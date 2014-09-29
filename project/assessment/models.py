@@ -38,13 +38,35 @@ class Assessment(models.Model):
         help_text='Team-members are allowed to edit assessment components.')
     public = models.BooleanField(default=False,
         help_text='The assessment and all components are publicly assessable.')
-    enable_literature_review = models.BooleanField(default=True)
-    enable_data_extraction = models.BooleanField(default=True)
-    enable_study_quality = models.BooleanField(default=True)
-    enable_bmd = models.BooleanField(default=True)
-    enable_reference_values = models.BooleanField(default=True)
-    enable_summary_text = models.BooleanField(default=True)
-    enable_comments = models.BooleanField(default=True)
+    enable_literature_review = models.BooleanField(default=True,
+        help_text="Search or import references from PubMed and other literature "
+                  "databases, define inclusion, exclusion, or descriptive tags, "
+                  "and apply these tags to retrieved literature for your analysis.")
+    enable_data_extraction = models.BooleanField(default=True,
+        help_text="Extract animal bioassay, epidemiological, or in-vitro data from "
+                  "key references and create customizable, dynamic visualizations "
+                  "or summary data and associated metadata for display.")
+    enable_study_quality = models.BooleanField(default=True,
+        help_text="Define criteria for a systematic review of literature, and apply "
+                  "these criteria to references in your literature-review. "
+                  "View details on findings and identify areas with a potential "
+                  "risk-of-bias.")
+    enable_bmd = models.BooleanField(default=True,
+        verbose_name="Enable BMD modeling",
+        help_text="Conduct benchmark dose (BMD) modeling on animal bioassay data "
+                  "available in the HAWC database, using the US EPA's Benchmark "
+                  "Dose Modeling Software (BMDS).")
+    enable_reference_values = models.BooleanField(default=True,
+        help_text="Define a point-of-departure, apply uncertainty factors, and "
+                  "derive reference values by route of exposure.")
+    enable_summary_text = models.BooleanField(default=True,
+        help_text="Create custom-text to describe methodology and results of the "
+                  "assessment; insert tables, figures, and visualizations to using "
+                  "\"smart-tags\" which link to other data in HAWC.")
+    enable_comments = models.BooleanField(default=True,
+        help_text="Enable comments from reviewers or the general-public on "
+                  "datasets or findings; comment-functionality and visibility "
+                  "can be controlled in advanced-settings.")
     created = models.DateTimeField(auto_now_add=True)
     changed = models.DateTimeField(auto_now=True)
 
