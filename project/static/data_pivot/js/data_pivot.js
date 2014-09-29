@@ -1935,7 +1935,7 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
   this.g_dose_points = this.vis.append("g");
   this.settings.datapoints.forEach(function(datum, i){
     var numeric = self.datarows.filter(
-            function(d){return !isNaN(x(d[datum.field_name]));});
+            function(d){return d[datum.field_name] !== "";});
 
     self['points_' + i] = self.g_dose_points.selectAll()
           .data(numeric)
