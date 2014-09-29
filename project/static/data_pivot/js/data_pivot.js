@@ -845,18 +845,8 @@ DataPivot.prototype._get_style_line_options = function(){
 };
 
 DataPivot.prototype.download_settings = function(){
-  var settings_json = this.get_settings_json(),
-      _click_object = function(element){
-        var oEvent = document.createEvent("MouseEvents");
-        oEvent.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0,
-            false, false, false, false, 0, null);
-        return element.dispatchEvent(oEvent);
-      },
-      blob = new Blob([settings_json], {"type" : "text\/json"}),
-      url = window.URL.createObjectURL(blob),
-      $a = $('a').attr('download', 'data_pivot_settings.json').attr('href', url);
-  _click_object($a[0]);
-  setTimeout(function(){window.URL.revokeObjectURL(url);}, 100);
+  var settings_json = this.get_settings_json();
+  saveTextAs(settings_json, "data_pivot_settings.json");
 };
 
 DataPivot.prototype.get_settings_json = function(){

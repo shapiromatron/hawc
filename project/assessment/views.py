@@ -98,6 +98,7 @@ class AssessmentModulesUpdate(BaseUpdate):
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
 
+
 class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy('portal')
