@@ -738,6 +738,8 @@ class AssessedOutcome(BaseEndpoint):
             choices=STATISTICAL_POWER_CHOICES)
     statistical_power_details = models.TextField(blank=True)
     main_finding = models.ForeignKey('epi.ExposureGroup',
+            blank=True,
+            null=True,
             verbose_name="Main finding",
             help_text="When a study did not report a statistically significant "
                       "association use the highest exposure group compared with "

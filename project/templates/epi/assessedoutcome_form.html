@@ -128,6 +128,21 @@
         confounders_dj.select({id:item.attr('value'), value:item.attr('title')})
       });
 
+      // toggle if main-finding support field is shown
+      var toggleMainFindingSupportVisibility = function(){
+        var val = $("#id_main_finding").val(),
+            support = $("#id_main_finding_support"),
+            support_div = support.parent().parent();
+        if (val){
+          support_div.fadeIn()
+        } else {
+          support_div.fadeOut();
+          support.val("1");  // make inconclusive
+        }
+      };
+      $('#id_main_finding').on('change', toggleMainFindingSupportVisibility);
+      toggleMainFindingSupportVisibility();
+
     });
   </script>
 {% endblock extrajs %}

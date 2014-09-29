@@ -81,8 +81,11 @@ AssessedOutcome.prototype._build_aogs = function(){
       return a.exposure_group.exposure_group_id -
              b.exposure_group.exposure_group_id;});
     this.aog = [];
+    this.main_finding = false;
     for(var i=0; i<this.data.aog.length; i++){
-        this.aog.push(new AssessedOutcomeGroup(this.data.aog[i]));
+        var aog = new AssessedOutcomeGroup(this.data.aog[i])
+        this.aog.push(aog);
+        if (aog.data.main_finding) this.main_finding = aog;
     }
     delete this.data.aog;
 };
@@ -113,7 +116,7 @@ AssessedOutcome.prototype.build_ao_table = function(div){
     add_tbody_tr("Diagnostic description", this.data.diagnostic_description);
     add_tbody_tr("Outcome N", this.data.outcome_n);
     add_tbody_tr("Summary", this.data.summary);
-    add_tbody_tr("Main finding supported?", this.data.main_finding_support);
+    if (this.main_finding) add_tbody_tr("Main finding supported?", this.data.main_finding_support);
     add_tbody_tr("Prevalence Incidence", this.data.prevalence_incidence);
     add_tbody_tr("Statistical metric presented", this.data.statistical_metric);
     add_tbody_tr("Statistical metric description", this.data.statistical_metric_description);
