@@ -1,4 +1,5 @@
 from collections import Counter, OrderedDict
+import copy
 import json
 import logging
 import math
@@ -536,34 +537,70 @@ class Endpoint(BaseEndpoint):
         Endpoint.d_response_delete_cache([self.pk])
 
     def flat_file_row(self, dose):
+        d = self.d_response(json_encode=False, dose_pk=dose.pk)
+        rows = []
 
-        d = self.getDict(target=True)
+        def get_dose_list(d):
+            doses = u', '.join([str(float(v['dose'])) for v in d['dr']])
+            return u"{0} {1}".format(doses, d["dose_units"])
 
-        row = [d['_study']['study-short_citation'],
-               d['_study']['study-url'],
-               d['_study']['study-pk'],
-               d['_experiment']['experiment-name'],
-               d['_experiment']['experiment-url'],
-               d['_animal_group']['animal_group-name'],
-               d['_animal_group']['animal_group-url'],
-               d['endpoint-name'],
-               d['endpoint-url'],
-               d['endpoint-data_type'],
-               dose.units,
-               d['endpoint-response_units'],
-               d['endpoint-pk']]
+        # build-base row which is endpoint-group independent
+        base = [d['study']['short_citation'],
+                d['study']['study_url'],
+                d['study']['pk'],
+                d['experiment'],
+                d['experiment_url'],
+                d['animal_group'],
+                d['animal_group_url'],
+                d['name'],
+                d['url'],
+                self.get_data_type_display(),
+                get_dose_list(d),
+                d['dose_units'],
+                d['response_units'],
+                d['pk']]
 
-        try:
-            doses = d['_animal_group']['_dosing_regime']['_doses'][dose.units]
+        # dose-group specific information
+        if len(d['dr'])>0:
+            base.extend([
+                d['dr'][1]['dose'],
+                d['dr'][d['NOAEL']]['dose'] if d['NOAEL'] != -999 else None,
+                d['dr'][d['LOAEL']]['dose'] if d['LOAEL'] != -999 else None,
+                d['dr'][d['FEL']]['dose'] if d['FEL'] != -999 else None,
+                d['dr'][len(d['dr'])-1]['dose']
+            ])
+        else:
+            base.extend([None]*5)
+
+        # BMD-specific information
+        if d['BMD'] and d['BMD'].has_key('outputs'):
+            base.extend([
+                d['BMD']['outputs']['model_name'],
+                d['BMD']['outputs']['BMDL'],
+                d['BMD']['outputs']['BMD'],
+                d['BMD']['outputs']['BMDU'],
+                d['BMD']['outputs']['CSF']
+            ])
+        else:
+            base.extend([None]*5)
+
+        # endpoint-group information
+        for i, v in enumerate(d['dr']):
+            row = copy.copy(base)
             row.extend([
-                    doses[1],
-                    doses[d['endpoint-NOAEL']] if d['endpoint-NOAEL'] != -999 else '-',
-                    doses[d['endpoint-LOAEL']] if d['endpoint-LOAEL'] != -999 else '-',
-                    doses[d['endpoint-FEL']] if d['endpoint-FEL'] != -999 else '-',
-                    doses[-1]])
-        except Exception:
-            row.extend(["-"]*5)
-        return [row]
+                i,
+                v['dose'],
+                v['n'],
+                v['incidence'],
+                v['response'],
+                v['stdev'],
+                v['fractionControlMean'],
+                v['fractionControlLow'],
+                v['fractionControlHigh']
+            ])
+            rows.append(row)
+
+        return rows
 
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
@@ -591,13 +628,28 @@ class Endpoint(BaseEndpoint):
                 'endpoint_url',
                 'data_type',
                 'dose_units',
+                'doses',
                 'response_units',
                 'primary_key',
                 'low_dose',
                 'NOAEL',
                 'LOAEL',
                 'FEL',
-                'high_dose'
+                'high_dose',
+                'BMD model name',
+                'BMDL',
+                'BMD',
+                'BMDU',
+                'CSF',
+                'dose_index',
+                'dose',
+                'n',
+                'incidence',
+                'response',
+                'stdev',
+                'ci_mean_vs_control',
+                'ci_low_vs_control',
+                'ci_high_vs_control'
                 ]
 
     @classmethod
@@ -816,10 +868,12 @@ class Endpoint(BaseEndpoint):
             try:
                 d['BMD'] = self.get_bmds_session().get_selected_model(json_encode=False)
             except:
-                pass
+                d['BMD'] = None
 
             logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
             cache.set(cache_name, d)
+            if type(d['BMD']) is not dict: d['BMD'] = None
+
 
         # Not cached without refactoring because this may depend on the dose
         # primary key. TODO: Instead, grab all BMD doses for each units type,
@@ -1097,18 +1151,17 @@ class EndpointGroup(models.Model):
         #
         # Expects a dictionary of endpoint groups and the endpoint data-type.
         #
-        # Calculates the fraction of control with respect to the mean-control
-        # estimate for continuous-only data. Assumes normally-distributed
-        # data (since we're reporting a stdev) and low/high corresponding to 2SD,
-        # or 95% CI.
+        # Returns the confidence interval for a population mean, assuming a
+        # normal distribution. Requires continuous data with a stdev.
         #
         # Appends results to the dictionary for each endpoint-group.
         #
         for eg in egs:
             if data_type == "C":
-                eg['fractionControlMean'] =  eg['response']/egs[0]['response']
-                eg['fractionControlLow'] =  (eg['response']-2*eg['stdev'])/egs[0]['response']
-                eg['fractionControlHigh'] = (eg['response']+2*eg['stdev'])/egs[0]['response']
+                eg['fractionControlMean'] =  float(eg['response'] / egs[0]['response'])
+                ci = (1.96 * float(eg['stdev']) / math.sqrt(eg['n'])) / float(egs[0]['response'])
+                eg['fractionControlLow']  = eg['fractionControlMean'] - ci
+                eg['fractionControlHigh'] = eg['fractionControlMean'] + ci
             else:
                 eg['fractionControlMean'] = None
                 eg['fractionControlLow'] = None
