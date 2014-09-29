@@ -39,7 +39,7 @@
       <tr><th>Description</th><td>{{object.description}}</td></tr>
       <tr><th>Search Type</th><td>{{object.get_search_type_display}}</td></tr>
       <tr><th>Search Database</th><td>{{object.get_source_display}}</td></tr>
-      <tr><th>Search Text</th><td>{{object.search_string}}</td></tr>
+      <tr><th>Search Text</th><td>{{object.search_string|safe}}</td></tr>
       <tr><th>Created</th><td>{{object.created}}</td></tr>
       <tr><th>Last Updated</th><td>{{object.last_updated}}</td></tr>
     </tbody>

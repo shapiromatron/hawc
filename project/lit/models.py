@@ -48,7 +48,7 @@ class Search(models.Model):
     slug = models.SlugField(verbose_name="URL Name",
                             help_text="The URL (web address) used to describe this object (no spaces or special-characters).")
     description = models.TextField()
-    search_string = models.TextField(help_text="The raw text of what was used to search using an online database")
+    search_string = models.TextField(help_text="The raw text of what was used to search using an online database. Use colors to separate search-terms (optional).")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -81,6 +81,11 @@ class Search(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    @property
+    def search_string_text(self):
+        # strip all HTML tags from search-string text
+        return strip_tags(self.search_string)
+
     def run_new_query(self):
         if self.source == 1:  # PubMed
             prior_query = None
@@ -95,14 +100,13 @@ class Search(models.Model):
             raise Exception("Search functionality disabled")
 
     def run_new_import(self):
+        ids = [int(v) for v in self.search_string_text.split(',')]
         if self.source == 0:  # Manually imported
             raise Exception("Import functionality disabled for manual import")
         elif self.source == 1:  # PubMed
-            ids = [int(v) for v in self.search_string.split(',')]
             identifiers = Identifiers.get_pubmed_identifiers(ids)
             Reference.get_pubmed_references(self, identifiers)
         elif self.source == 2:  # HERO
-            ids = [int(v) for v in self.search_string.split(',')]
             identifiers = Identifiers.get_hero_identifiers(ids)
             Reference.get_hero_references(self, identifiers)
 
@@ -265,7 +269,7 @@ class PubMedQuery(models.Model):
 
     def run_new_query(self, prior_query):
         # Create a new search
-        search = PubMedSearch(term=self.search.search_string)
+        search = PubMedSearch(term=self.search.search_string_text)
         search.get_ids_count()
 
         query_size_limit = 5000
