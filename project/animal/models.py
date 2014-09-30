@@ -870,10 +870,10 @@ class Endpoint(BaseEndpoint):
             except:
                 d['BMD'] = None
 
-            logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
-            cache.set(cache_name, d)
             if type(d['BMD']) is not dict: d['BMD'] = None
 
+            logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
+            cache.set(cache_name, d)
 
         # Not cached without refactoring because this may depend on the dose
         # primary key. TODO: Instead, grab all BMD doses for each units type,
