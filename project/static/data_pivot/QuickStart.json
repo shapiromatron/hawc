@@ -16,7 +16,8 @@
     "domain": "",
     "filter_logic": "and",
     "font_style": "Arial",
-    "merge_descriptions": false
+    "merge_descriptions": false,
+    "text_background": true
   },
   "legend": {
     "show": true,

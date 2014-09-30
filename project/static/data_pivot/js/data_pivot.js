@@ -111,7 +111,8 @@ DataPivot.default_plot_settings = function(){
       "dpe_enabled": false,
       "filter_logic": "and",
       "font_style": 'Arial',
-      "merge_descriptions": false
+      "merge_descriptions": false,
+      "text_background": true
     },
     "legend": DataPivotLegend.default_settings(),
     "dataline_settings": [],
@@ -1324,6 +1325,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
     "padding_bottom": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)),
     "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)),
     "merge_descriptions": $('<input type="checkbox">').prop('checked', values.merge_descriptions),
+    "text_background": $('<input type="checkbox">').prop('checked', values.text_background)
   };
 
   // set default values
@@ -1349,7 +1351,8 @@ var _DataPivot_settings_general = function(data_pivot, values){
       build_tr('Plot padding right', this.content.padding_right),
       build_tr('Plot padding bottom', this.content.padding_bottom),
       build_tr('Plot padding left', this.content.padding_left),
-      build_tr('Merge descriptions', this.content.merge_descriptions)];
+      build_tr('Merge descriptions', this.content.merge_descriptions),
+      build_tr('Highlight background text', this.content.text_background)];
 
   this.data_push();
   return this;
@@ -1370,6 +1373,7 @@ _DataPivot_settings_general.prototype.data_push = function(){
   this.values.padding.bottom = parseInt(this.content.padding_bottom.val(), 10);
   this.values.padding.left = parseInt(this.content.padding_left.val(), 10);
   this.values.merge_descriptions = this.content.merge_descriptions.prop('checked');
+  this.values.text_background = this.content.text_background.prop('checked');
 };
 
 
@@ -1903,7 +1907,7 @@ DataPivot_visualization.prototype.build_background_rectangles = function(){
       }
     }
   }
-  this.bg_rectangles_data = bgs;
+  this.bg_rectangles_data = (this.dp_settings.plot_settings.text_background) ? bgs : [];
   this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
 };
 
