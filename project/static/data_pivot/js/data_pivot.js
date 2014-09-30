@@ -1920,8 +1920,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
         }
       }, apply_line_styles = function(d){
         var obj = d3.select(this);
-        for (var property in d._styles["bars"]) {
-          obj.style(property, d._styles["bars"][property]);
+        for (var property in d._styles.bars) {
+          obj.style(property, d._styles.bars[property]);
         }
       }, apply_text_styles = function(obj, styles){
         obj = d3.select(obj);
@@ -1972,6 +1972,17 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("width", function(d){return (x(d.x2)-x(d.x1));})
           .each(apply_styles);
 
+  // draw reference lines
+  this.g_reference_lines = this.vis.append("g");
+  this.line_reference_lines = self.g_reference_lines.selectAll("line")
+          .data(this.settings.reference_lines)
+      .enter().append("svg:line")
+          .attr("x1", function(v){return x(v.x1);})
+          .attr("x2", function(v){return x(v.x2);})
+          .attr("y1", y.rangeExtent()[0]).transition().duration(1000)
+          .attr("y2", y.rangeExtent()[1])
+          .each(apply_styles);
+
   // Add bars
 
   // filter bars to include only bars where the difference between low/high
@@ -2008,7 +2019,7 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("y2", function(d){return (y(d._dp_y)+1.5*half_y);})
           .each(apply_line_styles);
 
-  // add dose-response dots
+  // add points
   this.g_dose_points = this.vis.append("g");
   this.settings.datapoints.forEach(function(datum, i){
     var numeric = self.datarows.filter(
@@ -2056,18 +2067,7 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .text(function(d){return d.text;})
           .each(function(d){apply_text_styles(this, d.style);});
 
-  // draw reference lines
-  this.g_reference_lines = this.vis.append("g");
-  this.line_reference_lines = self.g_reference_lines.selectAll("line")
-          .data(this.settings.reference_lines)
-      .enter().append("svg:line")
-          .attr("x1", function(v){return x(v.x1);})
-          .attr("x2", function(v){return x(v.x2);})
-          .attr("y1", y.rangeExtent()[0]).transition().duration(1000)
-          .attr("y2", y.rangeExtent()[1])
-          .each(apply_styles);
-
-
+  // add title and x-label
   var title_drag = d3.behavior.drag()
           .origin(Object)
           .on("drag", function(d, i){
