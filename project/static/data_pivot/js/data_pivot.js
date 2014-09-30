@@ -110,7 +110,8 @@ DataPivot.default_plot_settings = function(){
       "domain": "",
       "dpe_enabled": false,
       "filter_logic": "and",
-      "font_style": 'Arial'
+      "font_style": 'Arial',
+      "merge_descriptions": false
     },
     "legend": DataPivotLegend.default_settings(),
     "dataline_settings": [],
@@ -1321,7 +1322,8 @@ var _DataPivot_settings_general = function(data_pivot, values){
     "padding_top": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.top)),
     "padding_right": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.right)),
     "padding_bottom": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)),
-    "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left))
+    "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)),
+    "merge_descriptions": $('<input type="checkbox">').prop('checked', values.merge_descriptions),
   };
 
   // set default values
@@ -1346,7 +1348,8 @@ var _DataPivot_settings_general = function(data_pivot, values){
       build_tr('Plot padding top', this.content.padding_top),
       build_tr('Plot padding right', this.content.padding_right),
       build_tr('Plot padding bottom', this.content.padding_bottom),
-      build_tr('Plot padding left', this.content.padding_left)];
+      build_tr('Plot padding left', this.content.padding_left),
+      build_tr('Merge descriptions', this.content.merge_descriptions)];
 
   this.data_push();
   return this;
@@ -1366,6 +1369,7 @@ _DataPivot_settings_general.prototype.data_push = function(){
   this.values.padding.right = parseInt(this.content.padding_right.val(), 10);
   this.values.padding.bottom = parseInt(this.content.padding_bottom.val(), 10);
   this.values.padding.left = parseInt(this.content.padding_left.val(), 10);
+  this.values.merge_descriptions = this.content.merge_descriptions.prop('checked');
 };
 
 
@@ -1795,13 +1799,39 @@ DataPivot_visualization.prototype.get_dataset = function(){
     }
   });
 
+  this.datarows = rows;
+  this.merge_descriptions();
+
   this.title_str = this.dp_settings.plot_settings.title || "";
   this.x_label_text = this.dp_settings.plot_settings.axis_label || "";
   this.settings = settings;
-  this.datarows = rows;
   this.headers = this.settings.descriptions.map(function(v){
       return {"text": v.header_name,
               "style": get_associated_style("texts", v.header_style)};});
+};
+
+DataPivot_visualization.prototype.merge_descriptions = function(){
+  // Merge identical columns
+  var field_names = this.dp_settings.description_settings.map(function(v){return v.field_name});
+  for(var i=this.datarows.length-1; i>0; i--){
+    var isMerged = this.dp_settings.plot_settings.merge_descriptions;
+    if(isMerged){
+      // check if all columns are identical between this and the prior column
+      for(var j=0; j<field_names.length; j++){
+        if (this.datarows[i][field_names[j]] !== this.datarows[i-1][field_names[j]]){
+          isMerged = false;
+          break;
+        }
+      }
+      // Merge if passed check
+      if (isMerged){
+        for(var j=0; j<field_names.length; j++){
+          this.datarows[i][field_names[j]] = "";
+        }
+      }
+    }
+    this.datarows[i]._dp_isMerged = isMerged;
+  }
 };
 
 DataPivot_visualization.prototype.add_axes = function() {
@@ -1830,7 +1860,6 @@ DataPivot_visualization.prototype.add_axes = function() {
   var y_domain = this.datarows.map(function(v){ return v._dp_y;});
 
   $.extend(this.y_axis_settings, {
-    gridlines: this.dp_settings.plot_settings.show_yticks,
     domain: y_domain,
     number_ticks: y_domain.length,
     rangeRound: [0, this.h]
@@ -1838,6 +1867,44 @@ DataPivot_visualization.prototype.add_axes = function() {
 
   this.build_y_axis();
   this.build_x_axis();
+};
+
+DataPivot_visualization.prototype.build_background_rectangles = function(){
+  var bgs = [],
+      gridlines = [],
+      y = this.y_scale,
+      everyOther = true,
+      numRows = 0,
+      first_y,
+      pushBG = function(){
+
+        bgs.push({x: -10,
+                  y: y(first_y),
+                  w: 10,
+                  h: numRows*y.rangeBand()})
+      };
+
+  if (this.datarows.length>0){
+    first_y = this.datarows[0]._dp_y;
+    // starting with second-row, build rectangles
+    for(var i=1; i<this.datarows.length; i++){
+      numRows += 1;
+      if (!this.datarows[i]._dp_isMerged){
+        if(everyOther) pushBG();
+        everyOther = !everyOther;
+        numRows = 0;
+        first_y = this.datarows[i]._dp_y;
+        gridlines.push(first_y);
+        // edge-case to push final-row if needed
+        if (i === this.datarows.length-1){
+          numRows += 1;
+          pushBG();
+        }
+      }
+    }
+  }
+  this.bg_rectangles_data = bgs;
+  this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
 };
 
 DataPivot_visualization.prototype.draw_visualizations = function(){
@@ -1868,15 +1935,13 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
         }
       };
 
-  // add text background rectangles
-  var bgs = [];
-  for(var i=0; i<this.datarows.length; i=i+2){
-    bgs.push({"x": -10, "y": y(this.datarows[i]._dp_y), "w": 10, "h":y.rangeBand()});
-  }
+  // construct inputs for background rectangles and y-gridlines
+  this.build_background_rectangles();
 
+  // add text background rectangles behind text
   this.g_text_bg_rects = this.vis.append("g");
   this.text_bg_rects = this.g_text_bg_rects.selectAll()
-      .data(bgs)
+      .data(this.bg_rectangles_data)
       .enter().append("rect")
           .attr("x", function(d){return d.x;})
           .attr("height", function(d){return d.h;})
@@ -1884,7 +1949,19 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("width", function(d){return d.w;})
           .attr("class", "dp_text_bg");
 
-  // add x-range rectangles
+  // add y-gridlines
+  this.g_y_gridlines = this.vis.append("g")
+      .attr("class", "primary_gridlines y_gridlines");
+  this.y_gridlines = this.g_y_gridlines.selectAll()
+      .data(this.y_gridlines_data)
+    .enter().append("svg:line")
+      .attr("x1", x.range()[0])
+      .attr("x2", x.range()[1])
+      .attr("y1", function(d){return y(d);})
+      .attr("y2", function(d){return y(d);})
+      .attr("class", "primary_gridlines y_gridlines");
+
+  // add x-range rectangles for areas of interest
   this.g_rects = this.vis.append("g");
   this.rects_of_interest = this.vis.selectAll("rect.rects_of_interest")
       .data(this.settings.reference_rectangles)
