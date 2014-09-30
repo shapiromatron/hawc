@@ -594,9 +594,9 @@ class Endpoint(BaseEndpoint):
                 v['incidence'],
                 v['response'],
                 v['stdev'],
-                v['fractionControlMean'],
-                v['fractionControlLow'],
-                v['fractionControlHigh']
+                v['percentControlMean'],
+                v['percentControlLow'],
+                v['percentControlHigh']
             ])
             rows.append(row)
 
@@ -647,9 +647,9 @@ class Endpoint(BaseEndpoint):
                 'incidence',
                 'response',
                 'stdev',
-                'ci_mean_vs_control',
-                'ci_low_vs_control',
-                'ci_high_vs_control'
+                'percentControlMean',
+                'percentControlLow',
+                'percentControlHigh'
                 ]
 
     @classmethod
@@ -856,7 +856,7 @@ class Endpoint(BaseEndpoint):
                                        'significance_level'))
             for i, eg in enumerate(d['dr']):
                 eg['stdev'] = EndpointGroup.stdev(self.variance_type, eg['variance'], eg['n'])
-            EndpointGroup.fractionControl(self.data_type, d['dr'])
+            EndpointGroup.percentControl(self.data_type, d['dr'])
 
             # individual animal data
             if self.individual_animal_data:
@@ -1147,7 +1147,7 @@ class EndpointGroup(models.Model):
         return EndpointGroup.stdev(variance_type, self.variance, self.n)
 
     @staticmethod
-    def fractionControl(data_type, egs):
+    def percentControl(data_type, egs):
         #
         # Expects a dictionary of endpoint groups and the endpoint data-type.
         #
@@ -1158,14 +1158,14 @@ class EndpointGroup(models.Model):
         #
         for eg in egs:
             if data_type == "C":
-                eg['fractionControlMean'] =  float(eg['response'] / egs[0]['response'])
-                ci = (1.96 * float(eg['stdev']) / math.sqrt(eg['n'])) / float(egs[0]['response'])
-                eg['fractionControlLow']  = eg['fractionControlMean'] - ci
-                eg['fractionControlHigh'] = eg['fractionControlMean'] + ci
+                eg['percentControlMean'] =  float(eg['response'] / egs[0]['response']) * 100.
+                ci = (1.96 * float(eg['stdev']) / math.sqrt(eg['n'])) / float(egs[0]['response']) * 100.
+                eg['percentControlLow']  = (eg['percentControlMean'] - ci)
+                eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
             else:
-                eg['fractionControlMean'] = None
-                eg['fractionControlLow'] = None
-                eg['fractionControlHigh'] = None
+                eg['percentControlMean'] = None
+                eg['percentControlLow'] = None
+                eg['percentControlHigh'] = None
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
