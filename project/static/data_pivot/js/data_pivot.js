@@ -1566,16 +1566,15 @@ DataPivot_visualization.prototype.build_plot = function(){
   this.get_dataset();
   this.get_plot_sizes();
   this.build_plot_skeleton(true);
-  this._change_font_style();
   this.add_axes();
-  this.draw_visualizations();
-  this.add_final_rectangle();
-  this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend,
-                                    this.dp_settings, {"offset": true});
-  this.add_menu();
-  this.resize_plot_dimensions();
+  this._change_font_style();
   this.layout_text();
-  this.trigger_resize();
+  // this.draw_visualizations();
+  // this.add_final_rectangle();
+  // this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend,
+  //                                   this.dp_settings, {"offset": true});
+  this.add_menu();
+  // this.trigger_resize();
 };
 
 DataPivot_visualization.prototype._change_font_style = function(){
@@ -1809,9 +1808,15 @@ DataPivot_visualization.prototype.get_dataset = function(){
   this.title_str = this.dp_settings.plot_settings.title || "";
   this.x_label_text = this.dp_settings.plot_settings.axis_label || "";
   this.settings = settings;
-  this.headers = this.settings.descriptions.map(function(v){
-      return {"text": v.header_name,
-              "style": get_associated_style("texts", v.header_style)};});
+  this.headers = this.settings.descriptions.map(function(v, i){
+      return {"row": 0,
+              "col": i,
+              "text": v.header_name,
+              "style": get_associated_style("texts", v.header_style),
+              "cursor": "auto",
+              "onclick": function(){},
+              "max_width": 50}; // ajs to change
+  });
 };
 
 DataPivot_visualization.prototype.merge_descriptions = function(){
@@ -2046,31 +2051,6 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .on("click", function(d){if(datum.dpe_function_name){self.dpe[datum.dpe_function_name](d[datum.dpe_key]);}});
   });
 
-  // draw text components
-  this.g_text_columns = this.vis.append("g");
-  this.settings.descriptions.forEach(function(datum, i){
-      datum.content = self.g_text_columns.selectAll()
-          .data(self.datarows)
-      .enter().append("text")
-          .attr("x", function(d){return 0;})
-          .attr("y", function(d){return (y(d._dp_y) + half_y);})
-          .attr("dy", "0.35")
-          .text(function(d){return d[datum.field_name];})
-          .style('cursor', function(d){return (datum.dpe_function_name)?'pointer':'auto';})
-          .on("click", function(d){if(datum.dpe_function_name){
-              self.dpe[datum.dpe_function_name](d[datum.dpe_key]);
-          }})
-          .each(function(d){apply_text_styles(this, d._styles['text_' + i]);});
-  });
-
-  this.text_headers = self.g_text_columns.selectAll()
-          .data(this.headers)
-      .enter().append("text")
-          .attr("x", 0)
-          .attr("y", -25)
-          .text(function(d){return d.text;})
-          .each(function(d){apply_text_styles(this, d.style);});
-
   // add title and x-label
   var title_drag = d3.behavior.drag()
           .origin(Object)
@@ -2113,34 +2093,140 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
 };
 
 DataPivot_visualization.prototype.layout_text = function(){
-  var starting_point = -this.padding.left + this.padding.left_original,
+  /*
+   * Methodology for laying out a matrix of text in an SVG which requires
+   * word-wrap. The working method is as follows. First, layout all text in
+   * rows/columns, and get a matrix of objects which contains the element,
+   * x-location, y-location, width, and height. Then, find the maximum width
+   * in each column, and adjust x-location for each cell by column. Then, for
+   * each row, find the maximum height for each row, and adjust the y-location
+   * for each cell by column.
+   */
+  var x = this.x_scale,
+      y = this.y_scale,
       self = this,
-      get_offset = function(text_anchor, description){
-        switch (text_anchor){
-          case "start":
-            return 0;
-          case "middle":
-            return description.required_width/2;
-          case "end":
-            return description.required_width - self.text_spacing_offset;
+      apply_text_styles = function(obj, styles){
+        obj = d3.select(obj);
+        for (var property in styles) {
+          obj.style(property, styles[property]);
         }
-      };
+        if(styles.rotate>0){
+          obj.attr("transform", "rotate({0} {1},{2})".printf(styles.rotate,
+                                                             obj.attr("x"),
+                                                             obj.attr("y")));
+        }
+      }, wrap_text = function(texts, max_width){
+        texts.each(function(){
+          var text = d3.select(this),
+              words = text.text().split(/\s+/).reverse(),
+              word,
+              line = [],
+              lineNumber = 0,
+              lineHeight = this.getBBox().height, // px
+              x = text.attr("x"),
+              y = text.attr("y"),
+              dy = parseFloat(text.attr("dy")) || lineHeight/4,
+              tspan = text.text(null)
+                          .append("tspan")
+                          .attr("x", x)
+                          .attr("y", y)
+                          .attr("dy", dy + "px");
+          while(word = words.pop()){
+            line.push(word);
+            tspan.text(line.join(" "));
+            if(tspan.node().getComputedTextLength() > max_width && line.length>1){
+              line.pop();
+              tspan.text(line.join(" "));
+              line = [word];
+              tspan = text.append("tspan")
+                          .attr("x", x)
+                          .attr("y", y)
+                          .attr("dy", ++lineNumber * lineHeight + dy + "px")
+                          .text(word);
+            }
+          }
+        });
+      }, matrix =[],
+      row,
+      padding = 10,
+      left = padding,
+      top = padding;
 
-  this.settings.descriptions.forEach(function(description, i){
-    var offset;
-    //offset text
-    offset = get_offset(self.datarows[0]._styles["text_{0}".printf(i)]["text-anchor"], description);
-    description.content.attr('x', starting_point + offset);
-    // offset header
-    offset = get_offset(self.headers[i].style['text-anchor'], description);
-    self.headers[i].x = starting_point + offset;
-    starting_point += description.required_width;
+  // build n x m array-matrix of text-component-data (including header, where):
+  // n = number of rows, m = number of columns
+  matrix = [this.headers];
+  self.datarows.forEach(function(v, i){
+    row = [];
+    self.settings.descriptions.forEach(function(desc, j){
+      var txt = v[desc.field_name];
+      if(txt === "") return;
+      row.push({
+        "row": i+1,
+        "col": j,
+        "text": txt,
+        "style": v._styles['text_' + j],
+        "cursor": (desc.dpe_function_name)?'pointer':'auto',
+        "onclick": function(){
+          if(desc.dpe_function_name){self.dpe[desc.dpe_function_name](v[desc.dpe_key]);}
+        }
+      })
+    });
+    matrix.push(row);
   });
-  this.text_headers.attr('x', function(d){return d.x;});
 
-  // offset general background identifiers
-  this.text_bg_rects.attr('x',    -this.padding.left)
-                    .attr('width', this.padding.left);
+  // naively layout components
+  this.g_text_columns = this.vis.append("g").attr("class", "text_g");
+
+  this.text_rows = self.g_text_columns.selectAll("g")
+      .data(matrix)
+    .enter().append("g")
+      .attr("class", "text_row");
+
+  this.text_rows.selectAll("text")
+      .data(function(d) { return d; })
+    .enter().append("text")
+        .attr("x", 0)
+        .attr("y", 0)
+        .text(function(d){return d.text;})
+        .style("cursor", function(d){return d.cursor;})
+        .on("click", function(d){return d.onclick();})
+        .each(function(d){apply_text_styles(this, d.style);});
+
+  // apply wrap text method
+  this.headers.forEach(function(v,i){
+    var sel = self.g_text_columns.selectAll("text").filter(function(v){return v.col===i});
+    wrap_text(sel, v.max_width);
+
+    // get maximum column dimension and layout columns
+    v.widths = d3.max(sel[0].map(function(v){return v.getBBox().width;}));
+    sel.each(function(){
+      var val = d3.select(this),
+          anchor = val.style('text-anchor');
+      if(anchor === "end"){
+        val.attr("x", left+v.max_width);
+        val.selectAll('tspan').attr("x", left+v.widths);
+      } else if (anchor==="middle"){
+        var width = v.max_width || v.widths;  // use max_width in case of overflow
+        val.attr("x", left+width/2);
+        val.selectAll('tspan').attr("x", left+width/2);
+      } else { // default: left-aligned
+        val.attr("x", left);
+        val.selectAll('tspan').attr("x", left);
+      }
+    });
+    left += v.widths + padding;
+  });
+
+  // get maximum row dimension and layout rows
+  this.text_rows.selectAll('text').forEach(function(v){
+    var max_height = d3.max(v.map(function(v){return v.getBBox().height;})) || 0;
+    for(var i=0; i<v.length; i++){
+      var val = d3.select(v[i]);
+      val.attr("y", top);
+      val.selectAll('tspan').attr("y", top);
+    }
+    if(max_height>0) top += max_height + padding;
+  });
 };
 
 
