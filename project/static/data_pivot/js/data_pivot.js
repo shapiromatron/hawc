@@ -91,9 +91,9 @@ DataPivot.default_plot_settings = function(){
   return {
     "plot_settings": {
       "plot_width": 400,
-      "row_height": 25,
+      "minimum_row_height": 25,
       "padding": {
-        "top": 50,
+        "top": 25,
         "right": 25,
         "bottom": 40,
         "left": 20
@@ -236,7 +236,7 @@ DataPivot.prototype.build_settings = function(){
       build_description_tab = function(){
         var tab = $('<div class="tab-pane active" id="data_pivot_settings_description"></div>'),
             dpe_enabled = self.settings.plot_settings.dpe_enabled,
-            headers = ['Column Header', 'Display Name', 'Header Style', 'Text Style'],
+            headers = ['Column header', 'Display name', 'Header style', 'Text style', 'Maximum width (pixels)'],
             tbody = $('<tbody></tbody>');
 
         if(dpe_enabled) headers.push('On-Click');
@@ -267,7 +267,7 @@ DataPivot.prototype.build_settings = function(){
       }, build_data_tab = function(){
           var tab = $('<div class="tab-pane" id="data_pivot_settings_data"></div>'),
               dpe_enabled = self.settings.plot_settings.dpe_enabled,
-              headers = ['Column Header', 'Display Name', 'Line Style'],
+              headers = ['Column header', 'Display name', 'Line style'],
               header_tr = function(lst){
                 var vals = [];
                 lst.forEach(function(v){vals.push('<th>{0}</th>'.printf(v));});
@@ -288,8 +288,8 @@ DataPivot.prototype.build_settings = function(){
           tbody.append(obj.tr);
 
           // Build point table
-          headers = ['Column Header', 'Display Name', 'Marker Style'];
-          if(dpe_enabled) headers.push('On-Click');
+          headers = ['Column header', 'Display name', 'Marker style'];
+          if(dpe_enabled) headers.push('On-click');
           headers.push('Ordering');
           thead = $('<thead></thead>').html(header_tr(headers));
           point_tbody = $('<tbody></tbody>');
@@ -1106,6 +1106,7 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
   this.content.text_style = this.data_pivot.style_manager
       .add_select("texts", values.text_style);
 
+  this.content.max_width = $('<input class="span12" type="number">');
 
   if(dpe_enabled){
     this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options());
@@ -1114,6 +1115,7 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
   // set default values
   this.content.field_name.find('option[value="{0}"]'.printf(values.field_name)).prop('selected', true);
   this.content.header_name.val(values.header_name);
+  this.content.max_width.val(values.max_width);
   if(dpe_enabled){
     this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop('selected', true);
   }
@@ -1128,6 +1130,7 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
       .append($('<td></td>').append(this.content.header_name))
       .append($('<td></td>').append(this.content.header_style))
       .append($('<td></td>').append(this.content.text_style))
+      .append($('<td></td>').append(this.content.max_width))
       .on('change', 'input,select', function(v){self.data_push();});
 
   if(dpe_enabled){
@@ -1147,7 +1150,8 @@ _DataPivot_settings_description.defaults = function(){
     "header_name": '',
     "header_style": "header",
     "text_style": "base",
-    "dpe": DataPivot.NULL_CASE
+    "dpe": DataPivot.NULL_CASE,
+    "max_width": undefined
   };
 };
 
@@ -1157,6 +1161,7 @@ _DataPivot_settings_description.prototype.data_push = function(){
   this.values.header_style = this.content.header_style.find('option:selected').val();
   this.values.text_style = this.content.text_style.find('option:selected').val();
   this.values.header_name = this.content.header_name.val();
+  this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
   this.values.dpe = DataPivot.NULL_CASE;
   if(this.values.header_name === ''){this.values.header_name = this.values.field_name;}
   if(this.content.dpe){this.values.dpe = this.content.dpe.find('option:selected').val();}
@@ -1311,7 +1316,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
   // create fields
   this.content = {
     "plot_width": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.plot_width)),
-    "row_height": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.row_height)),
+    "minimum_row_height": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.minimum_row_height)),
     "title": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.title)),
     "axis_label": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.axis_label)),
     "show_xticks": $('<input type="checkbox">').prop('checked', values.show_xticks),
@@ -1339,7 +1344,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
 
   this.trs = [
       build_tr('Plot width', this.content.plot_width),
-      build_tr('Row height', this.content.row_height),
+      build_tr('Minimum row height', this.content.minimum_row_height),
       build_tr('Font style', this.content.font_style),
       build_tr('Title', this.content.title),
       build_tr('X-axis label', this.content.axis_label),
@@ -1360,7 +1365,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
 
 _DataPivot_settings_general.prototype.data_push = function(){
   this.values.plot_width = parseInt(this.content.plot_width.val(), 10);
-  this.values.row_height = parseInt(this.content.row_height.val(), 10);
+  this.values.minimum_row_height = parseInt(this.content.minimum_row_height.val(), 10);
   this.values.font_style = this.content.font_style.find('option:selected').val();
   this.values.title = this.content.title.val();
   this.values.axis_label = this.content.axis_label.val();
@@ -1531,8 +1536,8 @@ DataPivot_visualization.filter = function(arr, filters, filter_logic){
 DataPivot_visualization.prototype.set_defaults = function(){
   this.padding = $.extend({}, this.dp_settings.plot_settings.padding); //copy object
   this.padding.left_original = this.padding.left;
-  this.row_height = this.dp_settings.plot_settings.row_height;
   this.w = this.dp_settings.plot_settings.plot_width;
+  this.h = this.w;  // temporary; depends on rendered text-size
 
   var scale_type = (this.dp_settings.plot_settings.logscale) ? 'log' : 'linear',
       formatNumber = d3.format(",.f");
@@ -1550,10 +1555,10 @@ DataPivot_visualization.prototype.set_defaults = function(){
   };
 
   this.y_axis_settings = {
-    "scale_type": 'ordinal',
+    "scale_type": 'linear',
     "text_orient": 'left',
     "axis_class": 'axis y_axis',
-    "gridline_class": 'primary_gridlines x_gridlines',
+    "gridline_class": 'primary_gridlines y_gridlines',
     "axis_labels": false,
     "x_translate": 0,
     "y_translate": 0,
@@ -1564,20 +1569,20 @@ DataPivot_visualization.prototype.set_defaults = function(){
 DataPivot_visualization.prototype.build_plot = function(){
   this.plot_div.html('');
   this.get_dataset();
-  this.get_plot_sizes();
   this.build_plot_skeleton(true);
-  this.add_axes();
-  this._change_font_style();
+  this.set_font_style();
   this.layout_text();
-  // this.draw_visualizations();
-  // this.add_final_rectangle();
-  // this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend,
-  //                                   this.dp_settings, {"offset": true});
+  this.layout_plot();
+  this.add_axes();
+  this.draw_visualizations();
+  this.add_final_rectangle();
+  this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend,
+                                    this.dp_settings, {"offset": true});
   this.add_menu();
-  // this.trigger_resize();
+  this.trigger_resize();
 };
 
-DataPivot_visualization.prototype._change_font_style = function(){
+DataPivot_visualization.prototype.set_font_style = function(){
   var font;
   switch (this.dp_settings.plot_settings.font_style){
     case "Times New Roman":
@@ -1588,30 +1593,6 @@ DataPivot_visualization.prototype._change_font_style = function(){
       font = 'Arial;';
   }
   d3.select(this.svg).attr('style', 'font-family: {0}'.printf(font));
-};
-
-DataPivot_visualization.prototype.resize_plot_dimensions = function(){
-  // Resize plot based on the dimensions of the labels. We need to resize the
-  // plot to get all of the text to fit
-
-  var total_width = 0,
-      self = this;
-  this.settings.descriptions.forEach(function(description, i){
-    description.required_width = d3.max([
-        d3.max(description.content[0], function(v){return v.getBoundingClientRect().width;}),
-        self.text_headers[0][i].getBoundingClientRect().width]) + self.text_spacing_offset;
-    total_width += description.required_width;
-  });
-
-  if (this.padding.left < this.padding.left_original + total_width){
-    this.padding.left = this.padding.left_original + total_width;
-    this.build_plot();
-  }
-};
-
-DataPivot_visualization.prototype.get_plot_sizes = function(){
-  this.h = this.row_height*this.datarows.length;
-  this.plot_div.css('height', ((this.h + this.padding.top + this.padding.bottom + 45) + 'px'));
 };
 
 DataPivot_visualization.prototype.get_dataset = function(){
@@ -1714,9 +1695,8 @@ DataPivot_visualization.prototype.get_dataset = function(){
       }
     }
 
-    if (!include){
-      if ((low_range_include) && (high_range_include)) include = true;
-    }
+    // check in case range but no points
+    if ((!include) && (low_range_include) && (high_range_include)) include = true;
 
     // if row is included, add additional fields for plotting.
     if (include) {
@@ -1802,6 +1782,9 @@ DataPivot_visualization.prototype.get_dataset = function(){
     }
   });
 
+  // with final datarows subset, add index for rendered order
+  rows.forEach(function(v, i){v._dp_index = i;})
+
   this.datarows = rows;
   this.merge_descriptions();
 
@@ -1815,7 +1798,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
               "style": get_associated_style("texts", v.header_style),
               "cursor": "auto",
               "onclick": function(){},
-              "max_width": 50}; // ajs to change
+              "max_width": v.max_width};
   });
 };
 
@@ -1866,11 +1849,9 @@ DataPivot_visualization.prototype.add_axes = function() {
     y_translate: this.h
   });
 
-  var y_domain = this.datarows.map(function(v){ return v._dp_y;});
-
   $.extend(this.y_axis_settings, {
-    domain: y_domain,
-    number_ticks: y_domain.length,
+    domain: [0, this.h],
+    number_ticks: this.datarows.length,
     rangeRound: [0, this.h]
   });
 
@@ -1883,31 +1864,26 @@ DataPivot_visualization.prototype.build_background_rectangles = function(){
       gridlines = [],
       y = this.y_scale,
       everyOther = true,
-      numRows = 0,
-      first_y,
-      pushBG = function(){
-
-        bgs.push({x: -10,
-                  y: y(first_y),
-                  w: 10,
-                  h: numRows*y.rangeBand()})
+      self = this,
+      pushBG = function(first, last){
+        bgs.push({x: -self.text_width-self.padding.left,
+                  y: self.row_heights[first].min,
+                  w: self.text_width+self.padding.left,
+                  h: self.row_heights[last].max-self.row_heights[first].min})
       };
 
   if (this.datarows.length>0){
-    first_y = this.datarows[0]._dp_y;
+    first_index = 0;
     // starting with second-row, build rectangles
     for(var i=1; i<this.datarows.length; i++){
-      numRows += 1;
       if (!this.datarows[i]._dp_isMerged){
-        if(everyOther) pushBG();
+        if(everyOther) pushBG(first_index, i-1);
         everyOther = !everyOther;
-        numRows = 0;
-        first_y = this.datarows[i]._dp_y;
-        gridlines.push(first_y);
+        first_index = i;
+        gridlines.push(self.row_heights[first_index].min);
         // edge-case to push final-row if needed
-        if (i === this.datarows.length-1){
-          numRows += 1;
-          pushBG();
+        if (i === this.datarows.length-1 && everyOther){
+          pushBG(first_index, i);
         }
       }
     }
@@ -1918,10 +1894,9 @@ DataPivot_visualization.prototype.build_background_rectangles = function(){
 
 DataPivot_visualization.prototype.draw_visualizations = function(){
 
-  var x = this.x_scale,
+  var self = this,
+      x = this.x_scale,
       y = this.y_scale,
-      half_y = y.rangeBand()/2,
-      self = this,
       apply_styles = function(d) {
         var obj = d3.select(this);
         for (var property in d.style) {
@@ -1966,8 +1941,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
     .enter().append("svg:line")
       .attr("x1", x.range()[0])
       .attr("x2", x.range()[1])
-      .attr("y1", function(d){return y(d);})
-      .attr("y2", function(d){return y(d);})
+      .attr("y1", function(d){return d;})
+      .attr("y2", function(d){return d;})
       .attr("class", "primary_gridlines y_gridlines");
 
   // add x-range rectangles for areas of interest
@@ -1988,15 +1963,16 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
       .enter().append("svg:line")
           .attr("x1", function(v){return x(v.x1);})
           .attr("x2", function(v){return x(v.x2);})
-          .attr("y1", y.rangeExtent()[0]).transition().duration(1000)
-          .attr("y2", y.rangeExtent()[1])
+          .attr("y1", 0).transition().duration(1000)
+          .attr("y2", this.h)
           .each(apply_styles);
 
   // Add bars
 
   // filter bars to include only bars where the difference between low/high
   // is greater than 0
-  var bar_rows = this.datarows.filter(function(d){
+  var bar_half_height = 5,
+      bar_rows = this.datarows.filter(function(d){
       return ((d[self.settings.bars.high_field_name]-
                d[self.settings.bars.low_field_name])>0);});
 
@@ -2006,8 +1982,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
       .enter().append("svg:line")
           .attr("x1", function(d){return x(d[self.settings.bars.low_field_name]);})
           .attr("x2", function(d){return x(d[self.settings.bars.high_field_name]);})
-          .attr("y1", function(d){return (y(d._dp_y)+half_y);})
-          .attr("y2", function(d){return (y(d._dp_y)+half_y);})
+          .attr("y1", function(d){return self.row_heights[d._dp_index].mid;})
+          .attr("y2", function(d){return self.row_heights[d._dp_index].mid;})
           .each(apply_line_styles);
 
   this.dose_range_lower_vertical = this.g_bars.selectAll()
@@ -2015,8 +1991,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
       .enter().append("svg:line")
           .attr("x1", function(d){return x(d[self.settings.bars.low_field_name]);})
           .attr("x2", function(d){return x(d[self.settings.bars.low_field_name]);})
-          .attr("y1", function(d){return (y(d._dp_y)+0.5*half_y);})
-          .attr("y2", function(d){return (y(d._dp_y)+1.5*half_y);})
+          .attr("y1", function(d){return self.row_heights[d._dp_index].mid + bar_half_height;})
+          .attr("y2", function(d){return self.row_heights[d._dp_index].mid - bar_half_height;})
           .each(apply_line_styles);
 
   this.dose_range_upper_vertical = this.g_bars.selectAll()
@@ -2024,8 +2000,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
       .enter().append("svg:line")
           .attr("x1", function(d){return x(d[self.settings.bars.high_field_name]);})
           .attr("x2", function(d){return x(d[self.settings.bars.high_field_name]);})
-          .attr("y1", function(d){return (y(d._dp_y)+0.5*half_y);})
-          .attr("y2", function(d){return (y(d._dp_y)+1.5*half_y);})
+          .attr("y1", function(d){return self.row_heights[d._dp_index].mid + bar_half_height;})
+          .attr("y2", function(d){return self.row_heights[d._dp_index].mid - bar_half_height;})
           .each(apply_line_styles);
 
   // add points
@@ -2040,8 +2016,10 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("d", d3.svg.symbol()
               .size(function(d){return d._styles['points_' + i].size;})
               .type(function(d){return d._styles['points_' + i].type;}))
-          .attr("transform", function(d){return "translate(" + x(d[datum.field_name]) + "," + (y(d._dp_y)+half_y) + ")";})
-          .each(function(d){
+          .attr("transform", function(d){
+            return "translate({0},{1})".printf(x(d[datum.field_name]),
+                                               self.row_heights[d._dp_index].mid);
+          }).each(function(d){
             var obj = d3.select(this);
             for (var property in d._styles['points_' + i]) {
               obj.style(property, d._styles['points_' + i][property]);
@@ -2083,7 +2061,6 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
       .attr("cursor", "pointer")
       .call(title_drag);
 
-
   this.build_x_label(this.dp_settings.plot_settings.xlabel_left,
                      this.dp_settings.plot_settings.xlabel_top);
 
@@ -2102,9 +2079,7 @@ DataPivot_visualization.prototype.layout_text = function(){
    * each row, find the maximum height for each row, and adjust the y-location
    * for each cell by column.
    */
-  var x = this.x_scale,
-      y = this.y_scale,
-      self = this,
+  var self = this,
       apply_text_styles = function(obj, styles){
         obj = d3.select(obj);
         for (var property in styles) {
@@ -2149,13 +2124,17 @@ DataPivot_visualization.prototype.layout_text = function(){
       }, matrix =[],
       row,
       padding = 10,
-      left = padding,
-      top = padding;
+      left = this.padding.left,
+      top = this.padding.top,
+      min_row_height = this.dp_settings.plot_settings.minimum_row_height,
+      midpoint_height,
+      heights = [],
+      height_offset;
 
   // build n x m array-matrix of text-component-data (including header, where):
   // n = number of rows, m = number of columns
   matrix = [this.headers];
-  self.datarows.forEach(function(v, i){
+  this.datarows.forEach(function(v, i){
     row = [];
     self.settings.descriptions.forEach(function(desc, j){
       var txt = v[desc.field_name];
@@ -2175,9 +2154,9 @@ DataPivot_visualization.prototype.layout_text = function(){
   });
 
   // naively layout components
-  this.g_text_columns = this.vis.append("g").attr("class", "text_g");
+  this.g_text_columns = d3.select(this.svg).append("g").attr("class", "text_g");
 
-  this.text_rows = self.g_text_columns.selectAll("g")
+  this.text_rows = this.g_text_columns.selectAll("g")
       .data(matrix)
     .enter().append("g")
       .attr("class", "text_row");
@@ -2218,15 +2197,82 @@ DataPivot_visualization.prototype.layout_text = function(){
   });
 
   // get maximum row dimension and layout rows
-  this.text_rows.selectAll('text').forEach(function(v){
-    var max_height = d3.max(v.map(function(v){return v.getBBox().height;})) || 0;
-    for(var i=0; i<v.length; i++){
-      var val = d3.select(v[i]);
+  var merged_row_height;
+  this.text_rows.selectAll('text').forEach(function(v, i){
+    for(var j=0; j<v.length; j++){
+      var val = d3.select(v[j]);
       val.attr("y", top);
       val.selectAll('tspan').attr("y", top);
     }
-    if(max_height>0) top += max_height + padding;
+    // get maximum-height of rendered text, and row-height
+    var actual_height = d3.max(v.map(function(v){return v.getBBox().height;})) || 0,
+        row_height = d3.max([min_row_height, actual_height]);
+
+    // Peek-ahead and see if other rows are merged with this row; if so we may
+    // want to adjust the actual row-height to allow for even spacing.
+    // Only check for data rows (not header rows)
+    if (i>0){
+      var dataRowIndex = i-1
+      if(!self.datarows[dataRowIndex]._dp_isMerged){
+        var numRows = 1;
+        for(var j=dataRowIndex+1; j<self.datarows.length; j++){
+          if(!self.datarows[j]._dp_isMerged) break;
+          numRows +=1;
+        }
+        var extra = (actual_height-min_row_height);
+        if ((extra/numRows)<min_row_height){
+          merged_row_height = min_row_height;
+        } else {
+          merged_row_height = min_row_height + extra/numRows;
+        }
+      }
+      row_height = merged_row_height;
+    }
+
+    // save object of relative heights of data rows, with-respect to first-data row
+    if (i===1) height_offset = top;
+    if (i>0){
+      heights.push({
+        min: top - height_offset,
+        mid: top - height_offset + ((row_height + padding)/2),
+        max: top - height_offset + row_height + padding
+      });
+    }
+
+    //adjust height of next row
+    top += row_height + padding;
   });
+
+
+  // calculate plot-height, text-width, and save heights array
+  var textDim = this.g_text_columns.node().getBBox();
+  this.text_width = textDim.width + textDim.x;
+  this.h = heights[heights.length-1].max
+  this.row_heights = heights;
+};
+
+DataPivot_visualization.prototype.layout_plot = function(){
+  // Top-location to equal to the first-data row
+  // Left-location to equal size of text plus left-padding
+  var headerDims = this.g_text_columns.selectAll("g")[0][1].getBBox(),
+      top = headerDims.y,
+      textDims = this.g_text_columns.node().getBBox(),
+      left = textDims.width + textDims.x + this.padding.left;
+
+  this.vis.attr("transform", "translate({0},{1})".printf(left, top));
+  this.vis.select('.dp_bg').attr("height", this.h);
+
+  // resize SVG to account for new size
+  var svgDims = this.svg.getBBox(),
+      w = svgDims.width  + svgDims.x + this.padding.right,
+      h = svgDims.height + svgDims.y + this.padding.bottom;
+  d3.select(this.svg)
+    .attr("width", w)
+    .attr("height", h)
+    .attr("viewBox", "0 0 {0} {1}".printf(w, h));
+
+  this.full_width = w;
+  this.full_height = h;
 };
 
 
@@ -2536,13 +2582,13 @@ DataPivotLegend.prototype._draw_legend = function(){
       drag = d3.behavior.drag()
           .origin(Object)
           .on("drag", function(d,i){
-            var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+            var regexp = /\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/,
                 p = d3.select(this),
                 m = regexp.exec(p.attr("transform"));
                 if (m !== null && m.length===3){
                   var x = parseFloat(m[1]) + d3.event.dx,
                       y = parseFloat(m[2]) + d3.event.dy;
-                  p.attr("transform", "translate(" + x + "," + y + ")");
+                  p.attr("transform", "translate({0},{1})".printf(x,y));
                   self.settings.left = x;
                   self.settings.top = y;
                 }
@@ -2558,7 +2604,7 @@ DataPivotLegend.prototype._draw_legend = function(){
 
   if (this.options.offset){
     this.legend.attr("cursor", "pointer")
-        .attr("transform", "translate(" + self.settings.left + "," + self.settings.top + ")")
+        .attr("transform", "translate({0},{1})".printf(self.settings.left, self.settings.top))
         .call(drag);
   }
 

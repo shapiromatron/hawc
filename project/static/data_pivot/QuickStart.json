@@ -1,9 +1,9 @@
 {
   "plot_settings": {
     "plot_width": 400,
-    "row_height": 25,
+    "minimum_row_height": 15,
     "padding": {
-      "top": 50,
+      "top": 25,
       "right": 25,
       "bottom": 40,
       "left": 20

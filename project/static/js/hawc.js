@@ -564,19 +564,22 @@ D3Plot.prototype.build_plot_skeleton = function(background){
         .attr("viewBox", "0 0 {0} {1}".printf(w, h))
         .attr("preserveAspectRatio", "xMinYMin")
       .append("g")
-        .attr("transform", "translate(" + this.padding.left + "," + this.padding.top + ")");
+        .attr("transform", "translate({0},{1})".printf(this.padding.left, this.padding.top));
     this.svg = this.vis[0][0].parentNode;
 
     var chart = $(this.svg),
-        aspect = chart.width() / chart.height(),
         container = chart.parent();
 
+    this.full_width = w;
+    this.full_height = h;
     this.isFullSize = true;
     this.trigger_resize = function(forceResize){
-        var targetWidth = Math.min(container.width(), w),
-            currentWidth = parseInt(chart.attr("width"), 10);
-        if(forceResize===true && !self.isFullSize) targetWidth = w;
-        if (targetWidth !== w){
+        var targetWidth = Math.min(container.width(), self.full_width),
+            currentWidth = chart.width(),
+            aspect = self.full_width / self.full_height;
+        if(forceResize===true && !self.isFullSize) targetWidth = self.full_width;
+
+        if (targetWidth !== self.full_width){
             // use custom smaller size
             chart.attr("width", targetWidth);
             chart.attr("height", Math.round(targetWidth / aspect));
@@ -587,14 +590,13 @@ D3Plot.prototype.build_plot_skeleton = function(background){
             }
         } else {
             // set back to full-size
-            chart.attr("width", w);
-            chart.attr("height", Math.round(w / aspect));
+            chart.attr("width", self.full_width);
+            chart.attr("height", self.full_height);
             self.isFullSize = true;
             if(self.resize_button){
                 self.resize_button.attr("title", "zoom figure to fit screen");
                 self.resize_button.find('i').attr('class', 'icon-zoom-out');
             }
-
         }
     };
     $(window).resize(this.trigger_resize);
