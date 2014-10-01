@@ -125,50 +125,52 @@ DataPivot.default_plot_settings = function(){
     "row_overrides": [],
     "styles": {
       "symbols": [StyleSymbol.default_settings(),
-        {"size": 130, "stroke": "#000000", "name": "circle | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "circle | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "circle | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "circle | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "circle | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "circle | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "circle | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#d4266e"},
-        {"size": 130, "stroke": "#000000", "name": "triangle up | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "triangle up | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "triangle up | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "triangle up | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "triangle up | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "triangle up | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "triangle up | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#d4266e"},
-        {"size": 130, "stroke": "#000000", "name": "triangle down | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "triangle down | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "triangle down | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "triangle down | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "triangle down | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "triangle down | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "triangle down | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#d4266e"},
-        {"size": 130, "stroke": "#000000", "name": "diamond | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "diamond | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "diamond | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "diamond | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "diamond | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "diamond | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "diamond | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#d4266e"},
-        {"size": 130, "stroke": "#000000", "name": "square | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "square | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "square | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "square | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "square | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "square | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "square | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#d4266e"},
-        {"size": 130, "stroke": "#000000", "name": "cross | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#000000"},
-        {"size": 130, "stroke": "#6f0000", "name": "cross | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#e32727"},
-        {"size": 130, "stroke": "#006a1e", "name": "cross | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#22ba53"},
-        {"size": 130, "stroke": "#006dbe", "name": "cross | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#3aa4e5"},
-        {"size": 130, "stroke": "#dc8f00", "name": "cross | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#ffb100"},
-        {"size": 130, "stroke": "#5e5e5e", "name": "cross | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#b82cff"},
-        {"size": 130, "stroke": "#ab006c", "name": "cross | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#d4266e"}],
+        {"size": 90, "stroke": "#000000", "name": "transparent", "fill-opacity": 0, "stroke-width": 0, "type": "circle", "fill": "#000000"},
+        {"size": 90, "stroke": "#000000", "name": "circle | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "circle | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "circle | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "circle | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "circle | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "circle | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "circle | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "circle", "fill": "#d4266e"},
+        {"size": 90, "stroke": "#000000", "name": "triangle up | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "triangle up | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "triangle up | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "triangle up | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "triangle up | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "triangle up | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "triangle up | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-up", "fill": "#d4266e"},
+        {"size": 90, "stroke": "#000000", "name": "triangle down | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "triangle down | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "triangle down | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "triangle down | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "triangle down | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "triangle down | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "triangle down | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "triangle-down", "fill": "#d4266e"},
+        {"size": 90, "stroke": "#000000", "name": "diamond | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "diamond | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "diamond | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "diamond | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "diamond | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "diamond | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "diamond | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "diamond", "fill": "#d4266e"},
+        {"size": 90, "stroke": "#000000", "name": "square | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "square | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "square | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "square | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "square | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "square | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "square | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "square", "fill": "#d4266e"},
+        {"size": 90, "stroke": "#000000", "name": "cross | black", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#000000"},
+        {"size": 90, "stroke": "#6f0000", "name": "cross | red", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#e32727"},
+        {"size": 90, "stroke": "#006a1e", "name": "cross | green", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#22ba53"},
+        {"size": 90, "stroke": "#006dbe", "name": "cross | blue", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#3aa4e5"},
+        {"size": 90, "stroke": "#dc8f00", "name": "cross | orange", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#ffb100"},
+        {"size": 90, "stroke": "#5e5e5e", "name": "cross | purple", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#b82cff"},
+        {"size": 90, "stroke": "#ab006c", "name": "cross | fuschia", "fill-opacity": 0.8, "stroke-width": 2, "type": "cross", "fill": "#d4266e"}],
       "lines": [StyleLine.default_settings(),
         StyleLine.default_reference_line(),
+        {"stroke": "#000000", "stroke-dasharray": "none", "name": "transparent", "stroke-opacity": 0, "stroke-width": 0},
         {"stroke": "#000000", "stroke-dasharray": "none", "name": "solid | black", "stroke-opacity": 0.9, "stroke-width": 2},
         {"stroke": "#e32727", "stroke-dasharray": "none", "name": "solid | red", "stroke-opacity": 0.9, "stroke-width": 2},
         {"stroke": "#006a1e", "stroke-dasharray": "none", "name": "solid | green", "stroke-opacity": 0.9, "stroke-width": 2},
@@ -200,13 +202,14 @@ DataPivot.default_plot_settings = function(){
       "texts": [StyleText.default_settings(),
         StyleText.default_header(),
         StyleText.default_title(),
-        {"font-size": "12px", "rotate": "0", "name": "normal | black", "font-weight": "normal", "text-anchor": "start", "fill": "#000000"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | red", "font-weight": "normal", "text-anchor": "start", "fill": "#6f0000"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | green", "font-weight": "normal", "text-anchor": "start", "fill": "#006a1e"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | blue", "font-weight": "normal", "text-anchor": "start", "fill": "#006dbe"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | orange", "font-weight": "normal", "text-anchor": "start", "fill": "#dc8f00"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | purple", "font-weight": "normal", "text-anchor": "start", "fill": "#b82cff"},
-        {"font-size": "12px", "rotate": "0", "name": "normal | fuschia", "font-weight": "normal", "text-anchor": "start", "fill": "#ab006c"}],
+        {"font-size": "12px", "rotate": "0", "name": "transparent", "font-weight": "normal", "text-anchor": "start", "fill": "#000000", "fill-opacity": 0},
+        {"font-size": "12px", "rotate": "0", "name": "normal | black", "font-weight": "normal", "text-anchor": "start", "fill": "#000000", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | red", "font-weight": "normal", "text-anchor": "start", "fill": "#6f0000", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | green", "font-weight": "normal", "text-anchor": "start", "fill": "#006a1e", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | blue", "font-weight": "normal", "text-anchor": "start", "fill": "#006dbe", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | orange", "font-weight": "normal", "text-anchor": "start", "fill": "#dc8f00", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | purple", "font-weight": "normal", "text-anchor": "start", "fill": "#b82cff", "fill-opacity": 1},
+        {"font-size": "12px", "rotate": "0", "name": "normal | fuschia", "font-weight": "normal", "text-anchor": "start", "fill": "#ab006c", "fill-opacity": 1}],
       "rectangles": [StyleRectangle.default_settings(),
         {"stroke": "#000000", "name": "black", "fill-opacity": 0.2, "stroke-width": 0, "fill": "#000000"},
         {"stroke": "#6f0000", "name": "red", "fill-opacity": 0.2, "stroke-width": 0, "fill": "#e32727"},
@@ -2897,7 +2900,8 @@ StyleText.default_settings = function(){
     "font-weight": "normal",
     "fill": "#000",
     "text-anchor": "start",
-    "rotate" : "0"
+    "rotate" : "0",
+    "fill-opacity": 1
   };
 };
 
@@ -2908,7 +2912,8 @@ StyleText.default_header = function(){
     "font-weight": "bold",
     "fill": "#000",
     "text-anchor": "middle",
-    "rotate" : "0"
+    "rotate": "0",
+    "fill-opacity": 1
   };
 };
 
@@ -2919,7 +2924,8 @@ StyleText.default_title = function(){
     "font-weight": "bold",
     "fill": "#000",
     "text-anchor": "middle",
-    "rotate" : "0"
+    "rotate" : "0",
+    "fill-opacity": 1
   };
 };
 
@@ -2934,7 +2940,7 @@ StyleText.prototype.draw_modal = function($modal){
 
 StyleText.prototype.get_modified_settings = function(){
   var settings = {},
-      fields = ['name', 'font-size', 'fill', 'rotate'];
+      fields = ['name', 'font-size', 'fill', 'fill-opacity', 'rotate'];
   for(var i=0; i<fields.length; i++){
     settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
   }
@@ -2977,6 +2983,10 @@ StyleText.prototype._draw_setting_controls = function(){
   //fill
   form.append(add_horizontal_field('Fill',
       $('<input name="fill" type="color" value="{0}">'.printf(set.fill))));
+
+  //fill opacity
+  form.append(add_horizontal_field('Fill opacity',
+      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(set['fill-opacity']))));
 
   //text-anchor
   var text_anchor = $('<select name="text-anchor"></select>')
@@ -3413,6 +3423,7 @@ StyleViewer.prototype._update_styles = function(style_settings, randomize_positi
         .attr("font-size", style_settings['font-size'])
         .attr("font-weight", style_settings['font-weight'])
         .attr("fill", style_settings.fill)
+        .attr("fill-opacity", style_settings["fill-opacity"])
         .attr("text-anchor", style_settings["text-anchor"])
         .attr("transform", "rotate({0} 25,25)".printf(style_settings["rotate"]));
   }
