@@ -573,7 +573,7 @@ class Endpoint(BaseEndpoint):
             base.extend([None]*5)
 
         # BMD-specific information
-        if d['BMD'] and d['BMD'].has_key('outputs'):
+        if d['BMD'] and d['BMD'].has_key('outputs') and d['BMD']['dose_units_id'] == dose.pk:
             base.extend([
                 d['BMD']['outputs']['model_name'],
                 d['BMD']['outputs']['BMDL'],
