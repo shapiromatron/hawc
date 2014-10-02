@@ -43,6 +43,18 @@ class ContactUs(MessageMixin, FormView):
         return super(ContactUs, self).form_valid(form)
 
 
+class Error403(TemplateView):
+    template_name = '403.html'
+
+
+class Error404(TemplateView):
+    template_name = '404.html'
+
+
+class Error500(TemplateView):
+    template_name = '500.html'
+
+
 #Assessment Object
 class AssessmentPortal(LoginRequiredMixin, ListView):
     model = models.Assessment

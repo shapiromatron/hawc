@@ -3,16 +3,16 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.http import HttpResponse
 
-from assessment.views import Home, AssessmentPortal, Documentation, ContactUs
+from assessment import views
 
 urlpatterns = patterns('',
     # Portal
     #--------
-    url(r'^$', Home.as_view(), name='home'),
-    url(r'^portal/$', AssessmentPortal.as_view(), name='portal'),
+    url(r'^$', views.Home.as_view(), name='home'),
+    url(r'^portal/$', views.AssessmentPortal.as_view(), name='portal'),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
-    url(r'^documentation/$', Documentation.as_view(), name='documentation'),
-    url(r'^contact-us/$', ContactUs.as_view(), name='contact'),
+    url(r'^documentation/$', views.Documentation.as_view(), name='documentation'),
+    url(r'^contact-us/$', views.ContactUs.as_view(), name='contact'),
 
     # Apps
     #------
@@ -27,6 +27,12 @@ urlpatterns = patterns('',
     (r'^summary/', include('summary.urls', namespace='summary')),
     (r'^data-pivot/', include('data_pivot.urls', namespace='data_pivot')),
     (r'^comments/', include('comments.urls', namespace='comments')),
+
+    # Error-page testing
+    #-------------------
+    url(r'^403/$', views.Error403.as_view(), name='403'),
+    url(r'^404/$', views.Error404.as_view(), name='404'),
+    url(r'^500/$', views.Error500.as_view(), name='500'),
 
     # Admin
     #------
