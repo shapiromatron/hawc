@@ -2310,8 +2310,10 @@ DataPivot_visualization.prototype.layout_text = function(){
 
   // get maximum row dimension and layout rows
   var merged_row_height,
-      extra_space;
+      extra_space,
+      prior_extra = 0;
   this.text_rows.selectAll('text').forEach(function(v, i){
+
     for(var j=0; j<v.length; j++){
       var val = d3.select(v[j]);
       val.attr("y", textPadding+top);
@@ -2344,7 +2346,7 @@ DataPivot_visualization.prototype.layout_text = function(){
 
     // add spacer if needed
     var spacer = self.settings.spacers["row_" + i];
-    extra_space = (spacer && spacer.extra_space) ? min_row_height : 0;
+    extra_space = (spacer && spacer.extra_space) ? min_row_height/2 : 0;
 
     // get the starting point for the top-row and offset all dimensions from this
     if (i===1) height_offset = top;
@@ -2352,14 +2354,17 @@ DataPivot_visualization.prototype.layout_text = function(){
     // save object of relative heights of data rows, with-respect to first-data row
     if (i>0){
       heights.push({
-        min: top - height_offset,
-        mid: top - height_offset + textPadding + (row_height/2),
+        min: top - height_offset - prior_extra,
+        mid: top - height_offset + textPadding + row_height/2,
         max: top - height_offset + row_height + 2*textPadding + extra_space
       });
     }
 
     //adjust height of next row
-    top += row_height + 2*textPadding + extra_space;
+    top += row_height + 2*textPadding + 2*extra_space;
+
+    // set for next row
+    prior_extra = extra_space;
   });
 
 
