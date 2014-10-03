@@ -123,6 +123,7 @@ DataPivot.default_plot_settings = function(){
     "filters": [],
     "reference_lines": [],
     "reference_rectangles": [],
+    "labels": [],
     "row_overrides": [],
     "styles": {
       "symbols": [StyleSymbol.default_settings(),
@@ -634,9 +635,35 @@ DataPivot.prototype.build_settings = function(){
               return $('<div>').append(
                   $('<h3>Reference Ranges</h3>').append(new_point_button),
                   $('<table class="table table-condensed table-bordered"></table>').html([colgroup, thead, tbody]));
+            }, build_labels = function(){
+              var thead = $('<thead></thead>').html(
+                      [$('<tr></tr>').append('<th>Text</th><th>Style</th><th>Delete</th>')]),
+                  tbody = $('<tbody></tbody>'),
+                  add_row = function(i){
+                    if(!self.settings.labels[i]){
+                      self.settings.labels.push(_DataPivot_settings_label.defaults());
+                    }
+                    var obj = new _DataPivot_settings_label(self, self.settings.labels[i]);
+                    tbody.append(obj.tr);
+                  },
+                  new_row = function(){
+                    var num_rows = self.settings.labels.length;
+                    add_row(num_rows);
+                  },
+                  new_point_button = $('<button class="btn btn-primary pull-right">New Row</button>').on('click', new_row),
+                  num_rows = (self.settings.labels.length === 0) ? 1 : self.settings.labels.length;
+
+              for(var i=0; i<num_rows; i++){
+                add_row(i);
+              }
+              return $('<div>').append(
+                        $('<h3>Labels</h3>').append(new_point_button),
+                        $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody]));
             };
 
-        return tab.html([build_reference_lines(), build_reference_ranges()]);
+        return tab.html([build_reference_lines(),
+                         build_reference_ranges(),
+                         build_labels()]);
       }, build_styles_tab = function(){
         var tab = $('<div class="tab-pane" id="data_pivot_settings_styles"></div>'),
             symbol_div = self.style_manager.build_styles_crud('symbols'),
@@ -1012,6 +1039,43 @@ _DataPivot_settings_refrect.prototype.data_push = function(){
   this.values.x1 = parseFloat(this.content.x1_field.val());
   this.values.x2 = parseFloat(this.content.x2_field.val());
   this.values.rectangle_style = this.content.rectangle_style.find('option:selected').text();
+};
+
+
+var _DataPivot_settings_label = function(data_pivot, values){
+  var self = this;
+  this.data_pivot = data_pivot;
+  this.values = values;
+
+  // create fields
+  this.content = {};
+  this.content.text = $('<input class="span12" type="text">').val(values.text);
+  this.content.style = this.data_pivot.style_manager.add_select("texts", values.style);
+
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.labels, this, {showSort: false});
+
+  this.tr = $('<tr>')
+      .append($('<td>').append(this.content.text))
+      .append($('<td>').append(this.content.style))
+      .append(movement_td)
+      .on('change', 'input,select', function(v){self.data_push();});
+
+  this.data_push();
+  return this;
+};
+
+_DataPivot_settings_label.defaults = function(){
+  return {
+    "text": "",
+    "style": "title",
+    "x": 10,
+    "y": 10
+  };
+};
+
+_DataPivot_settings_label.prototype.data_push = function(){
+  this.values.text = this.content.text.val();
+  this.values.style = this.content.style.find('option:selected').text();
 };
 
 
@@ -1693,6 +1757,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
         "filters": [],
         "reference_lines": [],
         "reference_rectangles": [],
+        "labels": [],
         "spacers": {},
         "spacer_lines": []},
       rows = [],
@@ -1763,6 +1828,12 @@ DataPivot_visualization.prototype.get_dataset = function(){
                                           "x1": datum.x1,
                                           "x2": datum.x2});
     }
+  });
+
+  // unpack labels
+  this.dp_settings.labels.forEach(function(d){
+      d._style = get_associated_style("texts", d.style)
+      settings.labels.push(d);
   });
 
   // now, build data-objects for visualization
@@ -2140,6 +2211,33 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .style('cursor', function(d){return(datum.dpe_function_name)?'pointer':'auto';})
           .on("click", function(d){if(datum.dpe_function_name){self.dpe[datum.dpe_function_name](d[datum.dpe_key]);}});
   });
+
+
+  // add labels
+  var label_drag = d3.behavior.drag()
+          .origin(Object)
+          .on("drag", function(d, i){
+            var p = d3.select(this),
+                x = parseInt(p.attr('x'), 10) +  d3.event.dx,
+                y = parseInt(p.attr('y'), 10) +  d3.event.dy;
+
+            p.attr('x', x);
+            p.attr('y', y);
+            p.data()[0].x = x;
+            p.data()[0].y = y;
+          });
+
+  this.g_labels = this.vis.append("g");
+  this.text_labels = this.g_labels.selectAll("text")
+      .data(this.settings.labels)
+    .enter().append("text")
+        .attr('x', function(d){return d.x;})
+        .attr('y', function(d){return d.y;})
+        .text(function(d){return d.text;})
+        .attr("cursor", "pointer")
+        .each(function(d){apply_text_styles(this, d._style);})
+        .call(label_drag);
+
 
   // add title and x-label
   var title_drag = d3.behavior.drag()
