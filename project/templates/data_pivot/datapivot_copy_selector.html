@@ -1,0 +1,50 @@
+{% extends 'data_pivot/datapivot_list.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{block.super}} | Copy Data Pivot
+{% endblock title %}
+
+{% block breadcrumbs_self %}
+    <li><a href="{% url 'data_pivot:list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+    <li class="active">Copy existing<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+
+    {% csrf_token %}
+
+    <div class='row-fluid'>
+      <fieldset>
+        <legend>Copy data pivot</legend>
+        <span class="help-block">Select an existing data pivot and copy as a new
+          data pivot. This includes all model-settings, and the selected dataset.
+          You will be taken to a new view to create a new data pivot, but the
+          form will be pre-populated using the values from
+          the currently-selected data pivot.</span><br>
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+                {{field}}
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    {# Submission area #}
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Copy selected as new</button>
+        <a href="{% url 'data_pivot:list' assessment.pk %}" class="btn">Cancel</a>
+      </div>
+    </div>
+
+  </form>
+{% endblock content %}

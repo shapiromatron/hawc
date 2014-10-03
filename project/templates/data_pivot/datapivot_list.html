@@ -6,7 +6,9 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Data Pivot<span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">Data Pivot<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
 {% endblock %}
 
 {% block content %}
@@ -17,6 +19,7 @@
           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{% url 'data_pivot:new-prompt' assessment.pk %}">Create new</a></li>
+            <li><a href="{% url 'data_pivot:copy_selector' assessment.pk %}">Copy from existing</a></li>
           </ul>
         </div>
     {% endif %}

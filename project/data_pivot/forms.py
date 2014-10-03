@@ -12,11 +12,11 @@ class DataPivotUploadForm(forms.ModelForm):
         exclude = ('assessment', )
 
     def __init__(self, *args, **kwargs):
-            assessment = kwargs.pop('parent', None)
-            super(DataPivotUploadForm, self).__init__(*args, **kwargs)
-            self.fields['settings'].widget.attrs['rows'] = 2
-            if assessment:
-                self.instance.assessment = assessment
+        assessment = kwargs.pop('parent', None)
+        super(DataPivotUploadForm, self).__init__(*args, **kwargs)
+        self.fields['settings'].widget.attrs['rows'] = 2
+        if assessment:
+            self.instance.assessment = assessment
 
 
 class DataPivotQueryForm(forms.ModelForm):
@@ -27,13 +27,13 @@ class DataPivotQueryForm(forms.ModelForm):
                  'settings', 'caption')
 
     def __init__(self, *args, **kwargs):
-            assessment = kwargs.pop('parent', None)
-            super(DataPivotQueryForm, self).__init__(*args, **kwargs)
-            self.fields['settings'].widget.attrs['rows'] = 2
-            self.fields["evidence_type"].choices = ((0, 'Animal Bioassay'),
-                                                    (1, 'Epidemiology'))
-            if assessment:
-                self.instance.assessment = assessment
+        assessment = kwargs.pop('parent', None)
+        super(DataPivotQueryForm, self).__init__(*args, **kwargs)
+        self.fields['settings'].widget.attrs['rows'] = 2
+        self.fields["evidence_type"].choices = ((0, 'Animal Bioassay'),
+                                                (1, 'Epidemiology'))
+        if assessment:
+            self.instance.assessment = assessment
 
 
 class DataPivotSettingsForm(forms.ModelForm):
@@ -59,3 +59,20 @@ class DataPivotSearchForm(forms.Form):
         for obj in models.DataPivot.objects.filter(**query):
             response_json.append(obj.get_json(json_encode=False))
         return response_json
+
+
+
+class DataPivotSelectorForm(forms.Form):
+
+    dp = forms.ModelChoiceField(label="Data Pivot",
+                                queryset=models.DataPivot.objects.all(),
+                                empty_label=None)
+
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id', -1)
+        super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
+
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span12'
+
+        self.fields['dp'].queryset = self.fields['dp'].queryset.filter(assessment_id = assessment_id)

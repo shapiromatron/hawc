@@ -1,14 +1,13 @@
 import json
 
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, TemplateView, FormView
+from django.views.generic import TemplateView, FormView
 
 from assessment.models import Assessment
-from utils.views import (AssessmentPermissionsMixin, CanCreateMixin,
-                         MessageMixin, BaseList, BaseCreate, BaseDetail,
-                         BaseUpdate, BaseDelete)
+from utils.views import (AssessmentPermissionsMixin, BaseList, BaseCreate,
+                         BaseDetail, BaseUpdate, BaseDelete)
 from utils.helper import HAWCDjangoJSONEncoder
 
 from . import forms
@@ -65,6 +64,22 @@ class DataPivotNew(BaseCreate):
                              kwargs={'assessment': self.assessment.pk,
                                      'slug': self.object.slug})
 
+    def get_form_kwargs(self):
+        kwargs = super(DataPivotNew, self).get_form_kwargs()
+
+        # check if we have a template to use
+        try:
+            pk = int(self.request.GET.get('initial'))
+        except Exception:
+            pk = None
+
+        if pk:
+            obj = self.model.objects.filter(pk=pk).first()
+            if obj and obj.get_assessment() == self.assessment:
+                kwargs['instance'] = obj
+
+        return kwargs
+
 
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
@@ -84,6 +99,35 @@ class DataPivotFileNew(DataPivotNew):
         context = super(DataPivotFileNew, self).get_context_data(**kwargs)
         context['file_loader'] = True
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super(DataPivotFileNew, self).get_form_kwargs()
+        if kwargs.get('instance'):
+            # TODO: get file to copy properly when copying from existing
+            kwargs['instance'].file = None
+        return kwargs
+
+
+class DataPivotCopyAsNewSelector(BaseDetail):
+    # Select an existing assessed outcome as a template for a new one
+    model = Assessment
+    template_name = 'data_pivot/datapivot_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DataPivotCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.DataPivotSelectorForm(assessment_id=self.assessment.pk)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = super(DataPivotCopyAsNewSelector, self).get_object()
+        dp = get_object_or_404(models.DataPivot, pk=self.request.POST.get('dp'))
+        if hasattr(dp, 'datapivotupload'):
+            url = reverse_lazy('data_pivot:new-file', kwargs={"pk": self.assessment.pk})
+        else:
+            url = reverse_lazy('data_pivot:new-query', kwargs={"pk": self.assessment.pk})
+
+        url += "?initial={0}".format(dp.pk)
+        return HttpResponseRedirect(url)
 
 
 class DataPivotDetail(BaseDetail):
