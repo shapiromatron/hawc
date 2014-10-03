@@ -126,7 +126,7 @@ TagTreeViz.prototype.draw_visualization = function(){
 
         nodeEnter.append("svg:text")
                 .attr("x", 0)
-                .attr("dy", ".35em")
+                .attr("dy", "3.5px")
                 .attr("class", "node_value")
                 .attr("text-anchor", "middle")
                 .text(function(d) { return d.data.reference_count; })
