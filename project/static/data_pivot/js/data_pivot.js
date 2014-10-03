@@ -118,6 +118,7 @@ DataPivot.default_plot_settings = function(){
     "dataline_settings": [],
     "datapoint_settings": [],
     "description_settings": [],
+    "spacers": [],
     "sorts": [],
     "filters": [],
     "reference_lines": [],
@@ -503,6 +504,35 @@ DataPivot.prototype.build_settings = function(){
                   $('<h3>Row Sorting</h3>').append(new_point_button),
                   '<p class="help-block">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
                   $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody])]);
+            }, build_spacing_div = function(){
+              var div = $('<div></div>'),
+                  tbody = $('<tbody></tbody>'),
+                  thead = $('<thead></thead>').html(
+                         [$('<tr></tr>').append('<th>Row index</th>',
+                                                '<th>Show line?</th>',
+                                                '<th>Line style</th>',
+                                                '<th>Delete</th>')]),
+                  num_rows = (self.settings.spacers.length === 0) ? 1 : self.settings.spacers.length,
+                  add_row = function(i){
+                    if(!self.settings.spacers[i]){
+                      self.settings.spacers[i] = _DataPivot_settings_spacers.defaults();
+                    }
+                    var obj = new _DataPivot_settings_spacers(self, self.settings.spacers[i], i);
+                    tbody.append(obj.tr);
+                  },
+                  new_row = function(){
+                    var num_rows = self.settings.spacers.length;
+                    add_row(num_rows);
+                  },
+                  new_point_button = $('<button class="btn btn-primary pull-right">New Row</button>').on('click', new_row);
+
+              for(var i=0; i<num_rows; i++){
+                add_row(i);
+              }
+              return div.html([
+                  $('<h3>Additional Row Spacing</h3>').append(new_point_button),
+                  '<p class="help-block">Add additional-space between rows, and optionally a horizontal line.</p>',
+                  $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody])]);
             }, build_manual_ordering_div = function(){
               var div = $('<div></div>'),
                   thead = $('<thead></thead>').html(
@@ -550,12 +580,13 @@ DataPivot.prototype.build_settings = function(){
         return tab.html([
             build_filtering_div(), '<hr>',
             build_sorting_div(), '<hr>',
+            build_spacing_div(), '<hr>',
             build_manual_ordering_div()]);
       }, build_reference_tab = function(){
         var tab = $('<div class="tab-pane" id="data_pivot_settings_ref"></div>'),
             build_reference_lines = function(){
               var thead = $('<thead></thead>').html(
-                      [$('<tr></tr>').append('<th>Reference Line Value</th><th>Line Style</th><th>Ordering</th>')]),
+                      [$('<tr></tr>').append('<th>Reference Line Value</th><th>Line Style</th><th>Delete</th>')]),
                   tbody = $('<tbody></tbody>'),
                   add_row = function(i){
                     if(!self.settings.reference_lines[i]){
@@ -579,7 +610,7 @@ DataPivot.prototype.build_settings = function(){
                         $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody]));
             }, build_reference_ranges = function(){
               var thead = $('<thead></thead>').html(
-                      [$('<tr></tr>').append('<th>Lower Value</th><th>Upper Value</th><th>Range Style</th><th>Ordering</th>')]),
+                      [$('<tr></tr>').append('<th>Lower Value</th><th>Upper Value</th><th>Range Style</th><th>Delete</th>')]),
                   colgroup = $('<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'),
                   tbody = $('<tbody></tbody>'),
                   add_row = function(i){
@@ -883,15 +914,19 @@ DataPivot.delete_row = function(arr, obj){
   delete obj;
 };
 
-DataPivot.build_movement_td = function(arr, self){
+DataPivot.build_movement_td = function(arr, self, options){
   //build a td including buttons for movement
-  var up = $('<button class="btn btn-mini" title="move up"><i class="icon-arrow-up"></button>')
+  var td = $('<td>'),
+      up = $('<button class="btn btn-mini" title="move up"><i class="icon-arrow-up"></button>')
               .on('click', function(){DataPivot.move_row(arr, self, true);}),
       down = $('<button class="btn btn-mini" title="move down"><i class="icon-arrow-down"></button>')
               .on('click', function(){DataPivot.move_row(arr, self, false);}),
       del = $('<button class="btn btn-mini" title="remove"><i class="icon-remove"></button>')
               .on('click', function(){DataPivot.delete_row(arr, self);});
-    return $('<td></td>').append(up, down, del);
+
+    if(options.showSort) td.append(up, down);
+    td.append(del);
+    return td;
 };
 
 
@@ -907,7 +942,7 @@ var _DataPivot_settings_refline = function(data_pivot, values){
   this.content.line_style = this.data_pivot.style_manager
       .add_select("lines", values.line_style);
 
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.reference_lines, this);
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.reference_lines, this, {showSort: false});
 
   // set default values
   this.content.value_field.val(values.value);
@@ -951,7 +986,7 @@ var _DataPivot_settings_refrect = function(data_pivot, values){
   this.content.x1_field.val(values.x1);
   this.content.x2_field.val(values.x2);
 
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.reference_rectangles, this);
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.reference_rectangles, this, {showSort: false});
 
   this.tr = $('<tr></tr>')
       .append($('<td></td>').append(this.content.x1_field))
@@ -980,7 +1015,8 @@ _DataPivot_settings_refrect.prototype.data_push = function(){
 
 
 var _DataPivot_settings_sorts = function(data_pivot, values, index){
-  var self = this;
+  var self = this,
+      movement_td = DataPivot.build_movement_td(data_pivot.settings.sorts, this, {showSort: true});
   this.data_pivot = data_pivot;
   this.values = values;
 
@@ -989,8 +1025,6 @@ var _DataPivot_settings_sorts = function(data_pivot, values, index){
   this.content.field_name = $('<select class="span12"></select>')
       .html(this.data_pivot._get_header_options(true));
   this.content.ascending = $('<label class="radio"><input name="asc{0}" type="radio" value="true">Ascending</label><label class="radio"><input name="asc{0}" type="radio" value="false">Descending</label>'.printf(index));
-
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.sorts, this);
 
   // set default values
   this.content.field_name
@@ -1053,7 +1087,7 @@ var _DataPivot_settings_filters = function(data_pivot, values){
       .prop('selected', true);
   this.content.value.val(values.value);
 
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this);
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this, {showSort: true});
 
   this.tr = $('<tr></tr>')
       .append($('<td></td>').append(this.content.field_name))
@@ -1088,6 +1122,50 @@ _DataPivot_settings_filters.prototype.data_push = function(){
   this.values.field_name = this.content.field_name.find('option:selected').val();
   this.values.quantifier = this.content.quantifier.find('option:selected').val();
   this.values.value = this.content.value.val();
+};
+
+
+var _DataPivot_settings_spacers = function(data_pivot, values, index){
+  var self = this,
+      movement_td = DataPivot.build_movement_td(data_pivot.settings.spacers, this, {showSort: false});
+
+  this.data_pivot = data_pivot;
+  this.values = values;
+
+  // create fields
+  this.content = {
+    index: $('<input class="span12" type="number">'),
+    show_line: $('<input type="checkbox">'),
+    line_style: data_pivot.style_manager.add_select("lines", values.line_style)
+  };
+
+  // set default values
+  this.content.index.val(values.index);
+  this.content.show_line.prop('checked', values.show_line);
+
+  this.tr = $('<tr></tr>')
+      .append($('<td>').append(this.content.index))
+      .append($('<td>').append(this.content.show_line))
+      .append($('<td>').append(this.content.line_style))
+      .append(movement_td)
+      .on('change', 'input,select', function(v){self.data_push();});
+
+  this.data_push();
+  return this;
+};
+
+_DataPivot_settings_spacers.defaults = function(){
+  return {
+    index: DataPivot.NULL_CASE,
+    show_line: true,
+    line_style: "reference line"
+  };
+};
+
+_DataPivot_settings_spacers.prototype.data_push = function(){
+  this.values.index = parseInt(this.content.index.val(), 10) || -1;
+  this.values.show_line = this.content.show_line.prop('checked');
+  this.values.line_style = this.content.line_style.find('option:selected').text();
 };
 
 
@@ -1140,7 +1218,7 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
     this.tr.append($('<td></td>').append(this.content.dpe));
   }
 
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.description_settings, this);
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.description_settings, this, {showSort: true});
   this.tr.append(movement_td);
 
   this.data_push();
@@ -1218,7 +1296,7 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
     this.tr.append($('<td></td>').append(this.content.dpe));
   }
 
-  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this);
+  var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this, {showSort: true});
   this.tr.append(movement_td);
 
   this.data_push();
@@ -1607,7 +1685,9 @@ DataPivot_visualization.prototype.get_dataset = function(){
         "sorts": [],
         "filters": [],
         "reference_lines": [],
-        "reference_rectangles": []},
+        "reference_rectangles": [],
+        "spacers": {},
+        "spacer_lines": []},
       rows = [],
       get_associated_style = function(style_type, style_name){
 
@@ -1675,6 +1755,17 @@ DataPivot_visualization.prototype.get_dataset = function(){
       settings.reference_rectangles.push({"style": get_associated_style("rectangles", datum.rectangle_style),
                                           "x1": datum.x1,
                                           "x2": datum.x2});
+    }
+  });
+
+  // unpack extra spacers
+  this.dp_settings.spacers.forEach(function(v){
+    settings.spacers["row_" + v.index] = v;
+    if(v.show_line){
+      settings.spacer_lines.push({
+        index: v.index-1,
+        _styles: {bars: get_associated_style("lines", v.line_style)}
+      });
     }
   });
 
@@ -1970,6 +2061,17 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("y2", this.h)
           .each(apply_styles);
 
+  // draw horizontal-spacer lines
+  this.g_spacer_lines = this.vis.append("g");
+  this.g_spacer_lines = self.g_reference_lines.selectAll("line")
+          .data(this.settings.spacer_lines)
+      .enter().append("svg:line")
+          .attr("x1", -this.text_width-this.padding.left)
+          .attr("x2", this.w)
+          .attr("y1", function(d){return self.row_heights[d.index].max;})
+          .attr("y2", function(d){return self.row_heights[d.index].max;})
+          .each(apply_line_styles);
+
   // Add bars
 
   // filter bars to include only bars where the difference between low/high
@@ -2200,7 +2302,8 @@ DataPivot_visualization.prototype.layout_text = function(){
   });
 
   // get maximum row dimension and layout rows
-  var merged_row_height;
+  var merged_row_height,
+      extra_space;
   this.text_rows.selectAll('text').forEach(function(v, i){
     for(var j=0; j<v.length; j++){
       var val = d3.select(v[j]);
@@ -2232,18 +2335,21 @@ DataPivot_visualization.prototype.layout_text = function(){
       row_height = merged_row_height;
     }
 
-    // save object of relative heights of data rows, with-respect to first-data row
+    // add spacer if needed
+    extra_space = (self.settings.spacers["row_" + i]) ? min_row_height : 0;
+
     if (i===1) height_offset = top;
+    // save object of relative heights of data rows, with-respect to first-data row
     if (i>0){
       heights.push({
         min: top - height_offset,
         mid: top - height_offset + ((row_height + padding)/2),
-        max: top - height_offset + row_height + padding
+        max: top - height_offset + row_height + padding + extra_space
       });
     }
 
     //adjust height of next row
-    top += row_height + padding;
+    top += row_height + padding + extra_space;
   });
 
 
