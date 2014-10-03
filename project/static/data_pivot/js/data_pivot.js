@@ -1619,6 +1619,7 @@ DataPivot_visualization.prototype.set_defaults = function(){
   this.padding.left_original = this.padding.left;
   this.w = this.dp_settings.plot_settings.plot_width;
   this.h = this.w;  // temporary; depends on rendered text-size
+  this.textPadding = 5; // text padding on all sides of text
 
   var scale_type = (this.dp_settings.plot_settings.logscale) ? 'log' : 'linear',
       formatNumber = d3.format(",.f");
@@ -2228,7 +2229,7 @@ DataPivot_visualization.prototype.layout_text = function(){
         });
       }, matrix =[],
       row,
-      padding = 10,
+      textPadding = this.textPadding,
       left = this.padding.left,
       top = this.padding.top,
       min_row_height = this.dp_settings.plot_settings.minimum_row_height,
@@ -2298,7 +2299,7 @@ DataPivot_visualization.prototype.layout_text = function(){
         val.selectAll('tspan').attr("x", left);
       }
     });
-    left += v.widths + padding;
+    left += v.widths + 2*textPadding;
   });
 
   // get maximum row dimension and layout rows
@@ -2307,8 +2308,8 @@ DataPivot_visualization.prototype.layout_text = function(){
   this.text_rows.selectAll('text').forEach(function(v, i){
     for(var j=0; j<v.length; j++){
       var val = d3.select(v[j]);
-      val.attr("y", top);
-      val.selectAll('tspan').attr("y", top);
+      val.attr("y", textPadding+top);
+      val.selectAll('tspan').attr("y", textPadding+top);
     }
     // get maximum-height of rendered text, and row-height
     var actual_height = d3.max(v.map(function(v){return v.getBBox().height;})) || 0,
@@ -2338,18 +2339,20 @@ DataPivot_visualization.prototype.layout_text = function(){
     // add spacer if needed
     extra_space = (self.settings.spacers["row_" + i]) ? min_row_height : 0;
 
+    // get the starting point for the top-row and offset all dimensions from this
     if (i===1) height_offset = top;
+
     // save object of relative heights of data rows, with-respect to first-data row
     if (i>0){
       heights.push({
         min: top - height_offset,
-        mid: top - height_offset + ((row_height + padding)/2),
-        max: top - height_offset + row_height + padding + extra_space
+        mid: top - height_offset + textPadding + (row_height/2),
+        max: top - height_offset + row_height + 2*textPadding + extra_space
       });
     }
 
     //adjust height of next row
-    top += row_height + padding + extra_space;
+    top += row_height + 2*textPadding + extra_space;
   });
 
 
@@ -2364,7 +2367,7 @@ DataPivot_visualization.prototype.layout_plot = function(){
   // Top-location to equal to the first-data row
   // Left-location to equal size of text plus left-padding
   var headerDims = this.g_text_columns.selectAll("g")[0][1].getBBox(),
-      top = headerDims.y,
+      top = headerDims.y-this.textPadding,
       textDims = this.g_text_columns.node().getBBox(),
       left = textDims.width + textDims.x + this.padding.left;
 
