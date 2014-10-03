@@ -511,6 +511,7 @@ DataPivot.prototype.build_settings = function(){
                          [$('<tr></tr>').append('<th>Row index</th>',
                                                 '<th>Show line?</th>',
                                                 '<th>Line style</th>',
+                                                '<th>Extra space?</th>',
                                                 '<th>Delete</th>')]),
                   num_rows = (self.settings.spacers.length === 0) ? 1 : self.settings.spacers.length,
                   add_row = function(i){
@@ -1136,17 +1137,20 @@ var _DataPivot_settings_spacers = function(data_pivot, values, index){
   this.content = {
     index: $('<input class="span12" type="number">'),
     show_line: $('<input type="checkbox">'),
-    line_style: data_pivot.style_manager.add_select("lines", values.line_style)
+    line_style: data_pivot.style_manager.add_select("lines", values.line_style),
+    extra_space: $('<input type="checkbox">')
   };
 
   // set default values
   this.content.index.val(values.index);
   this.content.show_line.prop('checked', values.show_line);
+  this.content.extra_space.prop('checked', values.extra_space);
 
   this.tr = $('<tr></tr>')
       .append($('<td>').append(this.content.index))
       .append($('<td>').append(this.content.show_line))
       .append($('<td>').append(this.content.line_style))
+      .append($('<td>').append(this.content.extra_space))
       .append(movement_td)
       .on('change', 'input,select', function(v){self.data_push();});
 
@@ -1158,7 +1162,8 @@ _DataPivot_settings_spacers.defaults = function(){
   return {
     index: DataPivot.NULL_CASE,
     show_line: true,
-    line_style: "reference line"
+    line_style: "reference line",
+    extra_space: false
   };
 };
 
@@ -1166,6 +1171,7 @@ _DataPivot_settings_spacers.prototype.data_push = function(){
   this.values.index = parseInt(this.content.index.val(), 10) || -1;
   this.values.show_line = this.content.show_line.prop('checked');
   this.values.line_style = this.content.line_style.find('option:selected').text();
+  this.values.extra_space = this.content.extra_space.prop('checked');
 };
 
 
@@ -2337,7 +2343,8 @@ DataPivot_visualization.prototype.layout_text = function(){
     }
 
     // add spacer if needed
-    extra_space = (self.settings.spacers["row_" + i]) ? min_row_height : 0;
+    var spacer = self.settings.spacers["row_" + i];
+    extra_space = (spacer && spacer.extra_space) ? min_row_height : 0;
 
     // get the starting point for the top-row and offset all dimensions from this
     if (i===1) height_offset = top;
