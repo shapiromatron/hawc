@@ -1759,17 +1759,6 @@ DataPivot_visualization.prototype.get_dataset = function(){
     }
   });
 
-  // unpack extra spacers
-  this.dp_settings.spacers.forEach(function(v){
-    settings.spacers["row_" + v.index] = v;
-    if(v.show_line){
-      settings.spacer_lines.push({
-        index: v.index-1,
-        _styles: {bars: get_associated_style("lines", v.line_style)}
-      });
-    }
-  });
-
   // now, build data-objects for visualization
   self.dp_data.forEach(function(row, i){
     // Determine row inclusion. Rows can either be included by having any
@@ -1879,6 +1868,17 @@ DataPivot_visualization.prototype.get_dataset = function(){
 
   // with final datarows subset, add index for rendered order
   rows.forEach(function(v, i){v._dp_index = i;})
+
+  // unpack extra spacers
+  this.dp_settings.spacers.forEach(function(v){
+    settings.spacers["row_" + v.index] = v;
+    if(v.show_line && v.index>0 && v.index<=rows.length){
+      settings.spacer_lines.push({
+        index: v.index-1,
+        _styles: {bars: get_associated_style("lines", v.line_style)}
+      });
+    }
+  });
 
   this.datarows = rows;
   this.merge_descriptions();
