@@ -2063,7 +2063,7 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
 
   // draw horizontal-spacer lines
   this.g_spacer_lines = this.vis.append("g");
-  this.g_spacer_lines = self.g_reference_lines.selectAll("line")
+  this.spacer_lines = self.g_spacer_lines.selectAll("line")
           .data(this.settings.spacer_lines)
       .enter().append("svg:line")
           .attr("x1", -this.text_width-this.padding.left)
