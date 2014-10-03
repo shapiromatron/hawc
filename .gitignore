@@ -4,6 +4,7 @@
 .idea/*
 project/static/css/hawc_d3_aggregated.css
 docs/build/*
+project/celerybeat*
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files
