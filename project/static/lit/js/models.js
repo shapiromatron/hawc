@@ -86,13 +86,32 @@ Reference.prototype.deselect_name = function(){
 };
 
 Reference.prototype.print_div_row = function(){
-    return $('<div></div>')
-        .html(['<hr><p class="ref_small">{0} {1}</p>'.printf(this.data.authors || Reference.no_authors_text,
-                                                             this.data.year || ""),
-               '<p class="ref_title">{0}</p>'.printf(this.data.title),
-               '<p class="ref_small">{0}</p>'.printf(this.data.journal),
-               '<p>{0}</p>'.printf(this.data.abstract),
-               ].concat(this.print_taglist()));
+
+    var div = $('<div></div>'),
+        authors = $('<p class="ref_small">{0} {1}</p>'.printf(
+                        this.data.authors || Reference.no_authors_text,
+                        this.data.year || ""));
+    if (this.data.abstract){
+        $('<button type="button" class="btn btn-small pull-right abstractToggle">Show abstract</button>')
+        .on('click', function(){
+            var sel = $(this);
+            if(sel.text() === "Show abstract"){
+                div.find('.abstracts').collapse('show');
+                sel.text("Hide abstract");
+            } else {
+                div.find('.abstracts').collapse('hide');
+                sel.text("Show abstract");
+            }
+        }).appendTo(authors);
+    };
+
+    return div.html([
+        '<hr>',
+        authors,
+        '<p class="ref_title">{0}</p>'.printf(this.data.title),
+        '<p class="ref_small">{0}</p>'.printf(this.data.journal),
+        '<p class="abstracts collapse" >{1}</p>'.printf(this.data.pk, this.data.abstract),
+    ].concat(this.print_taglist()));
 };
 
 Reference.prototype.add_tag = function(tag){
@@ -147,7 +166,8 @@ ReferencesViewer.prototype.set_error = function(){
 };
 
 ReferencesViewer.prototype._print_header = function(){
-    var h3 = $('<h3></h3>');
+    var h3 = $('<h3></h3>')
+        self = this;
     if(this.options.fixed_title){
         h3.text(this.options.fixed_title);
     } else {
@@ -156,11 +176,24 @@ ReferencesViewer.prototype._print_header = function(){
                         '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>' +
                         '<ul class="dropdown-menu">' +
                           '<li><a href="{0}?tag_pk={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
+                          '<li><a href="#" class="show_abstracts">Show all abstracts</a></li>' +
                         '</ul>' +
                       '</div>';
         h3.text("References tagged ")
           .append("<span class='ref_tag'>{0}</span>".printf(tag_name))
-          .append(actions);
+          .append(actions)
+          .on('click', '.show_abstracts', function(){
+            var sel = $(this);
+            if(sel.text() === "Show all abstracts"){
+                self.$div.find('.abstracts').collapse('show');
+                sel.text("Hide all abstracts");
+                self.$div.find('.abstractToggle').text('Hide abstract');
+            } else {
+                self.$div.find('.abstracts').collapse('hide');
+                sel.text("Show all abstracts");
+                self.$div.find('.abstractToggle').text('Show abstract');
+            }
+          });
     }
     return h3;
 };

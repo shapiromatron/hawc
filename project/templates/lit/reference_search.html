@@ -65,7 +65,6 @@
         $.ajax({method: "POST",
                 data: form.serialize()})
           .done(function(results){
-            console.log(results);
             if(results.status=="success"){
                 refs = [];
                 results.refs.forEach(function(datum){refs.push(new Reference(datum, window.tagtree));});
