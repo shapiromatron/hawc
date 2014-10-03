@@ -90,22 +90,20 @@ Study.prototype.build_details_table = function(div){
         tbody = $('<tbody></tbody>'),
         add_tbody_tr = function(description, value){
             if(value){
-                tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                           .append($("<td>").html(value)));
+                tbody.append($("<tr>").append($("<th>").text(description))
+                                      .append($("<td>").html(value)));
             }
         }, add_tbody_tr_list = function(description, list_items){
-            var ul = $('<ul></ul>').append(
+            var ul = $('<ul>').append(
                         list_items.map(function(v){return '<li>{0}</li>'.printf(v.description);})),
-                tr = $('<tr></tr>')
+                tr = $('<tr>')
                         .append('<th>{0}</th>'.printf(description))
-                        .append($('<td></td>').append(ul));
+                        .append($('<td>').append(ul));
 
         tbody.append(tr);
-    }, unicode_boolean = function(val){
-        return (val) ? "☑" : "☒";
     };
 
-    colgroup.append('<col style="width: 30%;"><col style="width: 70%;">');
+    colgroup.append('<col style="width: 20%;"><col style="width: 80%;">');
 
     add_tbody_tr("Study type", this.data.study_type);
     add_tbody_tr("Full citation", this.data.full_citation);
@@ -113,19 +111,11 @@ Study.prototype.build_details_table = function(div){
     add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
     add_tbody_tr("Literature review tags", this._get_tags_ul());
     add_tbody_tr("COI reported", this.data.coi_reported);
-    if(this.data.coi_details){
-        add_tbody_tr("COI details", this.data.coi_details);
-    }
-    if(this.data.funding_source){
-        add_tbody_tr("Funding source", this.data.funding_source);
-    }
-    if(this.data.study_identifier){
-        add_tbody_tr("Study identifier", this.data.study_identifier);
-    }
-    add_tbody_tr("Contact author?", unicode_boolean(this.data.contact_author));
-    if(this.data.ask_author){
-        add_tbody_tr("Author contact details", this.data.ask_author);
-    }
+    add_tbody_tr("COI details", this.data.coi_details);
+    add_tbody_tr("Funding source", this.data.funding_source);
+    add_tbody_tr("Study identifier", this.data.study_identifier);
+    add_tbody_tr("Author contacted?", HAWCUtils.booleanCheckbox(this.data.contact_author));
+    add_tbody_tr("Author contact details", this.data.ask_author);
     add_tbody_tr("Summary text", this.data.summary);
 
     $(div).html(tbl.append(colgroup, tbody));
@@ -150,7 +140,7 @@ Study.prototype._get_identifiers_hyperlinks_ul = function(){
     this.data.reference.identifiers.forEach(function(v){
         if (v.url !== "None"){
             ul.append($('<li>').append(
-                $('<a>').attr('href', v.url).text(v.database)));
+                $('<a>').attr('href', v.url).attr('target', '_blank').text(v.database)));
         }
     });
 
