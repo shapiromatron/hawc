@@ -109,6 +109,7 @@ Study.prototype.build_details_table = function(div){
 
     add_tbody_tr("Study type", this.data.study_type);
     add_tbody_tr("Full citation", this.data.full_citation);
+    add_tbody_tr("Abstract", this.data.reference.abstract);
     add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
     add_tbody_tr("Literature review tags", this._get_tags_ul());
     add_tbody_tr("COI reported", this.data.coi_reported);
