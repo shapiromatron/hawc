@@ -1504,13 +1504,13 @@ _DataPivot_settings_conditionalFormat.prototype.delete_condition = function(cond
 _DataPivot_settings_conditionalFormat.condition_types = ["point-size", "point-color", "discrete-style"];
 
 _DataPivot_settings_conditionalFormat.defaults = {
-    "field_name": DataPivot.NULL_CASE,
-    "condition_type": "point-size",
-    "min_size": 50,
-    "max_size": 150,
-    "min_color": "#800000",
-    "max_color": "#008000",
-    "discrete_styles": []
+  "field_name": DataPivot.NULL_CASE,
+  "condition_type": "point-size",
+  "min_size": 50,
+  "max_size": 150,
+  "min_color": "#800000",
+  "max_color": "#008000",
+  "discrete_styles": []
 };
 
 
@@ -1739,7 +1739,8 @@ var _DataPivot_settings_general = function(data_pivot, values){
     "padding_bottom": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)),
     "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)),
     "merge_descriptions": $('<input type="checkbox">').prop('checked', values.merge_descriptions),
-    "text_background": $('<input type="checkbox">').prop('checked', values.text_background)
+    "text_background": $('<input type="checkbox">').prop('checked', values.text_background),
+    "text_background_color": $('<input type="color">').val(values.text_background_color)
   };
 
   // set default values
@@ -1766,7 +1767,11 @@ var _DataPivot_settings_general = function(data_pivot, values){
       build_tr('Plot padding bottom', this.content.padding_bottom),
       build_tr('Plot padding left', this.content.padding_left),
       build_tr('Merge descriptions', this.content.merge_descriptions),
-      build_tr('Highlight background text', this.content.text_background)];
+      build_tr('Highlight background text', this.content.text_background),
+      build_tr('Highlight background text color', this.content.text_background_color)];
+
+  this.content.text_background_color
+      .spectrum({"showInitial": true, "showInput": true});
 
   this.data_push();
   return this;
@@ -1788,6 +1793,7 @@ _DataPivot_settings_general.prototype.data_push = function(){
   this.values.padding.left = parseInt(this.content.padding_left.val(), 10);
   this.values.merge_descriptions = this.content.merge_descriptions.prop('checked');
   this.values.text_background = this.content.text_background.prop('checked');
+  this.values.text_background_color = this.content.text_background_color.val();
 };
 
 
@@ -2415,7 +2421,7 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
           .attr("height", function(d){return d.h;})
           .attr("y", function(d){return d.y;})
           .attr("width", function(d){return d.w;})
-          .attr("class", "dp_text_bg");
+          .style("fill", this.dp_settings.plot_settings.text_background_color);
 
   // add y-gridlines
   this.g_y_gridlines = this.vis.append("g")

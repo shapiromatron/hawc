@@ -17,7 +17,8 @@
     "filter_logic": "and",
     "font_style": "Arial",
     "merge_descriptions": false,
-    "text_background": true
+    "text_background": true,
+    "text_background_color": "#f6f5f9"
   },
   "legend": {
     "show": true,

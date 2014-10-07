@@ -412,10 +412,6 @@ path.tagslink {
   stroke-width: 2px;
 }
 
-.dp_text_bg{
-  fill: #f6f5f9;
-}
-
 /*
  * Duplicate of hawc.css but required for image building
  */
