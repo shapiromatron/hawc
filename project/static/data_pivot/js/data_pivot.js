@@ -2227,7 +2227,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
           if (vals.range){
             var cscale = d3.scale.linear()
                   .domain(vals.range)
-                  .interpolate(d3.interpolateRgb)
+                  .interpolate(d3.interpolateHsl)
                   .range([cf.min_color, cf.max_color]);
 
             rows.forEach(function(d){
