@@ -900,14 +900,6 @@ DataPivot.prototype._get_header_options = function(show_blank){
   }));
 };
 
-DataPivot.prototype._get_style_line_options = function(){
-  var opts = [];
-  this.settings.styles.lines.forEach(function(v, i){
-    opts.push('<option value="{0}">{1}</option>'.printf(i, v.name));
-  });
-  return opts;
-};
-
 DataPivot.prototype.download_settings = function(){
   var settings_json = this.get_settings_json();
   saveTextAs(settings_json, "data_pivot_settings.json");
@@ -955,6 +947,18 @@ DataPivot.build_movement_td = function(arr, self, options){
     if(options.showSort) td.append(up, down);
     td.append(del);
     return td;
+};
+
+DataPivot.getRowDetails = function(values){
+  var unique = d3.set(values).values(),
+      numeric = unique.filter(function(v){return $.isNumeric(v); }),
+      range = (numeric.length>0) ? d3.extent(numeric) : undefined;
+
+  return {
+    unique: unique,
+    numeric: numeric,
+    range: range
+  }
 };
 
 
@@ -1511,7 +1515,7 @@ _DataPivot_settings_conditionalFormat.defaults = {
 
 
 _DataPivot_settings_conditional = function(parent_div, parent, values){
-  values = values || {};
+  values = values || {discrete_styles: []};
   this.inputs = [];
 
   var self = this,
@@ -1592,7 +1596,9 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
     self.discrete_styles = [];
     discrete.empty();
 
-    var arr = dp.data.map(function(v){return v[fieldName.val()]; });
+    var arr = dp.data.map(function(v){return v[fieldName.val()]; }),
+        vals = DataPivot.getRowDetails(arr);
+
     if (conditionType.val() === "discrete-style"){
 
       // make map of current values
@@ -1601,7 +1607,7 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
         hash.set(v.key, v.style);
       });
 
-      d3.set(arr).values().forEach(function(v){
+      vals.unique.forEach(function(v){
         var style = dp.style_manager
                       .add_select("symbols", hash.get(v))
                       .data('key', v);
@@ -1609,12 +1615,9 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
         add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
       });
     } else {
-      var vals = arr.filter(function(v){return $.isNumeric(v); }),
-          txt = '<i>{0}</i>: '.printf(fieldName.val());
-
-      if(vals.length>0){
-        var range = d3.extent(vals);
-        txt += "contains values ranging from {0} to {1}.".printf(range[0], range[1]);
+      var txt = '<i>{0}</i>: '.printf(fieldName.val());
+      if(vals.range){
+        txt += "contains values ranging from {0} to {1}.".printf(vals.range[0], vals.range[1]);
       } else {
         txt += "has no range of values, please select another column.";
       }
@@ -2145,7 +2148,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
   rows = DataPivot_visualization.sorter(rows, settings.sorts);
 
   // row-overrides: style, order
-  self.dp_settings.row_overrides.forEach(function(v){
+  this.dp_settings.row_overrides.forEach(function(v){
     // apply offsets
     if(v.offset !== 0){
       for(var i=0; i<rows.length; i++){
@@ -2186,7 +2189,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
   });
 
   // row-overrides: remove (in separate loop, after offsets)
-  self.dp_settings.row_overrides.forEach(function(v){
+  this.dp_settings.row_overrides.forEach(function(v){
     if(v.include === false){
       for(var i=0; i<rows.length; i++){
         var pk = rows[i]['primary_key'] || rows[i]._dp_y;
@@ -2196,6 +2199,60 @@ DataPivot_visualization.prototype.get_dataset = function(){
         }
       }
     }
+  });
+
+  // condition-formatting overrides
+  this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
+    datapoint.conditional_formatting.forEach(function(cf){
+      var arr = rows.map(function(d){return d[cf.field_name]; }),
+          vals = DataPivot.getRowDetails(arr),
+          styles = "points_" + i;
+
+      switch(cf.condition_type){
+        case "point-size":
+          if (vals.range){
+            var pscale = d3.scale.pow().exponent(0.5)
+                  .domain(vals.range)
+                  .range([cf.min_size, cf.max_size]);
+
+            rows.forEach(function(d){
+              if ($.isNumeric(d[cf.field_name])){
+                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                d._styles[styles].size = pscale( d[cf.field_name] );
+              }
+            });
+          }
+          break;
+        case "point-color":
+          if (vals.range){
+            var cscale = d3.scale.linear()
+                  .domain(vals.range)
+                  .interpolate(d3.interpolateRgb)
+                  .range([cf.min_color, cf.max_color]);
+
+            rows.forEach(function(d){
+              if ($.isNumeric(d[cf.field_name])){
+                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                d._styles[styles].fill = cscale( d[cf.field_name] );
+              }
+            });
+          }
+          break;
+        case "discrete-style":
+
+          var hash = d3.map();
+          cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
+
+          rows.forEach(function(d){
+            d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]))
+          });
+
+          break;
+        default:
+          console.log("Unrecognized condition_type: {0}".printf(cf.condition_type));
+      }
+
+    });
   });
 
   // with final datarows subset, add index for rendered order
