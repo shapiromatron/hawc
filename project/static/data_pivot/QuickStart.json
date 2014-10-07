@@ -60,19 +60,22 @@
       "field_name": "Estimate",
       "header_name": "Estimate",
       "marker_style": "circle | green",
-      "dpe": "---"
+      "dpe": "---",
+      "conditional_formatting": []
     },
     {
       "field_name": "---",
       "header_name": "---",
       "marker_style": "base",
-      "dpe": "---"
+      "dpe": "---",
+      "conditional_formatting": []
     },
     {
       "field_name": "---",
       "header_name": "---",
       "marker_style": "base",
-      "dpe": "---"
+      "dpe": "---",
+      "conditional_formatting": []
     }
   ],
   "description_settings": [

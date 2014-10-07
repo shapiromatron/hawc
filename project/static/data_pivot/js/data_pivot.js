@@ -293,7 +293,7 @@ DataPivot.prototype.build_settings = function(){
           tbody.append(obj.tr);
 
           // Build point table
-          headers = ['Column header', 'Display name', 'Marker style'];
+          headers = ['Column header', 'Display name', 'Marker style', 'Conditional formatting'];
           if(dpe_enabled) headers.push('On-click');
           headers.push('Ordering');
           thead = $('<thead></thead>').html(header_tr(headers));
@@ -1325,12 +1325,15 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
 
   this.data_pivot = data_pivot;
   this.values = values;
+  this.conditional_formatter = new _DataPivot_settings_conditionalFormat(this, values.conditional_formatting || []);
 
   // create fields
   this.content = {
-    "field_name": $('<select class="span12"></select>').html(this.data_pivot._get_header_options(true)),
+    "field_name": $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
     "header_name": $('<input class="span12" type="text">'),
-    "marker_style": this.data_pivot.style_manager.add_select(style_type, values.marker_style)};
+    "marker_style": this.data_pivot.style_manager.add_select(style_type, values.marker_style),
+    "conditional_formatting": this.conditional_formatter.data
+  };
 
   if(dpe_enabled){
     this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options());
@@ -1348,10 +1351,11 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
     header_input.val($(this).find('option:selected').val());
   });
 
-  this.tr = $('<tr></tr>')
-      .append($('<td></td>').append(this.content.field_name))
-      .append($('<td></td>').append(this.content.header_name))
-      .append($('<td></td>').append(this.content.marker_style))
+  this.tr = $('<tr>')
+      .append($('<td>').append(this.content.field_name))
+      .append($('<td>').append(this.content.header_name))
+      .append($('<td>').append(this.content.marker_style))
+      .append($('<td>').append(this.conditional_formatter.status))
       .on('change', 'input,select', function(v){
         //update self
         self.data_push();
@@ -1362,9 +1366,7 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
          self.data_pivot.legend.add_or_update_field(obj);
       });
 
-  if(dpe_enabled){
-    this.tr.append($('<td></td>').append(this.content.dpe));
-  }
+  if(dpe_enabled) this.tr.append($('<td>').append(this.content.dpe));
 
   var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this, {showSort: true});
   this.tr.append(movement_td);
@@ -1378,7 +1380,8 @@ _DataPivot_settings_pointdata.defaults = function(){
     "field_name": DataPivot.NULL_CASE,
     "header_name": "",
     "marker_style": "base",
-    "dpe": DataPivot.NULL_CASE
+    "dpe": DataPivot.NULL_CASE,
+    "conditional_formatting": []
   };
 };
 
@@ -1387,8 +1390,260 @@ _DataPivot_settings_pointdata.prototype.data_push = function(){
   this.values.header_name = this.content.header_name.val();
   this.values.marker_style = this.content.marker_style.find('option:selected').text();
   this.values.dpe = DataPivot.NULL_CASE;
+  this.values.conditional_formatting = this.conditional_formatter.data;
   if(this.values.header_name === ''){this.values.header_name = this.values.field_name;}
   if(this.content.dpe){this.values.dpe = this.content.dpe.find('option:selected').val();}
+};
+
+
+var _DataPivot_settings_conditionalFormat = function(parent, values){
+  var self = this;
+
+  this.parent = parent;
+  this.data = values;
+  this.status = $('<div>');
+  this.conditionals = [];
+  this.modalInitialized = false;
+
+  this._status_text = $('<span style="padding-right: 10px">')
+    .appendTo(this.status);
+
+  this._showModal = $('<button class="btn btn-small" type="button">')
+    .on('click', function(){self._show_modal();})
+    .appendTo(this.status);
+
+  this._update_status();
+  this._build_modal();
+};
+
+_DataPivot_settings_conditionalFormat.prototype._update_status = function(){
+  var status = (this.data.length>0) ? "Enabled" : "None",
+      modal =  (this.data.length>0) ? "Edit" : "Create";
+
+  this._status_text.text(status);
+  this._showModal.text(modal);
+};
+
+_DataPivot_settings_conditionalFormat.prototype._build_modal = function(){
+  var self = this,
+      modal = $('<div class="modal hide fade">'),
+      header = $('<div class="modal-header">')
+        .appendTo(modal),
+      body = $('<div class="modal-body">')
+        .appendTo(modal),
+      add = $('<button type="button" class="btn btn-primary">')
+        .text("Add")
+        .on('click', function(){self._add_condition();}),
+      save = $('<button type="button" class="btn btn-success">')
+        .text("Save and Close")
+        .on('click', function(){self.close_modal(true);}),
+      close = $('<button type="button" class="btn pull-right">')
+        .text("Close")
+        .on('click', function(){self.close_modal(false);})
+      footer = $('<div class="modal-footer">')
+        .append(add, save, close)
+        .appendTo(modal),
+
+  this.modal = modal.appendTo(this.status);
+};
+
+_DataPivot_settings_conditionalFormat.prototype._show_modal = function(){
+  // set header text
+  var txt = 'Conditional formatting: <i>{0}<i>'.printf(this.parent.values.field_name);
+  this.modal.find('.modal-header').empty()
+      .append($('<h4>').html(txt));
+
+  // load current conditions
+  if (!this.modalInitialized) this._draw_conditions();
+  this.modalInitialized = true;
+
+  // show modal
+  this.modal.modal('show');
+};
+
+_DataPivot_settings_conditionalFormat.prototype.close_modal = function(save){
+  if(save) this._save_conditions();
+  this._update_status();
+  this.modal.modal('hide');
+};
+
+_DataPivot_settings_conditionalFormat.prototype._draw_conditions = function(){
+  var self = this,
+      body = this.modal.find('.modal-body').empty();
+
+  // add placeholder if no conditions are set
+  this.blank = $('<span>').appendTo(body);
+  if(this.data.length === 0) this.blank.text('No conditions have been set.');
+
+  // draw conditions
+  this.data.forEach(function(v){
+    self.conditionals.push(new _DataPivot_settings_conditional(body, self, v));
+  });
+};
+
+_DataPivot_settings_conditionalFormat.prototype._save_conditions = function(){
+  this.data = this.conditionals.map(function(v){ return v.get_values(); });
+  this.parent.data_push();
+};
+
+_DataPivot_settings_conditionalFormat.prototype._add_condition = function(values){
+  var body = this.modal.find('.modal-body');
+  this.blank.empty();
+  this.conditionals.push(new _DataPivot_settings_conditional(body, this, values));
+};
+
+_DataPivot_settings_conditionalFormat.prototype.delete_condition = function(conditional){
+  this.conditionals.splice_object(conditional);
+  delete conditional;
+};
+
+_DataPivot_settings_conditionalFormat.condition_types = ["point-size", "point-color", "discrete-style"];
+
+_DataPivot_settings_conditionalFormat.defaults = {
+    "field_name": DataPivot.NULL_CASE,
+    "condition_type": "point-size",
+    "min_size": 50,
+    "max_size": 150,
+    "min_color": "#800000",
+    "max_color": "#008000",
+    "discrete_styles": []
+};
+
+
+_DataPivot_settings_conditional = function(parent_div, parent, values){
+  values = values || {};
+  this.inputs = [];
+
+  var self = this,
+      dp = parent.parent.data_pivot,
+      defaults = _DataPivot_settings_conditionalFormat.defaults,
+      div = $('<div class="well">')
+              .appendTo(parent_div),
+      add_input_row = function(parent, desc_txt, inp){
+        var lbl = $('<label>').html(desc_txt);
+        parent.append(lbl, inp);
+      },
+      fieldName = $('<select name="field_name">')
+          .html(dp._get_header_options(true))
+          .val(values.field_name || defaults.field_name),
+      conditionType = $('<select name="condition_type">')
+          .html(_DataPivot_settings_conditionalFormat.condition_types
+            .map(function(v){return '<option value="{0}">{0}</option>'.printf(v)}))
+          .val(values.condition_type || defaults.condition_type),
+      changeConditionType = function(){
+        div.find('.conditionalDivs').hide();
+        div.find("." + conditionType.val()).fadeIn();
+      };
+
+  // add delete button
+  $('<button type="button" class="close">')
+    .text('x')
+    .on('click', function(){
+      div.remove();
+      parent.delete_condition(self);
+    })
+    .prependTo(div); // todo pop from parent
+
+  // add master conditional inputs and divs for changing fields
+  add_input_row(div, "Condition field", fieldName);
+  add_input_row(div, "Condition type", conditionType);
+  div.append('<hr>');
+  _DataPivot_settings_conditionalFormat.condition_types.forEach(function(v){
+    $('<div class="conditionalDivs {0}">'.printf(v)).appendTo(div).hide();
+  });
+
+  // build min/max for size and color
+  var rangeInputDiv = function(input){
+      var text = $('<span>').text(input.val());
+      input.on('change', function(){text.text(input.val());});
+      return $('<div>').append(input, text);
+    },
+    min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
+      .val(values.min_size || defaults.min_size),
+    max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">')
+      .val(values.max_size || defaults.max_size)
+    min_color = $('<input name="min_color" type="color">')
+      .val(values.min_color || defaults.min_color),
+    max_color = $('<input name="max_color" type="color">')
+      .val(values.max_color || defaults.max_color);
+
+  // add size values to size div
+  var ps = div.find(".point-size"),
+      min_max_ps = $('<p>').appendTo(ps);
+  add_input_row(ps, "Minimum point-size", rangeInputDiv(min_size));
+  add_input_row(ps, "Maximum point-size", rangeInputDiv(max_size));
+
+  // add color values to color div
+  var pc = div.find(".point-color"),
+      min_max_pc = $('<p>').appendTo(pc);
+  add_input_row(pc, 'Minimum color', min_color);
+  add_input_row(pc, 'Maximum color', max_color);
+  div.find('input[type="color"]').spectrum({"showInitial": true, "showInput": true});
+
+  this.inputs.push(fieldName, conditionType,
+                   min_size, max_size,
+                   min_color, max_color);
+
+  // get unique values and set values
+  var buildStyleSelectors = function(){
+
+    // show appropriate div
+    var discrete = div.find(".discrete-style");
+    self.discrete_styles = [];
+    discrete.empty();
+
+    var arr = dp.data.map(function(v){return v[fieldName.val()]; });
+    if (conditionType.val() === "discrete-style"){
+
+      // make map of current values
+      var hash = d3.map();
+      values.discrete_styles.forEach(function(v){
+        hash.set(v.key, v.style);
+      });
+
+      d3.set(arr).values().forEach(function(v){
+        var style = dp.style_manager
+                      .add_select("symbols", hash.get(v))
+                      .data('key', v);
+        self.discrete_styles.push(style);
+        add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
+      });
+    } else {
+      var vals = arr.filter(function(v){return $.isNumeric(v); }),
+          txt = '<i>{0}</i>: '.printf(fieldName.val());
+
+      if(vals.length>0){
+        var range = d3.extent(vals);
+        txt += "contains values ranging from {0} to {1}.".printf(range[0], range[1]);
+      } else {
+        txt += "has no range of values, please select another column.";
+      }
+
+      min_max_pc.html(txt);
+      min_max_ps.html(txt);
+    }
+  }
+
+  // add event-handlers and fire to initialize
+  fieldName.on('change', buildStyleSelectors);
+  conditionType.on('change', function(){
+    buildStyleSelectors();
+    changeConditionType();
+  });
+
+  changeConditionType();
+  buildStyleSelectors();
+};
+
+_DataPivot_settings_conditional.prototype.get_values = function(){
+  var values = {"discrete_styles": []};
+  this.inputs.forEach(function(v){
+    values[v.attr('name')] = parseInt(v.val(), 10) || v.val();
+  });
+  this.discrete_styles.forEach(function(v){
+    values.discrete_styles.push({ key: v.data("key"), style: v.val()});
+  });
+  return values;
 };
 
 

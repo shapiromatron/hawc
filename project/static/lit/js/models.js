@@ -1,10 +1,3 @@
-Array.prototype.splice_object = function(obj){
-    if (this.length === 0) return this;
-    for (var i = this.length-1; i>=0; i-=1){
-        if(this[i] === obj){this.splice(i, 1);}
-    }
-};
-
 Array.prototype.getUnique = function(){
    var u = {}, a = [];
    for(var i = 0, l = this.length; i < l; ++i){

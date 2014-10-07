@@ -61,6 +61,14 @@ String.random_string = function(){
 };
 
 
+Array.prototype.splice_object = function(obj){
+    if (this.length === 0) return this;
+    for (var i = this.length-1; i>=0; i-=1){
+        if(this[i] === obj){this.splice(i, 1);}
+    }
+};
+
+
 Math.GammaCDF = function(x,a){
     // adapted from http://www.math.ucla.edu/~tom/distributions/gamma.html
     var GI;
