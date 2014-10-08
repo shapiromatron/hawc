@@ -2702,7 +2702,7 @@ DataPivot_visualization.prototype.layout_text = function(){
   // apply wrap text method
   this.headers.forEach(function(v,i){
     var sel = self.g_text_columns.selectAll("text").filter(function(v){return v.col===i});
-    wrap_text(sel, v.max_width);
+    if (v.max_width) wrap_text(sel, v.max_width);
 
     // get maximum column dimension and layout columns
     v.widths = d3.max(sel[0].map(function(v){return v.getBBox().width;}));
