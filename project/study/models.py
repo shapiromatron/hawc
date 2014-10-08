@@ -85,7 +85,7 @@ class Study(Reference):
         Reference:
         https://github.com/lsaffre/lino/blob/master/lino/utils/mti.py
         """
-        parent_link_field = Study._meta.parents.get(reference.__class__,None)
+        parent_link_field = Study._meta.parents.get(reference.__class__, None)
         attrs[parent_link_field.name]=reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
@@ -310,6 +310,7 @@ class Attachment(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
 
 class StudyQualityDomain(models.Model):
     assessment = models.ForeignKey('assessment.Assessment',
