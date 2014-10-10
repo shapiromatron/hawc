@@ -136,8 +136,7 @@ class Assessment(models.Model):
             return False
         else:
             return ((user in self.project_manager.all()) or
-                    (user in self.team_members.all()) or
-                    (user in self.reviewers.all()))
+                    (user in self.team_members.all()))
 
     def user_can_edit_assessment(self, user):
         """
@@ -162,7 +161,8 @@ class Assessment(models.Model):
             return False
         else:
             return ((user in self.project_manager.all()) or
-                    (user in self.team_members.all()))
+                    (user in self.team_members.all()) or
+                    (user in self.reviewers.all()))
 
     def get_CAS_details(self):
         task = get_chemspider_details.delay(self.cas)
