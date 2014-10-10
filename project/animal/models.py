@@ -87,19 +87,32 @@ EXPERIMENT_TYPE_CHOICES = (("Ac", "Acute"),
 
 
 class Experiment(models.Model):
-    study = models.ForeignKey('study.Study', related_name='experiments')
-    name = models.CharField(max_length=80)
-    type = models.CharField(max_length=2, choices=EXPERIMENT_TYPE_CHOICES)
-    cas = models.CharField(max_length=40, blank=True,
-                           verbose_name="Chemical identifier (CAS)")
-    purity_available = models.BooleanField(default=True,
-                           verbose_name="Chemical purity available?")
-    purity = models.FloatField(blank=True, null=True,
-                               verbose_name="Chemical purity (%)",
-                               validators=[MinValueValidator(0), MaxValueValidator(100)])
-    description = models.TextField(blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    study = models.ForeignKey(
+        'study.Study',
+        related_name='experiments')
+    name = models.CharField(
+        max_length=80)
+    type = models.CharField(
+        max_length=2,
+        choices=EXPERIMENT_TYPE_CHOICES)
+    cas = models.CharField(
+        max_length=40,
+        blank=True,
+        verbose_name="Chemical identifier (CAS)")
+    purity_available = models.BooleanField(
+        default=True,
+        verbose_name="Chemical purity available?")
+    purity = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Chemical purity (%)",
+        validators=[MinValueValidator(0), MaxValueValidator(100)])
+    description = models.TextField(
+        blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     def __unicode__(self):
         return self.name

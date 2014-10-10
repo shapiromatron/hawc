@@ -41,16 +41,28 @@ class TooManyPubMedResults(Exception):
 
 
 class Search(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment', related_name='literature_searches')
-    search_type =  models.CharField(max_length=1, choices=SEARCH_TYPES)
-    source = models.PositiveSmallIntegerField(choices=SEARCH_SOURCES)
-    title = models.CharField(max_length=128)
-    slug = models.SlugField(verbose_name="URL Name",
-                            help_text="The URL (web address) used to describe this object (no spaces or special-characters).")
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='literature_searches')
+    search_type =  models.CharField(
+        max_length=1,
+        choices=SEARCH_TYPES)
+    source = models.PositiveSmallIntegerField(
+        choices=SEARCH_SOURCES)
+    title = models.CharField(
+        max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+                  "(no spaces or special-characters).")
     description = models.TextField()
-    search_string = models.TextField(help_text="The raw text of what was used to search using an online database. Use colors to separate search-terms (optional).")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    search_string = models.TextField(
+        help_text="The exact text used to search using an online database. "
+                  "Use colors to separate search-terms (optional).")
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         verbose_name_plural = "searches"
