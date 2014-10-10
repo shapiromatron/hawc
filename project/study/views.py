@@ -28,6 +28,12 @@ class StudyList(BaseList):
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)
 
+    def get_context_data(self, **kwargs):
+        context = super(StudyList, self).get_context_data(**kwargs)
+        if not context['obj_perms']['edit']:
+            context['object_list'] = context['object_list'].filter(published=True)
+        return context
+
 
 class StudyBiasExport(BaseList):
     """

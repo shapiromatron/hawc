@@ -30,30 +30,45 @@ COI_REPORTED_CHOICES = ((0, 'Authors report they have no COI'),
 
 
 class Study(Reference):
-    study_type = models.PositiveSmallIntegerField(choices=STUDY_TYPE_CHOICES)
-    short_citation = models.CharField(max_length=256, blank=False) # initial guess provided; can be edited
-    full_citation = models.TextField(blank=False) # initial guess provided; can be edited
-    coi_reported = models.PositiveSmallIntegerField(choices=COI_REPORTED_CHOICES,
-                                                    default=0,
-                                                    verbose_name="COI reported",
-                                                    help_text='Was a conflict of interest reported by the study authors?')
-    coi_details = models.TextField(blank=True,
-                                   verbose_name="COI details",
-                                   help_text="Details related to potential or disclosed conflict(s) of interest")
+    study_type = models.PositiveSmallIntegerField(
+        choices=STUDY_TYPE_CHOICES)
+    short_citation = models.CharField(
+        max_length=256,
+        blank=False) # initial guess provided from reference; can be edited
+    full_citation = models.TextField(
+        blank=False) # initial guess provided from reference; can be edited
+    coi_reported = models.PositiveSmallIntegerField(
+        choices=COI_REPORTED_CHOICES,
+        default=0,
+        verbose_name="COI reported",
+        help_text='Was a conflict of interest reported by the study authors?')
+    coi_details = models.TextField(
+        blank=True,
+        verbose_name="COI details",
+        help_text="Details related to potential or disclosed conflict(s) of interest")
     funding_source = models.TextField(blank=True)
-    study_identifier = models.CharField(max_length=128,
-                                        blank=True,
-                                        verbose_name="Internal study identifier",
-                                        help_text="Reference descriptor for assessment-tracking purposes "
-                                                  "(for example, \"{Author, year, #EndnoteNumber}\")")
-    contact_author = models.BooleanField(default=False,
-                                         help_text="Does author need to be contacted?")
-    ask_author = models.TextField(blank=True,
-                                  help_text="Details on author correspondence")
-    summary = models.TextField(blank=True,
-                               help_text="Study summary as written by team-members, "
-                                         "or details on data-extraction requirements "
-                                         "by project-management")
+    study_identifier = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="Internal study identifier",
+        help_text="Reference descriptor for assessment-tracking purposes "
+                  "(for example, \"{Author, year, #EndnoteNumber}\")")
+    contact_author = models.BooleanField(
+        default=False,
+        help_text="Does author need to be contacted?")
+    ask_author = models.TextField(
+        blank=True,
+        help_text="Details on author correspondence")
+    published = models.BooleanField(
+        default=False,
+        help_text="If True, reviewers and the public can see study "
+                  "(if assessment-permissions allow this level of visibility). "
+                  "Team-members can always see studies, even if they are "
+                  "not-yet published.")
+    summary = models.TextField(
+        blank=True,
+        help_text="Study summary as written by team-members, or details on "
+                  "data-extraction requirements by project-management")
 
     class Meta:
         verbose_name_plural = "Studies"

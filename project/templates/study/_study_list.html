@@ -9,12 +9,18 @@
       <th>Short Citation</th>
       <th>Full Citation</th>
       <th>Study Type</th>
+      {% if obj_perms.edit %}
+        <th>Published</th>
+      {% endif %}
     </tr>
     {% for object in object_list %}
       <tr>
         <td><a href="{{object.get_absolute_url}}">{{object.short_citation}}</a></td>
         <td>{{object.full_citation}}</td>
         <td>{{object.get_study_type_display}}</td>
+        {% if obj_perms.edit %}
+          <td>{{object.published}}</td>
+        {% endif %}
       </tr>
     {% endfor %}
   </table>
