@@ -57,6 +57,7 @@ class Study(Reference):
 
     class Meta:
         verbose_name_plural = "Studies"
+        ordering = ("short_citation", )
 
     def save(self, *args, **kwargs):
         Endpoint = get_model('animal', 'Endpoint')
