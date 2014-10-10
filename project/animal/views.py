@@ -607,7 +607,8 @@ class EndpointAssessmentList(BaseList):
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
-                   .prefetch_related('animal_group__dosing_regime__doses')
+                   .prefetch_related('animal_group__dosing_regime__doses')\
+                   .order_by('name')
 
 
 class EndpointTags(EndpointAssessmentList):
