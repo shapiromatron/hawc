@@ -106,6 +106,7 @@ class Experiment(models.Model):
         blank=True,
         null=True,
         verbose_name="Chemical purity (%)",
+        help_text="Assumed to be greater-than numeric-value specified (ex: > 95.5%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)])
     description = models.TextField(
         blank=True)
@@ -160,19 +161,36 @@ class Experiment(models.Model):
 
 
 class AnimalGroup(models.Model):
-    experiment = models.ForeignKey(Experiment, related_name="animal_groups")
-    name = models.CharField(max_length=80)
-    species = models.ForeignKey(Species)
-    strain = models.ForeignKey(Strain)
-    sex = models.CharField(max_length=1, choices=SEX_CHOICES)
-    dose_groups = models.PositiveSmallIntegerField(default=4,
-                    validators=[MinValueValidator(1)], verbose_name="Number of Dose Groups")
-    siblings = models.ForeignKey("self", blank=True, null=True, on_delete=models.SET_NULL)
-    dosing_regime = models.ForeignKey('DosingRegime',
-                    help_text='Specify an existing dosing regime or create a new dosing regime below',
-                    blank=True, null=True)  # this isn't really true, but is enforced in all views
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    experiment = models.ForeignKey(
+        Experiment,
+        related_name="animal_groups")
+    name = models.CharField(
+        max_length=80)
+    species = models.ForeignKey(
+        Species)
+    strain = models.ForeignKey(
+        Strain)
+    sex = models.CharField(
+        max_length=1,
+        choices=SEX_CHOICES)
+    dose_groups = models.PositiveSmallIntegerField(
+        default=4,
+        validators=[MinValueValidator(1)],
+        verbose_name="Number of Dose Groups")
+    siblings = models.ForeignKey(
+        "self",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL)
+    dosing_regime = models.ForeignKey(
+        'DosingRegime',
+        help_text='Specify an existing dosing regime or create a new dosing regime below',
+        blank=True,
+        null=True)  # not enforced in db, but enforced in views
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -241,8 +259,15 @@ class AnimalGroup(models.Model):
 
 
 class GenerationalAnimalGroup(AnimalGroup):
-    generation = models.CharField(max_length=2, choices=GENERATION_CHOICES)
-    parents = models.ManyToManyField("self", related_name="parents+", symmetrical=False, blank=True, null=True)
+    generation = models.CharField(
+        max_length=2,
+        choices=GENERATION_CHOICES)
+    parents = models.ManyToManyField(
+        "self",
+        related_name="parents+",
+        symmetrical=False,
+        blank=True,
+        null=True)
 
     def __unicode__(self):
         return self.name
@@ -262,12 +287,20 @@ class GenerationalAnimalGroup(AnimalGroup):
 
 
 class DoseUnits(models.Model):
-    units = models.CharField(max_length=20, unique=True)
-    administered = models.BooleanField(default=False)
-    converted = models.BooleanField(default=False)
-    hed = models.BooleanField(default=False, verbose_name="Human Equivalent Dose")
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    units = models.CharField(
+        max_length=20,
+        unique=True)
+    administered = models.BooleanField(
+        default=False)
+    converted = models.BooleanField(
+        default=False)
+    hed = models.BooleanField(
+        default=False,
+        verbose_name="Human Equivalent Dose")
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         verbose_name_plural = "dose units"
@@ -312,11 +345,20 @@ ROUTE_EXPOSURE = (("OD", u"Oral Diet"),
 
 
 class DosingRegime(models.Model):
-    dosed_animals = models.OneToOneField(AnimalGroup, related_name='dosed_animals', blank=True, null=True)
-    route_of_exposure = models.CharField(max_length=2, choices=ROUTE_EXPOSURE)
-    description = models.TextField(blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    dosed_animals = models.OneToOneField(
+        AnimalGroup,
+        related_name='dosed_animals',
+        blank=True,
+        null=True)
+    route_of_exposure = models.CharField(
+        max_length=2,
+        choices=ROUTE_EXPOSURE)
+    description = models.TextField(
+        blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.dosed_animals,
@@ -399,13 +441,21 @@ class DosingRegime(models.Model):
 
 
 class DoseGroup(models.Model):
-    dose_regime = models.ForeignKey(DosingRegime, related_name='doses')
-    dose_units = models.ForeignKey(DoseUnits)
+    dose_regime = models.ForeignKey(
+        DosingRegime,
+        related_name='doses')
+    dose_units = models.ForeignKey(
+        DoseUnits)
     dose_group_id = models.PositiveSmallIntegerField()
-    dose = models.DecimalField(max_digits=50, decimal_places=25, blank=False,
-                               validators=[MinValueValidator(0)])
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    dose = models.DecimalField(
+        max_digits=50,
+        decimal_places=25,
+        blank=False,
+        validators=[MinValueValidator(0)])
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     def save(self, *args, **kwargs):
         super(DoseGroup, self).save(*args, **kwargs)
@@ -1341,7 +1391,7 @@ class Aggregation(models.Model):
     endpoints = models.ManyToManyField(Endpoint,
                                        related_name='aggregation',
                                        help_text="All endpoints entered for assessment.")
-    summary_text = models.TextField(default="")
+    summary_text = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
