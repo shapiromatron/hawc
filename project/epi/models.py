@@ -476,6 +476,12 @@ class StudyPopulation(Demographics):
                                                   related_name='confounding_criteria',
                                                   blank=True, null=True)
 
+    class Meta:
+        ordering = ('name', )
+
+    def __unicode__(self):
+        return self.name
+
     def get_location(self):
         loc = ""
         if self.country:
@@ -485,9 +491,6 @@ class StudyPopulation(Demographics):
         if self.region:
             loc += " ({r})".format(r=self.region)
         return loc
-
-    def __unicode__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('epi:sp_detail', kwargs={'pk': self.pk})
@@ -587,6 +590,9 @@ class Exposure(models.Model):
                       'example, "2.05 µg/g creatinine (urine), geometric mean; 25th percentile = 1.18, 75th percentile = 3.33"')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('exposure_form_definition', )
 
     def __unicode__(self):
         return self.exposure_form_definition
@@ -757,7 +763,6 @@ class AssessedOutcome(BaseEndpoint):
     statistical_metric = models.ForeignKey(StatisticalMetric)
     statistical_metric_description = models.TextField(blank=True,
             help_text="Add additional text describing the statistical metric used, if needed.")
-
 
     @staticmethod
     def get_cache_names(pks):

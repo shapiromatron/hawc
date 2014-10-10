@@ -263,6 +263,9 @@ class BaseEndpoint(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     changed = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('name', )
+
     def __unicode__(self):
         return self.name
 
