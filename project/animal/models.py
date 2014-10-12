@@ -1177,7 +1177,7 @@ class EndpointGroup(models.Model):
                 sqrt_n = math.sqrt(eg['n'])
                 resp_control = float(egs[0]['response'])
                 if ((sqrt_n != 0) and (resp_control != 0)):
-                    eg['percentControlMean'] =  float(eg['response'] / resp_control) * 100.
+                    eg['percentControlMean'] =  float(eg['response']) / resp_control * 100.
                     ci = (1.96 * float(eg['stdev']) / sqrt_n) / resp_control * 100.
                     eg['percentControlLow']  = (eg['percentControlMean'] - ci)
                     eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
