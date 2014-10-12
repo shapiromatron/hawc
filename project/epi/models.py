@@ -20,6 +20,7 @@ from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file
 EPI_STUDY_DESIGN_CHOICES = (('CC', 'Case-control'),
                             ('CS', 'Cross-sectional'),
                             ('CP', 'Prospective'),
+                            ('RT', 'Retrospective'),
                             ('CT', 'Controlled trial'),
                             ('SE', 'Case-series'),
                             ('CR', 'Case-report'))
