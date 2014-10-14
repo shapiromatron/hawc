@@ -177,6 +177,11 @@ class AnimalGroup(models.Model):
         default=4,
         validators=[MinValueValidator(1)],
         verbose_name="Number of Dose Groups")
+    duration_observation = models.FloatField(
+        verbose_name="Observation duration (days)",
+        help_text="Length of observation period, in days (fractions allowed)",
+        blank=True,
+        null=True)
     siblings = models.ForeignKey(
         "self",
         blank=True,
@@ -358,11 +363,6 @@ class DosingRegime(models.Model):
     duration_exposure = models.FloatField(
         verbose_name="Exposure duration (days)",
         help_text="Length of exposure period, in days (fractions allowed)",
-        blank=True,
-        null=True)
-    duration_observation = models.FloatField(
-        verbose_name="Observation duration (days)",
-        help_text="Length of observation period, in days (fractions allowed)",
         blank=True,
         null=True)
     created = models.DateTimeField(
