@@ -39,7 +39,7 @@
               {% else %}
                 <li class="divider"></li>
                 <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                <li><a class= "btn btn-primary" href="{% url 'animal:dosing_regime_new' object.pk %}">Create New</a></li>
+                <li><a href="{% url 'animal:dosing_regime_new' object.pk %}">Create New</a></li>
               {% endif %}
 
               <li class="divider"></li>
