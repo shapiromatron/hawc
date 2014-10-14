@@ -355,6 +355,16 @@ class DosingRegime(models.Model):
         choices=ROUTE_EXPOSURE)
     description = models.TextField(
         blank=True)
+    duration_exposure = models.FloatField(
+        verbose_name="Exposure duration (days)",
+        help_text="Length of exposure period, in days (fractions allowed)",
+        blank=True,
+        null=True)
+    duration_observation = models.FloatField(
+        verbose_name="Observation duration (days)",
+        help_text="Length of observation period, in days (fractions allowed)",
+        blank=True,
+        null=True)
     created = models.DateTimeField(
         auto_now_add=True)
     updated = models.DateTimeField(
