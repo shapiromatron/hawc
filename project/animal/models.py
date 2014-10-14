@@ -311,6 +311,18 @@ class DoseUnits(models.Model):
     class Meta:
         verbose_name_plural = "dose units"
 
+    @property
+    def animal_dose_group_count(self):
+        return self.dosegroup_set.count()
+
+    @property
+    def epi_exposure_count(self):
+        return self.exposure_set.count()
+
+    @property
+    def invitro_experiment_count(self):
+        return self.experiment_set.count()
+
     @classmethod
     def json_all(cls):
         return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
