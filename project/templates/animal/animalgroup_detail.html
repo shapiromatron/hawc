@@ -62,7 +62,8 @@
         <tr><th>Species</th><td>{{object.species}}</td></tr>
         <tr><th>Strain</th><td>{{object.strain}}</td></tr>
         <tr><th>Sex</th><td>{{object.get_sex_display}}</td></tr>
-        <tr><th>Dose Groups</th><td>{{object.dose_groups}}</td></tr>
+        <tr><th>Dose groups</th><td>{{object.dose_groups}}</td></tr>
+        <tr><th>Observation duration</th><td>{{object.duration_observation}} days</td></tr>
         {% if object.generationalanimalgroup %}
           <tr><th>Generation</th><td>{{object.generationalanimalgroup.get_generation_display}}</td></tr>
           <tr>

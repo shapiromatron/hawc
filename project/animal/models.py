@@ -248,6 +248,7 @@ class AnimalGroup(models.Model):
             ("animal_group-name", self.name),
             ("animal_group-sex", self.get_sex_display()),
             ("animal_group-dose_groups", self.dose_groups),
+            ("animal_group-duration_observation", self.duration_observation),
             ("animal_group-siblings", self.get_siblings_pk()),
             ("animal_group-parents", "N/A")
         ))
@@ -405,6 +406,7 @@ class DosingRegime(models.Model):
                 ("dosing_regime-pk", self.pk),
                 ("dosing_regime-dosed_animals", self.isAnimalsDosed(animal_group)),
                 ("dosing_regime-route_of_exposure", self.get_route_of_exposure_display()),
+                ("dosing_regime-duration_exposure", self.duration_exposure),
                 ("dosing_regime-description", self.description)))
         d['_doses'] = self.get_doses_name_dict()
         return d
