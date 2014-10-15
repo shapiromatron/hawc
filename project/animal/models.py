@@ -517,7 +517,8 @@ class DoseGroup(models.Model):
 
 DATA_TYPE_CHOICES = (('C', 'Continuous'),
                      ('D', 'Dichotomous'),
-                     ('DC', 'Dichotomous Cancer'))
+                     ('DC', 'Dichotomous Cancer'),
+                     ('NR', 'Not reported'))
 
 MONOTONICITY_CHOICES = ((0, "N/A, single dose level study"),
                         (1, "N/A, no effects detected"),
@@ -526,7 +527,8 @@ MONOTONICITY_CHOICES = ((0, "N/A, single dose level study"),
                         (4, "yes, visual appearance of non-monotonic but no trend"),
                         (5, "yes, non-monotonic and significant trend"),
                         (6, "no pattern"),
-                        (7, "unclear"))
+                        (7, "unclear"),
+                        (8, "not-reported"))
 
 VARIANCE_TYPE_CHOICES = ((0, "NA"),
                          (1, "SD"),
