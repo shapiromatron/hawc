@@ -1,4 +1,7 @@
+from django.db.models import TextField
 from django.contrib import admin
+
+from pagedown.widgets import AdminPagedownWidget
 
 from . import models
 
@@ -12,5 +15,23 @@ class EffectTagAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'pk')
 
 
+class ChangeLogAdmin(admin.ModelAdmin):
+    # list options
+    list_display = ('__unicode__', 'header', 'view_on_site')
+
+    def view_on_site(self, obj):
+        return '<a target="_blank" href="{0}">View</a>'.format(obj.get_absolute_url())
+
+    view_on_site.allow_tags = True
+
+    # form options
+    formfield_overrides = {
+        TextField: {'widget': AdminPagedownWidget },
+    }
+
+    prepopulated_fields = {"slug": ("date", "name")}
+
+
 admin.site.register(models.Assessment, AssessmentAdmin)
 admin.site.register(models.EffectTag, EffectTagAdmin)
+admin.site.register(models.ChangeLog, ChangeLogAdmin)

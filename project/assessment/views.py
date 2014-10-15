@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, TemplateView, FormView
+from django.views.generic import ListView, DetailView, TemplateView, FormView
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse
 
@@ -153,6 +153,22 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = 'assessment'
     model = models.EffectTag
     form_class = forms.EffectTagForm
+
+
+# Changelog views
+class ChangeLogList(ListView):
+    model = models.ChangeLog
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(ChangeLogList, self).get_context_data(**kwargs)
+        if self.request.GET.get('detailed'):
+            context['detailed'] = True
+        return context
+
+
+class ChangeLogDetail(DetailView):
+    model = models.ChangeLog
 
 
 #Assorted functionality

@@ -154,6 +154,8 @@ INSTALLED_APPS = (
     'taggit',
     'treebeard',
     'selectable',
+    'pagedown',
+    'markdown_deux',
 
     # Custom apps
     'utils',

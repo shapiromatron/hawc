@@ -1,0 +1,20 @@
+{% extends 'hawc/home.html' %}
+
+{% load markdown_deux_tags %}
+
+
+{% block main_content %}
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+
+            <h2>{{object.date|date:"F d, Y"}}: <i>{{object.name}}</i></h2>
+            {{object.header|markdown}}
+            {{object.detailed_list|markdown}}
+
+            <a href="{% url 'change_log' %}">Back to full-list</a>
+
+        </div>
+    </div>
+
+{% endblock main_content %}

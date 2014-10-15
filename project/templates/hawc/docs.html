@@ -54,11 +54,19 @@
   </div>
 
   <div class="row-fluid">
-     <div class="span10 offset1">
-      <h2>License</h2>
-      <a href="#license_modal" data-toggle="modal">Click to View</a>
-      {% include "hawc_license.html" %}
+    <div class="span10 offset1">
+      <h2>HAWC Updates</h2>
+      <a href="{% url 'change_log' %}">View list of changes</a>
     </div>
   </div>
+
+  <div class="row-fluid">
+     <div class="span10 offset1">
+        <h2>License</h2>
+        <a href="#license_modal" data-toggle="modal">Click to View</a>
+        {% include "hawc_license.html" %}
+    </div>
+  </div>
+
 {% endblock %}
 

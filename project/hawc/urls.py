@@ -34,6 +34,10 @@ urlpatterns = patterns('',
     url(r'^404/$', views.Error404.as_view(), name='404'),
     url(r'^500/$', views.Error500.as_view(), name='500'),
 
+    # Change-log
+    url(r'^change-log/$', views.ChangeLogList.as_view(), name='change_log'),
+    url(r'^change-log/(?P<slug>[\w-]+)/$', views.ChangeLogDetail.as_view(), name='change_log_detail'),
+
     # Admin
     #------
     url(r'^admin/', include(admin.site.urls), name='master_admin'),
