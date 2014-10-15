@@ -20,11 +20,14 @@ from utils.helper import (HAWCDjangoJSONEncoder, build_excel_file, build_tsv_fil
 
 
 class Species(models.Model):
-    name = models.CharField(max_length=30,
-                            help_text="Enter species in singular (ex: Mouse, not Mice)",
-                            unique=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    name = models.CharField(
+        max_length=30,
+        help_text="Enter species in singular (ex: Mouse, not Mice)",
+        unique=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         verbose_name_plural = "species"
@@ -45,10 +48,14 @@ class Species(models.Model):
 
 
 class Strain(models.Model):
-    species = models.ForeignKey(Species)
-    name = models.CharField(max_length=30)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    species = models.ForeignKey(
+        Species)
+    name = models.CharField(
+        max_length=30)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         unique_together = (("species", "name"),)
