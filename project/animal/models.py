@@ -1308,15 +1308,17 @@ class EndpointGroup(models.Model):
         # Appends results to the dictionary for each endpoint-group.
         #
         for eg in egs:
+            eg['percentControlMean'] = None
+            eg['percentControlLow'] = None
+            eg['percentControlHigh'] = None
             if data_type == "C":
-                eg['percentControlMean'] =  float(eg['response'] / egs[0]['response']) * 100.
-                ci = (1.96 * float(eg['stdev']) / math.sqrt(eg['n'])) / float(egs[0]['response']) * 100.
-                eg['percentControlLow']  = (eg['percentControlMean'] - ci)
-                eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
-            else:
-                eg['percentControlMean'] = None
-                eg['percentControlLow'] = None
-                eg['percentControlHigh'] = None
+                sqrt_n = math.sqrt(eg['n'])
+                resp_control = float(egs[0]['response'])
+                if ((sqrt_n != 0) and (resp_control != 0)):
+                    eg['percentControlMean'] =  float(eg['response']) / resp_control * 100.
+                    ci = (1.96 * float(eg['stdev']) / sqrt_n) / resp_control * 100.
+                    eg['percentControlLow']  = (eg['percentControlMean'] - ci)
+                    eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
