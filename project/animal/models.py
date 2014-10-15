@@ -541,35 +541,69 @@ VARIANCE_NAME = {
 
 
 class Endpoint(BaseEndpoint):
-    animal_group = models.ForeignKey(AnimalGroup)
-    system = models.CharField(max_length=128, blank=True)
-    organ = models.CharField(max_length=128, blank=True)
-    effect = models.CharField(max_length=128, blank=True)
-    data_location = models.CharField(max_length=128, blank=True,
+    animal_group = models.ForeignKey(
+        AnimalGroup)
+    system = models.CharField(
+        max_length=128,
+        blank=True)
+    organ = models.CharField(
+        max_length=128,
+        blank=True)
+    effect = models.CharField(
+        max_length=128,
+        blank=True)
+    data_location = models.CharField(
+        max_length=128,
+        blank=True,
         help_text="Details on where the data are found in the literature (ex: Figure 1, Table 2, etc.)")
-    response_units = models.CharField(max_length=15, verbose_name="Response units")
-    data_type = models.CharField(max_length=2, choices=DATA_TYPE_CHOICES,
-        default="D", verbose_name="Dataset type")
-    variance_type = models.PositiveSmallIntegerField(default=0, choices=VARIANCE_TYPE_CHOICES)
-    NOAEL = models.SmallIntegerField(verbose_name="NOAEL", default=-999)
-    LOAEL = models.SmallIntegerField(verbose_name="LOAEL", default=-999)
-    FEL = models.SmallIntegerField(verbose_name="FEL", default=-999)
-    data_reported = models.BooleanField(default=True,
+    response_units = models.CharField(
+        max_length=15,
+        verbose_name="Response units")
+    data_type = models.CharField(
+        max_length=2,
+        choices=DATA_TYPE_CHOICES,
+        default="D",
+        verbose_name="Dataset type")
+    variance_type = models.PositiveSmallIntegerField(
+        default=0,
+        choices=VARIANCE_TYPE_CHOICES)
+    NOAEL = models.SmallIntegerField(
+        verbose_name="NOAEL",
+        default=-999)
+    LOAEL = models.SmallIntegerField(
+        verbose_name="LOAEL",
+        default=-999)
+    FEL = models.SmallIntegerField(
+        verbose_name="FEL",
+        default=-999)
+    data_reported = models.BooleanField(
+        default=True,
         help_text="Dose-response data for endpoint are available in the literature source")
-    data_extracted = models.BooleanField(default=True,
+    data_extracted = models.BooleanField(
+        default=True,
         help_text="Dose-response data for endpoint are extracted from literature into HAWC")
-    values_estimated = models.BooleanField(default=False,
+    values_estimated = models.BooleanField(
+        default=False,
         help_text="Response values were estimated using a digital ruler or other methods")
-    individual_animal_data = models.BooleanField(default=False,
+    individual_animal_data = models.BooleanField(
+        default=False,
         help_text="If individual response data are available for each animal.")
-    monotonicity = models.PositiveSmallIntegerField(choices=MONOTONICITY_CHOICES)
-    statistical_test = models.CharField(max_length=256, blank=True)
-    trend_value = models.FloatField(null=True, blank=True)
-    results_notes = models.TextField(blank=True,
+    monotonicity = models.PositiveSmallIntegerField(
+        choices=MONOTONICITY_CHOICES)
+    statistical_test = models.CharField(
+        max_length=256,
+        blank=True)
+    trend_value = models.FloatField(
+        null=True,
+        blank=True)
+    results_notes = models.TextField(
+        blank=True,
         help_text="Qualitative description of the results")
-    endpoint_notes = models.TextField(blank=True,
+    endpoint_notes = models.TextField(
+        blank=True,
         help_text="Any additional notes related to this endpoint itself, not related to results")
-    additional_fields = models.TextField(default="{}")
+    additional_fields = models.TextField(
+        default="{}")
 
     def getDict(self, target=False):
         """
@@ -1165,15 +1199,36 @@ class Endpoint(BaseEndpoint):
 
 
 class EndpointGroup(models.Model):
-    endpoint = models.ForeignKey(Endpoint, related_name='endpoint_group')
-    dose_group_id = models.IntegerField(blank=False)
-    n = models.PositiveSmallIntegerField(blank=False, validators=[MinValueValidator(0)])
-    incidence = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
-    response = models.DecimalField(max_digits=50, decimal_places=25, blank=True, null=True)
-    variance = models.DecimalField(max_digits=50, decimal_places=25, blank=True, null=True, validators=[MinValueValidator(0)])
-    significant = models.BooleanField(default=False, verbose_name="Statistically significant from control")
-    significance_level = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(1)],
-                                           verbose_name="Statistical significance level")
+    endpoint = models.ForeignKey(
+        Endpoint,
+        related_name='endpoint_group')
+    dose_group_id = models.IntegerField(
+        blank=False)
+    n = models.PositiveSmallIntegerField(
+        blank=False,
+        validators=[MinValueValidator(0)])
+    incidence = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0)])
+    response = models.DecimalField(
+        max_digits=50,
+        decimal_places=25,
+        blank=True,
+        null=True)
+    variance = models.DecimalField(
+        max_digits=50,
+        decimal_places=25,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0)])
+    significant = models.BooleanField(
+        default=False,
+        verbose_name="Statistically significant from control")
+    significance_level = models.FloatField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name="Statistical significance level")
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
@@ -1294,8 +1349,12 @@ class EndpointGroup(models.Model):
 
 
 class IndividualAnimal(models.Model):
-    endpoint_group = models.ForeignKey(EndpointGroup, related_name='individual_data')
-    response = models.DecimalField(max_digits=50, decimal_places=25)
+    endpoint_group = models.ForeignKey(
+        EndpointGroup,
+        related_name='individual_data')
+    response = models.DecimalField(
+        max_digits=50,
+        decimal_places=25)
 
     def save(self, *args, **kwargs):
         super(IndividualAnimal, self).save(*args, **kwargs)
@@ -1312,14 +1371,24 @@ UF_TYPE_CHOICES = (('UFA', 'Interspecies uncertainty'),
 
 
 class UncertaintyFactorAbstract(models.Model):
-    uf_type = models.CharField(max_length=3, choices=UF_TYPE_CHOICES,
-                               verbose_name="Uncertainty Value Type")
-    value = models.DecimalField(max_digits=5, decimal_places=3, default=10,
-                                help_text="Note that 3*3=10 for all uncertainty value calculations; therefore specifying 3.33 is not required.",
-                                validators=[MinValueValidator(1)])
-    description = models.TextField(blank=True, verbose_name='Justification')
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)  # standardize changed to updated
+    uf_type = models.CharField(
+        max_length=3,
+        choices=UF_TYPE_CHOICES,
+        verbose_name="Uncertainty Value Type")
+    value = models.DecimalField(
+        max_digits=5,
+        decimal_places=3,
+        default=10,
+        help_text="Note that 3*3=10 for all uncertainty value calculations; "
+                  "therefore specifying 3.33 is not required.",
+        validators=[MinValueValidator(1)])
+    description = models.TextField(
+        blank=True,
+        verbose_name='Justification')
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)  # standardize changed to updated
 
     class Meta:
         abstract = True
@@ -1344,7 +1413,9 @@ class UncertaintyFactorAbstract(models.Model):
 
 
 class UncertaintyFactorEndpoint(UncertaintyFactorAbstract):
-    endpoint = models.ForeignKey(Endpoint, related_name='ufs')
+    endpoint = models.ForeignKey(
+        Endpoint,
+        related_name='ufs')
 
     class Meta(UncertaintyFactorAbstract.Meta):
         unique_together = (("endpoint", "uf_type"),)
@@ -1373,7 +1444,9 @@ class UncertaintyFactorEndpoint(UncertaintyFactorAbstract):
 
 
 class UncertaintyFactorRefVal(UncertaintyFactorAbstract):
-    reference_value = models.ForeignKey('ReferenceValue', related_name='ufs')
+    reference_value = models.ForeignKey(
+        'ReferenceValue',
+        related_name='ufs')
 
     class Meta(UncertaintyFactorAbstract.Meta):
         unique_together = (("reference_value", "uf_type"),)
@@ -1406,20 +1479,28 @@ class Aggregation(models.Model):
     """
     Aggregation of endpoints
     """
-    assessment = models.ForeignKey('assessment.Assessment',
-                                   related_name='aggregation')
-    dose_units = models.ForeignKey('animal.DoseUnits')
-    name = models.CharField(max_length=100)
-    aggregation_type = models.CharField(max_length=2,
-                                        choices=AGGREGATION_TYPE_CHOICES,
-                                        default="E",
-                                        help_text="The purpose for creating this aggregation.")
-    endpoints = models.ManyToManyField(Endpoint,
-                                       related_name='aggregation',
-                                       help_text="All endpoints entered for assessment.")
-    summary_text = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='aggregation')
+    dose_units = models.ForeignKey(
+        DoseUnits)
+    name = models.CharField(
+        max_length=100)
+    aggregation_type = models.CharField(
+        max_length=2,
+        choices=AGGREGATION_TYPE_CHOICES,
+        default="E",
+        help_text="The purpose for creating this aggregation.")
+    endpoints = models.ManyToManyField(
+        Endpoint,
+        related_name='aggregation',
+        help_text="All endpoints entered for assessment.")
+    summary_text = models.TextField(
+        blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -1504,18 +1585,35 @@ REFERENCE_VALUE_CHOICES = ((1, 'Oral RfD'),
 
 
 class ReferenceValue(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment', related_name='reference_values')
-    point_of_departure = models.DecimalField(max_digits=50, decimal_places=25,
-                                             validators=[MinValueValidator(0)])
-    type = models.PositiveSmallIntegerField(choices=REFERENCE_VALUE_CHOICES, default=1)
-    units = models.ForeignKey(DoseUnits, related_name='units+')
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='reference_values')
+    point_of_departure = models.DecimalField(
+        max_digits=50,
+        decimal_places=25,
+        validators=[MinValueValidator(0)])
+    type = models.PositiveSmallIntegerField(
+        choices=REFERENCE_VALUE_CHOICES,
+        default=1)
+    units = models.ForeignKey(
+        DoseUnits,
+        related_name='units+')
     justification = models.TextField()
-    aggregation = models.ForeignKey(Aggregation,
-                    help_text="Specify a collection of endpoints which justify this reference-value")
-    aggregate_uf = models.DecimalField(max_digits=10, decimal_places=3, blank=True)
-    reference_value = models.DecimalField(max_digits=50, decimal_places=25, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    aggregation = models.ForeignKey(
+        Aggregation,
+        help_text="Specify a collection of endpoints which justify this reference-value")
+    aggregate_uf = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        blank=True)
+    reference_value = models.DecimalField(
+        max_digits=50,
+        decimal_places=25,
+        blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    changed = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         unique_together = (("assessment", "type", "units"),)
