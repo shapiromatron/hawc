@@ -1,0 +1,101 @@
+<table class="table table-condensed table-striped">
+  <colgroup>
+    <col style="width: 30%;">
+    <col style="width: 70%;">
+  </colgroup>
+  <tbody>
+    <tr>
+        <th>Known Exposure Routes</th><td>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Inhalation</th>
+                    <th>Dermal</th>
+                    <th>Oral</th>
+                    <th>In Utero</th>
+                    <th>IV</th>
+                    <th>Unknown Route</th>
+                </tr>
+                <tr>
+                    <td style="text-align:center"><span class="lead">{% if object.inhalation %}☑{% else %}☒{% endif%}</span></td>
+                    <td style="text-align:center"><span class="lead">{% if object.dermal %}☑{% else %}☒{% endif%}</span></td>
+                    <td style="text-align:center"><span class="lead">{% if object.oral %}☑{% else %}☒{% endif%}</span></td>
+                    <td style="text-align:center"><span class="lead">{% if object.in_utero %}☑{% else %}☒{% endif%}</span></td>
+                    <td style="text-align:center"><span class="lead">{% if object.iv %}☑{% else %}☒{% endif%}</span></td>
+                    <td style="text-align:center"><span class="lead">{% if object.unknown_route %}☑{% else %}☒{% endif%}</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </tr>
+    <tr><th>Measurement Metric</th><td>{{object.metric}} ({{object.metric_units}})</td></tr>
+    <tr><th>Measurement Description</th><td>{{object.metric_description}}</td></tr>
+    <tr><th>Analytical Method</th><td>{{object.analytical_method}}</td></tr>
+    {% if object.exposure_description %}
+        <tr><th>Exposure description</th><td>{{object.exposure_description}}</td></tr>
+    {% endif %}
+    {% if object.control_description %}
+        <tr><th>Control Description</th><td>{{object.control_description}}</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<h2>Exposure Groups:</h2>
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>Group Name</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in object.groups.all %}
+        <tr>
+            <td>{{group}}</td>
+            <td>
+                <ul>
+                    {% if group.comparative_name %} <li><b>Comparative name: </b>{{group.comparative_name}}</li> {% endif %}
+                    {% if group.exposure_n %}       <li><b>Exposure N: </b>{{group.exposure_n}}</li> {% endif %}
+                    {% if group.sex %}              <li><b>Sex: </b>{{group.get_sex_display}}</li> {% endif %}
+                    {% if group.ethnicity.count > 0 %} <li><b>Ethnicity: </b>{{group.get_ethnicity_list}}</li> {% endif %}
+
+                    {% if group.fraction_male %}
+                        <li><b>Fraction male: </b>
+                        {% if group.fraction_male_calculated %}[{{group.fraction_male}}]
+                        {% else %}{{group.fraction_male}}{% endif %}</li>
+                    {% endif %}
+
+                    {% if group.age_description %}  <li><b>Age description: </b>{{group.age_description}}</li> {% endif %}
+
+                    {% if group.age_mean %}
+                        <li><b>Age {{group.get_age_mean_type_display}}: </b>
+                        {% if group.age_calculated %}[{{group.age_mean}}]
+                        {% else %}{{group.age_mean}}{% endif %} yrs</li>
+                    {% endif %}
+
+                    {% if group.age_sd %}
+                        <li><b>Age {{group.get_age_sd_type_display}}: </b>
+                        {% if group.age_calculated %}[{{group.age_sd}}]
+                        {% else %}{{group.age_sd}}{% endif %} yrs</li>
+                    {% endif %}
+
+                    {% if group.age_lower %}
+                        <li><b>Age {{group.get_age_lower_type_display}}: </b>
+                        {% if group.age_calculated %}[{{group.age_lower}}]
+                        {% else %}{{group.age_lower}}{% endif %} yrs</li>
+                    {% endif %}
+
+                    {% if group.age_upper %}
+                        <li><b>Age {{group.get_age_upper_type_display}}: </b>
+                        {% if group.age_calculated %}[{{group.age_upper}}]
+                        {% else %}{{group.age_upper}}{% endif %} yrs</li>
+                    {% endif %}
+
+                    {% if group.n %}                <li><b>N: </b>{{group.n}}</li> {% endif %}
+                    {% if group.starting_n %}       <li><b>Starting N: </b>{{group.starting_n}}</li> {% endif %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

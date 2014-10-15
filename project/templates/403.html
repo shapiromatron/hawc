@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+  <div class="hero-unit">
+    <h1>Error 403. Forbidden.</h1>
+    <p>I'm sorry Dave, I'm afraid I can't do that.</p>
+  </div>
+
+  {% if not user.is_authenticated %}
+      <p>Have access to this site? </p>
+      <a class="btn btn-info" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
+  {% endif %}
+
+{% endblock %}

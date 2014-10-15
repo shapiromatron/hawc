@@ -1,0 +1,46 @@
+<a class="toggle_sidebar pull-right" title="Compress sidebar" href="#">x</a>
+<ul class="nav nav-list">
+  {% if assessment %}
+    <li class="nav-header">Selected assessment</li>
+    <li class="active"><a href="{% url 'assessment:detail' assessment.pk %}"> {{ assessment }}</a></li>
+
+    <li class="nav-header">Available modules</li>
+
+    {% if assessment.enable_literature_review %}
+        <li class=""><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+    {% endif %}
+
+    {% if assessment.enable_data_extraction %}
+        <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
+        <li class=""><a href="{% url 'animal:assessment_endpoint_list' assessment.pk %}">Endpoint List</a></li>
+        <li class=""><a href="{% url 'animal:assessment_endpoint_search' assessment.pk %}">Endpoint Search</a></li>
+        <li class=""><a href="{% url 'data_pivot:list' assessment.pk %}">Endpoint Data Pivot</a></li>
+        <li class=""><a href="{% url 'animal:endpoint_crossview' assessment.pk %}">Endpoint Crossview</a></li>
+        <li class=""><a href="{% url 'animal:aggregation_list' assessment.pk %}">Endpoint Aggregations</a></li>
+    {% endif %}
+
+    {% if assessment.enable_summary_text %}
+        <li class=""><a href="{% url 'summary:list' assessment.pk %}">Executive Summary</a></li>
+    {% endif %}
+
+    {% if assessment.enable_comments %}
+        <li class=""><a href="{% url 'comments:comment_list_assessment' assessment.pk %}">Comment Summary</a></li>
+    {% endif %}
+
+    {% if assessment.enable_data_extraction %}
+        <li class="nav-header">Visualizations</li>
+        <li class=""><a href="{% url 'animal:time_endpoint_dr' %}">Time-dependent dose-plots</a></li>
+        <li class=""><a href="{% url 'animal:review_plot' %}">Study quality aggregate plot</a></li>
+    {% endif %}
+
+    <li class="nav-header">Downloads</li>
+    <li class=""><a href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a></li>
+    {% if debug %}
+        <li class=""><a href="{% url 'assessment:reports' assessment.pk %}">Download reports</a></li>
+    {% endif %}
+  {% else %}
+    <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an Assessment</a>{% endblock %}</li>
+    <a href="{% url 'data_pivot:general' %}">Data Pivot</a>
+  {% endif %}
+</ul>
+

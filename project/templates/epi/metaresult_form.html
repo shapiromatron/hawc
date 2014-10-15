@@ -1,0 +1,179 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{assessment}} |
+  {% if crud == "Create" %}
+    {{protocol.study}} | {{protocol}} |Create Meta-Result
+  {% elif crud == "Update" %}
+    {{object.protocol.study}} | {{object.protocol}} | Update {{object}}
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{{protocol.study.get_absolute_url}}">{{protocol.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{protocol.get_absolute_url}}">{{protocol}}</a><span class="divider">/</span></li>
+    <li class="active">Create meta-result</li>
+  {% elif crud == "Update" %}
+    <li><a href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.protocol.get_absolute_url}}">{{object.protocol}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    {% csrf_token %}
+    <fieldset>
+      {% if crud == "Create" %}
+        <legend>Create new meta-result</legend>
+        <span class="help-block">Create a new meta-result for an epidemiological
+          assessment. A meta-result is the aggregate result from a meta-analysis or
+          pool analysis of multiple primary literature components.</span><br>
+      {% elif crud == "Update" %}
+        <legend>Update {{ object }} </legend>
+        <span class="help-block">Update an existing meta-result.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {% if field.label == "Adjustment factors" %}
+              <div class="row-fluid">
+                <div class="span11">
+                  {{field}}
+                </div>
+                <div class="span1">
+                  <a class ="btn btn-primary"
+                     href="{% url 'epi:factor_create' assessment.pk %}"
+                     onclick="return HAWCUtils.newWindowPopupLink(this);"
+                     title="Add new adjustment factor">+</a>
+                </div>
+              </div>
+            {% else %}
+              {{field}}
+            {% endif %}
+            <p class='help-block'>{{field.help_text}}</p>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+    </fieldset>
+
+    {# Single-Result formset #}
+        <legend>Single-Study Results
+        <button class="pull-right btn btn-primary"
+                title="Add new row to single-result"
+                type="button"
+                id="addFormInFormset">+</button>
+    </legend>
+    <span class="help-block">Add individual study-finding which were used for the meta-analysis.
+      Results can be associated with data already present in HAWC, or can be
+      manually-entered with key findings. Hover-over field-titles for more help-text.<br>
+      If you choose to not include-any individual results, delete all rows from this table
+      before submitting.</span><br>
+
+    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+
+    {# Submission area #}
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} meta-result</button>
+        {% if crud == "Create" %}
+          <a href='{% url "epi:mp_detail" protocol.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'epi:mr_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      // meta-result lookups
+      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
+      $('#id_adjustment_factors_0').djselectable('option', 'prepareQuery', assessment);
+      $('#id_health_outcome').djselectable('option', 'prepareQuery', assessment);
+      $('#id_exposure_name').djselectable('option', 'prepareQuery', assessment);
+
+      // dynamic formset settings
+      $('#addFormInFormset').click(function(){return HAWCUtils.dfAddForm(this, 'form');});
+      $('.formset').on('click', '.deleteForm', function(){return HAWCUtils.dfDeleteForm(this, 'form');});
+
+      // single study result dynamic field visibility
+      var toggleVisibleFields = function(event){
+        var val = parseInt($(this).val(), 10),
+            showAOG = (val === 1),
+            fadeInOrOut = function(itm, val){return (val) ? $(itm).fadeIn() : $(itm).fadeOut();},
+            tr = $(this).parent().parent();
+
+        tr.find('.isAOG').each(function(i,v){
+          fadeInOrOut($(v).siblings().andSelf(), showAOG);
+        });
+        tr.find('.isntAOG').each(function(i,v){
+          fadeInOrOut($(v).siblings().andSelf(), !showAOG);
+        });
+      };
+
+      $('.formset').on('change', '.singleResultType', toggleVisibleFields);
+      $('.singleResultType').trigger('change');
+
+      var updateSelectables = function($els, related_selector){
+        $els.each(function(i, el){
+          var related = $(el).parent().parent().find(related_selector);
+          $(el).djselectable('option', 'prepareQuery', function(qry){
+            qry.related = related.val();
+          });
+        });
+      }, bindMetaResultSelectables = function($el){
+        updateSelectables($el.find('.aoSearch'), '.studySearch');
+        updateSelectables($el.find('.aogSearch'), '.aoSearch[type=hidden]');
+      };
+
+      // update visible forms on-load
+      bindMetaResultSelectables($('.formset'));
+
+      // clear AO/AOG on study change
+      $('.formset').on('change', '.studySearch', function(){
+        var tr = $(this).parent().parent();
+        tr.find('.aoSearch, .aogSearch').val('');
+      });
+
+      // clear AOG on AO change
+      $('.formset').on('djselectablechange', ".aoSearch", function(){
+        var tr = $(this).parent().parent();
+        tr.find('.aogSearch').val("");
+      });
+
+      // update selectable and results addition when adding form in formset
+      $('.formset').bind('dynamicFormset-formAdded', function(e){
+        var tr = $(e.target),
+            AOtd = tr.find('.aoSearch').parent(),
+            AOGtd = tr.find('.aogSearch').parent();
+        AOtd.html(AOtd.find('input').detach());
+        AOGtd.html(AOGtd.find('input').detach());
+        window.bindSelectables(tr); // global django-selectable function
+        bindMetaResultSelectables(tr);
+        tr.find('.singleResultType').trigger('change');
+      });
+
+    });
+  </script>
+{% endblock extrajs %}

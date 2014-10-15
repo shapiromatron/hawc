@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}{{assessment}} | Create Factor {% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block main_content %}
+
+<form class="form-horizontal" action="." method="post">
+
+    {% csrf_token %}
+
+    <div class='row-fluid'>
+      <fieldset>
+        <legend>Create new factor</legend>
+        <span class="help-block">Create a new factor. Factors can be applied to assessment outcomes as adjustment factors or confounders considered. They are assessment-specific. Please take care not to duplicate existing factors.</span><br>
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {{field}}
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} factor</button>
+      </div>
+    </div>
+  </form>
+
+{% endblock main_content %}
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
+      $('#id_description').djselectable('option', 'prepareQuery', assessment);
+    });
+  </script>
+{% endblock extrajs %}

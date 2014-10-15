@@ -1,0 +1,45 @@
+{% if object_list %}
+  <table class="table table-condensed table-striped">
+    <colgroup>
+        {%if with_study %}
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+        {% else %}
+          <col style="width:40%"></col>
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+          <col style="width:20%"></col>
+        {% endif %}
+    </colgroup>
+    <thead>
+      <tr>
+        {%if with_study %}
+          <th>Study</th>
+        {% endif %}
+        <th>Protocol name</th>
+        <th>Protocol type</th>
+        <th>Total references in literature search</th>
+        <th>Total references included in analysis</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+        <tr>
+          {%if with_study %}
+            <td><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a></td>
+          {% endif %}
+          <td><a href="{% url 'epi:mp_detail' object.pk %}">{{object}}</a></td>
+          <td>{{object.get_protocol_type_display}}</td>
+          <td>{{object.total_references}}</td>
+          <td>{{object.total_studies_identified}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No meta-protocols are available.</p>
+{% endif %}
+

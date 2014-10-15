@@ -1,0 +1,55 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+{{assessment}} | {{object.protocol.study}} | {{object.protocol}} | {{object}}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.protocol.get_absolute_url}}">{{object.protocol|truncatechars:40}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if obj_perms.edit and crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="disabled"><a tabindex="-1" href="#">Meta-Result Editing</a></li>
+            <li><a href="{% url 'epi:mr_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'epi:mr_delete' pk=object.pk %}">Delete</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <div id="mr_details_div"></div>
+
+  {% if object.single_results.count %}
+    <h2>Individual-study results</h2>
+    <div id="mr_single_results"></div>
+  {% endif %}
+
+{% endblock %}
+
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}epi/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.mr = new MetaResult({{object.get_json|safe}});
+      mr.build_details_table($('#mr_details_div'));
+      {% if object.single_results.count %}
+        mr.build_single_results_table($('#mr_single_results'));
+      {% endif %}
+    });
+  </script>
+{% endblock %}

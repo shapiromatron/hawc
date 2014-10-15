@@ -1,0 +1,34 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{object}} | Reports | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active"> Reports <span class="divider">/</span></li>
+{% endblock %}
+
+
+{% block content %}
+  <h1>{{object}} reports</h1>
+
+  <p class='help-block'>Microsoft-Word table-level views of data contained in HAWC for {{assessment}}.</p>
+
+  <ol>
+
+    {% if assessment.enable_data_extraction %}
+    <li>
+        <b>Animal bioassay data</b><br>
+        <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Word document</p>
+    </li>
+
+    <li>
+        <b>Epidemiology data</b><br>
+        <a class='btn btn-primary' href="{% url 'epi:ao_report' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Word document</p>
+    </li>
+    {% endif %}
+  </ol>
+{% endblock %}

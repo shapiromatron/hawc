@@ -1,0 +1,70 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | Literature Review | {{crud}} {{type|lower}} | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:search_list' assessment.pk %}">{{type|title}}</a><span class="divider">/</span></li>
+
+  {% if crud == "Update" %}
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% endif %}
+
+  <li class="active">{{crud}}<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    <fieldset>
+      {% if crud == "Create" %}
+        <legend>Create new {{form.title_str|lower}}</legend>
+        <span class="help-block">{{form.help_text}}</span><br>
+      {% elif crud == "Update" %}
+         <legend>Update  {{ object }} </legend>
+         <span class="help-block">Update an existing literature search.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field|add_class:"span12"}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} literature {{type|lower}}</button>
+        {% if crud == "Create" %}
+          <a href="{% url 'lit:search_list' assessment.pk %}" class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    var slugify = function(txt){
+      return txt.toLowerCase()
+                .replace(/[^\w ]+/g,'')
+                .replace(/ +/g,'-');
+    }
+    $('#id_title').on('keyup', function(){$('#id_slug').val(slugify($(this).val()));});
+  </script>
+{% endblock extrajs %}

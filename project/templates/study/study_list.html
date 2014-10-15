@@ -1,0 +1,39 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Study List | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Studies<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>Extracted studies
+    {% if obj_perms.edit and crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="disabled"><a tabindex="-1" href="#">Study Editing</a></li>
+            <li><a href="{% url 'study:new_ref' assessment.pk %}">Create new</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h2>
+
+  {% include "study/_study_list.html" %}
+
+  {% if assessment.enable_study_quality %}
+    <h3>Study-quality information</h3>
+
+    <ul>
+      <li><a href="{% url 'study:sq_agg_stacked_bars' assessment.pk %}">Assessment-level study-quality overview</a></li>
+      <li><a href="{% url 'study:sq_agg_heatmap' assessment.pk %}">Individual study quality heatmap</a></li>
+    </ul>
+  {% endif %}
+
+{% endblock %}

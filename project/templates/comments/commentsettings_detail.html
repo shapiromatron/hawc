@@ -1,0 +1,43 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{object.assessment}} | Comment Settings | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'assessment:detail' object.assessment.pk %}">{{ object.assessment }}</a><span class="divider">/</span></li>
+    <li class="active">Comment Settings<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <h1>Comment settings
+    {% if obj_perms.edit %}
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url 'comments:comment_settings_update' object.pk %}">Update settings</a></li>
+      </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+        <tr>
+          <th>Allow comments</th><td>{{object.allow_comments}}</td>
+        </tr>
+        <tr>
+          <th>Public comments</th><td>{{object.public_comments}}</td>
+        </tr>
+    </tbody>
+  </table>
+
+{% endblock %}

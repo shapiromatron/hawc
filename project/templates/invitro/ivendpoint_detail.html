@@ -1,0 +1,50 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}{{assessment}} | {{object.experiment.study}} | {{object.experiment}} | {{object}} {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.experiment.study.get_absolute_url}}">{{object.experiment.study}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.experiment.get_absolute_url}}">{{object.experiment}}</a><span class="divider">/</span></li>
+  <li class="active">{{object}}<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if obj_perms.edit and crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            {% comment %}
+            <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
+            <li><a href="{% url 'epi:sp_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'epi:sp_delete' pk=object.pk %}">Delete</a></li>
+            <li><a href="{% url 'animal:experiment_versions' object.pk %}">View prior versions</a></li>
+            {% endcomment %}
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <div>
+    <div id="ive_div"></div>
+    <h3>Dose-response details</h3>
+    <div id="iveg_div"></div>
+  </div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}invitro/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.ive = new IVEndpoint({{object.get_json|safe}});
+      ive.build_endpoint_table($('#ive_div'));
+      ive.build_eg_table($('#iveg_div'));
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,157 @@
+
+
+ ==================================================================== 
+   	  Hill Model. (Version: 2.16;  Date: 04/06/2011) 
+  	  Input Data File: C:/Temp/hawc/bmd test cases/2-continuous-tc-HillCV-1SD.(d)  
+  	  Gnuplot Plotting File:  C:/Temp/hawc/bmd test cases/2-continuous-tc-HillCV-1SD.plt
+ 							Fri Jan 25 16:39:54 2013
+ ==================================================================== 
+
+ BMDS Model Run 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   The form of the response function is: 
+
+   Y[dose] = intercept + v*dose^n/(k^n + dose^n)
+
+
+   Dependent variable = Response
+   Independent variable = Dose
+   rho is set to 0
+   Power parameter restricted to be greater than 1
+   A constant variance model is fit
+
+   Total number of dose groups = 5
+   Total number of records with missing values = 0
+   Maximum number of iterations = 250
+   Relative Function Convergence has been set to: 1e-008
+   Parameter Convergence has been set to: 1e-008
+
+
+
+                  Default Initial Parameter Values  
+                          alpha =       35.502
+                            rho =            0   Specified
+                      intercept =           11
+                              v =           21
+                              n =     0.359215
+                              k =      545.455
+
+
+           Asymptotic Correlation Matrix of Parameter Estimates
+
+           ( *** The model parameter(s)  -rho   
+                 have been estimated at a boundary point, or have been specified by the user,
+                 and do not appear in the correlation matrix )
+
+                  alpha    intercept            v            n            k
+
+     alpha            1      0.00025      -0.0062      0.00085      -0.0061
+
+ intercept      0.00025            1       -0.041         0.54        -0.13
+
+         v      -0.0062       -0.041            1        -0.14         0.98
+
+         n      0.00085         0.54        -0.14            1        -0.31
+
+         k      -0.0061        -0.13         0.98        -0.31            1
+
+
+
+                                 Parameter Estimates
+
+                                                         95.0% Wald Confidence Interval
+       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit
+          alpha          39.9661          5.65217             28.8881             51.0442
+      intercept          15.0698         0.928035             13.2509             16.8888
+              v          3886.99          44180.7            -82705.6             90479.6
+              n          3.68274          1.39205            0.954378              6.4111
+              k          1973.89          6364.69            -10500.7             14448.4
+
+
+
+     Table of Data and Estimated Values of Interest
+
+ Dose       N    Obs Mean     Est Mean   Obs Std Dev  Est Std Dev   Scaled Res.
+------     ---   --------     --------   -----------  -----------   ----------
+
+    0    20         11         15.1          2.4         6.32          -2.88
+   50    20         16         15.1          3.4         6.32          0.654
+  150    20         19         15.4          5.7         6.32           2.57
+  350    20         21         21.7          6.7         6.32         -0.502
+  450    20         32         31.8          9.1         6.32          0.155
+
+
+
+ Model Descriptions for likelihoods calculated
+
+
+ Model A1:        Yij = Mu(i) + e(ij)
+           Var{e(ij)} = Sigma^2
+
+ Model A2:        Yij = Mu(i) + e(ij)
+           Var{e(ij)} = Sigma(i)^2
+
+ Model A3:        Yij = Mu(i) + e(ij)
+           Var{e(ij)} = Sigma^2
+     Model A3 uses any fixed variance parameters that
+     were specified by the user
+
+ Model  R:         Yi = Mu + e(i)
+            Var{e(i)} = Sigma^2
+
+
+                       Likelihoods of Interest
+
+            Model      Log(likelihood)   # Param's      AIC
+             A1         -225.914787            6     463.829574
+             A2         -206.437181           10     432.874362
+             A3         -225.914787            6     463.829574
+         fitted         -234.401616            5     478.803233
+              R         -270.510596            2     545.021192
+
+
+                   Explanation of Tests  
+
+ Test 1:  Do responses and/or variances differ among Dose levels? 
+          (A2 vs. R)
+ Test 2:  Are Variances Homogeneous? (A1 vs A2)
+ Test 3:  Are variances adequately modeled? (A2 vs. A3)
+ Test 4:  Does the Model for the Mean Fit? (A3 vs. fitted)
+ (Note:  When rho=0 the results of Test 3 and Test 2 will be the same.)
+
+                     Tests of Interest    
+
+   Test    -2*log(Likelihood Ratio)  Test df        p-value    
+
+   Test 1              128.147          8          <.0001
+   Test 2              38.9552          4          <.0001
+   Test 3              38.9552          4          <.0001
+   Test 4              16.9737          1          <.0001
+
+The p-value for Test 1 is less than .05.  There appears to be a
+difference between response and/or variances among the dose levels
+It seems appropriate to model the data
+
+The p-value for Test 2 is less than .1.  Consider running a 
+non-homogeneous variance model
+
+The p-value for Test 3 is less than .1.  You may want to consider a 
+different variance model
+
+The p-value for Test 4 is less than .1.  You may want to try a different 
+model
+ 
+
+        Benchmark Dose Computation
+
+Specified effect =             1
+
+Risk Type        =     Estimated standard deviations from the control mean 
+
+Confidence level =           0.95
+
+             BMD =        345.351
+
+            BMDL =       141.512
+

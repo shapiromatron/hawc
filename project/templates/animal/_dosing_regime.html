@@ -1,0 +1,35 @@
+<table class="table table-condensed table-striped">
+  <colgroup>
+    <col style="width: 30%;">
+    <col style="width: 70%;">
+  </colgroup>
+  <tbody>
+    {{print_dosed}}
+    <tr><th>Dosed Animals</th><td>{{object.dosed_animals}}</td></tr>
+    <tr><th>Route of Exposure</th><td>{{object.get_route_of_exposure_display}}</td></tr>
+    <tr>
+      <th>Doses</th>
+      <td>
+        <table class="table table-condensed table-hover">
+          <thead>
+            <tr>
+              {% for dose in object.get_dose_groups.0 %}
+                <th>{{dose.dose_units}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for doses in object.get_dose_groups %}
+              <tr>
+                {% for dose in doses %}
+                <td>{{dose.get_float_dose}}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+  </tbody>
+</table>

@@ -1,0 +1,125 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | {{crud}} {% if crud == "Create" %}Aggregation{% else %}{{object}}{% endif %} | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock extrastyle %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:aggregation_list' assessment.pk %}">Aggregations</a><span class="divider">/</span></li>
+  {% if crud == "Update" %}
+    <li><a href="{% url 'animal:aggregation_detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">{{crud}}<span class="divider">/</span></li>
+  {% else %}
+    <li class="active">{{crud}} Aggregation<span class="divider">/</span></li>
+  {% endif %}
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    <fieldset>
+
+      {% if crud == "Create" %}
+        <legend>Create new aggregation</legend>
+        <span class="help-block">Create a new aggregation. An aggregation is a collection of endpoints which are related, and should be used to represent a component of an analysis</span><br>
+      {% elif crud == "Update" %}
+         <legend>Update  {{ object }} </legend>
+         <span class="help-block">Update an existing aggregation.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field|add_class:"span12"}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+
+          {% if field.name == "endpoints" %}
+            <div id="endpoint_details" style="display:none">
+              <a class="close" href="#" style="z-index:right;">&times;</a>
+              <h4></h4>
+              <div class="row-fluid">
+                <div class="span7"><table id="dr-tbl" class="table table-condensed table-striped"></table></div>
+                <div class="span5"><div id="dr-plot" style="max-width:400px;" class="d3_container"></div></div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} aggregation</button>
+        {% if crud == "Create" %}
+          <a href="{% url 'assessment:detail' pk=assessment.pk %}" class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'animal:aggregation_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+
+{% endblock content %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $('#id_summary_text').wysihtml5({"stylesheets": false});
+
+    $('#id_endpoints').css('height', '200px');
+
+    //setup endpoint viewer
+    $('#id_endpoints').on('click', 'option', function(){
+      if(this.selected){
+        $('#endpoint_details').fadeOut('fast');
+        $.getJSON('/ani/endpoint/' + this.value + '/json/', function(data) {
+          window.endpoint = new Endpoint(data);
+          window.plot = new EndpointPlotContainer(window.endpoint, '#dr-plot');
+          window.endpoint.build_endpoint_table($('#dr-tbl'));
+          $('#endpoint_details h4').html(window.endpoint.build_breadcrumbs());
+        });
+        $('#endpoint_details').fadeIn('fast');
+      } else {
+        $('#endpoint_details').fadeOut('fast');
+      }
+    });
+    $('#endpoint_details a.close').on('click', function(){event.preventDefault(); $('#endpoint_details').fadeOut('fast');})
+
+    //setup endpoint filter (should only show endpoints with the selected dose-metric)
+    var load_endpoints = function(){
+      $.get('{% url 'animal:aggregation_endpoint_filter' pk=assessment.pk %}', {'dose_units': $('#id_dose_units').val()}, function(d){
+        var selected = {}
+        $('#id_endpoints option').each(function(i, v){
+          if ($(v).prop('selected')){selected[v.value] = true;};
+        });
+        $('#id_endpoints').prop("disabled", true);
+        var opts = [];
+        d.forEach(function(v, i){
+          var selected_value = false;
+          if (selected[v.id.toString()]){selected_value = true;}
+          var opt = $('<option value="' + v.id + '">' + v.name + "</option>").prop('selected', selected_value)
+          opts.push(opt);
+        });
+        $('#id_endpoints').html(opts).prop("disabled", (opts.length<1));
+      });
+    };
+    $('#id_dose_units').on('change', load_endpoints);
+    load_endpoints();
+
+  </script>
+{% endblock extrajs %}

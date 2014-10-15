@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+
+{% block title %}
+  User Settings | HAWC
+{% endblock %}
+
+{% block branding %}
+  <a class="brand" href="{% url 'user:settings' %}">HAWC: User Settings</a>
+{% endblock %}
+
+{% block topnavbar %}
+  <div class="btn-group pull-right">
+    {% if user.is_anonymous %}
+      <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
+    {% else %}
+    <button href="#" class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown">{{user}} <i class="icon-cog icon-white"></i></button>
+    <ul class="dropdown-menu">
+      <li><a href="{% url 'portal' %}">Portal</a></li>
+      <li><a href="{% url 'user:settings' %}">Settings</a></li>
+      <li><a href="{% url 'api_root' %}">API</a></li>
+      {% if user.is_staff %}
+       <li><a href="{%url 'admin:index' %}">Admin</a></li>
+      {% endif %}
+      <li class="divider"></li>
+      <li><a href="{% url 'user:logout' %}">Logout</a></li>
+    </ul>
+   {% endif %}
+  </div>
+{% endblock %}
+
+{% block main_content %}
+
+  <div class="row-fluid">
+    <ul class="breadcrumb">
+      <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
+      <li class="active"><a href="{% url 'user:settings' %}">User Profile</a><span class="divider">/</span></li>
+      {% block breadcrumbs %}
+      {% endblock %}
+    </ul>
+  </div>
+
+  <div class="row-fluid">
+    <div id='sidebar' class="span3 well fill" style="max-width: 300px;">
+      <ul class="nav nav-list">
+        <li class="nav-header">Profile Settings</li>
+        <li class=""><a href="{% url 'user:settings' %}">User Profile</a></li>
+        <li class=""><a href="{% url 'user:change_password' %}">Change Password</a></li>
+      </ul>
+    </div>
+
+  <!--Body content-->
+  <div class="span9 fill">
+    <div id="content" class="{% block content_type %}{% endblock %}">
+        {% block content %}
+        {% endblock %}
+        <br class="clear" />
+    </div>
+  </div>
+
+</div>
+{% endblock %}

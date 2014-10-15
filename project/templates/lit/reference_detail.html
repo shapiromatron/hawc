@@ -1,0 +1,26 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | References | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li class="active">Reference Detail<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <div id="reference_detail_div"></div>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.tagtree = new TagTree({{tags|safe}});
+      window.ref = new Reference({{object_json|safe}}, window.tagtree);
+      $('#reference_detail_div').html(ref.print_self(true));
+    });
+  </script>
+{% endblock extrajs %}

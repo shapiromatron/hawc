@@ -1,0 +1,11 @@
+{% extends 'animal/referencevalue_detail.html' %}
+
+{% block breadcrumbs_self %}
+  <li><a href="{{ object.get_absolute_url }}">{{object}}</a><span class="divider">/</span></li>
+  <li class="active">Delete<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+  {{ block.super }}
+  {% include "hawc/_delete_block.html" with name="reference value" notes="" %}
+{% endblock content %}

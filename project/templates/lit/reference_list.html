@@ -1,0 +1,57 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | References | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  {% if object_type == 'search' %}
+    <li><a href="{% url 'lit:search_list' assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
+    <li><a href="{% url 'lit:search_detail' assessment.pk object.slug %}">{{object}}</a><span class="divider">/</span></li>
+  {% endif %}
+  <li class="active">References<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <div class="row-fluid">
+    <div class="span3">
+      <h3>Taglist</h3>
+      <div id="taglist">
+      </div><br>
+      <p>Untagged References: ({{untagged}})</p>
+    </div>
+    <div class="span9">
+      <div id="references_detail_div">
+        <h3>Available References</h3>
+        <p class="help-block">Click on a tag to view tagged references.</p>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.assessment_pk = {{assessment.pk}};
+      window.tagtree = new TagTree({{tags|safe}});
+
+      tagtree.add_references({{ref_objs|safe}});
+
+      $('#taglist')
+        .html(tagtree.get_nested_list({"show_refs_count": true}))
+        .on('hawc-tagClicked', function(e){
+          $('.nested-tag').removeClass("selected");
+          $(e.target).addClass("selected");
+          var tag = $(e.target).data('d'),
+              options = {tag: tag,
+                         download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"}
+          window.refviewer = new ReferencesViewer($('#references_detail_div'), options);
+          tag.get_reference_objects(window.refviewer);
+        });
+    });
+  </script>
+{% endblock extrajs %}

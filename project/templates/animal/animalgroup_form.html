@@ -1,0 +1,201 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {% if crud == "Create" %}
+    {{assessment}} | {{experiment.study}} | {{experiment}} | Create Experiment Group | HAWC
+  {% elif crud == "Update" %}
+    {{assessment}} | {{object.experiment.study}} | {{object.experiment}} | Update {{object}} | HAWC
+  {% endif %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Update" %}
+    <li><a href="{% url 'study:detail' object.experiment.study.pk %}">{{object.experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' object.experiment.pk %}">{{object.experiment}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:animal_group_detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">{{crud}} </li>
+  {% elif crud == "Create" %}
+    <li><a href="{% url 'study:detail' experiment.study.pk %}">{{experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' experiment.pk %}">{{experiment}}</a><span class="divider">/</span></li>
+    <li class="active">{{crud}} Animal Group<span class="divider">/</span></li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  <form class="form-horizontal" action="." method="post" id="animal_group">
+
+    {% csrf_token %}
+
+    <!-- Animal Group form -->
+    <div class='row-fluid'>
+      <fieldset>
+        {% if crud == "Create" %}
+          <legend>Create new animal-group</legend>
+          <span class="help-block">Create a new animal-group. Each animal-group is a set of animals which are comparable for a given experiment. For example, they may be a group of F1 rats. Animal-groups may have different exposures or doses, but should be otherwise comparable.</span><br>
+        {% elif crud == "Update" %}
+          <legend>Update  {{ object }} </legend>
+          <span class="help-block">Update an existing animal-group.</span><br>
+        {% endif %}
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {% if field.name == "species" %}
+                {{field}} <a class ='btn btn-primary' href="{% url 'animal:species_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);">Add new species</a><br>
+              {% elif field.name == "strain" %}
+                {{field}} <a class ='btn btn-primary' href="{% url 'animal:strain_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);">Add new strain</a><br>
+              {% else %}
+                {{field}}<br>
+              {% endif %}
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    <!-- Dosing Regime Form -->
+    <div class='row-fluid' id='dosing_regime'>
+      <fieldset name="foo">
+        {% if crud == "Create" %}
+          <legend>Create new dosing-regime</legend>
+          <span class="help-block">Create a new dosing-regime. Each dosing-regime is one protocol for how animals were dosed. Multiple different dose-metrics can be associated with one dosing regime. If this is a generational-experiment, an existing dosing-regime may also be specified.</span><br>
+        {% elif crud == "Update" %}
+          <legend>Update dosing regime </legend>
+          <span class="help-block">Update an existing dosing-regime.</span><br>
+        {% endif %}
+
+        {{ form_dosing_regime.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form_dosing_regime %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {{field}}<br>
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+
+      <!-- Dose-Groups -->
+      <legend>Dose-groups
+        <span class='pull-right'>
+          <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
+          <a class='btn btn-primary' href="{% url 'animal:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+        </span>
+      </legend>
+
+      {% if dose_groups_errors %}<div class="alert alert-error">{{dose_groups_errors|safe}}</div>{% endif %}
+
+      <table id="dose_table" class="table table-condensed table-striped">
+        <colgroup></colgroup>
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+
+      <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
+
+    </div>
+
+    <!-- Submission Form -->
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} animal group</button>
+        {% if crud == "Create" %}
+          <a href='{% url 'animal:experiment_detail' experiment.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'animal:animal_group_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+
+  </form>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/animal_group_form.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    // $('#id_description').wysihtml5({"stylesheets": false});
+    $(document).ready(function() {
+
+      // load proper strains
+      var load_strains = function(){
+        // only show proper strains for a given species
+        $.get('{% url 'animal:get_strains' %}',{'species': $('#id_species').val()}, function(d){
+          $('#id_strain').prop("disabled", true);
+          var selected = $('#id_strain option:selected').val();
+          var opts = ['<option value="">---------</option>'];
+          d.forEach(function(v, i){
+            opts.push('<option value="' + v.id + '">' + v.name + "</option>");
+          });
+          $('#id_strain').html(opts).prop("disabled", (opts.length<2));
+          $('#id_strain option[value="' + selected + '"]').prop('selected', true);
+        });
+      };
+      $('#id_species').on('change', load_strains);
+
+      //form submission
+      $('#animal_group').submit(function(){
+        $('#dose_groups_json').val(JSON.stringify(doses.jsonify()));
+        return true;
+      });
+
+      // initial startup
+      load_strains();
+      dose_types = {{dose_types|safe}};
+
+      {% if dose_groups_json %}
+        dose_values = {{dose_groups_json|safe}};
+      {% endif %}
+
+      doses = new dose_array({{dose_groups_json|safe}});
+
+      // set handlers
+      $('#id_dose_groups').on('change', function(){doses.change_rows();})
+      $('#new_dose_column').on('click', function(){event.preventDefault(); doses.add_dose_column();})
+      $('#dose_table').on('click', '.remove_dose', function(e){
+        e.preventDefault();
+          var td_index = $(this).parent().index()-1;
+          doses.remove_dose_column(td_index);
+      });
+
+      // dosing-regime specification
+      toggle_dosing_form = function(){
+        var show_dosing_regime_form = isNaN(parseInt($('#id_dosing_regime').val()));
+        if (show_dosing_regime_form){
+          $('#dosing_regime').fadeIn();
+        } else {
+          $('#dosing_regime').fadeOut();
+        };
+      };
+      $('#id_dosing_regime').on('change', toggle_dosing_form);
+      toggle_dosing_form();
+
+      toggle_dosing_regime = function(){
+        var val = $('#id_generation option:selected').val();
+        if ((val == 'F1') || (val == 'F2')){
+          $('#id_dosing_regime').parent().parent().fadeIn();
+        } else {
+          $('#id_dosing_regime').parent().parent().fadeOut();
+          toggle_dosing_form();
+        }
+      };
+      $('#id_generation').on('change', toggle_dosing_regime);
+      toggle_dosing_regime();
+
+    });
+  </script>
+{% endblock %}

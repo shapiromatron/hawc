@@ -1,0 +1,95 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{assessment}} |
+  {% if crud == "Create" %}
+    {{study}} | Create Study Population
+  {% elif crud == "Update" %}
+    {{object.study}} | Update {{object}}
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{{study.get_absolute_url}}">{{study}}</a><span class="divider">/</span></li>
+    <li class="active">Create Study Population</li>
+  {% elif crud == "Update" %}
+    <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    {% csrf_token %}
+    <fieldset>
+      {% if crud == "Create" %}
+        <legend>Create new study population</legend>
+        <span class="help-block">Create a new study population. Each study-population is a associated with an epidemiology study. There may be multiple study populations with a single study, though this is typically unlikely.</span><br>
+      {% elif crud == "Update" %}
+        <legend>Update {{ object }} </legend>
+        <span class="help-block">Update an existing study population.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {% if field.label == "Inclusion criteria" or field.label == "Exclusion criteria" or field.label == "Confounding criteria" %}
+              <div class="row-fluid">
+                <div class="span11">
+                  {{field}}
+                </div>
+                <div class="span1">
+                  <a class ='btn btn-primary' href="{% url 'epi:studycriteria_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new critiera">+</a>
+                </div>
+              </div>
+            {% else %}
+              {{field}}
+            {% endif %}
+            <p class='help-block'>{{field.help_text}}</p>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+    </fieldset>
+
+
+
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} study population</button>
+        {% if crud == "Create" %}
+          <a href='{% url "study:detail" study.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'epi:sp_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
+      $('#id_inclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
+      $('#id_exclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
+      $('#id_confounding_criteria_0').djselectable('option', 'prepareQuery', assessment);
+    });
+  </script>
+{% endblock extrajs %}

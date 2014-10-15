@@ -1,0 +1,84 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{object}} | Downloads | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active"> Downloads <span class="divider">/</span></li>
+{% endblock %}
+
+
+{% block content %}
+  <h1>{{object}} downloads</h1>
+
+  <p class='help-block'>Multiple dataset exports are available, with more to be added soon. </p>
+
+  <ol>
+
+    {% if assessment.enable_literature_review %}
+    <li>
+        <b>Literature-review</b><br>
+        <a class='btn btn-primary' href="{% url 'lit:ref_download_excel' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+    {% endif %}
+
+    {% if assessment.enable_study_quality %}
+    <li>
+        <b>Study bias report</b><br>
+        <a class='btn btn-primary' href="{% url 'study:bias_export' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+    {% endif %}
+
+    {% if assessment.enable_data_extraction %}
+    <li>
+        <b>Animal bioassay data</b><br>
+        <a class='btn btn-primary' href="{% url 'animal:export' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+
+    <li>
+        <b>Epidemiology data</b><br>
+        <a class='btn btn-primary' href="{% url 'epi:export' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+
+    <li>
+        <b>In-vitro data</b><br>
+        <a class='btn btn-primary' href="{% url 'invitro:endpoints_flat' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+    {% endif %}
+
+    {% if assessment.enable_summary_text %}
+    <li>
+        <b>Summary Text (preliminary)</b><br>
+        <a class='btn btn-primary' href="{% url 'summary:word_report' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Word document</p>
+    </li>
+    {% endif %}
+
+    {% if assessment.enable_comments %}
+    <li>
+        <b>Comment summary</b><br>
+        <a class='btn btn-primary' href="{% url 'comments:comment_report' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Word document</p>
+    </li>
+    {% endif %}
+
+  </ol>
+
+    <h3>Additional downloads</h3>
+    <p>In addition to the downloads presented above, the following additional items can be downloaded:</p>
+    <ul>
+        <li>individual study summaries for each study (in Microsoft Word),</li>
+        <li>individual endpoints summaries (including BMD results) (in Microsoft Word),</li>
+        <li>downloads of any visualization (SVG, PNG, PDF, or Microsoft PowerPoint), and</li>
+        <li>a basic API for machine-readable code (<a href="{% url 'api_root' %}">API</a>)</li>
+    </ul>
+    <p>More requests or suggestions? <a target="_blank" href="{% url 'contact' %}">Contact us</a>!</p>
+
+{% endblock %}

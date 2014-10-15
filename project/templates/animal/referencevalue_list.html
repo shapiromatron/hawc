@@ -1,0 +1,22 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Reference Values | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Reference Values<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>Reference Values
+    {% if obj_perms.edit %}
+      <a class='btn btn-primary pull-right' href="{% url 'animal:ref_val_create' assessment.pk %}">Create new</a>
+    {% endif %}
+  </h1>
+
+  {% include "animal/_ref_val_list_tbl.html" %}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | {{study}} | Endpoints | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  <li class="active">Endpoints<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <h1>Available endpoints
+    {% if obj_perms.edit %}
+      <a class='btn btn-primary pull-right' href="{% url 'animal:endpoint_new' study.pk %}">Create new</a>
+    {% endif %}
+  </h1>
+
+  {% include "animal/_endpoint_list_tbl.html" with with_animal_group=False %}
+
+{% endblock %}

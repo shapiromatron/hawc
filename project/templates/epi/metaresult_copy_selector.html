@@ -1,0 +1,81 @@
+{% extends 'epi/metaprotocol_detail.html' %}
+
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{block.super}} | Copy Meta-Result
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs_self %}
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Copy meta-result<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+
+    {% csrf_token %}
+
+    <div class='row-fluid'>
+      <fieldset>
+        <legend>Copy meta-result</legend>
+        <span class="help-block">Select an existing meta-result from all
+          results currently-entered for this study. You will then
+          be taken to a new view to create a new meta-result, but the form
+          will be pre-populated using the values from currently-selected result.</span><br>
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+                {{field}}
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    {# Submission area #}
+    <div class="row-fluid">
+      <div class="form-actions">
+        <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
+        <a href='{{object.get_absolute_url}}' class="btn">Cancel</a>
+      </div>
+    </div>
+
+  </form>
+{% endblock content %}
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+        $('#id_mr_0').djselectable('option', 'prepareQuery', function(qry){
+            qry.related = "{{object.study.pk}}";
+        });
+
+        $('#submit_form').on('click', function(){
+          var val = parseInt($('#id_mr_1').val(), 10),
+              default_url = "{% url 'epi:mr_create' object.pk %}";
+
+          if (val){
+            $(this).attr('href', "{0}?initial={1}".printf(default_url, val));
+            return true;
+          }
+          return false;
+        });
+
+    });
+  </script>
+{% endblock extrajs %}
+

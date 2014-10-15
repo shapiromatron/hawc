@@ -1,0 +1,424 @@
+/*
+We use one-set of styles for all D3 objects so that when generating PNG
+images using other software (i.e. Inkscape), the software doesn't choke on
+unrecognized HTML expressions.
+*/
+
+.d3 {
+  font-family: Arial, Helvetica, sans-serif;
+  border: thin solid black;
+  background-color: white;
+}
+
+.options_menu {
+  padding: 5px;
+  background-color: #eee;
+  border: thin solid black;
+  height: 23px;
+}
+
+.dr_title {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.dr_axis_labels{
+  font-size: 12px;
+}
+
+.legend_text{
+  font-size: 12px;
+  fill: black;
+  stroke-width: 0px;
+}
+
+.dr_tick_text {
+  font-size: 12px;
+}
+
+.reference_text {
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.dr_err_bars {
+  stroke-width:1.5;
+  stroke: #2F516E;
+}
+
+.reference_line {
+  stroke-width:2;
+  stroke: black;
+}
+
+/* dose-response circles */
+circle {
+  r: 8;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+/* dose-response data points */
+.dose_points {
+  fill: #A8B2D3;
+}
+
+/* Data points are individual dose-response points, in boxplot. */
+.data_point_above {
+  fill: red;
+  stroke: black;
+  stroke-width: 0.5px;
+}
+
+.data_point {
+  fill: black;
+  opacity: 0.7;
+}
+
+/* dose-response data points */
+.dose_bars {
+  fill: #A8B2D3;
+  stroke: #666;
+  stroke-width: 2px;
+}
+
+.dose_points:hover {
+  fill: yellow;
+}
+
+/* extra additions to these points */
+.NOAEL {
+  fill: red;
+}
+
+.LOAEL {
+  fill: green;
+}
+
+.BMDL {
+  fill: blue;
+}
+
+rect.bounding_rectangle {
+  fill: none;
+  stroke: #666;
+  stroke-width: 2px;
+}
+
+rect.bounding_rectangle_cover{
+  fill:Gold;
+  fill-opacity:0.1;
+  stroke-width: 4px;
+}
+
+rect.selected_overlay{
+  fill:yellow;
+  fill-opacity:0.5;
+}
+
+/*
+ * UNCERTAINTY FACTOR
+ */
+
+.UFA {
+  fill: blue;
+}
+
+.UFH {
+  fill: red;
+}
+
+.UFS {
+  fill: green;
+}
+
+.UFL {
+  fill: lightgreen;
+}
+
+.UFD {
+  fill: violet;
+}
+
+.UFO {
+  fill: purple;
+}
+
+.uf_bar {
+  stroke: black;
+  stroke-width: 2px;
+  fill-opacity: 0.8;
+}
+
+.hovered_bar {
+  transition: 0.6s;
+  fill-opacity: 1.0;
+}
+
+.unhovered_bar {
+  transition: 0.6s;
+  fill: #ccc;
+}
+
+.uf_label {
+  pointer-events: none;
+  text-anchor: middle;
+  fill:white;
+  stroke: white;
+  stroke-width: 0px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.data_label {
+  pointer-events: none;
+  fill:black;
+  stroke: white;
+  stroke-width: 0px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.pod{
+  fill:yellow;
+}
+
+.rfd{
+  fill:orange;
+}
+
+
+/* LEGEND */
+rect.legend {
+  fill: white;
+  stroke: #666;
+  stroke-width: 2px;
+}
+
+line.primary_gridlines {
+  stroke: white;
+  stroke-width: 2px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+}
+
+.axis text {
+  font-size: 12px;
+}
+
+path.dr_line {
+  fill: none;
+  stroke-width: 3;
+}
+
+.bmd_line line, .bmd_line path{
+  stroke-width:2;
+  fill:none;
+}
+
+.d3modal {
+  background-color: white;
+  padding:10px;
+  border: 2px solid gray;
+}
+
+.d3hovertooltip {
+  position: absolute;
+  background: white;
+  border: 3px solid gray;
+  border-radius: 8px;
+  pointer-events: none;
+  max-width: 700px;
+}
+
+.d3plottooltip{
+  position: absolute !important;
+  background: white;
+  border: 3px solid gray;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.d3plottooltip .popover-title{
+  cursor: pointer;
+}
+
+.scorebox{
+  display: inline-block;
+  width: 30px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  margin-right: 5px;
+  margin-bottom: 3px;
+}
+
+td.scorecell {
+  width: 50px;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #ddd;
+  color: white;
+}
+
+td.domain_cell {
+  color: #757575;
+}
+
+ol.score-details{
+  list-style-type: none;
+}
+
+path.donuts {
+  stroke: white;
+  stroke-width: 2;
+}
+
+path.domain_arc {
+  fill: #ddd;
+}
+
+path.metric_arc {
+  cursor: pointer;
+}
+
+text.domain_arc {
+  fill: #757575;
+}
+
+path.donuts.hovered {
+  fill:#87CEFF;
+}
+
+text.arc_label {
+  pointer-events: none;
+  fill: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.heatmap_selectable{
+  cursor: pointer;
+}
+
+rect.heatmap_selectable{
+  stroke: gray;
+  stroke-width: 2px;
+}
+
+text.heatmap_selectable:hover{
+  font-weight: bold;
+}
+
+rect.heatmap_hovered {
+  stroke: yellow;
+  stroke-width: 6;
+  fill: white;
+  fill-opacity: 0.5;
+  pointer-events: none;
+}
+
+
+/*
+ * Crossview Plot
+ */
+
+path.crossview_paths {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 3px;
+
+  cursor: pointer;
+}
+
+text.crossview_title{
+  font-weight: bold;
+}
+
+text.crossview_fields{
+  cursor: pointer;
+}
+
+path.crossview_selected {
+ stroke: #6495ed;
+}
+
+text.crossview_selected {
+  fill: #6495ed;
+  font-weight: bold;
+}
+
+path.crossview_hover {
+ stroke: #ff4040;
+}
+
+text.crossview_hover {
+  fill: #ff4040;
+  font-weight: bold;
+}
+
+path.crossview_path_hover {
+ stroke: #ff4040;
+}
+
+text.crossview_path_hover {
+  fill: #ff4040;
+  font-weight: bold;
+}
+
+/*
+ * Tag Tree layout
+ */
+.tagnode circle {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 2.5px;
+}
+
+.tagnode text {
+  font-size: 11px;
+  pointer-events: none;
+  font-weight: bold;
+}
+
+path.tagslink {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 3.5px;
+}
+
+
+/*
+ * Data Pivot
+ */
+
+.dp_bg{
+  fill: #eee;
+}
+
+.dp_header{
+  stroke: #666;
+  stroke-width: 2px;
+}
+
+.dp_text_bg{
+  fill: #f6f5f9;
+}
+
+/*
+ * Duplicate of hawc.css but required for image building
+ */
+.hidden {
+    display:none;
+}

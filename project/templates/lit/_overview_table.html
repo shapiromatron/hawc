@@ -1,0 +1,24 @@
+<table class="table table-condensed table-hover">
+    <tbody>
+        <tr>
+            <th>Total References</th>
+            <td>{{overview.total_references}}</td>
+        </tr>
+        <tr>
+            <th>Total Tagged</th>
+            <td>{{overview.total_tagged}}</td>
+        </tr>
+        <tr>
+            <th>Total Untagged</th>
+            <td>{{overview.total_untagged}}</td>
+        </tr>
+        <tr>
+            <th>Reference details</th>
+            <td>
+                <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">View by tag</a>
+                <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+                <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

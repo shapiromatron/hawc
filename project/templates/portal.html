@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+
+{% block title %}
+  Portal | HAWC
+{% endblock %}
+
+{% block branding %}
+  <a class="brand" href="{% url 'portal' %}">HAWC</a>
+{% endblock %}
+
+{% block topnavbar %}
+  <div class="btn-group pull-right">
+    {% if user.is_anonymous %}
+      <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
+    {% else %}
+      <button href="#" class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown">Settings <i class="icon-cog icon-white"></i></button>
+      <ul class="dropdown-menu">
+        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+        <li><a href="{% url 'documentation' %}">Documentation</a></li>
+        <li><a href="{% url 'portal' %}">Portal</a></li>
+        <li><a href="{% url 'user:settings' %}">Settings</a></li>
+        <li><a href="{% url 'api_root' %}">API</a></li>
+        {% if user.is_staff %}
+          <li class="divider"></li>
+          <li><a href="{%url 'admin:index' %}">Admin</a></li>
+          {% if user.is_superuser %}
+           <li><a href="{% url 'assessment:full_list' %}">Superuser assessments list</a></li>
+          {% endif %}
+        {% endif %}
+        <li class="divider"></li>
+        <li><a href="{% url 'user:logout' %}">Logout</a></li>
+      </ul>
+   {% endif %}
+  </div>
+{% endblock %}
+
+{% block messages_base %}{% endblock messages_base %}
+
+{% block main_content %}
+
+  <div class="row-fluid">
+    <ul class="breadcrumb">
+      {% if user.is_authenticated %}
+        <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
+      {% else %}
+        <li class="active"><a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span></li>
+      {% endif %}
+      {% block breadcrumbs %}
+      {% endblock %}
+    </ul>
+  </div>
+
+  {% block messages %}
+    {% include "messages.html" %}
+  {% endblock messages %}
+
+  <div class="row-fluid">
+    <div id='sidebar' class="span3 well" style="max-width: 300px;">
+      {% include "assessment/sidebar.html" %}
+    </div>
+
+    <div id='sidebar_mini' style="display: none; margin-left: 0%; max-width: 10px">
+      <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
+    </div>
+
+    <!--Body content-->
+    <div id="content" class="span9">
+      <div class="{% block content_type %}{% endblock %}">
+        {% block content %}{% endblock %}
+        <br class="clear" />
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block portaljs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var visible = true,
+          trigger_resize = function(){$(window).trigger("resize");};
+
+      $('.toggle_sidebar').click(function(e){
+        e.preventDefault();
+        if(visible){
+          $("#sidebar").fadeOut(function(){
+            $("#content").addClass("span11");
+            $("#content").removeClass("span9");
+            $('#sidebar_mini').fadeIn(trigger_resize);
+          });
+        } else {
+          $('#sidebar_mini').fadeOut(function(){
+            $("#content").addClass("span9");
+            $("#content").removeClass("span11");
+            $('#sidebar').fadeIn(trigger_resize);
+          });
+        }
+        visible = !visible;
+      });
+    });
+  </script>
+{% endblock portaljs %}
+

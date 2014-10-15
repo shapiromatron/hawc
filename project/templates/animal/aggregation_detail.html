@@ -1,0 +1,107 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Aggregations | {{object}} | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li class=""><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li class=""><a href="{% url 'animal:aggregation_list' assessment.pk %}">Aggregations</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <h1>{{object}}
+    {% if crud == "Read" and obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {% if obj_perms.edit %}
+            <li class="disabled"><a tabindex="-1" href="#">Aggregation Editing</a></li>
+            <li><a href="{% url 'animal:aggregation_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'animal:aggregation_delete' object.pk %}">Delete</a></li>
+            <li><a href="{% url 'animal:aggregation_versions' object.pk %}">View prior versions</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <div class="row-fluid">
+
+    <div id='plot_agg'>
+      <h2>Visualization</h2>
+      <div id="plot_div" class="d3_container in"></div>
+    </div>
+
+    <h2>Summary Table
+      <a class="btn btn-small" id="table_toggle"><i class="icon-chevron-right"></i></a>
+    </h2>
+    <div id='tbl_agg'></div>
+
+    <div id="endpoint_details" style="display:none">
+      <a class="close" href="#" style="z-index:right;">&times;</a>
+      <h4></h4>
+      <div class="row-fluid">
+        <div class="span7"><table id="dr-tbl" class="table table-condensed table-striped"></table></div>
+        <div class="span5"><div id="dr-plot" style="max-width:400px;" class="d3_container"></div></div>
+      </div>
+    </div>
+
+    <div id='summary_text'>
+      <h2>Summary Text</h2>
+      <div id='summary_text_div'>
+        <p>{{ object.summary_text|safe }}</p>
+      </div>
+    </div>
+
+    {% if crud == "Read" %}
+
+      {% if object.aggregation_type == "CD" %}
+        <div id='ufs'>
+          <h2>Uncertainty Factors</h2>
+          <div id='summary_text_div'>
+            <p>Uncertainty factors are associated with this set of endpoints.</p>
+            <div class='well'>
+              <a class='btn btn-primary' href="{% url 'animal:ufs_agg_read' object.pk %}">View Endpoint Uncertainty Factors</a>
+              {% if obj_perms.edit %}
+                <a class='btn btn-primary' href="{% url 'animal:ufs_agg_edit' object.pk %}">Edit Endpoint Uncertainty Factors</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div id="comments_block"></div>
+    {% endif %}
+
+  </div>
+{% endblock content %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/aggregation.js" type="text/javascript"></script>
+  {% if crud == "Read" %}
+    {% include "comments/_comments_extrajs.html" %}
+  {% endif %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      var endpoints = [];
+      {{object.get_endpoints_json|safe}}.forEach(function(v, i){
+        endpoints.push(new Endpoint(v));
+      });
+
+      var options = {"build_table_startup": true,
+                     "$tbl_div" : $('#tbl_agg'),
+                     "build_plot_startup": true,
+                     "$plot_div" : $('#plot_div')};
+
+      window.aggregation = new Aggregation(endpoints, "{{object.name}}", options);
+    });
+  </script>
+{% endblock %}
+
+

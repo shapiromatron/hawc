@@ -1,0 +1,22 @@
+{% extends 'portal.html' %}
+
+{% block title %}{{assessment}} | Epidemiology Studies | {{object}} | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'epi:epistudy_list' assessment.pk %}">Epidemiology studies</a><span class="divider">/</span></li>
+  <li class="active">{{object}}<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <h1>{{object}}</h1>
+  {% include "study/_study_detail.html" %}
+  <h2>Available study populations</h2>
+  <ul>
+      {% for sp in object.study_populations.all %}
+        <li><a href="{{sp.get_absolute_url}}">{{sp}}</a></li>
+      {% empty %}
+        <li><i>No study populations are available for this study.</i></li>
+      {% endfor %}
+  </ul>
+{% endblock %}

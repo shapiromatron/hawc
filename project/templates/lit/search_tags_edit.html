@@ -1,0 +1,35 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | {{object}} | Edit Tags | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
+  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  <li class="active">Edit Tags<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <div id="reference_details"></div>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      {% if obj_perms.edit_assessment %}
+        window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
+      {% endif %}
+      window.tagtree = new TagTree({{tags|safe}});
+      window.refs = [];
+      {% for ref in references %}
+        refs.push(new Reference({{ref.get_json|safe}}, window.tagtree));
+      {% endfor %}
+      window.ref_container = new EditReferenceContainer(window.refs, window.tagtree,
+                                    {"content_div": "#reference_details"});
+    });
+  </script>
+{% endblock extrajs %}

@@ -1,0 +1,102 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{assessment}} |
+  {% if crud == "Create" %}
+    {{study}} | Create Meta-Protocol
+  {% elif crud == "Update" %}
+    {{object.study}} | Update {{object}}
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{{study.get_absolute_url}}">{{study}}</a><span class="divider">/</span></li>
+    <li class="active">Create meta-protocol</li>
+  {% elif crud == "Update" %}
+    <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    {% csrf_token %}
+    <fieldset>
+      {% if crud == "Create" %}
+        <legend>Create new meta-protocol</legend>
+        <span class="help-block">Create a new meta-protocol for an epidemiological
+          assessment. A meta-protocol contains the methodology behind a meta-analysis
+          or pooled analysis, which are frequently used epidemiological techniques
+          used to quantitatively summarize results from multiple studies or reference
+          populations.</span><br>
+      {% elif crud == "Update" %}
+        <legend>Update {{ object }} </legend>
+        <span class="help-block">Update an existing meta-protocol.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {% if field.label == "Inclusion criteria" or field.label == "Exclusion criteria" %}
+              <div class="row-fluid">
+                <div class="span11">
+                  {{field}}
+                </div>
+                <div class="span1">
+                  <a class ='btn btn-primary' href="{% url 'epi:studycriteria_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new critiera">+</a>
+                </div>
+              </div>
+            {% else %}
+              {{field}}
+            {% endif %}
+            <p class='help-block'>{{field.help_text}}</p>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+    </fieldset>
+
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} meta-protocol</button>
+        {% if crud == "Create" %}
+          <a href='{% url "study:detail" study.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'epi:mp_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
+      $('#id_inclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
+      $('#id_exclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
+
+      var datepicker_settings = {showAnim: "slideDown",
+                                 changeMonth: true,
+                                 changeYear: true,
+                                 yearRange: '1930 : * '};
+      $('#id_lit_search_start_date, #id_lit_search_end_date').datepicker(datepicker_settings);
+    });
+  </script>
+{% endblock extrajs %}

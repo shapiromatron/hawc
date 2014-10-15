@@ -1,0 +1,94 @@
+
+
+ ==================================================================== 
+   	  Probit Model. (Version: 3.2;  Date: 10/28/2009) 
+  	  Input Data File: C:/Temp/hawc/bmd test cases/1-dichotomous-tc-Probit-10%.(d)  
+  	  Gnuplot Plotting File:  C:/Temp/hawc/bmd test cases/1-dichotomous-tc-Probit-10%.plt
+ 							Fri Jan 25 00:03:26 2013
+ ==================================================================== 
+
+ BMDS_Model_Run 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   The form of the probability function is: 
+
+   P[response] = CumNorm(Intercept+Slope*Dose),
+
+   where CumNorm(.) is the cumulative normal distribution function
+
+
+   Dependent variable = Incidence
+   Independent variable = Dose
+   Slope parameter is not restricted
+
+   Total number of observations = 4
+   Total number of records with missing values = 0
+   Maximum number of iterations = 250
+   Relative Function Convergence has been set to: 1e-008
+   Parameter Convergence has been set to: 1e-008
+
+
+
+                  Default Initial (and Specified) Parameter Values  
+                     background =            0   Specified
+                      intercept =     -1.33155
+                          slope =   0.00305238
+
+
+           Asymptotic Correlation Matrix of Parameter Estimates
+
+           ( *** The model parameter(s)  -background   
+                 have been estimated at a boundary point, or have been specified by the user,
+                 and do not appear in the correlation matrix )
+
+              intercept        slope
+
+ intercept            1        -0.77
+
+     slope        -0.77            1
+
+
+
+                                 Parameter Estimates
+
+                                                         95.0% Wald Confidence Interval
+       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit
+      intercept         -1.28666         0.261575            -1.79934           -0.773988
+          slope       0.00280672       0.00119785         0.000458973          0.00515446
+
+
+
+                        Analysis of Deviance Table
+
+       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value
+     Full model        -36.6201         4
+   Fitted model        -37.2272         2       1.21417      2          0.5449
+  Reduced model        -40.0322         1       6.82414      3         0.07772
+
+           AIC:         78.4544
+
+
+                                  Goodness  of  Fit 
+                                                                 Scaled
+     Dose     Est._Prob.    Expected    Observed     Size       Residual
+  ------------------------------------------------------------------------
+    0.0000     0.0991         1.982     1.000          20       -0.735
+   50.0000     0.1258         2.517     3.000          20        0.326
+  150.0000     0.1933         3.867     5.000          20        0.642
+  350.0000     0.3804         7.609     7.000          20       -0.280
+
+ Chi^2 = 1.14      d.f. = 2        P-value = 0.5665
+
+
+   Benchmark Dose Computation
+
+Specified effect =            0.1
+
+Risk Type        =      Extra risk 
+
+Confidence level =           0.95
+
+             BMD =        144.581
+
+            BMDL =        99.9959
+

@@ -1,0 +1,87 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{object.study}} | {{object}} | HAWC
+{% endblock title %}
+
+
+{% block breadcrumbs %}
+  <li class=""><a href="{{ assessment.get_absolute_url }}">{{assessment}}</a><span class="divider">/</span></li>
+  <li class=""><a href="{{ object.study.get_absolute_url }}">{{object.study}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{ object }}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+    <h1>{{object}}
+      {% if obj_perms.edit %}
+        <div class="btn-group pull-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+              <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
+              <li><a href="{% url 'animal:experiment_update' object.pk %}">Update</a></li>
+              <li><a href="{% url 'animal:experiment_delete' object.pk %}">Delete</a></li>
+              {% comment %} <!-- <li><a href="{% url 'animal:experiment_versions' object.pk %}">View prior versions</a></li> --> {% endcomment %}
+              <li class="divider"></li>
+              <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
+              <li><a href="{% url 'animal:animal_group_new' object.pk %}">Create new</a></li>
+          </ul>
+        </div>
+      {% endif %}
+    </h1>
+
+    <table class="table table-condensed table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr><th>Name</th><td>{{object.name}}</td></tr>
+        <tr><th>Type</th><td>{{object.get_type_display}}</td></tr>
+        <tr><th>Multiple generations</th><td>{{object.is_generational}}</td></tr>
+        {% if object.cas %}
+          <tr><th>Chemical CAS and information</th><td id="chem_details">{{object.cas}}</td></tr>
+        {% endif %}
+        {% if object.purity_available %}
+          <tr><th>Chemical Purity</th><td>{{object.purity}}%</td></tr>
+        {% else %}
+          <tr><th>Chemical Purity available</th><td>{{object.purity_available}}</td></tr>
+        {% endif %}
+        <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+      </tbody>
+    </table>
+
+  {% if crud == "Read" %}
+    <h2>Available animal groups</h2>
+    {% include "animal/_animal_group_list_tbl.html" with object_list=object.animal_groups.all %}
+
+    <div id="comments_block"></div>
+  {% endif %}
+{% endblock %}
+
+
+{% block extrajs %}
+  {% if crud == "Read" %}
+    {% include "comments/_comments_extrajs.html" %}
+
+    {% if object.cas %}
+      <script type="text/javascript">
+        $(document).on('ready', function(){
+          $.get("{% url 'assessment:cas_details' %}?cas={{ object.cas|iriencode }}", function(d){
+            if(d.status==="success"){
+              var chem_data = $('<div>').appendTo($('#chem_details')),
+                  chem_builder = ChemicalPropertiesTableBuilder(d, chem_data, false);
+            }
+          });
+        });
+      </script>
+    {% endif %}
+
+  {% endif %}
+{% endblock extrajs %}

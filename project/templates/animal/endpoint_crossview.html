@@ -1,0 +1,53 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}{{assessment}} | Endpoint Crossview | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Endpoint Crossview<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>HAWC Crossview</h1>
+  <div id="crossview"></div>
+
+
+  <br><br><br><br><br><br>
+  <form id="endpoint" class="form-horizontal" action="." method="get">
+    <fieldset>
+      <legend>Change Dose Units</legend>
+      <span class="help-block">View chart with different dose-units.</span><br>
+        <div class="control-group form-row">
+          <label for="id_dose_units" class="control-label">Dose Units</label>
+          <div class="controls">
+            <select name="dose_pk" id="dose_pk">
+              {% for dose in doses %}
+                <option value="{{dose.pk}}">{{dose}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      <div class="span12 form-actions">
+        {% csrf_token %}
+        <button id='units_change' type="submit" class="btn btn-primary">Change Units</button>
+      </div>
+    </fieldset>
+  </form>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/crossview.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.endpoints = [];
+      {{endpoints_json|safe}}.forEach(function(datum){
+        window.endpoints.push(new Endpoint(datum));
+      });
+      window.crossview = new Crossview(endpoints, '#crossview');
+    });
+  </script>
+{% endblock %}

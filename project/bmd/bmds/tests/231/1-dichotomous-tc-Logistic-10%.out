@@ -1,0 +1,92 @@
+
+
+ ==================================================================== 
+   	  Logistic Model. (Version: 2.13; Date: 10/28/2009) 
+  	  Input Data File: C:/Temp/hawc/bmd test cases/1-dichotomous-tc-Logistic-10%.(d)  
+  	  Gnuplot Plotting File:  C:/Temp/hawc/bmd test cases/1-dichotomous-tc-Logistic-10%.plt
+ 							Fri Jan 25 00:03:26 2013
+ ==================================================================== 
+
+ BMDS_Model_Run 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   The form of the probability function is: 
+
+   P[response] = 1/[1+EXP(-intercept-slope*dose)]
+
+
+   Dependent variable = Incidence
+   Independent variable = Dose
+   Slope parameter is not restricted
+
+   Total number of observations = 4
+   Total number of records with missing values = 0
+   Maximum number of iterations = 250
+   Relative Function Convergence has been set to: 1e-008
+   Parameter Convergence has been set to: 1e-008
+
+
+
+                  Default Initial Parameter Values  
+                     background =            0   Specified
+                      intercept =     -2.12994
+                          slope =   0.00494818
+
+
+           Asymptotic Correlation Matrix of Parameter Estimates
+
+           ( *** The model parameter(s)  -background   
+                 have been estimated at a boundary point, or have been specified by the user,
+                 and do not appear in the correlation matrix )
+
+              intercept        slope
+
+ intercept            1         -0.8
+
+     slope         -0.8            1
+
+
+
+                                 Parameter Estimates
+
+                                                         95.0% Wald Confidence Interval
+       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit
+      intercept         -2.16112         0.482485            -3.10678            -1.21547
+          slope       0.00476052       0.00205934         0.000724288          0.00879675
+
+
+
+                        Analysis of Deviance Table
+
+       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value
+     Full model        -36.6201         4
+   Fitted model        -37.2846         2       1.32887      2          0.5146
+  Reduced model        -40.0322         1       6.82414      3         0.07772
+
+           AIC:         78.5691
+
+
+                                  Goodness  of  Fit 
+                                                                 Scaled
+     Dose     Est._Prob.    Expected    Observed     Size       Residual
+  ------------------------------------------------------------------------
+    0.0000     0.1033         2.066     1.000          20       -0.783
+   50.0000     0.1275         2.550     3.000          20        0.301
+  150.0000     0.1905         3.809     5.000          20        0.678
+  350.0000     0.3787         7.575     7.000          20       -0.265
+
+ Chi^2 = 1.23      d.f. = 2        P-value = 0.5395
+
+
+   Benchmark Dose Computation
+
+Specified effect =            0.1
+
+Risk Type        =      Extra risk 
+
+Confidence level =           0.95
+
+             BMD =        153.403
+
+            BMDL =        106.881
+

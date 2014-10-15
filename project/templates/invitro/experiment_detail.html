@@ -1,0 +1,45 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}{{assessment}} | {{object.study}} | {{object}} {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
+  <li class="active">{{object}}<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if obj_perms.edit and crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            {% comment %}
+            <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
+            <li><a href="{% url 'epi:sp_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'epi:sp_delete' pk=object.pk %}">Delete</a></li>
+            <li><a href="{% url 'animal:experiment_versions' object.pk %}">View prior versions</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
+            <li><a href="{% url 'epi:exposure_create' object.pk %}">Create new</a></li>
+            {% endcomment %}
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  {% include "invitro/_experiment_detail.html" %}
+
+  <h2>Available endpoints</h2>
+  <ul>
+    {% for endpoint in object.endpoints.all %}
+      <li><a href="{{endpoint.get_absolute_url}}">{{endpoint}}</a></li>
+    {% empty %}
+      <li><i>No endpoints are available for this experiment.</i></li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}

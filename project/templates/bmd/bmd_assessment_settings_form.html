@@ -1,0 +1,44 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{ object.assessment }} - {{crud}} BMD Options | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'bmd:assess_settings_detail' assessment.pk %}">BMD Settings</a><span class="divider">/</span></li>
+  <li class="active"> {{crud}} <span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    <fieldset>
+      <legend>Update  {{ object }} </legend>
+      <span class="help-block">Update BMD assessment settings.</span><br>
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field|add_class:"span12"}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} BMD settings</button>
+        {% if crud == "Update" %}
+          <a href="{% url 'bmd:assess_settings_detail' assessment.pk %}" class="btn">Cancel</a>
+        {% else %}
+          <a href="{% url 'assessment:detail' assessment.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+      {% csrf_token %}
+    </fieldset>
+  </form>
+{% endblock %}

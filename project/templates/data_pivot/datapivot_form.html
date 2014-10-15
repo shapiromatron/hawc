@@ -1,0 +1,80 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | {{crud}} Data Pivot | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'data_pivot:list' pk=assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+  {% if crud == "Update" %}
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% endif %}
+  <li class="active">{{crud}}<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
+    <fieldset>
+      {% if crud == "Create" %}
+        <legend>Create new data pivot</legend>
+        <span class="help-block">Create a new data pivot.</span><br>
+      {% elif crud == "Update" %}
+         <legend>Update  {{ object }} </legend>
+         <span class="help-block">Update an existing data pivot.</span><br>
+      {% endif %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field|add_class:"span12"}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} data pivot</button>
+        {% if crud == "Create" %}
+          <a href="{% url 'data_pivot:list' assessment.pk %}" class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}admin/js/urlify.js" type="text/javascript" ></script>
+  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#id_title').on('keyup', function(){
+        $('#id_slug').val(URLify($(this).val(), 50));
+      });
+
+      $('#id_caption').wysihtml5({"stylesheets": false});
+
+      {% if file_loader %}
+        $('#id_file').closest('div').find('span').append('<p class="help-block">For more details on saving in this format from Excel, <a href="{% url 'data_pivot:excel-unicode' %}" target="_blank">click here</a>.</p>')
+      {% endif %}
+
+    })
+
+  </script>
+{% endblock extrajs %}

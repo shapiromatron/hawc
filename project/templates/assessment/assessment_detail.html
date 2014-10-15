@@ -1,0 +1,166 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{object}} | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li  class="active">{{object}}<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+  <h1>{{object}}
+    {% if crud == "Read" and obj_perms.edit_assessment %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
+          <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
+          <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
+          <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
+          <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
+          {% if assessment.enable_reference_values %}
+            <li class="divider"></li>
+            <li class="disabled"><a tabindex="-1" href="#">Reference Values</a></li>
+            <li><a href="{% url 'animal:ref_val_create' object.pk %}">Create new</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <table id="assessment_table" class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+
+      <tr>
+        <th>Assessment Name</th>
+        <td>{{object.name}}</td>
+      </tr>
+
+      {% if object.cas %}
+        <tr>
+          <th>CAS Number</th>
+          <td>{{object.cas}}</td>
+        </tr>
+      {% endif %}
+
+      <tr>
+        <th>Year</th>
+        <td>{{object.year}}</td>
+      </tr>
+
+      <tr>
+        <th>Version</th>
+        <td>{{object.version}}</td>
+      </tr>
+
+      {% if assessment.enable_study_quality %}
+      <tr>
+        <th>Study Quality Review Settings</th>
+        <td><a href="{% url 'study:asq_detail' pk=object.pk %}">View</a></td>
+      </tr>
+      {% endif %}
+
+      {% if assessment.enable_bmd %}
+      <tr>
+        <th>BMDS Settings</th>
+        <td><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">View</a></td>
+      </tr>
+      {% endif %}
+
+      {% if assessment.enable_comments %}
+      <tr>
+        <th>Public Comment Settings</th>
+        <td><a href="{% url 'comments:comment_settings_details' object.pk %}">View</a></td>
+      </tr>
+      {% endif %}
+
+      {% if obj_perms.edit_assessment %}
+        <tr>
+          <th>Project Manager(s)</th>
+          <td>
+            <ul>
+              {% for m in object.project_manager.all %}
+                <li> {{ m.get_full_name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Team Member(s)</th>
+          <td>
+            <ul>
+              {% for m in object.team_members.all %}
+                <li> {{ m.get_full_name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Reviewer(s)</th>
+          <td>
+            <ul>
+              {% for m in object.reviewers.all %}
+                <li> {{ m.get_full_name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+      {% endif %}
+
+      <tr>
+        <th>Editable</th>
+        <td>{{object.editable}}</td>
+      </tr>
+
+      <tr>
+        <th>Public</th>
+        <td>{{object.public}}</td>
+      </tr>
+
+      <tr>
+        <th>Date Created</th>
+        <td>{{object.created}}</td>
+      </tr>
+
+      <tr>
+        <th>Last Updated</th>
+        <td>{{object.changed}}</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  {% if crud == "Read" and assessment.enable_reference_values and object.reference_values.count > 0 %}
+    <h2>Reference Values</h2>
+    {% include "animal/_ref_val_list_tbl.html" with object_list=object.reference_values.all %}
+
+    <div id="comments_block"></div>
+  {% endif %}
+
+{% endblock content %}
+
+{% block extrajs %}
+  {% include "comments/_comments_extrajs.html" %}
+
+  {% if crud == "Read" and object.cas %}
+    <script type="text/javascript">
+      $(document).on('ready', function(){
+        $.get("{% url 'assessment:cas_details' %}?cas={{ object.cas|iriencode }}", function(d){
+          if(d.status==="success"){
+            var chem_data = $('<div>').insertAfter($('#assessment_table')),
+                chem_builder = ChemicalPropertiesTableBuilder(d, chem_data, true);
+          }
+        });
+      });
+    </script>
+  {% endif %}
+
+{% endblock extrajs %}

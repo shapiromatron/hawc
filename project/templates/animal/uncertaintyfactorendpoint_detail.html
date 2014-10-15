@@ -1,0 +1,56 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{object.endpoint.study}} | {{object.endpoint}} | {% if crud == "Delete" %}Delete {% endif %}UF | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.endpoint.animal_group.experiment.study.pk %}">{{object.endpoint.animal_group.experiment.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:experiment_detail' object.endpoint.animal_group.experiment.pk %}">{{object.endpoint.animal_group.experiment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:animal_group_detail' object.endpoint.animal_group.pk %}">{{object.endpoint.animal_group}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:endpoint_detail' object.endpoint.pk %}">{{object.endpoint}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:ufs_list' object.endpoint.pk %}">Uncertainty Factors</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object.uf_type}} Uncertainty Factor
+    {% if crud == "Read" and obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'animal:uf_edit' object.pk %}">Update UF</a></li>
+          <li><a href="{% url 'animal:uf_delete' object.pk %}">Delete UF</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 25%;">
+      <col style="width: 75%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th>UF Type</th><td>{{object.uf_type}}</td></tr>
+      <tr><th>Description</th><td>{{object.get_uf_type_display}}</td></tr>
+      <tr><th>Value</th><td>{{object.value|floatformat:"-3"}}</td></tr>
+    <tr><th>Justification</th><td>{{object.description}}</td></tr>
+      <tr><th>Date Created</th><td>{{object.created}}</td></tr>
+      <tr><th>Last Updated</th><td>{{object.updated}}</td></tr>
+    </tbody>
+  </table>
+
+{% endblock content %}
+

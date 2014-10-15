@@ -1,0 +1,46 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{object.assessment}} | Study | Search | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Read" %}
+    <li class="active">Study Search<span class="divider">/</span></li>
+  {% endif %}
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <form class="form" action="." method="post">
+    <fieldset>
+       <legend>Study Search</legend>
+       <span class="help-block">Search for a different studies.</span>
+       <br>
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          <div class="controls">
+            {{field}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+
+{% endblock %}
+

@@ -1,0 +1,15 @@
+{% extends 'epi/metaresult_detail.html' %}
+
+{% block title %}
+  {{ block.super }} | Delete
+{% endblock title %}
+
+{% block breadcrumbs_self %}
+  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  <li class="active">Delete<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+  {{ block.super }}
+  {% include "hawc/_delete_block.html" with name="meta-result" notes="All individual-study results NOT tied to existing studies in HAWC will be removed." %}
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load url from future %}
+{% load add_class %}
+
+{% block title %}
+  Login | HAWC
+{% endblock %}
+
+{% block branding %}
+  <a class="brand" href="/">Health Assessment Workspace Collaborative (HAWC)</a>
+{% endblock %}
+
+{% block messages %}
+
+  {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
+    <div class="alert alert-error">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% blocktrans count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </div>
+  {% endif %}
+
+  {% if form.non_field_errors or form.this_is_the_login_form.errors %}
+    {% for error in form.non_field_errors|add:form.this_is_the_login_form.errors %}
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ error }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+{% endblock messages %}
+
+{% block main_content %}
+
+  <div class='row-fluid'>
+    <div class="span6 offset1">
+      <form class="form-horizontal" action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <fieldset>
+          <legend>Login to HAWC</legend>
+
+            {% for field in form %}
+              <div class="control-group form-row">
+                {{field.label_tag|add_class:"control-label"}}
+                <div class="controls">
+                  {{field}}<br>
+                  {% if field.errors %}
+                    <div class="alert alert-error">
+                    {% for err in field.errors %}{{err}}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-error">
+              {% for err in form.non_field_errors %}{{err}}{% endfor %}
+              </div>
+            {% endif %}
+
+          <div class="form-actions control-group submit-row">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+            <a href='/' class='btn'>Cancel</a><br><br>
+            <a href="{% url 'user:reset_password' %}">Forgot your password?</a>
+          </div>
+
+        </fieldset>
+      </form>
+    </div>
+
+
+    <div class= "span4">
+      <form class="form-horizontal">
+        <legend>New to HAWC?</legend>
+        <span class="help-block">Registration only takes a few seconds and will give a good overview of what HAWC has to offer.</span>
+        <div class="form-actions control-group submit-row">
+          <a href={% url 'user:new' %} class='btn btn-primary offset2 span8' style="text-align:center">Signup</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    document.getElementById('id_username').focus()
+  </script>
+{% endblock %}

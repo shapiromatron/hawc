@@ -1,0 +1,100 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | Searches & Imports | {{object}} | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object.title}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {% if obj_perms.edit and object.search_type == 's' %}
+            <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update search</a></li>
+            <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete search</a></li>
+          {% endif %}
+          <li><a href="{% url 'lit:search_download_excel' object.assessment.pk object.slug %}">Download to Excel</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+      <tr><th>Description</th><td>{{object.description}}</td></tr>
+      <tr><th>Search Type</th><td>{{object.get_search_type_display}}</td></tr>
+      <tr><th>Search Database</th><td>{{object.get_source_display}}</td></tr>
+      <tr><th>Search Text</th><td>{{object.search_string}}</td></tr>
+      <tr><th>Created</th><td>{{object.created}}</td></tr>
+      <tr><th>Last Updated</th><td>{{object.last_updated}}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="row-fluid">
+    <h3>Literature Tagging Statistics</h3>
+    <table class="table table-condensed table-hover">
+      <tbody>
+          <tr>
+              <th>Total References</th>
+              <td>{{object.references_count}}</td>
+          </tr>
+          <tr>
+              <th>Total Tagged</th>
+              <td>{{object.references_tagged_count}}</td>
+          </tr>
+          <tr>
+              <th>Total Untagged</th>
+              <td>{{object.references_untagged_count}}</td>
+          </tr>
+          <tr>
+              <th>Reference details</th>
+              <td>
+                <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
+                <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
+              </td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {% if crud == "Read" %}
+    {% if object.get_source_display == "Manually imported" %}
+      {% if obj_perms.edit %}
+        <div class="well">
+          <a class="btn btn-primary" href="{% url 'study:new_ref' assessment.pk %}">Create new reference</a>
+        </div>
+      {% endif %}
+    {% elif object.search_type == "i"  %}
+      {% include "lit/_import_list.html" %}
+    {% elif object.get_source_display == "PubMed" %}
+      {% include "lit/_pubmedqueries_list.html" %}
+    {% endif %}
+  {% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#run_search').on('click', function(e){
+        $('#loading_div').show();
+        return true;
+    });
+  });
+</script>
+{% endblock %}

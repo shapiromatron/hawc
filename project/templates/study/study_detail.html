@@ -1,0 +1,111 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{object.assessment}} | {{object}} | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' object.assessment.pk %}">{{ object.assessment }}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <h1>{{object}}
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
+        <li><a href="{% url 'study:report' object.pk %}">Download report</a></li>
+        {% if obj_perms.edit %}
+          <li class="divider"></li>
+          <li class="disabled"><a tabindex="-1" href="#">Study Editing</a></li>
+          <li><a href="{% url 'study:update' object.pk %}">Update</a></li>
+          <li><a href="{% url 'study:delete' object.pk %}">Delete</a></li>
+          <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
+          <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
+
+          {% if assessment.enable_study_quality %}
+            <li class="divider"></li>
+            <li class="disabled"><a tabindex="-1" href="#">Study Bias Editing</a></li>
+            {% if object.qualities.count == 0 %}
+              <li><a href="{% url 'study:sq_new' object.pk %}">Create</a></li>
+            {% else %}
+              <li><a href="{% url 'study:sq_update' object.pk %}">Update</a></li>
+            {% endif %}
+          {% endif %}
+
+          <li class="divider"></li>
+          {% if object.study_type == 0 %}
+            <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
+            <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new</a></li>
+          {% elif object.study_type == 1 %}
+            <li class="disabled"><a tabindex="-1" href="#">Study Population</a></li>
+            <li><a href="{% url 'epi:sp_create' object.pk %}">Create new</a></li>
+          {% elif object.study_type == 4 %}
+            <li class="disabled"><a tabindex="-1" href="#">Meta-analysis</a></li>
+            <li><a href="{% url 'epi:mp_create' object.pk %}">Create new</a></li>
+          {% endif %}
+
+        {% endif %}
+      </ul>
+    </div>
+  </h1>
+
+  <div id="study_details"></div>
+
+  {% if crud == "Read" %}
+
+    {% if assessment.enable_study_quality and object.qualities.count > 0 %}
+      <div class="row-fluid">
+          <h3>Study-bias visualization
+            <a class="btn btn-primary pull-right" href="{% url 'study:sq_detail' object.pk %}">View details</a>
+          </h3>
+          <div class="span12">
+            <div id='sq_plot' class="d3_container"></div>
+          </div>
+      </div>
+    {% endif %}
+
+    {% if study.study_type == 0 %}
+      <h2>Available experiments</h2>
+      {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
+    {% elif study.study_type == 1 %}
+      <h2>Available study populations</h2>
+      {% include "epi/_study_population_list.html" with object_list=object.study_populations.all %}
+    {% elif study.study_type == 2 %}
+      <h2>Available experiments</h2>
+      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
+    {% elif study.study_type == 4 %}
+      <h2>Available epidemiological meta-analyses</h2>
+      {% include "epi/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
+    {% endif %}
+
+    <div id="comments_block"></div>
+
+  {% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}study/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    window.study = new Study({{study.get_json|safe}})
+    var detail_div = $('#study_details')
+    study.build_details_table(detail_div);
+
+    {% if attachments_viewable %}
+      study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
+    {% endif %}
+
+    window.plot = new StudyQuality_Donut(study, '#sq_plot', {'build_plot_startup': true});
+  </script>
+  {% if crud == "Read" %}
+    {% include "comments/_comments_extrajs.html" %}
+  {% endif %}
+{% endblock extrajs %}

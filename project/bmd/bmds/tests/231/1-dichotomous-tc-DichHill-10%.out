@@ -1,0 +1,106 @@
+
+
+ ==================================================================== 
+   	  Dichotomous Hill Model. (Version: 1.2; Date: 08/05/2011) 
+  	  Input Data File: C:/Temp/hawc/bmd test cases/1-dichotomous-tc-DichHill-10%.(d)  
+  	  Gnuplot Plotting File:  C:/Temp/hawc/bmd test cases/1-dichotomous-tc-DichHill-10%.plt
+ 							Fri Jan 25 00:03:25 2013
+ ==================================================================== 
+
+ BMDS_Model_Run 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   The form of the probability function is: 
+
+   P[response] = v*g +(v-v*g)/[1+EXP(-intercept-slope*Log(dose))]
+
+        where: 0 <= g < 1, 0 < v <= 1
+
+               v is the maximum probability of response predicted by the model,
+
+               and v*g is the background estimate of that probability.
+
+
+   Dependent variable = Incidence
+   Independent variable = Dose
+   Slope parameter is restricted as slope >= 1
+
+   Total number of observations = 4
+   Total number of records with missing values = 0
+   Maximum number of iterations = 250
+   Relative Function Convergence has been set to: 1e-008
+   Parameter Convergence has been set to: 1e-008
+
+
+
+                  Default Initial Parameter Values  
+                              v =            1
+                              g =         0.05
+                      intercept =     -6.40884
+                          slope =            1
+
+
+           Asymptotic Correlation Matrix of Parameter Estimates
+
+           ( *** The model parameter(s)  -slope   
+                 have been estimated at a boundary point, or have been specified by the user,
+                 and do not appear in the correlation matrix )
+
+                      v            g    intercept
+
+         v            1        -0.55        -0.95
+
+         g        -0.55            1         0.39
+
+ intercept        -0.95         0.39            1
+
+
+
+                                 Parameter Estimates
+
+                                                         95.0% Wald Confidence Interval
+       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit
+              v         0.505535         0.415813           -0.309443             1.32051
+              g        0.0996629          0.11253           -0.120891            0.320217
+      intercept         -5.22002          1.96992            -9.08099            -1.35905
+          slope                1               NA
+
+NA - Indicates that this parameter has hit a bound
+     implied by some inequality constraint and thus
+     has no standard error.
+
+
+
+                        Analysis of Deviance Table
+
+       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value
+     Full model        -36.6201         4
+   Fitted model        -36.6218         3    0.00343751      1          0.9532
+  Reduced model        -40.0322         1       6.82414      3         0.07772
+
+           AIC:         79.2437
+
+
+                                  Goodness  of  Fit 
+                                                                 Scaled
+     Dose     Est._Prob.    Expected    Observed     Size       Residual
+  ------------------------------------------------------------------------
+    0.0000     0.0504         1.008     1.000          20       -0.008
+   50.0000     0.1472         2.945     3.000          20        0.035
+  150.0000     0.2542         5.084     5.000          20       -0.043
+  350.0000     0.3482         6.964     7.000          20        0.017
+
+ Chi^2 = 0.00      d.f. = 1        P-value = 0.9533
+
+
+   Benchmark Dose Computation
+
+Specified effect =            0.1
+
+Risk Type        =      Extra risk 
+
+Confidence level =           0.95
+
+             BMD =        48.7578
+
+           Benchmark dose computation failed.  Lower limit includes zero.

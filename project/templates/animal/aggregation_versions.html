@@ -1,0 +1,76 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{object.assessment}} | {{object}} Versions | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' object.assessment.pk %}">{{ object.assessment }}</a><span class="divider">/</span><li>
+  <li><a href="{% url 'animal:aggregation_list' object.assessment.pk %}">Aggregations</a><span class="divider">/</span><li>
+  <li><a href="{% url 'animal:aggregation_detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+  <li class="active">Versions<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <h1>Prior Versions of {{object}}</h1>
+  <div class="row-fluid">
+
+    <div class="span9">
+      <h2>Comparison</h2>
+      <table id='version' class="table table-condensed table-striped">
+        <colgroup>
+          <col style="width: 25%;">
+          <col style="width: 75%;">
+        </colgroup>
+        <thead>
+          <tr><th>Field</th><th>Current</th></tr>
+        </thead>
+        <tfoot>
+          <tr><td colspan="2">Additions to the primary version shown in <span class='diff-insert'>green</span>.</td></tr>
+          <tr><td colspan="2">Deletions to primary version shown in <span class='diff-delete'>red</span>.</td></tr>
+        </tfoot>
+        <tbody>
+          <tr><th>Name</th><td></td></tr>
+          <tr><th>Aggregation Type</th><td></td></tr>
+          <tr><th>Endpoints</th><td></td></tr>
+          <tr><th>Summary Text</th><td></td></tr>
+          <tr><th>Created</th><td></td></tr>
+          <tr><th>Last Updated</th><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="span3">
+      <h2>Version List</h2>
+      <table id='version_list' class="table table-condensed table-hover">
+        <thead>
+          <tr><th>{{object}} versions<br>
+            <a href="#" class="instruction_popovers" data-placement="bottom" data-trigger="hover" data-toggle="popover" data-content="Click on any version to view the value of all fields for that version. To compare one version to another and compare differences, select the primary model by clicking as usual, and then press ctrl-click to select the secondary model." data-original-title="Version comparison"><small>(hover for instructions)</small></a>
+          </th></tr>
+        </thead>
+        <tfoot>
+          <tr><td>Primary version highlighted in <span class='version_primary'>blue.</span></td></tr>
+          <tr><td>Secondary version highlighted in <span class='version_secondary'>red.</span></td></tr>
+        </tfoot>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block extrajs %}
+  <script src="{{ STATIC_URL }}animal/js/aggregation.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var aggregations = [];
+    var aggregations_versions =  {{versions|safe}};
+    var aggregations_length = aggregations_versions.length;
+    aggregations_versions.forEach(function(v,i){
+        aggregations.push(new AggregationVersions(v, aggregations_length-i));
+    });
+    var version = new Version(aggregations, '#version_list', '#version');
+    $(".instruction_popovers").popover({ html : true });
+  </script>
+{% endblock extrajs %}

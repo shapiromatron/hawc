@@ -1,0 +1,42 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | TagList | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  {% if object_type != 'reference' %}
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% endif %}
+  <li class="active">Visualization<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <div id="tagtree"></div><br><br>
+  <p class='help-block'>CTRL-click to view references associated with an node.</p>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}lit/js/visuals.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.assessment_pk = {{assessment.pk}};
+      window.tagtree = new TagTree({{tags|safe}});
+      window.tagtree.add_references({{ref_objs|safe}});
+      window.tagtree.get_refs_count();
+      window.tagtree.build_top_level_node("{{assessment}}");
+
+      var title = {% if object_type == 'reference' %}
+          "{{assessment}}: Literature Tagtree"; {% else %}
+          '"{{object}}" Literature Tagtree'; {% endif %}
+      window.treeviz = new TagTreeViz(window.tagtree,
+                                      $('#tagtree'),
+                                      title,
+                                      "{% url 'lit:ref_download_excel' assessment.pk %}");
+    });
+  </script>
+{% endblock extrajs %}

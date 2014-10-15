@@ -1,0 +1,33 @@
+{% if object_list %}
+<table class="table table-condensed table-striped">
+    <colgroup>
+       <col span="1" style="width: 30%;">
+       <col span="1" style="width: 10%;">
+       <col span="1" style="width: 10%;">
+       <col span="1" style="width: 20%;">
+       <col span="1" style="width: 20%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Latest Version</th>
+            <th>Date Created</th>
+            <th>Date Updated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></td>
+                <td>{{object.year}}</td>
+                <td>{{object.version}}</td>
+                <td>{{object.created}}</td>
+                <td>{{object.changed}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No assessments available.</p>
+{% endif %}

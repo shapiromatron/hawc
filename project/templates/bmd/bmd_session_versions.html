@@ -1,0 +1,35 @@
+{% extends 'bmd/bmd_session_detail.html' %}
+
+{% block title %}
+    {{ block.super }} | Versions
+{% endblock title %}
+
+{% block breadcrumbs_self %}
+  <li><a href="{% url 'bmd:read' endpoint.pk %}">BMD Modeling</a><span class="divider">/</span></li>
+  <li class="active">Versions<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+  {% if object_list %}
+    <table class="table table-condensed table-striped">
+      <tr>
+        <th>Version</th>
+        <th>Selected Model</th>
+        <th>Date Created</th>
+        <th>Date Last Updated</th>
+      </tr>
+      {% for object in object_list reversed %}
+        <tr>
+          <td>{{forloop.revcounter}}</td>
+          <td>{{object.selected_model}}</td>
+          <td>{{object.created}}</td>
+          <td>{{object.updated}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No BMD sessions available.</p>
+  {% endif %}
+{% endblock content %}
+
+{% block extrajs %}{% endblock extrajs %}

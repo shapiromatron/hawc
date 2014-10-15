@@ -1,0 +1,107 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | Tags | Update | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li class="active">Update Tags<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>Reference tags for {{assessment}}</h1>
+  <p class="help-block">Edit tags which can be applied to literature for this
+    assessment. If extracting data, all references marked with a tag in the
+    "Inclusion" category will be labeled as ready for data-extraction on the
+    assessment literature review page (<a href="{% url 'lit:overview' assessment.pk %}">here</a>).
+    New tags can be created, deleted, or sorted. To sort, click and hold a tag and
+    drag to the desired location.
+  </p>
+  <div id="tags"></div>
+  <div class="well">
+    <button class="btn btn-primary" data-toggle="modal" data-target="#new_tag_form">Add new tag</button>
+    <button class="btn btn-danger" data-toggle="modal" data-target="#delete_tag_form">Delete tag</button>
+    <a class='btn btn-primary pull-right' href="{% url 'lit:tags_copy' assessment.pk %}">Copy tags from existing assessment</a>
+  </div>
+
+  <!-- Modal to add tags -->
+  <div id="new_tag_form" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3>Add a new tag</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal" action="." method="post">
+        <fieldset>
+          <div class="control-group form-row">
+            <label for="tag_name" class="control-label">New tag name</label>
+            <div class="controls">
+              <input id="tag_name" type="text" maxlength="128">
+            </div>
+          </div>
+          <div class="control-group form-row">
+            <label for="tag_parent" class="control-label">Nest under</label>
+            <div class="controls">
+              <select id="tag_parent"></select>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+        <button type='button' id="submit_new_tag" class='btn btn-primary'>Submit</button>
+        <button type='button' data-dismiss="modal" class='btn'>Cancel</button>
+    </div>
+  </div>
+
+  <!-- Modal to remove tag -->
+  <div id="delete_tag_form" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3>Delete existing tag</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal" action="." method="post">
+        <fieldset>
+          <div class="control-group form-row">
+            <label for="delete_tag" class="control-label">Tag to remove</label>
+            <div class="controls">
+              <select id="delete_tag"></select>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+        <button type='button' id="submit_delete_tag" class='btn btn-primary'>Submit</button>
+        <button type='button' data-dismiss="modal" class='btn'>Cancel</button>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.tagtree = new TagTree({{tags|safe}});
+      window.editor = new EditTagTreeContainer(window.tagtree, $('#tags'));
+
+      $(document).on('hawc-tagMoved', '#tags', function(e, item, offset){
+        var tag = $(item).find('>.nested-tag').data('d');
+        tag.move_self(offset);
+      }).on('show', '#delete_tag_form', function(){
+        var options = window.tagtree.get_options();
+        $('#delete_tag').html(options);
+      }).on('show', '#new_tag_form', function(){
+        var options = window.tagtree.get_options();
+        options.unshift($('<option>---</option>'));
+        $('#tag_parent').html(options);
+      });
+
+    });
+  </script>
+{% endblock extrajs %}

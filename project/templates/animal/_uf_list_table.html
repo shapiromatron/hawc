@@ -1,0 +1,24 @@
+{% if object_list %}
+  <table class="table table-condensed table-striped">
+    <tr>
+      <th>Uncertainty</th>
+      <th>Description</th>
+      <th>Value</th>
+      <th>Justification</th>
+      <th>Last Updated</th>
+    </tr>
+    {% for object in object_list %}
+      <tr>
+        <td>
+          <a href="{% url 'animal:uf_detail' object.pk %}">{{object.uf_type}}</a>
+        </td>
+        <td>{{object.get_uf_type_display}}</td>
+        <td>{{object.value|floatformat:"-3"}}</td>
+        <td>{{object.description}}</td>
+        <td>{{object.updated}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No uncertainty factors available.</p>
+{% endif %}

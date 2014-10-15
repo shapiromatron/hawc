@@ -1,0 +1,27 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Data Pivot | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Data Pivot<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>Data Pivots
+    {% if obj_perms.edit %}
+        <div class="btn-group pull-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'data_pivot:new-prompt' assessment.pk %}">Create new</a></li>
+          </ul>
+        </div>
+    {% endif %}
+  </h1>
+
+  {% include "data_pivot/_data_pivot_list.html" %}
+
+{% endblock %}

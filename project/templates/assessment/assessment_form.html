@@ -1,0 +1,78 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{crud}}
+  {% if crud == "Create" %}
+    Assessment
+  {% else %}
+    {{object}}
+  {% endif %}
+{% endblock %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {% if crud == "Update" %}
+    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active"> {{ crud }} <span class="divider">/</span></li>
+  {% elif crud = "Create" %}
+    <li class="active"> {{ crud }}  Assessment<span class="divider">/</span></li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <form class="form-horizontal" action="." method="post">
+    <fieldset>
+
+      {% block form_legend %}
+        {% if crud == "Create" %}
+          <legend>Create new assessment</legend>
+          <p class="help-block">Create a new HAWC assessment.
+          Assessments are the fundamental objects in HAWC; all data added to the
+          tool will be related to an assessment. The settings below are used to
+          describe the basic characteristics of the assessment, along with setting
+          up permissions for role-based authorization and access for viewing and
+          editing content associated with an assessment.</p><br>
+        {% elif crud == "Update" %}
+           <legend>Update {{ object }}</legend>
+           <p class="help-block">Update an existing HAWC assessment.</p><br>
+        {% endif %}
+      {% endblock form_legend %}
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+        </div>
+        {{field.errors|add_class:"alert alert-error"}}
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} assessment</button>
+        {% if crud == "Create" %}
+          <a href="{% url 'portal' %}" class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'assessment:detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+{% endblock %}
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+{% endblock extrajs %}

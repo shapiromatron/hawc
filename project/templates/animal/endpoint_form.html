@@ -1,0 +1,231 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load get_range %}
+{% load selectable_tags %}
+
+{% block title %}
+  {% if crud == "Create" %}
+    {{assessment}} | {{animal_group.experiment.study}} | {{animal_group.experiment}} | {{animal_group}} | Create Endpoint | HAWC
+  {% elif crud == "Update" %}
+    {{assessment}} | {{object.animal_group.experiment.study}} | {{object.animal_group.experiment}} | {{object.animal_group}} | Update {{object}} | HAWC
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{% url 'study:detail' animal_group.experiment.study.pk %}">{{animal_group.experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' animal_group.experiment.pk %}">{{animal_group.experiment}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:animal_group_detail' animal_group.pk %}">{{animal_group}}</a><span class="divider">/</span></li>
+    <li class="active"> Create Endpoint <span class="divider">/</span></li>
+  {% elif crud == "Update" %}
+    <li><a href="{% url 'study:detail' object.animal_group.experiment.study.pk %}">{{object.animal_group.experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' object.animal_group.experiment.pk %}">{{object.animal_group.experiment}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:animal_group_detail' object.animal_group.pk %}">{{object.animal_group}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:endpoint_detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Update<span class="divider">/</span></li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  <form id="endpoint" class="form-horizontal" action="." method="post">
+
+    {% csrf_token %}
+
+    <div class='row-fluid'>
+      <fieldset class="span7">
+        {% if crud == "Create" %}
+          <legend>Create new endpoint</legend>
+          <span class="help-block">Create a new endpoint. Each endpoint is associated with one animal-group.</span><br>
+        {% elif crud == "Update" %}
+          <legend>Update  {{ object }} </legend>
+          <span class="help-block">Update an existing endpoint.</span><br>
+        {% endif %}
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {% if field.label == "Additional tags" %}
+                <div class="row-fluid">
+                  <div class="span11">
+                    {{field}}
+                  </div>
+                  <div class="span1">
+                    <a class ='btn btn-primary'
+                       href="{% url 'assessment:effect_tag_create' assessment.pk %}"
+                       onclick="return HAWCUtils.newWindowPopupLink(this);"
+                       title="Add new effect tag">+</a>
+                  </div>
+                </div>
+              {% else %}
+                {{field}}
+              {% endif %}
+              <span class='help-block'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+
+        <input id="egs_json" name="egs_json" type="hidden"></input>
+        <input id="endpoint_json" name="endpoint_json" type="hidden"></input>
+      </fieldset>
+
+      <div id='endpoint_plot' class='d3_container span4'>
+      </div>
+
+      <div id='eg_div' class="row-fluid">
+        <div class="span7">
+          <h3 id="eg_header">Dose-response data</h3>
+
+          {% if egs_errors %}<div class="alert alert-error">{{egs_errors|safe}}</div>{% endif %}
+
+          <table id="eg" class="table table-condensed table-striped">
+            <thead>
+              <tr>
+                <th id="doses_title">Dose</th>
+                <th>N</th>
+                <th class="d_only">Incidence</th>
+                <th class="c_only">Response</th>
+                <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
+                <th>Significance<br>Level<br>(if significant)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if crud == "Create" %}
+                {% for i in animal_group.dose_groups|get_range %}
+                  <tr>
+                    <td class="doses" id="dose_{{i}}"></td>
+                    <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
+                    <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
+                    <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                    <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
+                    <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+
+              {% if crud == "Update" %}
+                {% for eg in object.get_endpoint_groups %}
+                  <tr>
+                    <td class="doses" id="dose_{{eg.dose_group_id}}"></td>
+                    <td><input tabindex="2" class="span12" type="text" id="n_{{eg.dose_group_id}}" value="{{eg.n}}"></td>
+                    <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{eg.dose_group_id}}" value="{{eg.incidence}}"></td>
+                    <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{eg.dose_group_id}}" value="{{eg.response}}"></td>
+                    <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{eg.dose_group_id}}" value="{{eg.variance}}"></td>
+                    <td>{% if forloop.counter0 > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
+                  </tr>
+                {% empty %}
+                  {% for i in animal_group.dose_groups|get_range %}
+                    <tr>
+                      <td class="doses" id="dose_{{i}}"></td>
+                      <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
+                      <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
+                      <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                      <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
+                      <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
+                    </tr>
+                  {% endfor %}
+                {% endfor %}
+              {% endif %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-fluid">
+      <div class="span12 form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} endpoint</button>
+        {% if crud == "Create" %}
+          <a href='{% url 'animal:animal_group_detail' animal_group.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'animal:endpoint_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/edit_endpoint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+      {% if crud == "Create" %}
+        window.doses = {{animal_group.get_doses_json|safe}};
+      {% elif crud == "Update" %}
+        window.doses = {{object.animal_group.get_doses_json|safe}};
+      {% endif %}
+
+      //update values in doses field
+      $('#doses_title').html('Dose<br>(' + doses[0].units + ')');
+      $('.doses').each(function(i, v){
+        $(v).html(doses[0].values[i]);
+      });
+
+      {% if endpoint_json %} // post with errors
+        window.endpoint_data = {{endpoint_json|safe}};
+        window.endpoint_data['doses'] = doses;
+        window.endpoint = new EditEndpoint(endpoint_data, '#eg');
+        window.endpoint.load_values_into_form();
+      {% elif crud = "Update" %} // edit
+        window.endpoint = new EditEndpoint({{object.d_response|safe}}, '#eg');
+        window.endpoint.load_values_into_form();
+      {% else %} // new
+        window.endpoint = new EditEndpoint({doses: doses}, '#eg');
+        window.endpoint.update_endpoint_from_form();
+      {% endif %}
+      window.endpoint.build_form_representation();
+
+      $('#endpoint').submit(function(){
+          endpoint.update_endpoint_from_form();
+          $('#egs_json').val(endpoint.build_eg_submission());
+          $('#endpoint_json').val(JSON.stringify(endpoint.data));
+          return true;
+      });
+
+      $('body').on('change', 'input, select', function(i, v){
+          endpoint.update_endpoint_from_form();
+      });
+
+
+      // show/hide variance-type based on dataset-type
+      var toggleVarianceType = function(){
+        var varTypeDiv = $('#id_variance_type').parent().parent(),
+            dataType = $('#id_data_type').val();
+        if (dataType==="C"){
+          varTypeDiv.fadeIn();
+        } else {
+          varTypeDiv.fadeOut();
+          $('#id_variance_type').val(0);
+        };
+      };
+      $('body').on('change', '#id_data_type', toggleVarianceType);
+      toggleVarianceType();
+
+      // toggle the name of the variance column header as the value changes
+      var toggleVarianceColumnHeader = function(){
+        var varHeader = $('#varianceHeader'),
+            varType = parseInt($('#id_variance_type').val(), 0);
+        varHeader.html(EditEndpoint.getVarianceType(varType));
+      }
+      $('body').on('change', '#id_variance_type', toggleVarianceColumnHeader);
+      toggleVarianceColumnHeader();
+
+    });
+  </script>
+
+{% endblock %}

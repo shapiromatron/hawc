@@ -1,0 +1,80 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | Literature Review | Tags | Update | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:tags_update' assessment.pk %}">Update Tags</a><span class="divider">/</span></li>
+  <li class="active">Copy Tags<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <div class="row-fluid">
+    <form class="span8 offset2 form-horizontal" action="." method="post">
+
+      {% csrf_token %}
+
+      <fieldset>
+        <legend>Copy tags from existing assessments</legend>
+        <p class="help-block">Copy literature reference tags from an existing HAWC assessment which you have access to.</p><br>
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+              <div class="controls">
+                {{field}}
+                <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+
+      <b>Tags for selected assessment:</b>
+      <div id="tags"></div>
+
+      <div class="alert alert-block">
+        <h4>Warning!</h4>
+        <p>Copying tags from another assessment will remove ALL existing tags, and will
+        also remove any tags from existing literature for this assessment, even if the tag-names
+        are identical between an existing tag and a new tag copied from another assessment.<br><br>
+        It is therefore recommended to only complete this procedure if literature have not yet been
+        tagged for the current assessment.</p>
+      </div>
+
+      <div class="row-fluid">
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
+          <a class="btn" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      var loadTaglist = function(){
+        $.get("{% url 'lit:tags_list' %}", {'pk': $('#id_assessment').val()}, function(d){
+          window.tagtree = new TagTree(JSON.parse(d));
+          $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
+        });
+      };
+
+      $('#id_assessment').on('change', loadTaglist);
+      loadTaglist();
+
+    });
+  </script>
+{% endblock extrajs %}

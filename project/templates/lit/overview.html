@@ -1,0 +1,81 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Literature Review<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>References for {{assessment}} </h2>
+
+  <div class="row-fluid">
+    <div class="span6">
+      <h3>Statistics</h3>
+      {% include "lit/_overview_table.html" %}
+    </div>
+    <div class="span6">
+      <h3>Tags used in assessment
+        {% if obj_perms.edit_assessment %}
+          <a class='btn btn-primary pull-right' href="{% url 'lit:tags_update' assessment.pk %}">Update</a>
+        {% endif %}
+      </h3>
+      <div id="tags"></div>
+    </div>
+  </div>
+
+  {% if assessment.enable_data_extraction and need_import_count > 0 %}
+    <div class="alert alert-warning">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <b>New references marked for inclusion.</b><br>
+      <p>{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Extract now</a></p>
+  </div>
+  {% endif %}
+
+  <h2>Literature Searches & Imports
+    {% if obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'lit:search_new' assessment.pk %}">New search</a></li>
+          <li><a href="{% url 'lit:import_new' assessment.pk %}">New import</a></li>
+          <li><a href="{% url 'lit:ref_download_excel' assessment.pk %}">Download all references</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h2>
+  {% include "lit/_search_list.html" %}
+
+  <h2>Manually added references
+    {% if obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'study:new_ref' assessment.pk %}">Manually add new</a></li>
+          <li><a href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Edit tags</a></li>
+          <li><a href="{% url 'lit:ref_download_excel' assessment.pk %}">Download all references</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h2>
+  <p>References manually added: {{manual_import.references.count}}</p>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.tagtree = new TagTree({{tags|safe}});
+      $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
+    });
+  </script>
+{% endblock extrajs %}

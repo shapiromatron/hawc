@@ -1,0 +1,54 @@
+{% load add_class %}
+
+{{ formset.non_form_errors|add_class:"alert alert-error" }}
+{{ formset.non_field_errors|add_class:"alert alert-error" }}
+<table class="table table-condensed table-striped formset">
+
+  <thead>
+    {% for form in formset.forms %}
+      {% if forloop.first %}
+        <tr>
+          {{ formset.management_form }}
+          {% for field in form.visible_fields %}
+            <th title="{{field.help_text}}">{{ field.label|capfirst }}</th>
+          {% endfor %}
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </thead>
+
+  <tbody>
+    {% for form in formset.forms %}
+      <tr class="dynamic-form">
+        {% for field in form.visible_fields %}
+          <td>
+            {# Include the hidden fields in the form #}
+            {% if forloop.first %}
+              {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+              {% endfor %}
+
+              {{ form.non_field_errors|add_class:"alert alert-error" }}
+            {% endif %}
+
+            {# add field and errors #}
+            {{ field.errors|add_class:"alert alert-error" }}
+            {{ field }}
+
+            {# add delete button only if it's a new form in formset #}
+            {% if not form.instance.pk and showDeleteRow %}
+              {% if forloop.first %}<br><br>
+                <a id="remove-{{ form.prefix }}-row"
+                   title="Remove row"
+                   href="#"
+                   class="deleteForm btn btn-mini btn-danger">
+                    <i class="icon-trash icon-white"></i></a>
+              {% endif %}
+            {% endif %}
+
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

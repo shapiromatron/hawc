@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+
+{% block topnavbar %}
+  <div class="nav-collapse collapse">
+    <ul class="nav pull-right">
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <li><a href="{% url 'documentation' %}">Documentation</a></li>
+      <li><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'portal' %}">Portal</a></li>
+      {% else %}
+        <li><a href="{% url 'portal' %}">Login</a></li>
+      {% endif %}
+    </ul>
+  </div>
+{% endblock %}
+
+{% block main_content %}
+  <div class="hero-unit">
+    <h1>Welcome to HAWC.</h1>
+    <p>A collaborative workspace to conduct human-health risk assessments.</p>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span12">
+      <h4 id='about'>Project Details</h4>
+      <p>Conducting a human-health risk-assessment is typically done with multiple users working collaboratively. It's an iterative process, with revisions being made to previous assessments and multiple rounds of both internal and external review. This project is designed to make this process easier, by housing many of the key components of a risk assessment into modules, and allowing teams of users to work together on an assessment.
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span8">
+      <h4>Project Team</h4>
+      <p>This is the master's thesis project for Andy Shapiro, MSPH candidate in the Spring of 2014. However, a number of contributors have provided their insight and expert judgment, and this work couldn't have been conducted without their help. A list of partners, contributors, and advisors will be posted soon... </p>
+      <h4 id='about'>License</h4>
+      <a href="#license_modal" data-toggle="modal">View License</a>
+      {% include "hawc_license.html" %}
+    </div>
+    <div class="span4">
+      <h4 id='contact'>Contact information</h4>
+      <address>
+        <strong>Andy Shapiro</strong><br>
+        University of North Carolina at Chapel Hill<br>
+        School of Public Health<br>
+        <abbr title="Phone">P:</abbr> (919) 417-1475<br>
+        <a href="mailto:ajshapir@live.unc.edu">ajshapir@live.unc.edu</a>
+      </address>
+    </div>
+  </div>
+{% endblock %}
+

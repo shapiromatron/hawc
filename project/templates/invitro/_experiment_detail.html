@@ -1,0 +1,47 @@
+<table class="table table-condensed table-striped">
+  <colgroup>
+    <col style="width: 30%;">
+    <col style="width: 70%;">
+  </colgroup>
+  <tbody>
+    <tr>
+      <th>Species</th>
+      <td>{{object.species}}</td>
+    </tr>
+    {% if object.strain %}
+      <tr>
+        <th>Strain</th>
+        <td>{{object.strain}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <th>Sex</th>
+      <td>{{object.sex_symbol}} ({{object.get_sex_display}})</td>
+    </tr>
+    {% if object.generation != "na" %}
+    <tr>
+      <th>Generation</th>
+      <td>{{object.get_generation_display}}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <th>Evidence Stream</th>
+      <td><i>{{object.get_evidence_stream_display}}</i></td>
+    </tr>
+    <tr>
+      <th>Treatment Period</th>
+      <td>{{object.treatment_period}}</td>
+    </tr>
+
+    <tr>
+      <th>Doses ({{object.dose_units}})</th>
+      <td>
+        <ul>
+          {% for eg in object.exposure_groups.all %}
+            <li>{{eg.dose}}</li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>

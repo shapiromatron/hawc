@@ -1,0 +1,136 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{object.experiment.study}} | {{object.experiment}} | {{object}} | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li class=""><a href="{{ assessment.get_absolute_url }}">{{assessment}}</a><span class="divider">/</span></li>
+  <li class=""><a href="{{ object.experiment.study.get_absolute_url }}">{{object.experiment.study}}</a><span class="divider">/</span></li>
+  <li class=""><a href="{{ object.experiment.get_absolute_url }}">{{object.experiment}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{ object }}<span class="divider">/</span></li>
+  {% endblock %}
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{object}}
+      {% if obj_perms.edit %}
+        <div class="btn-group pull-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+
+              <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
+              <li><a href="{% url 'animal:animal_group_update' object.pk %}">Update</a></li>
+              <li><a href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a></li>
+
+              {% if object.dosing_regime %}
+                {% if object == object.dosing_regime.dosed_animals %}
+                  <li class="divider"></li>
+                  <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
+                  <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
+                  <li><a href="{% url 'animal:dosing_regime_delete' object.dosing_regime.pk %}">Delete</a></li>
+                {% endif %}
+              {% else %}
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
+                <li><a class= "btn btn-primary" href="{% url 'animal:dosing_regime_new' object.pk %}">Create New</a></li>
+              {% endif %}
+
+              <li class="divider"></li>
+              <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
+              <li><a href="{% url 'animal:endpoint_new' object.pk %}">Create new with summary data</a></li>
+              <li><a href="{% url 'animal:endpoint_individual_animal_new' object.pk %}">Create new with individual animal data</a></li>
+
+          </ul>
+        </div>
+      {% endif %}
+    </h1>
+
+    <table class="table table-condensed table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr><th>Name</th><td>{{object.name}}</td></tr>
+        <tr><th>Species</th><td>{{object.species}}</td></tr>
+        <tr><th>Strain</th><td>{{object.strain}}</td></tr>
+        <tr><th>Sex</th><td>{{object.get_sex_display}}</td></tr>
+        <tr><th>Dose Groups</th><td>{{object.dose_groups}}</td></tr>
+        {% if object.generationalanimalgroup %}
+          <tr><th>Generation</th><td>{{object.generationalanimalgroup.get_generation_display}}</td></tr>
+          <tr>
+            <th>Parents</th>
+            <td>
+              <ul>
+                {% for animal_group in object.generationalanimalgroup.parents.all %}
+                  <li><a href = {% url 'animal:animal_group_detail' animal_group.pk %}>{{animal_group}}</a></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endif %}
+        <tr><th>Siblings</th><td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>{% else %}None{% endif %}</td></tr>
+        {% if object.generationalanimalgroup %}
+          <tr>
+            <th>Children</th>
+            <td>
+              <ul>
+                {% for animal_group in object.generationalanimalgroup.get_children %}
+                  <li><a href = {% url 'animal:animal_group_detail' animal_group.pk %}>{{animal_group}}</a></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+  {% if crud == "Read" %}
+    <!-- Dosing-Regime -->
+    {% if object.dosing_regime %}
+      <h2>Dosing Regime</h2>
+      {% include "animal/_dosing_regime.html" with object=object.dosing_regime %}
+    {% endif %}
+
+    <!-- Endpoints -->
+    <h2>Available endpoints</h2>
+
+    <div id="endpoint_table"></div>
+    <div id="comments_block"></div>
+  {% endif %}
+
+{% endblock %}
+
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/aggregation.js" type="text/javascript"></script>
+
+  {% if crud == "Read" %}
+    {% include "comments/_comments_extrajs.html" %}
+  {% endif %}
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var endpoints = [];
+      {% for obj in object.get_endpoints %}
+        endpoints.push(new Endpoint({{obj.d_response|safe}}));
+      {% endfor %}
+
+      if (endpoints.length>0){
+        var animal_group_table = new AnimalGroup_table(
+                new Aggregation(endpoints, "{{object}}"), '#endpoint_table');
+      } else {
+        $('#endpoint_table').append('<p>No endpoints are available for this animal group.</p>');
+      }
+    });
+  </script>
+{% endblock %}
+

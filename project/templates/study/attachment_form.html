@@ -1,0 +1,47 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | {{study}} | Add attachment | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  <li class="active"> Add attachment <span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+    <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
+        <fieldset>
+            <legend>Add an attachment to a study</legend>
+            <span class="help-block">Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.</span><br>
+            {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+            {% for field in form %}
+                <div class="control-group form-row">
+                    {{field.label_tag|add_class:"control-label"}}
+                    <div class="controls">
+                        {{field|add_class:"span12"}}
+                        <span class='help-inline'>{{field.help_text}}</span>
+                    </div>
+                    {{field.errors|add_class:"alert alert-error"}}
+                </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create attachment</button>
+                <a href="{% url 'study:detail' study.pk %}" class="btn">Cancel</a>
+            </div>
+
+            {% csrf_token %}
+
+        </fieldset>
+    </form>
+
+{% endblock %}

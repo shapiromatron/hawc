@@ -1,0 +1,141 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{object.animal_group.experiment.study}} | {{object.animal_group.experiment}} | {{object.animal_group}} | {{object}} | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{{ object.animal_group.experiment.study.get_absolute_url }}">{{object.animal_group.experiment.study}}</a><span class="divider">/</span></li>
+  <li><a href="{{ object.animal_group.experiment.get_absolute_url }}">{{object.animal_group.experiment}}</a><span class="divider">/</span></li>
+  <li><a href="{{ object.animal_group.get_absolute_url }}">{{object.animal_group}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if crud == "Read" %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
+          <li><a href="{% url 'animal:endpoint_report' object.pk %}">Download report</a></li>
+          {% if obj_perms.edit %}
+
+            <li class="divider"></li>
+            <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
+            <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
+            <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>
+
+            <!-- BMD modeling section -->
+            {% if assessment.enable_bmd and object.dose_response_available %}
+              <li class="divider"></li>
+              <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
+              <li><a href="{% url 'bmd:edit' object.pk %}">
+                {% if object.bmds_session_exists %}Update{% else %}Create{% endif %}</a></li>
+            {% endif %}
+
+            {% if assessment.enable_reference_values %}
+              <li class="divider"></li>
+              <li class="disabled"><a tabindex="-1" href="#">Uncertainty Factors</a></li>
+              <li><a href="{% url 'animal:ufs_list' endpoint.pk %}">View</a></li>
+            {% endif %}
+          {% endif %}
+
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <!-- Endpoint details -->
+  <div class="row-fluid">
+    <div id="dr-details" class="span7">
+      <h2>Endpoint Details</h2>
+      <div id="endpoint-details-table"></div>
+
+      <h2>Dataset</h2>
+      <table id="dr-tbl" class="table table-condensed table-striped"></table>
+    </div>
+
+    <div id='dr-plot-container' class="span5">
+      <h2>Plot
+        <small style='margin-left:10px; vertical-align:text-bottom;'>
+          <a target="_blank" href="{% url 'animal:endpoint_dr' endpoint.pk%}" rel="tooltip" title="View fullscreen in new tab"><i href="{% url 'animal:endpoint_dr' endpoint.pk%}" class="icon-search"></i></a>
+        </small>
+      </h2>
+      <div id='bmd_ds_plot' class="d3_container">
+      </div>
+    </div>
+  </div>
+
+  {% if crud == "Read" %}
+
+    <!-- BMD details -->
+    {% if assessment.enable_bmd %}
+      <div class="row-fluid">
+        {% if object.bmds_session_exists %}
+          <h4>BMD Results</h4>
+          {% if object.get_bmds_session.selected_model %}
+            {% with object.get_bmds_session.selected_model as model %}
+              <table class="table table-condensed table-striped">
+                <colgroup>
+                  <col style="width: 30%;">
+                  <col style="width: 70%;">
+                </colgroup>
+                <tr>
+                  <th>Selected model</th>
+                  <td>{{model.summary_data.model_name}} ({{model.get_bmr_text}})</td>
+                </tr>
+                <tr>
+                  <th>BMD</th>
+                  <td>{{model.summary_data.BMD}} {{object.dose_units}}</td>
+                </tr>
+                <tr>
+                  <th>BMDL</th>
+                  <td>{{model.summary_data.BMDL}} {{object.dose_units}}</td>
+                </tr>
+              </table>
+            {% endwith %}
+          {% else %}
+            <p>No model has been selected for this endpoint.</p>
+          {% endif %}
+          <p><a href="{% url 'bmd:read' object.pk %}">View Details</a></p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- UF details -->
+    {% if assessment.enable_reference_values %}
+      {% with ufs=object.ufs.all %}
+        {% if ufs.count > 0 %}
+          <div class="row-fluid">
+            <h4>Uncertainty Factors</h4>
+            {% include "animal/_uf_list_table.html" with object_list=ufs %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
+
+    <!-- Comments -->
+    <div id="comments_block"></div>
+
+  {% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
+  {% if crud == "Read" %}
+    {% include "comments/_comments_extrajs.html" %}
+  {% endif %}
+  <script type="text/javascript">
+    var endpoint = new Endpoint({{object.d_response|safe}});
+    var plot = new EndpointPlotContainer(endpoint, '#bmd_ds_plot');
+    endpoint.build_details_table($('#endpoint-details-table'));
+    endpoint.build_endpoint_table($('#dr-tbl'));
+  </script>
+{% endblock %}

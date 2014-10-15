@@ -1,0 +1,234 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load get_range %}
+
+{% block title %}
+  {% if crud == "Create" %}
+    {{assessment}} | {{animal_group.experiment.study}} | {{animal_group.experiment}} | {{animal_group}} | HAWC
+  {% elif crud == "Update" %}
+    {{assessment}} | {{object.dosed_animals.experiment.study}} | {{object.dosed_animals.experiment}} | {{object.dosed_animals}} | {{object}} | HAWC
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Update" %}
+    <li><a href="{% url 'study:detail' object.dosed_animals.experiment.study.pk %}">{{object.dosed_animals.experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' object.dosed_animals.experiment.pk %}">{{object.dosed_animals.experiment}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:animal_group_detail' object.dosed_animals.pk %}">{{object.dosed_animals}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% elif crud == "Create" %}
+    <li><a href="{% url 'study:detail' animal_group.experiment.study.pk %}">{{animal_group.experiment.study}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:experiment_detail' animal_group.experiment.pk %}">{{animal_group.experiment}}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:animal_group_detail' animal_group.pk %}">{{animal_group}}</a><span class="divider">/</span></li>
+    <li class="active">Create Dosing Regime<span class="divider">/</span></li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  <form id='dosing_regime' class="form-horizontal" action="." method="post">
+
+    {% csrf_token %}
+
+    <div class='row-fluid'>
+      <fieldset>
+        {% if crud == "Create" %}
+          <legend>Create new dosing-regime</legend>
+          <span class="help-block">Create a new dosing-regime. Each dosing-regime is one protocol for how animals were dosed. Multiple different dose-metrics can be associated with one dosing regime.</span><br>
+        {% elif crud == "Update" %}
+          <legend>Update  {{ object }} </legend>
+          <span class="help-block">Update an existing dosing-regime.</span><br>
+        {% endif %}
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {{field}}
+              <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    <legend>Dose-groups
+      <a class="btn btn-primary pull-right" id="new_dose_column" href="#">Add new representation</a>
+    </legend>
+
+    {% if dose_groups_errors %}<div class="alert alert-error">{{dose_groups_errors|safe}}</div>{% endif %}
+    <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
+
+    {% if crud == "Create" %}
+      <table id="dose_table" class="table table-condensed table-striped">
+      <colgroup>
+        <col style="width: 10%;">
+        <col style="width: 90%;">
+      </colgroup>
+        <thead>
+          <tr>
+            <th>Dose Units</th>
+            <th>
+              <select class="input-medium dose_types"></select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in animal_group.dose_groups|get_range %}
+            <tr>
+              <td><label for="dose_group_{{i}}" class="control-label">Dose Group {{i|add:"1"}}</label></td>
+              <td><input type="text" tabindex="1" class="input-medium" id="dose_{{i}}"></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if crud == "Update" %}
+      <table id="dose_table" class="table table-condensed table-striped">
+        <colgroup>
+          <col style="width: 10%;">
+        </colgroup>
+          <thead>
+            <tr>
+              <th>Dose Units</th>
+              {% for dose in object.get_dose_groups.0 %}
+                <th>
+                  <select class="input-medium dose_types">
+                    <option value={{dose.dose_units.pk}}>{{dose.dose_units}}</option>
+                  </select>
+                  <a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a>
+                </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for doses in object.get_dose_groups %}
+              <tr>
+                <td><label for="dose_group_{{forloop.counter}}" class="control-label">Dose Group {{forloop.counter}}</label></td>
+                {% for dose in doses %}
+                  <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.get_float_dose}}"></td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+    {% endif %}
+
+    <div class="row-fluid">
+      <div class="form-actions">
+        <button id='submit_form' type="submit" class="btn btn-primary">{{crud}} dosing-regime</button>
+        {% if crud == "Create" %}
+          <a href='{% url 'animal:animal_group_detail' animal_group.pk %}' class="btn">Cancel</a>
+        {% elif crud = "Update" %}
+          <a href="{% url 'animal:dosing_regime_detail' object.pk %}" class="btn">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $('#id_description').wysihtml5({"stylesheets": false});
+
+    //form submission
+    $('#dosing_regime').submit(function(){
+      var vals = [];
+      for(var i=2; i<=$('#dose_table tr th').length; i++){
+        var dose_units = parseFloat($('#dose_table tr th:nth-child(' + i + ') select option:selected').val());
+        $('#dose_table tbody tr td:nth-child(' + i + ') input').each(function(i, v){
+          vals.push({'dose_units': dose_units,
+                     'dose_group_id': i,
+                     'dose': parseFloat(v.value)});
+        });
+      }
+      $('#dose_groups_json').val(JSON.stringify(vals));
+      return true;
+    });
+
+    var update_dose_pulldowns = function(){
+      $('.dose_types').each(function(i, v){
+        var select = $(v);
+        var selected = select.find('option:selected').val();
+        select.empty();
+        window.dose_types.forEach(function(v, i){
+          select.append('<option value="' + v.id + '">' + v.units + '</option>');
+        });
+        select.find('option[value=' + selected + ']').prop('selected', true);
+      });
+    }
+
+    var new_dose_column = function(){
+      // recalculate column width
+      var num_doses = $('.dose_types').length+1,
+          colgroup = $('#dose_table colgroup');
+
+      colgroup.empty()
+        .append('<col style="width:10%"></col>');
+      for(var i = 0; i<num_doses; i++ ){
+        colgroup.append('<col style="width:' + 90/num_doses +'%"></col>')
+      }
+
+      // add th
+      $('#dose_table thead tr').append('<th><select class="input-medium dose_types"></select><a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a></th>');
+
+      // add td
+      $('#dose_table tbody tr').each(function(i, v){
+        $(v).append('<td><input class="input-medium" type="text" tabindex="' + (num_doses) + '"  id="dose_' + (num_doses-1) + '"></td>')
+      });
+      update_dose_pulldowns();
+    }
+
+    // add new dose columns
+    $('#new_dose_column').on('click', function(e){
+      e.preventDefault();
+      new_dose_column()
+    });
+
+    // remove existing dose columns
+    $('#dose_table').on( 'click', '.remove_dose', function(e){
+      e.preventDefault();
+      var td_index = $(this).parent().index()+1;
+      $('#dose_table tr th:nth-child(' + td_index + ')').remove();
+      $('#dose_table tr td:nth-child(' + td_index + ')').remove();
+    })
+
+    // update existing dose-types
+    var dose_types = {{dose_types|safe}};
+    update_dose_pulldowns();
+
+     {% if dose_groups_json %}
+      // reload doses that already exist
+      (function() {
+        var dose_groups_json = {{dose_groups_json|safe}};
+        var number_dose_groups = {{animal_group.dose_groups}};
+
+        //add the appropriate number of dose-columns
+        for (var i = 1; i < dose_groups_json.length/number_dose_groups; i++){
+          new_dose_column();
+        }
+
+        //now populate fields
+        dose_groups_json.forEach(function(v, i){
+          var col = parseInt((i)/number_dose_groups);
+          var row = (i) % number_dose_groups
+          $($('#dose_table tbody tr td:nth-child(' + (col+2) + ') input')[row]).val(v.dose);
+          $('#dose_table thead tr th:nth-child(' + (col+2) + ') select').find('option[value=' + v.dose_units + ']').prop('selected', true);
+        });
+      }());
+     {% endif %}
+  </script>
+{% endblock extrajs %}

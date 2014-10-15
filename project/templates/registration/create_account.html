@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  Create Account | HAWC
+{% endblock %}
+
+{% block main_content %}
+  <div class="row-fluid">
+
+    <form class="form-horizontal span8 offset2" action="." method="post">
+      <fieldset>
+        <legend>New account creation</legend>
+        <span class="help-block">Create a new HAWC account. Note that this software is currently in beta, so it recommended to use a unique password for accessing this account, as these may change dramatically with time (passwords can always be changed as well).</span><br>
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            {{field.label_tag|add_class:"control-label"}}
+            <div class="controls">
+              {{field}}<br>
+              <p class='help-block'>{{field.help_text}}</p>
+              {{field.errors|add_class:"alert alert-error"}}
+            </div>
+          </div>
+        {% endfor %}
+        {{ form.non_field_errors }}
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Create account</button>
+          <a href='{% url 'home' %}' class='btn'>Cancel</a>
+        </div>
+
+        {% csrf_token %}
+
+      </fieldset>
+    </form>
+
+    {% include "hawc_license.html" %}
+
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#id_first_name').focus();
+      $('#id_accept_license').after('<a style="margin-left: 10px;" class="btn btn-small btn-primary" href="#license_modal" data-toggle="modal">View License</a>')
+    });
+  </script>
+{% endblock %}

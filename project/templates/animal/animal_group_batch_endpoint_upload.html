@@ -1,0 +1,46 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | {{object.experiment.study}} | {{object.experiment}} | {{object}} | Batch endpoint upload | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.experiment.study.pk %}">{{object.experiment.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:experiment_detail' object.experiment.pk %}">{{object.experiment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:endpoint_detail' object.pk %}">{{ object }}</a><span class="divider">/</span></li>
+  <li class="active">Batch upload endpoints</li>
+{% endblock %}
+
+{% block content %}
+  <h1>Batch upload Endpoints for {{study}}</h1>
+  <form class="form-horizontal" action="." method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Update endpoint JSON objects </legend>
+      <span class="help-block">File is expected to contain a list of JSON endpoint-objects. Each object will be imported as a new import into HAWC, associated with this study.</span><br>
+
+      {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+      {% for field in form %}
+        <div class="control-group form-row">
+          {{field.label_tag|add_class:"control-label"}}
+          <div class="controls">
+            {{field|add_class:"span12"}}
+            <span class='help-inline'>{{field.help_text}}</span>
+          </div>
+          {{field.errors|add_class:"alert alert-error"}}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="{% url 'animal:animal_group_detail' object.pk %}" class="btn">Cancel</a>
+      </div>
+
+      {% csrf_token %}
+
+    </fieldset>
+  </form>
+{% endblock %}

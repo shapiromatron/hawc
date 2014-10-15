@@ -1,0 +1,36 @@
+{% extends 'myuser/settings.html' %}
+
+{% block content %}
+  <h1>User Profile
+    <a class='btn btn-primary pull-right' href="{% url 'user:profile_update' %}">Update Profile</a>
+  </h1>
+
+  <h2>Account settings</h2>
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 35%;">
+      <col style="width: 35%;">
+    </colgroup>
+    <tbody>
+      <tr><th>Username (email)</th><td colspan="2"><a href="mailto:{{user.email}}">{{user.email}}</a></td></tr>
+      <tr><th>Full Name</th><td colspan="2">{{user.get_full_name}}</td></tr>
+      <tr><th>Password</th><td>********</td><td><a href="{% url 'user:change_password' %}">Click to change</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2>HAWC settings</h2>
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+      <tr>
+        <th>Authenticated HERO Access</th>
+        <td>{{object.HERO_access}}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
+
