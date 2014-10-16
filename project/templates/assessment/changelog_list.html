@@ -1,0 +1,70 @@
+{% extends 'hawc/home.html' %}
+
+{% load markdown_deux_tags %}
+
+
+{% block main_content %}
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+
+            <!-- header -->
+            <h1>HAWC Updates
+                {% if detailed %}
+                    <a class="btn btn-primary pull-right"
+                       href="{% url 'change_log' %}">Hide details</a>
+                {% else %}
+                    <a class="btn btn-primary pull-right"
+                       href="{% url 'change_log' %}?detailed=True">Show details</a>
+               {% endif %}
+            </h1>
+
+            <p class="help-block">
+            The HAWC software is constantly being updated, with bi-weekly software updates
+            being released to the site. Feature updates and changes are logged below, to
+            learn more about what's changed since you've last visited the site.
+            </p>
+
+            <!-- object list -->
+            {% for object in object_list %}
+                <h3>{{object.date|date:"F d, Y"}}: <i>{{object.name}}</i></h3>
+
+                {{object.header|markdown}}
+
+                {% if detailed %}
+                    {{object.detailed_list|markdown}}
+                {% else %}
+                    <a href="{{object.get_absolute_url}}">View details</a>
+                {% endif %}
+
+                <hr>
+
+            {% endfor %}
+
+            <!-- pagination -->
+            {% if is_paginated %}
+                <div class="pagination pagination-centered">
+                    <ul>
+
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&lt;&lt;</a></li>
+                        {% else %}
+                            <li class="disabled"><a href="#">&lt;&lt;</a></li>
+                        {% endif %}
+
+                        <li class="disabled"><a href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&gt;&gt;</a></li>
+                        {% else %}
+                            <li class="disabled"><a href="#">&gt;&gt;</a></li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock main_content %}

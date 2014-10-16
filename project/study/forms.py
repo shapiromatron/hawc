@@ -13,7 +13,7 @@ class StudyForm(forms.ModelForm):
         fields = ('study_type', 'short_citation', 'full_citation',
                   'coi_reported', 'coi_details', 'funding_source',
                   'study_identifier', 'contact_author', 'ask_author',
-                  'summary')
+                  'summary', 'published')
 
     def __init__(self, *args, **kwargs):
         super(StudyForm, self).__init__(*args, **kwargs)
@@ -57,7 +57,7 @@ class ReferenceStudyForm(StudyForm):
                   'title', 'authors', 'journal', 'abstract',
                   'coi_reported', 'coi_details', 'funding_source',
                   'study_identifier', 'contact_author', 'ask_author',
-                  'summary')
+                  'summary', 'published')
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)

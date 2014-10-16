@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 from . import views
 
 urlpatterns = patterns('study.views',
-    url(r'^assessment/(?P<pk>\d+)/overview/$', views.LitOverview.as_view(), name='overview'),
+    url(r'^assessment/(?P<pk>\d+)/$', views.LitOverview.as_view(), name='overview'),
 
     url(r'^assessment/tags/json/$', views.TagsJSON.as_view(), name='tags_list'),
     url(r'^assessment/(?P<pk>\d+)/tags/update/$', views.TagsUpdate.as_view(), name='tags_update'),

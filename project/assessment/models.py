@@ -136,8 +136,7 @@ class Assessment(models.Model):
             return False
         else:
             return ((user in self.project_manager.all()) or
-                    (user in self.team_members.all()) or
-                    (user in self.reviewers.all()))
+                    (user in self.team_members.all()))
 
     def user_can_edit_assessment(self, user):
         """
@@ -162,7 +161,8 @@ class Assessment(models.Model):
             return False
         else:
             return ((user in self.project_manager.all()) or
-                    (user in self.team_members.all()))
+                    (user in self.team_members.all()) or
+                    (user in self.reviewers.all()))
 
     def get_CAS_details(self):
         task = get_chemspider_details.delay(self.cas)
@@ -301,7 +301,34 @@ class BaseEndpoint(models.Model):
         return d
 
 
+class ChangeLog(models.Model):
+    date = models.DateField(
+        unique=True)
+    name = models.CharField(
+        unique=True,
+        verbose_name="Release name",
+        help_text="Adjective + noun combination",
+        max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL slug",
+        max_length=128)
+    header = models.TextField(
+        help_text="One-paragraph description of major changes made")
+    detailed_list = models.TextField(
+        help_text="Detailed bulleted-list of individual item-changes")
+
+    class Meta:
+        ordering = ("-date", )
+
+    def __unicode__(self):
+        return "{0}: {1}".format(self.date, self.name)
+
+    def get_absolute_url(self):
+        return reverse('change_log_detail', kwargs={'slug': self.slug})
+
+
 reversion.register(Assessment)
 reversion.register(ExternalImport)
 reversion.register(EffectTag)
 reversion.register(BaseEndpoint)
+reversion.register(ChangeLog)
