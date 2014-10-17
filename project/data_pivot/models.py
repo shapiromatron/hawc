@@ -18,7 +18,6 @@ class DataPivot(models.Model):
         max_length=128)
     slug = models.SlugField(
         verbose_name="URL Name",
-        unique=True,
         help_text="The URL (web address) used to describe this object "
                   "(no spaces or special-characters).")
     settings = models.TextField(
@@ -41,7 +40,7 @@ class DataPivot(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('data_pivot:detail', kwargs={'assessment': self.assessment.pk,
+        return reverse('data_pivot:detail', kwargs={'pk': self.assessment.pk,
                                                     'slug': self.slug})
     def get_assessment(self):
         return self.assessment

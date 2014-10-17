@@ -18,22 +18,22 @@ urlpatterns = patterns('',
         views.DataPivotCopyAsNewSelector.as_view(),
         name='copy_selector'),
 
-    url(r'^assessment/(?P<assessment>\d+)/search/json/$',
+    url(r'^assessment/(?P<pk>\d+)/search/json/$',
         views.DataPivotSearch.as_view(), name='search'),
 
-    url(r'^assessment/(?P<assessment>\d+)/(?P<slug>[\w-]+)/$',
+    url(r'^assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/$',
         views.DataPivotDetail.as_view(), name='detail'),
     url(r'^(?P<pk>\d+)/json/$',
         views.DataPivotJSON.as_view(), name='json'),
 
-    url(r'^assessment/(?P<assessment>\d+)/(?P<slug>[\w-]+)/update/$',
+    url(r'^assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/update/$',
         views.DataPivotUpdateSettings.as_view(), name='update'),
-    url(r'^assessment/(?P<assessment>\d+)/(?P<slug>[\w-]+)/query-update/$',
+    url(r'^assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/query-update/$',
         views.DataPivotUpdateQuery.as_view(), name='query-update'),
-    url(r'^assessment/(?P<assessment>\d+)/(?P<slug>[\w-]+)/file-update/$',
+    url(r'^assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/file-update/$',
         views.DataPivotUpdateFile.as_view(), name='file-update'),
 
-    url(r'^assessment/(?P<assessment>\d+)/(?P<slug>[\w-]+)/delete/$',
+    url(r'^assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/delete/$',
         views.DataPivotDelete.as_view(), name='delete'),
 
     url(r'^excel-unicode-saving/$',
