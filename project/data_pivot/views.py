@@ -61,7 +61,7 @@ class DataPivotNew(BaseCreate):
 
     def get_success_url(self):
         return reverse_lazy('data_pivot:update',
-                             kwargs={'assessment': self.assessment.pk,
+                             kwargs={'pk': self.assessment.pk,
                                      'slug': self.object.slug})
 
     def get_form_kwargs(self):

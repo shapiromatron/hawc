@@ -106,22 +106,29 @@ class DataPivotQuery(DataPivot):
         choices=STUDY_TYPE_CHOICES,
         default=0)
     units = models.ForeignKey(
-        'animal.doseunits')
+        'animal.doseunits',
+        blank=True,
+        null=True,
+        help_text="If kept-blank, dose-units will be random for each "
+                  "endpoint presented. This setting may used for comparing "
+                  "percent-response, where dose-units are not needed.")
 
     def get_data_url(self):
         # request a tsv instead of Excel default
         url = self.get_download_url()
-        if self.evidence_type == 0:  # Animal Bioassay:
-            return url + "&output=tsv"
+        if url.find("?")>=0:
+            url += "&output=tsv"
         else:
-            return url + "?output=tsv"
+            url += "?output=tsv"
+        return url
 
     def get_download_url(self):
         # request an Excel file for download
         url = None
         if self.evidence_type == 0:  # Animal Bioassay:
-            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment.pk}) + \
-                          '?dose_pk={dpk}'.format(dpk=self.datapivotquery.units.pk)
+            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment.pk})
+            if self.units:
+                url += '?dose_pk={0}'.format(self.units.pk)
         elif self.evidence_type == 1:  # Epidemiology
             url = reverse('epi:ao_flat', kwargs={'pk': self.assessment.pk})
         elif self.evidence_type == 2:  # In Vitro

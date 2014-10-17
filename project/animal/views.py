@@ -722,23 +722,21 @@ class EndpointFlatFile(BaseList):
     parent_model = Assessment
     model = models.Endpoint
 
-    def get_queryset(self, dose_pk):
-        return self.model.objects.filter(assessment=self.assessment,
-                        animal_group__dosing_regime__doses__dose_units=dose_pk).distinct('pk')
+    def get_queryset(self, dose=None):
+        kwargs = {"assessment": self.assessment}
+        if dose:
+            kwargs["animal_group__dosing_regime__doses__dose_units"] = dose.pk
+        return self.model.objects.filter(**kwargs).distinct('pk')
 
     def get(self, request, *args, **kwargs):
         output_format = request.GET.get('output', None)
 
-        # get dose or assume mg/kg-day
-        dose_pk = self.request.GET.get('dose_pk')
-        if dose_pk:
-            dose = get_object_or_404(models.DoseUnits, pk=dose_pk)
-        else:
-            dose = models.DoseUnits.objects.get(units='mg/kg-day')
+        # get Dose object if one exists, else get None
+        dose_pk = self.request.GET.get('dose_pk', -1)
+        dose = models.DoseUnits.objects.filter(pk=dose_pk).first()
 
-        self.object_list = self.get_queryset(dose.pk)
-
-        output = self.model.get_flat_file(self.object_list, dose, output_format)
+        self.object_list = self.get_queryset(dose)
+        output = self.model.get_flat_file(self.object_list, output_format, dose)
         if output_format == 'tsv':
             content_type = 'text/tab-separated-values'
             disposition = 'attachment; filename="download.tsv"'
