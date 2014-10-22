@@ -79,9 +79,11 @@ SEX_CHOICES = (("M", "Male"),
                ("F", "Female"),
                ("B", "Both"))
 
-GENERATION_CHOICES = (("F0", "Parent-Generation (F0)"),
-                      ("F1", "First-Generation (F1)"),
-                      ("F2", "Second-Generation (F2)"))
+GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
+                      ("F1", "First-generation (F1)"),
+                      ("F2", "Second-generation (F2)"),
+                      ("F3", "Third-generation (F3)"),
+                      ("F4", "Fourth-generation (F4)"))
 
 EXPERIMENT_TYPE_CHOICES = (("Ac", "Acute"),
                            ("Sb", "Subchronic"),
