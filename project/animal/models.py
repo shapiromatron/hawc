@@ -359,12 +359,13 @@ class DoseUnits(models.Model):
                 "dose_units-units": self.units}
 
 
-ROUTE_EXPOSURE = (("OD", u"Oral Diet"),
-                  ("OG", u"Oral Gavage"),
-                  ("OW", u"Oral Drinking Water"),
+ROUTE_EXPOSURE = (("OD", u"Oral diet"),
+                  ("OG", u"Oral gavage"),
+                  ("OW", u"Oral drinking water"),
                   ("I",  u"Inhalation"),
                   ("D",  u"Dermal"),
-                  ("SI", u"Subcutaneous Injection"),
+                  ("SI", u"Subcutaneous injection"),
+                  ("IP", u"Intraperitoneal injection"),
                   ("IO", u"in ovo"),
                   ("O",  u"Other"))
 
