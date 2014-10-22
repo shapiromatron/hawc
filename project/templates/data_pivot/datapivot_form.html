@@ -74,6 +74,14 @@
         $('#id_file').closest('div').find('span').append('<p class="help-block">For more details on saving in this format from Excel, <a href="{% url 'data_pivot:excel-unicode' %}" target="_blank">click here</a>.</p>')
       {% endif %}
 
+      // only show the units-box for animal bioassay data; not show for epi
+      var showUnits = function(){
+        var div = $('#id_units').parent().parent();
+        ($('#id_evidence_type').val() === "0") ? div.fadeIn() : div.fadeOut();
+      }
+      $('#id_evidence_type').on('change', showUnits);
+      showUnits();
+
     })
 
   </script>

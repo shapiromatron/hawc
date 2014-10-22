@@ -79,9 +79,11 @@ SEX_CHOICES = (("M", "Male"),
                ("F", "Female"),
                ("B", "Both"))
 
-GENERATION_CHOICES = (("F0", "Parent-Generation (F0)"),
-                      ("F1", "First-Generation (F1)"),
-                      ("F2", "Second-Generation (F2)"))
+GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
+                      ("F1", "First-generation (F1)"),
+                      ("F2", "Second-generation (F2)"),
+                      ("F3", "Third-generation (F3)"),
+                      ("F4", "Fourth-generation (F4)"))
 
 EXPERIMENT_TYPE_CHOICES = (("Ac", "Acute"),
                            ("Sb", "Subchronic"),
@@ -359,12 +361,13 @@ class DoseUnits(models.Model):
                 "dose_units-units": self.units}
 
 
-ROUTE_EXPOSURE = (("OD", u"Oral Diet"),
-                  ("OG", u"Oral Gavage"),
-                  ("OW", u"Oral Drinking Water"),
+ROUTE_EXPOSURE = (("OD", u"Oral diet"),
+                  ("OG", u"Oral gavage"),
+                  ("OW", u"Oral drinking water"),
                   ("I",  u"Inhalation"),
                   ("D",  u"Dermal"),
-                  ("SI", u"Subcutaneous Injection"),
+                  ("SI", u"Subcutaneous injection"),
+                  ("IP", u"Intraperitoneal injection"),
                   ("IO", u"in ovo"),
                   ("O",  u"Other"))
 
@@ -666,8 +669,9 @@ class Endpoint(BaseEndpoint):
         super(Endpoint, self).save(*args, **kwargs)
         Endpoint.d_response_delete_cache([self.pk])
 
-    def flat_file_row(self, dose):
-        d = self.d_response(json_encode=False, dose_pk=dose.pk)
+    def flat_file_row(self, dose=None):
+        dose_pk = dose.pk if dose else None
+        d = self.d_response(json_encode=False, dose_pk=dose_pk)
         rows = []
 
         def get_dose_list(d):
@@ -703,7 +707,7 @@ class Endpoint(BaseEndpoint):
             base.extend([None]*5)
 
         # BMD-specific information
-        if d['BMD'] and d['BMD'].has_key('outputs') and d['BMD']['dose_units_id'] == dose.pk:
+        if d['BMD'] and d['BMD'].has_key('outputs') and d['BMD']['dose_units_id'] == dose_pk:
             base.extend([
                 d['BMD']['outputs']['model_name'],
                 d['BMD']['outputs']['BMDL'],
@@ -783,7 +787,7 @@ class Endpoint(BaseEndpoint):
                 ]
 
     @classmethod
-    def get_flat_file(cls, queryset, dose, output_format):
+    def get_flat_file(cls, queryset, output_format, dose):
         """
         Construct an export file of the selected subset of endpoints.
         """
@@ -809,13 +813,15 @@ class Endpoint(BaseEndpoint):
             except:
                 return str
 
-        row = 0
+        i = 0
         dose = kwargs.get('dose', None)
 
         for endpoint in queryset:
-            row+=1
-            for j, val in enumerate(endpoint.flat_file_row(dose)[0]):
-                ws.write(row, j, try_float(val))
+            rows = endpoint.flat_file_row(dose)
+            for row in rows:
+                i+=1
+                for j, val in enumerate(row):
+                    ws.write(i, j, try_float(val))
 
     @staticmethod
     def endpoints_word_report(queryset):

@@ -12,16 +12,24 @@ from utils.helper import HAWCDjangoJSONEncoder
 
 
 class DataPivot(models.Model):
-    assessment = models.ForeignKey('assessment.assessment')
-    title = models.CharField(max_length=128)
-    slug = models.SlugField(verbose_name="URL Name",
-                            help_text="The URL (web address) used to describe this object (no spaces or special-characters).",
-                            unique=True)
-    settings = models.TextField(default="undefined",
-                help_text='Paste content from a settings file from a different data-pivot, or keep set to "undefined" (this can be changed later).')
-    caption = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    assessment = models.ForeignKey(
+        'assessment.assessment')
+    title = models.CharField(
+        max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+                  "(no spaces or special-characters).")
+    settings = models.TextField(
+        default="undefined",
+        help_text="Paste content from a settings file from a different "
+                  "data-pivot, or keep set to \"undefined\".")
+    caption = models.TextField(
+        default="")
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         unique_together = (("assessment", "title"),
@@ -32,7 +40,7 @@ class DataPivot(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('data_pivot:detail', kwargs={'assessment': self.assessment.pk,
+        return reverse('data_pivot:detail', kwargs={'pk': self.assessment.pk,
                                                     'slug': self.slug})
     def get_assessment(self):
         return self.assessment
@@ -80,10 +88,11 @@ class DataPivot(models.Model):
             return self.datapivotquery.get_data_url()
 
 
-
 class DataPivotUpload(DataPivot):
-    file = models.FileField(upload_to='data_pivot',
-                            help_text="The data should be in unicode-text format, tab delimited (this is a standard output type in Microsoft Excel).")
+    file = models.FileField(
+        upload_to='data_pivot',
+        help_text="The data should be in unicode-text format, tab delimited "
+                  "(this is a standard output type in Microsoft Excel).")
 
     def get_data_url(self):
         return self.file.url
@@ -93,24 +102,33 @@ class DataPivotUpload(DataPivot):
 
 
 class DataPivotQuery(DataPivot):
-    evidence_type = models.PositiveSmallIntegerField(choices=STUDY_TYPE_CHOICES,
-                                                     default=0) #0: Animal Bioassay
-    units = models.ForeignKey('animal.doseunits')
+    evidence_type = models.PositiveSmallIntegerField(
+        choices=STUDY_TYPE_CHOICES,
+        default=0)
+    units = models.ForeignKey(
+        'animal.doseunits',
+        blank=True,
+        null=True,
+        help_text="If kept-blank, dose-units will be random for each "
+                  "endpoint presented. This setting may used for comparing "
+                  "percent-response, where dose-units are not needed.")
 
     def get_data_url(self):
         # request a tsv instead of Excel default
         url = self.get_download_url()
-        if self.evidence_type == 0:  # Animal Bioassay:
-            return url + "&output=tsv"
+        if url.find("?")>=0:
+            url += "&output=tsv"
         else:
-            return url + "?output=tsv"
+            url += "?output=tsv"
+        return url
 
     def get_download_url(self):
         # request an Excel file for download
         url = None
         if self.evidence_type == 0:  # Animal Bioassay:
-            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment.pk}) + \
-                          '?dose_pk={dpk}'.format(dpk=self.datapivotquery.units.pk)
+            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment.pk})
+            if self.units:
+                url += '?dose_pk={0}'.format(self.units.pk)
         elif self.evidence_type == 1:  # Epidemiology
             url = reverse('epi:ao_flat', kwargs={'pk': self.assessment.pk})
         elif self.evidence_type == 2:  # In Vitro

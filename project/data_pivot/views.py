@@ -61,7 +61,7 @@ class DataPivotNew(BaseCreate):
 
     def get_success_url(self):
         return reverse_lazy('data_pivot:update',
-                             kwargs={'assessment': self.assessment.pk,
+                             kwargs={'pk': self.assessment.pk,
                                      'slug': self.object.slug})
 
     def get_form_kwargs(self):
@@ -130,8 +130,22 @@ class DataPivotCopyAsNewSelector(BaseDetail):
         return HttpResponseRedirect(url)
 
 
-class DataPivotDetail(BaseDetail):
+class GetDataPivotObjectMixin(object):
+
+    def get_object(self):
+        slug = self.kwargs.get('slug')
+        assessment = self.kwargs.get('pk')
+        obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
+        if hasattr(obj, "datapivotquery"):
+            obj = obj.datapivotquery
+        else:
+            obj = obj.datapivotupload
+        return super(GetDataPivotObjectMixin, self).get_object(object=obj)
+
+
+class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
+    template_name = "data_pivot/datapivot_detail.html"
 
 
 class DataPivotJSON(BaseDetail):
@@ -142,14 +156,14 @@ class DataPivotJSON(BaseDetail):
         return HttpResponse(self.object.get_json(), content_type="application/json")
 
 
-class DataPivotUpdateSettings(BaseUpdate):
+class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
     success_message = 'Data Pivot updated.'
     model = models.DataPivot
     form_class = forms.DataPivotSettingsForm
     template_name = 'data_pivot/datapivot_update_settings.html'
 
 
-class DataPivotUpdateQuery(BaseUpdate):
+class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
     success_message = 'Data Pivot updated.'
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
@@ -161,7 +175,7 @@ class DataPivotUpdateQuery(BaseUpdate):
         return context
 
 
-class DataPivotUpdateFile(BaseUpdate):
+class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
     success_message = 'Data Pivot updated.'
     model = models.DataPivotUpload
     form_class = forms.DataPivotUploadForm
@@ -173,9 +187,10 @@ class DataPivotUpdateFile(BaseUpdate):
         return context
 
 
-class DataPivotDelete(BaseDelete):
+class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
     success_message = 'Data Pivot deleted.'
     model = models.DataPivot
+    template_name = "data_pivot/datapivot_confirm_delete.html"
 
     def get_success_url(self):
         return reverse_lazy('data_pivot:list', kwargs={'pk': self.assessment.pk})

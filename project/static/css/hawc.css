@@ -4,13 +4,16 @@ iframe {
   resize: both;
 }
 
-/*
- * Disable html5 number spinners
- */
+/* Disable html5 number spinners in Chrome */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Disable html5 number spinners in Firefox */
+input[type=number] {
+    -moz-appearance:textfield;
 }
 
 /*All tables with footnotes*/
