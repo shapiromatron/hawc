@@ -1143,7 +1143,10 @@ class ExposureGroup(Demographics):
                   '"4.8±0.2 (mean±SEM)"',
         blank=True)
     exposure_group_id = models.PositiveSmallIntegerField()
-    exposure_n = models.PositiveSmallIntegerField(blank=True, null=True)
+    exposure_n = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
+        help_text="Final N used for exposure group")
 
     class Meta:
         ordering = ('exposure_group_id', )
