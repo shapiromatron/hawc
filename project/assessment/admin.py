@@ -12,7 +12,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 
 class EffectTagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'pk')
+    list_display = ('name', 'slug', 'id')
 
 
 class ChangeLogAdmin(admin.ModelAdmin):
