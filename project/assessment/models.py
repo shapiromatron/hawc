@@ -296,8 +296,10 @@ class BaseEndpoint(models.Model):
         d = {}
         if hasattr(self, 'assessedoutcome'):
             d = self.assessedoutcome.get_json(*args, **kwargs)
-        if hasattr(self, 'endpoint'):
+        elif hasattr(self, 'endpoint'):
             d = self.endpoint.d_response(*args, **kwargs)
+        elif hasattr(self, 'ivendpoint'):
+            d = self.ivendpoint.get_json(*args, **kwargs)
         return d
 
 

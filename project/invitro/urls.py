@@ -15,8 +15,8 @@ urlpatterns = patterns('',
     #     views.EndpointDetail.as_view(),
     #     name='endpoint_detail'),
 
-    # url(r'^assessment/(?P<pk>\d+)/endpoint-flat/$',
-    #     views.EndpointsFlat.as_view(),
-    #     name='endpoints_flat'),
+    url(r'^assessment/(?P<pk>\d+)/endpoint-flat/$',
+        views.EndpointsFlat.as_view(),
+        name='endpoints_flat'),
 
 )
