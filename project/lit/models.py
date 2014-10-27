@@ -4,6 +4,7 @@ from math import ceil
 import json
 import logging
 import re
+import HTMLParser
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -96,7 +97,8 @@ class Search(models.Model):
     @property
     def search_string_text(self):
         # strip all HTML tags from search-string text
-        return strip_tags(self.search_string)
+        html_parser = HTMLParser.HTMLParser()
+        return html_parser.unescape(strip_tags(self.search_string))
 
     def run_new_query(self):
         if self.source == 1:  # PubMed
