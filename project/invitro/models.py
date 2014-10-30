@@ -13,6 +13,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from animal.models import DoseUnits
 from utils.helper import HAWCDjangoJSONEncoder, build_tsv_file, build_excel_file
+from utils.models import AssessmentRootedTagTree
 
 
 class IVChemical(models.Model):
@@ -197,6 +198,14 @@ class IVExperiment(models.Model):
             return d
 
 
+class IVEndpointCategory(AssessmentRootedTagTree):
+    cache_template_taglist = 'invitro.ivendpointcategory.taglist.assessment-{0}'
+    cache_template_tagtree = 'invitro.ivendpointcategory.tagtree.assessment-{0}'
+
+    def __unicode__(self):
+        return self.name
+
+
 class IVEndpoint(BaseEndpoint):
 
     VARIANCE_TYPE_CHOICES = (
@@ -249,6 +258,8 @@ class IVEndpoint(BaseEndpoint):
         related_name="experiments")
     chemical = models.ForeignKey(
         IVChemical,
+        related_name="endpoints")
+    category = models.ForeignKey(IVEndpointCategory,
         related_name="endpoints")
     assay_type = models.CharField(
         max_length=128)

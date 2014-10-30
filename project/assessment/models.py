@@ -205,6 +205,9 @@ def default_configuration(sender, instance, created, **kwargs):
         logging.info("Building default comment settings")
         get_model('comments', 'CommentSettings')(assessment=instance).save()
 
+        logging.info("Building in-vitro endpoint category-root")
+        get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
+
 
 EXTERNAL_DB_CHOICES = (("DR", 'DRAGON'),)
 
