@@ -360,7 +360,7 @@ class IVEndpoint(BaseEndpoint):
             return d
 
     @classmethod
-    def flat_file_header(cls, num_doses):
+    def flat_file_header(cls, num_doses, num_bms):
         fields = [
             'Study',
             'Study HAWC ID',
@@ -397,9 +397,12 @@ class IVEndpoint(BaseEndpoint):
         fields.extend(["Dose {0}".format(i)        for i in xrange(1, num_doses+1)])
         fields.extend(["Change Control {0}".format(i) for i in xrange(1, num_doses+1)])
         fields.extend(["Significant {0}".format(i) for i in xrange(1, num_doses+1)])
+
+        fields.extend(["Benchmark Type {0}".format(i)  for i in xrange(1, num_bms+1)])
+        fields.extend(["Benchmark Value {0}".format(i) for i in xrange(1, num_bms+1)])
         return fields
 
-    def flat_file_row(self, num_doses):
+    def flat_file_row(self, num_doses, num_bms):
         d = self.get_json(json_encode=False)
 
         # get min and max doses or None
@@ -411,6 +414,9 @@ class IVEndpoint(BaseEndpoint):
         if len(doses)>0:
             min_dose = min(d for d in doses if d>0)
             max_dose = max(doses)
+
+        bm_types = [bm["benchmark"] for bm in d["benchmarks"]]
+        bm_values = [bm["value"] for bm in d["benchmarks"]]
 
         row = [
                 d['experiment']['study']['short_citation'],
@@ -450,10 +456,14 @@ class IVEndpoint(BaseEndpoint):
         doses.extend([None] * (num_doses-len(doses)))
         diffs.extend([None] * (num_doses-len(diffs)))
         sigs.extend([None] * (num_doses-len(sigs)))
+        bm_types.extend([None] * (num_bms-len(bm_types)))
+        bm_values.extend([None] * (num_bms-len(bm_values)))
 
         row.extend(doses)
         row.extend(diffs)
         row.extend(sigs)
+        row.extend(bm_types)
+        row.extend(bm_values)
 
         return [row]
 
@@ -464,13 +474,20 @@ class IVEndpoint(BaseEndpoint):
                             .values_list('max_egs', flat=True))
 
     @classmethod
+    def get_maximum_number_benchmarks(cls, queryset):
+        return max(queryset\
+                            .annotate(max_benchmarks=models.Count('benchmarks'))\
+                            .values_list('max_benchmarks', flat=True))
+
+    @classmethod
     def get_tsv_file(cls, queryset):
         """
         Construct a tab-delimited version of the selected queryset of endpoints.
         """
         num_doses = cls.get_maximum_number_doses(queryset)
-        headers = cls.flat_file_header(num_doses=num_doses)
-        return build_tsv_file(headers, queryset, num_doses=num_doses)
+        num_bms = cls.get_maximum_number_benchmarks(queryset)
+        headers = cls.flat_file_header(num_doses=num_doses, num_bms=num_bms)
+        return build_tsv_file(headers, queryset, num_doses=num_doses, num_bms=num_bms)
 
     @classmethod
     def get_excel_file(cls, queryset):
@@ -478,11 +495,11 @@ class IVEndpoint(BaseEndpoint):
         Construct an Excel workbook of the selected queryset of endpoints.
         """
         num_doses = cls.get_maximum_number_doses(queryset)
-        headers = cls.flat_file_header(num_doses=num_doses)
+        num_bms = cls.get_maximum_number_benchmarks(queryset)
         sheet_name = 'in-vitro'
-        headers = cls.flat_file_header(num_doses)
         data_rows_func = cls.build_excel_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func, num_doses=num_doses)
+        headers = cls.flat_file_header(num_doses=num_doses, num_bms=num_bms)
+        return build_excel_file(sheet_name, headers, queryset, data_rows_func, num_doses=num_doses, num_bms=num_bms)
 
     @staticmethod
     def build_excel_rows(ws, queryset, *args, **kwargs):
