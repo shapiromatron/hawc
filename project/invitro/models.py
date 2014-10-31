@@ -269,7 +269,8 @@ class IVEndpoint(BaseEndpoint):
     data_location = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Details on where the data are found in the literature (ex: Figure 1, Table 2, etc.)")
+        help_text="Details on where the data are found in the literature "
+                  "(ex: Figure 1, Table 2, etc.)")
     data_type = models.CharField(
         max_length=2,
         choices=DATA_TYPE_CHOICES,

@@ -17,13 +17,14 @@ from study.models import Study
 from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file, HAWCdocx
 
 
-EPI_STUDY_DESIGN_CHOICES = (('CC', 'Case-control'),
-                            ('CS', 'Cross-sectional'),
-                            ('CP', 'Prospective'),
-                            ('RT', 'Retrospective'),
-                            ('CT', 'Controlled trial'),
-                            ('SE', 'Case-series'),
-                            ('CR', 'Case-report'))
+EPI_STUDY_DESIGN_CHOICES = (
+    ('CC', 'Case-control'),
+    ('CS', 'Cross-sectional'),
+    ('CP', 'Prospective'),
+    ('RT', 'Retrospective'),
+    ('CT', 'Controlled trial'),
+    ('SE', 'Case-series'),
+    ('CR', 'Case-report'))
 
 # https://www.iso.org/obp/ui/
 EPI_STUDY_COUNTRY_CHOICES = (
@@ -279,10 +280,13 @@ EPI_STUDY_COUNTRY_CHOICES = (
 
 
 class StudyCriteria(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment')
+    assessment = models.ForeignKey(
+        'assessment.Assessment')
     description = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         ordering = ('description', )
@@ -293,78 +297,116 @@ class StudyCriteria(models.Model):
 
 
 # https://www.fsd1.org/powerschool/Documents/PDFs/Federal_Race_Ethnicity_Guidelines.pdf
-ETHNICITY_CHOICES = (('I', 'American Indian or Alaskan Native'),
-                     ('A', 'Asian'),
-                     ('B', 'Black or African American'),
-                     ('H', 'Hispanic/Latino'),
-                     ('P', 'Native American of Other Pacific Islander'),
-                     ('M', 'Two or More Races'),
-                     ('W', 'White'),
-                     ('O', 'Other'),
-                     ('U', 'Unknown/Unspecified'))
+ETHNICITY_CHOICES = (
+    ('I', 'American Indian or Alaskan Native'),
+    ('A', 'Asian'),
+    ('B', 'Black or African American'),
+    ('H', 'Hispanic/Latino'),
+    ('P', 'Native American of Other Pacific Islander'),
+    ('M', 'Two or More Races'),
+    ('W', 'White'),
+    ('O', 'Other'),
+    ('U', 'Unknown/Unspecified'))
 
 class Ethnicity(models.Model):
-    ethnicity = models.CharField(max_length=1, choices=ETHNICITY_CHOICES)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    ethnicity = models.CharField(
+        max_length=1,
+        choices=ETHNICITY_CHOICES)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     def __unicode__(self):
         return self.get_ethnicity_display()
 
 
-SEX_CHOICES = (("U", "Unspecified"),
-               ("M", "Male"),
-               ("F", "Female"),
-               ("B", "Male and Female"))
+SEX_CHOICES = (
+    ("U", "Unspecified"),
+    ("M", "Male"),
+    ("F", "Female"),
+    ("B", "Male and Female"))
 
-MEAN_TYPE_CHOICES = ((0, None),
-                     (1, "mean"),
-                     (2, "geometric mean"),
-                     (3, "median"))
+MEAN_TYPE_CHOICES = (
+    (0, None),
+    (1, "mean"),
+    (2, "geometric mean"),
+    (3, "median"))
 
-SD_TYPE_CHOICES = ((0, None),
-                   (1, "SD"),
-                   (2, "SEM"))
+SD_TYPE_CHOICES = (
+    (0, None),
+    (1, "SD"),
+    (2, "SEM"))
 
-AGE_LOWER_LIMIT_CHOICES = ((0, None),
-                           (1, 'lower limit'), )
+AGE_LOWER_LIMIT_CHOICES = (
+    (0, None),
+    (1, 'lower limit'))
 
-AGE_UPPER_LIMIT_CHOICES = ((0, None),
-                           (1, 'upper limit'), )
+AGE_UPPER_LIMIT_CHOICES = (
+    (0, None),
+    (1, 'upper limit'))
 
 
 class Demographics(models.Model):
-    sex = models.CharField(max_length=1, choices=SEX_CHOICES)
-    ethnicity = models.ManyToManyField(Ethnicity, blank=True)
-    fraction_male = models.FloatField(blank=True, null=True,
-                                      validators=[MinValueValidator(0),
-                                                  MaxValueValidator(1)])
-    fraction_male_calculated = models.BooleanField(default=False,
+    sex = models.CharField(
+        max_length=1,
+        choices=SEX_CHOICES)
+    ethnicity = models.ManyToManyField(
+        Ethnicity,
+        blank=True)
+    fraction_male = models.FloatField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(1)])
+    fraction_male_calculated = models.BooleanField(
+        default=False,
         help_text="Was the fraction-male value calculated/estimated from literature?")
-    age_mean = models.FloatField(blank=True, null=True,
-                               verbose_name='Age central estimate')
-    age_mean_type = models.PositiveSmallIntegerField(choices=MEAN_TYPE_CHOICES,
-                               verbose_name="Age central estimate type",
-                               default=0)
-    age_calculated = models.BooleanField(default=False,
+    age_mean = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Age central estimate')
+    age_mean_type = models.PositiveSmallIntegerField(
+        choices=MEAN_TYPE_CHOICES,
+        verbose_name="Age central estimate type",
+        default=0)
+    age_calculated = models.BooleanField(
+        default=False,
         help_text="Were age values calculated/estimated from literature?")
-    age_description = models.CharField(max_length=128, blank=True,
-        help_text="Age description if numeric ages do not make sense for this study-population (ex: longitudinal studies)")
-    age_sd = models.FloatField(blank=True, null=True,
-                               verbose_name='Age variance')
-    age_sd_type = models.PositiveSmallIntegerField(choices=SD_TYPE_CHOICES,
-                                                   verbose_name="Age variance type",
-                                                   default=0)
-    age_lower = models.FloatField(blank=True, null=True)
-    age_lower_type = models.PositiveSmallIntegerField(choices=AGE_LOWER_LIMIT_CHOICES,
-                                                      default=0)
-    age_upper = models.FloatField(blank=True, null=True)
-    age_upper_type = models.PositiveSmallIntegerField(choices=AGE_UPPER_LIMIT_CHOICES,
-                                                      default=0)
-    n = models.PositiveIntegerField(blank=True, null=True)
-    starting_n = models.PositiveIntegerField(blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    age_description = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Age description if numeric ages do not make sense for this "
+                  "study-population (ex: longitudinal studies)")
+    age_sd = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Age variance')
+    age_sd_type = models.PositiveSmallIntegerField(
+        choices=SD_TYPE_CHOICES,
+        verbose_name="Age variance type",
+        default=0)
+    age_lower = models.FloatField(
+        blank=True,
+        null=True)
+    age_lower_type = models.PositiveSmallIntegerField(
+        choices=AGE_LOWER_LIMIT_CHOICES,
+        default=0)
+    age_upper = models.FloatField(
+        blank=True,
+        null=True)
+    age_upper_type = models.PositiveSmallIntegerField(
+        choices=AGE_UPPER_LIMIT_CHOICES,
+        default=0)
+    n = models.PositiveIntegerField(
+        blank=True,
+        null=True)
+    starting_n = models.PositiveIntegerField(
+        blank=True,
+        null=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         abstract = True
@@ -435,10 +477,13 @@ class Demographics(models.Model):
 
 
 class Factor(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment')
-    description = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    assessment = models.ForeignKey(
+        'assessment.Assessment')
+    description = models.TextField()
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         unique_together = ('assessment', 'description')
@@ -459,23 +504,38 @@ class Factor(models.Model):
 
 
 class StudyPopulation(Demographics):
-    study = models.ForeignKey('study.Study', related_name="study_populations")
-    name = models.CharField(max_length=256)
-    design = models.CharField(max_length=2,
-                              choices=EPI_STUDY_DESIGN_CHOICES)
-    country = models.CharField(max_length=2,
-                               choices=EPI_STUDY_COUNTRY_CHOICES)
-    region = models.CharField(max_length=128, blank=True)
-    state = models.CharField(max_length=128, blank=True)
-    inclusion_criteria = models.ManyToManyField(StudyCriteria,
-                                                related_name='inclusion_criteria',
-                                                blank=True, null=True)
-    exclusion_criteria = models.ManyToManyField(StudyCriteria,
-                                                related_name='exclusion_criteria',
-                                                blank=True, null=True)
-    confounding_criteria = models.ManyToManyField(StudyCriteria,
-                                                  related_name='confounding_criteria',
-                                                  blank=True, null=True)
+    study = models.ForeignKey(
+        'study.Study',
+        related_name="study_populations")
+    name = models.CharField(
+        max_length=256)
+    design = models.CharField(
+        max_length=2,
+        choices=EPI_STUDY_DESIGN_CHOICES)
+    country = models.CharField(
+        max_length=2,
+        choices=EPI_STUDY_COUNTRY_CHOICES)
+    region = models.CharField(
+        max_length=128,
+        blank=True)
+    state = models.CharField(
+        max_length=128,
+        blank=True)
+    inclusion_criteria = models.ManyToManyField(
+        StudyCriteria,
+        related_name='inclusion_criteria',
+        blank=True,
+        null=True)
+    exclusion_criteria = models.ManyToManyField(
+        StudyCriteria,
+        related_name='exclusion_criteria',
+        blank=True,
+        null=True)
+    confounding_criteria = models.ManyToManyField(
+        StudyCriteria,
+        related_name='confounding_criteria',
+        blank=True,
+        null=True)
 
     class Meta:
         ordering = ('name', )
@@ -570,27 +630,43 @@ class StudyPopulation(Demographics):
 
 
 class Exposure(models.Model):
-    study_population = models.ForeignKey(StudyPopulation,
-                                         related_name="exposures")
-    inhalation = models.BooleanField(default=False)
-    dermal = models.BooleanField(default=False)
-    oral = models.BooleanField(default=False)
-    in_utero = models.BooleanField(default=False)
-    iv = models.BooleanField(default=False, verbose_name="Intravenous (IV)")
-    unknown_route = models.BooleanField(default=False)
-    exposure_form_definition = models.TextField(help_text='Name of exposure-route')
-    metric = models.TextField(verbose_name="Measurement Metric")
-    metric_units = models.ForeignKey(DoseUnits)
-    metric_description = models.TextField(verbose_name="Measurement Description")
-    analytical_method = models.TextField(help_text="Include details on the lab-techniques for exposure measurement in samples.")
+    study_population = models.ForeignKey(
+        StudyPopulation,
+        related_name="exposures")
+    inhalation = models.BooleanField(
+        default=False)
+    dermal = models.BooleanField(
+        default=False)
+    oral = models.BooleanField(
+        default=False)
+    in_utero = models.BooleanField(
+        default=False)
+    iv = models.BooleanField(
+        default=False,
+        verbose_name="Intravenous (IV)")
+    unknown_route = models.BooleanField(
+        default=False)
+    exposure_form_definition = models.TextField(
+        help_text='Name of exposure-route')
+    metric = models.TextField(
+        verbose_name="Measurement Metric")
+    metric_units = models.ForeignKey(
+        DoseUnits)
+    metric_description = models.TextField(
+        verbose_name="Measurement Description")
+    analytical_method = models.TextField(
+        help_text="Include details on the lab-techniques for exposure measurement in samples.")
     control_description = models.TextField()
     exposure_description = models.CharField(
             max_length=128,
             blank=True,
             help_text='May be used to describe the exposure distribution, for '
-                      'example, "2.05 µg/g creatinine (urine), geometric mean; 25th percentile = 1.18, 75th percentile = 3.33"')
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+                      'example, "2.05 µg/g creatinine (urine), geometric mean; '
+                      '25th percentile = 1.18, 75th percentile = 3.33"')
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         ordering = ('exposure_form_definition', )
@@ -666,19 +742,24 @@ class Exposure(models.Model):
                 dic['exposure_description'])
 
 
-DIAGNOSTIC_CHOICES = ((0, 'not reported'),
-                      (1, 'medical professional or test'),
-                      (2, 'medical records'),
-                      (3, 'self-reported'))
+DIAGNOSTIC_CHOICES = (
+    (0, 'not reported'),
+    (1, 'medical professional or test'),
+    (2, 'medical records'),
+    (3, 'self-reported'))
 
-P_VALUE_QUALIFIER_CHOICES = (('<', '<'),
-                             ('=', '='),
-                             ('-', 'n.s.'))
+P_VALUE_QUALIFIER_CHOICES = (
+    ('<', '<'),
+    ('=', '='),
+    ('-', 'n.s.'))
 
 
 class StatisticalMetric(models.Model):
-    metric = models.CharField(max_length=128, unique=True)
-    order = models.PositiveSmallIntegerField(help_text="Order as they appear in option-list")
+    metric = models.CharField(
+        max_length=128,
+        unique=True)
+    order = models.PositiveSmallIntegerField(
+        help_text="Order as they appear in option-list")
 
     class Meta:
         ordering = ('order', )
@@ -687,83 +768,99 @@ class StatisticalMetric(models.Model):
         return self.metric
 
 
-MAIN_FINDING_CHOICES = ((2, "supportive"),
-                        (1, "inconclusive"),
-                        (0, "not-supportive"))
+MAIN_FINDING_CHOICES = (
+    (2, "supportive"),
+    (1, "inconclusive"),
+    (0, "not-supportive"))
 
-DOSE_RESPONSE_CHOICES = ((0, "not-applicable"),
-                         (1, "monotonic"),
-                         (2, "non-monotonic"),
-                         (3, "no trend"))
+DOSE_RESPONSE_CHOICES = (
+    (0, "not-applicable"),
+    (1, "monotonic"),
+    (2, "non-monotonic"),
+    (3, "no trend"))
 
-STATISTICAL_POWER_CHOICES = ((0, 'not reported or calculated'),
-                             (1, 'appears to be adequately powered (sample size met)'),
-                             (2, 'somewhat underpowered (sample size is 75% to <100% of recommended)'),
-                             (3, 'underpowered (sample size is 50 to <75% required)'),
-                             (4, 'severely underpowered (sample size is <50% required)'))
+STATISTICAL_POWER_CHOICES = (
+    (0, 'not reported or calculated'),
+    (1, 'appears to be adequately powered (sample size met)'),
+    (2, 'somewhat underpowered (sample size is 75% to <100% of recommended)'),
+    (3, 'underpowered (sample size is 50 to <75% required)'),
+    (4, 'severely underpowered (sample size is <50% required)'))
 
 
 class AssessedOutcome(BaseEndpoint):
-    exposure = models.ForeignKey(Exposure, related_name='outcomes')
-    data_location = models.CharField(max_length=128, blank=True,
-        help_text="Details on where the data are found in the literature (ex: Figure 1, Table 2, etc.)")
+    exposure = models.ForeignKey(
+        Exposure,
+        related_name='outcomes')
+    data_location = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Details on where the data are found in the literature "
+                  "(ex: Figure 1, Table 2, etc.)")
     population_description = models.CharField(
-            max_length=128,
-            help_text='Detailed description of the population being studied for this outcome, '
-                      'which may be a subset of the entire study-population. For example, '
-                      '"US (national) NHANES 2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
-            blank=True)
-    diagnostic = models.PositiveSmallIntegerField(choices=DIAGNOSTIC_CHOICES)
+        max_length=128,
+        help_text='Detailed description of the population being studied for this outcome, '
+                  'which may be a subset of the entire study-population. For example, '
+                  '"US (national) NHANES 2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
+        blank=True)
+    diagnostic = models.PositiveSmallIntegerField(
+        choices=DIAGNOSTIC_CHOICES)
     diagnostic_description = models.TextField()
     outcome_n = models.PositiveIntegerField(
-            blank=True,
-            null=True,
-            verbose_name="Outcome N")
+        blank=True,
+        null=True,
+        verbose_name="Outcome N")
     summary = models.TextField(blank=True,
-            help_text='Summarize main findings of outcome, or describe why no '
-                      'details are presented (for example, "no association '
-                      '(data not shown)")')
-    prevalence_incidence = models.TextField(blank=True)
+        help_text='Summarize main findings of outcome, or describe why no '
+                  'details are presented (for example, "no association '
+                  '(data not shown)")')
+    prevalence_incidence = models.TextField(
+        blank=True)
     adjustment_factors = models.ManyToManyField(Factor,
-            help_text="All factors which were included in final model",
-            related_name='adjustments',
-            blank=True, null=True)
+        help_text="All factors which were included in final model",
+        related_name='adjustments',
+        blank=True, null=True)
     confounders_considered = models.ManyToManyField(Factor,
-            verbose_name= "Adjustment factors considered",
-            help_text="All factors which were examined (including those which were included in final model)",
-            related_name='confounders',
-            blank=True, null=True)
+        verbose_name= "Adjustment factors considered",
+        help_text="All factors which were examined (including those which were included in final model)",
+        related_name='confounders',
+        blank=True,
+        null=True)
     dose_response = models.PositiveSmallIntegerField(
-            verbose_name="Dose Response Trend",
-            help_text="Was a dose-response trend observed?",
-            default=0,
-            choices=DOSE_RESPONSE_CHOICES)
-    dose_response_details = models.TextField(blank=True)
+        verbose_name="Dose Response Trend",
+        help_text="Was a dose-response trend observed?",
+        default=0,
+        choices=DOSE_RESPONSE_CHOICES)
+    dose_response_details = models.TextField(
+        blank=True)
     statistical_power = models.PositiveSmallIntegerField(
-            help_text="Is the study sufficiently powered?",
-            default=0,
-            choices=STATISTICAL_POWER_CHOICES)
-    statistical_power_details = models.TextField(blank=True)
-    main_finding = models.ForeignKey('epi.ExposureGroup',
-            blank=True,
-            null=True,
-            verbose_name="Main finding",
-            help_text="When a study did not report a statistically significant "
-                      "association use the highest exposure group compared with "
-                      "the referent group (e.g., fourth quartile vs. first "
-                      "quartile). When a study reports a statistically "
-                      "significant association use the lowest exposure group "
-                      "with a statistically significant association (e.g., "
-                      "third quartile vs. first quartile). When associations "
-                      "were non-monotonic in nature, select main findings "
-                      "on a case-by-case basis.")
+        help_text="Is the study sufficiently powered?",
+        default=0,
+        choices=STATISTICAL_POWER_CHOICES)
+    statistical_power_details = models.TextField(
+        blank=True)
+    main_finding = models.ForeignKey(
+        'epi.ExposureGroup',
+        blank=True,
+        null=True,
+        verbose_name="Main finding",
+        help_text="When a study did not report a statistically significant "
+                  "association use the highest exposure group compared with "
+                  "the referent group (e.g., fourth quartile vs. first "
+                  "quartile). When a study reports a statistically "
+                  "significant association use the lowest exposure group "
+                  "with a statistically significant association (e.g., "
+                  "third quartile vs. first quartile). When associations "
+                  "were non-monotonic in nature, select main findings "
+                  "on a case-by-case basis.")
     main_finding_support = models.PositiveSmallIntegerField(
-            choices=MAIN_FINDING_CHOICES,
-            help_text="Are the results supportive of the main-finding?",
-            default=1)
-    statistical_metric = models.ForeignKey(StatisticalMetric)
-    statistical_metric_description = models.TextField(blank=True,
-            help_text="Add additional text describing the statistical metric used, if needed.")
+        choices=MAIN_FINDING_CHOICES,
+        help_text="Are the results supportive of the main-finding?",
+        default=1)
+    statistical_metric = models.ForeignKey(
+        StatisticalMetric)
+    statistical_metric_description = models.TextField(
+        blank=True,
+        help_text="Add additional text describing the statistical metric used, if needed.")
 
     @staticmethod
     def get_cache_names(pks):
@@ -1129,8 +1226,11 @@ class AssessedOutcome(BaseEndpoint):
 
 
 class ExposureGroup(Demographics):
-    exposure = models.ForeignKey(Exposure, related_name='groups')
-    description = models.CharField(max_length=256)
+    exposure = models.ForeignKey(
+        Exposure,
+        related_name='groups')
+    description = models.CharField(
+        max_length=256)
     exposure_numeric = models.FloatField(
         verbose_name='Low exposure value (sorting)',
         help_text='Should be an exposure-value used for sorting',
@@ -1203,33 +1303,53 @@ class ExposureGroup(Demographics):
 
 
 class AssessedOutcomeGroup(models.Model):
-    exposure_group = models.ForeignKey(ExposureGroup,
-                        help_text="Exposure-group related to this assessed outcome group")
-    assessed_outcome = models.ForeignKey(AssessedOutcome, related_name="groups")
-    n = models.PositiveIntegerField(blank=True, null=True,
-                        help_text="Individuals in group where outcome was measured")
-    estimate = models.FloatField(blank=True, null=True,
-                                 help_text="Central tendency estimate for group")
-    se = models.FloatField(blank=True, null=True,
-                           verbose_name='Standard Error (SE)',
-                           help_text="Standard error estimate for group")
-    lower_ci = models.FloatField(blank=True, null=True,
-                                  verbose_name='Lower CI',
-                                 help_text="Numerical value for lower-confidence interval")
-    upper_ci = models.FloatField(blank=True, null=True,
-                                 verbose_name='Upper CI',
-                                 help_text="Numerical value for upper-confidence interval")
-    ci_units = models.FloatField(blank=True, null=True,
-                                 verbose_name='Confidence Interval (CI)',
-                                 help_text='A 95% CI is written as 0.95.')
-    p_value_qualifier = models.CharField(max_length=1,
-                                         choices=P_VALUE_QUALIFIER_CHOICES,
-                                         default="-",
-                                         verbose_name='p-value qualifier')
-    p_value = models.FloatField(blank=True, null=True,
-                                verbose_name='p-value')
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    exposure_group = models.ForeignKey(
+        ExposureGroup,
+        help_text="Exposure-group related to this assessed outcome group")
+    assessed_outcome = models.ForeignKey(
+        AssessedOutcome,
+        related_name="groups")
+    n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text="Individuals in group where outcome was measured")
+    estimate = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Central tendency estimate for group")
+    se = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Standard Error (SE)',
+        help_text="Standard error estimate for group")
+    lower_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower CI',
+        help_text="Numerical value for lower-confidence interval")
+    upper_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper CI',
+        help_text="Numerical value for upper-confidence interval")
+    ci_units = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Confidence Interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
+    p_value_qualifier = models.CharField(
+        max_length=1,
+        choices=P_VALUE_QUALIFIER_CHOICES,
+        default="-",
+        verbose_name='p-value qualifier')
+    p_value = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='p-value')
+    created = models.DateTimeField(
+        auto_now_add=True)
+    updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         ordering = ('exposure_group__exposure_group_id', )
@@ -1301,46 +1421,58 @@ class AssessedOutcomeGroup(models.Model):
 
 
 
-META_PROTOCOL_CHOICES = ((0, "Meta-analysis"),
-                         (1, "Pooled-analysis"))
+META_PROTOCOL_CHOICES = (
+    (0, "Meta-analysis"),
+    (1, "Pooled-analysis"))
 
-META_LIT_SEARCH_CHOICES = ((0, "Systematic"),
-                           (1, "Other"))
+META_LIT_SEARCH_CHOICES = (
+    (0, "Systematic"),
+    (1, "Other"))
 
 
 class MetaProtocol(models.Model):
     study = models.ForeignKey('study.Study',
          related_name="meta_protocols")
     name = models.CharField(
-        verbose_name="Protocol name", max_length=128)
+        verbose_name="Protocol name",
+        max_length=128)
     protocol_type = models.PositiveSmallIntegerField(
-        choices=META_PROTOCOL_CHOICES, default=0)
+        choices=META_PROTOCOL_CHOICES,
+        default=0)
     lit_search_strategy = models.PositiveSmallIntegerField(
         verbose_name="Literature search strategy",
-        choices=META_LIT_SEARCH_CHOICES, default=0)
+        choices=META_LIT_SEARCH_CHOICES,
+        default=0)
     lit_search_notes = models.TextField(
         verbose_name="Literature search notes",
         blank=True)
     lit_search_start_date = models.DateField(
         verbose_name="Literature search start-date",
-        blank=True, null=True)
+        blank=True,
+        null=True)
     lit_search_end_date = models.DateField(
         verbose_name="Literature search end-date",
-        blank=True, null=True)
+        blank=True,
+        null=True)
     total_references = models.PositiveIntegerField(
         verbose_name="Total number of references found",
-        help_text="References identified through initial literature-search "\
+        help_text="References identified through initial literature-search "
                   "before application of inclusion/exclusion criteria",
-        blank=True, null=True)
-    inclusion_criteria = models.ManyToManyField(StudyCriteria,
-                                                related_name='meta_inclusion_criteria',
-                                                blank=True, null=True)
-    exclusion_criteria = models.ManyToManyField(StudyCriteria,
-                                                related_name='meta_exclusion_criteria',
-                                                blank=True, null=True)
+        blank=True,
+        null=True)
+    inclusion_criteria = models.ManyToManyField(
+        StudyCriteria,
+        related_name='meta_inclusion_criteria',
+        blank=True,
+        null=True)
+    exclusion_criteria = models.ManyToManyField(
+        StudyCriteria,
+        related_name='meta_exclusion_criteria',
+        blank=True,
+        null=True)
     total_studies_identified = models.PositiveIntegerField(
         verbose_name="Total number of studies identified",
-        help_text="Total references identified for inclusion after application " \
+        help_text="Total references identified for inclusion after application "
                   "of literature review and screening criteria")
     notes = models.TextField(blank=True)
 
@@ -1376,25 +1508,42 @@ class MetaProtocol(models.Model):
 
 
 class MetaResult(models.Model):
-    protocol = models.ForeignKey(MetaProtocol, related_name="results")
-    label = models.CharField(max_length=128)
-    health_outcome = models.CharField(max_length=128)
-    health_outcome_notes = models.TextField(blank=True)
-    exposure_name = models.CharField(max_length=128)
-    exposure_details = models.TextField(blank=True)
+    protocol = models.ForeignKey(
+        MetaProtocol,
+        related_name="results")
+    label = models.CharField(
+        max_length=128)
+    health_outcome = models.CharField(
+        max_length=128)
+    health_outcome_notes = models.TextField(
+        blank=True)
+    exposure_name = models.CharField(
+        max_length=128)
+    exposure_details = models.TextField(
+        blank=True)
     number_studies = models.PositiveSmallIntegerField()
-    statistical_metric = models.ForeignKey(StatisticalMetric)
-    statistical_notes = models.TextField(blank=True)
-    n = models.PositiveIntegerField(help_text="Number of individuals included from all analyses")
+    statistical_metric = models.ForeignKey(
+        StatisticalMetric)
+    statistical_notes = models.TextField(
+        blank=True)
+    n = models.PositiveIntegerField(
+        help_text="Number of individuals included from all analyses")
     risk_estimate = models.FloatField()
-    lower_ci = models.FloatField(verbose_name="Lower CI")
-    upper_ci = models.FloatField(verbose_name="Upper CI")
-    heterogeneity = models.CharField(max_length=256, blank=True)
-    adjustment_factors = models.ManyToManyField(Factor,
-            help_text="All factors which were included in final model",
-            related_name='meta_adjustments',
-            blank=True, null=True)
-    notes = models.TextField(blank=True)
+    lower_ci = models.FloatField(
+        verbose_name="Lower CI")
+    upper_ci = models.FloatField(
+        verbose_name="Upper CI")
+    heterogeneity = models.CharField(
+        max_length=256,
+        blank=True)
+    adjustment_factors = models.ManyToManyField(
+        Factor,
+        help_text="All factors which were included in final model",
+        related_name='meta_adjustments',
+        blank=True,
+        null=True)
+    notes = models.TextField(
+        blank=True)
 
     class Meta:
         ordering = ('label', )
@@ -1429,23 +1578,47 @@ class MetaResult(models.Model):
 
 
 class SingleResult(models.Model):
-    meta_result = models.ForeignKey(MetaResult, related_name="single_results")
-    study = models.ForeignKey('study.Study', related_name="single_results", blank=True, null=True)
-    outcome_group = models.ForeignKey(AssessedOutcomeGroup, related_name="single_results", blank=True, null=True)
-    exposure_name = models.CharField(max_length=128,
-                                     help_text='Enter a descriptive-name for the single study result (e.g., "Smith et al. 2000, obese-males")')
-    weight = models.FloatField(blank=True, null=True,
-                               validators=[MinValueValidator(0),MaxValueValidator(1)],
-                               help_text="For meta-analysis, enter the fraction-weight assigned for each result (leave-blank for pooled analyses)")
-    n = models.PositiveIntegerField(blank=True, null=True,
-                                    help_text="Enter the number of observations for this result")
-    risk_estimate = models.FloatField(blank=True, null=True,
-                                      help_text="Enter the numerical risk-estimate presented for this result")
-    lower_ci = models.FloatField(verbose_name="Lower CI",
-                                 blank=True, null=True)
-    upper_ci = models.FloatField(verbose_name="Upper CI",
-                                 blank=True, null=True)
-    notes = models.TextField(blank=True)
+    meta_result = models.ForeignKey(
+        MetaResult,
+        related_name="single_results")
+    study = models.ForeignKey(
+        'study.Study',
+        related_name="single_results",
+        blank=True,
+        null=True)
+    outcome_group = models.ForeignKey(
+        AssessedOutcomeGroup,
+        related_name="single_results",
+        blank=True,
+        null=True)
+    exposure_name = models.CharField(
+        max_length=128,
+        help_text='Enter a descriptive-name for the single study result '
+                  '(e.g., "Smith et al. 2000, obese-males")')
+    weight = models.FloatField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0),MaxValueValidator(1)],
+        help_text="For meta-analysis, enter the fraction-weight assigned for "
+                  "each result (leave-blank for pooled analyses)")
+    n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text="Enter the number of observations for this result")
+    risk_estimate = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Enter the numerical risk-estimate presented for this result")
+    lower_ci = models.FloatField(
+        verbose_name="Lower CI",
+        blank=True,
+        null=True)
+    upper_ci = models.FloatField(
+        verbose_name="Upper CI",
+        blank=True,
+        null=True)
+    notes = models.TextField(
+        blank=True)
 
     class Meta:
         ordering = ('-weight', 'exposure_name')
