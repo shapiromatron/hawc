@@ -176,15 +176,34 @@ AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
     tbody.append(tr);
 };
 
+AssessedOutcome. prototype.get_statistical_metric_header = function(){
+    var txt = this.data.statistical_metric;
+    txt = txt.charAt(0).toUpperCase() + txt.substr(1);
+    // assumes confidence interval is the same for all assessed-outcome groups
+    if (this.aog.length>0) txt += this.aog[0].get_confidence_interval();
+    return txt;
+};
+
 AssessedOutcome.prototype.build_aog_table = function(div){
     var tbl = $('<table class="table table-condensed table-striped"></table>'),
+        tcol = $("<colgroup><colgroup>"),
         thead = $('<thead></thead>'),
         tbody = $('<tbody></tbody>'),
         tfoot = $('<tfoot></tfoot>'),
         footnotes  = new TableFootnotes();
 
     // build header
-    thead.append('<tr><th>Exposure-group</th><th>N</th><th>Estimate</th><th>SE</th><th>(low, high)</th><th><i>p</i>-value</th></tr>');
+    var estimate_header = this.get_statistical_metric_header();
+    thead.append('<tr><th>Exposure-group</th><th>N</th><th>{0}</th><th>SE</th><th><i>p</i>-value</th></tr>'.printf(estimate_header));
+
+    // build colgroup
+    tcol.append([
+        $('<col width="30%">'),
+        $('<col width="15%">'),
+        $('<col width="25%">'),
+        $('<col width="15%">'),
+        $('<col width="15%">')
+        ]);
 
     // build body
     this.aog.forEach(function(v){ tbody.append(v.build_aog_table_row(footnotes)); });
@@ -193,7 +212,7 @@ AssessedOutcome.prototype.build_aog_table = function(div){
     var tfoot_txt = footnotes.html_list().join('<br>');
     tfoot.append('<tr><td colspan="{0}">{1}</td></tr>'.printf(10, tfoot_txt));
 
-    $(div).html(tbl.append(thead, tfoot, tbody));
+    $(div).html(tbl.append(tcol, thead, tfoot, tbody));
 };
 
 AssessedOutcome.prototype.build_breadcrumbs = function(){
@@ -226,9 +245,9 @@ var AssessedOutcomeGroup = function(data){
 };
 
 AssessedOutcomeGroup.prototype.build_aog_table_row  = function(footnotes){
-    var self = this;
+    var self = this,
+        name = this.data.exposure_group.description;
 
-    var name = this.data.exposure_group.description;
     if(this.data.main_finding){
         name = name + footnotes.add_footnote(["Main finding as selected by HAWC assessment authors."]);
     }
@@ -239,10 +258,24 @@ AssessedOutcomeGroup.prototype.build_aog_table_row  = function(footnotes){
                                              .on('click', function(e){e.preventDefault();
                                                                       self.tooltip.display_exposure_group_table(self, e);})),
                     $('<td>').text(this.data.n || "-"),
-                    $('<td>').text(this.data.estimate || "-"),
+                    $('<td>').text(this.build_formatted_estimate()),
                     $('<td>').text(this.data.se || "-"),
-                    $('<td>').text('({0},{1})'.printf(this.data.lower_ci || "-", this.data.upper_ci || "-")),
                     $('<td>').text(this.data.p_value_text || "-")]);
+};
+
+AssessedOutcomeGroup.prototype.build_formatted_estimate = function(){
+    var txt = "-";
+    if (this.data.estimate) txt = this.data.estimate;
+    if ((this.data.lower_ci) && (this.data.upper_ci)){
+        txt += ' ({0},{1})'.printf(this.data.lower_ci, this.data.upper_ci);
+    }
+    return txt;
+};
+
+AssessedOutcomeGroup.prototype.get_confidence_interval = function(){
+    var txt = "";
+    if(this.data.ci_units) txt = " ({0}% CI)".printf(this.data.ci_units*100);
+    return txt;
 };
 
 AssessedOutcomeGroup.prototype.get_ci = function(){
