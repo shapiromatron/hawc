@@ -164,6 +164,16 @@ class EndpointForm(ModelForm):
                   'monotonicity', 'statistical_test', 'trend_value',
                   'results_notes', 'endpoint_notes')
 
+    def clean(self):
+        cleaned_data = super(EndpointForm, self).clean()
+
+        data_type = cleaned_data.get("data_type")
+        variance_type = cleaned_data.get("variance_type")
+        if data_type=="C" and variance_type==0:
+            raise forms.ValidationError("If entering continuous data, the "
+                "variance type must be SD (standard-deviation) or SE "
+                "(standard error)")
+
 
 class EndpointGroupForm(ModelForm):
 
