@@ -596,13 +596,19 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Number of studies", this.data.number_studies);
     tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors);
     tbl.add_tbody_tr("N", this.data.n);
-    tbl.add_tbody_tr(this.data.statistical_metric, this.get_risk_estimate_text());
+    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text());
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
     tbl.add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity);
     tbl.add_tbody_tr("Notes", this.data.notes);
 
     $(div).html(tbl.get_tbl());
 };
+
+MetaResult.prototype.get_statistical_metric_header = function(){
+    var txt = this.data.statistical_metric;
+    if(this.data.ci_units) txt += " ({0}% CI)".printf(this.data.ci_units*100);
+    return txt;
+}
 
 MetaResult.prototype.get_risk_estimate_text = function(){
     var txt = "{0}".printf(this.data.risk_estimate);

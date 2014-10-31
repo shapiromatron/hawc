@@ -421,7 +421,7 @@ class SingleResultForm(forms.ModelForm):
         model = models.SingleResult
         fields = ('study', 'exposure_name', 'weight', 'outcome_group',
                   'n', 'risk_estimate', 'lower_ci',
-                  'upper_ci', 'notes')
+                  'upper_ci', 'ci_units', 'notes')
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -431,7 +431,7 @@ class SingleResultForm(forms.ModelForm):
         # re-order with custom-fields: https://djangosnippets.org/snippets/759/
         order = ('resultSelector', 'study', 'ao', 'outcome_group',
                  'exposure_name', 'weight', 'n',
-                 'risk_estimate', 'lower_ci', 'upper_ci', 'notes')
+                 'risk_estimate', 'lower_ci', 'upper_ci', 'ci_units', 'notes')
         tmp = copy(self.fields)
         self.fields = SortedDict()
         for item in order:
@@ -455,7 +455,7 @@ class SingleResultForm(forms.ModelForm):
         updateClasses(("resultSelector", ), "unstyled singleResultType")
         updateClasses(("study", "exposure_name", "weight", "notes"), "span12")
         updateClasses(("ao", "outcome_group", ), "span11 isAOG")
-        updateClasses(("n", "risk_estimate", "lower_ci", "upper_ci"), "span12 isntAOG")
+        updateClasses(("n", "risk_estimate", "lower_ci", "upper_ci", 'ci_units'), "span12 isntAOG")
         self.fields['study'].widget.attrs["class"] += " studySearch"
         self.fields['ao'].widget.attrs["class"]  += " aoSearch"
         self.fields['outcome_group'].widget.attrs["class"] += " aogSearch"
@@ -545,5 +545,4 @@ class MetaResultSelectorForm(forms.Form):
         super(MetaResultSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
-
 

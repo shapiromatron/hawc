@@ -1337,6 +1337,7 @@ class AssessedOutcomeGroup(models.Model):
     ci_units = models.FloatField(
         blank=True,
         null=True,
+        default=0.95,
         verbose_name='Confidence Interval (CI)',
         help_text='A 95% CI is written as 0.95.')
     p_value_qualifier = models.CharField(
@@ -1536,9 +1537,17 @@ class MetaResult(models.Model):
         help_text="Number of individuals included from all analyses")
     risk_estimate = models.FloatField()
     lower_ci = models.FloatField(
-        verbose_name="Lower CI")
+        verbose_name="Lower CI",
+        help_text="Numerical value for lower-confidence interval")
     upper_ci = models.FloatField(
-        verbose_name="Upper CI")
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval")
+    ci_units = models.FloatField(
+        blank=True,
+        null=True,
+        default=0.95,
+        verbose_name='Confidence Interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
     heterogeneity = models.CharField(
         max_length=256,
         blank=True)
@@ -1569,7 +1578,7 @@ class MetaResult(models.Model):
                   'health_outcome_notes', 'exposure_name', 'exposure_details',
                   'number_studies', 'statistical_notes',
                   'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                  'heterogeneity', 'notes')
+                  'ci_units', 'heterogeneity', 'notes')
         for field in fields:
             d[field] = getattr(self, field)
 
@@ -1616,13 +1625,21 @@ class SingleResult(models.Model):
         null=True,
         help_text="Enter the numerical risk-estimate presented for this result")
     lower_ci = models.FloatField(
+        blank=True,
+        null=True,
         verbose_name="Lower CI",
-        blank=True,
-        null=True)
+        help_text="Numerical value for lower-confidence interval")
     upper_ci = models.FloatField(
-        verbose_name="Upper CI",
         blank=True,
-        null=True)
+        null=True,
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval")
+    ci_units = models.FloatField(
+        blank=True,
+        null=True,
+        default=0.95,
+        verbose_name='Confidence Interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
     notes = models.TextField(
         blank=True)
 
@@ -1636,7 +1653,7 @@ class SingleResult(models.Model):
         d = {}
         fields = ('pk', 'exposure_name', 'weight',
                   'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                  'notes')
+                  'ci_units', 'notes')
         for field in fields:
             d[field] = getattr(self, field)
 
