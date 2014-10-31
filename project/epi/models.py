@@ -17,268 +17,6 @@ from study.models import Study
 from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file, HAWCdocx
 
 
-EPI_STUDY_DESIGN_CHOICES = (
-    ('CC', 'Case-control'),
-    ('CS', 'Cross-sectional'),
-    ('CP', 'Prospective'),
-    ('RT', 'Retrospective'),
-    ('CT', 'Controlled trial'),
-    ('SE', 'Case-series'),
-    ('CR', 'Case-report'))
-
-# https://www.iso.org/obp/ui/
-EPI_STUDY_COUNTRY_CHOICES = (
-    ("AF", u"Afghanistan"),
-    ("AX", u"Åland Islands"),
-    ("AL", u"Albania"),
-    ("DZ", u"Algeria"),
-    ("AS", u"American Samoa"),
-    ("AD", u"Andorra"),
-    ("AO", u"Angola"),
-    ("AI", u"Anguilla"),
-    ("AQ", u"Antarctica"),
-    ("AG", u"Antigua And Barbuda"),
-    ("AR", u"Argentina"),
-    ("AM", u"Armenia"),
-    ("AW", u"Aruba"),
-    ("AU", u"Australia"),
-    ("AT", u"Austria"),
-    ("AZ", u"Azerbaijan"),
-    ("BS", u"Bahamas"),
-    ("BH", u"Bahrain"),
-    ("BD", u"Bangladesh"),
-    ("BB", u"Barbados"),
-    ("BY", u"Belarus"),
-    ("BE", u"Belgium"),
-    ("BZ", u"Belize"),
-    ("BJ", u"Benin"),
-    ("BM", u"Bermuda"),
-    ("BT", u"Bhutan"),
-    ("BO", u"Bolivia, Plurinational State Of"),
-    ("BQ", u"Bonaire, Sint Eustatius And Saba"),
-    ("BA", u"Bosnia And Herzegovina"),
-    ("BW", u"Botswana"),
-    ("BV", u"Bouvet Island"),
-    ("BR", u"Brazil"),
-    ("IO", u"British Indian Ocean Territory"),
-    ("BN", u"Brunei Darussalam"),
-    ("BG", u"Bulgaria"),
-    ("BF", u"Burkina Faso"),
-    ("BI", u"Burundi"),
-    ("KH", u"Cambodia"),
-    ("CM", u"Cameroon"),
-    ("CA", u"Canada"),
-    ("CV", u"Cape Verde"),
-    ("KY", u"Cayman Islands"),
-    ("CF", u"Central African Republic"),
-    ("TD", u"Chad"),
-    ("CL", u"Chile"),
-    ("CN", u"China"),
-    ("CX", u"Christmas Island"),
-    ("CC", u"Cocos (Keeling) Islands"),
-    ("CO", u"Colombia"),
-    ("KM", u"Comoros"),
-    ("CG", u"Congo"),
-    ("CD", u"Congo, The Democratic Republic Of The"),
-    ("CK", u"Cook Islands"),
-    ("CR", u"Costa Rica"),
-    ("CI", u"Côte D'Ivoire"),
-    ("HR", u"Croatia"),
-    ("CU", u"Cuba"),
-    ("CW", u"Curaçao"),
-    ("CY", u"Cyprus"),
-    ("CZ", u"Czech Republic"),
-    ("DK", u"Denmark"),
-    ("DJ", u"Djibouti"),
-    ("DM", u"Dominica"),
-    ("DO", u"Dominican Republic"),
-    ("EC", u"Ecuador"),
-    ("EG", u"Egypt"),
-    ("SV", u"El Salvador"),
-    ("GQ", u"Equatorial Guinea"),
-    ("ER", u"Eritrea"),
-    ("EE", u"Estonia"),
-    ("ET", u"Ethiopia"),
-    ("FK", u"Falkland Islands (Malvinas)"),
-    ("FO", u"Faroe Islands"),
-    ("FJ", u"Fiji"),
-    ("FI", u"Finland"),
-    ("FR", u"France"),
-    ("GF", u"French Guiana"),
-    ("PF", u"French Polynesia"),
-    ("TF", u"French Southern Territories"),
-    ("GA", u"Gabon"),
-    ("GM", u"Gambia"),
-    ("GE", u"Georgia"),
-    ("DE", u"Germany"),
-    ("GH", u"Ghana"),
-    ("GI", u"Gibraltar"),
-    ("GR", u"Greece"),
-    ("GL", u"Greenland"),
-    ("GD", u"Grenada"),
-    ("GP", u"Guadeloupe"),
-    ("GU", u"Guam"),
-    ("GT", u"Guatemala"),
-    ("GG", u"Guernsey"),
-    ("GN", u"Guinea"),
-    ("GW", u"Guinea-Bissau"),
-    ("GY", u"Guyana"),
-    ("HT", u"Haiti"),
-    ("HM", u"Heard Island And Mcdonald Islands"),
-    ("VA", u"Holy See (Vatican City State)"),
-    ("HN", u"Honduras"),
-    ("HK", u"Hong Kong"),
-    ("HU", u"Hungary"),
-    ("IS", u"Iceland"),
-    ("IN", u"India"),
-    ("ID", u"Indonesia"),
-    ("IR", u"Iran, Islamic Republic Of"),
-    ("IQ", u"Iraq"),
-    ("IE", u"Ireland"),
-    ("IM", u"Isle Of Man"),
-    ("IL", u"Israel"),
-    ("IT", u"Italy"),
-    ("JM", u"Jamaica"),
-    ("JP", u"Japan"),
-    ("JE", u"Jersey"),
-    ("JO", u"Jordan"),
-    ("KZ", u"Kazakhstan"),
-    ("KE", u"Kenya"),
-    ("KI", u"Kiribati"),
-    ("KP", u"Korea, Democratic People's Republic Of"),
-    ("KR", u"Korea, Republic Of"),
-    ("KW", u"Kuwait"),
-    ("KG", u"Kyrgyzstan"),
-    ("LA", u"Lao People's Democratic Republic"),
-    ("LV", u"Latvia"),
-    ("LB", u"Lebanon"),
-    ("LS", u"Lesotho"),
-    ("LR", u"Liberia"),
-    ("LY", u"Libya"),
-    ("LI", u"Liechtenstein"),
-    ("LT", u"Lithuania"),
-    ("LU", u"Luxembourg"),
-    ("MO", u"Macao"),
-    ("MK", u"Macedonia, The Former Yugoslav Republic Of"),
-    ("MG", u"Madagascar"),
-    ("MW", u"Malawi"),
-    ("MY", u"Malaysia"),
-    ("MV", u"Maldives"),
-    ("ML", u"Mali"),
-    ("MT", u"Malta"),
-    ("MH", u"Marshall Islands"),
-    ("MQ", u"Martinique"),
-    ("MR", u"Mauritania"),
-    ("MU", u"Mauritius"),
-    ("YT", u"Mayotte"),
-    ("MX", u"Mexico"),
-    ("FM", u"Micronesia, Federated States Of"),
-    ("MD", u"Moldova, Republic Of"),
-    ("MC", u"Monaco"),
-    ("MN", u"Mongolia"),
-    ("ME", u"Montenegro"),
-    ("MS", u"Montserrat"),
-    ("MA", u"Morocco"),
-    ("MZ", u"Mozambique"),
-    ("MM", u"Myanmar"),
-    ("NA", u"Namibia"),
-    ("NR", u"Nauru"),
-    ("NP", u"Nepal"),
-    ("NL", u"Netherlands"),
-    ("NC", u"New Caledonia"),
-    ("NZ", u"New Zealand"),
-    ("NI", u"Nicaragua"),
-    ("NE", u"Niger"),
-    ("NG", u"Nigeria"),
-    ("NU", u"Niue"),
-    ("NF", u"Norfolk Island"),
-    ("MP", u"Northern Mariana Islands"),
-    ("NO", u"Norway"),
-    ("OM", u"Oman"),
-    ("PK", u"Pakistan"),
-    ("PW", u"Palau"),
-    ("PS", u"Palestine, State Of"),
-    ("PA", u"Panama"),
-    ("PG", u"Papua New Guinea"),
-    ("PY", u"Paraguay"),
-    ("PE", u"Peru"),
-    ("PH", u"Philippines"),
-    ("PN", u"Pitcairn"),
-    ("PL", u"Poland"),
-    ("PT", u"Portugal"),
-    ("PR", u"Puerto Rico"),
-    ("QA", u"Qatar"),
-    ("RE", u"Réunion"),
-    ("RO", u"Romania"),
-    ("RU", u"Russian Federation"),
-    ("RW", u"Rwanda"),
-    ("BL", u"Saint Barthélemy"),
-    ("SH", u"Saint Helena, Ascension And Tristan Da Cunha"),
-    ("KN", u"Saint Kitts And Nevis"),
-    ("LC", u"Saint Lucia"),
-    ("MF", u"Saint Martin (French Part)"),
-    ("PM", u"Saint Pierre And Miquelon"),
-    ("VC", u"Saint Vincent And The Grenadines"),
-    ("WS", u"Samoa"),
-    ("SM", u"San Marino"),
-    ("ST", u"Sao Tome And Principe"),
-    ("SA", u"Saudi Arabia"),
-    ("SN", u"Senegal"),
-    ("RS", u"Serbia"),
-    ("SC", u"Seychelles"),
-    ("SL", u"Sierra Leone"),
-    ("SG", u"Singapore"),
-    ("SX", u"Sint Maarten (Dutch Part)"),
-    ("SK", u"Slovakia"),
-    ("SI", u"Slovenia"),
-    ("SB", u"Solomon Islands"),
-    ("SO", u"Somalia"),
-    ("ZA", u"South Africa"),
-    ("GS", u"South Georgia And The South Sandwich Islands"),
-    ("SS", u"South Sudan"),
-    ("ES", u"Spain"),
-    ("LK", u"Sri Lanka"),
-    ("SD", u"Sudan"),
-    ("SR", u"Suriname"),
-    ("SJ", u"Svalbard And Jan Mayen"),
-    ("SZ", u"Swaziland"),
-    ("SE", u"Sweden"),
-    ("CH", u"Switzerland"),
-    ("SY", u"Syrian Arab Republic"),
-    ("TW", u"Taiwan, Province Of China"),
-    ("TJ", u"Tajikistan"),
-    ("TZ", u"Tanzania, United Republic Of"),
-    ("TH", u"Thailand"),
-    ("TL", u"Timor-Leste"),
-    ("TG", u"Togo"),
-    ("TK", u"Tokelau"),
-    ("TO", u"Tonga"),
-    ("TT", u"Trinidad And Tobago"),
-    ("TN", u"Tunisia"),
-    ("TR", u"Turkey"),
-    ("TM", u"Turkmenistan"),
-    ("TC", u"Turks And Caicos Islands"),
-    ("TV", u"Tuvalu"),
-    ("UG", u"Uganda"),
-    ("UA", u"Ukraine"),
-    ("AE", u"United Arab Emirates"),
-    ("GB", u"United Kingdom"),
-    ("US", u"United States"),
-    ("UM", u"United States Minor Outlying Islands"),
-    ("UY", u"Uruguay"),
-    ("UZ", u"Uzbekistan"),
-    ("VU", u"Vanuatu"),
-    ("VE", u"Venezuela, Bolivarian Republic Of"),
-    ("VN", u"Viet Nam"),
-    ("VG", u"Virgin Islands, British"),
-    ("VI", u"Virgin Islands, U.S."),
-    ("WF", u"Wallis And Futuna"),
-    ("EH", u"Western Sahara"),
-    ("YE", u"Yemen"),
-    ("ZM", u"Zambia"),
-    ("ZW", u"Zimbabwe"))
-
-
 class StudyCriteria(models.Model):
     assessment = models.ForeignKey(
         'assessment.Assessment')
@@ -296,19 +34,20 @@ class StudyCriteria(models.Model):
         return self.description
 
 
-# https://www.fsd1.org/powerschool/Documents/PDFs/Federal_Race_Ethnicity_Guidelines.pdf
-ETHNICITY_CHOICES = (
-    ('I', 'American Indian or Alaskan Native'),
-    ('A', 'Asian'),
-    ('B', 'Black or African American'),
-    ('H', 'Hispanic/Latino'),
-    ('P', 'Native American of Other Pacific Islander'),
-    ('M', 'Two or More Races'),
-    ('W', 'White'),
-    ('O', 'Other'),
-    ('U', 'Unknown/Unspecified'))
-
 class Ethnicity(models.Model):
+
+    # https://www.fsd1.org/powerschool/Documents/PDFs/Federal_Race_Ethnicity_Guidelines.pdf
+    ETHNICITY_CHOICES = (
+        ('I', 'American Indian or Alaskan Native'),
+        ('A', 'Asian'),
+        ('B', 'Black or African American'),
+        ('H', 'Hispanic/Latino'),
+        ('P', 'Native American of Other Pacific Islander'),
+        ('M', 'Two or More Races'),
+        ('W', 'White'),
+        ('O', 'Other'),
+        ('U', 'Unknown/Unspecified'))
+
     ethnicity = models.CharField(
         max_length=1,
         choices=ETHNICITY_CHOICES)
@@ -321,33 +60,33 @@ class Ethnicity(models.Model):
         return self.get_ethnicity_display()
 
 
-SEX_CHOICES = (
-    ("U", "Unspecified"),
-    ("M", "Male"),
-    ("F", "Female"),
-    ("B", "Male and Female"))
-
-MEAN_TYPE_CHOICES = (
-    (0, None),
-    (1, "mean"),
-    (2, "geometric mean"),
-    (3, "median"))
-
-SD_TYPE_CHOICES = (
-    (0, None),
-    (1, "SD"),
-    (2, "SEM"))
-
-AGE_LOWER_LIMIT_CHOICES = (
-    (0, None),
-    (1, 'lower limit'))
-
-AGE_UPPER_LIMIT_CHOICES = (
-    (0, None),
-    (1, 'upper limit'))
-
-
 class Demographics(models.Model):
+
+    SEX_CHOICES = (
+        ("U", "Unspecified"),
+        ("M", "Male"),
+        ("F", "Female"),
+        ("B", "Male and Female"))
+
+    MEAN_TYPE_CHOICES = (
+        (0, None),
+        (1, "mean"),
+        (2, "geometric mean"),
+        (3, "median"))
+
+    SD_TYPE_CHOICES = (
+        (0, None),
+        (1, "SD"),
+        (2, "SEM"))
+
+    AGE_LOWER_LIMIT_CHOICES = (
+        (0, None),
+        (1, 'lower limit'))
+
+    AGE_UPPER_LIMIT_CHOICES = (
+        (0, None),
+        (1, 'upper limit'))
+
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
@@ -504,6 +243,268 @@ class Factor(models.Model):
 
 
 class StudyPopulation(Demographics):
+
+    EPI_STUDY_DESIGN_CHOICES = (
+        ('CC', 'Case-control'),
+        ('CS', 'Cross-sectional'),
+        ('CP', 'Prospective'),
+        ('RT', 'Retrospective'),
+        ('CT', 'Controlled trial'),
+        ('SE', 'Case-series'),
+        ('CR', 'Case-report'))
+
+    # https://www.iso.org/obp/ui/
+    EPI_STUDY_COUNTRY_CHOICES = (
+        ("AF", u"Afghanistan"),
+        ("AX", u"Åland Islands"),
+        ("AL", u"Albania"),
+        ("DZ", u"Algeria"),
+        ("AS", u"American Samoa"),
+        ("AD", u"Andorra"),
+        ("AO", u"Angola"),
+        ("AI", u"Anguilla"),
+        ("AQ", u"Antarctica"),
+        ("AG", u"Antigua And Barbuda"),
+        ("AR", u"Argentina"),
+        ("AM", u"Armenia"),
+        ("AW", u"Aruba"),
+        ("AU", u"Australia"),
+        ("AT", u"Austria"),
+        ("AZ", u"Azerbaijan"),
+        ("BS", u"Bahamas"),
+        ("BH", u"Bahrain"),
+        ("BD", u"Bangladesh"),
+        ("BB", u"Barbados"),
+        ("BY", u"Belarus"),
+        ("BE", u"Belgium"),
+        ("BZ", u"Belize"),
+        ("BJ", u"Benin"),
+        ("BM", u"Bermuda"),
+        ("BT", u"Bhutan"),
+        ("BO", u"Bolivia, Plurinational State Of"),
+        ("BQ", u"Bonaire, Sint Eustatius And Saba"),
+        ("BA", u"Bosnia And Herzegovina"),
+        ("BW", u"Botswana"),
+        ("BV", u"Bouvet Island"),
+        ("BR", u"Brazil"),
+        ("IO", u"British Indian Ocean Territory"),
+        ("BN", u"Brunei Darussalam"),
+        ("BG", u"Bulgaria"),
+        ("BF", u"Burkina Faso"),
+        ("BI", u"Burundi"),
+        ("KH", u"Cambodia"),
+        ("CM", u"Cameroon"),
+        ("CA", u"Canada"),
+        ("CV", u"Cape Verde"),
+        ("KY", u"Cayman Islands"),
+        ("CF", u"Central African Republic"),
+        ("TD", u"Chad"),
+        ("CL", u"Chile"),
+        ("CN", u"China"),
+        ("CX", u"Christmas Island"),
+        ("CC", u"Cocos (Keeling) Islands"),
+        ("CO", u"Colombia"),
+        ("KM", u"Comoros"),
+        ("CG", u"Congo"),
+        ("CD", u"Congo, The Democratic Republic Of The"),
+        ("CK", u"Cook Islands"),
+        ("CR", u"Costa Rica"),
+        ("CI", u"Côte D'Ivoire"),
+        ("HR", u"Croatia"),
+        ("CU", u"Cuba"),
+        ("CW", u"Curaçao"),
+        ("CY", u"Cyprus"),
+        ("CZ", u"Czech Republic"),
+        ("DK", u"Denmark"),
+        ("DJ", u"Djibouti"),
+        ("DM", u"Dominica"),
+        ("DO", u"Dominican Republic"),
+        ("EC", u"Ecuador"),
+        ("EG", u"Egypt"),
+        ("SV", u"El Salvador"),
+        ("GQ", u"Equatorial Guinea"),
+        ("ER", u"Eritrea"),
+        ("EE", u"Estonia"),
+        ("ET", u"Ethiopia"),
+        ("FK", u"Falkland Islands (Malvinas)"),
+        ("FO", u"Faroe Islands"),
+        ("FJ", u"Fiji"),
+        ("FI", u"Finland"),
+        ("FR", u"France"),
+        ("GF", u"French Guiana"),
+        ("PF", u"French Polynesia"),
+        ("TF", u"French Southern Territories"),
+        ("GA", u"Gabon"),
+        ("GM", u"Gambia"),
+        ("GE", u"Georgia"),
+        ("DE", u"Germany"),
+        ("GH", u"Ghana"),
+        ("GI", u"Gibraltar"),
+        ("GR", u"Greece"),
+        ("GL", u"Greenland"),
+        ("GD", u"Grenada"),
+        ("GP", u"Guadeloupe"),
+        ("GU", u"Guam"),
+        ("GT", u"Guatemala"),
+        ("GG", u"Guernsey"),
+        ("GN", u"Guinea"),
+        ("GW", u"Guinea-Bissau"),
+        ("GY", u"Guyana"),
+        ("HT", u"Haiti"),
+        ("HM", u"Heard Island And Mcdonald Islands"),
+        ("VA", u"Holy See (Vatican City State)"),
+        ("HN", u"Honduras"),
+        ("HK", u"Hong Kong"),
+        ("HU", u"Hungary"),
+        ("IS", u"Iceland"),
+        ("IN", u"India"),
+        ("ID", u"Indonesia"),
+        ("IR", u"Iran, Islamic Republic Of"),
+        ("IQ", u"Iraq"),
+        ("IE", u"Ireland"),
+        ("IM", u"Isle Of Man"),
+        ("IL", u"Israel"),
+        ("IT", u"Italy"),
+        ("JM", u"Jamaica"),
+        ("JP", u"Japan"),
+        ("JE", u"Jersey"),
+        ("JO", u"Jordan"),
+        ("KZ", u"Kazakhstan"),
+        ("KE", u"Kenya"),
+        ("KI", u"Kiribati"),
+        ("KP", u"Korea, Democratic People's Republic Of"),
+        ("KR", u"Korea, Republic Of"),
+        ("KW", u"Kuwait"),
+        ("KG", u"Kyrgyzstan"),
+        ("LA", u"Lao People's Democratic Republic"),
+        ("LV", u"Latvia"),
+        ("LB", u"Lebanon"),
+        ("LS", u"Lesotho"),
+        ("LR", u"Liberia"),
+        ("LY", u"Libya"),
+        ("LI", u"Liechtenstein"),
+        ("LT", u"Lithuania"),
+        ("LU", u"Luxembourg"),
+        ("MO", u"Macao"),
+        ("MK", u"Macedonia, The Former Yugoslav Republic Of"),
+        ("MG", u"Madagascar"),
+        ("MW", u"Malawi"),
+        ("MY", u"Malaysia"),
+        ("MV", u"Maldives"),
+        ("ML", u"Mali"),
+        ("MT", u"Malta"),
+        ("MH", u"Marshall Islands"),
+        ("MQ", u"Martinique"),
+        ("MR", u"Mauritania"),
+        ("MU", u"Mauritius"),
+        ("YT", u"Mayotte"),
+        ("MX", u"Mexico"),
+        ("FM", u"Micronesia, Federated States Of"),
+        ("MD", u"Moldova, Republic Of"),
+        ("MC", u"Monaco"),
+        ("MN", u"Mongolia"),
+        ("ME", u"Montenegro"),
+        ("MS", u"Montserrat"),
+        ("MA", u"Morocco"),
+        ("MZ", u"Mozambique"),
+        ("MM", u"Myanmar"),
+        ("NA", u"Namibia"),
+        ("NR", u"Nauru"),
+        ("NP", u"Nepal"),
+        ("NL", u"Netherlands"),
+        ("NC", u"New Caledonia"),
+        ("NZ", u"New Zealand"),
+        ("NI", u"Nicaragua"),
+        ("NE", u"Niger"),
+        ("NG", u"Nigeria"),
+        ("NU", u"Niue"),
+        ("NF", u"Norfolk Island"),
+        ("MP", u"Northern Mariana Islands"),
+        ("NO", u"Norway"),
+        ("OM", u"Oman"),
+        ("PK", u"Pakistan"),
+        ("PW", u"Palau"),
+        ("PS", u"Palestine, State Of"),
+        ("PA", u"Panama"),
+        ("PG", u"Papua New Guinea"),
+        ("PY", u"Paraguay"),
+        ("PE", u"Peru"),
+        ("PH", u"Philippines"),
+        ("PN", u"Pitcairn"),
+        ("PL", u"Poland"),
+        ("PT", u"Portugal"),
+        ("PR", u"Puerto Rico"),
+        ("QA", u"Qatar"),
+        ("RE", u"Réunion"),
+        ("RO", u"Romania"),
+        ("RU", u"Russian Federation"),
+        ("RW", u"Rwanda"),
+        ("BL", u"Saint Barthélemy"),
+        ("SH", u"Saint Helena, Ascension And Tristan Da Cunha"),
+        ("KN", u"Saint Kitts And Nevis"),
+        ("LC", u"Saint Lucia"),
+        ("MF", u"Saint Martin (French Part)"),
+        ("PM", u"Saint Pierre And Miquelon"),
+        ("VC", u"Saint Vincent And The Grenadines"),
+        ("WS", u"Samoa"),
+        ("SM", u"San Marino"),
+        ("ST", u"Sao Tome And Principe"),
+        ("SA", u"Saudi Arabia"),
+        ("SN", u"Senegal"),
+        ("RS", u"Serbia"),
+        ("SC", u"Seychelles"),
+        ("SL", u"Sierra Leone"),
+        ("SG", u"Singapore"),
+        ("SX", u"Sint Maarten (Dutch Part)"),
+        ("SK", u"Slovakia"),
+        ("SI", u"Slovenia"),
+        ("SB", u"Solomon Islands"),
+        ("SO", u"Somalia"),
+        ("ZA", u"South Africa"),
+        ("GS", u"South Georgia And The South Sandwich Islands"),
+        ("SS", u"South Sudan"),
+        ("ES", u"Spain"),
+        ("LK", u"Sri Lanka"),
+        ("SD", u"Sudan"),
+        ("SR", u"Suriname"),
+        ("SJ", u"Svalbard And Jan Mayen"),
+        ("SZ", u"Swaziland"),
+        ("SE", u"Sweden"),
+        ("CH", u"Switzerland"),
+        ("SY", u"Syrian Arab Republic"),
+        ("TW", u"Taiwan, Province Of China"),
+        ("TJ", u"Tajikistan"),
+        ("TZ", u"Tanzania, United Republic Of"),
+        ("TH", u"Thailand"),
+        ("TL", u"Timor-Leste"),
+        ("TG", u"Togo"),
+        ("TK", u"Tokelau"),
+        ("TO", u"Tonga"),
+        ("TT", u"Trinidad And Tobago"),
+        ("TN", u"Tunisia"),
+        ("TR", u"Turkey"),
+        ("TM", u"Turkmenistan"),
+        ("TC", u"Turks And Caicos Islands"),
+        ("TV", u"Tuvalu"),
+        ("UG", u"Uganda"),
+        ("UA", u"Ukraine"),
+        ("AE", u"United Arab Emirates"),
+        ("GB", u"United Kingdom"),
+        ("US", u"United States"),
+        ("UM", u"United States Minor Outlying Islands"),
+        ("UY", u"Uruguay"),
+        ("UZ", u"Uzbekistan"),
+        ("VU", u"Vanuatu"),
+        ("VE", u"Venezuela, Bolivarian Republic Of"),
+        ("VN", u"Viet Nam"),
+        ("VG", u"Virgin Islands, British"),
+        ("VI", u"Virgin Islands, U.S."),
+        ("WF", u"Wallis And Futuna"),
+        ("EH", u"Western Sahara"),
+        ("YE", u"Yemen"),
+        ("ZM", u"Zambia"),
+        ("ZW", u"Zimbabwe"))
+
     study = models.ForeignKey(
         'study.Study',
         related_name="study_populations")
@@ -742,18 +743,6 @@ class Exposure(models.Model):
                 dic['exposure_description'])
 
 
-DIAGNOSTIC_CHOICES = (
-    (0, 'not reported'),
-    (1, 'medical professional or test'),
-    (2, 'medical records'),
-    (3, 'self-reported'))
-
-P_VALUE_QUALIFIER_CHOICES = (
-    ('<', '<'),
-    ('=', '='),
-    ('-', 'n.s.'))
-
-
 class StatisticalMetric(models.Model):
     metric = models.CharField(
         max_length=128,
@@ -768,26 +757,31 @@ class StatisticalMetric(models.Model):
         return self.metric
 
 
-MAIN_FINDING_CHOICES = (
-    (2, "supportive"),
-    (1, "inconclusive"),
-    (0, "not-supportive"))
-
-DOSE_RESPONSE_CHOICES = (
-    (0, "not-applicable"),
-    (1, "monotonic"),
-    (2, "non-monotonic"),
-    (3, "no trend"))
-
-STATISTICAL_POWER_CHOICES = (
-    (0, 'not reported or calculated'),
-    (1, 'appears to be adequately powered (sample size met)'),
-    (2, 'somewhat underpowered (sample size is 75% to <100% of recommended)'),
-    (3, 'underpowered (sample size is 50 to <75% required)'),
-    (4, 'severely underpowered (sample size is <50% required)'))
-
-
 class AssessedOutcome(BaseEndpoint):
+
+    DIAGNOSTIC_CHOICES = (
+        (0, 'not reported'),
+        (1, 'medical professional or test'),
+        (2, 'medical records'),
+        (3, 'self-reported'))
+    MAIN_FINDING_CHOICES = (
+        (2, "supportive"),
+        (1, "inconclusive"),
+        (0, "not-supportive"))
+
+    DOSE_RESPONSE_CHOICES = (
+        (0, "not-applicable"),
+        (1, "monotonic"),
+        (2, "non-monotonic"),
+        (3, "no trend"))
+
+    STATISTICAL_POWER_CHOICES = (
+        (0, 'not reported or calculated'),
+        (1, 'appears to be adequately powered (sample size met)'),
+        (2, 'somewhat underpowered (sample size is 75% to <100% of recommended)'),
+        (3, 'underpowered (sample size is 50 to <75% required)'),
+        (4, 'severely underpowered (sample size is <50% required)'))
+
     exposure = models.ForeignKey(
         Exposure,
         related_name='outcomes')
@@ -1303,6 +1297,12 @@ class ExposureGroup(Demographics):
 
 
 class AssessedOutcomeGroup(models.Model):
+
+    P_VALUE_QUALIFIER_CHOICES = (
+        ('<', '<'),
+        ('=', '='),
+        ('-', 'n.s.'))
+
     exposure_group = models.ForeignKey(
         ExposureGroup,
         help_text="Exposure-group related to this assessed outcome group")
@@ -1420,17 +1420,16 @@ class AssessedOutcomeGroup(models.Model):
                 ExposureGroup.build_flat_from_json_dict(dic['exposure_group'])
 
 
-
-META_PROTOCOL_CHOICES = (
-    (0, "Meta-analysis"),
-    (1, "Pooled-analysis"))
-
-META_LIT_SEARCH_CHOICES = (
-    (0, "Systematic"),
-    (1, "Other"))
-
-
 class MetaProtocol(models.Model):
+
+    META_PROTOCOL_CHOICES = (
+        (0, "Meta-analysis"),
+        (1, "Pooled-analysis"))
+
+    META_LIT_SEARCH_CHOICES = (
+        (0, "Systematic"),
+        (1, "Other"))
+
     study = models.ForeignKey('study.Study',
          related_name="meta_protocols")
     name = models.CharField(
