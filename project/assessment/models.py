@@ -205,6 +205,9 @@ def default_configuration(sender, instance, created, **kwargs):
         logging.info("Building default comment settings")
         get_model('comments', 'CommentSettings')(assessment=instance).save()
 
+        logging.info("Building in-vitro endpoint category-root")
+        get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
+
 
 EXTERNAL_DB_CHOICES = (("DR", 'DRAGON'),)
 
@@ -296,8 +299,10 @@ class BaseEndpoint(models.Model):
         d = {}
         if hasattr(self, 'assessedoutcome'):
             d = self.assessedoutcome.get_json(*args, **kwargs)
-        if hasattr(self, 'endpoint'):
+        elif hasattr(self, 'endpoint'):
             d = self.endpoint.d_response(*args, **kwargs)
+        elif hasattr(self, 'ivendpoint'):
+            d = self.ivendpoint.get_json(*args, **kwargs)
         return d
 
 

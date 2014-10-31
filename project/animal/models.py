@@ -330,7 +330,7 @@ class DoseUnits(models.Model):
 
     @property
     def invitro_experiment_count(self):
-        return self.experiment_set.count()
+        return self.ivexperiments.count()
 
     @classmethod
     def json_all(cls):
