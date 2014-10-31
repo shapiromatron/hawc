@@ -533,6 +533,7 @@ var DescriptiveTable = function(){
 
 DescriptiveTable.prototype.add_tbody_tr = function(description, value, calculated){
     if(value){
+        if (parseFloat(value, 10) === value) value = value.toLocaleString();
         if(calculated){value="[{0}]".printf(value);}  // [] = estimated
         this._tbody.append($('<tr></tr>').append($("<th>").text(description))
                                         .append($("<td>").text(value)));
