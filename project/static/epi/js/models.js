@@ -588,6 +588,7 @@ var MetaResult = function(data){
 MetaResult.prototype.build_details_table = function(div){
     var tbl = new DescriptiveTable();
     tbl.add_tbody_tr("Health outcome", this.data.health_outcome);
+    tbl.add_tbody_tr("Data location", this.data.data_location);
     tbl.add_tbody_tr("Health outcome notes", this.data.health_outcome_notes);
     tbl.add_tbody_tr("Exposure name", this.data.exposure_name);
     tbl.add_tbody_tr("Exposure details", this.data.exposure_details);

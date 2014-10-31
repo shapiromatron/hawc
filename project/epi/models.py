@@ -764,6 +764,7 @@ class AssessedOutcome(BaseEndpoint):
         (1, 'medical professional or test'),
         (2, 'medical records'),
         (3, 'self-reported'))
+
     MAIN_FINDING_CHOICES = (
         (2, "supportive"),
         (1, "inconclusive"),
@@ -815,7 +816,8 @@ class AssessedOutcome(BaseEndpoint):
         blank=True, null=True)
     confounders_considered = models.ManyToManyField(Factor,
         verbose_name= "Adjustment factors considered",
-        help_text="All factors which were examined (including those which were included in final model)",
+        help_text="All factors which were examined "
+                  "(including those which were included in final model)",
         related_name='confounders',
         blank=True,
         null=True)
@@ -1512,6 +1514,11 @@ class MetaResult(models.Model):
         related_name="results")
     label = models.CharField(
         max_length=128)
+    data_location = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Details on where the data are found in the literature "
+                  "(ex: Figure 1, Table 2, etc.)")
     health_outcome = models.CharField(
         max_length=128)
     health_outcome_notes = models.TextField(
@@ -1558,8 +1565,8 @@ class MetaResult(models.Model):
 
     def get_json(self, json_encode=True):
         d = {}
-        fields = ('pk', 'label', 'health_outcome', 'health_outcome_notes',
-                  'exposure_name', 'exposure_details',
+        fields = ('pk', 'label', 'health_outcome', 'data_location',
+                  'health_outcome_notes', 'exposure_name', 'exposure_details',
                   'number_studies', 'statistical_notes',
                   'n', 'risk_estimate', 'lower_ci', 'upper_ci',
                   'heterogeneity', 'notes')
