@@ -63,7 +63,7 @@ class Ethnicity(models.Model):
 class Demographics(models.Model):
 
     SEX_CHOICES = (
-        ("U", "Unspecified"),
+        ("U", "Not reported"),
         ("M", "Male"),
         ("F", "Female"),
         ("B", "Male and Female"))
@@ -96,6 +96,7 @@ class Demographics(models.Model):
     fraction_male = models.FloatField(
         blank=True,
         null=True,
+        help_text="Expects a value between 0 and 1, inclusive (leave blank if unknown)",
         validators=[MinValueValidator(0), MaxValueValidator(1)])
     fraction_male_calculated = models.BooleanField(
         default=False,
