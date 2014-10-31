@@ -748,6 +748,10 @@ class StatisticalMetric(models.Model):
     metric = models.CharField(
         max_length=128,
         unique=True)
+    isLog = models.BooleanField(
+        default=True,
+        verbose_name="Log-results",
+        help_text="When  plotting, use a log base 10 scale")
     order = models.PositiveSmallIntegerField(
         help_text="Order as they appear in option-list")
 
@@ -896,7 +900,9 @@ class AssessedOutcome(BaseEndpoint):
             d['dose_response'] = self.get_dose_response_display()
             d['statistical_power'] = self.get_statistical_power_display()
             d['main_finding_support'] = self.get_main_finding_support_display()
-            d['statistical_metric'] = unicode(self.statistical_metric)
+
+            d['statistical_metric'] = self.statistical_metric.metric
+            d['plot_as_log'] = self.statistical_metric.isLog
 
             d['adjustment_factors'] = []
             for af in self.adjustment_factors.all():

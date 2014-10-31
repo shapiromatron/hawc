@@ -232,12 +232,6 @@ AssessedOutcome.prototype.build_forest_plot = function(div){
     this.plot =  new AOForestPlot(this.aog, this, div);
 };
 
-AssessedOutcome.prototype.isLogScale = function(){
-    // Used to determine if the plot should be in log or linear scale.
-    var linears = ['adjusted beta', 'mean', 'mean change', 'adjusted coefficient'];
-    return (linears.indexOf(this.data.statistical_metric) === -1);
-};
-
 
 var AssessedOutcomeGroup = function(data){
     this.data = data;
@@ -430,7 +424,7 @@ AOForestPlot.prototype.get_dataset = function(){
             vals.push(ci.lower_ci, ci.upper_ci);
         }
     });
-
+    this.scale_type = (this.ao.data.plot_as_log) ? "log" : "linear";
     this.estimates = estimates;
     this.lines = lines;
     this.names = names;
@@ -446,16 +440,13 @@ AOForestPlot.prototype.get_plot_sizes = function(){
 };
 
 AOForestPlot.prototype.add_axes = function() {
-
-    var scale_type = (this.ao.isLogScale()) ? "log" : "linear";
-
-    if (scale_type === "log" && this.x_domain[0]>=1) this.x_domain[0]=0.1;
+    if (this.scale_type === "log" && this.x_domain[0]>=1) this.x_domain[0]=0.1;
 
     $.extend(this.x_axis_settings, {
         "domain": this.x_domain,
         "rangeRound": [0, this.w],
         "y_translate": this.h,
-        "scale_type": scale_type
+        "scale_type": this.scale_type
     });
 
     $.extend(this.y_axis_settings, {
