@@ -17,18 +17,15 @@ class StudyPopulationForm(forms.ModelForm):
 
     inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.StudyCriteriaLookup,
-        required=False,
-    )
+        required=False)
 
     exclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.StudyCriteriaLookup,
-        required=False,
-    )
+        required=False)
 
     confounding_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.StudyCriteriaLookup,
-        required=False,
-    )
+        required=False)
 
     class Meta:
         fields = ('name',
@@ -182,15 +179,17 @@ class BaseEGFormSet(BaseModelFormSet):
                     form.instance.save()
 
 
-EGFormSet = modelformset_factory(models.ExposureGroup,
-                                 form=ExposureGroupForm,
-                                 formset=BaseEGFormSet,
-                                 extra=1)
+EGFormSet = modelformset_factory(
+    models.ExposureGroup,
+    form=ExposureGroupForm,
+    formset=BaseEGFormSet,
+    extra=1)
 
-BlankEGFormSet = modelformset_factory(models.ExposureGroup,
-                                      form=ExposureGroupForm,
-                                      formset=BaseEGFormSet,
-                                      extra=1)
+BlankEGFormSet = modelformset_factory(
+    models.ExposureGroup,
+    form=ExposureGroupForm,
+    formset=BaseEGFormSet,
+    extra=1)
 
 
 class FactorForm(forms.ModelForm):
@@ -262,21 +261,18 @@ class AssessedOutcomeForm(forms.ModelForm):
     adjustment_factors = selectable.AutoCompleteSelectMultipleField(
         help_text="All factors which were included in final model",
         lookup_class=lookups.FactorLookup,
-        required=False,
-    )
+        required=False)
 
     confounders_considered = selectable.AutoCompleteSelectMultipleField(
         label="Adjustment factors considered",
         help_text="All factors which were examined (including those which were included in final model)",
         lookup_class=lookups.FactorLookup,
-        required=False,
-    )
+        required=False)
 
     effects = selectable.AutoCompleteSelectMultipleField(
         lookup_class=EffectTagLookup,
         required=False,
-        help_text="Tags used to help categorize effect description."
-    )
+        help_text="Tags used to help categorize effect description.")
 
     class Meta:
         model = models.AssessedOutcome
@@ -333,21 +329,22 @@ class BaseAOGFormSet(BaseModelFormSet):
     pass
 
 
-AOGFormSet = modelformset_factory(models.AssessedOutcomeGroup, form=AOGForm,
-                                  formset=BaseAOGFormSet, extra=0)
+AOGFormSet = modelformset_factory(
+    models.AssessedOutcomeGroup,
+    form=AOGForm,
+    formset=BaseAOGFormSet,
+    extra=0)
 
 
 class MetaProtocolForm(forms.ModelForm):
 
     inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.StudyCriteriaLookup,
-        required=False,
-    )
+        required=False)
 
     exclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.StudyCriteriaLookup,
-        required=False,
-    )
+        required=False)
 
     class Meta:
         model = models.MetaProtocol
@@ -371,8 +368,7 @@ class MetaResultForm(forms.ModelForm):
     adjustment_factors = selectable.AutoCompleteSelectMultipleField(
         help_text="All factors which were included in final model",
         lookup_class=lookups.FactorLookup,
-        required=False,
-    )
+        required=False)
 
     class Meta:
         model = models.MetaResult
@@ -403,24 +399,23 @@ class MetaResultForm(forms.ModelForm):
 
 class SingleResultForm(forms.ModelForm):
 
-    resultSelector = forms.ChoiceField(label="Results-data type",
-                                       choices=((0, "Add new results"),
-                                                (1, "Use existing results")),
-                                       initial=0)
+    resultSelector = forms.ChoiceField(
+        label="Results-data type",
+        choices=((0, "Add new results"),
+                 (1, "Use existing results")),
+        initial=0)
 
     ao = selectable.AutoCompleteSelectField(
         lookup_class=lookups.AssessedOutcomeByStudyLookup,
         label='Assessed Outcome',
         required=False,
-        widget=selectable.AutoComboboxSelectWidget
-    )
+        widget=selectable.AutoComboboxSelectWidget)
 
     outcome_group = selectable.AutoCompleteSelectField(
         lookup_class=lookups.AssessedOutcomeGroupByAOLookup,
         label='Assessed Outcome Group',
         required=False,
-        widget=selectable.AutoComboboxSelectWidget
-    )
+        widget=selectable.AutoComboboxSelectWidget)
 
     class Meta:
         model = models.SingleResult
@@ -435,9 +430,8 @@ class SingleResultForm(forms.ModelForm):
 
         # re-order with custom-fields: https://djangosnippets.org/snippets/759/
         order = ('resultSelector', 'study', 'ao', 'outcome_group',
-                 'exposure_name', 'weight',
-                 'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                 'notes')
+                 'exposure_name', 'weight', 'n',
+                 'risk_estimate', 'lower_ci', 'upper_ci', 'notes')
         tmp = copy(self.fields)
         self.fields = SortedDict()
         for item in order:
@@ -449,7 +443,9 @@ class SingleResultForm(forms.ModelForm):
 
         if assessment:
             # used with a single form; not used in formset_factory
-            return forms.ModelChoiceField(queryset=self.fields["study"].queryset.filter(assessment=assessment, study_type=1))
+            return forms.ModelChoiceField(
+                queryset=self.fields["study"].queryset\
+                             .filter(assessment=assessment, study_type=1))
 
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
@@ -508,11 +504,12 @@ class LoadedSingleResultFormset(FormsetWithIgnoredFields):
     ignored_fields = ['resultSelector']
 
 
-SingleResultFormset = modelformset_factory(models.SingleResult,
-                                           can_delete=True,
-                                           form=SingleResultForm,
-                                           formset=LoadedSingleResultFormset,
-                                           extra=1)
+SingleResultFormset = modelformset_factory(
+    models.SingleResult,
+    can_delete=True,
+    form=SingleResultForm,
+    formset=LoadedSingleResultFormset,
+    extra=1)
 
 
 def meta_result_clean_update_formset(formset, assessment):
