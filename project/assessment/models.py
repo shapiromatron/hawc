@@ -109,6 +109,9 @@ class Assessment(models.Model):
     def __unicode__(self):
         return "%s (%s)" % (self.name, self.year)
 
+    def get_project_manager_emails(self):
+        return self.project_manager.all().values_list('email', flat=True)
+
     def user_can_view_object(self, user):
         """
         Superusers can view all, noneditible reviews can be viewed, team members or

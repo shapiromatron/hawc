@@ -15,6 +15,7 @@ urlpatterns = patterns('assessment.views',
     url(r'^(?P<pk>\d+)/versions/$', views.AssessmentVersions.as_view(), name='versions'),
     url(r'^(?P<pk>\d+)/reports/$', views.AssessmentReports.as_view(), name='reports'),
     url(r'^(?P<pk>\d+)/downloads/$', views.AssessmentDownloads.as_view(), name='downloads'),
+    url(r'^(?P<pk>\d+)/email-project-managers/$', views.AssessmentEmailManagers.as_view(), name='email_managers'),
 
     # endpoint objects
     url(r'^endpoint/(?P<pk>\d+)/json/$',
