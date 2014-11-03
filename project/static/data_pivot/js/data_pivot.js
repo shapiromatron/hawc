@@ -112,7 +112,8 @@ DataPivot.default_plot_settings = function(){
       "filter_logic": "and",
       "font_style": 'Arial',
       "merge_descriptions": false,
-      "text_background": true
+      "text_background": true,
+      "text_background_color": "#EEEEEE"
     },
     "legend": DataPivotLegend.default_settings(),
     "dataline_settings": [],
