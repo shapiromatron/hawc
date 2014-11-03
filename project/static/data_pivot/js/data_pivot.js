@@ -91,7 +91,7 @@ DataPivot.default_plot_settings = function(){
   return {
     "plot_settings": {
       "plot_width": 400,
-      "minimum_row_height": 25,
+      "minimum_row_height": 12,
       "padding": {
         "top": 25,
         "right": 25,
