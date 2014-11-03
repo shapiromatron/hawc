@@ -58,7 +58,6 @@ class AnimalGroupForm(ModelForm):
 
         super(AnimalGroupForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
-        self.fields['dose_groups'].widget.attrs['class'] = 'input-small'
 
         if experiment:
             self.instance.experiment = experiment
@@ -74,9 +73,7 @@ class GenerationalAnimalGroupForm(ModelForm):
         experiment = kwargs.pop('parent', None)
 
         super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
-
         self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
-        self.fields['dose_groups'].widget.attrs['class'] = 'input-small'
 
         if experiment:
             self.instance.experiment = experiment
@@ -86,7 +83,7 @@ class GenerationalAnimalGroupForm(ModelForm):
         exclude = ('experiment',)
         fields = ('name', 'species', 'strain', 'sex',
                   'generation', 'siblings', 'parents',
-                  'dosing_regime', 'dose_groups')
+                  'dosing_regime')
 
 
 class DosingRegimeForm(ModelForm):

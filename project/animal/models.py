@@ -179,10 +179,6 @@ class AnimalGroup(models.Model):
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
-    dose_groups = models.PositiveSmallIntegerField(
-        default=4,
-        validators=[MinValueValidator(1)],
-        verbose_name="Number of Dose Groups")
     duration_observation = models.FloatField(
         verbose_name="Observation duration (days)",
         help_text="Length of observation period, in days (fractions allowed)",
@@ -253,7 +249,6 @@ class AnimalGroup(models.Model):
             ("animal_group-url", self.get_absolute_url()),
             ("animal_group-name", self.name),
             ("animal_group-sex", self.get_sex_display()),
-            ("animal_group-dose_groups", self.dose_groups),
             ("animal_group-duration_observation", self.duration_observation),
             ("animal_group-siblings", self.get_siblings_pk()),
             ("animal_group-parents", "N/A")
@@ -391,6 +386,10 @@ class DosingRegime(models.Model):
         help_text="Length of exposure period, in days (fractions allowed)",
         blank=True,
         null=True)
+    num_dose_groups = models.PositiveSmallIntegerField(
+        default=4,
+        validators=[MinValueValidator(1)],
+        verbose_name="Number of Dose Groups")
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
@@ -434,6 +433,7 @@ class DosingRegime(models.Model):
                 ("dosing_regime-dosed_animals", self.isAnimalsDosed(animal_group)),
                 ("dosing_regime-route_of_exposure", self.get_route_of_exposure_display()),
                 ("dosing_regime-duration_exposure", self.duration_exposure),
+                ("dosing_regime-num_dose_groups", self.num_dose_groups),
                 ("dosing_regime-description", self.description)))
         d['_doses'] = self.get_doses_name_dict()
         return d

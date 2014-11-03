@@ -224,7 +224,7 @@
         //now populate fields
         dose_groups_json.forEach(function(v, i){
           var col = parseInt((i)/number_dose_groups);
-          var row = (i) % number_dose_groups
+          var row = (i) % number_dose_groups;
           $($('#dose_table tbody tr td:nth-child(' + (col+2) + ') input')[row]).val(v.dose);
           $('#dose_table thead tr th:nth-child(' + (col+2) + ') select').find('option[value=' + v.dose_units + ']').prop('selected', true);
         });

@@ -104,7 +104,6 @@
       </table>
 
       <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
-
     </div>
 
     <!-- Submission Form -->
@@ -164,7 +163,7 @@
       doses = new dose_array({{dose_groups_json|safe}});
 
       // set handlers
-      $('#id_dose_groups').on('change', function(){doses.change_rows();})
+      $('#id_num_dose_groups').on('change', function(){doses.change_rows();})
       $('#new_dose_column').on('click', function(){event.preventDefault(); doses.add_dose_column();})
       $('#dose_table').on('click', '.remove_dose', function(e){
         e.preventDefault();
@@ -186,7 +185,7 @@
 
       toggle_dosing_regime = function(){
         var val = $('#id_generation option:selected').val();
-        if ((val == 'F1') || (val == 'F2')){
+        if ((val == 'F1') || (val == 'F2') || (val == 'F3')|| (val == 'F4')){
           $('#id_dosing_regime').parent().parent().fadeIn();
         } else {
           $('#id_dosing_regime').parent().parent().fadeOut();

@@ -133,7 +133,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
             #now, try to save each dose-group
             dose_groups = json.loads(self.request.POST['dose_groups_json'])
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
@@ -288,7 +288,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             #now, try to save each dose-group
             dose_groups = json.loads(self.request.POST['dose_groups_json'])
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
@@ -381,7 +381,7 @@ class DosingRegimeCreate(CanCreateMixin, MessageMixin, CreateView):
             dose_groups = json.loads(request.POST['dose_groups_json'])
 
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.animal_group.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 self.object.delete()
@@ -446,7 +446,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             dose_groups = json.loads(request.POST['dose_groups_json'])
 
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dosed_animals.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
