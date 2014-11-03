@@ -1137,7 +1137,7 @@ class RefValCreate(BaseCreate):
         else:
             # build formset with initial data
             ufs = []
-            for choice in models.UF_TYPE_CHOICES:
+            for choice in models.UncertaintyFactorAbstract.UF_TYPE_CHOICES:
                 ufs.append({'uf_type': choice[0]})
 
             NewRefValFormSet = inlineformset_factory(

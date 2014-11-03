@@ -250,7 +250,7 @@ class UncertaintyFactorRefValForm(ModelForm):
         reference_value_pk = kwargs.pop('reference_value_pk', None)
         super(UncertaintyFactorRefValForm, self).__init__(*args, **kwargs)
         self.fields['value'].widget.attrs['class'] = 'span12 uf_values'
-        self.fields['uf_type'].widget = HiddenSelectBox(choices=models.UF_TYPE_CHOICES)
+        self.fields['uf_type'].widget = HiddenSelectBox(choices=models.UncertaintyFactorAbstract.UF_TYPE_CHOICES)
         self.fields['uf_type'].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.attrs['class'] = 'span12 uf_descriptions'
         if reference_value_pk:

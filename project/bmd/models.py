@@ -18,14 +18,6 @@ from utils.executable_sheller import run_process
 from utils.helper import HAWCdocx
 
 
-DATA_TYPE_CHOICES = (
-    ('C', 'Continuous'),
-    ('D', 'Dichotomous'),
-    ('DC', 'Dichotomous Cancer'),
-    # ('DN', 'Nested Dichotomous'),
-    # ('CT', 'Combined Tumor')
-)
-
 BMDS_CHOICES = (
     ('2.30', 'Version 2.30'),
     ('2.31', 'Version 2.31'),

@@ -75,27 +75,18 @@ class Strain(models.Model):
         return excel_export_detail(dic, isHeader)
 
 
-SEX_CHOICES = (("M", "Male"),
-               ("F", "Female"),
-               ("B", "Both"))
-
-GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
-                      ("F1", "First-generation (F1)"),
-                      ("F2", "Second-generation (F2)"),
-                      ("F3", "Third-generation (F3)"),
-                      ("F4", "Fourth-generation (F4)"))
-
-EXPERIMENT_TYPE_CHOICES = (("Ac", "Acute"),
-                           ("Sb", "Subchronic"),
-                           ("Ch", "Chronic"),
-                           ("Ca", "Cancer"),
-                           ("Me", "Mechanistic"),
-                           ("Rp", "Reproductive"),
-                           ("Dv", "Developmental"),
-                           ("Ot", "Other"))
-
-
 class Experiment(models.Model):
+
+    EXPERIMENT_TYPE_CHOICES = (
+        ("Ac", "Acute"),
+        ("Sb", "Subchronic"),
+        ("Ch", "Chronic"),
+        ("Ca", "Cancer"),
+        ("Me", "Mechanistic"),
+        ("Rp", "Reproductive"),
+        ("Dv", "Developmental"),
+        ("Ot", "Other"))
+
     study = models.ForeignKey(
         'study.Study',
         related_name='experiments')
@@ -170,6 +161,12 @@ class Experiment(models.Model):
 
 
 class AnimalGroup(models.Model):
+
+    SEX_CHOICES = (
+        ("M", "Male"),
+        ("F", "Female"),
+        ("B", "Both"))
+
     experiment = models.ForeignKey(
         Experiment,
         related_name="animal_groups")
@@ -274,6 +271,13 @@ class AnimalGroup(models.Model):
 
 
 class GenerationalAnimalGroup(AnimalGroup):
+
+    GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
+                          ("F1", "First-generation (F1)"),
+                          ("F2", "Second-generation (F2)"),
+                          ("F3", "Third-generation (F3)"),
+                          ("F4", "Fourth-generation (F4)"))
+
     generation = models.CharField(
         max_length=2,
         choices=GENERATION_CHOICES)
@@ -361,18 +365,19 @@ class DoseUnits(models.Model):
                 "dose_units-units": self.units}
 
 
-ROUTE_EXPOSURE = (("OD", u"Oral diet"),
-                  ("OG", u"Oral gavage"),
-                  ("OW", u"Oral drinking water"),
-                  ("I",  u"Inhalation"),
-                  ("D",  u"Dermal"),
-                  ("SI", u"Subcutaneous injection"),
-                  ("IP", u"Intraperitoneal injection"),
-                  ("IO", u"in ovo"),
-                  ("O",  u"Other"))
-
-
 class DosingRegime(models.Model):
+
+    ROUTE_EXPOSURE = (
+        ("OD", u"Oral diet"),
+        ("OG", u"Oral gavage"),
+        ("OW", u"Oral drinking water"),
+        ("I",  u"Inhalation"),
+        ("D",  u"Dermal"),
+        ("SI", u"Subcutaneous injection"),
+        ("IP", u"Intraperitoneal injection"),
+        ("IO", u"in ovo"),
+        ("O",  u"Other"))
+
     dosed_animals = models.OneToOneField(
         AnimalGroup,
         related_name='dosed_animals',
@@ -525,32 +530,35 @@ class DoseGroup(models.Model):
             raise ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
 
 
-DATA_TYPE_CHOICES = (('C', 'Continuous'),
-                     ('D', 'Dichotomous'),
-                     ('DC', 'Dichotomous Cancer'),
-                     ('NR', 'Not reported'))
-
-MONOTONICITY_CHOICES = ((0, "N/A, single dose level study"),
-                        (1, "N/A, no effects detected"),
-                        (2, "yes, visual appearance of monotonicity but no trend"),
-                        (3, "yes, monotonic and significant trend"),
-                        (4, "yes, visual appearance of non-monotonic but no trend"),
-                        (5, "yes, non-monotonic and significant trend"),
-                        (6, "no pattern"),
-                        (7, "unclear"),
-                        (8, "not-reported"))
-
-VARIANCE_TYPE_CHOICES = ((0, "NA"),
-                         (1, "SD"),
-                         (2, "SE"))
-
-VARIANCE_NAME = {
-    0: "N/A",
-    1: "Standard Deviation",
-    2: "Standard Error"}
-
-
 class Endpoint(BaseEndpoint):
+
+    DATA_TYPE_CHOICES = (
+        ('C', 'Continuous'),
+        ('D', 'Dichotomous'),
+        ('DC', 'Dichotomous Cancer'),
+        ('NR', 'Not reported'))
+
+    MONOTONICITY_CHOICES = (
+        (0, "N/A, single dose level study"),
+        (1, "N/A, no effects detected"),
+        (2, "yes, visual appearance of monotonicity but no trend"),
+        (3, "yes, monotonic and significant trend"),
+        (4, "yes, visual appearance of non-monotonic but no trend"),
+        (5, "yes, non-monotonic and significant trend"),
+        (6, "no pattern"),
+        (7, "unclear"),
+        (8, "not-reported"))
+
+    VARIANCE_TYPE_CHOICES = (
+        (0, "NA"),
+        (1, "SD"),
+        (2, "SE"))
+
+    VARIANCE_NAME = {
+        0: "N/A",
+        1: "Standard Deviation",
+        2: "Standard Error"}
+
     animal_group = models.ForeignKey(
         AnimalGroup)
     system = models.CharField(
@@ -873,7 +881,7 @@ class Endpoint(BaseEndpoint):
 
     @property
     def variance_name(self):
-        return VARIANCE_NAME.get(self.variance_type, "N/A")
+        return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
 
     def docx_print(self, report, heading_level):
         """
@@ -1378,15 +1386,16 @@ class IndividualAnimal(models.Model):
         Endpoint.d_response_delete_cache([self.endpoint_group.endpoint.pk])
 
 
-UF_TYPE_CHOICES = (('UFA', 'Interspecies uncertainty'),
-                   ('UFH', 'Intraspecies variability'),
-                   ('UFS', 'Subchronic to chronic extrapolation'),
-                   ('UFL', 'Use of a LOAEL in absence of a NOAEL'),
-                   ('UFD', 'Database incomplete'),
-                   ('UFO', 'Other'))
-
-
 class UncertaintyFactorAbstract(models.Model):
+
+    UF_TYPE_CHOICES = (
+        ('UFA', 'Interspecies uncertainty'),
+        ('UFH', 'Intraspecies variability'),
+        ('UFS', 'Subchronic to chronic extrapolation'),
+        ('UFL', 'Use of a LOAEL in absence of a NOAEL'),
+        ('UFD', 'Database incomplete'),
+        ('UFO', 'Other'))
+
     uf_type = models.CharField(
         max_length=3,
         choices=UF_TYPE_CHOICES,
@@ -1486,15 +1495,13 @@ class UncertaintyFactorRefVal(UncertaintyFactorAbstract):
         return d
 
 
-AGGREGATION_TYPE_CHOICES = (('E', 'Evidence'),
-                            ('M', 'Mode-of-action'),
-                            ('CD', 'Candidate Reference Values'))
-
-
 class Aggregation(models.Model):
-    """
-    Aggregation of endpoints
-    """
+
+    AGGREGATION_TYPE_CHOICES = (
+        ('E', 'Evidence'),
+        ('M', 'Mode-of-action'),
+        ('CD', 'Candidate Reference Values'))
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='aggregation')
@@ -1572,7 +1579,7 @@ class Aggregation(models.Model):
         for version in versions:
             fields = version.field_dict
             fields['aggregation_type'] = get_foo_display(
-                    fields['aggregation_type'], AGGREGATION_TYPE_CHOICES)
+                    fields['aggregation_type'], Aggregation.AGGREGATION_TYPE_CHOICES)
             fields['changed_by'] = version.revision.user.get_full_name()
             fields['updated'] = version.revision.date_created
             fields['endpoints'] = get_endpoints(fields['endpoints'])
@@ -1594,13 +1601,14 @@ class Aggregation(models.Model):
             return d
 
 
-REFERENCE_VALUE_CHOICES = ((1, 'Oral RfD'),
-                           (2, 'Inhalation RfD'),
-                           (3, 'Oral CSF'),
-                           (4, 'Inhalation CSF'))
-
-
 class ReferenceValue(models.Model):
+
+    REFERENCE_VALUE_CHOICES = (
+        (1, 'Oral RfD'),
+        (2, 'Inhalation RfD'),
+        (3, 'Oral CSF'),
+        (4, 'Inhalation CSF'))
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='reference_values')
