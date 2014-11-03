@@ -952,7 +952,7 @@ DataPivot.build_movement_td = function(arr, self, options){
 
 DataPivot.getRowDetails = function(values){
   var unique = d3.set(values).values(),
-      numeric = unique.filter(function(v){return $.isNumeric(v); }),
+      numeric = values.filter(function(v){return $.isNumeric(v); }),
       range = (numeric.length>0) ? d3.extent(numeric) : undefined;
 
   return {
