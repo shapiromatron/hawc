@@ -1515,6 +1515,43 @@ _DataPivot_settings_conditionalFormat.defaults = {
 };
 
 
+var _DataPivot_ColorGradientSVG = function(svg, start_color, stop_color){
+  var svg = d3.select(svg);
+
+  var gradient = svg.append("svg:defs")
+    .append("svg:linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "100%")
+      .attr("y2", "100%")
+      .attr("spreadMethod", "pad");
+
+  this.start = gradient.append("svg:stop")
+      .attr("offset", "0%")
+      .attr("stop-color", start_color)
+      .attr("stop-opacity", 1);
+
+  this.stop = gradient.append("svg:stop")
+      .attr("offset", "100%")
+      .attr("stop-color", stop_color)
+      .attr("stop-opacity", 1);
+
+  svg.append("svg:rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .style("fill", "url(#gradient)");
+}
+
+_DataPivot_ColorGradientSVG.prototype.update_start_color = function(color){
+    this.start.attr("stop-color", color);
+}
+
+_DataPivot_ColorGradientSVG.prototype.update_stop_color = function(color){
+    this.stop.attr("stop-color", color);
+}
+
+
 _DataPivot_settings_conditional = function(parent_div, parent, values){
   values = values || {discrete_styles: []};
   this.inputs = [];
@@ -1566,11 +1603,17 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
     min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
       .val(values.min_size || defaults.min_size),
     max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">')
-      .val(values.max_size || defaults.max_size)
+      .val(values.max_size || defaults.max_size),
     min_color = $('<input name="min_color" type="color">')
       .val(values.min_color || defaults.min_color),
     max_color = $('<input name="max_color" type="color">')
-      .val(values.max_color || defaults.max_color);
+      .val(values.max_color || defaults.max_color),
+    svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
+    gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
+
+  // add event-handlers to change gradient color
+  min_color.change(function(v){gradient.update_start_color(min_color.val());});
+  max_color.change(function(v){gradient.update_stop_color(max_color.val());});
 
   // add size values to size div
   var ps = div.find(".point-size"),
@@ -1583,6 +1626,7 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
       min_max_pc = $('<p>').appendTo(pc);
   add_input_row(pc, 'Minimum color', min_color);
   add_input_row(pc, 'Maximum color', max_color);
+  pc.append('<br>', svg);
   div.find('input[type="color"]').spectrum({"showInitial": true, "showInput": true});
 
   this.inputs.push(fieldName, conditionType,
@@ -2234,7 +2278,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
           if (vals.range){
             var cscale = d3.scale.linear()
                   .domain(vals.range)
-                  .interpolate(d3.interpolateHsl)
+                  .interpolate(d3.interpolateRgb)
                   .range([cf.min_color, cf.max_color]);
 
             rows.forEach(function(d){
@@ -3414,7 +3458,7 @@ StyleSymbol.default_settings = function(){
     "type": "circle",
     "size": 130,
     "fill": "#000",
-    "fill-opacity": 0.9,
+    "fill-opacity": 1.0,
     "stroke": "#fff",
     "stroke-width": 1
   };
