@@ -2629,12 +2629,10 @@ DataPivot_visualization.prototype.layout_text = function(){
               lineHeight = this.getBBox().height, // px
               x = text.attr("x"),
               y = text.attr("y"),
-              dy = parseFloat(text.attr("dy")) || lineHeight/4,
               tspan = text.text(null)
                           .append("tspan")
                           .attr("x", x)
-                          .attr("y", y)
-                          .attr("dy", dy + "px");
+                          .attr("y", y);
           while(word = words.pop()){
             line.push(word);
             tspan.text(line.join(" "));
@@ -2645,7 +2643,7 @@ DataPivot_visualization.prototype.layout_text = function(){
               tspan = text.append("tspan")
                           .attr("x", x)
                           .attr("y", y)
-                          .attr("dy", ++lineNumber * lineHeight + dy + "px")
+                          .attr("dy", ++lineNumber * lineHeight + "px")
                           .text(word);
             }
           }
