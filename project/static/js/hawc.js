@@ -1212,6 +1212,48 @@ TableFootnotes.prototype.html_list = function(){
     return list;
 };
 
+/*
+ *
+ * Method for creating a table for descriptive information
+ *
+ */
+var DescriptiveTable = function(){
+    this._tbl = $('<table class="table table-condensed table-striped"></table>');
+    this._colgroup = $('<colgroup></colgroup>')
+            .append('<col style="width: 30%;"><col style="width: 70%;">');
+    this._tbody = $('<tbody></tbody>');
+    this._tbl.append(this._colgroup, this._tbody);
+};
+
+DescriptiveTable.prototype.add_tbody_tr = function(description, value, opts){
+    opts = opts || {};
+    if(value){
+        if (parseFloat(value, 10) === value) value = value.toLocaleString();
+        if(opts.calculated){value="[{0}]".printf(value);}  // [] = estimated
+        var td = $("<td>").html(value);
+        if(opts.annotate){
+            td.append('<br>', $('<span class="muted">').text(opts.annotate));
+        }
+        this._tbody.append($('<tr></tr>').append($("<th>").text(description))
+                                         .append(td));
+    }
+}
+
+DescriptiveTable.prototype.add_tbody_tr_list = function(description, list_items){
+    if(list_items.length>0){
+        var ul = $('<ul></ul>').append(
+                    list_items.map(function(v){return $('<li>').text(v); })),
+            tr = $('<tr></tr>')
+                    .append('<th>{0}</th>'.printf(description))
+                    .append($('<td></td>').append(ul));
+
+        this._tbody.append(tr);
+    }
+};
+
+DescriptiveTable.prototype.get_tbl= function(){ return this._tbl; };
+DescriptiveTable.prototype.get_tbody= function(){ return this._tbody; }
+
 
 /*
  *

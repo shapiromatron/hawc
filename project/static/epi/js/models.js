@@ -12,62 +12,35 @@ StudyPopulation.prototype.build_breadcrumbs = function(){
 };
 
 StudyPopulation.prototype.build_details_table = function(div){
-    var tbl = $('<table class="table table-condensed table-striped"></table>'),
-        colgroup = $('<colgroup></colgroup>'),
-        tbody = $('<tbody></tbody>'),
-        add_tbody_tr = function(description, value, calculated){
-            if(value){
-                if(calculated){value="[{0}]".printf(value);}  // [] = estimated
-                tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                           .append($("<td>").text(value)));
-            }
-        }, add_tbody_tr_list = function(description, list_items){
-            if(list_items.length>0){
-                var ul = $('<ul></ul>').append(
-                            list_items.map(function(v){return $('<li>').text(v); })),
-                    tr = $('<tr></tr>')
-                            .append('<th>{0}</th>'.printf(description))
-                            .append($('<td></td>').append(ul));
+    var tbl = new DescriptiveTable();
 
-                tbody.append(tr);
-            }
-        }, add_linked_items = function(txt, numeric, descriptor){
-            if (numeric){
-                add_tbody_tr(txt, "{0} ({1})".printf(numeric, descriptor));
-            }
-        };
-
-    // colgroup.append('<col style="width: 30%;"><col style="width: 70%;">');
-
-    add_tbody_tr("Study design", this.data.design);
-    add_tbody_tr("Country", this.data.country);
-    add_tbody_tr("State", this.data.state);
-    add_tbody_tr("Region", this.data.region);
-    add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
-    add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
-    add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria);
-
-    add_tbody_tr("N", this.data.demographics.n);
-    add_tbody_tr("Sex", this.data.demographics.sex);
-    add_tbody_tr_list("Ethnicities", this.data.demographics.ethnicity);
-    add_tbody_tr("Fraction male", this.data.demographics.fraction_male,
-                 this.data.demographics.fraction_male_calculated);
-
-    add_tbody_tr("Age description", this.data.demographics.age_description);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_mean_type),
+    tbl.add_tbody_tr("Study design", this.data.design);
+    tbl.add_tbody_tr("Country", this.data.country);
+    tbl.add_tbody_tr("State", this.data.state);
+    tbl.add_tbody_tr("Region", this.data.region);
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
+    tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria);
+    tbl.add_tbody_tr("N", this.data.demographics.n);
+    tbl.add_tbody_tr("Sex", this.data.demographics.sex);
+    tbl.add_tbody_tr_list("Ethnicities", this.data.demographics.ethnicity);
+    tbl.add_tbody_tr("Fraction male", this.data.demographics.fraction_male,
+                 {calculated: this.data.demographics.fraction_male_calculated});
+    tbl.add_tbody_tr("Age description", this.data.demographics.age_description);
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_mean_type),
                  this.data.demographics.age_mean,
-                 this.data.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_sd_type),
+                 {calculated: this.data.demographics.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_sd_type),
                  this.data.demographics.age_sd,
-                 this.data.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_lower_type),
+                 {calculated: this.data.demographics.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_lower_type),
                  this.data.demographics.age_lower,
-                 this.data.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_upper_type),
+                 {calculated: this.data.demographics.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_upper_type),
                  this.data.demographics.age_upper,
-                 this.data.demographics.age_calculated);
+                 {calculated: this.data.demographics.age_calculated});
 
-    $(div).html(tbl.append(colgroup, tbody));
+    $(div).html(tbl.get_tbl());
 };
 
 
@@ -91,43 +64,29 @@ AssessedOutcome.prototype._build_aogs = function(){
 };
 
 AssessedOutcome.prototype.build_ao_table = function(div){
-    var tbl = $('<table class="table table-condensed table-striped"></table>'),
-        colgroup = $('<colgroup></colgroup>'),
-        tbody = $('<tbody></tbody>'),
-        add_tbody_tr = function(description, value){
-            if(value){
-                tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                           .append($("<td>").html(value)));
-            }
-        }, build_annotated_notes = function(first_field, optional_description){
-            var txt = $('<span>').text(first_field);
-            if(optional_description){
-                txt.append('<br>', $('<span class="muted">').text(optional_description));
-            }
-            return txt;
-        };
+    var tbl = new DescriptiveTable();
+    tbl.add_tbody_tr("Assessed outcome", this.data.name);
+    tbl.add_tbody_tr("Location in literature", this.data.data_location);
+    tbl.add_tbody_tr("Population description", this.data.population_description);
+    tbl.add_tbody_tr("Population exposure description", this.data.exposure.exposure_description);
+    tbl.add_tbody_tr("Diagnostic", this.data.diagnostic);
+    tbl.add_tbody_tr("Diagnostic description", this.data.diagnostic_description);
+    tbl.add_tbody_tr("Outcome N", this.data.outcome_n);
+    tbl.add_tbody_tr("Summary", this.data.summary);
+    if (this.main_finding) tbl.add_tbody_tr("Main finding supported?", this.data.main_finding_support);
+    tbl.add_tbody_tr("Prevalence Incidence", this.data.prevalence_incidence);
+    tbl.add_tbody_tr("Statistical metric presented", this.data.statistical_metric);
+    tbl.add_tbody_tr("Statistical metric description", this.data.statistical_metric_description);
+    tbl.add_tbody_tr("Statistical power sufficient?",
+        this.data.statistical_power,
+        {annotate: this.data.statistical_power_details});
+    tbl.add_tbody_tr("Dose response trend?",
+        this.data.dose_response,
+        {annotate: this.data.dose_response_details});
+    tbl.add_tbody_tr("Effect tags", this.data.tags.map(function(v){return v.name;}).join(", "));
+    this._ao_tbl_adjustments_columns(tbl.get_tbody());
 
-    colgroup.append('<col style="width: 30%;"><col style="width: 70%;">');
-    add_tbody_tr("Assessed outcome", this.data.name);
-    add_tbody_tr("Location in literature", this.data.data_location);
-    add_tbody_tr("Population description", this.data.population_description);
-    add_tbody_tr("Population exposure description", this.data.exposure.exposure_description);
-    add_tbody_tr("Diagnostic", this.data.diagnostic);
-    add_tbody_tr("Diagnostic description", this.data.diagnostic_description);
-    add_tbody_tr("Outcome N", this.data.outcome_n);
-    add_tbody_tr("Summary", this.data.summary);
-    if (this.main_finding) add_tbody_tr("Main finding supported?", this.data.main_finding_support);
-    add_tbody_tr("Prevalence Incidence", this.data.prevalence_incidence);
-    add_tbody_tr("Statistical metric presented", this.data.statistical_metric);
-    add_tbody_tr("Statistical metric description", this.data.statistical_metric_description);
-    add_tbody_tr("Statistical power sufficient?",
-        build_annotated_notes(this.data.statistical_power, this.data.statistical_power_details));
-    add_tbody_tr("Dose response trend?",
-        build_annotated_notes(this.data.dose_response, this.data.dose_response_details));
-    add_tbody_tr("Tags", this.data.tags.map(function(v){return v.name;}).join(", "));
-    this._ao_tbl_adjustments_columns(tbody);
-
-    $(div).html(tbl.append(colgroup, tbody));
+    $(div).html(tbl.get_tbl());
 };
 
 AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
@@ -176,7 +135,7 @@ AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
     tbody.append(tr);
 };
 
-AssessedOutcome. prototype.get_statistical_metric_header = function(){
+AssessedOutcome.prototype.get_statistical_metric_header = function(){
     var txt = this.data.statistical_metric;
     txt = txt.charAt(0).toUpperCase() + txt.substr(1);
     // assumes confidence interval is the same for all assessed-outcome groups
@@ -546,41 +505,6 @@ AOVersion.field_order = ['name', 'summary', 'statistical_metric',
     'created', 'changed'];
 
 
-var DescriptiveTable = function(){
-    // Generic helper-class for building a descriptive table
-    // TODO: move to HAWC utils, and integrate into rest of epi/animal modules
-    this._tbl = $('<table class="table table-condensed table-striped"></table>');
-    this._colgroup = $('<colgroup></colgroup>').append('<col style="width: 30%;"><col style="width: 70%;">');
-    this._tbody = $('<tbody></tbody>');
-    this._tbl.append(this._colgroup, this._tbody);
-};
-
-DescriptiveTable.prototype.add_tbody_tr = function(description, value, calculated){
-    if(value){
-        if (parseFloat(value, 10) === value) value = value.toLocaleString();
-        if(calculated){value="[{0}]".printf(value);}  // [] = estimated
-        this._tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                        .append($("<td>").text(value)));
-    }
-}
-
-DescriptiveTable.prototype.add_tbody_tr_list = function(description, list_items){
-    if(list_items.length>0){
-        var ul = $('<ul></ul>').append(
-                    list_items.map(function(v){return $('<li>').text(v); })),
-            tr = $('<tr></tr>')
-                    .append('<th>{0}</th>'.printf(description))
-                    .append($('<td></td>').append(ul));
-
-        this._tbody.append(tr);
-    }
-};
-
-DescriptiveTable.prototype.get_tbl= function(){
-    return this._tbl;
-};
-
-
 var MetaProtocol = function(data){
     this.data = data;
 };
@@ -624,7 +548,6 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
     tbl.add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity);
     tbl.add_tbody_tr("Notes", this.data.notes);
-
     $(div).html(tbl.get_tbl());
 };
 
@@ -655,6 +578,7 @@ MetaResult.prototype.build_single_results_table = function(div){
     tbl.append(colgroup, thead, tbody);
     div.append(tbl);
 };
+
 
 var SingleStudyResult = function(data){
     this.data=data

@@ -230,19 +230,13 @@ Endpoint.prototype._endpoint_detail_td = function(){
 };
 
 Endpoint.prototype.build_details_table = function(div){
-    var tbl = $('<table class="table table-condensed table-striped"></table>'),
-        colgroup = $('<colgroup></colgroup>'),
-        tbody = $('<tbody></tbody>'),
+    var tbl = new DescriptiveTable(),
+        tbody = tbl.get_tbody(),
         self = this,
-        add_tbody_tr = function(description, value){
-            // only add if value is truthy
-            if(value) tbody.append($('<tr></tr>').append($("<th>").html(description))
-                                                 .append($("<td>").html(value)));
-        }, add_critical_dose = function(type){
+        critical_dose = function(type){
             var span = $("<span>"),
                 dose = new EndpointCriticalDose(self, span, type, true);
-            tbody.append($('<tr></tr>').append($("<th>").html(type))
-                                       .append($("<td>").html(span)));
+            return span;
         }, getTaglist = function(tags, assessment_id){
             if(tags.length === 0) return false;
             var ul = $('<ul class="nav nav-pills nav-stacked">');
@@ -252,31 +246,29 @@ Endpoint.prototype.build_details_table = function(div){
             return ul;
         };
 
-    colgroup.append('<col style="width: 30%;"><col style="width: 70%;">');
+    tbl.add_tbody_tr("Endpoint name", this.data.name);
+    tbl.add_tbody_tr("System", this.data.system);
+    tbl.add_tbody_tr("Organ", this.data.organ);
+    tbl.add_tbody_tr("Effect", this.data.effect);
+    tbl.add_tbody_tr("Additional tags", getTaglist(this.data.tags, this.data.assessment_id));
 
-    add_tbody_tr("Endpoint name", this.data.name);
-    add_tbody_tr("System", this.data.system);
-    add_tbody_tr("Organ", this.data.organ);
-    add_tbody_tr("Effect", this.data.effect);
-    add_tbody_tr("Additional tags", getTaglist(this.data.tags, this.data.assessment_id));
+    tbl.add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
+    tbl.add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted));
+    tbl.add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated));
+    tbl.add_tbody_tr("Location in literature", this.data.data_location);
 
-    add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
-    add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted));
-    add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated));
+    if(this.data.NOAEL>0) tbl.add_tbody_tr("NOAEL", critical_dose("NOAEL"));
+    if(this.data.LOAEL>0) tbl.add_tbody_tr("LOAEL", critical_dose("LOAEL"));
+    if(this.data.FEL>0) tbl.add_tbody_tr("FEL", critical_dose("FEL"));
 
-    add_tbody_tr("Location in literature", this.data.data_location);
+    tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
+    tbl.add_tbody_tr("Statistical test description", this.data.statistical_test);
+    tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
+    tbl.add_tbody_tr("Results notes", this.data.results_notes);
+    tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
 
-    if(this.data.NOAEL>0) add_critical_dose("NOAEL");
-    if(this.data.LOAEL>0) add_critical_dose("LOAEL");
-    if(this.data.FEL>0) add_critical_dose("FEL");
+    $(div).html(tbl.get_tbl());
 
-    add_tbody_tr("Monotonicity", this.data.monotonicity);
-    add_tbody_tr("Statistical test description", this.data.statistical_test);
-    add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
-    add_tbody_tr("Results notes", this.data.results_notes);
-    add_tbody_tr("General notes", this.data.endpoint_notes);
-
-    $(div).html(tbl.append(colgroup, tbody));
 };
 
 Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
