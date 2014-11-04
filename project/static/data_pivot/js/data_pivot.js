@@ -1641,7 +1641,8 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
     self.discrete_styles = [];
     discrete.empty();
 
-    var arr = dp.data.map(function(v){return v[fieldName.val()]; }),
+    var subset = DataPivot_visualization.filter(dp.data, dp.settings.filters, dp.settings.plot_settings.filter_logic),
+        arr = subset.map(function(v){return v[fieldName.val()]; }),
         vals = DataPivot.getRowDetails(arr);
 
     if (conditionType.val() === "discrete-style"){
@@ -1660,11 +1661,11 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
         add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
       });
     } else {
-      var txt = '<i>{0}</i>: '.printf(fieldName.val());
+      var txt = 'Selected items in <i>{0}</i> '.printf(fieldName.val());
       if(vals.range){
-        txt += "contains values ranging from {0} to {1}.".printf(vals.range[0], vals.range[1]);
+        txt += "contain values ranging from {0} to {1}.".printf(vals.range[0], vals.range[1]);
       } else {
-        txt += "has no range of values, please select another column.";
+        txt += "have no range of values, please select another column.";
       }
 
       min_max_pc.html(txt);
