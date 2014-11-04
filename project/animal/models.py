@@ -559,6 +559,15 @@ class Endpoint(BaseEndpoint):
         1: "Standard Deviation",
         2: "Standard Error"}
 
+    OBSERVATION_TIME_UNITS = (
+        (0, "not-reported"),
+        (1, "seconds"),
+        (2, "minutes"),
+        (3, "hours"),
+        (4, "days"),
+        (5, "weeks"),
+        (6, "months"))
+
     animal_group = models.ForeignKey(
         AnimalGroup)
     system = models.CharField(
@@ -570,6 +579,12 @@ class Endpoint(BaseEndpoint):
     effect = models.CharField(
         max_length=128,
         blank=True)
+    observation_time = models.FloatField(
+        blank=True,
+        null=True)
+    observation_time_units = models.PositiveSmallIntegerField(
+         default=0,
+         choices=OBSERVATION_TIME_UNITS)
     data_location = models.CharField(
         max_length=128,
         blank=True,
@@ -638,6 +653,8 @@ class Endpoint(BaseEndpoint):
             ("endpoint-system", self.system),
             ("endpoint-organ", self.organ),
             ("endpoint-effect", self.effect),
+            ("endpoint-observation_time", self.observation_time),
+            ("endpoint-observation_time_units", self.get_observation_time_units_display()),
             ("endpoint-data_location", self.data_location),
             ("endpoint-response_units", self.response_units),
             ("endpoint-data_type", self.get_data_type_display()),
@@ -896,6 +913,8 @@ class Endpoint(BaseEndpoint):
             u'System: {0}'.format(self.system),
             u'Organ: {0}'.format(self.organ),
             u'Effect: {0}'.format(self.effect),
+            u"Observation time: {0} {1}".format(self.observation_time,
+                                                self.get_observation_time_units_display()),
             u'Data location in reference: {0}'.format(self.data_location),
             u'Data available?: {0}'.format(self.data_reported),
             u'Data extracted?: {0}'.format(self.data_extracted),
@@ -978,7 +997,7 @@ class Endpoint(BaseEndpoint):
 
             # endpoint details
             fields = ['pk', 'name', 'assessment_id',
-                      'system', 'organ', 'effect',
+                      'system', 'organ', 'effect', 'observation_time',
                       'data_location', 'response_units', 'data_type', 'variance_type',
                       'variance_name', 'NOAEL', 'LOAEL', 'FEL',
                       'data_reported', 'data_extracted', 'values_estimated',
@@ -988,6 +1007,7 @@ class Endpoint(BaseEndpoint):
             for field in fields:
                 d[field] = getattr(self, field)
             d['url'] = self.get_absolute_url()
+            d['observation_time_units'] = self.get_observation_time_units_display()
             d['monotonicity'] = self.get_monotonicity_display()
             d['experiment_type'] = self.animal_group.experiment.get_type_display()
             d['doses'] = self.get_doses_json(json_encode=False)

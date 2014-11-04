@@ -250,6 +250,13 @@ Endpoint.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("System", this.data.system);
     tbl.add_tbody_tr("Organ", this.data.organ);
     tbl.add_tbody_tr("Effect", this.data.effect);
+
+    if(this.data.observation_time){
+        tbl.add_tbody_tr("Observation time", "{0} {1}".printf(
+                            this.data.observation_time,
+                            this.data.observation_time_units));
+    }
+
     tbl.add_tbody_tr("Additional tags", getTaglist(this.data.tags, this.data.assessment_id));
 
     tbl.add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
@@ -268,7 +275,6 @@ Endpoint.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
 
     $(div).html(tbl.get_tbl());
-
 };
 
 Endpoint.prototype._build_animal_group_response_row = function(footnote_object){

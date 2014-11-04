@@ -155,6 +155,7 @@ class EndpointForm(ModelForm):
     class Meta:
         model = models.Endpoint
         fields = ('name', 'system', 'organ', 'effect',  'effects',
+                  'observation_time', 'observation_time_units',
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'response_units',
                   'data_location', 'NOAEL', 'LOAEL', 'FEL',
@@ -166,10 +167,21 @@ class EndpointForm(ModelForm):
 
         data_type = cleaned_data.get("data_type")
         variance_type = cleaned_data.get("variance_type")
+        obs_time = cleaned_data.get("observation_time")
+        observation_time_units = cleaned_data.get("observation_time_units")
+
         if data_type=="C" and variance_type==0:
             raise forms.ValidationError("If entering continuous data, the "
                 "variance type must be SD (standard-deviation) or SE "
                 "(standard error)")
+
+        if obs_time and observation_time_units == 0:
+            raise forms.ValidationError("If reporting an endpoint-observation "
+                "time, time-units must be specified.")
+
+        if not obs_time and observation_time_units > 0:
+            raise forms.ValidationError("An observation-time must be reported"
+                " if time-units are specified")
 
 
 class EndpointGroupForm(ModelForm):
