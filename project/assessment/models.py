@@ -212,20 +212,6 @@ def default_configuration(sender, instance, created, **kwargs):
         get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
 
 
-EXTERNAL_DB_CHOICES = (("DR", 'DRAGON'),)
-
-
-class ExternalImport(models.Model):
-    external_db = models.CharField(choices=EXTERNAL_DB_CHOICES, max_length=2)
-    external_id = models.PositiveIntegerField()
-    external_table = models.CharField(max_length=40)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
-    created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
-
-
 class EffectTag(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(max_length=128, unique=True,
@@ -336,7 +322,6 @@ class ChangeLog(models.Model):
 
 
 reversion.register(Assessment)
-reversion.register(ExternalImport)
 reversion.register(EffectTag)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)
