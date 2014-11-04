@@ -843,7 +843,7 @@ DataPivot.prototype.build_settings = function(){
               tbody.html([
                   build_tr("Show legend", show_legend),
                   build_tr("Number of columns", number_columns),
-                  build_tr("Border width", border_width),
+                  build_tr("Border width", DataPivot.rangeInputDiv(border_width)),
                   build_tr("Border color", border_color),
                   build_tr("Legend item", legend_item)]);
 
@@ -960,6 +960,14 @@ DataPivot.getRowDetails = function(values){
     numeric: numeric,
     range: range
   }
+};
+
+DataPivot.rangeInputDiv = function(input){
+  // given an numeric-range input, return a div containing input and text
+  // field which updates based on current value.
+  var text = $('<span>').text(input.val());
+  input.on('change', function(){text.text(input.val());});
+  return $('<div>').append(input, text);
 };
 
 
@@ -1595,12 +1603,7 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
   });
 
   // build min/max for size and color
-  var rangeInputDiv = function(input){
-      var text = $('<span>').text(input.val());
-      input.on('change', function(){text.text(input.val());});
-      return $('<div>').append(input, text);
-    },
-    min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
+  var min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
       .val(values.min_size || defaults.min_size),
     max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">')
       .val(values.max_size || defaults.max_size),
@@ -1618,8 +1621,8 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
   // add size values to size div
   var ps = div.find(".point-size"),
       min_max_ps = $('<p>').appendTo(ps);
-  add_input_row(ps, "Minimum point-size", rangeInputDiv(min_size));
-  add_input_row(ps, "Maximum point-size", rangeInputDiv(max_size));
+  add_input_row(ps, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
+  add_input_row(ps, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
 
   // add color values to color div
   var pc = div.find(".point-color"),
@@ -3413,8 +3416,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //size
   form.append(add_horizontal_field('Size',
-      $('<input name="size" type="range" min="0" max="500" step="5" value="{0}">'
-          .printf(set.size))));
+       DataPivot.rangeInputDiv($('<input name="size" type="range" min="0" max="500" step="5" value="{0}">'
+          .printf(set.size)))));
 
   //type
   var type = $('<select name="type"></select>').html([
@@ -3436,8 +3439,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //fill-opacity
   form.append(add_horizontal_field('Fill-opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
-          .printf(set["fill-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
+          .printf(set["fill-opacity"])))));
 
   //stroke
   form.append(add_horizontal_field('Stroke',
@@ -3446,8 +3449,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-          .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+          .printf(set["stroke-width"])))));
 
 
   this.controls = form;
@@ -3558,8 +3561,8 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //size
   form.append(add_horizontal_field('Font Size',
-      $('<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'
-          .printf(parseInt(set.size, 10)))));
+       DataPivot.rangeInputDiv($('<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'
+          .printf(parseInt(set.size, 10))))));
 
   //fill
   form.append(add_horizontal_field('Fill',
@@ -3567,7 +3570,7 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //fill opacity
   form.append(add_horizontal_field('Fill opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(set['fill-opacity']))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(set['fill-opacity'])))));
 
   //text-anchor
   var text_anchor = $('<select name="text-anchor"></select>')
@@ -3586,8 +3589,8 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //rotate
   form.append(add_horizontal_field('Rotation',
-      $('<input name="rotate" type="range" min="0" max="360" step="15" value="{0}">'
-          .printf(set.rotate))));
+       DataPivot.rangeInputDiv($('<input name="rotate" type="range" min="0" max="360" step="15" value="{0}">'
+          .printf(set.rotate)))));
 
   this.controls = form;
 };
@@ -3672,13 +3675,13 @@ StyleLine.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-        .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+        .printf(set["stroke-width"])))));
 
   //stroke-opacity
   form.append(add_horizontal_field('Stroke-opacity',
-      $('<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
-          .printf(set["stroke-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
+          .printf(set["stroke-opacity"])))));
 
   //line-style
   var line_style = $('<select name="stroke-dasharray"></select>')
@@ -3762,8 +3765,8 @@ StyleRectangle.prototype._draw_setting_controls = function(){
 
   //fill-opacity
   form.append(add_horizontal_field('Fill-opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="{0}">'
-          .printf(set["fill-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="{0}">'
+          .printf(set["fill-opacity"])))));
 
   //stroke
   form.append(add_horizontal_field('Stroke',
@@ -3772,8 +3775,8 @@ StyleRectangle.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-          .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+          .printf(set["stroke-width"])))));
 
   this.controls = form;
 };
