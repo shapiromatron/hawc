@@ -17,19 +17,21 @@ from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_d
 from lit.models import Reference
 
 
-STUDY_TYPE_CHOICES = ((0, 'Animal Bioassay'),
-                      (1, 'Epidemiology'),
-                      (4, 'Epidemiology meta-analysis/pooled analysis'),
-                      (2, 'In vitro'),
-                      (3, 'Other'))
-
-COI_REPORTED_CHOICES = ((0, 'Authors report they have no COI'),
-                        (1, 'Authors disclosed COI'),
-                        (2, 'Unknown'),
-                        (3, 'Not reported'))
-
-
 class Study(Reference):
+
+    STUDY_TYPE_CHOICES = (
+        (0, 'Animal Bioassay'),
+        (1, 'Epidemiology'),
+        (4, 'Epidemiology meta-analysis/pooled analysis'),
+        (2, 'In vitro'),
+        (3, 'Other'))
+
+    COI_REPORTED_CHOICES = (
+        (0, 'Authors report they have no COI'),
+        (1, 'Authors disclosed COI'),
+        (2, 'Unknown'),
+        (3, 'Not reported'))
+
     study_type = models.PositiveSmallIntegerField(
         choices=STUDY_TYPE_CHOICES)
     short_citation = models.CharField(
@@ -420,14 +422,15 @@ class StudyQualityMetric(models.Model):
         StudyQualityMetric.objects.bulk_create(objects)
 
 
-STUDY_QUALITY_SCORE_CHOICES = ((1, 'Definitely high risk of bias'),
-                               (2, 'Probably high risk of bias'),
-                               (3, 'Probably low risk of bias'),
-                               (4, 'Definitely low risk of bias'),
-                               (0, 'Not applicable'))
-
-
 class StudyQuality(models.Model):
+
+    STUDY_QUALITY_SCORE_CHOICES = (
+        (1, 'Definitely high risk of bias'),
+        (2, 'Probably high risk of bias'),
+        (3, 'Probably low risk of bias'),
+        (4, 'Definitely low risk of bias'),
+        (0, 'Not applicable'))
+
     study = models.ForeignKey(Study, related_name='qualities')
     metric = models.ForeignKey(StudyQualityMetric, related_name='qualities')
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)

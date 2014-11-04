@@ -7,7 +7,7 @@ from django.http import Http404
 
 import reversion
 
-from study.models import STUDY_TYPE_CHOICES
+from study.models import Study
 from utils.helper import HAWCDjangoJSONEncoder
 
 
@@ -103,7 +103,7 @@ class DataPivotUpload(DataPivot):
 
 class DataPivotQuery(DataPivot):
     evidence_type = models.PositiveSmallIntegerField(
-        choices=STUDY_TYPE_CHOICES,
+        choices=Study.STUDY_TYPE_CHOICES,
         default=0)
     units = models.ForeignKey(
         'animal.doseunits',
