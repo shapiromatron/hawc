@@ -17,7 +17,7 @@ class SummaryTextTests(TestCase):
 
     @staticmethod
     def clean_json(json_dump):
-        remove_fields = ['created', 'updated', 'slug', 'text', 'assessment']
+        remove_fields = ['created', 'last_updated', 'slug', 'text', 'assessment']
         for node in json_dump:
             node.pop('id')
             for field in remove_fields:

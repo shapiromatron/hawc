@@ -23,7 +23,7 @@ class StudyCriteria(models.Model):
     description = models.TextField()
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -53,7 +53,7 @@ class Ethnicity(models.Model):
         choices=ETHNICITY_CHOICES)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -145,7 +145,7 @@ class Demographics(models.Model):
         null=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -222,7 +222,7 @@ class Factor(models.Model):
     description = models.TextField()
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -667,7 +667,7 @@ class Exposure(models.Model):
                       '25th percentile = 1.18, 75th percentile = 3.33"')
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -1358,7 +1358,7 @@ class AssessedOutcomeGroup(models.Model):
         verbose_name='p-value')
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:

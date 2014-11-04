@@ -336,7 +336,7 @@ class StudyQualityDomain(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(default="")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('assessment', 'name')
@@ -374,7 +374,7 @@ class StudyQualityMetric(models.Model):
     description = models.TextField(blank=True,
                                    help_text='HTML text describing scoring of this field.')
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('domain', 'metric')
@@ -391,7 +391,7 @@ class StudyQualityMetric(models.Model):
         information.
         """
         d = {}
-        fields = ('id', 'metric', 'description', 'created', 'changed')
+        fields = ('id', 'metric', 'description', 'created', 'last_updated')
         for field in fields:
             d[field] = getattr(self, field)
         d['domain'] = self.domain.pk
@@ -436,7 +436,7 @@ class StudyQuality(models.Model):
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('study', 'metric')

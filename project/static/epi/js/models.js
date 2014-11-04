@@ -495,14 +495,14 @@ var AOVersion = function(obj, revision_version){
     }
     // convert datetime formats
     this.created = new Date(this.created);
-    this.changed = new Date(this.changed);
+    this.last_updated = new Date(this.last_updated);
     this.revision_version = revision_version;
-    this.banner = this.revision_version + ': ' + String(this.changed) + ' by ' + this.changed_by;
+    this.banner = this.revision_version + ': ' + String(this.last_updated) + ' by ' + this.changed_by;
 };
 
 AOVersion.field_order = ['name', 'summary', 'statistical_metric',
     'outcome_n', 'diagnostic_description', 'prevalence_incidence',
-    'created', 'changed'];
+    'created', 'last_updated'];
 
 
 var MetaProtocol = function(data){

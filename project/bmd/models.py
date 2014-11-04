@@ -37,14 +37,13 @@ class BMD_session(models.Model):
     dose_units = models.ForeignKey('animal.DoseUnits')
     BMDS_version = models.CharField(max_length=10, choices=BMDS_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
     bmrs = models.TextField(blank=True)  # list of bmrs, json encoded
-    #run_by = models.ForeignKey(User)
     selected_model = models.OneToOneField('BMD_model_run', blank=True, null=True, related_name='selected')
     notes = models.TextField()
 
     class Meta:
-        get_latest_by = "updated"
+        get_latest_by = "last_updated"
 
     @classmethod
     def get_template(cls, assessment, data_type, json=False):
@@ -83,7 +82,7 @@ class BMD_session(models.Model):
         paras = (
             'BMDS software version: {0} (HAWC build)'.format(self.BMDS_version),
             'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.updated)),
+            'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
             )
 
         # save BMD summary table
@@ -133,7 +132,7 @@ class BMD_session(models.Model):
                         'selected_model': session,
                         'notes': self.notes,
                         'created': self.created,
-                        'updated': self.updated,
+                        'last_updated': self.last_updated,
                         'bmrs': loads(self.bmrs)},
             'models': [],
         }
@@ -500,7 +499,7 @@ class BMD_Assessment_Settings(models.Model):
     BMDS_version = models.CharField(max_length=10, choices=BMDS_CHOICES,
                                     default=max(BMDS_CHOICES)[0])
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = "BMD assessment settings"
@@ -521,7 +520,7 @@ class LogicField(models.Model):
     """
     assessment = models.ForeignKey('assessment.Assessment', related_name='BMD_Logic_Fields', editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
     logic_id = models.PositiveSmallIntegerField(editable=False)
     name = models.CharField(max_length=30, editable=False)
     function_name = models.CharField(max_length=25, editable=False)
@@ -543,7 +542,7 @@ class LogicField(models.Model):
         return self.description
 
     def webpage_return(self, endpoint_data_type, json=False):
-        outputs = {'updated': self.updated,
+        outputs = {'last_updated': self.last_updated,
                    'logic_id': self.logic_id,
                    'name': self.name,
                    'function_name': self.function_name,

@@ -23,7 +23,7 @@
 {% block content %}
 
   <div id="warnings">
-    {% if object.endpoint.changed >= bmd_session.updated %}
+    {% if object.endpoint.last_updated >= bmd_session.last_updated %}
       <div class="alert alert-danger ">
         <button type="button" class="close" data-dismiss="alert">×</button>
         <h4>Warning!</h4>

@@ -4,14 +4,14 @@ var AggregationVersions = function(obj, revision_version){
     for (var i in obj) {this[i] = obj[i];}
     // convert datetime formats
     this.created = new Date(this.created);
-    this.last_updated = new Date(this.last_updated);
+    this.updated = new Date(this.updated);
     this.revision_version = revision_version;
-    this.banner = this.revision_version + ': ' + String(this.last_updated) + ' by ' + this.changed_by;
+    this.banner = this.revision_version + ': ' + String(this.updated) + ' by ' + this.changed_by;
 };
 
 
 AggregationVersions.field_order = ['name', 'aggregation_type', 'endpoints',
-                                   'summary_text', 'created', 'last_updated'];
+                                   'summary_text', 'created', 'updated'];
 
 
 var Aggregation = function(endpoints, name, options){

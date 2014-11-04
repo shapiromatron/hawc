@@ -28,7 +28,7 @@ class DataPivot(models.Model):
         default="")
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:

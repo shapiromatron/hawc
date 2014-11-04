@@ -68,7 +68,7 @@ class Assessment(models.Model):
                   "datasets or findings; comment-functionality and visibility "
                   "can be controlled in advanced-settings.")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def get_prior_versions_json(self):
         """
@@ -94,6 +94,7 @@ class Assessment(models.Model):
             fields['team_members'] = get_users(fields['team_members'])
             fields['reviewers'] = get_users(fields['reviewers'])
             fields['changed_by'] = version.revision.user.get_full_name()
+            fields['updated'] = version.revision.date_created
             versions_json.append(fields)
         return json.dumps(versions_json, cls=DjangoJSONEncoder)
 
@@ -253,7 +254,7 @@ class BaseEndpoint(models.Model):
     effects = models.ManyToManyField(EffectTag, blank=True, null=True,
                                      verbose_name="Tags")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name

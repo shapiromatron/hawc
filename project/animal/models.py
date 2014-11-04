@@ -26,7 +26,7 @@ class Species(models.Model):
         unique=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -54,7 +54,7 @@ class Strain(models.Model):
         max_length=30)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -112,7 +112,7 @@ class Experiment(models.Model):
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -196,7 +196,7 @@ class AnimalGroup(models.Model):
         null=True)  # not enforced in db, but enforced in views
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -313,7 +313,7 @@ class DoseUnits(models.Model):
         verbose_name="Human Equivalent Dose")
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -394,7 +394,7 @@ class DosingRegime(models.Model):
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -493,7 +493,7 @@ class DoseGroup(models.Model):
         validators=[MinValueValidator(0)])
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def save(self, *args, **kwargs):
@@ -909,7 +909,7 @@ class Endpoint(BaseEndpoint):
         paras = (
             u'Endpoint summary, including dose-response table and BMDS outputs.',
             u'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.changed)),
+            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
             u'System: {0}'.format(self.system),
             u'Organ: {0}'.format(self.organ),
             u'Effect: {0}'.format(self.effect),
@@ -1145,7 +1145,7 @@ class Endpoint(BaseEndpoint):
         Return BMDS session
         """
         try:
-            return BMD_session.objects.filter(endpoint=self.pk).latest('updated')
+            return BMD_session.objects.filter(endpoint=self.pk).latest('last_updated')
         except:
             return None
 
@@ -1432,7 +1432,7 @@ class UncertaintyFactorAbstract(models.Model):
         verbose_name='Justification')
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)  # standardize changed to updated
 
     class Meta:
@@ -1656,7 +1656,7 @@ class ReferenceValue(models.Model):
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    changed = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -1709,7 +1709,7 @@ class ReferenceValue(models.Model):
             raise ValidationError('Error- reference value factor type already exists for this combination of assessment, reference-type, and units.')
 
     def get_json(self, json_encode=True):
-        fields = ['pk', 'point_of_departure', 'justification', 'created', 'changed']
+        fields = ['pk', 'point_of_departure', 'justification', 'created', 'last_updated']
         d = {'type': self.get_type_display(),
              'assessment_url': self.assessment.get_absolute_url(),
              'aggregation_url': self.aggregation.get_absolute_url(),
