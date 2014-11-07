@@ -748,6 +748,8 @@ class StatisticalMetric(models.Model):
     metric = models.CharField(
         max_length=128,
         unique=True)
+    abbreviation = models.CharField(
+        max_length=32)
     isLog = models.BooleanField(
         default=True,
         verbose_name="Log-results",
@@ -902,6 +904,7 @@ class AssessedOutcome(BaseEndpoint):
             d['main_finding_support'] = self.get_main_finding_support_display()
 
             d['statistical_metric'] = self.statistical_metric.metric
+            d['statistical_metric_abbreviation'] = self.statistical_metric.abbreviation
             d['plot_as_log'] = self.statistical_metric.isLog
 
             d['adjustment_factors'] = []
