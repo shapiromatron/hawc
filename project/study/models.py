@@ -137,7 +137,7 @@ class Study(Reference):
         fields = ('pk', 'full_citation', 'short_citation',
                   'coi_details', 'funding_source',
                   'study_identifier', 'contact_author', 'ask_author',
-                  'summary')
+                  'summary', 'published')
         for field in fields:
             d[field] = getattr(self, field)
 
@@ -225,7 +225,9 @@ class Study(Reference):
                             ("study-study_identifier", self.study_identifier),
                             ("study-contact_author", self.contact_author),
                             ("study-ask_author", self.ask_author),
-                            ("study-summary", self.summary)))
+                            ("study-summary", self.summary),
+                            ("study-published", self.published),
+                            ))
 
     @staticmethod
     def excel_export_detail(dic, isHeader):
@@ -245,7 +247,8 @@ class Study(Reference):
                 'study-study_identifier',
                 'study-contact_author',
                 'study-ask_author',
-                'study-summary')
+                'study-summary',
+                'study-published')
 
 
     @staticmethod
@@ -262,7 +265,8 @@ class Study(Reference):
                 dic['study_identifier'],
                 dic['contact_author'],
                 dic['ask_author'],
-                dic['summary'])
+                dic['summary'],
+                dic['published'])
 
     @staticmethod
     def study_bias_excel_export(queryset):
