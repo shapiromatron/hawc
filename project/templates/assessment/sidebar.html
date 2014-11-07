@@ -27,11 +27,13 @@
         <li class=""><a href="{% url 'comments:comment_list_assessment' assessment.pk %}">Comment Summary</a></li>
     {% endif %}
 
+    {% comment %}
     {% if assessment.enable_data_extraction %}
         <li class="nav-header">Visualizations</li>
         <li class=""><a href="{% url 'animal:time_endpoint_dr' %}">Time-dependent dose-plots</a></li>
         <li class=""><a href="{% url 'animal:review_plot' %}">Study quality aggregate plot</a></li>
     {% endif %}
+    {% endcomment %}
 
     <li class="nav-header">Downloads</li>
     <li class=""><a href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a></li>
