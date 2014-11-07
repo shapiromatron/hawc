@@ -470,15 +470,21 @@ class IVEndpoint(BaseEndpoint):
 
     @classmethod
     def get_maximum_number_doses(cls, queryset):
-        return max(queryset\
-                            .annotate(max_egs=models.Count('groups'))\
-                            .values_list('max_egs', flat=True))
+        max_val = 0
+        qs = queryset\
+                .annotate(max_egs=models.Count('groups'))\
+                .values_list('max_egs', flat=True)
+        if len(qs)>0: max_val = max(max_val)
+        return max_val
 
     @classmethod
     def get_maximum_number_benchmarks(cls, queryset):
-        return max(queryset\
-                            .annotate(max_benchmarks=models.Count('benchmarks'))\
-                            .values_list('max_benchmarks', flat=True))
+        max_val = 0
+        qs = queryset\
+                .annotate(max_benchmarks=models.Count('benchmarks'))\
+                .values_list('max_benchmarks', flat=True)
+        if len(qs)>0: max_val = max(max_val)
+        return max_val
 
     @classmethod
     def get_tsv_file(cls, queryset):
