@@ -507,31 +507,38 @@ class EndpointCreate(BaseCreate):
     form_class = forms.EndpointForm
 
     def post(self, request, *args, **kwargs):
-        #first, try to save endpoint
         self.object = None
+
+        # check if form is valid
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        if form.is_valid():
-            endpoint_model = form.save(commit=False)
-            endpoint_model.animal_group = self.parent
-            endpoint_model.save()
-            form.save_m2m()
-            self.object = endpoint_model
-            #now, try to save each endpoint group
-            egs = json.loads(request.POST['egs_json'])
-            for i, eg in enumerate(egs):
-                eg['endpoint'] = endpoint_model.pk
-                eg_form = forms.EndpointGroupForm(eg)
-                if eg_form.is_valid():
-                    eg_form.save()
-                else:
-                    self.egs_errors = form_error_list_to_ul(eg_form)
-                    self.object.delete()
-                    return self.form_invalid(form)
-        else:
+        if not form.is_valid():
             return self.form_invalid(form)
+        self.object = form.save(commit=False)
 
-        self.send_message()  # replicate MessageMixin
+        # load each endpoint-group form and check if valid (TODO: use formset)
+        egs = json.loads(request.POST['egs_json'])
+        egs_forms = []
+        for eg in egs:
+            eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
+            if eg_form.is_valid():
+               egs_forms.append(eg_form)
+            else:
+                self.egs_errors = form_error_list_to_ul(eg_form)
+                return self.form_invalid(form)
+
+        # save endpoint
+        self.object.animal_group = self.parent
+        self.object.save()
+        form.save_m2m()
+
+        # save endpoint-groups
+        for eg_form in egs_forms:
+            eg_form.instance.endpoint = self.object
+            eg_form.save()
+
+        # send success messages and redirect
+        self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):

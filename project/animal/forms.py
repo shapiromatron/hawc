@@ -188,9 +188,26 @@ class EndpointGroupForm(ModelForm):
 
     class Meta:
         model = models.EndpointGroup
-        fields = ('endpoint', 'dose_group_id', 'n', 'incidence',
+        fields = ('dose_group_id', 'n', 'incidence',
                   'response', 'variance', 'significance_level')
-        exclude = ('significant',)
+        exclude = ('endpoint', 'significant', )
+
+    def __init__(self, *args, **kwargs):
+        endpoint = kwargs.pop('endpoint', None)
+        super(EndpointGroupForm, self).__init__(*args, **kwargs)
+        if endpoint:
+            self.instance.endpoint = endpoint
+
+    def clean(self):
+        cleaned_data = super(EndpointGroupForm, self).clean()
+        if self.instance.endpoint.data_type == 'C':
+            if cleaned_data.get("variance") is None:
+                raise ValidationError('Variance must be numeric')
+            if cleaned_data.get("response") is None:
+                raise ValidationError('Response must be numeric')
+        else:
+            if cleaned_data.get("incidence") is None:
+                raise ValidationError('Incidence must be numeric')
 
 
 class UploadFileForm(forms.Form):

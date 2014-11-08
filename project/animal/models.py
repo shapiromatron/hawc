@@ -1261,15 +1261,6 @@ class EndpointGroup(models.Model):
         ordering = ('endpoint', 'dose_group_id')
 
     def clean(self):
-        if self.endpoint.data_type == 'C':
-            if self.variance is None:
-                raise ValidationError('Variance must be numeric')
-            if self.response is None:
-                raise ValidationError('Response must be numeric')
-        else:
-            if self.incidence is None:
-                raise ValidationError('Incidence must be numeric')
-
         self.significant = (self.significance_level > 0)
 
     def docx_print_row(self, data_type, doses):
