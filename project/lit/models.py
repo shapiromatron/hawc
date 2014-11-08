@@ -471,7 +471,7 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
             logging.info('cache used: {0}'.format(key))
         else:
             root = cls.get_assessment_root(assessment.pk)
-            tags = ReferenceFilterTag.dump_bulk(root)
+            tags = cls.dump_bulk(root)
             cache.set(key, tags)
             logging.info('cache set: {0}'.format(key))
 
@@ -505,23 +505,23 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
     def add_tag(cls, assessment_pk, name, parent_pk=None):
         cls.clear_cache(assessment_pk)
         if parent_pk:
-            parent = ReferenceFilterTag.objects.get(pk=parent_pk)
+            parent = cls.objects.get(pk=parent_pk)
         else:
             parent = cls.get_assessment_root(assessment_pk)
         new_tag = parent.add_child(name=name)
-        return ReferenceFilterTag.dump_bulk(new_tag)
+        return cls.dump_bulk(new_tag)
 
     @classmethod
     def remove_tag(cls, assessment_pk, pk):
         cls.clear_cache(assessment_pk)
-        ReferenceFilterTag.objects.filter(pk=pk).delete()
+        cls.objects.filter(pk=pk).delete()
 
     @classmethod
     def build_default(cls, assessment):
         """
         Constructor to define default study-quality metrics.
         """
-        root = ReferenceFilterTag.add_root(name=cls.get_assessment_root_name(assessment.pk))
+        root = cls.add_root(name=cls.get_assessment_root_name(assessment.pk))
 
         inc = root.add_child(name="Inclusion")
         inc.add_child(name='Human Study')
@@ -541,12 +541,12 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
 
         # copy tags from alternative assessment, renaming root-tag
         root = cls.get_assessment_root(copy_from_assessment.pk)
-        tags = ReferenceFilterTag.dump_bulk(root)
+        tags = cls.dump_bulk(root)
         tags[0]['data']['name'] = cls.get_assessment_root_name(copy_to_assessment.pk)
         tags[0]['data']['slug'] = cls.get_assessment_root_name(copy_to_assessment.pk)
 
         # insert as new taglist
-        ReferenceFilterTag.load_bulk(tags, parent=None, keep_ids=False)
+        cls.load_bulk(tags, parent=None, keep_ids=False)
         cls.clear_cache(copy_to_assessment.pk)
 
     def move_within_parent(self, assessment_pk, offset):

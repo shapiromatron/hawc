@@ -238,6 +238,10 @@ REST_FRAMEWORK = {
 }
 
 
+# Django pagedown settings
+PAGEDOWN_WIDGET_CSS = ('pagedown/demo/browser/demo.css', "css/pagedown.css",)
+
+
 # Django selectable settings
 SELECTABLE_MAX_LIMIT = 10
 

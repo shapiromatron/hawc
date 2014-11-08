@@ -101,7 +101,7 @@
             </thead>
             <tbody>
               {% if crud == "Create" %}
-                {% for i in animal_group.dose_groups|get_range %}
+                {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
                   <tr>
                     <td class="doses" id="dose_{{i}}"></td>
                     <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
@@ -124,7 +124,7 @@
                     <td>{% if forloop.counter0 > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
                   </tr>
                 {% empty %}
-                  {% for i in animal_group.dose_groups|get_range %}
+                  {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
                     <tr>
                       <td class="doses" id="dose_{{i}}"></td>
                       <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>

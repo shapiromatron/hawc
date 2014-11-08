@@ -89,31 +89,31 @@
         {% if crud == "Create" %}
           <tr>
             <th id="doses_title">Dose</th>
-            {% for i in animal_group.dose_groups|get_range %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <td class="doses" id="dose_{{i}}"></td>
             {% endfor %}
           </tr>
           <tr>
             <th>N</th>
-            {% for i in animal_group.dose_groups|get_range %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <td><input tabindex="1" class="span12 n_fields" type="text" id="n_{{i}}"></td>
             {% endfor %}
           </tr>
           <tr>
             <th>Average<br>Response</th>
-            {% for i in animal_group.dose_groups|get_range %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <td><input disabled class="span12" type="text" id="resp_{{i}}"></td>
             {% endfor %}
           </tr>
           <tr>
             <th>Variance (SD)</th>
-            {% for i in animal_group.dose_groups|get_range %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <td><input disabled class="span12" type="text" id="variance_{{i}}"></td>
             {% endfor %}
           </tr>
           <tr>
             <th>Significance<br>Level</th>
-            {% for i in animal_group.dose_groups|get_range %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <td>{% if i > 0 %}<input class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
             {% endfor %}
           </tr>

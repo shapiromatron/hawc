@@ -4,6 +4,6 @@ from . import models
 
 
 class StudyQualityMetricAdmin(admin.ModelAdmin):
-    list_display = ('domain', 'metric', 'created', 'changed')
+    list_display = ('domain', 'metric', 'created', 'last_updated')
 
 admin.site.register(models.StudyQualityMetric, StudyQualityMetricAdmin)

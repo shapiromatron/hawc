@@ -158,7 +158,7 @@ class EndpointSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Endpoint
-        fields = ('hawc_name', 'hawc_url', 'url', 'name', 'created', 'changed',
+        fields = ('hawc_name', 'hawc_url', 'url', 'name', 'created', 'last_updated',
                   'animal_group', 'effects', 'response_units', 'data_type', 'NOAEL',
                   'LOAEL', 'endpoint_groups')
         depth = 1

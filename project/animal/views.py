@@ -133,7 +133,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
             #now, try to save each dose-group
             dose_groups = json.loads(self.request.POST['dose_groups_json'])
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
@@ -288,7 +288,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             #now, try to save each dose-group
             dose_groups = json.loads(self.request.POST['dose_groups_json'])
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
@@ -381,7 +381,7 @@ class DosingRegimeCreate(CanCreateMixin, MessageMixin, CreateView):
             dose_groups = json.loads(request.POST['dose_groups_json'])
 
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.animal_group.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 self.object.delete()
@@ -446,7 +446,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             dose_groups = json.loads(request.POST['dose_groups_json'])
 
             try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.dosed_animals.dose_groups)
+                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
             except ValidationError as e:
                 self.dose_groups_errors = e.messages[0]
                 return self.form_invalid(form)
@@ -507,31 +507,38 @@ class EndpointCreate(BaseCreate):
     form_class = forms.EndpointForm
 
     def post(self, request, *args, **kwargs):
-        #first, try to save endpoint
         self.object = None
+
+        # check if form is valid
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        if form.is_valid():
-            endpoint_model = form.save(commit=False)
-            endpoint_model.animal_group = self.parent
-            endpoint_model.save()
-            form.save_m2m()
-            self.object = endpoint_model
-            #now, try to save each endpoint group
-            egs = json.loads(request.POST['egs_json'])
-            for i, eg in enumerate(egs):
-                eg['endpoint'] = endpoint_model.pk
-                eg_form = forms.EndpointGroupForm(eg)
-                if eg_form.is_valid():
-                    eg_form.save()
-                else:
-                    self.egs_errors = form_error_list_to_ul(eg_form)
-                    self.object.delete()
-                    return self.form_invalid(form)
-        else:
+        if not form.is_valid():
             return self.form_invalid(form)
+        self.object = form.save(commit=False)
 
-        self.send_message()  # replicate MessageMixin
+        # load each endpoint-group form and check if valid (TODO: use formset)
+        egs = json.loads(request.POST['egs_json'])
+        egs_forms = []
+        for eg in egs:
+            eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
+            if eg_form.is_valid():
+               egs_forms.append(eg_form)
+            else:
+                self.egs_errors = form_error_list_to_ul(eg_form)
+                return self.form_invalid(form)
+
+        # save endpoint
+        self.object.animal_group = self.parent
+        self.object.save()
+        form.save_m2m()
+
+        # save endpoint-groups
+        for eg_form in egs_forms:
+            eg_form.instance.endpoint = self.object
+            eg_form.save()
+
+        # send success messages and redirect
+        self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
@@ -605,7 +612,11 @@ class EndpointAssessmentList(BaseList):
     paginate_by = 25
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)\
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointAssessmentList, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
                    .prefetch_related('animal_group__dosing_regime__doses')\
                    .order_by('name')
@@ -706,7 +717,11 @@ class EndpointsReport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointsReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -723,10 +738,13 @@ class EndpointFlatFile(BaseList):
     model = models.Endpoint
 
     def get_queryset(self, dose=None):
-        kwargs = {"assessment": self.assessment}
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointFlatFile, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
         if dose:
-            kwargs["animal_group__dosing_regime__doses__dose_units"] = dose.pk
-        return self.model.objects.filter(**kwargs).distinct('pk')
+            filters["animal_group__dosing_regime__doses__dose_units"] = dose.pk
+        return self.model.objects.filter(**filters).distinct('pk')
 
     def get(self, request, *args, **kwargs):
         output_format = request.GET.get('output', None)
@@ -763,7 +781,11 @@ class EndpointCrossview(BaseList):
             self.dose_units = get_object_or_404(models.DoseUnits, pk=self.request.GET['dose_pk'])
         else:
             self.dose_units = models.DoseUnits.objects.get(units='mg/kg-day')
-        return self.model.objects.filter(assessment=self.assessment)\
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointCrossview, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
                    .prefetch_related('animal_group__dosing_regime__doses')\
                    .filter(animal_group__dosing_regime__doses__dose_units=self.dose_units).distinct('pk')
@@ -1137,7 +1159,7 @@ class RefValCreate(BaseCreate):
         else:
             # build formset with initial data
             ufs = []
-            for choice in models.UF_TYPE_CHOICES:
+            for choice in models.UncertaintyFactorAbstract.UF_TYPE_CHOICES:
                 ufs.append({'uf_type': choice[0]})
 
             NewRefValFormSet = inlineformset_factory(
@@ -1247,7 +1269,11 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(FullExport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

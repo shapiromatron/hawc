@@ -4,7 +4,7 @@ from . import models
 
 
 class StatisticalMetricAdmin(admin.ModelAdmin):
-    list_display = ('metric', 'order', )
+    list_display = ('metric', 'abbreviation', 'isLog', 'order', )
 
     def has_delete_permission(self, request, obj=None):
         return False

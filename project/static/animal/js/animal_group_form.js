@@ -131,7 +131,7 @@ dose_array.prototype._build_tbody = function(){
 };
 
 dose_array.prototype._get_number_dose_groups = function(){
-  return parseInt($('#id_dose_groups').val());
+  return parseInt($('#id_num_dose_groups').val());
 };
 
 dose_array.prototype._load_from_jsonify = function(values){

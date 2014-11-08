@@ -27,7 +27,7 @@
         {% if obj_perms.edit_assessment %}
           <td><a href="{% url 'bmd:assess_logic_update' logic.pk %}" class="btn btn-primary btn-small">Edit</a> </td>
         {% endif %}
-        <td>{{logic.updated}}</td>
+        <td>{{logic.last_updated}}</td>
       </tr>
       {% endfor %}
     </tbody>

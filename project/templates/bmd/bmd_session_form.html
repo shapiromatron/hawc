@@ -23,7 +23,7 @@
 
   {% if crud == 'Edit' %}
     <div id="warnings">
-      {% if endpoint.changed >= object.updated %}
+      {% if endpoint.last_updated >= object.last_updated %}
         <div class="alert alert-danger ">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <h4>Warning!</h4>

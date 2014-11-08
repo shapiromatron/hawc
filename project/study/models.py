@@ -17,19 +17,21 @@ from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_d
 from lit.models import Reference
 
 
-STUDY_TYPE_CHOICES = ((0, 'Animal Bioassay'),
-                      (1, 'Epidemiology'),
-                      (4, 'Epidemiology meta-analysis/pooled analysis'),
-                      (2, 'In vitro'),
-                      (3, 'Other'))
-
-COI_REPORTED_CHOICES = ((0, 'Authors report they have no COI'),
-                        (1, 'Authors disclosed COI'),
-                        (2, 'Unknown'),
-                        (3, 'Not reported'))
-
-
 class Study(Reference):
+
+    STUDY_TYPE_CHOICES = (
+        (0, 'Animal Bioassay'),
+        (1, 'Epidemiology'),
+        (4, 'Epidemiology meta-analysis/pooled analysis'),
+        (2, 'In vitro'),
+        (3, 'Other'))
+
+    COI_REPORTED_CHOICES = (
+        (0, 'Authors report they have no COI'),
+        (1, 'Authors disclosed COI'),
+        (2, 'Unknown'),
+        (3, 'Not reported'))
+
     study_type = models.PositiveSmallIntegerField(
         choices=STUDY_TYPE_CHOICES)
     short_citation = models.CharField(
@@ -135,7 +137,7 @@ class Study(Reference):
         fields = ('pk', 'full_citation', 'short_citation',
                   'coi_details', 'funding_source',
                   'study_identifier', 'contact_author', 'ask_author',
-                  'summary')
+                  'summary', 'published')
         for field in fields:
             d[field] = getattr(self, field)
 
@@ -223,7 +225,9 @@ class Study(Reference):
                             ("study-study_identifier", self.study_identifier),
                             ("study-contact_author", self.contact_author),
                             ("study-ask_author", self.ask_author),
-                            ("study-summary", self.summary)))
+                            ("study-summary", self.summary),
+                            ("study-published", self.published),
+                            ))
 
     @staticmethod
     def excel_export_detail(dic, isHeader):
@@ -243,7 +247,8 @@ class Study(Reference):
                 'study-study_identifier',
                 'study-contact_author',
                 'study-ask_author',
-                'study-summary')
+                'study-summary',
+                'study-published')
 
 
     @staticmethod
@@ -260,7 +265,8 @@ class Study(Reference):
                 dic['study_identifier'],
                 dic['contact_author'],
                 dic['ask_author'],
-                dic['summary'])
+                dic['summary'],
+                dic['published'])
 
     @staticmethod
     def study_bias_excel_export(queryset):
@@ -334,7 +340,7 @@ class StudyQualityDomain(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(default="")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('assessment', 'name')
@@ -372,7 +378,7 @@ class StudyQualityMetric(models.Model):
     description = models.TextField(blank=True,
                                    help_text='HTML text describing scoring of this field.')
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('domain', 'metric')
@@ -389,7 +395,7 @@ class StudyQualityMetric(models.Model):
         information.
         """
         d = {}
-        fields = ('id', 'metric', 'description', 'created', 'changed')
+        fields = ('id', 'metric', 'description', 'created', 'last_updated')
         for field in fields:
             d[field] = getattr(self, field)
         d['domain'] = self.domain.pk
@@ -420,20 +426,21 @@ class StudyQualityMetric(models.Model):
         StudyQualityMetric.objects.bulk_create(objects)
 
 
-STUDY_QUALITY_SCORE_CHOICES = ((1, 'Definitely high risk of bias'),
-                               (2, 'Probably high risk of bias'),
-                               (3, 'Probably low risk of bias'),
-                               (4, 'Definitely low risk of bias'),
-                               (0, 'Not applicable'))
-
-
 class StudyQuality(models.Model):
+
+    STUDY_QUALITY_SCORE_CHOICES = (
+        (1, 'Definitely high risk of bias'),
+        (2, 'Probably high risk of bias'),
+        (3, 'Probably low risk of bias'),
+        (4, 'Definitely low risk of bias'),
+        (0, 'Not applicable'))
+
     study = models.ForeignKey(Study, related_name='qualities')
     metric = models.ForeignKey(StudyQualityMetric, related_name='qualities')
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('study', 'metric')

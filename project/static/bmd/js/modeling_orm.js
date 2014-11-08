@@ -1043,7 +1043,7 @@ var LogicItem = function(item){
     this.func = item.function_name;
     this.logic_id = item.logic_id;
     this.test_on = item.test_on;
-    this.updated = item.updated;
+    this.last_updated = item.last_updated;
 };
 
 //  LOGIC LIST
@@ -1051,21 +1051,21 @@ var LogicItem = function(item){
 var LogicList = function(session, items){
     // unpack logic-list and save as object
     this.parent = session;
-    var l = [];
-    updated = items[0].updated;
+    var l = [],
+        last_updated = items[0].last_updated;
     items.forEach(function(v){
         if (v.test_on){
             l.push(new LogicItem(v)) ;
-            if (v.updated > updated){updated = v.updated;}
+            if (v.last_updated > last_updated){last_updated = v.last_updated;}
         }
     });
-    this.updated = updated;
+    this.last_updated = last_updated;
     this.items = l;
     this.add_update_warning();
 };
 
 LogicList.prototype.add_update_warning = function(){
-    if ((crud!='Create') && (this.parent.session.updated < this.updated)){
+    if ((crud!='Create') && (this.parent.session.last_updated < this.last_updated)){
         $('#warnings').prepend('<div class="alert alert-danger "><button ' +
           'type="button" class="close" data-dismiss="alert">×</button>'+
           '<h4>Warning!</h4>BMD model recommendation logic has changed since '+

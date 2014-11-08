@@ -91,7 +91,7 @@ DataPivot.default_plot_settings = function(){
   return {
     "plot_settings": {
       "plot_width": 400,
-      "minimum_row_height": 25,
+      "minimum_row_height": 12,
       "padding": {
         "top": 25,
         "right": 25,
@@ -112,7 +112,8 @@ DataPivot.default_plot_settings = function(){
       "filter_logic": "and",
       "font_style": 'Arial',
       "merge_descriptions": false,
-      "text_background": true
+      "text_background": true,
+      "text_background_color": "#EEEEEE"
     },
     "legend": DataPivotLegend.default_settings(),
     "dataline_settings": [],
@@ -842,7 +843,7 @@ DataPivot.prototype.build_settings = function(){
               tbody.html([
                   build_tr("Show legend", show_legend),
                   build_tr("Number of columns", number_columns),
-                  build_tr("Border width", border_width),
+                  build_tr("Border width", DataPivot.rangeInputDiv(border_width)),
                   build_tr("Border color", border_color),
                   build_tr("Legend item", legend_item)]);
 
@@ -951,7 +952,7 @@ DataPivot.build_movement_td = function(arr, self, options){
 
 DataPivot.getRowDetails = function(values){
   var unique = d3.set(values).values(),
-      numeric = unique.filter(function(v){return $.isNumeric(v); }),
+      numeric = values.filter(function(v){return $.isNumeric(v); }),
       range = (numeric.length>0) ? d3.extent(numeric) : undefined;
 
   return {
@@ -959,6 +960,14 @@ DataPivot.getRowDetails = function(values){
     numeric: numeric,
     range: range
   }
+};
+
+DataPivot.rangeInputDiv = function(input){
+  // given an numeric-range input, return a div containing input and text
+  // field which updates based on current value.
+  var text = $('<span>').text(input.val());
+  input.on('change', function(){text.text(input.val());});
+  return $('<div>').append(input, text);
 };
 
 
@@ -1514,6 +1523,43 @@ _DataPivot_settings_conditionalFormat.defaults = {
 };
 
 
+var _DataPivot_ColorGradientSVG = function(svg, start_color, stop_color){
+  var svg = d3.select(svg);
+
+  var gradient = svg.append("svg:defs")
+    .append("svg:linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "100%")
+      .attr("y2", "100%")
+      .attr("spreadMethod", "pad");
+
+  this.start = gradient.append("svg:stop")
+      .attr("offset", "0%")
+      .attr("stop-color", start_color)
+      .attr("stop-opacity", 1);
+
+  this.stop = gradient.append("svg:stop")
+      .attr("offset", "100%")
+      .attr("stop-color", stop_color)
+      .attr("stop-opacity", 1);
+
+  svg.append("svg:rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .style("fill", "url(#gradient)");
+}
+
+_DataPivot_ColorGradientSVG.prototype.update_start_color = function(color){
+    this.start.attr("stop-color", color);
+}
+
+_DataPivot_ColorGradientSVG.prototype.update_stop_color = function(color){
+    this.stop.attr("stop-color", color);
+}
+
+
 _DataPivot_settings_conditional = function(parent_div, parent, values){
   values = values || {discrete_styles: []};
   this.inputs = [];
@@ -1557,31 +1603,33 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
   });
 
   // build min/max for size and color
-  var rangeInputDiv = function(input){
-      var text = $('<span>').text(input.val());
-      input.on('change', function(){text.text(input.val());});
-      return $('<div>').append(input, text);
-    },
-    min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
+  var min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
       .val(values.min_size || defaults.min_size),
     max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">')
-      .val(values.max_size || defaults.max_size)
+      .val(values.max_size || defaults.max_size),
     min_color = $('<input name="min_color" type="color">')
       .val(values.min_color || defaults.min_color),
     max_color = $('<input name="max_color" type="color">')
-      .val(values.max_color || defaults.max_color);
+      .val(values.max_color || defaults.max_color),
+    svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
+    gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
+
+  // add event-handlers to change gradient color
+  min_color.change(function(v){gradient.update_start_color(min_color.val());});
+  max_color.change(function(v){gradient.update_stop_color(max_color.val());});
 
   // add size values to size div
   var ps = div.find(".point-size"),
       min_max_ps = $('<p>').appendTo(ps);
-  add_input_row(ps, "Minimum point-size", rangeInputDiv(min_size));
-  add_input_row(ps, "Maximum point-size", rangeInputDiv(max_size));
+  add_input_row(ps, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
+  add_input_row(ps, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
 
   // add color values to color div
   var pc = div.find(".point-color"),
       min_max_pc = $('<p>').appendTo(pc);
   add_input_row(pc, 'Minimum color', min_color);
   add_input_row(pc, 'Maximum color', max_color);
+  pc.append('<br>', svg);
   div.find('input[type="color"]').spectrum({"showInitial": true, "showInput": true});
 
   this.inputs.push(fieldName, conditionType,
@@ -1596,7 +1644,8 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
     self.discrete_styles = [];
     discrete.empty();
 
-    var arr = dp.data.map(function(v){return v[fieldName.val()]; }),
+    var subset = DataPivot_visualization.filter(dp.data, dp.settings.filters, dp.settings.plot_settings.filter_logic),
+        arr = subset.map(function(v){return v[fieldName.val()]; }),
         vals = DataPivot.getRowDetails(arr);
 
     if (conditionType.val() === "discrete-style"){
@@ -1615,11 +1664,11 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
         add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
       });
     } else {
-      var txt = '<i>{0}</i>: '.printf(fieldName.val());
+      var txt = 'Selected items in <i>{0}</i> '.printf(fieldName.val());
       if(vals.range){
-        txt += "contains values ranging from {0} to {1}.".printf(vals.range[0], vals.range[1]);
+        txt += "contain values ranging from {0} to {1}.".printf(vals.range[0], vals.range[1]);
       } else {
-        txt += "has no range of values, please select another column.";
+        txt += "have no range of values, please select another column.";
       }
 
       min_max_pc.html(txt);
@@ -2233,7 +2282,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
           if (vals.range){
             var cscale = d3.scale.linear()
                   .domain(vals.range)
-                  .interpolate(d3.interpolateHsl)
+                  .interpolate(d3.interpolateRgb)
                   .range([cf.min_color, cf.max_color]);
 
             rows.forEach(function(d){
@@ -2628,12 +2677,10 @@ DataPivot_visualization.prototype.layout_text = function(){
               lineHeight = this.getBBox().height, // px
               x = text.attr("x"),
               y = text.attr("y"),
-              dy = parseFloat(text.attr("dy")) || lineHeight/4,
               tspan = text.text(null)
                           .append("tspan")
                           .attr("x", x)
-                          .attr("y", y)
-                          .attr("dy", dy + "px");
+                          .attr("y", y);
           while(word = words.pop()){
             line.push(word);
             tspan.text(line.join(" "));
@@ -2644,7 +2691,7 @@ DataPivot_visualization.prototype.layout_text = function(){
               tspan = text.append("tspan")
                           .attr("x", x)
                           .attr("y", y)
-                          .attr("dy", ++lineNumber * lineHeight + dy + "px")
+                          .attr("dy", ++lineNumber * lineHeight + "px")
                           .text(word);
             }
           }
@@ -3369,8 +3416,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //size
   form.append(add_horizontal_field('Size',
-      $('<input name="size" type="range" min="0" max="500" step="5" value="{0}">'
-          .printf(set.size))));
+       DataPivot.rangeInputDiv($('<input name="size" type="range" min="0" max="500" step="5" value="{0}">'
+          .printf(set.size)))));
 
   //type
   var type = $('<select name="type"></select>').html([
@@ -3392,8 +3439,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //fill-opacity
   form.append(add_horizontal_field('Fill-opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
-          .printf(set["fill-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
+          .printf(set["fill-opacity"])))));
 
   //stroke
   form.append(add_horizontal_field('Stroke',
@@ -3402,8 +3449,8 @@ StyleSymbol.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-          .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+          .printf(set["stroke-width"])))));
 
 
   this.controls = form;
@@ -3415,7 +3462,7 @@ StyleSymbol.default_settings = function(){
     "type": "circle",
     "size": 130,
     "fill": "#000",
-    "fill-opacity": 0.9,
+    "fill-opacity": 1.0,
     "stroke": "#fff",
     "stroke-width": 1
   };
@@ -3514,8 +3561,8 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //size
   form.append(add_horizontal_field('Font Size',
-      $('<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'
-          .printf(parseInt(set.size, 10)))));
+       DataPivot.rangeInputDiv($('<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'
+          .printf(parseInt(set.size, 10))))));
 
   //fill
   form.append(add_horizontal_field('Fill',
@@ -3523,7 +3570,7 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //fill opacity
   form.append(add_horizontal_field('Fill opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(set['fill-opacity']))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(set['fill-opacity'])))));
 
   //text-anchor
   var text_anchor = $('<select name="text-anchor"></select>')
@@ -3542,8 +3589,8 @@ StyleText.prototype._draw_setting_controls = function(){
 
   //rotate
   form.append(add_horizontal_field('Rotation',
-      $('<input name="rotate" type="range" min="0" max="360" step="15" value="{0}">'
-          .printf(set.rotate))));
+       DataPivot.rangeInputDiv($('<input name="rotate" type="range" min="0" max="360" step="15" value="{0}">'
+          .printf(set.rotate)))));
 
   this.controls = form;
 };
@@ -3628,13 +3675,13 @@ StyleLine.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-        .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+        .printf(set["stroke-width"])))));
 
   //stroke-opacity
   form.append(add_horizontal_field('Stroke-opacity',
-      $('<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
-          .printf(set["stroke-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'
+          .printf(set["stroke-opacity"])))));
 
   //line-style
   var line_style = $('<select name="stroke-dasharray"></select>')
@@ -3718,8 +3765,8 @@ StyleRectangle.prototype._draw_setting_controls = function(){
 
   //fill-opacity
   form.append(add_horizontal_field('Fill-opacity',
-      $('<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="{0}">'
-          .printf(set["fill-opacity"]))));
+       DataPivot.rangeInputDiv($('<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="{0}">'
+          .printf(set["fill-opacity"])))));
 
   //stroke
   form.append(add_horizontal_field('Stroke',
@@ -3728,8 +3775,8 @@ StyleRectangle.prototype._draw_setting_controls = function(){
 
   //stroke-width
   form.append(add_horizontal_field('Stroke-width',
-      $('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
-          .printf(set["stroke-width"]))));
+       DataPivot.rangeInputDiv($('<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'
+          .printf(set["stroke-width"])))));
 
   this.controls = form;
 };

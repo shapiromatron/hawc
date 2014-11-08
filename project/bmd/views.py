@@ -96,7 +96,7 @@ class BMDVersions(BMDRead):
     def get_context_data(self, **kwargs):
         context = super(BMDVersions, self).get_context_data(**kwargs)
         context['endpoint'] = self.object.endpoint
-        context['object_list'] = self.model.objects.filter(endpoint=self.kwargs.get('pk')).order_by('updated')
+        context['object_list'] = self.model.objects.filter(endpoint=self.kwargs.get('pk')).order_by('last_updated')
         return context
 
 

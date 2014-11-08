@@ -26,7 +26,7 @@ class Species(models.Model):
         unique=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -54,7 +54,7 @@ class Strain(models.Model):
         max_length=30)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -75,27 +75,18 @@ class Strain(models.Model):
         return excel_export_detail(dic, isHeader)
 
 
-SEX_CHOICES = (("M", "Male"),
-               ("F", "Female"),
-               ("B", "Both"))
-
-GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
-                      ("F1", "First-generation (F1)"),
-                      ("F2", "Second-generation (F2)"),
-                      ("F3", "Third-generation (F3)"),
-                      ("F4", "Fourth-generation (F4)"))
-
-EXPERIMENT_TYPE_CHOICES = (("Ac", "Acute"),
-                           ("Sb", "Subchronic"),
-                           ("Ch", "Chronic"),
-                           ("Ca", "Cancer"),
-                           ("Me", "Mechanistic"),
-                           ("Rp", "Reproductive"),
-                           ("Dv", "Developmental"),
-                           ("Ot", "Other"))
-
-
 class Experiment(models.Model):
+
+    EXPERIMENT_TYPE_CHOICES = (
+        ("Ac", "Acute"),
+        ("Sb", "Subchronic"),
+        ("Ch", "Chronic"),
+        ("Ca", "Cancer"),
+        ("Me", "Mechanistic"),
+        ("Rp", "Reproductive"),
+        ("Dv", "Developmental"),
+        ("Ot", "Other"))
+
     study = models.ForeignKey(
         'study.Study',
         related_name='experiments')
@@ -121,7 +112,7 @@ class Experiment(models.Model):
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -170,6 +161,12 @@ class Experiment(models.Model):
 
 
 class AnimalGroup(models.Model):
+
+    SEX_CHOICES = (
+        ("M", "Male"),
+        ("F", "Female"),
+        ("B", "Both"))
+
     experiment = models.ForeignKey(
         Experiment,
         related_name="animal_groups")
@@ -182,10 +179,6 @@ class AnimalGroup(models.Model):
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
-    dose_groups = models.PositiveSmallIntegerField(
-        default=4,
-        validators=[MinValueValidator(1)],
-        verbose_name="Number of Dose Groups")
     duration_observation = models.FloatField(
         verbose_name="Observation duration (days)",
         help_text="Length of observation period, in days (fractions allowed)",
@@ -203,7 +196,7 @@ class AnimalGroup(models.Model):
         null=True)  # not enforced in db, but enforced in views
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -256,7 +249,6 @@ class AnimalGroup(models.Model):
             ("animal_group-url", self.get_absolute_url()),
             ("animal_group-name", self.name),
             ("animal_group-sex", self.get_sex_display()),
-            ("animal_group-dose_groups", self.dose_groups),
             ("animal_group-duration_observation", self.duration_observation),
             ("animal_group-siblings", self.get_siblings_pk()),
             ("animal_group-parents", "N/A")
@@ -274,6 +266,13 @@ class AnimalGroup(models.Model):
 
 
 class GenerationalAnimalGroup(AnimalGroup):
+
+    GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
+                          ("F1", "First-generation (F1)"),
+                          ("F2", "Second-generation (F2)"),
+                          ("F3", "Third-generation (F3)"),
+                          ("F4", "Fourth-generation (F4)"))
+
     generation = models.CharField(
         max_length=2,
         choices=GENERATION_CHOICES)
@@ -314,7 +313,7 @@ class DoseUnits(models.Model):
         verbose_name="Human Equivalent Dose")
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -330,7 +329,7 @@ class DoseUnits(models.Model):
 
     @property
     def invitro_experiment_count(self):
-        return self.experiment_set.count()
+        return self.ivexperiments.count()
 
     @classmethod
     def json_all(cls):
@@ -361,18 +360,19 @@ class DoseUnits(models.Model):
                 "dose_units-units": self.units}
 
 
-ROUTE_EXPOSURE = (("OD", u"Oral diet"),
-                  ("OG", u"Oral gavage"),
-                  ("OW", u"Oral drinking water"),
-                  ("I",  u"Inhalation"),
-                  ("D",  u"Dermal"),
-                  ("SI", u"Subcutaneous injection"),
-                  ("IP", u"Intraperitoneal injection"),
-                  ("IO", u"in ovo"),
-                  ("O",  u"Other"))
-
-
 class DosingRegime(models.Model):
+
+    ROUTE_EXPOSURE = (
+        ("OD", u"Oral diet"),
+        ("OG", u"Oral gavage"),
+        ("OW", u"Oral drinking water"),
+        ("I",  u"Inhalation"),
+        ("D",  u"Dermal"),
+        ("SI", u"Subcutaneous injection"),
+        ("IP", u"Intraperitoneal injection"),
+        ("IO", u"in ovo"),
+        ("O",  u"Other"))
+
     dosed_animals = models.OneToOneField(
         AnimalGroup,
         related_name='dosed_animals',
@@ -386,11 +386,15 @@ class DosingRegime(models.Model):
         help_text="Length of exposure period, in days (fractions allowed)",
         blank=True,
         null=True)
+    num_dose_groups = models.PositiveSmallIntegerField(
+        default=4,
+        validators=[MinValueValidator(1)],
+        verbose_name="Number of Dose Groups")
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def __unicode__(self):
@@ -429,6 +433,7 @@ class DosingRegime(models.Model):
                 ("dosing_regime-dosed_animals", self.isAnimalsDosed(animal_group)),
                 ("dosing_regime-route_of_exposure", self.get_route_of_exposure_display()),
                 ("dosing_regime-duration_exposure", self.duration_exposure),
+                ("dosing_regime-num_dose_groups", self.num_dose_groups),
                 ("dosing_regime-description", self.description)))
         d['_doses'] = self.get_doses_name_dict()
         return d
@@ -488,7 +493,7 @@ class DoseGroup(models.Model):
         validators=[MinValueValidator(0)])
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     def save(self, *args, **kwargs):
@@ -525,32 +530,44 @@ class DoseGroup(models.Model):
             raise ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
 
 
-DATA_TYPE_CHOICES = (('C', 'Continuous'),
-                     ('D', 'Dichotomous'),
-                     ('DC', 'Dichotomous Cancer'),
-                     ('NR', 'Not reported'))
-
-MONOTONICITY_CHOICES = ((0, "N/A, single dose level study"),
-                        (1, "N/A, no effects detected"),
-                        (2, "yes, visual appearance of monotonicity but no trend"),
-                        (3, "yes, monotonic and significant trend"),
-                        (4, "yes, visual appearance of non-monotonic but no trend"),
-                        (5, "yes, non-monotonic and significant trend"),
-                        (6, "no pattern"),
-                        (7, "unclear"),
-                        (8, "not-reported"))
-
-VARIANCE_TYPE_CHOICES = ((0, "NA"),
-                         (1, "SD"),
-                         (2, "SE"))
-
-VARIANCE_NAME = {
-    0: "N/A",
-    1: "Standard Deviation",
-    2: "Standard Error"}
-
-
 class Endpoint(BaseEndpoint):
+
+    DATA_TYPE_CHOICES = (
+        ('C', 'Continuous'),
+        ('D', 'Dichotomous'),
+        ('DC', 'Dichotomous Cancer'),
+        ('NR', 'Not reported'))
+
+    MONOTONICITY_CHOICES = (
+        (0, "N/A, single dose level study"),
+        (1, "N/A, no effects detected"),
+        (2, "yes, visual appearance of monotonicity but no trend"),
+        (3, "yes, monotonic and significant trend"),
+        (4, "yes, visual appearance of non-monotonic but no trend"),
+        (5, "yes, non-monotonic and significant trend"),
+        (6, "no pattern"),
+        (7, "unclear"),
+        (8, "not-reported"))
+
+    VARIANCE_TYPE_CHOICES = (
+        (0, "NA"),
+        (1, "SD"),
+        (2, "SE"))
+
+    VARIANCE_NAME = {
+        0: "N/A",
+        1: "Standard Deviation",
+        2: "Standard Error"}
+
+    OBSERVATION_TIME_UNITS = (
+        (0, "not-reported"),
+        (1, "seconds"),
+        (2, "minutes"),
+        (3, "hours"),
+        (4, "days"),
+        (5, "weeks"),
+        (6, "months"))
+
     animal_group = models.ForeignKey(
         AnimalGroup)
     system = models.CharField(
@@ -562,10 +579,17 @@ class Endpoint(BaseEndpoint):
     effect = models.CharField(
         max_length=128,
         blank=True)
+    observation_time = models.FloatField(
+        blank=True,
+        null=True)
+    observation_time_units = models.PositiveSmallIntegerField(
+         default=0,
+         choices=OBSERVATION_TIME_UNITS)
     data_location = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Details on where the data are found in the literature (ex: Figure 1, Table 2, etc.)")
+        help_text="Details on where the data are found in the literature "
+                  "(ex: Figure 1, Table 2, etc.)")
     response_units = models.CharField(
         max_length=15,
         verbose_name="Response units")
@@ -629,6 +653,8 @@ class Endpoint(BaseEndpoint):
             ("endpoint-system", self.system),
             ("endpoint-organ", self.organ),
             ("endpoint-effect", self.effect),
+            ("endpoint-observation_time", self.observation_time),
+            ("endpoint-observation_time_units", self.get_observation_time_units_display()),
             ("endpoint-data_location", self.data_location),
             ("endpoint-response_units", self.response_units),
             ("endpoint-data_type", self.get_data_type_display()),
@@ -682,6 +708,7 @@ class Endpoint(BaseEndpoint):
         base = [d['study']['short_citation'],
                 d['study']['study_url'],
                 d['study']['pk'],
+                d['study']['published'],
                 d['experiment'],
                 d['experiment_url'],
                 d['animal_group'],
@@ -739,21 +766,13 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
         super(Endpoint, cls).d_response_delete_cache(endpoint_pks)
-        if len(endpoint_pks)>0:
-            assessment = BaseEndpoint.objects.get(pk=endpoint_pks[0]).assessment
-            xls_cache = Endpoint.xls_export_cache_name(assessment)
-            logging.info('removing cache: {cache}'.format(cache=xls_cache))
-            cache.delete(xls_cache)
-
-    @staticmethod
-    def xls_export_cache_name(assessment):
-        return 'animal-xls-assessment-{0}'.format(assessment.pk)
 
     @classmethod
     def flat_file_header(cls):
         return ['study',
                 'study_url',
                 'Study Primary Key',
+                'Study Published',
                 'experiment',
                 'experiment_url',
                 'animal_group',
@@ -872,7 +891,7 @@ class Endpoint(BaseEndpoint):
 
     @property
     def variance_name(self):
-        return VARIANCE_NAME.get(self.variance_type, "N/A")
+        return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
 
     def docx_print(self, report, heading_level):
         """
@@ -883,10 +902,12 @@ class Endpoint(BaseEndpoint):
         paras = (
             u'Endpoint summary, including dose-response table and BMDS outputs.',
             u'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.changed)),
+            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
             u'System: {0}'.format(self.system),
             u'Organ: {0}'.format(self.organ),
             u'Effect: {0}'.format(self.effect),
+            u"Observation time: {0} {1}".format(self.observation_time,
+                                                self.get_observation_time_units_display()),
             u'Data location in reference: {0}'.format(self.data_location),
             u'Data available?: {0}'.format(self.data_reported),
             u'Data extracted?: {0}'.format(self.data_extracted),
@@ -969,7 +990,7 @@ class Endpoint(BaseEndpoint):
 
             # endpoint details
             fields = ['pk', 'name', 'assessment_id',
-                      'system', 'organ', 'effect',
+                      'system', 'organ', 'effect', 'observation_time',
                       'data_location', 'response_units', 'data_type', 'variance_type',
                       'variance_name', 'NOAEL', 'LOAEL', 'FEL',
                       'data_reported', 'data_extracted', 'values_estimated',
@@ -979,6 +1000,7 @@ class Endpoint(BaseEndpoint):
             for field in fields:
                 d[field] = getattr(self, field)
             d['url'] = self.get_absolute_url()
+            d['observation_time_units'] = self.get_observation_time_units_display()
             d['monotonicity'] = self.get_monotonicity_display()
             d['experiment_type'] = self.animal_group.experiment.get_type_display()
             d['doses'] = self.get_doses_json(json_encode=False)
@@ -1116,7 +1138,7 @@ class Endpoint(BaseEndpoint):
         Return BMDS session
         """
         try:
-            return BMD_session.objects.filter(endpoint=self.pk).latest('updated')
+            return BMD_session.objects.filter(endpoint=self.pk).latest('last_updated')
         except:
             return None
 
@@ -1126,19 +1148,11 @@ class Endpoint(BaseEndpoint):
         Full XLS data export for the animal bioassay data. Does not include any
         aggregation information, uncertainty-values, or reference values.
         """
-        cache_name = Endpoint.xls_export_cache_name(assessment)
-        excel = cache.get(cache_name)
-        if excel:
-            logging.info('using cache: {name}'.format(name=cache_name))
-        else:
-            sheet_name = 'ani'
-            doses = DoseUnits.doses_in_assessment(assessment)
-            headers = Endpoint.detailed_excel_export_header(doses)
-            data_rows_func = Endpoint.build_export_rows
-            excel = build_excel_file(sheet_name, headers, queryset, data_rows_func, doses=doses)
-            logging.info('setting cache: {name}'.format(name=cache_name))
-            cache.set(cache_name, excel)
-        return excel
+        sheet_name = 'ani'
+        doses = DoseUnits.doses_in_assessment(assessment)
+        headers = Endpoint.detailed_excel_export_header(doses)
+        data_rows_func = Endpoint.build_export_rows
+        return build_excel_file(sheet_name, headers, queryset, data_rows_func, doses=doses)
 
     @staticmethod
     def excel_export_detail(dic, isHeader):
@@ -1247,15 +1261,6 @@ class EndpointGroup(models.Model):
         ordering = ('endpoint', 'dose_group_id')
 
     def clean(self):
-        if self.endpoint.data_type == 'C':
-            if self.variance is None:
-                raise ValidationError('Variance must be numeric')
-            if self.response is None:
-                raise ValidationError('Response must be numeric')
-        else:
-            if self.incidence is None:
-                raise ValidationError('Incidence must be numeric')
-
         self.significant = (self.significance_level > 0)
 
     def docx_print_row(self, data_type, doses):
@@ -1377,15 +1382,16 @@ class IndividualAnimal(models.Model):
         Endpoint.d_response_delete_cache([self.endpoint_group.endpoint.pk])
 
 
-UF_TYPE_CHOICES = (('UFA', 'Interspecies uncertainty'),
-                   ('UFH', 'Intraspecies variability'),
-                   ('UFS', 'Subchronic to chronic extrapolation'),
-                   ('UFL', 'Use of a LOAEL in absence of a NOAEL'),
-                   ('UFD', 'Database incomplete'),
-                   ('UFO', 'Other'))
-
-
 class UncertaintyFactorAbstract(models.Model):
+
+    UF_TYPE_CHOICES = (
+        ('UFA', 'Interspecies uncertainty'),
+        ('UFH', 'Intraspecies variability'),
+        ('UFS', 'Subchronic to chronic extrapolation'),
+        ('UFL', 'Use of a LOAEL in absence of a NOAEL'),
+        ('UFD', 'Database incomplete'),
+        ('UFO', 'Other'))
+
     uf_type = models.CharField(
         max_length=3,
         choices=UF_TYPE_CHOICES,
@@ -1402,7 +1408,7 @@ class UncertaintyFactorAbstract(models.Model):
         verbose_name='Justification')
     created = models.DateTimeField(
         auto_now_add=True)
-    updated = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)  # standardize changed to updated
 
     class Meta:
@@ -1485,15 +1491,13 @@ class UncertaintyFactorRefVal(UncertaintyFactorAbstract):
         return d
 
 
-AGGREGATION_TYPE_CHOICES = (('E', 'Evidence'),
-                            ('M', 'Mode-of-action'),
-                            ('CD', 'Candidate Reference Values'))
-
-
 class Aggregation(models.Model):
-    """
-    Aggregation of endpoints
-    """
+
+    AGGREGATION_TYPE_CHOICES = (
+        ('E', 'Evidence'),
+        ('M', 'Mode-of-action'),
+        ('CD', 'Candidate Reference Values'))
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='aggregation')
@@ -1571,7 +1575,7 @@ class Aggregation(models.Model):
         for version in versions:
             fields = version.field_dict
             fields['aggregation_type'] = get_foo_display(
-                    fields['aggregation_type'], AGGREGATION_TYPE_CHOICES)
+                    fields['aggregation_type'], Aggregation.AGGREGATION_TYPE_CHOICES)
             fields['changed_by'] = version.revision.user.get_full_name()
             fields['updated'] = version.revision.date_created
             fields['endpoints'] = get_endpoints(fields['endpoints'])
@@ -1593,13 +1597,14 @@ class Aggregation(models.Model):
             return d
 
 
-REFERENCE_VALUE_CHOICES = ((1, 'Oral RfD'),
-                           (2, 'Inhalation RfD'),
-                           (3, 'Oral CSF'),
-                           (4, 'Inhalation CSF'))
-
-
 class ReferenceValue(models.Model):
+
+    REFERENCE_VALUE_CHOICES = (
+        (1, 'Oral RfD'),
+        (2, 'Inhalation RfD'),
+        (3, 'Oral CSF'),
+        (4, 'Inhalation CSF'))
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='reference_values')
@@ -1627,7 +1632,7 @@ class ReferenceValue(models.Model):
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
-    changed = models.DateTimeField(
+    last_updated = models.DateTimeField(
         auto_now=True)
 
     class Meta:
@@ -1680,7 +1685,7 @@ class ReferenceValue(models.Model):
             raise ValidationError('Error- reference value factor type already exists for this combination of assessment, reference-type, and units.')
 
     def get_json(self, json_encode=True):
-        fields = ['pk', 'point_of_departure', 'justification', 'created', 'changed']
+        fields = ['pk', 'point_of_departure', 'justification', 'created', 'last_updated']
         d = {'type': self.get_type_display(),
              'assessment_url': self.assessment.get_absolute_url(),
              'aggregation_url': self.aggregation.get_absolute_url(),

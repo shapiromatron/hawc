@@ -85,40 +85,20 @@ Study.prototype.get_name = function(){
 };
 
 Study.prototype.build_details_table = function(div){
-    var tbl = $('<table class="table table-condensed table-striped"></table>'),
-        colgroup = $('<colgroup></colgroup>'),
-        tbody = $('<tbody></tbody>'),
-        add_tbody_tr = function(description, value){
-            if(value){
-                tbody.append($("<tr>").append($("<th>").text(description))
-                                      .append($("<td>").html(value)));
-            }
-        }, add_tbody_tr_list = function(description, list_items){
-            var ul = $('<ul>').append(
-                        list_items.map(function(v){return '<li>{0}</li>'.printf(v.description);})),
-                tr = $('<tr>')
-                        .append('<th>{0}</th>'.printf(description))
-                        .append($('<td>').append(ul));
-
-        tbody.append(tr);
-    };
-
-    colgroup.append('<col style="width: 20%;"><col style="width: 80%;">');
-
-    add_tbody_tr("Study type", this.data.study_type);
-    add_tbody_tr("Full citation", this.data.full_citation);
-    add_tbody_tr("Abstract", this.data.reference.abstract);
-    add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
-    add_tbody_tr("Literature review tags", this._get_tags_ul());
-    add_tbody_tr("COI reported", this.data.coi_reported);
-    add_tbody_tr("COI details", this.data.coi_details);
-    add_tbody_tr("Funding source", this.data.funding_source);
-    add_tbody_tr("Study identifier", this.data.study_identifier);
-    add_tbody_tr("Author contacted?", HAWCUtils.booleanCheckbox(this.data.contact_author));
-    add_tbody_tr("Author contact details", this.data.ask_author);
-    add_tbody_tr("Summary text", this.data.summary);
-
-    $(div).html(tbl.append(colgroup, tbody));
+    var tbl = new DescriptiveTable();
+    tbl.add_tbody_tr("Study type", this.data.study_type);
+    tbl.add_tbody_tr("Full citation", this.data.full_citation);
+    tbl.add_tbody_tr("Abstract", this.data.reference.abstract);
+    tbl.add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
+    tbl.add_tbody_tr("Literature review tags", this._get_tags_ul());
+    tbl.add_tbody_tr("COI reported", this.data.coi_reported);
+    tbl.add_tbody_tr("COI details", this.data.coi_details);
+    tbl.add_tbody_tr("Funding source", this.data.funding_source);
+    tbl.add_tbody_tr("Study identifier", this.data.study_identifier);
+    tbl.add_tbody_tr("Author contacted?", HAWCUtils.booleanCheckbox(this.data.contact_author));
+    tbl.add_tbody_tr("Author contact details", this.data.ask_author);
+    tbl.add_tbody_tr("Summary text", this.data.summary);
+    $(div).html(tbl.get_tbl());
 };
 
 Study.prototype._get_tags_ul = function(){

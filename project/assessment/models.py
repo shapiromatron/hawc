@@ -68,7 +68,7 @@ class Assessment(models.Model):
                   "datasets or findings; comment-functionality and visibility "
                   "can be controlled in advanced-settings.")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def get_prior_versions_json(self):
         """
@@ -94,6 +94,7 @@ class Assessment(models.Model):
             fields['team_members'] = get_users(fields['team_members'])
             fields['reviewers'] = get_users(fields['reviewers'])
             fields['changed_by'] = version.revision.user.get_full_name()
+            fields['updated'] = version.revision.date_created
             versions_json.append(fields)
         return json.dumps(versions_json, cls=DjangoJSONEncoder)
 
@@ -108,6 +109,9 @@ class Assessment(models.Model):
 
     def __unicode__(self):
         return "%s (%s)" % (self.name, self.year)
+
+    def get_project_manager_emails(self):
+        return self.project_manager.all().values_list('email', flat=True)
 
     def user_can_view_object(self, user):
         """
@@ -205,19 +209,8 @@ def default_configuration(sender, instance, created, **kwargs):
         logging.info("Building default comment settings")
         get_model('comments', 'CommentSettings')(assessment=instance).save()
 
-
-EXTERNAL_DB_CHOICES = (("DR", 'DRAGON'),)
-
-
-class ExternalImport(models.Model):
-    external_db = models.CharField(choices=EXTERNAL_DB_CHOICES, max_length=2)
-    external_id = models.PositiveIntegerField()
-    external_table = models.CharField(max_length=40)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
-    created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+        logging.info("Building in-vitro endpoint category-root")
+        get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
 
 
 class EffectTag(models.Model):
@@ -261,7 +254,7 @@ class BaseEndpoint(models.Model):
     effects = models.ManyToManyField(EffectTag, blank=True, null=True,
                                      verbose_name="Tags")
     created = models.DateTimeField(auto_now_add=True)
-    changed = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -296,8 +289,10 @@ class BaseEndpoint(models.Model):
         d = {}
         if hasattr(self, 'assessedoutcome'):
             d = self.assessedoutcome.get_json(*args, **kwargs)
-        if hasattr(self, 'endpoint'):
+        elif hasattr(self, 'endpoint'):
             d = self.endpoint.d_response(*args, **kwargs)
+        elif hasattr(self, 'ivendpoint'):
+            d = self.ivendpoint.get_json(*args, **kwargs)
         return d
 
 
@@ -328,7 +323,6 @@ class ChangeLog(models.Model):
 
 
 reversion.register(Assessment)
-reversion.register(ExternalImport)
 reversion.register(EffectTag)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)

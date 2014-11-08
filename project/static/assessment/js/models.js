@@ -6,11 +6,11 @@ var Assessment = function(obj, revision_version){
     }
     // convert datetime formats
     this.created = new Date(this.created);
-    this.changed = new Date(this.changed);
+    this.updated = new Date(this.updated);
     this.revision_version = revision_version;
-    this.banner = this.revision_version + ': ' + String(this.changed) + ' by ' + this.changed_by;
+    this.banner = this.revision_version + ': ' + String(this.updated) + ' by ' + this.changed_by;
 };
 
 Assessment.field_order = ['name', 'cas', 'year', 'revision_version', 'project_manager',
                           'team_members', 'reviewers', 'editable', 'public',
-                          'created', 'changed'];
+                          'created', 'updated'];

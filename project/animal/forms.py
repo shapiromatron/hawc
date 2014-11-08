@@ -58,7 +58,6 @@ class AnimalGroupForm(ModelForm):
 
         super(AnimalGroupForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
-        self.fields['dose_groups'].widget.attrs['class'] = 'input-small'
 
         if experiment:
             self.instance.experiment = experiment
@@ -74,9 +73,7 @@ class GenerationalAnimalGroupForm(ModelForm):
         experiment = kwargs.pop('parent', None)
 
         super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
-
         self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
-        self.fields['dose_groups'].widget.attrs['class'] = 'input-small'
 
         if experiment:
             self.instance.experiment = experiment
@@ -86,7 +83,7 @@ class GenerationalAnimalGroupForm(ModelForm):
         exclude = ('experiment',)
         fields = ('name', 'species', 'strain', 'sex',
                   'generation', 'siblings', 'parents',
-                  'dosing_regime', 'dose_groups')
+                  'dosing_regime')
 
 
 class DosingRegimeForm(ModelForm):
@@ -158,20 +155,59 @@ class EndpointForm(ModelForm):
     class Meta:
         model = models.Endpoint
         fields = ('name', 'system', 'organ', 'effect',  'effects',
+                  'observation_time', 'observation_time_units',
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'response_units',
                   'data_location', 'NOAEL', 'LOAEL', 'FEL',
                   'monotonicity', 'statistical_test', 'trend_value',
                   'results_notes', 'endpoint_notes')
 
+    def clean(self):
+        cleaned_data = super(EndpointForm, self).clean()
+
+        data_type = cleaned_data.get("data_type")
+        variance_type = cleaned_data.get("variance_type")
+        obs_time = cleaned_data.get("observation_time")
+        observation_time_units = cleaned_data.get("observation_time_units")
+
+        if data_type=="C" and variance_type==0:
+            raise forms.ValidationError("If entering continuous data, the "
+                "variance type must be SD (standard-deviation) or SE "
+                "(standard error)")
+
+        if obs_time and observation_time_units == 0:
+            raise forms.ValidationError("If reporting an endpoint-observation "
+                "time, time-units must be specified.")
+
+        if not obs_time and observation_time_units > 0:
+            raise forms.ValidationError("An observation-time must be reported"
+                " if time-units are specified")
+
 
 class EndpointGroupForm(ModelForm):
 
     class Meta:
         model = models.EndpointGroup
-        fields = ('endpoint', 'dose_group_id', 'n', 'incidence',
+        fields = ('dose_group_id', 'n', 'incidence',
                   'response', 'variance', 'significance_level')
-        exclude = ('significant',)
+        exclude = ('endpoint', 'significant', )
+
+    def __init__(self, *args, **kwargs):
+        endpoint = kwargs.pop('endpoint', None)
+        super(EndpointGroupForm, self).__init__(*args, **kwargs)
+        if endpoint:
+            self.instance.endpoint = endpoint
+
+    def clean(self):
+        cleaned_data = super(EndpointGroupForm, self).clean()
+        if self.instance.endpoint.data_type == 'C':
+            if cleaned_data.get("variance") is None:
+                raise ValidationError('Variance must be numeric')
+            if cleaned_data.get("response") is None:
+                raise ValidationError('Response must be numeric')
+        else:
+            if cleaned_data.get("incidence") is None:
+                raise ValidationError('Incidence must be numeric')
 
 
 class UploadFileForm(forms.Form):
@@ -240,7 +276,7 @@ class UncertaintyFactorRefValForm(ModelForm):
         reference_value_pk = kwargs.pop('reference_value_pk', None)
         super(UncertaintyFactorRefValForm, self).__init__(*args, **kwargs)
         self.fields['value'].widget.attrs['class'] = 'span12 uf_values'
-        self.fields['uf_type'].widget = HiddenSelectBox(choices=models.UF_TYPE_CHOICES)
+        self.fields['uf_type'].widget = HiddenSelectBox(choices=models.UncertaintyFactorAbstract.UF_TYPE_CHOICES)
         self.fields['uf_type'].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.attrs['class'] = 'span12 uf_descriptions'
         if reference_value_pk:
