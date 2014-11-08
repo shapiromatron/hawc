@@ -202,7 +202,11 @@ class AssessedOutcomeFlat(BaseList):
     crud = "Read"
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(AssessedOutcomeFlat, self).get_obj_perms()
+        if not perms['edit']:
+            filters["exposure__study_population__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -222,7 +226,7 @@ class AssessedOutcomeFlat(BaseList):
         return response
 
 
-class FullExport(BaseList):
+class FullExport(AssessedOutcomeFlat):
     """
     Full XLS data export for the epidemiology outcome.
     """
@@ -230,18 +234,15 @@ class FullExport(BaseList):
     model = models.AssessedOutcome
     crud = "Read"
 
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
+        self.object_list = super(FullExport, self).get_queryset()
         xls = self.model.epidemiology_excel_export(self.object_list)
         response = HttpResponse(xls, content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="download.xls"'
         return response
 
 
-class AssessedOutcomeReport(BaseList):
+class AssessedOutcomeReport(AssessedOutcomeFlat):
     """
     Word report export for all epidemiological outcomes in an assessment
     """
@@ -249,11 +250,8 @@ class AssessedOutcomeReport(BaseList):
     model = models.AssessedOutcome
     crud = "Read"
 
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
+        self.object_list = super(AssessedOutcomeReport, self).get_queryset()
         docx = self.model.epidemiology_word_report(self.assessment, self.object_list)
         return docx.django_response()
 

@@ -766,15 +766,6 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
         super(Endpoint, cls).d_response_delete_cache(endpoint_pks)
-        if len(endpoint_pks)>0:
-            assessment = BaseEndpoint.objects.get(pk=endpoint_pks[0]).assessment
-            xls_cache = Endpoint.xls_export_cache_name(assessment)
-            logging.info('removing cache: {cache}'.format(cache=xls_cache))
-            cache.delete(xls_cache)
-
-    @staticmethod
-    def xls_export_cache_name(assessment):
-        return 'animal-xls-assessment-{0}'.format(assessment.pk)
 
     @classmethod
     def flat_file_header(cls):
@@ -1157,19 +1148,11 @@ class Endpoint(BaseEndpoint):
         Full XLS data export for the animal bioassay data. Does not include any
         aggregation information, uncertainty-values, or reference values.
         """
-        cache_name = Endpoint.xls_export_cache_name(assessment)
-        excel = cache.get(cache_name)
-        if excel:
-            logging.info('using cache: {name}'.format(name=cache_name))
-        else:
-            sheet_name = 'ani'
-            doses = DoseUnits.doses_in_assessment(assessment)
-            headers = Endpoint.detailed_excel_export_header(doses)
-            data_rows_func = Endpoint.build_export_rows
-            excel = build_excel_file(sheet_name, headers, queryset, data_rows_func, doses=doses)
-            logging.info('setting cache: {name}'.format(name=cache_name))
-            cache.set(cache_name, excel)
-        return excel
+        sheet_name = 'ani'
+        doses = DoseUnits.doses_in_assessment(assessment)
+        headers = Endpoint.detailed_excel_export_header(doses)
+        data_rows_func = Endpoint.build_export_rows
+        return build_excel_file(sheet_name, headers, queryset, data_rows_func, doses=doses)
 
     @staticmethod
     def excel_export_detail(dic, isHeader):

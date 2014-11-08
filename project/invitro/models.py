@@ -476,7 +476,7 @@ class IVEndpoint(BaseEndpoint):
         qs = queryset\
                 .annotate(max_egs=models.Count('groups'))\
                 .values_list('max_egs', flat=True)
-        if len(qs)>0: max_val = max(max_val)
+        if len(qs)>0: max_val = max(qs)
         return max_val
 
     @classmethod
@@ -485,7 +485,7 @@ class IVEndpoint(BaseEndpoint):
         qs = queryset\
                 .annotate(max_benchmarks=models.Count('benchmarks'))\
                 .values_list('max_benchmarks', flat=True)
-        if len(qs)>0: max_val = max(max_val)
+        if len(qs)>0: max_val = max(qs)
         return max_val
 
     @classmethod

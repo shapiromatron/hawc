@@ -605,7 +605,11 @@ class EndpointAssessmentList(BaseList):
     paginate_by = 25
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)\
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointAssessmentList, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
                    .prefetch_related('animal_group__dosing_regime__doses')\
                    .order_by('name')
@@ -706,7 +710,11 @@ class EndpointsReport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointsReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -723,10 +731,13 @@ class EndpointFlatFile(BaseList):
     model = models.Endpoint
 
     def get_queryset(self, dose=None):
-        kwargs = {"assessment": self.assessment}
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointFlatFile, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
         if dose:
-            kwargs["animal_group__dosing_regime__doses__dose_units"] = dose.pk
-        return self.model.objects.filter(**kwargs).distinct('pk')
+            filters["animal_group__dosing_regime__doses__dose_units"] = dose.pk
+        return self.model.objects.filter(**filters).distinct('pk')
 
     def get(self, request, *args, **kwargs):
         output_format = request.GET.get('output', None)
@@ -763,7 +774,11 @@ class EndpointCrossview(BaseList):
             self.dose_units = get_object_or_404(models.DoseUnits, pk=self.request.GET['dose_pk'])
         else:
             self.dose_units = models.DoseUnits.objects.get(units='mg/kg-day')
-        return self.model.objects.filter(assessment=self.assessment)\
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointCrossview, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
                    .prefetch_related('animal_group__dosing_regime__doses')\
                    .filter(animal_group__dosing_regime__doses__dose_units=self.dose_units).distinct('pk')
@@ -1247,7 +1262,11 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(FullExport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

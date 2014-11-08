@@ -19,7 +19,11 @@ class EndpointsFlat(BaseList):
     model = models.IVEndpoint
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointsFlat, self).get_obj_perms()
+        if not perms['edit']:
+            filters["experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
