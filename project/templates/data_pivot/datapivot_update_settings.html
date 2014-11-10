@@ -70,7 +70,7 @@
       {% endif %}
 
       d3.tsv("{{object.get_data_url|safe}}")
-        .row(function(d){ return DataPivot.coerce_numeric_data_row(d); })
+        .row(function(d, i){ return DataPivot.massage_row(d, i); })
         .get(function(error, data){
           $('#loading_div').fadeOut();
           window.dp = new DataPivot(data,

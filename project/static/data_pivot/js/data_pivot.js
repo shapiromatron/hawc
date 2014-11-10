@@ -11,7 +11,7 @@ DataPivot.NULL_CASE = "---";
 DataPivot.get_object = function(pk, callback){
   $.get('/data-pivot/{0}/json/'.printf(pk), function(d){
     d3.tsv(d.data_url)
-      .row(function(d){ return DataPivot.coerce_numeric_data_row(d); })
+      .row(function(d, i){ return DataPivot.massage_row(d, i); })
       .get(function(error, data){
         var dp = new DataPivot(data,
             JSON.parse(d.settings),
@@ -225,7 +225,7 @@ DataPivot.default_plot_settings = function(){
   };
 };
 
-DataPivot.coerce_numeric_data_row = function(row){
+DataPivot.massage_row = function(row, i){
   // make numbers in data numeric if possible
   // see https://github.com/mbostock/d3/wiki/CSV
   for(var field in row) {
@@ -233,6 +233,11 @@ DataPivot.coerce_numeric_data_row = function(row){
       row[field] = +row[field] || row[field];
     }
   }
+
+  // add data-pivot row-level key and index
+  row._dp_y  = i;
+  row._dp_pk = row['Row Key'] || i;
+
   return row;
 };
 
@@ -337,16 +342,9 @@ DataPivot.prototype.build_settings = function(){
                 return override_tbody.html(rows);
               }
 
-              // build row copies
-              var data_copy = [];
-              self.data.forEach(function(v, i){
-                var key = v['Row Key'] || i;
-                data_copy.push($.extend({"_pk": key}, v));
-              });
-
               // apply filters
-              data_copy = DataPivot_visualization.filter(data_copy, filters,
-                                                         self.settings.plot_settings.filter_logic);
+              var data_copy = DataPivot_visualization.filter(self.data,
+                                filters, self.settings.plot_settings.filter_logic);
               if(data_copy.length === 0 ){
                 rows.push('<tr><td colspan="6">No rows remaining after filtering criteria.</td></tr>');
                 return override_tbody.html(rows);
@@ -355,23 +353,29 @@ DataPivot.prototype.build_settings = function(){
               // apply sorts
               data_copy = DataPivot_visualization.sorter(data_copy, sorts);
 
-              var get_matched_override_or_default = function(pk){
-                var match = self.settings.row_overrides.filter(function(v){return v.pk===pk;});
-                if(match.length>0) return match[0];
-                return {
-                    "pk": pk,
-                    "include": true,
-                    "offset": 0,
-                    "text_style": DataPivot.NULL_CASE,
-                    "line_style": DataPivot.NULL_CASE,
-                    "symbol_style": DataPivot.NULL_CASE,
-                  };
-              }, offsets = [];
+              var row_override_map = d3.map(),
+                  get_matched_override_or_default = function(pk){
+                    var match = row_override_map.get(pk);
+                    if(match) return match;
+                    return {
+                        "pk": pk,
+                        "include": true,
+                        "offset": 0,
+                        "text_style": DataPivot.NULL_CASE,
+                        "line_style": DataPivot.NULL_CASE,
+                        "symbol_style": DataPivot.NULL_CASE,
+                      };
+                  },
+                  offsets = [];
+
+              self.settings.row_overrides.forEach(function(v){
+                row_override_map.set(v.pk, v);
+              });
 
               // build rows
               data_copy.forEach(function(v, i){
                 var desc = [],
-                    obj = get_matched_override_or_default(v._pk),
+                    obj = get_matched_override_or_default(v._dp_pk),
                     include = $('<input name="ov_include" type="checkbox">').prop('checked', obj.include),
                     move_up = $('<button class="btn btn-small"><i class="icon-arrow-up"></i></button>')
                         .click(function(){
@@ -398,7 +402,7 @@ DataPivot.prototype.build_settings = function(){
                     symbol_style = self.style_manager.add_select("symbols", obj.symbol_style, true);
 
                 descriptions.forEach(function(v2){desc.push(v[v2.field_name]);});
-                var tr = $('<tr></tr>').data({"pk": v._pk, "obj": obj})
+                var tr = $('<tr></tr>').data({"pk": v._dp_pk, "obj": obj})
                         .append('<td>{0}</td>'.printf(desc.join('<br>')))
                         .append($('<td></td>').append(include))
                         .append($('<td class="ov_offset"></td>').append(move_up, move_down).data("offset", obj.offset))
@@ -2174,7 +2178,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
 
     // if row is included, add additional fields for plotting.
     if (include) {
-      var additions = {"_dp_y": i, "_styles": {}};
+      var additions = {"_styles": {}};
 
       // unpack row-level styles for all points
       self.dp_settings.datapoint_settings.forEach(function(datum, i){
@@ -2207,8 +2211,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
     // apply offsets
     if(v.offset !== 0){
       for(var i=0; i<rows.length; i++){
-        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
-        if(pk == v.pk){
+        if(rows[i]._dp_pk == v.pk){
           var new_off = i+v.offset;
           if (new_off >= rows.length) new_off = rows.length-1;
           if (new_off < 0) new_off = 0;
@@ -2223,8 +2226,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
        (v.line_style !== DataPivot.NULL_CASE) ||
        (v.symbol_style !== DataPivot.NULL_CASE)){
       rows.forEach(function(v2,i){
-        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
-        if(pk === v.pk){
+        if(v2._dp_pk === v.pk){
           for(var key in v2._styles){
             if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
               v2._styles[key] = get_associated_style("texts", v.text_style);
@@ -2247,8 +2249,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
   this.dp_settings.row_overrides.forEach(function(v){
     if(v.include === false){
       for(var i=0; i<rows.length; i++){
-        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
-        if(pk === v.pk){
+        if(rows[i]._dp_pk === v.pk){
           rows.splice(i,1);
           break;
         }
