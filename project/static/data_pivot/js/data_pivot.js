@@ -330,7 +330,14 @@ DataPivot.prototype.build_settings = function(){
       }, build_ordering_tab = function(){
         var tab = $('<div class="tab-pane" id="data_pivot_settings_ordering"></div>'),
             override_tbody = $('<tbody></tbody>'),
-            build_manual_rows = function(){
+            reset_overrides = function(){
+              self.settings.row_overrides = [];
+              build_manual_rows();
+            }, reset_ordering_overrides = function(){
+              self.settings.row_overrides.forEach(function(v){
+                v.offset = 0;
+              });
+            }, build_manual_rows = function(){
               var rows = [],
                   get_selected_fields = function(v){return v.field_name !== DataPivot.NULL_CASE;},
                   descriptions = self.settings.description_settings.filter(get_selected_fields),
@@ -366,7 +373,12 @@ DataPivot.prototype.build_settings = function(){
                         "symbol_style": DataPivot.NULL_CASE,
                       };
                   },
-                  offsets = [];
+                  offsets = [],
+                  format_offset = function(offset){
+                    if(offset>0) return "↓{0}".printf(offset);
+                    if(offset<0) return "↑{0}".printf(Math.abs(offset));
+                    return "";
+                  };
 
               self.settings.row_overrides.forEach(function(v){
                 row_override_map.set(v.pk, v);
@@ -377,21 +389,26 @@ DataPivot.prototype.build_settings = function(){
                 var desc = [],
                     obj = get_matched_override_or_default(v._dp_pk),
                     include = $('<input name="ov_include" type="checkbox">').prop('checked', obj.include),
-                    move_up = $('<button class="btn btn-small"><i class="icon-arrow-up"></i></button>')
+                    offset_span = $('<span></span>').text(format_offset(obj.offset)),
+                    move_up = $('<button class="btn btn-mini"><i class="icon-arrow-up"></i></button>')
                         .click(function(){
                           var tr = $(this).parent().parent();
                           if (tr.index()>0){
-                            $(this).parent().data("offset", $(this).parent().data("offset")-1);
+                            var offset = $(this).parent().data("offset")-1;
+                            offset_span.text(format_offset(offset));
+                            $(this).parent().data("offset", offset);
                             tr.insertBefore(tr.prev())
                                 .animate({"background-color":"yellow"}, "fast")
                                 .animate({"background-color":"none"}, "slow");
                           }
                         }),
-                    move_down = $('<button class="btn btn-small"><i class="icon-arrow-down"></i></button>')
+                    move_down = $('<button class="btn btn-mini"><i class="icon-arrow-down"></i></button>')
                         .click(function(){
                           var tr = $(this).parent().parent();
                           if(tr.index()<tr.parent().children().length-1){
-                            $(this).parent().data("offset", $(this).parent().data("offset")+1);
+                            var offset = $(this).parent().data("offset")+1;
+                            offset_span.text(format_offset(offset));
+                            $(this).parent().data("offset", offset);
                             tr.insertAfter(tr.next())
                               .animate({"background-color":"yellow"}, "fast")
                               .animate({"background-color":"none"}, "slow");
@@ -405,7 +422,7 @@ DataPivot.prototype.build_settings = function(){
                 var tr = $('<tr></tr>').data({"pk": v._dp_pk, "obj": obj})
                         .append('<td>{0}</td>'.printf(desc.join('<br>')))
                         .append($('<td></td>').append(include))
-                        .append($('<td class="ov_offset"></td>').append(move_up, move_down).data("offset", obj.offset))
+                        .append($('<td class="ov_offset"></td>').append(offset_span, move_up, move_down).data("offset", obj.offset))
                         .append($('<td class="ov_text"></td>').append(text_style))
                         .append($('<td class="ov_line"></td>').append(line_style))
                         .append($('<td class="ov_symbol"></td>').append(symbol_style));
@@ -423,7 +440,13 @@ DataPivot.prototype.build_settings = function(){
                   }
                 });
               });
+
               return override_tbody.html(rows);
+            }, show_rebuild_overrides = function(){
+              var btn = $('<button class="btn btn-primary">Click to rebuild</button>')
+                          .on('click', build_manual_rows);
+              override_tbody.html($('<tr>').append(
+                    $('<td colspan="6">Row-ordering has changed.</td>').append('<br>', btn)));
             }, build_filtering_div = function(){
               var div = $('<div></div>'),
                   thead = $('<thead></thead>').html(
@@ -439,7 +462,7 @@ DataPivot.prototype.build_settings = function(){
                       self.settings.filters[i] = _DataPivot_settings_filters.defaults();
                     }
                     var obj = new _DataPivot_settings_filters(self, self.settings.filters[i]);
-                    tbody.append(obj.tr.on('change autocompletechange', 'input,select', build_manual_rows));
+                    tbody.append(obj.tr);
                   },
                   new_row = function(){
                     var num_rows = self.settings.filters.length;
@@ -469,7 +492,16 @@ DataPivot.prototype.build_settings = function(){
                 // set event binding to change settings
                 self.$settings_div.on('change', 'input[name="filter_logic"]', function(){
                   self.settings.plot_settings.filter_logic = $('input[name="filter_logic"]:checked').val();
-                  build_manual_rows();
+                  reset_ordering_overrides();
+                  show_rebuild_overrides();
+                });
+
+                tbody.on('change autocompletechange', 'input,select', function(){
+                  reset_ordering_overrides();
+                  show_rebuild_overrides();
+                }).on('click', 'button', function(){
+                  reset_ordering_overrides();
+                  show_rebuild_overrides();
                 });
 
                 return lbl.append('<h4>Filter logic</h4>',
@@ -488,7 +520,13 @@ DataPivot.prototype.build_settings = function(){
                          [$('<tr></tr>').append('<th>Field Name</th>',
                                                 '<th>Sort Order</th>',
                                                 '<th>Ordering</th>')]),
-                  tbody = $('<tbody></tbody>').on('change', 'input,select', build_manual_rows),
+                  tbody = $('<tbody></tbody>').on('change', 'input,select', function(){
+                    reset_ordering_overrides();
+                    show_rebuild_overrides();
+                  }).on('click', 'button', function(){
+                    reset_ordering_overrides();
+                    show_rebuild_overrides();
+                  }),
                   num_rows = (self.settings.sorts.length === 0) ? 2 : self.settings.sorts.length,
                   add_row = function(i){
                     if(!self.settings.sorts[i]){
@@ -546,14 +584,16 @@ DataPivot.prototype.build_settings = function(){
                               [$('<tr></tr>').append(
                                   '<th>Description</th>',
                                   '<th>Include</th>',
-                                  '<th>Move</th>',
+                                  '<th>Row Offset</th>',
                                   '<th>Override<br>Text Style</th>',
                                   '<th>Override<br>Line Style</th>',
                                   '<th>Override<br>Symbol Style</th>')]);
 
               return div.html([
-                  $('<h3>Row-level customization</h3>'),
-                  '<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
+                  $('<h3>Row-level customization</h3>').append(
+                      $('<button class="btn btn-primary pull-right">Reset overrides</button>')
+                          .on('click', reset_overrides)),
+                  $('<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>'),
                   $('<table class="table table-condensed table-bordered table-hover tbl_override"></table>').html([thead, override_tbody])]);
             }, update_override_settings = function(){
               self.settings.row_overrides = [];

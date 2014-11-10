@@ -101,7 +101,7 @@
 
               reader.onload = function(e) {
                 var data = d3.tsv.parse(e.target.result,
-                    function(d){return DataPivot.coerce_numeric_data_row(d); });
+                    function(d, i){return DataPivot.massage_row(d, i); });
                 load_json(data);
               };
 
