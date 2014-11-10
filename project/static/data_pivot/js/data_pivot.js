@@ -340,7 +340,7 @@ DataPivot.prototype.build_settings = function(){
               // build row copies
               var data_copy = [];
               self.data.forEach(function(v, i){
-                var key = v['primary_key'] || i;
+                var key = v['Row Key'] || i;
                 data_copy.push($.extend({"_pk": key}, v));
               });
 
@@ -2207,7 +2207,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
     // apply offsets
     if(v.offset !== 0){
       for(var i=0; i<rows.length; i++){
-        var pk = rows[i]['primary_key'] || rows[i]._dp_y;
+        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
         if(pk == v.pk){
           var new_off = i+v.offset;
           if (new_off >= rows.length) new_off = rows.length-1;
@@ -2223,7 +2223,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
        (v.line_style !== DataPivot.NULL_CASE) ||
        (v.symbol_style !== DataPivot.NULL_CASE)){
       rows.forEach(function(v2,i){
-        var pk = rows[i]['primary_key'] || rows[i]._dp_y;
+        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
         if(pk === v.pk){
           for(var key in v2._styles){
             if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
@@ -2247,7 +2247,7 @@ DataPivot_visualization.prototype.get_dataset = function(){
   this.dp_settings.row_overrides.forEach(function(v){
     if(v.include === false){
       for(var i=0; i<rows.length; i++){
-        var pk = rows[i]['primary_key'] || rows[i]._dp_y;
+        var pk = rows[i]['Row Key'] || rows[i]._dp_y;
         if(pk === v.pk){
           rows.splice(i,1);
           break;
@@ -2901,7 +2901,7 @@ DataPivotExtension.update_extensions = function(obj, key){
       obj.dpe_function_name = "display_study";
       break;
     case "endpoint":
-      obj.dpe_key = "primary_key";
+      obj.dpe_key = "Endpoint Key";
       obj.dpe_function_name = "display_endpoint";
       break;
     case "study_population":

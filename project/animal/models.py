@@ -749,6 +749,7 @@ class Endpoint(BaseEndpoint):
         for i, v in enumerate(d['dr']):
             row = copy.copy(base)
             row.extend([
+                v['pk'],
                 i,
                 v['dose'],
                 v['n'],
@@ -783,7 +784,7 @@ class Endpoint(BaseEndpoint):
                 'doses',
                 'dose_units',
                 'response_units',
-                'primary_key',
+                'Endpoint Key',
                 'low_dose',
                 'NOAEL',
                 'LOAEL',
@@ -794,6 +795,7 @@ class Endpoint(BaseEndpoint):
                 'BMD',
                 'BMDU',
                 'CSF',
+                'Row Key',
                 'dose_index',
                 'dose',
                 'n',
