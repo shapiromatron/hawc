@@ -131,9 +131,10 @@ class DataPivotQuery(DataPivot):
                 url += '?dose_pk={0}'.format(self.units.pk)
         elif self.evidence_type == 1:  # Epidemiology
             url = reverse('epi:ao_flat', kwargs={'pk': self.assessment.pk})
+        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
+            url = reverse('epi:mr_flat', kwargs={'pk': self.assessment.pk})
         elif self.evidence_type == 2:  # In Vitro
             url = reverse('invitro:endpoints_flat', kwargs={'pk': self.assessment.pk})
-
         if url is None:
             raise Http404
 

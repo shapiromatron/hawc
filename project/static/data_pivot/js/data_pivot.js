@@ -1997,6 +1997,7 @@ DataPivot_visualization.filter = function(arr, filters, filter_logic){
   for(var i=0; i<filters.length; i++){
     func = filters_map.get(filters[i].quantifier);
     field_name = filters[i].field_name;
+    if(field_name === DataPivot.NULL_CASE) continue;
     value = filters[i].value;
     if (func){
       if(filter_logic==="and"){

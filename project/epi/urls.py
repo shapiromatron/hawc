@@ -21,6 +21,14 @@ urlpatterns = patterns('',
         views.AssessedOutcomeReport.as_view(),
         name='ao_report'),
 
+    url(r'^assessment/(?P<pk>\d+)/meta-result-flat/$',
+        views.MetaResultFlat.as_view(),
+        name='mr_flat'),
+
+    url(r'^assessment/(?P<pk>\d+)/meta-result-full-export/$',
+        views.MetaResultFullExport.as_view(),
+        name='mr_export'),
+
     # study-criteria views
     url(r'^assessment/(?P<pk>\d+)/study-criteria/create/$',
         views.StudyCriteriaCreate.as_view(),

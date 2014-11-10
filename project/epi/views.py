@@ -377,3 +377,46 @@ class MetaResultDelete(BaseDelete):
     def get_success_url(self):
         self.parent = self.object.protocol
         return reverse("epi:mp_detail", kwargs={"pk": self.parent.pk})
+
+
+class MetaResultFlat(BaseList):
+    parent_model = Assessment
+    model = models.MetaResult
+    crud = "Read"
+
+    def get_queryset(self):
+        filters = {"protocol__study__assessment": self.assessment}
+        perms = super(MetaResultFlat, self).get_obj_perms()
+        if not perms['edit']:
+            filters["protocol__study__published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+
+        output_type = request.GET.get('output', None)
+
+        if output_type == 'tsv':
+            tsv = self.model.get_tsv_file(self.object_list)
+            response = HttpResponse(tsv, content_type='text/tab-separated-values')
+            response['Content-Disposition'] = 'attachment; filename="download.tsv"'
+
+        else:
+            xls = self.model.get_excel_file(self.object_list)
+            response = HttpResponse(xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="download.xls"'
+
+        return response
+
+
+class MetaResultFullExport(MetaResultFlat):
+    """
+    Full XLS data export for the epidemiology meta-analyses.
+    """
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = super(MetaResultFullExport, self).get_queryset()
+        xls = self.model.epidemiology_excel_export(self.object_list)
+        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="download.xls"'
+        return response

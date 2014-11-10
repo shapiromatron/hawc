@@ -47,6 +47,12 @@
     </li>
 
     <li>
+        <b>Epidemiology meta-analysis data</b><br>
+        <a class='btn btn-primary' href="{% url 'epi:mr_export' assessment.pk %}">Download</a><br>
+        <p class='help-block'>Microsoft Excel spreadsheet</p>
+    </li>
+
+    <li>
         <b>In-vitro data</b><br>
         <a class='btn btn-primary' href="{% url 'invitro:endpoints_flat' assessment.pk %}">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>

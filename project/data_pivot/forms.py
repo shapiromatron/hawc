@@ -30,9 +30,11 @@ class DataPivotQueryForm(forms.ModelForm):
         assessment = kwargs.pop('parent', None)
         super(DataPivotQueryForm, self).__init__(*args, **kwargs)
         self.fields['settings'].widget.attrs['rows'] = 2
-        self.fields["evidence_type"].choices = ((0, 'Animal Bioassay'),
-                                                (1, 'Epidemiology'),
-                                                (2, 'In vitro'))
+        self.fields["evidence_type"].choices = (
+            (0, 'Animal Bioassay'),
+            (1, 'Epidemiology'),
+            (4, 'Epidemiology meta-analysis/pooled analysis'),
+            (2, 'In vitro'))
         if assessment:
             self.instance.assessment = assessment
 

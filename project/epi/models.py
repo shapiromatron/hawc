@@ -1512,6 +1512,7 @@ class MetaProtocol(models.Model):
         for field in fields:
             d[field] = getattr(self, field)
 
+        d['url'] = self.get_absolute_url()
         d['protocol_type'] = self.get_protocol_type_display()
         d['lit_search_strategy'] = self.get_lit_search_strategy_display()
         d['inclusion_criteria'] = [unicode(v) for v in self.inclusion_criteria.all()]
@@ -1521,6 +1522,44 @@ class MetaProtocol(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
+
+    @staticmethod
+    def build_export_from_json_header():
+        # used for full-export/import functionalities
+        return (
+            'meta_protocol-pk',
+            'meta_protocol-url',
+            'meta_protocol-name',
+            'meta_protocol-protocol_type',
+            'meta_protocol-lit_search_strategy',
+            'meta_protocol-lit_search_notes',
+            'meta_protocol-lit_search_start_date',
+            'meta_protocol-lit_search_end_date',
+            'meta_protocol-total_references',
+            'meta_protocol-inclusion_criteria',
+            'meta_protocol-exclusion_criteria',
+            'meta_protocol-total_studies_identified',
+            'meta_protocol-notes',
+        )
+
+    @staticmethod
+    def build_flat_from_json_dict(dic):
+        # used for full-export/import functionalities
+        return (
+            dic['pk'],
+            dic['url'],
+            dic['name'],
+            dic['protocol_type'],
+            dic['lit_search_strategy'],
+            dic['lit_search_notes'],
+            dic['lit_search_start_date'],
+            dic['lit_search_end_date'],
+            dic['total_references'],
+            u'|'.join(dic['inclusion_criteria']),
+            u'|'.join(dic['exclusion_criteria']),
+            dic['total_studies_identified'],
+            dic['notes']
+        )
 
 
 class MetaResult(models.Model):
@@ -1596,14 +1635,207 @@ class MetaResult(models.Model):
         for field in fields:
             d[field] = getattr(self, field)
 
+        d['url'] = self.get_absolute_url()
         d['statistical_metric'] = unicode(self.statistical_metric)
         d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
         d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
+
+        d['protocol'] = self.protocol.get_json(json_encode=False)
+        d['study'] = self.protocol.study.get_json(json_encode=False)
 
         if json_encode:
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
+
+    @classmethod
+    def epidemiology_excel_export(cls, queryset):
+        # full export of epidemiology meta-analysis dataset, designed for
+        # import/export using a flat-xls file.
+        sheet_name = 'epi-meta-analysis'
+        headers = cls.epidemiology_excel_export_header()
+        data_rows_func = cls.build_export_rows
+        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
+
+    @staticmethod
+    def epidemiology_excel_export_header():
+        # build export header column names for full export
+        lst = []
+        lst.extend(Study.build_export_from_json_header())
+        lst.extend(MetaProtocol.build_export_from_json_header())
+        lst.extend(MetaResult.build_export_from_json_header())
+        return lst
+
+    def flat_file_row(self):
+        d = self.get_json(json_encode=False)
+        row = [
+            d['study']['short_citation'],
+            d['study']['study_url'],
+            d['study']['pk'],
+            d['study']['published'],
+
+            d['protocol']['pk'],
+            d['protocol']['url'],
+            d['protocol']['name'],
+            d['protocol']['protocol_type'],
+            d['protocol']['total_references'],
+            d['protocol']['total_studies_identified'],
+
+            d['pk'],  # repeat for data-pivot key
+            d['pk'],
+            d['url'],
+            d['label'],
+            d['health_outcome'],
+            d['exposure_name'],
+            d['number_studies'],
+            d['statistical_metric'],
+            d['n'],
+            d['risk_estimate'],
+            d['lower_ci'],
+            d['upper_ci'],
+            d['ci_units'],
+            d['heterogeneity'],
+        ]
+
+        return [row]
+
+
+    @classmethod
+    def flat_file_header(cls):
+        return [
+            'Study',
+            'Study URL',
+            'Study Primary Key',
+            'Study Published?',
+
+            'Protocol Primary Key',
+            'Protocol URL',
+            'Protocol Name',
+            'Protocol Type',
+            'Total References',
+            'Identified References',
+
+            'Row Key',
+            'Result Primary Key',
+            'Result URL',
+            'Result Label',
+            'Health Outcome',
+            'Exposure',
+            'Result References',
+            'Statistical Metric',
+            'N',
+            'Estimate',
+            'Lower CI',
+            'Upper CI',
+            'CI units',
+            'Heterogeneity'
+        ]
+
+    @classmethod
+    def get_tsv_file(cls, queryset):
+        """
+        Construct a tab-delimited version of the selected queryset of endpoints.
+        """
+        headers = cls.flat_file_header()
+        return build_tsv_file(headers, queryset)
+
+    @classmethod
+    def get_excel_file(cls, queryset):
+        """
+        Construct an Excel workbook of the selected queryset of endpoints.
+        """
+        sheet_name = 'epi-meta-analysis'
+        headers = cls.flat_file_header()
+        data_rows_func = cls.build_excel_rows
+        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
+
+    @staticmethod
+    def build_excel_rows(ws, queryset, *args, **kwargs):
+        """
+        Custom method used to build individual excel rows in Excel worksheet
+        """
+        def try_float(val):
+            if type(val) is bool:
+                return val
+            try:
+                return float(val)
+            except:
+                return val
+
+        for row, mr in enumerate(queryset):
+            for col, val in enumerate(mr.flat_file_row()[0]):
+                ws.write(row+1, col, try_float(val))
+
+    @staticmethod
+    def build_export_rows(ws, queryset, *args, **kwargs):
+
+        # build export data rows for full-export
+        def try_float(val):
+            if type(val) is bool:
+                return val
+            try:
+                return float(val)
+            except:
+                return val
+
+        for i, mr in enumerate(queryset):
+            d = mr.get_json(json_encode=False)
+            fields = []
+            fields.extend(Study.build_flat_from_json_dict(d['study']))
+            fields.extend(MetaProtocol.build_flat_from_json_dict(d['protocol']))
+            fields.extend(MetaResult.build_flat_from_json_dict(d))
+            for j, val in enumerate(fields):
+                ws.write(i+1, j, try_float(val))
+
+    @staticmethod
+    def build_export_from_json_header():
+        # used for full-export/import functionalities
+        return (
+            'meta_result-pk',
+            'meta_result-url',
+            'meta_result-label',
+            'meta_result-data_location',
+            'meta_result-health_outcome',
+            'meta_result-health_outcome_notes',
+            'meta_result-exposure_name',
+            'meta_result-exposure_details',
+            'meta_result-number_studies',
+            'meta_result-statistical_metric',
+            'meta_result-statistical_notes',
+            'meta_result-n',
+            'meta_result-risk_estimate',
+            'meta_result-lower_ci',
+            'meta_result-upper_ci',
+            'meta_result-ci_units',
+            'meta_result-heterogeneity',
+            'meta_result-adjustment_factors',
+            'meta_result-notes',
+        )
+
+    @staticmethod
+    def build_flat_from_json_dict(dic):
+        # used for full-export/import functionalities
+        return (
+            dic['pk'],
+            dic['url'],
+            dic['label'],
+            dic['data_location'],
+            dic['health_outcome'],
+            dic['health_outcome_notes'],
+            dic['exposure_name'],
+            dic['exposure_details'],
+            dic['number_studies'],
+            dic['statistical_metric'],
+            dic['statistical_notes'],
+            dic['n'],
+            dic['risk_estimate'],
+            dic['lower_ci'],
+            dic['upper_ci'],
+            dic['ci_units'],
+            dic['heterogeneity'],
+            u'|'.join( dic['adjustment_factors']),
+            dic['notes'],
+        )
 
 
 class SingleResult(models.Model):
