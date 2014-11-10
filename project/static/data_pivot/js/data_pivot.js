@@ -1971,22 +1971,20 @@ DataPivot_visualization.sorter = function(arr, sorts){
 };
 
 DataPivot_visualization.filter = function(arr, filters, filter_logic){
+  if(filters.length===0) return arr;
+
   var field_name, value, func,
-      lt = function(v){
-          return v[field_name]<value;},
-      lte = function(v){
-          return v[field_name]<=value;},
-      gt = function(v){
-          return v[field_name]>value;},
-      gte = function(v){
-          return v[field_name]>=value;},
-      contains = function(v){
-          return v[field_name].toString().toLowerCase().search(value.toLowerCase())>=0;},
-      not_contains = function(v){
-          return v[field_name].toString().toLowerCase().search(value.toLowerCase())<0;},
-      exact = function(v){
-          return v[field_name].toString().toLowerCase() === value.toLowerCase();},
-      isWithin = function(obj, arr){
+      new_arr = [],
+      included = d3.map(),
+      filters_map = d3.map({
+        lt: function(v){return v[field_name]<value;},
+        lte: function(v){return v[field_name]<=value;},
+        gt: function(v){return v[field_name]>value;},
+        gte: function(v){return v[field_name]>=value;},
+        contains: function(v){return v[field_name].toString().toLowerCase().search(value.toLowerCase())>=0;},
+        not_contains: function(v){return v[field_name].toString().toLowerCase().search(value.toLowerCase())<0;},
+        exact: function(v){return v[field_name].toString().toLowerCase() === value.toLowerCase();},
+      }), isWithin = function(obj, arr){
         var within = false;
         arr.forEach(function(v){
           if(v===obj) within = true;
@@ -1994,49 +1992,25 @@ DataPivot_visualization.filter = function(arr, filters, filter_logic){
         return within;
       };
 
-  var new_arr = [];
-  if(filter_logic==="and" || filters.length===0){new_arr = arr;}
+  if(filter_logic==="and") new_arr = arr;
 
   for(var i=0; i<filters.length; i++){
-    func = undefined;
+    func = filters_map.get(filters[i].quantifier);
     field_name = filters[i].field_name;
     value = filters[i].value;
-    switch(filters[i].quantifier){
-      case "lt":
-        func = lt;
-        break;
-      case "lte":
-        func = lte;
-        break;
-      case "gt":
-        func = gt;
-        break;
-      case "gte":
-        func = gte;
-        break;
-      case "contains":
-        func = contains;
-        break;
-      case "not_contains":
-        func = not_contains;
-        break;
-      case "exact":
-        func = exact;
-        break;
-      default:
-        console.log("Unrecognized filter: {0}".printf(filters[i].quantifier));
-    }
     if (func){
       if(filter_logic==="and"){
         new_arr = new_arr.filter(func);
       } else {
         var vals = arr.filter(func);
-        vals.forEach(function(v){
-          if(!isWithin(v, new_arr)) new_arr.push(v);
-        });
+        vals.forEach(function(v){ included.set(v._dp_pk, v); });
       }
+    } else {
+      console.log("Unrecognized filter: {0}".printf(filters[i].quantifier));
     }
   }
+
+  if(filter_logic==="or") new_arr = included.values();
 
   return new_arr;
 };
