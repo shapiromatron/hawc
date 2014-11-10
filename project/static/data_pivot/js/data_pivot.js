@@ -2798,7 +2798,9 @@ DataPivot_visualization.prototype.layout_text = function(){
           numRows +=1;
         }
         var extra = (actual_height-min_row_height);
-        if ((extra/numRows)<min_row_height){
+        if (numRows === 1){
+          merged_row_height = actual_height;
+        } else if ((extra/numRows)<min_row_height){
           merged_row_height = min_row_height;
         } else {
           merged_row_height = min_row_height + extra/numRows;
