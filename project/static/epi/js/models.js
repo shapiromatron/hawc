@@ -598,7 +598,6 @@ MetaResult.prototype.build_single_results_table = function(div){
 };
 
 MetaResult.prototype.build_breadcrumbs = function(){
-    console.log(this.data.study.url)
     var urls = [
         {
             url: this.data.study.study_url,

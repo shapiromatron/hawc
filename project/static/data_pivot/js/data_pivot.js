@@ -1317,7 +1317,7 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
   this.content.max_width = $('<input class="span12" type="number">');
 
   if(dpe_enabled){
-    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options());
+    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot));
   }
 
   // set default values
@@ -1393,7 +1393,7 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
   };
 
   if(dpe_enabled){
-    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options());
+    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot));
   }
 
   // set default values
@@ -2591,8 +2591,8 @@ DataPivot_visualization.prototype.draw_visualizations = function(){
               obj.style(property, d._styles['points_' + i][property]);
             }
           })
-          .style('cursor', function(d){return(datum.dpe_function_name)?'pointer':'auto';})
-          .on("click", function(d){if(datum.dpe_function_name){self.dpe[datum.dpe_function_name](d[datum.dpe_key]);}});
+          .style('cursor', function(d){return(datum._dpe_datatype)?'pointer':'auto';})
+          .on("click", function(d){if(datum._dpe_datatype){self.dpe.render_plottip(datum, d);}});
   });
 
 
@@ -2735,9 +2735,9 @@ DataPivot_visualization.prototype.layout_text = function(){
         "col": j,
         "text": txt,
         "style": v._styles['text_' + j],
-        "cursor": (desc.dpe_function_name)?'pointer':'auto',
+        "cursor": (desc._dpe_datatype)?'pointer':'auto',
         "onclick": function(){
-          if(desc.dpe_function_name){self.dpe[desc.dpe_function_name](v[desc.dpe_key]);}
+          if(desc._dpe_datatype)self.dpe.render_plottip(desc, v);
         }
       })
     });
@@ -2885,81 +2885,88 @@ DataPivotExtension = function(){
   this.plottip = new PlotTooltip({"width": "700px", "height": "450px"});
 };
 
-DataPivotExtension.prototype.display_endpoint = function(endpoint_pk){
-  var self = this, event = d3.event;
-  $.get('/assessment/endpoint/{0}/json/'.printf(endpoint_pk), function(d){
-    if(d['endpoint_type'] === 'bioassay'){
-      self.plottip.display_endpoint(new Endpoint(d), event);
-    } else {
-      self.plottip.display_assessed_outcome(new AssessedOutcome(d), event);
-    }
-  });
-};
+DataPivotExtension.prototype.render_plottip = function(settings, datarow){
 
-DataPivotExtension.prototype.display_study = function(study_pk){
-  var self = this, event = d3.event;
-  $.get('/study/{0}/json/'.printf(study_pk), function(d){
-    self.plottip.display_study(new Study(d), event);
-  });
-};
+  var e = d3.event,
+      self = this,
+      url_tmpl, plottip_fn, ObjType;
 
-DataPivotExtension.prototype.display_study_population = function(pk){
-  var self = this, event = d3.event;
-  $.get('/epi/study-population/{0}/json/'.printf(pk), function(d){
-    self.plottip.display_study_population(new StudyPopulation(d), event);
-  });
-};
+  switch(settings._dpe_datatype){
+    case "study":
+      url_tmpl = '/study/{0}/json/';
+      plottip_fn = "display_study";
+      ObjType = Study
+      break;
+    case "endpoint":
+      url_tmpl = '/assessment/endpoint/{0}/json/';
+      plottip_fn = "display_endpoint";
+      ObjType = Endpoint
+      break;
+    case "assessed_outcome":
+      url_tmpl = '/assessment/endpoint/{0}/json/';
+      plottip_fn = "display_assessed_outcome";
+      ObjType = AssessedOutcome
+      break;
+    case "study_population":
+      url_tmpl = '/epi/study-population/{0}/json/';
+      plottip_fn = "display_study_population";
+      ObjType = StudyPopulation
+      break;
+    case "meta_protocol":
+      url_tmpl = '/epi/meta-protocol/{0}/json/';
+      plottip_fn = "display_meta_protocol";
+      ObjType = MetaProtocol
+      break;
+    case "meta_result":
+      url_tmpl = '/epi/meta-result/{0}/json/';
+      plottip_fn = "display_meta_result";
+      ObjType = MetaResult
+      break;
+    };
 
-DataPivotExtension.prototype.display_meta_protocol = function(pk){
-  var self = this, event = d3.event;
-  $.get('/epi/meta-protocol/{0}/json/'.printf(pk), function(d){
-    self.plottip.display_meta_protocol(new MetaProtocol(d), event);
-  });
-};
-
-DataPivotExtension.prototype.display_meta_result = function(pk){
-  var self = this, event = d3.event;
-  $.get('/epi/meta-result/{0}/json/'.printf(pk), function(d){
-    self.plottip.display_meta_result(new MetaResult(d), event);
+  $.get(url_tmpl.printf(datarow[settings._dpe_key]), function(d){
+    self.plottip[plottip_fn](new ObjType(d), e);
   });
 };
 
 DataPivotExtension.update_extensions = function(obj, key){
-  switch(key){
-    case "study":
-      obj.dpe_key = "Study Primary Key";
-      obj.dpe_function_name = "display_study";
-      break;
-    case "endpoint":
-      obj.dpe_key = "Endpoint Key";
-      obj.dpe_function_name = "display_endpoint";
-      break;
-    case "study_population":
-      obj.dpe_key = "Study Population Key";
-      obj.dpe_function_name = "display_study_population";
-      break;
-    case "meta_protocol":
-      obj.dpe_key = "Protocol Primary Key";
-      obj.dpe_function_name = "display_meta_protocol";
-      break;
-    case "meta_result":
-      obj.dpe_key = "Result Primary Key";
-      obj.dpe_function_name = "display_meta_result";
-      break;
-    default:
-      console.log("Unrecognized DPE key: {0}".printf(key));
+  var map = d3.map({
+        "study":            {_dpe_key: "Study Primary Key",    _dpe_datatype: "study"},
+        "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint"},
+        "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome"},
+        "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population"},
+        "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol"},
+        "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result"},
+      }),
+      match = map.get(key);
+
+  if (match){
+    $.extend(obj, match);
+  } else {
+    console.log("Unrecognized DPE key: {0}".printf(key));
   }
 };
 
-DataPivotExtension.get_options = function(){
-  return [
-    '<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE),
-    '<option value="study">Show Study</option>',
-    '<option value="endpoint">Show Endpoint</option>',
-    '<option value="study_population">Show Study Population</option>',
-    '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
-    '<option value="meta_result">Show Epidemiology Meta-Result</option>'
-  ];
+DataPivotExtension.get_options = function(dp){
+  // extension options dependent on available data-columns
+  var opts = ['<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE)];
+
+  if (dp.data.length>0){
+    var headers = d3.set(d3.map(dp.data[0]).keys()),
+        options = d3.map({
+          "Study Primary Key": '<option value="study">Show Study</option>',
+          "Endpoint Key": '<option value="endpoint">Show Endpoint</option>',
+          "Assessed Outcome Key": '<option value="assessed_outcome">Show Assessed Outcome</option>',
+          "Study Population Key": '<option value="study_population">Show Study Population</option>',
+          "Protocol Primary Key":  '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
+          "Result Primary Key": '<option value="meta_result">Show Epidemiology Meta-Result</option>'
+        });
+
+    options.entries().forEach(function(v){
+      if(headers.has(v.key)) opts.push(v.value);
+    });
+  }
+  return opts;
 };
 
 

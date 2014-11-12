@@ -1009,7 +1009,7 @@ class AssessedOutcome(BaseEndpoint):
                 'Dose Units',
                 'Assessed Outcome Name',
                 'Assessed Outcome Population Description',
-                'Endpoint Key',
+                'Assessed Outcome Key',
                 'Diagnostic',
                 'Statistical Metric',
                 'Statistical Metric Description',
