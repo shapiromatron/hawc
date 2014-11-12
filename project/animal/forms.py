@@ -296,19 +296,11 @@ class AggregationForm(ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
-        # customize how endpoints are viewed in aggregation form
-        self.fields['endpoints'].queryset = models.Endpoint.objects.filter(
-                animal_group__in=models.AnimalGroup.objects.filter(
-                    experiment__in=models.Experiment.objects.filter(
-                        study__in=Study.objects.filter(assessment=self.instance.assessment)))
-            ).select_related('animal_group',
-                             'animal_group__experiment',
-                             'animal_group__experiment__study')
-        choices = []
-        for endpoint in self.fields['endpoints'].queryset:
-            choices.append((endpoint.pk,
-                            endpoint.get_m2m_representation()))
-        self.fields['endpoints'].widget.choices = choices
+        # endpoints dependent on dose-units
+        if self.instance.pk is None:
+            self.fields['endpoints'].queryset = models.Endpoint.objects.none()
+        else:
+            self.fields['endpoints'].queryset = self.instance.endpoints.all()
 
     class Meta:
         model = models.Aggregation

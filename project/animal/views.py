@@ -1029,7 +1029,10 @@ class AggregationEndpointFilter(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        self.units = models.DoseUnits.objects.filter(pk=self.request.GET.get('dose_units')).first()
+        self.units = None
+        units_pk = self.request.GET.get('dose_units')
+        if units_pk:
+            self.units = models.DoseUnits.objects.filter(pk=units_pk).first()
         return models.Endpoint.objects.filter(assessment=self.assessment)
 
     def get_context_data(self, **kwargs):
