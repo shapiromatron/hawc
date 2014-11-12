@@ -1035,7 +1035,9 @@ PlotTooltip.prototype.display_study = function(study, e){
         content = [sq_div, details_div];
     this._show_tooltip(title, content, e);
     study.build_details_table(details_div);
-    new StudyQuality_TblCompressed(study, sq_div, {'show_all_details_startup': false});
+    if(study.has_study_quality()){
+        new StudyQuality_TblCompressed(study, sq_div, {'show_all_details_startup': false});
+    }
 };
 
 PlotTooltip.prototype.display_study_population = function(sp, e){

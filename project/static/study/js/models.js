@@ -16,6 +16,7 @@ StudyVersion.field_order = ['short_citation', 'citation', 'hero_id',
 
 var Study = function(data){
     this.data = data;
+    this.study_quality = [];
     if(this.data.study_quality) this.unpack_study_quality();
 };
 
@@ -24,6 +25,10 @@ Study.get_object = function(pk, callback){
         callback(new Study(d));
     });
 };
+
+Study.prototype.has_study_quality = function(){
+    return this.study_quality.length>0;
+}
 
 Study.prototype.unpack_study_quality = function(){
     // unpack study-quality information and nest by domain
