@@ -3606,7 +3606,7 @@ StyleText.prototype._draw_setting_controls = function(){
   //size
   form.append(add_horizontal_field('Font Size',
        DataPivot.rangeInputDiv($('<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'
-          .printf(parseInt(set.size, 10))))));
+          .printf(parseInt(set['font-size'], 10))))));
 
   //fill
   form.append(add_horizontal_field('Fill',
