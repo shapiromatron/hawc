@@ -77,22 +77,28 @@ class Study(Reference):
         ordering = ("short_citation", )
 
     def save(self, *args, **kwargs):
-        Endpoint = get_model('animal', 'Endpoint')
-        AssessedOutcome = get_model('epi', 'AssessedOutcome')
         super(Study, self).save(*args, **kwargs)
-
-        #clear animal endpoints cache
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__experiment__study=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
-
-        # clear assessed outcome endpoints cache
-        ao_pks = list(AssessedOutcome.objects.all()
-                      .filter(exposure__study_population__study=self.pk)
-                      .values_list('pk', flat=True))
-        AssessedOutcome.d_response_delete_cache(ao_pks)
-        logging.debug("Resetting cache for assessed outcome from study change")
+        if self.study_type == 0:
+            #clear animal endpoints cache
+            Endpoint = get_model('animal', 'Endpoint')
+            pks = Endpoint.objects\
+                          .filter(animal_group__experiment__study=self.pk)\
+                          .values_list('pk', flat=True)
+            Endpoint.d_response_delete_cache(pks)
+        elif self.study_type == 1:
+            # clear assessed outcome endpoints cache
+            AssessedOutcome = get_model('epi', 'AssessedOutcome')
+            pks = AssessedOutcome.objects\
+                    .filter(exposure__study_population__study=self.pk)\
+                    .values_list('pk', flat=True)
+            AssessedOutcome.d_response_delete_cache(pks)
+        elif self.study_type == 4:
+            # clear MetaResult endpoints cache
+            MetaResult = get_model('epi', 'MetaResult')
+            pks = MetaResult.objects\
+                            .filter(protocol__study=self.pk)\
+                            .values_list('pk', flat=True)
+            MetaResult.delete_caches(pks)
 
     @classmethod
     def save_new_from_reference(cls, reference, attrs):
@@ -249,7 +255,6 @@ class Study(Reference):
                 'study-ask_author',
                 'study-summary',
                 'study-published')
-
 
     @staticmethod
     def build_flat_from_json_dict(dic):

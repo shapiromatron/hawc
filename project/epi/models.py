@@ -1504,6 +1504,10 @@ class MetaProtocol(models.Model):
     def get_absolute_url(self):
         return reverse('epi:mp_detail', kwargs={'pk': self.pk})
 
+    def save(self, *args, **kwargs):
+        super(MetaProtocol, self).save(*args, **kwargs)
+        MetaResult.delete_caches(self.results.all().values_list('pk', flat=True))
+
     def get_json(self, json_encode=True, get_parent=True):
         d = {}
         fields = ('pk', 'name', 'lit_search_notes',
@@ -1616,6 +1620,8 @@ class MetaResult(models.Model):
     notes = models.TextField(
         blank=True)
 
+    cache_template_object = 'meta-result-{0}'
+
     class Meta:
         ordering = ('label', )
 
@@ -1628,24 +1634,48 @@ class MetaResult(models.Model):
     def get_absolute_url(self):
         return reverse('epi:mr_detail', kwargs={'pk': self.pk})
 
+    def save(self, *args, **kwargs):
+        super(MetaResult, self).save(*args, **kwargs)
+        MetaResult.delete_caches([self.pk])
+
+    @classmethod
+    def get_cache_names(cls, pks):
+        return [cls.cache_template_object.format(pk) for pk in pks]
+
+    @classmethod
+    def delete_caches(cls, pks):
+        names = cls.get_cache_names(pks)
+        logging.info("Removing cache: {}".format(', '.join(names)))
+        cache.delete_many(names)
+
     def get_json(self, json_encode=True, get_parent=True):
-        d = {}
-        fields = ('pk', 'label', 'health_outcome', 'data_location',
-                  'health_outcome_notes', 'exposure_name', 'exposure_details',
-                  'number_studies', 'statistical_notes',
-                  'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                  'ci_units', 'heterogeneity', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
 
-        d['url'] = self.get_absolute_url()
-        d['statistical_metric'] = unicode(self.statistical_metric)
-        d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
-        d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
+        cache_name = self.__class__.get_cache_names([self.pk])[0]
+        d = cache.get(cache_name)
+        if d:
+            logging.info('using cache: {}'.format(cache_name))
+        else:
+            d = {}
+            fields = ('pk', 'label', 'health_outcome', 'data_location',
+                      'health_outcome_notes', 'exposure_name', 'exposure_details',
+                      'number_studies', 'statistical_notes',
+                      'n', 'risk_estimate', 'lower_ci', 'upper_ci',
+                      'ci_units', 'heterogeneity', 'notes')
+            for field in fields:
+                d[field] = getattr(self, field)
 
-        if get_parent:
-            d['protocol'] = self.protocol.get_json(json_encode=False, get_parent=False)
-            d['study'] = self.protocol.study.get_json(json_encode=False)
+            d['url'] = self.get_absolute_url()
+            d['statistical_metric'] = unicode(self.statistical_metric)
+            d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
+            d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
+
+            if get_parent:
+                d['protocol'] = self.protocol.get_json(json_encode=False, get_parent=False)
+                d['study'] = self.protocol.study.get_json(json_encode=False)
+
+                #only set if includes parent
+                logging.info('setting cache: {}'.format(cache_name))
+                cache.set(cache_name, d)
 
         if json_encode:
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
@@ -1911,6 +1941,10 @@ class SingleResult(models.Model):
 
     def __unicode__(self):
         return self.exposure_name
+
+    def save(self, *args, **kwargs):
+        super(SingleResult, self).save(*args, **kwargs)
+        MetaResult.delete_caches([self.meta_result.pk])
 
     def get_json(self, json_encode=True):
         d = {}
