@@ -1668,6 +1668,7 @@ class MetaResult(models.Model):
         lst.extend(Study.build_export_from_json_header())
         lst.extend(MetaProtocol.build_export_from_json_header())
         lst.extend(MetaResult.build_export_from_json_header())
+        lst.extend(SingleResult.build_export_from_json_header())
         return lst
 
     def flat_file_row(self):
@@ -1702,7 +1703,6 @@ class MetaResult(models.Model):
         ]
 
         return [row]
-
 
     @classmethod
     def flat_file_header(cls):
@@ -1782,14 +1782,27 @@ class MetaResult(models.Model):
             except:
                 return val
 
-        for i, mr in enumerate(queryset):
+        row = 1
+        for mr in queryset:
             d = mr.get_json(json_encode=False)
             fields = []
             fields.extend(Study.build_flat_from_json_dict(d['study']))
             fields.extend(MetaProtocol.build_flat_from_json_dict(d['protocol']))
             fields.extend(MetaResult.build_flat_from_json_dict(d))
-            for j, val in enumerate(fields):
-                ws.write(i+1, j, try_float(val))
+
+            if len(d['single_results'])==0:
+                # no single results; just print meta-results once
+                for j, val in enumerate(fields):
+                    ws.write(row, j, try_float(val))
+                row += 1
+            else:
+                # single-results exist; print each meta-result as a new row
+                for sr in d['single_results']:
+                    new_fields = list(fields)  # clone
+                    new_fields.extend(SingleResult.build_flat_from_json_dict(sr))
+                    for j, val in enumerate(new_fields):
+                        ws.write(row, j, try_float(val))
+                    row += 1
 
     @staticmethod
     def build_export_from_json_header():
@@ -1919,6 +1932,7 @@ class SingleResult(models.Model):
             d['lower_ci'] = self.outcome_group.lower_ci
             d['upper_ci'] = self.outcome_group.upper_ci
             # add link to the group
+            d['aog_pk'] = self.outcome_group.pk
             d['ao_name'] = unicode(self.outcome_group.assessed_outcome)
             d['ao_url'] = self.outcome_group.assessed_outcome.get_absolute_url()
 
@@ -1927,6 +1941,39 @@ class SingleResult(models.Model):
         else:
             return d
 
+    @staticmethod
+    def build_export_from_json_header():
+        # used for full-export/import functionalities
+        return (
+            'single_result-pk',
+            'single_result-study',
+            'single_result-outcome_group',
+            'single_result-exposure_name',
+            'single_result-weight',
+            'single_result-n',
+            'single_result-risk_estimate',
+            'single_result-lower_ci',
+            'single_result-upper_ci',
+            'single_result-ci_units',
+            'single_result-notes',
+        )
+
+    @staticmethod
+    def build_flat_from_json_dict(dic):
+        # used for full-export/import functionalities
+        return (
+            dic['pk'],
+            dic.get('study', None),
+            dic.get('aog_pk', None),
+            dic['exposure_name'],
+            dic['weight'],
+            dic['n'],
+            dic['risk_estimate'],
+            dic['lower_ci'],
+            dic['upper_ci'],
+            dic['ci_units'],
+            dic['notes'],
+        )
 
 reversion.register(Ethnicity)
 reversion.register(Factor)
