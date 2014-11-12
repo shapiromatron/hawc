@@ -99,12 +99,13 @@ Endpoint.prototype.build_endpoint_table = function(tbl_id){
 };
 
 Endpoint.prototype.build_breadcrumbs = function(){
-    return [
-        '<a target="_blank" href="' + this.data.study.study_url + '">' + this.data.study.short_citation + '</a>',
-        '<a target="_blank" href="' + this.data.experiment_url + '">' + this.data.experiment + '</a>',
-        '<a target="_blank" href="' + this.data.animal_group_url + '">' + this.data.animal_group + '</a>',
-        '<a target="_blank" href="' + this.data.url + '">' + this.data.name + '</a>'
-    ].join('<span> >> </span>');
+    var urls = [
+        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.experiment_url, name: this.data.experiment },
+        { url: this.data.animal_group_url, name: this.data.animal_group },
+        { url: this.data.url, name: this.data.name }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 Endpoint.prototype.add_confidence_intervals = function(){

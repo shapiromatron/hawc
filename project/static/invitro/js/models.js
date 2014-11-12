@@ -76,17 +76,12 @@ IVEndpoint.prototype.build_eg_table = function(div){
 };
 
 IVEndpoint.prototype.build_breadcrumbs = function(){
-    // ajs to add
-    return [
-        // '<a target="_blank" href="{0}">{1}</a>'
-        //     .printf(this.data.study.study_url, this.data.study.short_citation),
-        // '<a target="_blank" href="{0}">{1}</a>'
-        //     .printf(this.data.study_population.url, this.data.study_population.name),
-        // '<a target="_blank" href="{0}">{1}</a>'
-        //     .printf(this.data.exposure.url, this.data.exposure.exposure_form_definition),
-        // '<a target="_blank" href="{0}">{1}</a>'
-        //     .printf(this.data.url, this.data.name),
-    ].join('<span> / </span>');
+    // TODO: fixme
+    var urls = [
+        // { url: this.data.study.study_url, name: this.data.study.short_citation },
+        // { url: this.data.url, name: this.data.name }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 IVEndpoint.prototype.add_endpoint_group_footnotes = function(footnote_object, idx){

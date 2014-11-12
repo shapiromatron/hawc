@@ -81,8 +81,8 @@ Study.prototype.unpack_study_quality = function(){
 };
 
 Study.prototype.build_breadcrumbs = function(){
-    return '<a target="_blank" href="{0}">{1}</a>'
-                .printf(this.data.study_url, this.data.short_citation);
+    var urls = [{ url: this.data.study_url, name: this.data.short_citation }];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 Study.prototype.get_name = function(){

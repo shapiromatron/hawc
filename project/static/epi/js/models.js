@@ -3,12 +3,11 @@ var StudyPopulation = function(data){
 };
 
 StudyPopulation.prototype.build_breadcrumbs = function(){
-    return [
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.study.study_url, this.data.study.short_citation),
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.url, this.data.name),
-    ].join('<span> / </span>');
+    var urls = [
+        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.url, name: this.data.name }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 StudyPopulation.prototype.build_details_table = function(div){
@@ -175,16 +174,13 @@ AssessedOutcome.prototype.build_aog_table = function(div){
 };
 
 AssessedOutcome.prototype.build_breadcrumbs = function(){
-    return [
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.study.study_url, this.data.study.short_citation),
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.study_population.url, this.data.study_population.name),
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.exposure.url, this.data.exposure.exposure_form_definition),
-        '<a target="_blank" href="{0}">{1}</a>'
-            .printf(this.data.url, this.data.name),
-    ].join('<span> / </span>');
+    var urls = [
+        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.study_population.url, name: this.data.study_population.name },
+        { url: this.data.exposure.url, name: this.data.exposure.exposure_form_definition },
+        { url: this.data.url, name: this.data.name }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 AssessedOutcome.prototype.build_forest_plot = function(div){
@@ -528,14 +524,8 @@ MetaProtocol.prototype.build_details_table = function(div){
 
 MetaProtocol.prototype.build_breadcrumbs = function(){
     var urls = [
-        {
-            url: this.data.study.study_url,
-            name: this.data.study.short_citation
-        },
-        {
-            url: this.data.url,
-            name: this.data.name
-        }
+        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
 };
@@ -599,18 +589,9 @@ MetaResult.prototype.build_single_results_table = function(div){
 
 MetaResult.prototype.build_breadcrumbs = function(){
     var urls = [
-        {
-            url: this.data.study.study_url,
-            name: this.data.study.short_citation
-        },
-        {
-            url: this.data.protocol.url,
-            name: this.data.protocol.name
-        },
-        {
-            url: this.data.url,
-            name: this.data.label
-        }
+        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.protocol.url, name: this.data.protocol.name },
+        { url: this.data.url, name: this.data.label }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
 };
