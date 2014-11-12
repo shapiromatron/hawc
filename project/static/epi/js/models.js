@@ -526,6 +526,20 @@ MetaProtocol.prototype.build_details_table = function(div){
     $(div).html(tbl.get_tbl());
 };
 
+MetaProtocol.prototype.build_breadcrumbs = function(){
+    var urls = [
+        {
+            url: this.data.study.study_url,
+            name: this.data.study.short_citation
+        },
+        {
+            url: this.data.url,
+            name: this.data.name
+        }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
+};
+
 
 var MetaResult = function(data){
     this.data = data;
@@ -565,6 +579,10 @@ MetaResult.prototype.get_risk_estimate_text = function(){
     return txt;
 };
 
+MetaResult.prototype.has_single_results = function(){
+    return(this.data.single_results.length>0);
+}
+
 MetaResult.prototype.build_single_results_table = function(div){
     var tbl = $('<table class="table table-condensed table-striped"></table>'),
         thead = $('<thead></thead>').append('<tr><th>Name</th><th>Weight</th><th>N</th><th>Risk Estimate</th><th>Notes</th></tr>'),
@@ -577,6 +595,25 @@ MetaResult.prototype.build_single_results_table = function(div){
 
     tbl.append(colgroup, thead, tbody);
     div.append(tbl);
+};
+
+MetaResult.prototype.build_breadcrumbs = function(){
+    console.log(this.data.study.url)
+    var urls = [
+        {
+            url: this.data.study.study_url,
+            name: this.data.study.short_citation
+        },
+        {
+            url: this.data.protocol.url,
+            name: this.data.protocol.name
+        },
+        {
+            url: this.data.url,
+            name: this.data.label
+        }
+    ];
+    return HAWCUtils.build_breadcrumbs(urls);
 };
 
 

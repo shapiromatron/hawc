@@ -350,6 +350,14 @@ HAWCUtils.dfDeleteForm = function(btn, prefix) {
     return false;
 };
 
+HAWCUtils.build_breadcrumbs = function(arr){
+    // builds a string of breadcrumb hyperlinks for navigation
+    var links = [];
+    arr.forEach(function(v){
+        links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
+    });
+    return links.join('<span> / </span>');
+};
 
 /*
  * Version object. Used to generate diffs to compare a list of objects.
@@ -1069,6 +1077,28 @@ PlotTooltip.prototype.display_assessed_outcome = function(ao, e){
     ao.build_ao_table(ao_table_div);
     ao.build_aog_table(aog_table_div);
     ao.build_forest_plot(plot_div);
+};
+
+PlotTooltip.prototype.display_meta_protocol = function(obj, e){
+    var title  = '<small><b>{0}</b></small>'.printf(obj.build_breadcrumbs()),
+        table_div = $('<div>'),
+        content = [table_div];
+    obj.build_details_table(table_div);
+    this._show_tooltip(title, content, e);
+};
+
+PlotTooltip.prototype.display_meta_result = function(obj, e){
+    var title  = '<small><b>{0}</b></small>'.printf(obj.build_breadcrumbs()),
+        table_div = $('<div>'),
+        content = [table_div];
+
+    obj.build_details_table(table_div);
+    if(obj.has_single_results()){
+        var results_div = $('<div>');
+        obj.build_single_results_table(results_div);
+        content.push('<h4>Individual study-results</h4>', results_div);
+    }
+    this._show_tooltip(title, content, e);
 };
 
 PlotTooltip.prototype.display_references = function(nested_tag, e){

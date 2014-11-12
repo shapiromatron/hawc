@@ -111,6 +111,10 @@ urlpatterns = patterns('',
         views.MetaProtocolDetail.as_view(),
         name='mp_detail'),
 
+    url(r'^meta-protocol/(?P<pk>\d+)/json/$',
+        views.MetaProtocolJSON.as_view(),
+        name='mp_json'),
+
     url(r'^meta-protocol/(?P<pk>\d+)/update/$',
         views.MetaProtocolUpdate.as_view(),
         name='mp_update'),
@@ -131,6 +135,10 @@ urlpatterns = patterns('',
     url(r'^meta-result/(?P<pk>\d+)/$',
         views.MetaResultDetail.as_view(),
         name='mr_detail'),
+
+    url(r'^meta-result/(?P<pk>\d+)/json/$',
+        views.MetaResultJSON.as_view(),
+        name='mr_json'),
 
     url(r'^meta-result/(?P<pk>\d+)/update/$',
         views.MetaResultUpdate.as_view(),

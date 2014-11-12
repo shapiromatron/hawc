@@ -1504,7 +1504,7 @@ class MetaProtocol(models.Model):
     def get_absolute_url(self):
         return reverse('epi:mp_detail', kwargs={'pk': self.pk})
 
-    def get_json(self, json_encode=True):
+    def get_json(self, json_encode=True, get_parent=True):
         d = {}
         fields = ('pk', 'name', 'lit_search_notes',
                   'lit_search_start_date', 'lit_search_end_date',
@@ -1517,6 +1517,9 @@ class MetaProtocol(models.Model):
         d['lit_search_strategy'] = self.get_lit_search_strategy_display()
         d['inclusion_criteria'] = [unicode(v) for v in self.inclusion_criteria.all()]
         d['exclusion_criteria'] = [unicode(v) for v in self.exclusion_criteria.all()]
+
+        if get_parent:
+            d['study'] = self.study.get_json(json_encode=False)
 
         if json_encode:
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
@@ -1625,7 +1628,7 @@ class MetaResult(models.Model):
     def get_absolute_url(self):
         return reverse('epi:mr_detail', kwargs={'pk': self.pk})
 
-    def get_json(self, json_encode=True):
+    def get_json(self, json_encode=True, get_parent=True):
         d = {}
         fields = ('pk', 'label', 'health_outcome', 'data_location',
                   'health_outcome_notes', 'exposure_name', 'exposure_details',
@@ -1640,8 +1643,9 @@ class MetaResult(models.Model):
         d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
         d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
 
-        d['protocol'] = self.protocol.get_json(json_encode=False)
-        d['study'] = self.protocol.study.get_json(json_encode=False)
+        if get_parent:
+            d['protocol'] = self.protocol.get_json(json_encode=False, get_parent=False)
+            d['study'] = self.protocol.study.get_json(json_encode=False)
 
         if json_encode:
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)

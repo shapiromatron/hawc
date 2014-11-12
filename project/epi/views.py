@@ -279,6 +279,14 @@ class MetaProtocolDetail(BaseDetail):
     model = models.MetaProtocol
 
 
+class MetaProtocolJSON(MetaProtocolDetail):
+    http_method_names = ('get', )
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return HttpResponse(self.object.get_json(json_encode=True), content_type="application/json")
+
+
 class MetaProtocolUpdate(BaseUpdate):
     success_message = "Meta-protocol updated."
     model = models.MetaProtocol
@@ -351,6 +359,14 @@ class MetaResultCopyAsNewSelector(MetaProtocolDetail):
 
 class MetaResultDetail(BaseDetail):
     model = models.MetaResult
+
+
+class MetaResultJSON(MetaResultDetail):
+    http_method_names = ('get', )
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return HttpResponse(self.object.get_json(json_encode=True), content_type="application/json")
 
 
 class MetaResultUpdate(BaseUpdateWithFormset):

@@ -2910,6 +2910,20 @@ DataPivotExtension.prototype.display_study_population = function(pk){
   });
 };
 
+DataPivotExtension.prototype.display_meta_protocol = function(pk){
+  var self = this, event = d3.event;
+  $.get('/epi/meta-protocol/{0}/json/'.printf(pk), function(d){
+    self.plottip.display_meta_protocol(new MetaProtocol(d), event);
+  });
+};
+
+DataPivotExtension.prototype.display_meta_result = function(pk){
+  var self = this, event = d3.event;
+  $.get('/epi/meta-result/{0}/json/'.printf(pk), function(d){
+    self.plottip.display_meta_result(new MetaResult(d), event);
+  });
+};
+
 DataPivotExtension.update_extensions = function(obj, key){
   switch(key){
     case "study":
@@ -2924,16 +2938,28 @@ DataPivotExtension.update_extensions = function(obj, key){
       obj.dpe_key = "Study Population Key";
       obj.dpe_function_name = "display_study_population";
       break;
+    case "meta_protocol":
+      obj.dpe_key = "Protocol Primary Key";
+      obj.dpe_function_name = "display_meta_protocol";
+      break;
+    case "meta_result":
+      obj.dpe_key = "Result Primary Key";
+      obj.dpe_function_name = "display_meta_result";
+      break;
     default:
       console.log("Unrecognized DPE key: {0}".printf(key));
   }
 };
 
 DataPivotExtension.get_options = function(){
-  return ['<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE),
-          '<option value="study">Show Study Details</option>',
-          '<option value="endpoint">Show Endpoint Details</option>',
-          '<option value="study_population">Show Study Population Details</option>'];
+  return [
+    '<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE),
+    '<option value="study">Show Study</option>',
+    '<option value="endpoint">Show Endpoint</option>',
+    '<option value="study_population">Show Study Population</option>',
+    '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
+    '<option value="meta_result">Show Epidemiology Meta-Result</option>'
+  ];
 };
 
 
