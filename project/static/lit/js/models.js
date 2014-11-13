@@ -129,10 +129,9 @@ Reference.prototype.get_abstract_button = function(div){
 
 Reference.prototype.get_edit_button = function(){
     // get edit button if editing enabled, or return undefined
-    if(this.canEdit){
+    if(window.canEdit){
         return $('<a>')
             .text('Edit tags')
-            .attr('class', 'btn btn-small pull-right')
             .attr('href', this.edit_tags_url())
             .attr('target', '_blank');
     }

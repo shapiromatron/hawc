@@ -53,6 +53,7 @@
     $(document).ready(function(){
       window.assessment_pk = {{assessment.pk}};
       window.tagtree = new TagTree({{tags|safe}});
+      window.canEdit = {{obj_perms.edit|lower}};
 
       $('#reference_search_form').submit(function(event){
         options = {fixed_title: "Search Results"}

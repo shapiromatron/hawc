@@ -38,6 +38,7 @@
     $(document).ready(function(){
       window.assessment_pk = {{assessment.pk}};
       window.tagtree = new TagTree({{tags|safe}});
+      window.canEdit = {{obj_perms.edit|lower}};
 
       tagtree.add_references({{ref_objs|safe}});
 

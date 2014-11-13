@@ -7,10 +7,22 @@
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
   <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li class="active">Reference Detail<span class="divider">/</span></li>
+  <li class="active">{{object}}<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
+
+  {% if obj_perms.edit %}
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url 'lit:reference_tags_edit' object.pk %}">Edit tags</a></li>
+      </ul>
+    </div>
+  {% endif %}
+
   <div id="reference_detail_div"></div>
 {% endblock %}
 
@@ -20,7 +32,6 @@
     $(document).ready(function(){
       window.tagtree = new TagTree({{tags|safe}});
       window.ref = new Reference({{object_json|safe}}, window.tagtree);
-      $('#reference_detail_div').html(ref.print_self(true));
-    });
+      $('#reference_detail_div').html(ref.print_self(true)); });
   </script>
 {% endblock extrajs %}

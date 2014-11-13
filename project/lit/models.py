@@ -615,6 +615,12 @@ class Reference(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     block_id = models.DateTimeField(blank=True, null=True, help_text="Used internally for determining when reference was originally added")
 
+    def get_absolute_url(self):
+        return reverse('lit:ref_detail', kwargs={'pk': self.pk})
+
+    def __unicode__(self):
+        return self.get_short_citation_estimate()
+
     def get_json(self, json_encode=True):
         d = {"identifiers": [], "tags": []}
         fields = ('pk', 'title', 'authors', 'year', 'journal', 'abstract')

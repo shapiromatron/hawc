@@ -29,6 +29,7 @@
       window.tagtree.add_references({{ref_objs|safe}});
       window.tagtree.get_refs_count();
       window.tagtree.build_top_level_node("{{assessment}}");
+      window.canEdit = {{obj_perms.edit|lower}};
 
       var title = {% if object_type == 'reference' %}
           "{{assessment}}: Literature Tagtree"; {% else %}

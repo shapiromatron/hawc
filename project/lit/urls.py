@@ -10,6 +10,8 @@ urlpatterns = patterns('study.views',
     url(r'^assessment/(?P<pk>\d+)/tags/update/copy/$', views.TagsCopy.as_view(), name='tags_copy'),
 
     url(r'^reference/(?P<pk>\d+)/$', views.RefDetail.as_view(), name='ref_detail'),
+    url(r'^reference/(?P<pk>\d+)/tag/$', views.ReferenceTagsEdit.as_view(), name='reference_tags_edit'),
+
     url(r'^assessment/(?P<pk>\d+)/references/$', views.RefList.as_view(), name='ref_list'),
     url(r'^assessment/(?P<pk>\d+)/references/extraction-ready/$', views.RefListExtract.as_view(), name='ref_list_extract'),
 
@@ -28,7 +30,6 @@ urlpatterns = patterns('study.views',
 
     url(r'^assessment/(?P<pk>\d+)/import/new/$', views.ImportNew.as_view(), name='import_new'),
 
-    url(r'^reference/(?P<pk>\d+)/tag/$', views.ReferenceTagsEdit.as_view(), name='reference_tags_edit'),
 
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tag/$', views.SearchTagsEdit.as_view(), name='search_tags_edit'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags/$', views.SearchRefList.as_view(), name='search_tags'),
