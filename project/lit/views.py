@@ -215,6 +215,23 @@ class SearchTagsEdit(BaseUpdate):
         context['references'] = models.Reference.objects.filter(searches=self.object) \
                                                 .prefetch_related('identifiers')
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['model'] = self.model.__name__
+        return context
+
+
+class ReferenceTagsEdit(SearchTagsEdit):
+    model = models.Reference
+    form_class = forms.ReferenceForm
+
+    def get_object(self, **kwargs):
+        obj = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
+        return super(SearchTagsEdit, self).get_object(object=obj)
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchTagsEdit, self).get_context_data(**kwargs)
+        context['references'] = self.model.objects.filter(pk=self.object.pk).prefetch_related('identifiers')
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['model'] = self.model.__name__
         return context
 
 

@@ -28,6 +28,8 @@ urlpatterns = patterns('study.views',
 
     url(r'^assessment/(?P<pk>\d+)/import/new/$', views.ImportNew.as_view(), name='import_new'),
 
+    url(r'^reference/(?P<pk>\d+)/tag/$', views.ReferenceTagsEdit.as_view(), name='reference_tags_edit'),
+
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tag/$', views.SearchTagsEdit.as_view(), name='search_tags_edit'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags/$', views.SearchRefList.as_view(), name='search_tags'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags-visuals/$', views.SearchTagsVisualization.as_view(), name='search_tags_visual'),

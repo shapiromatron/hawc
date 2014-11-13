@@ -83,20 +83,21 @@ Reference.prototype.print_div_row = function(){
     var div = $('<div></div>'),
         authors = $('<p class="ref_small">{0} {1}</p>'.printf(
                         this.data.authors || Reference.no_authors_text,
-                        this.data.year || ""));
-    if (this.data.abstract){
-        $('<button type="button" class="btn btn-small pull-right abstractToggle">Show abstract</button>')
-        .on('click', function(){
-            var sel = $(this);
-            if(sel.text() === "Show abstract"){
-                div.find('.abstracts').collapse('show');
-                sel.text("Hide abstract");
-            } else {
-                div.find('.abstracts').collapse('hide');
-                sel.text("Show abstract");
-            }
-        }).appendTo(authors);
-    };
+                        this.data.year || "")),
+        abs_btn = this.get_abstract_button(div),
+        edit_btn = this.get_edit_button();
+
+    if(abs_btn || edit_btn){
+        var ul = $('<ul class="dropdown-menu">');
+
+        if (abs_btn) ul.append($('<li>').append(abs_btn));
+        if (edit_btn) ul.append($('<li>').append(edit_btn));
+
+        $('<div class="btn-group pull-right">')
+            .append('<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>')
+            .append(ul)
+            .appendTo(authors);
+    }
 
     return div.html([
         '<hr>',
@@ -107,6 +108,36 @@ Reference.prototype.print_div_row = function(){
     ].concat(this.print_taglist()));
 };
 
+Reference.prototype.get_abstract_button = function(div){
+    // get abstract button if abstract available, or return undefined
+    if(this.data.abstract){
+        return $('<a>')
+            .text("Show abstract")
+            .attr("class", "abstractToggle")
+            .on('click', function(){
+                var sel = $(this);
+                if(sel.text() === "Show abstract"){
+                    div.find('.abstracts').collapse('show');
+                    sel.text("Hide abstract");
+                } else {
+                    div.find('.abstracts').collapse('hide');
+                    sel.text("Show abstract");
+                }
+            });
+    };
+};
+
+Reference.prototype.get_edit_button = function(){
+    // get edit button if editing enabled, or return undefined
+    if(this.canEdit){
+        return $('<a>')
+            .text('Edit tags')
+            .attr('class', 'btn btn-small pull-right')
+            .attr('href', this.edit_tags_url())
+            .attr('target', '_blank');
+    }
+};
+
 Reference.prototype.add_tag = function(tag){
     var tag_already_exists = false;
     this.data.tags.forEach(function(v){if(tag===v){tag_already_exists=true;}});
@@ -114,6 +145,10 @@ Reference.prototype.add_tag = function(tag){
     this.data.tags.push(tag);
     tag.addObserver(this);
     this.notifyObservers();
+};
+
+Reference.prototype.edit_tags_url = function(){
+    return "/lit/reference/{0}/tag/".printf(this.data.pk);
 };
 
 Reference.prototype.remove_tag = function(tag){
@@ -191,7 +226,6 @@ ReferencesViewer.prototype._print_header = function(){
     return h3;
 };
 
-
 ReferencesViewer.prototype._set_loading_view = function(){
     this.$table_div.html('<p>Loading: <img src="/static/img/loading.gif"/></p>');
 };
@@ -223,7 +257,9 @@ EditReferenceContainer.prototype._build_containers = function(){
     this.$div_error = $('<div></div>');
 
     var self = this,
-        button_save_and_next = $('<button class="btn btn-primary">Save and go to next untagged</button>')
+        save_txt = (this.refs.length>1) ? "Save and go to ext untagged" : "Save",
+        button_save_and_next = $('<button class="btn btn-primary"></button>')
+            .text(save_txt)
             .click(function(){self.save_and_next();}),
         button_reset_tags = $('<button class="btn">Remove all tags</button>')
             .click(function(){if(self.loaded_ref) self.loaded_ref.remove_tags();}),
@@ -288,6 +324,10 @@ EditReferenceContainer.prototype._get_next_ref = function(){
     // none are available, just get the next one
     if(this.refs_untagged.length>0){
         this.loaded_ref = this.refs_untagged[0];
+        this.load_reference();
+    } else if (this.refs.length===1 && this.refs_tagged.length===1){
+        // if we are editing a single reference, display
+        this.loaded_ref = this.refs_tagged[0];
         this.load_reference();
     } else {
         this.set_references_complete();
@@ -400,6 +440,7 @@ EditReferenceContainer.prototype.set_references_complete = function(){
 
     this.$div_selected_tags.html("");
 };
+
 
 var EditTagTreeContainer = function(tagtree, div){
     var self = this;
