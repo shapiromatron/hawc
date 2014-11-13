@@ -94,6 +94,11 @@ class Search(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def delete(self, **kwargs):
+        assessment_pk = self.assessment.pk
+        super(Search, self).delete(**kwargs)
+        Reference.delete_orphans(assessment_pk)
+
     @property
     def search_string_text(self):
         # strip all HTML tags from search-string text
@@ -680,6 +685,18 @@ class Reference(models.Model):
                     'total_tagged': tagged,
                     'total_untagged': total-tagged}
         return overview
+
+    @classmethod
+    def delete_orphans(cls, assessment_pk):
+        # Remove orphan references (references with no associated searches)
+        orphans = cls.objects\
+                     .filter(assessment=assessment_pk)\
+                     .only("id")\
+                     .annotate(searches_count=models.Count('searches'))\
+                     .filter(searches_count=0)
+        logging.info("Removing {} orphan references from assessment {}".format(
+                        orphans.count(), assessment_pk))
+        orphans.delete()
 
     @classmethod
     def get_full_assessment_json(cls, assessment, json_encode=True):

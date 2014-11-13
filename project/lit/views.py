@@ -109,6 +109,11 @@ class SearchUpdate(BaseUpdate):
         if self.object.source == 2:
             self.object.run_new_query()  # re-import from HERO only
 
+    def get_context_data(self, **kwargs):
+        context = super(SearchUpdate, self).get_context_data(**kwargs)
+        context['type'] = self.object.get_search_type_display()
+        return context
+
 
 class SearchDelete(BaseDelete):
     success_message = 'Search deleted.'
