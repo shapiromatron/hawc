@@ -8,6 +8,7 @@ django-markdown-deux==1.0.5
 django-pagedown==0.1.0
 django-reversion==1.8.2
 django-selectable==0.8.0
+django-static-precompiler==0.7
 django-taggit==0.12.2
 django-treebeard==2.0
 djangorestframework==2.3.14

@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'selectable',
     'pagedown',
     'markdown_deux',
+    'static_precompiler',
 
     # Custom apps
     'utils',
@@ -170,6 +171,7 @@ TEMPLATE_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'static_precompiler.finders.StaticPrecompilerFinder',
 )
 
 TEMPLATE_LOADERS = (
@@ -245,6 +247,12 @@ PAGEDOWN_WIDGET_CSS = ('pagedown/demo/browser/demo.css', "css/pagedown.css",)
 # Django selectable settings
 SELECTABLE_MAX_LIMIT = 10
 
+# Django-static-precompiler settings
+STATIC_PRECOMPILER_COMPILERS = (
+    'static_precompiler.compilers.CoffeeScript',
+)
+
+STATIC_PRECOMPILER_OUTPUT_DIR = 'compiled'
 
 # Testing settings
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
