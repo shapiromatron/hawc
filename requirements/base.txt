@@ -27,3 +27,9 @@ sqlparse==0.1.11
 unicodecsv==0.9.4
 xlrd==0.9.3
 xlwt==0.7.5
+
+# watchdog and requirements
+watchdog==0.8.2
+argh==0.26.1
+PyYAML==3.11
+pathtools==0.1.2

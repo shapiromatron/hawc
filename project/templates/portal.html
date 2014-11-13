@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load coffeescript %}
 
 {% load url from future %}
 
@@ -79,7 +78,6 @@
 {% endblock %}
 
 {% block portaljs %}
-  <script src="{{ STATIC_URL}}{% coffeescript "js/tester.coffee" %}"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       var visible = true,
@@ -105,4 +103,3 @@
     });
   </script>
 {% endblock portaljs %}
-
