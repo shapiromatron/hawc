@@ -1678,12 +1678,16 @@ class ReferenceValue(models.Model):
     def clean(self):
         #Ensure the unique_together constraint is checked above. Added explicitly
         # here because assessment is excluded in form display of this
+        if hasattr(self, "units") is False:
+            raise ValidationError("Error- units are required.")
+
         pk_exclusion = {}
         if self.pk:
             pk_exclusion['pk'] = self.pk
         if ReferenceValue.objects.filter(assessment=self.assessment,
                                          type=self.type,
-                                         units=self.units).exclude(**pk_exclusion).count() > 0:
+                                         units=self.units)\
+                                 .exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- reference value factor type already exists for this combination of assessment, reference-type, and units.')
 
     def get_json(self, json_encode=True):
