@@ -9,8 +9,12 @@
   <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
   {% if model == "Search" %}
     <li><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% elif model == "Reference" %}
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% else %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
   {% endif %}
-  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
   <li class="active">Edit Tags<span class="divider">/</span></li>
 {% endblock %}
 

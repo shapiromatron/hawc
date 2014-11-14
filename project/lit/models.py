@@ -465,6 +465,11 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
     def get_assessment_root(cls, assessment_pk):
         return cls.objects.get(name=cls.get_assessment_root_name(assessment_pk))
 
+    def get_assessment(self):
+        name = self.get_root().name
+        Assessment = get_model('assessment', 'Assessment')
+        return Assessment.objects.get(pk=int(name[name.find('-')+1:]))
+
     @classmethod
     def get_all_tags(cls, assessment, json_encode=True):
         """

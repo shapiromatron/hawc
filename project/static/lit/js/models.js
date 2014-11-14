@@ -199,13 +199,17 @@ ReferencesViewer.prototype._print_header = function(){
         h3.text(this.options.fixed_title);
     } else {
         var tag_name = this.options.tag.get_full_name(),
-            actions = '<div class="btn-group pull-right">' +
-                        '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>' +
-                        '<ul class="dropdown-menu">' +
-                          '<li><a href="{0}?tag_pk={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
-                          '<li><a href="#" class="show_abstracts">Show all abstracts</a></li>' +
-                        '</ul>' +
-                      '</div>';
+            actions = $('<div class="btn-group pull-right">' +
+                          '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>' +
+                          '<ul class="dropdown-menu">' +
+                            '<li><a href="{0}?tag_pk={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
+                            '<li><a href="#" class="show_abstracts">Show all abstracts</a></li>' +
+                          '</ul>' +
+                        '</div>');
+
+        if (window.canEdit) actions.find(".dropdown-menu").append(
+            '<li><a href="/lit/reference-tag/{0}/tag/">Edit references with this tag (but not descendants)</a></li>'.printf(this.options.tag.data.pk));
+
         h3.text("References tagged ")
           .append("<span class='ref_tag'>{0}</span>".printf(tag_name))
           .append(actions)

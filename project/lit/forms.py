@@ -82,6 +82,12 @@ class ReferenceForm(forms.ModelForm):
         fields = ('tags',)
 
 
+class ReferenceFilterTagForm(forms.ModelForm):
+
+    class Meta:
+        model = models.ReferenceFilterTag
+
+
 class ReferenceSearchForm(forms.Form):
     title = forms.CharField(required=False)
     authors = forms.CharField(required=False)

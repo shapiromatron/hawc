@@ -11,6 +11,7 @@ urlpatterns = patterns('study.views',
 
     url(r'^reference/(?P<pk>\d+)/$', views.RefDetail.as_view(), name='ref_detail'),
     url(r'^reference/(?P<pk>\d+)/tag/$', views.ReferenceTagsEdit.as_view(), name='reference_tags_edit'),
+    url(r'^reference-tag/(?P<pk>\d+)/tag/$', views.TagsEditByTag.as_view(), name='references_tags_edit'),
 
     url(r'^assessment/(?P<pk>\d+)/references/$', views.RefList.as_view(), name='ref_list'),
     url(r'^assessment/(?P<pk>\d+)/references/extraction-ready/$', views.RefListExtract.as_view(), name='ref_list_extract'),

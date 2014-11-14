@@ -235,6 +235,25 @@ class ReferenceTagsEdit(SearchTagsEdit):
         return context
 
 
+class TagsEditByTag(SearchTagsEdit):
+    model = models.ReferenceFilterTag
+    form_class = forms.ReferenceFilterTagForm
+
+    def get_object(self, **kwargs):
+        obj = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
+        return super(SearchTagsEdit, self).get_object(object=obj)
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchTagsEdit, self).get_context_data(**kwargs)
+        context['references'] = models.Reference.objects\
+                                      .filter(tags=self.object.pk)\
+                                      .distinct()\
+                                      .prefetch_related('identifiers')
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['model'] = self.model.__name__
+        return context
+
+
 class SearchRefList(BaseDetail):
     model = models.Search
     template_name = "lit/reference_list.html"
