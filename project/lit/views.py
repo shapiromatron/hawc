@@ -41,6 +41,30 @@ class SearchList(BaseList):
         return self.model.objects.filter(assessment=self.assessment)
 
 
+class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
+    """
+    Select an existing search and copy-as-new
+    """
+    template_name = "lit/search_copy_selector.html"
+    form_class = forms.SearchSelectorForm
+
+    def dispatch(self, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        self.permission_check_user_can_view()
+        return super(SearchCopyAsNewSelector, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['assessment'] = self.assessment
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SearchCopyAsNewSelector, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+
 class RefDownloadExcel(BaseList):
     parent_model = Assessment
     model = models.Reference
@@ -69,6 +93,23 @@ class SearchNew(BaseCreate):
         context = super(SearchNew, self).get_context_data(**kwargs)
         context['type'] = 'Search'
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SearchNew, self).get_form_kwargs()
+
+        # check if we have a template to use
+        try:
+            pk = int(self.request.GET.get('initial'))
+        except Exception:
+            pk = None
+
+        if pk:
+            obj = self.model.objects.filter(pk=pk).first()
+            permitted_assesments = self.assessment.get_viewable_assessments(self.request.user, include_self=True)
+            if obj and obj.assessment in permitted_assesments:
+                kwargs['instance'] = obj
+
+        return kwargs
 
 
 class ImportNew(SearchNew):

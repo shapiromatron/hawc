@@ -75,6 +75,33 @@ class ImportForm(SearchForm):
         return ids
 
 
+class SearchModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+         return "{} | {{{}}} | {}".format(obj.assessment, obj.get_search_type_display(), obj)
+
+
+class SearchSelectorForm(forms.Form):
+
+    searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        assessment = kwargs.pop('assessment', None)
+
+        super(SearchSelectorForm, self).__init__(*args, **kwargs)
+
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span11'
+
+        assessment_pks = assessment.get_viewable_assessments(user=user, include_self=True)\
+                                   .values_list('pk', flat=True)
+
+        self.fields['searches'].queryset = self.fields['searches'].queryset\
+                                               .filter(assessment__in=assessment_pks)\
+                                               .exclude(title="Manual import")\
+                                               .order_by('assessment_id')
+
+
 class ReferenceForm(forms.ModelForm):
 
     class Meta:
@@ -127,7 +154,7 @@ class TagsCopyForm(forms.Form):
         self.assessment = kwargs.pop('assessment', None)
         super(TagsCopyForm, self).__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
-        self.fields['assessment'].queryset = self.assessment.get_viewable_assessments(user=user)
+        self.fields['assessment'].queryset = self.assessment.get_viewable_assessments(user=user, include_self=False)
 
     def copy_tags(self):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data['assessment'])

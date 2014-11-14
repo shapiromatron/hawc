@@ -174,15 +174,17 @@ class Assessment(models.Model):
         if v:
             return v
 
-    def get_viewable_assessments(self, user):
+    def get_viewable_assessments(self, user, include_self):
         """
         Given a user, get all assessments which that user is able to view,
-        excluding the current assessment.
+        optionally excluding the current assessment.
         """
-        return Assessment.objects.filter(Q(project_manager=user) |
-                                         Q(team_members=user) |
-                                         Q(reviewers=user)) \
-                         .exclude(pk=self.pk).distinct()
+        exclude_id = self.pk if not include_self else None
+        return Assessment.objects\
+            .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))\
+            .exclude(id=exclude_id)\
+            .distinct()
+
 
 @receiver(post_save, sender=Assessment)
 def default_configuration(sender, instance, created, **kwargs):

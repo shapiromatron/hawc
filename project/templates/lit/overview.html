@@ -45,6 +45,7 @@
         <ul class="dropdown-menu">
           <li><a href="{% url 'lit:search_new' assessment.pk %}">New search</a></li>
           <li><a href="{% url 'lit:import_new' assessment.pk %}">New import</a></li>
+          <li><a href="{% url 'lit:copy_search' assessment.pk %}">Copy from existing</a></li>
           <li><a href="{% url 'lit:ref_download_excel' assessment.pk %}">Download all references</a></li>
         </ul>
       </div>

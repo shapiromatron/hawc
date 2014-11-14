@@ -23,6 +23,7 @@ urlpatterns = patterns('study.views',
 
     url(r'^assessment/(?P<pk>\d+)/searches/$', views.SearchList.as_view(), name='search_list'),
     url(r'^assessment/(?P<pk>\d+)/search/new/$', views.SearchNew.as_view(), name='search_new'),
+    url(r'^assessment/(?P<pk>\d+)/search/copy/$', views.SearchCopyAsNewSelector.as_view(), name='copy_search'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/$', views.SearchDetail.as_view(), name='search_detail'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/update/$', views.SearchUpdate.as_view(), name='search_update'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/delete/$', views.SearchDelete.as_view(), name='search_delete'),
