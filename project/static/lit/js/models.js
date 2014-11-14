@@ -254,6 +254,7 @@ EditReferenceContainer.prototype._build_containers = function(){
     this.$div_selected_tags = $("<div class='well well-small'></div>");
     this.$div_details = $('<div></div>');
     this.$div_error = $('<div></div>');
+    this.saved_icon = $('<span class="btn litSavedIcon" style="display: none;">Saved!</span>');
 
     var self = this,
         save_txt = (this.refs.length>1) ? "Save and go to ext untagged" : "Save",
@@ -266,7 +267,8 @@ EditReferenceContainer.prototype._build_containers = function(){
             .append(['<h4>Tags for current reference</h4>',
                      this.$div_selected_tags,
                      button_save_and_next,
-                     button_reset_tags]);
+                     button_reset_tags,
+                     this.saved_icon]);
 
     this.$div_reflist = $('<div class="span3"></div>');
     this._populate_reflist();
@@ -337,8 +339,10 @@ EditReferenceContainer.prototype.save_and_next = function(){
 
     var self = this,
         success = function(){
-            self.unload_reference();
-            self._get_next_ref();
+            self.saved_icon.fadeIn().fadeOut({complete: function(){
+                self.unload_reference();
+                self._get_next_ref();
+            }});
         }, failure = function(){
             var txt = "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff.",
                 div = $('<div>').attr("class", "alert alert-danger").text(txt);

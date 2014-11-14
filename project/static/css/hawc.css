@@ -137,6 +137,21 @@ div.inline-smart-tag {
 }
 
 
+/*
+ *
+ * LITERATURE MODULE
+ *
+ */
+.litSavedIcon {
+  color: #5B5BEF;
+  font-weight: bold;
+  margin-left: 15px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #8080C0;
+  box-shadow: 0px 0px 10px 3px #5B5BEF;
+}
+
 .ref_small {
     font-size: 0.8465em;
     display:block;
@@ -203,12 +218,12 @@ div.inline-smart-tag {
     background-color: #0044cc;
 }
 
+
 /*
  *
  * BMD APPLICATION STYLES
  *
  */
-
 #bmd_settings_form{
    left: 5%;
    width:85%;
