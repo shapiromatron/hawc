@@ -1,9 +1,8 @@
-var DataPivot = function(data, settings, dom_bindings, title, caption){
+var DataPivot = function(data, settings, dom_bindings, title){
   this.data = data;
   this.settings = settings || DataPivot.default_plot_settings();
   if(dom_bindings.update) this.build_edit_settings(dom_bindings);
   this.title = title;
-  this.caption = caption;
 };
 
 DataPivot.NULL_CASE = "---";
@@ -16,8 +15,7 @@ DataPivot.get_object = function(pk, callback){
         var dp = new DataPivot(data,
             JSON.parse(d.settings),
             {},
-            d.title,
-            d.caption);
+            d.title);
         if(callback){callback(dp);} else {return dp;}
       });
   });
@@ -25,7 +23,6 @@ DataPivot.get_object = function(pk, callback){
 
 DataPivot.prototype.build_edit_settings = function(dom_bindings){
   var self = this;
-  this.settings.plot_settings.dpe_enabled = dom_bindings.dpe_enabled;
   this.style_manager = new StyleManager(this);
   this.$div = $(dom_bindings.container);
   this.$data_div = $(dom_bindings.data_div);
@@ -108,7 +105,6 @@ DataPivot.default_plot_settings = function(){
       "xlabel_top": undefined,
       "xlabel_left": undefined,
       "domain": "",
-      "dpe_enabled": false,
       "filter_logic": "and",
       "font_style": 'Arial',
       "merge_descriptions": false,
@@ -246,11 +242,9 @@ DataPivot.prototype.build_settings = function(){
   var self = this,
       build_description_tab = function(){
         var tab = $('<div class="tab-pane active" id="data_pivot_settings_description"></div>'),
-            dpe_enabled = self.settings.plot_settings.dpe_enabled,
-            headers = ['Column header', 'Display name', 'Header style', 'Text style', 'Maximum width (pixels)'],
+            headers = ['Column header', 'Display name', 'Header style', 'Text style', 'Maximum width (pixels)', 'On-Click'],
             tbody = $('<tbody></tbody>');
 
-        if(dpe_enabled) headers.push('On-Click');
         headers.push('Ordering');
 
         var thead = $('<thead></thead>').html(headers.map(function(v){
@@ -259,7 +253,7 @@ DataPivot.prototype.build_settings = function(){
               if(!self.settings.description_settings[i]){
                 self.settings.description_settings.push(_DataPivot_settings_description.defaults());
               }
-              var obj = new _DataPivot_settings_description(self, self.settings.description_settings[i], dpe_enabled);
+              var obj = new _DataPivot_settings_description(self, self.settings.description_settings[i]);
               tbody.append(obj.tr);
             },
             new_row = function(){
@@ -277,7 +271,6 @@ DataPivot.prototype.build_settings = function(){
             $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody])]);
       }, build_data_tab = function(){
           var tab = $('<div class="tab-pane" id="data_pivot_settings_data"></div>'),
-              dpe_enabled = self.settings.plot_settings.dpe_enabled,
               headers = ['Column header', 'Display name', 'Line style'],
               header_tr = function(lst){
                 var vals = [];
@@ -293,14 +286,13 @@ DataPivot.prototype.build_settings = function(){
             self.settings.dataline_settings.push(_DataPivot_settings_linedata.defaults());
           }
 
-          var obj = new _DataPivot_settings_linedata(self, 0, dpe_enabled),
+          var obj = new _DataPivot_settings_linedata(self, 0),
               tbl_line = $('<table class="table table-condensed table-bordered"></table>').html([thead, tbody]);
 
           tbody.append(obj.tr);
 
           // Build point table
-          headers = ['Column header', 'Display name', 'Marker style', 'Conditional formatting'];
-          if(dpe_enabled) headers.push('On-click');
+          headers = ['Column header', 'Display name', 'Marker style', 'Conditional formatting', 'On-click'];
           headers.push('Ordering');
           thead = $('<thead></thead>').html(header_tr(headers));
           point_tbody = $('<tbody></tbody>');
@@ -309,7 +301,7 @@ DataPivot.prototype.build_settings = function(){
                 if(!self.settings.datapoint_settings[i]){
                   self.settings.datapoint_settings.push(_DataPivot_settings_pointdata.defaults());
                 }
-                obj = new _DataPivot_settings_pointdata(self, self.settings.datapoint_settings[i], dpe_enabled);
+                obj = new _DataPivot_settings_pointdata(self, self.settings.datapoint_settings[i]);
                 point_tbody.append(obj.tr);
               }, new_point_row = function(){
                 var num_rows = self.settings.datapoint_settings.length;
@@ -1296,37 +1288,26 @@ _DataPivot_settings_spacers.prototype.data_push = function(){
 };
 
 
-var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
+var _DataPivot_settings_description = function(data_pivot, values){
   var self = this;
   this.data_pivot = data_pivot;
   this.values = values;
 
   // create fields
-  this.content = {};
-  this.content.field_name = $('<select class="span12"></select>')
-      .html(this.data_pivot._get_header_options(true));
-
-  this.content.header_name = $('<input class="span12" type="text">');
-
-  this.content.header_style = this.data_pivot.style_manager
-      .add_select("texts", values.header_style);
-
-  this.content.text_style = this.data_pivot.style_manager
-      .add_select("texts", values.text_style);
-
-  this.content.max_width = $('<input class="span12" type="number">');
-
-  if(dpe_enabled){
-    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot));
-  }
+  this.content = {
+    "field_name" :$('<select class="span12"></select>').html(this.data_pivot._get_header_options(true)),
+    "header_name": $('<input class="span12" type="text">'),
+    "header_style": this.data_pivot.style_manager.add_select("texts", values.header_style),
+    "text_style": this.data_pivot.style_manager.add_select("texts", values.text_style),
+    "max_width": $('<input class="span12" type="number">'),
+    "dpe": $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot))
+  };
 
   // set default values
   this.content.field_name.find('option[value="{0}"]'.printf(values.field_name)).prop('selected', true);
   this.content.header_name.val(values.header_name);
   this.content.max_width.val(values.max_width);
-  if(dpe_enabled){
-    this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop('selected', true);
-  }
+  this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop('selected', true);
 
   var header_input = this.content.header_name;
   this.content.field_name.on('change', function(){
@@ -1339,11 +1320,8 @@ var _DataPivot_settings_description = function(data_pivot, values, dpe_enabled){
       .append($('<td></td>').append(this.content.header_style))
       .append($('<td></td>').append(this.content.text_style))
       .append($('<td></td>').append(this.content.max_width))
+      .append($('<td></td>').append(this.content.dpe))
       .on('change', 'input,select', function(v){self.data_push();});
-
-  if(dpe_enabled){
-    this.tr.append($('<td></td>').append(this.content.dpe));
-  }
 
   var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.description_settings, this, {showSort: true});
   this.tr.append(movement_td);
@@ -1376,7 +1354,7 @@ _DataPivot_settings_description.prototype.data_push = function(){
 };
 
 
-var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
+var _DataPivot_settings_pointdata = function(data_pivot, values){
   var self = this,
       style_type = "symbols";
 
@@ -1389,19 +1367,14 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
     "field_name": $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
     "header_name": $('<input class="span12" type="text">'),
     "marker_style": this.data_pivot.style_manager.add_select(style_type, values.marker_style),
-    "conditional_formatting": this.conditional_formatter.data
+    "conditional_formatting": this.conditional_formatter.data,
+    "dpe": $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot))
   };
-
-  if(dpe_enabled){
-    this.content.dpe = $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot));
-  }
 
   // set default values
   this.content.field_name.find('option[value="{0}"]'.printf(values.field_name)).prop('selected', true);
   this.content.header_name.val(values.header_name);
-  if(dpe_enabled){
-    this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop('selected', true);
-  }
+  this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop('selected', true);
 
   var header_input = this.content.header_name;
   this.content.field_name.on('change', function(){
@@ -1413,6 +1386,7 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
       .append($('<td>').append(this.content.header_name))
       .append($('<td>').append(this.content.marker_style))
       .append($('<td>').append(this.conditional_formatter.status))
+      .append($('<td>').append(this.content.dpe))
       .on('change', 'input,select', function(v){
         //update self
         self.data_push();
@@ -1422,8 +1396,6 @@ var _DataPivot_settings_pointdata = function(data_pivot, values, dpe_enabled){
                    "symbol_style": self.content.marker_style.find('option:selected').text()};
          self.data_pivot.legend.add_or_update_field(obj);
       });
-
-  if(dpe_enabled) this.tr.append($('<td>').append(this.content.dpe));
 
   var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this, {showSort: true});
   this.tr.append(movement_td);

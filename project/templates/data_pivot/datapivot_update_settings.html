@@ -63,12 +63,6 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      var dpe_enabled = false;
-
-      {% if object.datapivotquery %}
-        dpe_enabled = true;
-      {% endif %}
-
       d3.tsv("{{object.get_data_url|safe}}")
         .row(function(d, i){ return DataPivot.massage_row(d, i); })
         .get(function(error, data){
@@ -79,8 +73,7 @@
                                      "container": '#data_pivot',
                                      "data_div": '#dp_data',
                                      "settings_div": '#dp_settings',
-                                     "display_div": '#dp_display',
-                                     "dpe_enabled": dpe_enabled});
+                                     "display_div": '#dp_display'});
         });
 
     });
