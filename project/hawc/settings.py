@@ -137,7 +137,7 @@ SERVER_EMAIL = 'webmaster@hawcproject.org'
 
 # Session and authentication
 AUTH_USER_MODEL = 'myuser.HAWCUser'
-PASSWORD_RESET_TIMEOUT_DAYS = 2
+PASSWORD_RESET_TIMEOUT_DAYS = 3
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
