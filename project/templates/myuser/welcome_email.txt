@@ -1,0 +1,20 @@
+Hello {{user.get_full_name}},
+
+An account has just been created for you on {{domain}}!
+{% if assessments.count > 0 %}
+You have been assigned to the following projects:
+{% for assessment in assessments %}
+- {{assessment}}
+{% endfor %}
+{% endif %}
+In order to use the site, you'll need to set your password. To set your
+password, click this link:
+
+- https://{{domain}}/user/password-reset/
+
+Enter your email address "{{user.email}}", and a link will be emailed to you to
+reset your password.
+
+Thank you for joining HAWC; we hope this is helpful in your health-assessment!
+
+The HAWC team

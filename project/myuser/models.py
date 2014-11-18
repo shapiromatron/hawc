@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.core.mail import send_mail
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-
+from django.template.loader import render_to_string
+from django.template import Context
 
 class HAWCMgr(BaseUserManager):
     # from https://docs.djangoproject.com/en/1.5/topics/auth/customizing/
@@ -77,6 +79,25 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         """
         send_mail(subject, message, from_email, [self.email])
+
+    def get_assessments(self):
+        Assessment = models.loading.get_model('assessment', 'Assessment')
+        return Assessment.get_viewable_assessments(self)
+
+    def send_welcome_email(self):
+        subject = "Welcome to HAWC!"
+        context = Context({
+            'user': self,
+            'assessments': self.get_assessments(),
+            'domain': Site.objects.get_current().domain
+        })
+
+        plaintext = render_to_string('myuser/welcome_email.txt',  context)
+        html =      render_to_string('myuser/welcome_email.html', context)
+
+        msg = EmailMultiAlternatives(subject, plaintext, None, [self.email])
+        msg.attach_alternative(html, "text/html")
+        msg.send()
 
 
 class UserProfile(models.Model):
