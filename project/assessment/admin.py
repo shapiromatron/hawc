@@ -32,6 +32,11 @@ class ChangeLogAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("date", "name")}
 
 
+class ReportTemplateAdmin(admin.ModelAdmin):
+    list_display = ('assessment', 'get_report_type_display', 'description', 'created', 'last_updated')
+
+
 admin.site.register(models.Assessment, AssessmentAdmin)
 admin.site.register(models.EffectTag, EffectTagAdmin)
 admin.site.register(models.ChangeLog, ChangeLogAdmin)
+admin.site.register(models.ReportTemplate, ReportTemplateAdmin)

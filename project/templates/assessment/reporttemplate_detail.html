@@ -1,0 +1,52 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | Report Templates | {{object}} | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'assessment:template_list' pk=assessment.pk %}">Report templates</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if obj_perms.edit and crud == "Read"%}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'assessment:template_update' object.pk %}">Update</a></li>
+          <li><a href="{% url 'assessment:template_delete' object.pk %}">Delete</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+
+  <ul>
+    <li>
+      <strong>Template file: </strong>
+      <a href="{{object.template.url}}">{{object.get_filename}}</a></li>
+    <li>
+      <strong>Report type: </strong>
+      {{object.get_report_type_display}}
+    </li>
+    <li>
+      <strong>Created: </strong>
+      {{object.created}}
+    </li>
+    <li>
+      <strong>Last updated: </strong>
+      {{object.last_updated}}
+    </li>
+  </ul>
+
+{% endblock %}
+

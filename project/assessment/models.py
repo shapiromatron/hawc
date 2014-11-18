@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import logging
 import json
+import os
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -324,7 +325,58 @@ class ChangeLog(models.Model):
         return reverse('change_log_detail', kwargs={'slug': self.slug})
 
 
+class ReportTemplate(models.Model):
+
+    REPORT_TYPE_CHOICES = (
+        (0, 'Literature search'),
+        (1, 'Studies and study-quality'),
+        (2, 'Animal bioassay'),
+        (3, 'Epidemiology'),
+        (4, 'Epidemiology meta-analysis/pooled analysis'),
+        (5, 'In vitro'))
+
+    assessment = models.ForeignKey(
+        'assessment.assessment',
+        related_name="templates",
+        blank=True,
+        null=True)
+    description = models.CharField(
+        max_length=256)
+    report_type = models.PositiveSmallIntegerField(
+        choices=REPORT_TYPE_CHOICES)
+    template = models.FileField(
+        upload_to="templates")
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    def __unicode__(self):
+        return self.description
+
+    def get_absolute_url(self):
+        # show list view; no detail-view
+        return reverse("assessment:template_detail", kwargs={"pk": self.pk})
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_filename(self):
+        return os.path.basename(self.template.name)
+
+    @classmethod
+    def get_by_report_type(cls, queryset):
+        templates = OrderedDict()
+        for typ in cls.REPORT_TYPE_CHOICES:
+            templates[typ[0]]=[]
+
+        for obj in queryset:
+            templates[obj.report_type].append(obj)
+
+        return templates
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)
+reversion.register(ReportTemplate)

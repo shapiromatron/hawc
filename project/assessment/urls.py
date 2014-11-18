@@ -17,6 +17,13 @@ urlpatterns = patterns('assessment.views',
     url(r'^(?P<pk>\d+)/downloads/$', views.AssessmentDownloads.as_view(), name='downloads'),
     url(r'^(?P<pk>\d+)/email-project-managers/$', views.AssessmentEmailManagers.as_view(), name='email_managers'),
 
+    # report-template objects
+    url(r'^(?P<pk>\d+)/templates/$', views.ReportTemplateList.as_view(), name='template_list'),
+    url(r'^(?P<pk>\d+)/templates/create/$', views.ReportTemplateCreate.as_view(), name='template_create'),
+    url(r'^templates/(?P<pk>\d+)/$', views.ReportTemplateDetail.as_view(), name='template_detail'),
+    url(r'^templates/(?P<pk>\d+)/edit/$', views.ReportTemplateUpdate.as_view(), name='template_update'),
+    url(r'^templates/(?P<pk>\d+)/delete/$', views.ReportTemplateDelete.as_view(), name='template_delete'),
+
     # endpoint objects
     url(r'^endpoint/(?P<pk>\d+)/json/$',
         views.EndpointJSON.as_view(),

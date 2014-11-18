@@ -22,6 +22,9 @@
           <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
           <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
           <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
+          {% if debug %}
+          <li><a href="{% url 'assessment:template_list' object.pk %}">View report templates</a></li>
+          {% endif %}
           {% if user.is_staff %}
             <li><a href="{% url 'assessment:email_managers' object.pk %}">Email managers</a></li>
           {% endif %}

@@ -1,34 +1,104 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{object}} | Reports | HAWC
+  {{assessment}} | Download Word Reports | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
+    <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
     <li class="active"> Reports <span class="divider">/</span></li>
 {% endblock %}
 
 
 {% block content %}
-  <h1>{{object}} reports</h1>
+  <h1>{{assessment}} reports</h1>
 
   <p class='help-block'>Microsoft-Word table-level views of data contained in HAWC for {{assessment}}.</p>
 
   <ol>
 
-    {% if assessment.enable_data_extraction %}
-    <li>
-        <b>Animal bioassay data</b><br>
+    {% if assessment.enable_literature_review and report_types.0|length > 0 %}
+      <li>
+        <b>Literature review dataset</b><br>
+        <p class="help-block">Select Microsoft Word template</p>
+        <select>
+          {% for object in report_types.0 %}
+            <option value="{{object.pk}}">{{object.description}}</option>
+          {% endfor %}
+        </select><br>
         <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
-        <p class='help-block'>Microsoft Word document</p>
-    </li>
-
-    <li>
-        <b>Epidemiology data</b><br>
-        <a class='btn btn-primary' href="{% url 'epi:ao_report' assessment.pk %}">Download</a><br>
-        <p class='help-block'>Microsoft Word document</p>
-    </li>
+      </li><br>
     {% endif %}
+
+    {% if assessment.enable_data_extraction %}
+
+      {% if report_types.1|length > 0 %}
+        <li>
+          <b>Studies and/or study-quality</b><br>
+          <p class="help-block">Select Microsoft Word template</p>
+          <select>
+            {% for object in report_types.1 %}
+              <option value="{{object.pk}}">{{object.description}}</option>
+            {% endfor %}
+          </select><br>
+          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        </li><br>
+      {% endif %}
+
+      {% if report_types.2|length > 0 %}
+        <li>
+          <b>Animal bioassay</b><br>
+          <p class="help-block">Select Microsoft Word template</p>
+          <select>
+            {% for object in report_types.2 %}
+              <option value="{{object.pk}}">{{object.description}}</option>
+            {% endfor %}
+          </select><br>
+          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        </li><br>
+      {% endif %}
+
+      {% if report_types.3|length > 0 %}
+        <li>
+          <b>Epidemiology</b><br>
+          <p class="help-block">Select Microsoft Word template</p>
+          <select>
+            {% for object in report_types.3 %}
+              <option value="{{object.pk}}">{{object.description}}</option>
+            {% endfor %}
+          </select><br>
+          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        </li><br>
+      {% endif %}
+
+      {% if report_types.4|length > 0 %}
+        <li>
+          <b>Epidemiology meta-analysis/pooled analysis</b><br>
+          <p class="help-block">Select Microsoft Word template</p>
+          <select>
+            {% for object in report_types.4 %}
+              <option value="{{object.pk}}">{{object.description}}</option>
+            {% endfor %}
+          </select><br>
+          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        </li><br>
+      {% endif %}
+
+      {% if report_types.5|length > 0 %}
+        <li>
+          <b>In vitro</b><br>
+          <p class="help-block">Select Microsoft Word template</p>
+          <select>
+            {% for object in report_types.5 %}
+              <option value="{{object.pk}}">{{object.description}}</option>
+            {% endfor %}
+          </select><br>
+          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        </li><br>
+      {% endif %}
+
+    {% endif %}
+
   </ol>
+
 {% endblock %}

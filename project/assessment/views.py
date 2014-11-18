@@ -1,8 +1,10 @@
 import json
-from django.utils.decorators import method_decorator
+
+from django.db.models import Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import Http404, HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, TemplateView, FormView
 from django.views.generic.edit import CreateView
@@ -10,7 +12,7 @@ from django.shortcuts import HttpResponse, get_object_or_404
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion)
+                         BaseDelete, BaseVersion, BaseList)
 
 from . import forms
 from . import models
@@ -121,12 +123,25 @@ class AssessmentVersions(BaseVersion):
     template_name = "assessment/assessment_versions.html"
 
 
-class AssessmentReports(BaseDetail):
+class AssessmentReports(BaseList):
     """
     Download assessment-level Microsoft Word reports.
     """
-    model = models.Assessment
+    parent_model = models.Assessment
+    model = models.ReportTemplate
     template_name = "assessment/assessment_reports.html"
+
+    def get_queryset(self):
+        # Get report-templates associated with no assessment (global) and
+        # those associated with selected assessment
+        return self.model.objects.filter(
+            Q(assessment=None) | Q(assessment=self.assessment))
+
+    def get_context_data(self, **kwargs):
+        context = super(AssessmentReports, self).get_context_data(**kwargs)
+        context['report_types'] = self.model.get_by_report_type(self.object_list)
+        return context
+
 
 
 class AssessmentDownloads(BaseDetail):
@@ -163,6 +178,40 @@ class AssessmentEmailManagers(MessageMixin, FormView):
     def form_valid(self, form):
         form.send_email()
         return super(AssessmentEmailManagers, self).form_valid(form)
+
+
+#Word Templates
+class ReportTemplateCreate(BaseCreate):
+    success_message = 'Report template created.'
+    parent_model = models.Assessment
+    model = models.ReportTemplate
+    form_class = forms.ReportTemplateForm
+
+
+class ReportTemplateList(BaseList):
+    parent_model = models.Assessment
+    model = models.ReportTemplate
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)
+
+
+class ReportTemplateDetail(BaseDetail):
+    model = models.ReportTemplate
+
+
+class ReportTemplateUpdate(BaseUpdate):
+    success_message = "Report template updated."
+    model = models.ReportTemplate
+    form_class = forms.ReportTemplateForm
+
+
+class ReportTemplateDelete(BaseDelete):
+    success_message = "Report template deleted."
+    model = models.ReportTemplate
+
+    def get_success_url(self):
+        return reverse_lazy("assessment:template_list", kwargs={"pk": self.assessment.pk})
 
 
 #Endpoint objects
