@@ -6,8 +6,6 @@ import os
 from django.db import models
 from django.db.models.loading import get_model
 from django.core.cache import cache
-from django.contrib.contenttypes import generic
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
@@ -175,15 +173,16 @@ class Assessment(models.Model):
         if v:
             return v
 
-    def get_viewable_assessments(self, user, include_self):
+    @classmethod
+    def get_viewable_assessments(cls, user, exclusion_id=None):
         """
-        Given a user, get all assessments which that user is able to view,
-        optionally excluding the current assessment.
+        Return queryset of all assessments which that user is able to view,
+        optionally excluding assessment exclusion_id,
+        not including public assessments
         """
-        exclude_id = self.pk if not include_self else None
         return Assessment.objects\
             .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))\
-            .exclude(id=exclude_id)\
+            .exclude(id=exclusion_id)\
             .distinct()
 
 

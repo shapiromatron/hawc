@@ -93,7 +93,7 @@ class SearchSelectorForm(forms.Form):
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
 
-        assessment_pks = assessment.get_viewable_assessments(user=user, include_self=True)\
+        assessment_pks = Assessment.get_viewable_assessments(user)\
                                    .values_list('pk', flat=True)
 
         self.fields['searches'].queryset = self.fields['searches'].queryset\
@@ -154,7 +154,8 @@ class TagsCopyForm(forms.Form):
         self.assessment = kwargs.pop('assessment', None)
         super(TagsCopyForm, self).__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
-        self.fields['assessment'].queryset = self.assessment.get_viewable_assessments(user=user, include_self=False)
+        self.fields['assessment'].queryset = Assessment.get_viewable_assessments(
+            user, exclusion_id=self.assessment.id)
 
     def copy_tags(self):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data['assessment'])
