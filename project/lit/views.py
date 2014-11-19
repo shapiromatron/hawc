@@ -105,7 +105,8 @@ class SearchNew(BaseCreate):
 
         if pk:
             obj = self.model.objects.filter(pk=pk).first()
-            permitted_assesments = self.assessment.get_viewable_assessments(self.request.user, include_self=True)
+            permitted_assesments = Assessment.get_viewable_assessments(
+                self.request.user, exclusion_id=self.assessment.pk)
             if obj and obj.assessment in permitted_assesments:
                 kwargs['instance'] = obj
 
