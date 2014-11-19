@@ -15,6 +15,6 @@ password, click this link:
 Enter your email address "{{user.email}}", and a link will be emailed to you to
 reset your password.
 
-Thank you for joining HAWC; we hope this is helpful in your health-assessment!
+Thank you for joining HAWC; we hope this is helpful in your health assessment!
 
 The HAWC team
