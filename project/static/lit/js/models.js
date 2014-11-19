@@ -261,7 +261,7 @@ EditReferenceContainer.prototype._build_containers = function(){
     this.saved_icon = $('<span class="btn litSavedIcon" style="display: none;">Saved!</span>');
 
     var self = this,
-        save_txt = (this.refs.length>1) ? "Save and go to ext untagged" : "Save",
+        save_txt = (this.refs.length>1) ? "Save and go to next untagged" : "Save",
         button_save_and_next = $('<button class="btn btn-primary"></button>')
             .text(save_txt)
             .click(function(){self.save_and_next();}),
