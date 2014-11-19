@@ -44,6 +44,8 @@ StudyPopulation.prototype.build_details_table = function(div){
 
 
 var AssessedOutcome = function(data){
+    this.aog = [];
+    this.main_finding = false;
     this.data = data;
     this._build_aogs();
 };
@@ -52,8 +54,7 @@ AssessedOutcome.prototype._build_aogs = function(){
     this.data.aog.sort(function(a, b){
       return a.exposure_group.exposure_group_id -
              b.exposure_group.exposure_group_id;});
-    this.aog = [];
-    this.main_finding = false;
+
     for(var i=0; i<this.data.aog.length; i++){
         var aog = new AssessedOutcomeGroup(this.data.aog[i])
         this.aog.push(aog);
@@ -171,6 +172,10 @@ AssessedOutcome.prototype.build_aog_table = function(div){
     tfoot.append('<tr><td colspan="{0}">{1}</td></tr>'.printf(10, tfoot_txt));
 
     $(div).html(tbl.append(tcol, thead, tfoot, tbody));
+};
+
+AssessedOutcome.prototype.has_aogs = function(){
+    return (this.aog.length>0);
 };
 
 AssessedOutcome.prototype.build_breadcrumbs = function(){

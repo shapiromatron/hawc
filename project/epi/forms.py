@@ -183,6 +183,7 @@ EGFormSet = modelformset_factory(
     models.ExposureGroup,
     form=ExposureGroupForm,
     formset=BaseEGFormSet,
+    can_delete=True,
     extra=1)
 
 BlankEGFormSet = modelformset_factory(

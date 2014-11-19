@@ -1075,8 +1075,10 @@ PlotTooltip.prototype.display_assessed_outcome = function(ao, e){
         content = [ao_table_div, plot_div, '<br><br><br>', aog_table_div];
     this._show_tooltip(title, content, e);
     ao.build_ao_table(ao_table_div);
-    ao.build_aog_table(aog_table_div);
-    ao.build_forest_plot(plot_div);
+    if(ao.has_aogs()){
+        ao.build_aog_table(aog_table_div);
+        ao.build_forest_plot(plot_div);
+    }
 };
 
 PlotTooltip.prototype.display_meta_protocol = function(obj, e){

@@ -8,10 +8,12 @@ from django.db.models.loading import get_model
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from mailmerge import MailMerge
 import reversion
 
 from utils.helper import HAWCDjangoJSONEncoder
@@ -360,8 +362,14 @@ class ReportTemplate(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def get_full_path(self):
+        return os.path.join(settings.MEDIA_ROOT, self.template.name)
+
     def get_filename(self):
         return os.path.basename(self.template.name)
+
+    def get_mailmerge(self):
+        return MailMerge(self.get_full_path())
 
     @classmethod
     def get_by_report_type(cls, queryset):
@@ -373,6 +381,20 @@ class ReportTemplate(models.Model):
             templates[obj.report_type].append(obj)
 
         return templates
+
+    @classmethod
+    def get_template(cls, template_id, assessment_id, report_type):
+        # Return a template object if one exists which matches the specified
+        # criteria, else throw an ObjectDoesNotExist error
+        qs = cls.objects\
+                .filter(id=template_id, report_type=2)\
+                .filter(Q(assessment=assessment_id) | Q(assessment=None))
+
+        if qs.count() == 1:
+            return qs[0]
+        else:
+            raise models.ObjectDoesNotExist()
+
 
 reversion.register(Assessment)
 reversion.register(EffectTag)

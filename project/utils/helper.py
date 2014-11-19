@@ -48,6 +48,20 @@ class HAWCdocx(object):
         return response
 
 
+def docx_template_response(docx):
+    """
+    Create an HttpResponse object with the appropriate headers.
+    """
+    docx_file = StringIO()
+    docx.write(docx_file)
+    docx.close()
+    docx_file.seek(0)
+    response = HttpResponse(docx_file)
+    response['Content-Disposition'] = 'attachment; filename=example.docx'
+    response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    return response
+
+
 def build_tsv_file(headers, queryset, *args, **kwargs):
     """
     Construct a tab-delimited version of the selected queryset of objects.

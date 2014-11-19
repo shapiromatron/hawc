@@ -16,7 +16,7 @@ from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
 from bmd.models import BMD_session
 from utils.helper import (HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file,
-                          HAWCdocx, excel_export_detail)
+                          HAWCdocx, excel_export_detail, docx_template_response)
 
 
 class Species(models.Model):
@@ -851,6 +851,44 @@ class Endpoint(BaseEndpoint):
         for endpoint in queryset:
             endpoint.docx_print(docx, 2)
         return docx
+
+    @classmethod
+    def apply_docx_template(cls, template, queryset):
+        mailmerge = template.get_mailmerge()
+
+        context = {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
+
+        mailmerge.merge(context)
+        return docx_template_response(mailmerge)
 
     def __unicode__(self):
         return self.name
