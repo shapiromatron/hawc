@@ -1,16 +1,15 @@
 import json
 
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse_lazy
-from django.views.decorators.http import require_http_methods
-from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView, UpdateView, FormView
 
-from assessment.models import Assessment
+from assessment.models import Assessment, ReportTemplate
 from study.models import Study
 from utils.forms import form_error_list_to_ul
 from utils.helper import HAWCDjangoJSONEncoder
@@ -723,10 +722,17 @@ class EndpointsReport(BaseList):
             filters["animal_group__experiment__study__published"] = True
         return self.model.objects.filter(**filters)
 
+    def get_template(self, request):
+        try:
+            template_id = request.GET.get('template_id', -1)
+            return ReportTemplate.get_template(template_id, self.assessment.id, 2)
+        except ObjectDoesNotExist:
+            raise Http404
+
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        docx = self.model.endpoints_word_report(self.object_list)
-        return docx.django_response()
+        template = self.get_template(request)
+        return self.model.apply_docx_template(template, self.object_list)
 
 
 class EndpointFlatFile(BaseList):

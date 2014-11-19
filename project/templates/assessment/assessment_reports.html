@@ -26,7 +26,9 @@
             <option value="{{object.pk}}">{{object.description}}</option>
           {% endfor %}
         </select><br>
-        <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary download-report'
+           data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+           href="#">Download</a><br>
       </li><br>
     {% endif %}
 
@@ -41,7 +43,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+          <a class='btn btn-primary download-report'
+             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             href="#">Download</a><br>
         </li><br>
       {% endif %}
 
@@ -54,7 +58,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+          <a class='btn btn-primary download-report'
+             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             href="#">Download</a><br>
         </li><br>
       {% endif %}
 
@@ -67,7 +73,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+          <a class='btn btn-primary download-report'
+             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             href="#">Download</a><br>
         </li><br>
       {% endif %}
 
@@ -80,7 +88,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+          <a class='btn btn-primary download-report'
+             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             href="#">Download</a><br>
         </li><br>
       {% endif %}
 
@@ -93,7 +103,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary' href="{% url 'animal:endpoints_report' assessment.pk %}">Download</a><br>
+          <a class='btn btn-primary download-report'
+             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             href="#">Download</a><br>
         </li><br>
       {% endif %}
 
@@ -102,3 +114,22 @@
   </ol>
 
 {% endblock %}
+
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      var update_url_with_template = function(e){
+        var self = $(this),
+            template_id = self.parent().find('select').val(),
+            url = self.data('basehref');
+
+        self.attr('href', "{0}?template_id={1}".printf(url, template_id));
+      }
+
+      $('.download-report').on('click', update_url_with_template);
+
+    });
+  </script>
+{% endblock extrajs %}
