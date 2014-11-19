@@ -39,6 +39,9 @@
   </tbody>
 </table>
 
+{% with egs=object.groups.all %}
+{% if egs.count > 0 %}
+
 <h2>Exposure Groups:</h2>
 
 <table class="table table-condensed table-hover">
@@ -49,53 +52,56 @@
         </tr>
     </thead>
     <tbody>
-        {% for group in object.groups.all %}
+        {% for eg in egs %}
         <tr>
-            <td>{{group}}</td>
+            <td>{{eg}}</td>
             <td>
                 <ul>
-                    {% if group.comparative_name %} <li><b>Comparative name: </b>{{group.comparative_name}}</li> {% endif %}
-                    {% if group.exposure_n %}       <li><b>Exposure N: </b>{{group.exposure_n}}</li> {% endif %}
-                    {% if group.sex %}              <li><b>Sex: </b>{{group.get_sex_display}}</li> {% endif %}
-                    {% if group.ethnicity.count > 0 %} <li><b>Ethnicity: </b>{{group.get_ethnicity_list}}</li> {% endif %}
+                    {% if eg.comparative_name %} <li><b>Comparative name: </b>{{eg.comparative_name}}</li> {% endif %}
+                    {% if eg.exposure_n %}       <li><b>Exposure N: </b>{{eg.exposure_n}}</li> {% endif %}
+                    {% if eg.sex %}              <li><b>Sex: </b>{{eg.get_sex_display}}</li> {% endif %}
+                    {% if eg.ethnicity.count > 0 %} <li><b>Ethnicity: </b>{{eg.get_ethnicity_list}}</li> {% endif %}
 
-                    {% if group.fraction_male %}
+                    {% if eg.fraction_male %}
                         <li><b>Fraction male: </b>
-                        {% if group.fraction_male_calculated %}[{{group.fraction_male}}]
-                        {% else %}{{group.fraction_male}}{% endif %}</li>
+                        {% if eg.fraction_male_calculated %}[{{eg.fraction_male}}]
+                        {% else %}{{eg.fraction_male}}{% endif %}</li>
                     {% endif %}
 
-                    {% if group.age_description %}  <li><b>Age description: </b>{{group.age_description}}</li> {% endif %}
+                    {% if eg.age_description %}  <li><b>Age description: </b>{{eg.age_description}}</li> {% endif %}
 
-                    {% if group.age_mean %}
-                        <li><b>Age {{group.get_age_mean_type_display}}: </b>
-                        {% if group.age_calculated %}[{{group.age_mean}}]
-                        {% else %}{{group.age_mean}}{% endif %} yrs</li>
+                    {% if eg.age_mean %}
+                        <li><b>Age {{eg.get_age_mean_type_display}}: </b>
+                        {% if eg.age_calculated %}[{{eg.age_mean}}]
+                        {% else %}{{eg.age_mean}}{% endif %} yrs</li>
                     {% endif %}
 
-                    {% if group.age_sd %}
-                        <li><b>Age {{group.get_age_sd_type_display}}: </b>
-                        {% if group.age_calculated %}[{{group.age_sd}}]
-                        {% else %}{{group.age_sd}}{% endif %} yrs</li>
+                    {% if eg.age_sd %}
+                        <li><b>Age {{eg.get_age_sd_type_display}}: </b>
+                        {% if eg.age_calculated %}[{{eg.age_sd}}]
+                        {% else %}{{eg.age_sd}}{% endif %} yrs</li>
                     {% endif %}
 
-                    {% if group.age_lower %}
-                        <li><b>Age {{group.get_age_lower_type_display}}: </b>
-                        {% if group.age_calculated %}[{{group.age_lower}}]
-                        {% else %}{{group.age_lower}}{% endif %} yrs</li>
+                    {% if eg.age_lower %}
+                        <li><b>Age {{eg.get_age_lower_type_display}}: </b>
+                        {% if eg.age_calculated %}[{{eg.age_lower}}]
+                        {% else %}{{eg.age_lower}}{% endif %} yrs</li>
                     {% endif %}
 
-                    {% if group.age_upper %}
-                        <li><b>Age {{group.get_age_upper_type_display}}: </b>
-                        {% if group.age_calculated %}[{{group.age_upper}}]
-                        {% else %}{{group.age_upper}}{% endif %} yrs</li>
+                    {% if eg.age_upper %}
+                        <li><b>Age {{eg.get_age_upper_type_display}}: </b>
+                        {% if eg.age_calculated %}[{{eg.age_upper}}]
+                        {% else %}{{eg.age_upper}}{% endif %} yrs</li>
                     {% endif %}
 
-                    {% if group.n %}                <li><b>N: </b>{{group.n}}</li> {% endif %}
-                    {% if group.starting_n %}       <li><b>Starting N: </b>{{group.starting_n}}</li> {% endif %}
+                    {% if eg.n %}                <li><b>N: </b>{{eg.n}}</li> {% endif %}
+                    {% if eg.starting_n %}       <li><b>Starting N: </b>{{eg.starting_n}}</li> {% endif %}
                 </ul>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+{% endif %}
+{% endwith %}

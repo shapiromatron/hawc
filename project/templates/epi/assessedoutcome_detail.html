@@ -34,11 +34,12 @@
   <h2>Assessed outcome description</h2>
   <div id="ao_tbl"></div>
 
-  <h2>Results by exposure-group</h2>
-  <div id="aog_tbl"></div>
-  <div id='aog_plot'></div>
-  <!-- Add some extra space below plot -->
-  <br><br><br><br>
+  {% if object.groups.count > 0 %}
+    <h2>Results by exposure-group</h2>
+    <div id="aog_tbl"></div>
+    <div id='aog_plot'></div>
+    <br><br><br><br><!-- Add some extra space below plot -->
+  {% endif %}
 {% endblock %}
 
 {% block extrajs %}
@@ -47,8 +48,10 @@
     $(document).ready(function(){
       window.ao = new AssessedOutcome({{object.get_json|safe}});
       ao.build_ao_table($('#ao_tbl'));
-      ao.build_aog_table($('#aog_tbl'));
-      ao.build_forest_plot($('#aog_plot'));
+        {% if object.groups.count > 0 %}
+        ao.build_aog_table($('#aog_tbl'));
+        ao.build_forest_plot($('#aog_plot'));
+      {% endif %}
     });
   </script>
 {% endblock %}
