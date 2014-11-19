@@ -388,7 +388,30 @@ AOForestPlot.prototype.get_dataset = function(){
     this.estimates = estimates;
     this.lines = lines;
     this.names = names;
-    this.x_domain = [d3.min(vals), d3.max(vals)];
+    this.get_x_domain(vals);
+};
+
+AOForestPlot.prototype.get_x_domain = function(vals){
+    var domain = d3.extent(vals);
+    if(domain[0] === domain[1]){
+        // set reasonable defaults for domain if there is no domain.
+        if (this.scale_type === "log"){
+            domain[0] = domain[0] * 0.1;
+            domain[1] = domain[1] * 10;
+        } else {
+
+            if (domain[0] > 0){
+                domain[0] = 0
+            } else if(domain[0] >= -1){
+                domain[0] = -1;
+            } else {
+                domain[0] = domain[0]*2;
+            }
+
+            if ((domain[1] >= -1) && (domain[1] <= 1)) domain[1] = 1;
+        }
+    }
+    this.x_domain = domain;
 };
 
 AOForestPlot.prototype.get_plot_sizes = function(){
@@ -475,7 +498,7 @@ AOForestPlot.prototype.draw_visualizations = function(){
       .attr("cy", function(d){return y(d.name) + mid;})
       .style("cursor", "pointer")
       .on('click', function(d){d.aog.tooltip.display_exposure_group_table(d.aog, d3.event);})
-      .append('title').text(function(d){return "View {0} exposure-group details".printf(d.name);});
+      .append('title').text(function(d){return "{0}: click to view exposure-group details".printf(d.estimate);});
 };
 
 AOForestPlot.prototype.resize_plot_dimensions = function(){
