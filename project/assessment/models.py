@@ -2,6 +2,7 @@ from collections import OrderedDict
 import logging
 import json
 import os
+from StringIO import StringIO
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -12,6 +13,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import HttpResponse
 
 from mailmerge import MailMerge
 import reversion
@@ -368,8 +370,21 @@ class ReportTemplate(models.Model):
     def get_filename(self):
         return os.path.basename(self.template.name)
 
-    def get_mailmerge(self):
-        return MailMerge(self.get_full_path())
+    def apply_mailmerge(self, context, filename="example.docx"):
+        # Return a django request response with a docx download.
+        docx = StringIO()
+
+        mailmerge = MailMerge(self.get_full_path())
+        mailmerge.merge(context)
+        mailmerge.write(docx)
+        mailmerge.close()
+
+        # return response
+        docx.seek(0)
+        response = HttpResponse(docx)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        return response
 
     @classmethod
     def get_by_report_type(cls, queryset):

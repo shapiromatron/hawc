@@ -16,7 +16,7 @@ from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
 from bmd.models import BMD_session
 from utils.helper import (HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file,
-                          HAWCdocx, excel_export_detail, docx_template_response)
+                          HAWCdocx, excel_export_detail)
 
 
 class Species(models.Model):
@@ -853,10 +853,8 @@ class Endpoint(BaseEndpoint):
         return docx
 
     @classmethod
-    def apply_docx_template(cls, template, queryset):
-        mailmerge = template.get_mailmerge()
-
-        context = {
+    def get_docx_template_context(cls, queryset):
+        return {
             "field1": "body and mind",
             "field2": "well respected man",
             "field3": 1234,
@@ -886,9 +884,6 @@ class Endpoint(BaseEndpoint):
                 },
             ]
         }
-
-        mailmerge.merge(context)
-        return docx_template_response(mailmerge)
 
     def __unicode__(self):
         return self.name

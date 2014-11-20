@@ -1,6 +1,6 @@
 import json
 
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
@@ -9,14 +9,14 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 
-from assessment.models import Assessment, ReportTemplate
+from assessment.models import Assessment
 from study.models import Study
 from utils.forms import form_error_list_to_ul
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         BaseVersion)
+                         BaseVersion, GenerateReport)
 from utils.helper import HAWCdocx
 
 from . import forms
@@ -710,10 +710,10 @@ class EndpointReport(EndpointRead):
         return report.django_response()
 
 
-class EndpointsReport(BaseList):
-    # Word report export for all animal bioassay data in an assessment
+class EndpointsReport(GenerateReport):
     parent_model = Assessment
     model = models.Endpoint
+    report_type = 2
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}
@@ -722,17 +722,11 @@ class EndpointsReport(BaseList):
             filters["animal_group__experiment__study__published"] = True
         return self.model.objects.filter(**filters)
 
-    def get_template(self, request):
-        try:
-            template_id = request.GET.get('template_id', -1)
-            return ReportTemplate.get_template(template_id, self.assessment.id, 2)
-        except ObjectDoesNotExist:
-            raise Http404
+    def get_filename(self):
+        return "animal-bioassay.docx"
 
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        template = self.get_template(request)
-        return self.model.apply_docx_template(template, self.object_list)
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class EndpointFlatFile(BaseList):
