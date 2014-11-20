@@ -39,6 +39,10 @@ urlpatterns = patterns('',
         views.StudyPopulationCreate.as_view(),
         name='sp_create'),
 
+    url(r'^study/(?P<pk>\d+)/study-population/copy-as-new-selector/$',
+        views.StudyPopulationCopyAsNewSelector.as_view(),
+        name='sp_copy_selector'),
+
     url(r'^study-population/(?P<pk>\d+)/$',
         views.StudyPopulationDetail.as_view(),
         name='sp_detail'),
@@ -59,6 +63,10 @@ urlpatterns = patterns('',
     url(r'^study-population/(?P<pk>\d+)/exposure/create/$',
         views.ExposureCreate.as_view(),
         name='exposure_create'),
+
+    url(r'^study-population/(?P<pk>\d+)/exposure/copy-as-new-selector/$',
+        views.ExposureCopyAsNewSelector.as_view(),
+        name='exposure_copy_selector'),
 
     url(r'^exposure/(?P<pk>\d+)/$',
         views.ExposureDetail.as_view(),

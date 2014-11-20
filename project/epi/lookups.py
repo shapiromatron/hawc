@@ -4,6 +4,21 @@ from selectable.registry import registry
 from . import models
 
 
+class StudyPopulationByStudyLookup(ModelLookup):
+    # Return names of study populations available for a particular study
+    model = models.StudyPopulation
+    search_fields = ('name__icontains')
+    filter_string = 'study'
+
+    def get_query(self, request, term):
+        try:
+            pk = int(request.GET.get('related'))
+        except Exception:
+            return self.model.objects.none()
+        filters = {self.filter_string: pk}
+        return self.model.objects.filter(**filters)
+
+
 class RegionLookup(ModelLookup):
     model = models.StudyPopulation
     search_fields = ('region__icontains', )
@@ -37,6 +52,19 @@ class StudyCriteriaLookup(ModelLookup):
         return results
 
 
+class ExposureByStudyLookup(StudyPopulationByStudyLookup):
+    # Return names of exposures available for a particular study
+    model = models.Exposure
+    search_fields = ('exposure_form_definition__icontains')
+    filter_string = 'study_population__study'
+
+    def get_item_label(self, obj):
+        return u"{} | {}".format(obj.study_population, obj)
+
+    def get_item_value(self, obj):
+        return u"{} | {}".format(obj.study_population, obj)
+
+
 class FactorLookup(ModelLookup):
     model = models.Factor
     search_fields = ('description__icontains', )
@@ -48,20 +76,21 @@ class FactorLookup(ModelLookup):
         return results
 
 
-class AssessedOutcomeByStudyLookup(ModelLookup):
+class AssessedOutcomeByStudyLookup(StudyPopulationByStudyLookup):
     # Return names of assessed outcomes available for a particular study
     model = models.AssessedOutcome
     search_fields = ('name__icontains', 'exposure__exposure_form_definition__icontains')
+    filter_string = 'exposure__study_population__study'
 
     def get_query(self, request, term):
-        try:
-            study_pk = int(request.GET.get('related'))
-        except Exception:
-            return self.model.objects.none()
-        return self.model.objects.filter(exposure__study_population__study=study_pk).order_by('exposure')
+        qs = super(AssessedOutcomeByStudyLookup, self).get_query(request, term)
+        return qs.order_by('exposure')
 
-    def get_item_label(self, ao):
-        return u"%s: %s" % (ao.exposure, ao)
+    def get_item_label(self, obj):
+        return u"{} | {} | {}".format(obj.exposure.study_population, obj.exposure, obj)
+
+    def get_item_value(self, obj):
+        return u"{} | {} | {}".format(obj.exposure.study_population, obj.exposure, obj)
 
 
 class AssessedOutcomeGroupByAOLookup(ModelLookup):
@@ -124,9 +153,11 @@ class MetaResultExposureNameLookup(ModelLookup):
         return item.exposure_name
 
 
+registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(StudyCriteriaLookup)
+registry.register(ExposureByStudyLookup)
 registry.register(FactorLookup)
 registry.register(AssessedOutcomeByStudyLookup)
 registry.register(AssessedOutcomeGroupByAOLookup)

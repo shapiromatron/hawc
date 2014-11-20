@@ -1,11 +1,11 @@
-{% extends 'epi/metaprotocol_detail.html' %}
+{% extends 'study/study_detail.html' %}
 
 
 {% load add_class %}
 {% load selectable_tags %}
 
 {% block title %}
-  {{block.super}} | Copy Meta-Result
+  {{block.super}} | Copy Study Population
 {% endblock title %}
 
 {% block extrastyle %}
@@ -14,12 +14,12 @@
 
 {% block breadcrumbs_self %}
     <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">Copy meta-result<span class="divider">/</span></li>
+    <li class="active">Copy study population<span class="divider">/</span></li>
 {% endblock breadcrumbs_self %}
 
 {% block content %}
 
-  {% include "hawc/_copy_as_new.html" with name="meta-result" notes="Select an existing meta-result as a template to create a new one." %}
+  {% include "hawc/_copy_as_new.html" with name="study population" notes="Select an existing study population as a template to create a new one." %}
 
 {% endblock content %}
 
@@ -31,8 +31,8 @@
 
       new HAWCUtils.InitialForm({
         "form": $('form'),
-        "related": "{{object.study.pk}}",
-        "base_url": "{% url 'epi:mr_create' object.pk %}"
+        "related": "{{object.pk}}",
+        "base_url": "{% url 'epi:sp_create' object.pk %}"
       });
 
     });

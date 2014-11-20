@@ -2010,6 +2010,7 @@ class SingleResult(models.Model):
             dic['notes'],
         )
 
+
 reversion.register(Ethnicity)
 reversion.register(Factor)
 reversion.register(StudyPopulation)

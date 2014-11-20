@@ -359,6 +359,27 @@ HAWCUtils.build_breadcrumbs = function(arr){
     return links.join('<span> / </span>');
 };
 
+HAWCUtils.InitialForm = function(config){
+
+    var selector = config.form.find('#id_selector_0'),
+        selector_val = config.form.find('#id_selector_1'),
+        submitter = config.form.find('#submit_form');
+
+    selector.djselectable('option', 'prepareQuery', function(qry){
+        qry.related = config.related;
+    });
+
+    submitter.on('click', function(){
+        var val = parseInt(selector_val.val(), 10);
+        if(val){
+            submitter.attr('href', "{0}?initial={1}".printf(config.base_url, val));
+            return true;
+        }
+        return false;
+    });
+}
+
+
 /*
  * Version object. Used to generate diffs to compare a list of objects.
  * Requires an object_list, which is an array of a specified object-type.

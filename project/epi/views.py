@@ -9,6 +9,7 @@ from utils.views import (BaseDetail, BaseDelete,
                          CloseIfSuccessMixin, BaseList)
 
 from study.models import Study
+from study.views import StudyRead
 
 from . import forms, models
 
@@ -30,6 +31,17 @@ class StudyPopulationCreate(BaseCreate):
     parent_template_name = 'study'
     model = models.StudyPopulation
     form_class = forms.StudyPopulationForm
+
+    def get_form_kwargs(self):
+        kwargs = super(StudyPopulationCreate, self).get_form_kwargs()
+
+        # check if we have an object-template to be used
+        initial_pk = self.request.GET.get('initial', -1)
+        initial = self.model.objects.filter(pk=initial_pk).first()
+        if initial and initial.get_assessment() == self.assessment:
+            kwargs['instance'] = initial
+
+        return kwargs
 
 
 class StudyPopulationDetail(BaseDetail):
@@ -61,6 +73,16 @@ class StudyPopulationJSON(BaseDetail):
                             content_type="application/json")
 
 
+class StudyPopulationCopyAsNewSelector(StudyRead):
+    # Select an existing assessed outcome as a template for a new one
+    template_name = 'epi/studypopulation_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudyPopulationCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.StudyPopulationSelectorForm()
+        return context
+
+
 # Exposures
 class ExposureCreate(BaseCreateWithFormset):
     success_message = 'Exposure created.'
@@ -69,6 +91,17 @@ class ExposureCreate(BaseCreateWithFormset):
     model = models.Exposure
     form_class = forms.ExposureForm
     formset_factory = forms.EGFormSet
+
+    def get_form_kwargs(self):
+        kwargs = super(ExposureCreate, self).get_form_kwargs()
+
+        # check if we have an object-template to be used
+        initial_pk = self.request.GET.get('initial', -1)
+        initial = self.model.objects.filter(pk=initial_pk).first()
+        if initial and initial.get_assessment() == self.assessment:
+            kwargs['instance'] = initial
+
+        return kwargs
 
     def post_object_save(self, form, formset):
         # Bind newly created exposure to exposure-group instance
@@ -111,6 +144,16 @@ class ExposureUpdate(BaseUpdateWithFormset):
         formset.rebuild_exposure_group_id()
 
 
+class ExposureCopyAsNewSelector(StudyPopulationDetail):
+    # Select an existing assessed outcome as a template for a new one
+    template_name = 'epi/exposure_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ExposureCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ExposureSelectorForm()
+        return context
+
+
 # Study criteria
 class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = 'Epidemiology study-population criteria created.'
@@ -143,11 +186,11 @@ class AssessedOutcomeCreate(BaseCreateWithFormset):
         kwargs = super(AssessedOutcomeCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
 
-        # check if we have an assessed-outcome template to be used
-        ao_pk = self.request.GET.get('initial_endpoint', -1)
-        ao = self.model.objects.filter(pk=ao_pk).first()
-        if ao and ao.assessment == self.assessment:
-            kwargs['instance'] = ao
+        # check if we have an object-template to be used
+        initial_pk = self.request.GET.get('initial', -1)
+        initial = self.model.objects.filter(pk=initial_pk).first()
+        if initial and initial.get_assessment() == self.assessment:
+            kwargs['instance'] = initial
 
         return kwargs
 

@@ -520,9 +520,35 @@ def meta_result_clean_update_formset(formset, assessment):
             form.initial['resultSelector'] = 1
 
 
+class StudyPopulationSelectorForm(forms.Form):
+
+    selector = selectable.AutoCompleteSelectField(
+        lookup_class=lookups.StudyPopulationByStudyLookup,
+        label='Study Population',
+        widget=selectable.AutoComboboxSelectWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(StudyPopulationSelectorForm, self).__init__(*args, **kwargs)
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span11'
+
+
+class ExposureSelectorForm(forms.Form):
+
+    selector = selectable.AutoCompleteSelectField(
+        lookup_class=lookups.ExposureByStudyLookup,
+        label='Exposure',
+        widget=selectable.AutoComboboxSelectWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(ExposureSelectorForm, self).__init__(*args, **kwargs)
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span11'
+
+
 class AssesedOutcomeSelectorForm(forms.Form):
 
-    ao = selectable.AutoCompleteSelectField(
+    selector = selectable.AutoCompleteSelectField(
         lookup_class=lookups.AssessedOutcomeByStudyLookup,
         label='Assessed Outcome',
         widget=selectable.AutoComboboxSelectWidget)
@@ -535,7 +561,7 @@ class AssesedOutcomeSelectorForm(forms.Form):
 
 class MetaResultSelectorForm(forms.Form):
 
-    mr = selectable.AutoCompleteSelectField(
+    selector = selectable.AutoCompleteSelectField(
         lookup_class=lookups.MetaResultByStudyLookup,
         label='Meta Result',
         widget=selectable.AutoComboboxSelectWidget)
