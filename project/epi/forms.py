@@ -496,10 +496,8 @@ class SingleResultForm(forms.ModelForm):
 class EmptySingleResultFormset(FormsetWithIgnoredFields):
     ignored_fields = ['resultSelector']
 
-    def __init__(self, *args, **kwargs):
-        super(EmptySingleResultFormset, self).__init__(*args, **kwargs)
-        self.queryset = models.SingleResult.objects.none()
-
+    def get_queryset(self):
+        return models.SingleResult.objects.none()
 
 class LoadedSingleResultFormset(FormsetWithIgnoredFields):
     ignored_fields = ['resultSelector']
