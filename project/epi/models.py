@@ -1235,6 +1235,39 @@ class AssessedOutcome(BaseEndpoint):
                 dic['statistical_metric'],
                 dic['statistical_metric_description'])
 
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
+
 
 class ExposureGroup(Demographics):
     exposure = models.ForeignKey(
@@ -1884,6 +1917,39 @@ class MetaResult(models.Model):
             u'|'.join( dic['adjustment_factors']),
             dic['notes'],
         )
+
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
 
 
 class SingleResult(models.Model):

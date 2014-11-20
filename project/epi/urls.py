@@ -25,6 +25,10 @@ urlpatterns = patterns('',
         views.MetaResultFlat.as_view(),
         name='mr_flat'),
 
+    url(r'^assessment/(?P<pk>\d+)/meta-result-report/$',
+        views.MetaResultReport.as_view(),
+        name='mr_report'),
+
     url(r'^assessment/(?P<pk>\d+)/meta-result-full-export/$',
         views.MetaResultFullExport.as_view(),
         name='mr_export'),

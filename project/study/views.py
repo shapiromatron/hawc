@@ -15,7 +15,7 @@ from utils.helper import HAWCdocx, HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList)
+                         BaseList, GenerateReport)
 
 from . import models
 from . import forms
@@ -33,6 +33,25 @@ class StudyList(BaseList):
         if not context['obj_perms']['edit']:
             context['object_list'] = context['object_list'].filter(published=True)
         return context
+
+
+class StudyReport(GenerateReport):
+    parent_model = Assessment
+    model = models.Study
+    report_type = 1
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(StudyReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "study.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class StudyBiasExport(BaseList):

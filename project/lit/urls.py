@@ -19,6 +19,7 @@ urlpatterns = patterns('study.views',
     url(r'^assessment/(?P<pk>\d+)/references/visualization/$', views.RefVisualization.as_view(), name='ref_visual'),
     url(r'^assessment/(?P<pk>\d+)/references/search/$', views.RefSearch.as_view(), name='ref_search'),
     url(r'^assessment/(?P<pk>\d+)/references/json/$', views.RefsJSON.as_view(), name='refs_json'),
+    url(r'^assessment/(?P<pk>\d+)/references/report/$', views.RefReport.as_view(), name='ref_report'),
     url(r'^assessment/(?P<pk>\d+)/references/download/$', views.RefDownloadExcel.as_view(), name='ref_download_excel'),
 
     url(r'^assessment/(?P<pk>\d+)/searches/$', views.SearchList.as_view(), name='search_list'),

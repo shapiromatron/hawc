@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
-                         BaseCreate, BaseDetail, BaseUpdate, BaseDelete)
+                         BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
+                         GenerateReport)
 from assessment.models import Assessment
 
 from . import forms
@@ -344,6 +345,21 @@ class RefList(BaseList):
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
         context['untagged'] = models.Reference.get_untagged_references(self.assessment).count()
         return context
+
+
+class RefReport(GenerateReport):
+    parent_model = Assessment
+    model = models.Reference
+    report_type = 0
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)
+
+    def get_filename(self):
+        return "literature.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class RefListExtract(BaseList):

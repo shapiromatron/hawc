@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
 from assessment.models import Assessment
-from utils.views import BaseDetail, BaseList
+from utils.views import BaseDetail, BaseList, GenerateReport
 
 from . import models
 
@@ -40,3 +40,21 @@ class EndpointsFlat(BaseList):
 
         return response
 
+
+class EndpointsReport(GenerateReport):
+    parent_model = Assessment
+    model = models.IVEndpoint
+    report_type = 5
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointsReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "in-vitro.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)

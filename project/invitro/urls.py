@@ -19,4 +19,7 @@ urlpatterns = patterns('',
         views.EndpointsFlat.as_view(),
         name='endpoints_flat'),
 
+    url(r'^assessment/(?P<pk>\d+)/report/$',
+        views.EndpointsReport.as_view(),
+        name='endpoints_report'),
 )

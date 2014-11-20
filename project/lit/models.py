@@ -931,3 +931,37 @@ class Reference(models.Model):
             tagsCopy = deepcopy(tags_base)
             applyTags(tagsCopy, ref)
             printTags(ws, row, 9, tagsCopy)
+
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
+

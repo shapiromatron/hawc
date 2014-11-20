@@ -402,7 +402,7 @@ class ReportTemplate(models.Model):
         # Return a template object if one exists which matches the specified
         # criteria, else throw an ObjectDoesNotExist error
         qs = cls.objects\
-                .filter(id=template_id, report_type=2)\
+                .filter(id=template_id, report_type=report_type)\
                 .filter(Q(assessment=assessment_id) | Q(assessment=None))
 
         if qs.count() == 1:

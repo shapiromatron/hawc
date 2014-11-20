@@ -530,6 +530,39 @@ class IVEndpoint(BaseEndpoint):
                 ws.write(r, c, try_float(val))
             r+=1
 
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
+
 
 class IVEndpointGroup(models.Model):
 

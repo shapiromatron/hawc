@@ -6,7 +6,7 @@ from assessment.models import Assessment
 from utils.views import (BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList)
+                         CloseIfSuccessMixin, BaseList, GenerateReport)
 
 from study.models import Study
 from study.views import StudyRead
@@ -269,6 +269,25 @@ class AssessedOutcomeFlat(BaseList):
         return response
 
 
+class AssessedOutcomeReport(GenerateReport):
+    parent_model = Assessment
+    model = models.AssessedOutcome
+    report_type = 3
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(AssessedOutcomeReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["exposure__study_population__study__published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "epidemiology.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
+
+
 class FullExport(AssessedOutcomeFlat):
     """
     Full XLS data export for the epidemiology outcome.
@@ -283,20 +302,6 @@ class FullExport(AssessedOutcomeFlat):
         response = HttpResponse(xls, content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="download.xls"'
         return response
-
-
-class AssessedOutcomeReport(AssessedOutcomeFlat):
-    """
-    Word report export for all epidemiological outcomes in an assessment
-    """
-    parent_model = Assessment
-    model = models.AssessedOutcome
-    crud = "Read"
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super(AssessedOutcomeReport, self).get_queryset()
-        docx = self.model.epidemiology_word_report(self.assessment, self.object_list)
-        return docx.django_response()
 
 
 class AssessedOutcomeCopyAsNewSelector(ExposureDetail):
@@ -466,6 +471,25 @@ class MetaResultFlat(BaseList):
             response['Content-Disposition'] = 'attachment; filename="download.xls"'
 
         return response
+
+
+class MetaResultReport(GenerateReport):
+    parent_model = Assessment
+    model = models.MetaResult
+    report_type = 4
+
+    def get_queryset(self):
+        filters = {"protocol__study__assessment": self.assessment}
+        perms = super(MetaResultReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["protocol__study__published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "meta-results.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class MetaResultFullExport(MetaResultFlat):
