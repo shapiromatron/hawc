@@ -22,7 +22,8 @@ class AssessmentSerializer(serializers.HyperlinkedModelSerializer):
     hawc_name = serializers.CharField(source='__unicode__')
     hawc_url = serializers.HyperlinkedIdentityField(view_name='assessment:detail', format='html')
 
-    study = serializers.ManyHyperlinkedRelatedField(
+    study = serializers.HyperlinkedRelatedField(
+        many=True,
         source='references',
         view_name='study-detail')
 
@@ -45,7 +46,8 @@ class ReferenceSerializer(serializers.HyperlinkedModelSerializer):
 """ Study """
 class StudySerializer(serializers.HyperlinkedModelSerializer):
     hawc_url = serializers.HyperlinkedIdentityField(view_name='study:detail', format='html')
-    experiment = serializers.ManyHyperlinkedRelatedField(
+    experiment = serializers.HyperlinkedRelatedField(
+        many=True,
         source='experiments',
         view_name='experiment-detail')
 
@@ -60,7 +62,8 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
     hawc_name = serializers.CharField(source='__unicode__')
     hawc_url = serializers.HyperlinkedIdentityField(view_name='animal:experiment_detail', format='html')
-    animal_group = serializers.ManyHyperlinkedRelatedField(
+    animal_group = serializers.HyperlinkedRelatedField(
+        many=True,
         source='animalgroup_set',
         view_name='animalgroup-detail')
 
@@ -107,7 +110,8 @@ class DosingRegimeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class GenerationalAnimalGroupSerializer(serializers.HyperlinkedModelSerializer):
-    parents = serializers.ManyHyperlinkedRelatedField(
+    parents = serializers.HyperlinkedRelatedField(
+        many=True,
         source='parents',
         view_name='animalgroup-detail')
 
@@ -125,7 +129,8 @@ class AnimalGroupSerializer(serializers.HyperlinkedModelSerializer):
     species = SpeciesSerializer()
     strain = StrainSerializer()
     dosing_regime = DosingRegimeSerializer()
-    endpoint = serializers.ManyHyperlinkedRelatedField(
+    endpoint = serializers.HyperlinkedRelatedField(
+        many=True,
         source='endpoint_set',
         view_name='endpoint-detail')
     generationalanimalgroup = GenerationalAnimalGroupSerializer()

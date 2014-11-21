@@ -1,6 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
+
+from rest_framework.routers import DefaultRouter
 
 from . import views
+from . import api
+
+router = DefaultRouter()
+router.register(r'meta-result', api.MetaResult, base_name="meta-result")
 
 urlpatterns = patterns('',
 
@@ -159,4 +165,6 @@ urlpatterns = patterns('',
     url(r'^meta-result/(?P<pk>\d+)/delete/$',
         views.MetaResultDelete.as_view(),
         name='mr_delete'),
+
+    url(r'^api/', include(router.urls)),
 )

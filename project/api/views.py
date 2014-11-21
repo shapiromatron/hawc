@@ -43,6 +43,7 @@ class HAWCUserDetail(generics.RetrieveAPIView):
 class AssessmentList(generics.ListAPIView):
     model = Assessment
     serializer_class = serializers.AssessmentSerializer
+    paginate_by = 10
 
     def get_queryset(self):
         """
@@ -53,7 +54,7 @@ class AssessmentList(generics.ListAPIView):
         return [assess for assess in assessments if assess.user_can_view_object(user)]
 
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class AssessmentDetail(generics.RetrieveAPIView):
     model = Assessment
     serializer_class = serializers.AssessmentSerializer
@@ -68,7 +69,7 @@ class StudyList(generics.ListAPIView):
         return Study.objects.filter(assessment=self.kwargs.get('pk'))
 
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class StudyDetail(generics.RetrieveAPIView):
     model = Study
     serializer_class = serializers.StudySerializer
@@ -83,7 +84,7 @@ class ExperimentList(generics.ListAPIView):
         return Experiment.objects.filter(study__in=
                     Study.objects.filter(assessment=self.kwargs.get('pk')))
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class ExperimentDetail(generics.RetrieveAPIView):
     model = Experiment
     serializer_class = serializers.ExperimentSerializer
@@ -98,7 +99,7 @@ class AnimalGroupList(generics.ListAPIView):
                     Experiment.objects.filter(study__in=
                         Study.objects.filter(assessment=self.kwargs.get('pk'))))
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class AnimalGroupDetail(generics.RetrieveAPIView):
     model = AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
@@ -115,7 +116,7 @@ class EndpointList(generics.ListAPIView):
                     Study.objects.filter(assessment=self.kwargs.get('pk')))))
 
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class EndpointDetail(generics.RetrieveAPIView):
     model = Endpoint
     serializer_class = serializers.EndpointSerializer
@@ -129,7 +130,7 @@ class AggregationList(generics.ListAPIView):
         return Aggregation.objects.filter(assessment=self.kwargs.get('pk'))
 
 
-@permission_classes((permissions.AssesssmentLevelPermissions, ))
+@permission_classes((permissions.AssessmentLevelPermissions, ))
 class AggregationDetail(generics.RetrieveAPIView):
     model = Aggregation
     serializer_class = serializers.AggregationSerializer
