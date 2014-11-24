@@ -1,12 +1,9 @@
-import json
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, TemplateView, FormView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
 

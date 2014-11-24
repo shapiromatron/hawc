@@ -16,7 +16,10 @@ urlpatterns = patterns('',
     url(r'^password-change/$', views.PasswordChange.as_view(), name='change_password'),
 
     url(r'^password-reset/$', password_reset,
-        {"post_reset_redirect": reverse_lazy("user:reset_password_sent")},
+        {
+            "post_reset_redirect": reverse_lazy("user:reset_password_sent"),
+            "password_reset_form": forms.HAWCPasswordResetForm
+        },
         name='reset_password'),
     url(r'^password-reset/sent/$', views.PasswordResetSent.as_view(),
         name='reset_password_sent'),

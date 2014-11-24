@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth import get_backends
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 
 from . import models
 
@@ -114,3 +114,19 @@ class HAWCAuthenticationForm(AuthenticationForm):
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(self.error_messages['inactive'])
         return self.cleaned_data
+
+
+class HAWCPasswordResetForm(PasswordResetForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCPasswordResetForm, self).__init__(*args, **kwargs)
+        self.fields['email'].help_text = "Email-addresses are case-sensitive."
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        try:
+            models.HAWCUser.objects.get(email=email)
+        except models.HAWCUser.DoesNotExist:
+            raise forms.ValidationError("Email address not found")
+
+        return email
