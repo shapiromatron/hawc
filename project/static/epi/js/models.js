@@ -542,8 +542,8 @@ MetaProtocol.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Literature search end-date", this.data.lit_search_end_date);
     tbl.add_tbody_tr("Literature search notes", this.data.lit_search_notes);
     tbl.add_tbody_tr("Total references from search", this.data.total_references);
-    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
-    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria.map(function(v){return v.description;}));
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria.map(function(v){return v.description;}));
     tbl.add_tbody_tr("Total references after inclusion/exclusion", this.data.total_studies_identified);
     tbl.add_tbody_tr("Additional notes", this.data.notes);
 
@@ -552,7 +552,7 @@ MetaProtocol.prototype.build_details_table = function(div){
 
 MetaProtocol.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.study.url, name: this.data.study.short_citation },
         { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
@@ -561,9 +561,16 @@ MetaProtocol.prototype.build_breadcrumbs = function(){
 
 var MetaResult = function(data){
     this.data = data;
+    this.single_results = [];
+    this._unpack_single_results();
+};
+
+MetaResult.prototype._unpack_single_results = function(){
+    var single_results = this.single_results;
     this.data.single_results.forEach(function(v,i){
-        data.single_results[i] = new SingleStudyResult(v);
+        single_results.push(new SingleStudyResult(v));
     });
+    this.data.single_results = [];
 };
 
 MetaResult.prototype.build_details_table = function(div){
@@ -574,9 +581,9 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Exposure name", this.data.exposure_name);
     tbl.add_tbody_tr("Exposure details", this.data.exposure_details);
     tbl.add_tbody_tr("Number of studies", this.data.number_studies);
-    tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors);
+    tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors.map(function(v){return v.description;}));
     tbl.add_tbody_tr("N", this.data.n);
-    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text());
+    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text(this.data));
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
     tbl.add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity);
     tbl.add_tbody_tr("Notes", this.data.notes);
@@ -584,22 +591,22 @@ MetaResult.prototype.build_details_table = function(div){
 };
 
 MetaResult.prototype.get_statistical_metric_header = function(){
-    var txt = this.data.statistical_metric;
+    var txt = this.data.statistical_metric.abbreviation;
     if(this.data.ci_units) txt += " ({0}% CI)".printf(this.data.ci_units*100);
     return txt;
-}
+};
 
-MetaResult.prototype.get_risk_estimate_text = function(){
-    var txt = "{0}".printf(this.data.risk_estimate);
-    if (this.data.lower_ci && this.data.upper_ci){
-        txt += " ({0}-{1})".printf(this.data.lower_ci, this.data.upper_ci);
+MetaResult.prototype.get_risk_estimate_text = function(data){
+    var txt = "{0}".printf(data.estimate);
+    if (data.lower_ci && data.upper_ci){
+        txt += " ({0}-{1})".printf(data.lower_ci, data.upper_ci);
     }
     return txt;
 };
 
 MetaResult.prototype.has_single_results = function(){
-    return(this.data.single_results.length>0);
-}
+    return(this.single_results.length>0);
+};
 
 MetaResult.prototype.build_single_results_table = function(div){
     var tbl = $('<table class="table table-condensed table-striped"></table>'),
@@ -607,7 +614,7 @@ MetaResult.prototype.build_single_results_table = function(div){
         colgroup = $('<colgroup></colgroup>').append('<col style="width: 30%;"><col style="width: 15%;"><col style="width: 15%;"><col style="width: 15%;"><col style="width: 25%;">'),
         tbody = $('<tbody></tbody>');
 
-    this.data.single_results.forEach(function(v){
+    this.single_results.forEach(function(v){
         v.build_table_row(tbody);
     });
 
@@ -630,29 +637,50 @@ var SingleStudyResult = function(data){
 };
 
 SingleStudyResult.prototype.build_table_row = function(tbody){
-    var addIfExists = function(v){return (v) ? v : "-";},
-        tr = $('<tr></tr>').appendTo(tbody);
-    tr.append('<td>{0}</td>'.printf(this.exposure_name_link()))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.weight)))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.n)))
-      .append('<td>{0}</td>'.printf(this.get_risk_estimate_text()))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.notes)));
+    console.log(this)
+    var self=this,
+        addIfExists = function(v){return (v) ? v : "-";},
+        tr = $('<tr></tr>').appendTo(tbody),
+        getValues = function(self){
+            var d = {
+                "name": self.exposure_name_link(),
+                "weight": self.data.weight,
+                "notes": self.data.notes
+            };
+            if (self.data.outcome_group){
+                d["n"] = self.data.outcome_group.n;
+                d["risk"] = self.get_risk_estimate_text(self.data.outcome_group);
+            } else {
+                d["n"] = self.data.n;
+                d["risk"] = self.get_risk_estimate_text(self.data);
+            }
+            return d;
+        },
+        d = getValues(this);
+    tr.append('<td>{0}</td>'.printf(addIfExists(d.name)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.weight)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.n)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.risk)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.notes)))
 };
 
-SingleStudyResult.prototype.get_risk_estimate_text = function(){
-    return MetaResult.prototype.get_risk_estimate_text.call(this);
+SingleStudyResult.prototype.get_risk_estimate_text = function(data){
+    return MetaResult.prototype.get_risk_estimate_text.call(this, data);
 };
 
 SingleStudyResult.prototype.exposure_name_link = function(){
+
     var txt = "";
     if(this.data.study){
-        txt = '<a href="{0}" target="_blank">{1}</a>: '.printf(this.data.study_url, this.data.study);
+        txt = '<a href="{0}" target="_blank">{1}</a>: '.printf(
+            this.data.study.url,
+            this.data.study.short_citation);
     };
-    if(this.data.ao_name){
-        txt += '<a href="{0}" title="{1}" target="_blank">{2}</a>'.printf(
-                    this.data.ao_url,
-                    this.data.ao_name,
-                    this.data.exposure_name);
+
+    if(this.data.outcome_group){
+        txt += '<a href="{0}" title="{1}" target="_blank">{1}</a>'.printf(
+            this.data.outcome_group.assessed_outcome.url,
+            this.data.outcome_group.assessed_outcome.name);
     } else {
         txt += this.data.exposure_name
     };

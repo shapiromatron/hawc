@@ -1,10 +1,14 @@
 import decimal
+import logging
 from StringIO import StringIO
 import os
 import re
 
+from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
+
+from rest_framework.renderers import JSONRenderer
 
 import unicodecsv
 from docx import Document
@@ -128,3 +132,69 @@ def build_excel_file(sheet_name, headers, queryset, data_rows_func, *args, **kwa
     output.seek(0)
 
     return output
+
+
+class SerializerHelper(object):
+    """
+    HAWC helper-object for getting serialized objects and setting cache.
+    Sets cache names based on django models and primary keys automatically.
+    Sets a cache using the serialized object, and also a JSON object.
+    """
+
+    serializers = {}
+
+    @classmethod
+    def _get_cache_name(cls, model, id, json=True):
+        name = "{}.{}.{}".format(model.__module__, model.__name__, id)
+        if json: name += ".json"
+        return name
+
+    @classmethod
+    def get_serialized(cls, obj, json=True, from_cache=True):
+        if from_cache:
+            name = cls._get_cache_name(obj.__class__, obj.id, json)
+            cached = cache.get(name)
+            if cached:
+                logging.info('using cache: {}'.format(name))
+            else:
+                cached = cls._serialize_and_cache(obj, json=json)
+            return cached
+        else:
+            return cls._serialize(obj, json=json)
+
+    @classmethod
+    def _serialize(cls, obj, json=False):
+        serializer = cls.serializers.get(obj.__class__)
+        serialized = serializer(obj).data
+        if json:
+            serialized = JSONRenderer().render(serialized)
+        return serialized
+
+    @classmethod
+    def _serialize_and_cache(cls, obj, json):
+        # get expected object names
+        name = cls._get_cache_name(obj.__class__, obj.id, json=False)
+        json_name = cls._get_cache_name(obj.__class__, obj.id, json=True)
+
+        # serialize data and get json-representation
+        serialized = cls._serialize(obj, json=False)
+        json = JSONRenderer().render(serialized)
+
+        logging.info('setting cache: {}'.format(name))
+        cache.set_many({name: serialized, json_name: json})
+
+        if json:
+            return json
+        else:
+            return serialized
+
+    @classmethod
+    def add_serializer(cls, model, serializer):
+        cls.serializers[model] = serializer
+
+    @classmethod
+    def delete_caches(cls, model, ids):
+        names = [cls._get_cache_name(model, id, json=False) for id in ids]
+        names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
+        logging.info("Removing caches: {}".format(', '.join(names)))
+        cache.delete_many(names)

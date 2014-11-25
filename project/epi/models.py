@@ -14,7 +14,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from animal.models import DoseUnits
 from study.models import Study
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file, HAWCdocx
+from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file, HAWCdocx, SerializerHelper
 
 
 class StudyCriteria(models.Model):
@@ -1437,6 +1437,9 @@ class AssessedOutcomeGroup(models.Model):
     def get_assessment(self):
         return self.assessed_outcome.get_assessment()
 
+    def get_parent_url(self):
+        return reverse('epi:assessedoutcome_detail', kwargs={'pk': self.assessed_outcome.pk})
+
     def save(self, *args, **kwargs):
         super(AssessedOutcomeGroup, self).save(*args, **kwargs)
         logging.debug("Resetting cache for assessed outcome from assessed outcome-group change")
@@ -1542,27 +1545,8 @@ class MetaProtocol(models.Model):
         super(MetaProtocol, self).save(*args, **kwargs)
         MetaResult.delete_caches(self.results.all().values_list('pk', flat=True))
 
-    def get_json(self, json_encode=True, get_parent=True):
-        d = {}
-        fields = ('pk', 'name', 'lit_search_notes',
-                  'lit_search_start_date', 'lit_search_end_date',
-                  'total_references', 'total_studies_identified', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['url'] = self.get_absolute_url()
-        d['protocol_type'] = self.get_protocol_type_display()
-        d['lit_search_strategy'] = self.get_lit_search_strategy_display()
-        d['inclusion_criteria'] = [unicode(v) for v in self.inclusion_criteria.all()]
-        d['exclusion_criteria'] = [unicode(v) for v in self.exclusion_criteria.all()]
-
-        if get_parent:
-            d['study'] = self.study.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     @staticmethod
     def build_export_from_json_header():
@@ -1596,8 +1580,8 @@ class MetaProtocol(models.Model):
             dic['lit_search_start_date'],
             dic['lit_search_end_date'],
             dic['total_references'],
-            u'|'.join(dic['inclusion_criteria']),
-            u'|'.join(dic['exclusion_criteria']),
+            u'|'.join(dic['inclusion_criteria']['description']),
+            u'|'.join(dic['exclusion_criteria']['description']),
             dic['total_studies_identified'],
             dic['notes']
         )
@@ -1654,8 +1638,6 @@ class MetaResult(models.Model):
     notes = models.TextField(
         blank=True)
 
-    cache_template_object = 'meta-result-{0}'
-
     class Meta:
         ordering = ('label', )
 
@@ -1673,48 +1655,11 @@ class MetaResult(models.Model):
         MetaResult.delete_caches([self.pk])
 
     @classmethod
-    def get_cache_names(cls, pks):
-        return [cls.cache_template_object.format(pk) for pk in pks]
-
-    @classmethod
     def delete_caches(cls, pks):
-        names = cls.get_cache_names(pks)
-        logging.info("Removing cache: {}".format(', '.join(names)))
-        cache.delete_many(names)
+        SerializerHelper.delete_caches(cls, pks)
 
-    def get_json(self, json_encode=True, get_parent=True):
-
-        cache_name = self.__class__.get_cache_names([self.pk])[0]
-        d = cache.get(cache_name)
-        if d:
-            logging.info('using cache: {}'.format(cache_name))
-        else:
-            d = {}
-            fields = ('pk', 'label', 'health_outcome', 'data_location',
-                      'health_outcome_notes', 'exposure_name', 'exposure_details',
-                      'number_studies', 'statistical_notes',
-                      'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                      'ci_units', 'heterogeneity', 'notes')
-            for field in fields:
-                d[field] = getattr(self, field)
-
-            d['url'] = self.get_absolute_url()
-            d['statistical_metric'] = unicode(self.statistical_metric)
-            d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
-            d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
-
-            if get_parent:
-                d['protocol'] = self.protocol.get_json(json_encode=False, get_parent=False)
-                d['study'] = self.protocol.study.get_json(json_encode=False)
-
-                #only set if includes parent
-                logging.info('setting cache: {}'.format(cache_name))
-                cache.set(cache_name, d)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     @classmethod
     def epidemiology_excel_export(cls, queryset):
@@ -2009,35 +1954,6 @@ class SingleResult(models.Model):
     def save(self, *args, **kwargs):
         super(SingleResult, self).save(*args, **kwargs)
         MetaResult.delete_caches([self.meta_result.pk])
-
-    def get_json(self, json_encode=True):
-        d = {}
-        fields = ('pk', 'exposure_name', 'weight',
-                  'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                  'ci_units', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        if self.study:
-            d['study'] = unicode(self.study)
-            d['study_url'] = self.study.get_absolute_url()
-
-        if self.outcome_group:
-            # replace results with data from AOG
-            # TODO: account for if SE is used
-            d['n'] = self.outcome_group.n
-            d['risk_estimate'] = self.outcome_group.estimate
-            d['lower_ci'] = self.outcome_group.lower_ci
-            d['upper_ci'] = self.outcome_group.upper_ci
-            # add link to the group
-            d['aog_pk'] = self.outcome_group.pk
-            d['ao_name'] = unicode(self.outcome_group.assessed_outcome)
-            d['ao_url'] = self.outcome_group.assessed_outcome.get_absolute_url()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
 
     @staticmethod
     def build_export_from_json_header():
