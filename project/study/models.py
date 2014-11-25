@@ -240,6 +240,28 @@ class Study(Reference):
         return excel_export_detail(dic, isHeader)
 
     @staticmethod
+    def flat_complete_header_row():
+        return Study.build_export_from_json_header()
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['short_citation'],
+            ser['full_citation'],
+            ser['coi_reported'],
+            ser['coi_details'],
+            ser['funding_source'],
+            ser['study_type'],
+            ser['study_identifier'],
+            ser['contact_author'],
+            ser['ask_author'],
+            ser['summary'],
+            ser['published']
+        )
+
+    @staticmethod
     def build_export_from_json_header():
         # used for full-export/import functionalities
         return ('study-pk',

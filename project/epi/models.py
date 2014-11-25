@@ -1549,8 +1549,7 @@ class MetaProtocol(models.Model):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'meta_protocol-pk',
             'meta_protocol-url',
@@ -1568,22 +1567,21 @@ class MetaProtocol(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
         return (
-            dic['pk'],
-            dic['url'],
-            dic['name'],
-            dic['protocol_type'],
-            dic['lit_search_strategy'],
-            dic['lit_search_notes'],
-            dic['lit_search_start_date'],
-            dic['lit_search_end_date'],
-            dic['total_references'],
-            u'|'.join(dic['inclusion_criteria']['description']),
-            u'|'.join(dic['exclusion_criteria']['description']),
-            dic['total_studies_identified'],
-            dic['notes']
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['protocol_type'],
+            ser['lit_search_strategy'],
+            ser['lit_search_notes'],
+            ser['lit_search_start_date'],
+            ser['lit_search_end_date'],
+            ser['total_references'],
+            u'|'.join([f['description'] for f in ser['inclusion_criteria']]),
+            u'|'.join([f['description'] for f in ser['exclusion_criteria']]),
+            ser['total_studies_identified'],
+            ser['notes']
         )
 
 
@@ -1661,161 +1659,8 @@ class MetaResult(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
-    @classmethod
-    def epidemiology_excel_export(cls, queryset):
-        # full export of epidemiology meta-analysis dataset, designed for
-        # import/export using a flat-xls file.
-        sheet_name = 'epi-meta-analysis'
-        headers = cls.epidemiology_excel_export_header()
-        data_rows_func = cls.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
     @staticmethod
-    def epidemiology_excel_export_header():
-        # build export header column names for full export
-        lst = []
-        lst.extend(Study.build_export_from_json_header())
-        lst.extend(MetaProtocol.build_export_from_json_header())
-        lst.extend(MetaResult.build_export_from_json_header())
-        lst.extend(SingleResult.build_export_from_json_header())
-        return lst
-
-    def flat_file_row(self):
-        d = self.get_json(json_encode=False)
-        row = [
-            d['study']['short_citation'],
-            d['study']['study_url'],
-            d['study']['pk'],
-            d['study']['published'],
-
-            d['protocol']['pk'],
-            d['protocol']['url'],
-            d['protocol']['name'],
-            d['protocol']['protocol_type'],
-            d['protocol']['total_references'],
-            d['protocol']['total_studies_identified'],
-
-            d['pk'],  # repeat for data-pivot key
-            d['pk'],
-            d['url'],
-            d['label'],
-            d['health_outcome'],
-            d['exposure_name'],
-            d['number_studies'],
-            d['statistical_metric'],
-            d['n'],
-            d['estimate'],
-            d['lower_ci'],
-            d['upper_ci'],
-            d['ci_units'],
-            d['heterogeneity'],
-        ]
-
-        return [row]
-
-    @classmethod
-    def flat_file_header(cls):
-        return [
-            'Study',
-            'Study URL',
-            'Study Primary Key',
-            'Study Published?',
-
-            'Protocol Primary Key',
-            'Protocol URL',
-            'Protocol Name',
-            'Protocol Type',
-            'Total References',
-            'Identified References',
-
-            'Row Key',
-            'Result Primary Key',
-            'Result URL',
-            'Result Label',
-            'Health Outcome',
-            'Exposure',
-            'Result References',
-            'Statistical Metric',
-            'N',
-            'Estimate',
-            'Lower CI',
-            'Upper CI',
-            'CI units',
-            'Heterogeneity'
-        ]
-
-    @classmethod
-    def get_tsv_file(cls, queryset):
-        """
-        Construct a tab-delimited version of the selected queryset of endpoints.
-        """
-        headers = cls.flat_file_header()
-        return build_tsv_file(headers, queryset)
-
-    @classmethod
-    def get_excel_file(cls, queryset):
-        """
-        Construct an Excel workbook of the selected queryset of endpoints.
-        """
-        sheet_name = 'epi-meta-analysis'
-        headers = cls.flat_file_header()
-        data_rows_func = cls.build_excel_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def build_excel_rows(ws, queryset, *args, **kwargs):
-        """
-        Custom method used to build individual excel rows in Excel worksheet
-        """
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        for row, mr in enumerate(queryset):
-            for col, val in enumerate(mr.flat_file_row()[0]):
-                ws.write(row+1, col, try_float(val))
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-
-        # build export data rows for full-export
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        row = 1
-        for mr in queryset:
-            d = mr.get_json(json_encode=False)
-            fields = []
-            fields.extend(Study.build_flat_from_json_dict(d['study']))
-            fields.extend(MetaProtocol.build_flat_from_json_dict(d['protocol']))
-            fields.extend(MetaResult.build_flat_from_json_dict(d))
-
-            if len(d['single_results'])==0:
-                # no single results; just print meta-results once
-                for j, val in enumerate(fields):
-                    ws.write(row, j, try_float(val))
-                row += 1
-            else:
-                # single-results exist; print each meta-result as a new row
-                for sr in d['single_results']:
-                    new_fields = list(fields)  # clone
-                    new_fields.extend(SingleResult.build_flat_from_json_dict(sr))
-                    for j, val in enumerate(new_fields):
-                        ws.write(row, j, try_float(val))
-                    row += 1
-
-    @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'meta_result-pk',
             'meta_result-url',
@@ -1839,28 +1684,27 @@ class MetaResult(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
         return (
-            dic['pk'],
-            dic['url'],
-            dic['label'],
-            dic['data_location'],
-            dic['health_outcome'],
-            dic['health_outcome_notes'],
-            dic['exposure_name'],
-            dic['exposure_details'],
-            dic['number_studies'],
-            dic['statistical_metric'],
-            dic['statistical_notes'],
-            dic['n'],
-            dic['estimate'],
-            dic['lower_ci'],
-            dic['upper_ci'],
-            dic['ci_units'],
-            dic['heterogeneity'],
-            u'|'.join( dic['adjustment_factors']),
-            dic['notes'],
+            ser['id'],
+            ser['url'],
+            ser['label'],
+            ser['data_location'],
+            ser['health_outcome'],
+            ser['health_outcome_notes'],
+            ser['exposure_name'],
+            ser['exposure_details'],
+            ser['number_studies'],
+            ser['statistical_metric']['metric'],
+            ser['statistical_notes'],
+            ser['n'],
+            ser['estimate'],
+            ser['lower_ci'],
+            ser['upper_ci'],
+            ser['ci_units'],
+            ser['heterogeneity'],
+            u'|'.join([f['description'] for f in ser['adjustment_factors']]),
+            ser['notes'],
         )
 
     @classmethod
@@ -1956,8 +1800,7 @@ class SingleResult(models.Model):
         MetaResult.delete_caches([self.meta_result.pk])
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'single_result-pk',
             'single_result-study',
@@ -1973,20 +1816,32 @@ class SingleResult(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
+
+        study = None
+        try:
+            study = ser['study']['id']
+        except TypeError:
+            pass
+
+        aog = None
+        try:
+            aog = ser['outcome_group']['id']
+        except TypeError:
+            pass
+
         return (
-            dic['pk'],
-            dic.get('study', None),
-            dic.get('aog_pk', None),
-            dic['exposure_name'],
-            dic['weight'],
-            dic['n'],
-            dic['estimate'],
-            dic['lower_ci'],
-            dic['upper_ci'],
-            dic['ci_units'],
-            dic['notes'],
+            ser['id'],
+            study,
+            aog,
+            ser['exposure_name'],
+            ser['weight'],
+            ser['n'],
+            ser['estimate'],
+            ser['lower_ci'],
+            ser['upper_ci'],
+            ser['ci_units'],
+            ser['notes'],
         )
 
 
