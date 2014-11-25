@@ -561,36 +561,8 @@ class StudyPopulation(Demographics):
     def get_assessment(self):
         return self.study.get_assessment()
 
-    def get_json(self, get_parent=True, json_encode=True):
-        d = {}
-        fields = ('pk', 'name', 'region', 'state')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['demographics'] = super(StudyPopulation, self).get_json()
-        d['design'] = self.get_design_display()
-        d['country'] = self.get_country_display()
-        d['url'] = self.get_absolute_url()
-
-        d['inclusion_criteria'] = []
-        for crit in self.inclusion_criteria.all():
-            d['inclusion_criteria'].append(crit.__unicode__())
-
-        d['exclusion_criteria'] = []
-        for crit in self.exclusion_criteria.all():
-            d['exclusion_criteria'].append(crit.__unicode__())
-
-        d['confounding_criteria'] = []
-        for crit in self.confounding_criteria.all():
-            d['confounding_criteria'].append(crit.__unicode__())
-
-        if get_parent:
-            d['study'] = self.study.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     @staticmethod
     def build_export_from_json_header():
@@ -877,65 +849,13 @@ class AssessedOutcome(BaseEndpoint):
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
         super(AssessedOutcome, cls).d_response_delete_cache(endpoint_pks)
+        SerializerHelper.delete_caches(cls, endpoint_pks)
 
     def get_absolute_url(self):
         return reverse('epi:assessedoutcome_detail', kwargs={'pk': self.pk})
 
     def get_json(self, json_encode=True):
-        # this is the main "object" for epidemiology; therefore we cache this
-        # json representation because it's expensive to create
-        cache_name = AssessedOutcome.get_cache_names([self.pk])[0]
-        d = cache.get(cache_name)
-        if d is None:
-
-            d = {}
-
-            d['endpoint_type'] = 'epi'
-            d['study'] = self.exposure.study_population.study.get_json(json_encode=False)
-            d['study_population'] = self.exposure.study_population.get_json(json_encode=False)
-            d['exposure'] = self.exposure.get_json(json_encode=False)
-
-            fields = ('pk', 'name', 'data_location', 'population_description',
-                      'diagnostic_description', 'outcome_n', 'summary',
-                      'prevalence_incidence', 'dose_response_details',
-                      'statistical_power_details', 'statistical_metric_description')
-            for field in fields:
-                d[field] = getattr(self, field)
-
-            d['url'] = self.get_absolute_url()
-            d['diagnostic'] = self.get_diagnostic_display()
-            d['dose_response'] = self.get_dose_response_display()
-            d['statistical_power'] = self.get_statistical_power_display()
-            d['main_finding_support'] = self.get_main_finding_support_display()
-
-            d['statistical_metric'] = self.statistical_metric.metric
-            d['statistical_metric_abbreviation'] = self.statistical_metric.abbreviation
-            d['plot_as_log'] = self.statistical_metric.isLog
-
-            d['adjustment_factors'] = []
-            for af in self.adjustment_factors.all():
-                d['adjustment_factors'].append(af.get_json(json_encode=False))
-
-            d['adjustment_factors_considered'] = []
-            for cc in self.confounders_considered.all():
-                d['adjustment_factors_considered'].append(cc.get_json(json_encode=False))
-
-            d['aog'] = []
-            for aog in self.groups.all():
-                d['aog'].append(aog.get_json(main_finding=self.main_finding,
-                                             json_encode=False))
-
-            d['tags'] = []
-            for tag in self.effects.all():
-                d['tags'].append(tag.get_json(json_encode=False))
-
-            logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
-            cache.set(cache_name, d)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_prior_versions_json(self):
         """ Get prior versions of object. """

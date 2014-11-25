@@ -4,7 +4,7 @@ var StudyPopulation = function(data){
 
 StudyPopulation.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.study.url, name: this.data.study.short_citation },
         { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
@@ -17,27 +17,27 @@ StudyPopulation.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Country", this.data.country);
     tbl.add_tbody_tr("State", this.data.state);
     tbl.add_tbody_tr("Region", this.data.region);
-    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
-    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
-    tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria);
-    tbl.add_tbody_tr("N", this.data.demographics.n);
-    tbl.add_tbody_tr("Sex", this.data.demographics.sex);
-    tbl.add_tbody_tr_list("Ethnicities", this.data.demographics.ethnicity);
-    tbl.add_tbody_tr("Fraction male", this.data.demographics.fraction_male,
-                 {calculated: this.data.demographics.fraction_male_calculated});
-    tbl.add_tbody_tr("Age description", this.data.demographics.age_description);
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_mean_type),
-                 this.data.demographics.age_mean,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_sd_type),
-                 this.data.demographics.age_sd,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_lower_type),
-                 this.data.demographics.age_lower,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_upper_type),
-                 this.data.demographics.age_upper,
-                 {calculated: this.data.demographics.age_calculated});
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria.map(function(d){return d.description;}));
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria.map(function(d){return d.description;}));
+    tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria.map(function(d){return d.description;}));
+    tbl.add_tbody_tr("N", this.data.n);
+    tbl.add_tbody_tr("Sex", this.data.sex);
+    tbl.add_tbody_tr_list("Ethnicities", this.data.ethnicity.map(function(d){return d.ethnicity;}));
+    tbl.add_tbody_tr("Fraction male", this.data.fraction_male,
+                 {calculated: this.data.fraction_male_calculated});
+    tbl.add_tbody_tr("Age description", this.data.age_description);
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_mean_type),
+                 this.data.age_mean,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_sd_type),
+                 this.data.age_sd,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_lower_type),
+                 this.data.age_lower,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_upper_type),
+                 this.data.age_upper,
+                 {calculated: this.data.age_calculated});
 
     $(div).html(tbl.get_tbl());
 };
@@ -51,16 +51,17 @@ var AssessedOutcome = function(data){
 };
 
 AssessedOutcome.prototype._build_aogs = function(){
-    this.data.aog.sort(function(a, b){
+    this.data.groups.sort(function(a, b){
       return a.exposure_group.exposure_group_id -
              b.exposure_group.exposure_group_id;});
 
-    for(var i=0; i<this.data.aog.length; i++){
-        var aog = new AssessedOutcomeGroup(this.data.aog[i])
+    for(var i=0; i<this.data.groups.length; i++){
+        var aog = new AssessedOutcomeGroup(this.data.groups[i])
         this.aog.push(aog);
+        aog.data.main_finding = (aog.data.exposure_group.id === this.data.main_finding);
         if (aog.data.main_finding) this.main_finding = aog;
     }
-    delete this.data.aog;
+    delete this.data.groups;
 };
 
 AssessedOutcome.prototype.build_ao_table = function(div){
@@ -75,7 +76,7 @@ AssessedOutcome.prototype.build_ao_table = function(div){
     tbl.add_tbody_tr("Summary", this.data.summary);
     if (this.main_finding) tbl.add_tbody_tr("Main finding supported?", this.data.main_finding_support);
     tbl.add_tbody_tr("Prevalence Incidence", this.data.prevalence_incidence);
-    tbl.add_tbody_tr("Statistical metric presented", this.data.statistical_metric);
+    tbl.add_tbody_tr("Statistical metric presented", this.data.statistical_metric.metric);
     tbl.add_tbody_tr("Statistical metric description", this.data.statistical_metric_description);
     tbl.add_tbody_tr("Statistical power sufficient?",
         this.data.statistical_power,
@@ -83,7 +84,7 @@ AssessedOutcome.prototype.build_ao_table = function(div){
     tbl.add_tbody_tr("Dose response trend?",
         this.data.dose_response,
         {annotate: this.data.dose_response_details});
-    tbl.add_tbody_tr("Effect tags", this.data.tags.map(function(v){return v.name;}).join(", "));
+    tbl.add_tbody_tr("Effect tags", this.data.effects.map(function(v){return v.name;}).join(", "));
     this._ao_tbl_adjustments_columns(tbl.get_tbody());
 
     $(div).html(tbl.get_tbl());
@@ -93,17 +94,14 @@ AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
     var dict_adj = {}, dict_conf = {}, i, key, item,
         adjustments = [], confounders = [], content = ['<i>None</i>'];
 
-    // get adjustment factors considered into "hashable" structure
-    for(i=0; i<this.data.adjustment_factors_considered.length; i++){
-        item = this.data.adjustment_factors_considered[i];
-        dict_conf[item.pk] = item.description;
-    }
+    this.data.confounders_considered.forEach(function(d){
+        dict_conf[d.id] = d.description;
+    });
 
-    // get adjustments into "hashable" structure
-    for(i=0; i<this.data.adjustment_factors.length; i++){
-        item = this.data.adjustment_factors[i];
-        dict_adj[item.pk] = item.description;
-    }
+    this.data.adjustment_factors.forEach(function(d){
+        dict_adj[d.id] = d.description;
+    });
+
 
     //  remove adjustments from considerations
     for(key in dict_conf){
@@ -136,7 +134,7 @@ AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
 };
 
 AssessedOutcome.prototype.get_statistical_metric_header = function(){
-    var txt = this.data.statistical_metric;
+    var txt = this.data.statistical_metric.metric;
     txt = txt.charAt(0).toUpperCase() + txt.substr(1);
     // assumes confidence interval is the same for all assessed-outcome groups
     if (this.aog.length>0) txt += this.aog[0].get_confidence_interval();
@@ -180,10 +178,22 @@ AssessedOutcome.prototype.has_aogs = function(){
 
 AssessedOutcome.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
-        { url: this.data.study_population.url, name: this.data.study_population.name },
-        { url: this.data.exposure.url, name: this.data.exposure.exposure_form_definition },
-        { url: this.data.url, name: this.data.name }
+        {
+            url: this.data.exposure.study_population.study.url,
+            name: this.data.exposure.study_population.study.short_citation
+        },
+        {
+            url: this.data.exposure.study_population.url,
+            name: this.data.exposure.study_population.name
+        },
+        {
+            url: this.data.exposure.url,
+            name: this.data.exposure.exposure_form_definition
+        },
+        {
+            url: this.data.url,
+            name: this.data.name
+        }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
 };
@@ -269,30 +279,30 @@ AssessedOutcomeGroup.prototype.build_exposure_group_table = function(div){
     add_tbody_tr("Name", this.data.exposure_group.description);
     add_tbody_tr("Comparison description", this.data.exposure_group.comparative_name);
     add_tbody_tr("Exposure N", this.data.exposure_group.exposure_n);
-    add_tbody_tr("Demographic Starting N", this.data.exposure_group.demographics.starting_n);
-    add_tbody_tr("Demographic N", this.data.exposure_group.demographics.n);
-    add_tbody_tr("Sex", this.data.exposure_group.demographics.sex);
+    add_tbody_tr("Demographic Starting N", this.data.exposure_group.starting_n);
+    add_tbody_tr("Demographic N", this.data.exposure_group.n);
+    add_tbody_tr("Sex", this.data.exposure_group.sex);
 
-    if(this.data.exposure_group.demographics.ethnicity.length>0)
+    if(this.data.exposure_group.ethnicity.length>0)
         add_tbody_tr_list("Ethnicities",
-                          this.data.exposure_group.demographics.ethnicity);
+                          this.data.exposure_group.ethnicity.map(function(d){return d.ethnicity;}));
 
-    add_tbody_tr("Fraction male", this.data.exposure_group.demographics.fraction_male,
-                                  this.data.exposure_group.demographics.fraction_male_calculated);
+    add_tbody_tr("Fraction male", this.data.exposure_group.fraction_male,
+                                  this.data.exposure_group.fraction_male_calculated);
 
-    add_tbody_tr("Age description", this.data.exposure_group.demographics.age_description);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_mean_type),
-                 this.data.exposure_group.demographics.age_mean,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_sd_type),
-                 this.data.exposure_group.demographics.age_sd,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_lower_type),
-                 this.data.exposure_group.demographics.age_lower,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_upper_type),
-                 this.data.exposure_group.demographics.age_upper,
-                 this.data.exposure_group.demographics.age_calculated);
+    add_tbody_tr("Age description", this.data.exposure_group.age_description);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_mean_type),
+                 this.data.exposure_group.age_mean,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_sd_type),
+                 this.data.exposure_group.age_sd,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_lower_type),
+                 this.data.exposure_group.age_lower,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_upper_type),
+                 this.data.exposure_group.age_upper,
+                 this.data.exposure_group.age_calculated);
 
     $(div).html(tbl.append(colgroup, tbody));
 };
@@ -312,7 +322,7 @@ var AOForestPlot = function(aogs, ao, plot_div, options){
     this.ao = ao;
     this.aogs = aogs;
     this.title_str = ao.data.name || "";
-    this.x_label_text = ao.data.statistical_metric || "(unitless)";
+    this.x_label_text = ao.data.statistical_metric.metric || "(unitless)";
     if(this.options.build_plot_startup){this.build_plot();}
 };
 
@@ -384,7 +394,7 @@ AOForestPlot.prototype.get_dataset = function(){
             vals.push(ci.lower_ci, ci.upper_ci);
         }
     });
-    this.scale_type = (this.ao.data.plot_as_log) ? "log" : "linear";
+    this.scale_type = (this.ao.data.statistical_metric.isLog) ? "log" : "linear";
     this.estimates = estimates;
     this.lines = lines;
     this.names = names;

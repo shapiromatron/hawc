@@ -98,6 +98,7 @@ class ExposureGroupSerializer(serializers.ModelSerializer):
 class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
     assessed_outcome = serializers.PrimaryKeyRelatedField()
     exposure_group = ExposureGroupSerializer()
+    p_value_text = serializers.CharField(source='p_value_text', read_only=True)
 
     class Meta:
         model = models.AssessedOutcomeGroup
