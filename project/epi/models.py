@@ -1629,7 +1629,7 @@ class MetaResult(models.Model):
         blank=True)
     n = models.PositiveIntegerField(
         help_text="Number of individuals included from all analyses")
-    risk_estimate = models.FloatField()
+    estimate = models.FloatField()
     lower_ci = models.FloatField(
         verbose_name="Lower CI",
         help_text="Numerical value for lower-confidence interval")
@@ -1759,7 +1759,7 @@ class MetaResult(models.Model):
             d['number_studies'],
             d['statistical_metric'],
             d['n'],
-            d['risk_estimate'],
+            d['estimate'],
             d['lower_ci'],
             d['upper_ci'],
             d['ci_units'],
@@ -1884,7 +1884,7 @@ class MetaResult(models.Model):
             'meta_result-statistical_metric',
             'meta_result-statistical_notes',
             'meta_result-n',
-            'meta_result-risk_estimate',
+            'meta_result-estimate',
             'meta_result-lower_ci',
             'meta_result-upper_ci',
             'meta_result-ci_units',
@@ -1909,7 +1909,7 @@ class MetaResult(models.Model):
             dic['statistical_metric'],
             dic['statistical_notes'],
             dic['n'],
-            dic['risk_estimate'],
+            dic['estimate'],
             dic['lower_ci'],
             dic['upper_ci'],
             dic['ci_units'],
@@ -1980,7 +1980,7 @@ class SingleResult(models.Model):
         blank=True,
         null=True,
         help_text="Enter the number of observations for this result")
-    risk_estimate = models.FloatField(
+    estimate = models.FloatField(
         blank=True,
         null=True,
         help_text="Enter the numerical risk-estimate presented for this result")
@@ -2002,9 +2002,6 @@ class SingleResult(models.Model):
         help_text='A 95% CI is written as 0.95.')
     notes = models.TextField(
         blank=True)
-
-    class Meta:
-        ordering = ('-weight', 'exposure_name')
 
     def __unicode__(self):
         return self.exposure_name
@@ -2052,7 +2049,7 @@ class SingleResult(models.Model):
             'single_result-exposure_name',
             'single_result-weight',
             'single_result-n',
-            'single_result-risk_estimate',
+            'single_result-estimate',
             'single_result-lower_ci',
             'single_result-upper_ci',
             'single_result-ci_units',
@@ -2069,7 +2066,7 @@ class SingleResult(models.Model):
             dic['exposure_name'],
             dic['weight'],
             dic['n'],
-            dic['risk_estimate'],
+            dic['estimate'],
             dic['lower_ci'],
             dic['upper_ci'],
             dic['ci_units'],
