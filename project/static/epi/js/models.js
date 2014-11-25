@@ -624,7 +624,7 @@ MetaResult.prototype.build_single_results_table = function(div){
 
 MetaResult.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.protocol.study.url, name: this.data.protocol.study.short_citation },
         { url: this.data.protocol.url, name: this.data.protocol.name },
         { url: this.data.url, name: this.data.label }
     ];
