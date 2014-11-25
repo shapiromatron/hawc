@@ -7,6 +7,7 @@ from . import api
 
 router = DefaultRouter()
 router.register(r'meta-result', api.MetaResult, base_name="meta-result")
+router.register(r'assessed-outcome', api.AssessedOutcome, base_name="assessed-outcome")
 
 urlpatterns = patterns('',
 

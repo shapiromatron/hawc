@@ -21,3 +21,17 @@ class MetaResult(viewsets.ReadOnlyModelViewSet):
         page = self.paginate_queryset(by_assessment)
         serializer = self.get_pagination_serializer(page)
         return Response(serializer.data)
+
+
+class AssessedOutcome(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (AssessmentLevelPermissions, )
+    model = models.AssessedOutcome
+    serializer_class = serializers.AssessedOutcomeSerializer
+
+    def list(self, request):
+        # override list to only return assessed-outcomes for a single assessment
+        assessment = get_permitted_assessment(request)
+        by_assessment = self.model.objects.filter(assessment=assessment)
+        page = self.paginate_queryset(by_assessment)
+        serializer = self.get_pagination_serializer(page)
+        return Response(serializer.data)

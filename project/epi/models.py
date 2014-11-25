@@ -866,6 +866,10 @@ class AssessedOutcome(BaseEndpoint):
         blank=True,
         help_text="Add additional text describing the statistical metric used, if needed.")
 
+    @property
+    def endpoint_type(self):
+        return "epi"
+
     @staticmethod
     def get_cache_names(pks):
         return ['endpoint-json-{pk}'.format(pk=pk) for pk in pks]

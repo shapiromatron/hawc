@@ -7,7 +7,130 @@ from utils.helper import SerializerHelper
 from . import models
 
 
+class StudyCriteriaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.StudyCriteria
+        depth = 0
+
+
+class EthnicitySerializer(serializers.ModelSerializer):
+
+    def transform_ethnicity(self, obj, value):
+        return obj.get_ethnicity_display()
+
+    class Meta:
+        model = models.Ethnicity
+        depth = 0
+
+
+class FactorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Factor
+        depth = 0
+
+
+class StudyPopulationSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    study = StudySerializer()
+    ethnicity = EthnicitySerializer()
+    inclusion_criteria = StudyCriteriaSerializer()
+    exclusion_criteria = StudyCriteriaSerializer()
+    confounding_criteria = StudyCriteriaSerializer()
+
+    def transform_design(self, obj, value):
+        return obj.get_design_display()
+
+    def transform_country(self, obj, value):
+        return obj.get_country_display()
+
+    def transform_sex(self, obj, value):
+        return obj.get_sex_display()
+
+    def transform_age_sd_type(self, obj, value):
+        return obj.get_age_sd_type_display()
+
+    def transform_age_mean_type(self, obj, value):
+        return obj.get_age_mean_type_display()
+
+    def transform_age_lower_type(self, obj, value):
+        return obj.get_age_lower_type_display()
+
+    def transform_age_upper_type(self, obj, value):
+        return obj.get_age_upper_type_display()
+
+    class Meta:
+        model = models.StudyPopulation
+
+
+class ExposureSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    study_population = StudyPopulationSerializer()
+
+    class Meta:
+        model = models.Exposure
+        depth = 1
+
+
+class ExposureGroupSerializer(serializers.ModelSerializer):
+    ethnicity = EthnicitySerializer()
+
+    def transform_sex(self, obj, value):
+        return obj.get_sex_display()
+
+    def transform_age_sd_type(self, obj, value):
+        return obj.get_age_sd_type_display()
+
+    def transform_age_mean_type(self, obj, value):
+        return obj.get_age_mean_type_display()
+
+    def transform_age_lower_type(self, obj, value):
+        return obj.get_age_lower_type_display()
+
+    def transform_age_upper_type(self, obj, value):
+        return obj.get_age_upper_type_display()
+
+    class Meta:
+        model = models.ExposureGroup
+
+
+class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
+    assessed_outcome = serializers.PrimaryKeyRelatedField()
+    exposure_group = ExposureGroupSerializer()
+
+    class Meta:
+        model = models.AssessedOutcomeGroup
+
+
 class AssessedOutcomeSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    assessment = serializers.PrimaryKeyRelatedField()
+    exposure = ExposureSerializer()
+    endpoint_type = serializers.CharField(source='endpoint_type', read_only=True)
+    groups = AssessedOutcomeGroupSerializer(many=True)
+    main_finding = serializers.PrimaryKeyRelatedField()
+    adjustment_factors = FactorSerializer()
+    confounders_considered = FactorSerializer()
+
+    def transform_diagnostic(self, obj, value):
+        return obj.get_diagnostic_display()
+
+    def transform_dose_response(self, obj, value):
+        return obj.get_dose_response_display()
+
+    def transform_statistical_power(self, obj, value):
+        return obj.get_statistical_power_display()
+
+    def transform_main_finding_support(self, obj, value):
+        return obj.get_main_finding_support_display()
+
+    class Meta:
+        model = models.AssessedOutcome
+        depth = 1
+
+
+class AssessedOutcomeShallowSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
@@ -15,8 +138,8 @@ class AssessedOutcomeSerializer(serializers.ModelSerializer):
         depth = 0
 
 
-class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
-    assessed_outcome = AssessedOutcomeSerializer()
+class AssessedOutcomeGroupVerboseSerializer(serializers.ModelSerializer):
+    assessed_outcome = AssessedOutcomeShallowSerializer()
 
     class Meta:
         model = models.AssessedOutcomeGroup
@@ -25,7 +148,7 @@ class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
 
 class SingleResultSerializer(serializers.ModelSerializer):
     study = StudySerializer()
-    outcome_group = AssessedOutcomeGroupSerializer()
+    outcome_group = AssessedOutcomeGroupVerboseSerializer()
     meta_result = serializers.PrimaryKeyRelatedField()
 
     class Meta:
@@ -48,13 +171,6 @@ class MetaProtocolSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class FactorSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.Factor
-        depth = 0
-
-
 class MetaResultSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     protocol = MetaProtocolSerializer()
@@ -66,9 +182,8 @@ class MetaResultSerializer(serializers.ModelSerializer):
         depth = 4
 
 
+
+SerializerHelper.add_serializer(models.StudyPopulation, StudyPopulationSerializer)
 SerializerHelper.add_serializer(models.AssessedOutcome, AssessedOutcomeSerializer)
-SerializerHelper.add_serializer(models.AssessedOutcomeGroup, AssessedOutcomeGroupSerializer)
-SerializerHelper.add_serializer(models.SingleResult, SingleResultSerializer)
 SerializerHelper.add_serializer(models.MetaProtocol, MetaProtocolSerializer)
-SerializerHelper.add_serializer(models.Factor, FactorSerializer)
 SerializerHelper.add_serializer(models.MetaResult, MetaResultSerializer)
