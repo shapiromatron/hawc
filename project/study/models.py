@@ -81,24 +81,24 @@ class Study(Reference):
         if self.study_type == 0:
             #clear animal endpoints cache
             Endpoint = get_model('animal', 'Endpoint')
-            pks = Endpoint.objects\
-                          .filter(animal_group__experiment__study=self.pk)\
-                          .values_list('pk', flat=True)
-            Endpoint.d_response_delete_cache(pks)
+            ids = Endpoint.objects\
+                          .filter(animal_group__experiment__study=self.id)\
+                          .values_list('id', flat=True)
+            Endpoint.d_response_delete_cache(ids)
         elif self.study_type == 1:
             # clear assessed outcome endpoints cache
             AssessedOutcome = get_model('epi', 'AssessedOutcome')
-            pks = AssessedOutcome.objects\
-                    .filter(exposure__study_population__study=self.pk)\
-                    .values_list('pk', flat=True)
-            AssessedOutcome.d_response_delete_cache(pks)
+            ids = AssessedOutcome.objects\
+                    .filter(exposure__study_population__study=self.id)\
+                    .values_list('id', flat=True)
+            AssessedOutcome.delete_caches(ids)
         elif self.study_type == 4:
             # clear MetaResult endpoints cache
             MetaResult = get_model('epi', 'MetaResult')
-            pks = MetaResult.objects\
-                            .filter(protocol__study=self.pk)\
-                            .values_list('pk', flat=True)
-            MetaResult.delete_caches(pks)
+            ids = MetaResult.objects\
+                            .filter(protocol__study=self.id)\
+                            .values_list('id', flat=True)
+            MetaResult.delete_caches(ids)
 
     @classmethod
     def save_new_from_reference(cls, reference, attrs):
@@ -527,14 +527,6 @@ class StudyQuality(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
-
-    def save(self, *args, **kwargs):
-        super(StudyQuality, self).save(*args, **kwargs)
-        Endpoint = get_model('animal', 'Endpoint')
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__experiment__study__qualities=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
 
     @staticmethod
     def build_export_from_json_header():

@@ -1007,7 +1007,6 @@ class Endpoint(BaseEndpoint):
             logging.info('using cache: {cache_name}'.format(cache_name=cache_name))
         else:
             d = {}
-            d['endpoint_type'] = 'bioassay'
 
             # study details
             d['study'] = self.animal_group.experiment.study.get_json(json_encode=False)

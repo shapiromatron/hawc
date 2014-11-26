@@ -99,6 +99,7 @@ class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
     assessed_outcome = serializers.PrimaryKeyRelatedField()
     exposure_group = ExposureGroupSerializer()
     p_value_text = serializers.CharField(source='p_value_text', read_only=True)
+    isMainFinding = serializers.CharField(source='isMainFinding', read_only=True)
 
     class Meta:
         model = models.AssessedOutcomeGroup
@@ -108,7 +109,6 @@ class AssessedOutcomeSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     assessment = serializers.PrimaryKeyRelatedField()
     exposure = ExposureSerializer()
-    endpoint_type = serializers.CharField(source='endpoint_type', read_only=True)
     groups = AssessedOutcomeGroupSerializer(many=True)
     main_finding = serializers.PrimaryKeyRelatedField()
     adjustment_factors = FactorSerializer()
