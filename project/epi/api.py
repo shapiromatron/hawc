@@ -5,8 +5,7 @@ from rest_framework.response import Response
 
 from api.permissions import AssessmentLevelPermissions, get_permitted_assessment
 
-from . import models
-from . import serializers
+from . import models, serializers
 
 
 class MetaResult(viewsets.ReadOnlyModelViewSet):
