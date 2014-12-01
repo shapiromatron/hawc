@@ -496,6 +496,9 @@ class DoseGroup(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    class Meta:
+        ordering = ('dose_units', 'dose_group_id')
+
     def save(self, *args, **kwargs):
         super(DoseGroup, self).save(*args, **kwargs)
         endpoint_pks = list(Endpoint.objects.all()
@@ -1335,12 +1338,15 @@ class EndpointGroup(models.Model):
 
     def getStdev(self, variance_type=None):
         """ Return the stdev of an endpoint-group, given the variance type. """
+        if not hasattr(self, "_stdev"):
 
-        # don't hit DB unless we need to
-        if variance_type is None:
-            variance_type = self.endpoint.variance_type
+            # don't hit DB unless we need to
+            if variance_type is None:
+                variance_type = self.endpoint.variance_type
 
-        return EndpointGroup.stdev(variance_type, self.variance, self.n)
+            self._stdev = EndpointGroup.stdev(variance_type, self.variance, self.n)
+
+        return self._stdev
 
     @staticmethod
     def percentControl(data_type, egs):

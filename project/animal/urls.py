@@ -1,6 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'endpoint', api.Endpoint, base_name="endpoint")
 
 
 urlpatterns = patterns('animal.views',
@@ -79,4 +85,6 @@ urlpatterns = patterns('animal.views',
     url(r'^assessment/(?P<pk>\d+)/species/create/$', views.SpeciesCreate.as_view(), name='species_create'),
     url(r'^assessment/(?P<pk>\d+)/strain/create/$', views.StrainCreate.as_view(), name='strain_create'),
     url(r'^assessment/(?P<pk>\d+)/dose-units/create/$', views.DoseUnitsCreate.as_view(), name='dose_units_create'),
+
+    url(r'^api/', include(router.urls))
 )
