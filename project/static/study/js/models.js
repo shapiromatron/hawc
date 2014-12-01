@@ -17,7 +17,7 @@ StudyVersion.field_order = ['short_citation', 'citation', 'hero_id',
 var Study = function(data){
     this.data = data;
     this.study_quality = [];
-    if(this.data.study_quality) this.unpack_study_quality();
+    if(this.data.qualities) this.unpack_study_quality();
 };
 
 Study.get_object = function(pk, callback){
@@ -37,7 +37,7 @@ Study.prototype.unpack_study_quality = function(){
         gradient_colors = d3.scale.linear()
             .domain([0, 1, 2, 3, 4])
             .range(SQColors);
-    this.data.study_quality.forEach(function(v, i){
+    this.data.qualities.forEach(function(v, i){
         v.score_color = gradient_colors(v.score);
         v.score_text_color = String.contrasting_color(v.score_color);
         v.score_text = StudyQuality.score_text[v.score];
@@ -46,13 +46,13 @@ Study.prototype.unpack_study_quality = function(){
 
     //construct dataset in structure for a donut plot
     this.study_quality = d3.nest()
-                            .key(function(d){return d.data.metric.domain;})
+                            .key(function(d){return d.data.metric.domain.name;})
                             .entries(study_quality);
 
     // now generate a score for each
     this.study_quality.forEach(function(v, i){
-        v.domain = v.values[0].data.metric.domain;
-        v.domain_text = v.values[0].data.metric.domain_text;
+        v.domain = v.values[0].data.metric.domain.id;
+        v.domain_text = v.values[0].data.metric.domain.name;
         delete v.key;
         v.criteria = v.values;
         delete v.values;
@@ -77,11 +77,11 @@ Study.prototype.unpack_study_quality = function(){
         }
     }
 
-    delete this.data.study_quality;
+    delete this.data.qualities;
 };
 
 Study.prototype.build_breadcrumbs = function(){
-    var urls = [{ url: this.data.study_url, name: this.data.short_citation }];
+    var urls = [{ url: this.data.url, name: this.data.short_citation }];
     return HAWCUtils.build_breadcrumbs(urls);
 };
 
@@ -93,9 +93,9 @@ Study.prototype.build_details_table = function(div){
     var tbl = new DescriptiveTable();
     tbl.add_tbody_tr("Study type", this.data.study_type);
     tbl.add_tbody_tr("Full citation", this.data.full_citation);
-    tbl.add_tbody_tr("Abstract", this.data.reference.abstract);
+    tbl.add_tbody_tr("Abstract", this.data.abstract);
     tbl.add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
-    tbl.add_tbody_tr("Literature review tags", this._get_tags_ul());
+    tbl.add_tbody_tr_list("Literature review tags", this.data.tags.map(function(d){return d.name;}));
     tbl.add_tbody_tr("COI reported", this.data.coi_reported);
     tbl.add_tbody_tr("COI details", this.data.coi_details);
     tbl.add_tbody_tr("Funding source", this.data.funding_source);
@@ -106,23 +106,10 @@ Study.prototype.build_details_table = function(div){
     $(div).html(tbl.get_tbl());
 };
 
-Study.prototype._get_tags_ul = function(){
-    var ul = $('<ul>');
-
-    this.data.reference.tags_text.forEach(function(v){
-        ul.append($('<li>').text(v));
-    });
-
-    if (ul.children().length===0){
-        ul.append($('<li><').html('<i>None (currently untagged)</i>'));
-    }
-    return ul;
-};
-
 Study.prototype._get_identifiers_hyperlinks_ul = function(){
     var ul = $('<ul>');
 
-    this.data.reference.identifiers.forEach(function(v){
+    this.data.identifiers.forEach(function(v){
         if (v.url !== "None"){
             ul.append($('<li>').append(
                 $('<a>').attr('href', v.url).attr('target', '_blank').text(v.database)));
@@ -130,7 +117,7 @@ Study.prototype._get_identifiers_hyperlinks_ul = function(){
     });
 
     if (ul.children().length===0){
-            ul.append($('<li>').text('Manually imported (no hyperlinks)'));
+            ul.append($('<li>').text('Manually imported (no hyperlink)'));
     }
 
     return ul;
@@ -155,7 +142,7 @@ var StudyQuality = function(study, data){
     this.study = study;
     this.data = data;
     this.data.metric.created = new Date(this.data.metric.created);
-    this.data.metric.changed = new Date(this.data.metric.changed);
+    this.data.metric.last_updated = new Date(this.data.metric.last_updated);
 };
 
 StudyQuality.score_text = {
@@ -169,11 +156,11 @@ StudyQuality.prototype.build_details_div = function(options){
     var content = [];
     options = options || {};
     if (options.show_study){
-        content.push('<h3><a href="{0}">{1}</a>: {2}</h3>'.printf(this.study.data.study_url,
+        content.push('<h3><a href="{0}">{1}</a>: {2}</h3>'.printf(this.study.data.url,
                                                                   this.study.data.short_citation,
-                                                                  this.data.metric.domain_text));
+                                                                  this.data.metric.domain.name));
     } else {
-        content.push('<h3>{0}</h3>'.printf(this.data.metric.domain_text));
+        content.push('<h3>{0}</h3>'.printf(this.data.metric.domain.name));
     }
     content.push('<h4>{0}</h4>'.printf(this.data.metric.metric),
                  '<div class="help-block">{0}</div>'.printf(this.data.metric.description),
@@ -214,11 +201,11 @@ StudyQuality.build_study_comparison_div = function(sqs){
     // construct a div which compares one metric across multiple studies.
     // This expects an array of study-quality objects where each object is
     // a different study but ALL objects are the same metric.
-    var content = ['<hr><h3>{0}</h3>'.printf(sqs[0].data.metric.domain_text),
+    var content = ['<hr><h3>{0}</h3>'.printf(sqs[0].data.metric.domain.name),
                    '<h4>{0}</h4>'.printf(sqs[0].data.metric.metric),
                    '<div class="help-block">{0}</div>'.printf(sqs[0].data.metric.description)];
     sqs.forEach(function(sq){
-        content.push('<h4><a href="{0}">{1}</a></h4>'.printf(sq.study.data.study_url, sq.study.data.short_citation),
+        content.push('<h4><a target="_blank" href="{0}">{1}</a></h4>'.printf(sq.study.data.url, sq.study.data.short_citation),
                      sq._build_details_div());
     });
     return $('<div class="row-fluid"></div>').html(content);
@@ -231,9 +218,9 @@ StudyQuality.build_metric_comparison_div = function(sqs){
     var domain_text,
         content = [];
     sqs.forEach(function(sq){
-        if(sq.data.metric.domain_text !== domain_text){
-            content.push('<hr><h3>{0}</h3>'.printf(sq.data.metric.domain_text));
-            domain_text = sq.data.metric.domain_text;
+        if(sq.data.metric.domain.name !== domain_text){
+            content.push('<hr><h3>{0}</h3>'.printf(sq.data.metric.domain.name));
+            domain_text = sq.data.metric.domain.name;
         }
         content.push('<h4>{0}</h4>'.printf(sq.data.metric.metric),
                      '<div class="help-block">{0}</div>'.printf(sqs[0].data.metric.description),
@@ -610,7 +597,7 @@ StudyQualityAggregation.prototype.build_metrics_dataset = function(){
     ds.forEach(function(v){
         v.rename_property('key', 'domain');
         v.rename_property('values', 'study_qualities');
-        v.domain_text = v.study_qualities[0].data.metric.domain_text;
+        v.domain_text = v.study_qualities[0].data.metric.domain.name;
         var possible_score = d3.sum(v.study_qualities.map(function(v){return (v.data.score>0)?4:0;})),
             score = d3.sum(v.study_qualities.map(function(v){return v.data.score;}));
         v.score = (possible_score>0)?d3.round(score/possible_score*100, 2):0;

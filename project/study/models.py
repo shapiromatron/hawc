@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from collections import OrderedDict
 
@@ -13,7 +12,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_detail
+from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_detail, SerializerHelper
 from lit.models import Reference
 
 
@@ -135,30 +134,7 @@ class Study(Reference):
         return self.assessment
 
     def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {"study_url": self.get_absolute_url()}
-        fields = ('pk', 'full_citation', 'short_citation',
-                  'coi_details', 'funding_source',
-                  'study_identifier', 'contact_author', 'ask_author',
-                  'summary', 'published')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['study_type'] = self.get_study_type_display()
-        d['study_quality'] = []
-        d['coi_reported'] = self.get_coi_reported_display()
-        for sq in self.qualities.all().select_related('metric'):
-            d['study_quality'].append(sq.get_json(json_encode=False))
-
-        d['reference'] = self.reference_ptr.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     def get_attachments_json(self):
         d = []
@@ -449,23 +425,6 @@ class StudyQualityMetric(models.Model):
     def get_assessment(self):
         return self.domain.get_assessment()
 
-    def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {}
-        fields = ('id', 'metric', 'description', 'created', 'last_updated')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['domain'] = self.domain.pk
-        d['domain_text'] = self.domain.__unicode__()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     @classmethod
     def get_metrics_for_assessment(self, assessment):
         return StudyQualityMetric.objects.filter(
@@ -508,25 +467,10 @@ class StudyQuality(models.Model):
         unique_together = (("study", "metric"),)
 
     def __unicode__(self):
-        return '{study}: {metric}'.format(study=self.study, metric=self.metric)
+        return '{}: {}'.format(self.study, self.metric)
 
     def get_absolute_url(self):
         return reverse('study:sq_detail', args=[str(self.study.pk)])
-
-    def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {'score_description': self.get_score_display()}
-        fields = ('pk', 'score', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['metric'] = self.metric.get_json(json_encode=False)
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
 
     @staticmethod
     def build_export_from_json_header():

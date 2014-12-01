@@ -1,7 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
 
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'study', api.Study, base_name="study")
 
 urlpatterns = patterns('',
     #assessment study-quality
@@ -44,5 +49,7 @@ urlpatterns = patterns('',
 
     #aggregated study-quality
     url(r'^assessment/(?P<pk>\d+)/study-qualities/heatmap/$', views.SQAggHeatmap.as_view(), name='sq_agg_heatmap'),
-    url(r'^assessment/(?P<pk>\d+)/study-qualities/stacked/$', views.SQAggStacked.as_view(), name='sq_agg_stacked_bars')
+    url(r'^assessment/(?P<pk>\d+)/study-qualities/stacked/$', views.SQAggStacked.as_view(), name='sq_agg_stacked_bars'),
+
+    url(r'^api/', include(router.urls))
 )

@@ -706,8 +706,8 @@ class Endpoint(BaseEndpoint):
 
         # build-base row which is endpoint-group independent
         base = [d['study']['short_citation'],
-                d['study']['study_url'],
-                d['study']['pk'],
+                d['study']['url'],
+                d['study']['id'],
                 d['study']['published'],
                 d['experiment'],
                 d['experiment_url'],
