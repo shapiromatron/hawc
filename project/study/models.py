@@ -12,7 +12,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_detail, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, excel_export_detail, SerializerHelper
 from lit.models import Reference
 
 
@@ -240,7 +240,7 @@ class Study(Reference):
     @staticmethod
     def build_export_from_json_header():
         # used for full-export/import functionalities
-        return ('study-pk',
+        return ('study-id',
                 'study-url',
                 'study-short_citation',
                 'study-full_citation',
@@ -270,45 +270,6 @@ class Study(Reference):
                 dic['ask_author'],
                 dic['summary'],
                 dic['published'])
-
-    @staticmethod
-    def study_bias_excel_export(queryset):
-        # full export of study bias, designed for import/export of
-        # data using a flat-xls file.
-        sheet_name = 'study-bias'
-        headers = Study.excel_export_header()
-        data_rows_func = Study.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def excel_export_header():
-        # build export header column names for full export
-        lst = []
-        lst.extend(Study.build_export_from_json_header())
-        lst.extend(StudyQuality.build_export_from_json_header())
-        return lst
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-        # build export data rows for full-export
-        def try_float(str):
-            try:
-                return float(str)
-            except:
-                return str
-
-        i = 0
-        for study in queryset:
-            d = study.get_json(json_encode=False)
-            fields = []
-            fields.extend(Study.build_flat_from_json_dict(d))
-            # build a row for each aog
-            for sq in d['study_quality']:
-                i+=1
-                new_fields = list(fields)  # clone
-                new_fields.extend(StudyQuality.build_flat_from_json_dict(sq))
-                for j, val in enumerate(new_fields):
-                    ws.write(i, j, try_float(val))
 
     @classmethod
     def get_docx_template_context(cls, queryset):
@@ -473,30 +434,34 @@ class StudyQuality(models.Model):
         return reverse('study:sq_detail', args=[str(self.study.pk)])
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('sq-domain-pk',
-                'sq-domain_text',
-                'sq-metric-pk',
-                'sq-metric-metric',
-                'sq-metric-description',
-                'sq-pk',
-                'sq-notes',
-                'sq-score_description',
-                'sq-score')
+    def flat_complete_header_row():
+        return (
+            'sq-domain_id',
+            'sq-domain_name',
+            'sq-domain_description',
+            'sq-metric_id',
+            'sq-metric_metric',
+            'sq-metric_description',
+            'sq-id',
+            'sq-notes',
+            'sq-score_description',
+            'sq-score'
+        )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['metric']['domain'],
-                dic['metric']['domain_text'],
-                dic['metric']['id'],
-                dic['metric']['metric'],
-                dic['metric']['description'],
-                dic['pk'],
-                dic['notes'],
-                dic['score_description'],
-                dic['score'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['metric']['domain']['id'],
+            ser['metric']['domain']['name'],
+            ser['metric']['domain']['description'],
+            ser['metric']['id'],
+            ser['metric']['metric'],
+            ser['metric']['description'],
+            ser['id'],
+            ser['notes'],
+            ser['score_description'],
+            ser['score']
+        )
 
 
 reversion.register(Study)

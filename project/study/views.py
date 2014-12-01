@@ -17,8 +17,7 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseList, GenerateReport)
 
-from . import models
-from . import forms
+from . import models, forms, exports
 
 
 class StudyList(BaseList):
@@ -54,22 +53,18 @@ class StudyReport(GenerateReport):
         return self.model.get_docx_template_context(queryset)
 
 
-class StudyBiasExport(BaseList):
+class StudyBiasExport(StudyList):
     """
     Full XLS data export for the study bias.
     """
-    parent_model = Assessment
-    model = models.Study
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        xls = self.model.study_bias_excel_export(self.object_list)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        self.object_list = super(StudyBiasExport, self).get_queryset()
+        exporter = exports.StudyQualityFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-study-bias'.format(self.assessment),
+                sheet_name='study-bias')
+        return exporter.build_response()
 
 
 class StudyCreateFromReference(BaseCreate):
