@@ -586,8 +586,8 @@ class Endpoint(BaseEndpoint):
         blank=True,
         null=True)
     observation_time_units = models.PositiveSmallIntegerField(
-         default=0,
-         choices=OBSERVATION_TIME_UNITS)
+        default=0,
+        choices=OBSERVATION_TIME_UNITS)
     data_location = models.CharField(
         max_length=128,
         blank=True,
@@ -1328,15 +1328,16 @@ class EndpointGroup(models.Model):
 
     @classmethod
     def getIndividuals(cls, endpoint, egs):
-            individuals = cls.objects.filter(endpoint=endpoint.id)\
-                             .select_related('endpoint_group__individual_data')\
-                             .values('dose_group_id', 'individual_data__response')
-            for i, eg in enumerate(egs):
-                eg['individual_responses'] = [
-                        v['individual_data__response']
-                        for v in individuals
-                        if v['dose_group_id'] == eg['dose_group_id']
-                    ]
+        individuals = cls.objects.filter(endpoint=endpoint.id)\
+                         .select_related('endpoint_group__individual_data')\
+                         .values('dose_group_id', 'individual_data__response')
+
+        for i, eg in enumerate(egs):
+            eg['individual_responses'] = [
+                    v['individual_data__response']
+                    for v in individuals
+                    if v['dose_group_id'] == eg['dose_group_id']
+                ]
 
     @staticmethod
     def stdev(variance_type, variance, n):

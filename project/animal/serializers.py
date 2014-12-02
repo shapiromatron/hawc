@@ -6,6 +6,7 @@ from assessment.serializers import EffectTagsSerializer
 
 from utils.helper import SerializerHelper
 from study.serializers import StudySerializer
+from bmd.serializers import BMDModelRunSerializer
 
 from . import models
 
@@ -96,14 +97,23 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['endpoint_group'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['endpoint_group'])
 
+        # get individual animal data
         if instance.individual_animal_data:
             models.EndpointGroup.getIndividuals(instance, ret['endpoint_group'])
+
+        # get BMD
+        ret['BMD'] = None
+        try:
+            model = instance.BMD_session.latest().selected_model
+            if model is not None:
+                ret['BMD'] = BMDModelRunSerializer(model).data
+        except instance.BMD_session.model.DoesNotExist:
+            pass
 
         return ret
 
     class Meta:
         model = models.Endpoint
-
 
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

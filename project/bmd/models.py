@@ -233,6 +233,9 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
             except:
                 pass
 
+    def get_assessment(self):
+        return self.BMD_session.endpoint.get_assessment()
+
     def __unicode__(self):
         return self.model_name
 
