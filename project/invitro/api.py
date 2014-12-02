@@ -12,6 +12,7 @@ class IVEndpoint(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     model = models.IVEndpoint
     serializer_class = serializers.IVEndpointSerializer
+    queryset = models.IVEndpoint.objects.all()
 
     def list(self, request):
         # override list to only return meta-results for a single assessment

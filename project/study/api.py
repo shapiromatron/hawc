@@ -11,6 +11,7 @@ from . import models, serializers
 class Study(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     model = models.Study
+    queryset = models.Study.objects.all()
     serializer_class = serializers.VerboseStudySerializer
 
     def list(self, request):

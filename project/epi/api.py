@@ -12,6 +12,7 @@ class MetaResult(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     model = models.MetaResult
     serializer_class = serializers.MetaResultSerializer
+    queryset = models.MetaResult.objects.all()
 
     def list(self, request):
         # override list to only return meta-results for a single assessment
@@ -26,6 +27,7 @@ class AssessedOutcome(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     model = models.AssessedOutcome
     serializer_class = serializers.AssessedOutcomeSerializer
+    queryset = models.AssessedOutcome.objects.all()
 
     def list(self, request):
         # override list to only return assessed-outcomes for a single assessment

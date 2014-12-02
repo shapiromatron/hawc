@@ -6,40 +6,54 @@ from utils.helper import SerializerHelper
 from . import models
 
 
+class StudyQualityDomainSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.StudyQualityDomain
+
+
+class StudyQualityMetricSerializer(serializers.ModelSerializer):
+    domain = StudyQualityDomainSerializer(read_only=True)
+
+    class Meta:
+        model = models.StudyQualityMetric
+
+
 class StudyQualitySerializer(serializers.ModelSerializer):
-    study = serializers.PrimaryKeyRelatedField()
-    score_description = serializers.CharField(source='get_score_display', read_only=True)
+    study = serializers.PrimaryKeyRelatedField(read_only=True)
+    metric = StudyQualityMetricSerializer(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(StudyQualitySerializer, self).to_representation(instance)
+        ret['score_description'] = instance.get_score_display()
+        return ret
 
     class Meta:
         model = models.StudyQuality
-        depth = 2
 
 
 class StudySerializer(serializers.ModelSerializer):
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    def transform_study_type(self, obj, value):
-        return obj.get_study_type_display()
-
-    def transform_coi_reported(self, obj, value):
-        return obj.get_coi_reported_display()
+    def to_representation(self, instance):
+        ret = super(StudySerializer, self).to_representation(instance)
+        ret['study_type'] = instance.get_study_type_display()
+        ret['coi_reported'] = instance.get_coi_reported_display()
+        ret['url'] = instance.get_absolute_url()
+        return ret
 
     class Meta:
         model = models.Study
-        depth = 0
 
 
 class VerboseStudySerializer(StudySerializer):
-    assessment = serializers.PrimaryKeyRelatedField()
-    searches = serializers.PrimaryKeyRelatedField(many=True)
-    qualities = StudyQualitySerializer(many=True)
+    assessment = serializers.PrimaryKeyRelatedField(read_only=True)
+    searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    qualities = StudyQualitySerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
     class Meta:
         model = models.Study
-        depth = 1
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

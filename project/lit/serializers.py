@@ -5,23 +5,22 @@ from . import models
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='get_url', read_only=True)
 
-    def transform_database(self, obj, value):
-        return obj.get_database_display()
+    def to_representation(self, instance):
+        ret = super(IdentifiersSerializer, self).to_representation(instance)
+        ret['database'] = instance.get_database_display()
+        ret['url'] = instance.get_url()
+        return ret
 
     class Meta:
         model = models.Identifiers
 
 
-class ReferenceTagsSerializer(serializers.WritableField):
-    # http://blog.pedesen.de/2013/07/06/Using-django-rest-framework-with-tagged-items-django-taggit/
+class ReferenceTagsSerializer(serializers.ModelSerializer):
 
-    def from_native(self, data):
-        raise ParseError("Write-not implemented")
+    def to_internal_value(self, data):
+        raise ParseError("Not implemented!")
 
-    def to_native(self, obj):
-        if type(obj) is not list:
-            return [{"id": tag.id, "name": tag.name} for tag in obj.all()]
-        return obj
-
+    def to_representation(self, obj):
+        # obj is a model-manager in this case; convert to list to serialize
+        return list(obj.values('id', 'name'))

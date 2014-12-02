@@ -21,7 +21,6 @@
         <li><a href="{% url 'documentation' %}">Documentation</a></li>
         <li><a href="{% url 'portal' %}">Portal</a></li>
         <li><a href="{% url 'user:settings' %}">Settings</a></li>
-        <li><a href="{% url 'api_root' %}">API</a></li>
         {% if user.is_staff %}
           <li class="divider"></li>
           <li><a href="{%url 'admin:index' %}">Admin</a></li>

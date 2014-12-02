@@ -11,7 +11,7 @@ django-selectable==0.8.0
 django-static-precompiler==0.7
 django-taggit==0.12.2
 django-treebeard==2.0
-djangorestframework==2.4.4
+djangorestframework==3.0.0
 docutils==0.12
 kombu==3.0.21
 lxml==3.3.5

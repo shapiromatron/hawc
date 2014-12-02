@@ -17,12 +17,12 @@ StudyPopulation.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Country", this.data.country);
     tbl.add_tbody_tr("State", this.data.state);
     tbl.add_tbody_tr("Region", this.data.region);
-    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria.map(function(d){return d.description;}));
-    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria.map(function(d){return d.description;}));
-    tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria.map(function(d){return d.description;}));
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
+    tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria);
     tbl.add_tbody_tr("N", this.data.n);
     tbl.add_tbody_tr("Sex", this.data.sex);
-    tbl.add_tbody_tr_list("Ethnicities", this.data.ethnicity.map(function(d){return d.ethnicity;}));
+    tbl.add_tbody_tr_list("Ethnicities", this.data.ethnicity);
     tbl.add_tbody_tr("Fraction male", this.data.fraction_male,
                  {calculated: this.data.fraction_male_calculated});
     tbl.add_tbody_tr("Age description", this.data.age_description);
@@ -91,44 +91,31 @@ AssessedOutcome.prototype.build_ao_table = function(div){
 };
 
 AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
-    var dict_adj = {}, dict_conf = {}, i, key, item,
-        adjustments = [], confounders = [], content = ['<i>None</i>'];
 
-    this.data.confounders_considered.forEach(function(d){
-        dict_conf[d.id] = d.description;
-    });
+    var adjs = _.clone(this.data.adjustment_factors),
+        confs = _.clone(this.data.confounders_considered),
+        content = ['<i>None</i>'],
+        tr = $('<tr>');
 
-    this.data.adjustment_factors.forEach(function(d){
-        dict_adj[d.id] = d.description;
-    });
-
-
-    //  remove adjustments from considerations
-    for(key in dict_conf){
-        if(dict_adj[key]){
-            delete dict_conf[key];
-        } else {
-            dict_conf[key] = dict_conf[key] + "<sup>a</sup>";
+    for (var i = confs.length-1; i>=0; i--){
+        if (adjs.indexOf(confs[i])>=0){
+            confs.splice(i, 1);   // remove from array
+        } else{
+            confs[i] = confs[i] + "<sup>a</sup>";
         }
-    }
+    };
 
-    // map to get captions
-    Object.keys(dict_adj).forEach(function(v){adjustments.push(dict_adj[v]);});
-    Object.keys(dict_conf).forEach(function(v){confounders.push(dict_conf[v]);});
-
-    // print
-    if (adjustments.length>0 || confounders.length>0){
+    if (adjs.length>0 || confs.length>0){
         content = [$('<ul>')
-                    .append(adjustments.map(function(v){return '<li>{0}</li>'.printf(v);}))
-                    .append(confounders.map(function(v){return '<li>{0}</li>'.printf(v);}))];
-        if(confounders.length>0){
+                    .append(adjs.map(function(v){return '<li>{0}</li>'.printf(v);}))
+                    .append(confs.map(function(v){return '<li>{0}</li>'.printf(v);}))];
+        if(confs.length>0){
             content.push("<p><sup>a</sup> Examined but not included in final model.</p>");
         }
     }
 
-    var tr = $('<tr></tr>')
-                .append('<th>{0}</th>'.printf("Adjustment factors"))
-                .append($('<td></td>').append(content));
+    tr.append('<th>{0}</th>'.printf("Adjustment factors"))
+      .append($('<td></td>').append(content));
 
     tbody.append(tr);
 };
@@ -283,9 +270,7 @@ AssessedOutcomeGroup.prototype.build_exposure_group_table = function(div){
     add_tbody_tr("Demographic N", this.data.exposure_group.n);
     add_tbody_tr("Sex", this.data.exposure_group.sex);
 
-    if(this.data.exposure_group.ethnicity.length>0)
-        add_tbody_tr_list("Ethnicities",
-                          this.data.exposure_group.ethnicity.map(function(d){return d.ethnicity;}));
+    add_tbody_tr_list("Ethnicities", this.data.exposure_group.ethnicity);
 
     add_tbody_tr("Fraction male", this.data.exposure_group.fraction_male,
                                   this.data.exposure_group.fraction_male_calculated);
@@ -591,7 +576,7 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Exposure name", this.data.exposure_name);
     tbl.add_tbody_tr("Exposure details", this.data.exposure_details);
     tbl.add_tbody_tr("Number of studies", this.data.number_studies);
-    tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors.map(function(v){return v.description;}));
+    tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors);
     tbl.add_tbody_tr("N", this.data.n);
     tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text(this.data));
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
@@ -647,7 +632,6 @@ var SingleStudyResult = function(data){
 };
 
 SingleStudyResult.prototype.build_table_row = function(tbody){
-    console.log(this)
     var self=this,
         addIfExists = function(v){return (v) ? v : "-";},
         tr = $('<tr></tr>').appendTo(tbody),

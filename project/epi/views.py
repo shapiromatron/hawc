@@ -69,7 +69,7 @@ class StudyPopulationJSON(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return HttpResponse(self.object.get_json(get_parent=True, json_encode=True),
+        return HttpResponse(self.object.get_json(json_encode=True),
                             content_type="application/json")
 
 
