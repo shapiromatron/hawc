@@ -268,11 +268,6 @@ class BaseEndpoint(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    @staticmethod
-    def clear_cache():
-        pks = BaseEndpoint.objects.all().values_list('pk', flat=True)
-        BaseEndpoint.d_response_delete_cache(pks)
-
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
         keys = ['endpoint-json-{pk}'.format(pk=pk) for pk in endpoint_pks]
