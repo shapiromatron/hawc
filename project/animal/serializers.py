@@ -72,7 +72,7 @@ class UncertaintyFactorEndpointSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(UncertaintyFactorEndpointSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
-        ret['uf_type_pretty'] = instance.get_uf_type_display()
+        ret['uf_type_verbose'] = instance.get_uf_type_display()
         return ret
 
     class Meta:

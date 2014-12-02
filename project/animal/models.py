@@ -1477,16 +1477,12 @@ class UncertaintyFactorAbstract(models.Model):
     def __unicode__(self):
         return self.get_uf_type_display()
 
-    @property
-    def uf_type_pretty(self):
-        return self.get_uf_type_display()
-
     def get_absolute_url(self):
         return reverse('animal:uf_detail', args=[self.pk])
 
     def get_dictionary(self):
         d = {}
-        fields = ['pk', 'uf_type', 'value', 'description', 'uf_type_pretty']
+        fields = ['pk', 'uf_type', 'value', 'description']
         for field in fields:
             d[field] = getattr(self, field)
         d['url'] = self.get_absolute_url()
