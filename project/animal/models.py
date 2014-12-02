@@ -1326,6 +1326,18 @@ class EndpointGroup(models.Model):
                         str(float(100.*(self.incidence/self.n)))])
         return row
 
+    @classmethod
+    def getIndividuals(cls, endpoint, egs):
+            individuals = cls.objects.filter(endpoint=endpoint.id)\
+                             .select_related('endpoint_group__individual_data')\
+                             .values('dose_group_id', 'individual_data__response')
+            for i, eg in enumerate(egs):
+                eg['individual_responses'] = [
+                        v['individual_data__response']
+                        for v in individuals
+                        if v['dose_group_id'] == eg['dose_group_id']
+                    ]
+
     @staticmethod
     def stdev(variance_type, variance, n):
         # calculate stdev given re
@@ -1420,6 +1432,9 @@ class IndividualAnimal(models.Model):
     response = models.DecimalField(
         max_digits=50,
         decimal_places=25)
+
+    def __unicode__(self):
+        return str(self.response)
 
     def save(self, *args, **kwargs):
         super(IndividualAnimal, self).save(*args, **kwargs)

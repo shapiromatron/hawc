@@ -81,10 +81,15 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret['additional_fields'] = json.loads(instance.additional_fields)
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['endpoint_group'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['endpoint_group'])
+
+        if instance.individual_animal_data:
+            models.EndpointGroup.getIndividuals(instance, ret['endpoint_group'])
+
         return ret
 
     class Meta:
         model = models.Endpoint
+
 
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
