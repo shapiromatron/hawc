@@ -1349,6 +1349,11 @@ class EndpointGroup(models.Model):
         return self._stdev
 
     @staticmethod
+    def getStdevs(variance_type, egs):
+        for eg in egs:
+            eg['stdev'] = EndpointGroup.stdev(variance_type, eg['variance'], eg['n'])
+
+    @staticmethod
     def percentControl(data_type, egs):
         #
         # Expects a dictionary of endpoint groups and the endpoint data-type.
