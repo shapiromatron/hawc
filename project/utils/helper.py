@@ -179,6 +179,7 @@ class SerializerHelper(object):
         # serialize data and get json-representation
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized)
+        serialized = dict(serialized)  # for pickling
 
         logging.info('setting cache: {}'.format(name))
         cache.set_many({name: serialized, json_name: json_str})

@@ -505,9 +505,7 @@ class SQAggHeatmap(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super(SQAggHeatmap, self).get_context_data(**kwargs)
-        jsons = []
-        for study in self.object_list:
-            jsons.append(study.get_json(json_encode=False))
+        jsons = [study.get_json(json_encode=False) for study in self.object_list]
         context['object_list_json'] = json.dumps(jsons, cls=HAWCDjangoJSONEncoder)
         context['chart_type'] = 'heatmap'
         return context
