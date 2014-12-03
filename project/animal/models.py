@@ -16,7 +16,7 @@ from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
 from bmd.models import BMD_session
 from utils.helper import (HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file,
-                          HAWCdocx, excel_export_detail)
+                          HAWCdocx, excel_export_detail, SerializerHelper)
 
 
 class Species(models.Model):
@@ -990,128 +990,18 @@ class Endpoint(BaseEndpoint):
             bmd_session.docx_print(report, heading_level=heading_level+1)
 
     @staticmethod
-    def d_responses(queryset, dose_pk):
+    def d_responses(queryset, dose_pk, json_encode=True):
         """
         Return a list of queryset responses with the specified dosing protocol
         """
-        d_response_list = []
-        for endpoint in queryset:
-            d_response_list.append(endpoint.d_response(json_encode=False, dose_pk=dose_pk))
-        return json.dumps(d_response_list, cls=HAWCDjangoJSONEncoder)
-
-    def d_response(self, json_encode=True, dose_pk=None):
-        """
-        Javascript-object style format endpoint object. Contains all endpoint-groups,
-        associated doses and dose-groups and BMD modeling results.
-        """
-        cache_name = 'endpoint-json-{pk}'.format(pk=self.pk)
-        d = cache.get(cache_name)
-        if d:
-            logging.info('using cache: {cache_name}'.format(cache_name=cache_name))
-        else:
-            d = {}
-
-            # study details
-            d['study'] = self.animal_group.experiment.study.get_json(json_encode=False)
-
-            # experiment details
-            d['experiment'] = self.animal_group.experiment.__unicode__()
-            d['experiment_url'] = self.animal_group.experiment.get_absolute_url()
-
-            # animal group details
-            d['animal_group'] = unicode(self.animal_group)
-            d['animal_group_url'] = self.animal_group.get_absolute_url()
-            d['species'] = unicode(self.animal_group.species)
-            d['strain'] = unicode(self.animal_group.strain)
-            d['sex'] = self.animal_group.get_sex_display()
-
-            # endpoint details
-            fields = ['pk', 'name', 'assessment_id',
-                      'system', 'organ', 'effect', 'observation_time',
-                      'data_location', 'response_units', 'data_type', 'variance_type',
-                      'variance_name', 'NOAEL', 'LOAEL', 'FEL',
-                      'data_reported', 'data_extracted', 'values_estimated',
-                      'dataset_increasing', 'individual_animal_data',
-                      'statistical_test', 'trend_value', 'results_notes',
-                      'endpoint_notes']
-            for field in fields:
-                d[field] = getattr(self, field)
-            d['url'] = self.get_absolute_url()
-            d['observation_time_units'] = self.get_observation_time_units_display()
-            d['monotonicity'] = self.get_monotonicity_display()
-            d['experiment_type'] = self.animal_group.experiment.get_type_display()
-            d['doses'] = self.get_doses_json(json_encode=False)
-            d['tags'] = list(self.effects.all().values('name', 'slug'))
-            d['additional_fields'] = json.loads(self.additional_fields)
-
-            # endpoint-group details
-            egs = self.get_endpoint_groups()
-            d['dr'] = list(egs.values('pk', 'dose_group_id', 'n', 'incidence',
-                                       'response', 'variance', 'significant',
-                                       'significance_level'))
-            for i, eg in enumerate(d['dr']):
-                eg['stdev'] = EndpointGroup.stdev(self.variance_type, eg['variance'], eg['n'])
-            EndpointGroup.percentControl(self.data_type, d['dr'])
-
-            # individual animal data
-            if self.individual_animal_data:
-                individuals = EndpointGroup.objects.filter(endpoint=self.pk).select_related('endpoint_group__individual_data').values('dose_group_id', 'individual_data__response')
-                for i, dr in enumerate(d['dr']):
-                    dr['individual_responses'] = [v['individual_data__response'] for v in individuals if v['dose_group_id'] == dr['dose_group_id']]
-
-            # BMD data
-            try:
-                d['BMD'] = self.get_bmds_session().get_selected_model(json_encode=False)
-            except:
-                d['BMD'] = None
-
-            if type(d['BMD']) is not dict: d['BMD'] = None
-
-            logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
-            cache.set(cache_name, d)
-
-        # Not cached without refactoring because this may depend on the dose
-        # primary key. TODO: Instead, grab all BMD doses for each units type,
-        # and then grab the correct one via javascript
-        try:
-            if dose_pk:
-                dose_index = None
-                for i, dose_value in enumerate(d['doses']):
-                    if (dose_value['units_id'] == dose_pk):
-                        dose_index = i
-                        break
-                if dose_index is None:
-                    raise Exception('Dose units not found')
-            else:
-                dose_index = 0  # by default, set dose equal to first dose value
-            d['dose_units'] = d['doses'][dose_index]['units']
-            d['dose_units_index'] = dose_index
-            d['dose_units_id'] = d['doses'][dose_index]['units_id']
-            for i, dose in enumerate(d['doses'][dose_index]['values']):
-                d['dr'][i]['dose'] = dose
-        except:
-            d['warnings'] = 'doses undefined'
-
-        #JSON-encoding differences
+        endpoints = [e.d_response(json_encode=False, dose_pk=dose_pk) for e in queryset]
         if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
+            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
         else:
-            return d
+            return endpoints
 
-    def d_response_ufs(self, json_encode=True, dose_pk=None):
-        """
-        Javascript-object style format endpoint object, but also includes
-        uncertainty factors associated with object.
-        """
-        d = self.d_response(json_encode=False, dose_pk=dose_pk)
-        ufs = UncertaintyFactorEndpoint.objects.filter(endpoint=self.pk)
-        d['ufs'] = []
-        for uf in ufs:
-            d['ufs'].append(uf.get_dictionary())
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def d_response(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_assessment(self):
         return self.assessment
@@ -1588,22 +1478,10 @@ class Aggregation(models.Model):
         return self.assessment
 
     def get_endpoints_json(self, json_encode=True):
-        # get all the endpoints with the proper dose-type
-        endpoints = []
-        for endpoint in self.endpoints.all().select_related('animal_group', 'animal_group__dosing_regime'):
-            endpoints.append(endpoint.d_response(json_encode=False, dose_pk=self.dose_units.pk))
-        if json_encode:
-            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
-        return endpoints
-
-    def get_endpoints_ufs_json(self, json_encode=True):
-        # get all the endpoints with the proper dose-type and uncertainty factors
-        endpoints = []
-        for endpoint in self.endpoints.all().select_related('animal_group', 'animal_group__dosing_regime'):
-            endpoints.append(endpoint.d_response_ufs(json_encode=False, dose_pk=self.dose_units.pk))
-        if json_encode:
-            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
-        return endpoints
+        return Endpoint.d_responses(
+                self.endpoints.all(),
+                dose_pk=self.dose_units_id,
+                json_encode=json_encode)
 
     def get_prior_versions_json(self):
         """

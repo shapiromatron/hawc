@@ -794,7 +794,10 @@ class EndpointCrossview(BaseList):
     def get_context_data(self, **kwargs):
         context = super(EndpointCrossview, self).get_context_data(**kwargs)
         context['doses'] = models.DoseUnits.objects.all()
-        context['endpoints_json'] = models.Endpoint.d_responses(context['object_list'], self.dose_units.pk)
+        context['endpoints_json'] = models.Endpoint.d_responses(
+                                            context['object_list'],
+                                            self.dose_units.pk,
+                                            json_encode=True)
         return context
 
 
