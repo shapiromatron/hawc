@@ -1,5 +1,6 @@
 import decimal
 import logging
+from collections import OrderedDict
 from StringIO import StringIO
 import os
 import re
@@ -50,43 +51,6 @@ class HAWCdocx(object):
         response['Content-Disposition'] = 'attachment; filename=example.docx'
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
-
-
-def build_tsv_file(headers, queryset, *args, **kwargs):
-    """
-    Construct a tab-delimited version of the selected queryset of objects.
-
-    - headers: list of header names
-    - queryset: list of objects, each of which has a flat_file_row method
-
-    Returns a tab-delimited StringIO object.
-
-    """
-    output = StringIO()
-    writer = unicodecsv.writer(output, dialect='excel-tab', encoding='utf-8')
-    writer.writerow(headers)
-    for obj in queryset:
-        writer.writerows(obj.flat_file_row(*args, **kwargs))
-    output.seek(0)
-    return output
-
-
-
-def excel_export_detail(dic, isHeader, blacklist=()):
-    """
-    General function used build an appropriate list of items for an excel
-    export given an Ordered Dictionary; returns either the keys or values.
-    """
-    keys = []
-    vals = []
-    for key, val in dic.viewitems():
-        if key[0] != "_" and key not in blacklist:
-            keys.append(key)
-            vals.append(val)
-    if isHeader:
-        return keys
-    else:
-        return vals
 
 
 def build_excel_file(sheet_name, headers, queryset, data_rows_func, *args, **kwargs):
@@ -179,7 +143,7 @@ class SerializerHelper(object):
         # serialize data and get json-representation
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized)
-        serialized = dict(serialized)  # for pickling
+        serialized = OrderedDict(serialized)  # for pickling
 
         logging.info('setting cache: {}'.format(name))
         cache.set_many({name: serialized, json_name: json_str})

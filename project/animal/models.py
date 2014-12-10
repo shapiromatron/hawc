@@ -1,11 +1,8 @@
-from collections import Counter, OrderedDict
-import copy
+from collections import Counter
 import json
-import logging
 import math
 
 from django.db import models
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -15,8 +12,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
 from bmd.models import BMD_session
-from utils.helper import (HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file,
-                          HAWCdocx, excel_export_detail, SerializerHelper)
+from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx, SerializerHelper
 
 
 class Species(models.Model):
@@ -35,17 +31,6 @@ class Species(models.Model):
     def __unicode__(self):
         return self.name
 
-    def getDict(self):
-        """
-        Return flat-dictionary of species.
-        """
-        return OrderedDict((("species-pk", self.pk),
-                            ("species-name", self.name)))
-
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
-
 
 class Strain(models.Model):
     species = models.ForeignKey(
@@ -62,17 +47,6 @@ class Strain(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def getDict(self):
-        """
-        Return flat-dictionary of strain.
-        """
-        return OrderedDict((("strain-pk", self.pk),
-                            ("strain-name", self.name)))
-
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
 
 
 class Experiment(models.Model):
@@ -140,24 +114,31 @@ class Experiment(models.Model):
         if v:
             return v
 
-    def getDict(self):
-        """
-        Return flat-dictionary of experiment.
-        """
-        return OrderedDict((
-            ("experiment-pk", self.pk),
-            ("experiment-url", self.get_absolute_url()),
-            ("experiment-name", self.name),
-            ("experiment-type", self.name),
-            ("experiment-cas", self.cas),
-            ("experiment-purity_available", self.purity_available),
-            ("experiment-purity", self.purity),
-            ("experiment-description", self.description)
-        ))
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'experiment-id',
+            'experiment-url',
+            'experiment-name',
+            'experiment-type',
+            'experiment-cas',
+            'experiment-purity_available',
+            'experiment-purity',
+            'experiment-description'
+        )
 
     @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
+    def flat_complete_data_row(dic):
+        return (
+            dic['id'],
+            dic['url'],
+            dic['name'],
+            dic['type'],
+            dic['cas'],
+            dic['purity_available'],
+            dic['purity'],
+            dic['description']
+        )
 
 
 class AnimalGroup(models.Model):
@@ -240,29 +221,35 @@ class AnimalGroup(models.Model):
         except:
             return None
 
-    def getDict(self):
-        """
-        Return flat-dictionary of AnimalGroup.
-        """
-        d = OrderedDict((
-            ("animal_group-pk", self.pk),
-            ("animal_group-url", self.get_absolute_url()),
-            ("animal_group-name", self.name),
-            ("animal_group-sex", self.get_sex_display()),
-            ("animal_group-duration_observation", self.duration_observation),
-            ("animal_group-siblings", self.get_siblings_pk()),
-            ("animal_group-parents", "N/A")
-        ))
-        d['_species'] = self.species.getDict()
-        d['_strain'] = self.strain.getDict()
-        d['_dosing_regime'] = self.dosing_regime.getDict(self)
-        if hasattr(self, "generationalanimalgroup"):
-            d.update(self.generationalanimalgroup.getDict())
-        return d
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "animal_group-id",
+            "animal_group-url",
+            "animal_group-name",
+            "animal_group-sex",
+            "animal_group-duration_observation",
+            "animal_group-siblings",
+            "animal_group-parents",
+            "animal_group-generation",
+            "species-name",
+            "strain-name",
+        )
 
     @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
+    def flat_complete_data_row(dic):
+        return (
+            dic['id'],
+            dic['url'],
+            dic['name'],
+            dic['sex'],
+            dic['duration_observation'],
+            dic['siblings'],
+            '|'.join([str(p) for p in dic['parents']]),
+            dic['generation'],
+            dic['species'],
+            dic['strain']
+        )
 
 
 class GenerationalAnimalGroup(AnimalGroup):
@@ -291,13 +278,6 @@ class GenerationalAnimalGroup(AnimalGroup):
 
     def get_parent_pks(self):
         return self.parents.all().values_list('pk', flat=True)
-
-    def getDict(self):
-        """
-        Return flat-dictionary of GenerationalAnimalGroup.
-        """
-        parent_pks = '|'.join([str(par) for par in self.get_parent_pks()])
-        return OrderedDict(( ('animal_group-parents', parent_pks), ))
 
 
 class DoseUnits(models.Model):
@@ -342,22 +322,16 @@ class DoseUnits(models.Model):
         assessment for animal bioassay data.
         """
         Study = models.get_model('study', 'Study')
-        return DoseGroup.objects.filter(dose_regime__in=
+        return DoseUnits.objects.filter(dosegroup__in=
+                    DoseGroup.objects.filter(dose_regime__in=
                     DosingRegime.objects.filter(dosed_animals__in=
                     AnimalGroup.objects.filter(experiment__in=
                     Experiment.objects.filter(study__in=
-                    Study.objects.filter(assessment=assessment))))) \
-                .values_list('dose_units__units', flat=True).distinct()
+                    Study.objects.filter(assessment=assessment)))))) \
+                .values_list('units', flat=True).distinct()
 
     def __unicode__(self):
         return self.units
-
-    def getDict(self):
-        """
-        Return flat-dictionary of DoseUnits.
-        """
-        return {"dose_units-pk": self.pk,
-                "dose_units-units": self.units}
 
 
 class DosingRegime(models.Model):
@@ -424,19 +398,27 @@ class DosingRegime(models.Model):
     def isAnimalsDosed(self, animal_group):
         return self.dosed_animals==animal_group
 
-    def getDict(self, animal_group):
-        """
-        Return ordered dictionary of DosingRegime.
-        """
-        d = OrderedDict((
-                ("dosing_regime-pk", self.pk),
-                ("dosing_regime-dosed_animals", self.isAnimalsDosed(animal_group)),
-                ("dosing_regime-route_of_exposure", self.get_route_of_exposure_display()),
-                ("dosing_regime-duration_exposure", self.duration_exposure),
-                ("dosing_regime-num_dose_groups", self.num_dose_groups),
-                ("dosing_regime-description", self.description)))
-        d['_doses'] = self.get_doses_name_dict()
-        return d
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "dosing_regime-id",
+            "dosing_regime-dosed_animals",
+            "dosing_regime-route_of_exposure",
+            "dosing_regime-duration_exposure",
+            "dosing_regime-num_dose_groups",
+            "dosing_regime-description",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['dosed_animals'],
+            ser['route_of_exposure'],
+            ser['duration_exposure'],
+            ser['num_dose_groups'],
+            ser['description'],
+        )
 
     def get_dose_groups_for_animal_form(self):
         groups = list(self.dose_groups.order_by('dose_group_id', 'dose_units').values('dose_group_id', 'dose_units', 'dose'))
@@ -473,10 +455,6 @@ class DosingRegime(models.Model):
             return json.dumps(doses, cls=HAWCDjangoJSONEncoder)
         else:
             return doses
-
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
 
 
 class DoseGroup(models.Model):
@@ -531,6 +509,21 @@ class DoseGroup(models.Model):
                 raise ValidationError('<ul><li>Each dose-type must have ' + str(number_dose_groups) + ' dose groups</li></ul>')
         if not all(dose_group.values()[0] == group for group in dose_group.values()):
             raise ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
+
+    @classmethod
+    def flat_complete_data_row(cls, ser_full, units, idx):
+        cols = []
+        ser = [ v for v in ser_full if v["dose_group_id"] == idx ]
+        for unit in units:
+            v = None
+            for s in ser:
+                if s["dose_units"]["units"] == unit:
+                    v = s["dose"]
+                    break
+
+            cols.append(v)
+
+        return cols
 
 
 class Endpoint(BaseEndpoint):
@@ -642,52 +635,6 @@ class Endpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
 
-    def getDict(self, target=False):
-        """
-        Return flat-dictionary of Endpoint.
-
-        Target indicates if all parent/child relationships should be fetched
-        for this Endpoint.
-        """
-        d = super(Endpoint, self).getDict()
-        d.update(OrderedDict((
-            ("endpoint-pk", self.pk),
-            ("endpoint-url", self.get_absolute_url()),
-            ("endpoint-system", self.system),
-            ("endpoint-organ", self.organ),
-            ("endpoint-effect", self.effect),
-            ("endpoint-observation_time", self.observation_time),
-            ("endpoint-observation_time_units", self.get_observation_time_units_display()),
-            ("endpoint-data_location", self.data_location),
-            ("endpoint-response_units", self.response_units),
-            ("endpoint-data_type", self.get_data_type_display()),
-            ("endpoint-variance_type", self.variance_name),
-            ("endpoint-NOAEL", self.NOAEL),
-            ("endpoint-LOAEL", self.LOAEL),
-            ("endpoint-FEL", self.FEL),
-            ("endpoint-data_reported", self.data_reported),
-            ("endpoint-data_extracted", self.data_extracted),
-            ("endpoint-values_estimated", self.values_estimated),
-            ("endpoint-individual_animal_data", self.individual_animal_data),
-            ("endpoint-monotonicity", self.get_monotonicity_display()),
-            ("endpoint-statistical_test", self.statistical_test),
-            ("endpoint-trend_value", self.trend_value),
-            ("endpoint-results_notes", self.results_notes),
-            ("endpoint-endpoint_notes", self.endpoint_notes),
-            ("endpoint-additional_fields", self.additional_fields),
-        )))
-
-        egs = []
-        if target:
-            d['_study'] = self.animal_group.experiment.study.getDict()
-            d['_experiment'] = self.animal_group.experiment.getDict()
-            d['_animal_group'] = self.animal_group.getDict()
-            for eg in self.endpoint_group.all():
-                egs.append(eg.getDict())
-            d['_endpoint_groups'] = egs
-
-        return d
-
     def get_update_url(self):
         if self.individual_animal_data:
             return reverse('animal:endpoint_individual_animal_update', args=[self.pk])
@@ -698,154 +645,9 @@ class Endpoint(BaseEndpoint):
         super(Endpoint, self).save(*args, **kwargs)
         Endpoint.d_response_delete_cache([self.pk])
 
-    def flat_file_row(self, dose=None):
-        dose_pk = dose.pk if dose else None
-        d = self.d_response(json_encode=False, dose_pk=dose_pk)
-        rows = []
-
-        def get_dose_list(d):
-            doses = u', '.join([str(float(v['dose'])) for v in d['dr']])
-            return u"{0} {1}".format(doses, d["dose_units"])
-
-        # build-base row which is endpoint-group independent
-        base = [d['study']['short_citation'],
-                d['study']['url'],
-                d['study']['id'],
-                d['study']['published'],
-                d['experiment'],
-                d['experiment_url'],
-                d['animal_group'],
-                d['animal_group_url'],
-                d['name'],
-                d['url'],
-                self.get_data_type_display(),
-                get_dose_list(d),
-                d['dose_units'],
-                d['response_units'],
-                d['pk']]
-
-        # dose-group specific information
-        if len(d['dr'])>0:
-            base.extend([
-                d['dr'][1]['dose'],
-                d['dr'][d['NOAEL']]['dose'] if d['NOAEL'] != -999 else None,
-                d['dr'][d['LOAEL']]['dose'] if d['LOAEL'] != -999 else None,
-                d['dr'][d['FEL']]['dose'] if d['FEL'] != -999 else None,
-                d['dr'][len(d['dr'])-1]['dose']
-            ])
-        else:
-            base.extend([None]*5)
-
-        # BMD-specific information
-        if d['BMD'] and d['BMD'].has_key('outputs') and d['BMD']['dose_units_id'] == dose_pk:
-            base.extend([
-                d['BMD']['outputs']['model_name'],
-                d['BMD']['outputs']['BMDL'],
-                d['BMD']['outputs']['BMD'],
-                d['BMD']['outputs']['BMDU'],
-                d['BMD']['outputs']['CSF']
-            ])
-        else:
-            base.extend([None]*5)
-
-        # endpoint-group information
-        for i, v in enumerate(d['dr']):
-            row = copy.copy(base)
-            row.extend([
-                v['pk'],
-                i,
-                v['dose'],
-                v['n'],
-                v['incidence'],
-                v['response'],
-                v['stdev'],
-                v['percentControlMean'],
-                v['percentControlLow'],
-                v['percentControlHigh']
-            ])
-            rows.append(row)
-
-        return rows
-
     @classmethod
     def d_response_delete_cache(cls, endpoint_pks):
         super(Endpoint, cls).d_response_delete_cache(endpoint_pks)
-
-    @classmethod
-    def flat_file_header(cls):
-        return ['study',
-                'study_url',
-                'Study Primary Key',
-                'Study Published',
-                'experiment',
-                'experiment_url',
-                'animal_group',
-                'animal_group_url',
-                'endpoint_name',
-                'endpoint_url',
-                'data_type',
-                'doses',
-                'dose_units',
-                'response_units',
-                'Endpoint Key',
-                'low_dose',
-                'NOAEL',
-                'LOAEL',
-                'FEL',
-                'high_dose',
-                'BMD model name',
-                'BMDL',
-                'BMD',
-                'BMDU',
-                'CSF',
-                'Row Key',
-                'dose_index',
-                'dose',
-                'n',
-                'incidence',
-                'response',
-                'stdev',
-                'percentControlMean',
-                'percentControlLow',
-                'percentControlHigh'
-                ]
-
-    @classmethod
-    def get_flat_file(cls, queryset, output_format, dose):
-        """
-        Construct an export file of the selected subset of endpoints.
-        """
-        headers = Endpoint.flat_file_header()
-        if output_format == "tsv":
-            return build_tsv_file(headers, queryset, dose)
-        else: # Excel by default
-            sheet_name = 'bioassay'
-            data_rows_func = Endpoint.build_excel_rows
-            return build_excel_file(sheet_name, headers, queryset,
-                                    data_rows_func, dose=dose)
-
-    @staticmethod
-    def build_excel_rows(ws, queryset, *args, **kwargs):
-        """
-        Custom method used to build individual excel rows in Excel worksheet
-        """
-        # write data
-        def try_float(str):
-            # attempt to coerce as float, else return string
-            try:
-                return float(str)
-            except:
-                return str
-
-        i = 0
-        dose = kwargs.get('dose', None)
-
-        for endpoint in queryset:
-            rows = endpoint.flat_file_row(dose)
-            for row in rows:
-                i+=1
-                for j, val in enumerate(row):
-                    ws.write(i, j, try_float(val))
 
     @staticmethod
     def endpoints_word_report(queryset):
@@ -1069,87 +871,61 @@ class Endpoint(BaseEndpoint):
         except:
             return None
 
-    @staticmethod
-    def detailed_excel_export(queryset, assessment):
-        """
-        Full XLS data export for the animal bioassay data. Does not include any
-        aggregation information, uncertainty-values, or reference values.
-        """
-        sheet_name = 'ani'
-        doses = DoseUnits.doses_in_assessment(assessment)
-        headers = Endpoint.detailed_excel_export_header(doses)
-        data_rows_func = Endpoint.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func, doses=doses)
+    @classmethod
+    def flat_complete_header_row(cls):
+        return (
+            "endpoint-id",
+            "endpoint-url",
+            "endpoint-name",
+            "endpoint-effects",
+            "endpoint-system",
+            "endpoint-organ",
+            "endpoint-effect",
+            "endpoint-observation_time",
+            "endpoint-observation_time_units",
+            "endpoint-data_location",
+            "endpoint-response_units",
+            "endpoint-data_type",
+            "endpoint-variance_type",
+            "endpoint-data_reported",
+            "endpoint-data_extracted",
+            "endpoint-values_estimated",
+            "endpoint-individual_animal_data",
+            "endpoint-monotonicity",
+            "endpoint-statistical_test",
+            "endpoint-trend_value",
+            "endpoint-results_notes",
+            "endpoint-endpoint_notes",
+            "endpoint-additional_fields",
+        )
 
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        blacklist = ["endpoint-NOAEL", "endpoint-LOAEL", "endpoint-FEL"]
-        return excel_export_detail(dic, isHeader, blacklist)
-
-    @staticmethod
-    def detailed_excel_export_header(doses):
-        # build export header column names for full export
-        Study = models.get_model('study', 'Study')
-        lst = []
-        # grab any endpoint for this case; in case the current assessment has no animal endpoints
-        endpoint = Endpoint.objects.all()[0]
-        if endpoint:
-            d = endpoint.getDict(target=True)
-            lst.extend(Study.excel_export_detail(d['_study'], True))
-            lst.extend(Experiment.excel_export_detail(d['_experiment'], True))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group'], True))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_species'], True))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_strain'], True))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_dosing_regime'], True))
-            lst.extend(['doses-' + dose for dose in doses])
-            lst.extend(Endpoint.excel_export_detail(d, True))
-            if len(d['_endpoint_groups'])>0:
-                lst.extend(EndpointGroup.excel_export_detail(d['_endpoint_groups'][0], True, d))
-        return lst
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-        doses = kwargs.get('doses', [])
-        # build export data rows for full-export
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        Study = models.get_model('study', 'Study')
-        r = 0
-        for endpoint in queryset:
-            d = endpoint.getDict(target=True)
-            lst = []
-            lst.extend(Study.excel_export_detail(d['_study'], False))
-            lst.extend(Experiment.excel_export_detail(d['_experiment'], False))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group'], False))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_species'], False))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_strain'], False))
-            lst.extend(AnimalGroup.excel_export_detail(d['_animal_group']['_dosing_regime'], False))
-            dose_idx = len(lst)
-            lst.extend([None]*len(doses))
-            lst.extend(Endpoint.excel_export_detail(d, False))
-
-            # build a row for each endpoint group
-            for i, eg in enumerate(d['_endpoint_groups']):
-                r+=1
-                new_fields = list(lst)  # clone
-                # write endpoint-group details
-                new_fields.extend(EndpointGroup.excel_export_detail(eg, False, d))
-
-                # write dose-details
-                for j, dose in enumerate(doses):
-                    try:
-                        new_fields[dose_idx+j] = d['_animal_group']['_dosing_regime']['_doses'][dose][i]
-                    except KeyError:
-                        pass
-
-                for c, val in enumerate(new_fields):
-                    ws.write(r, c, try_float(val))
+    @classmethod
+    def flat_complete_data_row(cls, ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            '|'.join([ d['name'] for d in ser['effects'] ]),
+            ser['system'],
+            ser['organ'],
+            ser['effect'],
+            ser['observation_time'],
+            ser['observation_time_units'],
+            ser['data_location'],
+            ser['response_units'],
+            ser['data_type'],
+            ser['variance_name'],
+            ser['data_reported'],
+            ser['data_extracted'],
+            ser['values_estimated'],
+            ser['individual_animal_data'],
+            ser['monotonicity'],
+            ser['statistical_test'],
+            ser['trend_value'],
+            ser['results_notes'],
+            ser['endpoint_notes'],
+            json.dumps(ser['additional_fields']),
+        )
 
 
 class EndpointGroup(models.Model):
@@ -1180,7 +956,8 @@ class EndpointGroup(models.Model):
         default=False,
         verbose_name="Statistically significant from control")
     significance_level = models.FloatField(
-        default=0,
+        null=True,
+        default=None,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Statistical significance level")
 
@@ -1283,37 +1060,37 @@ class EndpointGroup(models.Model):
         super(EndpointGroup, self).save(*args, **kwargs)
         Endpoint.d_response_delete_cache([self.endpoint.pk])
 
-    def getDict(self):
-        """
-        Return flat-dictionary of EndpointGroup.
-        """
-        return OrderedDict((
-                ("endpoint_group-pk", self.pk),
-                ("endpoint_group-dose_group_id", self.dose_group_id),
-                ("endpoint_group-n", self.n),
-                ("endpoint_group-incidence", self.incidence),
-                ("endpoint_group-response", self.response),
-                ("endpoint_group-variance", self.variance),
-                ("endpoint_group-significant", self.significant),
-                ("endpoint_group-significance_level", self.significance_level)
-        ))
+    @classmethod
+    def flat_complete_header_row(cls):
+        return (
+            "endpoint_group-id",
+            "endpoint_group-dose_group_id",
+            "endpoint_group-n",
+            "endpoint_group-incidence",
+            "endpoint_group-response",
+            "endpoint_group-variance",
+            "endpoint_group-significant",
+            "endpoint_group-significance_level",
+            "endpoint_group-NOAEL",
+            "endpoint_group-LOAEL",
+            "endpoint_group-FEL",
+        )
 
-    @staticmethod
-    def excel_export_detail(dic, isHeader, endpoint_dic):
-        lst = excel_export_detail(dic, isHeader)
-
-        if isHeader:
-            lst.extend(["endpoint_group-NOAEL",
-                         "endpoint_group-LOAEL",
-                         "endpoint_group-FEL"])
-        else:
-            lst.extend([
-                endpoint_dic["endpoint-NOAEL"] == dic["endpoint_group-dose_group_id"],
-                endpoint_dic["endpoint-LOAEL"] == dic["endpoint_group-dose_group_id"],
-                endpoint_dic["endpoint-FEL"]   == dic["endpoint_group-dose_group_id"]
-            ])
-
-        return lst
+    @classmethod
+    def flat_complete_data_row(cls, ser, endpoint):
+        return (
+            ser['id'],
+            ser['dose_group_id'],
+            ser['n'],
+            ser['incidence'],
+            ser['response'],
+            ser['variance'],
+            ser['significant'],
+            ser['significance_level'],
+            ser['dose_group_id']==endpoint['NOAEL'],
+            ser['dose_group_id']==endpoint['LOAEL'],
+            ser['dose_group_id']==endpoint['FEL'],
+        )
 
 
 class IndividualAnimal(models.Model):

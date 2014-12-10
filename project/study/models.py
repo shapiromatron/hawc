@@ -1,6 +1,5 @@
 import json
 import os
-from collections import OrderedDict
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -12,7 +11,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from utils.helper import HAWCDjangoJSONEncoder, excel_export_detail, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
 
 
@@ -192,35 +191,26 @@ class Study(Reference):
                     animal_group__in=AnimalGroup.objects.filter(
                     experiment__in=Experiment.objects.filter(study=self)))
 
-    def getDict(self):
-        """
-        Return flat-dictionary of Study.
-        """
-        return OrderedDict((("study-pk", self.pk),
-                            ("study-url", self.get_absolute_url()),
-                            ("study-short_citation", self.short_citation),
-                            ("study-full_citation", self.full_citation),
-                            ("study-coi_reported", self.get_coi_reported_display()),
-                            ("study-coi_details", self.coi_details),
-                            ("study-funding_source", self.funding_source),
-                            ("study-study_type", self.get_study_type_display()),
-                            ("study-study_identifier", self.study_identifier),
-                            ("study-contact_author", self.contact_author),
-                            ("study-ask_author", self.ask_author),
-                            ("study-summary", self.summary),
-                            ("study-published", self.published),
-                            ))
+    @classmethod
+    def flat_complete_header_row(cls):
+        return (
+            'study-id',
+            'study-url',
+            'study-short_citation',
+            'study-full_citation',
+            'study-coi_reported',
+            'study-coi_details',
+            'study-funding_source',
+            'study-study_type',
+            'study-study_identifier',
+            'study-contact_author',
+            'study-ask_author',
+            'study-summary',
+            'study-published'
+        )
 
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
-
-    @staticmethod
-    def flat_complete_header_row():
-        return Study.build_export_from_json_header()
-
-    @staticmethod
-    def flat_complete_data_row(ser):
+    @classmethod
+    def flat_complete_data_row(cls, ser):
         return (
             ser['id'],
             ser['url'],
@@ -236,40 +226,6 @@ class Study(Reference):
             ser['summary'],
             ser['published']
         )
-
-    @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('study-id',
-                'study-url',
-                'study-short_citation',
-                'study-full_citation',
-                'study-coi_reported',
-                'study-coi_details',
-                'study-funding_source',
-                'study-study_type',
-                'study-study_identifier',
-                'study-contact_author',
-                'study-ask_author',
-                'study-summary',
-                'study-published')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['study_url'],
-                dic['short_citation'],
-                dic['full_citation'],
-                dic['coi_reported'],
-                dic['coi_details'],
-                dic['funding_source'],
-                dic['study_type'],
-                dic['study_identifier'],
-                dic['contact_author'],
-                dic['ask_author'],
-                dic['summary'],
-                dic['published'])
 
     @classmethod
     def get_docx_template_context(cls, queryset):

@@ -30,6 +30,7 @@ class BMDModelRunSerializer(serializers.ModelSerializer):
         if instance.plot and instance.plot.url:
             ret['bmds_plot_url'] = instance.plot.url
 
+        ret.pop('d3_plotting')
         return ret
 
     class Meta:

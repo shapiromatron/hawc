@@ -274,14 +274,6 @@ class BaseEndpoint(models.Model):
         logging.info('removing cache: {caches}'.format(caches=', '.join(keys)))
         cache.delete_many(keys)
 
-    def getDict(self):
-        """
-        Return flat-dictionary of BaseEndpoint.
-        """
-        tagnames = EffectTag.get_name_list(self.effects)
-        return OrderedDict((("endpoint-name", self.name),
-                            ("endpoint-effects", tagnames)))
-
     def get_json(self, *args, **kwargs):
         """
         Use the appropriate child-class to generate JSON response object, or

@@ -19,8 +19,7 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          BaseVersion, GenerateReport)
 from utils.helper import HAWCdocx
 
-from . import forms
-from . import models
+from . import forms, models, exports
 
 
 # Experiment Views
@@ -747,24 +746,19 @@ class EndpointFlatFile(BaseList):
         return self.model.objects.filter(**filters).distinct('pk')
 
     def get(self, request, *args, **kwargs):
-        output_format = request.GET.get('output', None)
+        export_format = request.GET.get("output", "excel")
 
         # get Dose object if one exists, else get None
         dose_pk = self.request.GET.get('dose_pk', -1)
         dose = models.DoseUnits.objects.filter(pk=dose_pk).first()
 
         self.object_list = self.get_queryset(dose)
-        output = self.model.get_flat_file(self.object_list, output_format, dose)
-        if output_format == 'tsv':
-            content_type = 'text/tab-separated-values'
-            disposition = 'attachment; filename="download.tsv"'
-        else:
-            content_type = 'application/vnd.ms-excel'
-            disposition = 'attachment; filename="download.xls"'
-
-        response = HttpResponse(output, content_type=content_type)
-        response['Content-Disposition'] = disposition
-        return response
+        exporter = exports.EndpointFlatDataPivot(
+                self.object_list,
+                export_format=export_format,
+                filename='{}-animal-bioassay'.format(self.assessment),
+                dose=dose)
+        return exporter.build_response()
 
 
 class EndpointCrossview(BaseList):
@@ -1283,7 +1277,11 @@ class FullExport(BaseList):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        xls = models.Endpoint.detailed_excel_export(self.object_list, self.assessment)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        exporter = exports.EndpointFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-animal-bioassay'.format(self.assessment),
+                sheet_name='bioassay-analysis',
+                assessment=self.assessment)
+        return exporter.build_response()
+
