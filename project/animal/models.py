@@ -464,10 +464,7 @@ class DoseGroup(models.Model):
     dose_units = models.ForeignKey(
         DoseUnits)
     dose_group_id = models.PositiveSmallIntegerField()
-    dose = models.DecimalField(
-        max_digits=50,
-        decimal_places=25,
-        blank=False,
+    dose = models.FloatField(
         validators=[MinValueValidator(0)])
     created = models.DateTimeField(
         auto_now_add=True)
@@ -941,14 +938,10 @@ class EndpointGroup(models.Model):
         blank=True,
         null=True,
         validators=[MinValueValidator(0)])
-    response = models.DecimalField(
-        max_digits=50,
-        decimal_places=25,
+    response = models.FloatField(
         blank=True,
         null=True)
-    variance = models.DecimalField(
-        max_digits=50,
-        decimal_places=25,
+    variance = models.FloatField(
         blank=True,
         null=True,
         validators=[MinValueValidator(0)])
@@ -1097,9 +1090,7 @@ class IndividualAnimal(models.Model):
     endpoint_group = models.ForeignKey(
         EndpointGroup,
         related_name='individual_data')
-    response = models.DecimalField(
-        max_digits=50,
-        decimal_places=25)
+    response = models.FloatField()
 
     def __unicode__(self):
         return str(self.response)
@@ -1124,10 +1115,8 @@ class UncertaintyFactorAbstract(models.Model):
         max_length=3,
         choices=UF_TYPE_CHOICES,
         verbose_name="Uncertainty Value Type")
-    value = models.DecimalField(
-        max_digits=5,
-        decimal_places=3,
-        default=10,
+    value = models.FloatField(
+        default=10.,
         help_text="Note that 3*3=10 for all uncertainty value calculations; "
                   "therefore specifying 3.33 is not required.",
         validators=[MinValueValidator(1)])
@@ -1320,9 +1309,7 @@ class ReferenceValue(models.Model):
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='reference_values')
-    point_of_departure = models.DecimalField(
-        max_digits=50,
-        decimal_places=25,
+    point_of_departure = models.FloatField(
         validators=[MinValueValidator(0)])
     type = models.PositiveSmallIntegerField(
         choices=REFERENCE_VALUE_CHOICES,
@@ -1334,13 +1321,9 @@ class ReferenceValue(models.Model):
     aggregation = models.ForeignKey(
         Aggregation,
         help_text="Specify a collection of endpoints which justify this reference-value")
-    aggregate_uf = models.DecimalField(
-        max_digits=10,
-        decimal_places=3,
+    aggregate_uf = models.FloatField(
         blank=True)
-    reference_value = models.DecimalField(
-        max_digits=50,
-        decimal_places=25,
+    reference_value = models.FloatField(
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
