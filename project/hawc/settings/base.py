@@ -2,8 +2,8 @@ import os
 import sys
 from django.core.urlresolvers import reverse_lazy
 
-
-PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ),
+                               os.path.join(os.pardir, os.pardir)))
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
 
 DEBUG = False
@@ -32,14 +32,16 @@ MANAGERS = ADMINS
 
 
 # Template processors
-TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
-                               "django.core.context_processors.debug",
-                               "django.core.context_processors.i18n",
-                               "django.core.context_processors.media",
-                               "django.core.context_processors.static",
-                               "django.core.context_processors.tz",
-                               "django.contrib.messages.context_processors.messages",
-                               'django.core.context_processors.request')
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request"
+)
 
 
 # Middleware
@@ -272,7 +274,3 @@ if ((not DEBUG) and
         }
     }
 
-
-# Override with "settings_local.py" in development mode
-if os.getenv('DJANGO_ENVIRONMENT', 'not_development') == 'development':
-    from hawc.settings_local import *
