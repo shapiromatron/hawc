@@ -205,30 +205,28 @@ Endpoint.prototype._build_animal_group_dose_rows = function(options){
     var self = this,
         tr1 = $('<tr></tr>').append('<th rowspan="2">Parameter</th>'),
         tr2 = $('<tr></tr>'),
-        header_text,
-        txt;
+        header_text = 'Exposure group ',
+        txt,
+        num_groups = this.data.endpoint_group.length;
 
-    this.doses.forEach(function(v, i){
-        if(i===0){
-            header_text = 'Exposure group {0}'.printf(v.units);
-        } else {
-            header_text += ' ({0})'.printf(v.units);
-        }
-    });
+    // build top header row showing dose-units available
+    var units = this.doses.map(function(v){ return v.units; });
+    header_text += units[0];
+    if (units.length>1)
+        header_text += " ({0})".printf(units.slice(1, units.length).join(", "))
 
-    tr1.append('<th colspan="{0}">{1}</th>'.printf(this.doses.length, header_text));
+    tr1.append('<th colspan="{0}">{1}</th>'.printf(num_groups, header_text));
 
-    for(var i = 0; i<this.doses.length; i++){
-        this.data.endpoint_group.forEach(function(v, j){
-            if(j===0){
-                txt = v.values[i];
-            } else {
-                if (i!==0) txt += ' ({0})'.printf(v.values[i]);
-            }
-        });
+    // now build header row showing available doses
+    for(var i=0; i<num_groups; i++){
+        var doses = this.doses.map(function(v){ return v.values[i].dose; });
+        txt = doses[0].toLocaleString();
+        if (doses.length>1)
+            txt += " ({0})".printf(doses.slice(1, doses.length).join(", "))
         tr2.append('<th>{0}</th>'.printf(txt));
     }
-    return {html: [tr1, tr2], columns_count: this.doses.length+1};
+
+    return {html: [tr1, tr2], columns_count: num_groups.length+1};
 };
 
 Endpoint.prototype._build_animal_group_n_row = function(options){

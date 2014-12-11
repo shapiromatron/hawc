@@ -148,6 +148,14 @@ class AnimalGroup(models.Model):
         ("F", "Female"),
         ("B", "Both"))
 
+    GENERATION_CHOICES = (
+        (""  , "N/A (not generational-study)"),
+        ("F0", "Parent-generation (F0)"),
+        ("F1", "First-generation (F1)"),
+        ("F2", "Second-generation (F2)"),
+        ("F3", "Third-generation (F3)"),
+        ("F4", "Fourth-generation (F4)"))
+
     experiment = models.ForeignKey(
         Experiment,
         related_name="animal_groups")
@@ -170,6 +178,17 @@ class AnimalGroup(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL)
+    generation = models.CharField(
+        blank=True,
+        default = "",
+        max_length=2,
+        choices=GENERATION_CHOICES)
+    parents = models.ManyToManyField(
+        "self",
+        related_name="children",
+        symmetrical=False,
+        blank=True,
+        null=True)
     dosing_regime = models.ForeignKey(
         'DosingRegime',
         help_text='Specify an existing dosing regime or create a new dosing regime below',
@@ -186,15 +205,15 @@ class AnimalGroup(models.Model):
     def get_absolute_url(self):
         return reverse('animal:animal_group_detail', args=[str(self.pk)])
 
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
     def save(self, *args, **kwargs):
         super(AnimalGroup, self).save(*args, **kwargs)
         endpoint_pks = list(Endpoint.objects.all()
                             .filter(animal_group=self.pk)
                             .values_list('pk', flat=True))
         Endpoint.d_response_delete_cache(endpoint_pks)
-
-    def get_assessment(self):
-        return self.experiment.get_assessment()
 
     def clean(self):
         #ensure that strain is of the correct species
@@ -204,6 +223,10 @@ class AnimalGroup(models.Model):
         except:
             raise ValidationError('Error- selected strain is not of the selected species.')
 
+    @property
+    def is_generational(self):
+        return self.experiment.is_generational()
+
     def get_doses_json(self, json_encode=True):
         if not hasattr(self, 'doses'):
             self.doses = [{"error": "no dosing regime"}]
@@ -211,15 +234,6 @@ class AnimalGroup(models.Model):
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
-
-    def get_endpoints(self):
-        return Endpoint.objects.filter(animal_group=self.pk)
-
-    def get_siblings_pk(self):
-        try:
-            return self.siblings.pk
-        except:
-            return None
 
     @staticmethod
     def flat_complete_header_row():
@@ -250,34 +264,6 @@ class AnimalGroup(models.Model):
             dic['species'],
             dic['strain']
         )
-
-
-class GenerationalAnimalGroup(AnimalGroup):
-
-    GENERATION_CHOICES = (("F0", "Parent-generation (F0)"),
-                          ("F1", "First-generation (F1)"),
-                          ("F2", "Second-generation (F2)"),
-                          ("F3", "Third-generation (F3)"),
-                          ("F4", "Fourth-generation (F4)"))
-
-    generation = models.CharField(
-        max_length=2,
-        choices=GENERATION_CHOICES)
-    parents = models.ManyToManyField(
-        "self",
-        related_name="parents+",
-        symmetrical=False,
-        blank=True,
-        null=True)
-
-    def __unicode__(self):
-        return self.name
-
-    def get_children(self):
-        return GenerationalAnimalGroup.objects.filter(parents=self)
-
-    def get_parent_pks(self):
-        return self.parents.all().values_list('pk', flat=True)
 
 
 class DoseUnits(models.Model):
@@ -559,7 +545,8 @@ class Endpoint(BaseEndpoint):
         (6, "months"))
 
     animal_group = models.ForeignKey(
-        AnimalGroup)
+        AnimalGroup,
+        related_name="endpoints")
     system = models.CharField(
         max_length=128,
         blank=True)
@@ -1413,7 +1400,6 @@ reversion.register(Species)
 reversion.register(Strain)
 reversion.register(Experiment)
 reversion.register(AnimalGroup)
-reversion.register(GenerationalAnimalGroup)
 reversion.register(DoseUnits)
 reversion.register(DosingRegime)
 # need to modify Update view to make this viable

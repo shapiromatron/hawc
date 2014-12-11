@@ -49,20 +49,12 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
     dosing_regime = DosingRegimeSerializer(allow_null=True)
     species = serializers.StringRelatedField()
     strain = serializers.StringRelatedField()
+    parents = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
 
     def to_representation(self, instance):
         ret = super(AnimalGroupSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['sex'] = instance.get_sex_display()
-
-        # get generational data
-        ret['generation'] = "N/A"
-        ret['parents'] = []
-        gen = getattr(instance, "generationalanimalgroup", None)
-        if gen:
-            ret['generation'] = gen.generation
-            ret['parents'] = list(gen.parents.all().values_list('id', flat=True))
-
         return ret
 
     class Meta:

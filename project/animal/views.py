@@ -76,22 +76,11 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
     def dispatch(self, *args, **kwargs):
         self.experiment = get_object_or_404(models.Experiment, pk=kwargs['pk'])
-        if self.experiment.is_generational():
-            self.model = models.GenerationalAnimalGroup
+        self.is_generational = self.experiment.is_generational()
+        if self.is_generational:
             self.form_class = forms.GenerationalAnimalGroupForm
         self.assessment = self.experiment.get_assessment()
         return super(AnimalGroupCreate, self).dispatch(*args, **kwargs)
-
-    def get_form(self, form_class):
-        form = super(AnimalGroupCreate, self).get_form(form_class)
-        form.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
-                experiment=self.experiment.pk)
-        if form_class == forms.GenerationalAnimalGroupForm:
-            form.fields['parents'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.experiment.pk)
-            form.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
-                dosed_animals__in=form.fields['parents'].queryset)
-        return form
 
     def get_form_kwargs(self):
         kwargs = super(CreateView, self).get_form_kwargs()
@@ -110,14 +99,14 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         self.object = form.save(commit=False)
 
         #allow a shortcut for specified dosing-regime
-        if issubclass(self.model, models.GenerationalAnimalGroup) and self.object.dosing_regime:
+        if self.is_generational and self.object.dosing_regime:
             #save animal-group
             self.object.save()
 
             # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
+            if self.is_generational:
                 for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
+                    self.object.parents.add(parent)
 
             self.send_message()
             return HttpResponseRedirect(self.get_success_url())
@@ -159,9 +148,9 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
             dosing_regime.save()
 
             # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
+            if self.is_generational:
                 for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
+                    self.object.parents.add(parent)
 
             # Save doses
             for obj in dose_group_objects:
@@ -215,10 +204,8 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     def get_object(self, queryset=None):
         obj = super(AnimalGroupUpdate, self).get_object()
         self.dosing_regime = obj.dosing_regime # part of HACK below
-        if obj.experiment.is_generational():
-            self.model = models.GenerationalAnimalGroup
+        if obj.is_generational:
             self.form_class = forms.GenerationalAnimalGroupForm
-            return obj.generationalanimalgroup
         return obj
 
     def get_context_data(self, **kwargs):
@@ -239,18 +226,6 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
         return context
 
-    def get_form(self, form_class):
-        form = super(AnimalGroupUpdate, self).get_form(form_class)
-        form.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.object.experiment.pk).exclude(pk=self.object.pk)
-        form.fields['strain'].queryset = models.Strain.objects.filter(species=self.object.species)
-        if form_class == forms.GenerationalAnimalGroupForm:
-            form.fields['parents'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.object.experiment.pk).exclude(pk=self.object.pk)
-            form.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
-                dosed_animals__in=models.AnimalGroup.objects.filter(experiment=self.object.experiment.pk))
-        return form
-
     def form_valid(self, form):
         """
         Make sure that everything is valid before attempting to re-save or update anything
@@ -259,15 +234,15 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         self.object.dosing_regime = self.dosing_regime  # return to original regardless of form changes # HACK
 
         #allow a shortcut for specified dosing-regime
-        if ((issubclass(self.model, models.GenerationalAnimalGroup)) and
-                (self.object.dosing_regime.dosed_animals.pk != self.object.pk)):
+        if (self.object.is_generational and
+            (self.object.dosing_regime.dosed_animals.pk != self.object.pk)):
             #save animal-group
             self.object.save()
 
             # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
+            if self.object.is_generational:
                 for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
+                    self.object.parents.add(parent)
 
             self.send_message()
             return HttpResponseRedirect(self.get_success_url())
@@ -320,9 +295,9 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             dosing_regime.save()
 
             # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
+            if self.object.is_generational:
                 for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
+                    self.object.parents.add(parent)
 
             # Save doses
             for obj in dose_group_objects:

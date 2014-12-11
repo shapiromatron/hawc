@@ -62,28 +62,34 @@ class AnimalGroupForm(ModelForm):
         if experiment:
             self.instance.experiment = experiment
 
+        if self.instance.id:
+            self.fields['strain'].queryset = models.Strain.objects.filter(
+                species=self.instance.species)
+
+        self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
+                experiment=self.instance.experiment)
+
     class Meta:
         model = models.AnimalGroup
-        exclude = ('experiment', 'dosing_regime')
+        exclude = ('experiment', 'dosing_regime', 'generation',  'parents')
 
 
-class GenerationalAnimalGroupForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        experiment = kwargs.pop('parent', None)
-
-        super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
-
-        if experiment:
-            self.instance.experiment = experiment
+class GenerationalAnimalGroupForm(AnimalGroupForm):
 
     class Meta:
-        model = models.GenerationalAnimalGroup
+        model = models.AnimalGroup
         exclude = ('experiment',)
         fields = ('name', 'species', 'strain', 'sex',
                   'generation', 'siblings', 'parents',
                   'dosing_regime')
+
+    def __init__(self, *args, **kwargs):
+        super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
+        self.fields['generation'].choices = self.fields['generation'].choices[1:]
+        self.fields['parents'].queryset = models.AnimalGroup.objects.filter(
+            experiment=self.instance.experiment)
+        self.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
+                dosed_animals__in=self.fields['parents'].queryset)
 
 
 class DosingRegimeForm(ModelForm):

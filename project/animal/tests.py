@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 
-from animal.models import (Experiment, AnimalGroup, GenerationalAnimalGroup,
-                           Species, Strain, DosingRegime, Endpoint, EndpointGroup,
+from animal.models import (Experiment, AnimalGroup,  Species, Strain,
+                           DosingRegime, Endpoint, EndpointGroup,
                            UncertaintyFactorEndpoint, DoseUnits, DoseGroup, Aggregation)
 from study.tests import build_studies_for_permission_testing
 
@@ -697,69 +697,6 @@ class DoseGroupModelFunctionality(TestCase):
             DoseGroup.clean_formset(dose_groups, 4)
 
         self.assertItemsEqual(err.exception.messages, [u'<ul><li>Each dose-type must have 4 dose groups</li></ul>'])
-
-
-class GenerationalAnimalGroupFunctionality(TestCase):
-
-    def setUp(self):
-        build_dosing_regimes_for_permission_testing(self)
-
-        self.experiment_generational = Experiment(study=self.study_working,
-                                                  name='experiment name',
-                                                  type='Rp',
-                                                  description='No description.')
-        self.experiment_generational.save()
-        self.animal_group_f0 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F0")
-        self.animal_group_f0.save()
-
-        # add dosing regime to F0
-        c = Client()
-        c.login(username='pm', password='pw')
-        response = c.post(reverse('animal:dosing_regime_new',
-                              kwargs={'pk': self.animal_group_f0.pk}),
-                                     {"route_of_exposure": 'I',
-                                      "description": 'foo1',
-                                      "dose_groups_json": build_dosing_datasets_json(self.dose_units)})
-
-        self.generational_dosing_regime = DosingRegime.objects.all().latest('created')
-
-        self.animal_group_f1 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F1")
-        self.animal_group_f1.save()
-        self.animal_group_f1.parents.add(self.animal_group_f0)
-
-        self.animal_group_f2 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F2")
-        self.animal_group_f2.save()
-        self.animal_group_f2.parents.add(self.animal_group_f1)
-
-    def test_dosing_regime_search(self):
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f0.dosing_regime)
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f1.dosing_regime)
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f2.dosing_regime)
-
-    def test_children(self):
-        self.assertEqual(GenerationalAnimalGroup.objects.filter(pk=self.animal_group_f1.pk)[0].pk,
-                         self.animal_group_f0.get_children()[0].pk)
-
-        self.assertEqual(GenerationalAnimalGroup.objects.filter(pk=self.animal_group_f2.pk)[0].pk,
-                         self.animal_group_f1.get_children()[0].pk)
 
 
 class EndpointPermissions(TestCase):
