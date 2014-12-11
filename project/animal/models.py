@@ -482,10 +482,7 @@ class DoseGroup(models.Model):
         Endpoint.d_response_delete_cache(endpoint_pks)
 
     def __unicode__(self):
-        return str(float(self.dose)) + ' (' + self.dose_units.__unicode__() + ')'
-
-    def get_float_dose(self):
-        return float(self.dose)
+        return "{0} {1}".format(self.dose, self.dose_units)
 
     @classmethod
     def clean_formset(cls, dose_groups, number_dose_groups):
@@ -827,7 +824,7 @@ class Endpoint(BaseEndpoint):
         if not hasattr(self, 'doses'):
             self.get_doses_json()
         try:
-            return float(self.doses[0]['values'][self.LOAEL])
+            return self.doses[0]['values'][self.LOAEL]
         except:
             return None
 
@@ -838,7 +835,7 @@ class Endpoint(BaseEndpoint):
         if not hasattr(self, 'doses'):
             self.get_doses_json()
         try:
-            return float(self.doses[0]['values'][self.NOAEL])
+            return self.doses[0]['values'][self.NOAEL]
         except:
             return None
 
@@ -849,7 +846,7 @@ class Endpoint(BaseEndpoint):
         if not hasattr(self, 'doses'):
             self.get_doses_json()
         try:
-            return float(self.doses[0]['values'][self.FEL])
+            return self.doses[0]['values'][self.FEL]
         except:
             return None
 
@@ -966,24 +963,24 @@ class EndpointGroup(models.Model):
         """
         try:
             # try this first, should work endpoint-groups = dose-groups
-            row = [str(float(dose['values'][self.dose_group_id])) for dose in doses]
+            row = [str(dose['values'][self.dose_group_id]) for dose in doses]
         except:
             # do this instead if there are differences between dose-groups
             row = []
             for dose in doses:
                 try:
-                    row.append(str(float(dose['values'][self.dose_group_id])))
+                    row.append(str(dose['values'][self.dose_group_id]))
                 except:
                     row.append('Error')
 
         if data_type == 'C':
-            row.extend([str(float(self.n)),
-                        str(float(self.response)),
-                        str(float(self.variance))])
+            row.extend([str(self.n),
+                        str(self.response),
+                        str(self.variance)])
         else:
-            row.extend([str(float(self.n)),
-                        str(float(self.incidence)),
-                        str(float(100.*(self.incidence/self.n)))])
+            row.extend([str(self.n),
+                        str(self.incidence),
+                        str(100.*(self.incidence/self.n))])
         return row
 
     @classmethod
@@ -1005,7 +1002,7 @@ class EndpointGroup(models.Model):
         if variance_type == 1:
             return variance
         elif variance_type == 2:
-            return float(variance) * math.sqrt(n)
+            return variance * math.sqrt(n)
         else:
             return None
 
@@ -1042,10 +1039,10 @@ class EndpointGroup(models.Model):
             eg['percentControlHigh'] = None
             if data_type == "C":
                 sqrt_n = math.sqrt(eg['n'])
-                resp_control = float(egs[0]['response'])
+                resp_control = egs[0]['response']
                 if ((sqrt_n != 0) and (resp_control != 0)):
-                    eg['percentControlMean'] =  float(eg['response']) / resp_control * 100.
-                    ci = (1.96 * float(eg['stdev']) / sqrt_n) / resp_control * 100.
+                    eg['percentControlMean'] =  eg['response'] / resp_control * 100.
+                    ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
                     eg['percentControlLow']  = (eg['percentControlMean'] - ci)
                     eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
 
@@ -1344,7 +1341,7 @@ class ReferenceValue(models.Model):
         return self.assessment
 
     def calculate_reference_value(self, ufs_list=None):
-        return (float(self.point_of_departure) / self.calculate_total_uncertainty_value(ufs_list))
+        return (self.point_of_departure / self.calculate_total_uncertainty_value(ufs_list))
 
     def calculate_total_uncertainty_value(self, ufs_list=None):
         # in RfD math, 3*3=10.
@@ -1357,7 +1354,6 @@ class ReferenceValue(models.Model):
 
         if ufs_list is None:
             ufs_list = list(self.ufs.values_list('value', flat=True))
-            ufs_list = [float(v) for v in ufs_list]
 
         for uf in ufs_list:
             if approx_equal(uf, 3.):
@@ -1407,7 +1403,7 @@ class ReferenceValue(models.Model):
         # this data requires the cleaned formset to save.
         ufs = []
         for form in formset:
-            ufs.append(float(form.cleaned_data['value']))
+            ufs.append(form.cleaned_data['value'])
         self.aggregate_uf = self.calculate_total_uncertainty_value(ufs)
         self.reference_value = self.calculate_reference_value(ufs)
         self.save()

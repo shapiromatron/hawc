@@ -1,5 +1,4 @@
 import json
-from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -478,11 +477,11 @@ class AnimalGroupModelFunctionality(TestCase):
         self.dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=0,
-                                      dose=Decimal('0'))
+                                      dose=0.)
         self.dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=1,
-                                      dose=Decimal('50'))
+                                      dose=50.)
         self.dose_group_1.save()
         self.dose_group_2.save()
         self.assertEqual('[{"units": "mg/kg/day", "values": [0.0, 50.0], "units_id": ' + str(self.dose_units.pk) + '}]', self.animal_group_working.get_doses_json())
@@ -630,23 +629,23 @@ class DosingRegimeModelFunctionality(TestCase):
         self.dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=0,
-                                      dose=Decimal('0'))
+                                      dose=0.)
 
         self.dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=1,
-                                      dose=Decimal('50'))
+                                      dose=50.)
         self.dose_group_1.save()
         self.dose_group_2.save()
         self.alt_dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                           dose_units=self.alt_dose_units,
                                           dose_group_id=0,
-                                          dose=Decimal('100'))
+                                          dose=100.)
 
         self.alt_dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                           dose_units=self.alt_dose_units,
                                           dose_group_id=1,
-                                          dose=Decimal('150'))
+                                          dose=150.)
         self.alt_dose_group_1.save()
         self.alt_dose_group_2.save()
 
@@ -693,24 +692,11 @@ class DoseGroupModelFunctionality(TestCase):
         dose_groups.append({'dose_regime': self.dosing_regime_working.pk,
                             'dose_units': 2,
                             'dose_group_id': 0,
-                            'dose': Decimal('50.00000000000')})
+                            'dose': 50.})
         with self.assertRaises(ValidationError) as err:
             DoseGroup.clean_formset(dose_groups, 4)
 
         self.assertItemsEqual(err.exception.messages, [u'<ul><li>Each dose-type must have 4 dose groups</li></ul>'])
-
-    def test_get_float_dose(self):
-        dose_group = DoseGroup(dose_regime=self.dosing_regime_working,
-                               dose_units=self.dose_units,
-                               dose_group_id=0,
-                               dose=Decimal('50.00000000000'))
-        self.assertEqual(dose_group.get_float_dose(), 50.)
-
-        dose_group = DoseGroup(dose_regime=self.dosing_regime_working,
-                               dose_units=self.dose_units,
-                               dose_group_id=0,
-                               dose=Decimal('50.00000000001'))
-        self.assertNotEqual(dose_group.get_float_dose(), 50.)
 
 
 class GenerationalAnimalGroupFunctionality(TestCase):

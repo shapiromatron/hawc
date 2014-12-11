@@ -116,7 +116,7 @@
               <tr>
                 <td><label for="dose_group_{{forloop.counter}}" class="control-label">Dose Group {{forloop.counter}}</label></td>
                 {% for dose in doses %}
-                  <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.get_float_dose}}"></td>
+                  <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.dose}}"></td>
                 {% endfor %}
               </tr>
             {% endfor %}
