@@ -80,12 +80,52 @@ Reference.prototype.deselect_name = function(){
 
 Reference.prototype.print_div_row = function(){
 
-    var div = $('<div></div>'),
-        authors = $('<p class="ref_small">{0} {1}</p>'.printf(
-                        this.data.authors || Reference.no_authors_text,
-                        this.data.year || "")),
+    var data = this.data,
+        div = $('<div></div>'),
         abs_btn = this.get_abstract_button(div),
-        edit_btn = this.get_edit_button();
+        edit_btn = this.get_edit_button(),
+        get_title = function(){
+            if(data.title)
+                return '<p class="ref_title">{0}</p>'.printf(data.title);
+        },
+        get_journal = function(){
+            if(data.journal)
+                return '<p class="ref_small">{0}</p>'.printf(data.journal);
+        },
+        get_pubmed = function(){
+            var p;
+            data.identifiers.forEach(function(v){
+                if(v.database === "PubMed"){
+                    p = $('<p>')
+                        .attr('class', 'ref_small')
+                        .append('<strong>Pubmed ID: </strong>')
+                        .append($('<a>')
+                                    .attr('target', '_blank')
+                                    .attr('href', v.url)
+                                    .text(v.id));
+                }
+            });
+            return p;
+        },
+        get_abstract = function(){
+            if(data.abstract)
+                return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
+        },
+        populate_div = function(authors){
+            return [
+                '<hr>',
+                authors,
+                get_title(),
+                get_journal(),
+                get_abstract(),
+                get_pubmed()
+
+            ];
+        };
+
+    var authors = $('<p class="ref_small">{0} {1}</p>'.printf(
+                        data.authors || Reference.no_authors_text,
+                        data.year || ""));
 
     if(abs_btn || edit_btn){
         var ul = $('<ul class="dropdown-menu">');
@@ -97,15 +137,10 @@ Reference.prototype.print_div_row = function(){
             .append('<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>')
             .append(ul)
             .appendTo(authors);
+
     }
 
-    return div.html([
-        '<hr>',
-        authors,
-        '<p class="ref_title">{0}</p>'.printf(this.data.title),
-        '<p class="ref_small">{0}</p>'.printf(this.data.journal),
-        '<p class="abstracts collapse" >{1}</p>'.printf(this.data.pk, this.data.abstract),
-    ].concat(this.print_taglist()));
+    return div.html(populate_div(authors).concat(this.print_taglist()));
 };
 
 Reference.prototype.get_abstract_button = function(div){
