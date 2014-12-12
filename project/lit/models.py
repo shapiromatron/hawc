@@ -387,12 +387,16 @@ class Identifiers(models.Model):
                             year=content.get('year', None),
                             block_id=block_id)
         elif self.database == 2:  # HERO
+            # in some cases; my return None, we want "" instead of null
+            title = content.get('title')
+            journal = content.get('source') or content.get('journaltitle')
+            abstract = content.get('abstract', "")
             ref = Reference(assessment=assessment,
-                            title=content.get('title', ""),
+                            title=title or "",
                             authors=content.get('authors_short', ""),
                             year=content.get('year', None),
-                            journal=content.get('source', ""),
-                            abstract=content.get('abstract', ""))
+                            journal=journal or "",
+                            abstract=abstract or "")
         else:
             raise ValueError("Unknown database for reference creation.")
 
@@ -765,9 +769,14 @@ class Reference(models.Model):
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
             content = json.loads(identifier.content, encoding='utf-8')
-            ref = Reference.objects.filter(assessment=search.assessment,
-                                           identifiers__unique_id=content.get('PMID', None),
-                                           identifiers__database=1)  # PubMed
+            pmid = content.get('PMID', None)
+
+            if pmid:
+                ref = Reference.objects.filter(assessment=search.assessment,
+                                               identifiers__unique_id=pmid,
+                                               identifiers__database=1)  # PubMed
+            else:
+                ref = Reference.objects.none()
 
             if ref.count()==1:
                 ref = ref[0]

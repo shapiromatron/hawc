@@ -52,9 +52,10 @@ class Strain(models.Model):
 class Experiment(models.Model):
 
     EXPERIMENT_TYPE_CHOICES = (
-        ("Ac", "Acute"),
-        ("Sb", "Subchronic"),
-        ("Ch", "Chronic"),
+        ("Ac", "Acute (<24 hr)"),
+        ("St", "Short-term (1-30 days)"),
+        ("Sb", "Subchronic (30-90 days)"),
+        ("Ch", "Chronic (>90 days)"),
         ("Ca", "Cancer"),
         ("Me", "Mechanistic"),
         ("Rp", "Reproductive"),
