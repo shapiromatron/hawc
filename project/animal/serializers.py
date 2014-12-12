@@ -96,6 +96,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret['data_type_label'] = instance.get_data_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()
         ret['monotonicity'] = instance.get_monotonicity_display()
+        ret['trend_result'] = instance.get_trend_result_display()
         ret['additional_fields'] = json.loads(instance.additional_fields)
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['endpoint_group'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['endpoint_group'])

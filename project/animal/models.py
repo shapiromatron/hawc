@@ -27,6 +27,7 @@ class Species(models.Model):
 
     class Meta:
         verbose_name_plural = "species"
+        ordering = ("name", )
 
     def __unicode__(self):
         return self.name
@@ -44,6 +45,7 @@ class Strain(models.Model):
 
     class Meta:
         unique_together = (("species", "name"),)
+        ordering = ("species", "name")
 
     def __unicode__(self):
         return self.name
@@ -147,11 +149,12 @@ class AnimalGroup(models.Model):
     SEX_CHOICES = (
         ("M", "Male"),
         ("F", "Female"),
-        ("B", "Both"))
+        ("B", "Both"),
+        ("R", "Not reported"))
 
     GENERATION_CHOICES = (
         (""  , "N/A (not generational-study)"),
-        ("F0", "Parent-generation (F0)"),
+        ("P0", "Parent-generation (P0)"),
         ("F1", "First-generation (F1)"),
         ("F2", "Second-generation (F2)"),
         ("F3", "Third-generation (F3)"),
@@ -324,6 +327,7 @@ class DoseUnits(models.Model):
 class DosingRegime(models.Model):
 
     ROUTE_EXPOSURE = (
+        ("OC", u"Oral capsule"),
         ("OD", u"Oral diet"),
         ("OG", u"Oral gavage"),
         ("OW", u"Oral drinking water"),
@@ -332,6 +336,8 @@ class DosingRegime(models.Model):
         ("SI", u"Subcutaneous injection"),
         ("IP", u"Intraperitoneal injection"),
         ("IO", u"in ovo"),
+        ("W",  u"Whole body"),
+        ("U",  u"Unknown"),
         ("O",  u"Other"))
 
     dosed_animals = models.OneToOneField(
@@ -543,7 +549,15 @@ class Endpoint(BaseEndpoint):
         (3, "hours"),
         (4, "days"),
         (5, "weeks"),
-        (6, "months"))
+        (6, "months"),
+        (7, "PND"),
+        (8, "GD"))
+
+    TREND_RESULT_CHOICES = (
+        (0, "not applicable"),
+        (1, "not significant"),
+        (2, "significant"),
+        (3, "not reported"))
 
     animal_group = models.ForeignKey(
         AnimalGroup,
@@ -601,6 +615,7 @@ class Endpoint(BaseEndpoint):
         default=False,
         help_text="If individual response data are available for each animal.")
     monotonicity = models.PositiveSmallIntegerField(
+        default=8,
         choices=MONOTONICITY_CHOICES)
     statistical_test = models.CharField(
         max_length=256,
@@ -608,6 +623,9 @@ class Endpoint(BaseEndpoint):
     trend_value = models.FloatField(
         null=True,
         blank=True)
+    trend_result = models.PositiveSmallIntegerField(
+        default=3,
+        choices=TREND_RESULT_CHOICES)
     results_notes = models.TextField(
         blank=True,
         help_text="Qualitative description of the results")
@@ -876,6 +894,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-monotonicity",
             "endpoint-statistical_test",
             "endpoint-trend_value",
+            "endpoint-trend_result",
             "endpoint-results_notes",
             "endpoint-endpoint_notes",
             "endpoint-additional_fields",
@@ -904,6 +923,7 @@ class Endpoint(BaseEndpoint):
             ser['monotonicity'],
             ser['statistical_test'],
             ser['trend_value'],
+            ser['trend_result'],
             ser['results_notes'],
             ser['endpoint_notes'],
             json.dumps(ser['additional_fields']),
@@ -914,10 +934,8 @@ class EndpointGroup(models.Model):
     endpoint = models.ForeignKey(
         Endpoint,
         related_name='endpoint_group')
-    dose_group_id = models.IntegerField(
-        blank=False)
+    dose_group_id = models.IntegerField()
     n = models.PositiveSmallIntegerField(
-        blank=False,
         validators=[MinValueValidator(0)])
     incidence = models.PositiveSmallIntegerField(
         blank=True,

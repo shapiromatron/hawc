@@ -281,6 +281,7 @@ Endpoint.prototype.build_details_table = function(div){
 
     tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
     tbl.add_tbody_tr("Statistical test description", this.data.statistical_test);
+    tbl.add_tbody_tr("Trend result", this.data.trend_result);
     tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
     tbl.add_tbody_tr("Results notes", this.data.results_notes);
     tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
