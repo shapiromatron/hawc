@@ -82,7 +82,7 @@ class Study(Reference):
             ids = Endpoint.objects\
                           .filter(animal_group__experiment__study=self.id)\
                           .values_list('id', flat=True)
-            Endpoint.d_response_delete_cache(ids)
+            Endpoint.delete_caches(ids)
         elif self.study_type == 1:
             # clear assessed outcome endpoints cache
             AssessedOutcome = get_model('epi', 'AssessedOutcome')

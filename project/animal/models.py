@@ -1,4 +1,3 @@
-from collections import Counter
 import json
 import math
 
@@ -97,10 +96,10 @@ class Experiment(models.Model):
 
     def save(self, *args, **kwargs):
         super(Experiment, self).save(*args, **kwargs)
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__experiment=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
+        pks = Endpoint.objects.all()\
+                .filter(animal_group__experiment=self)\
+                .values_list('pk', flat=True)
+        Endpoint.delete_caches(pks)
 
     def get_absolute_url(self):
         return reverse('animal:experiment_detail', args=[str(self.pk)])
@@ -214,10 +213,10 @@ class AnimalGroup(models.Model):
 
     def save(self, *args, **kwargs):
         super(AnimalGroup, self).save(*args, **kwargs)
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
+        pks = Endpoint.objects.all()\
+                .filter(animal_group=self)\
+                .values_list('pk', flat=True)
+        Endpoint.delete_caches(pks)
 
     def clean(self):
         #ensure that strain is of the correct species
@@ -376,10 +375,10 @@ class DosingRegime(models.Model):
 
     def save(self, *args, **kwargs):
         super(DosingRegime, self).save(*args, **kwargs)
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__dosing_regime=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
+        pks = Endpoint.objects.all()\
+                .filter(animal_group__dosing_regime=self)\
+                .values_list('pk', flat=True)
+        Endpoint.delete_caches(pks)
 
     @property
     def dose_groups(self):
@@ -466,13 +465,6 @@ class DoseGroup(models.Model):
 
     class Meta:
         ordering = ('dose_units', 'dose_group_id')
-
-    def save(self, *args, **kwargs):
-        super(DoseGroup, self).save(*args, **kwargs)
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__dosing_regime__doses=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
 
     def __unicode__(self):
         return "{0} {1}".format(self.dose, self.dose_units)
@@ -623,11 +615,11 @@ class Endpoint(BaseEndpoint):
 
     def save(self, *args, **kwargs):
         super(Endpoint, self).save(*args, **kwargs)
-        Endpoint.d_response_delete_cache([self.pk])
+        Endpoint.delete_caches([self.id])
 
     @classmethod
-    def d_response_delete_cache(cls, endpoint_pks):
-        super(Endpoint, cls).d_response_delete_cache(endpoint_pks)
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
     @staticmethod
     def endpoints_word_report(queryset):
@@ -1034,7 +1026,7 @@ class EndpointGroup(models.Model):
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
-        Endpoint.d_response_delete_cache([self.endpoint.pk])
+        Endpoint.delete_caches([self.endpoint.pk])
 
     @classmethod
     def flat_complete_header_row(cls):
@@ -1077,11 +1069,6 @@ class IndividualAnimal(models.Model):
 
     def __unicode__(self):
         return str(self.response)
-
-    def save(self, *args, **kwargs):
-        super(IndividualAnimal, self).save(*args, **kwargs)
-        #todo: move to model view to prevent redundancies
-        Endpoint.d_response_delete_cache([self.endpoint_group.endpoint.pk])
 
 
 class UncertaintyFactorAbstract(models.Model):
@@ -1139,8 +1126,7 @@ class UncertaintyFactorEndpoint(UncertaintyFactorAbstract):
 
     def save(self, *args, **kwargs):
         super(UncertaintyFactorEndpoint, self).save(*args, **kwargs)
-        # cache deletion not required because UFs not-saved with this version of EndpointGroup
-        # cache.delete('endpoint-json-{pk}'.format(pk=self.endpoint.endpoint_group.pk))
+        Endpoint.delete_caches([self.endpoint.pk])
 
     def clean(self):
         #ensure that only only UF type of the same type exists for an endpoint

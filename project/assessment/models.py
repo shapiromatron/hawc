@@ -268,12 +268,6 @@ class BaseEndpoint(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    @classmethod
-    def d_response_delete_cache(cls, endpoint_pks):
-        keys = ['endpoint-json-{pk}'.format(pk=pk) for pk in endpoint_pks]
-        logging.info('removing cache: {caches}'.format(caches=', '.join(keys)))
-        cache.delete_many(keys)
-
     def get_json(self, *args, **kwargs):
         """
         Use the appropriate child-class to generate JSON response object, or

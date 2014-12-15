@@ -65,8 +65,7 @@ class BMD_session(models.Model):
 
     def save(self, *args, **kwargs):
         super(BMD_session, self).save(*args, **kwargs)
-        # circular module import errors force us to call using this method style
-        self.endpoint.__class__.d_response_delete_cache([self.endpoint.pk])
+        self.endpoint.delete_caches([self.endpoint.pk])
 
     def get_selected_model(self, json_encode=True):
         if self.selected_model:
