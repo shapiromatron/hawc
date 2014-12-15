@@ -446,7 +446,11 @@ class TagsJSON(BaseDetail):
     model = Assessment
 
     def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, pk=self.request.GET.get('pk'))
+        try:
+            pk = int(self.request.GET.get('pk', -1))
+        except ValueError:
+            pk = -1
+        obj = get_object_or_404(self.model, pk=pk)
         return super(TagsJSON, self).get_object(object=obj)
 
     def get(self, request, *args, **kwargs):
