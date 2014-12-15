@@ -4,11 +4,7 @@
 {% load get_range %}
 
 {% block title %}
-  {% if crud == "Create" %}
-    {{assessment}} | {{animal_group.experiment.study}} | {{animal_group.experiment}} | {{animal_group}} | HAWC
-  {% elif crud == "Update" %}
-    {{assessment}} | {{object.dosed_animals.experiment.study}} | {{object.dosed_animals.experiment}} | {{object.dosed_animals}} | {{object}} | HAWC
-  {% endif %}
+  {{assessment}} | {{object.dosed_animals.experiment.study}} | {{object.dosed_animals.experiment}} | {{object.dosed_animals}} | {{object}} | HAWC
 {% endblock title %}
 
 {% block extrastyle %}
@@ -17,17 +13,10 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  {% if crud == "Update" %}
-    <li><a href="{% url 'study:detail' object.dosed_animals.experiment.study.pk %}">{{object.dosed_animals.experiment.study}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'animal:experiment_detail' object.dosed_animals.experiment.pk %}">{{object.dosed_animals.experiment}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'animal:animal_group_detail' object.dosed_animals.pk %}">{{object.dosed_animals}}</a><span class="divider">/</span></li>
-    <li class="active">Update</li>
-  {% elif crud == "Create" %}
-    <li><a href="{% url 'study:detail' animal_group.experiment.study.pk %}">{{animal_group.experiment.study}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'animal:experiment_detail' animal_group.experiment.pk %}">{{animal_group.experiment}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'animal:animal_group_detail' animal_group.pk %}">{{animal_group}}</a><span class="divider">/</span></li>
-    <li class="active">Create Dosing Regime<span class="divider">/</span></li>
-  {% endif %}
+  <li><a href="{% url 'study:detail' object.dosed_animals.experiment.study.pk %}">{{object.dosed_animals.experiment.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:experiment_detail' object.dosed_animals.experiment.pk %}">{{object.dosed_animals.experiment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'animal:animal_group_detail' object.dosed_animals.pk %}">{{object.dosed_animals}}</a><span class="divider">/</span></li>
+  <li class="active">Update</li>
 {% endblock %}
 
 {% block content %}
@@ -38,13 +27,8 @@
 
     <div class='row-fluid'>
       <fieldset>
-        {% if crud == "Create" %}
-          <legend>Create new dosing-regime</legend>
-          <span class="help-block">Create a new dosing-regime. Each dosing-regime is one protocol for how animals were dosed. Multiple different dose-metrics can be associated with one dosing regime.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update  {{ object }} </legend>
-          <span class="help-block">Update an existing dosing-regime.</span><br>
-        {% endif %}
+        <legend>Update  {{ object }} </legend>
+        <span class="help-block">Update an existing dosing-regime.</span><br>
 
         {{ form.non_field_errors|add_class:"alert alert-error" }}
 
@@ -68,71 +52,39 @@
     {% if dose_groups_errors %}<div class="alert alert-error">{{dose_groups_errors|safe}}</div>{% endif %}
     <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
 
-    {% if crud == "Create" %}
-      <table id="dose_table" class="table table-condensed table-striped">
+    <table id="dose_table" class="table table-condensed table-striped">
       <colgroup>
         <col style="width: 10%;">
-        <col style="width: 90%;">
       </colgroup>
-        <thead>
-          <tr>
-            <th>Dose Units</th>
+      <thead>
+        <tr>
+          <th>Dose Units</th>
+          {% for dose in object.get_dose_groups.0 %}
             <th>
-              <select class="input-medium dose_types"></select>
+              <select class="input-medium dose_types">
+                <option value={{dose.dose_units.pk}}>{{dose.dose_units}}</option>
+              </select>
+              <a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a>
             </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in animal_group.dose_groups|get_range %}
-            <tr>
-              <td><label for="dose_group_{{i}}" class="control-label">Dose Group {{i|add:"1"}}</label></td>
-              <td><input type="text" tabindex="1" class="input-medium" id="dose_{{i}}"></td>
-            </tr>
           {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
-
-    {% if crud == "Update" %}
-      <table id="dose_table" class="table table-condensed table-striped">
-        <colgroup>
-          <col style="width: 10%;">
-        </colgroup>
-          <thead>
-            <tr>
-              <th>Dose Units</th>
-              {% for dose in object.get_dose_groups.0 %}
-                <th>
-                  <select class="input-medium dose_types">
-                    <option value={{dose.dose_units.pk}}>{{dose.dose_units}}</option>
-                  </select>
-                  <a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a>
-                </th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for doses in object.get_dose_groups %}
-              <tr>
-                <td><label for="dose_group_{{forloop.counter}}" class="control-label">Dose Group {{forloop.counter}}</label></td>
-                {% for dose in doses %}
-                  <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.dose}}"></td>
-                {% endfor %}
-              </tr>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doses in object.get_dose_groups %}
+          <tr>
+            <td><label for="dose_group_{{forloop.counter}}" class="control-label">Dose Group {{forloop.counter}}</label></td>
+            {% for dose in doses %}
+              <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.dose}}"></td>
             {% endfor %}
-          </tbody>
-        </table>
-
-    {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
     <div class="row-fluid">
       <div class="form-actions">
         <button id='submit_form' type="submit" class="btn btn-primary">{{crud}} dosing-regime</button>
-        {% if crud == "Create" %}
-          <a href='{% url 'animal:animal_group_detail' animal_group.pk %}' class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'animal:dosing_regime_detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
+        <a href="{% url 'animal:animal_group_detail' object.dosed_animals.id %}" class="btn">Cancel</a>
       </div>
     </div>
   </form>

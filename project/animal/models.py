@@ -369,7 +369,7 @@ class DosingRegime(models.Model):
                                  self.get_route_of_exposure_display())
 
     def get_absolute_url(self):
-        return reverse('animal:dosing_regime_detail', args=[str(self.pk)])
+        return self.dosed_animals.get_absolute_url()
 
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
@@ -476,26 +476,6 @@ class DoseGroup(models.Model):
 
     def __unicode__(self):
         return "{0} {1}".format(self.dose, self.dose_units)
-
-    @classmethod
-    def clean_formset(cls, dose_groups, number_dose_groups):
-        """
-        Ensure that the selected dose_groups fields have an number of dose_groups
-        equal to those expected from the animal dose group, and that all dose
-        ids have all dose groups.
-        """
-        if len(dose_groups) < 1:
-            raise ValidationError("<ul><li>At least one set of dose-units must be presented!</li></ul>")
-        dose_units = Counter()
-        dose_group = Counter()
-        for dose in dose_groups:
-            dose_units[dose['dose_units']] += 1
-            dose_group[dose['dose_group_id']] += 1
-        for dose_unit in dose_units.itervalues():
-            if dose_unit != number_dose_groups:
-                raise ValidationError('<ul><li>Each dose-type must have ' + str(number_dose_groups) + ' dose groups</li></ul>')
-        if not all(dose_group.values()[0] == group for group in dose_group.values()):
-            raise ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
 
     @classmethod
     def flat_complete_data_row(cls, ser_full, units, idx):

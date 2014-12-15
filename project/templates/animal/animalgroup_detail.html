@@ -29,17 +29,10 @@
               <li><a href="{% url 'animal:animal_group_update' object.pk %}">Update</a></li>
               <li><a href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a></li>
 
-              {% if object.dosing_regime %}
-                {% if object == object.dosing_regime.dosed_animals %}
-                  <li class="divider"></li>
-                  <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                  <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
-                  <li><a href="{% url 'animal:dosing_regime_delete' object.dosing_regime.pk %}">Delete</a></li>
-                {% endif %}
-              {% else %}
+              {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
                 <li class="divider"></li>
                 <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                <li><a href="{% url 'animal:dosing_regime_new' object.pk %}">Create New</a></li>
+                <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
               {% endif %}
 
               <li class="divider"></li>

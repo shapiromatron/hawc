@@ -1,8 +1,9 @@
+from collections import Counter
 import json
 
 from django import forms
 from django.forms import ModelForm, ValidationError, Select
-from django.forms.models import BaseModelFormSet, inlineformset_factory
+from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 
@@ -11,7 +12,6 @@ from selectable.forms.widgets import AutoCompleteWidget
 
 from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
-from study.models import Study
 from utils.helper import HAWCDjangoJSONEncoder
 
 from . import models
@@ -109,6 +109,63 @@ class DoseGroupForm(ModelForm):
     class Meta:
         model = models.DoseGroup
         fields = ('dose_units', 'dose_group_id', 'dose')
+
+
+class BaseDoseGroupFormSet(BaseModelFormSet):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseDoseGroupFormSet, self).__init__(*args, **kwargs)
+        self.queryset = models.DoseGroup.objects.none()
+
+    def clean(self, **kwargs):
+        """
+        Ensure that the selected dose_groups fields have an number of dose_groups
+        equal to those expected from the animal dose group, and that all dose
+        ids have all dose groups.
+        """
+        if any(self.errors):
+            return
+
+        dose_units = Counter()
+        dose_group = Counter()
+        num_dose_groups = self.data['num_dose_groups']
+        dose_groups = self.cleaned_data
+
+        if len(dose_groups)<1:
+            raise forms.ValidationError("<ul><li>At least one set of dose-units must be presented!</li></ul>")
+
+        for dose in dose_groups:
+            dose_units[dose['dose_units']] += 1
+            dose_group[dose['dose_group_id']] += 1
+
+        for dose_unit in dose_units.itervalues():
+            if dose_unit != num_dose_groups:
+                raise forms.ValidationError('<ul><li>Each dose-type must have {} dose groups</li></ul>'.format(num_dose_groups))
+
+        if not all(dose_group.values()[0] == group for group in dose_group.values()):
+            raise forms.ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
+
+
+def dosegroup_formset_factory(groups, num_dose_groups):
+
+    data = {
+        u'form-TOTAL_FORMS': str(len(groups)),
+        u'form-INITIAL_FORMS': 0,
+        u'num_dose_groups': num_dose_groups
+    }
+
+    for i, v in enumerate(groups):
+        data[u"form-{}-dose_group_id".format(i)]  = str(v.get('dose_group_id', ""))
+        data[u"form-{}-dose_units".format(i)]     = str(v.get('dose_units', ""))
+        data[u"form-{}-dose".format(i)]           = str(v.get('dose', ""))
+
+    FS = modelformset_factory(
+            models.DoseGroup,
+            form=DoseGroupForm,
+            formset=BaseDoseGroupFormSet,
+            extra=len(groups))
+
+    return FS(data)
 
 
 class EndpointForm(ModelForm):

@@ -27,11 +27,8 @@ urlpatterns = patterns('animal.views',
     url(r'^animal-group/(?P<pk>\d+)/edit/$', views.AnimalGroupUpdate.as_view(), name='animal_group_update'),
     url(r'^animal-group/(?P<pk>\d+)/delete/$', views.AnimalGroupDelete.as_view(), name='animal_group_delete'),
 
-    # Dosing Regime #also add dose-groups akin to endpoint form
-    url(r'^animal-group/(?P<pk>\d+)/dosing-regime/new/$', views.DosingRegimeCreate.as_view(), name='dosing_regime_new'),
-    url(r'^dosing-regime/(?P<pk>\d+)/$', views.DosingRegimeRead.as_view(), name='dosing_regime_detail'),
+    # Dosing Regime
     url(r'^dosing-regime/(?P<pk>\d+)/edit/$', views.DosingRegimeUpdate.as_view(), name='dosing_regime_update'),
-    url(r'^dosing-regime/(?P<pk>\d+)/delete/$', views.DosingRegimeDelete.as_view(), name='dosing_regime_delete'),
 
     # Endpoint
     url(r'^assessment/(?P<pk>\d+)/endpoints/$', views.EndpointAssessmentList.as_view(), name='assessment_endpoint_list'),
