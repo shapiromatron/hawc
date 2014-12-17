@@ -1,4 +1,5 @@
 var Endpoint = function(data, options){
+    if (!data) return;  // added for edit_endpoint prototype extension
     this.options = options || {};
     this.observers = [];
     this.doses = [];
@@ -22,6 +23,7 @@ Endpoint.prototype.addObserver = function(obs){
 };
 
 Endpoint.prototype.unpack_doses = function(){
+    if (!this.data.animal_group) return;  // added for edit_endpoint prototype extension
     this.doses = d3.nest()
            .key(function(d){return d.dose_units.id})
            .entries(this.data.animal_group.dosing_regime.doses);
