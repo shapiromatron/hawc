@@ -66,6 +66,14 @@ class AnimalGroupForm(ModelForm):
             self.fields['strain'].queryset = models.Strain.objects.filter(
                 species=self.instance.species)
 
+        self.fields['lifestage_exposed'].widget = AutoCompleteWidget(
+            lookup_class=lookups.AnimalGroupLifestageExposedLookup,
+            allow_new=True)
+
+        self.fields['lifestage_assessed'].widget = AutoCompleteWidget(
+            lookup_class=lookups.AnimalGroupLifestageAssessedLookup,
+            allow_new=True)
+
         self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
                 experiment=self.instance.experiment)
 

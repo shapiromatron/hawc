@@ -5,7 +5,14 @@ from . import models
 from utils.lookups import DistinctStringLookup
 
 
+class AnimalGroupLifestageExposedLookup(DistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_exposed"
 
+
+class AnimalGroupLifestageAssessedLookup(DistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_assessed"
 
 
 class DoseUnitsLookup(ModelLookup):
@@ -32,6 +39,8 @@ class EndpointStatisticalTestLookup(DistinctStringLookup):
     distinct_field = "statistical_test"
 
 
+registry.register(AnimalGroupLifestageExposedLookup)
+registry.register(AnimalGroupLifestageAssessedLookup)
 registry.register(DoseUnitsLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
