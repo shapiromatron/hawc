@@ -2,14 +2,10 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 
 from . import models
+from utils.lookups import DistinctStringLookup
 
 
-class DistinctStringLookup(ModelLookup):
-    distinct_field = None
 
-    def get_query(self, request, term):
-        qs = super(DistinctStringLookup, self).get_query(request, term)
-        return qs.distinct(self.distinct_field)
 
 
 class DoseUnitsLookup(ModelLookup):
@@ -18,49 +14,22 @@ class DoseUnitsLookup(ModelLookup):
 
 class EndpointSystemLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ("system__icontains", )
     distinct_field = "system"
-
-    def get_item_value(self, item):
-        return item.system
-
-    def get_item_label(self, item):
-        return item.system
 
 
 class EndpointOrganLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ("organ__icontains", )
     distinct_field = "organ"
-
-    def get_item_value(self, item):
-        return item.organ
-
-    def get_item_label(self, item):
-        return item.organ
 
 
 class EndpointEffectLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ("effect__icontains", )
     distinct_field = "effect"
 
-    def get_item_value(self, item):
-        return item.effect
 
-    def get_item_label(self, item):
-        return item.effect
-
-
-class EndpointStatisticalTestLookup(ModelLookup):
+class EndpointStatisticalTestLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ("statistical_test__icontains", )
-
-    def get_item_value(self, item):
-        return item.statistical_test
-
-    def get_item_label(self, item):
-        return item.statistical_test
+    distinct_field = "statistical_test"
 
 
 registry.register(DoseUnitsLookup)
