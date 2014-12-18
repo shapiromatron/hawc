@@ -559,9 +559,9 @@ class StudyPopulation(Demographics):
             ser['country'],
             ser['region'],
             ser['state'],
-            '|'.join([d['description'] for d in ser['inclusion_criteria']]),
-            '|'.join([d['description'] for d in ser['exclusion_criteria']]),
-            '|'.join([d['description'] for d in ser['confounding_criteria']])
+            '|'.join(ser['inclusion_criteria']),
+            '|'.join(ser['exclusion_criteria']),
+            '|'.join(ser['confounding_criteria'])
         ) + Demographics.flat_complete_data_row(ser)
 
     def save(self, *args, **kwargs):
@@ -700,6 +700,7 @@ class AssessedOutcome(BaseEndpoint):
         (3, 'self-reported'))
 
     MAIN_FINDING_CHOICES = (
+        (3, "not-reported"),
         (2, "supportive"),
         (1, "inconclusive"),
         (0, "not-supportive"))
@@ -708,7 +709,8 @@ class AssessedOutcome(BaseEndpoint):
         (0, "not-applicable"),
         (1, "monotonic"),
         (2, "non-monotonic"),
-        (3, "no trend"))
+        (3, "no trend"),
+        (4, "not reported"))
 
     STATISTICAL_POWER_CHOICES = (
         (0, 'not reported or calculated'),
@@ -858,8 +860,8 @@ class AssessedOutcome(BaseEndpoint):
             ser['outcome_n'],
             ser['summary'],
             ser['prevalence_incidence'],
-            '|'.join([unicode(d['description']) for d in ser['adjustment_factors']]),
-            '|'.join([unicode(d['description']) for d in ser['confounders_considered']]),
+            '|'.join(ser['adjustment_factors']),
+            '|'.join(ser['confounders_considered']),
             ser['main_finding_support'],
             ser['dose_response'],
             ser['dose_response_details'],
@@ -914,7 +916,7 @@ class ExposureGroup(Demographics):
         help_text='Should be an exposure-value used for sorting',
         blank=True, null=True)
     comparative_name = models.CharField(
-        max_length=40,
+        max_length=64,
         verbose_name="Comparative Name",
         help_text='Should include effect-group and comparative group, for example '
                   '"1.5-2.5(Q2) vs ≤1.5(Q1)", or if only one group is available, '
@@ -1183,8 +1185,8 @@ class MetaProtocol(models.Model):
             ser['lit_search_start_date'],
             ser['lit_search_end_date'],
             ser['total_references'],
-            u'|'.join([f['description'] for f in ser['inclusion_criteria']]),
-            u'|'.join([f['description'] for f in ser['exclusion_criteria']]),
+            u'|'.join(ser['inclusion_criteria']),
+            u'|'.join(ser['exclusion_criteria']),
             ser['total_studies_identified'],
             ser['notes']
         )
@@ -1308,7 +1310,7 @@ class MetaResult(models.Model):
             ser['upper_ci'],
             ser['ci_units'],
             ser['heterogeneity'],
-            u'|'.join([f['description'] for f in ser['adjustment_factors']]),
+            u'|'.join(ser['adjustment_factors']),
             ser['notes'],
         )
 
