@@ -58,6 +58,12 @@
         {% if object.duration_observation %}
           <tr><th>Observation duration</th><td>{{object.duration_observation}} days</td></tr>
         {% endif %}
+        {% if object.lifestage_exposed %}
+          <tr><th>Lifestage exposed</th><td>{{object.lifestage_exposed}}</td></tr>
+        {% endif %}
+        {% if object.lifestage_assessed %}
+          <tr><th>Lifestage assessed</th><td>{{object.lifestage_assessed}}</td></tr>
+        {% endif %}
         {% if object.is_generational %}
           <tr><th>Generation</th><td>{{object.get_generation_display}}</td></tr>
           <tr>

@@ -176,6 +176,17 @@ class AnimalGroup(models.Model):
         help_text="Length of observation period, in days (fractions allowed)",
         blank=True,
         null=True)
+    lifestage_exposed = models.CharField(
+        max_length=32,
+        blank=True,
+        help_text='Textual life-stage description when exposure occurred '
+                  '(examples include: "parental, PND18, juvenile, adult, '
+                  'continuous, multiple")')
+    lifestage_assessed = models.CharField(
+        max_length=32,
+        blank=True,
+        help_text='Textual life-stage description when endpoints were measured '
+                  '(examples include: "parental, PND18, juvenile, adult, multiple")')
     siblings = models.ForeignKey(
         "self",
         blank=True,
@@ -246,6 +257,8 @@ class AnimalGroup(models.Model):
             "animal_group-name",
             "animal_group-sex",
             "animal_group-duration_observation",
+            "animal_group-lifestage_exposed",
+            "animal_group-lifestage_assessed",
             "animal_group-siblings",
             "animal_group-parents",
             "animal_group-generation",
@@ -254,18 +267,20 @@ class AnimalGroup(models.Model):
         )
 
     @staticmethod
-    def flat_complete_data_row(dic):
+    def flat_complete_data_row(ser):
         return (
-            dic['id'],
-            dic['url'],
-            dic['name'],
-            dic['sex'],
-            dic['duration_observation'],
-            dic['siblings'],
-            '|'.join([str(p) for p in dic['parents']]),
-            dic['generation'],
-            dic['species'],
-            dic['strain']
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['sex'],
+            ser['duration_observation'],
+            ser['lifestage_exposed'],
+            ser['lifestage_assessed'],
+            ser['siblings'],
+            '|'.join([str(p) for p in ser['parents']]),
+            ser['generation'],
+            ser['species'],
+            ser['strain']
         )
 
 

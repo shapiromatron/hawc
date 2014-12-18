@@ -63,6 +63,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
             'animal_group',
             'animal_group_url',
+            'lifestage exposed',
+            'lifestage assessed',
 
             'endpoint_name',
             'endpoint_url',
@@ -140,6 +142,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
                 ser['animal_group']['name'],
                 ser['animal_group']['url'],
+                ser['animal_group']['lifestage_exposed'],
+                ser['animal_group']['lifestage_assessed'],
 
                 ser['name'],
                 ser['url'],
