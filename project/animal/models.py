@@ -677,6 +677,23 @@ class Endpoint(BaseEndpoint):
             ]
         }
 
+    @classmethod
+    def optimized_qs(cls, **filters):
+        # Use this method to get proper prefetch and select-related when
+        # returning API-style endpoints
+        return cls.objects\
+            .filter(**filters)\
+            .select_related(
+                'animal_group',
+                'animal_group__dosed_animals',
+                'animal_group__experiment',
+                'animal_group__experiment__study',
+            ).prefetch_related(
+                'endpoint_group',
+                'effects',
+                'animal_group__dosed_animals__doses',
+            )
+
     def __unicode__(self):
         return self.name
 
