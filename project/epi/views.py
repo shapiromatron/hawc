@@ -6,12 +6,12 @@ from assessment.models import Assessment
 from utils.views import (BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList)
+                         CloseIfSuccessMixin, BaseList, GenerateReport)
 
 from study.models import Study
 from study.views import StudyRead
 
-from . import forms, models
+from . import forms, models, exports
 
 
 # Study-level
@@ -69,7 +69,7 @@ class StudyPopulationJSON(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return HttpResponse(self.object.get_json(get_parent=True, json_encode=True),
+        return HttpResponse(self.object.get_json(json_encode=True),
                             content_type="application/json")
 
 
@@ -253,20 +253,31 @@ class AssessedOutcomeFlat(BaseList):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
+        export_format = request.GET.get("output", "excel")
+        exporter = exports.AssessedOutcomeFlatDataPivot(
+                self.object_list,
+                export_format=export_format,
+                filename='{}-epi'.format(self.assessment))
+        return exporter.build_response()
 
-        output_type = request.GET.get('output', None)
 
-        if output_type == 'tsv':
-            tsv = self.model.get_tsv_file(self.object_list)
-            response = HttpResponse(tsv, content_type='text/tab-separated-values')
-            response['Content-Disposition'] = 'attachment; filename="download.tsv"'
+class AssessedOutcomeReport(GenerateReport):
+    parent_model = Assessment
+    model = models.AssessedOutcome
+    report_type = 3
 
-        else:
-            xls = self.model.get_excel_file(self.object_list)
-            response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="download.xls"'
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(AssessedOutcomeReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["exposure__study_population__study__published"] = True
+        return self.model.objects.filter(**filters)
 
-        return response
+    def get_filename(self):
+        return "epidemiology.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class FullExport(AssessedOutcomeFlat):
@@ -279,24 +290,12 @@ class FullExport(AssessedOutcomeFlat):
 
     def get(self, request, *args, **kwargs):
         self.object_list = super(FullExport, self).get_queryset()
-        xls = self.model.epidemiology_excel_export(self.object_list)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
-
-
-class AssessedOutcomeReport(AssessedOutcomeFlat):
-    """
-    Word report export for all epidemiological outcomes in an assessment
-    """
-    parent_model = Assessment
-    model = models.AssessedOutcome
-    crud = "Read"
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super(AssessedOutcomeReport, self).get_queryset()
-        docx = self.model.epidemiology_word_report(self.assessment, self.object_list)
-        return docx.django_response()
+        exporter = exports.AssessedOutcomeFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-epi'.format(self.assessment),
+                sheet_name='epi')
+        return exporter.build_response()
 
 
 class AssessedOutcomeCopyAsNewSelector(ExposureDetail):
@@ -452,20 +451,31 @@ class MetaResultFlat(BaseList):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
+        export_format = request.GET.get("output", "excel")
+        exporter = exports.MetaResultFlatDataPivot(
+                self.object_list,
+                export_format=export_format,
+                filename='{}-epi-meta-analysis'.format(self.assessment))
+        return exporter.build_response()
 
-        output_type = request.GET.get('output', None)
 
-        if output_type == 'tsv':
-            tsv = self.model.get_tsv_file(self.object_list)
-            response = HttpResponse(tsv, content_type='text/tab-separated-values')
-            response['Content-Disposition'] = 'attachment; filename="download.tsv"'
+class MetaResultReport(GenerateReport):
+    parent_model = Assessment
+    model = models.MetaResult
+    report_type = 4
 
-        else:
-            xls = self.model.get_excel_file(self.object_list)
-            response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="download.xls"'
+    def get_queryset(self):
+        filters = {"protocol__study__assessment": self.assessment}
+        perms = super(MetaResultReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["protocol__study__published"] = True
+        return self.model.objects.filter(**filters)
 
-        return response
+    def get_filename(self):
+        return "meta-results.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class MetaResultFullExport(MetaResultFlat):
@@ -475,7 +485,9 @@ class MetaResultFullExport(MetaResultFlat):
 
     def get(self, request, *args, **kwargs):
         self.object_list = super(MetaResultFullExport, self).get_queryset()
-        xls = self.model.epidemiology_excel_export(self.object_list)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        exporter = exports.MetaResultFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-epi-meta-analysis'.format(self.assessment),
+                sheet_name='epi-meta-analysis')
+        return exporter.build_response()

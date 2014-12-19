@@ -1,6 +1,10 @@
-var Endpoint = function(data){
+var Endpoint = function(data, options){
+    if (!data) return;  // added for edit_endpoint prototype extension
+    this.options = options || {};
     this.observers = [];
+    this.doses = [];
     this.data = data;
+    this.unpack_doses();
     this.add_confidence_intervals();
 };
 
@@ -18,6 +22,17 @@ Endpoint.prototype.addObserver = function(obs){
     this.observers.push(obs);
 };
 
+Endpoint.prototype.unpack_doses = function(){
+    if (!this.data.animal_group) return;  // added for edit_endpoint prototype extension
+    this.doses = d3.nest()
+           .key(function(d){return d.dose_units.id})
+           .entries(this.data.animal_group.dosing_regime.doses);
+
+    this.doses.forEach(function(v){ v.units= v.values[0].dose_units.units; });
+    this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
+    this.switch_dose_units(this.dose_units_id);
+};
+
 Endpoint.prototype.removeObserver = function(obs){
     var observers = this.observers;
     this.observers.forEach(function(v, i){
@@ -32,24 +47,32 @@ Endpoint.prototype.notifyObservers = function(status){
 };
 
 Endpoint.prototype.toggle_dose_units = function(){
-    // this toggles to the next dose units
-    if (this.data.dose_units_index < this.data.doses.length-1){
-        this._switch_dose(this.data.dose_units_index+1);
-    } else {
-        this._switch_dose(0);
-    }
+    var units = _.pluck(this.doses, "key"),
+        idx = units.indexOf(this.dose_units_id),
+        new_idx = (idx < units.length-1) ? (idx+1) : 0;
+    this._switch_dose(new_idx);
 };
 
-Endpoint.prototype._switch_dose = function(dose_index){
+Endpoint.prototype.switch_dose_units = function(units_id){
+  var units_id = units_id.toString()
+  for(var i=0; i<this.doses.length; i++){
+        if(this.doses[i].key === units_id)
+            return this._switch_dose(i);
+    }
+    console.log("Error: dose units not found");
+}
+
+Endpoint.prototype._switch_dose = function(idx){
     // switch doses to the selected index
     try {
-        var dr = this.data.dr;
-        this.data.dose_units = this.data.doses[dose_index].units;
-        this.data.doses[dose_index].values.forEach(function(v, i){
-            dr[i].dose = v;
-        });
-        this.data.dose_units_index = dose_index;
-        this.data.dose_units_id = this.data.doses[dose_index].units_id;
+        var egs = this.data.endpoint_group,
+            doses = this.doses[idx];
+
+        this.dose_units_id = doses.key;
+        this.dose_units = doses.units;
+
+        egs.forEach(function(eg, i){ eg.dose = doses.values[i].dose; });
+
         this.notifyObservers({'status':'dose_changed'});
     } catch(err){}
 };
@@ -78,7 +101,7 @@ Endpoint.prototype.get_pod = function(){
 Endpoint.prototype.get_special_dose_text = function(name){
     // return the appropriate dose of interest
     try{
-        return this.data.dr[this.data[name]].dose;
+        return this.data.endpoint_group[this.data[name]].dose;
     }catch(err){
         return 'none';
     }
@@ -100,9 +123,9 @@ Endpoint.prototype.build_endpoint_table = function(tbl_id){
 
 Endpoint.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
-        { url: this.data.experiment_url, name: this.data.experiment },
-        { url: this.data.animal_group_url, name: this.data.animal_group },
+        { url: this.data.animal_group.experiment.study.url, name: this.data.animal_group.experiment.study.short_citation },
+        { url: this.data.animal_group.experiment.url, name: this.data.animal_group.experiment.name },
+        { url: this.data.animal_group.url, name: this.data.animal_group.name },
         { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
@@ -112,7 +135,7 @@ Endpoint.prototype.add_confidence_intervals = function(){
     // Add confidence interval data to dataset.
     if ((this.data !== undefined) &&
         (this.data.data_type !== undefined) &&
-        (this.data.dr.length>0)) {
+        (this.data.endpoint_group.length>0)) {
         if (this.data.data_type === 'C'){
             this.add_continuous_confidence_intervals();
         } else {
@@ -139,7 +162,7 @@ Endpoint.prototype.add_dichotomous_confidence_intervals = function(){
     the 95% confidence intervals on the observed proportions (independent of
     model).
     */
-    $(this.data.dr).each(function(i, v){
+    this.data.endpoint_group.forEach(function(v, i){
         var p = v.incidence/v.n,
             q = 1-p,
             z = 1.959963986120195;  // same as Math.ltqnorm(0.975);
@@ -180,7 +203,7 @@ Endpoint.prototype.add_continuous_confidence_intervals = function(){
        and upper ends of the error bar.
     */
     var self = this;
-    $(this.data.dr).each(function(i, v){
+    this.data.endpoint_group.forEach(function(v, i){
         if (v.stdev === undefined) self.calculate_stdev(v);
         var se = v.stdev/Math.sqrt(v.n),
             z = Math.Inv_tdist_05(v.n-1);
@@ -193,35 +216,33 @@ Endpoint.prototype._build_animal_group_dose_rows = function(options){
     var self = this,
         tr1 = $('<tr></tr>').append('<th rowspan="2">Parameter</th>'),
         tr2 = $('<tr></tr>'),
-        header_text,
-        txt;
+        header_text = 'Exposure group ',
+        txt,
+        num_groups = this.data.endpoint_group.length;
 
-    this.data.doses.forEach(function(v,i){
-        if(i===0){
-            header_text = 'Exposure group {0}'.printf(v.units);
-        } else {
-            header_text += ' ({0})'.printf(v.units);
-        }
-    });
+    // build top header row showing dose-units available
+    var units = this.doses.map(function(v){ return v.units; });
+    header_text += units[0];
+    if (units.length>1)
+        header_text += " ({0})".printf(units.slice(1, units.length).join(", "))
 
-    tr1.append('<th colspan="{0}">{1}</th>'.printf(this.data.dr.length, header_text));
+    tr1.append('<th colspan="{0}">{1}</th>'.printf(num_groups, header_text));
 
-    for(var i = 0; i<this.data.dr.length; i++){
-        this.data.doses.forEach(function(v, j){
-            if(j===0){
-                txt = v.values[i];
-            } else {
-                if (i!==0) txt += ' ({0})'.printf(v.values[i]);
-            }
-        });
+    // now build header row showing available doses
+    for(var i=0; i<num_groups; i++){
+        var doses = this.doses.map(function(v){ return v.values[i].dose; });
+        txt = doses[0].toLocaleString();
+        if (doses.length>1)
+            txt += " ({0})".printf(doses.slice(1, doses.length).join(", "))
         tr2.append('<th>{0}</th>'.printf(txt));
     }
-    return {html: [tr1, tr2], columns_count: this.data.dr.length+1};
+
+    return {html: [tr1, tr2], columns_count: num_groups.length+1};
 };
 
 Endpoint.prototype._build_animal_group_n_row = function(options){
     return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
-        this.data.dr.map(function(v){return '<td>{0}</td>'.printf(v.n);})));
+        this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n);})));
 };
 
 Endpoint.prototype._endpoint_detail_td = function(){
@@ -258,7 +279,7 @@ Endpoint.prototype.build_details_table = function(div){
                             this.data.observation_time_units));
     }
 
-    tbl.add_tbody_tr("Additional tags", getTaglist(this.data.tags, this.data.assessment_id));
+    tbl.add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment_id));
 
     tbl.add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
     tbl.add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted));
@@ -271,6 +292,7 @@ Endpoint.prototype.build_details_table = function(div){
 
     tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
     tbl.add_tbody_tr("Statistical test description", this.data.statistical_test);
+    tbl.add_tbody_tr("Trend result", this.data.trend_result);
     tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
     tbl.add_tbody_tr("Results notes", this.data.results_notes);
     tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
@@ -284,7 +306,7 @@ Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
 
     if (this.data.data_type == "C"){
         var dr_control;
-        this.data.dr.forEach(function(v, i){
+        this.data.endpoint_group.forEach(function(v, i){
             footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
             if(i === 0){
                 tr.append("<td>{0} ± {1}{2}</td>".printf(v.response, v.stdev, footnotes));
@@ -295,7 +317,7 @@ Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
             }
         });
     } else {
-        this.data.dr.forEach(function(v, i){
+        this.data.endpoint_group.forEach(function(v, i){
         footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
             tr.append("<td>{0}/{1} ({2}%){3}</td>".printf(v.incidence, v.n,
                     self._dichotomous_percent_change_incidence(v), footnotes));
@@ -304,22 +326,23 @@ Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
     return tr.data('endpoint', this);
 };
 
-Endpoint.prototype._dichotomous_percent_change_incidence = function(dr){
-    return Math.round((dr.incidence/dr.n*100), 3);
+Endpoint.prototype._dichotomous_percent_change_incidence = function(eg){
+    return Math.round((eg.incidence/eg.n*100), 3);
 };
 
-Endpoint.prototype._continuous_percent_difference_from_control = function(dr, dr_control){
-    return (dr_control.response === 0) ? "-" : Math.round(100*((dr.response - dr_control.response)/dr_control.response), 3);
+Endpoint.prototype._continuous_percent_difference_from_control = function(eg, eg_control){
+    return (eg_control.response === 0) ? "-" : Math.round(100*((eg.response - eg_control.response)/eg_control.response), 3);
 };
 
 Endpoint.prototype._number_of_animals_string = function(){
-    return this.data.dr.map(function(v){return v.n;}).join('-');
+    return this.data.endpoint_group.map(function(v){return v.n;}).join('-');
 };
 
 Endpoint.prototype.add_endpoint_group_footnotes = function(footnote_object, endpoint_group_index){
     var footnotes = [], self = this;
-    if (self.data.dr[endpoint_group_index].significant){
-        footnotes.push('Significantly different from control (<i>p</i> < {0})'.printf(self.data.dr[endpoint_group_index].significance_level));
+    if (self.data.endpoint_group[endpoint_group_index].significant){
+        footnotes.push('Significantly different from control (<i>p</i> < {0})'.printf(
+            self.data.endpoint_group[endpoint_group_index].significance_level));
     }
     if (self.data.LOAEL == endpoint_group_index) {
         footnotes.push('LOAEL (Lowest Observed Adverse Effect Level)');
@@ -339,16 +362,16 @@ var EndpointCriticalDose = function(endpoint, span, type, show_units){
     endpoint.addObserver(this);
     this.endpoint = endpoint;
     this.span = span;
-    this.type = type;
+    this.critical_effect_idx = endpoint.data[type];
     this.show_units = show_units;
     this.display();
 };
 
 EndpointCriticalDose.prototype.display = function(){
-    var txt = "", data = this.endpoint.data;
+    var txt = "", egs = this.endpoint.data.endpoint_group;
     try {
-        var txt = data.doses[data.dose_units_index].values[data[this.type]];
-        if (this.show_units) txt = "{0} {1}".printf(txt, data.dose_units);
+        var txt = egs[this.critical_effect_idx].dose;
+        if (this.show_units) txt = "{0} {1}".printf(txt, endpoint.dose_units);
     } catch(err){}
     this.span.html(txt);
 };
@@ -364,7 +387,7 @@ var EndpointPlotContainer = function(endpoint, plot_id){
     this.plot_div = $(plot_id);
     this.plot_id = plot_id;
 
-    if(endpoint.data.dr.length>0){
+    if(endpoint.data.endpoint_group.length>0){
         var options = {'build_plot_startup':false};
         this.plot_style = [new Barplot(endpoint, this.plot_id, options, this),
                            new DRPlot(endpoint, this.plot_id, options, this)];
@@ -415,7 +438,7 @@ EndpointTable.prototype.update = function(status){
 };
 
 EndpointTable.prototype.build_table = function(){
-    if (this.endpoint.data.dr.length === 0){
+    if (this.endpoint.data.endpoint_group.length === 0){
         this.tbl.html('<p>Dose-response data unavailable.</p>');
     } else {
         this.footnotes.reset();
@@ -429,8 +452,8 @@ EndpointTable.prototype.build_table = function(){
 };
 
 EndpointTable.prototype.build_header = function(){
-    var dose = $('<th>Dose<br>(' + this.endpoint.data.dose_units + ')</th>');
-    if (this.endpoint.data.doses.length>1){
+    var dose = $('<th>Dose<br>(' + this.endpoint.dose_units + ')</th>');
+    if (this.endpoint.doses.length>1){
         this.dose_toggle = $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>');
         dose.append(this.dose_toggle);
 
@@ -458,7 +481,7 @@ EndpointTable.prototype.build_header = function(){
 EndpointTable.prototype.build_body = function(){
     this.tbody = $('<tbody></tbody>');
     var self = this;
-    this.endpoint.data.dr.forEach(function(v, i){
+    this.endpoint.data.endpoint_group.forEach(function(v, i){
         var tr = $('<tr></tr>'),
             dose = v.dose;
 
@@ -616,7 +639,7 @@ DRPlot.prototype.customize_menu = function(){
                    icon: 'icon-resize-horizontal',
                    on_click: function(){plot.toggle_x_axis();}};
    this.add_menu_button(options);
-   if (this.endpoint.data.doses.length>1){
+   if (this.endpoint.doses.length>1){
        options = {id: 'toggle_dose_units',
                   cls: 'btn btn-mini',
                   title: 'Change dose-units representation',
@@ -655,26 +678,27 @@ DRPlot.prototype.toggle_y_axis= function(){
 DRPlot.prototype.toggle_x_axis= function(){
     // get minimum non-zero dose and then set all control doses
     // equal to ten-times lower than the lowest dose
+    var egs = this.endpoint.data.endpoint_group;
     if(window.event && window.event.stopPropagation) event.stopPropagation();
     if (this.x_axis_settings.scale_type == 'linear'){
         this.x_axis_settings.scale_type = 'log';
         this.x_axis_settings.number_ticks = 1;
         var formatNumber = d3.format(",.f");
         this.x_axis_settings.label_format = formatNumber;
-        if(this.endpoint.data.dr[0].dose === 0){
-            this.endpoint.data.dr[0].dose = this.endpoint.data.dr[1].dose/10;
-            this.endpoint.data.dr[0].dose_original = 0;
+        if(egs[0].dose === 0){
+            egs[0].dose = egs[1].dose/10;
+            egs[0].dose_original = 0;
         }
-        this.min_x = this.endpoint.data.dr[0].dose;
+        this.min_x = egs[0].dose;
         this.x_axis_settings.domain = [this.min_x/10, this.max_x*(1+this.buff)];
     } else {
         this.x_axis_settings.scale_type = 'linear';
         this.x_axis_settings.number_ticks = 5;
         this.x_axis_settings.label_format = undefined;
-        if (this.endpoint.data.dr[0].dose_original !== undefined){
-            this.endpoint.data.dr[0].dose = this.endpoint.data.dr[0].dose_original;
+        if (egs[0].dose_original !== undefined){
+            egs[0].dose = egs[0].dose_original;
         }
-        this.min_x = this.endpoint.data.dr[0].dose;
+        this.min_x = egs[0].dose;
         this.x_axis_settings.domain = [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)];
     }
     this.x_scale = this._build_scale(this.x_axis_settings);
@@ -822,25 +846,26 @@ DRPlot.prototype.dr_plot_update = function(){
         .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 
     //rebuild title
-    this.title_str = this.endpoint.data.name + ' (' + this.endpoint.data.dr[0].time +' hrs)';
+    this.title_str = this.endpoint.data.name + ' (' + this.endpoint.data.endpoint_group[0].time +' hrs)';
     this.add_title();
 };
 
 DRPlot.prototype.get_dataset_info = function(){
     this.title_str = this.endpoint.data.name;
-    this.x_label_text = "Dose ({0})".printf(this.endpoint.data.dose_units);
+    this.x_label_text = "Dose ({0})".printf(this.endpoint.dose_units);
     this.y_label_text = "Response ({0})".printf(this.endpoint.data.response_units);
 
     // Get values to be used in dose-response plots
     var ep = this.endpoint.data,
         values = [],
         sigs_data = [],
-        self = this;
+        self = this,
+        dose_units = this.endpoint.dose_units;
 
-    $(this.endpoint.data.dr).each(function(i, v){
+    ep.endpoint_group.forEach(function(v, i){
         var value = {'x': v.dose, 'cls': 'dose_points',
                      'y_lower':v.lower_limit, 'y_upper':v.upper_limit},
-            txt = ["Dose = {0} {1}".printf(v.dose, ep.dose_units),
+            txt = ["Dose = {0} {1}".printf(v.dose, dose_units),
                    "N = {0}".printf(v.n)];
         if (ep.data_type =='C'){
             value.y = v.response;
@@ -866,14 +891,14 @@ DRPlot.prototype.get_dataset_info = function(){
     this.sigs_data = sigs_data;
 
     // get plot domain
-    this.min_x = d3.min(this.endpoint.data.dr, function(datum) { return datum.dose; });
-    this.max_x = d3.max(this.endpoint.data.dr, function(datum) { return datum.dose; });
+    this.min_x = d3.min(ep.endpoint_group, function(datum) { return datum.dose; });
+    this.max_x = d3.max(ep.endpoint_group, function(datum) { return datum.dose; });
 
-    if (this.endpoint.data.dr.length>0){
+    if (ep.endpoint_group.length>0){
         var max_upper = d3.max(values, function(d){return d.y_upper;}),
             max_sig = d3.max(sigs_data, function(d){return d.y;});
 
-        this.min_y = d3.min(this.endpoint.data.dr, function(datum){return datum.lower_limit;});
+        this.min_y = d3.min(ep.endpoint_group, function(datum){return datum.lower_limit;});
         this.max_y = d3.max([max_upper, max_sig]);
     }
 };
@@ -903,7 +928,7 @@ DRPlot.prototype.add_selected_endpoint_BMD = function(){
     // Update BMD lines based on dose-changes
     var self = this;
     if ((this.endpoint.data.BMD) &&
-        (this.endpoint.data.BMD.dose_units_id === this.endpoint.data.dose_units_id)){
+        (this.endpoint.data.BMD.dose_units_id == this.endpoint.dose_units_id)){
         var append = true;
         self.bmd.forEach(function(v, i){
             if (v.BMD.id === self.endpoint.data.BMD.id){append = false;}
@@ -1292,7 +1317,7 @@ Barplot.prototype.customize_menu = function(){
                    on_click: function(){plot.toggle_y_axis();}};
    plot.add_menu_button(options);
 
-   if (this.endpoint.data.doses.length>1){
+   if (this.endpoint.doses.length>1){
        options = {id: 'toggle_dose_units',
                   cls: 'btn btn-mini',
                   title: 'Change dose-units representation',
@@ -1338,7 +1363,7 @@ Barplot.prototype.update = function(status){
 Barplot.prototype.dose_scale_change = function(){
     this.get_dataset_info();
     if (this.parent && this.parent.plot === this){
-        this.x_axis_settings.domain = this.endpoint.data.dr.map(
+        this.x_axis_settings.domain = this.endpoint.data.endpoint_group.map(
                 function(d){return String(d.dose);});
         this.x_scale = this._build_scale(this.x_axis_settings);
         this.x_axis_change_chart_update();
@@ -1389,7 +1414,7 @@ Barplot.prototype.get_dataset_info = function(){
         sigs_data = [];
 
     e = this.endpoint;
-    $(this.endpoint.data.dr).each(function(i, v){
+    this.endpoint.data.endpoint_group.forEach(function(v, i){
         if(e.data.data_type=='C'){
             val = v.response;
             txt = v.response;
@@ -1437,14 +1462,14 @@ Barplot.prototype.get_dataset_info = function(){
     }
 
     this.title_str = this.endpoint.data.name;
-    this.x_label_text = "Doses ({0})".printf(this.endpoint.data.dose_units);
+    this.x_label_text = "Doses ({0})".printf(this.endpoint.dose_units);
     this.y_label_text = "Response ({0})".printf(this.endpoint.data.response_units);
 };
 
 Barplot.prototype.add_axes = function() {
     $.extend(this.x_axis_settings, {
-        domain: this.endpoint.data.dr.map(function(d){return String(d.dose);}),
-        number_ticks: this.endpoint.data.dr.length,
+        domain: this.endpoint.data.endpoint_group.map(function(d){return String(d.dose);}),
+        number_ticks: this.endpoint.data.endpoint_group.length,
         rangeRound: [0, this.w],
         x_translate: 0,
         y_translate: this.h
@@ -1731,7 +1756,7 @@ BWPlot.prototype.add_reference_line = function(event){
         threshold = this.y_scale.invert(y_value);
 
     var txt = [], x = this.x_scale;
-    this.endpoint.data.dr.forEach(function(v, i){
+    this.endpoint.data.endpoint_group.forEach(function(v, i){
         var exceed = v.individual_responses.filter(function(e){return e>threshold;}).length;
         txt.push({'x':i+1, 'txt': exceed + '/' + v.individual_responses.length + ' (' + Math.round(exceed/v.individual_responses.length*100,2) +'%)'});
     });
@@ -1779,7 +1804,7 @@ BWPlot.prototype.get_dataset_info = function(){
     var y_min = Infinity, y_max = -Infinity,
         values = [], stats = [], bars = [];
 
-    this.endpoint.data.dr.forEach(function(v, i){
+    this.endpoint.data.endpoint_group.forEach(function(v, i){
         var stat = {x: v.dose,
                     min: d3.min(v.individual_responses),
                     five: v.response - 1.645*v.stdev,
@@ -1814,14 +1839,14 @@ BWPlot.prototype.get_dataset_info = function(){
     this.stats = stats;
 
     this.title_str = this.endpoint.data.name;
-    this.x_label_text = "Doses ({0})".printf(this.endpoint.data.dose_units);
+    this.x_label_text = "Doses ({0})".printf(this.endpoint.dose_units);
     this.y_label_text = "Response ({0})".printf(this.endpoint.data.response_units);
 };
 
 BWPlot.prototype.add_axes = function() {
     $.extend(this.x_axis_settings, {
-        domain: this.endpoint.data.dr.map(function(d){return String(d.dose);}),
-        number_ticks: this.endpoint.data.dr.length,
+        domain: this.endpoint.data.endpoint_group.map(function(d){return String(d.dose);}),
+        number_ticks: this.endpoint.data.endpoint_group.length,
         rangeRound: [0, this.w],
         x_translate: 0,
         y_translate: this.h

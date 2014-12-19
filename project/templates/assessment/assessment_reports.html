@@ -27,7 +27,7 @@
           {% endfor %}
         </select><br>
         <a class='btn btn-primary download-report'
-           data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+           data-basehref="{% url 'lit:ref_report' assessment.pk %}"
            href="#">Download</a><br>
       </li><br>
     {% endif %}
@@ -44,7 +44,7 @@
             {% endfor %}
           </select><br>
           <a class='btn btn-primary download-report'
-             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             data-basehref="{% url 'study:studies_report' assessment.pk %}"
              href="#">Download</a><br>
         </li><br>
       {% endif %}
@@ -74,7 +74,7 @@
             {% endfor %}
           </select><br>
           <a class='btn btn-primary download-report'
-             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             data-basehref="{% url 'epi:ao_report' assessment.pk %}"
              href="#">Download</a><br>
         </li><br>
       {% endif %}
@@ -89,7 +89,7 @@
             {% endfor %}
           </select><br>
           <a class='btn btn-primary download-report'
-             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             data-basehref="{% url 'epi:mr_report' assessment.pk %}"
              href="#">Download</a><br>
         </li><br>
       {% endif %}
@@ -104,7 +104,7 @@
             {% endfor %}
           </select><br>
           <a class='btn btn-primary download-report'
-             data-basehref="{% url 'animal:endpoints_report' assessment.pk %}"
+             data-basehref="{% url 'invitro:endpoints_report' assessment.pk %}"
              href="#">Download</a><br>
         </li><br>
       {% endif %}

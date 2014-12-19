@@ -19,7 +19,6 @@
     <ul class="dropdown-menu">
       <li><a href="{% url 'portal' %}">Portal</a></li>
       <li><a href="{% url 'user:settings' %}">Settings</a></li>
-      <li><a href="{% url 'api_root' %}">API</a></li>
       {% if user.is_staff %}
        <li><a href="{%url 'admin:index' %}">Admin</a></li>
       {% endif %}

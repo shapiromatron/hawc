@@ -1,6 +1,7 @@
 {% extends 'portal.html' %}
 
 {% load add_class %}
+{% load selectable_tags %}
 
 {% block title %}
   {% if crud == "Create" %}
@@ -9,6 +10,10 @@
     {{assessment}} | {{object.experiment.study}} | {{object.experiment}} | Update {{object}} | HAWC
   {% endif %}
 {% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
@@ -63,8 +68,9 @@
     </div>
 
     <!-- Dosing Regime Form -->
+    {% if crud == "Create" %}
     <div class='row-fluid' id='dosing_regime'>
-      <fieldset name="foo">
+      <fieldset>
         {% if crud == "Create" %}
           <legend>Create new dosing-regime</legend>
           <span class="help-block">Create a new dosing-regime. Each dosing-regime is one protocol for how animals were dosed. Multiple different dose-metrics can be associated with one dosing regime. If this is a generational-experiment, an existing dosing-regime may also be specified.</span><br>
@@ -105,6 +111,7 @@
 
       <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
     </div>
+    {% endif %}
 
     <!-- Submission Form -->
     <div class="row-fluid">
@@ -123,6 +130,8 @@
 {% endblock %}
 
 {% block extrajs %}
+  {% include_jquery_libs %}
+  {{ form.media }}
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}animal/js/animal_group_form.js" type="text/javascript"></script>

@@ -4,7 +4,7 @@ var StudyPopulation = function(data){
 
 StudyPopulation.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.study.url, name: this.data.study.short_citation },
         { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
@@ -20,24 +20,24 @@ StudyPopulation.prototype.build_details_table = function(div){
     tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
     tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
     tbl.add_tbody_tr_list("Confounding criteria", this.data.confounding_criteria);
-    tbl.add_tbody_tr("N", this.data.demographics.n);
-    tbl.add_tbody_tr("Sex", this.data.demographics.sex);
-    tbl.add_tbody_tr_list("Ethnicities", this.data.demographics.ethnicity);
-    tbl.add_tbody_tr("Fraction male", this.data.demographics.fraction_male,
-                 {calculated: this.data.demographics.fraction_male_calculated});
-    tbl.add_tbody_tr("Age description", this.data.demographics.age_description);
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_mean_type),
-                 this.data.demographics.age_mean,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_sd_type),
-                 this.data.demographics.age_sd,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_lower_type),
-                 this.data.demographics.age_lower,
-                 {calculated: this.data.demographics.age_calculated});
-    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.demographics.age_upper_type),
-                 this.data.demographics.age_upper,
-                 {calculated: this.data.demographics.age_calculated});
+    tbl.add_tbody_tr("N", this.data.n);
+    tbl.add_tbody_tr("Sex", this.data.sex);
+    tbl.add_tbody_tr_list("Ethnicities", this.data.ethnicity);
+    tbl.add_tbody_tr("Fraction male", this.data.fraction_male,
+                 {calculated: this.data.fraction_male_calculated});
+    tbl.add_tbody_tr("Age description", this.data.age_description);
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_mean_type),
+                 this.data.age_mean,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_sd_type),
+                 this.data.age_sd,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_lower_type),
+                 this.data.age_lower,
+                 {calculated: this.data.age_calculated});
+    tbl.add_tbody_tr("Age {0} (yrs)".printf(this.data.age_upper_type),
+                 this.data.age_upper,
+                 {calculated: this.data.age_calculated});
 
     $(div).html(tbl.get_tbl());
 };
@@ -51,16 +51,17 @@ var AssessedOutcome = function(data){
 };
 
 AssessedOutcome.prototype._build_aogs = function(){
-    this.data.aog.sort(function(a, b){
+    this.data.groups.sort(function(a, b){
       return a.exposure_group.exposure_group_id -
              b.exposure_group.exposure_group_id;});
 
-    for(var i=0; i<this.data.aog.length; i++){
-        var aog = new AssessedOutcomeGroup(this.data.aog[i])
+    for(var i=0; i<this.data.groups.length; i++){
+        var aog = new AssessedOutcomeGroup(this.data.groups[i])
         this.aog.push(aog);
+        aog.data.main_finding = (aog.data.exposure_group.id === this.data.main_finding);
         if (aog.data.main_finding) this.main_finding = aog;
     }
-    delete this.data.aog;
+    delete this.data.groups;
 };
 
 AssessedOutcome.prototype.build_ao_table = function(div){
@@ -75,7 +76,7 @@ AssessedOutcome.prototype.build_ao_table = function(div){
     tbl.add_tbody_tr("Summary", this.data.summary);
     if (this.main_finding) tbl.add_tbody_tr("Main finding supported?", this.data.main_finding_support);
     tbl.add_tbody_tr("Prevalence Incidence", this.data.prevalence_incidence);
-    tbl.add_tbody_tr("Statistical metric presented", this.data.statistical_metric);
+    tbl.add_tbody_tr("Statistical metric presented", this.data.statistical_metric.metric);
     tbl.add_tbody_tr("Statistical metric description", this.data.statistical_metric_description);
     tbl.add_tbody_tr("Statistical power sufficient?",
         this.data.statistical_power,
@@ -83,60 +84,44 @@ AssessedOutcome.prototype.build_ao_table = function(div){
     tbl.add_tbody_tr("Dose response trend?",
         this.data.dose_response,
         {annotate: this.data.dose_response_details});
-    tbl.add_tbody_tr("Effect tags", this.data.tags.map(function(v){return v.name;}).join(", "));
+    tbl.add_tbody_tr("Effect tags", this.data.effects.map(function(v){return v.name;}).join(", "));
     this._ao_tbl_adjustments_columns(tbl.get_tbody());
 
     $(div).html(tbl.get_tbl());
 };
 
 AssessedOutcome.prototype._ao_tbl_adjustments_columns = function(tbody){
-    var dict_adj = {}, dict_conf = {}, i, key, item,
-        adjustments = [], confounders = [], content = ['<i>None</i>'];
 
-    // get adjustment factors considered into "hashable" structure
-    for(i=0; i<this.data.adjustment_factors_considered.length; i++){
-        item = this.data.adjustment_factors_considered[i];
-        dict_conf[item.pk] = item.description;
-    }
+    var adjs = _.clone(this.data.adjustment_factors),
+        confs = _.clone(this.data.confounders_considered),
+        content = ['<i>None</i>'],
+        tr = $('<tr>');
 
-    // get adjustments into "hashable" structure
-    for(i=0; i<this.data.adjustment_factors.length; i++){
-        item = this.data.adjustment_factors[i];
-        dict_adj[item.pk] = item.description;
-    }
-
-    //  remove adjustments from considerations
-    for(key in dict_conf){
-        if(dict_adj[key]){
-            delete dict_conf[key];
-        } else {
-            dict_conf[key] = dict_conf[key] + "<sup>a</sup>";
+    for (var i = confs.length-1; i>=0; i--){
+        if (adjs.indexOf(confs[i])>=0){
+            confs.splice(i, 1);   // remove from array
+        } else{
+            confs[i] = confs[i] + "<sup>a</sup>";
         }
-    }
+    };
 
-    // map to get captions
-    Object.keys(dict_adj).forEach(function(v){adjustments.push(dict_adj[v]);});
-    Object.keys(dict_conf).forEach(function(v){confounders.push(dict_conf[v]);});
-
-    // print
-    if (adjustments.length>0 || confounders.length>0){
+    if (adjs.length>0 || confs.length>0){
         content = [$('<ul>')
-                    .append(adjustments.map(function(v){return '<li>{0}</li>'.printf(v);}))
-                    .append(confounders.map(function(v){return '<li>{0}</li>'.printf(v);}))];
-        if(confounders.length>0){
+                    .append(adjs.map(function(v){return '<li>{0}</li>'.printf(v);}))
+                    .append(confs.map(function(v){return '<li>{0}</li>'.printf(v);}))];
+        if(confs.length>0){
             content.push("<p><sup>a</sup> Examined but not included in final model.</p>");
         }
     }
 
-    var tr = $('<tr></tr>')
-                .append('<th>{0}</th>'.printf("Adjustment factors"))
-                .append($('<td></td>').append(content));
+    tr.append('<th>{0}</th>'.printf("Adjustment factors"))
+      .append($('<td></td>').append(content));
 
     tbody.append(tr);
 };
 
 AssessedOutcome.prototype.get_statistical_metric_header = function(){
-    var txt = this.data.statistical_metric;
+    var txt = this.data.statistical_metric.metric;
     txt = txt.charAt(0).toUpperCase() + txt.substr(1);
     // assumes confidence interval is the same for all assessed-outcome groups
     if (this.aog.length>0) txt += this.aog[0].get_confidence_interval();
@@ -180,10 +165,22 @@ AssessedOutcome.prototype.has_aogs = function(){
 
 AssessedOutcome.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
-        { url: this.data.study_population.url, name: this.data.study_population.name },
-        { url: this.data.exposure.url, name: this.data.exposure.exposure_form_definition },
-        { url: this.data.url, name: this.data.name }
+        {
+            url: this.data.exposure.study_population.study.url,
+            name: this.data.exposure.study_population.study.short_citation
+        },
+        {
+            url: this.data.exposure.study_population.url,
+            name: this.data.exposure.study_population.name
+        },
+        {
+            url: this.data.exposure.url,
+            name: this.data.exposure.exposure_form_definition
+        },
+        {
+            url: this.data.url,
+            name: this.data.name
+        }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
 };
@@ -269,30 +266,28 @@ AssessedOutcomeGroup.prototype.build_exposure_group_table = function(div){
     add_tbody_tr("Name", this.data.exposure_group.description);
     add_tbody_tr("Comparison description", this.data.exposure_group.comparative_name);
     add_tbody_tr("Exposure N", this.data.exposure_group.exposure_n);
-    add_tbody_tr("Demographic Starting N", this.data.exposure_group.demographics.starting_n);
-    add_tbody_tr("Demographic N", this.data.exposure_group.demographics.n);
-    add_tbody_tr("Sex", this.data.exposure_group.demographics.sex);
+    add_tbody_tr("Demographic Starting N", this.data.exposure_group.starting_n);
+    add_tbody_tr("Demographic N", this.data.exposure_group.n);
+    add_tbody_tr("Sex", this.data.exposure_group.sex);
 
-    if(this.data.exposure_group.demographics.ethnicity.length>0)
-        add_tbody_tr_list("Ethnicities",
-                          this.data.exposure_group.demographics.ethnicity);
+    add_tbody_tr_list("Ethnicities", this.data.exposure_group.ethnicity);
 
-    add_tbody_tr("Fraction male", this.data.exposure_group.demographics.fraction_male,
-                                  this.data.exposure_group.demographics.fraction_male_calculated);
+    add_tbody_tr("Fraction male", this.data.exposure_group.fraction_male,
+                                  this.data.exposure_group.fraction_male_calculated);
 
-    add_tbody_tr("Age description", this.data.exposure_group.demographics.age_description);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_mean_type),
-                 this.data.exposure_group.demographics.age_mean,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_sd_type),
-                 this.data.exposure_group.demographics.age_sd,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_lower_type),
-                 this.data.exposure_group.demographics.age_lower,
-                 this.data.exposure_group.demographics.age_calculated);
-    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.demographics.age_upper_type),
-                 this.data.exposure_group.demographics.age_upper,
-                 this.data.exposure_group.demographics.age_calculated);
+    add_tbody_tr("Age description", this.data.exposure_group.age_description);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_mean_type),
+                 this.data.exposure_group.age_mean,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_sd_type),
+                 this.data.exposure_group.age_sd,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_lower_type),
+                 this.data.exposure_group.age_lower,
+                 this.data.exposure_group.age_calculated);
+    add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_upper_type),
+                 this.data.exposure_group.age_upper,
+                 this.data.exposure_group.age_calculated);
 
     $(div).html(tbl.append(colgroup, tbody));
 };
@@ -312,7 +307,7 @@ var AOForestPlot = function(aogs, ao, plot_div, options){
     this.ao = ao;
     this.aogs = aogs;
     this.title_str = ao.data.name || "";
-    this.x_label_text = ao.data.statistical_metric || "(unitless)";
+    this.x_label_text = ao.data.statistical_metric.metric || "(unitless)";
     if(this.options.build_plot_startup){this.build_plot();}
 };
 
@@ -384,7 +379,7 @@ AOForestPlot.prototype.get_dataset = function(){
             vals.push(ci.lower_ci, ci.upper_ci);
         }
     });
-    this.scale_type = (this.ao.data.plot_as_log) ? "log" : "linear";
+    this.scale_type = (this.ao.data.statistical_metric.isLog) ? "log" : "linear";
     this.estimates = estimates;
     this.lines = lines;
     this.names = names;
@@ -542,8 +537,8 @@ MetaProtocol.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Literature search end-date", this.data.lit_search_end_date);
     tbl.add_tbody_tr("Literature search notes", this.data.lit_search_notes);
     tbl.add_tbody_tr("Total references from search", this.data.total_references);
-    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
-    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria.map(function(v){return v.description;}));
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria.map(function(v){return v.description;}));
     tbl.add_tbody_tr("Total references after inclusion/exclusion", this.data.total_studies_identified);
     tbl.add_tbody_tr("Additional notes", this.data.notes);
 
@@ -552,7 +547,7 @@ MetaProtocol.prototype.build_details_table = function(div){
 
 MetaProtocol.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.study.url, name: this.data.study.short_citation },
         { url: this.data.url, name: this.data.name }
     ];
     return HAWCUtils.build_breadcrumbs(urls);
@@ -561,9 +556,16 @@ MetaProtocol.prototype.build_breadcrumbs = function(){
 
 var MetaResult = function(data){
     this.data = data;
+    this.single_results = [];
+    this._unpack_single_results();
+};
+
+MetaResult.prototype._unpack_single_results = function(){
+    var single_results = this.single_results;
     this.data.single_results.forEach(function(v,i){
-        data.single_results[i] = new SingleStudyResult(v);
+        single_results.push(new SingleStudyResult(v));
     });
+    this.data.single_results = [];
 };
 
 MetaResult.prototype.build_details_table = function(div){
@@ -576,7 +578,7 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Number of studies", this.data.number_studies);
     tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors);
     tbl.add_tbody_tr("N", this.data.n);
-    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text());
+    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text(this.data));
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
     tbl.add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity);
     tbl.add_tbody_tr("Notes", this.data.notes);
@@ -584,22 +586,22 @@ MetaResult.prototype.build_details_table = function(div){
 };
 
 MetaResult.prototype.get_statistical_metric_header = function(){
-    var txt = this.data.statistical_metric;
+    var txt = this.data.statistical_metric.abbreviation;
     if(this.data.ci_units) txt += " ({0}% CI)".printf(this.data.ci_units*100);
     return txt;
-}
+};
 
-MetaResult.prototype.get_risk_estimate_text = function(){
-    var txt = "{0}".printf(this.data.risk_estimate);
-    if (this.data.lower_ci && this.data.upper_ci){
-        txt += " ({0}-{1})".printf(this.data.lower_ci, this.data.upper_ci);
+MetaResult.prototype.get_risk_estimate_text = function(data){
+    var txt = "{0}".printf(data.estimate);
+    if (data.lower_ci && data.upper_ci){
+        txt += " ({0}-{1})".printf(data.lower_ci, data.upper_ci);
     }
     return txt;
 };
 
 MetaResult.prototype.has_single_results = function(){
-    return(this.data.single_results.length>0);
-}
+    return(this.single_results.length>0);
+};
 
 MetaResult.prototype.build_single_results_table = function(div){
     var tbl = $('<table class="table table-condensed table-striped"></table>'),
@@ -607,7 +609,7 @@ MetaResult.prototype.build_single_results_table = function(div){
         colgroup = $('<colgroup></colgroup>').append('<col style="width: 30%;"><col style="width: 15%;"><col style="width: 15%;"><col style="width: 15%;"><col style="width: 25%;">'),
         tbody = $('<tbody></tbody>');
 
-    this.data.single_results.forEach(function(v){
+    this.single_results.forEach(function(v){
         v.build_table_row(tbody);
     });
 
@@ -617,7 +619,7 @@ MetaResult.prototype.build_single_results_table = function(div){
 
 MetaResult.prototype.build_breadcrumbs = function(){
     var urls = [
-        { url: this.data.study.study_url, name: this.data.study.short_citation },
+        { url: this.data.protocol.study.url, name: this.data.protocol.study.short_citation },
         { url: this.data.protocol.url, name: this.data.protocol.name },
         { url: this.data.url, name: this.data.label }
     ];
@@ -630,29 +632,49 @@ var SingleStudyResult = function(data){
 };
 
 SingleStudyResult.prototype.build_table_row = function(tbody){
-    var addIfExists = function(v){return (v) ? v : "-";},
-        tr = $('<tr></tr>').appendTo(tbody);
-    tr.append('<td>{0}</td>'.printf(this.exposure_name_link()))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.weight)))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.n)))
-      .append('<td>{0}</td>'.printf(this.get_risk_estimate_text()))
-      .append('<td>{0}</td>'.printf(addIfExists(this.data.notes)));
+    var self=this,
+        addIfExists = function(v){return (v) ? v : "-";},
+        tr = $('<tr></tr>').appendTo(tbody),
+        getValues = function(self){
+            var d = {
+                "name": self.exposure_name_link(),
+                "weight": self.data.weight,
+                "notes": self.data.notes
+            };
+            if (self.data.outcome_group){
+                d["n"] = self.data.outcome_group.n;
+                d["risk"] = self.get_risk_estimate_text(self.data.outcome_group);
+            } else {
+                d["n"] = self.data.n;
+                d["risk"] = self.get_risk_estimate_text(self.data);
+            }
+            return d;
+        },
+        d = getValues(this);
+    tr.append('<td>{0}</td>'.printf(addIfExists(d.name)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.weight)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.n)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.risk)))
+      .append('<td>{0}</td>'.printf(addIfExists(d.notes)))
 };
 
-SingleStudyResult.prototype.get_risk_estimate_text = function(){
-    return MetaResult.prototype.get_risk_estimate_text.call(this);
+SingleStudyResult.prototype.get_risk_estimate_text = function(data){
+    return MetaResult.prototype.get_risk_estimate_text.call(this, data);
 };
 
 SingleStudyResult.prototype.exposure_name_link = function(){
+
     var txt = "";
     if(this.data.study){
-        txt = '<a href="{0}" target="_blank">{1}</a>: '.printf(this.data.study_url, this.data.study);
+        txt = '<a href="{0}" target="_blank">{1}</a>: '.printf(
+            this.data.study.url,
+            this.data.study.short_citation);
     };
-    if(this.data.ao_name){
-        txt += '<a href="{0}" title="{1}" target="_blank">{2}</a>'.printf(
-                    this.data.ao_url,
-                    this.data.ao_name,
-                    this.data.exposure_name);
+
+    if(this.data.outcome_group){
+        txt += '<a href="{0}" title="{1}" target="_blank">{1}</a>'.printf(
+            this.data.outcome_group.assessed_outcome.url,
+            this.data.outcome_group.assessed_outcome.name);
     } else {
         txt += this.data.exposure_name
     };

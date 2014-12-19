@@ -1,4 +1,4 @@
-from settings import INSTALLED_APPS
+from .settings import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -14,20 +14,7 @@ STATICFILES_DIRS = (
     r'/path/to/hawc/project/static',
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'reversion.middleware.RevisionMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-)
-
-lst = list(INSTALLED_APPS)
-lst.extend(['debug_toolbar', 'django_extensions', 'django_coverage'])
-INSTALLED_APPS = tuple(lst)
+INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')
 DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
 
 INTERNAL_IPS = ('127.0.0.1',)

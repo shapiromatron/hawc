@@ -45,7 +45,7 @@
     $(document).ready(function(){
       window.endpoints = [];
       {{endpoints_json|safe}}.forEach(function(datum){
-        window.endpoints.push(new Endpoint(datum));
+        window.endpoints.push(new Endpoint(datum, {dose_units_id: {{dose_units_id}} }));
       });
       window.crossview = new Crossview(endpoints, '#crossview');
     });

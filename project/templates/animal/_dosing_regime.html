@@ -24,7 +24,7 @@
             {% for doses in object.get_dose_groups %}
               <tr>
                 {% for dose in doses %}
-                <td>{{dose.get_float_dose}}</td>
+                <td>{{dose.dose}}</td>
                 {% endfor %}
               </tr>
             {% endfor %}

@@ -1,7 +1,5 @@
 import json
-import logging
 import os
-from collections import OrderedDict
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -13,7 +11,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, excel_export_detail
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
 
 
@@ -81,24 +79,24 @@ class Study(Reference):
         if self.study_type == 0:
             #clear animal endpoints cache
             Endpoint = get_model('animal', 'Endpoint')
-            pks = Endpoint.objects\
-                          .filter(animal_group__experiment__study=self.pk)\
-                          .values_list('pk', flat=True)
-            Endpoint.d_response_delete_cache(pks)
+            ids = Endpoint.objects\
+                          .filter(animal_group__experiment__study=self.id)\
+                          .values_list('id', flat=True)
+            Endpoint.delete_caches(ids)
         elif self.study_type == 1:
             # clear assessed outcome endpoints cache
             AssessedOutcome = get_model('epi', 'AssessedOutcome')
-            pks = AssessedOutcome.objects\
-                    .filter(exposure__study_population__study=self.pk)\
-                    .values_list('pk', flat=True)
-            AssessedOutcome.d_response_delete_cache(pks)
+            ids = AssessedOutcome.objects\
+                    .filter(exposure__study_population__study=self.id)\
+                    .values_list('id', flat=True)
+            AssessedOutcome.delete_caches(ids)
         elif self.study_type == 4:
             # clear MetaResult endpoints cache
             MetaResult = get_model('epi', 'MetaResult')
-            pks = MetaResult.objects\
-                            .filter(protocol__study=self.pk)\
-                            .values_list('pk', flat=True)
-            MetaResult.delete_caches(pks)
+            ids = MetaResult.objects\
+                            .filter(protocol__study=self.id)\
+                            .values_list('id', flat=True)
+            MetaResult.delete_caches(ids)
 
     @classmethod
     def save_new_from_reference(cls, reference, attrs):
@@ -135,30 +133,7 @@ class Study(Reference):
         return self.assessment
 
     def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {"study_url": self.get_absolute_url()}
-        fields = ('pk', 'full_citation', 'short_citation',
-                  'coi_details', 'funding_source',
-                  'study_identifier', 'contact_author', 'ask_author',
-                  'summary', 'published')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['study_type'] = self.get_study_type_display()
-        d['study_quality'] = []
-        d['coi_reported'] = self.get_coi_reported_display()
-        for sq in self.qualities.all().select_related('metric'):
-            d['study_quality'].append(sq.get_json(json_encode=False))
-
-        d['reference'] = self.reference_ptr.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     def get_attachments_json(self):
         d = []
@@ -216,101 +191,74 @@ class Study(Reference):
                     animal_group__in=AnimalGroup.objects.filter(
                     experiment__in=Experiment.objects.filter(study=self)))
 
-    def getDict(self):
-        """
-        Return flat-dictionary of Study.
-        """
-        return OrderedDict((("study-pk", self.pk),
-                            ("study-url", self.get_absolute_url()),
-                            ("study-short_citation", self.short_citation),
-                            ("study-full_citation", self.full_citation),
-                            ("study-coi_reported", self.get_coi_reported_display()),
-                            ("study-coi_details", self.coi_details),
-                            ("study-funding_source", self.funding_source),
-                            ("study-study_type", self.get_study_type_display()),
-                            ("study-study_identifier", self.study_identifier),
-                            ("study-contact_author", self.contact_author),
-                            ("study-ask_author", self.ask_author),
-                            ("study-summary", self.summary),
-                            ("study-published", self.published),
-                            ))
+    @classmethod
+    def flat_complete_header_row(cls):
+        return (
+            'study-id',
+            'study-url',
+            'study-short_citation',
+            'study-full_citation',
+            'study-coi_reported',
+            'study-coi_details',
+            'study-funding_source',
+            'study-study_type',
+            'study-study_identifier',
+            'study-contact_author',
+            'study-ask_author',
+            'study-summary',
+            'study-published'
+        )
 
-    @staticmethod
-    def excel_export_detail(dic, isHeader):
-        return excel_export_detail(dic, isHeader)
+    @classmethod
+    def flat_complete_data_row(cls, ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['short_citation'],
+            ser['full_citation'],
+            ser['coi_reported'],
+            ser['coi_details'],
+            ser['funding_source'],
+            ser['study_type'],
+            ser['study_identifier'],
+            ser['contact_author'],
+            ser['ask_author'],
+            ser['summary'],
+            ser['published']
+        )
 
-    @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('study-pk',
-                'study-url',
-                'study-short_citation',
-                'study-full_citation',
-                'study-coi_reported',
-                'study-coi_details',
-                'study-funding_source',
-                'study-study_type',
-                'study-study_identifier',
-                'study-contact_author',
-                'study-ask_author',
-                'study-summary',
-                'study-published')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['study_url'],
-                dic['short_citation'],
-                dic['full_citation'],
-                dic['coi_reported'],
-                dic['coi_details'],
-                dic['funding_source'],
-                dic['study_type'],
-                dic['study_identifier'],
-                dic['contact_author'],
-                dic['ask_author'],
-                dic['summary'],
-                dic['published'])
-
-    @staticmethod
-    def study_bias_excel_export(queryset):
-        # full export of study bias, designed for import/export of
-        # data using a flat-xls file.
-        sheet_name = 'study-bias'
-        headers = Study.excel_export_header()
-        data_rows_func = Study.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def excel_export_header():
-        # build export header column names for full export
-        lst = []
-        lst.extend(Study.build_export_from_json_header())
-        lst.extend(StudyQuality.build_export_from_json_header())
-        return lst
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-        # build export data rows for full-export
-        def try_float(str):
-            try:
-                return float(str)
-            except:
-                return str
-
-        i = 0
-        for study in queryset:
-            d = study.get_json(json_encode=False)
-            fields = []
-            fields.extend(Study.build_flat_from_json_dict(d))
-            # build a row for each aog
-            for sq in d['study_quality']:
-                i+=1
-                new_fields = list(fields)  # clone
-                new_fields.extend(StudyQuality.build_flat_from_json_dict(sq))
-                for j, val in enumerate(new_fields):
-                    ws.write(i, j, try_float(val))
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
 
 
 class Attachment(models.Model):
@@ -394,23 +342,6 @@ class StudyQualityMetric(models.Model):
     def get_assessment(self):
         return self.domain.get_assessment()
 
-    def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {}
-        fields = ('id', 'metric', 'description', 'created', 'last_updated')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['domain'] = self.domain.pk
-        d['domain_text'] = self.domain.__unicode__()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     @classmethod
     def get_metrics_for_assessment(self, assessment):
         return StudyQualityMetric.objects.filter(
@@ -453,59 +384,40 @@ class StudyQuality(models.Model):
         unique_together = (("study", "metric"),)
 
     def __unicode__(self):
-        return '{study}: {metric}'.format(study=self.study, metric=self.metric)
+        return '{}: {}'.format(self.study, self.metric)
 
     def get_absolute_url(self):
         return reverse('study:sq_detail', args=[str(self.study.pk)])
 
-    def get_json(self, json_encode=True):
-        """
-        Returns a JSON representation of itself and all study-quality
-        information.
-        """
-        d = {'score_description': self.get_score_display()}
-        fields = ('pk', 'score', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['metric'] = self.metric.get_json(json_encode=False)
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
-    def save(self, *args, **kwargs):
-        super(StudyQuality, self).save(*args, **kwargs)
-        Endpoint = get_model('animal', 'Endpoint')
-        endpoint_pks = list(Endpoint.objects.all()
-                            .filter(animal_group__experiment__study__qualities=self.pk)
-                            .values_list('pk', flat=True))
-        Endpoint.d_response_delete_cache(endpoint_pks)
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'sq-domain_id',
+            'sq-domain_name',
+            'sq-domain_description',
+            'sq-metric_id',
+            'sq-metric_metric',
+            'sq-metric_description',
+            'sq-id',
+            'sq-notes',
+            'sq-score_description',
+            'sq-score'
+        )
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('sq-domain-pk',
-                'sq-domain_text',
-                'sq-metric-pk',
-                'sq-metric-metric',
-                'sq-metric-description',
-                'sq-pk',
-                'sq-notes',
-                'sq-score_description',
-                'sq-score')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['metric']['domain'],
-                dic['metric']['domain_text'],
-                dic['metric']['id'],
-                dic['metric']['metric'],
-                dic['metric']['description'],
-                dic['pk'],
-                dic['notes'],
-                dic['score_description'],
-                dic['score'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['metric']['domain']['id'],
+            ser['metric']['domain']['name'],
+            ser['metric']['domain']['description'],
+            ser['metric']['id'],
+            ser['metric']['metric'],
+            ser['metric']['description'],
+            ser['id'],
+            ser['notes'],
+            ser['score_description'],
+            ser['score']
+        )
 
 
 reversion.register(Study)

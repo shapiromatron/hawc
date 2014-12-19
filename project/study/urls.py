@@ -1,7 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
 
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'study', api.Study, base_name="study")
 
 urlpatterns = patterns('',
     #assessment study-quality
@@ -22,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/add-details/$', views.StudyCreateFromReference.as_view(), name='new_study'),
     url(r'^assessment/(?P<pk>\d+)/new-study/$', views.ReferenceStudyCreate.as_view(), name='new_ref'),
     url(r'^assessment/(?P<pk>\d+)/search/$', views.StudySearch.as_view(), name='search'),
+    url(r'^assessment/(?P<pk>\d+)/report/', views.StudyReport.as_view(), name='studies_report'),
 
     url(r'^(?P<pk>\d+)/$', views.StudyRead.as_view(), name='detail'),
     url(r'^(?P<pk>\d+)/json/', views.StudyReadJSON.as_view(), name='json'),
@@ -43,5 +49,7 @@ urlpatterns = patterns('',
 
     #aggregated study-quality
     url(r'^assessment/(?P<pk>\d+)/study-qualities/heatmap/$', views.SQAggHeatmap.as_view(), name='sq_agg_heatmap'),
-    url(r'^assessment/(?P<pk>\d+)/study-qualities/stacked/$', views.SQAggStacked.as_view(), name='sq_agg_stacked_bars')
+    url(r'^assessment/(?P<pk>\d+)/study-qualities/stacked/$', views.SQAggStacked.as_view(), name='sq_agg_stacked_bars'),
+
+    url(r'^api/', include(router.urls))
 )

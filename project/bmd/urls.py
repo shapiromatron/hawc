@@ -1,6 +1,13 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import api, views
+
+
+router = DefaultRouter()
+router.register(r'bmd', api.BMD_session, base_name="bmd")
+router.register(r'bmd-model', api.BMD_model_run, base_name="bmd-model")
 
 
 urlpatterns = patterns('',
@@ -35,5 +42,7 @@ urlpatterns = patterns('',
         views.AssessSettingsUpdate.as_view(), name='assess_settings_update'),
 
     url(r'^assessment/(?P<pk>\d+)/logic/edit/$',
-        views.AssessLogicUpdate.as_view(), name='assess_logic_update')
+        views.AssessLogicUpdate.as_view(), name='assess_logic_update'),
+
+    url(r'^api/', include(router.urls))
 )

@@ -29,17 +29,10 @@
               <li><a href="{% url 'animal:animal_group_update' object.pk %}">Update</a></li>
               <li><a href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a></li>
 
-              {% if object.dosing_regime %}
-                {% if object == object.dosing_regime.dosed_animals %}
-                  <li class="divider"></li>
-                  <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                  <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
-                  <li><a href="{% url 'animal:dosing_regime_delete' object.dosing_regime.pk %}">Delete</a></li>
-                {% endif %}
-              {% else %}
+              {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
                 <li class="divider"></li>
                 <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                <li><a href="{% url 'animal:dosing_regime_new' object.pk %}">Create New</a></li>
+                <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
               {% endif %}
 
               <li class="divider"></li>
@@ -65,27 +58,43 @@
         {% if object.duration_observation %}
           <tr><th>Observation duration</th><td>{{object.duration_observation}} days</td></tr>
         {% endif %}
-        {% if object.generationalanimalgroup %}
-          <tr><th>Generation</th><td>{{object.generationalanimalgroup.get_generation_display}}</td></tr>
+        {% if object.lifestage_exposed %}
+          <tr><th>Lifestage exposed</th><td>{{object.lifestage_exposed}}</td></tr>
+        {% endif %}
+        {% if object.lifestage_assessed %}
+          <tr><th>Lifestage assessed</th><td>{{object.lifestage_assessed}}</td></tr>
+        {% endif %}
+        {% if object.is_generational %}
+          <tr><th>Generation</th><td>{{object.get_generation_display}}</td></tr>
           <tr>
             <th>Parents</th>
             <td>
               <ul>
-                {% for animal_group in object.generationalanimalgroup.parents.all %}
-                  <li><a href = {% url 'animal:animal_group_detail' animal_group.pk %}>{{animal_group}}</a></li>
+                {% for parent in object.parents.all %}
+                  <li><a href = {% url 'animal:animal_group_detail' parent.id %}>{{parent}}</a></li>
+                {% empty %}
+                  <li>None</li>
                 {% endfor %}
               </ul>
             </td>
           </tr>
         {% endif %}
-        <tr><th>Siblings</th><td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>{% else %}None{% endif %}</td></tr>
-        {% if object.generationalanimalgroup %}
+
+        <tr>
+          <th>Siblings</th>
+          <td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>
+              {% else %}None{% endif %}</td>
+        </tr>
+
+        {% if object.is_generational %}
           <tr>
             <th>Children</th>
             <td>
               <ul>
-                {% for animal_group in object.generationalanimalgroup.get_children %}
-                  <li><a href = {% url 'animal:animal_group_detail' animal_group.pk %}>{{animal_group}}</a></li>
+                {% for child in object.children.all %}
+                  <li><a href = {% url 'animal:animal_group_detail' child.id %}>{{child}}</a></li>
+                {% empty %}
+                  <li>None</li>
                 {% endfor %}
               </ul>
             </td>
@@ -122,7 +131,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
       var endpoints = [];
-      {% for obj in object.get_endpoints %}
+      {% for obj in object.endpoints.all %}
         endpoints.push(new Endpoint({{obj.d_response|safe}}));
       {% endfor %}
 

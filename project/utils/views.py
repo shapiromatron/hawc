@@ -1,10 +1,11 @@
 import logging
 
-from django.core.exceptions import PermissionDenied
+from django.db.models.loading import get_model
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, Http404
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 
@@ -394,3 +395,31 @@ class BaseUpdateWithFormset(BaseUpdate):
             if kwargs.get('formset'):
                 context['formset'] = kwargs.get('formset')
         return context
+
+
+class GenerateReport(BaseList):
+    """
+    Generate a docx report given an assessment, data-type, and template.
+    """
+    report_type = None  # required; refer to assessment.ReportTemplate report-type choices
+
+    def get_filename(self):
+        raise NotImplementedError("Requires String return for docx filename")
+
+    def get_context(self, queryset):
+        raise NotImplementedError("Requires dictionary return for mail-merge")
+
+    def get_template(self, request):
+        ReportTemplate = get_model("assessment", "ReportTemplate")
+        try:
+            template_id = request.GET.get('template_id', -1)
+            return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)
+        except ObjectDoesNotExist:
+            raise Http404
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        template = self.get_template(request)
+        context = self.get_context(self.object_list)
+        filename = self.get_filename()
+        return template.apply_mailmerge(context, filename)

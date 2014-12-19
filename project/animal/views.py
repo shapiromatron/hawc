@@ -1,6 +1,6 @@
 import json
 
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
@@ -9,18 +9,17 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 
-from assessment.models import Assessment, ReportTemplate
+from assessment.models import Assessment
 from study.models import Study
 from utils.forms import form_error_list_to_ul
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         BaseVersion)
+                         BaseVersion, GenerateReport)
 from utils.helper import HAWCdocx
 
-from . import forms
-from . import models
+from . import forms, models, exports
 
 
 # Experiment Views
@@ -77,22 +76,11 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
     def dispatch(self, *args, **kwargs):
         self.experiment = get_object_or_404(models.Experiment, pk=kwargs['pk'])
-        if self.experiment.is_generational():
-            self.model = models.GenerationalAnimalGroup
+        self.is_generational = self.experiment.is_generational()
+        if self.is_generational:
             self.form_class = forms.GenerationalAnimalGroupForm
         self.assessment = self.experiment.get_assessment()
         return super(AnimalGroupCreate, self).dispatch(*args, **kwargs)
-
-    def get_form(self, form_class):
-        form = super(AnimalGroupCreate, self).get_form(form_class)
-        form.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
-                experiment=self.experiment.pk)
-        if form_class == forms.GenerationalAnimalGroupForm:
-            form.fields['parents'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.experiment.pk)
-            form.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
-                dosed_animals__in=form.fields['parents'].queryset)
-        return form
 
     def get_form_kwargs(self):
         kwargs = super(CreateView, self).get_form_kwargs()
@@ -101,77 +89,54 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
     def form_valid(self, form):
         """
-        Complicated logic here. If an animal group is NOT generational, then it
-        requires its own dosing regime. Thus, we must make sure the dosing regime
-        is valid before attempting to save.
-
-        If an animal group IS generational, a dosing-regime can be specified
-        from parent groups. OR, a dosing-regime can be created.
+        If an animal group is NOT generational, then it requires its own dosing
+        regime. Thus, we must make sure the dosing regime is valid before
+        attempting to save. If an animal group IS generational, a dosing-regime
+        can be specified from parent groups. OR, a dosing-regime can be created.
         """
         self.object = form.save(commit=False)
 
-        #allow a shortcut for specified dosing-regime
-        if issubclass(self.model, models.GenerationalAnimalGroup) and self.object.dosing_regime:
-            #save animal-group
-            self.object.save()
+        # If a dosing-regime is already specified, save as normal
+        if self.is_generational and self.object.dosing_regime:
+            return super(AnimalGroupCreate, self).form_valid(form)
 
-            # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
-                for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
-
-            self.send_message()
-            return HttpResponseRedirect(self.get_success_url())
-
-        # Otherwise, we'll need to ensure the dosing-regime is appropriate
-        # Check if dosing-regime is also valid
+        # Otherwise we create a new dosing-regime, as well as the associated
+        # dose-groups using a formset.
         self.form_dosing_regime = forms.DosingRegimeForm(self.request.POST)
         if self.form_dosing_regime.is_valid():
             dosing_regime = self.form_dosing_regime.save(commit=False)
 
-            #now, try to save each dose-group
-            dose_groups = json.loads(self.request.POST['dose_groups_json'])
-            try:
-                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
-            except ValidationError as e:
-                self.dose_groups_errors = e.messages[0]
+            # unpack dose-groups into formset and validate
+            fs_initial = json.loads(self.request.POST['dose_groups_json'])
+            fs = forms.dosegroup_formset_factory(fs_initial, dosing_regime.num_dose_groups)
+
+            if fs.is_valid():
+                # save dosing-regime and associate animal-group,
+                # setting foreign-key interrelationships
+                dosing_regime.save()
+                self.object.dosing_regime = dosing_regime
+                self.object.save()
+                dosing_regime.dosed_animals = self.object
+                dosing_regime.save()
+
+                # now save dose-groups, one for each dosing regime
+                for dose in fs.forms:
+                    dose.instance.dose_regime = dosing_regime
+
+                fs.save()
+
+                return super(AnimalGroupCreate, self).form_valid(form)
+
+            else:
+                # invalid formset; extract formset errors
+                for f in fs.forms:
+                    if len(f.errors.keys())>0:
+                        self.dose_groups_errors = form_error_list_to_ul(f)
+                        break
+
                 return self.form_invalid(form)
-
-            dose_group_objects = []
-            for dose_group in dose_groups:  # todo: make sure doses are ascending
-                dose_group_form = forms.DoseGroupForm(dose_group)
-                if dose_group_form.is_valid():
-                    dose_group_objects.append(dose_group_form.save(commit=False))
-                else:
-                    self.dose_groups_errors = form_error_list_to_ul(dose_group_form)
-                    return self.form_invalid(form)
-
-            #OK, everything is valid. Let's start saving to the database.
-
-            """
-            First, we'll save the dosing regime. Then, we'll associate this
-            dosing regime with the animal-group. Next, we'll save the
-            dosed_animals equal to this animal-group.
-            """
-            dosing_regime.save()
-            self.object.dosing_regime = dosing_regime
-            self.object.save()
-            dosing_regime.dosed_animals = self.object
-            dosing_regime.save()
-
-            # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
-                for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
-
-            # Save doses
-            for obj in dose_group_objects:
-                obj.dose_regime = dosing_regime
-            models.DoseGroup.objects.bulk_create(dose_group_objects)
-
-            self.send_message()
-            return HttpResponseRedirect(self.get_success_url())
         else:
+            # invalid dosing-regime
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -180,6 +145,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         context["experiment"] = self.experiment
         context["assessment"] = self.assessment
         context["dose_types"] = models.DoseUnits.json_all()
+
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
         else:
@@ -205,7 +171,7 @@ class AnimalGroupRead(BaseDetail):
 
 class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
-    Update selected experiment.
+    Update selected animal-group. Dosing regime cannot be edited.
     """
     model = models.AnimalGroup
     template_name = "animal/animalgroup_form.html"
@@ -215,11 +181,9 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = super(AnimalGroupUpdate, self).get_object()
-        self.dosing_regime = obj.dosing_regime # part of HACK below
-        if obj.experiment.is_generational():
-            self.model = models.GenerationalAnimalGroup
+        self.dosing_regime = obj.dosing_regime
+        if obj.is_generational:
             self.form_class = forms.GenerationalAnimalGroupForm
-            return obj.generationalanimalgroup
         return obj
 
     def get_context_data(self, **kwargs):
@@ -227,118 +191,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = models.DoseUnits.json_all()
-        context['form_dosing_regime'] = forms.DosingRegimeForm(instance=self.object.dosing_regime)
-
-        if self.request.method == 'POST':  # send back dose-group errors
-            context['dose_groups_json'] = self.request.POST['dose_groups_json']
-            if hasattr(self, 'form_dosing_regime'):
-                context['form_dosing_regime'] = self.form_dosing_regime
-            if hasattr(self, 'dose_groups_errors'):
-                context['dose_groups_errors'] = self.dose_groups_errors
-        else:
-            context['dose_groups_json'] = self.object.dosing_regime.get_dose_groups_for_animal_form()
-
         return context
-
-    def get_form(self, form_class):
-        form = super(AnimalGroupUpdate, self).get_form(form_class)
-        form.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.object.experiment.pk).exclude(pk=self.object.pk)
-        form.fields['strain'].queryset = models.Strain.objects.filter(species=self.object.species)
-        if form_class == forms.GenerationalAnimalGroupForm:
-            form.fields['parents'].queryset = models.AnimalGroup.objects.filter(
-                    experiment=self.object.experiment.pk).exclude(pk=self.object.pk)
-            form.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
-                dosed_animals__in=models.AnimalGroup.objects.filter(experiment=self.object.experiment.pk))
-        return form
-
-    def form_valid(self, form):
-        """
-        Make sure that everything is valid before attempting to re-save or update anything
-        """
-        self.object = form.save(commit=False)
-        self.object.dosing_regime = self.dosing_regime  # return to original regardless of form changes # HACK
-
-        #allow a shortcut for specified dosing-regime
-        if ((issubclass(self.model, models.GenerationalAnimalGroup)) and
-                (self.object.dosing_regime.dosed_animals.pk != self.object.pk)):
-            #save animal-group
-            self.object.save()
-
-            # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
-                for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
-
-            self.send_message()
-            return HttpResponseRedirect(self.get_success_url())
-
-        # Otherwise, we'll need to ensure the dosing-regime is appropriate
-        # Check if dosing-regime is also valid
-        try:
-            self.form_dosing_regime = forms.DosingRegimeForm(self.request.POST,
-                    instance=self.object.dosing_regime)
-        except:
-            self.form_dosing_regime = forms.DosingRegimeForm(self.request.POST)
-
-        if self.form_dosing_regime.is_valid():
-            dosing_regime = self.form_dosing_regime.save(commit=False)
-
-            #now, try to save each dose-group
-            dose_groups = json.loads(self.request.POST['dose_groups_json'])
-            try:
-                models.DoseGroup.clean_formset(dose_groups, dosing_regime.num_dose_groups)
-            except ValidationError as e:
-                self.dose_groups_errors = e.messages[0]
-                return self.form_invalid(form)
-
-            dose_group_objects = []
-            for dose_group in dose_groups:  # todo: make sure doses are ascending
-                try:
-                    dose_group_form = forms.DoseGroupForm(dose_group,
-                        instance=models.DoseGroup.objects.get(dose_regime=dosing_regime.pk,
-                            dose_units=dose_group['dose_units'],
-                            dose_group_id=dose_group['dose_group_id']))
-                except:
-                    dose_group_form = forms.DoseGroupForm(dose_group)
-                if dose_group_form.is_valid():
-                    dose_group_objects.append(dose_group_form.save(commit=False))
-                else:
-                    self.dose_groups_errors = form_error_list_to_ul(dose_group_form)
-                    return self.form_invalid(form)
-
-            #OK, everything is valid. Let's start saving to the database.
-
-            """
-            First, we'll save the dosing regime. Then, we'll associate this
-            dosing regime with the animal-group. Next, we'll save the
-            dosed_animals equal to this animal-group.
-            """
-            dosing_regime.save()
-            self.object.dosing_regime = dosing_regime
-            self.object.save()
-            dosing_regime.dosed_animals = self.object
-            dosing_regime.save()
-
-            # Save generational animal-group m2m information as well
-            if issubclass(self.model, models.GenerationalAnimalGroup):
-                for parent in form.cleaned_data['parents']:
-                    self.object.parents.add(parent.generationalanimalgroup)
-
-            # Save doses
-            for obj in dose_group_objects:
-                obj.dose_regime = dosing_regime
-                obj.save()
-
-            #Delete any additional doses
-            pks = [obj.pk for obj in dose_group_objects]
-            models.DoseGroup.objects.filter(dose_regime=dosing_regime.pk)\
-                                    .exclude(pk__in=pks).delete()
-
-            self.send_message()
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return self.form_invalid(form)
 
 
 class AnimalGroupDelete(BaseDelete):
@@ -350,74 +203,6 @@ class AnimalGroupDelete(BaseDelete):
 
 
 # Dosing Regime Views
-class DosingRegimeCreate(CanCreateMixin, MessageMixin, CreateView):
-    """
-    Create view of Dosing Regime. Has custom logic to also add dose-groups with
-    each creation of a dose-regime.
-    """
-    model = models.DosingRegime
-    form_class = forms.DosingRegimeForm
-    success_message = "Dosing regime created."
-    crud = "Create"
-
-    def dispatch(self, *args, **kwargs):
-        self.animal_group = get_object_or_404(models.AnimalGroup, pk=kwargs['pk'])
-        self.assessment = self.animal_group.get_assessment()
-        return super(DosingRegimeCreate, self).dispatch(*args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        if not self.user_can_create_object(self.assessment):
-            raise PermissionDenied
-        #first, try to save dosing-regime
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            self.object = form.save(commit=False)
-            self.object.dosed_animals = self.animal_group
-            self.object.save()
-            #now, try to save each dose-group
-            dose_groups = json.loads(request.POST['dose_groups_json'])
-
-            try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
-            except ValidationError as e:
-                self.dose_groups_errors = e.messages[0]
-                self.object.delete()
-                return self.form_invalid(form)
-
-            for dose_group in dose_groups:  # todo: make sure ascending order
-                dose_group['dose_regime'] = self.object.pk
-                dose_group_form = forms.DoseGroupForm(dose_group)
-                if dose_group_form.is_valid():
-                    dose_group_form.save()
-                else:
-                    self.dose_groups_errors = form_error_list_to_ul(dose_group_form)
-                    self.object.delete()
-                    return self.form_invalid(form)
-        else:
-            return self.form_invalid(form)
-
-        self.send_message()  # replicate MessageMixin
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateView, self).get_context_data(**kwargs)
-        context["crud"] = self.crud
-        context["animal_group"] = self.animal_group
-        context["assessment"] = self.assessment
-        context["dose_types"] = models.DoseUnits.json_all()
-        if self.request.method == 'POST':  # send back dose-group errors
-            context['dose_groups_json'] = self.request.POST['dose_groups_json']
-            if hasattr(self, 'dose_groups_errors'):
-                context['dose_groups_errors'] = self.dose_groups_errors
-        return context
-
-
-class DosingRegimeRead(BaseDetail):
-    model = models.DosingRegime
-
-
 class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
     Update selected dosing regime. Has custom logic to also add dose-groups with
@@ -428,55 +213,40 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     success_message = "Dosing regime updated."
     crud = "Update"
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
         """
-        First check if original model is valid. If so, then add to list of valid models.
-        Next, go through each dose-group, binding with instance if one exists.
-        Make sure each is valid, adding valid to list. Then, if all are valid,
-        save each in list. Delete any dose-groups greater than the list.
+        If the dosing-regime is valid, then check if the formset is valid. If
+        it is, then continue saving.
         """
-        valid_forms = []
-        self.object = self.get_object()
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            valid_forms.append(form)
-            #now, try to save each dose-group
-            dose_groups = json.loads(request.POST['dose_groups_json'])
+        self.object = form.save(commit=False)
 
-            try:
-                models.DoseGroup.clean_formset(dose_groups, self.object.num_dose_groups)
-            except ValidationError as e:
-                self.dose_groups_errors = e.messages[0]
-                return self.form_invalid(form)
+        # unpack dose-groups into formset and validate
+        fs_initial = json.loads(self.request.POST['dose_groups_json'])
+        fs = forms.dosegroup_formset_factory(fs_initial, self.object.num_dose_groups)
 
-            for dose_group in dose_groups:  # todo: make sure ascending order
-                try:
-                    dose_group_form = forms.DoseGroupForm(dose_group,
-                        instance=models.DoseGroup.objects.get(dose_regime=self.object,
-                            dose_units=dose_group['dose_units'],
-                            dose_group_id=dose_group['dose_group_id']))
-                except:
-                    dose_group_form = forms.DoseGroupForm(dose_group)
-                    dose_group_form.instance.dose_regime = self.object
+        if fs.is_valid():
+            self.object.save()
 
-                if dose_group_form.is_valid():
-                    valid_forms.append(dose_group_form)
-                else:
-                    self.dose_groups_errors = form_error_list_to_ul(dose_group_form)
-                    return self.form_invalid(form)
+            # instead of checking existing vs. new, just delete all old
+            # dose-groups, and save new formset
+            models.DoseGroup.objects.filter(dose_regime=self.object).delete()
+
+            # now save dose-groups, one for each dosing regime
+            for dose in fs.forms:
+                dose.instance.dose_regime = self.object
+
+            fs.save()
+
+            return super(DosingRegimeUpdate, self).form_valid(form)
+
         else:
+            # invalid formset; extract formset errors
+            for f in fs.forms:
+                if len(f.errors.keys())>0:
+                    self.dose_groups_errors = form_error_list_to_ul(f)
+                    break
+
             return self.form_invalid(form)
-
-        #now, save each form, and delete any existing dose groups not in this set
-        for form in valid_forms:
-            form.save()
-        pks = [form.instance.pk for form in valid_forms]
-        models.DoseGroup.objects.filter(dose_regime=self.object.pk)\
-                                .exclude(pk__in=pks).delete()
-
-        self.send_message()  # replicate MessageMixin
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super(UpdateView, self).get_context_data(**kwargs)
@@ -487,11 +257,6 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             if hasattr(self, 'dose_groups_errors'):
                 context['dose_groups_errors'] = self.dose_groups_errors
         return context
-
-
-class DosingRegimeDelete(BaseDelete):
-    success_message = "Dosing regime deleted."
-    model = models.DosingRegime
 
     def get_success_url(self):
         return self.object.dosed_animals.get_absolute_url()
@@ -710,10 +475,10 @@ class EndpointReport(EndpointRead):
         return report.django_response()
 
 
-class EndpointsReport(BaseList):
-    # Word report export for all animal bioassay data in an assessment
+class EndpointsReport(GenerateReport):
     parent_model = Assessment
     model = models.Endpoint
+    report_type = 2
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}
@@ -722,17 +487,11 @@ class EndpointsReport(BaseList):
             filters["animal_group__experiment__study__published"] = True
         return self.model.objects.filter(**filters)
 
-    def get_template(self, request):
-        try:
-            template_id = request.GET.get('template_id', -1)
-            return ReportTemplate.get_template(template_id, self.assessment.id, 2)
-        except ObjectDoesNotExist:
-            raise Http404
+    def get_filename(self):
+        return "animal-bioassay.docx"
 
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        template = self.get_template(request)
-        return self.model.apply_docx_template(template, self.object_list)
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
 
 
 class EndpointFlatFile(BaseList):
@@ -753,24 +512,19 @@ class EndpointFlatFile(BaseList):
         return self.model.objects.filter(**filters).distinct('pk')
 
     def get(self, request, *args, **kwargs):
-        output_format = request.GET.get('output', None)
+        export_format = request.GET.get("output", "excel")
 
         # get Dose object if one exists, else get None
         dose_pk = self.request.GET.get('dose_pk', -1)
         dose = models.DoseUnits.objects.filter(pk=dose_pk).first()
 
         self.object_list = self.get_queryset(dose)
-        output = self.model.get_flat_file(self.object_list, output_format, dose)
-        if output_format == 'tsv':
-            content_type = 'text/tab-separated-values'
-            disposition = 'attachment; filename="download.tsv"'
-        else:
-            content_type = 'application/vnd.ms-excel'
-            disposition = 'attachment; filename="download.xls"'
-
-        response = HttpResponse(output, content_type=content_type)
-        response['Content-Disposition'] = disposition
-        return response
+        exporter = exports.EndpointFlatDataPivot(
+                self.object_list,
+                export_format=export_format,
+                filename='{}-animal-bioassay'.format(self.assessment),
+                dose=dose)
+        return exporter.build_response()
 
 
 class EndpointCrossview(BaseList):
@@ -787,20 +541,25 @@ class EndpointCrossview(BaseList):
             self.dose_units = get_object_or_404(models.DoseUnits, pk=self.request.GET['dose_pk'])
         else:
             self.dose_units = models.DoseUnits.objects.get(units='mg/kg-day')
-        filters = {"assessment": self.assessment}
+        filters = {
+            "assessment": self.assessment,
+            "animal_group__dosing_regime__doses__dose_units": self.dose_units
+        }
         perms = super(EndpointCrossview, self).get_obj_perms()
         if not perms['edit']:
             filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)\
-                   .select_related('animal_group', 'animal_group__dosing_regime')\
-                   .prefetch_related('animal_group__dosing_regime__doses')\
-                   .filter(animal_group__dosing_regime__doses__dose_units=self.dose_units).distinct('pk')
+        return self.model.objects\
+                    .filter(**filters)\
+                    .distinct('pk')
 
 
     def get_context_data(self, **kwargs):
         context = super(EndpointCrossview, self).get_context_data(**kwargs)
+        context['dose_units_id'] = self.dose_units.id
         context['doses'] = models.DoseUnits.objects.all()
-        context['endpoints_json'] = models.Endpoint.d_responses(context['object_list'], self.dose_units.pk)
+        context['endpoints_json'] = models.Endpoint.d_responses(
+                                            context['object_list'],
+                                            json_encode=True)
         return context
 
 
@@ -1286,7 +1045,11 @@ class FullExport(BaseList):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        xls = models.Endpoint.detailed_excel_export(self.object_list, self.assessment)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        exporter = exports.EndpointFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-animal-bioassay'.format(self.assessment),
+                sheet_name='bioassay-analysis',
+                assessment=self.assessment)
+        return exporter.build_response()
+

@@ -15,10 +15,9 @@ from utils.helper import HAWCdocx, HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList)
+                         BaseList, GenerateReport)
 
-from . import models
-from . import forms
+from . import models, forms, exports
 
 
 class StudyList(BaseList):
@@ -35,22 +34,37 @@ class StudyList(BaseList):
         return context
 
 
-class StudyBiasExport(BaseList):
+class StudyReport(GenerateReport):
+    parent_model = Assessment
+    model = models.Study
+    report_type = 1
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(StudyReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "study.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
+
+
+class StudyBiasExport(StudyList):
     """
     Full XLS data export for the study bias.
     """
-    parent_model = Assessment
-    model = models.Study
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        xls = self.model.study_bias_excel_export(self.object_list)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        self.object_list = super(StudyBiasExport, self).get_queryset()
+        exporter = exports.StudyQualityFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-study-bias'.format(self.assessment),
+                sheet_name='study-bias')
+        return exporter.build_response()
 
 
 class StudyCreateFromReference(BaseCreate):
@@ -491,9 +505,7 @@ class SQAggHeatmap(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super(SQAggHeatmap, self).get_context_data(**kwargs)
-        jsons = []
-        for study in self.object_list:
-            jsons.append(study.get_json(json_encode=False))
+        jsons = [study.get_json(json_encode=False) for study in self.object_list]
         context['object_list_json'] = json.dumps(jsons, cls=HAWCDjangoJSONEncoder)
         context['chart_type'] = 'heatmap'
         return context

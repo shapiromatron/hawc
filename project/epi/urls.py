@@ -1,6 +1,13 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
+
+from rest_framework.routers import DefaultRouter
 
 from . import views
+from . import api
+
+router = DefaultRouter()
+router.register(r'meta-result', api.MetaResult, base_name="meta-result")
+router.register(r'assessed-outcome', api.AssessedOutcome, base_name="assessed-outcome")
 
 urlpatterns = patterns('',
 
@@ -24,6 +31,10 @@ urlpatterns = patterns('',
     url(r'^assessment/(?P<pk>\d+)/meta-result-flat/$',
         views.MetaResultFlat.as_view(),
         name='mr_flat'),
+
+    url(r'^assessment/(?P<pk>\d+)/meta-result-report/$',
+        views.MetaResultReport.as_view(),
+        name='mr_report'),
 
     url(r'^assessment/(?P<pk>\d+)/meta-result-full-export/$',
         views.MetaResultFullExport.as_view(),
@@ -155,4 +166,6 @@ urlpatterns = patterns('',
     url(r'^meta-result/(?P<pk>\d+)/delete/$',
         views.MetaResultDelete.as_view(),
         name='mr_delete'),
+
+    url(r'^api/', include(router.urls)),
 )

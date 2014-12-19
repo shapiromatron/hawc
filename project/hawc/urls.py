@@ -42,11 +42,6 @@ urlpatterns = patterns('',
     #------
     url(r'^admin/', include(admin.site.urls), name='master_admin'),
     url(r'^selectable/', include('selectable.urls')),
-
-    # API
-    #-----
-    url(r'^api/', include('api.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 )
 
 # only for DEBUG, want to use static server otherwise

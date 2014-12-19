@@ -5,7 +5,6 @@ import json
 import logging
 
 from django.db import models
-from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -13,8 +12,7 @@ import reversion
 
 from assessment.models import BaseEndpoint
 from animal.models import DoseUnits
-from study.models import Study
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file, build_tsv_file, HAWCdocx
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
 
 class StudyCriteria(models.Model):
@@ -151,63 +149,45 @@ class Demographics(models.Model):
     class Meta:
         abstract = True
 
-    def get_json(self):
-        d = {}
-        fields = ('age_mean', 'age_sd', 'age_lower', 'age_upper',
-                  'fraction_male', 'n', 'starting_n', 'fraction_male_calculated',
-                  'age_calculated', 'age_description')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['sex'] = self.get_sex_display()
-        d['age_sd_type'] = self.get_age_sd_type_display()
-        d['age_mean_type'] = self.get_age_mean_type_display()
-        d['age_lower_type'] = self.get_age_lower_type_display()
-        d['age_upper_type'] = self.get_age_upper_type_display()
-
-        d['ethnicity'] = []
-        for eth in self.ethnicity.all():
-            d['ethnicity'].append(eth.__unicode__())
-
-        return d
+    @staticmethod
+    def flat_complete_header_row(prefix="-"):
+        return (
+            prefix+'sex',
+            prefix+'ethnicity',
+            prefix+'fraction_male',
+            prefix+'fraction_male_calculated',
+            prefix+'age_mean',
+            prefix+'age_mean_type',
+            prefix+'age_calculated',
+            prefix+'age_description',
+            prefix+'age_sd',
+            prefix+'age_sd_type',
+            prefix+'age_lower',
+            prefix+'age_lower_type',
+            prefix+'age_upper',
+            prefix+'age_upper_type',
+            prefix+'n'
+        )
 
     @staticmethod
-    def build_export_from_json_header(prefix="-"):
-        # used for full-export/import functionalities
-        return (prefix+'sex',
-                prefix+'ethnicity',
-                prefix+'fraction_male',
-                prefix+'fraction_male_calculated',
-                prefix+'age_mean',
-                prefix+'age_mean_type',
-                prefix+'age_calculated',
-                prefix+'age_description',
-                prefix+'age_sd',
-                prefix+'age_sd_type',
-                prefix+'age_lower',
-                prefix+'age_lower_type',
-                prefix+'age_upper',
-                prefix+'age_upper_type',
-                prefix+'n')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['sex'],
-                '|'.join([unicode(v) for v in dic['ethnicity']]),
-                dic['fraction_male'],
-                dic['fraction_male_calculated'],
-                dic['age_mean'],
-                dic['age_mean_type'],
-                dic['age_calculated'],
-                dic['age_description'],
-                dic['age_sd'],
-                dic['age_sd_type'],
-                dic['age_lower'],
-                dic['age_lower_type'],
-                dic['age_upper'],
-                dic['age_upper_type'],
-                dic['n'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['sex'],
+            '|'.join([d['ethnicity'] for d in ser['ethnicity']]),
+            ser['fraction_male'],
+            ser['fraction_male_calculated'],
+            ser['age_mean'],
+            ser['age_mean_type'],
+            ser['age_calculated'],
+            ser['age_description'],
+            ser['age_sd'],
+            ser['age_sd_type'],
+            ser['age_lower'],
+            ser['age_lower_type'],
+            ser['age_upper'],
+            ser['age_upper_type'],
+            ser['n']
+        )
 
     def get_ethnicity_list(self):
         eths = []
@@ -231,16 +211,6 @@ class Factor(models.Model):
 
     def __unicode__(self):
         return self.description
-
-    def get_json(self, json_encode=False):
-        d = {}
-        fields = ('pk', 'description')
-        for field in fields:
-            d[field] = getattr(self, field)
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
 
 
 class StudyPopulation(Demographics):
@@ -561,74 +531,45 @@ class StudyPopulation(Demographics):
     def get_assessment(self):
         return self.study.get_assessment()
 
-    def get_json(self, get_parent=True, json_encode=True):
-        d = {}
-        fields = ('pk', 'name', 'region', 'state')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['demographics'] = super(StudyPopulation, self).get_json()
-        d['design'] = self.get_design_display()
-        d['country'] = self.get_country_display()
-        d['url'] = self.get_absolute_url()
-
-        d['inclusion_criteria'] = []
-        for crit in self.inclusion_criteria.all():
-            d['inclusion_criteria'].append(crit.__unicode__())
-
-        d['exclusion_criteria'] = []
-        for crit in self.exclusion_criteria.all():
-            d['exclusion_criteria'].append(crit.__unicode__())
-
-        d['confounding_criteria'] = []
-        for crit in self.confounding_criteria.all():
-            d['confounding_criteria'].append(crit.__unicode__())
-
-        if get_parent:
-            d['study'] = self.study.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('sp-pk',
-                'sp-url',
-                'sp-name',
-                'sp-design',
-                'sp-country',
-                'sp-region',
-                'sp-state',
-                'sp-inclusion_criteria',
-                'sp-exclusion_criteria',
-                'sp-confounding_criteria')  + \
-                Demographics.build_export_from_json_header(prefix='sp-')
+    def flat_complete_header_row():
+        return (
+            'sp-pk',
+            'sp-url',
+            'sp-name',
+            'sp-design',
+            'sp-country',
+            'sp-region',
+            'sp-state',
+            'sp-inclusion_criteria',
+            'sp-exclusion_criteria',
+            'sp-confounding_criteria'
+        )  + Demographics.flat_complete_header_row(prefix='sp-')
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['url'],
-                dic['name'],
-                dic['design'],
-                dic['country'],
-                dic['region'],
-                dic['state'],
-                '|'.join([unicode(v) for v in dic['inclusion_criteria']]),
-                '|'.join([unicode(v) for v in dic['exclusion_criteria']]),
-                '|'.join([unicode(v) for v in dic['confounding_criteria']])) + \
-                Demographics.build_flat_from_json_dict(dic['demographics'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['design'],
+            ser['country'],
+            ser['region'],
+            ser['state'],
+            '|'.join(ser['inclusion_criteria']),
+            '|'.join(ser['exclusion_criteria']),
+            '|'.join(ser['confounding_criteria'])
+        ) + Demographics.flat_complete_data_row(ser)
 
     def save(self, *args, **kwargs):
         super(StudyPopulation, self).save(*args, **kwargs)
-        endpoint_pks = list(AssessedOutcome.objects
-                            .filter(exposure__study_population=self.pk)
-                            .values_list('pk', flat=True))
-        logging.debug("Resetting cache for assessed outcomes from study population change")
-        AssessedOutcome.d_response_delete_cache(endpoint_pks)
+        endpoint_pks = AssessedOutcome.objects\
+            .filter(exposure__study_population=self.id)\
+            .values_list('id', flat=True)
+        AssessedOutcome.delete_caches(endpoint_pks)
 
 
 class Exposure(models.Model):
@@ -682,66 +623,52 @@ class Exposure(models.Model):
     def get_assessment(self):
         return self.study_population.get_assessment()
 
-    def get_json(self, json_encode=False):
-        d = {}
-        fields = ('pk', 'inhalation', 'dermal', 'oral', 'in_utero', 'iv',
-                  'unknown_route', 'exposure_form_definition', 'metric',
-                  'metric_description', 'analytical_method',
-                  'control_description', 'exposure_description')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['dose_units'] = self.metric_units.__unicode__()
-        d['url'] = self.get_absolute_url()
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     def save(self, *args, **kwargs):
         super(Exposure, self).save(*args, **kwargs)
-        endpoint_pks = list(AssessedOutcome.objects
-                            .filter(exposure=self.pk)
-                            .values_list('pk', flat=True))
-        logging.debug("Resetting cache for assessed outcomes from exposure change")
-        AssessedOutcome.d_response_delete_cache(endpoint_pks)
+        endpoint_pks = AssessedOutcome.objects\
+            .filter(exposure=self.id)\
+            .values_list('id', flat=True)
+        AssessedOutcome.delete_caches(endpoint_pks)
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('exposure-pk',
-                'exposure-url',
-                'exposure-inhalation',
-                'exposure-dermal',
-                'exposure-oral',
-                'exposure-in_utero',
-                'exposure-iv',
-                'exposure-unknown_route',
-                'exposure-exposure_form_definition',
-                'exposure-metric',
-                'exposure-metric_units',
-                'exposure-metric_description',
-                'exposure-analytical_method',
-                'exposure-control_description',
-                'exposure-exposure_description')
+    def flat_complete_header_row():
+        return (
+            'exposure-pk',
+            'exposure-url',
+            'exposure-inhalation',
+            'exposure-dermal',
+            'exposure-oral',
+            'exposure-in_utero',
+            'exposure-iv',
+            'exposure-unknown_route',
+            'exposure-exposure_form_definition',
+            'exposure-metric',
+            'exposure-metric_units',
+            'exposure-metric_description',
+            'exposure-analytical_method',
+            'exposure-control_description',
+            'exposure-exposure_description'
+        )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['url'],
-                dic['inhalation'],
-                dic['dermal'],
-                dic['oral'],
-                dic['in_utero'],
-                dic['iv'],
-                dic['unknown_route'],
-                dic['exposure_form_definition'],
-                dic['metric'],
-                dic['dose_units'],
-                dic['metric_description'],
-                dic['analytical_method'],
-                dic['control_description'],
-                dic['exposure_description'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['inhalation'],
+            ser['dermal'],
+            ser['oral'],
+            ser['in_utero'],
+            ser['iv'],
+            ser['unknown_route'],
+            ser['exposure_form_definition'],
+            ser['metric'],
+            ser['metric_units']['units'],
+            ser['metric_description'],
+            ser['analytical_method'],
+            ser['control_description'],
+            ser['exposure_description']
+        )
 
 
 class StatisticalMetric(models.Model):
@@ -773,6 +700,7 @@ class AssessedOutcome(BaseEndpoint):
         (3, 'self-reported'))
 
     MAIN_FINDING_CHOICES = (
+        (3, "not-reported"),
         (2, "supportive"),
         (1, "inconclusive"),
         (0, "not-supportive"))
@@ -781,7 +709,8 @@ class AssessedOutcome(BaseEndpoint):
         (0, "not-applicable"),
         (1, "monotonic"),
         (2, "non-monotonic"),
-        (3, "no trend"))
+        (3, "no trend"),
+        (4, "not reported"))
 
     STATISTICAL_POWER_CHOICES = (
         (0, 'not reported or calculated'),
@@ -866,72 +795,15 @@ class AssessedOutcome(BaseEndpoint):
         blank=True,
         help_text="Add additional text describing the statistical metric used, if needed.")
 
-    @staticmethod
-    def get_cache_names(pks):
-        return ['endpoint-json-{pk}'.format(pk=pk) for pk in pks]
-
     @classmethod
-    def d_response_delete_cache(cls, endpoint_pks):
-        super(AssessedOutcome, cls).d_response_delete_cache(endpoint_pks)
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
         return reverse('epi:assessedoutcome_detail', kwargs={'pk': self.pk})
 
     def get_json(self, json_encode=True):
-        # this is the main "object" for epidemiology; therefore we cache this
-        # json representation because it's expensive to create
-        cache_name = AssessedOutcome.get_cache_names([self.pk])[0]
-        d = cache.get(cache_name)
-        if d is None:
-
-            d = {}
-
-            d['endpoint_type'] = 'epi'
-            d['study'] = self.exposure.study_population.study.get_json(json_encode=False)
-            d['study_population'] = self.exposure.study_population.get_json(json_encode=False)
-            d['exposure'] = self.exposure.get_json(json_encode=False)
-
-            fields = ('pk', 'name', 'data_location', 'population_description',
-                      'diagnostic_description', 'outcome_n', 'summary',
-                      'prevalence_incidence', 'dose_response_details',
-                      'statistical_power_details', 'statistical_metric_description')
-            for field in fields:
-                d[field] = getattr(self, field)
-
-            d['url'] = self.get_absolute_url()
-            d['diagnostic'] = self.get_diagnostic_display()
-            d['dose_response'] = self.get_dose_response_display()
-            d['statistical_power'] = self.get_statistical_power_display()
-            d['main_finding_support'] = self.get_main_finding_support_display()
-
-            d['statistical_metric'] = self.statistical_metric.metric
-            d['statistical_metric_abbreviation'] = self.statistical_metric.abbreviation
-            d['plot_as_log'] = self.statistical_metric.isLog
-
-            d['adjustment_factors'] = []
-            for af in self.adjustment_factors.all():
-                d['adjustment_factors'].append(af.get_json(json_encode=False))
-
-            d['adjustment_factors_considered'] = []
-            for cc in self.confounders_considered.all():
-                d['adjustment_factors_considered'].append(cc.get_json(json_encode=False))
-
-            d['aog'] = []
-            for aog in self.groups.all():
-                d['aog'].append(aog.get_json(main_finding=self.main_finding,
-                                             json_encode=False))
-
-            d['tags'] = []
-            for tag in self.effects.all():
-                d['tags'].append(tag.get_json(json_encode=False))
-
-            logging.info('setting cache: {cache_name}'.format(cache_name=cache_name))
-            cache.set(cache_name, d)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_prior_versions_json(self):
         """ Get prior versions of object. """
@@ -947,293 +819,90 @@ class AssessedOutcome(BaseEndpoint):
 
     def save(self, *args, **kwargs):
         super(AssessedOutcome, self).save(*args, **kwargs)
-        AssessedOutcome.d_response_delete_cache([self.pk])
+        AssessedOutcome.delete_caches([self.pk])
 
-    def flat_file_row(self):
-        d = self.get_json(json_encode=False)
-        rows=[]
-        for i in xrange(0, len(d['aog'])):
-            row = [d['study']['short_citation'],
-                   d['study']['study_url'],
-                   d['study']['pk'],
-                   d['study']['published'],
-                   d['study_population']['name'],
-                   d['study_population']['pk'],
-                   d['study_population']['design'],
-                   d['study_population']['url'],
-                   d['exposure']['exposure_form_definition'],
-                   d['exposure']['metric'],
-                   d['exposure']['url'],
-                   d['exposure']['dose_units'],
-                   d['name'],
-                   d['population_description'],
-                   d['pk'],
-                   d['diagnostic'],
-                   d['statistical_metric'],
-                   d['statistical_metric_description'],
-                   d['summary'],
-                   d['dose_response'],
-                   d['statistical_power'],
-                   d['main_finding_support'],
-                   d['aog'][i]['exposure_group']['description'],
-                   d['aog'][i]['exposure_group']['comparative_name'],
-                   d['aog'][i]['exposure_group']['exposure_group_id'],
-                   d['aog'][i]['exposure_group']['exposure_numeric'],
-                   d['aog'][i]['pk'], # repeat for data-pivot key
-                   d['aog'][i]['pk'],
-                   d['aog'][i]['n'],
-                   d['aog'][i]['estimate'],
-                   d['aog'][i]['lower_ci'],
-                   d['aog'][i]['upper_ci'],
-                   d['aog'][i]['ci_units'],
-                   d['aog'][i]['se'],
-                   d['aog'][i]['p_value_text'],
-                   d['aog'][i]['p_value'],
-                   d['aog'][i]['main_finding']]
-            rows.append(row)
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'assessed_outcome-pk',
+            'assessed_outcome-url',
+            'assessed_outcome-name',
+            'assessed_outcome-data_location',
+            'assessed_outcome-population_description',
+            'assessed_outcome-effects',
+            'assessed_outcome-diagnostic',
+            'assessed_outcome-diagnostic_description',
+            'assessed_outcome-outcome_n',
+            'assessed_outcome-summary',
+            'assessed_outcome-prevalence_incidence',
+            'assessed_outcome-adjustment_factors',
+            'assessed_outcome-adjustment_factors_considered',
+            'assessed_outcome-main_finding_support',
+            'assessed_outcome-dose_response',
+            'assessed_outcome-dose_response_details',
+            'assessed_outcome-statistical_power',
+            'assessed_outcome-statistical_power_details',
+            'assessed_outcome-statistical_metric',
+            'assessed_outcome-statistical_metric_description'
+        )
 
-        return rows
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['data_location'],
+            ser['population_description'],
+            '|'.join([unicode(d['name']) for d in ser['effects']]),
+            ser['diagnostic'],
+            ser['diagnostic_description'],
+            ser['outcome_n'],
+            ser['summary'],
+            ser['prevalence_incidence'],
+            '|'.join(ser['adjustment_factors']),
+            '|'.join(ser['confounders_considered']),
+            ser['main_finding_support'],
+            ser['dose_response'],
+            ser['dose_response_details'],
+            ser['statistical_power'],
+            ser['statistical_power_details'],
+            ser['statistical_metric']['metric'],
+            ser['statistical_metric_description']
+        )
 
     @classmethod
-    def flat_file_header(cls):
-        return ['Study',
-                'Study URL',
-                'Study Primary Key',
-                'Study Published?',
-                'Study Population Name',
-                'Study Population Key',
-                'Design',
-                'Study Population URL',
-                'Exposure',
-                'Exposure Metric',
-                'Exposure URL',
-                'Dose Units',
-                'Assessed Outcome Name',
-                'Assessed Outcome Population Description',
-                'Assessed Outcome Key',
-                'Diagnostic',
-                'Statistical Metric',
-                'Statistical Metric Description',
-                'Outcome Summary',
-                'Dose Response',
-                'Statistical Power',
-                'Support Main Finding',
-                'Exposure Group Name',
-                'Exposure Group Comparative Description Name',
-                'Exposure Group Order',
-                'Exposure Group Numeric',
-                'Row Key',
-                'Assessed Outcome Group Primary Key',
-                'N',
-                'Estimate',
-                'Lower CI',
-                'Upper CI',
-                'CI units',
-                'SE',
-                'Statistical Significance',
-                'Statistical Significance (numeric)',
-                'Main Finding']
-
-    @classmethod
-    def get_tsv_file(cls, queryset):
-        """
-        Construct a tab-delimited version of the selected queryset of endpoints.
-        """
-        headers = AssessedOutcome.flat_file_header()
-        return build_tsv_file(headers, queryset)
-
-    @classmethod
-    def get_excel_file(cls, queryset):
-        """
-        Construct an Excel workbook of the selected queryset of endpoints.
-        """
-        sheet_name = 'epi'
-        headers = AssessedOutcome.flat_file_header()
-        data_rows_func = AssessedOutcome.build_excel_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def build_excel_rows(ws, queryset, *args, **kwargs):
-        """
-        Custom method used to build individual excel rows in Excel worksheet
-        """
-        # write data
-        def try_float(str):
-            # attempt to coerce as float, else return string
-            try:
-                return float(str)
-            except:
-                return str
-
-        row = 0
-        for ao in queryset:
-            aogs = ao.flat_file_row()
-            for aog in aogs:
-                row+=1
-                for j, val in enumerate(aog):
-                    ws.write(row, j, try_float(val))
-
-    @staticmethod
-    def epidemiology_word_report(assessment, queryset):
-        """
-        Prepare an epidemiology Word report, where each row is a separate study
-        population and multiple effects are shown for each.
-        """
-
-        def build_title(docx, assessment):
-            docx.add_heading("Epidemiological evidence for: {0}".format(assessment) , 1)
-            docx.add_paragraph(
-                "This section contains all epidemiological evidence currently "
-                "available for this assessment. Should addition information be "
-                "added, it would be included as well.")
-            docx.add_page_break()
-
-        def build_header_row(docx):
-            tbl = docx.add_table(rows=1, cols=9)
-            header = tbl.rows[0].cells
-            header[0].text = r"Reference, study location and period"
-            header[1].text = r"Total cases/Total controls"
-            header[2].text = r"Control-source"
-            header[3].text = r"Exposure assessment"
-            header[4].text = r"Organ Site"
-            header[5].text = r"Exposure Category"
-            header[6].text = r"Exposed Cases"
-            header[7].text = r"Relative Risk (95% CI)"
-            header[8].text = r"Covariants"
-            return tbl
-
-        def build_aog_group_rows(aogs):
-            txt_names = u""
-            txt_cases = u""
-            txt_rrs = u""
-            for aog in aogs:
-                txt_names += u"{0}\n".format(aog['exposure_group']['description'])
-                txt_cases += u"{0}\n".format(aog['exposure_group']['demographics']['n'] or u"")
-                if aog['lower_ci'] and aog['upper_ci']:
-                    txt_rrs += u'{0} ({1}-{2})\n'.format(aog['estimate'],
-                                                         aog['lower_ci'],
-                                                         aog['upper_ci'])
-                else:
-                    txt_rrs += u'{0}\n'.format(aog['estimate'])
-            return (txt_names, txt_cases, txt_rrs)
-
-        def build_detail_row(tbl, ao):
-            d = ao.get_json(json_encode=False)
-            row = tbl.add_row()
-            row.cells[0].text = d['study']['short_citation']
-            row.cells[1].text = unicode(d['study_population']['demographics']['n'])
-            row.cells[2].text = 'e'
-            row.cells[3].text = 'a'
-            row.cells[4].text = 'b'
-            group_rows = build_aog_group_rows(d['aog'])
-            row.cells[5].text = group_rows[0]
-            row.cells[6].text = group_rows[1]
-            row.cells[7].text = group_rows[2]
-            row.cells[8].text =  ', '.join([itm['description'] for itm in d['adjustment_factors']])
-
-        docx_wrapper = HAWCdocx()
-        docx = docx_wrapper.doc
-        build_title(docx, assessment)
-        tbl = build_header_row(docx)
-        for ao in queryset[:3]:  # AJS to change - start with subset
-            build_detail_row(tbl, ao)
-        return docx_wrapper
-
-    @staticmethod
-    def epidemiology_excel_export(queryset):
-        # full export of epidemiology dataset, designed for import/export of
-        # data using a flat-xls file.
-        sheet_name = 'epi'
-        headers = AssessedOutcome.epidemiology_excel_export_header(queryset)
-        data_rows_func = AssessedOutcome.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def epidemiology_excel_export_header(queryset):
-        # build export header column names for full export
-        lst = []
-        lst.extend(Study.build_export_from_json_header())
-        lst.extend(StudyPopulation.build_export_from_json_header())
-        lst.extend(Exposure.build_export_from_json_header())
-        lst.extend(AssessedOutcome.build_export_from_json_header())
-        lst.extend(AssessedOutcomeGroup.build_export_from_json_header())
-        return lst
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-
-        # build export data rows for full-export
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        i = 0
-        for ao in queryset:
-            d = ao.get_json(json_encode=False)
-            fields = []
-            fields.extend(Study.build_flat_from_json_dict(d['study']))
-            fields.extend(StudyPopulation.build_flat_from_json_dict(d['study_population']))
-            fields.extend(Exposure.build_flat_from_json_dict(d['exposure']))
-            fields.extend(AssessedOutcome.build_flat_from_json_dict(d))
-            # build a row for each aog
-            for aog in d['aog']:
-                i+=1
-                new_fields = list(fields)  # clone
-                new_fields.extend(AssessedOutcomeGroup.build_flat_from_json_dict(aog))
-                for j, val in enumerate(new_fields):
-                    ws.write(i, j, try_float(val))
-
-    @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('assessed_outcome-pk',
-                'assessed_outcome-url',
-                'assessed_outcome-name',
-                'assessed_outcome-data_location',
-                'assessed_outcome-population_description',
-                'assessed_outcome-effects',
-                'assessed_outcome-diagnostic',
-                'assessed_outcome-diagnostic_description',
-                'assessed_outcome-outcome_n',
-                'assessed_outcome-summary',
-                'assessed_outcome-prevalence_incidence',
-                'assessed_outcome-adjustment_factors',
-                'assessed_outcome-adjustment_factors_considered',
-                'assessed_outcome-main_finding_support',
-                'assessed_outcome-dose_response',
-                'assessed_outcome-dose_response_details',
-                'assessed_outcome-statistical_power',
-                'assessed_outcome-statistical_power_details',
-                'assessed_outcome-statistical_metric',
-                'assessed_outcome-statistical_metric_description')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['url'],
-                dic['name'],
-                dic['data_location'],
-                dic['population_description'],
-                '|'.join([unicode(v['name']) for v in dic['tags']]),
-                dic['diagnostic'],
-                dic['diagnostic_description'],
-                dic['outcome_n'],
-                dic['summary'],
-                dic['prevalence_incidence'],
-                '|'.join([unicode(v['description']) for v in dic['adjustment_factors']]),
-                '|'.join([unicode(v['description']) for v in dic['adjustment_factors_considered']]),
-                dic['main_finding_support'],
-                dic['dose_response'],
-                dic['dose_response_details'],
-                dic['statistical_power'],
-                dic['statistical_power_details'],
-                dic['statistical_metric'],
-                dic['statistical_metric_description'])
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
 
 
 class ExposureGroup(Demographics):
@@ -1247,7 +916,7 @@ class ExposureGroup(Demographics):
         help_text='Should be an exposure-value used for sorting',
         blank=True, null=True)
     comparative_name = models.CharField(
-        max_length=40,
+        max_length=64,
         verbose_name="Comparative Name",
         help_text='Should include effect-group and comparative group, for example '
                   '"1.5-2.5(Q2) vs ≤1.5(Q1)", or if only one group is available, '
@@ -1268,49 +937,34 @@ class ExposureGroup(Demographics):
     def get_assessment(self):
         return self.exposure.get_assessment()
 
-    def get_json(self, json_encode=True):
-        d = {}
-        fields = ('pk', 'description', 'exposure_numeric',
-                  'comparative_name', 'exposure_group_id', 'exposure_n')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['demographics'] = super(ExposureGroup, self).get_json()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'exposure_group-pk',
+            'exposure_group-description',
+            'exposure_group-exposure_numeric',
+            'exposure_group-comparative_name',
+            'exposure_group-exposure_group_id',
+            'exposure_group-exposure_n'
+        ) + Demographics.flat_complete_header_row(prefix='exposure-group-')
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('exposure_group-pk',
-                'exposure_group-description',
-                'exposure_group-exposure_numeric',
-                'exposure_group-comparative_name',
-                'exposure_group-exposure_group_id',
-                'exposure_group-exposure_n')  + \
-                Demographics.build_export_from_json_header(prefix='exposure-group-')
-
-    @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['description'],
-                dic['exposure_numeric'],
-                dic['comparative_name'],
-                dic['exposure_group_id'],
-                dic['exposure_n']) + \
-                Demographics.build_flat_from_json_dict(dic['demographics'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['description'],
+            ser['exposure_numeric'],
+            ser['comparative_name'],
+            ser['exposure_group_id'],
+            ser['exposure_n']
+        ) + Demographics.flat_complete_data_row(ser)
 
     def save(self, *args, **kwargs):
         super(ExposureGroup, self).save(*args, **kwargs)
-        endpoint_pks = list(AssessedOutcome.objects
-                                .filter(exposure=self.exposure)
-                                .values_list('pk', flat=True))
-        logging.debug("Resetting cache for assessed outcome from exposure-group change")
-        AssessedOutcome.d_response_delete_cache(endpoint_pks)
+        endpoint_pks = AssessedOutcome.objects\
+            .filter(exposure=self.exposure)\
+            .values_list('id', flat=True)
+        AssessedOutcome.delete_caches(endpoint_pks)
 
 
 class AssessedOutcomeGroup(models.Model):
@@ -1387,55 +1041,44 @@ class AssessedOutcomeGroup(models.Model):
             txt += str(self.p_value)
         return txt
 
-    def get_json(self, main_finding, json_encode=True):
-        d = {}
-        fields = ('pk', 'n', 'estimate', 'se', 'lower_ci', 'upper_ci',
-                  'ci_units', 'p_value', 'p_value_text')
-        for field in fields:
-            d[field] = getattr(self, field)
-        d['exposure_group'] = self.exposure_group.get_json(json_encode=False)
-        d['main_finding'] = self.exposure_group==main_finding
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     def get_assessment(self):
         return self.assessed_outcome.get_assessment()
 
     def save(self, *args, **kwargs):
         super(AssessedOutcomeGroup, self).save(*args, **kwargs)
-        logging.debug("Resetting cache for assessed outcome from assessed outcome-group change")
-        AssessedOutcome.d_response_delete_cache([self.assessed_outcome.pk])
+        AssessedOutcome.delete_caches([self.assessed_outcome.id])
+
+    @property
+    def isMainFinding(self):
+        return self.assessed_outcome.main_finding_id == self.exposure_group_id
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
-        return ('assessed_outcome_group-pk',
-                'assessed_outcome_group-n',
-                'assessed_outcome_group-estimate',
-                'assessed_outcome_group-se',
-                'assessed_outcome_group-lower_ci',
-                'assessed_outcome_group-upper_ci',
-                'assessed_outcome_group-ci_units',
-                'assessed_outcome_group-main_finding', # AssessedOutcome.main_finding
-                'assessed_outcome_group-p_value_text') + \
-                ExposureGroup.build_export_from_json_header()
+    def flat_complete_header_row():
+        return (
+            'assessed_outcome_group-pk',
+            'assessed_outcome_group-n',
+            'assessed_outcome_group-estimate',
+            'assessed_outcome_group-se',
+            'assessed_outcome_group-lower_ci',
+            'assessed_outcome_group-upper_ci',
+            'assessed_outcome_group-ci_units',
+            'assessed_outcome_group-main_finding', # AssessedOutcome.main_finding
+            'assessed_outcome_group-p_value_text'
+        ) + ExposureGroup.flat_complete_header_row()
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
-        return (dic['pk'],
-                dic['n'],
-                dic['estimate'],
-                dic['se'],
-                dic['lower_ci'],
-                dic['upper_ci'],
-                dic['ci_units'],
-                dic['main_finding'],  # AssessedOutcome.main_finding
-                dic['p_value_text'])  + \
-                ExposureGroup.build_flat_from_json_dict(dic['exposure_group'])
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['n'],
+            ser['estimate'],
+            ser['se'],
+            ser['lower_ci'],
+            ser['upper_ci'],
+            ser['ci_units'],
+            ser['isMainFinding'],
+            ser['p_value_text']
+        ) + ExposureGroup.flat_complete_data_row(ser['exposure_group'])
 
 
 class MetaProtocol(models.Model):
@@ -1509,31 +1152,11 @@ class MetaProtocol(models.Model):
         super(MetaProtocol, self).save(*args, **kwargs)
         MetaResult.delete_caches(self.results.all().values_list('pk', flat=True))
 
-    def get_json(self, json_encode=True, get_parent=True):
-        d = {}
-        fields = ('pk', 'name', 'lit_search_notes',
-                  'lit_search_start_date', 'lit_search_end_date',
-                  'total_references', 'total_studies_identified', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['url'] = self.get_absolute_url()
-        d['protocol_type'] = self.get_protocol_type_display()
-        d['lit_search_strategy'] = self.get_lit_search_strategy_display()
-        d['inclusion_criteria'] = [unicode(v) for v in self.inclusion_criteria.all()]
-        d['exclusion_criteria'] = [unicode(v) for v in self.exclusion_criteria.all()]
-
-        if get_parent:
-            d['study'] = self.study.get_json(json_encode=False)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'meta_protocol-pk',
             'meta_protocol-url',
@@ -1551,22 +1174,21 @@ class MetaProtocol(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
         return (
-            dic['pk'],
-            dic['url'],
-            dic['name'],
-            dic['protocol_type'],
-            dic['lit_search_strategy'],
-            dic['lit_search_notes'],
-            dic['lit_search_start_date'],
-            dic['lit_search_end_date'],
-            dic['total_references'],
-            u'|'.join(dic['inclusion_criteria']),
-            u'|'.join(dic['exclusion_criteria']),
-            dic['total_studies_identified'],
-            dic['notes']
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['protocol_type'],
+            ser['lit_search_strategy'],
+            ser['lit_search_notes'],
+            ser['lit_search_start_date'],
+            ser['lit_search_end_date'],
+            ser['total_references'],
+            u'|'.join(ser['inclusion_criteria']),
+            u'|'.join(ser['exclusion_criteria']),
+            ser['total_studies_identified'],
+            ser['notes']
         )
 
 
@@ -1596,7 +1218,7 @@ class MetaResult(models.Model):
         blank=True)
     n = models.PositiveIntegerField(
         help_text="Number of individuals included from all analyses")
-    risk_estimate = models.FloatField()
+    estimate = models.FloatField()
     lower_ci = models.FloatField(
         verbose_name="Lower CI",
         help_text="Numerical value for lower-confidence interval")
@@ -1621,8 +1243,6 @@ class MetaResult(models.Model):
     notes = models.TextField(
         blank=True)
 
-    cache_template_object = 'meta-result-{0}'
-
     class Meta:
         ordering = ('label', )
 
@@ -1640,204 +1260,14 @@ class MetaResult(models.Model):
         MetaResult.delete_caches([self.pk])
 
     @classmethod
-    def get_cache_names(cls, pks):
-        return [cls.cache_template_object.format(pk) for pk in pks]
-
-    @classmethod
     def delete_caches(cls, pks):
-        names = cls.get_cache_names(pks)
-        logging.info("Removing cache: {}".format(', '.join(names)))
-        cache.delete_many(names)
+        SerializerHelper.delete_caches(cls, pks)
 
-    def get_json(self, json_encode=True, get_parent=True):
-
-        cache_name = self.__class__.get_cache_names([self.pk])[0]
-        d = cache.get(cache_name)
-        if d:
-            logging.info('using cache: {}'.format(cache_name))
-        else:
-            d = {}
-            fields = ('pk', 'label', 'health_outcome', 'data_location',
-                      'health_outcome_notes', 'exposure_name', 'exposure_details',
-                      'number_studies', 'statistical_notes',
-                      'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                      'ci_units', 'heterogeneity', 'notes')
-            for field in fields:
-                d[field] = getattr(self, field)
-
-            d['url'] = self.get_absolute_url()
-            d['statistical_metric'] = unicode(self.statistical_metric)
-            d['adjustment_factors'] = [unicode(v) for v in self.adjustment_factors.all()]
-            d['single_results'] = [v.get_json(json_encode=False) for v in self.single_results.all()]
-
-            if get_parent:
-                d['protocol'] = self.protocol.get_json(json_encode=False, get_parent=False)
-                d['study'] = self.protocol.study.get_json(json_encode=False)
-
-                #only set if includes parent
-                logging.info('setting cache: {}'.format(cache_name))
-                cache.set(cache_name, d)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
-    @classmethod
-    def epidemiology_excel_export(cls, queryset):
-        # full export of epidemiology meta-analysis dataset, designed for
-        # import/export using a flat-xls file.
-        sheet_name = 'epi-meta-analysis'
-        headers = cls.epidemiology_excel_export_header()
-        data_rows_func = cls.build_export_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     @staticmethod
-    def epidemiology_excel_export_header():
-        # build export header column names for full export
-        lst = []
-        lst.extend(Study.build_export_from_json_header())
-        lst.extend(MetaProtocol.build_export_from_json_header())
-        lst.extend(MetaResult.build_export_from_json_header())
-        lst.extend(SingleResult.build_export_from_json_header())
-        return lst
-
-    def flat_file_row(self):
-        d = self.get_json(json_encode=False)
-        row = [
-            d['study']['short_citation'],
-            d['study']['study_url'],
-            d['study']['pk'],
-            d['study']['published'],
-
-            d['protocol']['pk'],
-            d['protocol']['url'],
-            d['protocol']['name'],
-            d['protocol']['protocol_type'],
-            d['protocol']['total_references'],
-            d['protocol']['total_studies_identified'],
-
-            d['pk'],  # repeat for data-pivot key
-            d['pk'],
-            d['url'],
-            d['label'],
-            d['health_outcome'],
-            d['exposure_name'],
-            d['number_studies'],
-            d['statistical_metric'],
-            d['n'],
-            d['risk_estimate'],
-            d['lower_ci'],
-            d['upper_ci'],
-            d['ci_units'],
-            d['heterogeneity'],
-        ]
-
-        return [row]
-
-    @classmethod
-    def flat_file_header(cls):
-        return [
-            'Study',
-            'Study URL',
-            'Study Primary Key',
-            'Study Published?',
-
-            'Protocol Primary Key',
-            'Protocol URL',
-            'Protocol Name',
-            'Protocol Type',
-            'Total References',
-            'Identified References',
-
-            'Row Key',
-            'Result Primary Key',
-            'Result URL',
-            'Result Label',
-            'Health Outcome',
-            'Exposure',
-            'Result References',
-            'Statistical Metric',
-            'N',
-            'Estimate',
-            'Lower CI',
-            'Upper CI',
-            'CI units',
-            'Heterogeneity'
-        ]
-
-    @classmethod
-    def get_tsv_file(cls, queryset):
-        """
-        Construct a tab-delimited version of the selected queryset of endpoints.
-        """
-        headers = cls.flat_file_header()
-        return build_tsv_file(headers, queryset)
-
-    @classmethod
-    def get_excel_file(cls, queryset):
-        """
-        Construct an Excel workbook of the selected queryset of endpoints.
-        """
-        sheet_name = 'epi-meta-analysis'
-        headers = cls.flat_file_header()
-        data_rows_func = cls.build_excel_rows
-        return build_excel_file(sheet_name, headers, queryset, data_rows_func)
-
-    @staticmethod
-    def build_excel_rows(ws, queryset, *args, **kwargs):
-        """
-        Custom method used to build individual excel rows in Excel worksheet
-        """
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        for row, mr in enumerate(queryset):
-            for col, val in enumerate(mr.flat_file_row()[0]):
-                ws.write(row+1, col, try_float(val))
-
-    @staticmethod
-    def build_export_rows(ws, queryset, *args, **kwargs):
-
-        # build export data rows for full-export
-        def try_float(val):
-            if type(val) is bool:
-                return val
-            try:
-                return float(val)
-            except:
-                return val
-
-        row = 1
-        for mr in queryset:
-            d = mr.get_json(json_encode=False)
-            fields = []
-            fields.extend(Study.build_flat_from_json_dict(d['study']))
-            fields.extend(MetaProtocol.build_flat_from_json_dict(d['protocol']))
-            fields.extend(MetaResult.build_flat_from_json_dict(d))
-
-            if len(d['single_results'])==0:
-                # no single results; just print meta-results once
-                for j, val in enumerate(fields):
-                    ws.write(row, j, try_float(val))
-                row += 1
-            else:
-                # single-results exist; print each meta-result as a new row
-                for sr in d['single_results']:
-                    new_fields = list(fields)  # clone
-                    new_fields.extend(SingleResult.build_flat_from_json_dict(sr))
-                    for j, val in enumerate(new_fields):
-                        ws.write(row, j, try_float(val))
-                    row += 1
-
-    @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'meta_result-pk',
             'meta_result-url',
@@ -1851,7 +1281,7 @@ class MetaResult(models.Model):
             'meta_result-statistical_metric',
             'meta_result-statistical_notes',
             'meta_result-n',
-            'meta_result-risk_estimate',
+            'meta_result-estimate',
             'meta_result-lower_ci',
             'meta_result-upper_ci',
             'meta_result-ci_units',
@@ -1861,29 +1291,61 @@ class MetaResult(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
         return (
-            dic['pk'],
-            dic['url'],
-            dic['label'],
-            dic['data_location'],
-            dic['health_outcome'],
-            dic['health_outcome_notes'],
-            dic['exposure_name'],
-            dic['exposure_details'],
-            dic['number_studies'],
-            dic['statistical_metric'],
-            dic['statistical_notes'],
-            dic['n'],
-            dic['risk_estimate'],
-            dic['lower_ci'],
-            dic['upper_ci'],
-            dic['ci_units'],
-            dic['heterogeneity'],
-            u'|'.join( dic['adjustment_factors']),
-            dic['notes'],
+            ser['id'],
+            ser['url'],
+            ser['label'],
+            ser['data_location'],
+            ser['health_outcome'],
+            ser['health_outcome_notes'],
+            ser['exposure_name'],
+            ser['exposure_details'],
+            ser['number_studies'],
+            ser['statistical_metric']['metric'],
+            ser['statistical_notes'],
+            ser['n'],
+            ser['estimate'],
+            ser['lower_ci'],
+            ser['upper_ci'],
+            ser['ci_units'],
+            ser['heterogeneity'],
+            u'|'.join(ser['adjustment_factors']),
+            ser['notes'],
         )
+
+    @classmethod
+    def get_docx_template_context(cls, queryset):
+        return {
+            "field1": "body and mind",
+            "field2": "well respected man",
+            "field3": 1234,
+            "nested": {"object": {"here": u"you got it!"}},
+            "extra": "tests",
+            "tables": [
+                {
+                    "title": "Tom's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 123,
+                    "row4": 6/7.,
+                },
+                {
+                    "title": "Frank's table",
+                    "row1": 'abc',
+                    "row2": 'def',
+                    "row3": 223,
+                    "row4": 5/7.,
+                },
+                {
+                    "title": "Gerry's table",
+                    "row1": 'cats',
+                    "row2": 'dogs',
+                    "row3": 123,
+                    "row4": 4/7.,
+                },
+            ]
+        }
 
 
 class SingleResult(models.Model):
@@ -1914,7 +1376,7 @@ class SingleResult(models.Model):
         blank=True,
         null=True,
         help_text="Enter the number of observations for this result")
-    risk_estimate = models.FloatField(
+    estimate = models.FloatField(
         blank=True,
         null=True,
         help_text="Enter the numerical risk-estimate presented for this result")
@@ -1937,9 +1399,6 @@ class SingleResult(models.Model):
     notes = models.TextField(
         blank=True)
 
-    class Meta:
-        ordering = ('-weight', 'exposure_name')
-
     def __unicode__(self):
         return self.exposure_name
 
@@ -1947,38 +1406,8 @@ class SingleResult(models.Model):
         super(SingleResult, self).save(*args, **kwargs)
         MetaResult.delete_caches([self.meta_result.pk])
 
-    def get_json(self, json_encode=True):
-        d = {}
-        fields = ('pk', 'exposure_name', 'weight',
-                  'n', 'risk_estimate', 'lower_ci', 'upper_ci',
-                  'ci_units', 'notes')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        if self.study:
-            d['study'] = unicode(self.study)
-            d['study_url'] = self.study.get_absolute_url()
-
-        if self.outcome_group:
-            # replace results with data from AOG
-            # TODO: account for if SE is used
-            d['n'] = self.outcome_group.n
-            d['risk_estimate'] = self.outcome_group.estimate
-            d['lower_ci'] = self.outcome_group.lower_ci
-            d['upper_ci'] = self.outcome_group.upper_ci
-            # add link to the group
-            d['aog_pk'] = self.outcome_group.pk
-            d['ao_name'] = unicode(self.outcome_group.assessed_outcome)
-            d['ao_url'] = self.outcome_group.assessed_outcome.get_absolute_url()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     @staticmethod
-    def build_export_from_json_header():
-        # used for full-export/import functionalities
+    def flat_complete_header_row():
         return (
             'single_result-pk',
             'single_result-study',
@@ -1986,7 +1415,7 @@ class SingleResult(models.Model):
             'single_result-exposure_name',
             'single_result-weight',
             'single_result-n',
-            'single_result-risk_estimate',
+            'single_result-estimate',
             'single_result-lower_ci',
             'single_result-upper_ci',
             'single_result-ci_units',
@@ -1994,20 +1423,32 @@ class SingleResult(models.Model):
         )
 
     @staticmethod
-    def build_flat_from_json_dict(dic):
-        # used for full-export/import functionalities
+    def flat_complete_data_row(ser):
+
+        study = None
+        try:
+            study = ser['study']['id']
+        except TypeError:
+            pass
+
+        aog = None
+        try:
+            aog = ser['outcome_group']['id']
+        except TypeError:
+            pass
+
         return (
-            dic['pk'],
-            dic.get('study', None),
-            dic.get('aog_pk', None),
-            dic['exposure_name'],
-            dic['weight'],
-            dic['n'],
-            dic['risk_estimate'],
-            dic['lower_ci'],
-            dic['upper_ci'],
-            dic['ci_units'],
-            dic['notes'],
+            ser['id'],
+            study,
+            aog,
+            ser['exposure_name'],
+            ser['weight'],
+            ser['n'],
+            ser['estimate'],
+            ser['lower_ci'],
+            ser['upper_ci'],
+            ser['ci_units'],
+            ser['notes'],
         )
 
 

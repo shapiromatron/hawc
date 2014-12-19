@@ -2,56 +2,45 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 
 from . import models
+from utils.lookups import DistinctStringLookup
+
+
+class AnimalGroupLifestageExposedLookup(DistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_exposed"
+
+
+class AnimalGroupLifestageAssessedLookup(DistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_assessed"
 
 
 class DoseUnitsLookup(ModelLookup):
     model = models.DoseUnits
 
 
-class EndpointSystemLookup(ModelLookup):
+class EndpointSystemLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ('system__icontains', )
-
-    def get_item_value(self, item):
-        return item.system
-
-    def get_item_label(self, item):
-        return item.system
+    distinct_field = "system"
 
 
-class EndpointOrganLookup(ModelLookup):
+class EndpointOrganLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ('organ__icontains', )
-
-    def get_item_value(self, item):
-        return item.organ
-
-    def get_item_label(self, item):
-        return item.organ
+    distinct_field = "organ"
 
 
-class EndpointEffectLookup(ModelLookup):
+class EndpointEffectLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ('effect__icontains', )
-
-    def get_item_value(self, item):
-        return item.effect
-
-    def get_item_label(self, item):
-        return item.effect
+    distinct_field = "effect"
 
 
-class EndpointStatisticalTestLookup(ModelLookup):
+class EndpointStatisticalTestLookup(DistinctStringLookup):
     model = models.Endpoint
-    search_fields = ('statistical_test__icontains', )
-
-    def get_item_value(self, item):
-        return item.statistical_test
-
-    def get_item_label(self, item):
-        return item.statistical_test
+    distinct_field = "statistical_test"
 
 
+registry.register(AnimalGroupLifestageExposedLookup)
+registry.register(AnimalGroupLifestageAssessedLookup)
 registry.register(DoseUnitsLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)

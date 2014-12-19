@@ -1,7 +1,11 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
 
+from . import api, views
+
+router = DefaultRouter()
+router.register(r'iv-endpoint', api.IVEndpoint, base_name="iv-endpoint")
 
 urlpatterns = patterns('',
 
@@ -19,4 +23,9 @@ urlpatterns = patterns('',
         views.EndpointsFlat.as_view(),
         name='endpoints_flat'),
 
+    url(r'^assessment/(?P<pk>\d+)/report/$',
+        views.EndpointsReport.as_view(),
+        name='endpoints_report'),
+
+    url(r'^api/', include(router.urls)),
 )

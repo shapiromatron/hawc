@@ -59,7 +59,7 @@ class HEROFetch(object):
                 r = requests.get(url, timeout=30.)
                 if r.status_code == 200:
                     data = json.loads(r.text)
-                    for ref in data["RESULTS"]:
+                    for ref in data["results"]:
                         self.content.append(self._parse_article(ref))
                 else:
                     self.failures.extend([int(pk) for pk in pks.split(',')])

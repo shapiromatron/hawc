@@ -1,6 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'endpoint', api.Endpoint, base_name="endpoint")
 
 
 urlpatterns = patterns('animal.views',
@@ -21,11 +27,8 @@ urlpatterns = patterns('animal.views',
     url(r'^animal-group/(?P<pk>\d+)/edit/$', views.AnimalGroupUpdate.as_view(), name='animal_group_update'),
     url(r'^animal-group/(?P<pk>\d+)/delete/$', views.AnimalGroupDelete.as_view(), name='animal_group_delete'),
 
-    # Dosing Regime #also add dose-groups akin to endpoint form
-    url(r'^animal-group/(?P<pk>\d+)/dosing-regime/new/$', views.DosingRegimeCreate.as_view(), name='dosing_regime_new'),
-    url(r'^dosing-regime/(?P<pk>\d+)/$', views.DosingRegimeRead.as_view(), name='dosing_regime_detail'),
+    # Dosing Regime
     url(r'^dosing-regime/(?P<pk>\d+)/edit/$', views.DosingRegimeUpdate.as_view(), name='dosing_regime_update'),
-    url(r'^dosing-regime/(?P<pk>\d+)/delete/$', views.DosingRegimeDelete.as_view(), name='dosing_regime_delete'),
 
     # Endpoint
     url(r'^assessment/(?P<pk>\d+)/endpoints/$', views.EndpointAssessmentList.as_view(), name='assessment_endpoint_list'),
@@ -79,4 +82,6 @@ urlpatterns = patterns('animal.views',
     url(r'^assessment/(?P<pk>\d+)/species/create/$', views.SpeciesCreate.as_view(), name='species_create'),
     url(r'^assessment/(?P<pk>\d+)/strain/create/$', views.StrainCreate.as_view(), name='strain_create'),
     url(r'^assessment/(?P<pk>\d+)/dose-units/create/$', views.DoseUnitsCreate.as_view(), name='dose_units_create'),
+
+    url(r'^api/', include(router.urls))
 )

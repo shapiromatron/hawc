@@ -164,13 +164,15 @@
   <script type="text/javascript">
 
     $(document).ready(function () {
+
+      // get doses for use in doses-data table
       {% if crud == "Create" %}
         window.doses = {{animal_group.get_doses_json|safe}};
       {% elif crud == "Update" %}
         window.doses = {{object.animal_group.get_doses_json|safe}};
       {% endif %}
 
-      //update values in doses field
+      //update values in doses table
       $('#doses_title').html('Dose<br>(' + doses[0].units + ')');
       $('.doses').each(function(i, v){
         $(v).html(doses[0].values[i]);
@@ -178,18 +180,20 @@
 
       {% if endpoint_json %} // post with errors
         window.endpoint_data = {{endpoint_json|safe}};
-        window.endpoint_data['doses'] = doses;
         window.endpoint = new EditEndpoint(endpoint_data, '#eg');
+        window.endpoint.inject_doses(window.doses);
         window.endpoint.load_values_into_form();
       {% elif crud = "Update" %} // edit
         window.endpoint = new EditEndpoint({{object.d_response|safe}}, '#eg');
         window.endpoint.load_values_into_form();
       {% else %} // new
         window.endpoint = new EditEndpoint({doses: doses}, '#eg');
+        window.endpoint.inject_doses(window.doses);
         window.endpoint.update_endpoint_from_form();
       {% endif %}
       window.endpoint.build_form_representation();
 
+      // package for submission
       $('#endpoint').submit(function(){
           endpoint.update_endpoint_from_form();
           $('#egs_json').val(endpoint.build_eg_submission());
@@ -197,10 +201,10 @@
           return true;
       });
 
+      // whenever input changes, update data form
       $('body').on('change', 'input, select', function(i, v){
           endpoint.update_endpoint_from_form();
       });
-
 
       // show/hide variance-type based on dataset-type
       var toggleVarianceType = function(){

@@ -2,6 +2,7 @@ from collections import OrderedDict
 import logging
 import json
 import os
+from StringIO import StringIO
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -12,6 +13,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import HttpResponse
 
 from mailmerge import MailMerge
 import reversion
@@ -266,25 +268,6 @@ class BaseEndpoint(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    @staticmethod
-    def clear_cache():
-        pks = BaseEndpoint.objects.all().values_list('pk', flat=True)
-        BaseEndpoint.d_response_delete_cache(pks)
-
-    @classmethod
-    def d_response_delete_cache(cls, endpoint_pks):
-        keys = ['endpoint-json-{pk}'.format(pk=pk) for pk in endpoint_pks]
-        logging.info('removing cache: {caches}'.format(caches=', '.join(keys)))
-        cache.delete_many(keys)
-
-    def getDict(self):
-        """
-        Return flat-dictionary of BaseEndpoint.
-        """
-        tagnames = EffectTag.get_name_list(self.effects)
-        return OrderedDict((("endpoint-name", self.name),
-                            ("endpoint-effects", tagnames)))
-
     def get_json(self, *args, **kwargs):
         """
         Use the appropriate child-class to generate JSON response object, or
@@ -368,8 +351,21 @@ class ReportTemplate(models.Model):
     def get_filename(self):
         return os.path.basename(self.template.name)
 
-    def get_mailmerge(self):
-        return MailMerge(self.get_full_path())
+    def apply_mailmerge(self, context, filename="example.docx"):
+        # Return a django request response with a docx download.
+        docx = StringIO()
+
+        mailmerge = MailMerge(self.get_full_path())
+        mailmerge.merge(context)
+        mailmerge.write(docx)
+        mailmerge.close()
+
+        # return response
+        docx.seek(0)
+        response = HttpResponse(docx)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        return response
 
     @classmethod
     def get_by_report_type(cls, queryset):
@@ -387,7 +383,7 @@ class ReportTemplate(models.Model):
         # Return a template object if one exists which matches the specified
         # criteria, else throw an ObjectDoesNotExist error
         qs = cls.objects\
-                .filter(id=template_id, report_type=2)\
+                .filter(id=template_id, report_type=report_type)\
                 .filter(Q(assessment=assessment_id) | Q(assessment=None))
 
         if qs.count() == 1:

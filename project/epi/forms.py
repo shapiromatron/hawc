@@ -421,7 +421,7 @@ class SingleResultForm(forms.ModelForm):
     class Meta:
         model = models.SingleResult
         fields = ('study', 'exposure_name', 'weight', 'outcome_group',
-                  'n', 'risk_estimate', 'lower_ci',
+                  'n', 'estimate', 'lower_ci',
                   'upper_ci', 'ci_units', 'notes')
 
     def __init__(self, *args, **kwargs):
@@ -432,7 +432,7 @@ class SingleResultForm(forms.ModelForm):
         # re-order with custom-fields: https://djangosnippets.org/snippets/759/
         order = ('resultSelector', 'study', 'ao', 'outcome_group',
                  'exposure_name', 'weight', 'n',
-                 'risk_estimate', 'lower_ci', 'upper_ci', 'ci_units', 'notes')
+                 'estimate', 'lower_ci', 'upper_ci', 'ci_units', 'notes')
         tmp = copy(self.fields)
         self.fields = SortedDict()
         for item in order:
@@ -456,7 +456,7 @@ class SingleResultForm(forms.ModelForm):
         updateClasses(("resultSelector", ), "unstyled singleResultType")
         updateClasses(("study", "exposure_name", "weight", "notes"), "span12")
         updateClasses(("ao", "outcome_group", ), "span11 isAOG")
-        updateClasses(("n", "risk_estimate", "lower_ci", "upper_ci", 'ci_units'), "span12 isntAOG")
+        updateClasses(("n", "estimate", "lower_ci", "upper_ci", 'ci_units'), "span12 isntAOG")
         self.fields['study'].widget.attrs["class"] += " studySearch"
         self.fields['ao'].widget.attrs["class"]  += " aoSearch"
         self.fields['outcome_group'].widget.attrs["class"] += " aogSearch"
@@ -482,7 +482,7 @@ class SingleResultForm(forms.ModelForm):
             return False
 
         if int(cleaned_data.get('resultSelector')) == 0:
-            if anyNull(cleaned_data, ('n', 'risk_estimate', 'lower_ci', 'upper_ci')):
+            if anyNull(cleaned_data, ('n', 'estimate', 'lower_ci', 'upper_ci')):
                 raise forms.ValidationError("If manually entering single-study data, "
                                       "N, Risk estimate, and upper and lower CI are required.")
         else:
@@ -498,6 +498,7 @@ class EmptySingleResultFormset(FormsetWithIgnoredFields):
 
     def get_queryset(self):
         return models.SingleResult.objects.none()
+
 
 class LoadedSingleResultFormset(FormsetWithIgnoredFields):
     ignored_fields = ['resultSelector']

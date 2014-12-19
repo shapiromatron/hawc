@@ -50,7 +50,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
       var endpoints = [];
-      {{object.get_endpoints_ufs_json|safe}}.forEach(function(v, i){
+      {{object.get_endpoints_json|safe}}.forEach(function(v, i){
         endpoints.push(new UFEndpoint(v, {uf_form_div: '#individual_ufs'}));
       });
 

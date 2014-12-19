@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
-                         BaseCreate, BaseDetail, BaseUpdate, BaseDelete)
+                         BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
+                         GenerateReport)
 from assessment.models import Assessment
 
 from . import forms
@@ -346,6 +347,21 @@ class RefList(BaseList):
         return context
 
 
+class RefReport(GenerateReport):
+    parent_model = Assessment
+    model = models.Reference
+    report_type = 0
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)
+
+    def get_filename(self):
+        return "literature.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(queryset)
+
+
 class RefListExtract(BaseList):
     parent_model = Assessment
     model = models.Reference
@@ -430,7 +446,11 @@ class TagsJSON(BaseDetail):
     model = Assessment
 
     def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, pk=self.request.GET.get('pk'))
+        try:
+            pk = int(self.request.GET.get('pk', -1))
+        except ValueError:
+            pk = -1
+        obj = get_object_or_404(self.model, pk=pk)
         return super(TagsJSON, self).get_object(object=obj)
 
     def get(self, request, *args, **kwargs):

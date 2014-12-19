@@ -1,13 +1,12 @@
 import json
-from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 
-from animal.models import (Experiment, AnimalGroup, GenerationalAnimalGroup,
-                           Species, Strain, DosingRegime, Endpoint, EndpointGroup,
+from animal.models import (Experiment, AnimalGroup,  Species, Strain,
+                           DosingRegime, Endpoint, EndpointGroup,
                            UncertaintyFactorEndpoint, DoseUnits, DoseGroup, Aggregation)
 from study.tests import build_studies_for_permission_testing
 
@@ -478,143 +477,14 @@ class AnimalGroupModelFunctionality(TestCase):
         self.dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=0,
-                                      dose=Decimal('0'))
+                                      dose=0.)
         self.dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=1,
-                                      dose=Decimal('50'))
+                                      dose=50.)
         self.dose_group_1.save()
         self.dose_group_2.save()
         self.assertEqual('[{"units": "mg/kg/day", "values": [0.0, 50.0], "units_id": ' + str(self.dose_units.pk) + '}]', self.animal_group_working.get_doses_json())
-
-
-class DosingRegimePermissions(TestCase):
-    """
-    Ensure permissions for animal-group views are properly configured.
-    """
-    def setUp(self):
-        build_dosing_regimes_for_permission_testing(self)
-
-    def test_read_success(self):
-        clients = ['sudo', 'pm', 'team', 'rev']
-        views = [
-            reverse('animal:dosing_regime_detail', kwargs={'pk': self.dosing_regime_working.pk}),
-            reverse('animal:dosing_regime_detail', kwargs={'pk': self.dosing_regime_final.pk}),
-        ]
-
-        for client in clients:
-            c = Client()
-            if client:
-                self.assertTrue(c.login(username=client, password='pw'))
-            for view in views:
-                response = c.get(view)
-                self.assertTrue(response.status_code == 200)
-
-    def test_read_failure(self):
-        #anonymous user
-        c = Client()
-        views = [
-            {'view': reverse('animal:dosing_regime_detail', kwargs={'pk': self.dosing_regime_final.pk}), 'status': 200},
-            {'view': reverse('animal:dosing_regime_detail', kwargs={'pk': self.dosing_regime_working.pk}), 'status': 403},
-        ]
-        for view in views:
-            response = c.get(view['view'])
-            self.assertTrue(response.status_code == view['status'])
-
-    def test_crud_success(self):
-        # check to ensure that sudo, pm and team can view the edit list,
-        # create a new dosing_regime, edit it, and delete it
-        clients = ['sudo', 'pm', 'team']
-        for client in clients:
-            c = Client()
-            if client:
-                self.assertTrue(c.login(username=client, password='pw'))
-
-            #new animal group required
-            animal_group = AnimalGroup(experiment=self.experiment_working,
-                                       name='animal group name',
-                                       species=self.species,
-                                       strain=self.strain,
-                                       sex='M',
-                                       dose_groups=4)
-            animal_group.save()
-
-            #create new
-            response = c.get(reverse('animal:dosing_regime_new',
-                             kwargs={'pk': animal_group.pk}))
-            self.assertTrue(response.status_code == 200)
-            response = c.post(reverse('animal:dosing_regime_new',
-                              kwargs={'pk': animal_group.pk}),
-                                {"route_of_exposure": 'I',
-                                 "description": 'foo1',
-                                 "dose_groups_json": build_dosing_datasets_json(self.dose_units)})
-            self.assertTrue(response.status_code == 302)
-            self.assertTemplateUsed('animal/dosing_regime_detail.html')
-            pk = DosingRegime.objects.all().latest('created').pk
-
-            #edit
-            response = c.get(reverse('animal:dosing_regime_update',
-                             kwargs={'pk': pk}))
-            self.assertTrue(response.status_code == 200)
-            response = c.post(reverse('animal:dosing_regime_update',
-                              kwargs={'pk': pk}),
-                                {"route_of_exposure": 'I',
-                                 "description": 'foo2',
-                                 "dose_groups_json": build_dosing_datasets_json(self.dose_units)})
-            self.assertTrue(response.status_code == 302)
-            self.assertTemplateUsed('animal/dosing_regime_detail.html')
-
-            #delete
-            response = c.get(reverse('animal:dosing_regime_delete',
-                             kwargs={'pk': pk}))
-            self.assertTrue(response.status_code == 200)
-            response = c.post(reverse('animal:dosing_regime_delete', kwargs={'pk': pk}))
-            self.assertTrue(response.status_code == 302)
-            self.assertTemplateUsed('animal/experiment_detail.html')
-
-    def test_crud_failure(self):
-        # make sure that reviewers and those not logged in have any access to
-        # these CRUD views on an ongoing assessment
-        clients = ['rev', None]
-        views = [
-            reverse('animal:dosing_regime_update', kwargs={'pk': self.dosing_regime_working.pk}),
-            reverse('animal:dosing_regime_new', kwargs={'pk': self.animal_group_working.pk}),
-            reverse('animal:dosing_regime_delete', kwargs={'pk': self.dosing_regime_working.pk}),
-            reverse('animal:dosing_regime_update', kwargs={'pk': self.dosing_regime_final.pk}),
-            reverse('animal:dosing_regime_new', kwargs={'pk': self.animal_group_final.pk}),
-            reverse('animal:dosing_regime_delete', kwargs={'pk': self.dosing_regime_final.pk}),
-        ]
-
-        for client in clients:
-            c = Client()
-            if client:
-                self.assertTrue(c.login(username=client, password='pw'))
-
-            for view in views:
-                response = c.get(view)
-                self.assertTrue(response.status_code == 403)
-                response = c.post(view)
-                self.assertTrue(response.status_code in [403, 405])
-
-        # test that no-one (except sudo) can change a final assessment
-        clients = ['pm', 'team', 'rev', None]
-        views = [
-            reverse('animal:dosing_regime_update', kwargs={'pk': self.dosing_regime_final.pk}),
-            reverse('animal:dosing_regime_new', kwargs={'pk': self.animal_group_final.pk}),
-            reverse('animal:dosing_regime_delete', kwargs={'pk': self.dosing_regime_final.pk}),
-        ]
-
-        for client in clients:
-            c = Client()
-            if client:
-                self.assertTrue(c.login(username=client, password='pw'))
-
-            for view in views:
-                response = c.get(view)
-                self.assertTrue(response.status_code == 403)
-                response = c.post(view)
-                self.assertTrue(response.status_code in [403, 405])
-
 
 class DosingRegimeModelFunctionality(TestCase):
     """
@@ -630,23 +500,23 @@ class DosingRegimeModelFunctionality(TestCase):
         self.dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=0,
-                                      dose=Decimal('0'))
+                                      dose=0.)
 
         self.dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                       dose_units=self.dose_units,
                                       dose_group_id=1,
-                                      dose=Decimal('50'))
+                                      dose=50.)
         self.dose_group_1.save()
         self.dose_group_2.save()
         self.alt_dose_group_1 = DoseGroup(dose_regime=self.dosing_regime_working,
                                           dose_units=self.alt_dose_units,
                                           dose_group_id=0,
-                                          dose=Decimal('100'))
+                                          dose=100.)
 
         self.alt_dose_group_2 = DoseGroup(dose_regime=self.dosing_regime_working,
                                           dose_units=self.alt_dose_units,
                                           dose_group_id=1,
-                                          dose=Decimal('150'))
+                                          dose=150.)
         self.alt_dose_group_1.save()
         self.alt_dose_group_2.save()
 
@@ -693,87 +563,11 @@ class DoseGroupModelFunctionality(TestCase):
         dose_groups.append({'dose_regime': self.dosing_regime_working.pk,
                             'dose_units': 2,
                             'dose_group_id': 0,
-                            'dose': Decimal('50.00000000000')})
+                            'dose': 50.})
         with self.assertRaises(ValidationError) as err:
             DoseGroup.clean_formset(dose_groups, 4)
 
         self.assertItemsEqual(err.exception.messages, [u'<ul><li>Each dose-type must have 4 dose groups</li></ul>'])
-
-    def test_get_float_dose(self):
-        dose_group = DoseGroup(dose_regime=self.dosing_regime_working,
-                               dose_units=self.dose_units,
-                               dose_group_id=0,
-                               dose=Decimal('50.00000000000'))
-        self.assertEqual(dose_group.get_float_dose(), 50.)
-
-        dose_group = DoseGroup(dose_regime=self.dosing_regime_working,
-                               dose_units=self.dose_units,
-                               dose_group_id=0,
-                               dose=Decimal('50.00000000001'))
-        self.assertNotEqual(dose_group.get_float_dose(), 50.)
-
-
-class GenerationalAnimalGroupFunctionality(TestCase):
-
-    def setUp(self):
-        build_dosing_regimes_for_permission_testing(self)
-
-        self.experiment_generational = Experiment(study=self.study_working,
-                                                  name='experiment name',
-                                                  type='Rp',
-                                                  description='No description.')
-        self.experiment_generational.save()
-        self.animal_group_f0 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F0")
-        self.animal_group_f0.save()
-
-        # add dosing regime to F0
-        c = Client()
-        c.login(username='pm', password='pw')
-        response = c.post(reverse('animal:dosing_regime_new',
-                              kwargs={'pk': self.animal_group_f0.pk}),
-                                     {"route_of_exposure": 'I',
-                                      "description": 'foo1',
-                                      "dose_groups_json": build_dosing_datasets_json(self.dose_units)})
-
-        self.generational_dosing_regime = DosingRegime.objects.all().latest('created')
-
-        self.animal_group_f1 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F1")
-        self.animal_group_f1.save()
-        self.animal_group_f1.parents.add(self.animal_group_f0)
-
-        self.animal_group_f2 = GenerationalAnimalGroup(experiment=self.experiment_generational,
-                                                       name='animal group name',
-                                                       species=self.species,
-                                                       strain=self.strain,
-                                                       sex='M',
-                                                       dose_groups=4,
-                                                       generation="F2")
-        self.animal_group_f2.save()
-        self.animal_group_f2.parents.add(self.animal_group_f1)
-
-    def test_dosing_regime_search(self):
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f0.dosing_regime)
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f1.dosing_regime)
-        self.assertEqual(self.generational_dosing_regime, self.animal_group_f2.dosing_regime)
-
-    def test_children(self):
-        self.assertEqual(GenerationalAnimalGroup.objects.filter(pk=self.animal_group_f1.pk)[0].pk,
-                         self.animal_group_f0.get_children()[0].pk)
-
-        self.assertEqual(GenerationalAnimalGroup.objects.filter(pk=self.animal_group_f2.pk)[0].pk,
-                         self.animal_group_f1.get_children()[0].pk)
 
 
 class EndpointPermissions(TestCase):
