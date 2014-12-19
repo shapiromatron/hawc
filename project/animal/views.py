@@ -541,22 +541,24 @@ class EndpointCrossview(BaseList):
             self.dose_units = get_object_or_404(models.DoseUnits, pk=self.request.GET['dose_pk'])
         else:
             self.dose_units = models.DoseUnits.objects.get(units='mg/kg-day')
-        filters = {"assessment": self.assessment}
+        filters = {
+            "assessment": self.assessment,
+            "animal_group__dosing_regime__doses__dose_units": self.dose_units
+        }
         perms = super(EndpointCrossview, self).get_obj_perms()
         if not perms['edit']:
             filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)\
-                   .select_related('animal_group', 'animal_group__dosing_regime')\
-                   .prefetch_related('animal_group__dosing_regime__doses')\
-                   .filter(animal_group__dosing_regime__doses__dose_units=self.dose_units).distinct('pk')
+        return self.model.objects\
+                    .filter(**filters)\
+                    .distinct('pk')
 
 
     def get_context_data(self, **kwargs):
         context = super(EndpointCrossview, self).get_context_data(**kwargs)
+        context['dose_units_id'] = self.dose_units.id
         context['doses'] = models.DoseUnits.objects.all()
         context['endpoints_json'] = models.Endpoint.d_responses(
                                             context['object_list'],
-                                            self.dose_units.pk,
                                             json_encode=True)
         return context
 

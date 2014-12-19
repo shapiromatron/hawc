@@ -2,9 +2,11 @@
 Endpoint.prototype._percent_change_control = function(index){
     try{
         if (this.data.data_type == "C"){
-            return this._continuous_percent_difference_from_control(this.data.dr[index], this.data.dr[0]);
+            return this._continuous_percent_difference_from_control(
+                this.data.endpoint_group[index],
+                this.data.endpoint_group[0]);
         } else {
-            return this._dichotomous_percent_change_incidence(this.data.dr[index]);
+            return this._dichotomous_percent_change_incidence(this.data.endpoint_group[index]);
         }
     } catch(err){
         return '-';
@@ -15,21 +17,23 @@ Endpoint.prototype.crossview_data_formatting = function(){
     // get metadata and an array of data-objects showing percent difference
     // from control
     var contents = [];
-    for(var i=1; i<this.data.dr.length; i++){
-        contents.push({'endpoint': this,
-                       'name': this.data.name,
-                       'study': this.data.study.short_citation,
-                       'experiment': this.data.experiment,
-                       'experiment_type': this.data.experiment_type,
-                       'animal_group': this.data.animal_group,
-                       'dose': this.data.dr[i].dose,
-                       'change': this._percent_change_control(i)/100,
-                       'loael': this.data.LOAEL === i,
-                       'noael': this.data.NOAEL === i,
-                       'tags': this.data.tags.map(function(v){return v.name;}),
-                       'sex': this.data.sex,
-                       'species': this.data.species,
-                       'path_title': this.data.name});
+    for(var i=1; i<this.data.endpoint_group.length; i++){
+        contents.push({
+            'endpoint': this,
+            'name': this.data.name,
+            'study': this.data.animal_group.experiment.study.short_citation,
+            'experiment': this.data.animal_group.experiment.name,
+            'experiment_type': this.data.animal_group.experiment.type,
+            'animal_group': this.data.animal_group.name,
+            'dose': this.data.endpoint_group[i].dose,
+            'change': this._percent_change_control(i)/100,
+            'loael': this.data.LOAEL === i,
+            'noael': this.data.NOAEL === i,
+            'effects': this.data.effects.map(function(v){return v.name;}),
+            'sex': this.data.animal_group.sex,
+            'species': this.data.animal_group.species,
+            'path_title': this.data.name
+        });
     }
     return contents;
 };
@@ -79,7 +83,7 @@ Crossview.default_settings = function(){
                 "experiment_type",
                 "species",
                 "sex",
-                "tags"
+                "effects"
               ]
            };
 };
@@ -112,6 +116,7 @@ Crossview.prototype.set_defaults = function(){
 
     var xlabel_format = d3.format(",.f"),
         ylabel_format = d3.format("%");
+
     this.x_axis_settings = {
         "scale_type": 'log',
         "text_orient": "bottom",
@@ -139,25 +144,31 @@ Crossview.prototype.get_dataset = function(){
     var dataset = [];
 
     this.endpoints.forEach(function(v,i){
-        if(v.data.dr.length>0){
+        if(v.data.endpoint_group.length>0){
             dataset.push(v.crossview_data_formatting());
         }
     });
 
     var responses = dataset.map(
         function(v){
-            return [d3.extent(v, function(v2){ return v2.dose;}),
-                    d3.extent(v, function(v2){ return v2.change;})];
+            return [
+                d3.extent(v, function(v2){ return v2.dose;}),
+                d3.extent(v, function(v2){ return v2.change;})
+            ];
         });
 
-    this.dose_range = [d3.min(responses, function(v){return v[0][0];}),
-                       d3.max(responses, function(v){return v[0][1];})];
-    this.response_range = [d3.min(responses, function(v){return v[1][0];}),
-                           d3.max(responses, function(v){return v[1][1];})];
+    this.dose_range = [
+        d3.min(responses, function(v){return v[0][0];}),
+        d3.max(responses, function(v){return v[0][1];})
+    ];
+    this.response_range = [
+        d3.min(responses, function(v){return v[1][0];}),
+        d3.max(responses, function(v){return v[1][1];})
+    ];
     this.dataset = dataset;
 
     this.title_str = '';
-    this.x_label_text = "Dose ({0})".printf(this.endpoints[0].data.dose_units);
+    this.x_label_text = "Dose ({0})".printf(this.endpoints[0].dose_units);
     this.y_label_text = '% change from control (continuous), % incidence (dichotomous)';
 };
 

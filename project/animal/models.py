@@ -796,11 +796,11 @@ class Endpoint(BaseEndpoint):
             bmd_session.docx_print(report, heading_level=heading_level+1)
 
     @staticmethod
-    def d_responses(queryset, dose_pk, json_encode=True):
+    def d_responses(queryset, json_encode=True):
         """
         Return a list of queryset responses with the specified dosing protocol
         """
-        endpoints = [e.d_response(json_encode=False, dose_pk=dose_pk) for e in queryset]
+        endpoints = [e.d_response(json_encode=False) for e in queryset]
         if json_encode:
             return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
         else:
@@ -1247,7 +1247,6 @@ class Aggregation(models.Model):
     def get_endpoints_json(self, json_encode=True):
         return Endpoint.d_responses(
                 self.endpoints.all(),
-                dose_pk=self.dose_units_id,
                 json_encode=json_encode)
 
     def get_prior_versions_json(self):

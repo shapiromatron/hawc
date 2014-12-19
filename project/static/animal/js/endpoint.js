@@ -30,7 +30,7 @@ Endpoint.prototype.unpack_doses = function(){
 
     this.doses.forEach(function(v){ v.units= v.values[0].dose_units.units; });
     this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
-    this.toggle_dose_units();
+    this.switch_dose_units(this.dose_units_id);
 };
 
 Endpoint.prototype.removeObserver = function(obs){
@@ -52,6 +52,15 @@ Endpoint.prototype.toggle_dose_units = function(){
         new_idx = (idx < units.length-1) ? (idx+1) : 0;
     this._switch_dose(new_idx);
 };
+
+Endpoint.prototype.switch_dose_units = function(units_id){
+  var units_id = units_id.toString()
+  for(var i=0; i<this.doses.length; i++){
+        if(this.doses[i].key === units_id)
+            return this._switch_dose(i);
+    }
+    console.log("Error: dose units not found");
+}
 
 Endpoint.prototype._switch_dose = function(idx){
     // switch doses to the selected index
