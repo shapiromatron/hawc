@@ -1285,17 +1285,7 @@ class Aggregation(models.Model):
         return json.dumps(versions_json, cls=HAWCDjangoJSONEncoder)
 
     def get_json(self, json_encode=True):
-        d = {"endpoints":[],
-             "url": self.get_absolute_url()}
-        for field in ['pk', 'name']:
-            d[field] = getattr(self, field)
-        for endpoint in self.endpoints.all():
-            d["endpoints"].append(endpoint.d_response(json_encode=False,
-                                  dose_pk=self.dose_units.pk))
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
 
 class ReferenceValue(models.Model):

@@ -120,4 +120,12 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
+class AggregationSerializer(serializers.ModelSerializer):
+    endpoints = EndpointSerializer(many=True)
+
+    class Meta:
+        model = models.Aggregation
+
+
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
+SerializerHelper.add_serializer(models.Aggregation, AggregationSerializer)

@@ -32,8 +32,8 @@ var Aggregation = function(endpoints, name, options){
     if (this.options.build_plot_startup){this.build_plot();}
 };
 
-Aggregation.get_object = function(pk, callback, options){
-    $.get('/ani/aggregation/{0}/json/'.printf(pk), function(d){
+Aggregation.get_object = function(id, callback, options){
+    $.get('/ani/aggregation/{0}/json/'.printf(id), function(d){
         var endpoints = [];
         d.endpoints.forEach(function(v){endpoints.push(new Endpoint(v));});
         callback(new Aggregation(endpoints, d.name, options));
@@ -104,9 +104,15 @@ POD_table.prototype._build_body = function(){
 
 POD_table.prototype._build_body_row = function(endpoint, counter){
     var tr = $('<tr></tr>').data('endpoint', endpoint);
-    tr.append('<td><a href="{0}">{1}</a></td>'.printf(endpoint.data.study.study_url, endpoint.data.study.short_citation),
-              '<td><a href="{0}">{1}</a></td>'.printf(endpoint.data.experiment_url, endpoint.data.experiment),
-              '<td><a href="{0}">{1}</a></td>'.printf(endpoint.data.animal_group_url, endpoint.data.animal_group),
+    tr.append('<td><a href="{0}">{1}</a></td>'.printf(
+                    endpoint.data.animal_group.experiment.study.url,
+                    endpoint.data.animal_group.experiment.study.short_citation),
+              '<td><a href="{0}">{1}</a></td>'.printf(
+                    endpoint.data.animal_group.experiment.url,
+                    endpoint.data.animal_group.experiment.name),
+              '<td><a href="{0}">{1}</a></td>'.printf(
+                    endpoint.data.animal_group.url,
+                    endpoint.data.animal_group.name),
               endpoint._endpoint_detail_td(),
               '<td>{0}</td>'.printf(endpoint.get_special_dose_text('NOAEL')),
               '<td>{0}</td>'.printf(endpoint.get_special_dose_text('LOAEL')),
@@ -449,30 +455,34 @@ ERH_plot.prototype.get_dataset_info = function(){
         points_data = [];
 
     this.aggregation.endpoints.forEach(function(v, i){
-        if (v.data.dr.length>0){
+        if (v.data.endpoint_group.length>0){
             // get min/max information
             if (default_x_scale == "log"){
-                min = Math.min(min, v.data.dr[1].dose);
+                min = Math.min(min, v.data.endpoint_group[1].dose);
             } else {
-                min = Math.min(min, v.data.dr[0].dose);
+                min = Math.min(min, v.data.endpoint_group[0].dose);
             }
-            max = Math.max(max, v.data.dr[v.data.dr.length-1].dose);
+            max = Math.max(max, v.data.endpoint_group[v.data.endpoint_group.length-1].dose);
             if (isFinite(v.get_bmd_special_values('BMDL'))) {
                 min = Math.min(min, v.get_bmd_special_values('BMDL'));
                 max = Math.max(max, v.get_bmd_special_values('BMDL'));
             }
 
             //setup lines information for dose-response line (excluding control)
-            lines_data.push({y: v.data.pk,
-                             name: v.data.study.short_citation + "- " + v.data.animal_group + ": " + v.data.name,
-                             x_lower: v.data.dr[1].dose,
-                             x_upper: v.data.dr[v.data.dr.length-1].dose});
+            lines_data.push({y: v.data.id,
+                             name: "{0}- {1}- {2}: {3}".printf(
+                                v.data.animal_group.experiment.study.short_citation,
+                                v.data.animal_group.experiment.name,
+                                v.data.animal_group.name,
+                                v.data.name),
+                             x_lower: v.data.endpoint_group[1].dose,
+                             x_upper: v.data.endpoint_group[v.data.endpoint_group.length-1].dose});
 
             // setup points information
 
             // add LOAEL/NOAEL
-            v.data.dr.forEach(function(v2,i2){
-                txt = [v.data.study.short_citation,
+            v.data.endpoint_group.forEach(function(v2,i2){
+                txt = [v.data.animal_group.experiment.study.short_citation,
                        v.data.name,
                        'Dose: ' + v2.dose,
                        'N: ' + v2.n];
@@ -484,7 +494,7 @@ ERH_plot.prototype.get_dataset_info = function(){
                     }
                     coords = {endpoint:v,
                               x:v2.dose,
-                              y:v.data.pk,
+                              y:v.data.id,
                               classes:'',
                               text: txt.join('\n')};
                     if (v.data.LOAEL == i2){ coords.classes='LOAEL';}
@@ -494,14 +504,14 @@ ERH_plot.prototype.get_dataset_info = function(){
             });
             // add BMDL
             if (isFinite(v.get_bmd_special_values('BMDL'))) {
-                txt = [v.data.study.short_citation,
+                txt = [v.data.animal_group.experiment.study.short_citation,
                        v.data.name,
                        'BMD Model: ' + v.data.BMD.outputs.model_name,
                        'BMD: ' + v.data.BMD.outputs.BMD + ' (' + v.data.dose_units + ')',
                        'BMDL: ' +v.data.BMD.outputs.BMDL + ' (' + v.data.dose_units + ')'];
                 points_data.push({endpoint:v,
                                   x: v.get_bmd_special_values('BMDL'),
-                                  y: v.data.pk,
+                                  y: v.data.id,
                                   classes: 'BMDL',
                                   text : txt.join('\n')});
             }
@@ -513,7 +523,7 @@ ERH_plot.prototype.get_dataset_info = function(){
     this.max_x = max;
 
     this.title_str = this.aggregation.name;
-    this.x_label_text = "Dose ({0})".printf(this.aggregation.endpoints[0].data.dose_units);
+    this.x_label_text = "Dose ({0})".printf(this.aggregation.endpoints[0].dose_units);
     this.y_label_text = 'Endpoints';
 };
 
@@ -679,13 +689,13 @@ Forest_plot.prototype.get_dataset_info = function(){
         y = 0, val, control, lower_ci, upper_ci;
 
     this.aggregation.endpoints.forEach(function(v1,i1){
-        if (v1.data.dr.length>0){
+        if (v1.data.endpoint_group.length>0){
             // and endpoint label
-            endpoint_labels.push({y:((y+y+v1.data.dr.length)/2),
-                                  label:v1.data.study.short_citation + "- " + v1.data.animal_group + ": " + v1.data.name});
+            endpoint_labels.push({y:((y+y+v1.data.endpoint_group.length)/2),
+                                  label:v1.data.animal_group.experiment.study.short_citation + "- " + v1.data.animal_group.experiment.name + "- " + v1.data.animal_group.name + ": " + v1.data.name});
 
-            v1.data.dr.forEach(function(v2,i2){
-                txt = [v1.data.study.short_citation,
+            v1.data.endpoint_group.forEach(function(v2,i2){
+                txt = [v1.data.animal_group.experiment.study.short_citation,
                        v1.data.name,
                        'Dose: ' + v2.dose,
                        'N: ' + v2.n];
@@ -745,7 +755,7 @@ Forest_plot.prototype.get_dataset_info = function(){
 
     this.title_str = this.aggregation.name;
     this.x_label_text = "% change from control (continuous), % incidence (dichotomous)";
-    this.y_label_text = "Doses ({0})".printf(this.aggregation.endpoints[0].data.dose_units);
+    this.y_label_text = "Doses ({0})".printf(this.aggregation.endpoints[0].dose_units);
 };
 
 Forest_plot.prototype.add_axes = function() {
