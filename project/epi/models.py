@@ -173,7 +173,7 @@ class Demographics(models.Model):
     def flat_complete_data_row(ser):
         return (
             ser['sex'],
-            '|'.join([d['ethnicity'] for d in ser['ethnicity']]),
+            '|'.join(ser['ethnicity']),
             ser['fraction_male'],
             ser['fraction_male_calculated'],
             ser['age_mean'],
