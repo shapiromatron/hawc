@@ -11,6 +11,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import reversion
 
 from assessment.models import BaseEndpoint
+from assessment.serializers import AssessmentSerializer
 from animal.models import DoseUnits
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
@@ -872,36 +873,16 @@ class AssessedOutcome(BaseEndpoint):
         )
 
     @classmethod
-    def get_docx_template_context(cls, queryset):
+    def get_docx_template_context(cls, assessment, queryset):
+
+        outcomes = [
+            SerializerHelper.get_serialized(obj, json=False, from_cache=True)
+            for obj in queryset
+        ]
+
         return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "outcomes": outcomes
         }
 
 
