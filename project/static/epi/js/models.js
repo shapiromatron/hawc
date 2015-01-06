@@ -537,8 +537,8 @@ MetaProtocol.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Literature search end-date", this.data.lit_search_end_date);
     tbl.add_tbody_tr("Literature search notes", this.data.lit_search_notes);
     tbl.add_tbody_tr("Total references from search", this.data.total_references);
-    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria.map(function(v){return v.description;}));
-    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria.map(function(v){return v.description;}));
+    tbl.add_tbody_tr_list("Inclusion criteria", this.data.inclusion_criteria);
+    tbl.add_tbody_tr_list("Exclusion criteria", this.data.exclusion_criteria);
     tbl.add_tbody_tr("Total references after inclusion/exclusion", this.data.total_studies_identified);
     tbl.add_tbody_tr("Additional notes", this.data.notes);
 
