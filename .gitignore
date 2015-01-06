@@ -1,6 +1,6 @@
 *.db
 *~
-*settings_local.py
+project/hawc/settings/local.py
 .idea/*
 project/static/css/hawc_d3_aggregated.css
 docs/build/*

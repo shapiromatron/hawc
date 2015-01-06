@@ -30,8 +30,8 @@ necessary requirements::
 Then create a local settings file and set your ``DJANGO_SETTINGS_MODULE`` to
 use it::
 
-    cp project/hawc/dev.example.py project/hawc/dev.py
-    echo "export DJANGO_SETTINGS_MODULE=hawc.settings.dev" >> $VIRTUAL_ENV/bin/postactivate
+    cp project/hawc/settings/local.example.py project/hawc/settings/local.py
+    echo "export DJANGO_SETTINGS_MODULE=hawc.settings.local" >> $VIRTUAL_ENV/bin/postactivate
     echo "unset DJANGO_SETTINGS_MODULE" >> $VIRTUAL_ENV/bin/postdeactivate
 
 Exit the virtualenv and reactivate it to activate the settings just changed::
