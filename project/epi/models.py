@@ -876,13 +876,37 @@ class AssessedOutcome(BaseEndpoint):
     def get_docx_template_context(cls, assessment, queryset):
 
         outcomes = [
-            SerializerHelper.get_serialized(obj, json=False, from_cache=True)
+            SerializerHelper.get_serialized(obj, json=False)
             for obj in queryset
         ]
+        studies = {}
+
+        # flip dictionary nesting
+        for ao in outcomes:
+            thisExp = ao["exposure"]
+            thisSP = ao["exposure"]["study_population"]
+            thisStudy = ao["exposure"]["study_population"]["study"]
+
+            study = studies.get(thisStudy["id"])
+            if study is None:
+                study = thisStudy
+                study["sps"] = {}
+                studies[study["id"]] = study
+
+            sp = study["sps"].get(thisSP["id"])
+            if sp is None:
+                sp = thisSP
+                sp["exps"] = {}
+                study["sps"][sp["id"]]  = sp
+
+        # unpack dictionaries
+        studies = studies.values()
+        for study in studies:
+            study["sps"] = study["sps"].values()
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
-            "outcomes": outcomes
+            "studies": studies
         }
 
 
