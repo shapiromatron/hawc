@@ -882,10 +882,10 @@ class AssessedOutcome(BaseEndpoint):
         studies = {}
 
         # flip dictionary nesting
-        for ao in outcomes:
-            thisExp = ao["exposure"]
-            thisSP = ao["exposure"]["study_population"]
-            thisStudy = ao["exposure"]["study_population"]["study"]
+        for thisAO in outcomes:
+            thisExp = thisAO["exposure"]
+            thisSP = thisAO["exposure"]["study_population"]
+            thisStudy = thisAO["exposure"]["study_population"]["study"]
 
             study = studies.get(thisStudy["id"])
             if study is None:
@@ -896,13 +896,32 @@ class AssessedOutcome(BaseEndpoint):
             sp = study["sps"].get(thisSP["id"])
             if sp is None:
                 sp = thisSP
-                sp["exps"] = {}
+                sp["ethnicities"] = u', '.join(sp["ethnicity"])
+                sp["inclusion_list"] = u', '.join(sp["inclusion_criteria"])
+                sp["exclusion_list"] = u', '.join(sp["exclusion_criteria"])
+                sp["exposures"] = {}
                 study["sps"][sp["id"]]  = sp
+
+            exposure = sp["exposures"].get(thisExp["id"])
+            if exposure is None:
+                exposure = thisExp
+                exposure["aos"] = {}
+                sp["exposures"][exposure["id"]]  = exposure
+
+            ao = exposure["aos"].get(thisAO["id"])
+            if ao is None:
+                ao = thisAO
+                ao["adjustments_list"] = u', '.join(ao["adjustment_factors"])
+                exposure["aos"][ao["id"]]  = ao
 
         # unpack dictionaries
         studies = studies.values()
         for study in studies:
             study["sps"] = study["sps"].values()
+            for sp in study["sps"]:
+                sp["exposures"] = sp["exposures"].values()
+                for exp in sp["exposures"]:
+                    exp["aos"] = exp["aos"].values()
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),

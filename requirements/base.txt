@@ -29,7 +29,7 @@ xlrd==0.9.3
 xlwt==0.7.5
 
 #docx-templating requirements (dev)
-git+git://github.com/shapiromatron/docx-mailmerge.git@b7754b09d07a8d7417636a30343d637e361a7748
+git+git://github.com/shapiromatron/docx-mailmerge.git@d62729fced6693a9ce80f40907c18250c18780d9
 
 # watchdog and requirements
 watchdog==0.8.2
