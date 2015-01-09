@@ -1,3 +1,4 @@
+from datetime import datetime
 import decimal
 import logging
 from collections import OrderedDict
@@ -13,7 +14,7 @@ from rest_framework.renderers import JSONRenderer
 
 import unicodecsv
 from docx import Document
-import xlwt
+import xlsxwriter
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -241,7 +242,8 @@ class ExcelFileBuilder(FlatFile):
     """
 
     def _setup(self):
-        self.wb = xlwt.Workbook()
+        self.output = StringIO()
+        self.wb = xlsxwriter.Workbook(self.output)
         self._add_worksheet(sheet_name=self.kwargs.get("sheet_name", "Sheet1"))
 
     def _add_worksheet(self, sheet_name="Sheet1"):
@@ -253,40 +255,48 @@ class ExcelFileBuilder(FlatFile):
         http://stackoverflow.com/questions/451452/
         """
         sheet_name = re.sub(r'[\:\\/\?\*\[\]]+', r'-', sheet_name)[:31]
-        self.ws = self.wb.add_sheet(sheet_name)
+        self.ws = self.wb.add_worksheet(sheet_name)
 
     def _write_header_row(self, header_row):
         # set formatting and freeze panes for header-row
-        header_fmt = xlwt.easyxf('font: colour black, bold True;')
-        self.ws.set_panes_frozen(True)
-        self.ws.horz_split_pos = 1
+        header_fmt = self.wb.add_format({'bold': True})
+        self.ws.freeze_panes(1, 0)
+        self.ncols = len(header_row)
 
         # write header-rows
         for col, val in enumerate(header_row):
-            self.ws.write(0, col, val, style=header_fmt)
+            self.ws.write(0, col, val, header_fmt)
 
     def _write_data_rows(self, data_rows):
+        date_format = self.wb.add_format({'num_format': 'dd/mm/yy'})
 
-        def try_float(val):
+        def write_cell(r, c, val):
             if type(val) is bool:
-                return val
+                return self.ws.write_boolean(r, c, val)
+            elif type(val) is datetime:
+                return self.ws.write_datetime(r, c, val.replace(tzinfo=None), date_format)
+
             try:
-                return float(val)
+                val = float(val)
             except:
-                return val
+                pass
+
+            return self.ws.write(r, c, val)
 
         r = 0
         for row in data_rows:
             r += 1
             for c, val in enumerate(row):
-                self.ws.write(r, c, try_float(val))
+                write_cell(r, c, val)
+
+        self.ws.autofilter(0, 0, r, self.ncols)
 
     def _django_response(self):
-        output = StringIO()
-        self.wb.save(output)
-        output.seek(0)
-        response = HttpResponse(output, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}.xls"'.format(self.filename)
+        fn = '{}.xlsx'.format(self.filename)
+        self.wb.close()
+        self.output.seek(0)
+        response = HttpResponse(self.output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(fn)
         return response
 
 
