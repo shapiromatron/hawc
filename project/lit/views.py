@@ -1,5 +1,7 @@
 import json
 
+from datetime import datetime
+
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -271,10 +273,12 @@ class SearchTagsEdit(BaseUpdate):
         # have permissions-checked for, and if so, update reference-tags
         response = {"status": "fail"}
         pk = self.request.POST.get('pk', -1)
-        ref = models.Reference.objects.filter(pk=pk).first()
-        if (ref) and (ref.assessment_id == self.assessment.id):
+        ref = models.Reference.objects.filter(pk=pk, assessment=self.assessment).first()
+        if ref:
             tag_pks = self.request.POST.getlist('tags[]', [])
             ref.tags.set(tag_pks)
+            ref.last_updated = datetime.now()
+            ref.save()
             response["status"] = "success"
         return response
 
