@@ -54,51 +54,6 @@ class HAWCdocx(object):
         return response
 
 
-def build_excel_file(sheet_name, headers, queryset, data_rows_func, *args, **kwargs):
-    """
-    Construct an Excel workbook of the selected queryset of endpoints.
-
-    - sheet_name: worksheet name for workbook
-    - headers: list of header names
-    - queryset: list of objects, each of which has a flat_file_row method
-    - data_rows_func: custom function which constructs excel rows
-
-    Returns an Excel StringIO object.
-
-    """
-    def clean_ws_name(name="Sheet1"):
-        """
-        http://stackoverflow.com/questions/451452/
-        While renaming a sheet or chart, you entered an invalid name. Try one of the following:
-        - Make sure the name you entered does not exceed 31 characters.
-        - Make sure the name does not contain any of the following characters: : \ / ? * [ or ]
-        - Make sure you did not leave the name blank.
-        """
-        return re.sub(r'[\:\\/\?\*\[\]]+', r'-', name)[:31]
-
-    wb = xlwt.Workbook()
-    ws = wb.add_sheet(clean_ws_name(sheet_name))
-
-    header_fmt = xlwt.easyxf('font: colour black, bold True;')
-
-    # freeze panes on header
-    ws.set_panes_frozen(True)
-    ws.horz_split_pos = 1
-
-    # write header
-    for col, val in enumerate(headers):
-        ws.write(0, col, val, style=header_fmt)
-
-    data_rows_func(ws, queryset, *args, **kwargs)
-
-    # save as object
-    output = StringIO()
-    wb.save(output)
-    output.seek(0)
-
-    return output
-
-
 class SerializerHelper(object):
     """
     HAWC helper-object for getting serialized objects and setting cache.

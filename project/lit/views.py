@@ -10,8 +10,7 @@ from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
                          GenerateReport)
 from assessment.models import Assessment
 
-from . import forms
-from . import models
+from . import forms, exports, models
 
 
 class LitOverview(BaseList):
@@ -71,16 +70,37 @@ class RefDownloadExcel(BaseList):
     model = models.Reference
 
     def get(self, request, *args, **kwargs):
+        """
+        If a tag primary-key is specified, download all references associated
+        with that tag or any child tags for the selected assessment. Otherwise,
+        download a full export of data.
+        """
+        queryset = self.model.objects.filter(assessment=self.assessment)
+        fn = "{}-refs".format(self.assessment)
+        sheet_name = unicode(self.assessment)
         try:
             tag_pk = int(request.GET.get('tag_pk', None))
             tag = models.ReferenceFilterTag.objects.get(pk=tag_pk)
+            tags_pks = [tag.pk]
+            tags_pks.extend(list(tag.get_descendants().values_list('pk', flat=True)))
+            queryset = queryset.filter(tags__in=tags_pks).distinct('pk')
+            fn = "{}-{}".format(tag.name, fn)
+            sheet_name = tag.name
+            tags = models.ReferenceFilterTag.dump_bulk(tag)
+            include_parent_tag=True
         except:
-            tag = None
+            tags = models.ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False)
+            include_parent_tag=False
 
-        xls = self.model.assessment_excel_export(self.assessment, tag)
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        exporter = exports.ReferenceFlatComplete(
+            queryset,
+            export_format="excel",
+            filename=fn,
+            sheet_name=sheet_name,
+            assessment=self.assessment,
+            tags=tags,
+            include_parent_tag=include_parent_tag)
+        return exporter.build_response()
 
 
 class SearchNew(BaseCreate):
@@ -183,10 +203,15 @@ class SearchDownloadExcel(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        xls = self.object.excel_export()
-        response = HttpResponse(xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="download.xls"'
-        return response
+        exporter = exports.ReferenceFlatComplete(
+            self.object.references.all(),
+            export_format="excel",
+            filename=self.object.slug,
+            sheet_name=self.object.slug,
+            assessment=self.assessment,
+            tags=models.ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False),
+            include_parent_tag=False)
+        return exporter.build_response()
 
 
 class SearchQuery(BaseUpdate):
