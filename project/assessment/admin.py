@@ -13,10 +13,14 @@ class AssessmentAdmin(admin.ModelAdmin):
     search_fields = ('name', 'project_manager__last_name', 'team_members__last_name', 'reviewers__last_name')
     list_filter = ('editable', 'public', )
 
+    def queryset(self, request):
+        qs = super(AssessmentAdmin, self).queryset(request)
+        return qs.prefetch_related('project_manager', 'team_members', 'reviewers')
+
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
-        for mgr in mgr.values('first_name', 'last_name'):
-            ul.append(u"<li>{} {}</li>".format(mgr['first_name'], mgr['last_name']))
+        for user in mgr.all():
+            ul.append(u"<li>{} {}</li>".format(user.first_name, user.last_name))
 
         ul.append("</ul>")
         return u" ".join(ul)
