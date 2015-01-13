@@ -11,5 +11,44 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="assessment" notes="This will remove ALL data associated with this assessment from all HAWC modules." %}
+
+    <div class="alert alert-error">
+      <h4>Warning!</h4>
+      <p>Are you sure you want to delete this assessment? This will remove ALL data associated with this assessment from all HAWC modules.</p>
+    </div>
+
+    <div id='deleteConfirm'>
+        <h4>Type "delete" confirm deletion!</h4>
+        <input placeholder='Type "delete" to confirm'></input>
+    </div>
+
+    <form id="deleteForm" action="." method="post">
+      <div class="form-actions">
+        <button type="submit" class="btn btn-danger">Delete {{name}}</button>
+        <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
+      </div>
+      {% csrf_token %}
+      </fieldset>
+    </form>
+    <br><br><br><br><br><br><br><br>
+
 {% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var frm = $('#deleteForm'),
+            confirm_div = $('#deleteConfirm');
+
+        confirm_div.find('input').keyup(function(){
+            if(this.value.toLowerCase() === "delete"){
+                frm.show();
+                confirm_div.hide();
+            } else {
+                frm.hide();
+            }
+        });
+        frm.hide();
+    });
+</script>
+{% endblock extrajs %}
