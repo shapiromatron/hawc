@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import hashlib
 import json
 import logging
 
@@ -875,6 +876,16 @@ class AssessedOutcome(BaseEndpoint):
     @classmethod
     def get_docx_template_context(cls, assessment, queryset):
 
+        def getStatMethods(ao):
+            v = {
+                "adjustments_list": ao["adjustments_list"],
+                "statistical_metric": ao["statistical_metric"]["metric"],
+                "statistical_metric_description": ao["statistical_metric_description"],
+                "endpoints": []
+            }
+            k = u"{}|{}|{}".format(v["adjustments_list"], v["statistical_metric"], v["statistical_metric_description"])
+            return hashlib.md5(k.encode('UTF-8')).hexdigest(), v
+
         outcomes = [
             SerializerHelper.get_serialized(obj, json=False)
             for obj in queryset
@@ -906,15 +917,23 @@ class AssessedOutcome(BaseEndpoint):
             if exposure is None:
                 exposure = thisExp
                 exposure["aos"] = {}
+                exposure["statistical_methods"] = {}
                 sp["exposures"][exposure["id"]]  = exposure
 
             ao = exposure["aos"].get(thisAO["id"])
             if ao is None:
                 ao = thisAO
-                ao["adjustments_list"] = u', '.join(ao["adjustment_factors"])
+                ao["adjustments_list"] = u', '.join(sorted(ao["adjustment_factors"]))
                 exposure["aos"][ao["id"]]  = ao
 
-        # unpack dictionaries
+            key, val = getStatMethods(ao)
+            stat_methods = exposure['statistical_methods'].get(key)
+            if not stat_methods:
+                exposure['statistical_methods'][key] = val
+                stat_methods = val
+            stat_methods["endpoints"].append(ao["name"])
+
+        # value dictionaries
         studies = studies.values()
         for study in studies:
             study["sps"] = study["sps"].values()
@@ -922,7 +941,9 @@ class AssessedOutcome(BaseEndpoint):
                 sp["exposures"] = sp["exposures"].values()
                 for exp in sp["exposures"]:
                     exp["aos"] = exp["aos"].values()
-
+                    exp["statistical_methods"] = exp["statistical_methods"].values()
+                    for obj in exp["statistical_methods"]:
+                        obj["endpoints_list"] = ", ".join(obj["endpoints"])
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
             "studies": studies
