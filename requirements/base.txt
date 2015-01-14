@@ -30,7 +30,7 @@ xlwt==0.7.5
 XlsxWriter==0.6.5
 
 #docx-templating requirements (dev)
-git+git://github.com/shapiromatron/docx-mailmerge.git@d62729fced6693a9ce80f40907c18250c18780d9
+git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
 
 # watchdog and requirements
 watchdog==0.8.2
