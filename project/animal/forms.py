@@ -12,10 +12,10 @@ from selectable.forms.widgets import AutoCompleteWidget
 
 from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
+from study.lookups import AnimalStudyLookup
 from utils.helper import HAWCDjangoJSONEncoder
 
-from . import models
-from . import lookups
+from . import models, lookups
 
 
 DOSE_CHOICES = ((-999, '<None>'),)
@@ -522,3 +522,73 @@ class DoseUnitsForm(ModelForm):
             allow_new=True)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
+
+
+class EndpointFilterForm(forms.Form):
+
+    study = forms.CharField(
+        label='Study reference',
+        widget=AutoCompleteWidget(AnimalStudyLookup),
+        help_text="ex: Smith et al. 2010",
+        required=False)
+
+    cas  = forms.CharField(
+        label='Study reference',
+        widget=AutoCompleteWidget(lookups.ExperimentCASLookup),
+        help_text="ex: 107-02-8",
+        required=False)
+
+    lifestage_exposed  = forms.CharField(
+        label='Lifestage exposed',
+        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
+        help_text="ex: pup",
+        required=False)
+
+    lifestage_assessed = forms.CharField(
+        label='Lifestage assessed',
+        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
+        help_text="ex: adult",
+        required=False)
+
+    species = AutoCompleteSelectField(
+        label='Species',
+        lookup_class=lookups.SpeciesLookup,
+        help_text="ex: Mouse",
+        required=False)
+
+    strain = AutoCompleteSelectField(
+        label='Strain',
+        lookup_class=lookups.StrainLookup,
+        help_text="ex: B6C3F1",
+        required=False)
+
+    sex = forms.MultipleChoiceField(
+        choices=models.AnimalGroup.SEX_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
+
+    data_extracted = forms.BooleanField(required=False)
+
+    system  = forms.CharField(
+        label='System',
+        widget=AutoCompleteWidget(lookups.EndpointSystemLookup),
+        help_text="ex: endocrine",
+        required=False)
+
+    organ  = forms.CharField(
+        label='Organ',
+        widget=AutoCompleteWidget(lookups.EndpointOrganLookup),
+        help_text="ex: pituitary",
+        required=False)
+
+    effect  = forms.CharField(
+        label='Effect',
+        widget=AutoCompleteWidget(lookups.EndpointEffectLookup),
+        help_text="ex: alanine aminotransferase (ALT)",
+        required=False)
+
+    tags  = forms.CharField(
+        label='Tags',
+        widget=AutoCompleteWidget(EffectTagLookup),
+        help_text="ex: antibody response",
+        required=False)
