@@ -933,7 +933,7 @@ class AssessedOutcome(BaseEndpoint):
                 stat_methods = val
             stat_methods["endpoints"].append(ao["name"])
 
-        # value dictionaries
+        # convert value dictionaries to lists
         studies = studies.values()
         for study in studies:
             study["sps"] = study["sps"].values()
@@ -944,6 +944,7 @@ class AssessedOutcome(BaseEndpoint):
                     exp["statistical_methods"] = exp["statistical_methods"].values()
                     for obj in exp["statistical_methods"]:
                         obj["endpoints_list"] = ", ".join(obj["endpoints"])
+
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
             "studies": studies
