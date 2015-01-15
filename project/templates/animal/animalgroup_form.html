@@ -149,8 +149,8 @@
           d.forEach(function(v, i){
             opts.push('<option value="' + v.id + '">' + v.name + "</option>");
           });
-          $('#id_strain').html(opts).prop("disabled", (opts.length<2));
-          $('#id_strain option[value="' + selected + '"]').prop('selected', true);
+          $('#id_strain').html(opts.join("")).prop("disabled", (opts.length<2));
+          $('#id_strain option[value="{0}"]'.printf(selected)).prop('selected', true);
         });
       };
       $('#id_species').on('change', load_strains);
