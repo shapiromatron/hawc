@@ -206,7 +206,7 @@ Endpoint.prototype.add_continuous_confidence_intervals = function(){
     this.data.endpoint_group.forEach(function(v, i){
         if (v.stdev === undefined) self.calculate_stdev(v);
         var se = v.stdev/Math.sqrt(v.n),
-            z = Math.Inv_tdist_05(v.n-1);
+            z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
         v.lower_limit = v.response - se * z;
         v.upper_limit = v.response + se * z;
     });
