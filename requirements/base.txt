@@ -1,4 +1,4 @@
-Django==1.7.1
+Django==1.7.3
 amqp==1.4.6
 anyjson==0.3.3
 billiard==3.3.0.18
@@ -27,9 +27,10 @@ sqlparse==0.1.11
 unicodecsv==0.9.4
 xlrd==0.9.3
 xlwt==0.7.5
+XlsxWriter==0.6.5
 
 #docx-templating requirements (dev)
-git+git://github.com/shapiromatron/docx-mailmerge.git@b7754b09d07a8d7417636a30343d637e361a7748
+git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
 
 # watchdog and requirements
 watchdog==0.8.2

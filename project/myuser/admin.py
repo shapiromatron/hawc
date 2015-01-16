@@ -14,6 +14,7 @@ send_welcome_emails.short_description = "Send welcome email"
 class HAWCUserAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'email', 'is_active',  'is_staff', 'date_joined')
     list_filter = ('date_joined', )
+    search_fields = ('last_name', 'first_name', 'email')
     ordering = ('-date_joined', )
 
     actions = [send_welcome_emails]

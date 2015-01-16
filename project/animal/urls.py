@@ -31,7 +31,7 @@ urlpatterns = patterns('animal.views',
     url(r'^dosing-regime/(?P<pk>\d+)/edit/$', views.DosingRegimeUpdate.as_view(), name='dosing_regime_update'),
 
     # Endpoint
-    url(r'^assessment/(?P<pk>\d+)/endpoints/$', views.EndpointAssessmentList.as_view(), name='assessment_endpoint_list'),
+    url(r'^assessment/(?P<pk>\d+)/endpoints/$', views.EndpointList.as_view(), name='endpoint_list'),
     url(r'^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$', views.EndpointTags.as_view(), name='assessment_endpoint_taglist'),
     url(r'^assessment/(?P<pk>\d+)/endpoints/search/$', views.EndpointSearch.as_view(), name='assessment_endpoint_search'),
     url(r'^animal-group/(?P<pk>\d+)/endpoint/new/$', views.EndpointCreate.as_view(), name='endpoint_new'),

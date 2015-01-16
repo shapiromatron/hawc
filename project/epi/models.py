@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import hashlib
 import json
 import logging
 
@@ -11,6 +12,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import reversion
 
 from assessment.models import BaseEndpoint
+from assessment.serializers import AssessmentSerializer
 from animal.models import DoseUnits
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
@@ -872,36 +874,80 @@ class AssessedOutcome(BaseEndpoint):
         )
 
     @classmethod
-    def get_docx_template_context(cls, queryset):
+    def get_docx_template_context(cls, assessment, queryset):
+
+        def getStatMethods(ao):
+            v = {
+                "adjustments_list": ao["adjustments_list"],
+                "statistical_metric": ao["statistical_metric"]["metric"],
+                "statistical_metric_description": ao["statistical_metric_description"],
+                "endpoints": []
+            }
+            k = u"{}|{}|{}".format(v["adjustments_list"], v["statistical_metric"], v["statistical_metric_description"])
+            return hashlib.md5(k.encode('UTF-8')).hexdigest(), v
+
+        outcomes = [
+            SerializerHelper.get_serialized(obj, json=False)
+            for obj in queryset
+        ]
+        studies = {}
+
+        # flip dictionary nesting
+        for thisAO in outcomes:
+            thisExp = thisAO["exposure"]
+            thisSP = thisAO["exposure"]["study_population"]
+            thisStudy = thisAO["exposure"]["study_population"]["study"]
+
+            study = studies.get(thisStudy["id"])
+            if study is None:
+                study = thisStudy
+                study["sps"] = {}
+                studies[study["id"]] = study
+
+            sp = study["sps"].get(thisSP["id"])
+            if sp is None:
+                sp = thisSP
+                sp["ethnicities"] = u', '.join(sp["ethnicity"])
+                sp["inclusion_list"] = u', '.join(sp["inclusion_criteria"])
+                sp["exclusion_list"] = u', '.join(sp["exclusion_criteria"])
+                sp["exposures"] = {}
+                study["sps"][sp["id"]]  = sp
+
+            exposure = sp["exposures"].get(thisExp["id"])
+            if exposure is None:
+                exposure = thisExp
+                exposure["aos"] = {}
+                exposure["statistical_methods"] = {}
+                sp["exposures"][exposure["id"]]  = exposure
+
+            ao = exposure["aos"].get(thisAO["id"])
+            if ao is None:
+                ao = thisAO
+                ao["adjustments_list"] = u', '.join(sorted(ao["adjustment_factors"]))
+                exposure["aos"][ao["id"]]  = ao
+
+            key, val = getStatMethods(ao)
+            stat_methods = exposure['statistical_methods'].get(key)
+            if not stat_methods:
+                exposure['statistical_methods'][key] = val
+                stat_methods = val
+            stat_methods["endpoints"].append(ao["name"])
+
+        # convert value dictionaries to lists
+        studies = studies.values()
+        for study in studies:
+            study["sps"] = study["sps"].values()
+            for sp in study["sps"]:
+                sp["exposures"] = sp["exposures"].values()
+                for exp in sp["exposures"]:
+                    exp["aos"] = exp["aos"].values()
+                    exp["statistical_methods"] = exp["statistical_methods"].values()
+                    for obj in exp["statistical_methods"]:
+                        obj["endpoints_list"] = ", ".join(obj["endpoints"])
+
         return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "studies": studies
         }
 
 

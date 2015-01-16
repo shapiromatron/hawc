@@ -1,3 +1,4 @@
+from datetime import datetime
 import decimal
 import logging
 from collections import OrderedDict
@@ -13,7 +14,7 @@ from rest_framework.renderers import JSONRenderer
 
 import unicodecsv
 from docx import Document
-import xlwt
+import xlsxwriter
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -51,51 +52,6 @@ class HAWCdocx(object):
         response['Content-Disposition'] = 'attachment; filename=example.docx'
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
-
-
-def build_excel_file(sheet_name, headers, queryset, data_rows_func, *args, **kwargs):
-    """
-    Construct an Excel workbook of the selected queryset of endpoints.
-
-    - sheet_name: worksheet name for workbook
-    - headers: list of header names
-    - queryset: list of objects, each of which has a flat_file_row method
-    - data_rows_func: custom function which constructs excel rows
-
-    Returns an Excel StringIO object.
-
-    """
-    def clean_ws_name(name="Sheet1"):
-        """
-        http://stackoverflow.com/questions/451452/
-        While renaming a sheet or chart, you entered an invalid name. Try one of the following:
-        - Make sure the name you entered does not exceed 31 characters.
-        - Make sure the name does not contain any of the following characters: : \ / ? * [ or ]
-        - Make sure you did not leave the name blank.
-        """
-        return re.sub(r'[\:\\/\?\*\[\]]+', r'-', name)[:31]
-
-    wb = xlwt.Workbook()
-    ws = wb.add_sheet(clean_ws_name(sheet_name))
-
-    header_fmt = xlwt.easyxf('font: colour black, bold True;')
-
-    # freeze panes on header
-    ws.set_panes_frozen(True)
-    ws.horz_split_pos = 1
-
-    # write header
-    for col, val in enumerate(headers):
-        ws.write(0, col, val, style=header_fmt)
-
-    data_rows_func(ws, queryset, *args, **kwargs)
-
-    # save as object
-    output = StringIO()
-    wb.save(output)
-    output.seek(0)
-
-    return output
 
 
 class SerializerHelper(object):
@@ -241,7 +197,8 @@ class ExcelFileBuilder(FlatFile):
     """
 
     def _setup(self):
-        self.wb = xlwt.Workbook()
+        self.output = StringIO()
+        self.wb = xlsxwriter.Workbook(self.output)
         self._add_worksheet(sheet_name=self.kwargs.get("sheet_name", "Sheet1"))
 
     def _add_worksheet(self, sheet_name="Sheet1"):
@@ -253,40 +210,48 @@ class ExcelFileBuilder(FlatFile):
         http://stackoverflow.com/questions/451452/
         """
         sheet_name = re.sub(r'[\:\\/\?\*\[\]]+', r'-', sheet_name)[:31]
-        self.ws = self.wb.add_sheet(sheet_name)
+        self.ws = self.wb.add_worksheet(sheet_name)
 
     def _write_header_row(self, header_row):
         # set formatting and freeze panes for header-row
-        header_fmt = xlwt.easyxf('font: colour black, bold True;')
-        self.ws.set_panes_frozen(True)
-        self.ws.horz_split_pos = 1
+        header_fmt = self.wb.add_format({'bold': True})
+        self.ws.freeze_panes(1, 0)
+        self.ncols = len(header_row)
 
         # write header-rows
         for col, val in enumerate(header_row):
-            self.ws.write(0, col, val, style=header_fmt)
+            self.ws.write(0, col, val, header_fmt)
 
     def _write_data_rows(self, data_rows):
+        date_format = self.wb.add_format({'num_format': 'dd/mm/yy'})
 
-        def try_float(val):
+        def write_cell(r, c, val):
             if type(val) is bool:
-                return val
+                return self.ws.write_boolean(r, c, val)
+            elif type(val) is datetime:
+                return self.ws.write_datetime(r, c, val.replace(tzinfo=None), date_format)
+
             try:
-                return float(val)
+                val = float(val)
             except:
-                return val
+                pass
+
+            return self.ws.write(r, c, val)
 
         r = 0
         for row in data_rows:
             r += 1
             for c, val in enumerate(row):
-                self.ws.write(r, c, try_float(val))
+                write_cell(r, c, val)
+
+        self.ws.autofilter(0, 0, r, self.ncols)
 
     def _django_response(self):
-        output = StringIO()
-        self.wb.save(output)
-        output.seek(0)
-        response = HttpResponse(output, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}.xls"'.format(self.filename)
+        fn = '{}.xlsx'.format(self.filename)
+        self.wb.close()
+        self.output.seek(0)
+        response = HttpResponse(self.output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(fn)
         return response
 
 

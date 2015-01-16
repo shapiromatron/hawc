@@ -6,16 +6,17 @@ from django.forms import ModelForm, ValidationError, Select
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
+from django.db.models import Q
 
 from selectable.forms import AutoCompleteSelectMultipleField, AutoCompleteSelectField
 from selectable.forms.widgets import AutoCompleteWidget
 
 from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
+from study.lookups import AnimalStudyLookup
 from utils.helper import HAWCDjangoJSONEncoder
 
-from . import models
-from . import lookups
+from . import models, lookups
 
 
 DOSE_CHOICES = ((-999, '<None>'),)
@@ -86,10 +87,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
 
     class Meta:
         model = models.AnimalGroup
-        exclude = ('experiment',)
-        fields = ('name', 'species', 'strain', 'sex',
-                  'generation', 'siblings', 'parents',
-                  'dosing_regime')
+        exclude = ('experiment', )
 
     def __init__(self, *args, **kwargs):
         super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
@@ -522,3 +520,119 @@ class DoseUnitsForm(ModelForm):
             allow_new=True)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
+
+
+class EndpointFilterForm(forms.Form):
+
+    study = forms.CharField(
+        label='Study reference',
+        widget=AutoCompleteWidget(AnimalStudyLookup),
+        help_text="ex: Smith et al. 2010",
+        required=False)
+
+    cas  = forms.CharField(
+        label='CAS',
+        widget=AutoCompleteWidget(lookups.ExperimentCASLookup),
+        help_text="ex: 107-02-8",
+        required=False)
+
+    lifestage_exposed  = forms.CharField(
+        label='Lifestage exposed',
+        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
+        help_text="ex: pup",
+        required=False)
+
+    lifestage_assessed = forms.CharField(
+        label='Lifestage assessed',
+        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
+        help_text="ex: adult",
+        required=False)
+
+    species = AutoCompleteSelectField(
+        label='Species',
+        lookup_class=lookups.SpeciesLookup,
+        help_text="ex: Mouse",
+        required=False)
+
+    strain = AutoCompleteSelectField(
+        label='Strain',
+        lookup_class=lookups.StrainLookup,
+        help_text="ex: B6C3F1",
+        required=False)
+
+    sex = forms.MultipleChoiceField(
+        choices=models.AnimalGroup.SEX_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        initial = [c[0] for c in models.AnimalGroup.SEX_CHOICES],
+        required=False)
+
+    data_extracted = forms.BooleanField(
+        initial=True,
+        required=False)
+
+    system  = forms.CharField(
+        label='System',
+        widget=AutoCompleteWidget(lookups.EndpointSystemLookup),
+        help_text="ex: endocrine",
+        required=False)
+
+    organ  = forms.CharField(
+        label='Organ',
+        widget=AutoCompleteWidget(lookups.EndpointOrganLookup),
+        help_text="ex: pituitary",
+        required=False)
+
+    effect  = forms.CharField(
+        label='Effect',
+        widget=AutoCompleteWidget(lookups.EndpointEffectLookup),
+        help_text="ex: alanine aminotransferase (ALT)",
+        required=False)
+
+    tags  = forms.CharField(
+        label='Tags',
+        widget=AutoCompleteWidget(EffectTagLookup),
+        help_text="ex: antibody response",
+        required=False)
+
+    def get_query(self):
+
+        study = self.cleaned_data['study']
+        cas = self.cleaned_data['cas']
+        lifestage_exposed = self.cleaned_data['lifestage_exposed']
+        lifestage_assessed = self.cleaned_data['lifestage_assessed']
+        species = self.cleaned_data['species']
+        strain = self.cleaned_data['strain']
+        sex = self.cleaned_data['sex']
+        data_extracted = self.cleaned_data['data_extracted']
+        system = self.cleaned_data['system']
+        organ = self.cleaned_data['organ']
+        effect = self.cleaned_data['effect']
+        tags = self.cleaned_data['tags']
+
+        query = Q()
+        if study:
+            query &= Q(animal_group__experiment__study__short_citation__icontains=study)
+        if cas:
+            query &= Q(animal_group__experiment__cas__icontains=cas)
+        if lifestage_exposed:
+            query &= Q(animal_group__lifestage_exposed__icontains=lifestage_exposed)
+        if lifestage_assessed:
+            query &= Q(animal_group__lifestage_assessed__icontains=lifestage_assessed)
+        if species:
+            query &= Q(animal_group__species=species)
+        if strain:
+            query &= Q(animal_group__strain__name__icontains=strain.name)
+        if sex:
+            query &= Q(animal_group__sex__in=sex)
+        # boolean field; we always include
+        query &= Q(data_extracted=data_extracted)
+        if system:
+            query &= Q(system__icontains=system)
+        if organ:
+            query &= Q(organ__icontains=organ)
+        if effect:
+            query &= Q(effect__icontains=effect)
+        if tags:
+            query &= Q(effects__name__icontains=tags)
+
+        return query

@@ -1,5 +1,4 @@
 from datetime import datetime
-from copy import copy, deepcopy
 from math import ceil
 import json
 import logging
@@ -16,7 +15,7 @@ from django.utils.html import strip_tags
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCDjangoJSONEncoder, build_excel_file
+from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import NonUniqueTagBase
 
 from fetchers.pubmed import PubMedSearch, PubMedFetch
@@ -265,15 +264,6 @@ class Search(models.Model):
     def references_untagged_count(self):
         return self.references.all().annotate(tag_count=models.Count('tags')) \
                                 .filter(tag_count=0).count()
-
-    def excel_export(self):
-        """
-        Full XLS data export for search.
-        """
-        queryset = self.references.all()
-        tags = ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False)
-        sheet_name = self.slug
-        return Reference.excel_export(queryset, tags, sheet_name=sheet_name, include_parent_tag=False)
 
 
 class PubMedQuery(models.Model):
@@ -834,112 +824,11 @@ class Reference(models.Model):
         return self.assessment
 
     @classmethod
-    def assessment_excel_export(cls, assessment, tag=None):
-        # return an excel-export of references for a given assessment, including
-        # all-references or only those which have the specified tag.
-        queryset = cls.objects.filter(assessment=assessment)
-        sheet_name = u'{0}'.format(unicode(assessment))
-
-        # filter references by tag and don't show additional columns
-        if tag is not None:
-            tags_pks = [tag.pk]
-            tags_pks.extend(list(tag.get_descendants().values_list('pk', flat=True)))
-            queryset = queryset.filter(tags__in=tags_pks).distinct('pk')
-            sheet_name += u'-{0}'.format(tag.name)
-            tags = ReferenceFilterTag.dump_bulk(tag)
-            include_parent_tag=True
-        else:
-            # show all tags and all references
-            tags = ReferenceFilterTag.get_all_tags(assessment=assessment, json_encode=False)
-            include_parent_tag=False
-
-        return cls.excel_export(queryset, tags, sheet_name=sheet_name, include_parent_tag=include_parent_tag)
-
-    @classmethod
-    def get_excel_export_header(cls, tags, include_parent_tag):
-        headers = ['HAWC ID', 'PubMed ID', 'Citation','Full Citation',
-                   'Title', 'Authors', 'Year', 'Journal',  'Abstract']
-        if tags:
-            headers.extend(ReferenceFilterTag.get_flattened_taglist(tags, include_parent_tag))
-        return headers
-
-    @classmethod
     def excel_export(cls, queryset, tags, sheet_name="hawc-reference-export", include_parent_tag=False):
         headers = cls.get_excel_export_header(tags, include_parent_tag)
         data_rows_func = cls.build_excel_rows
         excel = build_excel_file(sheet_name, headers, queryset, data_rows_func, tags=tags, include_parent_tag=include_parent_tag)
         return excel
-
-    @staticmethod
-    def build_excel_rows(ws, queryset, *args, **kwargs):
-        # build Excel row for each item in queryset
-
-        def resetTags(tags):
-            def setFalse(obj):
-                obj['isTagged']=False
-                for child in obj.get('children', []):
-                    setFalse(child)
-
-            tagsCopy = deepcopy(tags)
-            setFalse(tagsCopy)
-            return tagsCopy
-
-        tags_base = resetTags(kwargs.get('tags')[0])
-        include_parent_tag = kwargs.get('include_parent_tag', False)
-
-        def printTags(ws, row, idx, tags):
-            col = {'value': idx}
-            def printStatus(obj, col):
-                ws.write(row, col['value'], obj['isTagged'])
-                col['value'] = col['value'] + 1
-                for child in obj.get('children', []):
-                    printStatus(child, col)
-
-            if include_parent_tag:
-                printStatus(tags, col)
-            else:
-                for child in tags['children']:
-                    printStatus(child, col)
-
-        def applyTags(tagslist, ref):
-
-            def applyTag(tagged, tagslist):
-
-                def checkMatch(tagged, tag, parents):
-                    parents = copy(parents)
-                    if tagged.id == tag['id']:
-                        tag['isTagged'] = True
-                        for parent in parents:
-                            parent['isTagged'] = True
-
-                    parents.append(tag)
-                    for child in tag.get('children', []):
-                        checkMatch(tagged, child, parents)
-
-                if include_parent_tag:
-                    checkMatch(tagged, tagslist, [])
-                else:
-                    for child in tagslist['children']:
-                        checkMatch(tagged, child, [])
-
-            for tag in ref.tags.all():
-                applyTag(tag, tagslist)
-
-        row = 0
-        for ref in queryset:
-            row+=1
-            ws.write(row, 0, ref.pk)
-            ws.write(row, 1, ref.getPubMedID())
-            ws.write(row, 2, ref.get_short_citation_estimate())
-            ws.write(row, 3, ref.reference_citation)
-            ws.write(row, 4, ref.title)
-            ws.write(row, 5, ref.authors)
-            ws.write(row, 6, ref.year)
-            ws.write(row, 7, ref.journal)
-            ws.write(row, 8, strip_tags(ref.abstract))
-            tagsCopy = deepcopy(tags_base)
-            applyTags(tagsCopy, ref)
-            printTags(ws, row, 9, tagsCopy)
 
     @classmethod
     def get_docx_template_context(cls, queryset):

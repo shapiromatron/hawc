@@ -114,20 +114,21 @@ dose_array.prototype._build_colgroup = function(){
   for(var j=0; j<this.columns; j++){
     cols.push('<col style="width:' + (90/this.columns) +'%"></col>');
   }
-  $('#dose_table colgroup').html(cols);
+  $('#dose_table colgroup').html(cols.join(""));
 };
 
 dose_array.prototype._build_tbody = function(){
-  var trs = [];
+  var tbody = $('#dose_table tbody').html("");
   for(var i=0; i<this.rows; i++){
     var tr = $('<tr></tr>');
-    tr.append('<td><label class="control-label">Dose Group ' + (i+1) + '</label></td>');
+    tr.append('<td><label class="control-label">Dose Group {0}</label></td>'
+          .printf(i+1));
     for(var j=0; j<this.columns; j++){
-      tr.append('<td><input type="text" tabindex="' + (j+1) +'" class="input-medium" id="dose_' + (i) +'" value="' + this.array[i].doses[j] + '"></td>');
+      tr.append('<td><input type="text" tabindex="{0}" class="input-medium" id="dose_{1}" value="{2}"></td>'
+          .printf(j+1, i, this.array[i].doses[j]));
     }
-    trs.push(tr);
+    tbody.append(tr);
   }
-  $('#dose_table tbody').html(trs);
 };
 
 dose_array.prototype._get_number_dose_groups = function(){

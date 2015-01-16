@@ -277,7 +277,7 @@ class AssessedOutcomeReport(GenerateReport):
         return "epidemiology.docx"
 
     def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)
+        return self.model.get_docx_template_context(self.assessment, queryset)
 
 
 class FullExport(AssessedOutcomeFlat):
