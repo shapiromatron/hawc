@@ -1,5 +1,6 @@
 import json
 
+from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -368,25 +369,49 @@ class EndpointUpdate(BaseUpdate):
         return context
 
 
-class EndpointAssessmentList(BaseList):
+class EndpointList(BaseList):
     # List of Endpoints associated with assessment
     parent_model = Assessment
     model = models.Endpoint
     template_name = "animal/endpoint_list_assessment.html"
     paginate_by = 25
 
+    def get(self, request, *args, **kwargs):
+        if self.request.GET and self.request.GET.get('csrfmiddlewaretoken'):
+            self.form = forms.EndpointFilterForm(self.request.GET)
+        else:
+            self.form = forms.EndpointFilterForm()
+        return super(EndpointList, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
         filters = {"assessment": self.assessment}
-        perms = super(EndpointAssessmentList, self).get_obj_perms()
+        perms = super(EndpointList, self).get_obj_perms()
         if not perms['edit']:
             filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)\
+
+        # get any additional filters
+        query = Q()
+        if self.request.GET and self.form.is_valid():
+            query = self.form.get_query()
+
+        return self.model.objects.filter(**filters).filter(query)\
                    .select_related('animal_group', 'animal_group__dosing_regime')\
                    .prefetch_related('animal_group__dosing_regime__doses')\
                    .order_by('name')
 
+    def get_context_data(self, **kwargs):
+        context = super(EndpointList, self).get_context_data(**kwargs)
+        context['form'] = self.form
+        context['qs'] = self.get_endpointQueryString()
+        return context
 
-class EndpointTags(EndpointAssessmentList):
+    def get_endpointQueryString(self):
+        qd = self.request.GET.copy()
+        if "page" in qd: qd.pop("page")
+        return "&" + qd.urlencode()
+
+
+class EndpointTags(EndpointList):
     # List of Endpoints associated with an assessment and tag
 
     def get_queryset(self):
