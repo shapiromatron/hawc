@@ -86,10 +86,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
 
     class Meta:
         model = models.AnimalGroup
-        exclude = ('experiment',)
-        fields = ('name', 'species', 'strain', 'sex',
-                  'generation', 'siblings', 'parents',
-                  'dosing_regime')
+        exclude = ('experiment', )
 
     def __init__(self, *args, **kwargs):
         super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
