@@ -21,6 +21,7 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("-t", "--test",
             action="store_true",
+            help="Create an Excel spreadsheet which shows differences, but don't execute in database",
             dest="test_only"),
         )
 
@@ -50,7 +51,7 @@ class Command(BaseCommand):
                 obj.save()
                 mods += 1
                 self.stdout.write('Updated {} {}'.format(qs.model.__name__, obj.pk), self.style.HTTP_NOT_MODIFIED)
-        self.stdout.write("{} objects modified".format(mods), self.style.SQL_FIELD)
+        self.stdout.write("{} objects were modified".format(mods), self.style.SQL_FIELD)
 
     def test_clean_field(self, qs, field):
         """
@@ -91,7 +92,7 @@ class Command(BaseCommand):
             wb.close()
             self.stdout.write("Output XLSX: {}".format(fn), self.style.SQL_FIELD)
 
-        self.stdout.write("{} objects modified".format(len(rows)), self.style.SQL_FIELD)
+        self.stdout.write("{} objects would be modified".format(len(rows)), self.style.SQL_FIELD)
 
     def _cleanup_text(self, s):
         """
