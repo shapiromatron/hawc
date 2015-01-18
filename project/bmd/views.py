@@ -30,7 +30,8 @@ class BMDRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(BMDRead, self).get_context_data(**kwargs)
-        context['endpoint_json'] = self.object.endpoint.d_response(json_encode=True, dose_pk=self.object.dose_units.pk)
+        context['dose_units'] = self.object.dose_units.pk # todo: fix JS to ensure correct dose-units are used
+        context['endpoint_json'] = self.object.endpoint.d_response(json_encode=True)
         context['session'] = self.object.webpage_return(json=True)
         logics = models.LogicField.objects.filter(assessment=self.assessment)
         context['logics'] = models.LogicField.website_list_return(logics, self.object.endpoint.data_type, True)
