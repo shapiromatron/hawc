@@ -2,7 +2,10 @@
     <tbody>
         <tr>
             <th>Total References</th>
-            <td>{{overview.total_references}}</td>
+            <td title="If a reference is found in both a search and import, it is included in the search-counts only">
+               {{overview.total_references}}
+               ({{overview.total_searched}} from searches,
+               {{overview.total_imported}} from imports)</td>
         </tr>
         <tr>
             <th>Total Tagged</th>

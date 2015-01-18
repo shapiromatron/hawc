@@ -684,11 +684,18 @@ class Reference(models.Model):
         # Get an overview of tagging progress for an assessment
         refs = Reference.objects.filter(assessment=assessment)
         total = refs.count()
-        tagged = refs.annotate(tag_count=models.Count('tags')) \
+        total_tagged = refs.annotate(tag_count=models.Count('tags')) \
                      .filter(tag_count__gt=0).count()
-        overview = {'total_references': total,
-                    'total_tagged': tagged,
-                    'total_untagged': total-tagged}
+        total_untagged = total-total_tagged
+        total_searched = refs.filter(searches__search_type='s').distinct().count()
+        total_imported = total - total_searched
+        overview = {
+            'total_references': total,
+            'total_tagged': total_tagged,
+            'total_untagged': total_untagged,
+            'total_searched': total_searched,
+            'total_imported': total_imported
+        }
         return overview
 
     @classmethod
