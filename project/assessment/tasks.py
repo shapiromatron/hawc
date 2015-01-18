@@ -117,7 +117,8 @@ class SVGConverter():
             return png
         else:
             self._try_to_remove_files([fn_in])
-            return fn_out
+            self.png_path = fn_out
+            return self
 
     @shared_task
     def convert_to_pptx(self):
@@ -126,12 +127,11 @@ class SVGConverter():
 
         try:
             # get converted png image path
-            task = self.convert_to_png.delay(self, delete_and_return_object=False)
-            fn_png = task.get(timeout=60)
+            fn_png = self.png_path
 
             # create blank presentation slide layout
             prs = Presentation()
-            blank_slidelayout = prs.slidelayouts[6]
+            blank_slidelayout = prs.slide_layouts[6]
             slide = prs.slides.add_slide(blank_slidelayout)
 
             # add title

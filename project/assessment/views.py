@@ -14,9 +14,9 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList)
 
-from . import forms
-from . import models
-from . import tasks
+from celery import chain
+
+from . import forms, models, tasks
 
 
 #General views
@@ -291,8 +291,11 @@ def download_plot(request):
                 response['Content-Disposition'] = 'attachment; filename="download.png"'
 
         elif output_type == 'pptx':
-            task = converter.convert_to_pptx.delay(converter)
-            output = task.get(timeout=60)
+            task = chain(
+                converter.convert_to_png.s(converter, delete_and_return_object=False),
+                converter.convert_to_pptx.s()
+            )()
+            output = task.get(timeout=90)
             if output:
                 response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
                 response['Content-Disposition'] = 'attachment; filename="download.pptx"'
