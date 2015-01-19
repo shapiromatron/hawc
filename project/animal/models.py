@@ -482,7 +482,7 @@ class DoseGroup(models.Model):
         ordering = ('dose_units', 'dose_group_id')
 
     def __unicode__(self):
-        return "{0} {1}".format(self.dose, self.dose_units)
+        return u"{0} {1}".format(self.dose, self.dose_units)
 
     @classmethod
     def flat_complete_data_row(cls, ser_full, units, idx):
