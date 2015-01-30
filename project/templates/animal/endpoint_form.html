@@ -3,6 +3,7 @@
 {% load add_class %}
 {% load get_range %}
 {% load selectable_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {% if crud == "Create" %}
@@ -34,126 +35,77 @@
 
 {% block content %}
 
-  <form id="endpoint" class="form-horizontal" action="." method="post">
+  {% crispy form %}
 
-    {% csrf_token %}
+  <div id='endpointGroups' class="row-fluid">
 
-    <div class='row-fluid'>
-      <fieldset class="span7">
-        {% if crud == "Create" %}
-          <legend>Create new endpoint</legend>
-          <span class="help-block">Create a new endpoint. Each endpoint is associated with one animal-group.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update  {{ object }} </legend>
-          <span class="help-block">Update an existing endpoint.</span><br>
-        {% endif %}
+    <input id="egs_json" name="egs_json" type="hidden"></input>
+    <input id="endpoint_json" name="endpoint_json" type="hidden"></input>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+    <h3 id="eg_header">Dose-response data</h3>
 
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {% if field.label == "Additional tags" %}
-                <div class="row-fluid">
-                  <div class="span11">
-                    {{field}}
-                  </div>
-                  <div class="span1">
-                    <a class ='btn btn-primary'
-                       href="{% url 'assessment:effect_tag_create' assessment.pk %}"
-                       onclick="return HAWCUtils.newWindowPopupLink(this);"
-                       title="Add new effect tag">+</a>
-                  </div>
-                </div>
-              {% else %}
-                {{field}}
-              {% endif %}
-              <span class='help-block'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-
-        <input id="egs_json" name="egs_json" type="hidden"></input>
-        <input id="endpoint_json" name="endpoint_json" type="hidden"></input>
-      </fieldset>
-
-      <div id='endpoint_plot' class='d3_container span4'>
-      </div>
-
-      <div id='eg_div' class="row-fluid">
-        <div class="span7">
-          <h3 id="eg_header">Dose-response data</h3>
-
-          {% if egs_errors %}<div class="alert alert-error">{{egs_errors|safe}}</div>{% endif %}
-
-          <table id="eg" class="table table-condensed table-striped">
-            <thead>
+    <div class="span7">
+      {% if egs_errors %}<div class="alert alert-error">{{egs_errors|safe}}</div>{% endif %}
+      <table id="eg" class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th id="doses_title">Dose</th>
+            <th>N</th>
+            <th class="d_only">Incidence</th>
+            <th class="c_only">Response</th>
+            <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
+            <th>Significance<br>Level<br>(if significant)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if crud == "Create" %}
+            {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
               <tr>
-                <th id="doses_title">Dose</th>
-                <th>N</th>
-                <th class="d_only">Incidence</th>
-                <th class="c_only">Response</th>
-                <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
-                <th>Significance<br>Level<br>(if significant)</th>
+                <td class="doses" id="dose_{{i}}"></td>
+                <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
+                <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
+                <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
+                <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
               </tr>
-            </thead>
-            <tbody>
-              {% if crud == "Create" %}
-                {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
-                  <tr>
-                    <td class="doses" id="dose_{{i}}"></td>
-                    <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
-                    <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
-                    <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
-                    <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
-                    <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
-                  </tr>
-                {% endfor %}
-              {% endif %}
+            {% endfor %}
+          {% endif %}
 
-              {% if crud == "Update" %}
-                {% for eg in object.get_endpoint_groups %}
-                  <tr>
-                    <td class="doses" id="dose_{{eg.dose_group_id}}"></td>
-                    <td><input tabindex="2" class="span12" type="text" id="n_{{eg.dose_group_id}}" value="{{eg.n}}"></td>
-                    <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{eg.dose_group_id}}" value="{{eg.incidence}}"></td>
-                    <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{eg.dose_group_id}}" value="{{eg.response}}"></td>
-                    <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{eg.dose_group_id}}" value="{{eg.variance}}"></td>
-                    <td>{% if forloop.counter0 > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
-                  </tr>
-                {% empty %}
-                  {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
-                    <tr>
-                      <td class="doses" id="dose_{{i}}"></td>
-                      <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
-                      <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
-                      <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
-                      <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
-                      <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
-                    </tr>
-                  {% endfor %}
-                {% endfor %}
-              {% endif %}
+          {% if crud == "Update" %}
+            {% for eg in object.get_endpoint_groups %}
+              <tr>
+                <td class="doses" id="dose_{{eg.dose_group_id}}"></td>
+                <td><input tabindex="2" class="span12" type="text" id="n_{{eg.dose_group_id}}" value="{{eg.n}}"></td>
+                <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{eg.dose_group_id}}" value="{{eg.incidence}}"></td>
+                <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{eg.dose_group_id}}" value="{{eg.response}}"></td>
+                <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{eg.dose_group_id}}" value="{{eg.variance}}"></td>
+                <td>{% if forloop.counter0 > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
+              </tr>
+            {% empty %}
+              {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
+                <tr>
+                  <td class="doses" id="dose_{{i}}"></td>
+                  <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
+                  <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
+                  <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                  <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
+                  <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% endif %}
 
-            </tbody>
-          </table>
-        </div>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="span4">
+      <div id='endpoint_plot' class='d3_container'>
       </div>
     </div>
 
-    <div class="row-fluid">
-      <div class="span12 form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} endpoint</button>
-        {% if crud == "Create" %}
-          <a href='{% url 'animal:animal_group_detail' animal_group.pk %}' class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'animal:endpoint_detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-    </div>
-  </form>
+  </div>
+
 {% endblock %}
 
 {% block extrajs %}
@@ -165,12 +117,12 @@
 
     $(document).ready(function () {
 
+      // reorganize forms
+      $('.addEffectTag').insertAfter($('#id_effects_0').addClass("span10"));
+      $('#endpointGroups').insertBefore($('div.form-actions'));
+
       // get doses for use in doses-data table
-      {% if crud == "Create" %}
-        window.doses = {{animal_group.get_doses_json|safe}};
-      {% elif crud == "Update" %}
-        window.doses = {{object.animal_group.get_doses_json|safe}};
-      {% endif %}
+      window.doses = {{animal_group.get_doses_json|safe}};
 
       //update values in doses table
       $('#doses_title').html('Dose<br>(' + doses[0].units + ')');

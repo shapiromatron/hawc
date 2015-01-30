@@ -46,14 +46,16 @@
         <tr><th>Type</th><td>{{object.get_type_display}}</td></tr>
         <tr><th>Multiple generations</th><td>{{object.is_generational}}</td></tr>
         {% if object.cas %}
-          <tr><th>Chemical CAS and information</th><td id="chem_details">{{object.cas}}</td></tr>
+          <tr><th>CAS</th><td id="chem_details">{{object.cas}}</td></tr>
         {% endif %}
         {% if object.purity_available %}
-          <tr><th>Chemical Purity</th><td>&gt;{{object.purity}}%</td></tr>
+          <tr><th>Chemical purity</th><td>&gt;{{object.purity}}%</td></tr>
         {% else %}
-          <tr><th>Chemical Purity available</th><td>{{object.purity_available}}</td></tr>
+          <tr><th>Chemical purity available</th><td>{{object.purity_available}}</td></tr>
         {% endif %}
+        {% if object.description|length > 0 %}
         <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+        {% endif %}
       </tbody>
     </table>
 

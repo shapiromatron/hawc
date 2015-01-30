@@ -83,9 +83,9 @@ EditEndpoint.prototype.build_form_representation = function(){
 
     var toggle_eg_visibility = function(){
         if (self.endpoint_groups_available()){
-            $('#eg_div').fadeIn();
+            $('#endpointGroups').fadeIn();
         } else {
-            $('#eg_div').fadeOut();
+            $('#endpointGroups').fadeOut();
         }
     };
     $('#id_data_reported, #id_data_extracted').on('change', toggle_eg_visibility);

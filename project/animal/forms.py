@@ -1,5 +1,6 @@
 from collections import Counter
 import json
+import math
 
 from django import forms
 from django.forms import ModelForm, ValidationError, Select
@@ -15,11 +16,11 @@ from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
 from study.lookups import AnimalStudyLookup
 from utils.helper import HAWCDjangoJSONEncoder
+from utils.forms import BaseFormHelper
+
+from crispy_forms import layout as cfl
 
 from . import models, lookups
-
-
-DOSE_CHOICES = ((-999, '<None>'),)
 
 
 class ExperimentForm(ModelForm):
@@ -31,11 +32,33 @@ class ExperimentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
         super(ExperimentForm, self).__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs['class'] = 'span6'
-        self.fields['type'].widget.attrs['class'] = 'span6'
-        self.fields['description'].widget.attrs['class'] = 'span12'
         if parent:
             self.instance.study = parent
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing experiment.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new experiment",
+                "help_text":   u"""
+                    Create a new experiment. Each experiment is a associated with a
+                    study, and may have one or more collections of animals. For
+                    example, one experiment may be a 2-year cancer bioassay,
+                    while another multi-generational study.""",
+                "cancel_url": self.instance.study.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper['name'].wrap(cfl.Field, css_class="span6")
+        helper['type'].wrap(cfl.Field, css_class="span6")
+        helper['description'].wrap(cfl.Field, css_class="span12")
+        return helper
 
     def clean(self):
         super(ExperimentForm, self).clean()
@@ -54,18 +77,22 @@ class ExperimentForm(ModelForm):
 
 class AnimalGroupForm(ModelForm):
 
+    class Meta:
+        model = models.AnimalGroup
+        exclude = ('experiment', 'dosing_regime', 'generation',  'parents')
+
     def __init__(self, *args, **kwargs):
-        experiment = kwargs.pop('parent', None)
-
+        parent = kwargs.pop('parent', None)
         super(AnimalGroupForm, self).__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs['class'] = 'input-xxlarge'
 
-        if experiment:
-            self.instance.experiment = experiment
+        if parent:
+            self.instance.experiment = parent
 
         if self.instance.id:
             self.fields['strain'].queryset = models.Strain.objects.filter(
                 species=self.instance.species)
+
+        self.helper = self.setHelper()
 
         self.fields['lifestage_exposed'].widget = AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
@@ -78,9 +105,31 @@ class AnimalGroupForm(ModelForm):
         self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
                 experiment=self.instance.experiment)
 
-    class Meta:
-        model = models.AnimalGroup
-        exclude = ('experiment', 'dosing_regime', 'generation',  'parents')
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing animal-group.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new animal-group",
+                "help_text":   u"""
+                    Create a new animal-group. Each animal-group is a set of
+                    animals which are comparable for a given experiment. For
+                    example, they may be a group of F1 rats. Animal-groups may
+                    have different exposures or doses, but should be otherwise
+                    comparable.""",
+                "cancel_url": self.instance.experiment.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_id = "animal_group"
+        helper['name'].wrap(cfl.Field, css_class="span6")
+        helper.add_adder("addSpecies", "Add new species", '{% url "animal:species_create" assessment.pk %}')
+        helper.add_adder("addStrain", "Add new strain", '{% url "animal:strain_create" assessment.pk %}')
+        return helper
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -106,8 +155,31 @@ class DosingRegimeForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DosingRegimeForm, self).__init__(*args, **kwargs)
-        self.fields['route_of_exposure'].widget.attrs['class'] = 'input-large'
-        self.fields['description'].widget.attrs['class'] = 'span12'
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update dosing regime",
+                "help_text":   u"Update an existing dosing-regime.",
+                "cancel_url": self.instance.dosed_animals.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new dosing-regime",
+                "help_text":   u"""
+                    Create a new dosing-regime. Each dosing-regime is one
+                    protocol for how animals were dosed. Multiple different
+                    dose-metrics can be associated with one dosing regime. If
+                    this is a generational-experiment, an existing dosing-regime
+                    may also be specified.""",
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_id = "dosing_regime"
+        helper['route_of_exposure'].wrap(cfl.Field, css_class="span6")
+        helper['description'].wrap(cfl.Field, css_class="span12")
+        return helper
 
 
 class DoseGroupForm(ModelForm):
@@ -183,13 +255,24 @@ class EndpointForm(ModelForm):
         label="Additional tags"
     )
 
-    NOAEL = forms.CharField(label='NOAEL', widget=forms.Select(choices=DOSE_CHOICES))
-    LOAEL = forms.CharField(label='LOAEL', widget=forms.Select(choices=DOSE_CHOICES))
-    FEL = forms.CharField(label='FEL', widget=forms.Select(choices=DOSE_CHOICES))
+    class Meta:
+        model = models.Endpoint
+        fields = ('name', 'system', 'organ', 'effect',  'effects',
+                  'observation_time', 'observation_time_units',
+                  'data_reported', 'data_extracted', 'values_estimated',
+                  'data_type', 'variance_type', 'response_units',
+                  'data_location', 'NOAEL', 'LOAEL', 'FEL',
+                  'monotonicity', 'statistical_test', 'trend_value',
+                  'results_notes', 'endpoint_notes')
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
+        isNew = kwargs.pop('isNew', None)
         super(EndpointForm, self).__init__(*args, **kwargs)
+
+        self.fields['NOAEL'].widget = forms.Select()
+        self.fields['LOAEL'].widget = forms.Select()
+        self.fields['FEL'].widget = forms.Select()
 
         self.fields['system'].widget = AutoCompleteWidget(
             lookup_class=lookups.EndpointSystemLookup,
@@ -211,25 +294,50 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = animal_group.get_assessment()
 
-        for fld in self.fields.keys():
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs['class'] = 'span12'
-            else:
-                widget.attrs['class'] = 'checkbox'
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing endpoint.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new endpoint",
+                "help_text":   u"""
+                    Create a new endpoint. Each endpoint is associated with
+                    one animal-group.""",
+                "cancel_url": self.instance.animal_group.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.form_id = "endpoint"
+        helper.add_adder("addEffectTag",
+                         "Add new effect tag",
+                         '{% url "assessment:effect_tag_create" assessment.pk %}')
 
         for fld in ('results_notes', 'endpoint_notes'):
             self.fields[fld].widget.attrs['rows'] = 3
 
-    class Meta:
-        model = models.Endpoint
-        fields = ('name', 'system', 'organ', 'effect',  'effects',
-                  'observation_time', 'observation_time_units',
-                  'data_reported', 'data_extracted', 'values_estimated',
-                  'data_type', 'variance_type', 'response_units',
-                  'data_location', 'NOAEL', 'LOAEL', 'FEL',
-                  'monotonicity', 'statistical_test', 'trend_value',
-                  'results_notes', 'endpoint_notes')
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        helper.add_fluid_row('system', 3, "span4")
+        helper.add_fluid_row('data_type', 3, "span4")
+        helper.add_fluid_row('observation_time', 2, "span6")
+        helper.add_fluid_row('data_reported', 3, "span4")
+        helper.add_fluid_row('NOAEL', 3, "span4")
+        helper.add_fluid_row('results_notes', 3, "span6")
+        helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
+
+        return helper
 
     def clean(self):
         cleaned_data = super(EndpointForm, self).clean()

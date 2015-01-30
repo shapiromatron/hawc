@@ -308,6 +308,7 @@ class EndpointCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super(EndpointCreate, self).get_context_data(**kwargs)
+        context['animal_group'] = self.parent
         if self.request.method == 'POST':  # send back errors and previous representation
             context['endpoint_json'] = self.request.POST['endpoint_json']
             if hasattr(self, 'egs_errors'):

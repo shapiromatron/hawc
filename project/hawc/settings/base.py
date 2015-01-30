@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'pagedown',
     'markdown_deux',
     'static_precompiler',
+    'crispy_forms',
 
     # Custom apps
     'utils',
@@ -256,6 +257,9 @@ STATIC_PRECOMPILER_COMPILERS = (
 )
 
 STATIC_PRECOMPILER_OUTPUT_DIR = 'compiled'
+
+# Django crispy-forms settings
+CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Testing settings
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
