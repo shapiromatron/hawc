@@ -296,88 +296,79 @@ Math.stdev = function(array){
 /*
     Utility functions for HAWC in custom namespace
  */
-var HAWCUtils = function(){};
-
-HAWCUtils.booleanCheckbox = function(value){
-    return (value) ? "☑" : "☒";
-};
-
-HAWCUtils.newWindowPopupLink = function(triggeringLink) {
-    //Force new window to be a popup window
-    href = triggeringLink.href + '?_popup=1';
-    var win = window.open(href, "_blank", 'height=500,width=800,resizable=yes,scrollbars=yes');
-    win.focus();
-    return false;
-};
-
-HAWCUtils.dfUpdateElementIndex = function(el, prefix, ndx) {
-    // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-    var id_regex = new RegExp('(' + prefix + '-\\d+)'),
-        replacement = prefix + '-' + ndx;
-    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-    if (el.id) el.id = el.id.replace(id_regex, replacement);
-    if (el.name) el.name = el.name.replace(id_regex, replacement);
-};
-
-HAWCUtils.dfAddForm = function(btn, prefix) {
-    // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-    var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val(), 10),
-        row = $('.dynamic-form:last').clone(false).get(0);
-    $(row).removeAttr('id').insertAfter($('.dynamic-form:last')).children('.hidden').removeClass('hidden');
-    $(row).children().not(':last').children().each(function() {
-        HAWCUtils.dfUpdateElementIndex(this, prefix, formCount);
-        $(this).val('');
-    });
-    $(row).find('.delete-row').click(function() {
-        HAWCUtils.dfDeleteForm(this, prefix);
-    });
-    $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
-    $(row).trigger('dynamicFormset-formAdded');
-    return false;
-};
-
-HAWCUtils.dfDeleteForm = function(btn, prefix) {
-    // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-    $(btn).parents('.dynamic-form').remove();
-    var forms = $('.dynamic-form');
-    $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-    for (var i=0, formCount=forms.length; i<formCount; i++) {
-        $(forms.get(i)).children().not(':last').children().each(function() {
-            HAWCUtils.dfUpdateElementIndex(this, prefix, i);
-        });
-    }
-    $(forms).trigger('dynamicFormset-formRemoved');
-    return false;
-};
-
-HAWCUtils.build_breadcrumbs = function(arr){
-    // builds a string of breadcrumb hyperlinks for navigation
-    var links = [];
-    arr.forEach(function(v){
-        links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
-    });
-    return links.join('<span> / </span>');
-};
-
-HAWCUtils.InitialForm = function(config){
-
-    var selector = config.form.find('#id_selector_0'),
-        selector_val = config.form.find('#id_selector_1'),
-        submitter = config.form.find('#submit_form');
-
-    selector.djselectable('option', 'prepareQuery', function(qry){
-        qry.related = config.related;
-    });
-
-    submitter.on('click', function(){
-        var val = parseInt(selector_val.val(), 10);
-        if(val){
-            submitter.attr('href', "{0}?initial={1}".printf(config.base_url, val));
-            return true;
-        }
+var HAWCUtils = {
+    booleanCheckbox: function(value){
+        return (value) ? "☑" : "☒";
+    }, newWindowPopupLink: function(triggeringLink) {
+        //Force new window to be a popup window
+        href = triggeringLink.href + '?_popup=1';
+        var win = window.open(href, "_blank", 'height=500,width=800,resizable=yes,scrollbars=yes');
+        win.focus();
         return false;
-    });
-}
+    }, dfUpdateElementIndex: function(el, prefix, ndx) {
+        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
+        var id_regex = new RegExp('(' + prefix + '-\\d+)'),
+            replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }, dfAddForm: function(btn, prefix) {
+        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val(), 10),
+            row = $('.dynamic-form:last').clone(false).get(0);
+        $(row).removeAttr('id').insertAfter($('.dynamic-form:last')).children('.hidden').removeClass('hidden');
+        $(row).children().not(':last').children().each(function() {
+            HAWCUtils.dfUpdateElementIndex(this, prefix, formCount);
+            $(this).val('');
+        });
+        $(row).find('.delete-row').click(function() {
+            HAWCUtils.dfDeleteForm(this, prefix);
+        });
+        $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+        $(row).trigger('dynamicFormset-formAdded');
+        return false;
+    }, dfDeleteForm: function(btn, prefix) {
+        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
+        $(btn).parents('.dynamic-form').remove();
+        var forms = $('.dynamic-form');
+        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+        for (var i=0, formCount=forms.length; i<formCount; i++) {
+            $(forms.get(i)).children().not(':last').children().each(function() {
+                HAWCUtils.dfUpdateElementIndex(this, prefix, i);
+            });
+        }
+        $(forms).trigger('dynamicFormset-formRemoved');
+        return false;
+    }, build_breadcrumbs: function(arr){
+        // builds a string of breadcrumb hyperlinks for navigation
+        var links = [];
+        arr.forEach(function(v){
+            links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
+        });
+        return links.join('<span> / </span>');
+    }, InitialForm: function(config){
+
+        var selector = config.form.find('#id_selector_0'),
+            selector_val = config.form.find('#id_selector_1'),
+            submitter = config.form.find('#submit_form');
+
+        selector.djselectable('option', 'prepareQuery', function(qry){
+            qry.related = config.related;
+        });
+
+        submitter.on('click', function(){
+            var val = parseInt(selector_val.val(), 10);
+            if(val){
+                submitter.attr('href', "{0}?initial={1}".printf(config.base_url, val));
+                return true;
+            }
+            return false;
+        });
+    }, prettifyVariableName: function(str){
+        str = str.replace(/_/g, ' ');
+        return str.charAt(0).toUpperCase() + str.substr(1);
+    }
+};
 
 
 /*
@@ -1165,6 +1156,27 @@ PlotTooltip.prototype.display_exposure_group_table = function(heg, e){
     this._show_tooltip(title, div, e);
 };
 
+PlotTooltip.prototype.display_ivchemical = function(d, e){
+    var title  = '<small><b>{0}</b></small>'.printf(d.data.name),
+        details_div = $('<div>').html(d.build_details_table());
+    this._show_tooltip(title, details_div, e);
+};
+
+PlotTooltip.prototype.display_ivexperiment = function(d, e){
+    var title  = '<small><b>Experimental details</b></small>',
+        details_div = $('<div>').html(d.build_details_table());
+    this._show_tooltip(title, details_div, e);
+};
+
+PlotTooltip.prototype.display_ivendpoint = function(d, e){
+    var title  = '<small><b>{0}</b></small>'.printf(d.data.name),
+        details_div = $('<div>').html([
+            d.build_details_table(),
+            d.build_eg_table()
+        ]);
+    this._show_tooltip(title, details_div, e);
+};
+
 PlotTooltip.prototype.display_data_pivot = function(dp, e){
     var title = $('<span class="lead">').text(dp.title),
         div = $('<div>');
@@ -1235,37 +1247,38 @@ var TableFootnotes = function(){
     this.reset();
 };
 
-TableFootnotes.prototype.reset = function(){
-    this.footnote_number = 97; // start at a
-    this.footnotes = [];
-};
-
-TableFootnotes.prototype.add_footnote = function(texts){
-    // add a footnote and return the subscript for the footnote
-    var keys = [], self = this;
-    texts.forEach(function(text){
-        var key;
-        self.footnotes.forEach(function(v){
-            if(text === v.text){key = v.key; return;}
+TableFootnotes.prototype = {
+    reset: function(){
+        this.footnote_number = 97; // start at a
+        this.footnotes = [];
+    }, add_footnote: function(texts){
+        // add a footnote and return the subscript for the footnote
+        var keys = [],
+            self = this;
+        if (!(texts instanceof Array))
+            texts = [texts];
+        texts.forEach(function(text){
+            var key;
+            self.footnotes.forEach(function(v){
+                if(text === v.text){key = v.key; return;}
+            });
+            if (key === undefined){
+                key = String.fromCharCode(self.footnote_number);
+                self.footnotes.push({key: key , text: text});
+                self.footnote_number += 1;
+            }
+            keys.push(key);
         });
-        if (key === undefined){
-            key = String.fromCharCode(self.footnote_number);
-            self.footnotes.push({key: key , text: text});
-            self.footnote_number += 1;
-        }
-        keys.push(key);
-    });
-    return "<sup>{0}</sup>".printf(keys.join(','));
-};
-
-TableFootnotes.prototype.html_list = function(){
-    // return an html formatted list of footnotes
-    var list = [];
-    this.footnotes.forEach(function(v, i){
-        list.push("<sup>{0}</sup> {1}".printf(v.key, v.text));
-    });
-    return list;
-};
+        return "<sup>{0}</sup>".printf(keys.join(','));
+    }, html_list: function(){
+        // return an html formatted list of footnotes
+        var list = [];
+        this.footnotes.forEach(function(v, i){
+            list.push("<sup>{0}</sup> {1}".printf(v.key, v.text));
+        });
+        return list;
+    }
+}
 
 /*
  *
@@ -1280,35 +1293,89 @@ var DescriptiveTable = function(){
     this._tbl.append(this._colgroup, this._tbody);
 };
 
-DescriptiveTable.prototype.add_tbody_tr = function(description, value, opts){
-    opts = opts || {};
-    if(value){
-        if (parseFloat(value, 10) === value) value = value.toLocaleString();
-        if(opts.calculated){value="[{0}]".printf(value);}  // [] = estimated
-        var td = $("<td>").html(value);
-        if(opts.annotate){
-            td.append('<br>', $('<span class="muted">').text(opts.annotate));
+DescriptiveTable.prototype = {
+    add_tbody_tr: function(description, value, opts){
+        opts = opts || {};
+        if(value){
+            if (parseFloat(value, 10) === value) value = value.toLocaleString();
+            if(opts.calculated){value="[{0}]".printf(value);}  // [] = estimated
+            var td = $("<td>").html(value);
+            if(opts.annotate){
+                td.append('<br>', $('<span class="muted">').text(opts.annotate));
+            }
+            this._tbody.append($('<tr></tr>').append($("<th>").text(description))
+                                             .append(td));
         }
-        this._tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                         .append(td));
-    }
-}
+    }, add_tbody_tr_list: function(description, list_items){
+        if(list_items.length>0){
+            var ul = $('<ul></ul>').append(
+                        list_items.map(function(v){return $('<li>').text(v); })),
+                tr = $('<tr></tr>')
+                        .append('<th>{0}</th>'.printf(description))
+                        .append($('<td></td>').append(ul));
 
-DescriptiveTable.prototype.add_tbody_tr_list = function(description, list_items){
-    if(list_items.length>0){
-        var ul = $('<ul></ul>').append(
-                    list_items.map(function(v){return $('<li>').text(v); })),
-            tr = $('<tr></tr>')
-                    .append('<th>{0}</th>'.printf(description))
-                    .append($('<td></td>').append(ul));
-
-        this._tbody.append(tr);
+            this._tbody.append(tr);
+        }
+    }, get_tbl: function(){
+        return this._tbl;
+    }, get_tbody: function(){
+        return this._tbody;
     }
 };
 
-DescriptiveTable.prototype.get_tbl= function(){ return this._tbl; };
-DescriptiveTable.prototype.get_tbody= function(){ return this._tbody; }
+/*
+ *
+ * General object for creating any table in HAWC
+ *
+ */
+var BaseTable = function(){
+    this.tbl = $('<table class="table table-condensed table-striped">');
+    this.thead = $('<thead>');
+    this.colgroup = $('<colgroup>');
+    this.tbody = $('<tbody>');
+    this.tfoot = $('<tfoot>');
+    this.footnotes  = new TableFootnotes();
+    this.tbl.append(this.colgroup, this.thead, this.tfoot, this.tbody);
+};
 
+BaseTable.prototype = {
+    getTbl: function(){
+        this._set_footnotes();
+        return this.tbl;
+    }, numCols: function(cols){
+        if(cols){
+            this._numCols = cols;
+        } else if(this._numCols === undefined){
+            this._numCols = this.thead.first().children().first().children().length;
+        }
+        return this._numCols;
+    }, addHeaderRow: function(val){
+        this.addRow(val, true);
+    }, addRow: function(val, isHeader){
+        var tr,
+            tagName = (isHeader) ? "<th>" : "<td>";
+        if(val instanceof Array){
+            tr = $('<tr>').html(val.map(function(v){return $(tagName).html(v);}));
+        } else if (val instanceof jQuery && val.first().prop('tagName') === "TR") {
+            tr = val;
+        } else {
+            console.log('unknown input type');
+        }
+        if(isHeader){
+            this.thead.append(tr);
+        } else {
+            this.tbody.append(tr);
+        }
+    }, setColGroup: function(percents){
+        this.colgroup.html(percents.map(function(v){
+            return '<col style="width: {0}%;">'.printf(v);
+        }));
+    }, _set_footnotes: function(){
+        var txt = this.footnotes.html_list().join('<br>'),
+            colspan = this.numCols();
+        this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
+    }
+};
 
 /*
  *

@@ -2894,6 +2894,21 @@ DataPivotExtension.prototype.render_plottip = function(settings, datarow){
       plottip_fn = "display_meta_result";
       ObjType = MetaResult
       break;
+    case "iv_chemical":
+      url_tmpl = '/in-vitro/api/chemical/{0}/';
+      plottip_fn = "display_ivchemical";
+      ObjType = IVChemical
+      break;
+    case "iv_experiment":
+      url_tmpl = '/in-vitro/api/experiment/{0}/';
+      plottip_fn = "display_ivexperiment";
+      ObjType = IVExperiment
+      break;
+    case "iv_endpoint":
+      url_tmpl = '/in-vitro/api/endpoint/{0}/';
+      plottip_fn = "display_ivendpoint";
+      ObjType = IVEndpoint
+      break;
     };
 
   $.get(url_tmpl.printf(datarow[settings._dpe_key]), function(d){
@@ -2903,12 +2918,15 @@ DataPivotExtension.prototype.render_plottip = function(settings, datarow){
 
 DataPivotExtension.update_extensions = function(obj, key){
   var map = d3.map({
-        "study":            {_dpe_key: "Study Primary Key",    _dpe_datatype: "study"},
+        "study":            {_dpe_key: "Study HAWC ID",        _dpe_datatype: "study"},
         "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint"},
         "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome"},
         "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population"},
         "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol"},
         "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result"},
+        "iv_chemical":      {_dpe_key: "Chemical HAWC ID",     _dpe_datatype: "iv_chemical"},
+        "iv_experiment":    {_dpe_key: "IVExperiment HAWC ID", _dpe_datatype: "iv_experiment"},
+        "iv_endpoint":      {_dpe_key: "IVEndpoint HAWC ID",   _dpe_datatype: "iv_endpoint"}
       }),
       match = map.get(key);
 
@@ -2926,12 +2944,15 @@ DataPivotExtension.get_options = function(dp){
   if (dp.data.length>0){
     var headers = d3.set(d3.map(dp.data[0]).keys()),
         options = d3.map({
-          "Study Primary Key": '<option value="study">Show Study</option>',
+          "Study HAWC ID": '<option value="study">Show Study</option>',
           "Endpoint Key": '<option value="endpoint">Show Endpoint</option>',
           "Assessed Outcome Key": '<option value="assessed_outcome">Show Assessed Outcome</option>',
           "Study Population Key": '<option value="study_population">Show Study Population</option>',
           "Protocol Primary Key":  '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
-          "Result Primary Key": '<option value="meta_result">Show Epidemiology Meta-Result</option>'
+          "Result Primary Key": '<option value="meta_result">Show Epidemiology Meta-Result</option>',
+          "Chemical HAWC ID": '<option value="iv_chemical">Show In Vitro Chemical</option>',
+          "IVExperiment HAWC ID": '<option value="iv_experiment">Show In Vitro Experiment</option>',
+          "IVEndpoint HAWC ID": '<option value="iv_endpoint">Show In Vitro Endpoint</option>',
         });
 
     options.entries().forEach(function(v){

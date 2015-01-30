@@ -46,6 +46,9 @@ class IVChemical(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_assessment(self):
+        return self.study.assessment
+
 
 class IVCellType(models.Model):
 
@@ -146,6 +149,9 @@ class IVExperiment(models.Model):
         DoseUnits,
         related_name='ivexperiments')
 
+    def get_assessment(self):
+        return self.study.assessment
+
 
 class IVEndpointCategory(AssessmentRootedTagTree):
     cache_template_taglist = 'invitro.ivendpointcategory.taglist.assessment-{0}'
@@ -234,8 +240,8 @@ class IVEndpoint(BaseEndpoint):
     observation_time = models.FloatField(
         default=-999)
     observation_time_units = models.PositiveSmallIntegerField(
-         default=0,
-         choices=OBSERVATION_TIME_UNITS)
+        default=0,
+        choices=OBSERVATION_TIME_UNITS)
     NOAEL = models.SmallIntegerField(
         verbose_name="NOAEL",
         default=-999)

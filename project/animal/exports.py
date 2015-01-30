@@ -55,7 +55,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
         return [
             'study',
             'study_url',
-            'Study Primary Key',
+            'Study HAWC ID',
             'Study Published',
 
             'experiment',

@@ -12,9 +12,11 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             'Study Published',
 
             'Chemical name',
+            'Chemical HAWC ID',
             'Chemical CAS',
             'Chemical purity',
 
+            'IVExperiment HAWC ID',
             'Cell species',
             'Cell sex',
             'Cell type',
@@ -25,10 +27,10 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             'Transfection',
             'Cell line',
 
-            'Endpoint HAWC ID',
-            'Endpoint name',
-            'Endpoint URL',
-            'Endpoint description tags',
+            'IVEndpoint name',
+            'IVEndpoint HAWC ID',
+            'IVEndpoint URL',
+            'IVEndpoint description tags',
             'Assay type',
             'Endpoint description',
             'Endpoint response units',
@@ -84,9 +86,11 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['experiment']['study']['published'],
 
                 ser['chemical']['name'],
+                ser['chemical']['id'],
                 ser['chemical']['cas'],
                 ser['chemical']['purity'],
 
+                ser['experiment']['id'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],
@@ -97,9 +101,9 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['experiment']['transfection'],
                 ser['experiment']['cell_line'],
 
-                ser['id'],
                 ser['name'],
-                'add URL',
+                ser['id'],
+                '<add>',
                 '|'.join([d['name'] for d in ser['effects']]),
                 ser['assay_type'],
                 ser['short_description'],
