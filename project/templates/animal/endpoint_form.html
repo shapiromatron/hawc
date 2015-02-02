@@ -52,8 +52,10 @@
             <th id="doses_title">Dose</th>
             <th>N</th>
             <th class="d_only">Incidence</th>
-            <th class="c_only">Response</th>
+            <th class="pc_only">Response</th>
             <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
+            <th class="p_only">Low CI (%)</th>
+            <th class="p_only">High CI (%)</th>
             <th>Significance<br>Level<br>(if significant)</th>
           </tr>
         </thead>
@@ -64,9 +66,11 @@
                 <td class="doses" id="dose_{{i}}"></td>
                 <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
                 <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
-                <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                <td class="pc_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
                 <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
-                <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
+                <th class="p_only"><input tabindex="6" class="span12" type="text" id="lower_ci_{{i}}"></th>
+                <th class="p_only"><input tabindex="7" class="span12" type="text" id="upper_ci_{{i}}"></th>
+                <td>{% if i > 0 %}<input tabindex="8" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
               </tr>
             {% endfor %}
           {% endif %}
@@ -77,9 +81,11 @@
                 <td class="doses" id="dose_{{eg.dose_group_id}}"></td>
                 <td><input tabindex="2" class="span12" type="text" id="n_{{eg.dose_group_id}}" value="{{eg.n}}"></td>
                 <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{eg.dose_group_id}}" value="{{eg.incidence}}"></td>
-                <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{eg.dose_group_id}}" value="{{eg.response}}"></td>
+                <td class="pc_only"><input tabindex="4" class="span12" type="text" id="resp_{{eg.dose_group_id}}" value="{{eg.response}}"></td>
                 <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{eg.dose_group_id}}" value="{{eg.variance}}"></td>
-                <td>{% if forloop.counter0 > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
+                <th class="p_only"><input tabindex="6" class="span12" type="text" id="lower_ci_{{eg.dose_group_id}}" value="{{eg.lower_ci}}"></th>
+                <th class="p_only"><input tabindex="7" class="span12" type="text" id="upper_ci_{{eg.dose_group_id}}" value="{{eg.upper_ci}}"></th>
+                <td>{% if forloop.counter0 > 0 %}<input tabindex="8" class="span12" type="text" id="significance_level_{{eg.dose_group_id}}" value="{% if eg.significance_level > 0 %}{{eg.significance_level}}{% else %}-{% endif %}">{% endif %}</td>
               </tr>
             {% empty %}
               {% for i in animal_group.dosing_regime.num_dose_groups|get_range %}
@@ -87,9 +93,11 @@
                   <td class="doses" id="dose_{{i}}"></td>
                   <td><input tabindex="2" class="span12" type="text" id="n_{{i}}"></td>
                   <td class="d_only"><input tabindex="3" class="span12" type="text" id="inc_{{i}}"></td>
-                  <td class="c_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
+                  <td class="pc_only"><input tabindex="4" class="span12" type="text" id="resp_{{i}}"></td>
                   <td class="c_only"><input tabindex="5" class="span12" type="text" id="variance_{{i}}"></td>
-                  <td>{% if i > 0 %}<input tabindex="6" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
+                  <th class="p_only"><input tabindex="6" class="span12" type="text" id="lower_ci_{{i}}"></th>
+                  <th class="p_only"><input tabindex="7" class="span12" type="text" id="upper_ci_{{i}}"></th>
+                  <td>{% if i > 0 %}<input tabindex="8" class="span12" type="text" id="significance_level_{{i}}" value="-">{% endif %}</td>
                 </tr>
               {% endfor %}
             {% endfor %}
@@ -158,19 +166,28 @@
           endpoint.update_endpoint_from_form();
       });
 
-      // show/hide variance-type based on dataset-type
-      var toggleVarianceType = function(){
+      // show/hide dataset-type specific inputs
+      var toggleDatasetType = function(){
         var varTypeDiv = $('#id_variance_type').parent().parent(),
+            CI = $('#id_confidence_interval').parent().parent(),
             dataType = $('#id_data_type').val();
-        if (dataType==="C"){
+
+        if(dataType==="C"){
           varTypeDiv.fadeIn();
         } else {
           varTypeDiv.fadeOut();
           $('#id_variance_type').val(0);
-        };
+        }
+
+        if(dataType==="P"){
+          CI.fadeIn();
+        } else {
+          CI.fadeOut();
+          $('#id_confidence_interval').val("");
+        }
       };
-      $('body').on('change', '#id_data_type', toggleVarianceType);
-      toggleVarianceType();
+      $('body').on('change', '#id_data_type', toggleDatasetType);
+      toggleDatasetType();
 
       // toggle the name of the variance column header as the value changes
       var toggleVarianceColumnHeader = function(){

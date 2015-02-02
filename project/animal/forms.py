@@ -1,6 +1,6 @@
 from collections import Counter
 import json
-import math
+import operator
 
 from django import forms
 from django.forms import ModelForm, ValidationError, Select
@@ -260,14 +260,14 @@ class EndpointForm(ModelForm):
         fields = ('name', 'system', 'organ', 'effect',  'effects',
                   'observation_time', 'observation_time_units',
                   'data_reported', 'data_extracted', 'values_estimated',
-                  'data_type', 'variance_type', 'response_units',
-                  'data_location', 'NOAEL', 'LOAEL', 'FEL',
+                  'data_type', 'variance_type', 'confidence_interval',
+                  'response_units', 'data_location',
+                  'NOAEL', 'LOAEL', 'FEL',
                   'monotonicity', 'statistical_test', 'trend_value',
                   'results_notes', 'endpoint_notes')
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
-        isNew = kwargs.pop('isNew', None)
         super(EndpointForm, self).__init__(*args, **kwargs)
 
         self.fields['NOAEL'].widget = forms.Select()
@@ -332,7 +332,8 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('system', 3, "span4")
         helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('observation_time', 2, "span6")
-        helper.add_fluid_row('data_reported', 3, "span4")
+        helper.add_fluid_row('data_reported', 4, "span4")
+        helper.add_fluid_row('response_units', 2, "span6")
         helper.add_fluid_row('NOAEL', 3, "span4")
         helper.add_fluid_row('results_notes', 3, "span6")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
@@ -341,16 +342,8 @@ class EndpointForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(EndpointForm, self).clean()
-
-        data_type = cleaned_data.get("data_type")
-        variance_type = cleaned_data.get("variance_type")
         obs_time = cleaned_data.get("observation_time")
         observation_time_units = cleaned_data.get("observation_time_units")
-
-        if data_type=="C" and variance_type==0:
-            raise forms.ValidationError("If entering continuous data, the "
-                "variance type must be SD (standard-deviation) or SE "
-                "(standard error)")
 
         if obs_time and observation_time_units == 0:
             raise forms.ValidationError("If reporting an endpoint-observation "
@@ -360,13 +353,30 @@ class EndpointForm(ModelForm):
             raise forms.ValidationError("An observation-time must be reported"
                 " if time-units are specified")
 
+    def clean_confidence_interval(self):
+        confidence_interval = self.cleaned_data['confidence_interval']
+        data_type = self.cleaned_data.get("data_type")
+        if data_type == "P" and confidence_interval is None:
+            raise forms.ValidationError("Confidence-interval is required for percent-difference data")
+        return confidence_interval
+
+    def clean_variance_type(self):
+        data_type = self.cleaned_data.get("data_type")
+        variance_type = self.cleaned_data.get("variance_type")
+        if data_type == "C" and variance_type==0:
+            raise forms.ValidationError("If entering continuous data, the "
+                "variance type must be SD (standard-deviation) or SE "
+                "(standard error)")
+        return variance_type
+
 
 class EndpointGroupForm(ModelForm):
 
     class Meta:
         model = models.EndpointGroup
         fields = ('dose_group_id', 'n', 'incidence',
-                  'response', 'variance', 'significance_level')
+                  'response', 'variance', 'lower_ci',
+                  'upper_ci', 'significance_level')
         exclude = ('endpoint', 'significant', )
 
     def __init__(self, *args, **kwargs):
@@ -382,6 +392,11 @@ class EndpointGroupForm(ModelForm):
                 raise ValidationError('Variance must be numeric')
             if cleaned_data.get("response") is None:
                 raise ValidationError('Response must be numeric')
+        elif self.instance.endpoint.data_type == 'P':
+            if operator.xor(
+                    cleaned_data.get("lower_ci") is None,
+                    cleaned_data.get("upper_ci") is None):
+                raise ValidationError('Both confidence intervals must be provided, or left-blank')
         else:
             if cleaned_data.get("incidence") is None:
                 raise ValidationError('Incidence must be numeric')

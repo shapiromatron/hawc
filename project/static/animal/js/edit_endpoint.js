@@ -17,6 +17,8 @@ EditEndpoint.prototype.build_eg_submission = function(){
                 "incidence": v.incidence,
                 "response": v.response,
                 "variance": v.variance,
+                "lower_ci": v.lower_ci,
+                "upper_ci": v.upper_ci,
                 "significance_level": v.significance_level
             });
         });
@@ -41,6 +43,8 @@ EditEndpoint.prototype.update_endpoint_from_form = function(){
         row['incidence'] = parseFloat($('#inc_' + i).val());
         row['response'] = parseFloat($('#resp_' + i).val());
         row['variance'] = parseFloat($('#variance_' + i).val());
+        row['lower_ci'] = parseFloat($('#lower_ci_' + i).val());
+        row['upper_ci'] = parseFloat($('#upper_ci_' + i).val());
         row['significance_level'] = parseFloat($('#significance_level_' + i).val()) || 0;
         vals['endpoint_group'].push(row);
     });
@@ -108,13 +112,19 @@ EditEndpoint.prototype.change_dose_pulldowns = function(){
 
 EditEndpoint.prototype.change_dataset_type = function(){
     //Change the endpoint group edit fields
+    var shows, hides;
     if (this.data.data_type == 'C'){
-        this.eg_table.find('.c_only').css('display', '');
-        this.eg_table.find('.d_only').css('display', 'none');
+        shows = ".c_only,.pc_only";
+        hides =  ".d_only,.p_only";
+    } else if (this.data.data_type == 'P'){
+        shows = ".p_only,.pc_only";
+        hides =  ".c_only,.d_only";
     } else {
-        this.eg_table.find('.c_only').css('display', 'none');
-        this.eg_table.find('.d_only').css('display', '');
+        shows = ".d_only";
+        hides =  ".c_only,.p_only,.pc_only";
     }
+    this.eg_table.find(shows).show();
+    this.eg_table.find(hides).hide();
 };
 
 EditEndpoint.prototype.load_values_into_form = function(){
@@ -124,6 +134,8 @@ EditEndpoint.prototype.load_values_into_form = function(){
         $('#inc_' + i).val(v.incidence);
         $('#resp_' + i).val(v.response);
         $('#variance_' + i).val(v.variance);
+        $('#lower_ci_' + i).val(v.lower_ci);
+        $('#upper_ci_' + i).val(v.upper_ci);
         $('#significance_level_' + i).val(v.significance_level ||'-');
     });
 };

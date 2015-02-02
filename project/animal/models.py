@@ -505,6 +505,7 @@ class Endpoint(BaseEndpoint):
     DATA_TYPE_CHOICES = (
         ('C', 'Continuous'),
         ('D', 'Dichotomous'),
+        ('P', 'Percent Difference'),
         ('DC', 'Dichotomous Cancer'),
         ('NR', 'Not reported'))
 
@@ -580,6 +581,11 @@ class Endpoint(BaseEndpoint):
     variance_type = models.PositiveSmallIntegerField(
         default=0,
         choices=VARIANCE_TYPE_CHOICES)
+    confidence_interval = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Confidence interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
     NOAEL = models.SmallIntegerField(
         verbose_name="NOAEL",
         default=-999)
@@ -891,6 +897,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-response_units",
             "endpoint-data_type",
             "endpoint-variance_type",
+            "endpoint-confidence_interval",
             "endpoint-data_reported",
             "endpoint-data_extracted",
             "endpoint-values_estimated",
@@ -920,6 +927,7 @@ class Endpoint(BaseEndpoint):
             ser['response_units'],
             ser['data_type'],
             ser['variance_name'],
+            ser['confidence_interval'],
             ser['data_reported'],
             ser['data_extracted'],
             ser['values_estimated'],
@@ -952,6 +960,16 @@ class EndpointGroup(models.Model):
         blank=True,
         null=True,
         validators=[MinValueValidator(0)])
+    lower_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Lower CI",
+        help_text="Numerical value for lower-confidence interval")
+    upper_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval")
     significant = models.BooleanField(
         default=False,
         verbose_name="Statistically significant from control")
@@ -1055,6 +1073,10 @@ class EndpointGroup(models.Model):
                     ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
                     eg['percentControlLow']  = (eg['percentControlMean'] - ci)
                     eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
+            elif data_type == "P":
+                eg['percentControlMean'] = eg['response']
+                eg['percentControlLow']  = eg['lower_ci']
+                eg['percentControlHigh'] = eg['upper_ci']
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
@@ -1069,6 +1091,8 @@ class EndpointGroup(models.Model):
             "endpoint_group-incidence",
             "endpoint_group-response",
             "endpoint_group-variance",
+            "endpoint_group-lower_ci",
+            "endpoint_group-upper_ci",
             "endpoint_group-significant",
             "endpoint_group-significance_level",
             "endpoint_group-NOAEL",
@@ -1085,6 +1109,8 @@ class EndpointGroup(models.Model):
             ser['incidence'],
             ser['response'],
             ser['variance'],
+            ser['lower_ci'],
+            ser['upper_ci'],
             ser['significant'],
             ser['significance_level'],
             ser['dose_group_id']==endpoint['NOAEL'],

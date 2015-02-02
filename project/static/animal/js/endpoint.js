@@ -138,6 +138,8 @@ Endpoint.prototype.add_confidence_intervals = function(){
         (this.data.endpoint_group.length>0)) {
         if (this.data.data_type === 'C'){
             this.add_continuous_confidence_intervals();
+        } else if (this.data.data_type === 'P'){
+            this.add_pd_confidence_intervals();
         } else {
             this.add_dichotomous_confidence_intervals();
         }
@@ -171,6 +173,19 @@ Endpoint.prototype.add_dichotomous_confidence_intervals = function(){
         v.upper_limit = (((2*v.n*p + 2*z + 1) +
                          z * Math.sqrt(2*z + (2+1/v.n) + 4*p*(v.n*q-1))) / (2*(v.n+2*z)));
     });
+};
+
+Endpoint.prototype.add_pd_confidence_intervals = function(){
+  this.data.endpoint_group.forEach(function(v, i){
+       v.lower_limit = v.lower_ci;
+       v.upper_limit = v.upper_ci;
+    });
+};
+
+Endpoint.prototype.get_pd_string = function(eg){
+    var txt = "{0}%".printf(eg.response);
+    if(eg.lower_ci) txt += " ({0}-{1})".printf(eg.lower_ci, eg.upper_ci);
+    return txt
 };
 
 Endpoint.prototype.calculate_stdev = function(eg){
@@ -316,6 +331,11 @@ Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
                     self._continuous_percent_difference_from_control(v, dr_control), footnotes));
             }
         });
+    } else if (this.data.data_type == "P"){
+        this.data.endpoint_group.forEach(function(v, i){
+            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
+            tr.append("<td>{0}{1}</td>".printf(self.get_pd_string(v), footnotes))
+        });
     } else {
         this.data.endpoint_group.forEach(function(v, i){
         footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
@@ -332,6 +352,10 @@ Endpoint.prototype._dichotomous_percent_change_incidence = function(eg){
 
 Endpoint.prototype._continuous_percent_difference_from_control = function(eg, eg_control){
     return (eg_control.response === 0) ? "-" : Math.round(100*((eg.response - eg_control.response)/eg_control.response), 3);
+};
+
+Endpoint.prototype._pd_percent_difference_from_control = function(eg){
+    return eg.response;
 };
 
 Endpoint.prototype._number_of_animals_string = function(){
@@ -371,7 +395,7 @@ EndpointCriticalDose.prototype.display = function(){
     var txt = "", egs = this.endpoint.data.endpoint_group;
     try {
         var txt = egs[this.critical_effect_idx].dose;
-        if (this.show_units) txt = "{0} {1}".printf(txt, endpoint.dose_units);
+        if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);
     } catch(err){}
     this.span.html(txt);
 };
@@ -468,13 +492,17 @@ EndpointTable.prototype.build_header = function(){
             .append(dose)
             .append('<th>Number of Animals</th>');
     if (this.endpoint.data.data_type == 'D') {
+        this.number_columns = 4;
         header.append('<th>Incidence</th>')
-         .append('<th>Percent Incidence</th>');
+              .append('<th>Percent Incidence</th>');
+    } else if (this.endpoint.data.data_type == 'P') {
+        this.number_columns = 3;
+        header.append('<th>Response</th>');
     } else {
+        this.number_columns = 4;
         header.append('<th>Response</th>')
-         .append('<th>{0}</th>'.printf(this.endpoint.data.variance_name));
+              .append('<th>{0}</th>'.printf(this.endpoint.data.variance_name));
     }
-    this.number_columns = 4;
     this.thead = header;
 };
 
@@ -493,6 +521,8 @@ EndpointTable.prototype.build_body = function(){
         if (self.endpoint.data.data_type == 'C') {
             tr.append('<td>{0}</td>'.printf(v.response))
              .append('<td>{0}</td>'.printf(v.variance));
+        } else if (self.endpoint.data.data_type == 'P') {
+            tr.append("<td>{0}</td>".printf(self.endpoint.get_pd_string(v)));
         } else {
             tr.append('<td>{0}</td>'.printf(v.incidence))
               .append('<td>{0}%</td>'.printf(self.endpoint._dichotomous_percent_change_incidence(v)));
@@ -871,6 +901,9 @@ DRPlot.prototype.get_dataset_info = function(){
             value.y = v.response;
             txt.push("Response = {0} {1}".printf(v.response, ep.response_units),
                      "{0} = {1}".printf(ep.variance_name, v.variance));
+        } else if (ep.data_type =='P'){
+            value.y = v.response;
+            txt.push("Response = {0}".printf(self.endpoint.get_pd_string(v)));
         } else {
             value.y = v.incidence/v.n;
             txt.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
@@ -1418,6 +1451,9 @@ Barplot.prototype.get_dataset_info = function(){
         if(e.data.data_type=='C'){
             val = v.response;
             txt = v.response;
+        } else if (e.data.data_type =='P'){
+            val = v.response;
+            txt = e.get_pd_string(v);
         } else{
             val = v.incidence/v.n;
             txt = val;
