@@ -264,7 +264,7 @@ class EndpointForm(ModelForm):
                   'response_units', 'data_location',
                   'NOAEL', 'LOAEL', 'FEL',
                   'monotonicity', 'statistical_test', 'trend_value',
-                  'results_notes', 'endpoint_notes')
+                  'power_notes', 'results_notes', 'endpoint_notes')
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
@@ -319,7 +319,7 @@ class EndpointForm(ModelForm):
                          "Add new effect tag",
                          '{% url "assessment:effect_tag_create" assessment.pk %}')
 
-        for fld in ('results_notes', 'endpoint_notes'):
+        for fld in ('results_notes', 'endpoint_notes', 'power_notes'):
             self.fields[fld].widget.attrs['rows'] = 3
 
 
@@ -335,8 +335,8 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('data_reported', 4, "span4")
         helper.add_fluid_row('response_units', 2, "span6")
         helper.add_fluid_row('NOAEL', 3, "span4")
-        helper.add_fluid_row('results_notes', 3, "span6")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
+        helper.add_fluid_row('power_notes', 3, "span4")
 
         return helper
 
