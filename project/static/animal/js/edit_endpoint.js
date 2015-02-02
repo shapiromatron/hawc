@@ -272,3 +272,72 @@ EditEndpointIAD.prototype.load_values_into_form = function(){
     });
     this.build_iad_rows();
 };
+
+
+SampleSizeWidget = function(){
+    this.btn = $('#ssBtn')
+        .appendTo($("#hint_id_power_notes"))
+        .click($.proxy(this.setCalculator, this));
+    this.modal = $('#ssModal');
+    this.form = $('#ssForm');
+    this.result = this.form.find("#ssResult");
+    this.form.find("input").on('change', $.proxy(this.recalculate, this));
+    $('#ssSavePower').click($.proxy(this.savePower, this));
+};
+
+SampleSizeWidget.prototype = {
+    getSD: function(){
+        var n = $("#n_1").val(),
+            varType = $("#id_variance_type").val(),
+            variance = $("#variance_0").val();
+
+        switch(varType){
+            case "1": //SD
+                return variance;
+            case "2": //SE
+                return Math.round(variance * Math.sqrt(n));
+            default:
+                return NaN;
+        }
+    },
+    setCalculator: function(){
+        this.form.find("input[name=mean]").val( $("#resp_0").val() );
+        this.form.find("input[name=sd]").val( this.getSD() );
+        this.form.find("input[name=n]").val( $("#n_1").val() );
+        this.recalculate();
+    },
+    recalculate: function(){
+        var fields = _.object(_.map(this.form.serializeArray(), function(d){
+                return [d.name, parseFloat(d.value, 10)]; })),
+            txt = "Error in input fields.",
+            power, ratio;
+        if(!isNaN(fields.mean) && !isNaN(fields.sd) && !isNaN(fields.percentToDetect)){
+            power = Math.round(this.getPower(fields.mean, fields.sd, fields.percentToDetect));
+
+            if (!isNaN(fields.n)){
+                ratio = fields.n/power;
+                if (ratio <= 0.5){
+                    txt = "underpowered (sample size is ≤50% required), ";
+                } else if (ratio<1.0){
+                    txt = "marginally underpowered (sample size is between 50-100% required), ";
+                } else {
+                    txt = "sufficiently powered (sample size ≥100% required), ";
+                }
+            } else {
+                txt = "Effect ";
+            }
+            txt += "requires approximately {0} animals to detect a {1}% change from control".printf(power, fields.percentToDetect);
+        }
+        return this.result.html(txt);
+    }, getPower: function(mean, sd, percentToDetect){
+        // Calculate the sample size required to detect a response with 80%
+        // power, which is dependent on the control mean and standard-deviation,
+        // along with the fraction to detect such as a 10% (0.10) change from control
+        var fracToDetect = percentToDetect/100,
+            d = mean*fracToDetect/sd,
+            ss80 = 16/Math.pow(d, 2);
+        return ss80;
+    }, savePower: function(){
+        $("#id_power_notes").html(this.result.html());
+    }
+}

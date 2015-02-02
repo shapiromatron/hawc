@@ -114,6 +114,33 @@
 
   </div>
 
+  <button id="ssBtn" class="btn btn-mini" style="margin-left: 10px" type="button" data-toggle="modal" data-target="#ssModal">Calculate</button>
+  <div id="ssModal" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Power calculation</h3>
+    </div>
+    <div class="modal-body">
+      <form id="ssForm">
+        <p class="help-block">Calculate the sample-size required to detect an effect with 80% power.</p>
+        <label class="control-label">Control mean</label>
+        <input type="number" name="mean">
+        <label class="control-label">Control standard-deviation</label>
+        <input type="number" name="sd">
+        <label class="control-label">Number of animals</label>
+        <input type="number" name="n">
+        <label class="control-label">Difference to detect (%)</label>
+        <input type="number" name="percentToDetect" value="10">
+        <label class="control-label">Result:</label>
+        <p id="ssResult" class="alert alert-info">-</p>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
+      <a id="ssSavePower" href="#" class="btn btn-primary" title='Paste results into "power-notes" field' class="close" data-dismiss="modal" aria-hidden="true">Save output</a>
+    </div>
+  </div>
+
 {% endblock %}
 
 {% block extrajs %}
@@ -174,9 +201,11 @@
 
         if(dataType==="C"){
           varTypeDiv.fadeIn();
+          $('#ssBtn').fadeIn();
         } else {
           varTypeDiv.fadeOut();
           $('#id_variance_type').val(0);
+          $('#ssBtn').fadeOut();
         }
 
         if(dataType==="P"){
@@ -197,6 +226,9 @@
       }
       $('body').on('change', '#id_variance_type', toggleVarianceColumnHeader);
       toggleVarianceColumnHeader();
+
+      // initialize sample-size power widget
+      new SampleSizeWidget();
 
     });
   </script>
