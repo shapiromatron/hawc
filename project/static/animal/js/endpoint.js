@@ -309,6 +309,7 @@ Endpoint.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Statistical test description", this.data.statistical_test);
     tbl.add_tbody_tr("Trend result", this.data.trend_result);
     tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
+    tbl.add_tbody_tr("Power notes", this.data.power_notes);
     tbl.add_tbody_tr("Results notes", this.data.results_notes);
     tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
 
@@ -497,7 +498,7 @@ EndpointTable.prototype.build_header = function(){
               .append('<th>Percent Incidence</th>');
     } else if (this.endpoint.data.data_type == 'P') {
         this.number_columns = 3;
-        header.append('<th>Response</th>');
+        header.append('<th>Response ({0}% CI)</th>'.printf(self.endpoint.data.confidence_interval*100));
     } else {
         this.number_columns = 4;
         header.append('<th>Response</th>')
