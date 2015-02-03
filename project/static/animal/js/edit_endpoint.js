@@ -281,7 +281,7 @@ SampleSizeWidget = function(){
     this.modal = $('#ssModal');
     this.form = $('#ssForm');
     this.result = this.form.find("#ssResult");
-    this.form.find("input").on('change', $.proxy(this.recalculate, this));
+    this.form.find("input").on('change keyup', $.proxy(this.recalculate, this));
     $('#ssSavePower').click($.proxy(this.savePower, this));
 };
 
