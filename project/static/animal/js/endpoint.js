@@ -294,7 +294,7 @@ Endpoint.prototype.build_details_table = function(div){
                             this.data.observation_time_units));
     }
 
-    tbl.add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment_id));
+    tbl.add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment));
 
     tbl.add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
     tbl.add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted));
