@@ -377,19 +377,15 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
 
         if self.request.method == 'GET':
             # build formset with initial data
-            required_metrics = models.StudyQualityMetric \
-                                     .get_metrics_for_assessment(self.assessment) \
-                                     .values('pk')
-            for metric in required_metrics:
-                metric['metric'] = metric.pop('pk')
-                metric['study'] = self.study
-
+            metrics = models.StudyQualityMetric \
+                                     .get_required_metrics(self.assessment, self.study)
+            sqs = [{"study": self.study, "metric": metric}  for metric in metrics]
             NewSQFormSet = modelformset_factory(models.StudyQuality,
                                                 form=forms.SQForm,
                                                 formset=forms.BaseSQFormSet,
-                                                extra=len(required_metrics))
+                                                extra=len(sqs))
             self.formset = NewSQFormSet(queryset=models.StudyQuality.objects.none(),
-                                        initial=required_metrics)
+                                        initial=sqs)
 
         context['formset'] = self.formset
         context['crud'] = self.crud
