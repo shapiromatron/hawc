@@ -875,6 +875,12 @@ class AssessedOutcome(BaseEndpoint):
 
     @classmethod
     def get_docx_template_context(cls, assessment, queryset):
+        """
+        Given a queryset of assessed outcomes, invert the cached results to build
+        a top-down data hierarchy from study to assessed outcome. We use this
+        approach since our assessed outcomes are cached, so while it may require
+        more computation, its close to free on database access.
+        """
 
         def getStatMethods(ao):
             v = {

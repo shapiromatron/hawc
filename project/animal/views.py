@@ -506,7 +506,7 @@ class EndpointsReport(GenerateReport):
         return "animal-bioassay.docx"
 
     def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)
+        return self.model.get_docx_template_context(self.assessment, queryset)
 
 
 class EndpointFlatFile(BaseList):

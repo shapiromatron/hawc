@@ -10,6 +10,8 @@ import reversion
 
 from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
+from assessment.serializers import AssessmentSerializer
+
 from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
@@ -648,39 +650,6 @@ class Endpoint(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     @classmethod
-    def get_docx_template_context(cls, queryset):
-        return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
-        }
-
-    @classmethod
     def optimized_qs(cls, **filters):
         # Use this method to get proper prefetch and select-related when
         # returning API-style endpoints
@@ -881,6 +850,64 @@ class Endpoint(BaseEndpoint):
             ser['endpoint_notes'],
             json.dumps(ser['additional_fields']),
         )
+
+    @classmethod
+    def get_docx_template_context(cls, assessment, queryset):
+        """
+        Given a queryset of endpoints, invert the cached results to build
+        a top-down data hierarchy from study to endpoint. We use this
+        approach since our endpoints are cached, so while it may require
+        more computation, its close to free on database access.
+        """
+
+        endpoints = [
+            SerializerHelper.get_serialized(obj, json=False)
+            for obj in queryset
+        ]
+        studies = {}
+
+        # flip dictionary nesting
+        for thisEp in endpoints:
+            thisAG = thisEp["animal_group"]
+            thisExp = thisEp["animal_group"]["experiment"]
+            thisStudy = thisEp["animal_group"]["experiment"]["study"]
+
+            study = studies.get(thisStudy["id"])
+            if study is None:
+                study = thisStudy
+                study["exps"] = {}
+                studies[study["id"]] = study
+
+            exp = study["exps"].get(thisExp["id"])
+            if exp is None:
+                exp = thisExp
+                exp["ags"] = {}
+                study["exps"][exp["id"]]  = exp
+
+            ag = exp["ags"].get(thisAG["id"])
+            if ag is None:
+                ag = thisAG
+                ag["eps"] = {}
+                exp["ags"][ag["id"]]  = ag
+
+            ep = ag["eps"].get(thisEp["id"])
+            if ep is None:
+                ep = thisEp
+                ag["eps"][ep["id"]]  = ep
+
+        # convert value dictionaries to lists
+        studies = studies.values()
+        for study in studies:
+            study["exps"] = study["exps"].values()
+            for exp in study["exps"]:
+                exp["ags"] = exp["ags"].values()
+                for ag in exp["ags"]:
+                    ag["eps"] = ag["eps"].values()
+
+        return {
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "studies": studies
+        }
 
 
 class EndpointGroup(models.Model):
