@@ -80,8 +80,16 @@
       {% for metric in object.metrics.all %}
         <tr>
           <th>{{forloop.counter}}</th>
-          <td>{{metric}}</td>
-          <td>{{metric.description|safe}}</td>
+          <td>
+            {{metric}}<br><br>
+            <strong>Required for animal bioassay: </strong>
+              {%if metric.required_animal %}☑{% else %}☒{% endif %}<br>
+            <strong>Required for epidemiological: </strong>
+              {%if metric.required_epi %}☑{% else %}☒{% endif %}
+          </td>
+          <td>
+            {{metric.description|safe}}<br>
+          </td>
           {% if crud == "Update" %}
             <td><a class="btn btn-info" href="{% url 'study:sqm_update' metric.pk %}">Edit</a>
                 <a class="btn btn-danger" href="{% url 'study:sqm_delete' metric.pk %}">Delete</a></td>

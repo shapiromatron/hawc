@@ -114,6 +114,7 @@ class StudyCreateFromReference(BaseCreate):
             dt = dict(form.data)
             dt.pop('_wysihtml5_mode')
             dt.pop('csrfmiddlewaretoken')
+            dt.pop('save')  # crispyform
             for k,v in dt.iteritems(): #unpack list
                 dt[k]=v[0]
             self.object = self.model.save_new_from_reference(self.parent, dt)

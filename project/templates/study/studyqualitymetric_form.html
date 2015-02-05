@@ -1,6 +1,6 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {{assessment}} | Study Quality | Metric | Edit | HAWC
@@ -22,20 +22,7 @@
 
 {% block content %}
 
-  <form method="post" action=".">
-
-    <legend>{{crud}} Metric</legend>
-
-    {{form}}
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">{{ crud }} metric</button>
-      <a href="{% url 'study:asq_update' assessment.pk %}" class="btn">Cancel</a>
-    </div>
-
-    {% csrf_token %}
-
-  </form>
+  {% crispy form %}
 
 {% endblock %}
 

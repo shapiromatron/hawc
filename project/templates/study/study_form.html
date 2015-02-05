@@ -1,6 +1,6 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {{assessment}} | {{crud}} {% if crud == "Create" %}Study{% else %}{{object}}{% endif %} | HAWC
@@ -19,42 +19,9 @@
 {% endblock %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
-    <fieldset>
-      {% if crud == "Create" %}
-        <legend>Create new study</legend>
-        <span class="help-block">Create a new study. Each study is associated with one assessment.</span><br>
-      {% elif crud == "Update" %}
-         <legend>Update  {{ object }} </legend>
-         <span class="help-block">Update an existing study.</span><br>
-      {% endif %}
 
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
+  {% crispy form %}
 
-      {% for field in form %}
-        <div class="control-group form-row">
-          {{field.label_tag|add_class:"control-label"}}
-          <div class="controls">
-            {{field}}
-            <span class='help-inline'>{{field.help_text}}</span>
-          </div>
-          {{field.errors|add_class:"alert alert-error"}}
-        </div>
-      {% endfor %}
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} study</button>
-        {% if crud == "Create" %}
-          <a href="{% url 'assessment:detail' pk=assessment.pk %}" class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'study:detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-
-      {% csrf_token %}
-
-    </fieldset>
-  </form>
 {% endblock %}
 
 {% block extrajs %}
