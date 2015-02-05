@@ -1,7 +1,6 @@
 import json
 
 from django.db.models import Q
-from django.core.exceptions import PermissionDenied
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
@@ -18,7 +17,6 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
                          BaseVersion, GenerateReport)
-from utils.helper import HAWCdocx
 
 from . import forms, models, exports
 

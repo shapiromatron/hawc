@@ -12,7 +12,7 @@ from utils.helper import HAWCDjangoJSONEncoder
 import reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCdocx
+from utils.helper import HAWCtoDateString
 
 
 class SummaryText(MP_Node):
@@ -135,7 +135,7 @@ class SummaryText(MP_Node):
 
     @classmethod
     def build_report(cls, report, assessment):
-        title = 'Summary Text: ' + HAWCdocx.to_date_string(datetime.now())
+        title = 'Summary Text: ' + HAWCtoDateString(datetime.now())
         report.doc.add_heading(title, level=1)
 
         preface = 'Preliminary summary-text export in Word (work in progress)'

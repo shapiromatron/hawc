@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 
 from django.contrib.contenttypes import generic
@@ -10,7 +9,7 @@ from django.db import models
 import reversion
 
 from myuser.models import HAWCUser
-from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx
+from utils.helper import HAWCDjangoJSONEncoder
 
 
 class CommentSettings(models.Model):
@@ -100,30 +99,5 @@ class Comment(models.Model):
             raise ValidationError("Error- commenting not enabled for this assessment")
         if not self.assessment.user_can_view_object(self.commenter):
             raise ValidationError("Error- commenting not allowed for this user, for this assessment")
-
-    @staticmethod
-    def docx_print_report(report, assessment, queryset):
-        report.doc.add_heading(unicode(assessment) + ' Comment Summary: ' + HAWCdocx.to_date_string(datetime.now()), 1)
-        tbl = report.doc.add_table(rows=1, cols=4)
-        hdr_cells = tbl.rows[0].cells
-
-        for i,v in enumerate(['Object', 'Comment', 'Commenter', 'Date']):
-            hdr_cells[i].text = v
-
-        for comment in queryset:
-            comment.docx_print(tbl)
-
-    def docx_print(self, tbl):
-        cells = tbl.add_row().cells
-        cells[0].paragraphs[0].text=unicode(self.content_object)
-        cells[0].add_paragraph(text=unicode(self.content_object._meta.object_name))
-        cells[0].paragraphs[1].runs[0].italic=True
-
-        cells[1].paragraphs[0].text=self.title
-        cells[1].paragraphs[0].runs[0].bold=True
-        cells[1].add_paragraph(text=self.text)
-
-        cells[2].text = self.commenter.get_full_name()
-        cells[3].text = HAWCdocx.to_date_string(self.last_updated)
 
 reversion.register(Comment)

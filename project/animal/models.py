@@ -11,7 +11,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
 from bmd.models import BMD_session
-from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
 
 class Species(models.Model):

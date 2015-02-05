@@ -7,11 +7,10 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
 
 from assessment.models import Assessment
-from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx
-from utils.views import AssessmentPermissionsMixin, MessageMixin, BaseDetail, BaseUpdate, BaseList
+from utils.helper import HAWCDjangoJSONEncoder
+from utils.views import AssessmentPermissionsMixin, BaseDetail, BaseUpdate, BaseList
 
-from . import forms
-from . import models
+from . import exports, forms, models
 
 
 class CommentSettingsDetail(BaseDetail):
@@ -110,9 +109,13 @@ class CommentListAssessment(BaseList):
 
 
 class CommentReport(CommentListAssessment):
+    parent_model = Assessment
+    model = models.Comment
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        report = HAWCdocx()
-        models.Comment.docx_print_report(report, self.assessment, self.object_list)
-        return report.django_response()
+        exporter = exports.CommentExporterComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-comments'.format(self.assessment))
+        return exporter.build_response()

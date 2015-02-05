@@ -71,7 +71,6 @@
         </a>
         <ul class="dropdown-menu">
           <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
-          <li><a href="{% url 'summary:word_report' assessment.pk %}">Download</a></li>
           {% if obj_perms.edit %}
             <li><a href="{% url 'summary:modify' assessment.pk %}">Update text</a></li>
           {% endif %}

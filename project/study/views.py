@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from lit.models import Reference
 from assessment.models import Assessment
-from utils.helper import HAWCdocx, HAWCDjangoJSONEncoder
+from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
