@@ -154,27 +154,6 @@ class Study(Reference):
             versions_json.append(fields)
         return json.dumps(versions_json, cls=DjangoJSONEncoder)
 
-    def docx_print(self, report, heading_level):
-        """
-        Word report format for printing a study.
-        """
-
-        # define content
-        title = u'Study summary: {0}'.format(self.short_citation)
-        paras = (
-            u'Full Citation: {0}'.format(self.full_citation),
-            u'Text summary: {0}'.format(strip_tags(self.summary)),
-            )
-
-        # print to document
-        report.doc.add_heading(title, level=heading_level)
-        for para in paras:
-            report.doc.add_paragraph(para)
-        report.doc.add_page_break()
-
-        for endpoint in self.get_bioassay_endpoints():
-            endpoint.docx_print(report, heading_level+1)
-
     def get_bioassay_endpoints(self):
         """
         Return a queryset of related bioassay endpoints for selected study

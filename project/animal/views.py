@@ -492,15 +492,6 @@ class EndpointDelete(BaseDelete):
         return self.object.animal_group.get_absolute_url()
 
 
-class EndpointReport(EndpointRead):
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        report = HAWCdocx()
-        self.object.docx_print(report, heading_level=1)
-        return report.django_response()
-
-
 class EndpointsReport(GenerateReport):
     parent_model = Assessment
     model = models.Endpoint

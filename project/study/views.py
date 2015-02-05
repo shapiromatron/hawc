@@ -218,19 +218,6 @@ class StudyVersions(BaseVersion):
     template_name = "study/study_versions.html"
 
 
-class StudyDOCX(BaseDetail):
-    """
-    Builds a Microsoft Word study summary report.
-    """
-    model = models.Study
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        report = HAWCdocx()
-        self.object.docx_print(report, heading_level=1)
-        return report.django_response()
-
-
 # Attachment views
 class AttachmentCreate(BaseCreate):
     success_message = 'Attachment added to study.'

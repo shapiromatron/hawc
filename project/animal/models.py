@@ -647,14 +647,6 @@ class Endpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @staticmethod
-    def endpoints_word_report(queryset):
-        docx = HAWCdocx()
-        docx.doc.add_heading("Example heading", 1)
-        for endpoint in queryset:
-            endpoint.docx_print(docx, 2)
-        return docx
-
     @classmethod
     def get_docx_template_context(cls, queryset):
         return {
@@ -747,64 +739,6 @@ class Endpoint(BaseEndpoint):
     @property
     def variance_name(self):
         return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
-
-    def docx_print(self, report, heading_level):
-        """
-        Word report format for endpoint printing.
-        """
-        # define content
-        title = u'Endpoint summary: {0}'.format(self.name)
-        paras = (
-            u'Endpoint summary, including dose-response table and BMDS outputs.',
-            u'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
-            u'System: {0}'.format(self.system),
-            u'Organ: {0}'.format(self.organ),
-            u'Effect: {0}'.format(self.effect),
-            u"Observation time: {0} {1}".format(self.observation_time,
-                                                self.get_observation_time_units_display()),
-            u'Data location in reference: {0}'.format(self.data_location),
-            u'Data available?: {0}'.format(self.data_reported),
-            u'Data extracted?: {0}'.format(self.data_extracted),
-            u'Data-values estimated?: {0}'.format(self.values_estimated),
-            u'Response Units: {0}'.format(self.response_units),
-            u'LOAEL: {0}'.format(self.get_LOAEL()),
-            u'NOAEL: {0}'.format(self.get_NOAEL()),
-            u'FEL: {0}'.format(self.get_FEL()),
-            u'Monotonicity: {0}'.format(self.get_monotonicity_display()),
-            u'Statistical Test: {0}'.format(self.statistical_test),
-            u'Trend-value: {0}'.format(self.trend_value),
-            u'Results notes: {0}'.format(self.results_notes),
-            u'Endpoint notes: {0}'.format(self.endpoint_notes))
-
-        # save endpoint-table
-        doses = self.get_doses_json(json_encode=False)
-        table_header = [('Dose (' + dose['units'] + ')') for dose in doses]
-        if self.data_type == 'C':
-            table_header.extend(['N', 'Response', self.variance_name])
-        else:
-            table_header.extend(['Incidence', 'N', r'% Incidence'])
-        rows = [table_header]
-        egs = self.get_endpoint_groups()
-        for eg in egs:
-            rows.append(eg.docx_print_row(self.data_type, doses))
-
-        bmd_session = self.get_bmds_session()
-
-        # print to document
-        report.doc.add_heading(title, level=heading_level)
-        for para in paras:
-            report.doc.add_paragraph(para)
-
-        tbl = report.doc.add_table(len(rows), len(rows[0]))
-        for i, row in enumerate(rows):
-            for j, val in enumerate(row):
-                tbl.cell(i, j).text = val
-
-        report.doc.add_page_break()
-
-        if bmd_session:
-            bmd_session.docx_print(report, heading_level=heading_level+1)
 
     @staticmethod
     def d_responses(queryset, json_encode=True):
@@ -991,32 +925,6 @@ class EndpointGroup(models.Model):
 
     def clean(self):
         self.significant = (self.significance_level > 0)
-
-    def docx_print_row(self, data_type, doses):
-        """
-        Print Word representation of self, for insertion into a table.
-        """
-        try:
-            # try this first, should work endpoint-groups = dose-groups
-            row = [str(dose['values'][self.dose_group_id]) for dose in doses]
-        except:
-            # do this instead if there are differences between dose-groups
-            row = []
-            for dose in doses:
-                try:
-                    row.append(str(dose['values'][self.dose_group_id]))
-                except:
-                    row.append('Error')
-
-        if data_type == 'C':
-            row.extend([str(self.n),
-                        str(self.response),
-                        str(self.variance)])
-        else:
-            row.extend([str(self.n),
-                        str(self.incidence),
-                        str(100.*(self.incidence/self.n))])
-        return row
 
     @classmethod
     def getIndividuals(cls, endpoint, egs):

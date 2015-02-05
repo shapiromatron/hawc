@@ -23,7 +23,6 @@
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
-          <li><a href="{% url 'animal:endpoint_report' object.pk %}">Download report</a></li>
           {% if obj_perms.edit %}
 
             <li class="divider"></li>

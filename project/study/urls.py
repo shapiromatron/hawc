@@ -34,7 +34,6 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/edit/$', views.StudyUpdate.as_view(), name='update'),
     url(r'^(?P<pk>\d+)/delete/$', views.StudyDelete.as_view(), name='delete'),
     url(r'^(?P<pk>\d+)/versions/$', views.StudyVersions.as_view(), name='versions'),
-    url(r'^(?P<pk>\d+)/report/', views.StudyDOCX.as_view(), name='report'),
 
     # attachment
     url(r'^attachment/(?P<pk>\d+)/$', views.AttachmentRead.as_view(), name='attachment_detail'),
