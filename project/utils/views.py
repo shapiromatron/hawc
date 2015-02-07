@@ -245,7 +245,7 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(BaseCreate, self).get_form_kwargs()
-        kwargs['parent'] = self.parent # all epi inputs require a parent field
+        kwargs['parent'] = self.parent # all inputs require a parent field
         return kwargs
 
     def get_context_data(self, **kwargs):

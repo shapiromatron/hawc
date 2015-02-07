@@ -359,6 +359,21 @@ div.inline-smart-tag {
     }
 }
 
+
+/*
+ *
+ * FORM FORMATTING
+ *
+ */
+
+.control-label {
+  font-weight: bold;
+}
+
+.adders {
+  margin-left: 5px;
+}
+
 /*
   wysihtml5 color settings
   https://raw.githubusercontent.com/xing/wysihtml5/master/examples/css/stylesheet.css

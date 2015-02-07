@@ -10,8 +10,10 @@ import reversion
 
 from assessment.models import BaseEndpoint
 from assessment.tasks import get_chemspider_details
+from assessment.serializers import AssessmentSerializer
+
 from bmd.models import BMD_session
-from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
 
 class Species(models.Model):
@@ -505,6 +507,7 @@ class Endpoint(BaseEndpoint):
     DATA_TYPE_CHOICES = (
         ('C', 'Continuous'),
         ('D', 'Dichotomous'),
+        ('P', 'Percent Difference'),
         ('DC', 'Dichotomous Cancer'),
         ('NR', 'Not reported'))
 
@@ -580,6 +583,11 @@ class Endpoint(BaseEndpoint):
     variance_type = models.PositiveSmallIntegerField(
         default=0,
         choices=VARIANCE_TYPE_CHOICES)
+    confidence_interval = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Confidence interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
     NOAEL = models.SmallIntegerField(
         verbose_name="NOAEL",
         default=-999)
@@ -606,13 +614,18 @@ class Endpoint(BaseEndpoint):
         choices=MONOTONICITY_CHOICES)
     statistical_test = models.CharField(
         max_length=256,
-        blank=True)
+        blank=True,
+        help_text="Description of statistical analysis techniques used")
     trend_value = models.FloatField(
         null=True,
-        blank=True)
+        blank=True,
+        help_text="Numerical result for trend-test, if available")
     trend_result = models.PositiveSmallIntegerField(
         default=3,
         choices=TREND_RESULT_CHOICES)
+    power_notes = models.TextField(
+        blank=True,
+        help_text="Power of study-design to detect change from control")
     results_notes = models.TextField(
         blank=True,
         help_text="Qualitative description of the results")
@@ -635,47 +648,6 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
-
-    @staticmethod
-    def endpoints_word_report(queryset):
-        docx = HAWCdocx()
-        docx.doc.add_heading("Example heading", 1)
-        for endpoint in queryset:
-            endpoint.docx_print(docx, 2)
-        return docx
-
-    @classmethod
-    def get_docx_template_context(cls, queryset):
-        return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
-        }
 
     @classmethod
     def optimized_qs(cls, **filters):
@@ -736,64 +708,6 @@ class Endpoint(BaseEndpoint):
     @property
     def variance_name(self):
         return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
-
-    def docx_print(self, report, heading_level):
-        """
-        Word report format for endpoint printing.
-        """
-        # define content
-        title = u'Endpoint summary: {0}'.format(self.name)
-        paras = (
-            u'Endpoint summary, including dose-response table and BMDS outputs.',
-            u'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            u'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
-            u'System: {0}'.format(self.system),
-            u'Organ: {0}'.format(self.organ),
-            u'Effect: {0}'.format(self.effect),
-            u"Observation time: {0} {1}".format(self.observation_time,
-                                                self.get_observation_time_units_display()),
-            u'Data location in reference: {0}'.format(self.data_location),
-            u'Data available?: {0}'.format(self.data_reported),
-            u'Data extracted?: {0}'.format(self.data_extracted),
-            u'Data-values estimated?: {0}'.format(self.values_estimated),
-            u'Response Units: {0}'.format(self.response_units),
-            u'LOAEL: {0}'.format(self.get_LOAEL()),
-            u'NOAEL: {0}'.format(self.get_NOAEL()),
-            u'FEL: {0}'.format(self.get_FEL()),
-            u'Monotonicity: {0}'.format(self.get_monotonicity_display()),
-            u'Statistical Test: {0}'.format(self.statistical_test),
-            u'Trend-value: {0}'.format(self.trend_value),
-            u'Results notes: {0}'.format(self.results_notes),
-            u'Endpoint notes: {0}'.format(self.endpoint_notes))
-
-        # save endpoint-table
-        doses = self.get_doses_json(json_encode=False)
-        table_header = [('Dose (' + dose['units'] + ')') for dose in doses]
-        if self.data_type == 'C':
-            table_header.extend(['N', 'Response', self.variance_name])
-        else:
-            table_header.extend(['Incidence', 'N', r'% Incidence'])
-        rows = [table_header]
-        egs = self.get_endpoint_groups()
-        for eg in egs:
-            rows.append(eg.docx_print_row(self.data_type, doses))
-
-        bmd_session = self.get_bmds_session()
-
-        # print to document
-        report.doc.add_heading(title, level=heading_level)
-        for para in paras:
-            report.doc.add_paragraph(para)
-
-        tbl = report.doc.add_table(len(rows), len(rows[0]))
-        for i, row in enumerate(rows):
-            for j, val in enumerate(row):
-                tbl.cell(i, j).text = val
-
-        report.doc.add_page_break()
-
-        if bmd_session:
-            bmd_session.docx_print(report, heading_level=heading_level+1)
 
     @staticmethod
     def d_responses(queryset, json_encode=True):
@@ -891,6 +805,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-response_units",
             "endpoint-data_type",
             "endpoint-variance_type",
+            "endpoint-confidence_interval",
             "endpoint-data_reported",
             "endpoint-data_extracted",
             "endpoint-values_estimated",
@@ -899,6 +814,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-statistical_test",
             "endpoint-trend_value",
             "endpoint-trend_result",
+            "endpoint-power_notes",
             "endpoint-results_notes",
             "endpoint-endpoint_notes",
             "endpoint-additional_fields",
@@ -920,6 +836,7 @@ class Endpoint(BaseEndpoint):
             ser['response_units'],
             ser['data_type'],
             ser['variance_name'],
+            ser['confidence_interval'],
             ser['data_reported'],
             ser['data_extracted'],
             ser['values_estimated'],
@@ -928,10 +845,69 @@ class Endpoint(BaseEndpoint):
             ser['statistical_test'],
             ser['trend_value'],
             ser['trend_result'],
+            ser['power_notes'],
             ser['results_notes'],
             ser['endpoint_notes'],
             json.dumps(ser['additional_fields']),
         )
+
+    @classmethod
+    def get_docx_template_context(cls, assessment, queryset):
+        """
+        Given a queryset of endpoints, invert the cached results to build
+        a top-down data hierarchy from study to endpoint. We use this
+        approach since our endpoints are cached, so while it may require
+        more computation, its close to free on database access.
+        """
+
+        endpoints = [
+            SerializerHelper.get_serialized(obj, json=False)
+            for obj in queryset
+        ]
+        studies = {}
+
+        # flip dictionary nesting
+        for thisEp in endpoints:
+            thisAG = thisEp["animal_group"]
+            thisExp = thisEp["animal_group"]["experiment"]
+            thisStudy = thisEp["animal_group"]["experiment"]["study"]
+
+            study = studies.get(thisStudy["id"])
+            if study is None:
+                study = thisStudy
+                study["exps"] = {}
+                studies[study["id"]] = study
+
+            exp = study["exps"].get(thisExp["id"])
+            if exp is None:
+                exp = thisExp
+                exp["ags"] = {}
+                study["exps"][exp["id"]]  = exp
+
+            ag = exp["ags"].get(thisAG["id"])
+            if ag is None:
+                ag = thisAG
+                ag["eps"] = {}
+                exp["ags"][ag["id"]]  = ag
+
+            ep = ag["eps"].get(thisEp["id"])
+            if ep is None:
+                ep = thisEp
+                ag["eps"][ep["id"]]  = ep
+
+        # convert value dictionaries to lists
+        studies = studies.values()
+        for study in studies:
+            study["exps"] = study["exps"].values()
+            for exp in study["exps"]:
+                exp["ags"] = exp["ags"].values()
+                for ag in exp["ags"]:
+                    ag["eps"] = ag["eps"].values()
+
+        return {
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "studies": studies
+        }
 
 
 class EndpointGroup(models.Model):
@@ -952,6 +928,16 @@ class EndpointGroup(models.Model):
         blank=True,
         null=True,
         validators=[MinValueValidator(0)])
+    lower_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Lower CI",
+        help_text="Numerical value for lower-confidence interval")
+    upper_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval")
     significant = models.BooleanField(
         default=False,
         verbose_name="Statistically significant from control")
@@ -966,32 +952,6 @@ class EndpointGroup(models.Model):
 
     def clean(self):
         self.significant = (self.significance_level > 0)
-
-    def docx_print_row(self, data_type, doses):
-        """
-        Print Word representation of self, for insertion into a table.
-        """
-        try:
-            # try this first, should work endpoint-groups = dose-groups
-            row = [str(dose['values'][self.dose_group_id]) for dose in doses]
-        except:
-            # do this instead if there are differences between dose-groups
-            row = []
-            for dose in doses:
-                try:
-                    row.append(str(dose['values'][self.dose_group_id]))
-                except:
-                    row.append('Error')
-
-        if data_type == 'C':
-            row.extend([str(self.n),
-                        str(self.response),
-                        str(self.variance)])
-        else:
-            row.extend([str(self.n),
-                        str(self.incidence),
-                        str(100.*(self.incidence/self.n))])
-        return row
 
     @classmethod
     def getIndividuals(cls, endpoint, egs):
@@ -1055,6 +1015,10 @@ class EndpointGroup(models.Model):
                     ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
                     eg['percentControlLow']  = (eg['percentControlMean'] - ci)
                     eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
+            elif data_type == "P":
+                eg['percentControlMean'] = eg['response']
+                eg['percentControlLow']  = eg['lower_ci']
+                eg['percentControlHigh'] = eg['upper_ci']
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
@@ -1069,6 +1033,8 @@ class EndpointGroup(models.Model):
             "endpoint_group-incidence",
             "endpoint_group-response",
             "endpoint_group-variance",
+            "endpoint_group-lower_ci",
+            "endpoint_group-upper_ci",
             "endpoint_group-significant",
             "endpoint_group-significance_level",
             "endpoint_group-NOAEL",
@@ -1085,6 +1051,8 @@ class EndpointGroup(models.Model):
             ser['incidence'],
             ser['response'],
             ser['variance'],
+            ser['lower_ci'],
+            ser['upper_ci'],
             ser['significant'],
             ser['significance_level'],
             ser['dose_group_id']==endpoint['NOAEL'],

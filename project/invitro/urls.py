@@ -5,7 +5,9 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r'iv-endpoint', api.IVEndpoint, base_name="iv-endpoint")
+router.register(r'chemical', api.IVChemical, base_name="chemical")
+router.register(r'experiment', api.IVExperiment, base_name="experiment")
+router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
 
 urlpatterns = patterns('',
 

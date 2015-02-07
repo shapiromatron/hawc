@@ -10,7 +10,6 @@
       <th>NOAEL</th>
       <th>LOAEL</th>
       <th>FEL</th>
-      <th>Report</th>
     </tr>
     {% for object in object_list %}
       <tr>
@@ -23,7 +22,6 @@
         <td>{{object.get_NOAEL}}</td>
         <td>{{object.get_LOAEL}}</td>
         <td>{{object.get_FEL}}</td>
-        <td><a href="{% url 'animal:endpoint_report' object.pk %}" rel="tooltip" data-original-title="Download report">Download</a></td>
       </tr>
     {% endfor %}
   </table>

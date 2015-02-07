@@ -1,6 +1,7 @@
 {% extends 'portal.html' %}
 
 {% load add_class %}
+{% load crispy_forms_tags %}
 {% load selectable_tags %}
 
 {% block title %}
@@ -31,68 +32,13 @@
 
 {% block content %}
 
-  <form class="form-horizontal" action="." method="post" id="animal_group">
+  <!-- Animal-Group Form -->
+  {% crispy form %}
 
-    {% csrf_token %}
-
-    <!-- Animal Group form -->
-    <div class='row-fluid'>
-      <fieldset>
-        {% if crud == "Create" %}
-          <legend>Create new animal-group</legend>
-          <span class="help-block">Create a new animal-group. Each animal-group is a set of animals which are comparable for a given experiment. For example, they may be a group of F1 rats. Animal-groups may have different exposures or doses, but should be otherwise comparable.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update  {{ object }} </legend>
-          <span class="help-block">Update an existing animal-group.</span><br>
-        {% endif %}
-
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {% if field.name == "species" %}
-                {{field}} <a class ='btn btn-primary' href="{% url 'animal:species_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);">Add new species</a><br>
-              {% elif field.name == "strain" %}
-                {{field}} <a class ='btn btn-primary' href="{% url 'animal:strain_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);">Add new strain</a><br>
-              {% else %}
-                {{field}}<br>
-              {% endif %}
-              <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-    </div>
-
-    <!-- Dosing Regime Form -->
-    {% if crud == "Create" %}
-    <div class='row-fluid' id='dosing_regime'>
-      <fieldset>
-        {% if crud == "Create" %}
-          <legend>Create new dosing-regime</legend>
-          <span class="help-block">Create a new dosing-regime. Each dosing-regime is one protocol for how animals were dosed. Multiple different dose-metrics can be associated with one dosing regime. If this is a generational-experiment, an existing dosing-regime may also be specified.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update dosing regime </legend>
-          <span class="help-block">Update an existing dosing-regime.</span><br>
-        {% endif %}
-
-        {{ form_dosing_regime.non_field_errors|add_class:"alert alert-error" }}
-
-        {% for field in form_dosing_regime %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {{field}}<br>
-              <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-
+  <!-- Dosing Regime Form and Dose-Groups -->
+  {% if crud == "Create" %}
+    {% crispy form_dosing_regime %}
+    <div id="doseGroupsDiv">
       <!-- Dose-Groups -->
       <legend>Dose-groups
         <span class='pull-right'>
@@ -111,21 +57,9 @@
 
       <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
     </div>
-    {% endif %}
 
-    <!-- Submission Form -->
-    <div class="row-fluid">
-      <div class="form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} animal group</button>
-        {% if crud == "Create" %}
-          <a href='{% url 'animal:experiment_detail' experiment.pk %}' class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'animal:animal_group_detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-    </div>
+  {% endif %}
 
-  </form>
 
 {% endblock %}
 
@@ -138,6 +72,18 @@
   <script type="text/javascript">
     // $('#id_description').wysihtml5({"stylesheets": false});
     $(document).ready(function() {
+
+      // reorganize forms
+      $('.addSpecies').insertAfter($('#id_species'))
+      $('.addStrain').insertAfter($('#id_strain'))
+      {% if crud == "Create" %}
+        var actions = $('.form-actions');
+        $('#dosing_regime').children().each(function(i, v){
+          if(v.name != "csrfmiddlewaretoken") $(v).insertBefore(actions);
+        });
+        $('#dosing_regime').remove();
+        $('#doseGroupsDiv').insertBefore(actions)
+      {% endif %}
 
       // load proper strains
       var load_strains = function(){

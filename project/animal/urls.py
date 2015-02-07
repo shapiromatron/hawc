@@ -42,7 +42,6 @@ urlpatterns = patterns('animal.views',
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
     url(r'^endpoint/(?P<pk>\d+)/individual-animal-data/edit/$', views.EndpointIndividualAnimalUpdate.as_view(), name='endpoint_individual_animal_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
-    url(r'^endpoint/(?P<pk>\d+)/report/$', views.EndpointReport.as_view(), name='endpoint_report'),
     url(r'^assessment/(?P<pk>\d+)/endpoints/flatfile/$', views.EndpointFlatFile.as_view(), name='endpoints_flatfile'),
     url(r'^assessment/(?P<pk>\d+)/endpoints/crossview/$', views.EndpointCrossview.as_view(), name='endpoint_crossview'),
 

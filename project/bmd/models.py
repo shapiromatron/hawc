@@ -10,12 +10,9 @@ from django.core.files import File
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
-from docx.shared import Inches
-
 from bmds.bmds import BMDS
 from bmds.output_parser import BMD_output_parser
 from utils.executable_sheller import run_process
-from utils.helper import HAWCdocx
 
 
 BMDS_CHOICES = (
@@ -72,49 +69,6 @@ class BMD_session(models.Model):
             return self.selected_model.webpage_return(json=json_encode)
         else:
             return dumps(None)
-
-    def docx_print(self, report, heading_level):
-        """ Word report format for bmd printing """
-
-        # define content
-        title = 'Benchmark Dose Modeling'
-        paras = (
-            'BMDS software version: {0} (HAWC build)'.format(self.BMDS_version),
-            'Created: {0}'.format(HAWCdocx.to_date_string(self.created)),
-            'Last Updated: {0}'.format(HAWCdocx.to_date_string(self.last_updated)),
-            )
-
-        # save BMD summary table
-        models = list(BMD_model_run.objects.filter(BMD_session=self.pk))
-        rows = [['Model name', 'Global p-value', 'AIC', 'BMD', 'BMDL', 'Residual of Interest']]
-        for model in models:
-            rows.append(model.docx_print_table_row())
-
-        if self.selected_model:
-            models.pop(models.index(self.selected_model))
-
-        # print document
-        report.doc.add_heading(title, level=heading_level)
-        for para in paras:
-            report.doc.add_paragraph(para)
-
-        tbl = report.doc.add_table(len(rows), len(rows[0]))
-        for i, row in enumerate(rows):
-            for j, val in enumerate(row):
-                tbl.cell(i, j).text = val
-
-        report.doc.add_page_break()
-
-        # print selected model
-        if self.selected_model:
-            self.selected_model.docx_print(report, heading_level=heading_level+1, selected=True)
-        else:
-            p = report.doc.add_paragraph('No model was selected as a best-fitting model.')
-            p.italic = True
-
-        # print remaining models
-        for model in models:
-            model.docx_print(report, heading_level=heading_level+1, selected=False)
 
     def webpage_return(self, json=False):
         """
@@ -446,43 +400,6 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
 
         BMD_model_run.delete_files(([f_002, f_plt, f_emf]))
         return image
-
-    def docx_print(self, report, heading_level, selected):
-        """
-        Print outputs of self to Word document
-        """
-        title = '{0} Output Text'.format(self.model_name)
-        if selected:
-            title = 'Selected Best-Fitting Model: ' + title
-
-        # image-file
-        try:
-            fn = self.plot.path
-            # ajs todo: implement EMF in python-docx
-            report.doc.add_picture(fn, width=Inches(4))
-        except:
-            report.doc.add_paragraph("No BMDS output image available.")
-
-        # text
-        report.doc.add_heading(title, level=heading_level)
-        for line in self.output_text.split('\n'):
-            report.doc.add_paragraph(text=line, style='RawOutput')
-        report.doc.add_page_break()
-
-    def docx_print_table_row(self):
-        """
-        Return list of string values to insert into summary BMD table.
-        """
-        output = {}
-        try:
-            output = loads(self.outputs)
-        except ValueError:
-            pass
-
-        row = [self.model_name]
-        for col in ('p_value4', 'AIC', 'BMD', 'BMDL', 'residual_of_interest'):
-            row.append(str(output.get(col, '')))
-        return row
 
     def summary_data(self):
         """

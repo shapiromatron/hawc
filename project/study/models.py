@@ -1,5 +1,6 @@
 import json
 import os
+import collections
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -111,9 +112,7 @@ class Study(Reference):
         attrs[parent_link_field.name]=reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
-        s=Study(**attrs)
-        s.save()
-        return s
+        return Study.objects.create(**attrs)
 
     def clean(self):
         pk_exclusion = {}
@@ -154,27 +153,6 @@ class Study(Reference):
             fields.pop('assessment')
             versions_json.append(fields)
         return json.dumps(versions_json, cls=DjangoJSONEncoder)
-
-    def docx_print(self, report, heading_level):
-        """
-        Word report format for printing a study.
-        """
-
-        # define content
-        title = u'Study summary: {0}'.format(self.short_citation)
-        paras = (
-            u'Full Citation: {0}'.format(self.full_citation),
-            u'Text summary: {0}'.format(strip_tags(self.summary)),
-            )
-
-        # print to document
-        report.doc.add_heading(title, level=heading_level)
-        for para in paras:
-            report.doc.add_paragraph(para)
-        report.doc.add_page_break()
-
-        for endpoint in self.get_bioassay_endpoints():
-            endpoint.docx_print(report, heading_level+1)
 
     def get_bioassay_endpoints(self):
         """
@@ -314,7 +292,7 @@ class StudyQualityDomain(models.Model):
         """
         fn = os.path.join(settings.PROJECT_PATH, 'study/fixtures/ohat_study_quality_defaults.json')
         with open(fn, 'r') as f:
-            objects = json.loads(f.read())
+            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
         for domain in objects["domains"]:
             d = StudyQualityDomain(assessment=assessment,
@@ -330,11 +308,19 @@ class StudyQualityMetric(models.Model):
     metric = models.CharField(max_length=256)
     description = models.TextField(blank=True,
                                    help_text='HTML text describing scoring of this field.')
+    required_animal = models.BooleanField(
+        default=True,
+        verbose_name="Required for bioassay?",
+        help_text="Is this metric required for animal bioassay studies?")
+    required_epi = models.BooleanField(
+        default=True,
+        verbose_name="Required for epidemiology?",
+        help_text="Is this metric required for human epidemiological studies?")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('domain', 'metric')
+        ordering = ('domain', 'id')
 
     def __unicode__(self):
         return self.metric
@@ -343,10 +329,15 @@ class StudyQualityMetric(models.Model):
         return self.domain.get_assessment()
 
     @classmethod
-    def get_metrics_for_assessment(self, assessment):
-        return StudyQualityMetric.objects.filter(
-                domain__in=StudyQualityDomain.objects.filter(
-                    assessment=assessment))
+    def get_required_metrics(self, assessment, study):
+        filters = {
+            "domain__in": StudyQualityDomain.objects.filter(assessment=assessment),
+        }
+        if study.study_type == 0:
+            filters["required_animal"] = True
+        elif study.study_type in [1,4]:
+            filters["required_epi"] = True
+        return StudyQualityMetric.objects.filter(**filters)
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
@@ -354,12 +345,12 @@ class StudyQualityMetric(models.Model):
         Build multiple study-quality metrics given a domain django object and a
         list of python dictionaries for each metric.
         """
-        objects = []
+        objs = []
         for metric in metrics:
-            objects.append(StudyQualityMetric(domain=domain,
-                                              metric=metric["metric"],
-                                              description=metric["description"]))
-        StudyQualityMetric.objects.bulk_create(objects)
+            obj = StudyQualityMetric(**metric)
+            obj.domain = domain
+            objs.append(obj)
+        StudyQualityMetric.objects.bulk_create(objs)
 
 
 class StudyQuality(models.Model):

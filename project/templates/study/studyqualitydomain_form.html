@@ -1,6 +1,6 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {{assessment}} | Study Quality | {{object}} Domain | Edit | HAWC
@@ -22,21 +22,7 @@
 
 {% block content %}
 
-  <form method="post" action=".">
-
-    <legend>{{crud}} Domain</legend>
-    <!-- <p class="help-block">Modify domain name and description of domain.</p> -->
-
-    {{form}}
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">{{ crud }} domain</button>
-      <a href="{% url 'study:asq_update' assessment.pk %}" class="btn">Cancel</a>
-    </div>
-
-    {% csrf_token %}
-
-  </form>
+  {% crispy form %}
 
 {% endblock %}
 

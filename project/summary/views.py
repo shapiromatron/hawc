@@ -2,10 +2,9 @@ import json
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView
 
 from assessment.models import Assessment
-from utils.helper import HAWCDjangoJSONEncoder, HAWCdocx
+from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import BaseList, BaseCreate, BaseDetail
 
 from . import forms
@@ -32,15 +31,6 @@ class SummaryTextList(BaseList):
     def get_queryset(self):
         rt = self.model.get_assessment_root_node(assessment=self.assessment)
         return self.model.objects.filter(pk__in=[rt.pk])
-
-
-class SummaryReport(SummaryTextList):
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        report = HAWCdocx()
-        self.model.build_report(report, self.assessment)
-        return report.django_response()
 
 
 class SummaryTextModify(BaseCreate):

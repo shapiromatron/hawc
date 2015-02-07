@@ -1,7 +1,6 @@
 import json
 
 from django.db.models import Q
-from django.core.exceptions import PermissionDenied
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
@@ -18,7 +17,6 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
                          BaseVersion, GenerateReport)
-from utils.helper import HAWCdocx
 
 from . import forms, models, exports
 
@@ -308,6 +306,7 @@ class EndpointCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super(EndpointCreate, self).get_context_data(**kwargs)
+        context['animal_group'] = self.parent
         if self.request.method == 'POST':  # send back errors and previous representation
             context['endpoint_json'] = self.request.POST['endpoint_json']
             if hasattr(self, 'egs_errors'):
@@ -491,15 +490,6 @@ class EndpointDelete(BaseDelete):
         return self.object.animal_group.get_absolute_url()
 
 
-class EndpointReport(EndpointRead):
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        report = HAWCdocx()
-        self.object.docx_print(report, heading_level=1)
-        return report.django_response()
-
-
 class EndpointsReport(GenerateReport):
     parent_model = Assessment
     model = models.Endpoint
@@ -516,7 +506,7 @@ class EndpointsReport(GenerateReport):
         return "animal-bioassay.docx"
 
     def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)
+        return self.model.get_docx_template_context(self.assessment, queryset)
 
 
 class EndpointFlatFile(BaseList):

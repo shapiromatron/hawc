@@ -59,19 +59,11 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_summary_text %}
-    <li>
-        <b>Summary Text (preliminary)</b><br>
-        <a class='btn btn-primary' href="{% url 'summary:word_report' assessment.pk %}">Download</a><br>
-        <p class='help-block'>Microsoft Word document</p>
-    </li>
-    {% endif %}
-
     {% if assessment.enable_comments %}
     <li>
         <b>Comment summary</b><br>
         <a class='btn btn-primary' href="{% url 'comments:comment_report' assessment.pk %}">Download</a><br>
-        <p class='help-block'>Microsoft Word document</p>
+        <p class='help-block'>Microsoft Excel document</p>
     </li>
     {% endif %}
 

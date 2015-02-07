@@ -71,7 +71,6 @@
         </a>
         <ul class="dropdown-menu">
           <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
-          <li><a href="{% url 'summary:word_report' assessment.pk %}">Download</a></li>
           {% if obj_perms.edit %}
             <li><a href="{% url 'summary:modify' assessment.pk %}">Update text</a></li>
           {% endif %}
@@ -87,6 +86,8 @@
   <script src="{{STATIC_URL}}study/js/models.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}animal/js/aggregation.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}epi/js/models.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}invitro/js/models.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}data_pivot/js/data_pivot.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/smart_tags.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/summary.js" type="text/javascript"></script>

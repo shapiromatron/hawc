@@ -3,7 +3,6 @@ import decimal
 import logging
 from collections import OrderedDict
 from StringIO import StringIO
-import os
 import re
 
 from django.core.cache import cache
@@ -13,8 +12,14 @@ from django.shortcuts import HttpResponse
 from rest_framework.renderers import JSONRenderer
 
 import unicodecsv
-from docx import Document
 import xlsxwriter
+
+
+def HAWCtoDateString(datetime):
+        """
+        Helper function to ensure dates are consistent.
+        """
+        return datetime.strftime("%B %d %Y, %I:%M %p")
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -26,32 +31,6 @@ class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
             return float(o)
         else:
             return super(HAWCDjangoJSONEncoder, self).default(o)
-
-
-class HAWCdocx(object):
-
-    def __init__(self):
-        path = os.path.join(os.path.dirname(__file__), 'hawc-template.docx')
-        self.doc = Document(path)
-
-    @classmethod
-    def to_date_string(cls, datetime):
-        """
-        Helper function to ensure dates are constant throughout report.
-        """
-        return datetime.strftime("%B %d %Y, %I:%M %p")
-
-    def django_response(self):
-        """
-        Create an HttpResponse object with the appropriate headers.
-        """
-        docx_file = StringIO()
-        self.doc.save(docx_file)
-        docx_file.seek(0)
-        response = HttpResponse(docx_file)
-        response['Content-Disposition'] = 'attachment; filename=example.docx'
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return response
 
 
 class SerializerHelper(object):

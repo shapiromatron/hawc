@@ -17,6 +17,8 @@ EditEndpoint.prototype.build_eg_submission = function(){
                 "incidence": v.incidence,
                 "response": v.response,
                 "variance": v.variance,
+                "lower_ci": v.lower_ci,
+                "upper_ci": v.upper_ci,
                 "significance_level": v.significance_level
             });
         });
@@ -41,6 +43,8 @@ EditEndpoint.prototype.update_endpoint_from_form = function(){
         row['incidence'] = parseFloat($('#inc_' + i).val());
         row['response'] = parseFloat($('#resp_' + i).val());
         row['variance'] = parseFloat($('#variance_' + i).val());
+        row['lower_ci'] = parseFloat($('#lower_ci_' + i).val());
+        row['upper_ci'] = parseFloat($('#upper_ci_' + i).val());
         row['significance_level'] = parseFloat($('#significance_level_' + i).val()) || 0;
         vals['endpoint_group'].push(row);
     });
@@ -83,9 +87,9 @@ EditEndpoint.prototype.build_form_representation = function(){
 
     var toggle_eg_visibility = function(){
         if (self.endpoint_groups_available()){
-            $('#eg_div').fadeIn();
+            $('#endpointGroups').fadeIn();
         } else {
-            $('#eg_div').fadeOut();
+            $('#endpointGroups').fadeOut();
         }
     };
     $('#id_data_reported, #id_data_extracted').on('change', toggle_eg_visibility);
@@ -108,13 +112,19 @@ EditEndpoint.prototype.change_dose_pulldowns = function(){
 
 EditEndpoint.prototype.change_dataset_type = function(){
     //Change the endpoint group edit fields
+    var shows, hides;
     if (this.data.data_type == 'C'){
-        this.eg_table.find('.c_only').css('display', '');
-        this.eg_table.find('.d_only').css('display', 'none');
+        shows = ".c_only,.pc_only";
+        hides =  ".d_only,.p_only";
+    } else if (this.data.data_type == 'P'){
+        shows = ".p_only,.pc_only";
+        hides =  ".c_only,.d_only";
     } else {
-        this.eg_table.find('.c_only').css('display', 'none');
-        this.eg_table.find('.d_only').css('display', '');
+        shows = ".d_only";
+        hides =  ".c_only,.p_only,.pc_only";
     }
+    this.eg_table.find(shows).show();
+    this.eg_table.find(hides).hide();
 };
 
 EditEndpoint.prototype.load_values_into_form = function(){
@@ -124,6 +134,8 @@ EditEndpoint.prototype.load_values_into_form = function(){
         $('#inc_' + i).val(v.incidence);
         $('#resp_' + i).val(v.response);
         $('#variance_' + i).val(v.variance);
+        $('#lower_ci_' + i).val(v.lower_ci);
+        $('#upper_ci_' + i).val(v.upper_ci);
         $('#significance_level_' + i).val(v.significance_level ||'-');
     });
 };
@@ -260,3 +272,72 @@ EditEndpointIAD.prototype.load_values_into_form = function(){
     });
     this.build_iad_rows();
 };
+
+
+SampleSizeWidget = function(){
+    this.btn = $('#ssBtn')
+        .appendTo($("#hint_id_power_notes"))
+        .click($.proxy(this.setCalculator, this));
+    this.modal = $('#ssModal');
+    this.form = $('#ssForm');
+    this.result = this.form.find("#ssResult");
+    this.form.find("input").on('change keyup', $.proxy(this.recalculate, this));
+    $('#ssSavePower').click($.proxy(this.savePower, this));
+};
+
+SampleSizeWidget.prototype = {
+    getSD: function(){
+        var n = $("#n_1").val(),
+            varType = $("#id_variance_type").val(),
+            variance = $("#variance_0").val();
+
+        switch(varType){
+            case "1": //SD
+                return variance;
+            case "2": //SE
+                return Math.round(variance * Math.sqrt(n));
+            default:
+                return NaN;
+        }
+    },
+    setCalculator: function(){
+        this.form.find("input[name=mean]").val( $("#resp_0").val() );
+        this.form.find("input[name=sd]").val( this.getSD() );
+        this.form.find("input[name=n]").val( $("#n_1").val() );
+        this.recalculate();
+    },
+    recalculate: function(){
+        var fields = _.object(_.map(this.form.serializeArray(), function(d){
+                return [d.name, parseFloat(d.value, 10)]; })),
+            txt = "Error in input fields.",
+            power, ratio;
+        if(!isNaN(fields.mean) && !isNaN(fields.sd) && !isNaN(fields.percentToDetect)){
+            power = Math.round(this.getPower(fields.mean, fields.sd, fields.percentToDetect));
+
+            if (!isNaN(fields.n)){
+                ratio = fields.n/power;
+                if (ratio <= 0.5){
+                    txt = "underpowered (sample size is ≤50% required), ";
+                } else if (ratio<1.0){
+                    txt = "marginally underpowered (sample size is between 50-100% required), ";
+                } else {
+                    txt = "sufficiently powered (sample size ≥100% required), ";
+                }
+            } else {
+                txt = "Effect ";
+            }
+            txt += "requires approximately {0} animals to detect a {1}% change from control".printf(power, fields.percentToDetect);
+        }
+        return this.result.html(txt);
+    }, getPower: function(mean, sd, percentToDetect){
+        // Calculate the sample size required to detect a response with 80%
+        // power, which is dependent on the control mean and standard-deviation,
+        // along with the fraction to detect such as a 10% (0.10) change from control
+        var fracToDetect = percentToDetect/100,
+            d = mean*fracToDetect/sd,
+            ss80 = 16/Math.pow(d, 2);
+        return ss80;
+    }, savePower: function(){
+        $("#id_power_notes").html(this.result.html());
+    }
+}

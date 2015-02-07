@@ -9,6 +9,4 @@ urlpatterns = patterns('',
         views.SummaryTextModify.as_view(), name='modify'),
     url(r'^assessment/(?P<pk>\d+)/summaries/json/$',
         views.SummaryTextJSON.as_view(), name='json'),
-    url(r'^assessment/(?P<pk>\d+)/summaries/word/$',
-        views.SummaryReport.as_view(), name='word_report'),
 )

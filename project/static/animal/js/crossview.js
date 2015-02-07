@@ -5,6 +5,8 @@ Endpoint.prototype._percent_change_control = function(index){
             return this._continuous_percent_difference_from_control(
                 this.data.endpoint_group[index],
                 this.data.endpoint_group[0]);
+        } else if (this.data.data_type == "P"){
+            return this._pd_percent_difference_from_control(this.data.endpoint_group[index]);
         } else {
             return this._dichotomous_percent_change_incidence(this.data.endpoint_group[index]);
         }

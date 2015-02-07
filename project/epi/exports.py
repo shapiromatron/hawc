@@ -45,7 +45,7 @@ class AssessedOutcomeFlatDataPivot(FlatFileExporter):
         return [
             'Study',
             'Study URL',
-            'Study Primary Key',
+            'Study HAWC ID',
             'Study Published?',
 
             'Study Population Name',
@@ -192,7 +192,7 @@ class MetaResultFlatDataPivot(FlatFileExporter):
         return [
             'Study',
             'Study URL',
-            'Study Primary Key',
+            'Study HAWC ID',
             'Study Published?',
 
             'Protocol Primary Key',

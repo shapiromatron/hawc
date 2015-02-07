@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from lit.models import Reference
 from assessment.models import Assessment
-from utils.helper import HAWCdocx, HAWCDjangoJSONEncoder
+from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
@@ -114,6 +114,7 @@ class StudyCreateFromReference(BaseCreate):
             dt = dict(form.data)
             dt.pop('_wysihtml5_mode')
             dt.pop('csrfmiddlewaretoken')
+            dt.pop('save')  # crispyform
             for k,v in dt.iteritems(): #unpack list
                 dt[k]=v[0]
             self.object = self.model.save_new_from_reference(self.parent, dt)
@@ -215,19 +216,6 @@ class StudyDelete(BaseDelete):
 class StudyVersions(BaseVersion):
     model = models.Study
     template_name = "study/study_versions.html"
-
-
-class StudyDOCX(BaseDetail):
-    """
-    Builds a Microsoft Word study summary report.
-    """
-    model = models.Study
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        report = HAWCdocx()
-        self.object.docx_print(report, heading_level=1)
-        return report.django_response()
 
 
 # Attachment views
@@ -377,19 +365,15 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
 
         if self.request.method == 'GET':
             # build formset with initial data
-            required_metrics = models.StudyQualityMetric \
-                                     .get_metrics_for_assessment(self.assessment) \
-                                     .values('pk')
-            for metric in required_metrics:
-                metric['metric'] = metric.pop('pk')
-                metric['study'] = self.study
-
+            metrics = models.StudyQualityMetric \
+                                     .get_required_metrics(self.assessment, self.study)
+            sqs = [{"study": self.study, "metric": metric}  for metric in metrics]
             NewSQFormSet = modelformset_factory(models.StudyQuality,
                                                 form=forms.SQForm,
                                                 formset=forms.BaseSQFormSet,
-                                                extra=len(required_metrics))
+                                                extra=len(sqs))
             self.formset = NewSQFormSet(queryset=models.StudyQuality.objects.none(),
-                                        initial=required_metrics)
+                                        initial=sqs)
 
         context['formset'] = self.formset
         context['crud'] = self.crud

@@ -21,7 +21,6 @@
       </a>
       <ul class="dropdown-menu">
         <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
-        <li><a href="{% url 'study:report' object.pk %}">Download report</a></li>
         {% if obj_perms.edit %}
           <li class="divider"></li>
           <li class="disabled"><a tabindex="-1" href="#">Study Editing</a></li>
