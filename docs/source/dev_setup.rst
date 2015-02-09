@@ -12,11 +12,6 @@ following applications installed on your local development system:
 - Postgres >= 9.1
 - git >= 1.7
 
-While development has previously been setup using the Windows operating
-environment, it is recommended to use a Mac/Linux environment for development,
-as it better reflects the server-environment and is generally much easier
-to develop Python applications with a system can can compile C code natively.
-
 
 Getting Started
 ---------------
@@ -27,26 +22,41 @@ necessary requirements::
     mkvirtualenv hawc
     $VIRTUAL_ENV/bin/pip install -r $PWD/requirements/dev.txt
 
-Then create a local settings file and set your ``DJANGO_SETTINGS_MODULE`` to
-use it::
+Create a local settings file and update the necessary fields within the settings::
 
-    cp project/hawc/settings/local.example.py project/hawc/settings/local.py
-    echo "export DJANGO_SETTINGS_MODULE=hawc.settings.local" >> $VIRTUAL_ENV/bin/postactivate
-    echo "unset DJANGO_SETTINGS_MODULE" >> $VIRTUAL_ENV/bin/postdeactivate
+    cp hawc/settings/local.example.py hawc/settings/local.py
 
-Exit the virtualenv and reactivate it to activate the settings just changed::
+Next, update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivate``::
+
+    #!/bin/sh
+    # This hook is sourced after this virtualenv is activated.
+
+    # required to install psycopg2 on Mac
+    export "PATH=/Library/PostgreSQL/9.4/bin:${PATH}"
+
+    # django environment-variable settings
+    export "DJANGO_SECRET_KEY=dge)%8j^94jtu0sioz2%q1ermqp!9f*eq^b_yorddc7_)&^tuf"
+    export "DJANGO_SETTINGS_MODULE=hawc.settings.local"
+    export "DJANGO_STATIC_ROOT=$HOME/dev/temp/hawc/static"
+    export "DJANGO_MEDIA_ROOT=$HOME/dev/temp/hawc/media"
+
+    # move to project path
+    cd $HOME/dev/hawc/project
+
+Re-activate the virtual environment::
 
     deactivate
     workon hawc
 
-Create the Postgres database and run the initial syncdb/migrate::
+Create a PostgreSQL database and run the initial syncdb/migrate::
 
     createdb -E UTF-8 hawc
-    python manage.py syncdb
 
-Note that django-reversion needs to have two additional migrations to use the custom HAWC user-model. To apply this migration, copy the migrations in `hawc/utils/reversion` to the correct location where reversion is installed on your computer, and then apply migrations::
+Next, we'll run a few management command and apply migrations::
 
+    python manage.py build_d3_styles
     python manage.py migrate
+    python manage.py createcachetable dev_cache_table
 
 You should now be able to run the development server::
 
