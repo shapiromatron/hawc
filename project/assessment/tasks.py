@@ -24,11 +24,13 @@ logger = get_task_logger(__name__)
 
 
 # load CSS into memory upon runtime (only do it once)
-with codecs.open(
-        os.path.abspath(
-            os.path.join(settings.PROJECT_PATH,
-                         r'static/css/hawc_d3_aggregated.css')), 'r', 'UTF-8') as css_file:
-    D3_CSS_STYLES = unicode(css_file.read())
+D3_CSS_STYLES = u""
+D3_CSS_PATH = os.path.abspath(
+    os.path.join(settings.PROJECT_PATH,
+                 r'static/css/hawc_d3_aggregated.css'))
+if os.path.exists(D3_CSS_PATH):
+    with codecs.open(D3_CSS_PATH, 'r', 'UTF-8') as f:
+        D3_CSS_STYLES = unicode(f.read())
 
 
 class SVGConverter():
