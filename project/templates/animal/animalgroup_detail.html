@@ -39,6 +39,7 @@
               <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
               <li><a href="{% url 'animal:endpoint_new' object.pk %}">Create new with summary data</a></li>
               <li><a href="{% url 'animal:endpoint_individual_animal_new' object.pk %}">Create new with individual animal data</a></li>
+              <li><a href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a></li>
 
           </ul>
         </div>

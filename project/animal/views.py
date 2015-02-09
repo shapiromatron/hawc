@@ -1,7 +1,7 @@
 import json
 
 from django.db.models import Q
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, model_to_dict
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -201,6 +201,16 @@ class AnimalGroupDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
+class EndpointCopyAsNewSelector(AnimalGroupRead):
+    # Select an existing assessed outcome as a template for a new one
+    template_name = 'animal/endpoint_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.EndpointSelectorForm()
+        return context
+
+
 # Dosing Regime Views
 class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
@@ -269,18 +279,31 @@ class EndpointCreate(BaseCreate):
     model = models.Endpoint
     form_class = forms.EndpointForm
 
-    def post(self, request, *args, **kwargs):
-        self.object = None
+    def get_form_kwargs(self):
+        # bind to assessment
+        kwargs = super(EndpointCreate, self).get_form_kwargs()
+        kwargs['assessment'] = self.assessment
 
-        # check if form is valid
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if not form.is_valid():
-            return self.form_invalid(form)
+        # check if we have an object-template to be used
+        initial_pk = self.request.GET.get('initial')
+        try:
+            initial = self.model.objects.filter(pk=initial_pk).first()
+        except ValueError:
+            pass
+
+        if initial and initial.assessment == self.assessment:
+            kwargs['initial'] = model_to_dict(initial)
+
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        Check if endpoint-group formset is valid
+        """
         self.object = form.save(commit=False)
 
-        # load each endpoint-group form and check if valid (TODO: use formset)
-        egs = json.loads(request.POST['egs_json'])
+        # check if endpoint-groups are valid
+        egs = json.loads(self.request.POST['egs_json'])
         egs_forms = []
         for eg in egs:
             eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
@@ -290,17 +313,12 @@ class EndpointCreate(BaseCreate):
                 self.egs_errors = form_error_list_to_ul(eg_form)
                 return self.form_invalid(form)
 
-        # save endpoint
-        self.object.animal_group = self.parent
-        self.object.save()
-        form.save_m2m()
-
-        # save endpoint-groups
+        # save endpoint and endpoint-groups
+        self.object = form.save()
         for eg_form in egs_forms:
             eg_form.instance.endpoint = self.object
             eg_form.save()
 
-        # send success messages and redirect
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -319,35 +337,24 @@ class EndpointUpdate(BaseUpdate):
     model = models.Endpoint
     form_class = forms.EndpointForm
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
         """
-        First check if original model is valid. If so, then add to list of valid models.
-        Next, go through each EG, binding with instance if one exists. Go through
-        each and make sure each is valid, and if so, add to list. Then, if all
-        are valid, save each in list. Delete any EGs which greater than the list.
+        Check if endpoint-group formset is valid
         """
-        valid_forms = []
-        self.object = self.get_object()
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            valid_forms.append(form)
-            #now, try to save each endpoint
-            egs = json.loads(request.POST['egs_json'])
-            for i, eg in enumerate(egs):
-                eg['endpoint'] = self.object.pk
-                try:
-                    eg_form = forms.EndpointGroupForm(eg,
-                        instance=models.EndpointGroup.objects.get(endpoint=self.object.pk, dose_group_id=i))
-                except:
-                    eg_form = forms.EndpointGroupForm(eg)
-                if eg_form.is_valid():
-                    valid_forms.append(eg_form)
-                else:
-                    self.egs_errors = form_error_list_to_ul(eg_form)
-                    return self.form_invalid(form)
-        else:
-            return self.form_invalid(form)
+        valid_forms = [form]
+        egs = json.loads(self.request.POST['egs_json'])
+        for i, eg in enumerate(egs):
+            try:
+                eg_form = forms.EndpointGroupForm(eg,
+                    instance=models.EndpointGroup.objects.get(endpoint=self.object, dose_group_id=i),
+                    endpoint=self.object)
+            except:
+                eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
+            if eg_form.is_valid():
+                valid_forms.append(eg_form)
+            else:
+                self.egs_errors = form_error_list_to_ul(eg_form)
+                return self.form_invalid(form)
 
         #now, save each form, and delete any existing dose groups greater than max
         for form in valid_forms:

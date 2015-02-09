@@ -26,6 +26,7 @@ urlpatterns = patterns('animal.views',
     url(r'^animal-group/(?P<pk>\d+)/$', views.AnimalGroupRead.as_view(), name='animal_group_detail'),
     url(r'^animal-group/(?P<pk>\d+)/edit/$', views.AnimalGroupUpdate.as_view(), name='animal_group_update'),
     url(r'^animal-group/(?P<pk>\d+)/delete/$', views.AnimalGroupDelete.as_view(), name='animal_group_delete'),
+    url(r'^animal-group/(?P<pk>\d+)/endpoint/copy-as-new-selector/$', views.EndpointCopyAsNewSelector.as_view(), name='endpoint_copy_selector'),
 
     # Dosing Regime
     url(r'^dosing-regime/(?P<pk>\d+)/edit/$', views.DosingRegimeUpdate.as_view(), name='dosing_regime_update'),

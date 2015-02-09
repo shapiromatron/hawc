@@ -9,8 +9,7 @@ from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 
-from selectable.forms import AutoCompleteSelectMultipleField, AutoCompleteSelectField
-from selectable.forms.widgets import AutoCompleteWidget
+from selectable import forms as selectable
 
 from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
@@ -94,11 +93,11 @@ class AnimalGroupForm(ModelForm):
 
         self.helper = self.setHelper()
 
-        self.fields['lifestage_exposed'].widget = AutoCompleteWidget(
+        self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
             allow_new=True)
 
-        self.fields['lifestage_assessed'].widget = AutoCompleteWidget(
+        self.fields['lifestage_assessed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageAssessedLookup,
             allow_new=True)
 
@@ -248,7 +247,7 @@ def dosegroup_formset_factory(groups, num_dose_groups):
 
 class EndpointForm(ModelForm):
 
-    effects = AutoCompleteSelectMultipleField(
+    effects = selectable.AutoCompleteSelectMultipleField(
         lookup_class=EffectTagLookup,
         required=False,
         help_text="Any additional descriptive-tags used to categorize the outcome",
@@ -268,31 +267,32 @@ class EndpointForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
+        assessment = kwargs.pop('assessment', None)
         super(EndpointForm, self).__init__(*args, **kwargs)
 
         self.fields['NOAEL'].widget = forms.Select()
         self.fields['LOAEL'].widget = forms.Select()
         self.fields['FEL'].widget = forms.Select()
 
-        self.fields['system'].widget = AutoCompleteWidget(
+        self.fields['system'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EndpointSystemLookup,
             allow_new=True)
 
-        self.fields['organ'].widget = AutoCompleteWidget(
+        self.fields['organ'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EndpointOrganLookup,
             allow_new=True)
 
-        self.fields['effect'].widget = AutoCompleteWidget(
+        self.fields['effect'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EndpointEffectLookup,
             allow_new=True)
 
-        self.fields['statistical_test'].widget = AutoCompleteWidget(
+        self.fields['statistical_test'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EndpointStatisticalTestLookup,
             allow_new=True)
 
         if animal_group:
             self.instance.animal_group = animal_group
-            self.instance.assessment = animal_group.get_assessment()
+            self.instance.assessment = assessment
 
         self.helper = self.setHelper()
 
@@ -400,6 +400,19 @@ class EndpointGroupForm(ModelForm):
         else:
             if cleaned_data.get("incidence") is None:
                 raise ValidationError('Incidence must be numeric')
+
+
+class EndpointSelectorForm(forms.Form):
+    model = models.Endpoint
+    selector = selectable.AutoCompleteSelectField(
+        lookup_class=lookups.EndpointByStudyLookup,
+        label='Endpoint',
+        widget=selectable.AutoComboboxSelectWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(EndpointSelectorForm, self).__init__(*args, **kwargs)
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span11'
 
 
 class UploadFileForm(forms.Form):
@@ -583,7 +596,7 @@ class EndpointSearchForm(forms.Form):
 
     endpoint_name = forms.CharField(required=False)
 
-    tags = AutoCompleteSelectField(
+    tags = selectable.AutoCompleteSelectField(
         lookup_class=EffectTagLookup,
         label='Endpoint effect tag',
         required=False,
@@ -638,7 +651,7 @@ class DoseUnitsForm(ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
         super(DoseUnitsForm, self).__init__(*args, **kwargs)
-        self.fields['units'].widget = AutoCompleteWidget(
+        self.fields['units'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup,
             allow_new=True)
         for fld in self.fields.keys():
@@ -649,35 +662,35 @@ class EndpointFilterForm(forms.Form):
 
     study = forms.CharField(
         label='Study reference',
-        widget=AutoCompleteWidget(AnimalStudyLookup),
+        widget=selectable.AutoCompleteWidget(AnimalStudyLookup),
         help_text="ex: Smith et al. 2010",
         required=False)
 
     cas  = forms.CharField(
         label='CAS',
-        widget=AutoCompleteWidget(lookups.ExperimentCASLookup),
+        widget=selectable.AutoCompleteWidget(lookups.ExperimentCASLookup),
         help_text="ex: 107-02-8",
         required=False)
 
     lifestage_exposed  = forms.CharField(
         label='Lifestage exposed',
-        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
         help_text="ex: pup",
         required=False)
 
     lifestage_assessed = forms.CharField(
         label='Lifestage assessed',
-        widget=AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
         help_text="ex: adult",
         required=False)
 
-    species = AutoCompleteSelectField(
+    species = selectable.AutoCompleteSelectField(
         label='Species',
         lookup_class=lookups.SpeciesLookup,
         help_text="ex: Mouse",
         required=False)
 
-    strain = AutoCompleteSelectField(
+    strain = selectable.AutoCompleteSelectField(
         label='Strain',
         lookup_class=lookups.StrainLookup,
         help_text="ex: B6C3F1",
@@ -695,25 +708,25 @@ class EndpointFilterForm(forms.Form):
 
     system  = forms.CharField(
         label='System',
-        widget=AutoCompleteWidget(lookups.EndpointSystemLookup),
+        widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
         help_text="ex: endocrine",
         required=False)
 
     organ  = forms.CharField(
         label='Organ',
-        widget=AutoCompleteWidget(lookups.EndpointOrganLookup),
+        widget=selectable.AutoCompleteWidget(lookups.EndpointOrganLookup),
         help_text="ex: pituitary",
         required=False)
 
     effect  = forms.CharField(
         label='Effect',
-        widget=AutoCompleteWidget(lookups.EndpointEffectLookup),
+        widget=selectable.AutoCompleteWidget(lookups.EndpointEffectLookup),
         help_text="ex: alanine aminotransferase (ALT)",
         required=False)
 
     tags  = forms.CharField(
         label='Tags',
-        widget=AutoCompleteWidget(EffectTagLookup),
+        widget=selectable.AutoCompleteWidget(EffectTagLookup),
         help_text="ex: antibody response",
         required=False)
 

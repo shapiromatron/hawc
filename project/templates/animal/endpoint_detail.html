@@ -22,10 +22,7 @@
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
           {% if obj_perms.edit %}
-
-            <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
             <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
             <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>

@@ -54,6 +54,27 @@ class EndpointStatisticalTestLookup(DistinctStringLookup):
     distinct_field = "statistical_test"
 
 
+class EndpointByStudyLookup(ModelLookup):
+    # Return names of endpoints available for a particular study
+    model = models.Endpoint
+    search_fields = ('name__icontains', 'animal_group__name__icontains')
+    filter_string = 'animal_group__experiment__study'
+
+    def get_query(self, request, term):
+        try:
+            pk = int(request.GET.get('related'))
+        except Exception:
+            return self.model.objects.none()
+        filters = {self.filter_string: pk}
+        return self.model.objects.filter(**filters).order_by('animal_group')
+
+    def get_item_label(self, obj):
+        return u"{} | {} | {}".format(obj.animal_group.experiment, obj.animal_group, obj)
+
+    def get_item_value(self, obj):
+        return u"{} | {} | {}".format(obj.animal_group.experiment, obj.animal_group, obj)
+
+
 registry.register(SpeciesLookup)
 registry.register(StrainLookup)
 registry.register(ExperimentCASLookup)
@@ -64,3 +85,4 @@ registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)
 registry.register(EndpointStatisticalTestLookup)
+registry.register(EndpointByStudyLookup)
