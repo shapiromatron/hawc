@@ -1303,7 +1303,7 @@ DescriptiveTable.prototype = {
             if(opts.annotate){
                 td.append('<br>', $('<span class="muted">').text(opts.annotate));
             }
-            this._tbody.append($('<tr></tr>').append($("<th>").text(description))
+            this._tbody.append($('<tr></tr>').append($("<th>").html(description))
                                              .append(td));
         }
     }, add_tbody_tr_list: function(description, list_items){
