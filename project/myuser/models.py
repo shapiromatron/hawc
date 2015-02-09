@@ -39,8 +39,7 @@ class HAWCMgr(BaseUserManager):
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
     objects = HAWCMgr()
-    email = models.EmailField(verbose_name="Email address (username)",
-                              max_length=254, unique=True, db_index=True)
+    email = models.EmailField(max_length=254, unique=True, db_index=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
