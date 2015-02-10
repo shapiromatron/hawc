@@ -48,16 +48,20 @@ class Search(models.Model):
         max_length=1,
         choices=SEARCH_TYPES)
     source = models.PositiveSmallIntegerField(
-        choices=SEARCH_SOURCES)
+        choices=SEARCH_SOURCES,
+        help_text="Database used to identify literature.")
     title = models.CharField(
-        max_length=128)
+        max_length=128,
+        help_text="A brief-description to describe the identified literature.")
     slug = models.SlugField(
         verbose_name="URL Name",
         help_text="The URL (web address) used to describe this object "
                   "(no spaces or special-characters).")
-    description = models.TextField()
+    description = models.TextField(
+        blank=True,
+        help_text="A more detailed description of the literature search or import strategy.")
     search_string = models.TextField(
-        help_text="The exact text used to search using an online database. "
+        help_text="The search-text used to query an online database. "
                   "Use colors to separate search-terms (optional).")
     created = models.DateTimeField(
         auto_now_add=True)

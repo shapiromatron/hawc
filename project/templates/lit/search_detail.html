@@ -36,7 +36,9 @@
       <col style="width: 70%;">
     </colgroup>
     <tbody>
-      <tr><th>Description</th><td>{{object.description}}</td></tr>
+      {% if object.description %}
+        <tr><th>Description</th><td>{{object.description}}</td></tr>
+      {% endif %}
       <tr><th>Search Type</th><td>{{object.get_search_type_display}}</td></tr>
       <tr><th>Search Database</th><td>{{object.get_source_display}}</td></tr>
       <tr><th>Search Text</th><td>{{object.search_string|safe}}</td></tr>

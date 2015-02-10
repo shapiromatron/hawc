@@ -1,6 +1,8 @@
+from django.core.urlresolvers import reverse_lazy
 from django import forms
 
 from assessment.models import Assessment
+from utils.forms import BaseFormHelper
 
 from . import models
 
@@ -20,35 +22,74 @@ class SearchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
         super(SearchForm, self).__init__(*args, **kwargs)
-        self.fields['source'].choices = [(1, 'PubMed')] # only current choice
-        self.fields['description'].widget.attrs['rows'] = 3
-        self.fields['search_string'].widget.attrs['rows'] = 5
         self.instance.search_type = 's'
         if assessment:
             self.instance.assessment = assessment
 
+        self.fields['source'].choices = [(1, 'PubMed')] # only current choice
+        self.fields['description'].widget.attrs['rows'] = 3
+        self.fields['search_string'].widget.attrs['rows'] = 5
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing literature search",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new literature search",
+                "help_text":   u"""
+                    Create a new literature search. Note that upon creation,
+                    the search will not be executed, but can instead by run on
+                    the next page. The search should be well-tested before
+                    attempting to import into HAWC.""",
+                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
 
 class ImportForm(SearchForm):
 
-    title_str = 'Literature Import'
-    help_text = ('Create a new literature import. This will attempt to '
-                 'interact with an external database, and will import a '
-                 'specific subset of literature identified by primary keys '
-                 'specified by the user. Thus, this is an import or known '
-                 'references, not a search.')
-
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop('parent', None)
         super(ImportForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
         self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."
         self.fields['search_string'].label = "ID List"
-        self.fields['description'].widget.attrs['rows'] = 3
-        self.fields['search_string'].widget.attrs['rows'] = 5
         self.instance.search_type = 'i'
-        if assessment:
-            self.instance.assessment = assessment
 
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing literature search",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new literature import",
+                "help_text":   u"""
+                    Import a list of literature from an external database by
+                    specifying a comma-separated list of primary keys from the
+                    database. This is an import or known references, not a
+                    search based on a query.""",
+                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
 
     def clean_search_string(self):
         # make sure that it returns a list of positive unique integers

@@ -1,6 +1,6 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {{assessment}} | Literature Review | {{crud}} {{type|lower}} | HAWC
@@ -23,42 +23,8 @@
 {% endblock %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
-    <fieldset>
-      {% if crud == "Create" %}
-        <legend>Create new {{form.title_str|lower}}</legend>
-        <span class="help-block">{{form.help_text}}</span><br>
-      {% elif crud == "Update" %}
-         <legend>Update  {{ object }} </legend>
-         <span class="help-block">Update an existing literature search.</span><br>
-      {% endif %}
 
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-      {% for field in form %}
-        <div class="control-group form-row">
-          {{field.label_tag|add_class:"control-label"}}
-          <div class="controls">
-            {{field|add_class:"span12"}}
-            <span class='help-inline'>{{field.help_text}}</span>
-          </div>
-          {{field.errors|add_class:"alert alert-error"}}
-        </div>
-      {% endfor %}
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} literature {{type|lower}}</button>
-        {% if crud == "Create" %}
-          <a href="{% url 'lit:search_list' assessment.pk %}" class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-
-      {% csrf_token %}
-
-    </fieldset>
-  </form>
+  {% crispy form %}
 
 {% endblock %}
 
@@ -85,7 +51,6 @@
             "image": false
         });
       {% endif %}
-
 
       // autogenerate slugs
       var slugify = function(txt){
