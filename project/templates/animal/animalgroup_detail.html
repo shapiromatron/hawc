@@ -81,11 +81,12 @@
           </tr>
         {% endif %}
 
+        {% if object.siblings %}
         <tr>
           <th>Siblings</th>
-          <td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>
-              {% else %}None{% endif %}</td>
+          <td><a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a></td>
         </tr>
+        {% endif %}
 
         {% if object.is_generational %}
           <tr>
@@ -108,7 +109,7 @@
     <!-- Dosing-Regime -->
     {% if object.dosing_regime %}
       <h2>Dosing Regime</h2>
-      {% include "animal/_dosing_regime.html" with object=object.dosing_regime %}
+      {% include "animal/_dosing_regime.html" with animal_group=object object=object.dosing_regime %}
     {% endif %}
 
     <!-- Endpoints -->

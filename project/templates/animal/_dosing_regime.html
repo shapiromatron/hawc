@@ -4,10 +4,16 @@
     <col style="width: 70%;">
   </colgroup>
   <tbody>
-    {{print_dosed}}
-    <tr><th>Dosed animals</th><td>{{object.dosed_animals}}</td></tr>
+
+    {% if animal_group != object.dosed_animals %}
+      <tr><th>Dosed animals</th><td>
+        <a href="{{object.dosed_animals.get_absolute_url}}">{{object.dosed_animals}}</a>
+      </td></tr>
+    {% endif %}
     <tr><th>Route of exposure</th><td>{{object.get_route_of_exposure_display}}</td></tr>
-    <tr><th>Exposure duration</th><td>{{object.duration_exposure}} days</td></tr>
+    {% if object.duration_exposure %}
+      <tr><th>Exposure duration</th><td>{{object.duration_exposure}} days</td></tr>
+    {% endif %}
     <tr><th>Number of dose groups</th><td>{{object.num_dose_groups}}</td></tr>
     <tr>
       <th>Doses</th>
@@ -32,6 +38,8 @@
         </table>
       </td>
     </tr>
-    <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+    {% if object.description %}
+      <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+    {% endif %}
   </tbody>
 </table>
