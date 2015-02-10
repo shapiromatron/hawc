@@ -13,6 +13,7 @@
 {% endblock title %}
 
 {% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
   {% include_ui_theme %}
 {% endblock %}
 
@@ -36,7 +37,9 @@
   {% crispy form %}
 
   <!-- Dosing Regime Form and Dose-Groups -->
+  <!-- <div id="dosing_regime"> -->
   {% if crud == "Create" %}
+
     {% crispy form_dosing_regime %}
     <div id="doseGroupsDiv">
       <!-- Dose-Groups -->
@@ -59,7 +62,7 @@
     </div>
 
   {% endif %}
-
+  <!-- </div> -->
 
 {% endblock %}
 
@@ -70,8 +73,9 @@
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}animal/js/animal_group_form.js" type="text/javascript"></script>
   <script type="text/javascript">
-    // $('#id_description').wysihtml5({"stylesheets": false});
     $(document).ready(function() {
+
+      // $('#id_description').wysihtml5({"stylesheets": false});
 
       // reorganize forms
       $('.addSpecies').insertAfter($('#id_species'))
@@ -100,6 +104,7 @@
         });
       };
       $('#id_species').on('change', load_strains);
+      load_strains();
 
       //form submission
       $('#animal_group').submit(function(){
@@ -107,14 +112,11 @@
         return true;
       });
 
-      // initial startup
-      load_strains();
       dose_types = {{dose_types|safe}};
 
       {% if dose_groups_json %}
         dose_values = {{dose_groups_json|safe}};
       {% endif %}
-
       doses = new dose_array({{dose_groups_json|safe}});
 
       // set handlers

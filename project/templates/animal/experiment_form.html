@@ -32,6 +32,23 @@
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script type="text/javascript">
-    $('#id_description').wysihtml5({"stylesheets": false});
+    $(document).ready(function(){
+      $('#id_description').wysihtml5({"stylesheets": false});
+
+      var pa = $('#id_purity_available'),
+          purity = $('#id_purity'),
+          purityDiv = purity.parent().parent(),
+          showPurity = function(){
+            if (pa.prop('checked')){
+              purityDiv.show();
+            } else {
+              purityDiv.hide();
+              purity.val("");
+            }
+          };
+      pa.on('click', showPurity);
+      showPurity();
+
+    });
   </script>
 {% endblock extrajs %}

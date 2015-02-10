@@ -49,7 +49,9 @@ class ExperimentForm(ModelForm):
                     Create a new experiment. Each experiment is a associated with a
                     study, and may have one or more collections of animals. For
                     example, one experiment may be a 2-year cancer bioassay,
-                    while another multi-generational study.""",
+                    while another multi-generational study. It is possible to
+                    create multiple separate experiments within a single study,
+                    with different study-designs, durations, or test-species.""",
                 "cancel_url": self.instance.study.get_absolute_url()
             }
 
@@ -62,16 +64,25 @@ class ExperimentForm(ModelForm):
     def clean(self):
         super(ExperimentForm, self).clean()
 
-        # If purity available, then purity must be non-blank
-        if self.cleaned_data['purity_available']:
-            if self.cleaned_data.get('purity', None) is None:
-                raise ValidationError("If purity data are available, value must be provided.")
-
-        # If purity was provided, make sure purity_availalbe is True
+        # If purity was provided, make sure purity_available is True
         if self.cleaned_data.get('purity', None) is not None:
             self.cleaned_data['purity_available'] = True
 
         return self.cleaned_data
+
+    def clean_purity(self):
+        purity = self.cleaned_data.get("purity", None)
+        purity_available = self.cleaned_data.get("purity_available")
+        if purity_available and purity is None:
+            raise forms.ValidationError("If purity data are available, value must be provided.")
+        return purity
+
+    def clean_purity_available(self):
+        purity = self.cleaned_data.get("purity", None)
+        purity_available = self.cleaned_data.get("purity_available")
+        if purity is not None:
+            purity_available = True
+        return purity_available
 
 
 class AnimalGroupForm(ModelForm):
@@ -91,8 +102,6 @@ class AnimalGroupForm(ModelForm):
             self.fields['strain'].queryset = models.Strain.objects.filter(
                 species=self.instance.species)
 
-        self.helper = self.setHelper()
-
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
             allow_new=True)
@@ -104,7 +113,16 @@ class AnimalGroupForm(ModelForm):
         self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
                 experiment=self.instance.experiment)
 
+        self.helper = self.setHelper()
+
     def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if fld in ["species", "strain"]:
+                widget.attrs['class'] = 'span10'
+            else:
+                widget.attrs['class'] = 'span12'
+
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
@@ -124,10 +142,14 @@ class AnimalGroupForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
         helper.form_id = "animal_group"
-        helper['name'].wrap(cfl.Field, css_class="span6")
         helper.add_adder("addSpecies", "Add new species", '{% url "animal:species_create" assessment.pk %}')
         helper.add_adder("addStrain", "Add new strain", '{% url "animal:strain_create" assessment.pk %}')
+        helper.add_fluid_row('species', 3, "span4")
+        helper.add_fluid_row('lifestage_exposed', 3, "span4")
+        if "generation" in self.fields:
+            helper.add_fluid_row('siblings', 3, "span4")
         return helper
 
 
@@ -157,6 +179,11 @@ class DosingRegimeForm(ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
+
+        self.fields['description'].widget.attrs['rows'] = 4
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span12'
+
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update dosing regime",
@@ -170,14 +197,15 @@ class DosingRegimeForm(ModelForm):
                     Create a new dosing-regime. Each dosing-regime is one
                     protocol for how animals were dosed. Multiple different
                     dose-metrics can be associated with one dosing regime. If
-                    this is a generational-experiment, an existing dosing-regime
-                    may also be specified.""",
+                    this is a generational-experiment, you may not need to create
+                    a new dosing-regime, but could instead specify the dosing
+                    regime of parents or other ancestors.""",
             }
 
         helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
         helper.form_id = "dosing_regime"
-        helper['route_of_exposure'].wrap(cfl.Field, css_class="span6")
-        helper['description'].wrap(cfl.Field, css_class="span12")
+        helper.add_fluid_row('route_of_exposure', 3, "span4")
         return helper
 
 
@@ -294,6 +322,11 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
+        self.fields["name"].help_text="""
+            Short-text used to describe the endpoint.
+            Should include observation-time,
+            if multiple endpoints have the same observation time."""
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -307,8 +340,9 @@ class EndpointForm(ModelForm):
             inputs = {
                 "legend_text": u"Create new endpoint",
                 "help_text":   u"""
-                    Create a new endpoint. Each endpoint is associated with
-                    one animal-group.""",
+                    Create a new endpoint. An endpoint may should describe one
+                    measure-of-effect which was measured in the study. It may
+                    or may not contain quantitative data.""",
                 "cancel_url": self.instance.animal_group.get_absolute_url()
             }
 

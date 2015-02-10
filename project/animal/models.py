@@ -69,17 +69,22 @@ class Experiment(models.Model):
         'study.Study',
         related_name='experiments')
     name = models.CharField(
-        max_length=80)
+        max_length=80,
+        help_text="Short-text used to describe the experiment "
+                  "(i.e. 2-year cancer bioassay, 28-day inhalation, etc.).")
     type = models.CharField(
         max_length=2,
-        choices=EXPERIMENT_TYPE_CHOICES)
+        choices=EXPERIMENT_TYPE_CHOICES,
+        help_text="Type of study being performed; be as specific as-possible")
     cas = models.CharField(
         max_length=40,
         blank=True,
-        verbose_name="Chemical identifier (CAS)")
+        verbose_name="Chemical identifier (CAS)",
+        help_text="CAS number for chemical-tested, if available.")
     purity_available = models.BooleanField(
         default=True,
-        verbose_name="Chemical purity available?")
+        verbose_name="Chemical purity available?",
+        help_text="Was the purity of the chemical described in the study?")
     purity = models.FloatField(
         blank=True,
         null=True,
@@ -87,7 +92,11 @@ class Experiment(models.Model):
         help_text="Assumed to be greater-than numeric-value specified (ex: > 95.5%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)])
     description = models.TextField(
-        blank=True)
+        blank=True,
+        help_text="Describe high-level experimental protocol used. Other fields "
+                  "are available in subsequent forms to enter the species, strain, "
+                  "and dosing-protocol. However, this may be a useful field to "
+                  "describe the overall purpose and experimental design.")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -165,7 +174,9 @@ class AnimalGroup(models.Model):
         Experiment,
         related_name="animal_groups")
     name = models.CharField(
-        max_length=80)
+        max_length=80,
+        help_text="Short description of the animals (i.e. Male Fischer F344 rats, Female C57BL/6 mice)"
+        )
     species = models.ForeignKey(
         Species)
     strain = models.ForeignKey(
@@ -173,11 +184,6 @@ class AnimalGroup(models.Model):
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
-    duration_observation = models.FloatField(
-        verbose_name="Observation duration (days)",
-        help_text="Length of observation period, in days (fractions allowed)",
-        blank=True,
-        null=True)
     lifestage_exposed = models.CharField(
         max_length=32,
         blank=True,
@@ -189,6 +195,11 @@ class AnimalGroup(models.Model):
         blank=True,
         help_text='Textual life-stage description when endpoints were measured '
                   '(examples include: "parental, PND18, juvenile, adult, multiple")')
+    duration_observation = models.FloatField(
+        verbose_name="Observation duration (days)",
+        help_text="Numeric length of observation period, in days (fractions allowed)",
+        blank=True,
+        null=True)
     siblings = models.ForeignKey(
         "self",
         blank=True,
@@ -366,7 +377,7 @@ class DosingRegime(models.Model):
         choices=ROUTE_EXPOSURE)
     duration_exposure = models.FloatField(
         verbose_name="Exposure duration (days)",
-        help_text="Length of exposure period, in days (fractions allowed)",
+        help_text="Numeric length of exposure period, in days (fractions allowed)",
         blank=True,
         null=True)
     num_dose_groups = models.PositiveSmallIntegerField(
@@ -374,7 +385,8 @@ class DosingRegime(models.Model):
         validators=[MinValueValidator(1)],
         verbose_name="Number of Dose Groups")
     description = models.TextField(
-        blank=True)
+        blank=True,
+        help_text="Detailed description of dosing methodology (i.e. exposed via inhalation 5 days/week for 6 hours)")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -554,16 +566,22 @@ class Endpoint(BaseEndpoint):
         related_name="endpoints")
     system = models.CharField(
         max_length=128,
-        blank=True)
+        blank=True,
+        help_text="Relevant biological system")
     organ = models.CharField(
         max_length=128,
-        blank=True)
+        blank=True,
+        verbose_name="Organ (and tissue)",
+        help_text="Relevant organ; also include tissue if relevant")
     effect = models.CharField(
         max_length=128,
-        blank=True)
+        blank=True,
+        help_text="Effect, using common-vocabulary")
     observation_time = models.FloatField(
         blank=True,
-        null=True)
+        null=True,
+        help_text="Numeric value of the time an observation was reported; "
+                  "optional, should be recorded if the same effect was measured multiple times.")
     observation_time_units = models.PositiveSmallIntegerField(
         default=0,
         choices=OBSERVATION_TIME_UNITS)
@@ -574,7 +592,8 @@ class Endpoint(BaseEndpoint):
                   "(ex: Figure 1, Table 2, etc.)")
     response_units = models.CharField(
         max_length=15,
-        verbose_name="Response units")
+        verbose_name="Response units",
+        help_text=u"Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)")
     data_type = models.CharField(
         max_length=2,
         choices=DATA_TYPE_CHOICES,
@@ -590,13 +609,16 @@ class Endpoint(BaseEndpoint):
         help_text='A 95% CI is written as 0.95.')
     NOAEL = models.SmallIntegerField(
         verbose_name="NOAEL",
-        default=-999)
+        default=-999,
+        help_text="No observed (adverse) effect level")
     LOAEL = models.SmallIntegerField(
         verbose_name="LOAEL",
-        default=-999)
+        default=-999,
+        help_text="Lowest observed (adverse) effect level")
     FEL = models.SmallIntegerField(
         verbose_name="FEL",
-        default=-999)
+        default=-999,
+        help_text="Frank effect level")
     data_reported = models.BooleanField(
         default=True,
         help_text="Dose-response data for endpoint are available in the literature source")
