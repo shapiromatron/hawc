@@ -32,12 +32,14 @@ class Study(Reference):
         (3, 'Not reported'))
 
     study_type = models.PositiveSmallIntegerField(
-        choices=STUDY_TYPE_CHOICES)
+        choices=STUDY_TYPE_CHOICES,
+        help_text="Type of data captured in the selected study. "
+                  "This determines which fields are required for data-extraction.")
     short_citation = models.CharField(
         max_length=256,
-        blank=False) # initial guess provided from reference; can be edited
+        help_text="How the study should be identified (i.e. Smith et al. (2012), etc.)")
     full_citation = models.TextField(
-        blank=False) # initial guess provided from reference; can be edited
+        help_text="Complete study citation, in desired format.")
     coi_reported = models.PositiveSmallIntegerField(
         choices=COI_REPORTED_CHOICES,
         default=0,
@@ -56,20 +58,22 @@ class Study(Reference):
                   "(for example, \"{Author, year, #EndnoteNumber}\")")
     contact_author = models.BooleanField(
         default=False,
-        help_text="Does author need to be contacted?")
+        help_text="Was the author contacted for clarification of methods or results?")
     ask_author = models.TextField(
         blank=True,
-        help_text="Details on author correspondence")
+        verbose_name="Correspondence details",
+        help_text="Details on correspondence between data-extractor and author, if needed.")
     published = models.BooleanField(
         default=False,
-        help_text="If True, reviewers and the public can see study "
+        help_text="If True, this study, risk-of-bias, and extraction details "
+                  "may be visible to reviewers and/or the general public "
                   "(if assessment-permissions allow this level of visibility). "
-                  "Team-members can always see studies, even if they are "
-                  "not-yet published.")
+                  "Team-members and project-management can view both "
+                  "published and unpublished studies.")
     summary = models.TextField(
         blank=True,
-        help_text="Study summary as written by team-members, or details on "
-                  "data-extraction requirements by project-management")
+        verbose_name="Summary and/or extraction requirements",
+        help_text="Study summary or details on data-extraction needs.")
 
     class Meta:
         verbose_name_plural = "Studies"

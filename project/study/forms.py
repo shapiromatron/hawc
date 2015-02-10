@@ -35,7 +35,7 @@ class BaseStudyForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self, inputs={}):
-        for fld in ('full_citation', 'coi_details', 'funding_source', 'ask_author', 'summary'):
+        for fld in ('full_citation', 'coi_details', 'funding_source', 'ask_author'):
             self.fields[fld].widget.attrs['rows'] = 3
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
@@ -45,6 +45,7 @@ class BaseStudyForm(forms.ModelForm):
                 widget.attrs['class'] = 'checkbox'
 
         helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
         helper.add_fluid_row('short_citation', 2, "span6")
         helper.add_fluid_row('coi_reported', 2, "span6")
         helper.add_fluid_row('contact_author', 2, "span6")
@@ -209,6 +210,7 @@ class SQForm(forms.ModelForm):
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
         self.fields['notes'].widget.attrs['class'] = 'html5text span12'
+        self.fields['notes'].widget.attrs['rows'] = 4
         if study:
             self.instance.study = study
 
