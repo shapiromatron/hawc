@@ -1,39 +1,20 @@
 from django.core.mail import send_mail, mail_admins
 from django import forms
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
 
-from selectable.forms import AutoCompleteSelectMultipleField, AutoCompleteWidget
+from selectable.forms import AutoCompleteWidget, AutoCompleteSelectMultipleWidget
 from pagedown.widgets import PagedownWidget
 from markdown_deux import markdown
+from utils.forms import BaseFormHelper, remove_holddown
 
 from myuser.lookups import HAWCUserLookup
 
-from . import models
-from . import lookups
+from . import models, lookups
 
 
 class AssessmentForm(forms.ModelForm):
 
-    project_manager = AutoCompleteSelectMultipleField(
-        lookup_class=HAWCUserLookup,
-        label='Project Manager(s)',
-        help_text='Have full assessment control, including the ability to add team members, make public, or delete an assessment',
-        required=True,
-    )
-
-    team_members = AutoCompleteSelectMultipleField(
-        lookup_class=HAWCUserLookup,
-        label='Team Member(s)',
-        help_text='Can view and edit assessment components, when the project is editable',
-        required=False,
-    )
-
-    reviewers = AutoCompleteSelectMultipleField(
-        lookup_class=HAWCUserLookup,
-        label='Reviewers(s)',
-        help_text='Can view assessment components in read-only mode; can also add comments.',
-        required=False,
-    )
     class Meta:
         exclude = ('enable_literature_review',
                    'enable_data_extraction',
@@ -43,6 +24,52 @@ class AssessmentForm(forms.ModelForm):
                    'enable_summary_text',
                    'enable_comments')
         model = models.Assessment
+
+    def __init__(self, *args, **kwargs):
+        super(AssessmentForm, self).__init__(*args, **kwargs)
+
+        self.fields['project_manager'].widget = AutoCompleteSelectMultipleWidget(
+            lookup_class=HAWCUserLookup)
+        self.fields['team_members'].widget = AutoCompleteSelectMultipleWidget(
+            lookup_class=HAWCUserLookup)
+        self.fields['reviewers'].widget = AutoCompleteSelectMultipleWidget(
+            lookup_class=HAWCUserLookup)
+
+        remove_holddown(self, ('project_manager', 'team_members', 'reviewers'))
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing HAWC assessment.<br><br>* required fields",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new assessment",
+                "help_text":   u"""
+                    Assessments are the fundamental objects in HAWC; all data added to the
+                    tool will be related to an assessment. The settings below are used to
+                    describe the basic characteristics of the assessment, along with setting
+                    up permissions for role-based authorization and access for viewing and
+                    editing content associated with an assessment.<br><br>* required fields""",
+                "cancel_url": reverse_lazy('portal')
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('version', 2, "span6")
+        helper.add_fluid_row('project_manager', 3, "span4")
+        return helper
 
 
 class AssessmentModulesForm(forms.ModelForm):

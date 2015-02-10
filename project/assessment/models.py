@@ -25,48 +25,82 @@ from .tasks import get_chemspider_details
 
 
 class Assessment(models.Model):
-    name = models.CharField(max_length=80, verbose_name='Assessment Name')
-    cas = models.CharField(max_length=40, blank=True,
-                           verbose_name="Chemical identifier (CAS)",
-                           help_text="Add a CAS number if assessment is for one chemical, otherwise leave-blank.")
-    year = models.PositiveSmallIntegerField(verbose_name='Assessment Year')  # not required - delete?
-    version = models.CharField(max_length=80, verbose_name='Assessment Version')  # http://stackoverflow.com/questions/522997/ todo: make autoincrement
-    project_manager = models.ManyToManyField(HAWCUser, related_name='assessment_pms', null=False,  # todo: move all these into one m2m table w/ metadata
-        help_text="Have full assessment control, including the ability to add team members, make public, or delete an assessment.")
-    team_members = models.ManyToManyField(HAWCUser, related_name='assessment_teams', null=True, blank=True,
-        help_text="Can view and edit assessment components, when the project is editable.")
-    reviewers = models.ManyToManyField(HAWCUser, related_name='assessment_reviewers', null=True, blank=True,
-        help_text="Can view assessment components in read-only mode; can also add comments.")
-    editable = models.BooleanField(default=True,
-        help_text='Team-members are allowed to edit assessment components.')
-    public = models.BooleanField(default=False,
-        help_text='The assessment and all components are publicly assessable.')
-    enable_literature_review = models.BooleanField(default=True,
+    name = models.CharField(
+        max_length=80,
+        verbose_name='Assessment Name',
+        help_text="Describe the objective of the health-assessment.")
+    year = models.PositiveSmallIntegerField(
+        verbose_name='Assessment Year',
+        help_text="Year with which the assessment should be associated.")
+    version = models.CharField(
+        max_length=80,
+        verbose_name='Assessment Version',
+        help_text="Version to describe the current assessment (i.e. draft, final, v1).")
+    cas = models.CharField(
+        max_length=40,
+        blank=True,
+        verbose_name="Chemical identifier (CAS)",
+        help_text="Add a single CAS-number if one is available to describe the "
+                  "assessment, otherwise leave-blank.")
+    project_manager = models.ManyToManyField(HAWCUser,
+        related_name='assessment_pms',
+        null=False,  # todo: move all these into one m2m table w/ metadata
+        help_text="Has complete assessment control, including the ability to "
+                  "add team members, make public, or delete an assessment. "
+                  "You can add multiple project-managers.")
+    team_members = models.ManyToManyField(HAWCUser,
+        related_name='assessment_teams',
+        null=True,
+        blank=True,
+        help_text="Can view and edit assessment components, "
+                  "if project is editable. "
+                  "You can add multiple team-members")
+    reviewers = models.ManyToManyField(HAWCUser,
+        related_name='assessment_reviewers',
+        null=True,
+        blank=True,
+        help_text="Can view the assessment even if the assessment is not public, "
+                  "but cannot add or change content. Reviewers may optionally add "
+                  "comments, if this feature is enabled. You can add multiple reviewers.")
+    editable = models.BooleanField(
+        default=True,
+        help_text='Project-managers and team-members are allowed to edit assessment components.')
+    public = models.BooleanField(
+        default=False,
+        help_text='The assessment can be viewed by the general public.')
+    enable_literature_review = models.BooleanField(
+        default=True,
         help_text="Search or import references from PubMed and other literature "
                   "databases, define inclusion, exclusion, or descriptive tags, "
                   "and apply these tags to retrieved literature for your analysis.")
-    enable_data_extraction = models.BooleanField(default=True,
+    enable_data_extraction = models.BooleanField(
+        default=True,
         help_text="Extract animal bioassay, epidemiological, or in-vitro data from "
                   "key references and create customizable, dynamic visualizations "
                   "or summary data and associated metadata for display.")
-    enable_study_quality = models.BooleanField(default=True,
+    enable_study_quality = models.BooleanField(
+        default=True,
         help_text="Define criteria for a systematic review of literature, and apply "
                   "these criteria to references in your literature-review. "
                   "View details on findings and identify areas with a potential "
                   "risk-of-bias.")
-    enable_bmd = models.BooleanField(default=True,
+    enable_bmd = models.BooleanField(
+        default=True,
         verbose_name="Enable BMD modeling",
         help_text="Conduct benchmark dose (BMD) modeling on animal bioassay data "
                   "available in the HAWC database, using the US EPA's Benchmark "
                   "Dose Modeling Software (BMDS).")
-    enable_reference_values = models.BooleanField(default=True,
+    enable_reference_values = models.BooleanField(
+        default=True,
         help_text="Define a point-of-departure, apply uncertainty factors, and "
                   "derive reference values by route of exposure.")
-    enable_summary_text = models.BooleanField(default=True,
+    enable_summary_text = models.BooleanField(
+        default=True,
         help_text="Create custom-text to describe methodology and results of the "
                   "assessment; insert tables, figures, and visualizations to using "
                   "\"smart-tags\" which link to other data in HAWC.")
-    enable_comments = models.BooleanField(default=True,
+    enable_comments = models.BooleanField(
+        default=True,
         help_text="Enable comments from reviewers or the general-public on "
                   "datasets or findings; comment-functionality and visibility "
                   "can be controlled in advanced-settings.")

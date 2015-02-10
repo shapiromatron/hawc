@@ -55,6 +55,7 @@ Create a PostgreSQL database and run the initial syncdb/migrate::
 Next, we'll run a few management command and apply migrations::
 
     python manage.py build_d3_styles
+    python manage.py syncdb
     python manage.py migrate
     python manage.py createcachetable dev_cache_table
 
