@@ -287,6 +287,7 @@ Endpoint.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("System", this.data.system);
     tbl.add_tbody_tr("Organ", this.data.organ);
     tbl.add_tbody_tr("Effect", this.data.effect);
+    tbl.add_tbody_tr("Diagnostic description", this.data.diagnostic);
 
     if(this.data.observation_time){
         tbl.add_tbody_tr("Observation time", "{0} {1}".printf(

@@ -38,6 +38,8 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(DosingRegimeSerializer, self).to_representation(instance)
         ret['route_of_exposure'] = instance.get_route_of_exposure_display()
+        ret['positive_control'] = instance.get_positive_control_display()
+        ret['negative_control'] = instance.get_negative_control_display()
         return ret
 
     class Meta:

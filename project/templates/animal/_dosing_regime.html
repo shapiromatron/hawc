@@ -15,10 +15,12 @@
       <tr><th>Exposure duration</th><td>{{object.duration_exposure}} days</td></tr>
     {% endif %}
     <tr><th>Number of dose groups</th><td>{{object.num_dose_groups}}</td></tr>
+    <tr><th>Positive control</th><td>{{object.get_positive_control_display}}</td></tr>
+    <tr><th>Negative control</th><td>{{object.get_negative_control_display}}</td></tr>
     <tr>
       <th>Doses</th>
       <td>
-        <table class="table table-condensed table-hover">
+        <table class="table table-condensed">
           <thead>
             <tr>
               {% for dose in object.get_dose_groups.0 %}

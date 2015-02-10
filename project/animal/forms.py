@@ -36,6 +36,15 @@ class ExperimentForm(ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        self.fields["description"].widget.attrs['rows'] = 3
+
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
@@ -56,9 +65,10 @@ class ExperimentForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper['name'].wrap(cfl.Field, css_class="span6")
-        helper['type'].wrap(cfl.Field, css_class="span6")
-        helper['description'].wrap(cfl.Field, css_class="span12")
+        helper.form_class = None
+        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('chemical', 3, "span4")
+        helper.add_fluid_row('purity_available', 2, "span4")
         return helper
 
     def clean(self):
@@ -206,6 +216,7 @@ class DosingRegimeForm(ModelForm):
         helper.form_class = None
         helper.form_id = "dosing_regime"
         helper.add_fluid_row('route_of_exposure', 3, "span4")
+        helper.add_fluid_row('positive_control', 2, "span6")
         return helper
 
 
@@ -284,7 +295,9 @@ class EndpointForm(ModelForm):
 
     class Meta:
         model = models.Endpoint
-        fields = ('name', 'system', 'organ', 'effect',  'effects',
+        fields = ('name',
+                  'system', 'organ', 'effect',
+                  'effects', 'diagnostic',
                   'observation_time', 'observation_time_units',
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'confidence_interval',
@@ -353,6 +366,7 @@ class EndpointForm(ModelForm):
                          "Add new effect tag",
                          '{% url "assessment:effect_tag_create" assessment.pk %}')
 
+        self.fields['diagnostic'].widget.attrs['rows'] = 2
         for fld in ('results_notes', 'endpoint_notes', 'power_notes'):
             self.fields[fld].widget.attrs['rows'] = 3
 
@@ -364,6 +378,7 @@ class EndpointForm(ModelForm):
                 widget.attrs['class'] = 'span12'
 
         helper.add_fluid_row('system', 3, "span4")
+        helper.add_fluid_row('effects', 2, "span6")
         helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('observation_time', 2, "span6")
         helper.add_fluid_row('data_reported', 4, "span4")

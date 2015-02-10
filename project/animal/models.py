@@ -76,21 +76,34 @@ class Experiment(models.Model):
         max_length=2,
         choices=EXPERIMENT_TYPE_CHOICES,
         help_text="Type of study being performed; be as specific as-possible")
+    chemical = models.CharField(
+        max_length=128,
+        verbose_name="Chemical name",
+        blank=True)
     cas = models.CharField(
         max_length=40,
         blank=True,
         verbose_name="Chemical identifier (CAS)",
         help_text="CAS number for chemical-tested, if available.")
+    chemical_source = models.CharField(
+        max_length=128,
+        verbose_name="Source of chemical",
+        blank=True)
     purity_available = models.BooleanField(
         default=True,
-        verbose_name="Chemical purity available?",
-        help_text="Was the purity of the chemical described in the study?")
+        verbose_name="Chemical purity available?")
     purity = models.FloatField(
         blank=True,
         null=True,
         verbose_name="Chemical purity (%)",
         help_text="Assumed to be greater-than numeric-value specified (ex: > 95.5%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)])
+    guideline_compliance = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="""Description of any compliance methods used (i.e. use of EPA
+            OECD, NTP, or other guidelines; conducted under GLP guideline
+            conditions, non-GLP but consistent with guideline study, etc.)""")
     description = models.TextField(
         blank=True,
         help_text="Describe high-level experimental protocol used. Other fields "
@@ -134,23 +147,29 @@ class Experiment(models.Model):
             'experiment-url',
             'experiment-name',
             'experiment-type',
+            'experiment-chemical',
             'experiment-cas',
+            'experiment-chemical_source',
             'experiment-purity_available',
             'experiment-purity',
+            'experiment-guideline_compliance',
             'experiment-description'
         )
 
     @staticmethod
-    def flat_complete_data_row(dic):
+    def flat_complete_data_row(ser):
         return (
-            dic['id'],
-            dic['url'],
-            dic['name'],
-            dic['type'],
-            dic['cas'],
-            dic['purity_available'],
-            dic['purity'],
-            dic['description']
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            ser['type'],
+            ser['chemical'],
+            ser['cas'],
+            ser['chemical_source'],
+            ser['purity_available'],
+            ser['purity'],
+            ser['guideline_compliance'],
+            ser['description']
         )
 
 
@@ -353,7 +372,7 @@ class DoseUnits(models.Model):
 
 class DosingRegime(models.Model):
 
-    ROUTE_EXPOSURE = (
+    ROUTE_EXPOSURE_CHOICES = (
         ("OC", u"Oral capsule"),
         ("OD", u"Oral diet"),
         ("OG", u"Oral gavage"),
@@ -363,9 +382,22 @@ class DosingRegime(models.Model):
         ("SI", u"Subcutaneous injection"),
         ("IP", u"Intraperitoneal injection"),
         ("IO", u"in ovo"),
+        ("P",  u"Parental"),
         ("W",  u"Whole body"),
         ("U",  u"Unknown"),
         ("O",  u"Other"))
+
+    POSITIVE_CONTROL_CHOICES = (
+        (True, "Yes"),
+        (False, "No"),
+        (None, "Unknown"))
+
+    NEGATIVE_CONTROL_CHOICES = (
+        ("NR", "Not-reported"),
+        ("UN", "Untreated"),
+        ("VT", "Vehicle-treated"),
+        ("B" , "Untreated + Vehicle-treated"),
+        ("N" , "None"))
 
     dosed_animals = models.OneToOneField(
         AnimalGroup,
@@ -374,7 +406,7 @@ class DosingRegime(models.Model):
         null=True)
     route_of_exposure = models.CharField(
         max_length=2,
-        choices=ROUTE_EXPOSURE)
+        choices=ROUTE_EXPOSURE_CHOICES)
     duration_exposure = models.FloatField(
         verbose_name="Exposure duration (days)",
         help_text="Numeric length of exposure period, in days (fractions allowed)",
@@ -384,6 +416,15 @@ class DosingRegime(models.Model):
         default=4,
         validators=[MinValueValidator(1)],
         verbose_name="Number of Dose Groups")
+    positive_control = models.NullBooleanField(
+        choices=POSITIVE_CONTROL_CHOICES,
+        default=None,
+        help_text="Was a positive control used?")
+    negative_control = models.CharField(
+        max_length=2,
+        default="NR",
+        choices=NEGATIVE_CONTROL_CHOICES,
+        help_text="Description of negative-controls used")
     description = models.TextField(
         blank=True,
         help_text="Detailed description of dosing methodology (i.e. exposed via inhalation 5 days/week for 6 hours)")
@@ -427,6 +468,8 @@ class DosingRegime(models.Model):
             "dosing_regime-route_of_exposure",
             "dosing_regime-duration_exposure",
             "dosing_regime-num_dose_groups",
+            "dosing_regime-positive_control",
+            "dosing_regime-negative_control",
             "dosing_regime-description",
         )
 
@@ -438,6 +481,8 @@ class DosingRegime(models.Model):
             ser['route_of_exposure'],
             ser['duration_exposure'],
             ser['num_dose_groups'],
+            ser['positive_control'],
+            ser['negative_control'],
             ser['description'],
         )
 
@@ -645,6 +690,9 @@ class Endpoint(BaseEndpoint):
     trend_result = models.PositiveSmallIntegerField(
         default=3,
         choices=TREND_RESULT_CHOICES)
+    diagnostic = models.TextField(
+        blank=True,
+        help_text="Diagnostic or method used to measure endpoint (if relevant)")
     power_notes = models.TextField(
         blank=True,
         help_text="Power of study-design to detect change from control")
@@ -836,6 +884,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-statistical_test",
             "endpoint-trend_value",
             "endpoint-trend_result",
+            "endpoint-diagnostic",
             "endpoint-power_notes",
             "endpoint-results_notes",
             "endpoint-endpoint_notes",
@@ -866,6 +915,7 @@ class Endpoint(BaseEndpoint):
             ser['monotonicity'],
             ser['statistical_test'],
             ser['trend_value'],
+            ser['diagnostic'],
             ser['trend_result'],
             ser['power_notes'],
             ser['results_notes'],
