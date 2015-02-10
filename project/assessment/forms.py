@@ -84,6 +84,27 @@ class AssessmentModulesForm(forms.ModelForm):
                   'enable_comments')
         model = models.Assessment
 
+    def __init__(self, *args, **kwargs):
+        super(AssessmentModulesForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = {
+            "legend_text": u"Update enabled modules",
+            "help_text":   u"""
+                HAWC is composed of multiple modules, each designed
+                to capture data and decisions related to specific components of a
+                health assessment. This screen allows a project-manager to change
+                which modules are enabled for this assessment. Modules can be
+                enabled or disabled at any time; content already entered into a particular
+                module will not be changed when enabling or disabling modules.
+                """,
+            "cancel_url": self.instance.get_absolute_url()
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
+
 
 class EffectTagForm(forms.ModelForm):
 

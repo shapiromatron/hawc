@@ -1,25 +1,16 @@
 {% extends 'assessment/assessment_form.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}
     {{block.super}}: enabled modules
 {% endblock title %}
 
 {% block extrastyle %}{% endblock %}
 
-
 {% block breadcrumbs %}
-    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active"> Update modules <span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active"> Update enabled modules <span class="divider">/</span></li>
 {% endblock breadcrumbs %}
-
-{% block form_legend %}
-    <legend>Update enabled modules</legend>
-    <p class="help-block">HAWC is composed of multiple modules, each designed
-        to capture data and decisions related to specific components of a
-        health assessment. This screen allows a project-manager to change
-        which modules are enabled for this assessment. Modules can be
-        enabled or disabled at any time; content already entered into a particular
-        module will not be changed when enabling or disabling modules.</p><br>
-{% endblock form_legend %}
 
 {% block extrajs %}{% endblock extrajs %}
