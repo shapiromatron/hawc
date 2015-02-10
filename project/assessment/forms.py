@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from selectable.forms import AutoCompleteWidget, AutoCompleteSelectMultipleWidget
 from pagedown.widgets import PagedownWidget
 from markdown_deux import markdown
-from utils.forms import BaseFormHelper, remove_holddown
+from utils.forms import BaseFormHelper, remove_holddown_helptext
 
 from myuser.lookups import HAWCUserLookup
 
@@ -35,7 +35,7 @@ class AssessmentForm(forms.ModelForm):
         self.fields['reviewers'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
 
-        remove_holddown(self, ('project_manager', 'team_members', 'reviewers'))
+        remove_holddown_helptext(self, ('project_manager', 'team_members', 'reviewers'))
 
         self.helper = self.setHelper()
 

@@ -85,10 +85,9 @@ class FormsetWithIgnoredFields(forms.BaseModelFormSet):
                     form.fields[field_name].initial = value
 
 
-def remove_holddown(form, fields):
+def remove_holddown_helptext(form, fields):
     """
-    This removes the unhelpful "Hold down the...." help texts for the
-    specified fields for a form.
+    Removes "Hold down the...." help-text for specified form fields.
     https://djangosnippets.org/snippets/2400/
     """
     remove_message = u'Hold down "Control", or "Command" on a Mac, to select more than one.'
