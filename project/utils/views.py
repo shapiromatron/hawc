@@ -423,3 +423,24 @@ class GenerateReport(BaseList):
         context = self.get_context(self.object_list)
         filename = self.get_filename()
         return template.apply_mailmerge(context, filename)
+
+
+class GenerateFixedReport(BaseList):
+    """
+    Generate a docx report given an assessment, data-type, using method as template.
+    """
+    ReportClass = None # required; class used to generate report
+
+    def get_context(self, queryset):
+        raise NotImplementedError("Requires report-context object")
+
+    def get_filename(self):
+        raise NotImplementedError("Requires dictionary return for mail-merge")
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context(self.object_list)
+        filename = self.get_filename()
+        report = self.ReportClass(filename, context)
+        report.apply_context()
+        return report.django_response()

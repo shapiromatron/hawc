@@ -1,3 +1,4 @@
+import abc
 from datetime import datetime
 import decimal
 import logging
@@ -11,6 +12,7 @@ from django.shortcuts import HttpResponse
 
 from rest_framework.renderers import JSONRenderer
 
+import docx
 import unicodecsv
 import xlsxwriter
 
@@ -254,3 +256,62 @@ class TSVFileBuilder(FlatFile):
         response = HttpResponse(self.output, content_type='text/tab-separated-values')
         response['Content-Disposition'] = 'attachment; filename="{}.tsv"'.format(self.filename)
         return response
+
+
+class DOCXReport(object):
+
+    def __init__(self, fn, context):
+        self.fn = fn
+        self.context = context
+        self.doc = docx.Document()
+
+    @abc.abstractmethod
+    def apply_context(self):
+        """
+        Main-method called to generate the content in a Word report
+        """
+        pass
+
+    def django_response(self):
+        """
+        Create an HttpResponse object with the appropriate headers.
+        """
+        docx_file = StringIO()
+        self.doc.save(docx_file)
+        docx_file.seek(0)
+        response = HttpResponse(docx_file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(self.fn)
+        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        return response
+
+    def build_table(self, numRows, numCols, cells):
+        """
+        Helper function to build a table.
+
+        - numRows: (int)
+        - numCols: (int)
+        - cells: (list) in the following format:
+            [
+                {"row":0, "col":0, "val":"value"},
+                {"row":1, "col":0, "val":"value", "rowspan": 2},
+                {"row":1, "col":0, "val":"value", "colspan": 2},
+            ]
+
+        """
+
+        tbl = self.doc.add_table(rows=numRows, cols=numCols, style=None)
+
+        for cell in cells:
+
+            # merge cells if needed
+            rowspan = cell.get("rowspan", None)
+            colspan = cell.get("colspan", None)
+            if rowspan or colspan:
+                rowIdx = cell["row"] + cell.get("rowspan", 1) - 1
+                colIdx = cell["col"] + cell.get("colspan", 1) - 1
+                tbl.cell(cell["row"], cell["col"]).merge(tbl.cell(rowIdx, colIdx))
+
+            # add content
+            tbl.cell(cell["row"], cell["col"]).paragraphs[0].text = cell["val"]
+
+        return tbl
