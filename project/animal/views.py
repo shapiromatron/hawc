@@ -262,9 +262,15 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = models.DoseUnits.json_all()
+
         if self.request.method == 'POST':  # send back dose-group errors
+            context['dose_groups_json'] = self.request.POST['dose_groups_json']
             if hasattr(self, 'dose_groups_errors'):
                 context['dose_groups_errors'] = self.dose_groups_errors
+        else:
+            context["dose_groups_json"] = json.dumps(
+                list(self.object.doses.values('dose', 'dose_group_id', 'dose_units')))
+
         return context
 
     def get_success_url(self):

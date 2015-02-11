@@ -34,37 +34,8 @@
     </legend>
 
     {% if dose_groups_errors %}<div class="alert alert-error">{{dose_groups_errors|safe}}</div>{% endif %}
-
+    <table id="dose_table" class="table table-condensed table-striped"></table>
     <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
-
-    <table id="dose_table" class="table table-condensed table-striped">
-      <colgroup>
-        <col style="width: 10%;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Dose Units</th>
-          {% for dose in object.get_dose_groups.0 %}
-            <th>
-              <select class="input-medium dose_types">
-                <option value={{dose.dose_units.pk}}>{{dose.dose_units}}</option>
-              </select>
-              <a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a>
-            </th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for doses in object.get_dose_groups %}
-          <tr>
-            <td><label for="dose_group_{{forloop.counter}}" class="control-label">Dose Group {{forloop.counter}}</label></td>
-            {% for dose in doses %}
-              <td><input type="text" tabindex="{{forloop.counter}}" class="input-medium" value="{{dose.dose}}"></td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
 
   </div>
 
@@ -73,98 +44,18 @@
 {% block extrajs %}
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}animal/js/dose_regime_form.js" type="text/javascript"></script>
   <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
+
+      // reorganize forms
+      var actions = $('.form-actions');
       $('#doseGroupsDiv').insertBefore($('.form-actions'))
 
-      $('#id_description').wysihtml5({"stylesheets": false});
+      var dose_types = {{dose_types|safe}},
+          dose_values = {{dose_groups_json|safe}};
 
-      //form submission
-      $('#dosing_regime').submit(function(){
-        var vals = [];
-        for(var i=2; i<=$('#dose_table tr th').length; i++){
-          var dose_units = parseFloat($('#dose_table tr th:nth-child(' + i + ') select option:selected').val());
-          $('#dose_table tbody tr td:nth-child(' + i + ') input').each(function(i, v){
-            vals.push({'dose_units': dose_units,
-                       'dose_group_id': i,
-                       'dose': parseFloat(v.value)});
-          });
-        }
-        $('#dose_groups_json').val(JSON.stringify(vals));
-        return true;
-      });
-
-      var update_dose_pulldowns = function(dose_types){
-        $('.dose_types').each(function(i, v){
-          var select = $(v);
-          var selected = select.find('option:selected').val();
-          select.empty();
-          dose_types.forEach(function(v, i){
-            select.append('<option value="' + v.id + '">' + v.units + '</option>');
-          });
-          select.find('option[value=' + selected + ']').prop('selected', true);
-        });
-      }
-
-      var new_dose_column = function(){
-        // recalculate column width
-        var num_doses = $('.dose_types').length+1,
-            colgroup = $('#dose_table colgroup');
-
-        colgroup.empty()
-          .append('<col style="width:10%"></col>');
-        for(var i = 0; i<num_doses; i++ ){
-          colgroup.append('<col style="width:' + 90/num_doses +'%"></col>')
-        }
-
-        // add th
-        $('#dose_table thead tr').append('<th><select class="input-medium dose_types"></select><a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a></th>');
-
-        // add td
-        $('#dose_table tbody tr').each(function(i, v){
-          $(v).append('<td><input class="input-medium" type="text" tabindex="' + (num_doses) + '"  id="dose_' + (num_doses-1) + '"></td>')
-        });
-        update_dose_pulldowns();
-      }
-
-      // add new dose columns
-      $('#new_dose_column').on('click', function(e){
-        e.preventDefault();
-        new_dose_column()
-      });
-
-      // remove existing dose columns
-      $('#dose_table').on( 'click', '.remove_dose', function(e){
-        e.preventDefault();
-        var td_index = $(this).parent().index()+1;
-        $('#dose_table tr th:nth-child(' + td_index + ')').remove();
-        $('#dose_table tr td:nth-child(' + td_index + ')').remove();
-      })
-
-      // update existing dose-types
-      update_dose_pulldowns({{dose_types|safe}});
-
-       {% if dose_groups_json %}
-        // reload doses that already exist
-        (function() {
-          var dose_groups_json = {{dose_groups_json|safe}};
-          var number_dose_groups = {{animal_group.dose_groups}};
-
-          //add the appropriate number of dose-columns
-          for (var i = 1; i < dose_groups_json.length/number_dose_groups; i++){
-            new_dose_column();
-          }
-
-          //now populate fields
-          dose_groups_json.forEach(function(v, i){
-            var col = parseInt((i)/number_dose_groups);
-            var row = (i) % number_dose_groups;
-            $($('#dose_table tbody tr td:nth-child(' + (col+2) + ') input')[row]).val(v.dose);
-            $('#dose_table thead tr th:nth-child(' + (col+2) + ') select').find('option[value=' + v.dose_units + ']').prop('selected', true);
-          });
-        }());
-       {% endif %}
-
-      });
+      new DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
+    });
   </script>
 {% endblock extrajs %}

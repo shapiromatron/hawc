@@ -391,6 +391,7 @@ class DosingRegime(models.Model):
         ("IO", u"in ovo"),
         ("P",  u"Parental"),
         ("W",  u"Whole body"),
+        ("M",  u"Multiple"),
         ("U",  u"Unknown"),
         ("O",  u"Other"))
 
@@ -413,16 +414,18 @@ class DosingRegime(models.Model):
         null=True)
     route_of_exposure = models.CharField(
         max_length=2,
-        choices=ROUTE_EXPOSURE_CHOICES)
+        choices=ROUTE_EXPOSURE_CHOICES,
+        help_text="Primary route of exposure. If multiple primary-exposures, describe in notes-field below")
     duration_exposure = models.FloatField(
         verbose_name="Exposure duration (days)",
-        help_text="Numeric length of exposure period, in days (fractions allowed)",
+        help_text="Length of exposure period (fractions allowed), used for sorting in visualizations",
         blank=True,
         null=True)
     num_dose_groups = models.PositiveSmallIntegerField(
         default=4,
         validators=[MinValueValidator(1)],
-        verbose_name="Number of Dose Groups")
+        verbose_name="Number of Dose Groups",
+        help_text="Number of dose groups, plus control")
     positive_control = models.NullBooleanField(
         choices=POSITIVE_CONTROL_CHOICES,
         default=None,
