@@ -68,7 +68,7 @@ class ExperimentForm(ModelForm):
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")
-        helper.add_fluid_row('purity_available', 2, "span4")
+        helper.add_fluid_row('purity_available', 3, "span4")
         return helper
 
     def clean(self):

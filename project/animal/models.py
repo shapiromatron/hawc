@@ -98,6 +98,11 @@ class Experiment(models.Model):
         verbose_name="Chemical purity (%)",
         help_text="Assumed to be greater-than numeric-value specified (ex: > 95.5%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)])
+    vehicle = models.CharField(
+        max_length=64,
+        verbose_name="Chemical vehicle",
+        help_text="If a vehicle was used, vehicle common-name",
+        blank=True)
     guideline_compliance = models.CharField(
         max_length=128,
         blank=True,
@@ -152,6 +157,7 @@ class Experiment(models.Model):
             'experiment-chemical_source',
             'experiment-purity_available',
             'experiment-purity',
+            'experiment-vehicle',
             'experiment-guideline_compliance',
             'experiment-description'
         )
@@ -168,6 +174,7 @@ class Experiment(models.Model):
             ser['chemical_source'],
             ser['purity_available'],
             ser['purity'],
+            ser['vehicle'],
             ser['guideline_compliance'],
             ser['description']
         )

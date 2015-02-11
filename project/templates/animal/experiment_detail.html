@@ -59,6 +59,9 @@
         {% else %}
           <tr><th>Chemical purity available</th><td>{{object.purity_available}}</td></tr>
         {% endif %}
+        {% if object.vehicle %}
+          <tr><th>Vehicle</th><td>{{object.vehicle}}</td></tr>
+        {% endif %}
         {% if object.guideline_compliance %}
           <tr><th>Guideline compliance</th><td>{{object.guideline_compliance}}</td></tr>
         {% endif %}
