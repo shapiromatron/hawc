@@ -14,6 +14,7 @@ urlpatterns = patterns('animal.views',
     # Overall views
     url(r'^assessment/(?P<pk>\d+)/full-export/$', views.FullExport.as_view(), name='export'),
     url(r'^assessment/(?P<pk>\d+)/report/$', views.EndpointsReport.as_view(), name='endpoints_report'),
+    url(r'^assessment/(?P<pk>\d+)/fixed-report/$', views.EndpointsFixedReport.as_view(), name='endpoints_fixedreport'),
 
     # Experiment
     url(r'^study/(?P<pk>\d+)/experiment/new/$', views.ExperimentCreate.as_view(), name='experiment_new'),

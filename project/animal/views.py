@@ -16,9 +16,9 @@ from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         BaseVersion, GenerateReport)
+                         BaseVersion, GenerateReport, GenerateFixedReport)
 
-from . import forms, models, exports
+from . import docx, forms, models, exports
 
 
 # Experiment Views
@@ -511,6 +511,25 @@ class EndpointsReport(GenerateReport):
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = super(EndpointsReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["animal_group__experiment__study__published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "animal-bioassay.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(self.assessment, queryset)
+
+
+class EndpointsFixedReport(GenerateFixedReport):
+    parent_model = Assessment
+    model = models.Endpoint
+    ReportClass = docx.EndpointDOCXReport
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(EndpointsFixedReport, self).get_obj_perms()
         if not perms['edit']:
             filters["animal_group__experiment__study__published"] = True
         return self.model.objects.filter(**filters)
