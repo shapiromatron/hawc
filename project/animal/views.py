@@ -18,7 +18,7 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
                          BaseVersion, GenerateReport, GenerateFixedReport)
 
-from . import docx, forms, models, exports
+from . import forms, models, exports, reports
 
 
 # Experiment Views
@@ -525,7 +525,7 @@ class EndpointsReport(GenerateReport):
 class EndpointsFixedReport(GenerateFixedReport):
     parent_model = Assessment
     model = models.Endpoint
-    ReportClass = docx.EndpointDOCXReport
+    ReportClass = reports.EndpointDOCXReport
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}

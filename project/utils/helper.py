@@ -292,14 +292,18 @@ class DOCXReport(object):
         - numCols: (int)
         - cells: (list) in the following format:
             [
-                {"row":0, "col":0, "val":"value"},
-                {"row":1, "col":0, "val":"value", "rowspan": 2},
-                {"row":1, "col":0, "val":"value", "colspan": 2},
+                {"row":0, "col":0, "text":"value"},
+                {"row":1, "col":0, "text":"value", "rowspan": 2},
+                {"row":1, "col":0, "text":"value", "colspan": 2},
+                {"row":0, "col":0, "runs":[
+                    {"text": "standard text"},
+                    {"text": "bolded text", "bold": True}
+                ]},
             ]
 
         """
 
-        tbl = self.doc.add_table(rows=numRows, cols=numCols, style=None)
+        tbl = self.doc.add_table(rows=numRows, cols=numCols, style='Light Shading')
 
         for cell in cells:
 
@@ -312,6 +316,14 @@ class DOCXReport(object):
                 tbl.cell(cell["row"], cell["col"]).merge(tbl.cell(rowIdx, colIdx))
 
             # add content
-            tbl.cell(cell["row"], cell["col"]).paragraphs[0].text = cell["val"]
+            p = tbl.cell(cell["row"], cell["col"]).paragraphs[0]
+            if "text" in cell:
+                p.text = cell["text"]
+
+            if "runs" in cell:
+                for runD in cell["runs"]:
+                    run = p.add_run(runD["text"])
+                    run.bold = runD.get("bold", False)
+                    run.italic = runD.get("italic", False)
 
         return tbl
