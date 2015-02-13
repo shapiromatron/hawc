@@ -15,9 +15,9 @@ from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList, GenerateReport)
+                         BaseList, GenerateReport, GenerateFixedReport)
 
-from . import models, forms, exports
+from . import models, forms, exports, reports
 
 
 class StudyList(BaseList):
@@ -324,6 +324,25 @@ class SQMetricDelete(BaseDelete):
 
 
 # Study quality views
+class SQFixedReport(GenerateFixedReport):
+    parent_model = Assessment
+    model = models.Study
+    ReportClass = reports.SQDOCXReport
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = super(SQFixedReport, self).get_obj_perms()
+        if not perms['edit']:
+            filters["published"] = True
+        return self.model.objects.filter(**filters)
+
+    def get_filename(self):
+        return "risk_of_bias.docx"
+
+    def get_context(self, queryset):
+        return self.model.get_docx_template_context(self.assessment, queryset)
+
+
 class SQCreate(CanCreateMixin, MessageMixin, CreateView):
     model = models.Study
     template_name = "study/sq_edit.html"

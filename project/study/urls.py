@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^assessment/(?P<pk>\d+)/study-quality/$', views.ASQDetail.as_view(), name='asq_detail'),
     url(r'^assessment/(?P<pk>\d+)/study-quality/edit/$', views.ASQEdit.as_view(), name='asq_update'),
     url(r'^assessment/(?P<pk>\d+)/study-quality/report/$', views.StudyBiasExport.as_view(), name='bias_export'),
+    url(r'^assessment/(?P<pk>\d+)/study-quality/fixed-report/$', views.SQFixedReport.as_view(), name='sq_fixedreport'),
 
     url(r'^assessment/(?P<pk>\d+)/study-quality-domain/create/$', views.SQDomainCreate.as_view(), name='sqd_create'),
     url(r'^study-quality-domain/(?P<pk>\d+)/edit/$', views.SQDomainUpdate.as_view(), name='sqd_update'),

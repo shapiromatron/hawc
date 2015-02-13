@@ -12,6 +12,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
+from assessment.serializers import AssessmentSerializer
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
 
@@ -210,36 +211,11 @@ class Study(Reference):
         )
 
     @classmethod
-    def get_docx_template_context(cls, queryset):
+    def get_docx_template_context(cls, assessment, queryset):
+        studies = [SerializerHelper.get_serialized(study, json=False) for study in queryset]
         return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "studies": studies
         }
 
 
