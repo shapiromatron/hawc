@@ -103,7 +103,7 @@ Endpoint.prototype.get_special_dose_text = function(name){
     try{
         return this.data.endpoint_group[this.data[name]].dose;
     }catch(err){
-        return 'none';
+        return '-';
     }
 };
 
@@ -382,6 +382,25 @@ Endpoint.prototype.add_endpoint_group_footnotes = function(footnote_object, endp
     return footnote_object.add_footnote(footnotes);
 };
 
+Endpoint.prototype.build_endpoint_list_row = function(){
+    return [
+        '<a href="{0}" target="_blank">{1}</a>'.printf(
+            this.data.animal_group.experiment.study.url,
+            this.data.animal_group.experiment.study.short_citation),
+        '<a href="{0}" target="_blank">{1}</a>'.printf(
+            this.data.animal_group.experiment.url,
+            this.data.animal_group.experiment.name),
+        '<a href="{0}" target="_blank">{1}</a>'.printf(
+            this.data.animal_group.url,
+            this.data.animal_group.name),
+        '<a href="{0}" target="_blank">{1}</a>'.printf(
+            this.data.url,
+            this.data.name),
+        this.get_special_dose_text("NOAEL"),
+        this.get_special_dose_text("LOAEL"),
+        this.get_special_dose_text("FEL")
+    ];
+};
 
 var EndpointCriticalDose = function(endpoint, span, type, show_units){
     // custom field to observe dose changes and respond based on selected dose
@@ -546,6 +565,36 @@ EndpointTable.prototype.build_colgroup = function(){
     }
 };
 
+
+var EndpointsListTable = function(endpoints){
+    this.endpoints = endpoints;
+    this.tbl = new BaseTable();
+};
+
+EndpointsListTable.prototype = {
+    build_table: function(){
+
+        if(this.endpoints.length === 0)
+            return "<p>No endpoints available.</p>";
+
+        var self = this,
+            headers = [
+                "Study",
+                "Experiment",
+                "Animal Group",
+                "Endpoint",
+                "NOAEL",
+                "LOAEL",
+                "FEL"
+            ];
+
+        this.tbl.addHeaderRow(headers);
+        this.endpoints.map(function(v){
+            self.tbl.addRow(v.build_endpoint_list_row());
+        });
+        return this.tbl.getTbl();
+    }
+}
 
 var EndpointDetailRow = function(endpoint, div, hide_level, options){
     /*

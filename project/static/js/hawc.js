@@ -1355,7 +1355,8 @@ BaseTable.prototype = {
         var tr,
             tagName = (isHeader) ? "<th>" : "<td>";
         if(val instanceof Array){
-            tr = $('<tr>').html(val.map(function(v){return $(tagName).html(v);}));
+            tr = $('<tr>');
+            val.forEach(function(v){tr.append($(tagName).html(v));});
         } else if (val instanceof jQuery && val.first().prop('tagName') === "TR") {
             tr = val;
         } else {

@@ -385,7 +385,6 @@ class EndpointList(BaseList):
     # List of Endpoints associated with assessment
     parent_model = Assessment
     model = models.Endpoint
-    template_name = "animal/endpoint_list_assessment.html"
     paginate_by = 25
 
     def get(self, request, *args, **kwargs):
@@ -415,6 +414,8 @@ class EndpointList(BaseList):
         context = super(EndpointList, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['qs'] = self.get_endpointQueryString()
+        context['endpoints_json'] = self.model.d_responses(
+            context['object_list'], json_encode=True)
         return context
 
     def get_endpointQueryString(self):

@@ -6,7 +6,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'animal:endpoint_list' assessment.pk %}">Endpoints</a></li>
+  <li><a href="{% url 'animal:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    {% include "animal/_endpoint_list_tbl.html" with with_animal_group="True" %}
+    <div id="endpointTbl"></div>
 
     {% if is_paginated %}
         <div class="pagination pagination-centered">
@@ -84,12 +84,20 @@
 
 
 {% block extrajs %}
-  {% include_jquery_libs %}
-  {{ form.media }}
+    {% include_jquery_libs %}
+    {{ form.media }}
+    <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             var assessment = function(qry){qry.assessment = {{assessment.pk}};}
             $('#id_study').djselectable('option', 'prepareQuery', assessment);
+
+            var endpoints = [];
+            {{endpoints_json|safe}}.forEach(function(datum){
+                endpoints.push(new Endpoint(datum));
+            });
+            var tbl = new EndpointsListTable(endpoints);
+            $("#endpointTbl").html(tbl.build_table());
         });
     </script>
 {% endblock %}
