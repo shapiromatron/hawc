@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, APIException
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework import filters
 
 from assessment.models import Assessment
 
@@ -29,29 +30,30 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             return assessment.user_can_edit_object(request.user)
 
 
-class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
-    assessment_filter_args = ""
-    permission_classes = (AssessmentLevelPermissions, )
+class InAssessmentFilter(filters.BaseFilterBackend):
+    """
+    Filter objects which are in a particular assessment.
+    """
+    def filter_queryset(self, request, queryset, view):
+        if view.action != 'list':
+            return queryset
 
-    def list(self, request):
-        # override list to only return meta-results for a single assessment
-        filters = {self.assessment_filter_args: self.get_permitted_assessment(request)}
-        by_assessment = self.model.objects.filter(**filters)
-        page = self.paginate_queryset(by_assessment)
-        serializer = self.get_pagination_serializer(page)
-        return Response(serializer.data)
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-    def get_permitted_assessment(self, request):
-        # Used for determining if a user has access to view assessment-view.
-        # First, check if assessment is specified. If not, raise RequiresAssessmentID
-        # Then, check if user has permission to view. If not, raise 403
-        assessment_id = request.GET.get('assessment_id')
+        assessment_id = request.GET.get('assessment_id', None)
         if assessment_id is None:
             raise RequiresAssessmentID
+
         assessment = Assessment.objects.filter(id=assessment_id).first()
         if assessment and not assessment.user_can_view_object(request.user):
             raise PermissionDenied
-        return assessment
+
+        filters = {view.assessment_filter_args: assessment_id}
+        return queryset.filter(**filters)
+
+
+class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
+    assessment_filter_args = ""
+    permission_classes = (AssessmentLevelPermissions, )
+    filter_backends = (InAssessmentFilter, )
+
+    def get_queryset(self):
+        return self.model.objects.all()
