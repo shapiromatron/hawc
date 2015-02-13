@@ -413,9 +413,12 @@ var EndpointCriticalDose = function(endpoint, span, type, show_units){
 };
 
 EndpointCriticalDose.prototype.display = function(){
-    var txt = "", egs = this.endpoint.data.endpoint_group;
+    var txt = "",
+        self = this,
+        doses = this.endpoint.doses.filter(function(v){
+            return v.units === self.endpoint.dose_units;});
     try {
-        var txt = egs[this.critical_effect_idx].dose;
+        txt = doses[0].values[this.critical_effect_idx].dose;
         if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);
     } catch(err){}
     this.span.html(txt);
