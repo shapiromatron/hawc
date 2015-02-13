@@ -15,6 +15,7 @@ class RequiresAssessmentID(APIException):
 class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
+
         assessment = obj.get_assessment()
 
         # (GET, HEAD or OPTIONS)
@@ -34,7 +35,7 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request):
         # override list to only return meta-results for a single assessment
-        filters = {self.assessment_filter_args: get_permitted_assessment(request)}
+        filters = {self.assessment_filter_args: self.get_permitted_assessment(request)}
         by_assessment = self.model.objects.filter(**filters)
         page = self.paginate_queryset(by_assessment)
         serializer = self.get_pagination_serializer(page)
@@ -43,7 +44,7 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return self.model.objects.all()
 
-    def get_permitted_assessment(request):
+    def get_permitted_assessment(self, request):
         # Used for determining if a user has access to view assessment-view.
         # First, check if assessment is specified. If not, raise RequiresAssessmentID
         # Then, check if user has permission to view. If not, raise 403
