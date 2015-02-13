@@ -13,15 +13,16 @@ from django.shortcuts import HttpResponse
 from rest_framework.renderers import JSONRenderer
 
 import docx
+from docx.shared import Inches
 import unicodecsv
 import xlsxwriter
 
 
 def HAWCtoDateString(datetime):
-        """
-        Helper function to ensure dates are consistent.
-        """
-        return datetime.strftime("%B %d %Y, %I:%M %p")
+    """
+    Helper function to ensure dates are consistent.
+    """
+    return datetime.strftime("%B %d %Y, %I:%M %p")
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -304,6 +305,7 @@ class DOCXReport(object):
         """
 
         tbl = self.doc.add_table(rows=numRows, cols=numCols, style='Light Shading')
+        tbl.autofit = False
 
         for cell in cells:
 
@@ -316,7 +318,12 @@ class DOCXReport(object):
                 tbl.cell(cell["row"], cell["col"]).merge(tbl.cell(rowIdx, colIdx))
 
             # add content
-            p = tbl.cell(cell["row"], cell["col"]).paragraphs[0]
+            cellD = tbl.cell(cell["row"], cell["col"])
+            p = cellD.paragraphs[0]
+
+            if "width" in cell:
+                cellD.width = docx.shared.Inches(cell["width"])
+
             if "text" in cell:
                 p.text = cell["text"]
 

@@ -24,6 +24,9 @@ class SpanFactory(object):
     def get_spans(self):
         return self.obj
 
+def build_header_cell(row, col, width, text, colspan=1):
+    return {"row": row, "col": col, "width": width, "colspan": colspan,
+            "runs": [{ "text": text, "bold": True, "italic": False }]}
 
 def getDoses(ag):
     # dictionary-mapping where keys are dose-units and doses are list of floats
@@ -125,14 +128,14 @@ class EndpointDOCXReport(DOCXReport):
 
         # build header rows
         cells = [
-            {"row": 0, "col": 0, "text": r'Template Option 1: Animal Study', "colspan": 6},
-            {"row": 1, "col": 0, "text": r'Reference, Animal Model, and Dosing'},
-            {"row": 1, "col": 1, "text": r'Health Outcome'},
-            {"row": 1, "col": 2, "text": r'Results', "colspan": 4},
-            {"row": 2, "col": 2, "text": u'Dose ({0})'.format(firstDose)},
-            {"row": 2, "col": 3, "text": r'N'},
-            {"row": 2, "col": 4, "text": u'Mean \u00B1 SD'},
-            {"row": 2, "col": 5, "text": r'% control (95% CI)'},
+            build_header_cell(0, 0, 10,  r'Template Option 1: Animal Study', colspan=6),
+            build_header_cell(1, 0, 2.5, r'Reference, Animal Model, and Dosing'),
+            build_header_cell(1, 1, 2.7, r'Health Outcome'),
+            build_header_cell(1, 2, 3,   r'Results', colspan=4),
+            build_header_cell(2, 2, 1.5, u'Dose ({0})'.format(firstDose)),
+            build_header_cell(2, 3, 0.5, r'N'),
+            build_header_cell(2, 4, 1.2, u'Mean \u00B1 SD'),
+            build_header_cell(2, 5, 1.6, r'% control (95% CI)'),
         ]
 
         # build summary rows
@@ -146,7 +149,8 @@ class EndpointDOCXReport(DOCXReport):
             if ep["data_extracted"] == False:
                 continue
 
-            cells.append({"row": rows, "col": 2, "text": ep['name'], "colspan": 4})
+            cells.append({"row": rows, "col": 2, "colspan": 4,
+                         "runs": [{"text": ep['name'], "italic": True}]})
             data_type = ep["data_type"]
             rows +=1
             for i, eg in enumerate(ep["endpoint_group"]):
@@ -193,7 +197,7 @@ class EndpointDOCXReport(DOCXReport):
         section.page_height  = Inches(8.5)
 
         # title
-        txt = "Bioassay report: ".format(d['assessment']['name'])
+        txt = "Bioassay report: {0}".format(d['assessment']['name'])
         doc.add_heading(txt, 0)
 
         # loop through each study
@@ -202,4 +206,3 @@ class EndpointDOCXReport(DOCXReport):
             for exp in study['exps']:
                 for ag in exp['ags']:
                     self.build_summary_table(ag)
-
