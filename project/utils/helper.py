@@ -6,6 +6,8 @@ from collections import OrderedDict
 from StringIO import StringIO
 import re
 
+from celery import shared_task
+
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
@@ -264,10 +266,18 @@ class DOCXReport(object):
     def __init__(self, fn, context):
         self.fn = fn
         self.context = context
+
+    @shared_task
+    def build_report(self):
+        """
+        Build DOCX report, apply context, and return Django HTTP response
+        """
         self.doc = docx.Document()
+        self.create_context()
+        return self.django_response()
 
     @abc.abstractmethod
-    def apply_context(self):
+    def create_context(self):
         """
         Main-method called to generate the content in a Word report
         """

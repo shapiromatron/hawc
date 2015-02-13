@@ -49,6 +49,13 @@
         </li><br>
       {% endif %}
 
+      <li>
+        <b>Animal bioassay (fixed report)</b><br>
+        <p class="help-block">Select Microsoft Word template</p>
+        <a class='btn btn-primary'
+           href="{% url 'animal:endpoints_fixedreport' assessment.pk %}">Download</a><br>
+      </li><br>
+
       {% if report_types.2|length > 0 %}
         <li>
           <b>Animal bioassay</b><br>

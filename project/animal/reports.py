@@ -184,7 +184,7 @@ class EndpointDOCXReport(DOCXReport):
         self.build_table(rows, 6, cells)
         self.doc.add_paragraph("\n")
 
-    def apply_context(self):
+    def create_context(self):
         doc = self.doc
         d = self.context
 

@@ -1,5 +1,8 @@
 import logging
 
+from celery.exceptions import TimeoutError
+
+from django.shortcuts import HttpResponse
 from django.db.models.loading import get_model
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -442,5 +445,9 @@ class GenerateFixedReport(BaseList):
         context = self.get_context(self.object_list)
         filename = self.get_filename()
         report = self.ReportClass(filename, context)
-        report.apply_context()
-        return report.django_response()
+        try:
+            task = report. build_report.delay(report)
+            response = task.get(timeout=120)
+        except TimeoutError:
+            response = HttpResponse("<p>An error in processing occurred - report not generated.</p>")
+        return response
