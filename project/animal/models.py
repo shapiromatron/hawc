@@ -821,39 +821,6 @@ class Endpoint(BaseEndpoint):
             change += egs[i].response - egs[0].response
         return change >= 0
 
-    def get_LOAEL(self):
-        """
-        Return LOAEL based on first-dose type or None.
-        """
-        if not hasattr(self, 'doses'):
-            self.get_doses_json()
-        try:
-            return self.doses[0]['values'][self.LOAEL]
-        except:
-            return None
-
-    def get_NOAEL(self):
-        """
-        Return NOAEL based on first-dose type or None.
-        """
-        if not hasattr(self, 'doses'):
-            self.get_doses_json()
-        try:
-            return self.doses[0]['values'][self.NOAEL]
-        except:
-            return None
-
-    def get_FEL(self):
-        """
-        Return FEL based on first-dose type or None.
-        """
-        if not hasattr(self, 'doses'):
-            self.get_doses_json()
-        try:
-            return self.doses[0]['values'][self.FEL]
-        except:
-            return None
-
     def bmds_session_exists(self):
         """
         Check if at least one BMDS session exists for the specified Endpoint ID.

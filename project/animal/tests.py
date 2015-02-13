@@ -735,12 +735,6 @@ class EndpointFunctionality(TestCase):
     def test_dataset_increasing(self):
         self.assertEqual(self.endpoint_working.dataset_increasing, True)
 
-    def test_dataset_LOAEL(self):
-        self.assertEqual(self.endpoint_working.get_LOAEL(), None)
-
-    def test_dataset_NOAEL(self):
-        self.assertEqual(self.endpoint_working.get_NOAEL(), 50.)
-
     def bmds_session_exists(self):
         self.assertEqual(self.endpoint_working.bmds_session_exists(), False)
 
