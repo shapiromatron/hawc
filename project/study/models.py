@@ -366,6 +366,14 @@ class StudyQuality(models.Model):
         (4, 'Definitely low risk of bias'),
         (0, 'Not applicable'))
 
+    SCORE_SYMBOLS = {
+        1: "--",
+        2: "-",
+        3: "+",
+        4: "++",
+        0: "-",
+    }
+
     study = models.ForeignKey(Study, related_name='qualities')
     metric = models.ForeignKey(StudyQualityMetric, related_name='qualities')
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)
@@ -383,6 +391,9 @@ class StudyQuality(models.Model):
 
     def get_absolute_url(self):
         return reverse('study:sq_detail', args=[str(self.study.pk)])
+
+    def get_score_symbol(self):
+        return self.SCORE_SYMBOLS[self.score]
 
     @staticmethod
     def flat_complete_header_row():

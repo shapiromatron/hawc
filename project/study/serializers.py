@@ -26,6 +26,7 @@ class StudyQualitySerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(StudyQualitySerializer, self).to_representation(instance)
         ret['score_description'] = instance.get_score_display()
+        ret['score_symbol'] = instance.get_score_symbol()
         return ret
 
     class Meta:
