@@ -96,7 +96,7 @@
             {{endpoints_json|safe}}.forEach(function(datum){
                 endpoints.push(new Endpoint(datum));
             });
-            var tbl = new EndpointsListTable(endpoints);
+            var tbl = new EndpointListTable(endpoints);
             $("#endpointTbl").html(tbl.build_table());
         });
     </script>

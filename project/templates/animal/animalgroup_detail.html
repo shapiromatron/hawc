@@ -114,8 +114,8 @@
 
     <!-- Endpoints -->
     <h2>Available endpoints</h2>
+    <div id="endpointsDiv"></div>
 
-    <div id="endpoint_table"></div>
     <div id="comments_block"></div>
   {% endif %}
 
@@ -124,8 +124,6 @@
 
 {% block extrajs %}
   <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/aggregation.js" type="text/javascript"></script>
-
   {% if crud == "Read" %}
     {% include "comments/_comments_extrajs.html" %}
   {% endif %}
@@ -137,12 +135,16 @@
         endpoints.push(new Endpoint({{obj.d_response|safe}}));
       {% endfor %}
 
-      if (endpoints.length>0){
-        var animal_group_table = new AnimalGroup_table(
-                new Aggregation(endpoints, "{{object}}"), '#endpoint_table');
-      } else {
-        $('#endpoint_table').append('<p>No endpoints are available for this animal group.</p>');
+      var tbl =  new AnimalGroupTable(endpoints);
+
+      $('#endpointsDiv').append(tbl.build_table());
+
+      if (tbl.endpoints_no_dr.length>0){
+        $('#endpointsDiv')
+            .append("<h3>Additional endpoints (not extracted)</h3>")
+            .append(tbl.build_no_dr_ul());
       }
+
     });
   </script>
 {% endblock %}

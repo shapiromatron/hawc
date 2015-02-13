@@ -227,24 +227,26 @@ Endpoint.prototype.add_continuous_confidence_intervals = function(){
     });
 };
 
-Endpoint.prototype._build_animal_group_dose_rows = function(options){
+Endpoint.prototype._build_ag_dose_rows = function(options){
+
     var self = this,
-        tr1 = $('<tr></tr>').append('<th rowspan="2">Parameter</th>'),
-        tr2 = $('<tr></tr>'),
-        header_text = 'Exposure group ',
-        txt,
-        num_groups = this.data.endpoint_group.length;
+        nDoses = this.doses.length,
+        nGroups = this.doses[0].values.length,
+        tr1 = $('<tr>'),
+        tr2 = $('<tr>'),
+        txt;
 
-    // build top header row showing dose-units available
-    var units = this.doses.map(function(v){ return v.units; });
-    header_text += units[0];
-    if (units.length>1)
-        header_text += " ({0})".printf(units.slice(1, units.length).join(", "))
+    // build top-row
+    txt =  "Groups ".printf(this.doses[0].units);
+    this.doses.forEach(function(v, i){
+        txt += (i===0) ? v.units : " ({0})".printf(v.units);
+    });
 
-    tr1.append('<th colspan="{0}">{1}</th>'.printf(num_groups, header_text));
+    tr1.append('<th rowspan="2">Endpoint</th>')
+       .append('<th colspan="{0}">{1}</th>'.printf(nGroups, txt));
 
     // now build header row showing available doses
-    for(var i=0; i<num_groups; i++){
+    for(var i=0; i<nGroups; i++){
         var doses = this.doses.map(function(v){ return v.values[i].dose; });
         txt = doses[0].toLocaleString();
         if (doses.length>1)
@@ -252,12 +254,52 @@ Endpoint.prototype._build_animal_group_dose_rows = function(options){
         tr2.append('<th>{0}</th>'.printf(txt));
     }
 
-    return {html: [tr1, tr2], columns_count: num_groups.length+1};
+    return {html: [tr1, tr2], ncols: nGroups+1};
 };
 
-Endpoint.prototype._build_animal_group_n_row = function(options){
+Endpoint.prototype.build_ag_no_dr_li = function(){
+    return '<li><a href="{0}" target="_blank">{1}</a></li>'.printf(this.data.url, this.data.name);
+};
+
+Endpoint.prototype.build_ag_n_key = function(){
+    return this.data.endpoint_group.map(function(v){return v.n;}).join('-');
+};
+
+Endpoint.prototype._build_ag_n_row = function(options){
     return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
         this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n);})));
+};
+
+Endpoint.prototype._build_ag_response_row = function(footnote_object){
+    var self = this, footnotes,
+        tr = $('<tr>')
+            .append('<td><a href="{0}" target="_blank">{1}</a></td>'.printf(this.data.url, this.data.name));
+
+    if (this.data.data_type == "C"){
+        var dr_control;
+        this.data.endpoint_group.forEach(function(v, i){
+            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
+            if(i === 0){
+                tr.append("<td>{0} ± {1}{2}</td>".printf(v.response, v.variance, footnotes));
+                dr_control = v;
+            } else {
+                tr.append("<td>{0} ± {1} ({2}%){3}</td>'".printf(v.response, v.variance,
+                    self._continuous_percent_difference_from_control(v, dr_control), footnotes));
+            }
+        });
+    } else if (this.data.data_type == "P"){
+        this.data.endpoint_group.forEach(function(v, i){
+            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
+            tr.append("<td>{0}{1}</td>".printf(self.get_pd_string(v), footnotes))
+        });
+    } else {
+        this.data.endpoint_group.forEach(function(v, i){
+        footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
+            tr.append("<td>{0}/{1} ({2}%){3}</td>".printf(v.incidence, v.n,
+                    self._dichotomous_percent_change_incidence(v), footnotes));
+        });
+    }
+    return tr;
 };
 
 Endpoint.prototype._endpoint_detail_td = function(){
@@ -317,37 +359,6 @@ Endpoint.prototype.build_details_table = function(div){
     $(div).html(tbl.get_tbl());
 };
 
-Endpoint.prototype._build_animal_group_response_row = function(footnote_object){
-    var self = this, footnotes,
-        tr = $('<tr>{0}</tr>'.printf(this._endpoint_detail_td()));
-
-    if (this.data.data_type == "C"){
-        var dr_control;
-        this.data.endpoint_group.forEach(function(v, i){
-            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-            if(i === 0){
-                tr.append("<td>{0} ± {1}{2}</td>".printf(v.response, v.stdev, footnotes));
-                dr_control = v;
-            } else {
-                tr.append("<td>{0} ± {1} ({2}%){3}</td>'".printf(v.response, v.stdev,
-                    self._continuous_percent_difference_from_control(v, dr_control), footnotes));
-            }
-        });
-    } else if (this.data.data_type == "P"){
-        this.data.endpoint_group.forEach(function(v, i){
-            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-            tr.append("<td>{0}{1}</td>".printf(self.get_pd_string(v), footnotes))
-        });
-    } else {
-        this.data.endpoint_group.forEach(function(v, i){
-        footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-            tr.append("<td>{0}/{1} ({2}%){3}</td>".printf(v.incidence, v.n,
-                    self._dichotomous_percent_change_incidence(v), footnotes));
-        });
-    }
-    return tr.data('endpoint', this);
-};
-
 Endpoint.prototype._dichotomous_percent_change_incidence = function(eg){
     return Math.round((eg.incidence/eg.n*100), 3);
 };
@@ -358,10 +369,6 @@ Endpoint.prototype._continuous_percent_difference_from_control = function(eg, eg
 
 Endpoint.prototype._pd_percent_difference_from_control = function(eg){
     return eg.response;
-};
-
-Endpoint.prototype._number_of_animals_string = function(){
-    return this.data.endpoint_group.map(function(v){return v.n;}).join('-');
 };
 
 Endpoint.prototype.add_endpoint_group_footnotes = function(footnote_object, endpoint_group_index){
@@ -569,12 +576,12 @@ EndpointTable.prototype.build_colgroup = function(){
 };
 
 
-var EndpointsListTable = function(endpoints){
+var EndpointListTable = function(endpoints){
     this.endpoints = endpoints;
     this.tbl = new BaseTable();
 };
 
-EndpointsListTable.prototype = {
+EndpointListTable.prototype = {
     build_table: function(){
 
         if(this.endpoints.length === 0)
@@ -598,6 +605,64 @@ EndpointsListTable.prototype = {
         return this.tbl.getTbl();
     }
 }
+
+
+AnimalGroupTable = function(endpoints){
+    this.endpoints = endpoints;
+    this.tbl = new BaseTable();
+    this.endpoints_no_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length === 0;}),
+    this.endpoints_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length > 0;});
+};
+
+AnimalGroupTable.prototype = {
+    build_table: function(){
+        if(this.endpoints.length === 0)
+            return "<p>No endpoints available.</p>";
+
+        this._build_header();
+        this._build_tbody();
+        return this.tbl.getTbl();
+    }, _build_header: function(){
+        var self = this,
+            header = this.endpoints[0]._build_ag_dose_rows();
+
+        header.html.forEach(function(v){
+            self.tbl.addHeaderRow(v)
+        })
+        this.ncols = header.ncols;
+    }, _build_tbody: function(){
+        var tbl = this.tbl,
+            ngroups = this._sort_egs_by_n();
+
+        ngroups.forEach(function(endpoints){
+            endpoints.forEach(function(v, i){
+                if(i===0) tbl.addRow(v._build_ag_n_row());
+                tbl.addRow(v._build_ag_response_row(tbl.footnotes));
+            });
+        });
+
+    }, _sort_egs_by_n: function(){
+        /*
+        Return an array of arrays of endpoints which have the same
+        number of animals, to reduce printing duplicative N rows in table.
+        */
+         var eps = {}, key;
+
+        this.endpoints_dr.forEach(function(v){
+            key = v.build_ag_n_key();
+            if (eps[key] === undefined) eps[key] = [];
+            eps[key].push(v);
+        });
+        return _.values(eps);
+    }, build_no_dr_ul: function(){
+        var ul = $('<ul>');
+        this.endpoints_no_dr.forEach(function(v){
+            ul.append(v.build_ag_no_dr_li())
+        });
+        return ul;
+    }
+};
+
 
 var EndpointDetailRow = function(endpoint, div, hide_level, options){
     /*
