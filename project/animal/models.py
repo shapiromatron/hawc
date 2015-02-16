@@ -65,6 +65,14 @@ class Experiment(models.Model):
         ("Dv", "Developmental"),
         ("Ot", "Other"))
 
+    LITTER_EFFECT_CHOICES = (
+        ("NA", "Not-applicable"),
+        ("NR", "Not-reported"),
+        ("YS", "Yes, statistical controls"),
+        ("YD", "Yes, study-design"),
+        ("N" , "No"),
+        ("O" , "Other"))
+
     study = models.ForeignKey(
         'study.Study',
         related_name='experiments')
@@ -102,6 +110,23 @@ class Experiment(models.Model):
         max_length=64,
         verbose_name="Chemical vehicle",
         help_text="If a vehicle was used, vehicle common-name",
+        blank=True)
+    diet = models.CharField(
+        max_length=128,
+        help_text="Description of animal-feed, if relevant",
+        blank=True)
+    animal_source = models.CharField(
+        max_length=128,
+        help_text="Laboratory and/or breeding details where animals were acquired",
+        blank=True)
+    litter_effects = models.CharField(
+        max_length=2,
+        choices=LITTER_EFFECT_CHOICES,
+        default="NA",
+        help_text="Type of controls used for litter-effects")
+    litter_effect_notes = models.CharField(
+        max_length=128,
+        help_text="Any additional notes describing how litter effects were controlled",
         blank=True)
     guideline_compliance = models.CharField(
         max_length=128,
@@ -158,6 +183,10 @@ class Experiment(models.Model):
             'experiment-purity_available',
             'experiment-purity',
             'experiment-vehicle',
+            'experiment-diet',
+            'experiment-animal_source',
+            'experiment-litter_effects',
+            'experiment-litter_effect_notes',
             'experiment-guideline_compliance',
             'experiment-description'
         )
@@ -175,6 +204,10 @@ class Experiment(models.Model):
             ser['purity_available'],
             ser['purity'],
             ser['vehicle'],
+            ser['diet'],
+            ser['animal_source'],
+            ser['litter_effects'],
+            ser['litter_effect_notes'],
             ser['guideline_compliance'],
             ser['description']
         )

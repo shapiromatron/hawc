@@ -62,6 +62,18 @@
         {% if object.vehicle %}
           <tr><th>Vehicle</th><td>{{object.vehicle}}</td></tr>
         {% endif %}
+        {% if object.animal_source %}
+          <tr><th>Animal source</th><td>{{object.animal_source}}</td></tr>
+        {% endif %}
+        {% if object.diet %}
+          <tr><th>Animal diet</th><td>{{object.diet}}</td></tr>
+        {% endif %}
+        {% if object.litter_effects != "NA" %}
+          <tr><th>Litter effects</th><td>
+            {{object.get_litter_effects_display}}
+            <p class="help-block">{{object.litter_effect_notes}}</p>
+            </td></tr>
+        {% endif %}
         {% if object.guideline_compliance %}
           <tr><th>Guideline compliance</th><td>{{object.guideline_compliance}}</td></tr>
         {% endif %}

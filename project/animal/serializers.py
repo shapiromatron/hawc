@@ -18,6 +18,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         ret = super(ExperimentSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['type'] = instance.get_type_display()
+        ret['litter_effects'] = instance.get_litter_effects_display()
         return ret
 
     class Meta:

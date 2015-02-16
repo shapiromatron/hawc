@@ -69,6 +69,8 @@ class ExperimentForm(ModelForm):
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")
         helper.add_fluid_row('purity_available', 3, "span4")
+        helper.add_fluid_row('diet', 2, "span6")
+        helper.add_fluid_row('litter_effects', 2, "span6")
         return helper
 
     def clean(self):
@@ -93,6 +95,25 @@ class ExperimentForm(ModelForm):
         if purity is not None:
             purity_available = True
         return purity_available
+
+    def clean_litter_effects(self):
+        type = self.cleaned_data.get("type")
+        litter_effects = self.cleaned_data.get("litter_effects")
+        if type in ["Rp", "Dv"]:
+            if litter_effects == "NA":
+                raise forms.ValidationError("Litter effects required if a reproductive/developmental study")
+        elif type != "Ot" and litter_effects != "NA":
+            raise forms.ValidationError("Litter effects must be NA if non-reproductive/developmental study")
+        return litter_effects
+
+    def clean_litter_effect_notes(self):
+        litter_effects = self.cleaned_data.get("litter_effects")
+        litter_effect_notes = self.cleaned_data.get("litter_effect_notes")
+        if litter_effects == "NA" and litter_effect_notes != "":
+            raise forms.ValidationError("Litter effect notes should be blank if effects are not-applicable")
+        if litter_effects == "O" and litter_effect_notes == "":
+            raise forms.ValidationError('Notes are required if litter effects are "Other"')
+        return litter_effect_notes
 
 
 class AnimalGroupForm(ModelForm):
