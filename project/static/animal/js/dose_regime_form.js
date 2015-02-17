@@ -121,10 +121,10 @@ DosingRegimeForm.prototype  = {
       });
     });
   }, _add_blank_row: function(numCols){
-      var doses = [];
-      for(var j=0; j<numCols; j++)
-        doses.push("");
-      return {"doses": doses}
+    var doses = [];
+    for(var j=0; j<numCols; j++)
+      doses.push("");
+    return {"doses": doses}
   }, _build_thead: function(){
     var tr = $('<tr>').append('<th>Dose Units</th>');
     for(var j=0; j<this.columns; j++){
@@ -165,8 +165,7 @@ DosingRegimeForm.prototype  = {
     return tbody;
   }, _get_number_dose_groups: function(){
     return Math.min(parseInt(this.form.find('#id_num_dose_groups').val()), 20);
-  },
-  _setEventHandlers: function(){
+  }, _setEventHandlers: function(){
     var self = this;
 
     this.form.find('#id_description').wysihtml5({"stylesheets": false});
@@ -175,8 +174,8 @@ DosingRegimeForm.prototype  = {
       self.change_rows();
     });
 
-    this.form.find('#new_dose_column').on('click', function(){
-      event.preventDefault();
+    this.form.find('#new_dose_column').on('click', function(e){
+      e.preventDefault();
       self.add_dose_column();
     });
 
@@ -190,6 +189,5 @@ DosingRegimeForm.prototype  = {
       self.form.find('#dose_groups_json').val(JSON.stringify(self.jsonify()));
       return true;
     });
-
   }
 };
