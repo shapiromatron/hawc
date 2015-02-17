@@ -202,17 +202,17 @@ class SQForm(forms.ModelForm):
 
     class Meta:
         model = models.StudyQuality
-        exclude = ('study', )
+        exclude = ('content_type', 'object_id')
 
     def __init__(self, *args, **kwargs):
-        study = kwargs.pop('study', None)
+        content_object = kwargs.pop('content_object', None)
         super(SQForm, self).__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
         self.fields['notes'].widget.attrs['class'] = 'html5text span12'
         self.fields['notes'].widget.attrs['rows'] = 4
-        if study:
-            self.instance.study = study
+        if content_object:
+            self.instance.content_object = content_object
 
 
 class BaseSQFormSet(BaseModelFormSet):

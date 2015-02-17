@@ -374,7 +374,7 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
     def form_valid(self):
         for form in self.formset:
             sq = form.save(commit=False)
-            sq.study = self.study
+            sq.content_object = self.study
             sq.save()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
@@ -386,7 +386,7 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
             # build formset with initial data
             metrics = models.StudyQualityMetric \
                                      .get_required_metrics(self.assessment, self.study)
-            sqs = [{"study": self.study, "metric": metric}  for metric in metrics]
+            sqs = [{"content_object": self.study, "metric": metric}  for metric in metrics]
             NewSQFormSet = modelformset_factory(models.StudyQuality,
                                                 form=forms.SQForm,
                                                 formset=forms.BaseSQFormSet,
@@ -458,7 +458,7 @@ class SQEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
 
         if self.request.method == 'GET':
-            self.formset = forms.SQFormSet(queryset=models.StudyQuality.objects.filter(study=self.study))
+            self.formset = forms.SQFormSet(queryset=models.StudyQuality.objects.filter(studies=self.study))
 
         context['formset'] = self.formset
         context['crud'] = self.crud
@@ -479,7 +479,7 @@ class SQDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        models.StudyQuality.objects.filter(study=self.object.pk).delete()
+        models.StudyQuality.objects.filter(studies=self.object.pk).delete()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(reverse_lazy('study:detail',
                                     kwargs={'pk': self.object.pk}))

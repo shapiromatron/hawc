@@ -5,6 +5,8 @@ import collections
 from django.db import models
 from django.db.models.loading import get_model
 from django.conf import settings
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
@@ -75,6 +77,7 @@ class Study(Reference):
         blank=True,
         verbose_name="Summary and/or extraction requirements",
         help_text="Study summary or details on data-extraction needs.")
+    qualities = generic.GenericRelation('StudyQuality', related_query_name='studies')
 
     class Meta:
         verbose_name_plural = "Studies"
@@ -350,7 +353,9 @@ class StudyQuality(models.Model):
         0: "-",
     }
 
-    study = models.ForeignKey(Study, related_name='qualities')
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
     metric = models.ForeignKey(StudyQualityMetric, related_name='qualities')
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
@@ -358,15 +363,16 @@ class StudyQuality(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('study', 'metric')
+        ordering = ("content_type", "object_id", "metric")
         verbose_name_plural = "Study Qualities"
-        unique_together = (("study", "metric"),)
+        unique_together = (("content_type", "object_id", "metric"), )
 
     def __unicode__(self):
-        return '{}: {}'.format(self.study, self.metric)
+        return '{}: {}'.format(self.metric, self.score)
 
     def get_absolute_url(self):
-        return reverse('study:sq_detail', args=[str(self.study.pk)])
+        if type(self.content_object) is Study:
+            return reverse('study:sq_detail', args=[str(self.study.pk)])
 
     def get_score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]

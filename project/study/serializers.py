@@ -20,7 +20,6 @@ class StudyQualityMetricSerializer(serializers.ModelSerializer):
 
 
 class StudyQualitySerializer(serializers.ModelSerializer):
-    study = serializers.PrimaryKeyRelatedField(read_only=True)
     metric = StudyQualityMetricSerializer(read_only=True)
 
     def to_representation(self, instance):
@@ -31,6 +30,7 @@ class StudyQualitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.StudyQuality
+        exclude = ('object_id', 'content_type')
 
 
 class StudySerializer(serializers.ModelSerializer):
