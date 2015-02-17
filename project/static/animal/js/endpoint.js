@@ -1033,7 +1033,7 @@ DRPlot.prototype.get_dataset_info = function(){
         if (v.significance_level>0){
             sigs_data.push({'x': v.dose,
                             'significance_level': v.significance_level,
-                            'y': v.upper_limit});
+                            'y': v.upper_limit || value.y});
         }
 
         value.txt = txt.join('\n');
@@ -1047,10 +1047,10 @@ DRPlot.prototype.get_dataset_info = function(){
     this.max_x = d3.max(ep.endpoint_group, function(datum) { return datum.dose; });
 
     if (ep.endpoint_group.length>0){
-        var max_upper = d3.max(values, function(d){return d.y_upper;}),
+        var max_upper = d3.max(values, function(d){return d.y_upper || d.y;}),
             max_sig = d3.max(sigs_data, function(d){return d.y;});
 
-        this.min_y = d3.min(ep.endpoint_group, function(datum){return datum.lower_limit;});
+        this.min_y = d3.min(values, function(d){return d.y_lower || d.y;});
         this.max_y = d3.max([max_upper, max_sig]);
     }
 };
@@ -1109,15 +1109,18 @@ DRPlot.prototype.add_dr_error_bars = function(update){
             .attr('class','error_bars');
     }
 
-    var bar_options = {
-        data: this.values,
-        x1: function(d) {return x(d.x);},
-        y1: function(d) {return y(d.y_lower);},
-        x2: function(d) {return x(d.x);},
-        y2: function(d) {return y(d.y_upper);},
-        classes: 'dr_err_bars',
-        append_to: this.error_bar_group
-    };
+    var bars = this.values.filter(function(v){
+        return v.y_lower !== null && v.y_upper !== null;
+        }),
+        bar_options  = {
+            data: bars,
+            x1: function(d) {return x(d.x);},
+            y1: function(d) {return y(d.y_lower);},
+            x2: function(d) {return x(d.x);},
+            y2: function(d) {return y(d.y_upper);},
+            classes: 'dr_err_bars',
+            append_to: this.error_bar_group
+        };
 
     if (this.error_bars_vertical && update){
         this.error_bars_vertical = this.build_line(bar_options, this.error_bars_vertical);
@@ -1171,6 +1174,7 @@ DRPlot.prototype.add_dose_response = function(update) {
     } else {
         var dots_group = this.vis.append("g")
                 .attr('class','dr_dots');
+
         this.dots = dots_group.selectAll("path.dot")
             .data(this.values)
         .enter().append("circle")
@@ -1588,13 +1592,13 @@ Barplot.prototype.get_dataset_info = function(){
                      'low':v.lower_limit,
                      'txt':txt,
                      'classes':cls});
-        min = Math.min(min, v.lower_limit, val);
-        max = Math.max(max, v.upper_limit);
+        min = Math.min(min, v.lower_limit || val);
+        max = Math.max(max, v.upper_limit || val);
 
         if (v.significance_level>0){
             sigs_data.push({'x': v.dose,
                             'significance_level': v.significance_level,
-                            'y': v.upper_limit});
+                            'y': v.upper_limit || val});
         }
 
     });
