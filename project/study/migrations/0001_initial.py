@@ -105,7 +105,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='studyquality',
-            unique_together=set([('study', 'metric')]),
+            unique_together=set([('metric', 'study')]),
         ),
         migrations.AddField(
             model_name='attachment',
