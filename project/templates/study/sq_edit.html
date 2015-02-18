@@ -14,7 +14,7 @@
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
-    <li><a href="{% url 'study:sq_detail' study.pk %}">Study-quality</a><span class="divider">/</span></li>
+    <li><a href="{% url 'study:sqs_detail' study.pk %}">Study-quality</a><span class="divider">/</span></li>
     <li class="active"> Edit <span class="divider">/</span></li>
   {% elif crud == "Create" %}
     <li class="active"> Edit study-quality <span class="divider">/</span></li>
@@ -65,7 +65,7 @@
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">{{ crud }} study-quality</button>
-        <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'study:sq_detail' study.pk %}{% endif %}" class="btn">Cancel</a>
+        <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'study:sqs_detail' study.pk %}{% endif %}" class="btn">Cancel</a>
     </div>
 
     {% csrf_token %}

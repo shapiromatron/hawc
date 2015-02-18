@@ -41,11 +41,13 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/attachment/add/$', views.AttachmentCreate.as_view(), name='attachment_create'),
     url(r'^attachment/(?P<pk>\d+)/delete/$', views.AttachmentDelete.as_view(), name='attachment_delete'),
 
+    #study-quality at study-level
+    url(r'^(?P<pk>\d+)/study-quality/$', views.SQsDetail.as_view(), name='sqs_detail'),
+    url(r'^(?P<pk>\d+)/study-quality/create/$', views.SQsCreate.as_view(), name='sqs_new'),
+    url(r'^(?P<pk>\d+)/study-quality/edit/$', views.SQsEdit.as_view(), name='sqs_update'),
+    url(r'^(?P<pk>\d+)/study-quality/delete/$', views.SQsDelete.as_view(), name='sqs_delete'),
+
     #study-quality
-    url(r'^(?P<pk>\d+)/study-quality/$', views.SQDetail.as_view(), name='sq_detail'),
-    url(r'^(?P<pk>\d+)/study-quality/create/$', views.SQCreate.as_view(), name='sq_new'),
-    url(r'^(?P<pk>\d+)/study-quality/edit/$', views.SQEdit.as_view(), name='sq_update'),
-    url(r'^(?P<pk>\d+)/study-quality/delete/$', views.SQDelete.as_view(), name='sq_delete'),
 
     #aggregated study-quality
     url(r'^assessment/(?P<pk>\d+)/study-qualities/heatmap/$', views.SQAggHeatmap.as_view(), name='sq_agg_heatmap'),

@@ -323,7 +323,7 @@ class SQMetricDelete(BaseDelete):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
 
 
-# Study quality views
+# Study quality views for study
 class SQFixedReport(GenerateFixedReport):
     parent_model = Assessment
     model = models.Study
@@ -343,7 +343,7 @@ class SQFixedReport(GenerateFixedReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class SQCreate(CanCreateMixin, MessageMixin, CreateView):
+class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
     model = models.Study
     template_name = "study/sq_edit.html"
     form_class = forms.SQForm
@@ -351,7 +351,7 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
     crud = 'Create'
 
     def get_success_url(self):
-        return reverse_lazy('study:sq_detail', kwargs={'pk': self.study.pk})
+        return reverse_lazy('study:sqs_detail', kwargs={'pk': self.study.pk})
 
     def dispatch(self, *args, **kwargs):
         self.study = get_object_or_404(self.model, pk=kwargs['pk'])
@@ -359,7 +359,7 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
         # only create if there are currently no study qualities with study
         if self.study.qualities.count()>0:
             raise Http404
-        return super(SQCreate, self).dispatch(*args, **kwargs)
+        return super(SQsCreate, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if not self.user_can_create_object(self.assessment):
@@ -401,7 +401,7 @@ class SQCreate(CanCreateMixin, MessageMixin, CreateView):
         return context
 
 
-class SQDetail(AssessmentPermissionsMixin, DetailView):
+class SQsDetail(AssessmentPermissionsMixin, DetailView):
     """
     Detailed view of study-quality metrics for reporting.
     """
@@ -412,18 +412,18 @@ class SQDetail(AssessmentPermissionsMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         self.study = get_object_or_404(self.model, pk=kwargs['pk'])
         self.assessment = self.study.get_assessment()
-        return super(SQDetail, self).dispatch(*args, **kwargs)
+        return super(SQsDetail, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['sqs'] = self.object.qualities.all().select_related('metric')
-        context['obj_perms'] = super(SQDetail, self).get_obj_perms()
+        context['obj_perms'] = self.get_obj_perms()
         context['crud'] = self.crud
         return context
 
 
-class SQEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
     Edit settings for study quality metrics associated with study.
     """
@@ -434,12 +434,12 @@ class SQEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = 'Update'
 
     def get_success_url(self):
-        return reverse_lazy('study:sq_detail', kwargs={'pk': self.study.pk})
+        return reverse_lazy('study:sqs_detail', kwargs={'pk': self.study.pk})
 
     def dispatch(self, *args, **kwargs):
         self.study = get_object_or_404(self.model, pk=kwargs['pk'])
         self.assessment = self.study.get_assessment()
-        return super(SQEdit, self).dispatch(*args, **kwargs)
+        return super(SQsEdit, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.formset = forms.SQFormSet(self.request.POST)
@@ -467,7 +467,7 @@ class SQEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         return context
 
 
-class SQDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
+class SQsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     """
     Delete all study quality-metrics associated with study.
     """
@@ -487,13 +487,13 @@ class SQDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     def dispatch(self, *args, **kwargs):
         self.study = get_object_or_404(self.model, pk=kwargs['pk'])
         self.assessment = self.study.get_assessment()
-        return super(SQDelete, self).dispatch(*args, **kwargs)
+        return super(SQsDelete, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(DeleteView, self).get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['sqs'] = self.object.qualities.all().select_related('metric')
-        context['obj_perms'] = super(SQDelete, self).get_obj_perms()
+        context['obj_perms'] = self.get_obj_perms()
         context['crud'] = self.crud
         return context
 
