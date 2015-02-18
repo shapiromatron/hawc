@@ -5,7 +5,7 @@ from rest_framework import serializers
 from assessment.serializers import EffectTagsSerializer
 
 from utils.helper import SerializerHelper
-from study.serializers import StudySerializer
+from study.serializers import StudySerializer, StudyQualitySerializer
 from bmd.serializers import BMDModelRunSerializer
 
 from . import models
@@ -90,6 +90,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     animal_group = AnimalGroupSerializer()
     endpoint_group = EndpointGroupSerializer(many=True)
     ufs = UncertaintyFactorEndpointSerializer(many=True)
+    qualities = StudyQualitySerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
         ret = super(EndpointSerializer, self).to_representation(instance)

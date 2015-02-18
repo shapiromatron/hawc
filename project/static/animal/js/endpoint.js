@@ -409,6 +409,59 @@ Endpoint.prototype.build_endpoint_list_row = function(){
     ];
 };
 
+
+var EndpointSQTable = function(endpoint){
+    this.endpoint = endpoint;
+    this.tbl = new BaseTable();
+};
+
+EndpointSQTable.prototype = {
+    hasQualities: function(){
+        return this.endpoint.data.qualities.length>0;
+    },
+    build_table: function(options){
+
+        if(!this.hasQualities()) return;
+
+        var self = this,
+            headers = [
+                "Domain",
+                "Metric",
+                "Score",
+                "Description"
+            ],
+            getNotes = function(v){
+                var notes = $("<div>").append(v.notes);
+                if (options.canEdit){
+
+                    var ul = $('<ul class="dropdown-menu">')
+                        .append('<li><a href="{0}">Edit</a></li>'.printf(v.url_edit))
+                        .append('<li><a href="{0}">Delete</a></li>'.printf(v.url_delete));
+
+                    var dd = $('<div class="dropdown pull-right optsCaret">')
+                        .append('<a class="dropdown-toggle btn btn-mini btn-primary" data-toggle="dropdown" href="#"><span class="caret"></span></a>')
+                        .append(ul)
+                        .appendTo(notes);
+                }
+                return notes;
+            }
+
+        this.tbl.addHeaderRow(headers);
+        this.tbl.setColGroup([20,30,15,35]);
+        this.endpoint.data.qualities.map(function(v){
+
+            self.tbl.addRow([
+                v.metric.domain.name,
+                v.metric.metric,
+                v.score_symbol,
+                getNotes(v)
+            ]).addClass('showOptsCaret');
+        });
+        return this.tbl.getTbl();
+    }
+}
+
+
 var EndpointCriticalDose = function(endpoint, span, type, show_units){
     // custom field to observe dose changes and respond based on selected dose
     endpoint.addObserver(this);

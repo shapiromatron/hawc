@@ -520,3 +520,50 @@ class SQAggStacked(SQAggHeatmap):
         context = super(SQAggStacked, self).get_context_data(**kwargs)
         context['chart_type'] = 'stacked'
         return context
+
+
+# Study quality views for endpoints
+class SQCreate(BaseCreate):
+    success_message = 'Study-quality override created.'
+    model = models.StudyQuality
+    form_class = forms.SQEndpointForm
+
+    @property
+    def parent_model(self):
+        if self.kwargs['slug'] == "endpoint":
+            return get_model("animal", "Endpoint")
+        else:
+            raise Http404()
+
+    @property
+    def parent_template_name(self):
+        if self.kwargs['slug'] == "endpoint":
+            return "endpoint"
+        else:
+            raise Http404()
+
+
+class SQEdit(BaseUpdate):
+    model = models.StudyQuality
+    form_class = forms.SQEndpointForm
+    success_message = 'Study-quality metric updated.'
+
+    def get_context_data(self, **kwargs):
+        context = super(SQEdit, self).get_context_data(**kwargs)
+        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+            context["endpoint"] = self.object.content_object
+        return context
+
+
+class SQDelete(BaseDelete):
+    model = models.StudyQuality
+    success_message = 'Study-quality metric deleted.'
+
+    def get_context_data(self, **kwargs):
+        context = super(SQDelete, self).get_context_data(**kwargs)
+        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+            context["endpoint"] = self.object.content_object
+        return context
+
+    def get_success_url(self):
+        return self.object.content_object.get_absolute_url()

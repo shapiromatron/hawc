@@ -205,7 +205,7 @@ class SQForm(forms.ModelForm):
         exclude = ('content_type', 'object_id')
 
     def __init__(self, *args, **kwargs):
-        content_object = kwargs.pop('content_object', None)
+        content_object = kwargs.pop('parent', None)
         super(SQForm, self).__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
@@ -213,6 +213,43 @@ class SQForm(forms.ModelForm):
         self.fields['notes'].widget.attrs['rows'] = 4
         if content_object:
             self.instance.content_object = content_object
+
+
+class SQEndpointForm(SQForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SQEndpointForm, self).__init__(*args, **kwargs)
+        self.fields['metric'].queryset = self.fields['metric'].queryset.filter(
+            domain__assessment=self.instance.content_object.assessment)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an study-quality override.",
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create study-quality override",
+                "help_text":   u"""
+                    Create a study-quality metric which is overridden for this
+                    particular endpoint.
+                    """,
+            }
+
+        inputs["cancel_url"] = self.instance.content_object.get_absolute_url()
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+    def clean_metric(self):
+        metric = self.cleaned_data['metric']
+        qualities = self.instance.content_object.qualities.all()
+        for quality in qualities:
+            if metric == quality.metric and quality.id != self.instance.id:
+                raise forms.ValidationError("Study quality metrics must be unique for a given endpoint.")
+        return metric
 
 
 class BaseSQFormSet(BaseModelFormSet):

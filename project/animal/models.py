@@ -3,6 +3,7 @@ import math
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -747,6 +748,9 @@ class Endpoint(BaseEndpoint):
         help_text="Any additional notes related to this endpoint itself, not related to results")
     additional_fields = models.TextField(
         default="{}")
+    qualities = generic.GenericRelation(
+        'study.StudyQuality',
+        related_query_name='endpoints')
 
     def get_update_url(self):
         if self.individual_animal_data:

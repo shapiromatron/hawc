@@ -10,6 +10,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.utils.html import strip_tags
 
 import reversion
@@ -370,9 +372,20 @@ class StudyQuality(models.Model):
     def __unicode__(self):
         return '{}: {}'.format(self.metric, self.score)
 
+    def get_assessment(self):
+        return self.content_object.get_assessment()
+
     def get_absolute_url(self):
         if type(self.content_object) is Study:
-            return reverse('study:sq_detail', args=[str(self.study.pk)])
+            return reverse('study:sqs_detail', args=[str(self.study.pk)])
+        else:
+            return self.content_object.get_absolute_url()
+
+    def get_edit_url(self):
+        return reverse('study:sq_update', args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse('study:sq_delete', args=[self.pk])
 
     def get_score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
@@ -406,6 +419,14 @@ class StudyQuality(models.Model):
             ser['score_description'],
             ser['score']
         )
+
+
+@receiver(post_save, sender=StudyQuality)
+@receiver(post_delete, sender=StudyQuality)
+def invalidate_endpoint_cache(sender, instance, **kwargs):
+    Endpoint = get_model('animal', 'Endpoint')
+    if type(instance.content_object) == Endpoint:
+        Endpoint.delete_caches([instance.content_object.id])
 
 
 reversion.register(Study)

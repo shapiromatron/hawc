@@ -1367,6 +1367,7 @@ BaseTable.prototype = {
         } else {
             this.tbody.append(tr);
         }
+        return tr;
     }, setColGroup: function(percents){
         this.colgroup.html(percents.map(function(v){
             return '<col style="width: {0}%;">'.printf(v);

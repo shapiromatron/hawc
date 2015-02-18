@@ -27,7 +27,12 @@
             <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
             <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>
 
-            <!-- BMD modeling section -->
+            {% if assessment.enable_study_quality %}
+              <li class="divider"></li>
+              <li class="disabled"><a tabindex="-1" href="#">Study Bias Editing</a></li>
+              <li><a href="{% url 'study:sq_create' "endpoint" object.pk %}">Create study-quality override</a></li>
+            {% endif %}
+
             {% if assessment.enable_bmd and object.dose_response_available %}
               <li class="divider"></li>
               <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
@@ -130,8 +135,16 @@
   {% endif %}
   <script type="text/javascript">
     var endpoint = new Endpoint({{object.d_response|safe}}),
-        plot = new EndpointPlotContainer(endpoint, '#bmd_ds_plot');
+        plot = new EndpointPlotContainer(endpoint, '#bmd_ds_plot'),
+        qualityTbl = new EndpointSQTable(endpoint);
+
     endpoint.build_details_table($('#endpoint-details-table'));
     endpoint.build_endpoint_table($('#dr-tbl'));
+    if(qualityTbl.hasQualities()){
+      $('#endpoint-details-table')
+        .append("<h3>Risk of bias overrides</h3>")
+        .append('<p class="help-block">Endpoint-level risk-of bias used to override study bias</p>')
+        .append(qualityTbl.build_table({ "canEdit": {{obj_perms.edit|lower}} }));
+    }
   </script>
 {% endblock %}

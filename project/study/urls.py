@@ -48,6 +48,9 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/study-quality/delete/$', views.SQsDelete.as_view(), name='sqs_delete'),
 
     #study-quality
+    url(r'^study-quality/(?P<slug>[\w-]+)/(?P<pk>\d+)/create/', views.SQCreate.as_view(), name='sq_create'),
+    url(r'^study-quality/(?P<pk>\d+)/edit/$', views.SQEdit.as_view(), name='sq_update'),
+    url(r'^study-quality/(?P<pk>\d+)/delete/$', views.SQDelete.as_view(), name='sq_delete'),
 
     #aggregated study-quality
     url(r'^assessment/(?P<pk>\d+)/study-qualities/heatmap/$', views.SQAggHeatmap.as_view(), name='sq_agg_heatmap'),

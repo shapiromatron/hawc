@@ -56,6 +56,22 @@ code {
     padding: 0 2px 0 2px;
 }
 
+.showOptsCaret:hover .optsCaret {
+  opacity: 1.0;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.optsCaret {
+  opacity: 0;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
 .sq_score{
     border-radius: 25px;
     height: 50px;
