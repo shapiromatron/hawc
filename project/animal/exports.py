@@ -65,6 +65,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'animal_group_url',
             'lifestage exposed',
             'lifestage assessed',
+            'species strain',
 
             'endpoint_name',
             'endpoint_url',
@@ -125,6 +126,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
                     return float(dose['dose'])
             return None
 
+        def get_species_strain(e):
+            ns = [ eg["n"] for eg in e["endpoint_group"] ]
+            ns_txt = models.EndpointGroup.getNRangeText(ns)
+            return u"{}, {} ({} {})".format(
+                e['animal_group']['species'],
+                e['animal_group']['strain'],
+                e['animal_group']['sex_symbol'],
+                ns_txt
+            )
+
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
@@ -144,6 +155,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['url'],
                 ser['animal_group']['lifestage_exposed'],
                 ser['animal_group']['lifestage_assessed'],
+                get_species_strain(ser),
 
                 ser['name'],
                 ser['url'],

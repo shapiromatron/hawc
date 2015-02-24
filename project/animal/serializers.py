@@ -58,6 +58,7 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         ret = super(AnimalGroupSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['sex'] = instance.get_sex_display()
+        ret['sex_symbol'] = instance.sex_symbol
         return ret
 
     class Meta:

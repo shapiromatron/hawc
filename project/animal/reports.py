@@ -5,6 +5,8 @@ from docx.enum.section import WD_ORIENT
 
 from utils.helper import DOCXReport
 
+from animal import models
+
 
 class SpanFactory(object):
 
@@ -65,16 +67,8 @@ def getEndpointsText(eps):
 def getNText(eps):
     ns = []
     for ep in eps:
-        for eg in ep["endpoint_group"]:
-            ns.append(eg["n"])
-    if len(ns)==0:
-        return "Not available"
-    nmin = min(ns)
-    nmax = max(ns)
-    if nmin==nmax:
-        return unicode(nmin)
-    else:
-        return u"{}-{}".format(nmin, nmax)
+        ns.extend([ eg["n"] for eg in ep["endpoint_group"]  ])
+    return models.EndpointGroup.getNRangeText(ns)
 
 def getStatisticalAnalysis(eps):
     return u"; ".join(set([ep["statistical_test"] for ep in eps ]))
@@ -167,7 +161,10 @@ class EndpointDOCXReport(DOCXReport):
                     col2 = u'NR'
                 else:  # ["P"]
                     col1 = u'NR'
-                    col2 = u'{0:.1f}'.format(eg["percentControlMean"])
+                    if eg["percentControlMean"]:
+                        col2 = u'{0:.1f}'.format(eg["percentControlMean"])
+                    else:
+                        col2 = u"-"
                     if eg["percentControlLow"]:
                         col2 += u"({0:.1f}, {1:.1f})".format(eg["percentControlLow"], eg["percentControlHigh"])
 

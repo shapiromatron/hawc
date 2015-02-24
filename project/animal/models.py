@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import json
 import math
 
@@ -216,6 +219,13 @@ class Experiment(models.Model):
 
 class AnimalGroup(models.Model):
 
+    SEX_SYMBOLS = {
+        "M": u"♂",
+        "F": u"♀",
+        "B": u"♂♀",
+        "R": u"NR"
+    }
+
     SEX_CHOICES = (
         ("M", "Male"),
         ("F", "Female"),
@@ -313,6 +323,10 @@ class AnimalGroup(models.Model):
     @property
     def is_generational(self):
         return self.experiment.is_generational()
+
+    @property
+    def sex_symbol(self):
+        return self.SEX_SYMBOLS.get(self.sex)
 
     def get_doses_json(self, json_encode=True):
         if not hasattr(self, 'doses'):
@@ -1105,6 +1119,22 @@ class EndpointGroup(models.Model):
                 eg['percentControlMean'] = eg['response']
                 eg['percentControlLow']  = eg['lower_ci']
                 eg['percentControlHigh'] = eg['upper_ci']
+
+    @staticmethod
+    def getNRangeText(ns):
+        """
+        Given a list of N values, return textual range of N values in the list.
+        For example, may return "10-12", "7", or "Not available".
+        """
+        if len(ns)==0:
+            return "Not available"
+        nmin = min(ns)
+        nmax = max(ns)
+        if nmin==nmax:
+            return unicode(nmin)
+        else:
+            return u"{}-{}".format(nmin, nmax)
+
 
     def save(self, *args, **kwargs):
         super(EndpointGroup, self).save(*args, **kwargs)
