@@ -18,13 +18,33 @@
         <div class="btn-group pull-right">
           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{% url 'data_pivot:new-prompt' assessment.pk %}">Create new</a></li>
-            <li><a href="{% url 'data_pivot:copy_selector' assessment.pk %}">Copy from existing</a></li>
+            <li><a href="{% url 'summary:dp_new-prompt' assessment.pk %}">Create new</a></li>
+            <li><a href="{% url 'summary:dp_copy_selector' assessment.pk %}">Copy from existing</a></li>
           </ul>
         </div>
     {% endif %}
   </h1>
 
-  {% include "data_pivot/_data_pivot_list.html" %}
+  {% if object_list %}
+    <table class="table table-condensed table-striped">
+      <colgroup>
+        <col style="width: 100%;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+          <tr>
+            <td><a href="{{object.get_absolute_url}}">{{object}}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No data pivots are available.</p>
+  {% endif %}
 
 {% endblock %}

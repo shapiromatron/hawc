@@ -262,7 +262,7 @@ SmartTagSearch.prototype._dp_search = function(search_string){
     var self = this,
         data = {'title': search_string};
 
-    $.post('/data-pivot/assessment/{0}/search/json/'.printf(window.assessment_pk), data, function(d){
+    $.post('/summary/data-pivot/assessment/{0}/search/json/'.printf(window.assessment_pk), data, function(d){
         var content = [];
         if(d.status !== "success" || d.dps.length === 0){
             content.push("<p>No results found.</p>");

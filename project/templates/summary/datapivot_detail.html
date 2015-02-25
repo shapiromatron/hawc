@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'data_pivot:list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+  <li><a href="{% url 'summary:dp_list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
   {% if crud == "Read" %}
     <li class="active">{{object}}<span class="divider">/</span></li>
   {% else %}
@@ -28,10 +28,10 @@
                        {% else %}{{MEDIA_URL}}{{object.datapivotupload.file}}{% endif %}">Download data file</a></li>
         {% if obj_perms.edit %}
           <li class="divider"></li>
-          <li><a href="{% url 'data_pivot:update' assessment.pk object.slug %}">Edit display settings</a></li>
-          <li><a href="{% if object.datapivotquery %}{% url 'data_pivot:query-update' assessment.pk object.slug %}
-                       {% else %}{% url 'data_pivot:file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a></li>
-          <li><a href="{% url 'data_pivot:delete' assessment.pk object.slug %}">Delete Pivot</a></li>
+          <li><a href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a></li>
+          <li><a href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}
+                       {% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a></li>
+          <li><a href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a></li>
         {% endif %}
       </ul>
     </div>

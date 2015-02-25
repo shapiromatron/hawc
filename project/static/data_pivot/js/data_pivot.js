@@ -8,7 +8,7 @@ var DataPivot = function(data, settings, dom_bindings, title){
 DataPivot.NULL_CASE = "---";
 
 DataPivot.get_object = function(pk, callback){
-  $.get('/data-pivot/{0}/json/'.printf(pk), function(d){
+  $.get('/summary/data-pivot/{0}/json/'.printf(pk), function(d){
     d3.tsv(d.data_url)
       .row(function(d, i){ return DataPivot.massage_row(d, i); })
       .get(function(error, data){
@@ -1899,8 +1899,7 @@ DataPivot_visualization.sorter = function(arr, sorts){
       field_name = sorts[i].field_name;
       ascending = sorts[i].ascending;
 
-      if (a[field_name].toString() !==
-        b[field_name].toString()){
+      if (a[field_name].toString() !== b[field_name].toString()){
         break;
       }
     }

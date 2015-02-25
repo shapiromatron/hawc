@@ -12,7 +12,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'data_pivot:list' pk=assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+  <li><a href="{% url 'summary:dp_list' pk=assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
     <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
   {% endif %}
@@ -46,7 +46,7 @@
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">{{ crud }} data pivot</button>
         {% if crud == "Create" %}
-          <a href="{% url 'data_pivot:list' assessment.pk %}" class="btn">Cancel</a>
+          <a href="{% url 'summary:dp_list' assessment.pk %}" class="btn">Cancel</a>
         {% elif crud = "Update" %}
           <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
         {% endif %}
@@ -71,7 +71,7 @@
       $('#id_caption').wysihtml5({"stylesheets": false});
 
       {% if file_loader %}
-        $('#id_file').closest('div').find('span').append('<p class="help-block">For more details on saving in this format from Excel, <a href="{% url 'data_pivot:excel-unicode' %}" target="_blank">click here</a>.</p>')
+        $('#id_file').closest('div').find('span').append('<p class="help-block">For more details on saving in this format from Excel, <a href="{% url 'summary:dp_excel-unicode' %}" target="_blank">click here</a>.</p>')
       {% endif %}
 
       // only show the units-box for animal bioassay data; not show for epi

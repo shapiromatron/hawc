@@ -83,16 +83,15 @@ INSTALLED_APPS = (
     'utils',
     'myuser',
     'assessment',
+    'api',
     'lit',
     'study',
     'animal',
     'epi',
     'invitro',
     'bmd',
-    'api',
     'summary',
     'comments',
-    'data_pivot'
 )
 
 

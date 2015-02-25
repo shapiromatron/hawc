@@ -14,7 +14,7 @@
         <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
         <li class=""><a href="{% url 'animal:endpoint_list' assessment.pk %}">Endpoint List</a></li>
         <li class=""><a href="{% url 'animal:assessment_endpoint_search' assessment.pk %}">Endpoint Search</a></li>
-        <li class=""><a href="{% url 'data_pivot:list' assessment.pk %}">Endpoint Data Pivot</a></li>
+        <li class=""><a href="{% url 'summary:dp_list' assessment.pk %}">Endpoint Data Pivot</a></li>
         <li class=""><a href="{% url 'animal:endpoint_crossview' assessment.pk %}">Endpoint Crossview</a></li>
         <li class=""><a href="{% url 'animal:aggregation_list' assessment.pk %}">Endpoint Aggregations</a></li>
     {% endif %}
@@ -42,7 +42,7 @@
     {% endif %}
   {% else %}
     <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an Assessment</a>{% endblock %}</li>
-    <a href="{% url 'data_pivot:general' %}">Data Pivot</a>
+    <a href="{% url 'summary:dp_general' %}">Data Pivot</a>
   {% endif %}
 </ul>
 

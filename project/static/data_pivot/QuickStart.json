@@ -23,7 +23,7 @@
   "legend": {
     "show": true,
     "left": 292,
-    "top": -38,
+    "top": -30,
     "columns": 1,
     "style": {
       "border_color": "#666",
@@ -32,17 +32,17 @@
     "fields": [
       {
         "line_index": 0,
-        "label": "Hypertension",
-        "line_style": "base",
-        "symbol_style": "circle | green"
+        "line_style": "solid | black",
+        "symbol_style": "circle | green",
+        "label": "Hypertension"
       },
       {
-        "line_style": "base",
+        "line_style": "solid | black",
         "symbol_style": "circle | red",
         "label": "Lung cancer"
       },
       {
-        "line_style": "base",
+        "line_style": "solid | black",
         "symbol_style": "circle | blue",
         "label": "Pulse pressure"
       }
@@ -53,7 +53,7 @@
       "low_field_name": "Lower CL",
       "high_field_name": "Upper CL",
       "header_name": "Lower CL",
-      "marker_style": "base"
+      "marker_style": "solid | black"
     }
   ],
   "datapoint_settings": [
@@ -157,6 +157,7 @@
       "rectangle_style": "base"
     }
   ],
+  "labels": [],
   "row_overrides": [
     {
       "pk": 5,

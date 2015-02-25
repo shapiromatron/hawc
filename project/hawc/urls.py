@@ -25,7 +25,6 @@ urlpatterns = patterns('',
     (r'^bmd/', include('bmd.urls', namespace='bmd')),
     (r'^lit/', include('lit.urls', namespace='lit')),
     (r'^summary/', include('summary.urls', namespace='summary')),
-    (r'^data-pivot/', include('data_pivot.urls', namespace='data_pivot')),
     (r'^comments/', include('comments.urls', namespace='comments')),
 
     # Error-page testing

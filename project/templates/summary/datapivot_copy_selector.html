@@ -1,4 +1,4 @@
-{% extends 'data_pivot/datapivot_list.html' %}
+{% extends 'summary/datapivot_list.html' %}
 
 {% load add_class %}
 
@@ -7,7 +7,7 @@
 {% endblock title %}
 
 {% block breadcrumbs_self %}
-    <li><a href="{% url 'data_pivot:list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+    <li><a href="{% url 'summary:dp_list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
     <li class="active">Copy existing<span class="divider">/</span></li>
 {% endblock breadcrumbs_self %}
 
@@ -42,7 +42,7 @@
     <div class="row-fluid">
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Copy selected as new</button>
-        <a href="{% url 'data_pivot:list' assessment.pk %}" class="btn">Cancel</a>
+        <a href="{% url 'summary:dp_list' assessment.pk %}" class="btn">Cancel</a>
       </div>
     </div>
 
