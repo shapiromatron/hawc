@@ -7,6 +7,8 @@ import json
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
 
 import reversion
 
@@ -565,13 +567,6 @@ class StudyPopulation(Demographics):
             '|'.join(ser['confounding_criteria'])
         ) + Demographics.flat_complete_data_row(ser)
 
-    def save(self, *args, **kwargs):
-        super(StudyPopulation, self).save(*args, **kwargs)
-        endpoint_pks = AssessedOutcome.objects\
-            .filter(exposure__study_population=self.id)\
-            .values_list('id', flat=True)
-        AssessedOutcome.delete_caches(endpoint_pks)
-
 
 class Exposure(models.Model):
     study_population = models.ForeignKey(
@@ -623,13 +618,6 @@ class Exposure(models.Model):
 
     def get_assessment(self):
         return self.study_population.get_assessment()
-
-    def save(self, *args, **kwargs):
-        super(Exposure, self).save(*args, **kwargs)
-        endpoint_pks = AssessedOutcome.objects\
-            .filter(exposure=self.id)\
-            .values_list('id', flat=True)
-        AssessedOutcome.delete_caches(endpoint_pks)
 
     @staticmethod
     def flat_complete_header_row():
@@ -817,10 +805,6 @@ class AssessedOutcome(BaseEndpoint):
             except Exception:
                 fields['statistical_metric'] = "-"
         return json.dumps(versions_json, cls=HAWCDjangoJSONEncoder)
-
-    def save(self, *args, **kwargs):
-        super(AssessedOutcome, self).save(*args, **kwargs)
-        AssessedOutcome.delete_caches([self.pk])
 
     @staticmethod
     def flat_complete_header_row():
@@ -1010,13 +994,6 @@ class ExposureGroup(Demographics):
             ser['exposure_n']
         ) + Demographics.flat_complete_data_row(ser)
 
-    def save(self, *args, **kwargs):
-        super(ExposureGroup, self).save(*args, **kwargs)
-        endpoint_pks = AssessedOutcome.objects\
-            .filter(exposure=self.exposure)\
-            .values_list('id', flat=True)
-        AssessedOutcome.delete_caches(endpoint_pks)
-
 
 class AssessedOutcomeGroup(models.Model):
 
@@ -1095,10 +1072,6 @@ class AssessedOutcomeGroup(models.Model):
     def get_assessment(self):
         return self.assessed_outcome.get_assessment()
 
-    def save(self, *args, **kwargs):
-        super(AssessedOutcomeGroup, self).save(*args, **kwargs)
-        AssessedOutcome.delete_caches([self.assessed_outcome.id])
-
     @property
     def isMainFinding(self):
         return self.assessed_outcome.main_finding_id == self.exposure_group_id
@@ -1143,7 +1116,7 @@ class MetaProtocol(models.Model):
         (1, "Other"))
 
     study = models.ForeignKey('study.Study',
-         related_name="meta_protocols")
+        related_name="meta_protocols")
     name = models.CharField(
         verbose_name="Protocol name",
         max_length=128)
@@ -1198,10 +1171,6 @@ class MetaProtocol(models.Model):
 
     def get_absolute_url(self):
         return reverse('epi:mp_detail', kwargs={'pk': self.pk})
-
-    def save(self, *args, **kwargs):
-        super(MetaProtocol, self).save(*args, **kwargs)
-        MetaResult.delete_caches(self.results.all().values_list('pk', flat=True))
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
@@ -1305,10 +1274,6 @@ class MetaResult(models.Model):
 
     def get_absolute_url(self):
         return reverse('epi:mr_detail', kwargs={'pk': self.pk})
-
-    def save(self, *args, **kwargs):
-        super(MetaResult, self).save(*args, **kwargs)
-        MetaResult.delete_caches([self.pk])
 
     @classmethod
     def delete_caches(cls, pks):
@@ -1453,10 +1418,6 @@ class SingleResult(models.Model):
     def __unicode__(self):
         return self.exposure_name
 
-    def save(self, *args, **kwargs):
-        super(SingleResult, self).save(*args, **kwargs)
-        MetaResult.delete_caches([self.meta_result.pk])
-
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -1501,6 +1462,58 @@ class SingleResult(models.Model):
             ser['ci_units'],
             ser['notes'],
         )
+
+
+@receiver(post_save, sender=StudyPopulation)
+@receiver(pre_delete, sender=StudyPopulation)
+@receiver(post_save, sender=Exposure)
+@receiver(pre_delete, sender=Exposure)
+@receiver(post_save, sender=AssessedOutcome)
+@receiver(pre_delete, sender=AssessedOutcome)
+@receiver(post_save, sender=ExposureGroup)
+@receiver(pre_delete, sender=ExposureGroup)
+@receiver(post_save, sender=AssessedOutcomeGroup)
+@receiver(pre_delete, sender=AssessedOutcomeGroup)
+def invalidate_assessed_outcome_cache(sender, instance, **kwargs):
+    instance_type = type(instance)
+    filters = {}
+    if instance_type is StudyPopulation:
+        filters["exposure__study_population"] = instance.id
+    elif instance_type is Exposure:
+        filters["exposure"] = instance.id
+    elif instance_type is AssessedOutcome:
+        ids = [instance.id]
+    elif instance_type is ExposureGroup:
+        filters["exposure"] = instance.exposure_id
+    elif instance_type is AssessedOutcomeGroup:
+        ids = [instance.assessed_outcome_id]
+
+    if len(filters)>0:
+        ids = AssessedOutcome.objects.filter(**filters).values_list('id', flat=True)
+
+    AssessedOutcome.delete_caches(ids)
+
+
+@receiver(post_save, sender=MetaProtocol)
+@receiver(pre_delete, sender=MetaProtocol)
+@receiver(post_save, sender=MetaResult)
+@receiver(pre_delete, sender=MetaResult)
+@receiver(post_save, sender=SingleResult)
+@receiver(pre_delete, sender=SingleResult)
+def invalidate_meta_result_cache(sender, instance, **kwargs):
+    instance_type = type(instance)
+    filters = {}
+    if instance_type is MetaProtocol:
+        filters["protocol"] = instance.id
+    elif instance_type is MetaResult:
+        ids = [instance.id]
+    elif instance_type is SingleResult:
+        ids = [instance.meta_result_id]
+
+    if len(filters)>0:
+        ids = MetaResult.objects.filter(**filters).values_list('id', flat=True)
+
+    MetaResult.delete_caches(ids)
 
 
 reversion.register(Ethnicity)
