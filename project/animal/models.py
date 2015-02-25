@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
 
 import reversion
 
@@ -151,13 +153,6 @@ class Experiment(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        super(Experiment, self).save(*args, **kwargs)
-        pks = Endpoint.objects.all()\
-                .filter(animal_group__experiment=self)\
-                .values_list('pk', flat=True)
-        Endpoint.delete_caches(pks)
 
     def get_absolute_url(self):
         return reverse('animal:experiment_detail', args=[str(self.pk)])
@@ -304,13 +299,6 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
-
-    def save(self, *args, **kwargs):
-        super(AnimalGroup, self).save(*args, **kwargs)
-        pks = Endpoint.objects.all()\
-                .filter(animal_group=self)\
-                .values_list('pk', flat=True)
-        Endpoint.delete_caches(pks)
 
     def clean(self):
         #ensure that strain is of the correct species
@@ -500,13 +488,6 @@ class DosingRegime(models.Model):
 
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
-
-    def save(self, *args, **kwargs):
-        super(DosingRegime, self).save(*args, **kwargs)
-        pks = Endpoint.objects.all()\
-                .filter(animal_group__dosing_regime=self)\
-                .values_list('pk', flat=True)
-        Endpoint.delete_caches(pks)
 
     @property
     def dose_groups(self):
@@ -771,10 +752,6 @@ class Endpoint(BaseEndpoint):
             return reverse('animal:endpoint_individual_animal_update', args=[self.pk])
         else:
             return reverse('animal:endpoint_update', args=[self.pk])
-
-    def save(self, *args, **kwargs):
-        super(Endpoint, self).save(*args, **kwargs)
-        Endpoint.delete_caches([self.id])
 
     @classmethod
     def delete_caches(cls, ids):
@@ -1135,11 +1112,6 @@ class EndpointGroup(models.Model):
         else:
             return u"{}-{}".format(nmin, nmax)
 
-
-    def save(self, *args, **kwargs):
-        super(EndpointGroup, self).save(*args, **kwargs)
-        Endpoint.delete_caches([self.endpoint.pk])
-
     @classmethod
     def flat_complete_header_row(cls):
         return (
@@ -1239,10 +1211,6 @@ class UncertaintyFactorEndpoint(UncertaintyFactorAbstract):
 
     class Meta(UncertaintyFactorAbstract.Meta):
         unique_together = (("endpoint", "uf_type"),)
-
-    def save(self, *args, **kwargs):
-        super(UncertaintyFactorEndpoint, self).save(*args, **kwargs)
-        Endpoint.delete_caches([self.endpoint.pk])
 
     def clean(self):
         #ensure that only only UF type of the same type exists for an endpoint
@@ -1484,6 +1452,40 @@ class ReferenceValue(models.Model):
         self.aggregate_uf = self.calculate_total_uncertainty_value(ufs)
         self.reference_value = self.calculate_reference_value(ufs)
         self.save()
+
+
+@receiver(post_save, sender=Experiment)
+@receiver(pre_delete, sender=Experiment)
+@receiver(post_save, sender=AnimalGroup)
+@receiver(pre_delete, sender=AnimalGroup)
+@receiver(post_save, sender=DosingRegime)
+@receiver(pre_delete, sender=DosingRegime)
+@receiver(post_save, sender=Endpoint)
+@receiver(pre_delete, sender=Endpoint)
+@receiver(post_save, sender=EndpointGroup)
+@receiver(pre_delete, sender=EndpointGroup)
+@receiver(post_save, sender=UncertaintyFactorEndpoint)
+@receiver(pre_delete, sender=UncertaintyFactorEndpoint)
+def invalidate_endpoint_cache(sender, instance, **kwargs):
+    instance_type = type(instance)
+    filters = {}
+    if instance_type is Experiment:
+        filters["animal_group__experiment"] = instance.id
+    elif instance_type is AnimalGroup:
+        filters["animal_group"] = instance.id
+    elif instance_type is DosingRegime:
+        filters["animal_group__dosing_regime"] = instance.id
+    elif instance_type is Endpoint:
+        ids = [instance.id]
+    elif instance_type is EndpointGroup:
+        ids = [instance.endpoint.id]
+    elif instance_type is UncertaintyFactorEndpoint:
+        ids = [instance.endpoint.id]
+
+    if len(filters)>0:
+        ids = Endpoint.objects.filter(**filters).values_list('id', flat=True)
+
+    Endpoint.delete_caches(ids)
 
 
 reversion.register(Species)

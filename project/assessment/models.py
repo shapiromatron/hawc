@@ -6,7 +6,6 @@ from StringIO import StringIO
 
 from django.db import models
 from django.db.models.loading import get_model
-from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
