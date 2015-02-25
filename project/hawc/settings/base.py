@@ -83,7 +83,6 @@ INSTALLED_APPS = (
     'utils',
     'myuser',
     'assessment',
-    'api',
     'lit',
     'study',
     'animal',
