@@ -10,9 +10,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.html import strip_tags
 
 import reversion
 
@@ -84,30 +83,6 @@ class Study(Reference):
     class Meta:
         verbose_name_plural = "Studies"
         ordering = ("short_citation", )
-
-    def save(self, *args, **kwargs):
-        super(Study, self).save(*args, **kwargs)
-        if self.study_type == 0:
-            #clear animal endpoints cache
-            Endpoint = get_model('animal', 'Endpoint')
-            ids = Endpoint.objects\
-                          .filter(animal_group__experiment__study=self.id)\
-                          .values_list('id', flat=True)
-            Endpoint.delete_caches(ids)
-        elif self.study_type == 1:
-            # clear assessed outcome endpoints cache
-            AssessedOutcome = get_model('epi', 'AssessedOutcome')
-            ids = AssessedOutcome.objects\
-                    .filter(exposure__study_population__study=self.id)\
-                    .values_list('id', flat=True)
-            AssessedOutcome.delete_caches(ids)
-        elif self.study_type == 4:
-            # clear MetaResult endpoints cache
-            MetaResult = get_model('epi', 'MetaResult')
-            ids = MetaResult.objects\
-                            .filter(protocol__study=self.id)\
-                            .values_list('id', flat=True)
-            MetaResult.delete_caches(ids)
 
     @classmethod
     def save_new_from_reference(cls, reference, attrs):
@@ -421,12 +396,37 @@ class StudyQuality(models.Model):
         )
 
 
+@receiver(post_save, sender=Study)
+@receiver(pre_delete, sender=Study)
 @receiver(post_save, sender=StudyQuality)
-@receiver(post_delete, sender=StudyQuality)
+@receiver(pre_delete, sender=StudyQuality)
 def invalidate_endpoint_cache(sender, instance, **kwargs):
     Endpoint = get_model('animal', 'Endpoint')
-    if type(instance.content_object) == Endpoint:
-        Endpoint.delete_caches([instance.content_object.id])
+    AssessedOutcome = get_model('epi', 'AssessedOutcome')
+    MetaResult = get_model('epi', 'MetaResult')
+
+    if type(instance) is Study:
+        Model = None
+        filters = {}
+
+        if instance.study_type == 0:
+            Model = Endpoint
+            filters["animal_group__experiment__study"] = instance.id
+        elif instance.study_type == 1:
+            Model = AssessedOutcome
+            filters["exposure__study_population__study"] = instance.id
+        elif instance.study_type == 4:
+            Model = MetaResult
+            filters["protocol__study"] = instance.id
+
+        if Model:
+            ids = Model.objects.filter(**filters).values_list('id', flat=True)
+            Model.delete_caches(ids)
+
+    elif type(instance) is StudyQuality:
+
+        if type(instance.content_object) == Endpoint:
+            Endpoint.delete_caches([instance.content_object.id])
 
 
 reversion.register(Study)
