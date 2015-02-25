@@ -1478,9 +1478,9 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     elif instance_type is Endpoint:
         ids = [instance.id]
     elif instance_type is EndpointGroup:
-        ids = [instance.endpoint.id]
+        ids = [instance.endpoint_id]
     elif instance_type is UncertaintyFactorEndpoint:
-        ids = [instance.endpoint.id]
+        ids = [instance.endpoint_id]
 
     if len(filters)>0:
         ids = Endpoint.objects.filter(**filters).values_list('id', flat=True)

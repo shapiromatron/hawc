@@ -426,7 +426,7 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     elif type(instance) is StudyQuality:
 
         if type(instance.content_object) == Endpoint:
-            Endpoint.delete_caches([instance.content_object.id])
+            Endpoint.delete_caches([instance.object_id])
 
 
 reversion.register(Study)
