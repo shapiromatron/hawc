@@ -26,6 +26,7 @@ class StudyQualitySerializer(serializers.ModelSerializer):
         ret = super(StudyQualitySerializer, self).to_representation(instance)
         ret['score_description'] = instance.get_score_display()
         ret['score_symbol'] = instance.score_symbol
+        ret['score_shade'] = instance.score_shade
         ret['url_edit'] = instance.get_edit_url()
         ret['url_delete'] = instance.get_delete_url()
         return ret

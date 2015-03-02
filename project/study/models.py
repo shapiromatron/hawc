@@ -330,6 +330,14 @@ class StudyQuality(models.Model):
         0: "-",
     }
 
+    SCORE_SHADES = {
+        1: "#CC3333",
+        2: "#FFCC00",
+        3: "#6FFF00",
+        4: "#00CC00",
+        0: "#FFCC00",
+    }
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
@@ -365,6 +373,10 @@ class StudyQuality(models.Model):
     @property
     def score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
+
+    @property
+    def score_shade(self):
+        return self.SCORE_SHADES[self.score]
 
     @staticmethod
     def flat_complete_header_row():
