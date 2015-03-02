@@ -326,7 +326,7 @@ SampleSizeWidget.prototype = {
             } else {
                 txt = "Effect ";
             }
-            txt += "requires approximately {0} animals to detect a {1}% change from control".printf(power, fields.percentToDetect);
+            txt += "requires approximately {0} animals to detect a {1}% change from control at 80% power".printf(power, fields.percentToDetect);
         }
         return this.result.html(txt);
     }, getPower: function(mean, sd, percentToDetect){
