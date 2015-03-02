@@ -362,7 +362,8 @@ class StudyQuality(models.Model):
     def get_delete_url(self):
         return reverse('study:sq_delete', args=[self.pk])
 
-    def get_score_symbol(self):
+    @property
+    def score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
 
     @staticmethod
