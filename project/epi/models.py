@@ -1494,6 +1494,27 @@ def invalidate_assessed_outcome_cache(sender, instance, **kwargs):
     AssessedOutcome.delete_caches(ids)
 
 
+@receiver(post_save, sender=ExposureGroup)
+def create_new_aogs(sender, instance, created, **kwargs):
+    # When a new exposure-group is created, create new default assessed-outcome
+    # group for all assessed-outcomes with the exposure-group's exposure, and
+    # invalidate old assessed-outcome cache.
+    if not created:
+        return
+    aos = AssessedOutcome.objects\
+            .filter(exposure=instance.exposure)\
+            .values_list('id', flat=True)
+    aogs = []
+    for ao in aos:
+        kwargs = {
+            "exposure_group_id": instance.id,
+            "assessed_outcome_id": ao
+        }
+        aogs.append(AssessedOutcomeGroup(**kwargs))
+    AssessedOutcomeGroup.objects.bulk_create(aogs)
+    AssessedOutcome.delete_caches(aos)
+
+
 @receiver(post_save, sender=MetaProtocol)
 @receiver(pre_delete, sender=MetaProtocol)
 @receiver(post_save, sender=MetaResult)
