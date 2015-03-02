@@ -1,8 +1,10 @@
 from django.utils.html import strip_tags
 
 from docx.shared import Inches
+
 from utils.helper import DOCXReport
-from docx.enum.text import WD_BREAK
+
+from . import models
 
 
 def build_header_cell(row, col, width, text, colspan=1):
@@ -38,7 +40,7 @@ class SQDOCXReport(DOCXReport):
         rows = 2
         for d in study["qualities"]:
             cells.append({"row": rows, "col": 0, "text": d["metric"]["metric"]})
-            cells.append({"row": rows, "col": 1, "text": d["score_symbol"]})
+            cells.append({"row": rows, "col": 1, "text": d["score_symbol"], "shade": d["score_shade"]})
             cells.append({"row": rows, "col": 2, "text": strip_tags(d["notes"])})
             rows += 1
 
@@ -50,14 +52,19 @@ class SQDOCXReport(DOCXReport):
             {"text": "Risk of Bias Key:", "bold": True, "italic": False}
            ]},
            {"row": 0, "col": 1, "width": 1.0, "text": "Definitely Low"},
-           {"row": 0, "col": 2, "width": 0.4, "text": "++"},
+           {"row": 0, "col": 2, "width": 0.4, "text": "++",
+            "shade": models.StudyQuality.SCORE_SHADES[4]},
            {"row": 0, "col": 3, "width": 1.0, "text": "Probably Low"},
-           {"row": 0, "col": 4, "width": 0.4, "text": "+"},
+           {"row": 0, "col": 4, "width": 0.4, "text": "+",
+            "shade": models.StudyQuality.SCORE_SHADES[3]},
            {"row": 0, "col": 5, "width": 1.0, "text": "Probably High"},
-           {"row": 0, "col": 6, "width": 0.4, "text": "-"},
-           {"row": 0, "col": 7, "width": 0.4, "text": "NR"},
+           {"row": 0, "col": 6, "width": 0.4, "text": "-",
+            "shade": models.StudyQuality.SCORE_SHADES[2]},
+           {"row": 0, "col": 7, "width": 0.4, "text": "NR",
+            "shade": models.StudyQuality.SCORE_SHADES[0]},
            {"row": 0, "col": 8, "width": 1.0, "text": "Definitely High"},
-           {"row": 0, "col": 9, "width": 0.4, "text": "--"},
+           {"row": 0, "col": 9, "width": 0.4, "text": "--",
+            "shade": models.StudyQuality.SCORE_SHADES[1]},
         ]
         self.build_table(1, len(cells), cells)
 

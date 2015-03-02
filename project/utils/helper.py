@@ -15,7 +15,7 @@ from django.shortcuts import HttpResponse
 from rest_framework.renderers import JSONRenderer
 
 import docx
-from docx.shared import Inches
+
 import unicodecsv
 import xlsxwriter
 
@@ -318,6 +318,8 @@ class DOCXReport(object):
         tbl.autofit = False
 
         for cell in cells:
+            cellD = tbl.cell(cell["row"], cell["col"])
+            p = cellD.paragraphs[0]
 
             # merge cells if needed
             rowspan = cell.get("rowspan", None)
@@ -325,12 +327,15 @@ class DOCXReport(object):
             if rowspan or colspan:
                 rowIdx = cell["row"] + cell.get("rowspan", 1) - 1
                 colIdx = cell["col"] + cell.get("colspan", 1) - 1
-                tbl.cell(cell["row"], cell["col"]).merge(tbl.cell(rowIdx, colIdx))
+                cellD.merge(tbl.cell(rowIdx, colIdx))
+
+            # add cell-shading if needed
+            if "shade" in cell:
+                shade_elm = docx.oxml.parse_xml(r'<w:shd {} w:fill="{}"/>'.format(
+                    docx.oxml.ns.nsdecls('w'), cell["shade"]))
+                cellD._tc.get_or_add_tcPr().append(shade_elm)
 
             # add content
-            cellD = tbl.cell(cell["row"], cell["col"])
-            p = cellD.paragraphs[0]
-
             if "width" in cell:
                 cellD.width = docx.shared.Inches(cell["width"])
 
