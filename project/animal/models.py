@@ -675,7 +675,7 @@ class Endpoint(BaseEndpoint):
         help_text="Details on where the data are found in the literature "
                   "(ex: Figure 1, Table 2, etc.)")
     response_units = models.CharField(
-        max_length=15,
+        max_length=32,
         verbose_name="Response units",
         help_text=u"Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)")
     data_type = models.CharField(
