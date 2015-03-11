@@ -21,6 +21,12 @@ var Reference = function(data, tagtree){
 
 Reference.no_authors_text = '[No authors listed]';
 
+Reference.sortCompare = function(a,b){
+  if (a.data.authors > b.data.authors) return 1;
+  if (a.data.authors < b.data.authors) return -1;
+  return 0;
+}
+
 Reference.prototype.addObserver = function(obs){
     this.observers.push(obs);
 };
@@ -219,7 +225,7 @@ var ReferencesViewer = function($div, options){
 };
 
 ReferencesViewer.prototype.set_references = function(refs){
-    this.refs = refs;
+    this.refs = refs.sort(Reference.sortCompare);
     this._build_reference_table();
 };
 
@@ -278,7 +284,7 @@ ReferencesViewer.prototype._build_reference_table = function(){
 
 
 var EditReferenceContainer = function(refs, tagtree, settings){
-    this.refs = refs;
+    this.refs = refs.sort(Reference.sortCompare);
     this.tagtree = tagtree;
     this.tagtree.addObserver(this);
     this.$div_content = $(settings.content_div);
