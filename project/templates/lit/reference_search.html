@@ -83,10 +83,12 @@
       });
 
       var print_search_fields = function(){
-        var fields = []
-        fields.push('<p><b>Title: </b>{0}</p>'.printf($('#id_title').val()),
-                    '<p><b>Authors: </b>{0}</p>'.printf($('#id_authors').val()),
-                    '<p><b>Journal/Year: </b>{0}</p>'.printf($('#id_journal').val()))
+        var fields = [
+          '<p><b>Title: </b>{0}</p>'.printf($('#id_title').val()),
+          '<p><b>Authors: </b>{0}</p>'.printf($('#id_authors').val()),
+          '<p><b>Journal/Year: </b>{0}</p>'.printf($('#id_journal').val()),
+          '<p><b>Database ID: </b>{0}</p>'.printf($('#id_db_id').val())
+        ];
         $('#search_context').html(fields);
       };
 

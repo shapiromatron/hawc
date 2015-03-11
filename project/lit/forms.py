@@ -157,10 +157,17 @@ class ReferenceFilterTagForm(forms.ModelForm):
 
 
 class ReferenceSearchForm(forms.Form):
-    title = forms.CharField(required=False)
-    authors = forms.CharField(required=False)
-    journal = forms.CharField(required=False,
-                              help_text="Use shorthand name for journals.")
+    title = forms.CharField(
+        required=False)
+    authors = forms.CharField(
+        required=False)
+    journal = forms.CharField(
+        required=False,
+        help_text="Use shorthand name for journals.")
+    db_id  = forms.IntegerField(
+        label='Database ID',
+        help_text="Enter a PubMed or HERO database ID, for example 8675309",
+        required=False)
 
     def __init__(self, *args, **kwargs):
         assessment_pk = kwargs.pop('assessment_pk', None)
@@ -172,18 +179,20 @@ class ReferenceSearchForm(forms.Form):
         """
         Returns a queryset of reference-search results.
         """
-        query = {}
+        query = {"assessment": self.assessment}
         if self.cleaned_data['title']:
             query['title__icontains'] = self.cleaned_data['title']
         if self.cleaned_data['authors']:
             query['authors__icontains'] = self.cleaned_data['authors']
         if self.cleaned_data['journal']:
             query['journal__icontains'] = self.cleaned_data['journal']
-
-        refs_json = []
-        for ref in models.Reference.objects.filter(assessment=self.assessment).filter(**query):
-            refs_json.append(ref.get_json(json_encode=False))
-        return refs_json
+        if self.cleaned_data['db_id']:
+            query['identifiers__unique_id'] = self.cleaned_data['db_id']
+        refs = [
+            r.get_json(json_encode=False)
+            for r in models.Reference.objects.filter(**query)
+        ]
+        return refs
 
 
 class TagsCopyForm(forms.Form):
