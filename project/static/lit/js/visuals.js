@@ -9,7 +9,7 @@ var TagTreeViz = function(tagtree, plot_div, title, downloadURL, options){
     this.tagtree = tagtree;
     this.title_str = title;
     this.downloadURL = downloadURL;
-    this.plottip = new PlotTooltip({"width": "800px", "height": "500px"});
+    this.modal = new HAWCModal();
     if(this.options.build_plot_startup){this.build_plot();}
 };
 
@@ -80,10 +80,16 @@ TagTreeViz.prototype.draw_visualization = function(){
     update(root);
 
     function fetch_references(nested_tag){
-        self.plottip.display_references(nested_tag, d3.event);
-        var options = {tag: nested_tag, download_url: self.downloadURL}
-        window.refviewer = new ReferencesViewer($('#references_div'), options);
-        nested_tag.get_reference_objects(window.refviewer);
+        var title = '<h4>{0}</h4>'.printf(nested_tag.data.name),
+            div = $('<div id="references_div"></div'),
+            options = {tag: nested_tag, download_url: self.downloadURL},
+            refviewer = new ReferencesViewer(div, options)
+        self.modal
+            .addHeader(title)
+            .addBody(div)
+            .addFooter("")
+            .show();
+        nested_tag.get_reference_objects(refviewer);
     }
 
     function update(source) {
