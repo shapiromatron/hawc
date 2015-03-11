@@ -1238,6 +1238,47 @@ PlotTooltip.prototype.show_tooltip = function(e){
 };
 
 
+var HAWCModal = function(){
+    // singleton modal instance
+    var $modalDiv = $('#hawcModal');
+    if ($modalDiv.length === 0) $modalDiv = this.initialSetup();
+    this.$modalDiv = $modalDiv;
+}
+
+HAWCModal.prototype = {
+    show: function(){
+        this.$modalDiv.find('.modal-body').scrollTop(0);
+        this.$modalDiv.modal('show');
+        return this;
+    }, hide: function(){
+        this.$modalDiv.modal('hide');
+        return this;
+    }, initialSetup: function(){
+        return $('<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>')
+            .append('<div class="modal-header"></div>')
+            .append('<div class="modal-body"></div>')
+            .append('<div class="modal-footer"></div>')
+            .appendTo($('body'));
+    }, addHeader: function(html, options){
+        var $el = this.$modalDiv.find(".modal-header"),
+            noClose = (options && options.noClose) || false;
+        $el.html(html);
+        if (!noClose) $el.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
+        return this;
+    }, addFooter: function(html, options){
+        var $el = this.$modalDiv.find(".modal-footer"),
+            noClose = (options && options.noClose) || false;
+        $el.html(html);
+        if (!noClose) $el.append('<button class="btn" data-dismiss="modal">Close</button>');
+        return this;
+    }, addBody: function(html){
+        var $el = this.$modalDiv.find(".modal-body");
+        $el.html(html)
+        return this;
+    }
+}
+
+
 /*
  *
  * Methods for attaching footnotes to any table

@@ -16,6 +16,21 @@ input[type=number] {
     -moz-appearance:textfield;
 }
 
+/* Override bootstrap modal width */
+.modal {
+    width: 950px;
+    margin-left: -475px;
+}
+
+.modal-body {
+    max-height: 600px;
+}
+
+.modal.fade.in {
+  top: 2%;
+}
+
+
 /*All tables with footnotes*/
 tfoot > tr > td {
     font-size:80%;
