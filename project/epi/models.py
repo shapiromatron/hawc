@@ -1331,36 +1331,56 @@ class MetaResult(models.Model):
         )
 
     @classmethod
-    def get_docx_template_context(cls, queryset):
+    def get_docx_template_context(cls, assessment, queryset):
+        """
+        Given a queryset of meta-results, invert the cached results to build
+        a top-down data hierarchy from study to meta-result. We use this
+        approach since our meta-results are cached, so while it may require
+        more computation, its close to free on database access.
+        """
+
+        results = [
+            SerializerHelper.get_serialized(obj, json=False)
+            for obj in queryset
+        ]
+        studies = {}
+
+        # flip dictionary nesting
+        for thisMr in results:
+            thisPro = thisMr["protocol"]
+            thisStudy = thisMr["protocol"]["study"]
+
+            study = studies.get(thisStudy["id"])
+            if study is None:
+                study = thisStudy
+                study["protocols"] = {}
+                studies[study["id"]] = study
+
+            pro = study["protocols"].get(thisPro["id"])
+            if pro is None:
+                pro = thisPro
+                pro["inclusion_list"] = u', '.join(pro["inclusion_criteria"])
+                pro["exclusion_list"] = u', '.join(pro["exclusion_criteria"])
+                pro["results"] = {}
+                study["protocols"][pro["id"]]  = pro
+
+            mr = pro["results"].get(thisMr["id"])
+            if mr is None:
+                mr = thisMr
+                mr["ci_percent"] = mr["ci_units"]*100.
+                mr["adjustments_list"] = u', '.join(sorted(mr["adjustment_factors"]))
+                pro["results"][mr["id"]] = mr
+
+        # convert value dictionaries to lists
+        studies = studies.values()
+        for study in studies:
+            study["protocols"] = study["protocols"].values()
+            for pro in study["protocols"]:
+                pro["results"] = pro["results"].values()
+
         return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
+            "assessment": AssessmentSerializer().to_representation(assessment),
+            "studies": studies
         }
 
 
