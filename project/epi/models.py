@@ -1339,6 +1339,13 @@ class MetaResult(models.Model):
         more computation, its close to free on database access.
         """
 
+        def getStatMethods(mr):
+            key = u"{}|{}".format(
+                mr["adjustments_list"],
+                mr["statistical_notes"]
+            )
+            return key, mr
+
         results = [
             SerializerHelper.get_serialized(obj, json=False)
             for obj in queryset
@@ -1362,6 +1369,7 @@ class MetaResult(models.Model):
                 pro["inclusion_list"] = u', '.join(pro["inclusion_criteria"])
                 pro["exclusion_list"] = u', '.join(pro["exclusion_criteria"])
                 pro["results"] = {}
+                pro["statistical_methods"] = {}
                 study["protocols"][pro["id"]]  = pro
 
             mr = pro["results"].get(thisMr["id"])
@@ -1371,12 +1379,19 @@ class MetaResult(models.Model):
                 mr["adjustments_list"] = u', '.join(sorted(mr["adjustment_factors"]))
                 pro["results"][mr["id"]] = mr
 
+            statKey, statVal = getStatMethods(thisMr)
+            stats = pro["statistical_methods"].get(statKey)
+            if stats is None:
+                stats = statVal
+                pro["statistical_methods"][statKey] = statVal
+
         # convert value dictionaries to lists
         studies = studies.values()
         for study in studies:
             study["protocols"] = study["protocols"].values()
             for pro in study["protocols"]:
                 pro["results"] = pro["results"].values()
+                pro["statistical_methods"] = pro["statistical_methods"].values()
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
