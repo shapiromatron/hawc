@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 from optparse import make_option
 
 import xlsxwriter
@@ -104,8 +105,9 @@ class Command(BaseCommand):
         # If the next character is uppercase, we assume the newline is a paragraph
         # ending; otherwise we get rid of it and replace with a space
 
-        # Remove all carriage returns
-        s = s.replace("\r", "")
+        # Remove control characters except line-break
+        # http://www.utf8-chartable.de/unicode-utf8-table.pl
+        s = re.sub(ur"[\u0000-\u0009\u000b-\u001f\u007f-\u009f]", "", s)
 
         newstr = ""
         for i, c in enumerate(s):
@@ -130,6 +132,9 @@ class Command(BaseCommand):
 
                 newstr += spacing        # convert newline to space
         s = newstr
+
+        # Remove trailing spaces
+        s = s.strip()
 
         # Fix quotes
         s = s.replace(u"‘‘", u"“").replace(u"’’", u"”")
