@@ -1075,6 +1075,15 @@ class AssessedOutcomeGroup(models.Model):
         return self.assessed_outcome.get_assessment()
 
     @property
+    def estimate_formatted(self):
+        txt = "-"
+        if self.estimate:
+            txt = unicode(self.estimate)
+        if (self.lower_ci and self.upper_ci):
+            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+        return txt
+
+    @property
     def isMainFinding(self):
         return self.assessed_outcome.main_finding_id == self.exposure_group_id
 
@@ -1277,6 +1286,15 @@ class MetaResult(models.Model):
     def get_absolute_url(self):
         return reverse('epi:mr_detail', kwargs={'pk': self.pk})
 
+    @property
+    def estimate_formatted(self):
+        txt = "-"
+        if self.estimate:
+            txt = unicode(self.estimate)
+        if (self.lower_ci and self.upper_ci):
+            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+        return txt
+
     @classmethod
     def delete_caches(cls, pks):
         SerializerHelper.delete_caches(cls, pks)
@@ -1456,6 +1474,15 @@ class SingleResult(models.Model):
 
     def __unicode__(self):
         return self.exposure_name
+
+    @property
+    def estimate_formatted(self):
+        txt = "-"
+        if self.estimate:
+            txt = unicode(self.estimate)
+        if (self.lower_ci and self.upper_ci):
+            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+        return txt
 
     @staticmethod
     def flat_complete_header_row():

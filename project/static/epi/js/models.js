@@ -209,18 +209,9 @@ AssessedOutcomeGroup.prototype.build_aog_table_row  = function(footnotes){
                                              .on('click', function(e){e.preventDefault();
                                                                       self.tooltip.display_exposure_group_table(self, e);})),
                     $('<td>').text(this.data.n || "-"),
-                    $('<td>').text(this.build_formatted_estimate()),
+                    $('<td>').text(this.data.estimateFormatted),
                     $('<td>').text(this.data.se || "-"),
                     $('<td>').text(this.data.p_value_text || "-")]);
-};
-
-AssessedOutcomeGroup.prototype.build_formatted_estimate = function(){
-    var txt = "-";
-    if (this.data.estimate) txt = this.data.estimate;
-    if ((this.data.lower_ci) && (this.data.upper_ci)){
-        txt += ' ({0},{1})'.printf(this.data.lower_ci, this.data.upper_ci);
-    }
-    return txt;
 };
 
 AssessedOutcomeGroup.prototype.get_confidence_interval = function(){
@@ -578,7 +569,7 @@ MetaResult.prototype.build_details_table = function(div){
     tbl.add_tbody_tr("Number of studies", this.data.number_studies);
     tbl.add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors);
     tbl.add_tbody_tr("N", this.data.n);
-    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.get_risk_estimate_text(this.data));
+    tbl.add_tbody_tr(this.get_statistical_metric_header(), this.data.estimateFormatted);
     tbl.add_tbody_tr("Statistical notes", this.data.statistical_notes);
     tbl.add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity);
     tbl.add_tbody_tr("Notes", this.data.notes);
@@ -588,14 +579,6 @@ MetaResult.prototype.build_details_table = function(div){
 MetaResult.prototype.get_statistical_metric_header = function(){
     var txt = this.data.statistical_metric.abbreviation;
     if(this.data.ci_units) txt += " ({0}% CI)".printf(this.data.ci_units*100);
-    return txt;
-};
-
-MetaResult.prototype.get_risk_estimate_text = function(data){
-    var txt = "{0}".printf(data.estimate);
-    if (data.lower_ci && data.upper_ci){
-        txt += " ({0}-{1})".printf(data.lower_ci, data.upper_ci);
-    }
     return txt;
 };
 
@@ -643,10 +626,10 @@ SingleStudyResult.prototype.build_table_row = function(tbody){
             };
             if (self.data.outcome_group){
                 d["n"] = self.data.outcome_group.n;
-                d["risk"] = self.get_risk_estimate_text(self.data.outcome_group);
+                d["risk"] = self.data.outcome_group.estimateFormatted;
             } else {
                 d["n"] = self.data.n;
-                d["risk"] = self.get_risk_estimate_text(self.data);
+                d["risk"] = self.data.estimateFormatted;
             }
             return d;
         },
@@ -656,10 +639,6 @@ SingleStudyResult.prototype.build_table_row = function(tbody){
       .append('<td>{0}</td>'.printf(addIfExists(d.n)))
       .append('<td>{0}</td>'.printf(addIfExists(d.risk)))
       .append('<td>{0}</td>'.printf(addIfExists(d.notes)))
-};
-
-SingleStudyResult.prototype.get_risk_estimate_text = function(data){
-    return MetaResult.prototype.get_risk_estimate_text.call(this, data);
 };
 
 SingleStudyResult.prototype.exposure_name_link = function(){

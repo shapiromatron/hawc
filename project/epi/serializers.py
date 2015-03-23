@@ -80,6 +80,7 @@ class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
         ret = super(AssessedOutcomeGroupSerializer, self).to_representation(instance)
         ret['p_value_text'] = instance.p_value_text
         ret['isMainFinding'] = instance.isMainFinding
+        ret['estimateFormatted'] = instance.estimate_formatted
         return ret
 
     class Meta:
@@ -123,6 +124,11 @@ class AssessedOutcomeShallowSerializer(serializers.ModelSerializer):
 class AssessedOutcomeGroupVerboseSerializer(serializers.ModelSerializer):
     assessed_outcome = AssessedOutcomeShallowSerializer()
 
+    def to_representation(self, instance):
+        ret = super(AssessedOutcomeGroupVerboseSerializer, self).to_representation(instance)
+        ret['estimateFormatted'] = instance.estimate_formatted
+        return ret
+
     class Meta:
         model = models.AssessedOutcomeGroup
 
@@ -131,6 +137,12 @@ class SingleResultSerializer(serializers.ModelSerializer):
     study = StudySerializer()
     outcome_group = AssessedOutcomeGroupVerboseSerializer()
     meta_result = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(SingleResultSerializer, self).to_representation(instance)
+        if instance.outcome_group is None:
+            ret['estimateFormatted'] = instance.estimate_formatted
+        return ret
 
     class Meta:
         model = models.SingleResult
@@ -161,6 +173,7 @@ class MetaResultSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(MetaResultSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
+        ret['estimateFormatted'] = instance.estimate_formatted
         return ret
 
     class Meta:
