@@ -923,7 +923,9 @@ class AssessedOutcome(BaseEndpoint):
             stat_methods["endpoints"].append(ao["name"])
 
         # convert value dictionaries to lists
-        studies = studies.values()
+        studies = sorted(
+            studies.values(),
+            key=lambda obj: (obj["short_citation"]))
         for study in studies:
             study["sps"] = study["sps"].values()
             for sp in study["sps"]:
@@ -1386,7 +1388,9 @@ class MetaResult(models.Model):
                 pro["statistical_methods"][statKey] = statVal
 
         # convert value dictionaries to lists
-        studies = studies.values()
+        studies = sorted(
+            studies.values(),
+            key=lambda obj: (obj["short_citation"]))
         for study in studies:
             study["protocols"] = study["protocols"].values()
             for pro in study["protocols"]:
