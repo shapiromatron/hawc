@@ -69,6 +69,9 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
             'endpoint_name',
             'endpoint_url',
+            'system',
+            'organ',
+            'effect',
             'data_type',
             'doses',
             'dose_units',
@@ -159,6 +162,9 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
                 ser['name'],
                 ser['url'],
+                ser['system'],
+                ser['organ'],
+                ser['effect'],
                 ser['data_type_label'],
                 get_doses_str(doses),
                 get_dose_units(doses),
