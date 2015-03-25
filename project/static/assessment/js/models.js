@@ -10,7 +10,9 @@ var Assessment = function(obj, revision_version){
     this.revision_version = revision_version;
     this.banner = this.revision_version + ': ' + String(this.updated) + ' by ' + this.changed_by;
 };
-
-Assessment.field_order = ['name', 'cas', 'year', 'revision_version', 'project_manager',
-                          'team_members', 'reviewers', 'editable', 'public',
-                          'created', 'updated'];
+_.extend(Assessment. {
+    field_order: [
+        'name', 'cas', 'year', 'revision_version', 'project_manager',
+        'team_members', 'reviewers', 'editable', 'public',
+        'created', 'updated']
+});

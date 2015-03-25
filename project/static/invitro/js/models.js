@@ -1,7 +1,6 @@
 var IVChemical = function(data){
     this.data = data;
 };
-
 IVChemical.prototype = {
     build_details_table: function(){
         var tbl = new DescriptiveTable();
@@ -22,7 +21,6 @@ IVChemical.prototype = {
 var IVExperiment = function(data){
     this.data = data;
 };
-
 IVExperiment.prototype = {
     build_details_table: function(){
         var tbl = new DescriptiveTable();
@@ -53,7 +51,6 @@ var IVEndpoint = function(data){
     this.data = data;
     this._build_ivegs();
 };
-
 IVEndpoint.prototype = {
     _build_ivegs: function(){
         var groups = this.data.groups;
@@ -151,7 +148,6 @@ IVEndpoint.prototype = {
 var IVEndpointGroup = function(data){
     this.data = data;
 };
-
 IVEndpointGroup.prototype = {
     build_row: function(tbl, opts){
         var tr = $('<tr>'),

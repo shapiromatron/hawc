@@ -5,8 +5,7 @@ var DosingRegimeForm = function(form, dose_types, initial){
   this.rebuildTable();
   this._setEventHandlers();
 };
-
-DosingRegimeForm.prototype  = {
+DosingRegimeForm.prototype = {
   _setInitialValues: function(initial){
     var rows = 0,
         columns = 0,

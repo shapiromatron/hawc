@@ -181,102 +181,99 @@ SmartTagSearch = function(editor, $modal){
 
     $modal.on('show', configure_startup);
 };
+SmartTagSearch.prototype = {
+    _set_results: function(content){
+        this.$results_div.html(content);
+    },
+    _endpoint_search: function(search_string){
+        var self = this,
+            data = {'endpoint_name': search_string};
 
-SmartTagSearch.prototype._set_results = function(content){
-    this.$results_div.html(content);
-};
+        $.get('/ani/assessment/{0}/endpoints/search/q/'.printf(window.assessment_pk), data, function(d){
+            var content = [];
+            if(d.status !== "ok" || d.endpoints.length === 0){
+                content.push("<p>No results found.</p>");
+            } else {
+                d.endpoints.forEach(function(e_data){
+                    var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
+                        endpoint = new Endpoint(e_data),
+                        smart_data = {"pk": endpoint.data.pk,
+                                      "name": endpoint.data.name,
+                                      "caption": ""};
 
-SmartTagSearch.prototype._endpoint_search = function(search_string){
-    var self = this,
-        data = {'endpoint_name': search_string};
+                    content.push($(endpoint.build_breadcrumbs() + add_button)
+                                    .data(smart_data));
+                });
+            }
+            self._set_results(content);
+        });
+    },
+    _study_search: function(search_string){
+        var self = this,
+            data = {'short_citation': search_string};
 
-    $.get('/ani/assessment/{0}/endpoints/search/q/'.printf(window.assessment_pk), data, function(d){
-        var content = [];
-        if(d.status !== "ok" || d.endpoints.length === 0){
-            content.push("<p>No results found.</p>");
-        } else {
-            d.endpoints.forEach(function(e_data){
-                var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
-                    endpoint = new Endpoint(e_data),
-                    smart_data = {"pk": endpoint.data.pk,
-                                  "name": endpoint.data.name,
-                                  "caption": ""};
+        $.post('/study/assessment/{0}/search/'.printf(window.assessment_pk), data, function(d){
+            var content = [];
+            if(d.status !== "success" || d.studies.length === 0){
+                content.push("<p>No results found.</p>");
+            } else {
+                d.studies.forEach(function(study_data){
+                    var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
+                        study = new Study(study_data),
+                        smart_data = {"pk": study.data.pk,
+                                      "name": study.data.short_citation,
+                                      "caption": ""};
 
-                content.push($(endpoint.build_breadcrumbs() + add_button)
-                                .data(smart_data));
-            });
-        }
-        self._set_results(content);
-    });
-};
+                    content.push($(study.build_breadcrumbs() + add_button)
+                                    .data(smart_data));
+                });
+            }
+            self._set_results(content);
+        });
+    },
+    _aggregation_search: function(search_string){
+        var self = this,
+            data = {'name': search_string};
 
-SmartTagSearch.prototype._study_search = function(search_string){
-    var self = this,
-        data = {'short_citation': search_string};
+        $.post('/ani/{0}/aggregation/search/'.printf(window.assessment_pk), data, function(d){
+            var content = [];
+            if(d.status !== "success" || d.aggregations.length === 0){
+                content.push("<p>No results found.</p>");
+            } else {
+                d.aggregations.forEach(function(agg_data){
+                    var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
+                        agg = new Aggregation(agg_data.endpoints, agg_data.name),
+                        smart_data = {"pk": agg_data.pk,
+                                      "name": agg_data.name,
+                                      "caption": ""};
+                    var breadcrumb = '<a target="_blank" href="{0}">{1}</a>'
+                                        .printf(agg_data.url, agg_data.name);
+                    content.push($(breadcrumb + add_button).data(smart_data));
+                });
+            }
+            self._set_results(content);
+        });
+    },
+    _dp_search: function(search_string){
+        var self = this,
+            data = {'title': search_string};
 
-    $.post('/study/assessment/{0}/search/'.printf(window.assessment_pk), data, function(d){
-        var content = [];
-        if(d.status !== "success" || d.studies.length === 0){
-            content.push("<p>No results found.</p>");
-        } else {
-            d.studies.forEach(function(study_data){
-                var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
-                    study = new Study(study_data),
-                    smart_data = {"pk": study.data.pk,
-                                  "name": study.data.short_citation,
-                                  "caption": ""};
-
-                content.push($(study.build_breadcrumbs() + add_button)
-                                .data(smart_data));
-            });
-        }
-        self._set_results(content);
-    });
-};
-
-SmartTagSearch.prototype._aggregation_search = function(search_string){
-    var self = this,
-        data = {'name': search_string};
-
-    $.post('/ani/{0}/aggregation/search/'.printf(window.assessment_pk), data, function(d){
-        var content = [];
-        if(d.status !== "success" || d.aggregations.length === 0){
-            content.push("<p>No results found.</p>");
-        } else {
-            d.aggregations.forEach(function(agg_data){
-                var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
-                    agg = new Aggregation(agg_data.endpoints, agg_data.name),
-                    smart_data = {"pk": agg_data.pk,
-                                  "name": agg_data.name,
-                                  "caption": ""};
-                var breadcrumb = '<a target="_blank" href="{0}">{1}</a>'
-                                    .printf(agg_data.url, agg_data.name);
-                content.push($(breadcrumb + add_button).data(smart_data));
-            });
-        }
-        self._set_results(content);
-    });
-};
-
-SmartTagSearch.prototype._dp_search = function(search_string){
-    var self = this,
-        data = {'title': search_string};
-
-    $.post('/summary/data-pivot/assessment/{0}/search/json/'.printf(window.assessment_pk), data, function(d){
-        var content = [];
-        if(d.status !== "success" || d.dps.length === 0){
-            content.push("<p>No results found.</p>");
-        } else {
-            d.dps.forEach(function(dp){
-                var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
-                    smart_data = {"pk": dp.pk,
-                                  "name": dp.title,
-                                  "caption": dp.caption};
-                var breadcrumb = '<a target="_blank" href="{0}">{1}</a>'
-                                    .printf(dp.url, dp.title);
-                content.push($(breadcrumb + add_button).data(smart_data));
-            });
-        }
-        self._set_results(content);
-    });
+        $.post('/summary/data-pivot/assessment/{0}/search/json/'.printf(window.assessment_pk), data, function(d){
+            var content = [];
+            if(d.status !== "success" || d.dps.length === 0){
+                content.push("<p>No results found.</p>");
+            } else {
+                d.dps.forEach(function(dp){
+                    var add_button = '  <a class="btn btn-mini smart-tag-results"><i class="icon-plus"></i></a> <br>',
+                        smart_data = {"pk": dp.pk,
+                                      "name": dp.title,
+                                      "caption": dp.caption};
+                    var breadcrumb = '<a target="_blank" href="{0}">{1}</a>'
+                                        .printf(dp.url, dp.title);
+                    content.push($(breadcrumb + add_button).data(smart_data));
+                });
+            }
+            self._set_results(content);
+        });
+    }
 };
