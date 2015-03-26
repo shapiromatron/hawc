@@ -483,7 +483,7 @@ var UncertaintyFactorPlot = function(objects, plot_div, options){
     this.objects.forEach(function(v,i){v.addObserver(self);}); //observe all
     if(this.options.build_plot_startup){this.build_plot();}
 };
-UncertaintyFactorPlot.prototype = {
+_.extend(UncertaintyFactorPlot.prototype, D3Plot.prototype, {
     update: function(){
         this.update_plot();
     },
@@ -840,5 +840,4 @@ UncertaintyFactorPlot.prototype = {
         legend_settings.dot_r = 5;
         this.build_legend(legend_settings);
     }
-};
-_.extend(UncertaintyFactorPlot.prototype, D3Plot.prototype);
+});

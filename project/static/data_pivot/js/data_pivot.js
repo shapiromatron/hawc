@@ -1969,7 +1969,7 @@ _.extend(DataPivot_visualization, {
     return new_arr;
   }
 });
-DataPivot_visualization.prototype = {
+_.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
   set_defaults: function(){
     this.padding = $.extend({}, this.dp_settings.plot_settings.padding); //copy object
     this.padding.left_original = this.padding.left;
@@ -2824,8 +2824,7 @@ DataPivot_visualization.prototype = {
     this.full_width = w;
     this.full_height = h;
   }
-};
-_.extend(DataPivot_visualization.prototype, D3Plot.prototype);
+});
 
 
 DataPivotExtension = function(){
@@ -3809,7 +3808,7 @@ StyleViewer.default_settings = function(){
     }
   };
 };
-StyleViewer.prototype = {
+_.extend(StyleViewer.prototype, D3Plot.prototype, {
   build_plot: function(){
     this.plot_div.html('');
     this.get_plot_sizes();
@@ -4052,5 +4051,4 @@ StyleViewer.prototype = {
     this.style=style;
     this._update_styles(this.style.settings, true);
   }
-};
-_.extend(StyleViewer.prototype, D3Plot.prototype);
+});

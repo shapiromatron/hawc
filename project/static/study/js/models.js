@@ -230,7 +230,7 @@ var StudyQuality_Donut = function(study, plot_id, options){
         if (event.ctrlKey || event.metaKey){self.toggle_lock_view();}
     });
 };
-StudyQuality_Donut.prototype = {
+_.extend(StudyQuality_Donut.prototype, D3Plot.prototype, {
     set_defaults: function(options){
         this.w = 800;
         this.h = 400;
@@ -452,8 +452,7 @@ StudyQuality_Donut.prototype = {
         this.subset_div.append(ol);
         this.subset_div.fadeIn("500");
     }
-};
-_.extend(StudyQuality_Donut.prototype, D3Plot.prototype);
+});
 
 
 var StudyQuality_TblCompressed = function(study, div, options){
@@ -595,7 +594,7 @@ var StudyQualityAggregation_Heatmap = function(sq_agg, plot_div, details_div, op
     this.sq_agg = sq_agg; // expected array
     if(this.options.build_plot_startup){this.build_plot();}
 };
-StudyQualityAggregation_Heatmap.prototype = {
+_.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_dataset();
@@ -849,8 +848,7 @@ StudyQualityAggregation_Heatmap.prototype = {
 
         StudyQuality.display_details_divs(self.details_div, divs);
     }
-};
-_.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype);
+});
 
 
 var StudyQualityAggregation_Stacked = function(sq_agg, plot_div, options){
@@ -864,7 +862,7 @@ var StudyQualityAggregation_Stacked = function(sq_agg, plot_div, options){
     this.sq_agg = sq_agg; // expected array
     if(this.options.build_plot_startup){this.build_plot();}
 };
-StudyQualityAggregation_Stacked.prototype = {
+_.extend(StudyQualityAggregation_Stacked.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_dataset();
@@ -1006,5 +1004,4 @@ StudyQualityAggregation_Stacked.prototype = {
         //     .style("opacity", 1)
         //     .text(function(d){return (d.y>0) ? (d.y*100 + '%') : "";});
     }
-};
-_.extend(StudyQualityAggregation_Stacked.prototype, D3Plot.prototype);
+});

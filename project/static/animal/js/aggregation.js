@@ -225,7 +225,7 @@ ERH_plot = function(aggregation, plot_id, options, parent){
     this.default_x_scale = options.default_x_scale || 'log';
     if(this.options.build_plot_startup){this.build_plot();}
 };
-ERH_plot.prototype = {
+_.extend(ERH_plot.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -519,8 +519,7 @@ ERH_plot.prototype = {
         legend_settings.box_padding = 5;
         this.build_legend(legend_settings);
     }
-};
-_.extend(ERH_plot.prototype, D3Plot.prototype);
+});
 
 
 Forest_plot = function(aggregation, plot_id, options, parent){
@@ -534,7 +533,7 @@ Forest_plot = function(aggregation, plot_id, options, parent){
     this.default_y_scale = options.default_y_scale || 'linear';
     if(this.options.build_plot_startup){this.build_plot();}
 };
-Forest_plot.prototype = {
+_.extend(Forest_plot.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_dataset_info();
@@ -793,5 +792,4 @@ Forest_plot.prototype = {
         legend_settings.box_padding = 5;
         this.build_legend(legend_settings);
     }
-};
-_.extend(Forest_plot.prototype, D3Plot.prototype);
+});

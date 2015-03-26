@@ -7,7 +7,7 @@ StudyQualityMatrix = function(aggregation, plot_id, options, parent){
     this.set_defaults(options);
     if(this.options.build_plot_startup){this.build_plot();}
 };
-StudyQualityMatrix.prototype = {
+_.extend(StudyQualityMatrix.prototype, D3Plot.prototype, {
     set_defaults: function(options){
         this.padding = {top:40, right:30, bottom:40, left:510};
         this.buff = 0.05; // addition numerical-spacing min/max
@@ -236,5 +236,4 @@ StudyQualityMatrix.prototype = {
             .attr("class", "uf_label")
             .text(function(d){return d.scoretext;});
     }
-};
-_.extend(StudyQualityMatrix.prototype, D3Plot.prototype);
+});

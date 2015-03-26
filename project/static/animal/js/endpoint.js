@@ -744,7 +744,7 @@ var DRPlot = function(endpoint, div, options, parent){
     endpoint.addObserver(this);
     if (this.options.build_plot_startup){this.build_plot();}
 };
-DRPlot.prototype = {
+_.extend(DRPlot.prototype, D3Plot.prototype, {
     update: function(status){
         if (status.status === "dose_changed") this.dose_scale_change();
     },
@@ -1308,8 +1308,7 @@ DRPlot.prototype = {
         this.bmd.push(line);
         this.add_legend();
     }
-};
-_.extend(DRPlot.prototype, D3Plot.prototype);
+});
 
 
 var BMDline = function(DRPlot, BMD, line_class){
@@ -1445,7 +1444,7 @@ var Barplot = function(endpoint, plot_id, options, parent){
     this.endpoint.addObserver(this);
     if (this.options.build_plot_startup){this.build_plot();}
 };
-Barplot.prototype = {
+_.extend(Barplot.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -1788,8 +1787,7 @@ Barplot.prototype = {
     },
     cleanup_before_change: function(){
     }
-};
-_.extend(Barplot.prototype, D3Plot.prototype);
+});
 
 
 BWPlot = function(endpoint, div, options, parent){
@@ -1805,7 +1803,7 @@ BWPlot = function(endpoint, div, options, parent){
     this.get_dataset_info();
     if (this.options.build_plot_startup){this.build_plot();}
 };
-BWPlot.prototype = {
+_.extend(BWPlot.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.empty();
         this.get_plot_sizes();
@@ -2074,5 +2072,4 @@ BWPlot.prototype = {
     },
     add_bmd_line: function(){},
     cleanup_before_change: function(){}
-};
-_.extend(BWPlot.prototype, D3Plot.prototype);
+});

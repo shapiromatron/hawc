@@ -775,7 +775,7 @@ var TagTreeViz = function(tagtree, plot_div, title, downloadURL, options){
     this.modal = new HAWCModal();
     if(this.options.build_plot_startup){this.build_plot();}
 };
-TagTreeViz.prototype = {
+_.extend(TagTreeViz.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -960,5 +960,4 @@ TagTreeViz.prototype = {
         //     .attr('y', this.h-5)
         //     .text("CTRL-click to view references associated with an node.");
     }
-};
-_.extend(TagTreeViz.prototype, D3Plot.prototype);
+});

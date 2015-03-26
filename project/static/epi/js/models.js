@@ -293,7 +293,7 @@ var AOForestPlot = function(aogs, ao, plot_div, options){
     this.x_label_text = ao.data.statistical_metric.metric || "(unitless)";
     if(this.options.build_plot_startup){this.build_plot();}
 };
-AOForestPlot.prototype = {
+_.extend(AOForestPlot.prototype, D3Plot.prototype, {
     default_options: function(){
         return {"build_plot_startup": true};
     },
@@ -476,8 +476,7 @@ AOForestPlot.prototype = {
             this.build_plot();
         }
     }
-};
-_.extend(AOForestPlot.prototype, D3Plot.prototype);
+});
 
 
 var AOVersion = function(obj, revision_version){

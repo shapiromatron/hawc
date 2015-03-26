@@ -69,7 +69,7 @@ _.extend(Crossview, {
            };
     }
 });
-Crossview.prototype = {
+_.extend(Crossview.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.html('');
         this.get_dataset();
@@ -368,5 +368,4 @@ Crossview.prototype = {
                 .moveToFront();
         }
     }
-};
-_.extend(Crossview.prototype, D3Plot.prototype);
+});
