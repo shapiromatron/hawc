@@ -49,9 +49,13 @@ class Command(BaseCommand):
             new_txt = self._cleanup_text(txt)
             if txt != new_txt:
                 setattr(obj, field, new_txt)
-                obj.save()
-                mods += 1
-                self.stdout.write('Updated {} {}'.format(qs.model.__name__, obj.pk), self.style.HTTP_NOT_MODIFIED)
+                try:
+                    obj.save()
+                    mods += 1
+                    self.stdout.write('Updated {} {}'.format(qs.model.__name__, obj.pk), self.style.HTTP_NOT_MODIFIED)
+                except Exception as e:
+                    print e, obj.id
+
         self.stdout.write("{} objects were modified".format(mods), self.style.SQL_FIELD)
 
     def test_clean_field(self, qs, field):
