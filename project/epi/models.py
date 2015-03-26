@@ -875,6 +875,22 @@ class AssessedOutcome(BaseEndpoint):
             k = u"{}|{}|{}".format(v["adjustments_list"], v["statistical_metric"], v["statistical_metric_description"])
             return hashlib.md5(k.encode('UTF-8')).hexdigest(), v
 
+        def getCustomAge(sp):
+            txt = sp["age_description"]
+
+            rng = sp["age_lower"] is not None and sp["age_upper"] is not None
+            if rng:
+                rng =  u"{}-{} years".format(sp["age_lower"], sp["age_upper"])
+
+            if sp["age_mean"] is not None:
+                txt = u"{} ({})".format(sp["age_mean"], sp["age_mean_type"])
+                if rng:
+                    txt += u", from {}".format(rng)
+            elif rng:
+                txt = rng
+
+            return txt
+
         outcomes = [
             SerializerHelper.get_serialized(obj, json=False)
             for obj in queryset
@@ -896,6 +912,7 @@ class AssessedOutcome(BaseEndpoint):
             sp = study["sps"].get(thisSP["id"])
             if sp is None:
                 sp = thisSP
+                sp["_age"] = getCustomAge(sp)
                 sp["ethnicities"] = u', '.join(sp["ethnicity"])
                 sp["inclusion_list"] = u', '.join(sp["inclusion_criteria"])
                 sp["exclusion_list"] = u', '.join(sp["exclusion_criteria"])
@@ -1397,7 +1414,7 @@ class MetaResult(models.Model):
             mr = pro["results"].get(thisMr["id"])
             if mr is None:
                 mr = thisMr
-                mr["ci_percent"] = mr["ci_units"]*100.
+                mr["ci_percent"] = int(mr["ci_units"]*100.)
                 mr["adjustments_list"] = u', '.join(sorted(mr["adjustment_factors"]))
                 pro["results"][mr["id"]] = mr
 
