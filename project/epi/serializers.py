@@ -81,6 +81,8 @@ class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
         ret['p_value_text'] = instance.p_value_text
         ret['isMainFinding'] = instance.isMainFinding
         ret['estimateFormatted'] = instance.estimate_formatted
+        if ret['n'] is None:
+            ret['n'] = ret['exposure_group']['n'] or "-"
         return ret
 
     class Meta:
