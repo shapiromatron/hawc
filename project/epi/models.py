@@ -1099,7 +1099,7 @@ class AssessedOutcomeGroup(models.Model):
         if self.estimate:
             txt = unicode(self.estimate)
         if (self.lower_ci and self.upper_ci):
-            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+            txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
     @property
@@ -1311,7 +1311,7 @@ class MetaResult(models.Model):
         if self.estimate:
             txt = unicode(self.estimate)
         if (self.lower_ci and self.upper_ci):
-            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+            txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
     @classmethod
@@ -1504,7 +1504,7 @@ class SingleResult(models.Model):
         if self.estimate:
             txt = unicode(self.estimate)
         if (self.lower_ci and self.upper_ci):
-            txt += u' ({} – {})'.format(self.lower_ci, self.upper_ci)
+            txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
     @staticmethod
