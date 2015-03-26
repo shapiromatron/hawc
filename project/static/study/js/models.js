@@ -87,11 +87,12 @@ Study.prototype = {
         return this.data.short_citation;
     },
     build_details_table: function(div){
-        var tbl = new DescriptiveTable();
+        var tbl = new DescriptiveTable(),
+            links = this._get_identifiers_hyperlinks_ul();
         tbl.add_tbody_tr("Study type", this.data.study_type);
         tbl.add_tbody_tr("Full citation", this.data.full_citation);
         tbl.add_tbody_tr("Abstract", this.data.abstract);
-        tbl.add_tbody_tr("Reference hyperlink", this._get_identifiers_hyperlinks_ul());
+        if (links.children().length>0) tbl.add_tbody_tr("Reference hyperlink", links);
         tbl.add_tbody_tr_list("Literature review tags", this.data.tags.map(function(d){return d.name;}));
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
         tbl.add_tbody_tr("COI details", this.data.coi_details);
@@ -106,15 +107,11 @@ Study.prototype = {
         var ul = $('<ul>');
 
         this.data.identifiers.forEach(function(v){
-            if (v.url !== "None"){
+            if (v.url){
                 ul.append($('<li>').append(
                     $('<a>').attr('href', v.url).attr('target', '_blank').text(v.database)));
             }
         });
-
-        if (ul.children().length===0){
-                ul.append($('<li>').text('Manually imported (no hyperlink)'));
-        }
 
         return ul;
     },

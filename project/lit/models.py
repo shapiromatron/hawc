@@ -23,7 +23,7 @@ from fetchers.hero import HEROFetch
 from . import managers
 
 
-SEARCH_SOURCES = ((0, 'Manually imported'),
+SEARCH_SOURCES = ((0, 'External link'),
                   (1, 'PubMed'),
                   (2, 'HERO'))
 
@@ -352,6 +352,7 @@ class Identifiers(models.Model):
     unique_id = models.IntegerField()
     database = models.IntegerField(choices=SEARCH_SOURCES)
     content = models.TextField()
+    url = models.URLField(blank=True)
 
     class Meta:
         unique_together = (("database", "unique_id"),)
@@ -360,14 +361,14 @@ class Identifiers(models.Model):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
     def get_url(self):
-        if self.database == 0: # Manually imported
-            return 'None'
-        elif self.database == 1: # PubMed
-            return r'http://www.ncbi.nlm.nih.gov/pubmed/{unique_id}'.format(
+        url = self.url
+        if self.database == 1: # PubMed
+            url = r'http://www.ncbi.nlm.nih.gov/pubmed/{unique_id}'.format(
                         unique_id=self.unique_id)
         elif self.database == 2: # HERO
-            return r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={unique_id}'.format(
+            url = r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={unique_id}'.format(
                         unique_id=self.unique_id)
+        return url
 
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
@@ -449,6 +450,10 @@ class Identifiers(models.Model):
             idents.append(ident.unique_id)
 
         return Identifiers.objects.filter(database=1, unique_id__in=idents)
+
+    @classmethod
+    def get_max_external_id(cls):
+        return cls.objects.filter(database=0).aggregate(models.Max('unique_id'))["unique_id__max"]
 
 
 class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
@@ -674,6 +679,21 @@ class Reference(models.Model):
             if ident.database == 1:
                 return ident.unique_id
         return None
+
+    def set_custom_url(self, url):
+        """
+        Special-case. Add an Identifier with the selected URL for this reference.
+        Only-one custom URL is allowed for each reference; overwrites existing.
+        """
+        i = self.identifiers.filter(database=0).first()
+        if i:
+            i.url = url
+            i.save()
+        else:
+            unique_id = Identifiers.get_max_external_id() + 1
+            self.identifiers.add(
+                Identifiers.objects.create(
+                    database=0, unique_id=unique_id, url=url))
 
     @classmethod
     def get_untagged_references(cls, assessment):
