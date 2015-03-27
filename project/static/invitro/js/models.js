@@ -1,6 +1,16 @@
 var IVChemical = function(data){
     this.data = data;
 };
+_.extend(IVChemical, {
+    get_object: function(id, cb){
+        $.get('/in-vitro/api/chemical/{0}/'.printf(id), function(d){
+            cb(new IVChemical(d));
+        });
+    },
+    displayAsModal: function(id){
+        IVChemical.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 IVChemical.prototype = {
     build_details_table: function(){
         var tbl = new DescriptiveTable();
@@ -14,6 +24,19 @@ IVChemical.prototype = {
         tbl.add_tbody_tr("Purity notes", this.data.purity_confirmed_notes);
         tbl.add_tbody_tr("Dilution/storage notes", this.data.dilution_storage_notes);
         return tbl.get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(d.data.name),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details.append(this.build_details_table());
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 };
 
@@ -21,6 +44,16 @@ IVChemical.prototype = {
 var IVExperiment = function(data){
     this.data = data;
 };
+_.extend(IVExperiment, {
+    get_object: function(id, cb){
+        $.get('/in-vitro/api/experiment/{0}/'.printf(id), function(d){
+            cb(new IVExperiment(d));
+        });
+    },
+    displayAsModal: function(id){
+        IVExperiment.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 IVExperiment.prototype = {
     build_details_table: function(){
         var tbl = new DescriptiveTable();
@@ -43,6 +76,19 @@ IVExperiment.prototype = {
         tbl.add_tbody_tr("Control notes", this.data.control_notes);
         tbl.add_tbody_tr("Dose units", this.data.dose_units.units);
         return tbl.get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf("Experimental details"),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details.append(this.build_details_table());
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 };
 
@@ -51,6 +97,16 @@ var IVEndpoint = function(data){
     this.data = data;
     this._build_ivegs();
 };
+_.extend(IVEndpoint, {
+    get_object: function(id, cb){
+        $.get('/in-vitro/api/endpoint/{0}/'.printf(id), function(d){
+            cb(new IVEndpoint(d));
+        });
+    },
+    displayAsModal: function(id){
+        IVEndpoint.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 IVEndpoint.prototype = {
     _build_ivegs: function(){
         var groups = this.data.groups;
@@ -141,6 +197,23 @@ IVEndpoint.prototype = {
             tbl.addRow(v.build_row(tbl, opts));
         });
         return tbl.getTbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(d.data.name),
+            $details = $('<div class="span12">'),
+            $eg_tbl = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details))
+                .append($('<div class="row-fluid">').append($eg_tbl));
+
+        $details.append(this.build_details_table());
+        $eg_tbl.append(this.build_eg_table());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 };
 

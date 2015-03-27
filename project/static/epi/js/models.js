@@ -1,6 +1,16 @@
 var StudyPopulation = function(data){
     this.data = data;
 };
+_.extend(StudyPopulation, {
+    get_object: function(id, cb){
+        $.get('/epi/study-population/{0}/json/'.printf(id), function(d){
+            cb(new StudyPopulation(d));
+        });
+    },
+    displayAsModal: function(id){
+        StudyPopulation.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 StudyPopulation.prototype = {
     build_breadcrumbs: function(){
         var urls = [
@@ -39,6 +49,20 @@ StudyPopulation.prototype = {
                      {calculated: this.data.age_calculated});
 
         $(div).html(tbl.get_tbl());
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        this.build_details_table($details);
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 800});
     }
 };
 
@@ -49,6 +73,16 @@ var AssessedOutcome = function(data){
     this.data = data;
     this._build_aogs();
 };
+_.extend(AssessedOutcome, {
+    get_object: function(id, cb){
+        $.get('/assessment/endpoint/{0}/json/'.printf(id), function(d){
+            cb(new AssessedOutcome(d));
+        });
+    },
+    displayAsModal: function(id){
+        AssessedOutcome.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 AssessedOutcome.prototype = {
     _build_aogs: function(){
         this.data.groups.sort(function(a, b){
@@ -180,6 +214,33 @@ AssessedOutcome.prototype = {
     },
     build_forest_plot: function(div){
         this.plot =  new AOForestPlot(this.aog, this, div);
+    },
+    displayAsModal: function(){
+        var self = this,
+            modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $plot = $('<div class="span12">'),
+            $tbl = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        this.build_ao_table($details);
+
+        if(this.has_aogs()){
+            $content
+                .append($('<div class="row-fluid">').append($tbl))
+                .append($('<div class="row-fluid">').append($plot));
+            this.build_aog_table($tbl);
+            modal.getModal().on('shown', function(){
+                self.build_forest_plot($plot);
+            });
+        }
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1200});
     }
 };
 
@@ -502,6 +563,16 @@ _.extend(AOVersion, {
 var MetaProtocol = function(data){
     this.data = data;
 };
+_.extend(MetaProtocol, {
+    get_object: function(id, cb){
+        $.get('/epi/meta-protocol/{0}/json/'.printf(id), function(d){
+            cb(new MetaProtocol(d));
+        });
+    },
+    displayAsModal: function(id){
+        MetaProtocol.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 MetaProtocol.prototype = {
     build_details_table: function(div){
         var tbl = new DescriptiveTable();
@@ -525,6 +596,20 @@ MetaProtocol.prototype = {
             { url: this.data.url, name: this.data.name }
         ];
         return HAWCUtils.build_breadcrumbs(urls);
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        this.build_details_table($details);
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 };
 
@@ -534,6 +619,16 @@ var MetaResult = function(data){
     this.single_results = [];
     this._unpack_single_results();
 };
+_.extend(MetaResult, {
+    get_object: function(id, cb){
+        $.get('/epi/meta-result/{0}/json/'.printf(id), function(d){
+            cb(new MetaResult(d));
+        });
+    },
+    displayAsModal: function(id){
+        MetaResult.get_object(id, function(d){d.displayAsModal();});
+    }
+});
 MetaResult.prototype = {
     _unpack_single_results: function(){
         var single_results = this.single_results;
@@ -586,6 +681,30 @@ MetaResult.prototype = {
             { url: this.data.url, name: this.data.label }
         ];
         return HAWCUtils.build_breadcrumbs(urls);
+    },
+    displayAsModal: function(){
+        var self = this,
+            modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $tbl = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        this.build_details_table($details);
+        if(this.has_single_results()){
+            $content
+                .append($('<div class="row-fluid">')
+                    .append('<div class="span12"><h4>Individual study-results</h4></div>'))
+                .append($('<div class="row-fluid">')
+                    .append($tbl));
+            this.build_single_results_table($tbl);
+        }
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 };
 

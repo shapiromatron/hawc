@@ -1084,23 +1084,6 @@ var PlotTooltip = function(styles){
     $('.d3plottooltip').on('click', '.close', function(){self.hide_tooltip();});
 };
 PlotTooltip.prototype = {
-    display_study: function(study, e){
-        var title  = '<small><b>{0}</b></small>'.printf(study.build_breadcrumbs()),
-            details_div = $('<div>'),
-            sq_div = $('<div>'),
-            content = [sq_div, details_div];
-        this._show_tooltip(title, content, e);
-        study.build_details_table(details_div);
-        if(study.has_study_quality()){
-            new StudyQuality_TblCompressed(study, sq_div, {'show_all_details_startup': false});
-        }
-    },
-    display_study_population: function(sp, e){
-        var title  = '<small><b>{0}</b></small>'.printf(sp.build_breadcrumbs()),
-            details_div = $('<div>');
-        this._show_tooltip(title, details_div, e);
-        sp.build_details_table(details_div);
-    },
     display_endpoint: function(endpoint, e){
         var title  = '<small><b>{0}</b></small>'.printf(endpoint.build_breadcrumbs()),
             plot_div = $('<div style="height:300px; width:300px"></div'),
@@ -1111,54 +1094,6 @@ PlotTooltip.prototype = {
         endpoint.build_details_table(details_div);
         this._show_tooltip(title, content, e);
         new EndpointPlotContainer(endpoint, plot_div);
-    },
-    display_assessed_outcome: function(ao, e){
-        var title  = '<small><b>{0}</b></small>'.printf(ao.build_breadcrumbs()),
-            ao_table_div = $('<div>'),
-            aog_table_div = $('<div>'),
-            plot_div = $('<div>'),
-            content = [ao_table_div, plot_div, '<br><br><br>', aog_table_div];
-        this._show_tooltip(title, content, e);
-        ao.build_ao_table(ao_table_div);
-        if(ao.has_aogs()){
-            ao.build_aog_table(aog_table_div);
-            ao.build_forest_plot(plot_div);
-        }
-    },
-    display_meta_protocol: function(obj, e){
-        var title  = '<small><b>{0}</b></small>'.printf(obj.build_breadcrumbs()),
-            table_div = $('<div>'),
-            content = [table_div];
-        obj.build_details_table(table_div);
-        this._show_tooltip(title, content, e);
-    },
-    display_meta_result: function(obj, e){
-        var title  = '<small><b>{0}</b></small>'.printf(obj.build_breadcrumbs()),
-            table_div = $('<div>'),
-            content = [table_div];
-
-        obj.build_details_table(table_div);
-        if(obj.has_single_results()){
-            var results_div = $('<div>');
-            obj.build_single_results_table(results_div);
-            content.push('<h4>Individual study-results</h4>', results_div);
-        }
-        this._show_tooltip(title, content, e);
-    },
-    display_references: function(nested_tag, e){
-        var title  = '<small><b>{0}</b></small>'.printf(nested_tag.data.name),
-            content = [$('<div id="references_div"></div')];
-        this._show_tooltip(title, content, e);
-    },
-    display_aggregation: function(aggregation, e){
-        var title  = aggregation.name,
-            plot_div = $('<div></div>'),
-            tbl_div = $('<div></div>'),
-            tbl_toggle = $('<a class="btn btn-small" id="table_toggle">Toggle table style <i class="icon-chevron-right"></i></a>'),
-            content = [plot_div, tbl_div, tbl_toggle];
-        aggregation.build_table(tbl_div);
-        this._show_tooltip(title, content, e);
-        aggregation.build_plot(plot_div);
     },
     display_comments: function(comment_manager, e){
         var title='Comments for {0}'.printf(comment_manager.object.data.title),
@@ -1181,33 +1116,6 @@ PlotTooltip.prototype = {
 
         heg.build_exposure_group_table(div);
         this._show_tooltip(title, div, e);
-    },
-    display_ivchemical: function(d, e){
-        var title  = '<small><b>{0}</b></small>'.printf(d.data.name),
-            details_div = $('<div>').html(d.build_details_table());
-        this._show_tooltip(title, details_div, e);
-    },
-    display_ivexperiment: function(d, e){
-        var title  = '<small><b>Experimental details</b></small>',
-            details_div = $('<div>').html(d.build_details_table());
-        this._show_tooltip(title, details_div, e);
-    },
-    display_ivendpoint: function(d, e){
-        var title  = '<small><b>{0}</b></small>'.printf(d.data.name),
-            details_div = $('<div>').html([
-                d.build_details_table(),
-                d.build_eg_table()
-            ]);
-        this._show_tooltip(title, details_div, e);
-    },
-    display_data_pivot: function(dp, e){
-        var title = $('<span class="lead">').text(dp.title),
-            div = $('<div>');
-        this._show_tooltip(title, div, e);
-        dp.build_data_pivot_vis(div);
-        div.append(dp.caption);
-        this.tooltip.width($(dp.plot.svg).width()+55);
-        this.tooltip.height($(dp.plot.svg).height()+130);
     },
     _calculate_position: function(){
         // Determine the top and left coordinates for the popup box. Tries to put
@@ -1263,13 +1171,14 @@ var HAWCModal = function(){
     // singleton modal instance
     var $modalDiv = $('#hawcModal');
     if ($modalDiv.length === 0){
-        this.$modalDiv = $('<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>')
+        $modalDiv = $('<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>')
             .append('<div class="modal-header"></div>')
             .append('<div class="modal-body"></div>')
             .append('<div class="modal-footer"></div>')
             .appendTo($('body'));
         $(window).on('resize', $.proxy(this._resizeModal, this));
     }
+    this.$modalDiv = $modalDiv;
 };
 HAWCModal.prototype = {
     show: function(options){
@@ -1284,21 +1193,21 @@ HAWCModal.prototype = {
         this.$modalDiv.modal('hide');
         return this;
     }, addHeader: function(html, options){
-        var $el = this.$modalDiv.find(".modal-header"),
-            noClose = (options && options.noClose) || false;
+        var noClose = (options && options.noClose) || false,
+            $el = this.$modalDiv.find(".modal-header");
         $el.html(html);
         if (!noClose) $el.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
         return this;
     }, addFooter: function(html, options){
-        var $el = this.$modalDiv.find(".modal-footer"),
-            noClose = (options && options.noClose) || false;
+        var noClose = (options && options.noClose) || false,
+            $el = this.$modalDiv.find(".modal-footer");
         $el.html(html);
         if (!noClose) $el.append('<button class="btn" data-dismiss="modal">Close</button>');
         return this;
     }, getBody: function(){
         return this.$modalDiv.find(".modal-body");
     }, addBody: function(html){
-        this.getBody().html(html)
+        this.getBody().html(html).scrollTop(0);
         return this;
     }, _resizeModal: function(){
         var h = parseInt($(window).height(), 10),
@@ -1332,6 +1241,8 @@ HAWCModal.prototype = {
         }
         this.$modalDiv.css(modalCSS);
         this.getBody().css(modalBodyCSS);
+    }, getModal: function(){
+        return this.$modalDiv;
     }
 };
 

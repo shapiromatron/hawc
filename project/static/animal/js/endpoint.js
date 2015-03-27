@@ -8,13 +8,16 @@ var Endpoint = function(data, options){
     this.add_confidence_intervals();
 };
 _.extend(Endpoint, {
-    get_object: function(pk, callback){
-        $.get('/ani/endpoint/{0}/json/'.printf(pk), function(d){
-            callback(new Endpoint(d));
+    get_object: function(id, cb){
+        $.get('/ani/endpoint/{0}/json/'.printf(id), function(d){
+            cb(new Endpoint(d));
         });
     },
     getTagURL: function(assessment, slug){
         return "/ani/assessment/{0}/endpoints/tags/{1}/".printf(assessment, slug);
+    },
+    displayAsModal: function(id){
+        Endpoint.get_object(id, function(d){d.displayAsModal();});
     }
 });
 Endpoint.prototype = {
@@ -392,6 +395,31 @@ Endpoint.prototype = {
         } catch(err){
             return '-';
         }
+    },
+    displayAsModal: function(){
+        var self = this,
+            modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $plot = $('<div style="height:300px; width:300px">'),
+            $tbl = $('<table class="table table-condensed table-striped">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">')
+                    .append($details))
+                .append($('<div class="row-fluid">')
+                    .append($('<div class="span7">').append($tbl))
+                    .append($('<div class="span5">').append($plot)));
+
+        this.build_details_table($details);
+        this.build_endpoint_table($tbl);
+        modal.getModal().on('shown', function(){
+            new EndpointPlotContainer(self, $plot);
+        });
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1200});
     }
 };
 

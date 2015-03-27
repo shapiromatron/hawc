@@ -40,6 +40,9 @@ _.extend(Aggregation, {
             d.endpoints.forEach(function(v){endpoints.push(new Endpoint(v));});
             callback(new Aggregation(endpoints, d.name, options));
         });
+    },
+    displayAsModal: function(id, options){
+        Aggregation.get_object(id, function(d){d.displayAsModal();}, options);
     }
 });
 Aggregation.prototype = {
@@ -61,6 +64,9 @@ Aggregation.prototype = {
     },
     get_name: function(){
         return this.name;
+    },
+    displayAsModal: function(){
+        console.log("not implemented.");
     }
 };
 

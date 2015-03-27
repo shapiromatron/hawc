@@ -20,10 +20,13 @@ var Study = function(data){
     if(this.data.qualities) this.unpack_study_quality();
 };
 _.extend(Study, {
-    get_object: function(pk, callback){
-        $.get('/study/{0}/json/'.printf(pk), function(d){
-            callback(new Study(d));
+    get_object: function(id, cb){
+        $.get('/study/{0}/json/'.printf(id), function(d){
+            cb(new Study(d));
         });
+    },
+    displayAsModal: function(id){
+        Study.get_object(id, function(d){d.displayAsModal();});
     }
 });
 Study.prototype = {
@@ -127,6 +130,31 @@ Study.prototype = {
             ul.append('<li><a target="_blank" href="{0}">{1}</a> <a class="pull-right" title="Delete {1}" href="{2}"><i class="icon-trash"></i></a></li>'.printf(v.url, v.filename, v.url_delete));
         });
         tbody.append(tr.append(td.append(ul)));
+    },
+    displayAsModal: function(){
+        var self = this,
+            modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        this.build_details_table($details);
+        if(this.has_study_quality()){
+            var $sq = $('<div class="span12">')
+            $content.prepend($('<div class="row-fluid">').append($sq));
+            modal.getModal().on('shown', function(){
+                new StudyQuality_TblCompressed(self,
+                        $sq,
+                        {'show_all_details_startup': false}
+                );
+            });
+        }
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 };
 

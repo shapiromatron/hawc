@@ -19,6 +19,9 @@ _.extend(DataPivot, {
         });
     });
   },
+  displayAsModal: function(id){
+    DataPivot.get_object(id, function(d){d.displayAsModal();});
+  },
   default_plot_settings: function(){
     return {
       "plot_settings": {
@@ -991,6 +994,24 @@ DataPivot.prototype = {
   },
   get_settings_json: function(){
     return JSON.stringify(this.settings);
+  },
+  displayAsModal: function(){
+    var self = this,
+        modal = new HAWCModal(),
+        title = '<h4>{0}</h4>'.printf(this.title),
+        $plot = $('<div class="span12">'),
+        $content = $('<div class="container-fluid">')
+            .append($('<div class="row-fluid">')
+                .append($plot));
+
+    modal.getModal().on('shown', function(){
+      self.build_data_pivot_vis($plot);
+    });
+
+    modal.addHeader(title)
+        .addBody($content)
+        .addFooter("")
+        .show();
   }
 };
 
@@ -2833,15 +2854,15 @@ DataPivotExtension = function(){
 _.extend(DataPivotExtension, {
   update_extensions: function(obj, key){
     var map = d3.map({
-          "study":            {_dpe_key: "Study HAWC ID",        _dpe_datatype: "study"},
-          "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint"},
-          "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome"},
-          "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population"},
-          "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol"},
-          "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result"},
-          "iv_chemical":      {_dpe_key: "Chemical HAWC ID",     _dpe_datatype: "iv_chemical"},
-          "iv_experiment":    {_dpe_key: "IVExperiment HAWC ID", _dpe_datatype: "iv_experiment"},
-          "iv_endpoint":      {_dpe_key: "IVEndpoint HAWC ID",   _dpe_datatype: "iv_endpoint"}
+          "study":            {_dpe_key: "Study HAWC ID",        _dpe_datatype: "study", _dpe_cls: Study},
+          "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint},
+          "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population", _dpe_cls: StudyPopulation},
+          "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome", _dpe_cls: AssessedOutcome},
+          "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol", _dpe_cls: MetaProtocol},
+          "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result", _dpe_cls: MetaResult},
+          "iv_chemical":      {_dpe_key: "Chemical HAWC ID",     _dpe_datatype: "iv_chemical", _dpe_cls: IVChemical},
+          "iv_experiment":    {_dpe_key: "IVExperiment HAWC ID", _dpe_datatype: "iv_experiment", _dpe_cls: IVExperiment},
+          "iv_endpoint":      {_dpe_key: "IVEndpoint HAWC ID",   _dpe_datatype: "iv_endpoint", _dpe_cls: IVEndpoint}
         }),
         match = map.get(key);
 
@@ -2878,62 +2899,9 @@ _.extend(DataPivotExtension, {
 });
 DataPivotExtension.prototype = {
   render_plottip: function(settings, datarow){
-
-    var e = d3.event,
-        self = this,
-        url_tmpl, plottip_fn, ObjType;
-
-    switch(settings._dpe_datatype){
-      case "study":
-        url_tmpl = '/study/{0}/json/';
-        plottip_fn = "display_study";
-        ObjType = Study
-        break;
-      case "endpoint":
-        url_tmpl = '/assessment/endpoint/{0}/json/';
-        plottip_fn = "display_endpoint";
-        ObjType = Endpoint
-        break;
-      case "assessed_outcome":
-        url_tmpl = '/assessment/endpoint/{0}/json/';
-        plottip_fn = "display_assessed_outcome";
-        ObjType = AssessedOutcome
-        break;
-      case "study_population":
-        url_tmpl = '/epi/study-population/{0}/json/';
-        plottip_fn = "display_study_population";
-        ObjType = StudyPopulation
-        break;
-      case "meta_protocol":
-        url_tmpl = '/epi/meta-protocol/{0}/json/';
-        plottip_fn = "display_meta_protocol";
-        ObjType = MetaProtocol
-        break;
-      case "meta_result":
-        url_tmpl = '/epi/meta-result/{0}/json/';
-        plottip_fn = "display_meta_result";
-        ObjType = MetaResult
-        break;
-      case "iv_chemical":
-        url_tmpl = '/in-vitro/api/chemical/{0}/';
-        plottip_fn = "display_ivchemical";
-        ObjType = IVChemical
-        break;
-      case "iv_experiment":
-        url_tmpl = '/in-vitro/api/experiment/{0}/';
-        plottip_fn = "display_ivexperiment";
-        ObjType = IVExperiment
-        break;
-      case "iv_endpoint":
-        url_tmpl = '/in-vitro/api/endpoint/{0}/';
-        plottip_fn = "display_ivendpoint";
-        ObjType = IVEndpoint
-        break;
-      };
-
-    $.get(url_tmpl.printf(datarow[settings._dpe_key]), function(d){
-      self.plottip[plottip_fn](new ObjType(d), e);
-    });
+    var Cls = settings._dpe_cls,
+        key = settings._dpe_key;
+    Cls.displayAsModal(datarow[key])
   }
 };
 
