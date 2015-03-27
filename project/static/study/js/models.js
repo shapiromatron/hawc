@@ -582,7 +582,7 @@ StudyQualityAggregation.prototype = {
 };
 
 
-var StudyQualityAggregation_Heatmap = function(sq_agg, plot_div, details_div, options){
+var StudyQualityAggregation_Heatmap = function(sq_agg, plot_div, options){
     // heatmap of study-quality information. Criteria are on the y-axis,
     // and studies are on the x-axis
     var self = this;
@@ -590,8 +590,8 @@ var StudyQualityAggregation_Heatmap = function(sq_agg, plot_div, details_div, op
     this.options = options;
     this.set_defaults();
     this.plot_div = $(plot_div);
-    this.details_div = $(details_div);
     this.sq_agg = sq_agg; // expected array
+    this.modal = new HAWCModal();
     if(this.options.build_plot_startup){this.build_plot();}
 };
 _.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
@@ -733,10 +733,11 @@ _.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
         .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
         .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
         .on('click', function(v){
-            $('#sq_agg_modal_title').html(['Study Quality Details']);
-            self._modal_sizing();
-            $('#sq_details_modal').modal('toggle');
-            self.print_details({type: 'cell', sqs: [v]});
+            self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]})
+            self.modal
+                .addHeader('<h4>Study Quality Details</h4>')
+                .addFooter("")
+                .show({maxWidth: 900});
         });
         this.score = this.cells_group.selectAll("svg.text")
             .data(this.dataset)
@@ -757,11 +758,11 @@ _.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
             .attr('class', 'heatmap_selectable')
             .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
             .on('click', function(v){
-                $('#sq_agg_modal_title').html(['Study Quality Details']);
-                self._modal_sizing();
-                $('#sq_details_modal').modal('toggle');
-                var sqs = $(this).data('sqs');
-                self.print_details(sqs);
+                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.modal
+                    .addHeader('<h4>Study Quality Details</h4>')
+                    .addFooter("")
+                    .show({maxWidth: 900});
             });
 
         $('.x_axis text').each(function(i, v){
@@ -772,11 +773,11 @@ _.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
             .on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'column'});})
             .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
             .on('click', function(v){
-                $('#sq_agg_modal_title').html(['Study Quality Details']);
-                self._modal_sizing();
-                $('#sq_details_modal').modal('toggle');
-                var sqs = $(this).data('sqs');
-                self.print_details(sqs);
+                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.modal
+                    .addHeader('<h4>Study Quality Details</h4>')
+                    .addFooter("")
+                    .show({maxWidth: 900});
             });
 
         this.hover_group = this.vis.append("g");
@@ -828,25 +829,22 @@ _.extend(StudyQualityAggregation_Heatmap.prototype, D3Plot.prototype, {
                     .attr('class', 'heatmap_hovered');
         }
     },
-    print_details: function(d){
-        var divs = [],
-            self = this;
-
-        this.details_div.fadeOut();
+    print_details: function($div, d){
+        var content = [];
 
         switch (d.type){
             case 'cell':
-                divs.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
+                content.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
                 break;
             case 'study':
-                divs.push(StudyQuality.build_metric_comparison_div(d.sqs));
+                content.push(StudyQuality.build_metric_comparison_div(d.sqs));
                 break;
             case 'metric':
-                divs.push(StudyQuality.build_study_comparison_div(d.sqs));
+                content.push(StudyQuality.build_study_comparison_div(d.sqs));
                 break;
         }
 
-        StudyQuality.display_details_divs(self.details_div, divs);
+        StudyQuality.display_details_divs($div, content);
     }
 });
 

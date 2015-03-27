@@ -1262,23 +1262,27 @@ PlotTooltip.prototype = {
 var HAWCModal = function(){
     // singleton modal instance
     var $modalDiv = $('#hawcModal');
-    if ($modalDiv.length === 0) $modalDiv = this.initialSetup();
-    this.$modalDiv = $modalDiv;
+    if ($modalDiv.length === 0){
+        this.$modalDiv = $('<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>')
+            .append('<div class="modal-header"></div>')
+            .append('<div class="modal-body"></div>')
+            .append('<div class="modal-footer"></div>')
+            .appendTo($('body'));
+        $(window).on('resize', $.proxy(this._resizeModal, this));
+    }
 };
 HAWCModal.prototype = {
-    show: function(){
-        this.$modalDiv.find('.modal-body').scrollTop(0);
+    show: function(options){
+        this.fixedSize = options && options.fixedSize || false;
+        this.maxWidth = options && options.maxWidth || Infinity;
+        this.maxHeight = options && options.maxHeight || Infinity;
+        this._resizeModal();
+        this.getBody().scrollTop(0);
         this.$modalDiv.modal('show');
         return this;
     }, hide: function(){
         this.$modalDiv.modal('hide');
         return this;
-    }, initialSetup: function(){
-        return $('<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>')
-            .append('<div class="modal-header"></div>')
-            .append('<div class="modal-body"></div>')
-            .append('<div class="modal-footer"></div>')
-            .appendTo($('body'));
     }, addHeader: function(html, options){
         var $el = this.$modalDiv.find(".modal-header"),
             noClose = (options && options.noClose) || false;
@@ -1291,10 +1295,43 @@ HAWCModal.prototype = {
         $el.html(html);
         if (!noClose) $el.append('<button class="btn" data-dismiss="modal">Close</button>');
         return this;
+    }, getBody: function(){
+        return this.$modalDiv.find(".modal-body");
     }, addBody: function(html){
-        var $el = this.$modalDiv.find(".modal-body");
-        $el.html(html)
+        this.getBody().html(html)
         return this;
+    }, _resizeModal: function(){
+        var h = parseInt($(window).height(), 10),
+            w = parseInt($(window).width(), 10),
+            modalCSS = {
+                "width": "",
+                "max-height": "",
+                "height": "",
+                "top": "",
+                "left": "",
+                "margin": ""
+            },
+            modalBodyCSS = {
+                "max-height": ""
+            };
+
+        if(!this.fixedSize){
+            var mWidth = Math.min(w-50, this.maxWidth),
+                mWidthPadding = parseInt((w-mWidth)*0.5, 10),
+                mHeight = Math.min(h-50, this.maxHeight);
+            _.extend(modalCSS, {
+                "width": "{0}px".printf(mWidth),
+                "max-height": "{0}px".printf(mHeight),
+                "top": "25px",
+                "left": "{0}px".printf(mWidthPadding),
+                "margin": "0px"
+            });
+            _.extend(modalBodyCSS, {
+                "max-height": "{0}px".printf(mHeight-150)
+            });
+        }
+        this.$modalDiv.css(modalCSS);
+        this.getBody().css(modalBodyCSS);
     }
 };
 

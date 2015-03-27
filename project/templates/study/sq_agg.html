@@ -19,17 +19,6 @@
     </div>
   </div>
 
-
-  <div id="sq_details_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="sq_agg_modal_title"></h3>
-    </div>
-    <div class="modal-body">
-      <div id="sq_agg_modal_details"></div>
-    </div>
-  </div>
-
 {% endblock %}
 
 {% block extrajs %}
@@ -44,7 +33,7 @@
 
       if("{{chart_type}}"==="heatmap"){
         window.heatmap = new StudyQualityAggregation_Heatmap(sq_agg,
-           '#sq_agg_plot', '#sq_agg_modal_details', {build_plot_startup: true})
+           '#sq_agg_plot', {build_plot_startup: true})
       } else if ("{{chart_type}}"==="stacked"){
         window.stacked = new StudyQualityAggregation_Stacked(sq_agg,
            '#sq_agg_plot', {build_plot_startup: true})

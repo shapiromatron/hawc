@@ -845,7 +845,7 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
                 .addHeader(title)
                 .addBody(div)
                 .addFooter("")
-                .show();
+                .show({maxWidth: 800});
             nested_tag.get_reference_objects(refviewer);
         }
 
