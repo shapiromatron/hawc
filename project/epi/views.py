@@ -269,7 +269,7 @@ class AssessedOutcomeReport(GenerateReport):
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = super(AssessedOutcomeReport, self).get_obj_perms()
-        if not perms['edit']:
+        if not perms['edit'] or self.onlyPublished:
             filters["exposure__study_population__study__published"] = True
         return self.model.objects.filter(**filters)
 
@@ -467,7 +467,7 @@ class MetaResultReport(GenerateReport):
     def get_queryset(self):
         filters = {"protocol__study__assessment": self.assessment}
         perms = super(MetaResultReport, self).get_obj_perms()
-        if not perms['edit']:
+        if not perms['edit'] or self.onlyPublished:
             filters["protocol__study__published"] = True
         return self.model.objects.filter(**filters)
 

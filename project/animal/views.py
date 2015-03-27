@@ -512,7 +512,7 @@ class EndpointsReport(GenerateReport):
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = super(EndpointsReport, self).get_obj_perms()
-        if not perms['edit']:
+        if not perms['edit'] or self.onlyPublished:
             filters["animal_group__experiment__study__published"] = True
         return self.model.objects.filter(**filters)
 

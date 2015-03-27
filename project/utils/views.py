@@ -421,6 +421,7 @@ class GenerateReport(BaseList):
             raise Http404
 
     def get(self, request, *args, **kwargs):
+        self.onlyPublished = bool(self.request.GET.get('onlyPublished', False))
         self.object_list = self.get_queryset()
         template = self.get_template(request)
         context = self.get_context(self.object_list)

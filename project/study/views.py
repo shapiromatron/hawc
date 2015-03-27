@@ -42,7 +42,7 @@ class StudyReport(GenerateReport):
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = super(StudyReport, self).get_obj_perms()
-        if not perms['edit']:
+        if not perms['edit'] or self.onlyPublished:
             filters["published"] = True
         return self.model.objects.filter(**filters)
 

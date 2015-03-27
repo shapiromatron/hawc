@@ -15,6 +15,24 @@
 
   <p class='help-block'>Microsoft-Word table-level views of data contained in HAWC for {{assessment}}.</p>
 
+
+  {% if obj_perms.edit %}
+    <form>
+      <fieldset>
+        <legend>Reporting settings</legend>
+        <label class="checkbox"> Only print results from studies marked "published"
+          <input type="checkbox" name="onlyPublished" checked="true">
+        </label>
+        <p class="help-block">
+          This setting is only available for team-members; the public and
+          reviewers can only view published studies.
+        </p>
+      </fieldset>
+    </form>
+    <hr>
+  {% endif %}
+
+
   <ol>
 
     {% if assessment.enable_literature_review and report_types.0|length > 0 %}
@@ -134,15 +152,18 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      var update_url_with_template = function(e){
+      var setDownloadSettings = function(e){
         var self = $(this),
             template_id = self.parent().find('select').val(),
+            onlyPublished = $('input[name="onlyPublished"]').prop('checked'),
             url = self.data('basehref');
 
-        self.attr('href', "{0}?template_id={1}".printf(url, template_id));
+        url = "{0}?template_id={1}".printf(url, template_id);
+        if (onlyPublished) url += "&onlyPublished=true";
+        self.attr('href', url);
       }
 
-      $('.download-report').on('click', update_url_with_template);
+      $('.download-report').on('click', setDownloadSettings);
 
     });
   </script>
