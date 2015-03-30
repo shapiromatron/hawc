@@ -772,10 +772,10 @@ DataPivot.prototype = {
                 var div = $('<div></div>'),
                     tbl = $('<table class="table table-condensed table-bordered"></table>'),
                     tbody = $('<tbody></tbody>'),
-                    colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;"></colgroup>'),
-                    obj = new _DataPivot_settings_general(self, self.settings.plot_settings);
+                    colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;"></colgroup>');
 
-                tbody.html(obj.trs);
+                self._dp_settings_general = new _DataPivot_settings_general(self, self.settings.plot_settings);
+                tbody.html(self._dp_settings_general.trs);
                 tbl.html([colgroup, tbody]);
                 return div.html(tbl);
               }, download_button = $('<button class="btn btn-primary">Download settings</button>')
@@ -979,7 +979,13 @@ DataPivot.prototype = {
                   build_styles_tab())
         ];
 
-    this.$settings_div.html(content);
+    this.$settings_div
+      .html(content)
+      .on('shown', function(e){
+        if($(e.target).attr('href')==="#data_pivot_settings_general"){
+          self._dp_settings_general.update_merge_until();
+        }
+      });
   },
   _get_header_options: function(show_blank){
     var opts = [];
@@ -987,6 +993,11 @@ DataPivot.prototype = {
     return opts.concat(this.data_headers.map(function(v){
       return '<option value="{0}">{0}</option>'.printf(v);
     }));
+  },
+  _get_description_options: function(){
+    return this.settings.description_settings.map(function(d,i){
+      return '<option value="{0}">{1}</option>'.printf(i, d.header_name);
+    });
   },
   download_settings: function(){
     var settings_json = this.get_settings_json();
@@ -1810,12 +1821,14 @@ var _DataPivot_settings_general = function(data_pivot, values){
     "padding_bottom": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)),
     "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)),
     "merge_descriptions": $('<input type="checkbox">').prop('checked', values.merge_descriptions),
+    "merge_until": $('<select name="merge_until">'),
     "text_background": $('<input type="checkbox">').prop('checked', values.text_background),
     "text_background_color": $('<input type="color">').val(values.text_background_color)
   };
 
   // set default values
   this.content.font_style.find('option[value="{0}"]'.printf(values.font_style)).prop('selected', true);
+  this.update_merge_until();
 
   var build_tr = function(name, content){
     return $('<tr></tr>').append($('<th>{0}</th>'.printf(name)),
@@ -1838,11 +1851,21 @@ var _DataPivot_settings_general = function(data_pivot, values){
       build_tr('Plot padding bottom', this.content.padding_bottom),
       build_tr('Plot padding left', this.content.padding_left),
       build_tr('Merge descriptions', this.content.merge_descriptions),
+      build_tr('Merge descriptions up to', this.content.merge_until),
       build_tr('Highlight background text', this.content.text_background),
       build_tr('Highlight background text color', this.content.text_background_color)];
 
   this.content.text_background_color
       .spectrum({"showInitial": true, "showInput": true});
+
+  // display merge_until only when merge_descriptions activated
+  var show_mergeUntil = function(){
+    var show = self.content.merge_descriptions.prop('checked')
+        row = self.content.merge_until.parent().parent();
+    return (show) ? row.show() : row.hide();
+  };
+  this.content.merge_descriptions.on('change', show_mergeUntil);
+  show_mergeUntil();
 
   this.data_push();
   return this;
@@ -1863,8 +1886,14 @@ _DataPivot_settings_general.prototype = {
     this.values.padding.bottom = parseInt(this.content.padding_bottom.val(), 10);
     this.values.padding.left = parseInt(this.content.padding_left.val(), 10);
     this.values.merge_descriptions = this.content.merge_descriptions.prop('checked');
+    this.values.merge_until = parseInt(this.content.merge_until.val(), 10) || 0;
     this.values.text_background = this.content.text_background.prop('checked');
     this.values.text_background_color = this.content.text_background_color.val();
+  },
+  update_merge_until: function(){
+    this.content.merge_until
+      .html(this.data_pivot._get_description_options())
+      .val(this.values.merge_until);
   }
 };
 
@@ -2330,12 +2359,13 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
   },
   merge_descriptions: function(){
     // Merge identical columns
-    var field_names = this.dp_settings.description_settings.map(function(v){return v.field_name});
+    var field_names = this.dp_settings.description_settings.map(function(v){return v.field_name}),
+        merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length-1;
     for(var i=this.datarows.length-1; i>0; i--){
       var isMerged = this.dp_settings.plot_settings.merge_descriptions;
       if(isMerged){
         // check if all columns are identical between this and the prior column
-        for(var j=0; j<field_names.length; j++){
+        for(var j=0; j<=merge_until; j++){
           if (this.datarows[i][field_names[j]] !== this.datarows[i-1][field_names[j]]){
             isMerged = false;
             break;
@@ -2343,7 +2373,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         }
         // Merge if passed check
         if (isMerged){
-          for(var j=0; j<field_names.length; j++){
+          for(var j=0; j<=merge_until; j++){
             this.datarows[i][field_names[j]] = "";
           }
         }
