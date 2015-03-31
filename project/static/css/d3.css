@@ -241,6 +241,7 @@ path.dr_line {
   border: 3px solid gray;
   border-radius: 8px;
   overflow: auto;
+  z-index: 1150;
 }
 
 .d3plottooltip .popover-title{
