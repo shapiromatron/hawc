@@ -959,7 +959,7 @@ class AssessedOutcome(BaseEndpoint):
                         ao["character"] = chr(65+i)
                     exp["statistical_methods"] = exp["statistical_methods"].values()
                     for obj in exp["statistical_methods"]:
-                        obj["endpoints_list"] = u", ".join(obj["endpoints"])
+                        obj["endpoints_list"] = u"; ".join(obj["endpoints"])
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
@@ -1448,7 +1448,7 @@ class MetaResult(models.Model):
                     key=lambda obj: (obj["label"].lower()))
                 pro["statistical_methods"] = pro["statistical_methods"].values()
                 for obj in pro["statistical_methods"]:
-                    obj["sm_endpoints"] = u", ".join([ d["label"] for d in obj["sm_endpoints"] ])
+                    obj["sm_endpoints"] = u"; ".join([ d["label"] for d in obj["sm_endpoints"] ])
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
