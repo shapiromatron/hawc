@@ -269,37 +269,53 @@ AssessedOutcome.prototype = {
         return txt;
     },
     build_aog_table: function(div){
-        var tbl = $('<table class="table table-condensed table-striped"></table>'),
-            tcol = $("<colgroup><colgroup>"),
-            thead = $('<thead></thead>'),
-            tbody = $('<tbody></tbody>'),
-            tfoot = $('<tfoot></tfoot>'),
-            footnotes  = new TableFootnotes();
+        var tbl = new BaseTable(),
+            hasSE = this.aogs_has_se(),
+            hasEstimates = this.aogs_has_estimates(),
+            headers = [
+                "Exposure-group",
+                "N",
+                "<i>p</i>-value"
+            ],
+            colgroups;
 
-        // build header
-        var estimate_header = this.get_statistical_metric_header();
-        thead.append('<tr><th>Exposure-group</th><th>N</th><th>{0}</th><th>SE</th><th><i>p</i>-value</th></tr>'.printf(estimate_header));
+        if (hasEstimates) headers.splice(2, 0, this.get_statistical_metric_header());
+        if (hasSE) headers.splice(headers.length-1, 0, "SE");
 
-        // build colgroup
-        tcol.append([
-            $('<col width="30%">'),
-            $('<col width="15%">'),
-            $('<col width="25%">'),
-            $('<col width="15%">'),
-            $('<col width="15%">')
-            ]);
-
-        // build body
-        this.aog.forEach(function(v){ tbody.append(v.build_aog_table_row(footnotes)); });
-
-        // build footer
-        var tfoot_txt = footnotes.html_list().join('<br>');
-        tfoot.append('<tr><td colspan="{0}">{1}</td></tr>'.printf(10, tfoot_txt));
-
-        $(div).html(tbl.append(tcol, thead, tfoot, tbody));
+        switch(headers.length){
+            case 5:
+                colgroups = [30, 15, 25, 15, 15];
+                break;
+            case 4:
+                colgroups = [30, 20, 30, 20];
+                break;
+            default:
+                colgroups = [34, 33, 33];
+                break;
+        }
+        tbl.addHeaderRow(headers);
+        tbl.setColGroup(colgroups);
+        this.aog.forEach(function(v){
+            tbl.addRow(v.build_aog_table_row(tbl.footnotes, hasSE, hasEstimates));
+        });
+        $(div).html(tbl.getTbl());
     },
     has_aogs: function(){
         return (this.aog.length>0);
+    },
+    aogs_has_se: function(){
+        var hasSE = false;
+        this.aog.forEach(function(d){
+            if (d.hasSE()) hasSE=true;
+        });
+        return hasSE;
+    },
+    aogs_has_estimates: function(){
+        var hasEstimates = false;
+        this.aog.forEach(function(d){
+            if (d.hasEstimates()) hasEstimates=true;
+        });
+        return hasEstimates;
     },
     build_breadcrumbs: function(){
         var urls = [
@@ -360,23 +376,39 @@ var AssessedOutcomeGroup = function(data){
     this.tooltip = new PlotTooltip({"width": "500px", "height": "380px"});
 };
 AssessedOutcomeGroup.prototype = {
-    build_aog_table_row: function(footnotes){
+    build_aog_table_row: function(footnotes, hasSE, hasEstimates){
         var self = this,
-            name = this.data.exposure_group.description;
+            name = this.data.exposure_group.description,
+            tds,
+            link;
 
         if(this.data.main_finding){
             name = name + footnotes.add_footnote(["Main finding as selected by HAWC assessment authors."]);
         }
 
-        return $('<tr></tr>').append([
-                        $('<td>').append($('<a>').attr('href', '#')
-                                                 .html(name)
-                                                 .on('click', function(e){e.preventDefault();
-                                                                          self.tooltip.display_exposure_group_table(self, e);})),
-                        $('<td>').text(this.data.n || "-"),
-                        $('<td>').text(this.data.estimateFormatted),
-                        $('<td>').text(this.data.se || "-"),
-                        $('<td>').text(this.data.p_value_text || "-")]);
+        link = $('<a>')
+            .attr('href', '#')
+            .html(name)
+            .on('click', function(e){
+                e.preventDefault();
+                self.tooltip.display_exposure_group_table(self, e);
+            });
+
+        tds = [
+            link,
+            this.data.n || "-",
+            this.data.p_value_text || "-"
+        ]
+
+        if(hasEstimates){
+            tds.splice(2, 0, this.data.estimateFormatted);
+        }
+
+        if(hasSE){
+            tds.splice(tds.length-1, 0, this.data.se || "-");
+        }
+
+        return tds;
     },
     get_confidence_interval: function(){
         var txt = "";
@@ -394,6 +426,12 @@ AssessedOutcomeGroup.prototype = {
             ci.upper_ci = this.data.estimate + 1.96 * this.data.se * Math.sqrt(this.data.n);
         }
         return ci;
+    },
+    hasSE: function(){
+        return this.data.se !== null;
+    },
+    hasEstimates: function(){
+        return this.data.estimate !== null || this.data.lower_ci !== null;
     },
     build_exposure_group_table: function(div){
         div.html(Exposure.prototype.build_eg_table.call(this, this.data.exposure_group));
