@@ -1091,6 +1091,8 @@ class AssessedOutcomeGroup(models.Model):
 
     @property
     def p_value_text(self):
+        if self.p_value is None:
+            return "n.s."
         txt = self.get_p_value_qualifier_display()
         if txt != "n.s.":
             txt += str(self.p_value)
