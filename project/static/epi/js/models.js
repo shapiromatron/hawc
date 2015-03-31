@@ -425,6 +425,7 @@ _.extend(AOForestPlot.prototype, D3Plot.prototype, {
     build_plot: function(){
         this.plot_div.empty();
         this.get_dataset();
+        if (!this.isPlottable()) return;
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
         this.add_axes();
@@ -435,6 +436,9 @@ _.extend(AOForestPlot.prototype, D3Plot.prototype, {
         this.add_menu();
         this.resize_plot_dimensions();
         this.trigger_resize();
+    },
+    isPlottable: function(){
+        return this.estimates.length>0 || this.lines.length>0;
     },
     set_defaults: function(){
         this.padding = {top:35, right:20, bottom:40, left:20};
@@ -470,8 +474,11 @@ _.extend(AOForestPlot.prototype, D3Plot.prototype, {
             var name = aog.data.exposure_group.description.toString();
             names.push(name);
             if(aog.data.estimate !== null){
-                estimates.push({"aog": aog, "name": name,
-                                "estimate": aog.data.estimate});
+                estimates.push({
+                    "aog": aog,
+                    "name": name,
+                    "estimate": aog.data.estimate
+                });
                 vals.push(aog.data.estimate);
             }
             var ci = aog.get_ci();
