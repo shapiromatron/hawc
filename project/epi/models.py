@@ -944,11 +944,17 @@ class AssessedOutcome(BaseEndpoint):
             studies.values(),
             key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
-            study["sps"] = study["sps"].values()
+            study["sps"] = sorted(
+                study["sps"].values(),
+                key=lambda obj: (obj["name"].lower()))
             for sp in study["sps"]:
-                sp["exposures"] = sp["exposures"].values()
+                sp["exposures"] = sorted(
+                    sp["exposures"].values(),
+                    key=lambda obj: (obj["exposure_form_definition"].lower()))
                 for exp in sp["exposures"]:
-                    exp["aos"] = exp["aos"].values()
+                    exp["aos"] = sorted(
+                        exp["aos"].values(),
+                        key=lambda obj: (obj["name"].lower()))
                     for i, ao in enumerate(exp["aos"]):
                         ao["character"] = chr(65+i)
                     exp["statistical_methods"] = exp["statistical_methods"].values()
@@ -1431,9 +1437,13 @@ class MetaResult(models.Model):
             studies.values(),
             key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
-            study["protocols"] = study["protocols"].values()
+            study["protocols"] = sorted(
+                study["protocols"].values(),
+                key=lambda obj: (obj["name"].lower()))
             for pro in study["protocols"]:
-                pro["results"] = pro["results"].values()
+                pro["results"] = sorted(
+                    pro["results"].values(),
+                    key=lambda obj: (obj["label"].lower()))
                 pro["statistical_methods"] = pro["statistical_methods"].values()
                 for obj in pro["statistical_methods"]:
                     obj["sm_endpoints"] = u", ".join([ d["label"] for d in obj["sm_endpoints"] ])

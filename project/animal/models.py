@@ -977,11 +977,17 @@ class Endpoint(BaseEndpoint):
             studies.values(),
             key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
-            study["exps"] = study["exps"].values()
+            study["exps"] = sorted(
+                study["exps"].values(),
+                key=lambda obj: (obj["name"].lower()))
             for exp in study["exps"]:
-                exp["ags"] = exp["ags"].values()
+                exp["ags"] = sorted(
+                    exp["ags"].values(),
+                    key=lambda obj: (obj["name"].lower()))
                 for ag in exp["ags"]:
-                    ag["eps"] = ag["eps"].values()
+                    ag["eps"] = sorted(
+                        ag["eps"].values(),
+                        key=lambda obj: (obj["name"].lower()))
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
