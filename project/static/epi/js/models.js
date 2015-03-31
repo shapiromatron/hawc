@@ -3,7 +3,7 @@ var StudyPopulation = function(data){
 };
 _.extend(StudyPopulation, {
     get_object: function(id, cb){
-        $.get('/epi/study-population/{0}/json/'.printf(id), function(d){
+        $.get('/epi/api/study-population/{0}/'.printf(id), function(d){
             cb(new StudyPopulation(d));
         });
     },
@@ -63,6 +63,116 @@ StudyPopulation.prototype = {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 800});
+    }
+};
+
+
+var Exposure = function(data){
+    this.data = data;
+};
+_.extend(Exposure, {
+    get_object: function(id, cb){
+        $.get('/epi/api/exposure/{0}/'.printf(id), function(d){
+            cb(new Exposure(d));
+        });
+    },
+    displayAsModal: function(id){
+        Exposure.get_object(id, function(d){d.displayAsModal();});
+    }
+});
+Exposure.prototype = {
+    build_breadcrumbs: function(){
+        var urls = [
+            {
+                url: this.data.study_population.study.url,
+                name: this.data.study_population.study.short_citation
+            },
+            {
+                url: this.data.study_population.url,
+                name: this.data.study_population.name
+            },
+            {
+                url: this.data.url,
+                name: this.data.exposure_form_definition
+            }
+        ];
+        return HAWCUtils.build_breadcrumbs(urls);
+    },
+    get_exposure_li: function(){
+        var lis = [];
+        if (this.data.inhalation) lis.push("Inhalation");
+        if (this.data.dermal) lis.push("Dermal");
+        if (this.data.oral) lis.push("Oral");
+        if (this.data.in_utero) lis.push("In utero");
+        if (this.data.iv) lis.push("IV");
+        if (this.data.unknown_route) lis.push("Unknown route");
+        return lis;
+    },
+    build_details_table: function(){
+        return new DescriptiveTable()
+            .add_tbody_tr_list("Known exposure routes", this.get_exposure_li())
+            .add_tbody_tr("Measurement metric", this.data.metric)
+            .add_tbody_tr("Measurement description", this.data.metric_description)
+            .add_tbody_tr("Measurement metric units", this.data.metric_units.units)
+            .add_tbody_tr("Analytical method", this.data.analytical_method)
+            .add_tbody_tr("Exposure description", this.data.exposure_description)
+            .add_tbody_tr("Control description", this.data.control_description)
+            .get_tbl();
+    },
+    build_egs_table: function(){
+        var self = this,
+            tbl = new DescriptiveTable(),
+            extract_as_list = function(tbl){
+                // remove descriptive table pieces and convert to list.
+                var lst = [];
+                tbl.find('tr').each(function(i, tr){
+                    var els = $(tr).children();
+                    lst.push("<strong>{0}: </strong>{1}".printf(
+                        els[0].textContent,
+                        els[1].textContent
+                    ));
+                })
+                return lst;
+            };
+
+        this.data.groups.forEach(function(d){
+            tbl.add_tbody_tr_list(d.description, extract_as_list(self.build_eg_table(d)));
+        });
+        return tbl.get_tbl()
+    },
+    build_eg_table: function(d){
+        return new DescriptiveTable()
+            .add_tbody_tr("Name", d.description)
+            .add_tbody_tr("Comparison description", d.comparative_name)
+            .add_tbody_tr("Exposure N", d.exposure_n)
+            .add_tbody_tr("Demographic Starting N", d.starting_n)
+            .add_tbody_tr("Demographic N", d.n)
+            .add_tbody_tr("Sex", d.sex)
+            .add_tbody_tr("Race/ethnicity", d.ethnicity.join(", "))
+            .add_tbody_tr("Fraction male", d.fraction_male, {calculated: d.fraction_male_calculated})
+            .add_tbody_tr("Age description", d.age_description)
+            .add_tbody_tr("Age {0} (yrs)".printf(d.age_mean_type),  d.age_mean,  {calculated: d.age_calculated})
+            .add_tbody_tr("Age {0} (yrs)".printf(d.age_sd_type),    d.age_sd,    {calculated: d.age_calculated})
+            .add_tbody_tr("Age {0} (yrs)".printf(d.age_lower_type), d.age_lower, {calculated: d.age_calculated})
+            .add_tbody_tr("Age {0} (yrs)".printf(d.age_upper_type), d.age_upper, {calculated: d.age_calculated})
+            .get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = $('<h4>').html(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details
+            .append(this.build_details_table())
+            .append("<h4>Exposure groups</h4>")
+            .append(this.build_egs_table());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 };
 
@@ -286,53 +396,7 @@ AssessedOutcomeGroup.prototype = {
         return ci;
     },
     build_exposure_group_table: function(div){
-        var tbl = $('<table class="table table-condensed table-striped"></table>'),
-            colgroup = $('<colgroup></colgroup>'),
-            tbody = $('<tbody></tbody>'),
-            add_tbody_tr = function(description, value, calculated){
-                if(value){
-                    if(calculated){value="[{0}]".printf(value);}  // [] = estimated
-                    tbody.append($('<tr></tr>').append($("<th>").text(description))
-                                               .append($("<td>").text(value)));
-                }
-            }, add_tbody_tr_list = function(description, list_items){
-                var ul = $('<ul></ul>').append(
-                            list_items.map(function(v){return $('<li>').text(v); })),
-                    tr = $('<tr></tr>')
-                            .append('<th>{0}</th>'.printf(description))
-                            .append($('<td></td>').append(ul));
-
-            tbody.append(tr);
-        };
-
-        colgroup.append('<col style="width: 30%;"><col style="width: 70%;">');
-        add_tbody_tr("Name", this.data.exposure_group.description);
-        add_tbody_tr("Comparison description", this.data.exposure_group.comparative_name);
-        add_tbody_tr("Exposure N", this.data.exposure_group.exposure_n);
-        add_tbody_tr("Demographic Starting N", this.data.exposure_group.starting_n);
-        add_tbody_tr("Demographic N", this.data.exposure_group.n);
-        add_tbody_tr("Sex", this.data.exposure_group.sex);
-
-        add_tbody_tr_list("Ethnicities", this.data.exposure_group.ethnicity);
-
-        add_tbody_tr("Fraction male", this.data.exposure_group.fraction_male,
-                                      this.data.exposure_group.fraction_male_calculated);
-
-        add_tbody_tr("Age description", this.data.exposure_group.age_description);
-        add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_mean_type),
-                     this.data.exposure_group.age_mean,
-                     this.data.exposure_group.age_calculated);
-        add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_sd_type),
-                     this.data.exposure_group.age_sd,
-                     this.data.exposure_group.age_calculated);
-        add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_lower_type),
-                     this.data.exposure_group.age_lower,
-                     this.data.exposure_group.age_calculated);
-        add_tbody_tr("Age {0} (yrs)".printf(this.data.exposure_group.age_upper_type),
-                     this.data.exposure_group.age_upper,
-                     this.data.exposure_group.age_calculated);
-
-        $(div).html(tbl.append(colgroup, tbody));
+        div.html(Exposure.prototype.build_eg_table.call(this, this.data.exposure_group));
     }
 };
 

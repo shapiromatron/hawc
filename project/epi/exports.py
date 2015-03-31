@@ -54,6 +54,7 @@ class AssessedOutcomeFlatDataPivot(FlatFileExporter):
             'Study Population URL',
 
             'Exposure',
+            'Exposure Key',
             'Exposure Metric',
             'Exposure URL',
             'Dose Units',
@@ -105,6 +106,7 @@ class AssessedOutcomeFlatDataPivot(FlatFileExporter):
                 ser['exposure']['study_population']['url'],
 
                 ser['exposure']['exposure_form_definition'],
+                ser['exposure']['id'],
                 ser['exposure']['metric'],
                 ser['exposure']['url'],
                 ser['exposure']['metric_units']['units'],

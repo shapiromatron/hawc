@@ -35,8 +35,6 @@
     {% endif %}
   </h1>
 
-  {% include "epi/_exposure_detail.html" %}
-
   {% if crud == "Read" %}
   <h2>Assessed Outcomes</h2>
   <ul>
@@ -48,4 +46,19 @@
   </ul>
   {% endif %}
 
+{% endblock %}
+
+
+{% block extrajs %}
+  <script src="{{STATIC_URL}}epi/js/models.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      Exposure.get_object({{object.id}}, function(d){
+        $('h1')
+          .after(d.build_egs_table())
+          .after("<h2>Exposure groups</h2>")
+          .after(d.build_details_table());
+      });
+    });
+  </script>
 {% endblock %}
