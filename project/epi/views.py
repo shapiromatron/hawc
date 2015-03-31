@@ -63,16 +63,6 @@ class StudyPopulationDelete(BaseDelete):
         return reverse("study:detail", kwargs={"pk": self.parent.pk})
 
 
-class StudyPopulationJSON(BaseDetail):
-    model = models.StudyPopulation
-    http_method_names = ('get', )
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return HttpResponse(self.object.get_json(json_encode=True),
-                            content_type="application/json")
-
-
 class StudyPopulationCopyAsNewSelector(StudyRead):
     # Select an existing assessed outcome as a template for a new one
     template_name = 'epi/studypopulation_copy_selector.html'

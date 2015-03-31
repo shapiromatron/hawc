@@ -60,10 +60,6 @@ urlpatterns = patterns('',
         views.StudyPopulationDetail.as_view(),
         name='sp_detail'),
 
-    url(r'^study-population/(?P<pk>\d+)/json/$',
-        views.StudyPopulationJSON.as_view(),
-        name='sp_detail_json'),
-
     url(r'^study-population/(?P<pk>\d+)/update/$',
         views.StudyPopulationUpdate.as_view(),
         name='sp_update'),
