@@ -72,6 +72,10 @@ class ExposureGroupSerializer(serializers.ModelSerializer):
         model = models.ExposureGroup
 
 
+class ExposureVerboseSerializer(ExposureSerializer):
+    groups = ExposureGroupSerializer(many=True)
+
+
 class AssessedOutcomeGroupSerializer(serializers.ModelSerializer):
     assessed_outcome = serializers.PrimaryKeyRelatedField(read_only=True)
     exposure_group = ExposureGroupSerializer()

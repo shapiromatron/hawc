@@ -11,6 +11,18 @@ class MetaResult(AssessmentViewset):
     serializer_class = serializers.MetaResultSerializer
 
 
+class StudyPopulation(AssessmentViewset):
+    assessment_filter_args = "study__assessment"
+    model = models.StudyPopulation
+    serializer_class = serializers.StudyPopulationSerializer
+
+
+class Exposure(AssessmentViewset):
+    assessment_filter_args = "study_population__study__assessment"
+    model = models.Exposure
+    serializer_class = serializers.ExposureVerboseSerializer
+
+
 class AssessedOutcome(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.AssessedOutcome
