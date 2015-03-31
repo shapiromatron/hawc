@@ -973,7 +973,9 @@ class Endpoint(BaseEndpoint):
                 ag["eps"][ep["id"]]  = ep
 
         # convert value dictionaries to lists
-        studies = studies.values()
+        studies = sorted(
+            studies.values(),
+            key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
             study["exps"] = study["exps"].values()
             for exp in study["exps"]:

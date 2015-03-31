@@ -942,7 +942,7 @@ class AssessedOutcome(BaseEndpoint):
         # convert value dictionaries to lists
         studies = sorted(
             studies.values(),
-            key=lambda obj: (obj["short_citation"]))
+            key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
             study["sps"] = study["sps"].values()
             for sp in study["sps"]:
@@ -1429,7 +1429,7 @@ class MetaResult(models.Model):
         # convert value dictionaries to lists
         studies = sorted(
             studies.values(),
-            key=lambda obj: (obj["short_citation"]))
+            key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
             study["protocols"] = study["protocols"].values()
             for pro in study["protocols"]:
