@@ -113,29 +113,30 @@ class Command(BaseCommand):
         # http://www.utf8-chartable.de/unicode-utf8-table.pl
         s = re.sub(ur"[\u0000-\u0009\u000b-\u001f\u007f-\u009f]", "", s)
 
-        newstr = ""
-        for i, c in enumerate(s):
-            try:
-                nextIsUpper = unicodedata.category(s[i+1])=="Lu"
-            except IndexError:
-                nextIsUpper = False
+        # Cleanup extra newlines-spacing
+        # newstr = ""
+        # for i, c in enumerate(s):
+        #     try:
+        #         nextIsUpper = unicodedata.category(s[i+1])=="Lu"
+        #     except IndexError:
+        #         nextIsUpper = False
 
-            if c != "\n" :
-                newstr += c
-            elif nextIsUpper:
-                # extra spacing on paragraphs
-                newstr += "\n\n"
-            else:
-                # convert newline to space if needed
-                spacing = " "
-                try:
-                    if s[i-1] == " " or s[i-1] == " ":
-                        spacing = ""
-                except IndexError:
-                    spacing = ""
+        #     if c != "\n" :
+        #         newstr += c
+        #     elif nextIsUpper:
+        #         # extra spacing on paragraphs
+        #         newstr += "\n\n"
+        #     else:
+        #         # convert newline to space if needed
+        #         spacing = " "
+        #         try:
+        #             if s[i-1] == " " or s[i-1] == " ":
+        #                 spacing = ""
+        #         except IndexError:
+        #             spacing = ""
 
-                newstr += spacing        # convert newline to space
-        s = newstr
+        #         newstr += spacing        # convert newline to space
+        # s = newstr
 
         # Remove trailing spaces
         s = s.strip()
