@@ -1,7 +1,7 @@
 var Endpoint = function(data, options){
+    Observee.apply(this, arguments);
     if (!data) return;  // added for edit_endpoint prototype extension
     this.options = options || {};
-    this.observers = [];
     this.doses = [];
     this.data = data;
     this.unpack_doses();
@@ -20,10 +20,7 @@ _.extend(Endpoint, {
         Endpoint.get_object(id, function(d){d.displayAsModal();});
     }
 });
-Endpoint.prototype = {
-    addObserver: function(obs){
-        this.observers.push(obs);
-    },
+_.extend(Endpoint.prototype, Observee.prototype, {
     unpack_doses: function(){
         if (!this.data.animal_group) return;  // added for edit_endpoint prototype extension
         this.doses = d3.nest()
@@ -33,17 +30,6 @@ Endpoint.prototype = {
         this.doses.forEach(function(v){ v.units= v.values[0].dose_units.units; });
         this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
         this.switch_dose_units(this.dose_units_id);
-    },
-    removeObserver: function(obs){
-        var observers = this.observers;
-        this.observers.forEach(function(v, i){
-            if (obs === v){observers.splice(i, 1);}
-        });
-    },
-    notifyObservers: function(status){
-        this.observers.forEach(function(v, i){
-            v.update(status);
-        });
     },
     toggle_dose_units: function(){
         var units = _.pluck(this.doses, "key"),
@@ -421,7 +407,7 @@ Endpoint.prototype = {
             .addFooter("")
             .show({maxWidth: 1200});
     }
-};
+});
 
 
 var EndpointSQTable = function(endpoint){
@@ -699,7 +685,6 @@ AnimalGroupTable.prototype = {
                 tbl.addRow(v._build_ag_response_row(tbl.footnotes));
             });
         });
-
     }, _sort_egs_by_n: function(){
         /*
         Return an array of arrays of endpoints which have the same

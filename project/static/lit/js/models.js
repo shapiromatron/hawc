@@ -1,8 +1,7 @@
 var Reference = function(data, tagtree){
+    Observee.apply(this, arguments);
     var self = this,
         tag_ids = data.tags;
-
-    this.observers = [];
     this.data = data;
     this.data.tags = [];
     tag_ids.forEach(function(v){self.add_tag(tagtree.dict[v]);});
@@ -15,18 +14,7 @@ _.extend(Reference, {
       return 0;
     }
 });
-Reference.prototype = {
-    addObserver: function(obs){
-        this.observers.push(obs);
-    },
-    removeObserver: function(obs){
-        this.observers.splice_object(obs);
-    },
-    notifyObservers: function(status){
-        this.observers.forEach(function(v, i){
-            v.update(status);
-        });
-    },
+_.extend(Reference.prototype, Observee.prototype, {
     print_self: function(show_taglist){
         var taglist = show_taglist || false;
 
@@ -186,7 +174,7 @@ Reference.prototype = {
     update: function(status){
         if (status.event =="tag removed"){this.remove_tag(status.object);}
     }
-};
+});
 
 
 var ReferencesViewer = function($div, options){
@@ -483,12 +471,13 @@ EditTagTreeContainer.prototype = {
 
 
 var TagTree = function(data){
+    Observee.apply(this, arguments);
     var self = this;
     this.tags = this._construct_tags(data[0], skip_root=true);
     this.dict = this._build_dictionary();
     this.observers = [];
 };
-TagTree.prototype = {
+_.extend(TagTree.prototype, Observee.prototype, {
     add_root_tag: function(name){
         var self = this,
             data = {"content": "tag",
@@ -532,17 +521,6 @@ TagTree.prototype = {
         }
         return tags;
     },
-    addObserver: function(obs){
-        this.observers.push(obs);
-    },
-    removeObserver: function(obs){
-        this.observers.splice_object(obs);
-    },
-    notifyObservers: function(status){
-        this.observers.forEach(function(v, i){
-            v.update(status);
-        });
-    },
     tree_changed: function(){
         this.dict = this._build_dictionary();
         this.notifyObservers('TagTree');
@@ -574,10 +552,11 @@ TagTree.prototype = {
     get_refs_count: function(name){
         this.tags.forEach(function(v){v.get_reference_count();});
     }
-};
+});
 
 
 var NestedTag = function(item, level, tree, parent){
+    Observee.apply(this, arguments);
     var self = this,
         children = [];
     this.observers= [];
@@ -594,7 +573,7 @@ var NestedTag = function(item, level, tree, parent){
     this.children = children;
     return this;
 };
-NestedTag.prototype = {
+_.extend(NestedTag.prototype, Observee.prototype, {
     get_nested_list_item: function(parent, padding, options){
         var div = $('<div></div>'),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
@@ -746,19 +725,8 @@ NestedTag.prototype = {
     remove_child: function(tag){
         this.children.splice_object(tag);
         delete tag;
-    },
-    addObserver: function(obs){
-        this.observers.push(obs);
-    },
-    removeObserver: function(obs){
-        this.observers.splice_object(obs);
-    },
-    notifyObservers: function(status){
-        this.observers.forEach(function(v, i){
-            v.update(status);
-        });
     }
-};
+});
 
 
 var TagTreeViz = function(tagtree, plot_div, title, downloadURL, options){

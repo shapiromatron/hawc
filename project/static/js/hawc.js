@@ -407,6 +407,26 @@ var HAWCUtils = {
 };
 
 
+// Observer design pattern; observers require an `update` method.
+var Observee = function(){
+    this._observers = [];
+};
+Observee.prototype = {
+    addObserver: function(obj){
+        this._observers.push(obj);
+    },
+    removeObserver: function(obj){
+        var idx = this._observers.indexOf(obj);
+        if (idx>=0) this._observers.splice(idx, 1);
+    },
+    notifyObservers: function(msg){
+        this._observers.forEach(function(d){
+            d.update(msg);
+        });
+    }
+};
+
+
 // Version object. Used to generate diffs to compare a list of objects.
 var Version = function(object_list, list_table_id, comparison_table_id){
     /*

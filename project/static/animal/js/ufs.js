@@ -238,13 +238,13 @@ UFsContainerTable.prototype = {
 
 
 var ReferenceValue = function(dataset, options){
-    this.observers = [];
+    Observee.apply(this, arguments);
     this.data = dataset;
     this.unpack_endpoint_ufs();
     this.calculate_plot_values();
     this.set_domain_calcs();
 };
-ReferenceValue.prototype = {
+_.extend(ReferenceValue.prototype, Observee.prototype, {
     unpack_endpoint_ufs: function(){
         UFEndpoint.prototype.unpack_endpoint_ufs.apply(this);
     },
@@ -287,15 +287,6 @@ ReferenceValue.prototype = {
         this.ufs_container = {get_global_domain: function(){
              return {domain: [self.data.rfd, self.data.point_of_departure], changed: false}; }};
     },
-    addObserver: function(obs){
-        UFEndpoint.prototype.addObserver.apply(this, [obs]);
-    },
-    removeObserver: function(obs){
-        UFEndpoint.prototype.removeObserver.apply(this, [obs]);
-    },
-    notifyObservers: function(status){
-        UFEndpoint.prototype.notifyObservers.apply(this, [status]);
-    },
     build_uf_table: function(div){
         var tbl = $('<table class="table table-condensed table-striped"></table>'),
             colgroup = $('<colgroup><col style="width:25%"><col style="width:10%"><col style="width:65%"></col></colgroup>'),
@@ -312,7 +303,7 @@ ReferenceValue.prototype = {
         });
         $(div).html(tbl.html([colgroup, thead, tbody]));
     }
-};
+});
 
 
 var UFEndpoint = function(endpoint, options){
