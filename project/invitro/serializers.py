@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 
 from rest_framework import serializers
 
@@ -34,10 +35,19 @@ class IVExperimentSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class IVChemicalSerializer(serializers.ModelSerializer):
+class _IVChemicalSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        ret = super(_IVChemicalSerializer, self).to_representation(instance)
+        ret['precipitation'] = instance.get_precipitation_display()
+        return ret
 
     class Meta:
         model = models.IVChemical
+
+
+class IVChemicalSerializer(_IVChemicalSerializer):
+    study = StudySerializer()
 
 
 class IVEndpointGroupSerializer(serializers.ModelSerializer):
@@ -47,6 +57,7 @@ class IVEndpointGroupSerializer(serializers.ModelSerializer):
         ret['difference_control'] = instance.get_difference_control_display()
         ret['significant_control'] = instance.get_significant_control_display()
         ret['cytotoxicity_observed'] = instance.get_cytotoxicity_observed_display()
+        ret['precipitation_observed'] = instance.get_precipitation_observed_display()
         return ret
 
     class Meta:
@@ -59,12 +70,22 @@ class IVBenchmarkSerializer(serializers.ModelSerializer):
         model = models.IVBenchmark
 
 
+class IVEndpointCategory(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        return OrderedDict(names=instance.get_list_representation())
+
+    class Meta:
+        model = models.IVEndpointCategory
+
+
 class IVEndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    chemical = IVChemicalSerializer()
+    chemical = _IVChemicalSerializer()
     experiment = IVExperimentSerializer()
     groups = IVEndpointGroupSerializer(many=True)
     benchmarks = IVBenchmarkSerializer(many=True)
+    category = IVEndpointCategory()
 
     def to_representation(self, instance):
         ret = super(IVEndpointSerializer, self).to_representation(instance)

@@ -12,6 +12,11 @@ from utils.models import AssessmentRootedTagTree
 
 
 class IVChemical(models.Model):
+    PRECIPITATION_CHOICES = (
+        (0, "not reported"),
+        (1, "no"),
+        (2, "yes"))
+
     study = models.ForeignKey(
         'study.Study',
         related_name='ivchemicals')
@@ -26,7 +31,7 @@ class IVChemical(models.Model):
         verbose_name="CAS inferred?",
         help_text="Was the correct CAS inferred or incorrect in the original document?")
     cas_notes = models.CharField(
-        max_length=128,
+        max_length=256,
         verbose_name="CAS determination notes")
     source = models.CharField(
         max_length=128,
@@ -34,12 +39,17 @@ class IVChemical(models.Model):
     purity = models.CharField(
         max_length=32,
         verbose_name="Chemical purity",
-        help_text="Example")
+        help_text="Ex: >99%, not-reported, etc.")
     purity_confirmed = models.BooleanField(
         default=False,
         verbose_name="Purity experimentally confirmed")
     purity_confirmed_notes = models.TextField(
         blank=True)
+    precipitation = models.PositiveSmallIntegerField(
+        default=0,
+        choices=PRECIPITATION_CHOICES,
+        verbose_name="Precipitation",
+        help_text="Was precipitation observed?")
     dilution_storage_notes = models.TextField(
         help_text="Dilution, storage, and observations such as precipitation should be noted here.")
 
@@ -71,6 +81,9 @@ class IVCellType(models.Model):
         related_name='ivcelltypes')
     species = models.CharField(
         max_length=64)
+    strain = models.CharField(
+        max_length=64,
+        default="not applicable")
     sex = models.CharField(
         max_length=2,
         choices=SEX_CHOICES)
@@ -142,7 +155,7 @@ class IVExperiment(models.Model):
         blank=True,
         help_text="Vehicle control chemical or other notes")
     control_notes = models.CharField(
-        max_length=128,
+        max_length=256,
         blank=True,
         help_text="Additional details related to controls")
     dose_units = models.ForeignKey(
@@ -160,6 +173,11 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     def __unicode__(self):
         return self.name
 
+    def get_list_representation(self):
+        lst = list(self.get_ancestors().values_list('name', flat=True))
+        lst.pop(0)
+        lst.append(self.name)
+        return lst
 
 class IVEndpoint(BaseEndpoint):
 
@@ -188,8 +206,10 @@ class IVEndpoint(BaseEndpoint):
         (0, "not-available"),
         (1, "increase"),
         (2, "increase, then decrease"),
+        (6, "increase, then no change"),
         (3, "decrease"),
         (4, "decrease, then increase"),
+        (7, "decrease, then no change"),
         (5, "no clear pattern"))
 
     TREND_TEST_RESULT_CHOICES = (
@@ -215,12 +235,17 @@ class IVEndpoint(BaseEndpoint):
         IVChemical,
         related_name="endpoints")
     category = models.ForeignKey(IVEndpointCategory,
+        blank=True,
+        null=True,
         related_name="endpoints")
     assay_type = models.CharField(
         max_length=128)
     short_description = models.CharField(
-        max_length=64,
-        help_text="Short (<64 character) description of effect & measurement")
+        max_length=128,
+        help_text="Short (<128 character) description of effect & measurement")
+    effect = models.CharField(
+        max_length=128,
+        help_text="Effect, using common-vocabulary")
     data_location = models.CharField(
         max_length=128,
         blank=True,
@@ -261,6 +286,10 @@ class IVEndpoint(BaseEndpoint):
     trend_test = models.PositiveSmallIntegerField(
         default=0,
         choices=TREND_TEST_RESULT_CHOICES)
+    trend_test_notes = models.CharField(
+        max_length=256,
+        blank=True,
+        help_text="Notes describing details on the trend-test performed")
     endpoint_notes = models.TextField(
         blank=True,
         help_text="Any additional notes regarding the endpoint itself")
@@ -341,10 +370,10 @@ class IVEndpointGroup(models.Model):
         ("na", u"not applicable"),
     )
 
-    CYTOTOXICITY_CHOICES = (
-        ('nr', 'not reported'),
-        ('-', 'no'),
-        ('+', 'yes'),
+    OBSERVATION_CHOICES = (
+        (None,  'not reported'),
+        (False, 'not observed'),
+        (True,  'observed'),
     )
 
     endpoint = models.ForeignKey(
@@ -372,10 +401,12 @@ class IVEndpointGroup(models.Model):
         max_length=2,
         default="nr",
         choices=SIGNIFICANCE_CHOICES)
-    cytotoxicity_observed = models.CharField(
-        max_length=2,
-        default="nr",
-        choices=CYTOTOXICITY_CHOICES)
+    cytotoxicity_observed = models.NullBooleanField(
+        default=None,
+        choices=OBSERVATION_CHOICES)
+    precipitation_observed = models.NullBooleanField(
+        default=None,
+        choices=OBSERVATION_CHOICES)
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
@@ -387,8 +418,7 @@ class IVBenchmark(models.Model):
         related_name="benchmarks")
     benchmark = models.CharField(
         max_length=32)
-    value = models.FloatField(
-        validators=[MinValueValidator(0)])
+    value = models.FloatField()
 
 
 reversion.register(IVChemical)
