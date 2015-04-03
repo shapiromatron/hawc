@@ -16,8 +16,8 @@ python manage.py create_user --noinput hikingfan@gmail.com George Washington 1,2
 """
 
 def get_assessment_ids(txt):
-    if len(txt) == 0 or txt == "F":
-        return []
+    if len(txt) == 0 or txt.lower()[0] == "n":
+        return False
     ids = txt.replace(" ", "").split(",")
     return [int(d) for d in ids]
 
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 pms = raw_input("Enter assessment ids to assign as project manager (comma delimited): ")
                 tms = raw_input("Enter assessment ids to assign as team-member (comma delimited): ")
                 rvs = raw_input("Enter assessment ids to assign as reviewer (comma delimited): ")
-                send_welcome = raw_input("Send welcome email [y or n] ? ")
+                send_welcome = raw_input("Send welcome email [Y or N] ? ")
             except KeyboardInterrupt:
                 self.stdout.write("\nUser creation aborted.\n")
                 return
@@ -64,23 +64,12 @@ class Command(BaseCommand):
             rvs = args[5]
             send_welcome = args[6]
 
-        kwargs = {
-            "email": email,
-            "password": HAWCUser.objects.make_random_password(),
-            "first_name": first_name,
-            "last_name": last_name,
-        }
-
-        pms = get_assessment_ids(pms)
-        tms = get_assessment_ids(tms)
-        rvs = get_assessment_ids(rvs)
-
-        user = HAWCUser.objects.create_user(**kwargs)
-        user.assessment_pms.add(*pms)
-        user.assessment_teams.add(*tms)
-        user.assessment_reviewers.add(*rvs)
-        self.stdout.write("User created.")
-
-        if send_welcome.lower() == "y":
-            user.send_welcome_email()
-            self.stdout.write("Welcome email sent.")
+        HAWCUser.objects.create_user_batch(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            pms=get_assessment_ids(pms),
+            tms=get_assessment_ids(tms),
+            rvs=get_assessment_ids(rvs),
+            welcome_email= (send_welcome.lower() == "y")
+        )

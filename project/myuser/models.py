@@ -36,6 +36,39 @@ class HAWCMgr(BaseUserManager):
         u.save()
         return u
 
+    def create_user_batch(self, email, first_name, last_name,
+                         pms=False, tms=False, rvs=False,
+                         welcome_email=False):
+        """
+        Create a HAWC user, assign to assessments, and optionally send a welcome-email.
+        Used for batch-creation of multiple users by administrators.
+
+        Assessment-are a list of assessment-ids or False if none are added.
+
+        Example method call:
+
+            create_hawc_user("hikingfan@gmail.com", "George", "Washington",
+                             pms=[1,2,3] tms=False, rvs=False,
+                             welcome_email=True)
+        """
+        user = self.create_user(
+            email=email,
+            password=self.make_random_password(),
+            first_name=first_name,
+            last_name=last_name)
+
+        if pms:
+            user.assessment_pms.add(*pms)
+
+        if tms:
+            user.assessment_teams.add(*tms)
+
+        if rvs:
+            user.assessment_reviewers.add(*rvs)
+
+        if welcome_email:
+            user.send_welcome_email()
+
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
     objects = HAWCMgr()
