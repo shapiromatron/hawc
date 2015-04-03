@@ -14,16 +14,15 @@ _.extend(IVChemical, {
 IVChemical.prototype = {
     build_details_table: function(){
         return new DescriptiveTable()
-            .add_tbody_tr("Chemical name", this.data.name);
-            .add_tbody_tr("CAS", this.data.cas);
-            .add_tbody_tr("CAS inferred?", HAWCUtils.booleanCheckbox(this.data.cas_inferred));
-            .add_tbody_tr("CAS notes", this.data.cas_notes);
-            .add_tbody_tr("Source", this.data.source);
-            .add_tbody_tr("Purity", this.data.purity);
-            .add_tbody_tr("Purity confirmed?", HAWCUtils.booleanCheckbox(this.data.purity_confirmed));
-            .add_tbody_tr("Purity notes", this.data.purity_confirmed_notes);
-            .add_tbody_tr("Precipitation observed", this.data.precipitation);
-            .add_tbody_tr("Dilution/storage/precipitation notes", this.data.dilution_storage_notes);
+            .add_tbody_tr("Chemical name", this.data.name)
+            .add_tbody_tr("CAS", this.data.cas)
+            .add_tbody_tr("CAS inferred?", HAWCUtils.booleanCheckbox(this.data.cas_inferred))
+            .add_tbody_tr("CAS notes", this.data.cas_notes)
+            .add_tbody_tr("Source", this.data.source)
+            .add_tbody_tr("Purity", this.data.purity)
+            .add_tbody_tr("Purity confirmed?", HAWCUtils.booleanCheckbox(this.data.purity_confirmed))
+            .add_tbody_tr("Purity notes", this.data.purity_confirmed_notes)
+            .add_tbody_tr("Dilution/storage/precipitation notes", this.data.dilution_storage_notes)
             .get_tbl();
     },
     displayAsModal: function(){

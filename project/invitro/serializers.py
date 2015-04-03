@@ -36,12 +36,6 @@ class IVExperimentSerializer(serializers.ModelSerializer):
 
 
 class _IVChemicalSerializer(serializers.ModelSerializer):
-
-    def to_representation(self, instance):
-        ret = super(_IVChemicalSerializer, self).to_representation(instance)
-        ret['precipitation'] = instance.get_precipitation_display()
-        return ret
-
     class Meta:
         model = models.IVChemical
 

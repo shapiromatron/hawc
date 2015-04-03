@@ -12,11 +12,6 @@ from utils.models import AssessmentRootedTagTree
 
 
 class IVChemical(models.Model):
-    PRECIPITATION_CHOICES = (
-        (0, "not reported"),
-        (1, "no"),
-        (2, "yes"))
-
     study = models.ForeignKey(
         'study.Study',
         related_name='ivchemicals')
@@ -45,11 +40,6 @@ class IVChemical(models.Model):
         verbose_name="Purity experimentally confirmed")
     purity_confirmed_notes = models.TextField(
         blank=True)
-    precipitation = models.PositiveSmallIntegerField(
-        default=0,
-        choices=PRECIPITATION_CHOICES,
-        verbose_name="Precipitation",
-        help_text="Was precipitation observed?")
     dilution_storage_notes = models.TextField(
         help_text="Dilution, storage, and observations such as precipitation should be noted here.")
 
