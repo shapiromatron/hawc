@@ -25,6 +25,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '0001_initial'),
         ('study', '0005_auto_20150209_2238'),
+        ('summary', '0001_initial'),
+        ('taggit', '0001_initial')
     ]
 
     operations = [

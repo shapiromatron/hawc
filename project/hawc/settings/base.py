@@ -20,10 +20,7 @@ USE_I18N = False
 USE_L10N = True
 USE_TZ = True
 
-ALLOWED_HOSTS = ("hawcproject.org",
-                 "hawcproject.com",
-                 "www.hawcproject.org",
-                 "www.hawcproject.com")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split("|")
 
 ADMINS = (
     ('Andy Shapiro', 'shapiromatron@gmail.com'),
