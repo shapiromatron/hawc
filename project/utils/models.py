@@ -160,3 +160,9 @@ class AssessmentRootedTagTree(MP_Node):
         kwargs["name"] = cls.get_root_name(assessment_id)
         return cls.add_root(**kwargs)
 
+    @classmethod
+    def get_maximum_depth(cls, assessment_id):
+        # get maximum depth; subtracting root-level
+        return max(cls.get_root(assessment_id)
+                      .get_descendants()
+                      .values_list('depth', flat=True))-1
