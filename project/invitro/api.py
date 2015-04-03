@@ -14,7 +14,7 @@ class IVChemical(AssessmentViewset):
 class IVExperiment(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.IVExperiment
-    serializer_class = serializers.IVExperimentSerializer
+    serializer_class = serializers.IVExperimentSerializerFull
 
 
 class IVEndpoint(AssessmentViewset):

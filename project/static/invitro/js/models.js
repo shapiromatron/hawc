@@ -43,6 +43,7 @@ IVChemical.prototype = {
 
 var IVExperiment = function(data){
     this.data = data;
+    this.initEndpoints();
 };
 _.extend(IVExperiment, {
     get_object: function(id, cb){
@@ -52,30 +53,65 @@ _.extend(IVExperiment, {
     },
     displayAsModal: function(id){
         IVExperiment.get_object(id, function(d){d.displayAsModal();});
+    },
+    displayAsPage: function(id, div){
+        IVExperiment.get_object(id, function(d){d.displayAsPage(div);});
     }
 });
 IVExperiment.prototype = {
+    initEndpoints: function(){
+        this.endpoints = [];
+        if(this.data.endpoints){
+            for (var i=0; i<this.data.endpoints.length; i++){
+                this.endpoints.push(new IVEndpoint(this.data.endpoints[i]));
+            }
+            delete this.data.endpoints;
+        }
+    },
+    build_title: function(){
+        return $("<h1>")
+            .text(this.data.title);
+    },
     build_details_table: function(){
-        var tbl = new DescriptiveTable();
-        tbl.add_tbody_tr("Cell type", this.data.cell_type.cell_type);
-        tbl.add_tbody_tr("Tissue", this.data.cell_type.tissue);
-        tbl.add_tbody_tr("Species", this.data.cell_type.species);
-        tbl.add_tbody_tr("Sex", this.data.cell_type.sex_symbol);
-        tbl.add_tbody_tr("Cell source", this.data.cell_type.source);
-        tbl.add_tbody_tr("Transfection", this.data.transfection);
-        tbl.add_tbody_tr("Cell line", this.data.cell_line);
-        tbl.add_tbody_tr("Dosing notes", this.data.dosing_notes);
-        tbl.add_tbody_tr("Metabolic activation", this.data.metabolic_activation);
-        tbl.add_tbody_tr("Serum", this.data.serum);
-        tbl.add_tbody_tr("Has positive control", this.data.has_positive_control);
-        tbl.add_tbody_tr("Positive control", this.data.positive_control);
-        tbl.add_tbody_tr("Has negative control", this.data.has_negative_control);
-        tbl.add_tbody_tr("Negative control", this.data.negative_control);
-        tbl.add_tbody_tr("Has vehicle control", this.data.has_vehicle_control);
-        tbl.add_tbody_tr("Vehicle control", this.data.vehicle_control);
-        tbl.add_tbody_tr("Control notes", this.data.control_notes);
-        tbl.add_tbody_tr("Dose units", this.data.dose_units.units);
-        return tbl.get_tbl();
+        var getControlText = function(bool, str) {
+                var txt = HAWCUtils.booleanCheckbox(bool);
+                if (bool && str) txt = str;
+                return txt;
+            },
+            pos = getControlText(this.data.has_positive_control, this.data.positive_control),
+            neg = getControlText(this.data.has_negative_control, this.data.negative_control),
+            veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control);
+
+        return new DescriptiveTable()
+            .add_tbody_tr("Cell type", this.data.cell_type.cell_type)
+            .add_tbody_tr("Tissue", this.data.cell_type.tissue)
+            .add_tbody_tr("Species", this.data.cell_type.species)
+            .add_tbody_tr("Strain", this.data.cell_type.strain)
+            .add_tbody_tr("Sex", this.data.cell_type.sex_symbol)
+            .add_tbody_tr("Cell source", this.data.cell_type.source)
+            .add_tbody_tr("Transfection", this.data.transfection)
+            .add_tbody_tr("Cell line", this.data.cell_line)
+            .add_tbody_tr("Dosing notes", this.data.dosing_notes)
+            .add_tbody_tr("Metabolic activation", this.data.metabolic_activation)
+            .add_tbody_tr("Serum", this.data.serum)
+            .add_tbody_tr("Positive control", pos)
+            .add_tbody_tr("Negative control", neg)
+            .add_tbody_tr("Vehicle control", veh)
+            .add_tbody_tr("Control notes", this.data.control_notes)
+            .add_tbody_tr("Dose units", this.data.dose_units.units)
+            .get_tbl();
+    },
+    build_endpoint_list: function(){
+      var ul = $('<ul>');
+
+      if (this.endpoints.length===0)
+        ul.append("<li><i>No endpoints available.</i></li>");
+
+      this.endpoints.forEach(function(d){
+        ul.append($('<li>').html(d.build_hyperlink()));
+      });
+
+      return ul;
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
@@ -89,6 +125,13 @@ IVExperiment.prototype = {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 900});
+    },
+    displayAsPage: function($div){
+        $div
+            .append(this.build_title())
+            .append(this.build_details_table())
+            .append("<h2>Available endpoints</h2>")
+            .append(this.build_endpoint_list());
     }
 };
 
@@ -96,6 +139,7 @@ IVExperiment.prototype = {
 var IVEndpoint = function(data){
     this.data = data;
     this._build_ivegs();
+    this._build_chemical();
 };
 _.extend(IVEndpoint, {
     get_object: function(id, cb){
@@ -105,6 +149,9 @@ _.extend(IVEndpoint, {
     },
     displayAsModal: function(id){
         IVEndpoint.get_object(id, function(d){d.displayAsModal();});
+    },
+    displayAsPage: function(id, div){
+        IVEndpoint.get_object(id, function(d){d.displayAsPage(div);});
     }
 });
 IVEndpoint.prototype = {
@@ -113,7 +160,23 @@ IVEndpoint.prototype = {
         groups.sort(function(a, b){ return a.id - b.id;});
         this.egs = groups.map(function(v){return new IVEndpointGroup(v);});
         delete this.data.groups;
-    }, build_details_table: function(){
+    },
+    _build_chemical: function(){
+        if (this.data.chemical){
+            this.chemical = new IVChemical(this.data.chemical);
+            delete this.data.chemical;
+        }
+    },
+    build_hyperlink: function(){
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this._title_text());
+    },
+    _title_text: function(){
+        return "{0} ({1})".printf(this.data.name, this.chemical.data.name);
+    },
+    build_title: function(){
+        return $("<h1>").text(this._title_text());
+    },
+    build_details_table: function(){
 
         var self = this,
             tbl = new DescriptiveTable(),
@@ -128,27 +191,31 @@ IVEndpoint.prototype = {
             }, getObservationTime = function(){
                 if (self.data.observation_time>=0)
                     return "{0} {1}".printf(self.data.observation_time, self.data.observation_time_units);
+            }, getCategory = function(cat){
+                if (cat) return cat.names.join("→");
             };
 
-        tbl.add_tbody_tr("Name", this.data.name);
-        tbl.add_tbody_tr("Assay type", this.data.assay_type);
-        tbl.add_tbody_tr("Short description", this.data.short_description);
-        tbl.add_tbody_tr("Data location", this.data.data_location);
-        tbl.add_tbody_tr("Data type", this.data.data_type);
-        tbl.add_tbody_tr("Variance type", this.data.variance_type);
-        tbl.add_tbody_tr("Response units", this.data.response_units);
-        tbl.add_tbody_tr("Observation time", getObservationTime());
-        tbl.add_tbody_tr("NOAEL", getCriticalValue(this.data.NOAEL));
-        tbl.add_tbody_tr("LOAEL", getCriticalValue(this.data.LOAEL));
-        tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
-        tbl.add_tbody_tr("Overall pattern", this.data.overall_pattern);
-        tbl.add_tbody_tr("Statistical test notes", this.data.statistical_test_notes);
-        tbl.add_tbody_tr("Trend test", this.data.trend_test);
-        tbl.add_tbody_tr("Endpoint notes", this.data.endpoint_notes);
-        tbl.add_tbody_tr("Result notes", this.data.result_notes);
-        tbl.add_tbody_tr("Category", this.data.category.name);
-        tbl.add_tbody_tr_list("Effects", _.pluck(this.data.effects, "name"));
-        tbl.add_tbody_tr_list("Benchmarks", this.data.benchmarks.map(getBenchmarkText));
+        tbl.add_tbody_tr("Name", this.data.name)
+           .add_tbody_tr("Assay type", this.data.assay_type)
+           .add_tbody_tr("Short description", this.data.short_description)
+           .add_tbody_tr("Effect category", this.data.effect)
+           .add_tbody_tr("Specific category", getCategory(this.data.category))
+           .add_tbody_tr("Data location", this.data.data_location)
+           .add_tbody_tr("Data type", this.data.data_type)
+           .add_tbody_tr("Variance type", this.data.variance_type)
+           .add_tbody_tr("Response units", this.data.response_units)
+           .add_tbody_tr("Observation time", getObservationTime())
+           .add_tbody_tr("NOAEL", getCriticalValue(this.data.NOAEL))
+           .add_tbody_tr("LOAEL", getCriticalValue(this.data.LOAEL))
+           .add_tbody_tr("Monotonicity", this.data.monotonicity)
+           .add_tbody_tr("Overall pattern", this.data.overall_pattern)
+           .add_tbody_tr("Statistical test notes", this.data.statistical_test_notes)
+           .add_tbody_tr("Trend test", this.data.trend_test)
+           .add_tbody_tr("Trend test notes", this.data.trend_test_notes)
+           .add_tbody_tr("Endpoint notes", this.data.endpoint_notes)
+           .add_tbody_tr("Result notes", this.data.result_notes)
+           .add_tbody_tr_list("Effects", _.pluck(this.data.effects, "name"))
+           .add_tbody_tr_list("Benchmarks", this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
         _.map(this.data.additional_fields, function(val, key){
@@ -156,7 +223,8 @@ IVEndpoint.prototype = {
         });
 
         return tbl.get_tbl();
-    }, build_eg_table: function(){
+    },
+    build_eg_table: function(){
         var self = this,
             tbl = new BaseTable(),
             opts = {},
@@ -167,7 +235,8 @@ IVEndpoint.prototype = {
                     hasVariance: false,
                     hasDiffControl: false,
                     hasSigControl: false,
-                    hasCytotox: false
+                    hasCytotox: false,
+                    hasPrecip: false
                 }
                 self.egs.forEach(function(v){
                     if (v.data.n !== null) opts.hasN = true;
@@ -176,6 +245,7 @@ IVEndpoint.prototype = {
                     if (v.data.difference_control !== "not-tested") opts.hasDiffControl = true;
                     if (v.data.significant_control !== "not reported") opts.hasSigControl = true;
                     if (v.data.cytotoxicity_observed !== "not reported") opts.hasCytotox = true;
+                    if (v.data.precipitation_observed !== "not reported") opts.hasPrecip = true;
                 });
                 return opts;
             }, opts = getAvailableColumns(),
@@ -187,6 +257,7 @@ IVEndpoint.prototype = {
                 if (opts.hasDiffControl) arr.push("Difference<br>Control");
                 if (opts.hasSigControl) arr.push("Significant<br>Control");
                 if (opts.hasCytotox) arr.push("Cytotoxicity<br>Observed");
+                if (opts.hasPrecip) arr.push("Precipitation<br>Observed");
                 return arr;
             };
 
@@ -214,6 +285,15 @@ IVEndpoint.prototype = {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 900});
+    },
+    displayAsPage: function($div){
+        $div
+            .append(this.build_title())
+            .append(this.build_details_table())
+            .append("<h2>Chemical details</h2>")
+            .append(this.chemical.build_details_table())
+            .append("<h2>Endpoint-group</h2>")
+            .append(this.build_eg_table());
     }
 };
 
@@ -252,6 +332,9 @@ IVEndpointGroup.prototype = {
 
         if (opts.hasCytotox)
             tr.append('<td>{0}</td>'.printf(this.data.cytotoxicity_observed));
+
+        if (opts.hasPrecip)
+            tr.append('<td>{0}</td>'.printf(this.data.precipitation_observed));
 
         return tr;
     }

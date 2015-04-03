@@ -1,7 +1,15 @@
 from assessment.models import Assessment
-from utils.views import GenerateReport, BaseList
+from utils.views import GenerateReport, BaseList, BaseDetail
 
 from . import models, exports
+
+
+class ExperimentDetail(BaseDetail):
+    model = models.IVExperiment
+
+
+class EndpointDetail(BaseDetail):
+    model = models.IVEndpoint
 
 
 class EndpointsFlat(BaseList):

@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
+from assessment.serializers import EffectTagsSerializer
 from study.serializers import StudySerializer
 from utils.helper import SerializerHelper
 
@@ -27,7 +28,9 @@ class IVExperimentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(IVExperimentSerializer, self).to_representation(instance)
-        ret['metabolic_activation_symbol'] = instance.get_metabolic_activation_display()
+        ret['url'] = instance.get_absolute_url()
+        ret['metabolic_activation'] = instance.get_metabolic_activation_display()
+        ret['title'] = unicode(self.instance)
         return ret
 
     class Meta:
@@ -80,9 +83,11 @@ class IVEndpointSerializer(serializers.ModelSerializer):
     groups = IVEndpointGroupSerializer(many=True)
     benchmarks = IVBenchmarkSerializer(many=True)
     category = IVEndpointCategory()
+    effects = EffectTagsSerializer()
 
     def to_representation(self, instance):
         ret = super(IVEndpointSerializer, self).to_representation(instance)
+        ret['url'] = instance.get_absolute_url()
         ret['data_type'] = instance.get_data_type_display()
         ret['variance_type'] = instance.get_variance_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()
@@ -94,7 +99,25 @@ class IVEndpointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpoint
-        depth = 1
+
+
+class MiniIVEndpointSerializer(IVEndpointSerializer):
+    experiment = serializers.PrimaryKeyRelatedField(read_only=True)
+    groups = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    benchmarks = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    category = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(MiniIVEndpointSerializer, self).to_representation(instance)
+        ret['url'] = instance.get_absolute_url()
+        return ret
+
+    class Meta:
+        model = models.IVEndpoint
+
+
+class IVExperimentSerializerFull(IVExperimentSerializer):
+    endpoints = MiniIVEndpointSerializer(many=True)
 
 
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

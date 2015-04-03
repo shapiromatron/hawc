@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.core.urlresolvers import reverse
 
 import reversion
 
@@ -64,7 +65,7 @@ class IVCellType(models.Model):
         'f':  u'♀',
         'mf': u'♂♀',
         'na': u'N/A',
-        'nr': u'N/R'}
+        'nr': u'not reported'}
 
     study = models.ForeignKey(
         'study.Study',
@@ -86,7 +87,7 @@ class IVCellType(models.Model):
         verbose_name="Source of cell cultures")
 
     def __unicode__(self):
-        return self.cell_type
+        return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
@@ -152,8 +153,14 @@ class IVExperiment(models.Model):
         DoseUnits,
         related_name='ivexperiments')
 
+    def __unicode__(self):
+        return unicode(self.cell_type)
+
     def get_assessment(self):
         return self.study.assessment
+
+    def get_absolute_url(self):
+        return reverse('invitro:experiment_detail', args=[str(self.id)])
 
 
 class IVEndpointCategory(AssessmentRootedTagTree):
@@ -168,6 +175,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
         lst.pop(0)
         lst.append(self.name)
         return lst
+
 
 class IVEndpoint(BaseEndpoint):
 
@@ -220,7 +228,7 @@ class IVEndpoint(BaseEndpoint):
 
     experiment = models.ForeignKey(
         IVExperiment,
-        related_name="experiments")
+        related_name="endpoints")
     chemical = models.ForeignKey(
         IVChemical,
         related_name="endpoints")
@@ -291,6 +299,9 @@ class IVEndpoint(BaseEndpoint):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    def get_absolute_url(self):
+        return reverse('invitro:endpoint_detail', args=[str(self.id)])
 
     @classmethod
     def get_maximum_number_doses(cls, queryset):
