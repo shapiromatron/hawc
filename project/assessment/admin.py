@@ -45,6 +45,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 class EffectTagAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'id')
+    search_fields = ('name', )
 
 
 class ChangeLogAdmin(admin.ModelAdmin):

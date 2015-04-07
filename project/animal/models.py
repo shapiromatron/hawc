@@ -69,7 +69,8 @@ class Experiment(models.Model):
         ("Me", "Mechanistic"),
         ("Rp", "Reproductive"),
         ("Dv", "Developmental"),
-        ("Ot", "Other"))
+        ("Ot", "Other"),
+        ("NR", "Not-reported"))
 
     LITTER_EFFECT_CHOICES = (
         ("NA", "Not-applicable"),
@@ -424,6 +425,7 @@ class DosingRegime(models.Model):
         ("D",  u"Dermal"),
         ("SI", u"Subcutaneous injection"),
         ("IP", u"Intraperitoneal injection"),
+        ("IV", u"Intravenous injection"),
         ("IO", u"in ovo"),
         ("P",  u"Parental"),
         ("W",  u"Whole body"),
@@ -441,7 +443,8 @@ class DosingRegime(models.Model):
         ("UN", "Untreated"),
         ("VT", "Vehicle-treated"),
         ("B" , "Untreated + Vehicle-treated"),
-        ("N" , "None"))
+        ("Y" , "Yes (untreated and/or vehicle)"),
+        ("N" , "No"))
 
     dosed_animals = models.OneToOneField(
         AnimalGroup,
