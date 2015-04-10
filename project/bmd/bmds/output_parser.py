@@ -112,7 +112,7 @@ class BMD_output_parser(object):
 
     def _import_warnings(self):
         """Warnings in output files are searched for using this method; if a
-        warning is found then it will be appened to the warnings list. """
+        warning is found then it will be appended to the warnings list. """
         warnings = (r'Warning: BMDL computation is at best imprecise for these data',
                     r'THE MODEL HAS PROBABLY NOT CONVERGED!!!',
                     r'BMR value is not in the range of the mean function',
