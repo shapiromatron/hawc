@@ -13,7 +13,7 @@ from study.models import Study
 import reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder
+from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper
 
 
 class SummaryText(MP_Node):
@@ -156,6 +156,58 @@ class SummaryText(MP_Node):
                 print_node(node, 2)
 
 
+class Visual(models.Model):
+
+    VISUAL_CHOICES = (
+        (0, "animal bioassay endpoint aggregation"),
+        (1, "animal bioassay endpoint crossview"), )
+
+    title = models.CharField(
+        max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+                  "(no spaces or special-characters).")
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='visuals')
+    visual_type = models.PositiveSmallIntegerField(
+        choices=VISUAL_CHOICES)
+    dose_units = models.ForeignKey(
+        'animal.DoseUnits',
+        blank=True,
+        null=True)
+    endpoints = models.ManyToManyField(
+        'assessment.BaseEndpoint',
+        related_name='visuals',
+        help_text="Endpoints to be included in visualization",
+        blank=True,
+        null=True)
+    settings = models.TextField(
+        default="{}")
+    caption = models.TextField()
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        unique_together = (("assessment", "title"),
+                           ("assessment", "slug"))
+
+    def __unicode__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('summary:visualization_detail', args=[str(self.pk)])
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
+
+
 class DataPivot(models.Model):
     assessment = models.ForeignKey(
         'assessment.assessment')
@@ -289,3 +341,4 @@ class DataPivotQuery(DataPivot):
 reversion.register(SummaryText)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
+reversion.register(Visual)

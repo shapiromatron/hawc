@@ -87,6 +87,20 @@ class SummaryTextModify(BaseCreate):
                             content_type="application/json")
 
 
+# VISUALIZATIONS
+class VisualizationList(BaseList):
+    parent_model = Assessment
+    model = models.Visual
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)
+
+
+class VisualizationDetail(BaseDetail):
+    parent_model = Assessment
+    model = models.Visual
+
+
 # DATA-PIVOT
 class GeneralDataPivot(TemplateView):
     """

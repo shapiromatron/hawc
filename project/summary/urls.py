@@ -1,8 +1,19 @@
-from django.conf.urls import patterns, url
 
-from . import views
+from django.conf.urls import patterns, url, include
+
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'visual', api.Visual, base_name="visual")
+
 
 urlpatterns = patterns('',
+    # API
+    url(r'^api/', include(router.urls)),
+
     # SUMMARY-TEXT
     url(r'^assessment/(?P<pk>\d+)/summaries/$',
         views.SummaryTextList.as_view(),
@@ -13,6 +24,14 @@ urlpatterns = patterns('',
     url(r'^assessment/(?P<pk>\d+)/summaries/json/$',
         views.SummaryTextJSON.as_view(),
         name='json'),
+
+    # VISUALIZATIONS
+    url(r'^assessment/(?P<pk>\d+)/visuals/$',
+        views.VisualizationList.as_view(),
+        name='visualization_list'),
+    url(r'^visuals/(?P<pk>\d+)/$',
+        views.VisualizationDetail.as_view(),
+        name='visualization_detail'),
 
     # DATA-PIVOT
     url(r'^data-pivot/$',

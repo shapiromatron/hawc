@@ -17,6 +17,9 @@
         <li class=""><a href="{% url 'summary:dp_list' assessment.pk %}">Endpoint Data Pivot</a></li>
         <li class=""><a href="{% url 'animal:endpoint_crossview' assessment.pk %}">Endpoint Crossview</a></li>
         <li class=""><a href="{% url 'animal:aggregation_list' assessment.pk %}">Endpoint Aggregations</a></li>
+        {% if debug %}
+            <li class=""><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
+        {% endif %}
     {% endif %}
 
     {% if assessment.enable_summary_text %}

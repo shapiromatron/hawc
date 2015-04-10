@@ -300,3 +300,77 @@ SummaryText.prototype = {
         }
     }
 };
+
+
+
+var VisualCollection = function(data){
+    this.visuals = [];
+    for(var i=0; i<data.length; i++){
+        this.visuals.push(new Visual(data[i]));
+    }
+}
+_.extend(VisualCollection, {
+    buildTable: function(url, $el){
+        $.get(url, function(d){
+            var obj = new VisualCollection(d);
+            return obj.build_table($el);
+        });
+    }
+});
+VisualCollection.prototype = {
+    build_table: function($el){
+        if(this.visuals.length === 0)
+            return $el.html("<p><i>No custom-visuals are available for this assessment.</i></p>");
+
+        var tbl = new BaseTable();
+        tbl.addHeaderRow(['Title', 'Visual type', 'Description', 'Created', 'Modified']);
+        tbl.setColGroup([18, 18, 34, 15, 15]);
+        for(var i=0; i<this.visuals.length; i++){
+            tbl.addRow(this.visuals[i].build_row());
+        };
+
+        return $el.html(tbl.getTbl());
+    }
+}
+
+
+var Visual = function(data){
+    this.data = data;
+    this.data.created = new Date(this.data.created);
+    this.data.last_updated = new Date(this.data.last_updated);
+};
+_.extend(Visual, {
+    get_object: function(id, cb){
+        $.get('/summary/api/visual/{0}/'.printf(id), function(d){
+            cb(new Visual(d));
+        });
+    },
+    displayAsPage: function(id, $el){
+        Visual.get_object(id, function(d){d.displayAsPage($el);});
+    }
+});
+Visual.prototype = {
+
+    build_row: function(){
+        return [
+            '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.title),
+            this.data.visual_type,
+            HAWCUtils.truncateChars(this.data.caption),
+            this.data.created.toString(),
+            this.data.last_updated.toString()
+        ]
+    },
+    displayAsPage: function($el){
+        var title = $("<h1>").text(this.data.title),
+            caption = $('<div>').html(this.data.caption);
+
+        $el
+            .append(title)
+            .append("<h2>Visualization</h2>")
+            .append("<p>to add...</p>")
+            .append("<h2>Summary table</h2>")
+            .append("<p>to (optionally) add...</p>")
+            .append("<h2>Caption</h2>")
+            .append(caption);
+    },
+};
