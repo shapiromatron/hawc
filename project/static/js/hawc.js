@@ -403,6 +403,11 @@ var HAWCUtils = {
     prettifyVariableName: function(str){
         str = str.replace(/_/g, ' ');
         return str.charAt(0).toUpperCase() + str.substr(1);
+    },
+    truncateChars: function(txt, n){
+        n = n || 200;
+        if (txt.length>n) return txt.slice(0, n) + "...";
+        return txt;
     }
 };
 
