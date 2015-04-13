@@ -204,7 +204,7 @@ _.extend(StudyQuality, {
                 domain_text = sq.data.metric.domain.name;
             }
             content.push('<h4>{0}</h4>'.printf(sq.data.metric.metric),
-                         '<div class="help-block">{0}</div>'.printf(sqs[0].data.metric.description),
+                         '<div class="help-block">{0}</div>'.printf(sq.data.metric.description),
                          sq._build_details_div());
         });
         return $('<div class="row-fluid"></div>').html(content);
