@@ -342,7 +342,15 @@ var Visual = function(data){
 _.extend(Visual, {
     get_object: function(id, cb){
         $.get('/summary/api/visual/{0}/'.printf(id), function(d){
-            cb(new Visual(d));
+            var Cls
+            switch (d.visual_type){
+                case "animal bioassay endpoint aggregation":
+                    Cls = EndpointAggregation;
+                    break;
+                default:
+                    throw "Error - unknown visualization-type";
+            }
+            cb(new Cls(d));
         });
     },
     displayAsPage: function(id, $el){
@@ -350,7 +358,6 @@ _.extend(Visual, {
     }
 });
 Visual.prototype = {
-
     build_row: function(){
         return [
             '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.title),
@@ -361,16 +368,794 @@ Visual.prototype = {
         ]
     },
     displayAsPage: function($el){
+        throw "Abstract method; requires implementation";
+    }
+};
+
+
+D3Visualization = function(parent, data, options){
+    D3Plot.apply(this, arguments);
+    this.parent = parent;
+    this.data = data;
+    this.options = options || {};
+    this.settings = {};
+};
+_.extend(D3Visualization.prototype, D3Plot.prototype, {
+    render: function($div){
+        throw "Abstract method; requires implementation";
+    },
+    processData: function(){
+        throw "Abstract method; requires implementation";
+    }
+});
+
+
+EndpointAggregation = function(data){
+    this.data = data;
+    this.endpoints = data.endpoints.map(function(d){
+        var e = new Endpoint(d);
+        e.switch_dose_units(data.dose_units);
+        return e;
+    });
+    delete this.data.endpoints;
+};
+EndpointAggregation.prototype = {
+    displayAsPage: function($el){
         var title = $("<h1>").text(this.data.title),
-            caption = $('<div>').html(this.data.caption);
+            caption = $('<div>').html(this.data.caption)
+            self = this;
+
+        this.$tblDiv = $('<div>');
+        this.$plotDiv = $('<div>');
+
+        var btn = $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
+            .append('<i class="icon-chevron-right"></i>')
+            .click(function(){self.buildTbl();});
 
         $el
             .append(title)
             .append("<h2>Visualization</h2>")
-            .append("<p>to add...</p>")
-            .append("<h2>Summary table</h2>")
-            .append("<p>to (optionally) add...</p>")
+            .append(this.$plotDiv)
+            .append($("<h2>Summary table&nbsp;</h2>").append(btn))
+            .append(this.$tblDiv)
             .append("<h2>Caption</h2>")
             .append(caption);
+
+        this.buildTbl();
+        this.plotData = this.getPlotData();
+        this.buildPlot();
     },
+    buildTbl: function(){
+        if(this.table){
+            this.table.unshift(this.table.pop());
+        } else {
+            // todo: get default from options, if one exists
+            this.table = [this.buildTblPOD, this.buildTblEvidence];
+        }
+        this.$tblDiv.html(this.table[0].apply(this, arguments));
+    },
+    buildTblPOD: function(){
+        var tbl = new BaseTable(),
+            showEndpointDetail = function(e){
+                e.preventDefault();
+                var tr = $(this).parent().parent();
+                if (tr.data('detail_row')){
+                    tr.data('detail_row').toggle_view(!tr.data('detail_row').object_visible);
+                } else {
+                    var ep = tr.data('endpoint'),
+                        div_id = String.random_string()
+                        colspan = tr.children().length;
+
+                    tr.after('<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(colspan, div_id))
+                      .data('detail_row', new EndpointDetailRow(ep, '#'+div_id, 1));
+                }
+            };
+
+        tbl.addHeaderRow([
+            'Study', 'Experiment', 'Animal Group', 'Endpoint',
+            'NOAEL', 'LOAEL', 'BMD', 'BMDL']);
+
+        this.endpoints.forEach(function(e){
+            tbl.addRow([
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.study.url,
+                    e.data.animal_group.experiment.study.short_citation),
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.url,
+                    e.data.animal_group.experiment.name),
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.url,
+                    e.data.animal_group.name),
+                e._endpoint_detail_td(),
+                e.get_special_dose_text('NOAEL'),
+                e.get_special_dose_text('LOAEL'),
+                e.get_bmd_special_values('BMD'),
+                e.get_bmd_special_values('BMDL')
+            ]).data('endpoint', e);
+        });
+
+        return tbl.getTbl().on('click', '.endpoint-selector', showEndpointDetail);
+    },
+    buildTblEvidence: function(){
+        var tbl = new BaseTable();
+
+        tbl.addHeaderRow(['Study', 'Experiment', 'Animal Group', 'Endpoint']);
+
+        this.endpoints.forEach(function(e){
+
+            var ep_tbl = $('<div>')
+                    .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
+                    .append(e.build_endpoint_table($('<table class="table table-condensed">')));
+
+            tbl.addRow([
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.study.url,
+                    e.data.animal_group.experiment.study.short_citation),
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.url,
+                    e.data.animal_group.experiment.name),
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.url,
+                    e.data.animal_group.name),
+                ep_tbl
+            ]);
+        });
+
+        return tbl.getTbl();
+    },
+    buildPlot: function(){
+        if(this.plot){
+            this.plot.unshift(this.plot.pop());
+        } else {
+            // todo: get default from options, if one exists
+            this.plot = [
+                new EndpointAggregationExposureResponsePlot(this, this.plotData),
+                new EndpointAggregationForestPlot(this, this.plotData)
+            ];
+        }
+        this.$tblDiv.html(this.plot[0].render(this.$plotDiv));
+    },
+    getPlotData: function(){
+        return {
+            title: this.data.title,
+            endpoints: this.endpoints,
+        }
+    },
+    addPlotToggleButton: function(){
+        return {
+            id:'plot_toggle',
+            cls: 'btn btn-mini',
+            title: 'View alternate visualizations',
+            text: '',
+            icon: 'icon-circle-arrow-right',
+            on_click: $.proxy(this.buildPlot, this)
+        };
+    }
 };
+
+
+EndpointAggregationForestPlot = function(parent, data, options){
+    D3Visualization.apply(this, arguments);
+    this.setDefaults();
+};
+_.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
+    setDefaults: function(){
+        this.padding = {top:40, right:20, bottom:40, left:30};
+        this.padding.left_original = this.padding.left;
+        this.buff = 0.05; // addition numerical-spacing around dose/reponse units
+    },
+    render: function($div){
+        this.plot_div = $div;
+        this.processData();
+        this.build_plot_skeleton(true);
+        this.add_title();
+        this.add_axes();
+        this.add_endpoint_lines();
+        this.add_dose_points();
+        this.add_axis_text();
+        this.add_final_rectangle();
+        this.build_x_label();
+        this.build_y_label();
+        this.add_legend();
+        this.add_menu();
+        this.add_menu_button(this.parent.addPlotToggleButton());
+        this.resize_plot_dimensions();
+        this.trigger_resize();
+    },
+    processData: function(){
+        var points = [],
+            lines = [],
+            endpoint_labels = [],
+            y = 0, val, control, lower_ci, upper_ci, egs,
+            getCoordClass = function(e, i){
+                if (e.data.LOAEL == i) return "LOAEL"
+                if (e.data.NOAEL == i) return "NOAEL"
+                return ""
+            },
+            dose_units = this.data.endpoints[0].dose_units;
+
+        this.data.endpoints
+        .filter(function(e){
+            return e.data.endpoint_group.length>0;
+        })
+        .forEach(function(e){
+
+            egs = e.data.endpoint_group;
+
+            endpoint_labels.push({
+                y: (y + (egs.length*0.5)),
+                label:  "{0}- {1}- {2}: {3}".printf(
+                    e.data.animal_group.experiment.study.short_citation,
+                    e.data.animal_group.experiment.name,
+                    e.data.animal_group.name,
+                    e.data.name)
+            });
+
+            egs.forEach(function(eg, i){
+                txt = [
+                    e.data.animal_group.experiment.study.short_citation,
+                    e.data.name,
+                    'Dose: ' + eg.dose,
+                    'N: ' + eg.n
+                ];
+
+               if (i === 0){
+                    // get control value
+                    if (e.data.data_type == 'C'){
+                        control = parseFloat(eg.response, 10);
+                    } else {
+                        control = parseFloat(eg.incidence / eg.n, 10);
+                    }
+                    if (control === 0){control = 1e-10;}
+                }
+
+                // get plot value
+                y += 1;
+                if (e.data.data_type == 'C'){
+                    txt.push('Mean: ' + eg.response, 'Stdev: ' + eg.stdev);
+                    val = (eg.response - control) / control;
+                    lower_ci = (eg.lower_limit - control) / control;
+                    upper_ci = (eg.upper_limit - control) / control;
+                } else {
+                    txt.push('Incidence: ' + eg.incidence);
+                    val = eg.incidence / eg.n;
+                    lower_ci = eg.lower_limit;
+                    upper_ci = eg.upper_limit;
+                }
+                var coords = {
+                    'x':val,
+                    'y':y,
+                    'class': getCoordClass(e, i),
+                    'text': txt.join('\n'),
+                    'dose': eg.dose,
+                    'lower_ci': lower_ci,
+                    'upper_ci': upper_ci,
+                    'endpoint': e
+                };
+                points.push(coords);
+            });
+            y+=1;
+            lines.push({'y': y, 'endpoint': e.data.name});
+        });
+
+        // remove final spacer-line
+        lines.pop();
+        y-=1;
+
+        // calculate dimensions
+        var plot_width = parseInt(this.plot_div.width() - this.padding.right - this.padding.left, 10),
+            plot_height = parseInt(points.length*18, 10),
+            container_height = parseInt(plot_height + this.padding.top + this.padding.bottom + 45, 10);
+
+        // set settings to object
+        _.extend(this, {
+            points: points,
+            lines: lines,
+            endpoint_labels: endpoint_labels,
+            min_x: d3.min(points, function(v){return v.lower_ci;}),
+            max_x: d3.max(points, function(v){return v.upper_ci;}),
+            min_y: 0,
+            max_y: y+=1,
+            w: plot_width,
+            h: plot_height,
+            title_str: this.data.title,
+            x_label_text: "% change from control (continuous), % incidence (dichotomous)",
+            y_label_text: "Doses ({0})".printf(dose_units)
+        });
+        this.plot_div.css({'height': '{0}px'.printf(container_height)});
+    },
+    add_axes: function() {
+        // using plot-settings, customize axes
+        this.x_axis_settings = {
+            'scale_type': 'linear',
+            'domain': [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)],
+            'rangeRound': [0, this.w],
+            'text_orient': "bottom",
+            'x_translate': 0,
+            'y_translate': this.h,
+            'axis_class': 'axis x_axis',
+            'gridlines': true,
+            'gridline_class': 'primary_gridlines x_gridlines',
+            'number_ticks': 10,
+            'axis_labels':true,
+            'label_format':d3.format(".0%")
+        };
+
+        this.y_axis_settings = {
+            'scale_type': 'linear',
+            'domain': [this.max_y, this.min_y],  // invert axis
+            'rangeRound': [this.h, 0],
+            'text_orient': "left",
+            'x_translate': 0,
+            'y_translate': 0,
+            'axis_class': 'axis y_axis',
+            'gridlines': false,
+            'gridline_class': 'primary_gridlines y_gridlines',
+            'number_ticks': 10,
+            'axis_labels':false,
+            'label_format':undefined //default
+        };
+        this.build_x_axis();
+        this.build_y_axis();
+    },
+    resize_plot_dimensions: function(){
+        // Resize plot based on the dimensions of the labels.
+        var ylabel_width = d3.max(this.plot_div.find('.forest_plot_labels').map(
+                                  function(){return this.getComputedTextLength();})) +
+                           d3.max(this.plot_div.find('.dr_tick_text').map(
+                                  function(){return this.getComputedTextLength();}));
+        if (this.padding.left < this.padding.left_original + ylabel_width){
+            this.padding.left = this.padding.left_original + ylabel_width;
+            this.render(this.plot_div);
+        }
+    },
+    add_endpoint_lines: function(){
+        // horizontal line separators between endpoints
+        var x = this.x_scale,
+            y = this.y_scale,
+            lower = [],
+            upper = [];
+
+        //horizontal lines
+        this.vis.selectAll("svg.endpoint_lines")
+            .data(this.lines)
+          .enter().append("line")
+            .attr("x1", function(d) { return x(x.domain()[0]); })
+            .attr("y1", function(d) { return y(d.y); })
+            .attr("x2", function(d) { return x(x.domain()[1]); })
+            .attr("y2", function(d) { return y(d.y); })
+            .attr('class','primary_gridlines');
+
+        // add vertical line at zero
+        this.vis.append("line")
+            .attr("x1", this.x_scale(0))
+            .attr("y1", this.y_scale(this.min_y))
+            .attr("x2", this.x_scale(0))
+            .attr("y2", this.y_scale(this.max_y))
+            .attr('class','reference_line');
+    },
+    add_dose_points: function(){
+
+        var x = this.x_scale,
+            y = this.y_scale,
+            self = this;
+
+        // horizontal confidence interval line
+        this.vis.selectAll("svg.error_bars")
+            .data(this.points)
+          .enter().append("line")
+            .attr("x1", function(d) { return x(d.lower_ci); })
+            .attr("y1", function(d) { return y(d.y); })
+            .attr("x2", function(d) { return x(d.upper_ci); })
+            .attr("y2", function(d) { return y(d.y); })
+            .attr('class','dr_err_bars');
+
+        // lower vertical vertical confidence intervals line
+        this.vis.selectAll("svg.error_bars")
+            .data(this.points)
+          .enter().append("line")
+            .attr("x1", function(d) { return x(d.lower_ci); })
+            .attr("y1", function(d) { return y(d.y)-5; })
+            .attr("x2", function(d) { return x(d.lower_ci); })
+            .attr("y2", function(d) {return y(d.y)+5; })
+            .attr('class','dr_err_bars');
+
+        // upper vertical confidence intervals line
+        this.vis.selectAll("svg.error_bars")
+            .data(this.points)
+          .enter().append("line")
+            .attr("x1", function(d) { return x(d.upper_ci); })
+            .attr("y1", function(d) { return y(d.y)-5; })
+            .attr("x2", function(d) { return x(d.upper_ci); })
+            .attr("y2", function(d) {return y(d.y)+5; })
+            .attr('class','dr_err_bars');
+
+        // central tendency of percent-change
+        this.dots = this.vis.selectAll("path.dot")
+            .data(this.points)
+          .enter().append("circle")
+            .attr("r","7")
+            .attr("class", function(d){ return "dose_points " + d.class;})
+            .style("cursor", "pointer")
+            .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+            .on('click', function(v){v.endpoint.displayAsModal();});
+
+        // add the outer element last
+        this.dots.append("svg:title").text(function(d) { return d.text; });
+    },
+    add_axis_text: function(){
+        // Next set labels on axis
+        var y_scale = this.y_scale, x_scale = this.x_scale;
+        this.y_dose_text = this.vis.selectAll("y_axis.text")
+            .data(this.points)
+        .enter().append("text")
+            .attr("x", -5)
+            .attr("y", function(v,i){return y_scale(v.y);})
+            .attr("dy", "0.5em")
+            .attr('class','dr_tick_text')
+            .attr("text-anchor", "end")
+            .text(function(d,i) { return d.dose;});
+
+        this.labels = this.vis.selectAll("y_axis.text")
+            .data(this.endpoint_labels)
+        .enter().append("text")
+            .attr("x", -this.padding.left+25)
+            .attr("y", function(v,i){return y_scale(v.y);})
+            .attr('class','dr_title forest_plot_labels')
+            .attr("text-anchor", "start")
+            .text(function(d,i) { return d.label;});
+    },
+    add_legend: function(){
+        var addItem = function(txt, cls, color){
+                return {"text": txt, "classes": cls, "color": color}
+            },
+            item_height = 20,
+            box_w = 110,
+            items = [
+                addItem("Doses in Study", "dose_points")
+            ];
+
+        if (this.plot_div.find('.LOAEL').length > 0) items.push(addItem("LOAEL", "LOAEL"))
+        if (this.plot_div.find('.NOAEL').length > 0) items.push(addItem("NOAEL", "NOAEL"))
+        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
+
+        this.build_legend({
+            items: items,
+            item_height: item_height,
+            box_w: box_w,
+            box_h: items.length*item_height,
+            box_l: this.w + this.padding.right - box_w - 10,
+            dot_r: 5,
+            box_t: 10-this.padding.top,
+            box_padding: 5
+        });
+    }
+});
+
+
+EndpointAggregationExposureResponsePlot = function(parent, data, options){
+    D3Visualization.apply(this, arguments);
+    this.setDefaults();
+};
+_.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prototype, {
+    setDefaults: function(){
+        var left = 25,
+            formatNumber = d3.format(",.f");
+
+        _.extend(this, {
+            default_x_scale: "log",
+            padding: {
+                top:40,
+                right:20,
+                bottom:40,
+                left:left,
+                left_original: left
+            },
+            buff: 0.05,
+            x_axis_settings: {
+                scale_type: this.options.default_x_axis || 'log',
+                text_orient: "bottom",
+                axis_class: 'axis x_axis',
+                gridlines: true,
+                gridline_class: 'primary_gridlines x_gridlines',
+                number_ticks: 10,
+                axis_labels: true,
+                label_format: formatNumber
+            },
+            y_axis_settings: {
+                scale_type: 'ordinal',
+                text_orient: 'left',
+                axis_class: 'axis y_axis',
+                gridlines: true,
+                gridline_class: 'primary_gridlines y_gridlines',
+                axis_labels: true,
+                label_format: undefined //default
+            }
+        });
+    },
+    render: function($div){
+        var self = this;
+        this.plot_div = $div;
+        this.processData();
+        this.build_plot_skeleton(true);
+        this.add_title();
+        this.add_axes();
+        this.build_x_label();
+        this.build_y_label();
+        this.add_dose_lines();
+        this.add_dose_points();
+        this.add_final_rectangle();
+        this.add_legend();
+        this.customize_menu();
+        this.resize_plot_dimensions();
+        this.trigger_resize();
+    },
+    processData: function(){
+        var min = Infinity,
+            max = -Infinity,
+            default_x_scale = this.default_x_scale,
+            lines_data = [],
+            points_data = [],
+            dose_units = this.data.endpoints[0].dose_units,
+            egs;
+
+        this.data.endpoints.filter(function(e){
+            return e.data.endpoint_group.length>0;
+        }).forEach(function(e){
+            egs = e.data.endpoint_group;
+
+            // get min/max information
+            min = (default_x_scale == "log") ? Math.min(min, egs[1].dose) : Math.min(min, egs[0].dose);
+            max = Math.max(max, egs[egs.length-1].dose);
+            if (isFinite(e.get_bmd_special_values('BMDL'))) {
+                min = Math.min(min, e.get_bmd_special_values('BMDL'));
+                max = Math.max(max, e.get_bmd_special_values('BMDL'));
+            }
+
+            //setup lines information for dose-response line (excluding control)
+            lines_data.push({
+                y: e.data.id,
+                name: "{0}- {1}- {2}: {3}".printf(
+                    e.data.animal_group.experiment.study.short_citation,
+                    e.data.animal_group.experiment.name,
+                    e.data.animal_group.name,
+                    e.data.name),
+                x_lower: egs[1].dose,
+                x_upper: egs[egs.length-1].dose
+            });
+
+            // setup points information
+
+            // add LOAEL/NOAEL
+            egs.forEach(function(v2,i2){
+                txt = [e.data.animal_group.experiment.study.short_citation,
+                       e.data.name,
+                       'Dose: ' + v2.dose,
+                       'N: ' + v2.n];
+                if (v2.dose>0){
+                    if (e.data.data_type == 'C'){
+                        txt.push('Mean: ' + v2.response, 'Stdev: ' + v2.stdev);
+                    } else {
+                        txt.push('Incidence: ' + v2.incidence);
+                    }
+                    coords = {endpoint:e,
+                              x:v2.dose,
+                              y:e.data.id,
+                              classes:'',
+                              text: txt.join('\n')};
+                    if (e.data.LOAEL == i2){ coords.classes='LOAEL';}
+                    if (e.data.NOAEL == i2){ coords.classes='NOAEL';}
+                    points_data.push(coords);
+                }
+            });
+            // add BMDL
+            if (isFinite(e.get_bmd_special_values('BMDL'))) {
+                txt = [
+                    e.data.animal_group.experiment.study.short_citation,
+                    e.data.name,
+                    'BMD Model: ' + e.data.BMD.outputs.model_name,
+                    'BMD: ' + e.data.BMD.outputs.BMD + ' (' + e.data.dose_units + ')',
+                    'BMDL: ' + e.data.BMD.outputs.BMDL + ' (' + e.data.dose_units + ')'
+                ];
+
+                points_data.push({
+                    endpoint:e,
+                    x: e.get_bmd_special_values('BMDL'),
+                    y: e.data.id,
+                    classes: 'BMDL',
+                    text : txt.join('\n')
+                });
+            }
+        });
+
+        // calculate dimensions
+        var plot_width = parseInt(this.plot_div.width() - this.padding.right - this.padding.left - 20, 10),
+            plot_height = parseInt(lines_data.length*40, 10),
+            container_height = parseInt(plot_height + this.padding.top + this.padding.bottom + 45, 10);
+
+        _.extend(this, {
+            lines_data: lines_data,
+            points_data: points_data,
+            min_x: min,
+            max_x: max,
+            min_y: 0,
+            max_y: lines_data.length,
+            w: plot_width,
+            h: plot_height,
+            title_str: this.data.title,
+            x_label_text: "Dose ({0})".printf(dose_units),
+            y_label_text: 'Endpoints',
+        });
+        this.plot_div.css({'height': '{0}px'.printf(container_height)});
+    },
+    toggle_x_axis: function(){
+        if(window.event && window.event.stopPropagation){event.stopPropagation();}
+        if (this.x_axis_settings.scale_type == 'linear'){
+            this.x_axis_settings.scale_type = 'log';
+            this.x_axis_settings.number_ticks = 1;
+            var formatNumber = d3.format(",.f");
+            this.x_axis_settings.label_format = formatNumber;
+        } else {
+            this.x_axis_settings.scale_type = 'linear';
+            this.x_axis_settings.number_ticks = 10;
+            this.x_axis_settings.label_format = undefined;
+        }
+        this.update_x_domain();
+        this.x_scale = this._build_scale(this.x_axis_settings);
+        this.x_axis_change_chart_update();
+    },
+    x_axis_change_chart_update: function(){
+        // Assuming the plot has already been constructed once,
+        // rebuild plot with updated x-scale.
+        var x = this.x_scale;
+
+        this.rebuild_x_axis();
+        this.rebuild_x_gridlines({animate: true});
+
+        //rebuild dosing lines
+        this.dosing_lines.selectAll("line")
+            .transition()
+            .duration(1000)
+            .attr("x1", function(d) { return x(d.x_lower);})
+            .attr("x2", function(d) { return x(d.x_upper); });
+
+        this.dots
+            .transition()
+            .duration(1000)
+            .attr('cx', function(d){return x(d.x);});
+    },
+    resize_plot_dimensions: function(){
+        // Resize plot based on the dimensions of the labels.
+        var ylabel_width = this.vis.select('.y_axis').node().getBoundingClientRect().width;
+        if (this.padding.left < this.padding.left_original + ylabel_width){
+            this.padding.left = this.padding.left_original + ylabel_width;
+            this.render(this.plot_div);
+        }
+    },
+    add_axes: function() {
+        // using plot-settings, customize axes
+        this.update_x_domain();
+        $.extend(this.x_axis_settings, {
+            rangeRound: [0, this.w],
+            x_translate: 0,
+            y_translate: this.h
+        });
+
+        $.extend(this.y_axis_settings, {
+            domain: this.lines_data.map(function(d) {return d.y;}),
+            rangeRound: [0, this.h],
+            number_ticks: this.lines_data.length,
+            x_translate: 0,
+            y_translate: 0
+        });
+        this.build_x_axis();
+        this.build_y_axis();
+
+        var lines_data = this.lines_data;
+        d3.selectAll('.y_axis text')
+            .text(function(v, i){
+                var name;
+                lines_data.forEach(function(endpoint){
+                    if (v === endpoint.y) {
+                        name = endpoint.name;
+                        return;
+                    }
+                });
+                return name;
+            });
+    },
+    update_x_domain: function(){
+        var domain_value;
+        if (this.x_axis_settings.scale_type === 'linear'){
+            domain_value = [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)];
+        } else {
+            domain_value = [this.min_x, this.max_x];
+        }
+        this.x_axis_settings.domain = domain_value;
+    },
+    add_dose_lines: function(){
+        var x = this.x_scale,
+            y = this.y_scale,
+            halfway = y.rangeBand()/2;
+
+        this.dosing_lines = this.vis.append("g");
+        this.dosing_lines.selectAll("line")
+            .data(this.lines_data)
+          .enter().append("line")
+            .attr("x1", function(d) { return x(d.x_lower); })
+            .attr("y1", function(d) {return y(d.y)+halfway;})
+            .attr("x2", function(d) { return x(d.x_upper); })
+            .attr("y2", function(d) {return y(d.y)+halfway;})
+            .attr('class','dr_err_bars'); // todo: rename class to more general name
+    },
+    add_dose_points: function(){
+
+        var x = this.x_scale,
+            y = this.y_scale,
+            self = this,
+            tt_width = 400,
+            halfway = y.rangeBand()/2;
+
+        var tooltip = d3.select("body")
+            .append("div")
+            .attr('class', 'd3modal')
+            .attr('width', tt_width + 'px')
+            .style("position", "absolute")
+            .style("z-index", "1000")
+            .style("visibility", "hidden")
+            .on('click', function(){$(this).css('visibility','hidden');});
+        this.tooltip = $(tooltip[0]);
+
+        this.dots_group = this.vis.append("g");
+        this.dots = this.dots_group.selectAll("circle")
+            .data(this.points_data)
+          .enter().append("circle")
+            .attr("r","7")
+            .attr("class", function(d){ return "dose_points " + d.classes;})
+            .attr("cursor", "pointer")
+            .attr("cx", function(d){return x(d.x);})
+            .attr("cy", function(d){return y(d.y)+halfway;})
+            .style("cursor", "pointer")
+            .on('click', function(v){v.endpoint.displayAsModal();});
+
+        // add the outer element last
+        this.dots.append("svg:title").text(function(d) { return d.text; });
+    },
+    customize_menu: function(){
+        this.add_menu();
+        this.add_menu_button(this.parent.addPlotToggleButton());
+        this.add_menu_button({
+            id:'toggle_x_axis',
+            cls: 'btn btn-mini',
+            title: 'Change x-axis scale (shortcut: click the x-axis label)',
+            text: '',
+            icon: 'icon-resize-horizontal',
+            on_click: $.proxy(this.toggle_x_axis, this)
+        });
+    },
+    add_legend: function(){
+        var addItem = function(txt, cls, color){
+                return {"text": txt, "classes": cls, "color": color}
+            },
+            item_height = 20,
+            box_w = 110,
+            items = [
+                addItem("Doses in Study", "dose_points")
+            ];
+
+        if (this.plot_div.find('.LOAEL').length > 0) items.push(addItem("LOAEL", "LOAEL"))
+        if (this.plot_div.find('.NOAEL').length > 0) items.push(addItem("NOAEL", "NOAEL"))
+        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
+
+        this.build_legend({
+            items: items,
+            item_height: item_height,
+            box_w: box_w,
+            box_h: items.length*item_height,
+            box_l: this.w + this.padding.right - box_w - 10,
+            dot_r: 5,
+            box_t: 10-this.padding.top,
+            box_padding: 5
+        });
+    }
+});

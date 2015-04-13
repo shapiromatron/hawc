@@ -117,7 +117,7 @@ POD_table.prototype = {
                   '<td><a href="{0}">{1}</a></td>'.printf(
                         endpoint.data.animal_group.url,
                         endpoint.data.animal_group.name),
-                  endpoint._endpoint_detail_td(),
+                  $('<td>').append(endpoint._endpoint_detail_td()),
                   '<td>{0}</td>'.printf(endpoint.get_special_dose_text('NOAEL')),
                   '<td>{0}</td>'.printf(endpoint.get_special_dose_text('LOAEL')),
                   '<td>{0}</td>'.printf(endpoint.get_bmd_special_values('BMD')),
@@ -577,7 +577,7 @@ _.extend(Forest_plot.prototype, D3Plot.prototype, {
         this.aggregation.endpoints.forEach(function(v1,i1){
             if (v1.data.endpoint_group.length>0){
                 // and endpoint label
-                endpoint_labels.push({y:((y+y+v1.data.endpoint_group.length)/2),
+                endpoint_labels.push({y:((y+v1.data.endpoint_group.length)/2),
                                       label:v1.data.animal_group.experiment.study.short_citation + "- " + v1.data.animal_group.experiment.name + "- " + v1.data.animal_group.name + ": " + v1.data.name});
 
                 v1.data.endpoint_group.forEach(function(v2,i2){

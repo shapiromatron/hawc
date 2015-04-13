@@ -268,9 +268,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return tr;
     },
     _endpoint_detail_td: function(){
-        return '<td><a class="endpoint-selector" href="#">{0} ({1})</a> \
+        return '<a class="endpoint-selector" href="#">{0} ({1})</a> \
                 <a class="pull-right" title="View endpoint details (new window)" href="{2}"> \
-                <i class="icon-share-alt"></i></a></td>'.printf(this.data.name, this.data.response_units, this.data.url);
+                <i class="icon-share-alt"></i></a>'.printf(this.data.name, this.data.response_units, this.data.url);
     },
     build_details_table: function(div){
         var tbl = new DescriptiveTable(),
