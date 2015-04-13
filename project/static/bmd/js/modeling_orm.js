@@ -700,89 +700,83 @@ var OutputTable = function(tbl_selector, session){
     this.set_columns();
     this.build_table();
 };
+OutputTable.prototype = {
+    clear: function(){
+        this.tbl.find('thead').html('');
+        this.tbl.find('tbody').html('');
+    },
+    build_table: function(){
+        this.clear();
+        this.build_header();
+        this.build_data_rows();
+    },
+    set_columns: function(){
+        // should be able to customize in the future
 
-OutputTable.prototype.clear = function(){
-    this.tbl.find('thead').html('');
-    this.tbl.find('tbody').html('');
-};
+        // set columns
+        var ot = this;
+        this.columns = [];
+        this.columns.push(this.add_column('model_name', 'Model'));
+        this.columns.push(this.add_column('p_value4', 'Global <br><i>p</i>-value'));
+        this.columns.push(this.add_column('AIC', 'AIC'));
 
-OutputTable.prototype.build_table = function(){
-    this.clear();
-    this.build_header();
-    this.build_data_rows();
-};
+        // BMD/BMDL for each bmr
+        this.parent.bmrs.forEach(function(v,i){
+            var bmr_str = v.get_table_name();
+            ot.columns.push(ot.add_column('BMD', 'BMD<br>(' + bmr_str + ')', i));
+            ot.columns.push(ot.add_column('BMDL', 'BMDL<br>(' + bmr_str + ')', i));
+        });
 
-OutputTable.prototype.set_columns = function(){
-    // should be able to customize in the future
-
-    // set columns
-    var ot = this;
-    this.columns = [];
-    this.columns.push(this.add_column('model_name', 'Model'));
-    this.columns.push(this.add_column('p_value4', 'Global <br><i>p</i>-value'));
-    this.columns.push(this.add_column('AIC', 'AIC'));
-
-    // BMD/BMDL for each bmr
-    this.parent.bmrs.forEach(function(v,i){
-        var bmr_str = v.get_table_name();
-        ot.columns.push(ot.add_column('BMD', 'BMD<br>(' + bmr_str + ')', i));
-        ot.columns.push(ot.add_column('BMDL', 'BMDL<br>(' + bmr_str + ')', i));
-    });
-
-    this.columns.push(this.add_column('residual_of_interest', 'Residual <br>of Interest'));
-    this.columns.push(this.add_column('OutputFile', 'Output<br>File')); // special case
-};
-
-OutputTable.prototype.add_column = function(field_name, column_name, bmr_id){
-    if (bmr_id === undefined) {bmr_id = this.bmr_of_interest;}
-    return {'field_name': field_name, 'column_name': column_name, 'bmr_id': bmr_id};
-};
-
-OutputTable.prototype.set_bmr_of_interest = function(index){
-    if (index < this.parent.bmrs.length){
-        this.bmr_of_interest = index;
-    }
-};
-
-OutputTable.prototype.build_header = function(){
-    // Build table header based on the BMR types available for modeling
-    var tr = $('<tr></tr>');
-    this.columns.forEach(function(v){
-        tr.append('<th>' + v.column_name + '</th>');
-    });
-    this.tbl.find('thead').html(tr);
-};
-
-OutputTable.prototype.build_data_rows = function(){
-    this.tbl.find('tbody').empty();
-    var ot = this;
-    this.parent.outputs.forEach(function(v){
-        ot.build_row(v);
-    });
-};
-
-OutputTable.prototype.build_row = function(option_row){
-    // Build data row for output table. The entire row apends the output file
-    // of interest for the BMR of interest; the individual BMD/BMDL rows also
-    // append the output file for the other BMRs in the table. These are used
-    // to build output figures.
-    var tr = $('<tr></tr>').data('d', option_row[this.bmr_of_interest]), td;
-    this.columns.forEach(function(v){
-        switch(v.field_name){
-            case 'OutputFile':
-                tr.append('<td><a class="bmd_outfile" href="#">View</a></td>');
-                break;
-            case 'BMD':
-            case 'BMDL':
-                td = $('<td>' + option_row[v.bmr_id].outputs[v.field_name] +  '</td>').data('d', option_row[v.bmr_id]);
-                tr.append(td);
-                break;
-            default:
-                tr.append('<td>' + option_row[v.bmr_id].outputs[v.field_name] + '</td>');
+        this.columns.push(this.add_column('residual_of_interest', 'Residual <br>of Interest'));
+        this.columns.push(this.add_column('OutputFile', 'Output<br>File')); // special case
+    },
+    add_column: function(field_name, column_name, bmr_id){
+        if (bmr_id === undefined) {bmr_id = this.bmr_of_interest;}
+        return {'field_name': field_name, 'column_name': column_name, 'bmr_id': bmr_id};
+    },
+    set_bmr_of_interest: function(index){
+        if (index < this.parent.bmrs.length){
+            this.bmr_of_interest = index;
         }
-    });
-    this.tbl.find('tbody').append(tr);
-};
+    },
+    build_header: function(){
+        // Build table header based on the BMR types available for modeling
+        var tr = $('<tr></tr>');
+        this.columns.forEach(function(v){
+            tr.append('<th>' + v.column_name + '</th>');
+        });
+        this.tbl.find('thead').html(tr);
+    },
+    build_data_rows: function(){
+        this.tbl.find('tbody').empty();
+        var ot = this;
+        this.parent.outputs.forEach(function(v){
+            ot.build_row(v);
+        });
+    },
+    build_row: function(option_row){
+        // Build data row for output table. The entire row apends the output file
+        // of interest for the BMR of interest; the individual BMD/BMDL rows also
+        // append the output file for the other BMRs in the table. These are used
+        // to build output figures.
+        var tr = $('<tr></tr>').data('d', option_row[this.bmr_of_interest]), td;
+        this.columns.forEach(function(v){
+            switch(v.field_name){
+                case 'OutputFile':
+                    tr.append('<td><a class="bmd_outfile" href="#">View</a></td>');
+                    break;
+                case 'BMD':
+                case 'BMDL':
+                    td = $('<td>' + option_row[v.bmr_id].outputs[v.field_name] +  '</td>').data('d', option_row[v.bmr_id]);
+                    tr.append(td);
+                    break;
+                default:
+                    tr.append('<td>' + option_row[v.bmr_id].outputs[v.field_name] + '</td>');
+            }
+        });
+        this.tbl.find('tbody').append(tr);
+    }
+}
 
 //  SELECTION
 // ==========
@@ -797,217 +791,207 @@ var Selection = function(session){
     this.load_session_values();
     this.build_html();
 };
-
-Selection.prototype.load_session_values = function(){
-    // preload the session values, if any are available
-    this.notes = this.parent.session.notes;
-    if (this.parent.session.selected_model == -1){
-        this.bmr_id = -1;
-        this.model_id = -1;
-    } else {
-        var bmr_id, model_id, id = this.parent.session.selected_model;
-        this.parent.outputs.forEach(function(model_type){
-            model_type.forEach(function(model){
-                if (model.id == id){
-                    bmr_id = model.bmr_id;
-                    model_id = model.option_id;
-                }
-            });
-        });
-        this.bmr_id = bmr_id;
-        this.model_id = model_id;
-    }
-};
-
-Selection.prototype.build_html = function(){
-    this.clear();
-    if(this.parent.outputs.length>0){
-        if(this.parent.crud == 'Read'){
-            this.build_table();
+Selection.prototype = {
+    load_session_values: function(){
+        // preload the session values, if any are available
+        this.notes = this.parent.session.notes;
+        if (this.parent.session.selected_model == -1){
+            this.bmr_id = -1;
+            this.model_id = -1;
         } else {
-            this.build_form();
+            var bmr_id, model_id, id = this.parent.session.selected_model;
+            this.parent.outputs.forEach(function(model_type){
+                model_type.forEach(function(model){
+                    if (model.id == id){
+                        bmr_id = model.bmr_id;
+                        model_id = model.option_id;
+                    }
+                });
+            });
+            this.bmr_id = bmr_id;
+            this.model_id = model_id;
         }
-    }
-};
+    },
+    build_html: function(){
+        this.clear();
+        if(this.parent.outputs.length>0){
+            if(this.parent.crud == 'Read'){
+                this.build_table();
+            } else {
+                this.build_form();
+            }
+        }
+    },
+    clear: function(){
+        $('#selection_div').html('');
+    },
+    build_form: function(){
+        // build model selection form
+        var div = $('<div id="selection_div" class="row-fluid"></div>'),
+            form = $('<form id="selection_form" class="form-horizontal"></form>'),
+            formset = $('<formset></formset>');
 
-Selection.prototype.clear=  function(){
-    $('#selection_div').html('');
-};
+        formset.append('<legend>Model selection</legend>');
+        formset.append('<span class="help-block">Select best-fitting BMD model</span>');
 
-Selection.prototype.build_form = function(){
-    // build model selection form
-    var div = $('<div id="selection_div" class="row-fluid"></div>'),
-        form = $('<form id="selection_form" class="form-horizontal"></form>'),
-        formset = $('<formset></formset>');
+        inputs=[];
 
-    formset.append('<legend>Model selection</legend>');
-    formset.append('<span class="help-block">Select best-fitting BMD model</span>');
+        var add_input_row = function(label_text, input_field){
+            var input_row = $('<div class="control-group form-row"></div>');
+            input_row.append('<label class="control-label">{0}</label>'.printf(label_text));
+            var control_div = $('<div class="controls"></div>');
+            control_div.append(input_field);
+            input_row.append(control_div);
+            return input_row;
+        };
 
-    inputs=[];
+        // add bmr button
+        var inp_bmr = $('<select id="selection_bmr" class="span8"></select>');
+        this.parent.bmrs.forEach(function(v,i){
+            inp_bmr.append('<option value=' + i + '>' + v.get_table_name() + '</option>');
+        });
+        inputs.push(add_input_row("Selected BMR:", inp_bmr));
 
-    var add_input_row = function(label_text, input_field){
-        var input_row = $('<div class="control-group form-row"></div>');
-        input_row.append('<label class="control-label">{0}</label>'.printf(label_text));
-        var control_div = $('<div class="controls"></div>');
-        control_div.append(input_field);
-        input_row.append(control_div);
-        return input_row;
-    };
+        // add bmd option
+        var inp_bmd = $('<select id="selection_model" class="span8"></select>');
+        inp_bmd.append('<option value="-1">None</option>');
+        this.parent.outputs.forEach(function(v){
+            inp_bmd.append('<option value=' + v[0].option_id + '>' + v[0].model_name + '</option>');
+        });
+        inputs.push(add_input_row("Selected Model:", inp_bmd));
 
-    // add bmr button
-    var inp_bmr = $('<select id="selection_bmr" class="span8"></select>');
-    this.parent.bmrs.forEach(function(v,i){
-        inp_bmr.append('<option value=' + i + '>' + v.get_table_name() + '</option>');
-    });
-    inputs.push(add_input_row("Selected BMR:", inp_bmr));
+        // add notes
+        var inp_txt = $('<textarea id="selection_notes" class="span8">{0}</textarea>'.printf(this.notes));
+        inputs.push(add_input_row("Selection Notes:", inp_txt));
 
-    // add bmd option
-    var inp_bmd = $('<select id="selection_model" class="span8"></select>');
-    inp_bmd.append('<option value="-1">None</option>');
-    this.parent.outputs.forEach(function(v){
-        inp_bmd.append('<option value=' + v[0].option_id + '>' + v[0].model_name + '</option>');
-    });
-    inputs.push(add_input_row("Selected Model:", inp_bmd));
+        // add csrf token
+        inputs.push(csrf_token);
 
-    // add notes
-    var inp_txt = $('<textarea id="selection_notes" class="span8">{0}</textarea>'.printf(this.notes));
-    inputs.push(add_input_row("Selection Notes:", inp_txt));
+        //add buttons
+        var buttons = $('<div class="form-actions"></div>');
+        buttons.append('<a id="selection_submit" href="#" class="btn btn-primary">Select</a>');
 
-    // add csrf token
-    inputs.push(csrf_token);
+        formset.append(inputs, buttons);
+        form.append(formset);
+        div.append(form);
+        $('#bmd_output_tbl').after(div);
 
-    //add buttons
-    var buttons = $('<div class="form-actions"></div>');
-    buttons.append('<a id="selection_submit" href="#" class="btn btn-primary">Select</a>');
+        // add event-binding
+        var obj = this;
+        $('#selection_form').on('change', '#selection_model', function(e){
+            obj.test_row_highlight();
+        });
+        $('#selection_form').on('change', '#selection_bmr', function(e){
+            obj.bmr_change();
+            obj.test_row_highlight();
+        });
+        $('#selection_form').on('click', '#selection_submit', function(e){
+            e.preventDefault();
+            obj.submit();
+        });
 
-    formset.append(inputs, buttons);
-    form.append(formset);
-    div.append(form);
-    $('#bmd_output_tbl').after(div);
-
-    // add event-binding
-    var obj = this;
-    $('#selection_form').on('change', '#selection_model', function(e){
-        obj.test_row_highlight();
-    });
-    $('#selection_form').on('change', '#selection_bmr', function(e){
-        obj.bmr_change();
-        obj.test_row_highlight();
-    });
-    $('#selection_form').on('click', '#selection_submit', function(e){
-        e.preventDefault();
-        obj.submit();
-    });
-
-    // select proper model
-    $('#selection_bmr option[value="' + this.bmr_id + '"]').prop('selected', true);
-    $('#selection_model option[value="' + this.model_id + '"]').prop('selected', true);
-    this.test_row_highlight();
-};
-
-Selection.prototype.bmr_change = function(){
-    // update the models displayed on the plot to use the proper BMR.
-    var bmr_id = parseInt($($('#selection_bmr option:selected')[0]).val());
-    this.parent.output_tbl.set_bmr_of_interest(bmr_id);
-    this.parent.output_tbl.build_data_rows();
-};
-
-Selection.prototype.build_table = function(){
-    // build table view
-    this.find_selected_row();
-    this.highlight_row();
-    var bmr, model_name;
-    var div = $('<div id="selection_div" class="row-fluid"></div>'),
-        tbl = $('<table id="selection_table" class="table table-striped table-condensed"><colgroup><col style="width: 30%;"><col style="width: 70%;"></colgroup><tbody></tbody></table>');
-    try {
-        bmr = this.parent.bmrs[this.bmr_id].get_table_name();
-    } catch(err) {
-        bmr = 'None selected.';
-    }
-    try {
-        model_name = this.BMDOutput.model_name;
-    } catch(err) {
-        model_name = 'None selected.';
-    }
-    tbl.append('<tr><th>BMR</th><td>' + bmr + '</td></tr>');
-    tbl.append('<tr><th>Model</th><td>' + model_name +'</td></tr>');
-    tbl.append('<tr><th>Notes</th><td>' + this.notes +'</td></tr>');
-    div.append(tbl);
-    $('#bmd_output_tbl').after(div);
-};
-
-Selection.prototype.test_row_highlight = function(){
-    // check if a row can be highlighted, if it can, highlight
-    this.bmr_id = parseInt($($('#selection_bmr option:selected')[0]).val());
-    this.model_id = parseInt($($('#selection_model option:selected')[0]).val());
-    this.notes = $('#selection_notes').val();
-    this.reset_selection();
-    if ((this.bmr_id >= 0) && (this.model_id >= 0)) {
+        // select proper model
+        $('#selection_bmr option[value="' + this.bmr_id + '"]').prop('selected', true);
+        $('#selection_model option[value="' + this.model_id + '"]').prop('selected', true);
+        this.test_row_highlight();
+    },
+    bmr_change: function(){
+        // update the models displayed on the plot to use the proper BMR.
+        var bmr_id = parseInt($($('#selection_bmr option:selected')[0]).val());
+        this.parent.output_tbl.set_bmr_of_interest(bmr_id);
+        this.parent.output_tbl.build_data_rows();
+    },
+    build_table: function(){
+        // build table view
         this.find_selected_row();
         this.highlight_row();
-    }
-};
-
-Selection.prototype.highlight_row = function(){
-    // highlight selected row
-    if (this.selected_row !== null) {
-        this.selected_row.addClass('bmd_selected_model');
-        bmd_output_plot.clear_bmd_lines('d3_bmd_selected');
-        bmd_output_plot.add_bmd_line(this.BMDOutput, 'd3_bmd_selected');
-    }
-};
-
-Selection.prototype.rebuild_plot = function(){
-    bmd_output_plot.build_plot();
-};
-
-Selection.prototype.find_selected_row = function(){
-    // find the selected row and returns
-    var trs = this.parent.output_tbl.tbl.find('tbody tr'),
-        model_id = this.model_id,
-        tr = null;
-    $.each(trs, function(i,v){
-        var d = $(v).data('d');
-        if(d.option_id == model_id){
-            tr = $(v);
+        var bmr, model_name;
+        var div = $('<div id="selection_div" class="row-fluid"></div>'),
+            tbl = $('<table id="selection_table" class="table table-striped table-condensed"><colgroup><col style="width: 30%;"><col style="width: 70%;"></colgroup><tbody></tbody></table>');
+        try {
+            bmr = this.parent.bmrs[this.bmr_id].get_table_name();
+        } catch(err) {
+            bmr = 'None selected.';
         }
-    });
-    if(tr !== null){
-        this.selected_row = tr;
-        this.BMDOutput = tr.data('d');
-    }
-};
-
-Selection.prototype.reset_selection = function(){
-    // unighlight selected row and reset properties
-    bmd_output_plot.clear_bmd_lines('d3_bmd_selected');
-    if (this.selected_row !== null){
-        this.selected_row.removeClass('bmd_selected_model');
-        this.selected_row = null;
-        this.BMDOutput = null;
-    }
-};
-
-Selection.prototype.submit = function(){
-    // Submit data to server via AJAX response, then redirect to summary view
-    this.test_row_highlight();
-    var model = (this.selected_row === null) ? null : this.BMDOutput.id;
-    overrides = [];
-    this.parent.outputs.forEach(function(v){
-        v.forEach(function(d){
-            overrides.push(d.submit());
+        try {
+            model_name = this.BMDOutput.model_name;
+        } catch(err) {
+            model_name = 'None selected.';
+        }
+        tbl.append('<tr><th>BMR</th><td>' + bmr + '</td></tr>');
+        tbl.append('<tr><th>Model</th><td>' + model_name +'</td></tr>');
+        tbl.append('<tr><th>Notes</th><td>' + this.notes +'</td></tr>');
+        div.append(tbl);
+        $('#bmd_output_tbl').after(div);
+    },
+    test_row_highlight: function(){
+        // check if a row can be highlighted, if it can, highlight
+        this.bmr_id = parseInt($($('#selection_bmr option:selected')[0]).val());
+        this.model_id = parseInt($($('#selection_model option:selected')[0]).val());
+        this.notes = $('#selection_notes').val();
+        this.reset_selection();
+        if ((this.bmr_id >= 0) && (this.model_id >= 0)) {
+            this.find_selected_row();
+            this.highlight_row();
+        }
+    },
+    highlight_row: function(){
+        // highlight selected row
+        if (this.selected_row !== null) {
+            this.selected_row.addClass('bmd_selected_model');
+            bmd_output_plot.clear_bmd_lines('d3_bmd_selected');
+            bmd_output_plot.add_bmd_line(this.BMDOutput, 'd3_bmd_selected');
+        }
+    },
+    rebuild_plot: function(){
+        bmd_output_plot.build_plot();
+    },
+    find_selected_row: function(){
+        // find the selected row and returns
+        var trs = this.parent.output_tbl.tbl.find('tbody tr'),
+            model_id = this.model_id,
+            tr = null;
+        $.each(trs, function(i,v){
+            var d = $(v).data('d');
+            if(d.option_id == model_id){
+                tr = $(v);
+            }
         });
-    });
-    var args = {
-            'model': model,
-            'notes': this.notes,
-            'overrides': overrides};
-    args = JSON.stringify(args);
-    var url = '/bmd/model/' + this.parent.session.pk + '/select/';
-    var redirect_url = '/ani/endpoint/' + this.parent.endpoint.data.pk  + '/';
-    $.post(url, args, function(d) {
-        document.location.href= redirect_url;
-    });
+        if(tr !== null){
+            this.selected_row = tr;
+            this.BMDOutput = tr.data('d');
+        }
+    },
+    reset_selection: function(){
+        // unighlight selected row and reset properties
+        bmd_output_plot.clear_bmd_lines('d3_bmd_selected');
+        if (this.selected_row !== null){
+            this.selected_row.removeClass('bmd_selected_model');
+            this.selected_row = null;
+            this.BMDOutput = null;
+        }
+    },
+    submit: function(){
+        // Submit data to server via AJAX response, then redirect to summary view
+        this.test_row_highlight();
+        var model = (this.selected_row === null) ? null : this.BMDOutput.id;
+        overrides = [];
+        this.parent.outputs.forEach(function(v){
+            v.forEach(function(d){
+                overrides.push(d.submit());
+            });
+        });
+        var args = {
+                'model': model,
+                'notes': this.notes,
+                'overrides': overrides};
+        args = JSON.stringify(args);
+        var url = '/bmd/model/' + this.parent.session.pk + '/select/';
+        var redirect_url = '/ani/endpoint/' + this.parent.endpoint.data.pk  + '/';
+        $.post(url, args, function(d) {
+            document.location.href= redirect_url;
+        });
+    }
 };
 
 //  LOGIC ITEM
