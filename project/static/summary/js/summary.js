@@ -347,8 +347,11 @@ _.extend(Visual, {
                 case "animal bioassay endpoint aggregation":
                     Cls = EndpointAggregation;
                     break;
+                case "animal bioassay endpoint crossview":
+                    Cls = Crossview;
+                    break;
                 default:
-                    throw "Error - unknown visualization-type";
+                    throw "Error - unknown visualization-type: {0}".printf(d.visual_type);
             }
             cb(new Cls(d));
         });
@@ -381,6 +384,9 @@ D3Visualization = function(parent, data, options){
     this.settings = {};
 };
 _.extend(D3Visualization.prototype, D3Plot.prototype, {
+    setDefaults: function(){
+        throw "Abstract method; requires implementation";
+    },
     render: function($div){
         throw "Abstract method; requires implementation";
     },
@@ -1157,5 +1163,355 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             box_t: 10-this.padding.top,
             box_padding: 5
         });
+    }
+});
+
+
+Crossview = function(data){
+    EndpointAggregation.apply(this, arguments);
+
+    // D3.js monkey-patch
+    d3.selection.prototype.moveToFront = function(){
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+};
+Crossview.prototype = {
+    displayAsPage: function($el){
+        var title = $("<h1>").text(this.data.title),
+            caption = $('<div>').html(this.data.caption),
+            $plotDiv = $('<div>'),
+            data = this.getPlotData();
+
+        $el
+            .append(title)
+            .append("<h2>Visualization</h2>")
+            .append($plotDiv)
+            .append("<h2>Caption</h2>")
+            .append(caption);
+
+        new CrossviewPlot(this, data).render($plotDiv);
+    },
+    getPlotData: function(){
+        return {
+            title: this.data.title,
+            endpoints: this.endpoints,
+            dose_units: this.dose_units
+        }
+    }
+};
+
+
+CrossviewPlot = function(parent, data, options){
+    D3Visualization.apply(this, arguments);
+    this.setDefaults();
+};
+_.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
+    setDefaults: function(){
+        var padding_left = 70;
+        _.extend(this, {
+            padding: {
+                  "top": 25,
+                  "right": 50,
+                  "bottom": 40,
+                  "left": padding_left,
+                  "left_original": padding_left
+                },
+            x_axis_settings: {
+                "scale_type": 'log',
+                "text_orient": "bottom",
+                "axis_class": 'axis x_axis',
+                "gridlines": false,
+                "gridline_class": 'primary_gridlines x_gridlines',
+                "number_ticks": 10,
+                "axis_labels": true,
+                "label_format": d3.format(",.f")
+            },
+            y_axis_settings: {
+                'scale_type': "linear",
+                'text_orient': "left",
+                'axis_class': "axis y_axis",
+                'gridlines': false,
+                'gridline_class': "primary_gridlines y_gridlines",
+                'number_ticks': 10,
+                'axis_labels': true,
+                'label_format': d3.format("%")
+            },
+            settings: {
+                "plot_settings": {
+                    "show_menu_bar": true,
+                    "build_plot_startup": true,
+                    "plot_width": 850,
+                    "text_width": 150,
+                    "height": 500,
+                    "tag_height": 17,
+                    "tag_left_padding": 25,
+                    "tag_category_spacing": 5
+                },
+                "crossview_filters": [
+                    "study",
+                    "experiment_type",
+                    "species",
+                    "sex",
+                    "effects"
+                ]
+            }
+        });
+    },
+    render: function($div){
+        this.plot_div = $div.html('');
+        if(this.data.endpoints.length === 0){
+            return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit.</p>");
+        }
+        this.processData();
+        this.build_plot_skeleton(false);
+        this.add_axes();
+        this.draw_visualization();
+        this.draw_text();
+        this.add_menu();
+        this.add_title();
+        this.build_x_label();
+        this.build_y_label();
+        this.trigger_resize();
+    },
+    processData: function(){
+
+        var process_endpoint = function(e){
+            return e.data.endpoint_group
+                .filter(function(eg,i){
+                    return i>0;
+                }).map(function(eg,i){
+                    return {
+                        'endpoint': e,
+                        'name': e.data.name,
+                        'study': e.data.animal_group.experiment.study.short_citation,
+                        'experiment': e.data.animal_group.experiment.name,
+                        'experiment_type': e.data.animal_group.experiment.type,
+                        'animal_group': e.data.animal_group.name,
+                        'dose': eg.dose,
+                        'change': e._percent_change_control(i)/100,
+                        'effects': e.data.effects.map(function(v){return v.name;}),
+                        'sex': e.data.animal_group.sex,
+                        'species': e.data.animal_group.species,
+                        'path_title': e.data.name
+                    }
+                });
+        },
+        dose_units = this.data.endpoints[0].dose_units,
+        dataset = this.data.endpoints
+            .filter(function(e){return e.data.endpoint_group.length>0; })
+            .map(function(e){ return process_endpoint(e); }),
+        dose_extents = dataset.map(function(e){
+            return d3.extent(e, function(eg){return eg.dose})}),
+        resp_extents = dataset.map(function(e){
+            return d3.extent(e, function(eg){return eg.change})}),
+        plot_width = this.settings.plot_settings.plot_width + this.settings.plot_settings.text_width,
+        plot_height = this.settings.plot_settings.height,
+        menu_spacing = (this.settings.plot_settings.show_menu_bar) ? 40 : 0,
+        container_height = plot_height + this.padding.top + this.padding.bottom + menu_spacing;
+
+        _.extend(this, {
+            dataset: dataset,
+            dose_range: [
+                d3.min(dose_extents, function(v){return v[0];}),
+                d3.max(dose_extents, function(v){return v[1];})
+            ],
+            response_range: [
+                d3.min(resp_extents, function(d){return d[0]}),
+                d3.max(resp_extents, function(d){return d[1]})
+            ],
+            title_str: '',
+            x_label_text: "Dose ({0})".printf(dose_units),
+            y_label_text: '% change from control (continuous), % incidence (dichotomous)',
+            w: plot_width,
+            h: plot_height
+        });
+
+        this.plot_div.css({'height': '{0}px'.printf(container_height)});
+    },
+    add_axes: function() {
+        _.extend(this.x_axis_settings, {
+            "domain": this.dose_range,
+            "rangeRound": [0, this.settings.plot_settings.plot_width],
+            "x_translate": 0,
+            "y_translate": this.h
+        });
+
+        _.extend(this.y_axis_settings, {
+            "domain": this.response_range,
+            "number_ticks": 10,
+            "rangeRound": [this.h, 0],
+            "x_translate": 0,
+            "y_translate": 0
+        });
+
+        this.build_x_axis();
+        this.build_y_axis();
+    },
+    draw_visualization: function(){
+        var x = this.x_scale,
+            y = this.y_scale,
+            self = this;
+
+        // reference line
+        this.vis.append("g")
+            .append("line")
+            .attr("x1", x.range()[0] )
+            .attr("y1", y(0) )
+            .attr("x2", x.range()[1] )
+            .attr("y2", y(0) )
+            .attr('class', 'cv_reference_line');
+
+        //response-lines
+        var response_centerlines = this.vis.append("g"),
+            line = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d){return x(d.dose);})
+                .y(function(d){return y(d.change);});
+
+        response_centerlines.selectAll(".crossview_paths")
+            .data(this.dataset)
+          .enter().append("path")
+            .attr("class", "crossview_paths")
+            .attr("d", line)
+            .on('click', function(v){v[0].endpoint.displayAsModal();})
+            .on('mouseover', function(v){self.change_show_selected_fields(this, v, true);})
+            .on('mouseout', function(v){self.change_show_selected_fields(this, v, false);});
+
+        d3.selectAll(".crossview_paths").append("svg:title")
+            .text(function(v){return v[0].path_title;});
+    },
+    draw_text: function(){
+
+        var self = this,
+            height = -this.settings.plot_settings.tag_height,
+            tag_x = self.settings.plot_settings.plot_width + self.settings.plot_settings.tag_left_padding,
+            tag_y = function(){height += self.settings.plot_settings.tag_height; return height;},
+            filters = this.settings.crossview_filters.map(
+                            function(f){return self.build_crossview(f);});
+            crossviews_g = this.vis.append("g");
+
+        filters.forEach(function(filter){
+            // print header
+            crossviews_g
+                .append('text')
+                .attr("x", tag_x)
+                .attr("y", function(){return tag_y();})
+                .attr("text-anchor", "start")
+                .attr('class', 'crossview_title')
+                .text(filter[0].field);
+
+            //print fields
+            crossviews_g.selectAll("crossview.texts")
+                .data(filter)
+            .enter().append("text")
+                .attr("x", tag_x)
+                .attr("y", function(){return tag_y();})
+                .attr("text-anchor", "start")
+                .attr('class', 'crossview_fields')
+                .text(function(v) {return v.text;})
+                .on('click', function(v){self.change_active_filters(v, this);})
+                .on('mouseover', function(v){self.change_hover_filter(v, this);})
+                .on('mouseout', function(v){self.change_hover_filter(v, this);});
+            height += self.settings.plot_settings.tag_category_spacing;
+        });
+
+        _.extend(this, {
+            crossviews_g: crossviews_g,
+            filters: filters,
+            active_filters: [],
+            hover_filter: undefined
+        });
+    },
+    isMatch: function(val, txt){
+        // use as a filter to determine match-criteria
+        return (val instanceof Array) ? val.indexOf(txt)>=0 : val === txt;
+    },
+    change_show_selected_fields: function(path, v, hover_on){
+        // if a user hovers over an object, highlight all crossviews that item
+        // belongs to.
+        var self = this,
+            filterMatches = function(filter){
+                return self.isMatch(v[0][filter.field], filter.text);
+            };
+
+        // fix IE bug with mouseover events: http://stackoverflow.com/questions/3686132/
+        if (hover_on && d3.select(path).classed('crossview_path_hover')) return;
+
+        // only show if the field is a selected subset, if selected subset exists
+        if ((this.crossview_selected) &&
+            (!d3.select(path).classed('crossview_selected'))){return;}
+
+        d3.select(path).classed('crossview_path_hover', hover_on).moveToFront();
+        d3.selectAll('.crossview_fields').classed('crossview_path_hover', false);
+        if(hover_on){
+            d3.selectAll('.crossview_fields').filter(filterMatches).classed('crossview_path_hover', true);
+        }
+    },
+    change_active_filters: function(v, text){
+        var active_filter = true;
+        // check if filter already on; if on then turn off, else add
+        if(this.active_filters.length>=1){
+            for (var i = this.active_filters.length - 1; i >= 0; i -= 1){
+                if(this.active_filters[i] === v){active_filter = false; this.active_filters.splice(i, 1);}
+            }
+        }
+        if (active_filter){this.active_filters.push(v);}
+        d3.select(text).classed('crossview_selected', active_filter)
+                       .classed('crossview_hover', false);
+        this._update_selected_filters();
+    },
+    change_hover_filter: function(v, text){
+        if (this.hover_filter === v){
+            this.hover_filter = undefined;
+            d3.select(text).classed('crossview_hover', false);
+        } else {
+            this.hover_filter = v;
+            d3.select(text).classed('crossview_hover', true);
+        }
+        this._update_hover_filters();
+    },
+    build_crossview: function(field){
+        // extract values in array
+        var values;
+        if (this.dataset[0][0][field] instanceof Array){
+            values = [];
+            this.dataset.forEach(function(v){
+                values = values.concat(v[0][field]);
+            });
+        } else {
+            values = this.dataset.map(function(v){return v[0][field];});
+        }
+
+        return _.uniq(values.sort(), true).map(function(v){
+            return {'field': field, 'status':false, 'text': v};
+        });
+    },
+    _update_selected_filters: function(){
+        d3.selectAll('.crossview_paths')
+            .classed('crossview_selected', false);
+
+        var self = this,
+            sel = d3.selectAll('.crossview_paths');
+        if(this.active_filters.length>0){
+            this.active_filters.forEach(function(filter){
+                sel = sel.filter(function(d){return self.isMatch(d[0][filter.field], filter.text);});
+            });
+            sel.classed('crossview_selected', true).moveToFront();
+        }
+        this.crossview_selected = sel;
+        this._update_hover_filters();
+    },
+    _update_hover_filters: function(){
+        var self = this,
+            sel = this.crossview_selected || d3.selectAll('.crossview_paths'),
+            filter = this.hover_filter;
+        d3.selectAll('.crossview_paths').classed('crossview_hover', false);
+        if(filter){
+            sel.filter(function(d){return self.isMatch(d[0][filter.field], filter.text);})
+                .classed('crossview_hover', true)
+                .moveToFront();
+        }
     }
 });

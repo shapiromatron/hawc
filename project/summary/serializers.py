@@ -26,9 +26,9 @@ class VisualSerializer(CollectionVisualSerializer):
     def to_representation(self, instance):
         ret = super(VisualSerializer, self).to_representation(instance)
         eps = []
-        if instance.visual_type==0:
-            for be in instance.endpoints.all():
-                eps.append(SerializerHelper.get_serialized(be.endpoint, json=False))
+        qs = instance.get_endpoints()
+        for e in qs:
+            eps.append(SerializerHelper.get_serialized(e.endpoint, json=False))
         ret["endpoints"] = eps
 
         return ret

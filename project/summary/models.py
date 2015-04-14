@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 
 from django.db import models
+from django.db.models.loading import get_model
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.core.urlresolvers import reverse
@@ -206,6 +207,18 @@ class Visual(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
+
+    def get_endpoints(self):
+        qs = self.__class__.objects.none()
+        if self.visual_type==0:
+            qs = self.endpoints.all()
+        elif self.visual_type==1:
+            Endpoint = get_model('animal', 'Endpoint')
+            qs = Endpoint.objects.filter(
+                assessment_id=self.assessment_id,
+                animal_group__dosing_regime__doses__dose_units_id=self.dose_units_id
+            ).distinct('pk')
+        return qs
 
 
 class DataPivot(models.Model):
