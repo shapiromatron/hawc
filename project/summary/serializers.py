@@ -25,6 +25,10 @@ class VisualSerializer(CollectionVisualSerializer):
 
     def to_representation(self, instance):
         ret = super(VisualSerializer, self).to_representation(instance)
+
+        ret['url_update'] = instance.get_update_url()
+        ret['url_delete'] = instance.get_delete_url()
+
         eps = []
         qs = instance.get_endpoints()
         for e in qs:

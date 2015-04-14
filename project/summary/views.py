@@ -101,6 +101,27 @@ class VisualizationDetail(BaseDetail):
     model = models.Visual
 
 
+class VisualizationCreate(BaseCreate):
+    parent_model = Assessment
+    parent_template_name = 'assessment'
+    model = models.Visual
+    form_class = forms.VisualForm
+
+
+class VisualizationUpdate(BaseUpdate):
+    success_message = 'Visualization updated.'
+    model = models.Visual
+    form_class = forms.VisualForm
+
+
+class VisualizationDelete(BaseDelete):
+    success_message = 'Visualization deleted.'
+    model = models.Visual
+
+    def get_success_url(self):
+        return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
+
+
 # DATA-PIVOT
 class GeneralDataPivot(TemplateView):
     """

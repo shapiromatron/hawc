@@ -6,7 +6,9 @@
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
-  <li class="active">{{object}}<span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
 {% endblock %}
 
 {% block content_type %}visualization{% endblock %}
@@ -16,6 +18,7 @@
   <script src="{{STATIC_URL}}summary/js/summary.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
+      window.isEditable = {{obj_perms.edit|lower}};
       Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
   </script>

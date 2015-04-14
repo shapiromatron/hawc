@@ -1,8 +1,11 @@
 from django import forms
 
 from assessment.models import Assessment
+from utils.forms import BaseFormHelper
 
 from . import models
+
+
 
 class SummaryTextForm(forms.ModelForm):
 
@@ -24,6 +27,51 @@ class SummaryTextForm(forms.ModelForm):
             self.instance.assessment = Assessment.objects.get(pk=assessment_pk)
         self.fields.keyOrder = ['delete', 'id', 'parent',
                                 'sibling', 'title', 'slug', 'text']
+
+
+class VisualForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Visual
+        exclude = ('assessment', )
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop('parent', None)
+        super(VisualForm, self).__init__(*args, **kwargs)
+        self.fields['settings'].widget.attrs['rows'] = 2
+        self.fields['endpoints'].queryset = self.fields['endpoints'].queryset.none()
+        if assessment:
+            self.instance.assessment = assessment
+        self.helper = self.setHelper()
+
+
+    def setHelper(self):
+
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing visualization.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new visualization",
+                "help_text":   u"""
+                    Create a custom-visualization for this assessment.
+                    Generally, you will select a subset of available data, then
+                    customize the visualization the next-page.
+                """,
+                "cancel_url": self.instance.get_list_url(self.instance.assessment.id)
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
 
 
 class DataPivotUploadForm(forms.ModelForm):
@@ -81,7 +129,6 @@ class DataPivotSearchForm(forms.Form):
         for obj in models.DataPivot.objects.filter(**query):
             response_json.append(obj.get_json(json_encode=False))
         return response_json
-
 
 
 class DataPivotSelectorForm(forms.Form):

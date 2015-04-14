@@ -372,6 +372,12 @@ Visual.prototype = {
     },
     displayAsPage: function($el){
         throw "Abstract method; requires implementation";
+    },
+    addActionsMenu: function(){
+        return HAWCUtils.pageActionsButton([
+           {url: this.data.url_update, text: "Update visualization"},
+           {url: this.data.url_delete, text: "Delete visualization"}
+        ]);
     }
 };
 
@@ -397,7 +403,7 @@ _.extend(D3Visualization.prototype, D3Plot.prototype, {
 
 
 EndpointAggregation = function(data){
-    this.data = data;
+    Visual.apply(this, arguments);
     this.endpoints = data.endpoints.map(function(d){
         var e = new Endpoint(d);
         e.switch_dose_units(data.dose_units);
@@ -405,11 +411,13 @@ EndpointAggregation = function(data){
     });
     delete this.data.endpoints;
 };
-EndpointAggregation.prototype = {
+_.extend(EndpointAggregation.prototype, Visual.prototype, {
     displayAsPage: function($el){
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption)
             self = this;
+
+        if (window.isEditable) title.append(this.addActionsMenu());
 
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
@@ -537,7 +545,7 @@ EndpointAggregation.prototype = {
             on_click: $.proxy(this.buildPlot, this)
         };
     }
-};
+});
 
 
 EndpointAggregationForestPlot = function(parent, data, options){
@@ -1177,12 +1185,14 @@ Crossview = function(data){
       });
     };
 };
-Crossview.prototype = {
+_.extend(Crossview.prototype, Visual.prototype, {
     displayAsPage: function($el){
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
+
+        if (window.isEditable) title.append(this.addActionsMenu());
 
         $el
             .append(title)
@@ -1200,7 +1210,7 @@ Crossview.prototype = {
             dose_units: this.dose_units
         }
     }
-};
+});
 
 
 CrossviewPlot = function(parent, data, options){

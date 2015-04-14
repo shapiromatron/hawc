@@ -408,6 +408,15 @@ var HAWCUtils = {
         n = n || 200;
         if (txt.length>n) return txt.slice(0, n) + "...";
         return txt;
+    },
+    pageActionsButton: function(items){
+        var $menu = $('<ul class="dropdown-menu">');
+        items.forEach(function(d){
+            $menu.append('<li><a href="{0}">{1}</a></li>'.printf(d.url, d.text));
+        });
+        return $('<div class="btn-group pull-right">')
+            .append("<a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>Actions <span class='caret'></span></a>")
+            .append($menu)
     }
 };
 

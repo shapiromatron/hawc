@@ -199,8 +199,18 @@ class Visual(models.Model):
     def __unicode__(self):
         return self.title
 
+    @classmethod
+    def get_list_url(cls, assessment_id):
+        return reverse('summary:visualization_list', args=[str(assessment_id)])
+
     def get_absolute_url(self):
         return reverse('summary:visualization_detail', args=[str(self.pk)])
+
+    def get_update_url(self):
+        return reverse('summary:visualization_update', args=[str(self.pk)])
+
+    def get_delete_url(self):
+        return reverse('summary:visualization_delete', args=[str(self.pk)])
 
     def get_assessment(self):
         return self.assessment
