@@ -106,16 +106,34 @@ class VisualizationCreateSelector(BaseDetail):
 
 
 class VisualizationCreate(BaseCreate):
+    success_message = "Visualization created."
     parent_model = Assessment
     parent_template_name = 'assessment'
     model = models.Visual
-    form_class = forms.VisualForm
+
+    def get_form_class(self):
+        visual_type = int(self.kwargs.get('visual_type'))
+        try:
+            return forms.get_visual_form(visual_type)
+        except ValueError:
+            raise Http404
+
+    def get_form_kwargs(self):
+        kwargs = super(VisualizationCreate, self).get_form_kwargs()
+        kwargs['visual_type'] = int(self.kwargs.get('visual_type'))
+        print kwargs
+        return kwargs
 
 
 class VisualizationUpdate(BaseUpdate):
     success_message = 'Visualization updated.'
     model = models.Visual
-    form_class = forms.VisualForm
+
+    def get_form_class(self):
+        try:
+            return forms.get_visual_form(self.object.visual_type)
+        except ValueError:
+            raise Http404
 
 
 class VisualizationDelete(BaseDelete):

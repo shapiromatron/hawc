@@ -1,5 +1,7 @@
 from django import forms
+from selectable import forms as selectable
 
+from animal.lookups import EndpointByAssessmentLookup
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper
 
@@ -33,17 +35,18 @@ class VisualForm(forms.ModelForm):
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', )
+        exclude = ('assessment', 'visual_type')
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
+        visual_type = kwargs.pop('visual_type', None)
         super(VisualForm, self).__init__(*args, **kwargs)
         self.fields['settings'].widget.attrs['rows'] = 2
-        self.fields['endpoints'].queryset = self.fields['endpoints'].queryset.none()
         if assessment:
             self.instance.assessment = assessment
+        if visual_type is not None:  # required if value is 0
+            self.instance.visual_type = visual_type
         self.helper = self.setHelper()
-
 
     def setHelper(self):
 
@@ -72,6 +75,40 @@ class VisualForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper
+
+
+class EndpointAggregationForm(VisualForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EndpointAggregationForm, self).__init__(*args, **kwargs)
+        self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
+            lookup_class=EndpointByAssessmentLookup,
+            label='Endpoints',
+            widget=selectable.AutoCompleteSelectMultipleWidget)
+        self.fields["endpoints"].widget.update_query_parameters(
+            {'assessment_id': self.instance.assessment_id})
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        exclude = ('assessment', 'visual_type')
+
+
+class CrossviewForm(VisualForm):
+
+    class Meta:
+        model = models.Visual
+        exclude = ('assessment', 'visual_type', 'endpoints')
+
+
+def get_visual_form(visual_type):
+    try:
+        return {
+            0: EndpointAggregationForm,
+            1: CrossviewForm
+        }[visual_type]
+    except:
+        raise ValueError()
 
 
 class DataPivotUploadForm(forms.ModelForm):
