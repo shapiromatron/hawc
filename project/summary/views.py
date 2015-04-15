@@ -97,8 +97,12 @@ class VisualizationList(BaseList):
 
 
 class VisualizationDetail(BaseDetail):
-    parent_model = Assessment
     model = models.Visual
+
+
+class VisualizationCreateSelector(BaseDetail):
+    model = Assessment
+    template_name = "summary/visual_selector.html"
 
 
 class VisualizationCreate(BaseCreate):
