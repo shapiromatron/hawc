@@ -23,7 +23,36 @@
 
 
 {% block content %}
-  {% crispy form %}
+
+<div class="tabbable">
+
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#data" data-toggle="tab">Data</a></li>
+    <li>
+      <a href="#settings" data-toggle="tab">Settings</a></li>
+    <li>
+      <a href="#preview" data-toggle="tab">Preview</a></li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div class="tab-pane active" id="data">
+      {% crispy form %}
+    </div>
+
+    <div class="tab-pane" id="settings">
+      <input>
+    </div>
+
+    <div class="tab-pane" id="preview">
+      c
+    </div>
+
+  </div>
+
+</div>
+
 {% endblock %}
 
 
@@ -33,12 +62,17 @@
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/summary.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}summary/js/summary_form.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       $('#id_caption').wysihtml5({"stylesheets": false});
       $('#id_title').on('keyup', function(){
         $('#id_slug').val(URLify($(this).val(), 50));
       });
+
+      window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
+
+      new VisualForm.create({{visual_type}}, $('.tabbable'));
     });
   </script>
 {% endblock %}

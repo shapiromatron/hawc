@@ -121,8 +121,22 @@ class VisualizationCreate(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super(VisualizationCreate, self).get_form_kwargs()
         kwargs['visual_type'] = int(self.kwargs.get('visual_type'))
-        print kwargs
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(VisualizationCreate, self).get_context_data(**kwargs)
+        context['visual_type'] = int(self.kwargs.get('visual_type'))
+        return context
+
+
+class VisualizationCreateTester(BaseCreate):
+    parent_model = Assessment
+    http_method_names = ('post', )
+
+    def post(self, request, *args, **kwargs):
+        # ajs to resume here; make sure we can get the endpoint data for
+        # crossview and endpoint-assessment
+        return HttpResponse('{"hi": "ho"}', content_type="application/json")
 
 
 class VisualizationUpdate(BaseUpdate):
@@ -134,6 +148,11 @@ class VisualizationUpdate(BaseUpdate):
             return forms.get_visual_form(self.object.visual_type)
         except ValueError:
             raise Http404
+
+    def get_context_data(self, **kwargs):
+        context = super(VisualizationUpdate, self).get_context_data(**kwargs)
+        context['visual_type'] = self.object.visual_type
+        return context
 
 
 class VisualizationDelete(BaseDelete):
