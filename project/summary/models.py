@@ -215,20 +215,58 @@ class Visual(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
-
-    def get_endpoints(self):
+    def get_endpoints(self, request=None):
+        Endpoint = get_model('animal', 'Endpoint')
         qs = self.__class__.objects.none()
+        filters = {"assessment_id": self.assessment_id}
+
         if self.visual_type==0:
-            qs = self.endpoints.all()
+            if request:
+                filters["id__in"] = request.POST.getlist('endpoints_1')
+                qs = Endpoint.objects.filter(**filters)
+            else:
+                qs = self.endpoints.all()
+
         elif self.visual_type==1:
-            Endpoint = get_model('animal', 'Endpoint')
-            qs = Endpoint.objects.filter(
-                assessment_id=self.assessment_id,
-                animal_group__dosing_regime__doses__dose_units_id=self.dose_units_id
-            ).distinct('pk')
+            if request:
+                try:
+                    dose_id = int(request.POST.get('dose_units', -1))
+                except ValueError:
+                    dose_id = -1
+            else:
+                dose_id = self.dose_units_id
+
+            filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
+            qs = Endpoint.objects.filter(**filters).distinct('pk')
+
         return qs
+
+    def get_editing_dataset(self, request):
+        # Generate a pseudo-return when editing or creating a dataset.
+        # Do not include the settings field; this will be set from the
+        # input-form.
+
+        dose_units = None
+        try:
+            dose_units = int(request.POST.get("dose_units"))
+        except ValueError:
+            pass
+
+        data = {
+            "title": request.POST.get("title"),
+            "slug": request.POST.get("slug"),
+            "caption": request.POST.get("caption"),
+            "dose_units": dose_units,
+            "created": datetime.now().isoformat(),
+            "last_updated": datetime.now().isoformat()
+        }
+
+        if self.visual_type in [0, 1]:
+            Endpoint = get_model('animal', 'Endpoint')
+            qs = self.get_endpoints(request)
+            data["endpoints"] = Endpoint.d_responses(qs, json_encode=False)
+
+        return json.dumps(data)
 
 
 class DataPivot(models.Model):
@@ -262,6 +300,7 @@ class DataPivot(models.Model):
     def get_absolute_url(self):
         return reverse('summary:dp_detail', kwargs={'pk': self.assessment.pk,
                                                     'slug': self.slug})
+
     def get_assessment(self):
         return self.assessment
 

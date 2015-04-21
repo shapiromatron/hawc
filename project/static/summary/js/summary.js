@@ -1196,9 +1196,7 @@ _.extend(Crossview.prototype, Visual.prototype, {
 
         $el
             .append(title)
-            .append("<h2>Visualization</h2>")
             .append($plotDiv)
-            .append("<h2>Caption</h2>")
             .append(caption);
 
         new CrossviewPlot(this, data).render($plotDiv);
@@ -1207,7 +1205,8 @@ _.extend(Crossview.prototype, Visual.prototype, {
         return {
             title: this.data.title,
             endpoints: this.endpoints,
-            dose_units: this.dose_units
+            dose_units: this.data.dose_units,
+            settings: this.data.settings
         }
     }
 });
@@ -1219,15 +1218,7 @@ CrossviewPlot = function(parent, data, options){
 };
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
-        var padding_left = 70;
         _.extend(this, {
-            padding: {
-                  "top": 25,
-                  "right": 50,
-                  "bottom": 40,
-                  "left": padding_left,
-                  "left_original": padding_left
-                },
             x_axis_settings: {
                 "scale_type": 'log',
                 "text_orient": "bottom",
@@ -1250,11 +1241,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             },
             settings: {
                 "plot_settings": {
-                    "show_menu_bar": true,
-                    "build_plot_startup": true,
-                    "plot_width": 850,
                     "text_width": 150,
-                    "height": 500,
                     "tag_height": 17,
                     "tag_left_padding": 25,
                     "tag_category_spacing": 5
@@ -1307,6 +1294,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                         'filters': filters
                     }
                 });
+
             return {
                 'filters': filters,
                 'plotting': egs,
@@ -1314,14 +1302,11 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 'resp_extent': d3.extent(egs, function(d){return d.resp})
             };
         },
-        dose_units = this.data.endpoints[0].dose_units,
+        dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
         dataset = this.data.endpoints
             .filter(function(e){return e.data.endpoint_group.length>0; })
             .map(function(e){ return process_endpoint(e); }),
-        plot_width = this.settings.plot_settings.plot_width + this.settings.plot_settings.text_width,
-        plot_height = this.settings.plot_settings.height,
-        menu_spacing = (this.settings.plot_settings.show_menu_bar) ? 40 : 0,
-        container_height = plot_height + this.padding.top + this.padding.bottom + menu_spacing;
+        container_height = this.data.settings.height + 50;  // menu-spacing
 
         _.extend(this, {
             dataset: dataset,
@@ -1333,11 +1318,19 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 d3.min(dataset, function(d){return d.resp_extent[0];}),
                 d3.max(dataset, function(d){return d.resp_extent[1];})
             ],
-            title_str: '',
+            title_str: this.data.settings.title,
             x_label_text: "Dose ({0})".printf(dose_units),
             y_label_text: '% change from control (continuous), % incidence (dichotomous)',
-            w: plot_width,
-            h: plot_height
+            plot_settings: this.data.settings,
+            w: this.data.settings.width - this.data.settings.padding_top,
+            h: this.data.settings.height - this.data.settings.padding_left,
+            padding: {
+                "top": this.data.settings.padding_top,
+                "right": this.data.settings.width-this.data.settings.padding_left-this.data.settings.inner_width,
+                "bottom": this.data.settings.height-this.data.settings.padding_top-this.data.settings.inner_height,
+                "left": this.data.settings.padding_left,
+                "left_original": this.data.settings.padding_left
+            }
         });
 
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
@@ -1345,15 +1338,15 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     add_axes: function() {
         _.extend(this.x_axis_settings, {
             "domain": this.dose_range,
-            "rangeRound": [0, this.settings.plot_settings.plot_width],
+            "rangeRound": [0, this.plot_settings.inner_width],
             "x_translate": 0,
-            "y_translate": this.h
+            "y_translate": this.plot_settings.inner_height
         });
 
         _.extend(this.y_axis_settings, {
             "domain": this.response_range,
             "number_ticks": 10,
-            "rangeRound": [this.h, 0],
+            "rangeRound": [this.plot_settings.inner_height, 0],
             "x_translate": 0,
             "y_translate": 0
         });
@@ -1406,7 +1399,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                         .value();
             },
             height = -this.settings.plot_settings.tag_height,
-            tag_x = self.settings.plot_settings.plot_width + self.settings.plot_settings.tag_left_padding,
+            tag_x = self.plot_settings.inner_width + self.settings.plot_settings.tag_left_padding,
             tag_y = function(){height += self.settings.plot_settings.tag_height; return height;},
             filters = this.settings.crossview_filters.map(function(f){return buildFilter(f);});
             crossviews_g = this.vis.append("g");

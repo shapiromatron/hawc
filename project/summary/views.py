@@ -129,14 +129,16 @@ class VisualizationCreate(BaseCreate):
         return context
 
 
-class VisualizationCreateTester(BaseCreate):
+class VisualizationCreateTester(VisualizationCreate):
     parent_model = Assessment
     http_method_names = ('post', )
 
     def post(self, request, *args, **kwargs):
-        # ajs to resume here; make sure we can get the endpoint data for
-        # crossview and endpoint-assessment
-        return HttpResponse('{"hi": "ho"}', content_type="application/json")
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        response = form.instance.get_editing_dataset(request)
+        return HttpResponse(response, content_type="application/json")
 
 
 class VisualizationUpdate(BaseUpdate):

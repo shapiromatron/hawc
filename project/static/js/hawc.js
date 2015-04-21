@@ -417,9 +417,14 @@ var HAWCUtils = {
         return $('<div class="btn-group pull-right">')
             .append("<a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>Actions <span class='caret'></span></a>")
             .append($menu)
+    },
+    addAlert: function(content, $div){
+        $div = $div || $("#content");
+        $div.prepend($('<div class="alert">')
+            .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+            .append(content));
     }
 };
-
 
 // Observer design pattern; observers require an `update` method.
 var Observee = function(){
