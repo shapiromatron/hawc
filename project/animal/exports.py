@@ -66,6 +66,11 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'lifestage exposed',
             'lifestage assessed',
             'species strain',
+            'generation',
+            'animal description',
+            'animal description (with N)',
+            'sex',
+            'route',
 
             'endpoint_name',
             'endpoint_url',
@@ -130,9 +135,24 @@ class EndpointFlatDataPivot(FlatFileExporter):
             return None
 
         def get_species_strain(e):
-            ns = [ eg["n"] for eg in e["endpoint_group"] ]
-            ns_txt = models.EndpointGroup.getNRangeText(ns)
-            return u"{}, {} ({} {})".format(
+            return u"{} {}".format(
+                e['animal_group']['species'],
+                e['animal_group']['strain']
+            )
+
+        def get_gen_species_strain_sex(e, withN=False):
+
+            gen = e['animal_group']['generation']
+            if len(gen)>0:
+                gen += " "
+
+            ns_txt = ""
+            if withN:
+                ns = [ eg["n"] for eg in e["endpoint_group"] ]
+                ns_txt = " " + models.EndpointGroup.getNRangeText(ns)
+
+            return u"{}{}, {} ({}{})".format(
+                gen,
                 e['animal_group']['species'],
                 e['animal_group']['strain'],
                 e['animal_group']['sex_symbol'],
@@ -159,6 +179,11 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['lifestage_exposed'],
                 ser['animal_group']['lifestage_assessed'],
                 get_species_strain(ser),
+                ser['animal_group']['generation'],
+                get_gen_species_strain_sex(ser, withN=False),
+                get_gen_species_strain_sex(ser, withN=True),
+                ser['animal_group']['sex'],
+                ser['animal_group']['dosing_regime']['route_of_exposure'],
 
                 ser['name'],
                 ser['url'],
