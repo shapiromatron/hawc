@@ -2727,10 +2727,11 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       self.settings.descriptions.forEach(function(desc, j){
         var txt = v[desc.field_name];
         if(txt === "") return;
+        if($.isNumeric(txt) && (txt % 1 === 0)) txt = parseInt(txt, 10);
         row.push({
           "row": i+1,
           "col": j,
-          "text": txt,
+          "text": txt.toLocaleString(),
           "style": v._styles['text_' + j],
           "cursor": (desc._dpe_datatype)?'pointer':'auto',
           "onclick": function(){
