@@ -217,8 +217,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
 
         // now build header row showing available doses
         for(var i=0; i<nGroups; i++){
-            var doses = this.doses.map(function(v){ return v.values[i].dose; });
-            txt = doses[0].toLocaleString();
+            var doses = this.doses.map(function(v){ return v.values[i].dose.toLocaleString(); });
+            txt = doses[0];
             if (doses.length>1)
                 txt += " ({0})".printf(doses.slice(1, doses.length).join(", "))
             tr2.append('<th>{0}</th>'.printf(txt));
@@ -362,9 +362,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.url,
                 this.data.name),
-            this.get_special_dose_text("NOAEL"),
-            this.get_special_dose_text("LOAEL"),
-            this.get_special_dose_text("FEL")
+            this.get_special_dose_text("NOAEL").toLocaleString(),
+            this.get_special_dose_text("LOAEL").toLocaleString(),
+            this.get_special_dose_text("FEL").toLocaleString()
         ];
     },
     _percent_change_control: function(index){
@@ -477,7 +477,7 @@ EndpointCriticalDose.prototype = {
             doses = this.endpoint.doses.filter(function(v){
                 return v.units === self.endpoint.dose_units;});
         try {
-            txt = doses[0].values[this.critical_effect_idx].dose;
+            txt = doses[0].values[this.critical_effect_idx].dose.toLocaleString();
             if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);
         } catch(err){}
         this.span.html(txt);
@@ -590,7 +590,7 @@ EndpointTable.prototype = {
         var self = this;
         this.endpoint.data.endpoint_group.forEach(function(v, i){
             var tr = $('<tr></tr>'),
-                dose = v.dose;
+                dose = v.dose.toLocaleString();
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
