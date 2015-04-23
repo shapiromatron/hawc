@@ -218,14 +218,14 @@ class AnimalGroup(models.Model):
     SEX_SYMBOLS = {
         "M": u"♂",
         "F": u"♀",
-        "B": u"♂♀",
+        "C": u"♂♀",
         "R": u"NR"
     }
 
     SEX_CHOICES = (
         ("M", "Male"),
         ("F", "Female"),
-        ("B", "Both"),
+        ("C", "Combined"),
         ("R", "Not reported"))
 
     GENERATION_CHOICES = (
