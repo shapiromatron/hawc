@@ -2819,8 +2819,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           } else {
             merged_row_height = min_row_height + extra/numRows;
           }
+          row_height = merged_row_height;
         }
-        row_height = merged_row_height;
       }
 
       // add spacer if needed
