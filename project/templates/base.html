@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load server_role %}
 
 <!DOCTYPE html>
 <html lang="en-us">
@@ -29,10 +30,10 @@
 
     <!-- Navigation bar -->
     <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
+      <div class="navbar-inner  {% server_role %}">
         <div class="container-fluid">
 
-          {% block branding %}<a class="brand" href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC)</a>{% endblock %}
+          {% block branding %}<a class="brand" href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC){% server_role_text %}</a>{% endblock %}
 
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
             <span class="icon-bar"></span>

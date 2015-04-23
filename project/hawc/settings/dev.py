@@ -3,6 +3,7 @@ from .base import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+SERVER_ROLE = "dev"
 
 INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')
 

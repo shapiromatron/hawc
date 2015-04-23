@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 
 {% load url from future %}
+{% load server_role %}
 
 {% block title %}
   Portal | HAWC
 {% endblock %}
 
 {% block branding %}
-  <a class="brand" href="{% url 'portal' %}">HAWC</a>
+  <a class="brand" href="{% url 'portal' %}">HAWC{% server_role_text %}</a>
 {% endblock %}
 
 {% block topnavbar %}
