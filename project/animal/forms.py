@@ -404,7 +404,6 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('response_units', 2, "span6")
         helper.add_fluid_row('NOEL', 3, "span4")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
-        helper.add_fluid_row('power_notes', 3, "span4")
 
         return helper
 

@@ -744,7 +744,8 @@ class Endpoint(BaseEndpoint):
         help_text="Qualitative description of the results")
     endpoint_notes = models.TextField(
         blank=True,
-        help_text="Any additional notes related to this endpoint itself, not related to results")
+        verbose_name="General notes/methodology",
+        help_text="Any additional notes related to this endpoint/methodology, not including results")
     additional_fields = models.TextField(
         default="{}")
     qualities = generic.GenericRelation(
