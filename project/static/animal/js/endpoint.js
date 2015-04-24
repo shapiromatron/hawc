@@ -318,7 +318,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
         tbl.add_tbody_tr("Power notes", this.data.power_notes);
         tbl.add_tbody_tr("Results notes", this.data.results_notes);
-        tbl.add_tbody_tr("General notes", this.data.endpoint_notes);
+        tbl.add_tbody_tr("General notes/methodology", this.data.endpoint_notes);
 
         $(div).html(tbl.get_tbl());
     },

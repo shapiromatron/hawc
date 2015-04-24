@@ -2726,7 +2726,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       row = [];
       self.settings.descriptions.forEach(function(desc, j){
         var txt = v[desc.field_name];
-        if(txt === "") return;
         if($.isNumeric(txt) && (txt % 1 === 0)) txt = parseInt(txt, 10);
         row.push({
           "row": i+1,
@@ -2788,8 +2787,10 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
     // get maximum row dimension and layout rows
     var merged_row_height,
         extra_space,
-        prior_extra = 0;
-    this.text_rows.selectAll('text').forEach(function(v, i){
+        prior_extra = 0,
+        text_rows = this.text_rows.selectAll('text');
+
+    text_rows.forEach(function(v, i){
 
       for(var j=0; j<v.length; j++){
         var val = d3.select(v[j]);
@@ -2797,30 +2798,38 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         val.selectAll('tspan').attr("y", textPadding+top);
       }
       // get maximum-height of rendered text, and row-height
-      var actual_height = d3.max(v.map(function(v){return v.getBBox().height;})) || 0,
+      var cellHeights = v.map(function(v){return v.getBBox().height;}),
+          actual_height = d3.max(cellHeights),
           row_height = d3.max([min_row_height, actual_height]);
 
       // Peek-ahead and see if other rows are merged with this row; if so we may
       // want to adjust the actual row-height to allow for even spacing.
       // Only check for data rows (not header rows)
-      if (i>0){
-        var dataRowIndex = i-1
-        if(!self.datarows[dataRowIndex]._dp_isMerged){
-          var numRows = 1;
-          for(var j=dataRowIndex+1; j<self.datarows.length; j++){
-            if(!self.datarows[j]._dp_isMerged) break;
-            numRows +=1;
+      if (i>0 && !self.datarows[i-1]._dp_isMerged){
+        var numRows = 1, min_height = 0;
+        for(var j=i+1; j<self.datarows.length; j++){
+
+          // the row height should be the maximum-height of a non-merged cell
+          if(j===i+1){
+            text_rows[j]
+              .map(function(v){ return v.getBBox().height; })
+              .forEach(function(d,i){
+                if (d>0) min_height = Math.max(min_height, cellHeights[i]);
+            });
           }
-          var extra = (actual_height-min_row_height);
-          if (numRows === 1){
-            merged_row_height = actual_height;
-          } else if ((extra/numRows)<min_row_height){
-            merged_row_height = min_row_height;
-          } else {
-            merged_row_height = min_row_height + extra/numRows;
-          }
-          row_height = merged_row_height;
+
+          if(!self.datarows[j]._dp_isMerged) break;
+          numRows +=1;
         }
+        var extra = (actual_height-min_row_height);
+        if (numRows === 1){
+          merged_row_height = actual_height;
+        } else if ((extra/numRows)<min_row_height){
+          merged_row_height = min_row_height;
+        } else {
+          merged_row_height = min_row_height + extra/numRows;
+        }
+        row_height = Math.max(min_height, merged_row_height);
       }
 
       // add spacer if needed
