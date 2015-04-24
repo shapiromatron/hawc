@@ -103,7 +103,7 @@ Study.prototype = {
         tbl.add_tbody_tr("Study identifier", this.data.study_identifier);
         tbl.add_tbody_tr("Author contacted?", HAWCUtils.booleanCheckbox(this.data.contact_author));
         tbl.add_tbody_tr("Author contact details", this.data.ask_author);
-        tbl.add_tbody_tr("Summary text", this.data.summary);
+        tbl.add_tbody_tr("Summary and/or extraction comments", this.data.summary);
         $(div).html(tbl.get_tbl());
     },
     _get_identifiers_hyperlinks_ul: function(){

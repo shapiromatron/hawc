@@ -76,7 +76,7 @@ class Study(Reference):
                   "published and unpublished studies.")
     summary = models.TextField(
         blank=True,
-        verbose_name="Summary and/or extraction requirements",
+        verbose_name="Summary and/or extraction comments",
         help_text="Study summary or details on data-extraction needs.")
     qualities = generic.GenericRelation('StudyQuality', related_query_name='studies')
 
