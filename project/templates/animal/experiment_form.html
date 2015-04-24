@@ -46,8 +46,7 @@
               purity.val("");
             }
           };
-      pa.on('click', showPurity);
-      showPurity();
+      pa.on('click', showPurity).trigger('click');
 
       var type = $('#id_type'),
           litEff = $('#id_litter_effects'),
@@ -62,8 +61,7 @@
               litEffNotes.val("");
             }
           };
-      type.on('change', showLitterEffects);
-      showLitterEffects();
+      type.on('change', showLitterEffects).trigger('change');
 
     });
   </script>

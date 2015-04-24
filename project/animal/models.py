@@ -122,10 +122,12 @@ class Experiment(models.Model):
         max_length=128,
         help_text="Description of animal-feed, if relevant",
         blank=True)
-    animal_source = models.CharField(
+    guideline_compliance = models.CharField(
         max_length=128,
-        help_text="Laboratory and/or breeding details where animals were acquired",
-        blank=True)
+        blank=True,
+        help_text="""Description of any compliance methods used (i.e. use of EPA
+            OECD, NTP, or other guidelines; conducted under GLP guideline
+            conditions, non-GLP but consistent with guideline study, etc.)""")
     litter_effects = models.CharField(
         max_length=2,
         choices=LITTER_EFFECT_CHOICES,
@@ -135,12 +137,6 @@ class Experiment(models.Model):
         max_length=128,
         help_text="Any additional notes describing how litter effects were controlled",
         blank=True)
-    guideline_compliance = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="""Description of any compliance methods used (i.e. use of EPA
-            OECD, NTP, or other guidelines; conducted under GLP guideline
-            conditions, non-GLP but consistent with guideline study, etc.)""")
     description = models.TextField(
         blank=True,
         verbose_name="Description and animal husbandry",
@@ -185,7 +181,6 @@ class Experiment(models.Model):
             'experiment-purity',
             'experiment-vehicle',
             'experiment-diet',
-            'experiment-animal_source',
             'experiment-litter_effects',
             'experiment-litter_effect_notes',
             'experiment-guideline_compliance',
@@ -206,7 +201,6 @@ class Experiment(models.Model):
             ser['purity'],
             ser['vehicle'],
             ser['diet'],
-            ser['animal_source'],
             ser['litter_effects'],
             ser['litter_effect_notes'],
             ser['guideline_compliance'],
@@ -251,6 +245,10 @@ class AnimalGroup(models.Model):
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
+    animal_source = models.CharField(
+        max_length=128,
+        help_text="Laboratory and/or breeding details where animals were acquired",
+        blank=True)
     lifestage_exposed = models.CharField(
         max_length=32,
         blank=True,
@@ -333,9 +331,10 @@ class AnimalGroup(models.Model):
             "animal_group-url",
             "animal_group-name",
             "animal_group-sex",
-            "animal_group-duration_observation",
+            "animal_group-animal_source",
             "animal_group-lifestage_exposed",
             "animal_group-lifestage_assessed",
+            "animal_group-duration_observation",
             "animal_group-siblings",
             "animal_group-parents",
             "animal_group-generation",
@@ -350,9 +349,10 @@ class AnimalGroup(models.Model):
             ser['url'],
             ser['name'],
             ser['sex'],
-            ser['duration_observation'],
+            ser['animal_source'],
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
+            ser['duration_observation'],
             ser['siblings'],
             '|'.join([str(p) for p in ser['parents']]),
             ser['generation'],

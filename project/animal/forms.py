@@ -17,8 +17,6 @@ from study.lookups import AnimalStudyLookup
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.forms import BaseFormHelper
 
-from crispy_forms import layout as cfl
-
 from . import models, lookups
 
 
@@ -69,8 +67,8 @@ class ExperimentForm(ModelForm):
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")
         helper.add_fluid_row('purity_available', 3, "span4")
-        helper.add_fluid_row('diet', 2, "span6")
         helper.add_fluid_row('litter_effects', 2, "span6")
+        helper.add_fluid_row('diet', 2, "span6")
         return helper
 
     def clean(self):
