@@ -205,8 +205,8 @@ IVEndpoint.prototype = {
            .add_tbody_tr("Variance type", this.data.variance_type)
            .add_tbody_tr("Response units", this.data.response_units)
            .add_tbody_tr("Observation time", getObservationTime())
-           .add_tbody_tr("NOAEL", getCriticalValue(this.data.NOAEL))
-           .add_tbody_tr("LOAEL", getCriticalValue(this.data.LOAEL))
+           .add_tbody_tr("NOEL", getCriticalValue(this.data.NOEL))
+           .add_tbody_tr("LOEL", getCriticalValue(this.data.LOEL))
            .add_tbody_tr("Monotonicity", this.data.monotonicity)
            .add_tbody_tr("Overall pattern", this.data.overall_pattern)
            .add_tbody_tr("Statistical test notes", this.data.statistical_test_notes)
@@ -263,8 +263,8 @@ IVEndpoint.prototype = {
 
         tbl.addHeaderRow(headers(opts));
         this.egs.forEach(function(v, i){
-            opts.isLOAEL = (i === self.data.LOAEL);
-            opts.isLOAEL = (i === self.data.NOAEL);
+            opts.isLOEL = (i === self.data.LOEL);
+            opts.isNOEL = (i === self.data.NOEL);
             tbl.addRow(v.build_row(tbl, opts));
         });
         return tbl.getTbl();
@@ -306,10 +306,10 @@ IVEndpointGroup.prototype = {
         var tr = $('<tr>'),
             getDose = function(dose){
                 var txt = dose;
-                if(opts.isNOAEL)
-                    txt += tbl.footnotes.add_footnote('NOAEL (No Observed Adverse Effect Level)');
-                if(opts.isLOAEL)
-                    txt += tbl.footnotes.add_footnote('LOAEL (Lowest Observed Adverse Effect Level)');
+                if(opts.isNOEL)
+                    txt += tbl.footnotes.add_footnote('NOEL (No Observed Effect Level)');
+                if(opts.isLOEL)
+                    txt += tbl.footnotes.add_footnote('LOEL (Lowest Observed Effect Level)');
                 return txt;
             };
 

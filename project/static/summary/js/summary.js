@@ -467,7 +467,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
 
         tbl.addHeaderRow([
             'Study', 'Experiment', 'Animal Group', 'Endpoint',
-            'NOAEL', 'LOAEL', 'BMD', 'BMDL']);
+            'NOEL', 'LOEL', 'BMD', 'BMDL']);
 
         this.endpoints.forEach(function(e){
             tbl.addRow([
@@ -481,8 +481,8 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
                     e.data.animal_group.url,
                     e.data.animal_group.name),
                 e._endpoint_detail_td(),
-                e.get_special_dose_text('NOAEL'),
-                e.get_special_dose_text('LOAEL'),
+                e.get_special_dose_text('NOEL'),
+                e.get_special_dose_text('LOEL'),
                 e.get_bmd_special_values('BMD'),
                 e.get_bmd_special_values('BMDL')
             ]).data('endpoint', e);
@@ -582,8 +582,8 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             endpoint_labels = [],
             y = 0, val, control, lower_ci, upper_ci, egs,
             getCoordClass = function(e, i){
-                if (e.data.LOAEL == i) return "LOAEL"
-                if (e.data.NOAEL == i) return "NOAEL"
+                if (e.data.LOEL == i) return "LOEL"
+                if (e.data.NOEL == i) return "NOEL"
                 return ""
             },
             dose_units = this.data.endpoints[0].dose_units;
@@ -829,8 +829,8 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                 addItem("Doses in Study", "dose_points")
             ];
 
-        if (this.plot_div.find('.LOAEL').length > 0) items.push(addItem("LOAEL", "LOAEL"))
-        if (this.plot_div.find('.NOAEL').length > 0) items.push(addItem("NOAEL", "NOAEL"))
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "LOEL"))
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "NOEL"))
         if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
 
         this.build_legend({
@@ -940,7 +940,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
 
             // setup points information
 
-            // add LOAEL/NOAEL
+            // add LOEL/NOEL
             egs.forEach(function(v2,i2){
                 txt = [e.data.animal_group.experiment.study.short_citation,
                        e.data.name,
@@ -957,8 +957,8 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                               y:e.data.id,
                               classes:'',
                               text: txt.join('\n')};
-                    if (e.data.LOAEL == i2){ coords.classes='LOAEL';}
-                    if (e.data.NOAEL == i2){ coords.classes='NOAEL';}
+                    if (e.data.LOEL == i2){ coords.classes='LOEL';}
+                    if (e.data.NOEL == i2){ coords.classes='NOEL';}
                     points_data.push(coords);
                 }
             });
@@ -1157,8 +1157,8 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                 addItem("Doses in Study", "dose_points")
             ];
 
-        if (this.plot_div.find('.LOAEL').length > 0) items.push(addItem("LOAEL", "LOAEL"))
-        if (this.plot_div.find('.NOAEL').length > 0) items.push(addItem("NOAEL", "NOAEL"))
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "LOEL"))
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "NOEL"))
         if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
 
         this.build_legend({

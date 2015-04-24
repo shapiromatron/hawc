@@ -84,8 +84,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'Endpoint Key',
 
             'low_dose',
-            'NOAEL',
-            'LOAEL',
+            'NOEL',
+            'LOEL',
             'FEL',
             'high_dose',
 
@@ -201,8 +201,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
             if len(ser['endpoint_group'])>1:
                 row.extend([
                     get_dose(doses, 1),  # first non-zero dose
-                    get_dose(doses, ser['NOAEL']),
-                    get_dose(doses, ser['LOAEL']),
+                    get_dose(doses, ser['NOEL']),
+                    get_dose(doses, ser['LOEL']),
                     get_dose(doses, ser['FEL']),
                     get_dose(doses, len(ser['endpoint_group'])-1),
                 ])

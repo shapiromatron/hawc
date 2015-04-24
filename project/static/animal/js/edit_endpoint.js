@@ -41,8 +41,8 @@ EditEndpoint.prototype = {
         $('#endpoint :input').each(function() {
             vals[this.name] = $(this).val();
         });
-        vals['NOAEL'] = $('#id_NOAEL option:selected').val();
-        vals['LOAEL'] = $('#id_LOAEL option:selected').val();
+        vals['NOEL'] = $('#id_NOEL option:selected').val();
+        vals['LOEL'] = $('#id_LOEL option:selected').val();
         vals['FEL'] = $('#id_FEL option:selected').val();
 
         //now endpoint-group data
@@ -102,7 +102,7 @@ EditEndpoint.prototype = {
         toggle_eg_visibility();
     },
     change_dose_pulldowns: function(){
-        var fields = $('#id_NOAEL, #id_LOAEL, #id_FEL')
+        var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
                         .html("<option value=-999>&lt;None&gt;</option>");
 
         $('.doses').each(function(i, v){
@@ -110,8 +110,8 @@ EditEndpoint.prototype = {
         });
 
         // select pre-existing selection (if appropriate)
-        $('#id_NOAEL option[value="{0}"]'.printf(this.data.NOAEL)).prop('selected', true);
-        $('#id_LOAEL option[value="{0}"]'.printf(this.data.LOAEL)).prop('selected', true);
+        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
+        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
         $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
     },
     change_dataset_type: function(){
@@ -176,8 +176,8 @@ EditEndpointIAD.prototype = {
         $('#endpoint :input').each(function() {
             vals[this.name] = $(this).val();
         });
-        vals['NOAEL'] = $('#id_NOAEL option:selected').val();
-        vals['LOAEL'] = $('#id_LOAEL option:selected').val();
+        vals['NOEL'] = $('#id_NOEL option:selected').val();
+        vals['LOEL'] = $('#id_LOEL option:selected').val();
         vals['FEL'] = $('#id_FEL option:selected').val();
 
         //now endpoint-group data

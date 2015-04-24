@@ -89,8 +89,8 @@ _.extend(StudyQualityMatrix.prototype, D3Plot.prototype, {
                               y: v1.data.name,
                               classes:'',
                               text: txt.join('\n')};
-                    if (v1.data.LOAEL == i2){ coords.classes='LOAEL';}
-                    if (v1.data.NOAEL == i2){ coords.classes='NOAEL';}
+                    if (v1.data.LOEL == i2){ coords.classes='LOEL';}
+                    if (v1.data.NOEL == i2){ coords.classes='NOEL';}
                     points.push(coords);
                 }
             });

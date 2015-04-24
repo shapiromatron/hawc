@@ -347,8 +347,8 @@ class BMDRunTests(unittest.TestCase):
         self.bmr_d = {'type': 'Extra', 'value': 0.1, 'confidence_level': 0.95}
         self.bmr_c = {'type': 'Std. Dev.', 'value': 1.0, 'confidence_level': 0.95}
         self.dataset_dichotomous = {
-            'LOAEL': -999,
-            'NOAEL': -999,
+            'LOEL': -999,
+            'NOEL': -999,
             'data_type': u'D',
             'dose_units': u'mg/kg/day',
             'dr': [{'dose': 0.0,
@@ -382,8 +382,8 @@ class BMDRunTests(unittest.TestCase):
             'template': None
         }
         self.dataset_continuous = {
-            'LOAEL': -999,
-            'NOAEL': -999,
+            'LOEL': -999,
+            'NOEL': -999,
             'data_type': u'D',
             'dose_units': u'mg/kg/day',
             'dr': [{'dose': 0.0,

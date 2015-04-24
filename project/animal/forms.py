@@ -321,7 +321,7 @@ class EndpointForm(ModelForm):
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'confidence_interval',
                   'response_units', 'data_location',
-                  'NOAEL', 'LOAEL', 'FEL',
+                  'NOEL', 'LOEL', 'FEL',
                   'monotonicity', 'statistical_test', 'trend_value',
                   'power_notes', 'results_notes', 'endpoint_notes')
 
@@ -330,8 +330,8 @@ class EndpointForm(ModelForm):
         assessment = kwargs.pop('assessment', None)
         super(EndpointForm, self).__init__(*args, **kwargs)
 
-        self.fields['NOAEL'].widget = forms.Select()
-        self.fields['LOAEL'].widget = forms.Select()
+        self.fields['NOEL'].widget = forms.Select()
+        self.fields['LOEL'].widget = forms.Select()
         self.fields['FEL'].widget = forms.Select()
 
         self.fields['system'].widget = selectable.AutoCompleteWidget(
@@ -402,7 +402,7 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('observation_time', 2, "span6")
         helper.add_fluid_row('data_reported', 4, "span4")
         helper.add_fluid_row('response_units', 2, "span6")
-        helper.add_fluid_row('NOAEL', 3, "span4")
+        helper.add_fluid_row('NOEL', 3, "span4")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
         helper.add_fluid_row('power_notes', 3, "span4")
 

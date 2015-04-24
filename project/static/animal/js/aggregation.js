@@ -74,12 +74,12 @@ Aggregation.prototype = {
 POD_table = function(aggregation, tbl_id){
     /* Point-of-departure tables are used to present the key values used in a an
      * assessment for derivation of a point-of-departure. This may include the
-     * LOAEL, NOAEL, and selected BMDL, if modeling was conducted.
+     * LOEL, NOEL, and selected BMDL, if modeling was conducted.
      */
     this.parent = aggregation;
     this.tbl = $(tbl_id);
     this.headers = ['Study', 'Experiment', 'Animal Group',
-                    'Endpoint', 'NOAEL', 'LOAEL', 'BMD', 'BMDL'];
+                    'Endpoint', 'NOEL', 'LOEL', 'BMD', 'BMDL'];
     this.build_table();
 };
 POD_table.prototype = {
@@ -118,8 +118,8 @@ POD_table.prototype = {
                         endpoint.data.animal_group.url,
                         endpoint.data.animal_group.name),
                   $('<td>').append(endpoint._endpoint_detail_td()),
-                  '<td>{0}</td>'.printf(endpoint.get_special_dose_text('NOAEL')),
-                  '<td>{0}</td>'.printf(endpoint.get_special_dose_text('LOAEL')),
+                  '<td>{0}</td>'.printf(endpoint.get_special_dose_text('NOEL')),
+                  '<td>{0}</td>'.printf(endpoint.get_special_dose_text('LOEL')),
                   '<td>{0}</td>'.printf(endpoint.get_bmd_special_values('BMD')),
                   '<td>{0}</td>'.printf(endpoint.get_bmd_special_values('BMDL')));
         return tr;
@@ -376,7 +376,7 @@ _.extend(ERH_plot.prototype, D3Plot.prototype, {
 
                 // setup points information
 
-                // add LOAEL/NOAEL
+                // add LOEL/NOEL
                 v.data.endpoint_group.forEach(function(v2,i2){
                     txt = [v.data.animal_group.experiment.study.short_citation,
                            v.data.name,
@@ -393,8 +393,8 @@ _.extend(ERH_plot.prototype, D3Plot.prototype, {
                                   y:v.data.id,
                                   classes:'',
                                   text: txt.join('\n')};
-                        if (v.data.LOAEL == i2){ coords.classes='LOAEL';}
-                        if (v.data.NOAEL == i2){ coords.classes='NOAEL';}
+                        if (v.data.LOEL == i2){ coords.classes='LOEL';}
+                        if (v.data.NOEL == i2){ coords.classes='NOEL';}
                         points_data.push(coords);
                     }
                 });
@@ -513,8 +513,8 @@ _.extend(ERH_plot.prototype, D3Plot.prototype, {
     add_legend: function(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOAEL').length > 0) { legend_settings.items.push({'text':'LOAEL', 'classes':'LOAEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOAEL').length > 0) { legend_settings.items.push({'text':'NOAEL', 'classes':'NOAEL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'LOEL', 'color':undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'NOEL', 'color':undefined}); }
         if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'BMDL', 'color':undefined}); }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
@@ -611,8 +611,8 @@ _.extend(Forest_plot.prototype, D3Plot.prototype, {
                     }
                     var coords = {'x':val, 'y':y, 'class':'', 'text': txt.join('\n'), 'dose': v2.dose,
                                   'lower_ci': lower_ci, 'upper_ci': upper_ci, 'endpoint': v1};
-                    if (v1.data.LOAEL == i2){ coords.class='LOAEL';}
-                    if (v1.data.NOAEL == i2){ coords.class='NOAEL';}
+                    if (v1.data.LOEL == i2){ coords.class='LOEL';}
+                    if (v1.data.NOEL == i2){ coords.class='NOEL';}
                     points.push(coords);
                 });
                 y+=1;
@@ -786,8 +786,8 @@ _.extend(Forest_plot.prototype, D3Plot.prototype, {
     add_legend: function(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOAEL').length > 0) { legend_settings.items.push({'text':'LOAEL', 'classes':'LOAEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOAEL').length > 0) { legend_settings.items.push({'text':'NOAEL', 'classes':'NOAEL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'LOEL', 'color':undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'NOEL', 'color':undefined}); }
         if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'BMDL', 'color':undefined}); }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;

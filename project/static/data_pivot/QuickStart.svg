@@ -65,8 +65,8 @@ circle{r:8;stroke:black;stroke-width:1.5px;}
 .data_point{fill:black;opacity:0.7;}
 .dose_bars{fill:#A8B2D3;}
 .dose_points:hover{fill:yellow;}
-.NOAEL{fill:red;}
-.LOAEL{fill:green;}
+.NOEL{fill:red;}
+.LOEL{fill:green;}
 .BMDL{fill:blue;}
 rect{fill:none;stroke:#666;stroke-width:2px;shape-rendering:crispEdges;}
 rect.bounding_rectangle_cover{fill:Gold;fill-opacity:0.1;stroke-width:4px;}

@@ -695,14 +695,14 @@ class Endpoint(BaseEndpoint):
         null=True,
         verbose_name='Confidence interval (CI)',
         help_text='A 95% CI is written as 0.95.')
-    NOAEL = models.SmallIntegerField(
-        verbose_name="NOAEL",
+    NOEL = models.SmallIntegerField(
+        verbose_name="NOEL",
         default=-999,
-        help_text="No observed (adverse) effect level")
-    LOAEL = models.SmallIntegerField(
-        verbose_name="LOAEL",
+        help_text="No observed effect level")
+    LOEL = models.SmallIntegerField(
+        verbose_name="LOEL",
         default=-999,
-        help_text="Lowest observed (adverse) effect level")
+        help_text="Lowest observed effect level")
     FEL = models.SmallIntegerField(
         verbose_name="FEL",
         default=-999,
@@ -1137,8 +1137,8 @@ class EndpointGroup(models.Model):
             "endpoint_group-upper_ci",
             "endpoint_group-significant",
             "endpoint_group-significance_level",
-            "endpoint_group-NOAEL",
-            "endpoint_group-LOAEL",
+            "endpoint_group-NOEL",
+            "endpoint_group-LOEL",
             "endpoint_group-FEL",
         )
 
@@ -1155,8 +1155,8 @@ class EndpointGroup(models.Model):
             ser['upper_ci'],
             ser['significant'],
             ser['significance_level'],
-            ser['dose_group_id']==endpoint['NOAEL'],
-            ser['dose_group_id']==endpoint['LOAEL'],
+            ser['dose_group_id']==endpoint['NOEL'],
+            ser['dose_group_id']==endpoint['LOEL'],
             ser['dose_group_id']==endpoint['FEL'],
         )
 

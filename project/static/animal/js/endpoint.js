@@ -67,11 +67,11 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         if (isFinite(this.get_bmd_special_values('BMDL'))){
             return {'type': 'BMDL', 'value': this.get_bmd_special_values('BMDL')};
         }
-        if (isFinite(this.get_special_dose_text('LOAEL'))){
-            return {'type': 'LOAEL', 'value': this.get_special_dose_text('LOAEL')};
+        if (isFinite(this.get_special_dose_text('LOEL'))){
+            return {'type': 'LOEL', 'value': this.get_special_dose_text('LOEL')};
         }
-        if (isFinite(this.get_special_dose_text('NOAEL'))){
-            return {'type': 'NOAEL', 'value': this.get_special_dose_text('NOAEL')};
+        if (isFinite(this.get_special_dose_text('NOEL'))){
+            return {'type': 'NOEL', 'value': this.get_special_dose_text('NOEL')};
         }
         if (isFinite(this.get_special_dose_text('FEL'))){
             return {'type': 'FEL', 'value': this.get_special_dose_text('FEL')};
@@ -308,8 +308,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         tbl.add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated));
         tbl.add_tbody_tr("Location in literature", this.data.data_location);
 
-        if(this.data.NOAEL>0) tbl.add_tbody_tr("NOAEL", critical_dose("NOAEL"));
-        if(this.data.LOAEL>0) tbl.add_tbody_tr("LOAEL", critical_dose("LOAEL"));
+        if(this.data.NOEL>0) tbl.add_tbody_tr("NOEL", critical_dose("NOEL"));
+        if(this.data.LOEL>0) tbl.add_tbody_tr("LOEL", critical_dose("LOEL"));
         if(this.data.FEL>0) tbl.add_tbody_tr("FEL", critical_dose("FEL"));
 
         tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
@@ -337,11 +337,11 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             footnotes.push('Significantly different from control (<i>p</i> < {0})'.printf(
                 self.data.endpoint_group[endpoint_group_index].significance_level));
         }
-        if (self.data.LOAEL == endpoint_group_index) {
-            footnotes.push('LOAEL (Lowest Observed Adverse Effect Level)');
+        if (self.data.LOEL == endpoint_group_index) {
+            footnotes.push('LOEL (Lowest Observed Effect Level)');
         }
-        if (self.data.NOAEL == endpoint_group_index) {
-            footnotes.push('NOAEL (No Observed Adverse Effect Level)');
+        if (self.data.NOEL == endpoint_group_index) {
+            footnotes.push('NOEL (No Observed Effect Level)');
         }
         if (self.data.FEL == endpoint_group_index) {
             footnotes.push('FEL (Frank Effect Level)');
@@ -362,8 +362,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.url,
                 this.data.name),
-            this.get_special_dose_text("NOAEL").toLocaleString(),
-            this.get_special_dose_text("LOAEL").toLocaleString(),
+            this.get_special_dose_text("NOEL").toLocaleString(),
+            this.get_special_dose_text("LOEL").toLocaleString(),
             this.get_special_dose_text("FEL").toLocaleString()
         ];
     },
@@ -639,8 +639,8 @@ EndpointListTable.prototype = {
                 "Experiment",
                 "Animal Group",
                 "Endpoint",
-                "NOAEL",
-                "LOAEL",
+                "NOEL",
+                "LOEL",
                 "FEL"
             ];
 
@@ -1056,8 +1056,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                 value.y = v.incidence/v.n;
                 txt.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
             }
-            if (ep.LOAEL == i){value.cls = value.cls + ' LOAEL'; }
-            if (ep.NOAEL == i){value.cls = value.cls + ' NOAEL'; }
+            if (ep.LOEL == i){value.cls = value.cls + ' LOEL'; }
+            if (ep.NOEL == i){value.cls = value.cls + ' NOEL'; }
 
             if (v.significance_level>0){
                 sigs_data.push({'x': v.dose,
@@ -1241,8 +1241,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOAEL').length > 0) { legend_settings.items.push({'text':'LOAEL', 'classes':'LOAEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOAEL').length > 0) { legend_settings.items.push({'text':'NOAEL', 'classes':'NOAEL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text': 'LOEL', 'classes': 'LOEL', 'color': undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text': 'NOEL', 'classes': 'NOEL', 'color': undefined}); }
         $.each($(this.bmd), function(i, v){
             legend_settings.items.push({'text': this.BMD.model_name, 'classes': '', 'color': this.line_color });
         });
@@ -1592,8 +1592,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             }
 
             cls='dose_bars';
-            if(e.data.NOAEL == i){cls+=' NOAEL';}
-            if(e.data.LOAEL == i){cls+=' LOAEL';}
+            if(e.data.NOEL == i){cls+=' NOEL';}
+            if(e.data.LOEL == i){cls+=' LOEL';}
 
             values.push({'dose': v.dose,
                          'value':val,
@@ -1775,8 +1775,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
     add_legend: function(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOAEL').length > 0) { legend_settings.items.push({'text':'LOAEL', 'classes':'LOAEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOAEL').length > 0) { legend_settings.items.push({'text':'NOAEL', 'classes':'NOAEL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'LOEL', 'color':undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'NOEL', 'color':undefined}); }
         if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'BMDL', 'color':undefined}); }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;

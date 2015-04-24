@@ -92,8 +92,8 @@ def build_endpoints_for_permission_testing(obj):
                                     name='endpoint name',
                                     response_units='% affected',
                                     data_type='C',
-                                    NOAEL=1,
-                                    LOAEL=-999)
+                                    NOEL=1,
+                                    LOEL=-999)
     obj.endpoint_working.save()
 
     obj.endpoint_final = Endpoint(assessment=obj.assessment_final,
@@ -101,8 +101,8 @@ def build_endpoints_for_permission_testing(obj):
                                   name='endpoint name',
                                   response_units='% affected',
                                   data_type='C',
-                                  NOAEL=-999,
-                                  LOAEL=-999)
+                                  NOEL=-999,
+                                  LOEL=-999)
     obj.endpoint_final.save()
 
     # now build endpoint groups
@@ -646,8 +646,8 @@ class EndpointPermissions(TestCase):
                                  "name": 'endpoint name',
                                  "response_units": '% affected',
                                  "data_type": 'D',
-                                 "NOAEL": 1,
-                                 "LOAEL": -999,
+                                 "NOEL": 1,
+                                 "LOEL": -999,
                                  "egs_json": '[{"dose_group_id":0,"n":20,"incidence":1,"response":null,"variance":null},{"dose_group_id":1,"n":20,"incidence":2,"response":null,"variance":null},{"dose_group_id":2,"n":20,"incidence":3,"response":null,"variance":null},{"dose_group_id":3,"n":20,"incidence":4,"response":null,"variance":null}]'})
             self.assertTrue(response.status_code == 302)
             self.assertTemplateUsed('animal/endpoint_detail.html')
@@ -663,8 +663,8 @@ class EndpointPermissions(TestCase):
                                  "name": 'endpoint name',
                                  "response_units": '% affected',
                                  "data_type": 'D',
-                                 "NOAEL": 1,
-                                 "LOAEL": -999,
+                                 "NOEL": 1,
+                                 "LOEL": -999,
                                  "egs_json": '[{"dose_group_id":0,"n":20,"incidence":1,"response":null,"variance":null},{"dose_group_id":1,"n":20,"incidence":2,"response":null,"variance":null},{"dose_group_id":2,"n":20,"incidence":3,"response":null,"variance":null},{"dose_group_id":3,"n":20,"incidence":4,"response":null,"variance":null}]'})
             self.assertTrue(response.status_code == 302)
             self.assertTemplateUsed('animal/endpoint_detail.html')
@@ -755,8 +755,8 @@ class EndpointGroupFunctionality(TestCase):
                             name='endpoint name',
                             response_units='% affected',
                             data_type='D',
-                            NOAEL=1,
-                            LOAEL=-999)
+                            NOEL=1,
+                            LOEL=-999)
         endpoint.save()
 
         eg = EndpointGroup(dose_group_id=0,
