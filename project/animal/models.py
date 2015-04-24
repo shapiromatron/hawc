@@ -143,10 +143,11 @@ class Experiment(models.Model):
             conditions, non-GLP but consistent with guideline study, etc.)""")
     description = models.TextField(
         blank=True,
-        help_text="Describe high-level experimental protocol used. Other fields "
-                  "are available in subsequent forms to enter the species, strain, "
-                  "and dosing-protocol. However, this may be a useful field to "
-                  "describe the overall purpose and experimental design.")
+        verbose_name="Description and animal husbandry",
+        help_text="Text-description of the experimental protocol used. "
+                  "May also include information such as animal husbandry. "
+                  "Note that dosing-regime information and animal details are "
+                  "captured in other fields.")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(

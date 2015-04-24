@@ -38,13 +38,14 @@
 
     <table class="table table-condensed table-striped">
       <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+        <col style="width: 25%;">
+        <col style="width: 75%;">
       </colgroup>
       <tbody>
         <tr><th>Name</th><td>{{object.name}}</td></tr>
         <tr><th>Type</th><td>{{object.get_type_display}}</td></tr>
-        <tr><th>Multiple generations</th><td>{{object.is_generational}}</td></tr>
+        <tr><th>Multiple generations</th>
+            <td>{% if object.is_generational %}Yes{% else %}No{% endif %}</td></tr>
         {% if object.chemical %}
           <tr><th>Chemical</th><td>{{object.chemical}}</td></tr>
         {% endif %}
@@ -57,7 +58,7 @@
         {% if object.purity_available %}
           <tr><th>Chemical purity</th><td>&gt;{{object.purity}}%</td></tr>
         {% else %}
-          <tr><th>Chemical purity available</th><td>{{object.purity_available}}</td></tr>
+          <tr><th>Chemical purity available</th><td>No</td></tr>
         {% endif %}
         {% if object.vehicle %}
           <tr><th>Vehicle</th><td>{{object.vehicle}}</td></tr>
@@ -78,7 +79,7 @@
           <tr><th>Guideline compliance</th><td>{{object.guideline_compliance}}</td></tr>
         {% endif %}
         {% if object.description|length > 0 %}
-        <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
+        <tr><th>Description and animal husbandry</th><td>{{object.description|safe}}</td></tr>
         {% endif %}
       </tbody>
     </table>
