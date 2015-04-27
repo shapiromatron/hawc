@@ -7,12 +7,16 @@ _.extend(EditEndpoint, {
     getVarianceType: function(variance_type){
         // static method used for returning the "pretty-name" for variance type
         switch(variance_type){
+            case 0:
+                return "N/A";
             case 1:
-                return "Standard Deviation"
+                return "Standard Deviation";
             case 2:
-                return "Standard Error"
+                return "Standard Error";
+            case 3:
+                return "Not Reported";
             default:
-                return "N/A"
+                throw("Unknown variance_type");
         }
     }
 });
@@ -52,6 +56,7 @@ EditEndpoint.prototype = {
             row['incidence'] = parseFloat($('#inc_' + i).val());
             row['response'] = parseFloat($('#resp_' + i).val());
             row['variance'] = parseFloat($('#variance_' + i).val());
+            row['hasVariance'] = $.isNumeric(row['variance']);
             row['lower_ci'] = parseFloat($('#lower_ci_' + i).val());
             row['upper_ci'] = parseFloat($('#upper_ci_' + i).val());
             row['significance_level'] = parseFloat($('#significance_level_' + i).val()) || 0;
@@ -127,8 +132,8 @@ EditEndpoint.prototype = {
             shows = ".d_only";
             hides =  ".c_only,.p_only,.pc_only";
         }
-        this.eg_table.find(shows).show();
-        this.eg_table.find(hides).hide();
+        $(shows).show();
+        $(hides).hide();
     },
     load_values_into_form: function(){
         // load values from object representation into form
@@ -315,7 +320,8 @@ SampleSizeWidget.prototype = {
             txt += "requires approximately {0} animals to detect a {1}% change from control at 80% power".printf(power, fields.percentToDetect);
         }
         return this.result.html(txt);
-    }, getPower: function(mean, sd, percentToDetect){
+    },
+    getPower: function(mean, sd, percentToDetect){
         // Calculate the sample size required to detect a response with 80%
         // power, which is dependent on the control mean and standard-deviation,
         // along with the fraction to detect such as a 10% (0.10) change from control
@@ -323,7 +329,8 @@ SampleSizeWidget.prototype = {
             d = mean*fracToDetect/sd,
             ss80 = 16/Math.pow(d, 2);
         return ss80;
-    }, savePower: function(){
+    },
+    savePower: function(){
         $("#id_power_notes").html(this.result.html());
     }
 };

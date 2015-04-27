@@ -455,8 +455,10 @@ class EndpointGroupForm(ModelForm):
     def clean(self):
         cleaned_data = super(EndpointGroupForm, self).clean()
         if self.instance.endpoint.data_type == 'C':
-            if cleaned_data.get("variance") is None:
-                raise ValidationError('Variance must be numeric')
+            var = cleaned_data.get("variance")
+            var_type = self.instance.endpoint.variance_type
+            if (var is None and var_type in (1,2)) or (var is not None and var_type in (0,3)):
+                raise ValidationError('Variance must be numeric, or variance-type should be not reported')
             if cleaned_data.get("response") is None:
                 raise ValidationError('Response must be numeric')
         elif self.instance.endpoint.data_type == 'P':

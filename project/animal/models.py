@@ -625,12 +625,14 @@ class Endpoint(BaseEndpoint):
     VARIANCE_TYPE_CHOICES = (
         (0, "NA"),
         (1, "SD"),
-        (2, "SE"))
+        (2, "SE"),
+        (3, "NR"))
 
     VARIANCE_NAME = {
         0: "N/A",
         1: "Standard Deviation",
-        2: "Standard Error"}
+        2: "Standard Error",
+        3: "Not Reported"}
 
     OBSERVATION_TIME_UNITS = (
         (0, "not-reported"),
@@ -1043,6 +1045,10 @@ class EndpointGroup(models.Model):
     def clean(self):
         self.significant = (self.significance_level > 0)
 
+    @property
+    def hasVariance(self):
+        return self.variance is not None
+
     @classmethod
     def getIndividuals(cls, endpoint, egs):
         individuals = cls.objects.filter(endpoint=endpoint.id)\
@@ -1061,7 +1067,7 @@ class EndpointGroup(models.Model):
         # calculate stdev given re
         if variance_type == 1:
             return variance
-        elif variance_type == 2:
+        elif variance and variance_type == 2:
             return variance * math.sqrt(n)
         else:
             return None
@@ -1094,21 +1100,22 @@ class EndpointGroup(models.Model):
         # Appends results to the dictionary for each endpoint-group.
         #
         for eg in egs:
-            eg['percentControlMean'] = None
-            eg['percentControlLow'] = None
-            eg['percentControlHigh'] = None
+            mean = low = high = None
             if data_type == "C":
                 sqrt_n = math.sqrt(eg['n'])
                 resp_control = egs[0]['response']
                 if ((sqrt_n != 0) and (resp_control != 0)):
-                    eg['percentControlMean'] =  eg['response'] / resp_control * 100.
-                    ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
-                    eg['percentControlLow']  = (eg['percentControlMean'] - ci)
-                    eg['percentControlHigh'] = (eg['percentControlMean'] + ci)
+                    mean =  eg['response'] / resp_control * 100.
+                    if eg['stdev']:
+                        ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
+                        low  = (mean - ci)
+                        high = (mean + ci)
             elif data_type == "P":
-                eg['percentControlMean'] = eg['response']
-                eg['percentControlLow']  = eg['lower_ci']
-                eg['percentControlHigh'] = eg['upper_ci']
+                mean = eg['response']
+                low  = eg['lower_ci']
+                high = eg['upper_ci']
+
+            eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
     def getNRangeText(ns):

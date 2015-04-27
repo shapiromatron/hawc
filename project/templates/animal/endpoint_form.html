@@ -44,7 +44,19 @@
     <input id="endpoint_json" name="endpoint_json" type="hidden"></input>
 
     <h3 id="eg_header">Dose-response data</h3>
-
+    <p class="help-text">
+      <span class="d_only">
+        For dichotomous data, all fields are required.
+      </span>
+      <span class="c_only">
+        For continuous data, if variance is not-reported, ensure the
+        "variance type" input-field above is "NR", and then variance can be
+        left blank; otherwise it is required.
+      </span>
+      <span class="p_only">
+        For percent-difference data, lower CI (%) and upper CI (%) are optional.
+      </span>
+    </p>
     <div class="span7">
       {% if egs_errors %}<div class="alert alert-error">{{egs_errors|safe}}</div>{% endif %}
       <table id="eg" class="table table-condensed table-striped">

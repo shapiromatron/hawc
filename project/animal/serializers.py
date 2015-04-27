@@ -68,6 +68,11 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
 class EndpointGroupSerializer(serializers.ModelSerializer):
     endpoint = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    def to_representation(self, instance):
+        ret = super(EndpointGroupSerializer, self).to_representation(instance)
+        ret['hasVariance'] = instance.hasVariance
+        return ret
+
     class Meta:
         model = models.EndpointGroup
 

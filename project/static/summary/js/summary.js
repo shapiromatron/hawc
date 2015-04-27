@@ -752,11 +752,14 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
 
         var x = this.x_scale,
             y = this.y_scale,
-            self = this;
+            self = this,
+            lines = this.points.filter(function(v){
+                return ($.isNumeric(v.lower_ci)) && ($.isNumeric(v.upper_ci));
+            });
 
         // horizontal confidence interval line
         this.vis.selectAll("svg.error_bars")
-            .data(this.points)
+            .data(lines)
           .enter().append("line")
             .attr("x1", function(d) { return x(d.lower_ci); })
             .attr("y1", function(d) { return y(d.y); })
@@ -766,7 +769,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
 
         // lower vertical vertical confidence intervals line
         this.vis.selectAll("svg.error_bars")
-            .data(this.points)
+            .data(lines)
           .enter().append("line")
             .attr("x1", function(d) { return x(d.lower_ci); })
             .attr("y1", function(d) { return y(d.y)-5; })
@@ -776,7 +779,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
 
         // upper vertical confidence intervals line
         this.vis.selectAll("svg.error_bars")
-            .data(this.points)
+            .data(lines)
           .enter().append("line")
             .attr("x1", function(d) { return x(d.upper_ci); })
             .attr("y1", function(d) { return y(d.y)-5; })

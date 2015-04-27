@@ -160,7 +160,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         if(eg.lower_ci) txt += " ({0}-{1})".printf(eg.lower_ci, eg.upper_ci);
         return txt
     },
-    calculate_stdev: function(eg){
+    _calculate_stdev: function(eg){
         // stdev is required for plotting; calculate if SE is specified
         var convert = ((this.data.data_type === "C") &&
                        (parseInt(this.data.variance_type, 10) === 2));
@@ -190,11 +190,13 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         */
         var self = this;
         this.data.endpoint_group.forEach(function(v, i){
-            if (v.stdev === undefined) self.calculate_stdev(v);
-            var se = v.stdev/Math.sqrt(v.n),
-                z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
-            v.lower_limit = v.response - se * z;
-            v.upper_limit = v.response + se * z;
+            if (v.hasVariance){
+                if (v.stdev === undefined) self._calculate_stdev(v);
+                var se = v.stdev/Math.sqrt(v.n),
+                    z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
+                v.lower_limit = v.response - se * z;
+                v.upper_limit = v.response + se * z;
+            }
         });
     },
     _build_ag_dose_rows: function(options){
@@ -237,7 +239,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n);})));
     },
     _build_ag_response_row: function(footnote_object){
-        var self = this, footnotes,
+        var self = this, footnotes, response,
             tr = $('<tr>')
                 .append('<td><a href="{0}" target="_blank">{1}</a></td>'.printf(this.data.url, this.data.name));
 
@@ -246,10 +248,14 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             this.data.endpoint_group.forEach(function(v, i){
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if(i === 0){
-                    tr.append("<td>{0} ± {1}{2}</td>".printf(v.response, v.variance, footnotes));
+                    response = v.response.toLocaleString();
+                    if(v.hasVariance) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    tr.append("<td>{0}{1}</td>".printf(response, footnotes));
                     dr_control = v;
                 } else {
-                    tr.append("<td>{0} ± {1} ({2}%){3}</td>'".printf(v.response, v.variance,
+                    response = v.response.toLocaleString();
+                    if(v.hasVariance) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    tr.append("<td>{0} ({1}%){2}</td>'".printf(response,
                         self._continuous_percent_difference_from_control(v, dr_control), footnotes));
                 }
             });
@@ -556,40 +562,48 @@ EndpointTable.prototype = {
         return this.tbl;
     },
     build_header: function(){
-        var dose = $('<th>Dose<br>(' + this.endpoint.dose_units + ')</th>');
+        var self = this,
+            d = this.endpoint.data,
+            dose = $('<th>Dose ({0})</th>'.printf(this.endpoint.dose_units)),
+            tr = $('<tr>');
+
         if (this.endpoint.doses.length>1){
-            this.dose_toggle = $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>');
-            dose.append(this.dose_toggle);
-
-            var self = this;
-            this.dose_toggle.on('click', function(e){
-                e.preventDefault();
-                self.endpoint.toggle_dose_units();
-            });
+            $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>')
+                .on('click', function(e){
+                    e.preventDefault();
+                    self.endpoint.toggle_dose_units();
+                })
+                .appendTo(dose);
         }
 
-        var header = $('<thead><tr></tr></thead>')
-                .append(dose)
-                .append('<th>Number of Animals</th>');
-        if (this.endpoint.data.data_type == 'D') {
-            this.number_columns = 4;
-            header.append('<th>Incidence</th>')
+        tr.append(dose)
+          .append('<th>Number of Animals</th>');
+
+        switch (d.data_type){
+            case "D":
+                tr.append('<th>Incidence</th>')
                   .append('<th>Percent Incidence</th>');
-        } else if (this.endpoint.data.data_type == 'P') {
-            this.number_columns = 3;
-            header.append('<th>Response ({0}% CI)</th>'.printf(self.endpoint.data.confidence_interval*100));
-        } else {
-            this.number_columns = 4;
-            header.append('<th>Response</th>')
-                  .append('<th>{0}</th>'.printf(this.endpoint.data.variance_name));
+                break;
+            case "P":
+                tr.append('<th>Response ({0}% CI)</th>'.printf(d.confidence_interval*100));
+                break;
+            case "C":
+                tr.append('<th>Response</th>');
+                this.hasVariance = d.endpoint_group[0].hasVariance;
+                if(this.hasVariance) tr.append('<th>{0}</th>'.printf(d.variance_name));
+                break;
+            default:
+                throw("Unknown data type.");
         }
-        this.thead = header;
+
+        this.number_columns = tr.children().length;
+        this.thead = $('<thead>').append(tr);
     },
     build_body: function(){
         this.tbody = $('<tbody></tbody>');
         var self = this;
         this.endpoint.data.endpoint_group.forEach(function(v, i){
-            var tr = $('<tr></tr>'),
+            var tr = $('<tr>'),
                 dose = v.dose.toLocaleString();
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
@@ -598,8 +612,8 @@ EndpointTable.prototype = {
               .append('<td>{0}</td>'.printf(v.n));
 
             if (self.endpoint.data.data_type == 'C') {
-                tr.append('<td>{0}</td>'.printf(v.response))
-                 .append('<td>{0}</td>'.printf(v.variance));
+                tr.append('<td>{0}</td>'.printf(v.response));
+                if(self.hasVariance) tr.append('<td>{0}</td>'.printf(v.variance));
             } else if (self.endpoint.data.data_type == 'P') {
                 tr.append("<td>{0}</td>".printf(self.endpoint.get_pd_string(v)));
             } else {
@@ -1136,7 +1150,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         }
 
         var bars = this.values.filter(function(v){
-            return v.y_lower !== null && v.y_upper !== null;
+            return ($.isNumeric(v.y_lower)) && ($.isNumeric(v.y_upper));
             }),
             bar_options  = {
                 data: bars,
@@ -1743,13 +1757,16 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
     add_error_bars: function(){
         var hline_width = this.w * 0.02,
             x = this.x_scale,
-            y = this.y_scale;
+            y = this.y_scale,
+            bars = this.values.filter(function(v){
+                return ($.isNumeric(v.low)) && ($.isNumeric(v.high));
+            });
 
         this.error_bar_group = this.vis.append("g")
                 .attr('class','error_bars');
 
         bar_options = {
-            data: this.values,
+            data: bars,
             x1: function(d) {return x(d.dose)+x.rangeBand()/2;},
             y1: function(d) {return y(d.low);},
             x2: function(d) {return x(d.dose)+x.rangeBand()/2;},
