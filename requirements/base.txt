@@ -38,3 +38,8 @@ watchdog==0.8.2
 argh==0.26.1
 PyYAML==3.11
 pathtools==0.1.2
+
+# for import scripts
+numpy==1.9.2
+pandas==0.16.0
+python-dateutil==2.4.2
