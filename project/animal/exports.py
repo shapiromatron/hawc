@@ -60,6 +60,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
             'experiment',
             'experiment_url',
+            'chemical',
 
             'animal_group',
             'animal_group_url',
@@ -77,6 +78,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'system',
             'organ',
             'effect',
+            'observation_time',
             'data_type',
             'doses',
             'dose_units',
@@ -159,6 +161,15 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ns_txt
             )
 
+        def get_observation_time(e):
+            txt = ""
+            if e["observation_time"]:
+                if e["observation_time"] % 1 == 0:
+                    txt = u"{} {}".format(int(e["observation_time"]), e["observation_time_units"])
+                else:
+                    txt = u"{} {}".format(e["observation_time"], e["observation_time_units"])
+            return txt
+
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
@@ -173,6 +184,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
                 ser['animal_group']['experiment']['name'],
                 ser['animal_group']['experiment']['url'],
+                ser['animal_group']['experiment']['chemical'],
 
                 ser['animal_group']['name'],
                 ser['animal_group']['url'],
@@ -190,6 +202,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['system'],
                 ser['organ'],
                 ser['effect'],
+                get_observation_time(ser),
                 ser['data_type_label'],
                 get_doses_str(doses),
                 get_dose_units(doses),
