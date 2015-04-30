@@ -7,6 +7,18 @@ from utils.helper import SerializerHelper
 from . import models
 
 
+class DataPivotSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        ret = super(DataPivotSerializer, self).to_representation(instance)
+        ret['url'] = instance.get_absolute_url()
+        ret['visual_type'] = instance.visual_type
+        return ret
+
+    class Meta:
+        model = models.DataPivot
+
+
 class CollectionVisualSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):

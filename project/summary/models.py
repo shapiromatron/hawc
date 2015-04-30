@@ -298,7 +298,7 @@ class DataPivot(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('summary:dp_detail', kwargs={'pk': self.assessment.pk,
+        return reverse('summary:dp_detail', kwargs={'pk': self.assessment_id,
                                                     'slug': self.slug})
 
     def get_assessment(self):
@@ -346,6 +346,12 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.get_data_url()
 
+    @property
+    def visual_type(self):
+        if hasattr(self, 'datapivotupload'):
+            return self.datapivotupload.visual_type
+        else:
+            return self.datapivotquery.visual_type
 
 class DataPivotUpload(DataPivot):
     file = models.FileField(
@@ -359,6 +365,9 @@ class DataPivotUpload(DataPivot):
     def get_download_url(self):
         return self.file.url
 
+    @property
+    def visual_type(self):
+        return "Data pivot (file upload)"
 
 class DataPivotQuery(DataPivot):
     evidence_type = models.PositiveSmallIntegerField(
@@ -399,6 +408,18 @@ class DataPivotQuery(DataPivot):
 
         return url
 
+    @property
+    def visual_type(self):
+        if self.evidence_type == 0:  # Animal Bioassay:
+            return "Data pivot (animal bioassay)"
+        elif self.evidence_type == 1:  # Epidemiology
+            return "Data pivot (epidemiology)"
+        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
+            return "Data pivot (epidemiology meta-analysis/pooled-analysis)"
+        elif self.evidence_type == 2:  # In Vitro
+            return "Data pivot (in vitro)"
+        else:
+            raise ValueError("Unknown type")
 
 reversion.register(SummaryText)
 reversion.register(DataPivotUpload)

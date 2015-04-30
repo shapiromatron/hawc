@@ -5,6 +5,13 @@ from assessment.api.views import AssessmentViewset
 from . import models, serializers
 
 
+class DataPivot(AssessmentViewset):
+    assessment_filter_args = "assessment"
+    model = models.DataPivot
+    serializer_class = serializers.DataPivotSerializer
+    paginate_by = None
+
+
 class Visual(AssessmentViewset):
     """
     For list view, return all Visual objects for an assessment, but using the
@@ -22,5 +29,3 @@ class Visual(AssessmentViewset):
         if self.action == "list":
             cls  = serializers.CollectionVisualSerializer
         return cls
-
-
