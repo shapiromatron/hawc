@@ -316,22 +316,6 @@ class DataPivot(models.Model):
                                     slug=self.slug).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- slug name must be unique for assessment.')
 
-    def get_json(self, json_encode=True):
-        d = {}
-        fields = ('pk', 'title', 'caption')
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        d['settings'] = self.settings
-        d['url'] = self.get_absolute_url()
-        d['data_url'] = self.get_data_url()
-        d['download_url'] = self.get_download_url()
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
-
     def get_download_url(self):
         # get download url for Excel file (default download-type)
         if hasattr(self, 'datapivotupload'):
@@ -352,6 +336,13 @@ class DataPivot(models.Model):
             return self.datapivotupload.visual_type
         else:
             return self.datapivotquery.visual_type
+
+    def get_settings(self):
+        try:
+            return json.loads(self.settings)
+        except ValueError:
+            return None
+
 
 class DataPivotUpload(DataPivot):
     file = models.FileField(
@@ -394,15 +385,15 @@ class DataPivotQuery(DataPivot):
         # request an Excel file for download
         url = None
         if self.evidence_type == 0:  # Animal Bioassay:
-            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment.pk})
-            if self.units:
-                url += '?dose_pk={0}'.format(self.units.pk)
+            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment_id})
+            if self.units_id:
+                url += '?dose_pk={0}'.format(self.units_id)
         elif self.evidence_type == 1:  # Epidemiology
-            url = reverse('epi:ao_flat', kwargs={'pk': self.assessment.pk})
+            url = reverse('epi:ao_flat', kwargs={'pk': self.assessment_id})
         elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
-            url = reverse('epi:mr_flat', kwargs={'pk': self.assessment.pk})
+            url = reverse('epi:mr_flat', kwargs={'pk': self.assessment_id})
         elif self.evidence_type == 2:  # In Vitro
-            url = reverse('invitro:endpoints_flat', kwargs={'pk': self.assessment.pk})
+            url = reverse('invitro:endpoints_flat', kwargs={'pk': self.assessment_id})
         if url is None:
             raise Http404
 

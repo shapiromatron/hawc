@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:dp_list' assessment.pk %}">Data Pivot</a><span class="divider">/</span></li>
+  <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
   {% if crud == "Read" %}
     <li class="active">{{object}}<span class="divider">/</span></li>
   {% else %}
@@ -39,11 +39,11 @@
 
   {% block dp_content %}
 
+    <div id="dp_display"></div>
+
     <div id="loading_div">
       <p>Fetching the latest data from {{assessment}}... <img src="{{STATIC_URL}}img/loading.gif"></p>
     </div>
-
-    <div id="dp_display" style='display:none;'></div>
 
     {% if object.caption %}
       <div class="well">{{object.caption|safe}}</div>
@@ -62,14 +62,11 @@
   <script src="{{STATIC_URL}}data_pivot/js/data_pivot.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      d3.tsv("{{object.get_data_url|safe}}")
-        .row(function(d, i){ return DataPivot.massage_row(d, i); })
-        .get(function(error, data){
-          $('#loading_div').fadeOut();
-          window.dp = new DataPivot_visualization(data,
-                                     {{object.settings|safe}},
-                                     $('#dp_display').fadeIn());
+      DataPivot.get_object({{object.id}}, function(dp){
+        $('#loading_div').fadeOut(function(){
+          dp.build_data_pivot_vis($('#dp_display'));
         });
+      });
     });
   </script>
 {% endblock %}

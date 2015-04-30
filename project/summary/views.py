@@ -178,14 +178,6 @@ class ExcelUnicode(TemplateView):
     template_name = "summary/datapivot_save_as_unicode_modal.html"
 
 
-class DataPivotList(BaseList):
-    parent_model = Assessment
-    model = models.DataPivot
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
-
 class DataPivotNewPrompt(TemplateView):
     """
     Select if you wish to upload a file or use a query.
@@ -298,14 +290,6 @@ class GetDataPivotObjectMixin(object):
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
-
-
-class DataPivotJSON(BaseDetail):
-    model = models.DataPivot
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return HttpResponse(self.object.get_json(), content_type="application/json")
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):

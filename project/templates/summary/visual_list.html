@@ -30,6 +30,7 @@
     $(document).ready(function(){
       VisualCollection.buildTable(
         "{% url 'summary:visual-list' %}?assessment_id={{assessment.id}}",
+        "{% url 'summary:data_pivot-list' %}?assessment_id={{assessment.id}}",
         $('.visualizationsList'));
     });
   </script>

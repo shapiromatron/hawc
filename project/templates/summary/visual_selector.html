@@ -22,6 +22,10 @@
       <div>
         <select class="span10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
           <option
+            data-showcase="#dataPivot"
+            value="{% url 'summary:dp_new-prompt' assessment.id %}">
+            Data pivot</option>
+          <option
             data-showcase="#visual0"
             value="{% url 'summary:visualization_create' assessment.id 0 %}">
             Bioassay endpoint aggregation</option>
@@ -67,6 +71,20 @@
         for a given dose-unit, with response normalized to percent change from
         control using spline interpolation. Interactive, clicking on any line
         displays dose-response details and highlights metadata in red
+      </p>
+    </div>
+
+    <div id="dataPivot">
+      <h2>Data Pivot</h2>
+      <div class="row">
+        <img class="span10 offset1" src="{{STATIC_URL}}/summary/img/data_pivot.png">
+      </div>
+      <p class="help-block">
+        Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
+        from a tab-delimited file can be used to generate custom forest-plot
+        style visualizations. Displayed text-fields and numbers to plot are
+        customizable; results can be sorted and filter, and conditional-formatting
+        can also be applied.
       </p>
     </div>
 

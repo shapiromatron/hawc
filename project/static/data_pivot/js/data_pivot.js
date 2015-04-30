@@ -7,12 +7,12 @@ var DataPivot = function(data, settings, dom_bindings, title){
 _.extend(DataPivot, {
   NULL_CASE: "---",
   get_object: function(pk, callback){
-    $.get('/summary/data-pivot/{0}/json/'.printf(pk), function(d){
+    $.get('/summary/api/data_pivot/{0}/'.printf(pk), function(d){
       d3.tsv(d.data_url)
         .row(function(d, i){ return DataPivot.massage_row(d, i); })
         .get(function(error, data){
           var dp = new DataPivot(data,
-              JSON.parse(d.settings),
+              d.settings,
               {},
               d.title);
           if(callback){callback(dp);} else {return dp;}

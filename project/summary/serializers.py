@@ -7,16 +7,27 @@ from utils.helper import SerializerHelper
 from . import models
 
 
-class DataPivotSerializer(serializers.ModelSerializer):
+class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        ret = super(DataPivotSerializer, self).to_representation(instance)
+        ret = super(CollectionDataPivotSerializer, self).to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['visual_type'] = instance.visual_type
         return ret
 
     class Meta:
         model = models.DataPivot
+        exclude = ('settings', )
+
+
+class DataPivotSerializer(CollectionDataPivotSerializer):
+
+    def to_representation(self, instance):
+        ret = super(DataPivotSerializer, self).to_representation(instance)
+        ret["settings"] = instance.get_settings()
+        ret['data_url'] = instance.get_data_url()
+        ret['download_url'] = instance.get_download_url()
+        return ret
 
 
 class CollectionVisualSerializer(serializers.ModelSerializer):

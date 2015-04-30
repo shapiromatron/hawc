@@ -6,10 +6,20 @@ from . import models, serializers
 
 
 class DataPivot(AssessmentViewset):
+    """
+    For list view, return simplified data-pivot view.
+
+    For all other views, use the detailed visual view.
+    """
     assessment_filter_args = "assessment"
     model = models.DataPivot
-    serializer_class = serializers.DataPivotSerializer
     paginate_by = None
+
+    def get_serializer_class(self):
+        cls = serializers.DataPivotSerializer
+        if self.action == "list":
+            cls  = serializers.CollectionDataPivotSerializer
+        return cls
 
 
 class Visual(AssessmentViewset):

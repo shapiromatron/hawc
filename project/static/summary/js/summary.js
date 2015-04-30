@@ -310,9 +310,20 @@ var VisualCollection = function(data){
     }
 }
 _.extend(VisualCollection, {
-    buildTable: function(url, $el){
-        $.get(url, function(d){
-            var obj = new VisualCollection(d);
+    buildTable: function(url1, url2, $el){
+        var visuals, obj;
+
+        $.when(
+           $.get(url1),
+           $.get(url2)
+        ).done(function(d1, d2) {
+            d1[0].push.apply(d1[0], d2[0]);
+            visuals = _.sortBy(d1[0], function(d){return d.title;});
+        }).fail(function(){
+            HAWCUtils.addAlert("Error- unable to fetch visualizations; please contact a HAWC administrator.");
+            visuals = [];
+        }).always(function(){
+            obj = new VisualCollection( visuals );
             return obj.build_table($el);
         });
     }
@@ -324,7 +335,7 @@ VisualCollection.prototype = {
 
         var tbl = new BaseTable();
         tbl.addHeaderRow(['Title', 'Visual type', 'Description', 'Created', 'Modified']);
-        tbl.setColGroup([18, 18, 34, 15, 15]);
+        tbl.setColGroup([20, 20, 38, 11, 11]);
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
         };
