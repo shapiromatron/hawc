@@ -1106,7 +1106,7 @@ class AssessedOutcomeGroup(models.Model):
         txt = "-"
         if self.estimate:
             txt = unicode(self.estimate)
-        if (self.lower_ci and self.upper_ci):
+        if (self.lower_ci is not None and self.upper_ci is not None):
             txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
