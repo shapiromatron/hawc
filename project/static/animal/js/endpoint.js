@@ -581,6 +581,7 @@ EndpointTable.prototype = {
 
         switch (d.data_type){
             case "D":
+            case "DC":
                 tr.append('<th>Incidence</th>')
                   .append('<th>Percent Incidence</th>');
                 break;
