@@ -575,42 +575,6 @@ class EndpointFlatFile(BaseList):
         return exporter.build_response()
 
 
-class EndpointCrossview(BaseList):
-    """
-    Endpoint meta-data viewer.
-    Returns a JSON flat-file object of a collection of endpoints.
-    """
-    parent_model = Assessment
-    model = models.Endpoint
-    template_name = "animal/endpoint_crossview.html"
-
-    def get_queryset(self):
-        if self.request.GET.get('dose_pk'):
-            self.dose_units = get_object_or_404(models.DoseUnits, pk=self.request.GET['dose_pk'])
-        else:
-            self.dose_units = models.DoseUnits.objects.get(units='mg/kg-day')
-        filters = {
-            "assessment": self.assessment,
-            "animal_group__dosing_regime__doses__dose_units": self.dose_units
-        }
-        perms = super(EndpointCrossview, self).get_obj_perms()
-        if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects\
-                    .filter(**filters)\
-                    .distinct('pk')
-
-
-    def get_context_data(self, **kwargs):
-        context = super(EndpointCrossview, self).get_context_data(**kwargs)
-        context['dose_units_id'] = self.dose_units.id
-        context['doses'] = models.DoseUnits.objects.all()
-        context['endpoints_json'] = models.Endpoint.d_responses(
-                                            context['object_list'],
-                                            json_encode=True)
-        return context
-
-
 # Individual animal view
 class EndpointIndividualAnimalCreate(EndpointCreate):
     # Create Endpoint with individual animal data

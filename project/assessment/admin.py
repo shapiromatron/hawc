@@ -43,6 +43,7 @@ class AssessmentAdmin(admin.ModelAdmin):
     get_reviewers.short_description = 'Reviewers'
     get_reviewers.allow_tags = True
 
+
 class EffectTagAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'id')
     search_fields = ('name', )
