@@ -72,6 +72,22 @@ _.extend(FloatField.prototype, TextField.prototype, {
 });
 
 
+var CheckboxField = function () {
+    return TextField.apply(this, arguments);
+}
+_.extend(CheckboxField.prototype, TextField.prototype, {
+    toSerialized: function () {
+        this.parent.settings[this.schema.name] = this.$inp.prop('checked');
+    },
+    fromSerialized: function () {
+        this.$inp.prop('checked', this.parent.settings[this.schema.name]);
+    },
+    _setInput: function(){
+        this.$inp = $('<input type="checkbox" name="{0}">'.printf(this.schema.name));
+    },
+});
+
+
 var SelectField = function () {
     return TextField.apply(this, arguments);
 }
