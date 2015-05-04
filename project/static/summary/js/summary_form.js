@@ -17,11 +17,11 @@ _.extend(InputField.prototype, {
 });
 
 
-var TableInput = function () {
+var TableField = function () {
     this.firstRenderPass = true;
     return InputField.apply(this, arguments);
 }
-_.extend(TableInput.prototype, InputField.prototype, {
+_.extend(TableField.prototype, InputField.prototype, {
     toSerialized: function () {
         this.parent.settings[this.schema.name] =
             _.map(this.$tbody.children(), this.toSerializedRow, this);
@@ -48,7 +48,7 @@ _.extend(TableInput.prototype, InputField.prototype, {
         if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
         if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
 
-        this.table = $('<table class="table table-condensed">').appendTo($div);
+        this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
         this.setColgroup();
         this.$thead = $('<thead>').appendTo(this.table);
         this.$tbody = $('<tbody>').appendTo(this.table);
@@ -87,7 +87,13 @@ _.extend(TableInput.prototype, InputField.prototype, {
         return td;
     },
     addTdText: function(name){
-        return '<td><input name="{0}" class="span12"></td>'.printf(name);
+        return '<td><input name="{0}" class="span12" type="text"></td>'.printf(name);
+    },
+    addTdInt: function(name){
+        return '<td><input name="{0}" class="span12" type="number"></td>'.printf(name);
+    },
+    addTdFloat: function(name){
+        return '<td><input name="{0}" class="span12" type="number" step="any"></td>'.printf(name);
     }
 });
 
@@ -427,8 +433,37 @@ _.extend(CrossviewForm, {
             def: 45
         },
         {
-            type: SpacerNullField,
-        }
+            type: ReferenceLineField,
+            prependSpacer: true,
+            label: "Dose reference line",
+            name: "reflines_dose",
+            colWidths: [20, 40, 20, 20],
+            showBlank: true
+        },
+        {
+            type: ReferenceRangeField,
+            prependSpacer: true,
+            label: "Dose reference range",
+            name: "refranges_dose",
+            colWidths: [10, 10, 40, 20, 20],
+            showBlank: true
+        },
+        {
+            type: ReferenceLineField,
+            prependSpacer: true,
+            label: "Response reference line",
+            name: "reflines_response",
+            colWidths: [20, 40, 20, 20],
+            showBlank: true
+        },
+        {
+            type: ReferenceRangeField,
+            prependSpacer: true,
+            label: "Response reference range",
+            name: "refranges_response",
+            colWidths: [10, 10, 40, 20, 20],
+            showBlank: true
+        },
     ]
 });
 _.extend(CrossviewForm.prototype, VisualForm.prototype, {

@@ -1369,21 +1369,108 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.build_x_axis();
         this.build_y_axis();
     },
+    _draw_ref_ranges: function(){
+        var x = this.x_scale,
+            y = this.y_scale,
+            hrng, vrng,
+            filter_rng = function(d){return $.isNumeric(d.lower) && $.isNumeric(d.upper);},
+            make_hrng = function(d){
+                return {
+                    x: x.range()[0], width:  Math.abs(x.range()[1] - x.range()[0]),
+                    y: y(d.upper),   height: Math.abs(y(d.upper) - y(d.lower)),
+                    title: d.title
+                }
+            },
+            make_vrng = function(d){
+                return {
+                    x: x(d.lower),   width:  Math.abs(x(d.upper) - x(d.lower)),
+                    y: y.range()[1], height: Math.abs(y.range()[1] - y.range()[0]),
+                    title: d.title
+                }
+            };
+
+        hrng = _.chain(this.plot_settings.refranges_response)
+          .filter(filter_rng)
+          .map(make_hrng)
+          .value();
+
+        vrng = _.chain(this.plot_settings.refranges_dose)
+          .filter(filter_rng)
+          .map(make_vrng)
+          .value();
+
+        hrng.push.apply(hrng, vrng);
+        this.g_reference_ranges = this.vis.append("g");
+        this.g_reference_ranges.selectAll("rect")
+                .data(hrng)
+            .enter().append("svg:rect")
+                .attr("x",      function(d){ return d.x; })
+                .attr("y",      function(d){ return d.y; })
+                .attr("width",  function(d){ return d.width; })
+                .attr("height", function(d){ return d.height; })
+                .attr("fill", "dodgerblue")
+                .attr("fill-opacity", "0.1")
+                .attr("border")
+
+        this.g_reference_ranges.selectAll("rect")
+            .append("svg:title").text(function(d) { return d.title; });
+
+    },
+    _draw_ref_lines: function(){
+        var x = this.x_scale,
+            y = this.y_scale,
+            hrefs, vrefs,
+            filter_ref = function(d){return $.isNumeric(d.value);},
+            make_href = function(d){
+                return {
+                    x1: x.range()[0], x2: x.range()[1],
+                    y1: y(d.value),   y2: y(d.value),
+                    title: d.title
+                }
+              },
+              make_vref = function(d){
+                return {
+                    x1: x(d.value),   x2: x(d.value),
+                    y1: y.range()[0], y2: y.range()[1],
+                    title: d.title
+                }
+              };
+
+        hrefs = _.chain(this.plot_settings.reflines_response)
+          .filter(filter_ref)
+          .map(make_href)
+          .value();
+
+        vrefs = _.chain(this.plot_settings.reflines_dose)
+          .filter(filter_ref)
+          .map(make_vref)
+          .value();
+
+        hrefs.push.apply(hrefs, vrefs);
+
+        this.g_reference_lines = this.vis.append("g");
+        this.g_reference_lines.selectAll("line")
+                .data(hrefs)
+            .enter().append("svg:line")
+                .attr("x1", function(d){ return d.x1; })
+                .attr("x2", function(d){ return d.x2; })
+                .attr("y1", function(d){ return d.y1; })
+                .attr("y2", function(d){ return d.y2; })
+                .attr('stroke', 'darkslateblue')
+                .attr('stroke-width', 2);
+
+        this.g_reference_lines.selectAll("line")
+            .append("svg:title").text(function(d) { return d.title; });
+    },
     draw_visualization: function(){
         var x = this.x_scale,
             y = this.y_scale,
             self = this;
 
-        // reference line
-        this.vis.append("g")
-            .append("line")
-            .attr("x1", x.range()[0] )
-            .attr("y1", y(0) )
-            .attr("x2", x.range()[1] )
-            .attr("y2", y(0) )
-            .attr('class', 'cv_reference_line');
+        this._draw_ref_ranges();
+        this._draw_ref_lines();
 
-        //response-lines
+        // response-lines
         var response_centerlines = this.vis.append("g"),
             line = d3.svg.line()
                 .interpolate("basis")
