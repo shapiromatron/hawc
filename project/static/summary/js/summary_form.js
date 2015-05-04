@@ -17,6 +17,81 @@ _.extend(InputField.prototype, {
 });
 
 
+var TableInput = function () {
+    this.firstRenderPass = true;
+    return InputField.apply(this, arguments);
+}
+_.extend(TableInput.prototype, InputField.prototype, {
+    toSerialized: function () {
+        this.parent.settings[this.schema.name] =
+            _.map(this.$tbody.children(), this.toSerializedRow, this);
+    },
+    fromSerialized: function () {
+        var arr = this.parent.settings[this.schema.name] || [];
+        this.$tbody.empty();
+        _.each(arr, this.fromSerializedRow, this);
+        if (this.firstRenderPass && this.schema.showBlank) {
+            this.addRow();
+            this.firstRenderPass = false;
+        }
+    },
+    setColgroup: function () {
+        var cw = this.schema.colWidths || [],
+            setCol = function(d){return '<col width="{0}%"'.printf(d);};
+        $("<colgroup>")
+            .append(_.map(cw, setCol))
+            .appendTo(this.table);
+    },
+    render: function () {
+        var $div = $('<div class="control-group form-row">');
+
+        if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
+        if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
+
+        this.table = $('<table class="table table-condensed">').appendTo($div);
+        this.setColgroup();
+        this.$thead = $('<thead>').appendTo(this.table);
+        this.$tbody = $('<tbody>').appendTo(this.table);
+        this.renderHeader();
+        $div.appendTo(this.$parent);
+    },
+    thOrdering: function (options) {
+        var th = $('<th>').html("Ordering&nbsp;"),
+            add = $('<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>')
+                    .on('click', $.proxy(this.addRow, this));
+
+        if (options.showNew) th.append(add);
+        return th;
+    },
+    tdOrdering: function () {
+        var moveUp = function(){
+                var tr = $(this.parentNode.parentNode),
+                    prev = tr.prev();
+                if (prev.length>0) tr.insertBefore(prev);
+            },
+            moveDown = function(){
+                var tr = $(this.parentNode.parentNode),
+                    next = tr.next();
+                if (next.length>0) tr.insertAfter(next);
+            },
+            del = function(){
+                $(this.parentNode.parentNode).remove();
+            },
+            td = $('<td>');
+
+        td.append(
+            $('<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>').on('click', moveUp),
+            $('<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>').on('click', moveDown),
+            $('<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>').on('click', del)
+        );
+        return td;
+    },
+    addTdText: function(name){
+        return '<td><input name="{0}" class="span12"></td>'.printf(name);
+    }
+});
+
+
 var TextField = function () {
     return InputField.apply(this, arguments);
 }
