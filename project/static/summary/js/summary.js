@@ -368,6 +368,7 @@ _.extend(Visual, {
         });
     },
     displayAsPage: function(id, $el){
+        $el.html("<p>Loading... <img src='/static/img/loading.gif'></p>");
         Visual.get_object(id, function(d){d.displayAsPage($el);});
     }
 });
@@ -437,14 +438,14 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             .append('<i class="icon-chevron-right"></i>')
             .click(function(){self.buildTbl();});
 
-        $el
-            .append(title)
-            .append("<h2>Visualization</h2>")
-            .append(this.$plotDiv)
-            .append($("<h2>Summary table&nbsp;</h2>").append(btn))
-            .append(this.$tblDiv)
-            .append("<h2>Caption</h2>")
-            .append(caption);
+        $el.empty()
+           .append(title)
+           .append("<h2>Visualization</h2>")
+           .append(this.$plotDiv)
+           .append($("<h2>Summary table&nbsp;</h2>").append(btn))
+           .append(this.$tblDiv)
+           .append("<h2>Caption</h2>")
+           .append(caption);
 
         this.buildTbl();
         this.plotData = this.getPlotData();
@@ -1208,10 +1209,10 @@ _.extend(Crossview.prototype, Visual.prototype, {
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
-        $el
-            .append(title)
-            .append($plotDiv)
-            .append(caption);
+        $el.empty()
+           .append(title)
+           .append($plotDiv)
+           .append(caption);
 
         new CrossviewPlot(this, data).render($plotDiv);
     },
