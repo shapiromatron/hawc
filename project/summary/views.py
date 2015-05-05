@@ -329,7 +329,7 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
     template_name = "summary/datapivot_confirm_delete.html"
 
     def get_success_url(self):
-        return reverse_lazy('summary:dp_list', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
 
 
 class DataPivotSearch(AssessmentPermissionsMixin, FormView):
