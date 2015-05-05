@@ -78,6 +78,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'system',
             'organ',
             'effect',
+            'tags',
             'observation_time',
             'data_type',
             'doses',
@@ -170,6 +171,12 @@ class EndpointFlatDataPivot(FlatFileExporter):
                     txt = u"{} {}".format(e["observation_time"], e["observation_time_units"])
             return txt
 
+        def get_tags(e):
+            effs = [ tag["name"] for tag in e["effects"] ]
+            if len(effs)>0:
+                return u"|{0}|".format(u"|".join(effs))
+            return ""
+
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
@@ -202,6 +209,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['system'],
                 ser['organ'],
                 ser['effect'],
+                get_tags(ser),
                 get_observation_time(ser),
                 ser['data_type_label'],
                 get_doses_str(doses),
