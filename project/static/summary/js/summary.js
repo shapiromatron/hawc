@@ -1201,11 +1201,12 @@ Crossview = function(data){
     };
 };
 _.extend(Crossview.prototype, Visual.prototype, {
-    displayAsPage: function($el){
+    displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption),
             $plotDiv = $('<div>'),
-            data = this.getPlotData();
+            data = this.getPlotData(),
+            options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
@@ -1214,7 +1215,7 @@ _.extend(Crossview.prototype, Visual.prototype, {
            .append($plotDiv)
            .append(caption);
 
-        new CrossviewPlot(this, data).render($plotDiv);
+        new CrossviewPlot(this, data, options).render($plotDiv);
     },
     getPlotData: function(){
         return {
@@ -1509,8 +1510,10 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .on('mouseout', function(d){self.change_show_selected_fields(this, d, false);})
             .append("svg:title").text(function(d){return d[0].title;});
     },
+    setFilterLocation: function(i, x, y){
+        _.extend(this.data.settings.filters[i], {"x": x, "y": y});
+    },
     draw_text: function(){
-
         var self = this,
             buildFilter = function(field){
                 return _.chain(self.dataset)
@@ -1524,37 +1527,80 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             height = -this.settings.plot_settings.tag_height,
             tag_x = self.plot_settings.inner_width + self.settings.plot_settings.tag_left_padding,
             tag_y = function(){height += self.settings.plot_settings.tag_height; return height;},
-            filters = this.filters.map(function(f){return buildFilter(f);});
-            crossviews_g = this.vis.append("g");
+            filters = this.filters.map(function(f){return buildFilter(f);}),
+            drag = function(){};
 
-        filters.forEach(function(filter){
-            // print header
-            crossviews_g
-                .append('text')
-                .attr("x", tag_x)
-                .attr("y", function(){return tag_y();})
-                .attr("text-anchor", "start")
-                .attr('class', 'crossview_title')
-                .text(filter[0].field);
+        if (self.options.dev){
+            drag = d3.behavior.drag()
+                .origin(Object)
+                .on("drag", function(d,i){
+                    var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                        p = d3.select(this),
+                        m = regexp.exec(p.attr("transform"));
+                        if (m !== null && m.length===3){
+                            var x = parseFloat(m[1]) + d3.event.dx,
+                                y = parseFloat(m[2]) + d3.event.dy;
+                            p.attr("transform", "translate(" + x + "," + y + ")");
+                            self.setFilterLocation(i, x, y);
+                        }
+                });
+        }
 
-            //print fields
-            crossviews_g.selectAll("crossview.texts")
-                .data(filter)
-            .enter().append("text")
-                .attr("x", tag_x)
-                .attr("y", function(){return tag_y();})
-                .attr("text-anchor", "start")
-                .attr('class', 'crossview_fields')
-                .text(function(v) {return v.text;})
-                .on('click', function(v){self.change_active_filters(v, this);})
-                .on('mouseover', function(d){self._update_hover_filters(d);})
-                .on('mouseout', function(d) {self._update_hover_filters( );});
+        this.vis.append("g")
+            .attr('class', 'filter_holder')
+            .selectAll('g.filter')
+                .data(filters)
+            .enter().append('g')
+            .attr('class', 'filter')
+            .attr('transform', function(d,i){
+                var x = self.data.settings.filters[i].x||0,
+                    y = self.data.settings.filters[i].y||0;
+                return 'translate({0},{1})'.printf(x, y);
+            })
+            .each(function(d, i){
 
-            height += self.settings.plot_settings.tag_category_spacing;
-        });
+                // print header
+                d3.select(this)
+                    .append('text')
+                    .attr("x", tag_x)
+                    .attr("y", function(){return tag_y();})
+                    .attr("text-anchor", "start")
+                    .attr('class', 'crossview_title')
+                    .text(d[0].field);
+
+                //print fields
+                d3.select(this).selectAll("crossview.texts")
+                    .data(d)
+                .enter().append("text")
+                    .attr("x", tag_x)
+                    .attr("y", function(){return tag_y();})
+                    .attr("text-anchor", "start")
+                    .attr('class', 'crossview_fields')
+                    .text(function(v) {return v.text;})
+                    .on('click', function(v){self.change_active_filters(v, this);})
+                    .on('mouseover', function(d){self._update_hover_filters(d);})
+                    .on('mouseout', function(d) {self._update_hover_filters( );});
+
+                if(self.options.dev){
+                    var bb = this.getBBox();
+                    d3.select(this)
+                        .insert("rect", ":first-child")
+                        .attr("fill", "orange")
+                        .attr("opacity", "0.1")
+                        .attr("x", bb.x)
+                        .attr("y", bb.y)
+                        .attr("width", bb.width)
+                        .attr("height", bb.height)
+                        .attr("cursor", "pointer")
+                        .append("svg:title").text(function(d) { return "drag to reposition"; });
+                }
+
+                height += self.settings.plot_settings.tag_category_spacing;
+
+            })
+            .call(drag);
 
         _.extend(this, {
-            crossviews_g: crossviews_g,
             filters: filters,
             active_filters: []
         });
