@@ -423,6 +423,9 @@ var HAWCUtils = {
         $div.prepend($('<div class="alert">')
             .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
             .append(content));
+    },
+    abstractMethod: function(){
+        throw "Abstract method; requires implementation";
     }
 };
 

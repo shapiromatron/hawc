@@ -5,15 +5,9 @@ var InputField = function(schema, $parent, parent){
     return this;
 };
 _.extend(InputField.prototype, {
-    toSerialized: function () {
-        throw "Abstract method; requires implementation";
-    },
-    fromSerialized: function () {
-        throw "Abstract method; requires implementation";
-    },
-    render: function () {
-        throw "Abstract method; requires implementation";
-    }
+    toSerialized: HAWCUtils.abstractMethod,
+    fromSerialized: HAWCUtils.abstractMethod,
+    render: HAWCUtils.abstractMethod
 });
 
 
@@ -22,6 +16,10 @@ var TableField = function () {
     return InputField.apply(this, arguments);
 }
 _.extend(TableField.prototype, InputField.prototype, {
+    renderHeader: HAWCUtils.abstractMethod,
+    addRow: HAWCUtils.abstractMethod,
+    fromSerializedRow: HAWCUtils.abstractMethod,
+    toSerializedRow: HAWCUtils.abstractMethod,
     toSerialized: function () {
         this.parent.settings[this.schema.name] =
             _.map(this.$tbody.children(), this.toSerializedRow, this);
@@ -332,9 +330,7 @@ VisualForm.prototype = {
             loading = '<p>Loading... <img src="/static/img/loading.gif"></p>';
         $preview.html(loading);
     },
-    buildPreview: function(){
-        throw "Abstract method; requires implementation";
-    },
+    buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
         $("#preview").empty();
         delete this.preview;

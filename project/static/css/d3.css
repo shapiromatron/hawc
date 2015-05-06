@@ -350,11 +350,6 @@ text.crossview_fields{
   cursor: pointer;
 }
 
-.cv_reference_line {
-  stroke: orange;
-  stroke-dasharray: 5,5;
-}
-
 path.crossview_selected {
  stroke: #6495ed;
 }
