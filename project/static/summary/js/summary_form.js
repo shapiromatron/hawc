@@ -436,23 +436,7 @@ var EndpointAggregationForm = function($el){
     VisualForm.apply(this, arguments);
 };
 _.extend(EndpointAggregationForm, {
-    schema: [
-        {
-            type: TextField,
-            name: "title",
-            label: "Title",
-            def: "Title",
-            helpText: "Enter a title for the visualization, or leave blank"
-        },
-        {
-            type: SelectField,
-            name: "opts",
-            label: "Title",
-            def: 456,
-            opts: [[123, "label"], [456, "label2"]],
-            helpText: "Enter a title for the visualization, or leave blank"
-        }
-    ]
+    schema: []
 });
 _.extend(EndpointAggregationForm.prototype, VisualForm.prototype, {
     buildPreview: function(){

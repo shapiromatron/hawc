@@ -8,11 +8,11 @@ from myuser.models import HAWCUser
 HELP_TEXT = """Interactive prompt to create users/send welcome emails. Can either use
 interactive prompts, or non-interactive prompts via command line. If using the
 command-line, specify lists of assessments based on primary keys, comma-separated.
-To add no assessments, enter the value "N". To send a welcome email, enter "y" or "n".
+To add no assessments, enter the value "N". To send a welcome email, enter "Y" or "N".
 
 A complete example may be:
 
-python manage.py create_user --noinput hikingfan@gmail.com George Washington 1,2,3 N N y
+python manage.py create_user --noinput hikingfan@gmail.com George Washington N 118 N Y
 """
 
 def get_assessment_ids(txt):
