@@ -424,9 +424,11 @@ VisualForm.prototype = {
     },
     buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
+        this.updateSettingsFromPreview();
         $("#preview").empty();
         delete this.preview;
-    }
+    },
+    updateSettingsFromPreview: HAWCUtils.abstractMethod
 };
 
 
@@ -456,7 +458,8 @@ _.extend(EndpointAggregationForm.prototype, VisualForm.prototype, {
     buildPreview: function(){
         var data = this.prepareData();
         this.preview = new EndpointAggregation(data).displayAsPage( $("#preview").empty() );
-    }
+    },
+    updateSettingsFromPreview: function(){}
 });
 
 
@@ -620,5 +623,9 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
         var data = this.prepareData();
         this.preview = new Crossview(data);
         this.preview.displayAsPage( $("#preview").empty(), {"dev": true});
+    },
+    updateSettingsFromPreview: function(){
+        settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
+        this.unpackSettings();
     }
 });
