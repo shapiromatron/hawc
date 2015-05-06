@@ -92,6 +92,16 @@ _.extend(TableField.prototype, InputField.prototype, {
     },
     addTdFloat: function(name){
         return '<td><input name="{0}" class="span12" type="number" step="any"></td>'.printf(name);
+    },
+    addTdSelect: function(name, values){
+        var sel = $('<select name="{0}" class="span12">'.printf(name))
+                .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d)}));
+        return $('<td>').append(sel);
+    },
+    addTdSelectMultiple: function(name, values){
+        var sel = $('<select name="{0}" class="span12" multiple>'.printf(name))
+                .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d)}));
+        return $('<td>').append(sel);
     }
 });
 
@@ -450,6 +460,51 @@ _.extend(EndpointAggregationForm.prototype, VisualForm.prototype, {
 });
 
 
+var CrossviewSelectorField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(CrossviewSelectorField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Field name</th>',
+                // '<th>Values</th>',
+                // '<th>Number of columns</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        return $('<tr>')
+            .append(
+                this.addTdSelect('name', [
+                    'study',
+                    'experiment_type',
+                    'species',
+                    'sex',
+                    'effects',
+                ]),
+                // this.addTdSelectMultiple('values', [1,2,3,4,5,6]),
+                // this.addTdText('columns'),
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d,i) {
+        var row = this.addRow();
+        row.find('select[name="name"]').val(d.name);
+        // row.find('select[name="values"]').val(d.values);
+        // row.find('input[name="columns"]').val(d.columns);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "name": row.find('select[name="name"]').val(),
+            // "values": row.find('select[name="values"]').val(),
+            // "columns": parseInt(row.find('input[name="columns"]').val(), 10),
+        }
+    }
+});
+
+
 var CrossviewForm = function(){
     VisualForm.apply(this, arguments);
 };
@@ -509,6 +564,14 @@ _.extend(CrossviewForm, {
             name: "padding_top",
             label: "Plot padding-top (px)",
             def: 45
+        },
+        {
+            type: CrossviewSelectorField,
+            prependSpacer: true,
+            label: "Filters",
+            name: "filters",
+            colWidths: [80, 20],
+            showBlank: true
         },
         {
             type: ReferenceLineField,

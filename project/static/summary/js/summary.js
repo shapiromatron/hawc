@@ -1260,14 +1260,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     "tag_height": 17,
                     "tag_left_padding": 25,
                     "tag_category_spacing": 5
-                },
-                "crossview_filters": [
-                    "study",
-                    "experiment_type",
-                    "species",
-                    "sex",
-                    "effects"
-                ]
+                }
             }
         });
     },
@@ -1287,44 +1280,70 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.build_y_label();
         this.trigger_resize();
     },
+    _cw_filter_process: {
+        "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
+        "experiment_type": function(d){return d.data.animal_group.experiment.type; },
+        "species": function(d){return d.data.animal_group.species; },
+        "sex": function(d){return d.data.animal_group.sex; },
+        "effects": function(d){return d.data.effects.map(function(v){return v.name; })}
+    },
+    _cw_filter_names: {
+        "study": "study",
+        "experiment_type": "experiment_type",
+        "species": "species",
+        "sex": "sex",
+        "effects": "effects"
+    },
     processData: function(){
 
-        var process_endpoint = function(e){
-            var filters = {
-                    'study': e.data.animal_group.experiment.study.short_citation,
-                    'experiment_type': e.data.animal_group.experiment.type,
-                    'species': e.data.animal_group.species,
-                    'sex': e.data.animal_group.sex,
-                    'effects': e.data.effects.map(function(v){return v.name;}),
-                },
-                egs = e.data.endpoint_group
-                .filter(function(eg, i){
-                    return i>0;
-                }).map(function(eg){
-                    return {
-                        'dose': eg.dose,
-                        'resp': e._percent_change_control(eg.dose_group_id)/100,
-                        'title': e.data.name,
-                        'endpoint': e,
-                        'filters': filters
-                    }
+        var self = this,
+            getFilters = function(d){
+                var obj = {}, fld;
+                self.data.settings.filters.forEach(function(fld){
+                    obj[fld.name] = self._cw_filter_process[fld.name](d);
                 });
+                return obj;
+            },
+            getFilterNames = function(){
+                return self.data.settings.filters.map(function(fld){
+                    return self._cw_filter_names[fld.name];
+                });
+            },
+            filterEndpoint = function(e){
+                return e.data.endpoint_group.length>0;
+            },
+            processEndpoint = function(e){
+                var filters = getFilters(e),
+                    egs = e.data.endpoint_group
+                    .filter(function(eg, i){
+                        return i>0;
+                    }).map(function(eg){
+                        return {
+                            'dose': eg.dose,
+                            'resp': e._percent_change_control(eg.dose_group_id)/100,
+                            'title': e.data.name,
+                            'endpoint': e,
+                            'filters': filters
+                        }
+                    });
 
-            return {
-                'filters': filters,
-                'plotting': egs,
-                'dose_extent': d3.extent(egs, function(d){return d.dose}),
-                'resp_extent': d3.extent(egs, function(d){return d.resp})
-            };
-        },
-        dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
-        dataset = this.data.endpoints
-            .filter(function(e){return e.data.endpoint_group.length>0; })
-            .map(function(e){ return process_endpoint(e); }),
-        container_height = this.data.settings.height + 50;  // menu-spacing
+                return {
+                    'filters': filters,
+                    'plotting': egs,
+                    'dose_extent': d3.extent(egs, function(d){return d.dose}),
+                    'resp_extent': d3.extent(egs, function(d){return d.resp})
+                };
+            },
+            dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
+            dataset = _.chain(this.data.endpoints)
+                .filter(filterEndpoint)
+                .map(processEndpoint)
+                .value(),
+            container_height = this.data.settings.height + 50;  // menu-spacing
 
         _.extend(this, {
             dataset: dataset,
+            filters: getFilterNames(),
             dose_range: [
                 d3.min(dataset, function(v){return v.dose_extent[0];}),
                 d3.max(dataset, function(v){return v.dose_extent[1];})
@@ -1505,7 +1524,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             height = -this.settings.plot_settings.tag_height,
             tag_x = self.plot_settings.inner_width + self.settings.plot_settings.tag_left_padding,
             tag_y = function(){height += self.settings.plot_settings.tag_height; return height;},
-            filters = this.settings.crossview_filters.map(function(f){return buildFilter(f);});
+            filters = this.filters.map(function(f){return buildFilter(f);});
             crossviews_g = this.vis.append("g");
 
         filters.forEach(function(filter){
