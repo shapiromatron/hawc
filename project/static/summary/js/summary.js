@@ -1400,6 +1400,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
           .value();
 
         hrng.push.apply(hrng, vrng);
+        if (hrng.length===0) return;
+
         this.g_reference_ranges = this.vis.append("g");
         this.g_reference_ranges.selectAll("rect")
                 .data(hrng)
@@ -1414,7 +1416,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         this.g_reference_ranges.selectAll("rect")
             .append("svg:title").text(function(d) { return d.title; });
-
     },
     _draw_ref_lines: function(){
         var x = this.x_scale,
@@ -1447,6 +1448,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
           .value();
 
         hrefs.push.apply(hrefs, vrefs);
+        if (hrefs.length===0) return;
 
         this.g_reference_lines = this.vis.append("g");
         this.g_reference_lines.selectAll("line")

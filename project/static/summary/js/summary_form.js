@@ -96,6 +96,88 @@ _.extend(TableField.prototype, InputField.prototype, {
 });
 
 
+var ReferenceLineField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(ReferenceLineField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Line value</th>',
+                '<th>Caption</th>',
+                '<th>Style</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        return $('<tr>')
+            .append(
+                this.addTdFloat('value'),
+                this.addTdText('title'),
+                this.addTdText('style'),
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d,i) {
+        var row = this.addRow();
+        row.find('input[name="value"]').val(d.value);
+        row.find('input[name="title"]').val(d.title);
+        row.find('input[name="style"]').val(d.style);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "value": parseFloat(row.find('input[name="value"]').val(), 10),
+            "title": row.find('input[name="title"]').val(),
+            "style": row.find('input[name="style"]').val(),
+        }
+    }
+});
+
+
+var ReferenceRangeField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(ReferenceRangeField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Lower value</th>',
+                '<th>Upper value</th>',
+                '<th>Caption</th>',
+                '<th>Style</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        return $('<tr>')
+            .append(
+                this.addTdFloat('lower'),
+                this.addTdFloat('upper'),
+                this.addTdText('title'),
+                this.addTdText('style'),
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d,i) {
+        var row = this.addRow();
+        row.find('input[name="lower"]').val(d.lower);
+        row.find('input[name="upper"]').val(d.upper);
+        row.find('input[name="title"]').val(d.title);
+        row.find('input[name="style"]').val(d.style);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "lower": parseFloat(row.find('input[name="lower"]').val(), 10),
+            "upper": parseFloat(row.find('input[name="upper"]').val(), 10),
+            "title": row.find('input[name="title"]').val(),
+            "style": row.find('input[name="style"]').val(),
+        }
+    }
+});
+
+
 var TextField = function () {
     return InputField.apply(this, arguments);
 }
