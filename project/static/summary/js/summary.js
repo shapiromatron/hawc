@@ -1256,12 +1256,9 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 'label_format': d3.format("%")
             },
             settings: {
-                "plot_settings": {
-                    "text_width": 150,
-                    "tag_height": 17,
-                    "tag_left_padding": 25,
-                    "tag_category_spacing": 5
-                }
+                "tag_height": 17,
+                "column_padding": 5,
+                "filter_padding": 10
             }
         });
     },
@@ -1513,6 +1510,78 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     setFilterLocation: function(i, x, y){
         _.extend(this.data.settings.filters[i], {"x": x, "y": y});
     },
+    layout_filter: function(g, filters, i){
+        var self = this,
+            settings = this.data.settings.filters[i],
+            xOffset = this._filter_left_offset || this.settings.filter_padding,
+            nPerCol = Math.ceil(filters.length/settings.columns),
+            cols, bb, title, colg;
+
+        cols = _.chain(filters)
+                 .groupBy(function(el, j){return Math.floor(j/nPerCol);})
+                 .toArray()
+                 .value();
+
+        // print header
+        title = d3.select(g)
+            .append('text')
+            .attr("x", xOffset)
+            .attr("y", -this.settings.tag_height)
+            .attr("text-anchor", "start")
+            .attr('class', 'crossview_title')
+            .text(filters[0].field);
+
+        //build column-groups
+        colg = d3.select(g).selectAll("g.crossview_cols")
+            .data(cols)
+                .enter().append("g")
+                .attr('transform', 'translate({0},0)'.printf(xOffset))
+                .attr('class', 'crossview_cols')
+
+        //layout text
+        colg.selectAll('.crossview_fields')
+            .data(function(d){return d;})
+            .enter().append("text")
+            .attr("x", 0)
+            .attr("y", function(d,i){return i*self.settings.tag_height;})
+            .attr("text-anchor", "start")
+            .attr('class', 'crossview_fields')
+            .text(function(v) {return v.text;})
+            .on('click', function(v){self.change_active_filters(v, this);})
+            .on('mouseover', function(d){self._update_hover_filters(d);})
+            .on('mouseout', function(d) {self._update_hover_filters( );});
+
+        // offset filter-column groups to prevent overlap
+        colg.each(function(d){
+            d3.select(this).attr('transform', 'translate({0},0)'.printf(xOffset))
+            xOffset += this.getBBox().width + self.settings.column_padding;
+        });
+
+        // set offset for next filter
+        bb = g.getBBox();
+        this._filter_left_offset = bb.x + bb.width + this.settings.filter_padding;
+
+        // center title-text
+        if(settings.columns>1){
+            title.attr("x", (bb.x+bb.width/2))
+                 .attr("text-anchor", "middle");
+        }
+
+        // show helper to indicate draggable
+        if(self.options.dev){
+            d3.select(g)
+                .insert("rect", ":first-child")
+                .attr("fill", "orange")
+                .attr("opacity", "0.1")
+                .attr("x", bb.x)
+                .attr("y", bb.y)
+                .attr("width", bb.width)
+                .attr("height", bb.height)
+                .attr("cursor", "pointer")
+                .append("svg:title").text(function(d) { return "drag to reposition"; });
+        }
+
+    },
     draw_text: function(){
         var self = this,
             buildFilter = function(field){
@@ -1524,9 +1593,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                         .map(function(d){return {'field': field, 'status': false, 'text': d};})
                         .value();
             },
-            height = -this.settings.plot_settings.tag_height,
-            tag_x = self.plot_settings.inner_width + self.settings.plot_settings.tag_left_padding,
-            tag_y = function(){height += self.settings.plot_settings.tag_height; return height;},
             filters = this.filters.map(function(f){return buildFilter(f);}),
             drag = function(){};
 
@@ -1557,47 +1623,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     y = self.data.settings.filters[i].y||0;
                 return 'translate({0},{1})'.printf(x, y);
             })
-            .each(function(d, i){
-
-                // print header
-                d3.select(this)
-                    .append('text')
-                    .attr("x", tag_x)
-                    .attr("y", function(){return tag_y();})
-                    .attr("text-anchor", "start")
-                    .attr('class', 'crossview_title')
-                    .text(d[0].field);
-
-                //print fields
-                d3.select(this).selectAll("crossview.texts")
-                    .data(d)
-                .enter().append("text")
-                    .attr("x", tag_x)
-                    .attr("y", function(){return tag_y();})
-                    .attr("text-anchor", "start")
-                    .attr('class', 'crossview_fields')
-                    .text(function(v) {return v.text;})
-                    .on('click', function(v){self.change_active_filters(v, this);})
-                    .on('mouseover', function(d){self._update_hover_filters(d);})
-                    .on('mouseout', function(d) {self._update_hover_filters( );});
-
-                if(self.options.dev){
-                    var bb = this.getBBox();
-                    d3.select(this)
-                        .insert("rect", ":first-child")
-                        .attr("fill", "orange")
-                        .attr("opacity", "0.1")
-                        .attr("x", bb.x)
-                        .attr("y", bb.y)
-                        .attr("width", bb.width)
-                        .attr("height", bb.height)
-                        .attr("cursor", "pointer")
-                        .append("svg:title").text(function(d) { return "drag to reposition"; });
-                }
-
-                height += self.settings.plot_settings.tag_category_spacing;
-
-            })
+            .each(function(d, i){ self.layout_filter(this, d, i); })
             .call(drag);
 
         _.extend(this, {
@@ -1631,14 +1657,13 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     change_active_filters: function(v, text){
         // check if filter already on; if on then turn off, else add
         var idx = this.active_filters.indexOf(v),
-            isNew = (idx===-1);
+            isNew = (idx<0);
 
         if(isNew){
             this.active_filters.push(v);
         } else {
             this.active_filters.splice(idx, 1);
         }
-
         d3.select(text)
             .classed('crossview_selected', isNew)
             .classed('crossview_hover', false);

@@ -350,22 +350,20 @@ text.crossview_fields{
   cursor: pointer;
 }
 
+text.crossview_fields:hover{
+  fill: #ff4040;
+}
+
 path.crossview_selected {
  stroke: #6495ed;
 }
 
 text.crossview_selected {
-  fill: #6495ed;
-  font-weight: bold;
+  fill: #6495ed !important;
 }
 
 path.crossview_hover {
  stroke: #ff4040;
-}
-
-text.crossview_hover {
-  fill: #ff4040;
-  font-weight: bold;
 }
 
 path.crossview_path_hover {
@@ -374,7 +372,6 @@ path.crossview_path_hover {
 
 text.crossview_path_hover {
   fill: #ff4040;
-  font-weight: bold;
 }
 
 /*

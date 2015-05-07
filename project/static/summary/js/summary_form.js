@@ -455,7 +455,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
             .append(
                 '<th>Field name</th>',
                 // '<th>Values</th>',
-                // '<th>Number of columns</th>',
+                '<th>Number of columns</th>',
                 '<th>X position</th>',
                 '<th>Y position</th>',
                 this.thOrdering({showNew: true})
@@ -472,7 +472,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
                     'effects',
                 ]),
                 // this.addTdSelectMultiple('values', [1,2,3,4,5,6]),
-                // this.addTdText('columns'),
+                this.addTdInt('columns'),
                 this.addTdInt('x'),
                 this.addTdInt('y'),
                 this.tdOrdering()
@@ -482,7 +482,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         var row = this.addRow();
         row.find('select[name="name"]').val(d.name);
         // row.find('select[name="values"]').val(d.values);
-        // row.find('input[name="columns"]').val(d.columns);
+        row.find('input[name="columns"]').val(d.columns);
         row.find('input[name="x"]').val(d.x);
         row.find('input[name="y"]').val(d.y);
     },
@@ -491,7 +491,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         return {
             "name": row.find('select[name="name"]').val(),
             // "values": row.find('select[name="values"]').val(),
-            // "columns": parseInt(row.find('input[name="columns"]').val(), 10),
+            "columns": parseInt(row.find('input[name="columns"]').val(), 10),
             "x": parseInt(row.find('input[name="x"]').val(), 10),
             "y": parseInt(row.find('input[name="y"]').val(), 10),
         }
@@ -564,7 +564,7 @@ _.extend(CrossviewForm, {
             prependSpacer: true,
             label: "Filters",
             name: "filters",
-            colWidths: [40, 20, 20, 20]
+            colWidths: [40, 20, 10, 10, 20]
         },
         {
             type: ReferenceLineField,
