@@ -515,6 +515,18 @@ _.extend(CrossviewForm, {
             def: "Title"
         },
         {
+            type: TextField,
+            name: "xAxisLabel",
+            label: "X-axis label",
+            def: "Dose (<add units>)"
+        },
+        {
+            type: TextField,
+            name: "yAxisLabel",
+            label: "Y-axis label",
+            def: "% change from control (continuous), % incidence (dichotomous)"
+        },
+        {
             type: IntegerField,
             name: "width",
             label: "Overall width (px)",

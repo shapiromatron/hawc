@@ -1272,10 +1272,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.add_axes();
         this.draw_visualization();
         this.draw_text();
+        this.build_labels();
         this.add_menu();
-        this.add_title();
-        this.build_x_label();
-        this.build_y_label();
         this.trigger_resize();
     },
     _cw_filter_process: {
@@ -1291,6 +1289,35 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         "species": "Species",
         "sex": "Sex",
         "effects": "Effect tags"
+    },
+    build_labels: function(){
+
+        // TODO: fix plot layout; offsets are off!
+
+        var midX = d3.mean(this.x_scale.range()),
+            midY = d3.mean(this.y_scale.range());
+
+        this.vis.append("svg:text")
+            .attr("x", midX)
+            .attr("y", -10)
+            .text(this.data.settings.title)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_title");
+
+        this.vis.append("svg:text")
+            .attr("x", midX)
+            .attr("y", d3.max(this.y_scale.range())+30)
+            .text(this.data.settings.xAxisLabel)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_axis_labels x_axis_label");
+
+        this.vis.append("svg:text")
+            .attr("x", -50)
+            .attr("y", midY)
+            .attr("transform",'rotate(270, -50,  {0})'.printf(midY))
+            .text(this.data.settings.yAxisLabel)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_axis_labels y_axis_label");
     },
     processData: function(){
 
@@ -1345,9 +1372,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 d3.min(dataset, function(d){return d.resp_extent[0];}),
                 d3.max(dataset, function(d){return d.resp_extent[1];})
             ],
-            title_str: this.data.settings.title,
-            x_label_text: "Dose ({0})".printf(dose_units),
-            y_label_text: '% change from control (continuous), % incidence (dichotomous)',
             plot_settings: this.data.settings,
             w: this.data.settings.width - this.data.settings.padding_top,
             h: this.data.settings.height - this.data.settings.padding_left,
