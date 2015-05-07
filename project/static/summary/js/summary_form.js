@@ -123,7 +123,7 @@ _.extend(ReferenceLineField.prototype, TableField.prototype, {
             .append(
                 this.addTdFloat('value'),
                 this.addTdText('title'),
-                this.addTdText('style'),
+                this.addTdSelect('style', _.pluck(D3Visualization.styles.lines, 'name')),
                 this.tdOrdering()
             ).appendTo(this.$tbody);
     },
@@ -131,14 +131,14 @@ _.extend(ReferenceLineField.prototype, TableField.prototype, {
         var row = this.addRow();
         row.find('input[name="value"]').val(d.value);
         row.find('input[name="title"]').val(d.title);
-        row.find('input[name="style"]').val(d.style);
+        row.find('select[name="style"]').val(d.style);
     },
     toSerializedRow: function (row) {
         row = $(row);
         return {
             "value": parseFloat(row.find('input[name="value"]').val(), 10),
             "title": row.find('input[name="title"]').val(),
-            "style": row.find('input[name="style"]').val(),
+            "style": row.find('select[name="style"]').val(),
         }
     }
 });
@@ -164,7 +164,7 @@ _.extend(ReferenceRangeField.prototype, TableField.prototype, {
                 this.addTdFloat('lower'),
                 this.addTdFloat('upper'),
                 this.addTdText('title'),
-                this.addTdText('style'),
+                this.addTdSelect('style', _.pluck(D3Visualization.styles.rectangles, 'name')),
                 this.tdOrdering()
             ).appendTo(this.$tbody);
     },
@@ -173,7 +173,7 @@ _.extend(ReferenceRangeField.prototype, TableField.prototype, {
         row.find('input[name="lower"]').val(d.lower);
         row.find('input[name="upper"]').val(d.upper);
         row.find('input[name="title"]').val(d.title);
-        row.find('input[name="style"]').val(d.style);
+        row.find('select[name="style"]').val(d.style);
     },
     toSerializedRow: function (row) {
         row = $(row);
@@ -181,7 +181,7 @@ _.extend(ReferenceRangeField.prototype, TableField.prototype, {
             "lower": parseFloat(row.find('input[name="lower"]').val(), 10),
             "upper": parseFloat(row.find('input[name="upper"]').val(), 10),
             "title": row.find('input[name="title"]').val(),
-            "style": row.find('input[name="style"]').val(),
+            "style": row.find('select[name="style"]').val(),
         }
     }
 });

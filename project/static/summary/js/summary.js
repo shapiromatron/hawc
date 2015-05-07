@@ -401,6 +401,53 @@ D3Visualization = function(parent, data, options){
     this.options = options || {};
     this.settings = {};
 };
+_.extend(D3Visualization, {
+    styles: {
+        "lines": [
+            {"name": "base",                    "stroke": "#708090", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 3},
+            {"name": "reference line",          "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0.8, "stroke-width": 2},
+            {"name": "transparent",             "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0,   "stroke-width": 0},
+            {"name": "solid | black",           "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | red",             "stroke": "#e32727", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | green",           "stroke": "#006a1e", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | blue",            "stroke": "#006dbe", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | orange",          "stroke": "#dc8f00", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | purple",          "stroke": "#b82cff", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "solid | fuschia",         "stroke": "#ab006c", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | black",          "stroke": "#000000", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | red",            "stroke": "#e32727", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | green",          "stroke": "#006a1e", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | blue",           "stroke": "#006dbe", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | orange",         "stroke": "#dc8f00", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | purple",         "stroke": "#b82cff", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dashed | fuschia",        "stroke": "#ab006c", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | black",          "stroke": "#000000", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | red",            "stroke": "#e32727", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | green",          "stroke": "#006a1e", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | blue",           "stroke": "#006dbe", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | orange",         "stroke": "#dc8f00", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | purple",         "stroke": "#b82cff", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dotted | fuschia",        "stroke": "#ab006c", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | black",     "stroke": "#000000", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | red",       "stroke": "#e32727", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | green",     "stroke": "#006a1e", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | blue",      "stroke": "#006dbe", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | orange",    "stroke": "#dc8f00", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | purple",    "stroke": "#b82cff", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
+            {"name": "dash-dotted | fuschia",   "stroke": "#ab006c", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2}
+        ],
+        "rectangles": [
+            {"name": "base",    "fill": "#be6a62", "fill-opacity": 0.3, "stroke": "#be6a62", "stroke-width": 1.5},
+            {"name": "black",   "fill": "#000000", "fill-opacity": 0.2, "stroke": "#000000", "stroke-width": 0},
+            {"name": "red",     "fill": "#e32727", "fill-opacity": 0.2, "stroke": "#6f0000", "stroke-width": 0},
+            {"name": "green",   "fill": "#22ba53", "fill-opacity": 0.2, "stroke": "#006a1e", "stroke-width": 0},
+            {"name": "blue",    "fill": "#3aa4e5", "fill-opacity": 0.2, "stroke": "#006dbe", "stroke-width": 0},
+            {"name": "orange",  "fill": "#ffb100", "fill-opacity": 0.2, "stroke": "#dc8f00", "stroke-width": 0},
+            {"name": "purple",  "fill": "#b82cff", "fill-opacity": 0.2, "stroke": "#5e5e5e", "stroke-width": 0},
+            {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.2, "stroke": "#ab006c", "stroke-width": 0}
+        ]
+    }
+})
 _.extend(D3Visualization.prototype, D3Plot.prototype, {
     setDefaults: function(){
         throw "Abstract method; requires implementation";
@@ -1412,14 +1459,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 return {
                     x: x.range()[0], width:  Math.abs(x.range()[1] - x.range()[0]),
                     y: y(d.upper),   height: Math.abs(y(d.upper) - y(d.lower)),
-                    title: d.title
+                    title: d.title,
+                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style})
                 }
             },
             make_vrng = function(d){
                 return {
                     x: x(d.lower),   width:  Math.abs(x(d.upper) - x(d.lower)),
                     y: y.range()[1], height: Math.abs(y.range()[1] - y.range()[0]),
-                    title: d.title
+                    title: d.title,
+                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style})
                 }
             };
 
@@ -1444,9 +1493,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .attr("y",      function(d){ return d.y; })
                 .attr("width",  function(d){ return d.width; })
                 .attr("height", function(d){ return d.height; })
-                .attr("fill", "dodgerblue")
-                .attr("fill-opacity", "0.1")
-                .attr("border")
+                .each(function(d){ d3.select(this).attr(d.styles); });
 
         this.g_reference_ranges.selectAll("rect")
             .append("svg:title").text(function(d) { return d.title; });
@@ -1460,14 +1507,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 return {
                     x1: x.range()[0], x2: x.range()[1],
                     y1: y(d.value),   y2: y(d.value),
-                    title: d.title
+                    title: d.title,
+                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style})
                 }
               },
               make_vref = function(d){
                 return {
                     x1: x(d.value),   x2: x(d.value),
                     y1: y.range()[0], y2: y.range()[1],
-                    title: d.title
+                    title: d.title,
+                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style})
                 }
               };
 
@@ -1492,8 +1541,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .attr("x2", function(d){ return d.x2; })
                 .attr("y1", function(d){ return d.y1; })
                 .attr("y2", function(d){ return d.y2; })
-                .attr('stroke', 'darkslateblue')
-                .attr('stroke-width', 2);
+                .each(function(d){ d3.select(this).attr(d.styles); });
 
         this.g_reference_lines.selectAll("line")
             .append("svg:title").text(function(d) { return d.title; });
