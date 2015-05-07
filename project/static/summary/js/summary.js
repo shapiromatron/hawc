@@ -1286,11 +1286,11 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         "effects": function(d){return d.data.effects.map(function(v){return v.name; })}
     },
     _cw_filter_names: {
-        "study": "study",
-        "experiment_type": "experiment_type",
-        "species": "species",
-        "sex": "sex",
-        "effects": "effects"
+        "study": "Study",
+        "experiment_type": "Experiment type",
+        "species": "Species",
+        "sex": "Sex",
+        "effects": "Effect tags"
     },
     processData: function(){
 
@@ -1301,11 +1301,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     obj[fld.name] = self._cw_filter_process[fld.name](d);
                 });
                 return obj;
-            },
-            getFilterNames = function(){
-                return self.data.settings.filters.map(function(fld){
-                    return self._cw_filter_names[fld.name];
-                });
             },
             filterEndpoint = function(e){
                 return e.data.endpoint_group.length>0;
@@ -1341,7 +1336,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         _.extend(this, {
             dataset: dataset,
-            filters: getFilterNames(),
+            filters: _.pluck(this.data.settings.filters, 'name'),
             dose_range: [
                 d3.min(dataset, function(v){return v.dose_extent[0];}),
                 d3.max(dataset, function(v){return v.dose_extent[1];})
@@ -1529,7 +1524,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("y", -this.settings.tag_height)
             .attr("text-anchor", "start")
             .attr('class', 'crossview_title')
-            .text(filters[0].field);
+            .text(self._cw_filter_names[filters[0].field]);
 
         //build column-groups
         colg = d3.select(g).selectAll("g.crossview_cols")
