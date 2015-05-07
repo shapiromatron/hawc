@@ -285,7 +285,7 @@ class BaseEndpoint(models.Model):
     in-vitro endpoints used in assessment. Not fully abstract so efficient
     queries can pull data from all three more-specific endpoint types.
     """
-    assessment = models.ForeignKey(Assessment)
+    assessment = models.ForeignKey(Assessment, db_index=True)
     # Some denormalization but required for efficient capture of all endpoints
     # in assessment; major use case in HAWC.
 
