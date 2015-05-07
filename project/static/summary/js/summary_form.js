@@ -12,7 +12,6 @@ _.extend(InputField.prototype, {
 
 
 var TableField = function () {
-    this.firstRenderPass = true;
     return InputField.apply(this, arguments);
 }
 _.extend(TableField.prototype, InputField.prototype, {
@@ -27,10 +26,10 @@ _.extend(TableField.prototype, InputField.prototype, {
     fromSerialized: function () {
         var arr = this.parent.settings[this.schema.name] || [];
         this.$tbody.empty();
-        _.each(arr, this.fromSerializedRow, this);
-        if (this.firstRenderPass && this.schema.showBlank) {
+        if (arr.length === 0) {
             this.addRow();
-            this.firstRenderPass = false;
+        } else {
+            _.each(arr, this.fromSerializedRow, this);
         }
     },
     setColgroup: function () {
@@ -565,40 +564,35 @@ _.extend(CrossviewForm, {
             prependSpacer: true,
             label: "Filters",
             name: "filters",
-            colWidths: [40, 20, 20, 20],
-            showBlank: true
+            colWidths: [40, 20, 20, 20]
         },
         {
             type: ReferenceLineField,
             prependSpacer: true,
             label: "Dose reference line",
             name: "reflines_dose",
-            colWidths: [20, 40, 20, 20],
-            showBlank: true
+            colWidths: [20, 40, 20, 20]
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
             label: "Dose reference range",
             name: "refranges_dose",
-            colWidths: [10, 10, 40, 20, 20],
-            showBlank: true
+            colWidths: [10, 10, 40, 20, 20]
         },
         {
             type: ReferenceLineField,
             prependSpacer: true,
             label: "Response reference line",
             name: "reflines_response",
-            colWidths: [20, 40, 20, 20],
-            showBlank: true
+            colWidths: [20, 40, 20, 20]
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
             label: "Response reference range",
             name: "refranges_response",
-            colWidths: [10, 10, 40, 20, 20],
-            showBlank: true
+            colWidths: [10, 10, 40, 20, 20]
         },
     ]
 });
