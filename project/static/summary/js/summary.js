@@ -1292,8 +1292,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     },
     build_labels: function(){
 
-        // TODO: fix plot layout; offsets are off!
-
         var midX = d3.mean(this.x_scale.range()),
             midY = d3.mean(this.y_scale.range());
 
@@ -1373,8 +1371,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 d3.max(dataset, function(d){return d.resp_extent[1];})
             ],
             plot_settings: this.data.settings,
-            w: this.data.settings.width - this.data.settings.padding_top,
-            h: this.data.settings.height - this.data.settings.padding_left,
+            w: this.data.settings.inner_width,
+            h: this.data.settings.inner_height,
             padding: {
                 "top": this.data.settings.padding_top,
                 "right": this.data.settings.width-this.data.settings.padding_left-this.data.settings.inner_width,
