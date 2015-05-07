@@ -408,13 +408,42 @@ VisualForm.prototype = {
     },
     buildSettingsForm: function(){
         var $parent = this.$el.find("#settings"),
-            self = this;
+            self = this,
+            getParent = function(val){
+                return self.settingsTabs[val] || $parent;
+            };
+
+        this.buildSettingsSubtabs($parent);
 
         this.constructor.schema.forEach(function(d){
-            self.fields.push(new d.type(d, $parent, self));
+            self.fields.push(new d.type(d, getParent(d.tab), self));
         });
 
         self.fields.forEach(function(d){d.render();});
+    },
+    buildSettingsSubtabs: function($parent){
+        var self = this,
+            tabs = this.constructor.tabs || [],
+            tablinks = [],
+            ul, div, isActive;
+
+        this.settingsTabs = {}
+
+        if (tabs.length === 0) return;
+
+        _.each(tabs, function(d, i){
+            isActive = (i===0) ? 'active"' : "";
+            self.settingsTabs[d.name] = $('<div id="settings_{0}" class="tab-pane {1}">'.printf(d.name, isActive));
+            tablinks.push('<li class="{0}"><a href="#settings_{1}" data-toggle="tab">{2}</a></li>'.printf(isActive, d.name, d.label))
+        });
+
+        $('<ul class="nav nav-tabs">')
+            .append(tablinks)
+            .appendTo($parent);
+
+        $('<div class="tab-content">')
+            .append(_.values(self.settingsTabs))
+            .appendTo($parent);
     },
     setPreviewLoading: function(){
         var $settings = (this.$el.find("#settings")),
@@ -503,108 +532,115 @@ var CrossviewForm = function(){
     VisualForm.apply(this, arguments);
 };
 _.extend(CrossviewForm, {
+    tabs: [
+        {name: "overall",       label: "General settings"},
+        {name: "filters",       label: "Crossview filters"},
+        {name: "references",    label: "References"}
+    ],
     schema: [
-        {
-            type: HeaderNullField,
-            label: "Overall plot-settings"
-        },
         {
             type: TextField,
             name: "title",
             label: "Title",
-            def: "Title"
+            def: "Title",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "xAxisLabel",
             label: "X-axis label",
-            def: "Dose (<add units>)"
+            def: "Dose (<add units>)",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "yAxisLabel",
             label: "Y-axis label",
-            def: "% change from control (continuous), % incidence (dichotomous)"
+            def: "% change from control (continuous), % incidence (dichotomous)",
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "width",
             label: "Overall width (px)",
             def: 1100,
-            helpText: "Overall width, including plot and tags"
+            helpText: "Overall width, including plot and tags",
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "height",
             label: "Overall height (px)",
             def: 600,
-            helpText: "Overall height, including plot and tags"
-        },
-        {
-            type: SpacerNullField,
-        },
-        {
-            type: HeaderNullField,
-            label: "Crossview visualization-settings"
+            helpText: "Overall height, including plot and tags",
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "inner_width",
             label: "Plot width (px)",
-            def: 940
+            def: 940,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "inner_height",
             label: "Plot height (px)",
-            def: 520
+            def: 520,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_left",
             label: "Plot padding-left (px)",
-            def: 75
+            def: 75,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_top",
             label: "Plot padding-top (px)",
-            def: 45
+            def: 45,
+            tab: "overall"
         },
         {
             type: CrossviewSelectorField,
-            prependSpacer: true,
-            label: "Filters",
+            prependSpacer: false,
             name: "filters",
-            colWidths: [40, 20, 10, 10, 20]
+            colWidths: [40, 20, 10, 10, 20],
+            tab: "filters"
         },
         {
             type: ReferenceLineField,
-            prependSpacer: true,
+            prependSpacer: false,
             label: "Dose reference line",
             name: "reflines_dose",
-            colWidths: [20, 40, 20, 20]
+            colWidths: [20, 40, 20, 20],
+            tab: "references"
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
             label: "Dose reference range",
             name: "refranges_dose",
-            colWidths: [10, 10, 40, 20, 20]
+            colWidths: [10, 10, 40, 20, 20],
+            tab: "references"
         },
         {
             type: ReferenceLineField,
             prependSpacer: true,
             label: "Response reference line",
             name: "reflines_response",
-            colWidths: [20, 40, 20, 20]
+            colWidths: [20, 40, 20, 20],
+            tab: "references"
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
             label: "Response reference range",
             name: "refranges_response",
-            colWidths: [10, 10, 40, 20, 20]
+            colWidths: [10, 10, 40, 20, 20],
+            tab: "references"
         },
     ]
 });
