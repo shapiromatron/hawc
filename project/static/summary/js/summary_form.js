@@ -319,10 +319,8 @@ _.extend(VisualForm, {
 });
 VisualForm.prototype = {
     setupEvents: function(){
-
         var self = this,
-            dataChanged = false,
-            setDataChanged = function(){dataChanged=true;},
+            setDataChanged = function(){self.dataSynced=false;},
             $data = this.$el.find("#data"),
             $settings = this.$el.find("#settings")
             $preview = this.$el.find("#preview");
@@ -332,41 +330,66 @@ VisualForm.prototype = {
         $data.on('djselectableadd djselectableremove', setDataChanged);
         $data.find('.wysihtml5-sandbox').contents().find('body').on("keyup", setDataChanged);
 
+        // whenever data is synced, rebuild
+        $settings.on('dataSynched', $.proxy(this.unpackSettings, this));
+        $preview.on('dataSynched', $.proxy(this.buildPreview, this));
+
         $('a[data-toggle="tab"]').on('show', function(e){
             var toShow = $(e.target).attr('href'),
                 shown = $(e.relatedTarget).attr('href');
 
-            if(shown==="#settings") self.packSettings();
+            switch(shown){
+                case "#data":
+                    if(self.dataSynced){
+                        self.unpackSettings();
+                    } else {
+                        self.getData();
+                    }
+                    break;
+                case "#settings":
+                    self.packSettings();
+                    break;
+                case "#preview":
+                    self.removePreview();
+                    break;
+            }
 
-            if(shown==="#data") self.unpackSettings();
-
-            if(shown==="#preview") self.removePreview();
-
-            if(toShow==="#preview"){
-                self.setPreviewLoading();
-                if(dataChanged){
-                    self.getData(self.buildPreview)
-                    dataChanged = false;
-                } else {
-                    $('a[data-toggle="tab"]').one('shown', $.proxy(self.buildPreview, self));
-                }
+            switch(toShow){
+                case "#settings":
+                    if(!self.dataSynced) {
+                        self.addSettingsLoader();
+                        self.getData();
+                    }
+                    break;
+                case "#preview":
+                    self.setPreviewLoading();
+                    if(self.dataSynced){
+                        $('a[data-toggle="tab"]').one('shown', $.proxy(self.buildPreview, self));
+                    } else {
+                        self.getData();
+                    }
+                    break;
             }
         });
 
         $('#data form').on('submit', $.proxy(this.packSettings, this));
     },
-    getData: function(cb){
-        var data = $('form').serialize(),
-            self = this,
-            $preview = this.$el.find("#preview");
+    getData: function(){
+        var self = this,
+            form = $('form').serialize();
 
-        $.post(window.test_url, data)
-            .success(function(d){
-                self.data = d;
-                if (cb) cb.apply(self);
-            }).fail(function(){
-                HAWCUtils.addAlert("<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed.");
-            });
+        if(this.isSynching) return;
+        this.dataSynced = false;
+        this.isSynching = true;
+        $.post(window.test_url, form, function(d){
+            self.data = d;
+        }).fail(function(){
+            HAWCUtils.addAlert("<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed.");
+        }).always(function(){
+            self.isSynching = false;
+            self.dataSynced = true;
+            $('#preview, #settings').trigger('dataSynched');
+        });
     },
     prepareData: function(){
         // deep-copy the data and make sure we have current settings
@@ -397,6 +420,8 @@ VisualForm.prototype = {
     },
     unpackSettings: function(){
         // #id_settings serialization -> settings-tab
+        // must also have synced data
+        this.removeSettingsLoader();
         var self = this, settings;
         try {
             settings = JSON.parse($('#id_settings').val());
@@ -447,8 +472,20 @@ VisualForm.prototype = {
     },
     setPreviewLoading: function(){
         var $settings = (this.$el.find("#settings")),
-            loading = '<p>Loading... <img src="/static/img/loading.gif"></p>';
+            loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         $preview.html(loading);
+    },
+    addSettingsLoader: function(){
+        var div = $('#settings'),
+            self = this, loader;
+        loader = div.find('p.loader');
+        if(loader.length === 0) loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
+        div.children().hide(0, function(){div.append(loader).show();});
+    },
+    removeSettingsLoader: function(){
+        var div = $('#settings');
+        div.find('p.loader').remove();
+        div.children().show(800);
     },
     buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
