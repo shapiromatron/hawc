@@ -123,7 +123,8 @@
       // add selected adjustment-factors to confounders-considered list
       $('#id_adjustment_factors_0').on('djselectableadd', function(e,v){
         var item = $(v.input),
-            confounders_dj = $('#id_confounders_considered_0').djselectable().data().djselectable;
+            confounders_dj = $('#id_confounders_considered_0').djselectable().data().uiDjselectable;
+
         confounders_dj.select({id:item.attr('value'), value:item.attr('title')})
       });
 
