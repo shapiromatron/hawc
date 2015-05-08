@@ -83,14 +83,17 @@ _.extend(TableField.prototype, InputField.prototype, {
         );
         return td;
     },
-    addTdText: function(name){
-        return '<td><input name="{0}" class="span12" type="text"></td>'.printf(name);
+    addTdText: function(name, val){
+        val = (val!==undefined) ? val : "";
+        return '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val);
     },
-    addTdInt: function(name){
-        return '<td><input name="{0}" class="span12" type="number"></td>'.printf(name);
+    addTdInt: function(name, val){
+        val = (val!==undefined) ? val : "";
+        return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(name, val);
     },
-    addTdFloat: function(name){
-        return '<td><input name="{0}" class="span12" type="number" step="any"></td>'.printf(name);
+    addTdFloat: function(name, val){
+        val = (val!==undefined) ? val : "";
+        return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(name, val);
     },
     addTdSelect: function(name, values){
         var sel = $('<select name="{0}" class="span12">'.printf(name))
@@ -383,6 +386,7 @@ VisualForm.prototype = {
         this.isSynching = true;
         $.post(window.test_url, form, function(d){
             self.data = d;
+            if (self.afterGetDataHook) self.afterGetDataHook(d);
         }).fail(function(){
             HAWCUtils.addAlert("<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed.");
         }).always(function(){
@@ -520,7 +524,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         return $('<tr>')
             .append(
                 '<th>Field name</th>',
-                // '<th>Values</th>',
+                '<th>Values</th>',
                 '<th>Number of columns</th>',
                 '<th>X position</th>',
                 '<th>Y position</th>',
@@ -528,26 +532,55 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
             ).appendTo(this.$thead);
     },
     addRow: function () {
-        return $('<tr>')
-            .append(
-                this.addTdSelect('name', [
+        var self = this,
+            nameTd = this.addTdSelect('name', [
                     'study',
                     'experiment_type',
                     'species',
                     'sex',
                     'effects',
-                ]),
-                // this.addTdSelectMultiple('values', [1,2,3,4,5,6]),
-                this.addTdInt('columns'),
-                this.addTdInt('x'),
-                this.addTdInt('y'),
+                ]).attr('class', 'valuesSome'),
+            valuesTd = this.addTdSelectMultiple('values', []),
+            values = valuesTd.find('select').attr('size', 8).css('overflow-y', 'scroll'),
+            name = nameTd.find('select'),
+            setValues = function(fld){
+                var opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld))
+                            .map(function(d){return '<option value="{0}" selected>{0}</option>'.printf(d)})
+                            .value();
+                values.html(opts);
+            }, allValues, allValuesLeg;
+
+        allValues = $('<input name="allValues" type="checkbox" checked>').on('change', function(){
+            if ($(this).prop('checked')){
+                values.hide();
+            } else {
+                values.show();
+                setValues(name.val());
+            }
+        }).trigger('change');
+
+        allValuesLeg = $('<label class="checkbox">')
+            .append(allValues)
+            .append("Use all values")
+            .prependTo(valuesTd);
+
+        name.on('change', function(d){setValues($(this).val());});
+
+        return $('<tr>')
+            .append(
+                nameTd,
+                valuesTd,
+                this.addTdInt('columns', 1),
+                this.addTdInt('x', 0),
+                this.addTdInt('y', 0),
                 this.tdOrdering()
             ).appendTo(this.$tbody);
     },
     fromSerializedRow: function (d,i) {
         var row = this.addRow();
         row.find('select[name="name"]').val(d.name);
-        // row.find('select[name="values"]').val(d.values);
+        row.find('input[name="allValues"]').prop('checked', d.allValues).trigger('change');
+        row.find('select[name="values"]').val(d.values);
         row.find('input[name="columns"]').val(d.columns);
         row.find('input[name="x"]').val(d.x);
         row.find('input[name="y"]').val(d.y);
@@ -556,7 +589,8 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         row = $(row);
         return {
             "name": row.find('select[name="name"]').val(),
-            // "values": row.find('select[name="values"]').val(),
+            "allValues": row.find('input[name="allValues"]').prop('checked'),
+            "values": row.find('select[name="values"]').val(),
             "columns": parseInt(row.find('input[name="columns"]').val(), 10),
             "x": parseInt(row.find('input[name="x"]').val(), 10),
             "y": parseInt(row.find('input[name="y"]').val(), 10),
@@ -644,7 +678,7 @@ _.extend(CrossviewForm, {
             type: CrossviewSelectorField,
             prependSpacer: false,
             name: "filters",
-            colWidths: [40, 20, 10, 10, 20],
+            colWidths: [24, 25, 12, 12, 12, 15],
             tab: "filters"
         },
         {
@@ -690,5 +724,13 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
     updateSettingsFromPreview: function(){
         settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
         this.unpackSettings();
+    },
+    afterGetDataHook: function(data){
+        var endpoints = data.endpoints.map(function(d){
+            var e = new Endpoint(d);
+            e.switch_dose_units(data.dose_units);
+            return e;
+        });
+        this.endpoints = endpoints;
     }
 });

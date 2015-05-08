@@ -1279,6 +1279,29 @@ CrossviewPlot = function(parent, data, options){
     D3Visualization.apply(this, arguments);
     this.setDefaults();
 };
+_.extend(CrossviewPlot, {
+    get_options: function(eps, fld){
+        // get options for input field;
+        // should replicate processEndpoint in prototype below.
+        return _.chain(eps)
+         .filter(CrossviewPlot._filterEndpoint)
+         .map(CrossviewPlot._cw_filter_process[fld])
+         .flatten()
+         .sortBy()
+         .uniq(true)
+         .value();
+    },
+    _filterEndpoint: function(e){
+        return e.data.endpoint_group.length>0;
+    },
+    _cw_filter_process: {
+        "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
+        "experiment_type": function(d){return d.data.animal_group.experiment.type; },
+        "species": function(d){return d.data.animal_group.species; },
+        "sex": function(d){return d.data.animal_group.sex; },
+        "effects": function(d){return d.data.effects.map(function(v){return v.name; })}
+    }
+})
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
         _.extend(this, {
@@ -1323,13 +1346,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.add_menu();
         this.trigger_resize();
     },
-    _cw_filter_process: {
-        "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
-        "experiment_type": function(d){return d.data.animal_group.experiment.type; },
-        "species": function(d){return d.data.animal_group.species; },
-        "sex": function(d){return d.data.animal_group.sex; },
-        "effects": function(d){return d.data.effects.map(function(v){return v.name; })}
-    },
     _cw_filter_names: {
         "study": "Study",
         "experiment_type": "Experiment type",
@@ -1365,17 +1381,13 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("class","dr_axis_labels y_axis_label");
     },
     processData: function(){
-
         var self = this,
             getFilters = function(d){
                 var obj = {}, fld;
                 self.data.settings.filters.forEach(function(fld){
-                    obj[fld.name] = self._cw_filter_process[fld.name](d);
+                    obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d);
                 });
                 return obj;
-            },
-            filterEndpoint = function(e){
-                return e.data.endpoint_group.length>0;
             },
             processEndpoint = function(e){
                 var filters = getFilters(e),
@@ -1401,14 +1413,29 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             },
             dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
             dataset = _.chain(this.data.endpoints)
-                .filter(filterEndpoint)
+                .filter(CrossviewPlot._filterEndpoint)
                 .map(processEndpoint)
                 .value(),
             container_height = this.data.settings.height + 50;  // menu-spacing
 
+        // build filters
+        var filters = _.chain(this.data.settings.filters)
+               .map(function(f){
+                    var vals = _.chain(f.values);
+                    if(f.allValues){
+                        vals = _.chain(dataset)
+                                .map(function(d){return d.filters[f.name];})
+                                .flatten()
+                                .sort()
+                                .uniq(true);
+                    }
+                    return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d};}).value();
+               }).value();
+
         _.extend(this, {
             dataset: dataset,
-            filters: _.pluck(this.data.settings.filters, 'name'),
+            filters: filters,
+            active_filters: [],
             dose_range: [
                 d3.min(dataset, function(v){return v.dose_extent[0];}),
                 d3.max(dataset, function(v){return v.dose_extent[1];})
@@ -1645,21 +1672,9 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .attr("cursor", "pointer")
                 .append("svg:title").text(function(d) { return "drag to reposition"; });
         }
-
     },
     draw_text: function(){
-        var self = this,
-            buildFilter = function(field){
-                return _.chain(self.dataset)
-                        .map(function(d){return d.filters[field];})
-                        .flatten()
-                        .sort()
-                        .uniq(true)
-                        .map(function(d){return {'field': field, 'status': false, 'text': d};})
-                        .value();
-            },
-            filters = this.filters.map(function(f){return buildFilter(f);}),
-            drag = function(){};
+        var self = this, drag;
 
         if (self.options.dev){
             drag = d3.behavior.drag()
@@ -1675,12 +1690,14 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                             self.setFilterLocation(i, x, y);
                         }
                 });
+        } else {
+            drag = function(){};
         }
 
         this.vis.append("g")
             .attr('class', 'filter_holder')
             .selectAll('g.filter')
-                .data(filters)
+                .data(this.filters)
             .enter().append('g')
             .attr('class', 'filter')
             .attr('transform', function(d,i){
@@ -1690,11 +1707,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             })
             .each(function(d, i){ self.layout_filter(this, d, i); })
             .call(drag);
-
-        _.extend(this, {
-            filters: filters,
-            active_filters: []
-        });
     },
     isMatch: function(val, txt){
         // use as a filter to determine match-criteria
