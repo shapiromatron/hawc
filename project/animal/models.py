@@ -118,8 +118,7 @@ class Experiment(models.Model):
         verbose_name="Chemical vehicle",
         help_text="If a vehicle was used, vehicle common-name",
         blank=True)
-    diet = models.CharField(
-        max_length=128,
+    diet = models.TextField(
         help_text="Description of animal-feed, if relevant",
         blank=True)
     guideline_compliance = models.CharField(

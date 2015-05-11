@@ -41,6 +41,7 @@ class ExperimentForm(ModelForm):
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
+        self.fields["diet"].widget.attrs['rows'] = 3
         self.fields["description"].widget.attrs['rows'] = 3
 
         if self.instance.id:
