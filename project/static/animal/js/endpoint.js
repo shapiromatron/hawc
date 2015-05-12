@@ -229,7 +229,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return {html: [tr1, tr2], ncols: nGroups+1};
     },
     build_ag_no_dr_li: function(){
-        return '<li><a href="{0}" target="_blank">{1}</a></li>'.printf(this.data.url, this.data.name);
+        return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
     },
     build_ag_n_key: function(){
         return this.data.endpoint_group.map(function(v){return v.n;}).join('-');
@@ -241,7 +241,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     _build_ag_response_row: function(footnote_object){
         var self = this, footnotes, response,
             tr = $('<tr>')
-                .append('<td><a href="{0}" target="_blank">{1}</a></td>'.printf(this.data.url, this.data.name));
+                .append('<td><a href="{0}">{1}</a></td>'.printf(this.data.url, this.data.name));
 
         if (this.data.data_type == "C"){
             var dr_control;
