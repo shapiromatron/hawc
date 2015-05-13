@@ -1092,23 +1092,38 @@ class EndpointGroup(models.Model):
     def percentControl(data_type, egs):
         #
         # Expects a dictionary of endpoint groups and the endpoint data-type.
-        #
-        # Returns the confidence interval for a population mean, assuming a
-        # normal distribution. Requires continuous data with a stdev.
-        #
         # Appends results to the dictionary for each endpoint-group.
         #
-        for eg in egs:
+        # Calculates a 95% confidence interval for the percent-difference from
+        # control, taking into account variance from both groups using a
+        # Fisher Information Matrix, assuming independent normal distributions.
+        #
+        for i, eg in enumerate(egs):
             mean = low = high = None
             if data_type == "C":
-                sqrt_n = math.sqrt(eg['n'])
-                resp_control = egs[0]['response']
-                if ((sqrt_n != 0) and (resp_control != 0)):
-                    mean =  eg['response'] / resp_control * 100.
-                    if eg['stdev']:
-                        ci = (1.96 * eg['stdev'] / sqrt_n) / resp_control * 100.
-                        low  = (mean - ci)
-                        high = (mean + ci)
+
+                if i == 0:
+                    n_1 = eg['n']
+                    mu_1 = eg['response']
+                    sd_1 = eg.get('stdev')
+
+                n_2 = eg['n']
+                mu_2 = eg['response']
+                sd_2 = eg.get('stdev')
+
+                if mu_1 != 0 and sd_1 and sd_2:
+                    mean = (mu_2-mu_1) / mu_1 * 100.
+                    sd = math.sqrt(
+                        math.pow(mu_1, -2) * (
+                            (math.pow(sd_2, 2)/n_2) +
+                            (math.pow(mu_2, 2)*math.pow(sd_1, 2)) / (n_1*math.pow(mu_1, 2))
+                        )
+                    )
+                    ci   = (1.96 * sd) * 100
+                    rng  = sorted([ mean - ci, mean + ci ])
+                    low  = rng[0]
+                    high = rng[1]
+
             elif data_type == "P":
                 mean = eg['response']
                 low  = eg['lower_ci']
