@@ -746,6 +746,95 @@ class EndpointFunctionality(TestCase):
                          u'Foo et al. \u279E experiment name \u279E animal group name \u279E endpoint name')
 
 
+class EndpointGroupPercentControl(TestCase):
+
+    def _build_egdict(self, egs):
+        output = []
+        for eg in egs:
+            output.append({
+                "n": eg[1],
+                "response": eg[2],
+                "stdev": eg[3]
+            })
+        return output
+
+    def _testerFactory(self, inputs, outputs, data_type):
+        egs = self._build_egdict(inputs)
+        EndpointGroup.percentControl(data_type, egs)
+        for i, d in enumerate(outputs):
+            self.assertAlmostEqual(egs[i]["percentControlMean"], d[0])
+            self.assertAlmostEqual(egs[i]["percentControlLow"],  d[1])
+            self.assertAlmostEqual(egs[i]["percentControlHigh"], d[2])
+
+    def testIncreasing(self):
+        inputs = [
+            (0,   10, 15.1,  3.5),
+            (100, 9,  25.5,  7.8),
+            (200, 8,  35.7,  13.3),
+            (300, 7,  150.1, 23.1),
+        ]
+        outputs = [
+          (0.0, -20.3171209611, 20.3171209611),
+          (68.8741721854, 27.3103479282, 110.437996443),
+          (136.42384106, 66.5736748386, 206.274007281),
+          (894.039735099, 711.728201234, 1076.35126896),
+        ]
+        self._testerFactory(inputs, outputs, "C")
+
+    def testDecreasing(self):
+        inputs = [
+            (0,   7,  150.1, 15.1),
+            (100, 8,  35.7,  13.3),
+            (200, 9,  25.5,  7.8),
+            (300, 10, 15.1,  3.5),
+        ]
+        outputs = [
+            (0.0, -10.5394586484, 10.5394586484),
+            (-76.2158560959, -82.6067710106, -69.8249411813),
+            (-83.0113257828, -86.634786933, -79.3878646326),
+            (-89.9400399734, -91.5681779063, -88.3119020404),
+        ]
+        self._testerFactory(inputs, outputs, "C")
+
+    def testEdge(self):
+        inputs = [
+            (0,   7,   150.1, 15.1),
+            (100, 7,   150.1, 15.1),
+            (200, 700, 150.1, 15.1),
+            (300, 10,  0,  15),
+        ]
+        outputs = [
+            (0.0, -10.5394586484, 10.5394586484),
+            (0.0, -10.5394586484, 10.5394586484),
+            (0.0, -7.48969260009, 7.48969260009),
+            (-100.0, -106.193934924, -93.806065076),
+        ]
+        self._testerFactory(inputs, outputs, "C")
+
+    def testNoneCases(self):
+        nulls = [
+          [(0,   7,  150.1, None), ],
+          [(0,   7,  0,     3), ]
+        ]
+        for inputs in nulls:
+          egs = self._build_egdict(inputs)
+          EndpointGroup.percentControl("C", egs)
+          self.assertAlmostEqual(egs[0]["percentControlMean"], None)
+          self.assertAlmostEqual(egs[0]["percentControlLow"],  None)
+          self.assertAlmostEqual(egs[0]["percentControlHigh"], None)
+
+    def testPCases(self):
+        egs = [{
+          "response": 1,
+          "lower_ci": 2,
+          "upper_ci": 3
+        }]
+        EndpointGroup.percentControl("P", egs)
+        self.assertAlmostEqual(egs[0]["percentControlMean"], 1)
+        self.assertAlmostEqual(egs[0]["percentControlLow"],  2)
+        self.assertAlmostEqual(egs[0]["percentControlHigh"], 3)
+
+
 class EndpointGroupFunctionality(TestCase):
     def setUp(self):
         build_endpoints_for_permission_testing(self)
