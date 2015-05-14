@@ -18,7 +18,7 @@ kombu==3.0.21
 lxml==3.3.5
 pillow==2.5.3
 psycopg2==2.5.3
-python-docx==0.8.0
+python-docx==0.8.5
 python-pptx==0.4.2
 pytz==2014.4
 redis==2.10.3

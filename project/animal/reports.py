@@ -178,7 +178,7 @@ class EndpointDOCXReport(DOCXReport):
         cells.extend([ref, ho])
 
         # send to the printers...
-        self.build_table(rows, 6, cells)
+        self.build_table(rows, 6, cells, numHeaders=2)
         self.doc.add_paragraph("\n")
 
     def create_context(self):

@@ -295,7 +295,7 @@ class DOCXReport(object):
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
 
-    def build_table(self, numRows, numCols, cells):
+    def build_table(self, numRows, numCols, cells, numHeaders=1):
         """
         Helper function to build a table.
 
@@ -347,5 +347,12 @@ class DOCXReport(object):
                     run = p.add_run(runD["text"])
                     run.bold = runD.get("bold", False)
                     run.italic = runD.get("italic", False)
+
+        # mark rows as headers to break on pages
+        if numHeaders>=1:
+            for i in xrange(numHeaders):
+                tblHeader = docx.oxml.parse_xml(r'<w:tblHeader {} />'.format(
+                    docx.oxml.ns.nsdecls('w')))
+                tbl.rows[i]._tr.get_or_add_trPr().append(tblHeader)
 
         return tbl

@@ -44,7 +44,7 @@ class SQDOCXReport(DOCXReport):
             cells.append({"row": rows, "col": 2, "text": strip_tags(d["notes"])})
             rows += 1
 
-        self.build_table(rows, 3, cells)
+        self.build_table(rows, 3, cells, numHeaders=2)
 
     def build_ROB_legend(self):
         cells = [
