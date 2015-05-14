@@ -9,6 +9,24 @@ from myuser.models import HAWCUser
 from .models import Assessment
 
 from django.core.management import call_command
+from selenium import webdriver
+
+
+
+class MainPageTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ff = webdriver.Firefox()
+
+    def test_isRunning(self):
+        self.ff.get('http://localhost:8000')
+        assert 'Health Assessment Workspace Collaborative' in self.ff.title
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.ff.quit()
+
 
 class CeleryTests(TestCase):
 
