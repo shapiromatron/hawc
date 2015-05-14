@@ -1,5 +1,6 @@
 from .base import *
 
+import logging
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -59,3 +60,23 @@ CACHES = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+
+if 'test' in sys.argv[1:]:
+
+    class DisableMigrations(object):
+
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return "notmigrations"
+
+
+    DEBUG = False
+    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+    PASSWORD_HASHERS = (
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    )
+    logging.disable(logging.CRITICAL)
+    MIGRATION_MODULES = DisableMigrations()
