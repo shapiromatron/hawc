@@ -157,12 +157,9 @@
   {% if crud == "Read" and object.cas %}
     <script type="text/javascript">
       $(document).on('ready', function(){
-        $.get("{% url 'assessment:cas_details' %}?cas={{ object.cas|iriencode }}", function(d){
-          if(d.status==="success"){
-            var chem_data = $('<div>').insertAfter($('#assessment_table')),
-                chem_builder = ChemicalPropertiesTableBuilder(d, chem_data, true);
-          }
-        });
+        var url = "{{object.cas_url}}",
+            div = $('<div>').insertAfter($('#assessment_table'))
+        HAWCUtils.renderChemicalProperties(url, div, true);
       });
     </script>
   {% endif %}

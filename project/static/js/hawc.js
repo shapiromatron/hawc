@@ -426,6 +426,26 @@ var HAWCUtils = {
     },
     abstractMethod: function(){
         throw "Abstract method; requires implementation";
+    },
+    renderChemicalProperties: function(url, $div, show_header){
+        $.get(url, function(data){
+            if(data.status==="success"){
+
+                var content = [],
+                    ul = $('<ul>');
+
+                    ul.append('<li><b>Common name:</b> {0}</li>'.printf(data.CommonName))
+                      .append('<li><b>SMILES:</b> {0}</li>'.printf(data.SMILES))
+                      .append('<li><b>Molecular Weight:</b> {0}</li>'.printf(data.MW))
+                      .append('<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image));
+
+                if (show_header) content.push('<h3>Chemical Properties Information</h3>');
+
+                content.push(ul,
+                             '<p class="help-block">Chemical information provided by <a target="_blank" href="http://www.chemspider.com/">http://www.chemspider.com/</a></p>');
+                $div.html(content);
+            }
+        });
     }
 };
 
@@ -1418,22 +1438,4 @@ BaseTable.prototype = {
             colspan = this.numCols();
         this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
     }
-};
-
-
-// Given chemical detail information, build a table to represent this data
-var ChemicalPropertiesTableBuilder = function(data, $div, show_header){
-    var content = [],
-        ul = $('<ul>');
-
-        ul.append('<li><b>Common name:</b> {0}</li>'.printf(data.CommonName))
-          .append('<li><b>SMILES:</b> {0}</li>'.printf(data.SMILES))
-          .append('<li><b>Molecular Weight:</b> {0}</li>'.printf(data.MW))
-          .append('<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image));
-
-    if (show_header) content.push('<h3>Chemical Properties Information</h3>');
-
-    content.push(ul,
-                 '<p class="help-block">Chemical information provided by <a target="_blank" href="http://www.chemspider.com/">http://www.chemspider.com/</a></p>');
-    $div.html(content);
 };

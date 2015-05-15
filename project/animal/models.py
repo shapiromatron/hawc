@@ -14,8 +14,7 @@ from django.dispatch import receiver
 
 import reversion
 
-from assessment.models import BaseEndpoint
-from assessment.tasks import get_chemspider_details
+from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
@@ -160,11 +159,9 @@ class Experiment(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
-    def get_CAS_details(self):
-        task = get_chemspider_details.delay(self.cas)
-        v = task.get(timeout=60)
-        if v:
-            return v
+    @property
+    def cas_url(self):
+        return get_cas_url(self.cas)
 
     @staticmethod
     def flat_complete_header_row():

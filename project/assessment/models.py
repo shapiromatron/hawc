@@ -12,6 +12,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
 from mailmerge import MailMerge
@@ -20,7 +21,13 @@ import reversion
 from utils.helper import HAWCDjangoJSONEncoder
 from myuser.models import HAWCUser
 
-from .tasks import get_chemspider_details
+
+
+def get_cas_url(cas):
+    if cas:
+        return u"{}?cas={}".format(reverse('assessment:cas_details'), urlquote(cas))
+    else:
+        return None
 
 
 class Assessment(models.Model):
@@ -140,6 +147,10 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse('assessment:detail', args=[str(self.pk)])
 
+    @property
+    def cas_url(self):
+        return get_cas_url(self.cas)
+
     class Meta:
         ordering = ("-created", )
 
@@ -203,12 +214,6 @@ class Assessment(models.Model):
             return ((user in self.project_manager.all()) or
                     (user in self.team_members.all()) or
                     (user in self.reviewers.all()))
-
-    def get_CAS_details(self):
-        task = get_chemspider_details.delay(self.cas)
-        v = task.get(timeout=60)
-        if v:
-            return v
 
     @classmethod
     def get_viewable_assessments(cls, user, exclusion_id=None):
