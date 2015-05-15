@@ -7,6 +7,7 @@ from . import views, api
 
 router = DefaultRouter()
 router.register(r'endpoint', api.Endpoint, base_name="endpoint")
+router.register(r'experiment', api.Experiment, base_name="experiment")
 
 
 urlpatterns = patterns('animal.views',

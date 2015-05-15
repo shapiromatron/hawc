@@ -5,6 +5,12 @@ from assessment.api.views import AssessmentViewset
 from . import models, serializers
 
 
+class Experiment(AssessmentViewset):
+    assessment_filter_args = "study__assessment"
+    model = models.Experiment
+    serializer_class = serializers.ExperimentSerializer
+
+
 class Endpoint(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint

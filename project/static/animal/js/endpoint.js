@@ -1,3 +1,85 @@
+var Experiment = function(data){
+    this.data = data;
+};
+_.extend(Experiment, {
+    get_object: function(id, cb){
+        $.get('/ani/api/experiment/{0}/'.printf(id), function(d){
+            cb(new Experiment(d));
+        });
+    },
+    displayAsModal: function(id){
+        Experiment.get_object(id, function(d){d.displayAsModal();});
+    }
+});
+Experiment.prototype = {
+    build_breadcrumbs: function(){
+        var urls = [
+            {
+                url: this.data.study.url,
+                name: this.data.study.short_citation
+            },
+            {
+                url: this.data.url,
+                name: this.data.name
+            }
+        ];
+        return HAWCUtils.build_breadcrumbs(urls);
+    },
+    build_details_table: function(){
+        var self = this,
+            getGenerations = function(){
+                return (self.data.is_generational) ? "Yes" : "No";
+            },
+            getLitterEffects = function(){
+                if(self.data.is_generational) return self.data.litter_effects;
+            },
+            getPurityText = function(){
+                return (self.data.purity_available) ? "Chemical purity" : "Chemical purity available";
+            },
+            getPurity = function(){
+                return (self.data.purity) ? ">{0}%".printf(self.data.purity) : "No";
+            },
+            tbl, casTd;
+
+        tbl = new DescriptiveTable()
+            .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Type", this.data.type)
+            .add_tbody_tr("Multiple generations", getGenerations())
+            .add_tbody_tr("Chemical", this.data.chemical)
+            .add_tbody_tr("CAS", this.data.cas)
+            .add_tbody_tr("Chemical source", this.data.chemical_source)
+            .add_tbody_tr(getPurityText(), getPurity())
+            .add_tbody_tr("Vehicle", this.data.vehicle)
+            .add_tbody_tr("Animal diet", this.data.diet)
+            .add_tbody_tr("Litter effects", getLitterEffects(), {annotate: this.data.litter_effect_notes})
+            .add_tbody_tr("Guideline compliance", this.data.guideline_compliance)
+            .add_tbody_tr("Description and animal husbandry", this.data.description);
+
+        if (this.data.cas_url){
+            casTd = tbl.get_tbl().find('th:contains("CAS")').next();
+            HAWCUtils.renderChemicalProperties(this.data.cas_url, casTd, false);
+        }
+
+        return tbl.get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = $('<h4>').html(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details
+            .append(this.build_details_table());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1000});
+    }
+};
+
+
 var Endpoint = function(data, options){
     Observee.apply(this, arguments);
     if (!data) return;  // added for edit_endpoint prototype extension

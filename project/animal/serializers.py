@@ -19,6 +19,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         ret['url'] = instance.get_absolute_url()
         ret['type'] = instance.get_type_display()
         ret['litter_effects'] = instance.get_litter_effects_display()
+        ret['is_generational'] = instance.is_generational()
         ret['cas_url'] = instance.cas_url
         return ret
 
