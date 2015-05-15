@@ -1292,7 +1292,8 @@ _.extend(CrossviewPlot, {
          .value();
     },
     _filterEndpoint: function(e){
-        return e.data.endpoint_group.length>0;
+        // need at-least two non-zero dose-groups for visualization.
+        return e.data.endpoint_group.length>2;
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
