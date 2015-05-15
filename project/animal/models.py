@@ -1000,6 +1000,22 @@ class Endpoint(BaseEndpoint):
             "studies": studies
         }
 
+    @classmethod
+    def get_system_choices(cls, assessment_id):
+        objs = cls.objects\
+                  .filter(assessment_id=assessment_id)\
+                  .distinct('system')\
+                  .values_list('system', flat=True)
+        return [ (obj, obj) for obj in sorted(objs) ]
+
+    @classmethod
+    def get_effect_choices(cls, assessment_id):
+        objs = cls.objects\
+                  .filter(assessment_id=assessment_id)\
+                  .distinct('effect')\
+                  .values_list('effect', flat=True)
+        return [ (obj, obj) for obj in sorted(objs) ]
+
 
 class EndpointGroup(models.Model):
     endpoint = models.ForeignKey(

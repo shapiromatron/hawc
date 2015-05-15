@@ -8,7 +8,6 @@ from utils.forms import BaseFormHelper
 from . import models
 
 
-
 class SummaryTextForm(forms.ModelForm):
 
     delete = forms.BooleanField(initial=False)
@@ -35,7 +34,7 @@ class VisualForm(forms.ModelForm):
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', 'visual_type')
+        exclude = ('assessment', 'visual_type', 'prefilters')
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
@@ -91,10 +90,53 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', 'visual_type')
+        exclude = ('assessment', 'visual_type', 'prefilters')
 
 
 class CrossviewForm(VisualForm):
+
+    prefilter_system = forms.BooleanField(
+        required=False,
+        label="Prefilter by system",
+        help_text="Prefilter endpoints on plot to include on select systems.")
+
+    systems = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Effects to include",
+        help_text="""Select one or more systems to include in the plot.
+                     If no system is selected, no endpoints will be available.""")
+
+    prefilter_effect = forms.BooleanField(
+        required=False,
+        label="Prefilter by effect",
+        help_text="Use this box to limit the effects.")
+
+    effects = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Effects to include",
+        help_text="""Select one or more effects to include in the plot.
+                     If no effect is selected, no endpoints will be available.""")
+
+    def __init__(self, *args, **kwargs):
+        super(CrossviewForm, self).__init__(*args, **kwargs)
+
+        self.pf = models.Prefilter(self.instance)
+
+        self.fields["prefilters"].widget = forms.HiddenInput()
+        self.fields["systems"].choices = self.pf.getChoices("systems")
+        self.fields["effects"].choices = self.pf.getChoices("effects")
+
+        self.fields["systems"].widget.attrs['size'] = 10
+        self.fields["effects"].widget.attrs['size'] = 10
+
+        self.pf.setInitialForm(self)
+
+    def clean(self):
+        cleaned_data = super(CrossviewForm, self).clean()
+        cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
+        return cleaned_data
 
     class Meta:
         model = models.Visual

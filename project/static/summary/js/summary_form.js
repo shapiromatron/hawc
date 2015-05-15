@@ -299,6 +299,7 @@ var VisualForm = function($el){
     this.$el = $el;
     this.fields = [];
     this.settings = {};
+    this.initDataForm();
     this.initSettings();
     this.buildSettingsForm();
     this.getData();
@@ -491,6 +492,7 @@ VisualForm.prototype = {
         div.find('p.loader').remove();
         div.children().show(800);
     },
+    initDataForm: function(){},
     buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
         this.updateSettingsFromPreview();
@@ -732,5 +734,16 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
             return e;
         });
         this.endpoints = endpoints;
+    },
+    initDataForm: function(){
+        $('#id_prefilter_system').on('change', function(){
+            var sys = $('#id_systems').parent().parent();
+            ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
+        }).trigger('change');
+
+        $('#id_prefilter_effect').on('change', function(){
+            var sys = $('#id_effects').parent().parent();
+            ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
+        }).trigger('change');
     }
 });

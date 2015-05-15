@@ -1336,7 +1336,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit.</p>");
+            return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>");
         }
         this.build_plot_skeleton(false);
         this.add_axes();

@@ -8,13 +8,14 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from animal.models import Endpoint
 from comments.models import Comment
 from study.models import Study
 
 import reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper
+from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder
 
 
 class SummaryText(MP_Node):
@@ -178,6 +179,8 @@ class Visual(models.Model):
         'animal.DoseUnits',
         blank=True,
         null=True)
+    prefilters = models.TextField(
+        default="{}")
     endpoints = models.ManyToManyField(
         'assessment.BaseEndpoint',
         related_name='visuals',
@@ -216,7 +219,6 @@ class Visual(models.Model):
         return self.assessment
 
     def get_endpoints(self, request=None):
-        Endpoint = get_model('animal', 'Endpoint')
         qs = self.__class__.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
@@ -233,11 +235,14 @@ class Visual(models.Model):
                     dose_id = int(request.POST.get('dose_units', -1))
                 except ValueError:
                     dose_id = -1
+                Prefilter.setRequestFilters(filters, request=request)
+
             else:
                 dose_id = self.dose_units_id
+                Prefilter.setRequestFilters(filters, prefilters=self.prefilters)
 
             filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
-            qs = Endpoint.objects.filter(**filters).distinct('pk')
+            qs = Endpoint.objects.filter(**filters).distinct('id')
 
         return qs
 
@@ -262,7 +267,6 @@ class Visual(models.Model):
         }
 
         if self.visual_type in [0, 1]:
-            Endpoint = get_model('animal', 'Endpoint')
             qs = self.get_endpoints(request)
             data["endpoints"] = Endpoint.d_responses(qs, json_encode=False)
 
@@ -360,6 +364,7 @@ class DataPivotUpload(DataPivot):
     def visual_type(self):
         return "Data pivot (file upload)"
 
+
 class DataPivotQuery(DataPivot):
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,
@@ -411,6 +416,61 @@ class DataPivotQuery(DataPivot):
             return "Data pivot (in vitro)"
         else:
             raise ValueError("Unknown type")
+
+
+class Prefilter(object):
+    """
+    Helper-object to deal with the Visual.prefilters field
+    """
+    def __init__(self, model):
+        self.model = model
+        self.prefilters = json.loads(model.prefilters)
+
+    @classmethod
+    def setRequestFilters(cls, filters, request=None, prefilters=None):
+        if request:
+            if request.POST.get('prefilter_system'):
+                filters["system__in"] = request.POST.getlist('systems')
+
+            if request.POST.get('prefilter_effect'):
+                filters["effect__in"] = request.POST.getlist('effects')
+
+        if prefilters:
+            filters.update(json.loads(prefilters))
+
+    def setInitialForm(self, form):
+        for k,v in self.prefilters.iteritems():
+            if k == "system__in":
+                form.fields["systems"].initial = v
+                form.fields["prefilter_system"].initial = True
+
+            if k == "effect__in":
+                form.fields["effects"].initial = v
+                form.fields["prefilter_effect"].initial = True
+
+    def setPrefilters(self, data):
+        prefilters = {}
+
+        if data['prefilter_system']:
+            prefilters["system__in"] = data.get("systems", [])
+
+        if data['prefilter_effect']:
+            prefilters["effect__in"] = data.get("effects", [])
+
+        return json.dumps(prefilters)
+
+    def getChoices(self, field_name):
+        choices = None
+
+        if field_name == "systems":
+            choices = list(Endpoint.get_system_choices(self.model.assessment_id))
+        elif field_name == "effects":
+            choices = list(Endpoint.get_effect_choices(self.model.assessment_id))
+        else:
+            raise ValueError("Unknown field name: {}".format(field_name))
+
+        return choices
+
 
 reversion.register(SummaryText)
 reversion.register(DataPivotUpload)
