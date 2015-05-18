@@ -886,6 +886,18 @@ var AnimalGroupTable = function(endpoints){
     this.endpoints_no_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length === 0;}),
     this.endpoints_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length > 0;});
 };
+_.extend(AnimalGroupTable, {
+    render: function($div, endpoints){
+        var tbl = new AnimalGroupTable(endpoints);
+
+        $div.append(tbl.build_table());
+
+        if (tbl.endpoints_no_dr.length>0){
+            $div.append("<h3>Additional endpoints (not extracted)</h3>")
+                .append(tbl.build_no_dr_ul());
+        }
+    }
+});
 AnimalGroupTable.prototype = {
     build_table: function(){
         if(this.endpoints.length === 0)
