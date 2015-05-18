@@ -124,6 +124,7 @@ class CrossviewForm(VisualForm):
         super(CrossviewForm, self).__init__(*args, **kwargs)
 
         self.pf = models.Prefilter(self.instance)
+        self.pf.setInitialForm(self)
 
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")
@@ -132,7 +133,6 @@ class CrossviewForm(VisualForm):
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
 
-        self.pf.setInitialForm(self)
 
     def clean(self):
         cleaned_data = super(CrossviewForm, self).clean()
@@ -246,6 +246,7 @@ class DataPivotQueryForm(DataPivotForm):
             (2, 'In vitro'))
 
         self.pf = models.Prefilter(self.instance)
+        self.pf.setInitialForm(self)
 
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")
