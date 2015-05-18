@@ -338,8 +338,16 @@ class AnimalGroup(models.Model):
             "strain-name",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    @classmethod
+    def getRelatedAnimalGroupID(cls, rel):
+        if rel:
+            return str(rel['id'])
+        else:
+            return None
+
+    @classmethod
+    def flat_complete_data_row(cls, ser):
+
         return (
             ser['id'],
             ser['url'],
@@ -349,8 +357,8 @@ class AnimalGroup(models.Model):
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
             ser['duration_observation'],
-            ser['siblings'],
-            '|'.join([str(p) for p in ser['parents']]),
+            cls.getRelatedAnimalGroupID(ser['siblings']),
+            '|'.join([cls.getRelatedAnimalGroupID(p) for p in ser['parents']]),
             ser['generation'],
             ser['species'],
             ser['strain']
@@ -516,7 +524,7 @@ class DosingRegime(models.Model):
     def flat_complete_data_row(ser):
         return (
             ser['id'],
-            ser['dosed_animals'],
+            AnimalGroup.getRelatedAnimalGroupID(ser['dosed_animals']),
             ser['route_of_exposure'],
             ser['duration_exposure'],
             ser['num_dose_groups'],
