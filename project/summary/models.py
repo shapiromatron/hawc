@@ -2,7 +2,6 @@ from datetime import datetime
 import json
 
 from django.db import models
-from django.db.models.loading import get_model
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.core.urlresolvers import reverse
@@ -376,6 +375,8 @@ class DataPivotQuery(DataPivot):
         help_text="If kept-blank, dose-units will be random for each "
                   "endpoint presented. This setting may used for comparing "
                   "percent-response, where dose-units are not needed.")
+    prefilters = models.TextField(
+        default="{}")
 
     def get_data_url(self):
         # request a tsv instead of Excel default
