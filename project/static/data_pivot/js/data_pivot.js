@@ -2903,7 +2903,8 @@ _.extend(DataPivotExtension, {
           "study":            {_dpe_key: "Study HAWC ID",        _dpe_datatype: "study", _dpe_cls: Study},
           "experiment":       {_dpe_key: "Experiment ID",        _dpe_datatype: "experiment", _dpe_cls: Experiment},
           "animal_group":     {_dpe_key: "Animal Group ID",      _dpe_datatype: "animal_group", _dpe_cls: AnimalGroup},
-          "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint},
+          "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint, options: {complete: false}},
+          "endpoint_complete":{_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint, options: {complete: true}},
           "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population", _dpe_cls: StudyPopulation},
           "exposure":         {_dpe_key: "Exposure Key",         _dpe_datatype: "exposure", _dpe_cls: Exposure},
           "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome", _dpe_cls: AssessedOutcome},
@@ -2928,22 +2929,25 @@ _.extend(DataPivotExtension, {
     if (dp.data.length>0){
       var headers = d3.set(d3.map(dp.data[0]).keys()),
           options = d3.map({
-            "Study HAWC ID": '<option value="study">Show Study</option>',
-            "Study Population Key": '<option value="study_population">Show Study Population</option>',
-            "Exposure Key": '<option value="exposure">Show Exposure</option>',
-            "Protocol Primary Key":  '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
-            "Result Primary Key": '<option value="meta_result">Show Epidemiology Meta-Result</option>',
-            "Experiment ID": '<option value="experiment">Show Experiment</option>',
-            "Animal Group ID": '<option value="animal_group">Show Animal Group</option>',
-            "Endpoint Key": '<option value="endpoint">Show Endpoint</option>',
-            "Assessed Outcome Key": '<option value="assessed_outcome">Show Assessed Outcome</option>',
-            "Chemical HAWC ID": '<option value="iv_chemical">Show In Vitro Chemical</option>',
-            "IVExperiment HAWC ID": '<option value="iv_experiment">Show In Vitro Experiment</option>',
-            "IVEndpoint HAWC ID": '<option value="iv_endpoint">Show In Vitro Endpoint</option>',
+            "Study HAWC ID":        ['<option value="study">Show Study</option>'],
+            "Study Population Key": ['<option value="study_population">Show Study Population</option>'],
+            "Exposure Key":         ['<option value="exposure">Show Exposure</option>'],
+            "Protocol Primary Key": ['<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>'],
+            "Result Primary Key":   ['<option value="meta_result">Show Epidemiology Meta-Result</option>'],
+            "Experiment ID":        ['<option value="experiment">Show Experiment</option>'],
+            "Animal Group ID":      ['<option value="animal_group">Show Animal Group</option>'],
+            "Endpoint Key":         [
+              '<option value="endpoint">Show Endpoint</option>',
+              '<option value="endpoint_complete">Show Endpoint Complete Summary</option>'
+            ],
+            "Assessed Outcome Key": ['<option value="assessed_outcome">Show Assessed Outcome</option>'],
+            "Chemical HAWC ID":     ['<option value="iv_chemical">Show In Vitro Chemical</option>'],
+            "IVExperiment HAWC ID": ['<option value="iv_experiment">Show In Vitro Experiment</option>'],
+            "IVEndpoint HAWC ID":   ['<option value="iv_endpoint">Show In Vitro Endpoint</option>'],
           });
 
       options.entries().forEach(function(v){
-        if(headers.has(v.key)) opts.push(v.value);
+        if(headers.has(v.key)) opts.push.apply(opts, v.value);
       });
     }
     return opts;
@@ -2952,8 +2956,9 @@ _.extend(DataPivotExtension, {
 DataPivotExtension.prototype = {
   render_plottip: function(settings, datarow){
     var Cls = settings._dpe_cls,
-        key = settings._dpe_key;
-    Cls.displayAsModal(datarow[key])
+        key = settings._dpe_key,
+        options = settings.options
+    Cls.displayAsModal(datarow[key], options);
   }
 };
 

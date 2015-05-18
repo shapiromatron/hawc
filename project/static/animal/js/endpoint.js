@@ -69,13 +69,15 @@ Experiment.prototype = {
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
-        $details
-            .append(this.build_details_table());
+        this.render($details);
 
         modal.addHeader(title)
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
+    },
+    render: function($div){
+        $div.append(this.build_details_table());
     }
 };
 
@@ -196,16 +198,19 @@ AnimalGroup.prototype = {
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
-        $details.append(
-            this.build_details_table(),
-            $("<h2>Dosing regime</h2>"),
-            this.build_dr_details_table()
-        );
+        this.render($details);
 
         modal.addHeader(title)
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
+    },
+    render: function($div){
+        $div.append(
+            this.build_details_table(),
+            $("<h2>Dosing regime</h2>"),
+            this.build_dr_details_table()
+        );
     }
 };
 
@@ -228,8 +233,8 @@ _.extend(Endpoint, {
     getTagURL: function(assessment, slug){
         return "/ani/assessment/{0}/endpoints/tags/{1}/".printf(assessment, slug);
     },
-    displayAsModal: function(id){
-        Endpoint.get_object(id, function(d){d.displayAsModal();});
+    displayAsModal: function(id, opts){
+        Endpoint.get_object(id, function(d){d.displayAsModal(opts);});
     }
 });
 _.extend(Endpoint.prototype, Observee.prototype, {
@@ -600,19 +605,51 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             return '-';
         }
     },
-    displayAsModal: function(){
-        var self = this,
+    displayAsModal: function(opts){
+        var complete = (opts) ? opts.complete : true,
+            self = this,
             modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
             $details = $('<div class="span12">'),
             $plot = $('<div style="height:300px; width:300px">'),
             $tbl = $('<table class="table table-condensed table-striped">'),
-            $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">')
-                    .append($details))
-                .append($('<div class="row-fluid">')
-                    .append($('<div class="span7">').append($tbl))
-                    .append($('<div class="span5">').append($plot)));
+            $content = $('<div class="container-fluid">'),
+            $study, $exp, $ag, $end, $tabs, $divs,
+            study, exp, ag, end;
+
+        if (complete){
+            tabs = $('<ul class="nav nav-tabs">').append(
+                '<li><a href="#modalStudy" data-toggle="tab">Study</a></li>',
+                '<li><a href="#modalExp" data-toggle="tab">Experiment</a></li>',
+                '<li><a href="#modalAG" data-toggle="tab">Animal Group</a></li>',
+                '<li class="active"><a href="#modalEnd" data-toggle="tab">Endpoint</a></li>'
+            );
+            $study = $('<div class="tab-pane" id="modalStudy">');
+            Study.render(this.data.animal_group.experiment.study.id,
+                         $study,
+                         tabs.find('a[href="#modalStudy"]'));
+
+            $exp = $('<div class="tab-pane" id="modalExp">');
+            exp = new Experiment(this.data.animal_group.experiment);
+            exp.render($exp);
+
+            $ag = $('<div class="tab-pane" id="modalAG">');
+            ag = new AnimalGroup(this.data.animal_group);
+            ag.render($ag);
+
+            $end = $('<div class="tab-pane active" id="modalEnd">');
+            divs = $('<div class="tab-content">').append($study, $exp, $ag, $end);
+            $content.prepend(tabs, divs);
+        } else {
+            $end = $content
+        }
+
+        $end
+            .append($('<div class="row-fluid">')
+                .append($details))
+            .append($('<div class="row-fluid">')
+                .append($('<div class="span7">').append($tbl))
+                .append($('<div class="span5">').append($plot)));
 
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
