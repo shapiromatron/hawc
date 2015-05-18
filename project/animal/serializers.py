@@ -35,8 +35,21 @@ class DosesSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+class AnimalGroupRelationSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        ret = super(AnimalGroupRelationSerializer, self).to_representation(instance)
+        ret['url'] = instance.get_absolute_url()
+        return ret
+
+    class Meta:
+        model = models.AnimalGroup
+        fields = ('id', 'name', )
+
+
 class DosingRegimeSerializer(serializers.ModelSerializer):
     doses = DosesSerializer(many=True)
+    dosed_animals = AnimalGroupRelationSerializer()
 
     def to_representation(self, instance):
         ret = super(DosingRegimeSerializer, self).to_representation(instance)
@@ -47,18 +60,6 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DosingRegime
-
-
-class AnimalGroupRelationSerializer(serializers.ModelSerializer):
-
-    def to_representation(self, instance):
-        ret = super(AnimalGroupRelationSerializer, self).to_representation(instance)
-        ret['url'] = instance.get_absolute_url()
-        return ret
-
-    class Meta:
-        model = models.AnimalGroup
-        fields = ('name', )
 
 
 class AnimalGroupSerializer(serializers.ModelSerializer):

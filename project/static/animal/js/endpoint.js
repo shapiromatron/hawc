@@ -111,19 +111,19 @@ AnimalGroup.prototype = {
         ];
         return HAWCUtils.build_breadcrumbs(urls);
     },
+    _getAniRelationLink: function(obj){
+        if (!obj) return undefined;
+        return $('<a href="{0}">{1}</a>'.printf(obj.url, obj.name));
+    },
     build_details_table: function(){
         var self = this,
             getDurObs = function(){
                 var d = self.data.duration_observation;
                 return (d) ? "{0} days".printf(d) : undefined;
             },
-            getRelationVal = function(obj){
-                if (!obj) return undefined;
-                return $('<a href="{0}">{1}</a>'.printf(obj.url, obj.name));
-            },
             getRelations = function(lst){
                 return _.chain(lst)
-                        .map(getRelationVal)
+                        .map(self._getAniRelationLink)
                         .map(function(d){return $('<li>').append(d);})
                         .value();
             },
@@ -140,8 +140,52 @@ AnimalGroup.prototype = {
             .add_tbody_tr("Lifestage assessed", this.data.lifestage_assessed)
             .add_tbody_tr("Generation", this.data.generation)
             .add_tbody_tr_list("Parents", getRelations(this.data.parents))
-            .add_tbody_tr("Siblings", getRelationVal(this.data.siblings))
+            .add_tbody_tr("Siblings", this._getAniRelationLink(this.data.siblings))
             .add_tbody_tr_list("Children", getRelations(this.data.children));
+
+        return tbl.get_tbl();
+    },
+    build_dr_details_table: function(){
+        var self = this,
+            data = this.data.dosing_regime,
+            tbl,
+            getDurObs = function(d){
+                return (d) ? "{0} days".printf(d) : undefined;
+            },
+            getDoses = function(doses){
+
+                if(doses.length === 0) return undefined;
+
+                var grps = _.chain(doses)
+                            .sortBy(function(d){return d.dose_group_id;})
+                            .groupBy(function(d){return d.dose_units.units;})
+                            .value(),
+                    units = _.keys(grps),
+                    doses = _.zip.apply(null,
+                                _.map(_.values(grps), function(d){
+                                    return _.map(d, function(x){return x.dose;});
+                            })),
+                    tbl = new BaseTable();
+
+                tbl.addHeaderRow(units);
+                _.each(doses, function(d){tbl.addRow(d);});
+
+                return tbl.getTbl();
+            }, getDosedAnimals = function(id_, dosed_animals){
+                // only show dosed-animals if dosing-regime not applied to these animals
+                var ag = (id_ !== dosed_animals.id) ? dosed_animals : undefined;
+                return self._getAniRelationLink(ag);
+            };
+
+        tbl = new DescriptiveTable()
+            .add_tbody_tr("Dosed animals", getDosedAnimals(this.data.id, data.dosed_animals))
+            .add_tbody_tr("Route of exposure", data.route_of_exposure)
+            .add_tbody_tr("Exposure duration", getDurObs(data.duration_exposure))
+            .add_tbody_tr("Number of dose-groups", data.num_dose_groups)
+            .add_tbody_tr("Positive control", data.positive_control)
+            .add_tbody_tr("Negative control", data.negative_control)
+            .add_tbody_tr("Doses", getDoses(data.doses))
+            .add_tbody_tr("Description", data.description);
 
         return tbl.get_tbl();
     },
@@ -152,8 +196,11 @@ AnimalGroup.prototype = {
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
-        $details
-            .append(this.build_details_table());
+        $details.append(
+            this.build_details_table(),
+            $("<h2>Dosing regime</h2>"),
+            this.build_dr_details_table()
+        );
 
         modal.addHeader(title)
             .addBody($content)

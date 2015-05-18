@@ -47,16 +47,8 @@
     </h1>
 
   {% if crud == "Read" %}
-    <!-- Dosing-Regime -->
-    {% if object.dosing_regime %}
-      <h2>Dosing Regime</h2>
-      {% include "animal/_dosing_regime.html" with animal_group=object object=object.dosing_regime %}
-    {% endif %}
-
-    <!-- Endpoints -->
     <h2>Available endpoints</h2>
     <div id="endpointsDiv"></div>
-
     <div id="comments_block"></div>
   {% endif %}
 
@@ -73,7 +65,12 @@
     $(document).ready(function(){
 
       AnimalGroup.get_object({{object.id}}, function(d){
-          $('h1').after(d.build_details_table());
+          $('h1')
+            .after(
+                d.build_details_table(),
+                $("<h2>Dosing regime</h2>"),
+                d.build_dr_details_table()
+            );
       });
 
       var endpoints = [];
