@@ -49,12 +49,26 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         model = models.DosingRegime
 
 
+class AnimalGroupRelationSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        ret = super(AnimalGroupRelationSerializer, self).to_representation(instance)
+        ret['url'] = instance.get_absolute_url()
+        return ret
+
+    class Meta:
+        model = models.AnimalGroup
+        fields = ('name', )
+
+
 class AnimalGroupSerializer(serializers.ModelSerializer):
     experiment = ExperimentSerializer()
     dosing_regime = DosingRegimeSerializer(allow_null=True)
     species = serializers.StringRelatedField()
     strain = serializers.StringRelatedField()
-    parents = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    parents = AnimalGroupRelationSerializer(many=True)
+    siblings = AnimalGroupRelationSerializer()
+    children = AnimalGroupRelationSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super(AnimalGroupSerializer, self).to_representation(instance)

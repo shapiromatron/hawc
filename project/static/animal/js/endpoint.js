@@ -80,6 +80,89 @@ Experiment.prototype = {
 };
 
 
+var AnimalGroup = function(data){
+    this.data = data;
+};
+_.extend(AnimalGroup, {
+    get_object: function(id, cb){
+        $.get('/ani/api/animal-group/{0}/'.printf(id), function(d){
+            cb(new AnimalGroup(d));
+        });
+    },
+    displayAsModal: function(id){
+        AnimalGroup.get_object(id, function(d){d.displayAsModal();});
+    }
+});
+AnimalGroup.prototype = {
+    build_breadcrumbs: function(){
+        var urls = [
+            {
+                url: this.data.experiment.study.url,
+                name: this.data.experiment.study.short_citation
+            },
+            {
+                url: this.data.experiment.url,
+                name: this.data.experiment.name
+            },
+            {
+                url: this.data.url,
+                name: this.data.name
+            }
+        ];
+        return HAWCUtils.build_breadcrumbs(urls);
+    },
+    build_details_table: function(){
+        var self = this,
+            getDurObs = function(){
+                var d = self.data.duration_observation;
+                return (d) ? "{0} days".printf(d) : undefined;
+            },
+            getRelationVal = function(obj){
+                if (!obj) return undefined;
+                return $('<a href="{0}">{1}</a>'.printf(obj.url, obj.name));
+            },
+            getRelations = function(lst){
+                return _.chain(lst)
+                        .map(getRelationVal)
+                        .map(function(d){return $('<li>').append(d);})
+                        .value();
+            },
+            tbl;
+
+        tbl = new DescriptiveTable()
+            .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Species", this.data.species)
+            .add_tbody_tr("Strain", this.data.strain)
+            .add_tbody_tr("Sex", this.data.sex)
+            .add_tbody_tr("Duration of observation", getDurObs())
+            .add_tbody_tr("Source", this.data.animal_source)
+            .add_tbody_tr("Lifestage exposed", this.data.lifestage_exposed)
+            .add_tbody_tr("Lifestage assessed", this.data.lifestage_assessed)
+            .add_tbody_tr("Generation", this.data.generation)
+            .add_tbody_tr_list("Parents", getRelations(this.data.parents))
+            .add_tbody_tr("Siblings", getRelationVal(this.data.siblings))
+            .add_tbody_tr_list("Children", getRelations(this.data.children));
+
+        return tbl.get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = $('<h4>').html(this.build_breadcrumbs()),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details
+            .append(this.build_details_table());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1000});
+    }
+};
+
+
 var Endpoint = function(data, options){
     Observee.apply(this, arguments);
     if (!data) return;  // added for edit_endpoint prototype extension

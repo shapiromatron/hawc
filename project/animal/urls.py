@@ -8,6 +8,7 @@ from . import views, api
 router = DefaultRouter()
 router.register(r'endpoint', api.Endpoint, base_name="endpoint")
 router.register(r'experiment', api.Experiment, base_name="experiment")
+router.register(r'animal-group', api.AnimalGroup, base_name="animal_group")
 
 
 urlpatterns = patterns('animal.views',

@@ -46,68 +46,6 @@
       {% endif %}
     </h1>
 
-    <table class="table table-condensed table-striped">
-      <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
-      </colgroup>
-      <tbody>
-        <tr><th>Name</th><td>{{object.name}}</td></tr>
-        <tr><th>Species</th><td>{{object.species}}</td></tr>
-        <tr><th>Strain</th><td>{{object.strain}}</td></tr>
-        <tr><th>Sex</th><td>{{object.get_sex_display}}</td></tr>
-        {% if object.animal_source %}
-          <tr><th>Animal source</th><td>{{object.animal_source}}</td></tr>
-        {% endif %}
-        {% if object.duration_observation %}
-          <tr><th>Observation duration</th><td>{{object.duration_observation}} days</td></tr>
-        {% endif %}
-        {% if object.lifestage_exposed %}
-          <tr><th>Lifestage exposed</th><td>{{object.lifestage_exposed}}</td></tr>
-        {% endif %}
-        {% if object.lifestage_assessed %}
-          <tr><th>Lifestage assessed</th><td>{{object.lifestage_assessed}}</td></tr>
-        {% endif %}
-        {% if object.is_generational %}
-          <tr><th>Generation</th><td>{{object.get_generation_display}}</td></tr>
-          <tr>
-            <th>Parents</th>
-            <td>
-              <ul>
-                {% for parent in object.parents.all %}
-                  <li><a href = {% url 'animal:animal_group_detail' parent.id %}>{{parent}}</a></li>
-                {% empty %}
-                  <li>None</li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        {% endif %}
-
-        {% if object.siblings %}
-        <tr>
-          <th>Siblings</th>
-          <td><a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a></td>
-        </tr>
-        {% endif %}
-
-        {% if object.is_generational %}
-          <tr>
-            <th>Children</th>
-            <td>
-              <ul>
-                {% for child in object.children.all %}
-                  <li><a href = {% url 'animal:animal_group_detail' child.id %}>{{child}}</a></li>
-                {% empty %}
-                  <li>None</li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
-
   {% if crud == "Read" %}
     <!-- Dosing-Regime -->
     {% if object.dosing_regime %}
@@ -133,6 +71,11 @@
 
   <script type="text/javascript">
     $(document).ready(function(){
+
+      AnimalGroup.get_object({{object.id}}, function(d){
+          $('h1').after(d.build_details_table());
+      });
+
       var endpoints = [];
       {% for obj in object.endpoints.all %}
         endpoints.push(new Endpoint({{obj.d_response|safe}}));

@@ -11,6 +11,12 @@ class Experiment(AssessmentViewset):
     serializer_class = serializers.ExperimentSerializer
 
 
+class AnimalGroup(AssessmentViewset):
+    assessment_filter_args = "experiment__study__assessment"
+    model = models.AnimalGroup
+    serializer_class = serializers.AnimalGroupSerializer
+
+
 class Endpoint(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
