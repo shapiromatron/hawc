@@ -3,13 +3,18 @@ import json
 
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
 from animal.models import Endpoint
+from epi.models import AssessedOutcome, MetaResult
+from invitro.models import IVEndpoint
 from comments.models import Comment
 from study.models import Study
+
+from animal.exports import EndpointFlatDataPivot
+from epi.exports import AssessedOutcomeFlatDataPivot, MetaResultFlatDataPivot
+from invitro.exports import IVEndpointFlatDataPivot
 
 import reversion
 from treebeard.mp_tree import MP_Node
@@ -382,32 +387,94 @@ class DataPivotQuery(DataPivot):
     prefilters = models.TextField(
         default="{}")
 
-    def get_data_url(self):
-        # request a tsv instead of Excel default
-        url = self.get_download_url()
-        if url.find("?")>=0:
-            url += "&output=tsv"
-        else:
-            url += "?output=tsv"
-        return url
+    def _get_dataset_filters(self):
+        filters = {}
+
+        if self.evidence_type == 0:  # Animal Bioassay:
+
+            filters["assessment_id"] = self.assessment_id
+            filters["animal_group__experiment__study__published"] = True
+            if self.units_id:
+                filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
+            Prefilter.setRequestFilters(filters, prefilters=self.prefilters)
+
+        elif self.evidence_type == 1:  # Epidemiology
+
+            filters["assessment_id"] = self.assessment_id
+            filters["exposure__study_population__study__published"] = True
+
+        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
+
+            filters["protocol__study__assessment_id"] = self.assessment_id
+            filters["protocol__study__published"] = True
+
+        elif self.evidence_type == 2:  # In Vitro
+
+            filters["assessment_id"] = self.assessment_id
+            filters["experiment__study__published"] = True
+
+        return filters
+
+    def _get_dataset_queryset(self, filters):
+        if self.evidence_type == 0:  # Animal Bioassay:
+
+            print filters
+            qs = Endpoint.objects.filter(**filters).distinct('pk')
+
+        elif self.evidence_type == 1:  # Epidemiology
+            qs = AssessedOutcome.objects.filter(**filters)
+
+        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
+            qs = MetaResult.objects.filter(**filters)
+
+        elif self.evidence_type == 2:  # In Vitro
+            qs = IVEndpoint.objects.filter(**filters)
+
+        return qs
+
+    def _get_dataset_exporter(self, qs, format_):
+        if self.evidence_type == 0:  # Animal Bioassay:
+            exporter = EndpointFlatDataPivot(
+                qs,
+                export_format=format_,
+                filename='{}-animal-bioassay'.format(self.assessment),
+                dose=self.units
+            )
+
+        elif self.evidence_type == 1:  # Epidemiology
+            exporter = AssessedOutcomeFlatDataPivot(
+                qs,
+                export_format=format_,
+                filename='{}-epi'.format(self.assessment)
+            )
+
+        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
+            exporter = MetaResultFlatDataPivot(
+                qs,
+                export_format=format_,
+                filename='{}-epi-meta-analysis'.format(self.assessment)
+            )
+
+        elif self.evidence_type == 2:  # In Vitro
+            exporter = IVEndpointFlatDataPivot(
+                qs,
+                export_format=format_,
+                filename='{}-invitro'.format(self.assessment)
+            )
+
+        return exporter
+
+    def get_dataset(self, format_):
+        filters = self._get_dataset_filters()
+        qs = self._get_dataset_queryset(filters)
+        exporter = self._get_dataset_exporter(qs, format_)
+        return exporter.build_response()
 
     def get_download_url(self):
-        # request an Excel file for download
-        url = None
-        if self.evidence_type == 0:  # Animal Bioassay:
-            url = reverse('animal:endpoints_flatfile', kwargs={'pk': self.assessment_id})
-            if self.units_id:
-                url += '?dose_pk={0}'.format(self.units_id)
-        elif self.evidence_type == 1:  # Epidemiology
-            url = reverse('epi:ao_flat', kwargs={'pk': self.assessment_id})
-        elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
-            url = reverse('epi:mr_flat', kwargs={'pk': self.assessment_id})
-        elif self.evidence_type == 2:  # In Vitro
-            url = reverse('invitro:endpoints_flat', kwargs={'pk': self.assessment_id})
-        if url is None:
-            raise Http404
+        return reverse('summary:dp_data', kwargs={'pk': self.assessment_id, 'slug': self.slug})
 
-        return url
+    def get_data_url(self):
+        return self.get_download_url() + "?format=tsv"
 
     @property
     def visual_type(self):

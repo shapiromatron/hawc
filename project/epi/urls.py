@@ -18,21 +18,13 @@ urlpatterns = patterns('',
         views.EpiStudyList.as_view(),
         name='epistudy_list'),
 
-    url(r'^assessment/(?P<pk>\d+)/flat/$',
-        views.AssessedOutcomeFlat.as_view(),
-        name='ao_flat'),
-
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
         views.FullExport.as_view(),
         name='export'),
 
-   url(r'^assessment/(?P<pk>\d+)/report/$',
+    url(r'^assessment/(?P<pk>\d+)/report/$',
         views.AssessedOutcomeReport.as_view(),
         name='ao_report'),
-
-    url(r'^assessment/(?P<pk>\d+)/meta-result-flat/$',
-        views.MetaResultFlat.as_view(),
-        name='mr_flat'),
 
     url(r'^assessment/(?P<pk>\d+)/meta-result-report/$',
         views.MetaResultReport.as_view(),

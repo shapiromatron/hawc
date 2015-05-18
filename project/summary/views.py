@@ -292,6 +292,21 @@ class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     template_name = "summary/datapivot_detail.html"
 
 
+class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
+    model = models.DataPivot
+
+    def get_export_format(self):
+        format_ = self.request.GET.get("format", "excel")
+        if format_ not in ["tsv", "excel"]:
+            raise Http404()
+        return format_
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        format_ = self.get_export_format()
+        return self.object.get_dataset(format_)
+
+
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
     success_message = 'Data Pivot updated.'
     model = models.DataPivot

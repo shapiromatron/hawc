@@ -21,9 +21,9 @@ urlpatterns = patterns('',
         views.EndpointDetail.as_view(),
         name='endpoint_detail'),
 
-    url(r'^assessment/(?P<pk>\d+)/endpoint-flat/$',
-        views.EndpointsFlat.as_view(),
-        name='endpoints_flat'),
+    url(r'^assessment/(?P<pk>\d+)/full-export/$',
+        views.EndpointsFullExport.as_view(),
+        name='endpoints_export'),
 
     url(r'^assessment/(?P<pk>\d+)/report/$',
         views.EndpointsReport.as_view(),

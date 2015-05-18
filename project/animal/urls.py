@@ -46,7 +46,6 @@ urlpatterns = patterns('animal.views',
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
     url(r'^endpoint/(?P<pk>\d+)/individual-animal-data/edit/$', views.EndpointIndividualAnimalUpdate.as_view(), name='endpoint_individual_animal_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
-    url(r'^assessment/(?P<pk>\d+)/endpoints/flatfile/$', views.EndpointFlatFile.as_view(), name='endpoints_flatfile'),
 
     # Endpoint-level uncertainty factor
     url(r'^endpoint/(?P<pk>\d+)/ufs/$', views.UFList.as_view(), name='ufs_list'),

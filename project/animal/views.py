@@ -542,39 +542,6 @@ class EndpointsFixedReport(GenerateFixedReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class EndpointFlatFile(BaseList):
-    """
-    Endpoint flat-file generator.
-    Returns a JSON flat-file object of a collection of endpoints.
-    """
-    parent_model = Assessment
-    model = models.Endpoint
-
-    def get_queryset(self, dose=None):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointFlatFile, self).get_obj_perms()
-        if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        if dose:
-            filters["animal_group__dosing_regime__doses__dose_units"] = dose.pk
-        return self.model.objects.filter(**filters).distinct('pk')
-
-    def get(self, request, *args, **kwargs):
-        export_format = request.GET.get("output", "excel")
-
-        # get Dose object if one exists, else get None
-        dose_pk = self.request.GET.get('dose_pk', -1)
-        dose = models.DoseUnits.objects.filter(pk=dose_pk).first()
-
-        self.object_list = self.get_queryset(dose)
-        exporter = exports.EndpointFlatDataPivot(
-                self.object_list,
-                export_format=export_format,
-                filename='{}-animal-bioassay'.format(self.assessment),
-                dose=dose)
-        return exporter.build_response()
-
-
 # Individual animal view
 class EndpointIndividualAnimalCreate(EndpointCreate):
     # Create Endpoint with individual animal data

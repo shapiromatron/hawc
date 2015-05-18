@@ -12,13 +12,13 @@ class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
 
-class EndpointsFlat(BaseList):
+class EndpointsFullExport(BaseList):
     parent_model = Assessment
     model = models.IVEndpoint
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}
-        perms = super(EndpointsFlat, self).get_obj_perms()
+        perms = super(EndpointsFullExport, self).get_obj_perms()
         if not perms['edit']:
             filters["experiment__study__published"] = True
         return self.model.objects.filter(**filters)

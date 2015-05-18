@@ -229,28 +229,6 @@ class AssessedOutcomeDelete(BaseDelete):
         return reverse("epi:exposure_detail", kwargs={"pk": self.parent.pk})
 
 
-class AssessedOutcomeFlat(BaseList):
-    parent_model = Assessment
-    model = models.AssessedOutcome
-    crud = "Read"
-
-    def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(AssessedOutcomeFlat, self).get_obj_perms()
-        if not perms['edit']:
-            filters["exposure__study_population__study__published"] = True
-        return self.model.objects.filter(**filters)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        export_format = request.GET.get("output", "excel")
-        exporter = exports.AssessedOutcomeFlatDataPivot(
-                self.object_list,
-                export_format=export_format,
-                filename='{}-epi'.format(self.assessment))
-        return exporter.build_response()
-
-
 class AssessedOutcomeReport(GenerateReport):
     parent_model = Assessment
     model = models.AssessedOutcome
@@ -270,7 +248,7 @@ class AssessedOutcomeReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class FullExport(AssessedOutcomeFlat):
+class FullExport(BaseList):
     """
     Full XLS data export for the epidemiology outcome.
     """
@@ -278,8 +256,15 @@ class FullExport(AssessedOutcomeFlat):
     model = models.AssessedOutcome
     crud = "Read"
 
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = self.get_obj_perms()
+        if not perms['edit']:
+            filters["exposure__study_population__study__published"] = True
+        return self.model.objects.filter(**filters)
+
     def get(self, request, *args, **kwargs):
-        self.object_list = super(FullExport, self).get_queryset()
+        self.object_list = self.get_queryset()
         exporter = exports.AssessedOutcomeFlatComplete(
                 self.object_list,
                 export_format="excel",
@@ -427,28 +412,6 @@ class MetaResultDelete(BaseDelete):
         return reverse("epi:mp_detail", kwargs={"pk": self.parent.pk})
 
 
-class MetaResultFlat(BaseList):
-    parent_model = Assessment
-    model = models.MetaResult
-    crud = "Read"
-
-    def get_queryset(self):
-        filters = {"protocol__study__assessment": self.assessment}
-        perms = super(MetaResultFlat, self).get_obj_perms()
-        if not perms['edit']:
-            filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        export_format = request.GET.get("output", "excel")
-        exporter = exports.MetaResultFlatDataPivot(
-                self.object_list,
-                export_format=export_format,
-                filename='{}-epi-meta-analysis'.format(self.assessment))
-        return exporter.build_response()
-
-
 class MetaResultReport(GenerateReport):
     parent_model = Assessment
     model = models.MetaResult
@@ -468,13 +431,22 @@ class MetaResultReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class MetaResultFullExport(MetaResultFlat):
+class MetaResultFullExport(BaseList):
     """
     Full XLS data export for the epidemiology meta-analyses.
     """
+    parent_model = Assessment
+    model = models.MetaResult
+
+    def get_queryset(self):
+        filters = {"protocol__study__assessment": self.assessment}
+        perms = self.get_obj_perms()
+        if not perms['edit']:
+            filters["protocol__study__published"] = True
+        return self.model.objects.filter(**filters)
 
     def get(self, request, *args, **kwargs):
-        self.object_list = super(MetaResultFullExport, self).get_queryset()
+        self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(
                 self.object_list,
                 export_format="excel",
