@@ -300,6 +300,10 @@ class DataPivot(models.Model):
     def __unicode__(self):
         return self.title
 
+    @classmethod
+    def get_list_url(cls, assessment_id):
+        return reverse('summary:visualization_list', args=[str(assessment_id)])
+
     def get_absolute_url(self):
         return reverse('summary:dp_detail', kwargs={'pk': self.assessment_id,
                                                     'slug': self.slug})

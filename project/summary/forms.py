@@ -1,4 +1,5 @@
 from django import forms
+from django.core.urlresolvers import reverse
 from selectable import forms as selectable
 
 from animal.lookups import EndpointByAssessmentLookup
@@ -153,21 +154,61 @@ def get_visual_form(visual_type):
         raise ValueError()
 
 
-class DataPivotUploadForm(forms.ModelForm):
+class DataPivotForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop('parent', None)
+        super(DataPivotForm, self).__init__(*args, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        self.helper = self.setHelper()
+        self.fields['settings'].widget.attrs['rows'] = 2
+
+    def setHelper(self):
+
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing data-pivot.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new data-pivot",
+                "help_text":   u"""
+                    Create a custom-visualization for this assessment.
+                    Generally, you will select a subset of available data, then
+                    customize the visualization the next-page.
+                """,
+                "cancel_url": self.instance.get_list_url(self.instance.assessment.id)
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
+
+
+class DataPivotUploadForm(DataPivotForm):
 
     class Meta:
         model = models.DataPivotUpload
         exclude = ('assessment', )
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop('parent', None)
         super(DataPivotUploadForm, self).__init__(*args, **kwargs)
-        self.fields['settings'].widget.attrs['rows'] = 2
-        if assessment:
-            self.instance.assessment = assessment
+        self.fields['file'].help_text += """<br>
+            For more details on saving in this format from Excel,
+            <a href="{0}" target="_blank">click here</a>.
+            """.format(reverse('summary:dp_excel-unicode'))
 
 
-class DataPivotQueryForm(forms.ModelForm):
+class DataPivotQueryForm(DataPivotForm):
+
 
     class Meta:
         model = models.DataPivotQuery
@@ -175,16 +216,12 @@ class DataPivotQueryForm(forms.ModelForm):
                  'settings', 'caption')
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop('parent', None)
         super(DataPivotQueryForm, self).__init__(*args, **kwargs)
-        self.fields['settings'].widget.attrs['rows'] = 2
         self.fields["evidence_type"].choices = (
             (0, 'Animal Bioassay'),
             (1, 'Epidemiology'),
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
-        if assessment:
-            self.instance.assessment = assessment
 
 
 class DataPivotSettingsForm(forms.ModelForm):

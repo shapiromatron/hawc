@@ -1,5 +1,6 @@
 {% extends 'portal.html' %}
 
+{% load crispy_forms_tags %}
 {% load add_class %}
 
 {% block title %}
@@ -20,42 +21,7 @@
 {% endblock %}
 
 {% block content %}
-  <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
-    <fieldset>
-      {% if crud == "Create" %}
-        <legend>Create new data pivot</legend>
-        <span class="help-block">Create a new data pivot.</span><br>
-      {% elif crud == "Update" %}
-         <legend>Update  {{ object }} </legend>
-         <span class="help-block">Update an existing data pivot.</span><br>
-      {% endif %}
-
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-      {% for field in form %}
-        <div class="control-group form-row">
-          {{field.label_tag|add_class:"control-label"}}
-          <div class="controls">
-            {{field|add_class:"span12"}}
-            <span class='help-inline'>{{field.help_text}}</span>
-          </div>
-          {{field.errors|add_class:"alert alert-error"}}
-        </div>
-      {% endfor %}
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} data pivot</button>
-        {% if crud == "Create" %}
-          <a href="{% url 'summary:visualization_list' assessment.pk %}" class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-
-      {% csrf_token %}
-
-    </fieldset>
-  </form>
+    {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
@@ -69,10 +35,6 @@
       });
 
       $('#id_caption').wysihtml5({"stylesheets": false});
-
-      {% if file_loader %}
-        $('#id_file').closest('div').find('span').append('<p class="help-block">For more details on saving in this format from Excel, <a href="{% url 'summary:dp_excel-unicode' %}" target="_blank">click here</a>.</p>')
-      {% endif %}
 
       // only show the units-box for animal bioassay data; not show for epi
       var showUnits = function(){
