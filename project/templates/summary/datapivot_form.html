@@ -36,13 +36,28 @@
 
       $('#id_caption').wysihtml5({"stylesheets": false});
 
-      // only show the units-box for animal bioassay data; not show for epi
-      var showUnits = function(){
-        var div = $('#id_units').parent().parent();
-        ($('#id_evidence_type').val() === "0") ? div.fadeIn() : div.fadeOut();
-      }
-      $('#id_evidence_type').on('change', showUnits);
-      showUnits();
+      // determine which fields to display depending on data-type
+      $('#id_evidence_type').on('change', function(){
+        var aniOnlyDivs = $([
+            "#div_id_units",
+            "#div_id_prefilter_system",
+            "#div_id_systems",
+            "#div_id_prefilter_effect",
+            "div_id_effects"
+        ].join(","));
+        ($('#id_evidence_type').val() === "0") ? aniOnlyDivs.show() : aniOnlyDivs.hide();
+      }).trigger('change');
+
+      // only show prefilters options if relevant
+      $('#id_prefilter_system').on('change', function(){
+          var sys = $('#div_id_systems');
+          ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
+      }).trigger('change');
+
+      $('#id_prefilter_effect').on('change', function(){
+          var sys = $('#div_id_effects');
+          ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
+      }).trigger('change');
 
     })
 
