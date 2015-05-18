@@ -58,10 +58,12 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'Study HAWC ID',
             'Study Published',
 
+            'Experiment ID',
             'experiment',
             'experiment_url',
             'chemical',
 
+            'Animal Group ID',
             'animal_group',
             'animal_group_url',
             'lifestage exposed',
@@ -189,10 +191,12 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['experiment']['study']['id'],
                 ser['animal_group']['experiment']['study']['published'],
 
+                ser['animal_group']['experiment']['id'],
                 ser['animal_group']['experiment']['name'],
                 ser['animal_group']['experiment']['url'],
                 ser['animal_group']['experiment']['chemical'],
 
+                ser['animal_group']['id'],
                 ser['animal_group']['name'],
                 ser['animal_group']['url'],
                 ser['animal_group']['lifestage_exposed'],

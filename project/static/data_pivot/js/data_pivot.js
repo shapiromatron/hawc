@@ -2896,13 +2896,13 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 });
 
 
-DataPivotExtension = function(){
-  this.plottip = new PlotTooltip({"width": "700px", "height": "450px"});
-};
+DataPivotExtension = function(){};
 _.extend(DataPivotExtension, {
   update_extensions: function(obj, key){
     var map = d3.map({
           "study":            {_dpe_key: "Study HAWC ID",        _dpe_datatype: "study", _dpe_cls: Study},
+          "experiment":       {_dpe_key: "Experiment ID",        _dpe_datatype: "experiment", _dpe_cls: Experiment},
+          "animal_group":     {_dpe_key: "Animal Group ID",      _dpe_datatype: "animal_group", _dpe_cls: AnimalGroup},
           "endpoint":         {_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint},
           "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population", _dpe_cls: StudyPopulation},
           "exposure":         {_dpe_key: "Exposure Key",         _dpe_datatype: "exposure", _dpe_cls: Exposure},
@@ -2933,6 +2933,8 @@ _.extend(DataPivotExtension, {
             "Exposure Key": '<option value="exposure">Show Exposure</option>',
             "Protocol Primary Key":  '<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>',
             "Result Primary Key": '<option value="meta_result">Show Epidemiology Meta-Result</option>',
+            "Experiment ID": '<option value="experiment">Show Experiment</option>',
+            "Animal Group ID": '<option value="animal_group">Show Animal Group</option>',
             "Endpoint Key": '<option value="endpoint">Show Endpoint</option>',
             "Assessed Outcome Key": '<option value="assessed_outcome">Show Assessed Outcome</option>',
             "Chemical HAWC ID": '<option value="iv_chemical">Show In Vitro Chemical</option>',
