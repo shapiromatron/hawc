@@ -62,7 +62,7 @@
       <script type="text/javascript">
         $(document).on('ready', function(){
           var url = "{{object.cas_url}}",
-              chem_data = $('<div>').appendTo($('#chem_details'));
+              div = $('<div>').appendTo($('#chem_details'));
 
           HAWCUtils.renderChemicalProperties(url, div, false);
         });
