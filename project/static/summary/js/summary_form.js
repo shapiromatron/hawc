@@ -552,7 +552,8 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
             values = valuesTd.find('select').attr('size', 8).css('overflow-y', 'scroll'),
             name = nameTd.find('select'),
             setValues = function(fld){
-                var opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld))
+                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                    opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld, isLog))
                             .map(function(d){return '<option value="{0}" selected>{0}</option>'.printf(d)})
                             .value();
                 values.html(opts);
@@ -680,6 +681,13 @@ _.extend(CrossviewForm, {
             name: "padding_top",
             label: "Plot padding-top (px)",
             def: 45,
+            tab: "overall"
+        },
+        {
+            type: CheckboxField,
+            name: "dose_isLog",
+            label: "Use logscale for dose",
+            def: true,
             tab: "overall"
         },
         {

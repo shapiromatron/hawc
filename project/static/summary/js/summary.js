@@ -1280,20 +1280,24 @@ CrossviewPlot = function(parent, data, options){
     this.setDefaults();
 };
 _.extend(CrossviewPlot, {
-    get_options: function(eps, fld){
+    get_options: function(eps, fld, isLog){
         // get options for input field;
         // should replicate processEndpoint in prototype below.
+        var numDG = CrossviewPlot._requiredGroups(isLog);
         return _.chain(eps)
-         .filter(CrossviewPlot._filterEndpoint)
-         .map(CrossviewPlot._cw_filter_process[fld])
-         .flatten()
-         .sortBy()
-         .uniq(true)
-         .value();
+                .filter(_.partial(CrossviewPlot._filterEndpoint, numDG))
+                .map(CrossviewPlot._cw_filter_process[fld])
+                .flatten()
+                .sortBy()
+                .uniq(true)
+                .value();
     },
-    _filterEndpoint: function(e){
+    _requiredGroups: function(isLog){
+        return (isLog) ? 3 : 2;
+    },
+    _filterEndpoint: function(numDG, e){
         // need at-least two non-zero dose-groups for visualization.
-        return e.data.endpoint_group.length>2;
+        return e.data.endpoint_group.length>=numDG;
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
@@ -1313,7 +1317,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
         _.extend(this, {
             x_axis_settings: {
-                "scale_type": 'log',
                 "text_orient": "bottom",
                 "axis_class": 'axis x_axis',
                 "gridlines": false,
@@ -1404,10 +1407,10 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             },
             processEndpoint = function(e){
                 var filters = getFilters(e),
+                    egFilter = (self.data.settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
                     egs = e.data.endpoint_group
-                    .filter(function(eg, i){
-                        return i>0;
-                    }).map(function(eg){
+                    .filter(egFilter)
+                    .map(function(eg){
                         return {
                             'dose': eg.dose,
                             'resp': e._percent_change_control(eg.dose_group_id)/100,
@@ -1425,11 +1428,13 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 };
             },
             dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
+            numDG = CrossviewPlot._requiredGroups(this.data.settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
-                .filter(CrossviewPlot._filterEndpoint)
+                .filter(_.partial(CrossviewPlot._filterEndpoint, numDG))
                 .map(processEndpoint)
                 .value(),
-            container_height = this.data.settings.height + 50;  // menu-spacing
+            container_height = this.data.settings.height + 50,  // menu-spacing
+            dose_scale = (this.data.settings.dose_isLog) ? "log" : "linear";
 
         // build filters
         var filters = _.chain(this.data.settings.filters)
@@ -1455,6 +1460,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             plot_settings: this.data.settings,
             w: this.data.settings.inner_width,
             h: this.data.settings.inner_height,
+            dose_scale: dose_scale,
             padding: {
                 "top": this.data.settings.padding_top,
                 "right": this.data.settings.width-this.data.settings.padding_left-this.data.settings.inner_width,
@@ -1497,6 +1503,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     },
     add_axes: function(){
         _.extend(this.x_axis_settings, {
+            "scale_type": this.dose_scale,
             "domain": this.dose_range,
             "rangeRound": [0, this.plot_settings.inner_width],
             "x_translate": 0,
