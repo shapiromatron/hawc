@@ -69,6 +69,9 @@
   <script type="text/javascript">
     $(document).ready(function() {
 
+      $('#id_comments').wysihtml5({"stylesheets": false});
+      $('#id_description').wysihtml5({"stylesheets": false});
+
       // reorganize forms
       $('.addSpecies').insertAfter($('#id_species'));
       $('.addStrain').insertAfter($('#id_strain'));

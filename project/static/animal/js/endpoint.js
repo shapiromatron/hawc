@@ -143,7 +143,8 @@ AnimalGroup.prototype = {
             .add_tbody_tr("Generation", this.data.generation)
             .add_tbody_tr_list("Parents", getRelations(this.data.parents))
             .add_tbody_tr("Siblings", this._getAniRelationLink(this.data.siblings))
-            .add_tbody_tr_list("Children", getRelations(this.data.children));
+            .add_tbody_tr_list("Children", getRelations(this.data.children))
+            .add_tbody_tr("Description", this.data.comments);
 
         return tbl.get_tbl();
     },

@@ -42,7 +42,7 @@ class ExperimentForm(ModelForm):
                 widget.attrs['class'] = 'span12'
 
         self.fields["diet"].widget.attrs['rows'] = 3
-        self.fields["description"].widget.attrs['rows'] = 3
+        self.fields["description"].widget.attrs['rows'] = 4
 
         if self.instance.id:
             inputs = {
@@ -144,6 +144,7 @@ class AnimalGroupForm(ModelForm):
                 experiment=self.instance.experiment)
 
         self.helper = self.setHelper()
+        self.fields['comments'].widget.attrs['rows'] = 4
 
     def setHelper(self):
         for fld in self.fields.keys():

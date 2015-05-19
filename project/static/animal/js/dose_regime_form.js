@@ -167,8 +167,6 @@ DosingRegimeForm.prototype = {
   }, _setEventHandlers: function(){
     var self = this;
 
-    this.form.find('#id_description').wysihtml5({"stylesheets": false});
-
     this.form.find('#id_num_dose_groups').on('change', function(){
       self.change_rows();
     });

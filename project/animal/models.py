@@ -225,7 +225,8 @@ class AnimalGroup(models.Model):
         ("F1", "First-generation (F1)"),
         ("F2", "Second-generation (F2)"),
         ("F3", "Third-generation (F3)"),
-        ("F4", "Fourth-generation (F4)"))
+        ("F4", "Fourth-generation (F4)"),
+        ("Ot", "Other"))
 
     experiment = models.ForeignKey(
         Experiment,
@@ -282,6 +283,10 @@ class AnimalGroup(models.Model):
         help_text='Specify an existing dosing regime or create a new dosing regime below',
         blank=True,
         null=True)  # not enforced in db, but enforced in views
+    comments = models.TextField(
+        blank=True,
+        verbose_name="Description",
+        help_text="Any addition notes for this animal-group.")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -320,6 +325,10 @@ class AnimalGroup(models.Model):
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
 
+    @property
+    def generation_short(self):
+        return "Other" if self.generation == "Ot" else self.generation
+
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -334,6 +343,7 @@ class AnimalGroup(models.Model):
             "animal_group-siblings",
             "animal_group-parents",
             "animal_group-generation",
+            "animal_group-comments",
             "species-name",
             "strain-name",
         )
@@ -360,6 +370,7 @@ class AnimalGroup(models.Model):
             cls.getRelatedAnimalGroupID(ser['siblings']),
             '|'.join([cls.getRelatedAnimalGroupID(p) for p in ser['parents']]),
             ser['generation'],
+            ser['comments'],
             ser['species'],
             ser['strain']
         )
