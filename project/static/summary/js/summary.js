@@ -1432,19 +1432,10 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     }
                     return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d};}).value();
                }).value();
-
         _.extend(this, {
             dataset: dataset,
             filters: filters,
             active_filters: [],
-            dose_range: [
-                d3.min(dataset, function(v){return v.dose_extent[0];}),
-                d3.max(dataset, function(v){return v.dose_extent[1];})
-            ],
-            response_range: [
-                d3.min(dataset, function(d){return d.resp_extent[0];}),
-                d3.max(dataset, function(d){return d.resp_extent[1];})
-            ],
             plot_settings: this.data.settings,
             w: this.data.settings.inner_width,
             h: this.data.settings.inner_height,
@@ -1456,10 +1447,39 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 "left_original": this.data.settings.padding_left
             }
         });
-
+        this._set_ranges();
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
     },
-    add_axes: function() {
+    _set_ranges: function(){
+        var parseRange = function(txt){
+                var arr = txt.split(",");
+                if(arr.length !== 2) return false;
+                _.each(arr, parseFloat)
+                return (_.all( _.map(arr, isFinite))) ? arr : false;
+            },
+            dose_range = parseRange(this.data.settings.dose_range || ""),
+            resp_range = parseRange(this.data.settings.response_range || "");
+
+        if (!dose_range){
+            dose_range = [
+                d3.min(this.dataset, function(v){return v.dose_extent[0];}),
+                d3.max(this.dataset, function(v){return v.dose_extent[1];})
+            ];
+        }
+
+        if (!resp_range){
+            resp_range = [
+                d3.min(this.dataset, function(d){return d.resp_extent[0];}),
+                d3.max(this.dataset, function(d){return d.resp_extent[1];})
+            ];
+        }
+
+        _.extend(this, {
+            dose_range: dose_range,
+            response_range: resp_range
+        });
+    },
+    add_axes: function(){
         _.extend(this.x_axis_settings, {
             "domain": this.dose_range,
             "rangeRound": [0, this.plot_settings.inner_width],

@@ -677,6 +677,20 @@ _.extend(CrossviewForm, {
             tab: "overall"
         },
         {
+            type: TextField,
+            name: "dose_range",
+            label: "Dose-axis range",
+            tab: "overall",
+            helpText: 'If left blank, calculated automatically from data (ex: "1, 100").'
+        },
+        {
+            type: TextField,
+            name: "response_range",
+            label: "Response-axis range",
+            tab: "overall",
+            helpText: 'If left blank, calculated automatically from data (ex: "-0.5, 2.5").'
+        },
+        {
             type: CrossviewSelectorField,
             prependSpacer: false,
             name: "filters",
