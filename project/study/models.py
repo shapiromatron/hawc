@@ -18,6 +18,7 @@ import reversion
 from assessment.serializers import AssessmentSerializer
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
+from utils.helper import cleanHTML
 
 
 class Study(Reference):
@@ -186,7 +187,7 @@ class Study(Reference):
             ser['study_identifier'],
             ser['contact_author'],
             ser['ask_author'],
-            ser['summary'],
+            cleanHTML(ser['summary']),
             ser['published']
         )
 
@@ -403,7 +404,7 @@ class StudyQuality(models.Model):
             ser['metric']['metric'],
             ser['metric']['description'],
             ser['id'],
-            ser['notes'],
+            cleanHTML(ser['notes']),
             ser['score_description'],
             ser['score']
         )

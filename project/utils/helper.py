@@ -11,6 +11,7 @@ from celery import shared_task
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
+from django.utils import html
 
 from rest_framework.renderers import JSONRenderer
 
@@ -25,6 +26,14 @@ def HAWCtoDateString(datetime):
     Helper function to ensure dates are consistent.
     """
     return datetime.strftime("%B %d %Y, %I:%M %p")
+
+def cleanHTML(txt):
+    return html.strip_entities(
+                html.strip_tags(
+                    txt.replace('\n', ' ')
+                       .replace('\r', "")
+                       .replace('<br>', "\n")
+                       .replace("&nbsp;", " ")))
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):

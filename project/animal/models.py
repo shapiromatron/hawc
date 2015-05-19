@@ -18,7 +18,7 @@ from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 
 
 class Species(models.Model):
@@ -200,7 +200,7 @@ class Experiment(models.Model):
             ser['litter_effects'],
             ser['litter_effect_notes'],
             ser['guideline_compliance'],
-            ser['description']
+            cleanHTML(ser['description'])
         )
 
 
@@ -370,7 +370,7 @@ class AnimalGroup(models.Model):
             cls.getRelatedAnimalGroupID(ser['siblings']),
             '|'.join([cls.getRelatedAnimalGroupID(p) for p in ser['parents']]),
             ser['generation'],
-            ser['comments'],
+            cleanHTML(ser['comments']),
             ser['species'],
             ser['strain']
         )
@@ -541,7 +541,7 @@ class DosingRegime(models.Model):
             ser['num_dose_groups'],
             ser['positive_control'],
             ser['negative_control'],
-            ser['description'],
+            cleanHTML(ser['description']),
         )
 
     def get_dose_groups_for_animal_form(self):
@@ -945,8 +945,8 @@ class Endpoint(BaseEndpoint):
             ser['trend_result'],
             ser['diagnostic'],
             ser['power_notes'],
-            ser['results_notes'],
-            ser['endpoint_notes'],
+            cleanHTML(ser['results_notes']),
+            cleanHTML(ser['endpoint_notes']),
             json.dumps(ser['additional_fields']),
         )
 
