@@ -387,6 +387,11 @@ class DataPivotQuery(DataPivot):
                   "percent-response, where dose-units are not needed.")
     prefilters = models.TextField(
         default="{}")
+    published_only = models.BooleanField(
+        default=True,
+        verbose_name="Published studies only",
+        help_text='Only present data from studies which have been marked as '
+                  '"published" in HAWC.')
 
     def _get_dataset_filters(self):
         filters = {}
@@ -394,7 +399,8 @@ class DataPivotQuery(DataPivot):
         if self.evidence_type == 0:  # Animal Bioassay:
 
             filters["assessment_id"] = self.assessment_id
-            filters["animal_group__experiment__study__published"] = True
+            if self.published_only:
+                filters["animal_group__experiment__study__published"] = True
             if self.units_id:
                 filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
             Prefilter.setRequestFilters(filters, prefilters=self.prefilters)
@@ -402,24 +408,25 @@ class DataPivotQuery(DataPivot):
         elif self.evidence_type == 1:  # Epidemiology
 
             filters["assessment_id"] = self.assessment_id
-            filters["exposure__study_population__study__published"] = True
+            if self.published_only:
+                filters["exposure__study_population__study__published"] = True
 
         elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
 
             filters["protocol__study__assessment_id"] = self.assessment_id
-            filters["protocol__study__published"] = True
+            if self.published_only:
+                filters["protocol__study__published"] = True
 
         elif self.evidence_type == 2:  # In Vitro
 
             filters["assessment_id"] = self.assessment_id
-            filters["experiment__study__published"] = True
+            if self.published_only:
+                filters["experiment__study__published"] = True
 
         return filters
 
     def _get_dataset_queryset(self, filters):
         if self.evidence_type == 0:  # Animal Bioassay:
-
-            print filters
             qs = Endpoint.objects.filter(**filters).distinct('pk')
 
         elif self.evidence_type == 1:  # Epidemiology

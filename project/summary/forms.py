@@ -234,8 +234,9 @@ class DataPivotQueryForm(DataPivotForm):
                      If no effect is selected, no endpoints will be available.""")
     class Meta:
         model = models.DataPivotQuery
-        fields =('evidence_type', 'units', 'title', 'slug',
-                 'settings', 'caption', 'prefilters')
+        fields =('evidence_type', 'units', 'title',
+                 'slug', 'settings', 'caption',
+                 'published_only', 'prefilters')
 
     def __init__(self, *args, **kwargs):
         super(DataPivotQueryForm, self).__init__(*args, **kwargs)
