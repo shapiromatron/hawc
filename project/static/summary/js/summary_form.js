@@ -412,7 +412,7 @@ VisualForm.prototype = {
 
         // set defaults if needed
         this.constructor.schema.forEach(function(d){
-            if (d.name && !settings[d.name]) settings[d.name] = d.def;
+            if (d.name && settings[d.name] === undefined) settings[d.name] = d.def;
         });
 
         $('#id_settings').val(JSON.stringify(settings));
