@@ -123,8 +123,8 @@ class CrossviewForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super(CrossviewForm, self).__init__(*args, **kwargs)
 
-        self.pf = models.Prefilter(self.instance)
-        self.pf.setInitialForm(self)
+        self.pf = models.Prefilter(self)
+        self.pf.setInitialForm()
 
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")
@@ -246,8 +246,8 @@ class DataPivotQueryForm(DataPivotForm):
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
 
-        self.pf = models.Prefilter(self.instance)
-        self.pf.setInitialForm(self)
+        self.pf = models.Prefilter(self)
+        self.pf.setInitialForm()
 
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")

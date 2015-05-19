@@ -502,9 +502,8 @@ class Prefilter(object):
     """
     Helper-object to deal with the Visual.prefilters field
     """
-    def __init__(self, model):
-        self.model = model
-        self.prefilters = json.loads(model.prefilters)
+    def __init__(self, form):
+        self.form = form
 
     @classmethod
     def setRequestFilters(cls, filters, request=None, prefilters=None):
@@ -518,15 +517,16 @@ class Prefilter(object):
         if prefilters:
             filters.update(json.loads(prefilters))
 
-    def setInitialForm(self, form):
-        for k,v in self.prefilters.iteritems():
+    def setInitialForm(self):
+        prefilters = json.loads(self.form.instance.prefilters)
+        for k,v in prefilters.iteritems():
             if k == "system__in":
-                form.fields["systems"].initial = v
-                form.fields["prefilter_system"].initial = True
+                self.form.fields["systems"].initial = v
+                self.form.fields["prefilter_system"].initial = True
 
             if k == "effect__in":
-                form.fields["effects"].initial = v
-                form.fields["prefilter_effect"].initial = True
+                self.form.fields["effects"].initial = v
+                self.form.fields["prefilter_effect"].initial = True
 
     def setPrefilters(self, data):
         prefilters = {}
@@ -540,12 +540,13 @@ class Prefilter(object):
         return json.dumps(prefilters)
 
     def getChoices(self, field_name):
+        assessment_id = self.form.instance.assessment_id
         choices = None
 
         if field_name == "systems":
-            choices = list(Endpoint.get_system_choices(self.model.assessment_id))
+            choices = list(Endpoint.get_system_choices(assessment_id))
         elif field_name == "effects":
-            choices = list(Endpoint.get_effect_choices(self.model.assessment_id))
+            choices = list(Endpoint.get_effect_choices(assessment_id))
         else:
             raise ValueError("Unknown field name: {}".format(field_name))
 
