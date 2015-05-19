@@ -514,8 +514,14 @@ class Prefilter(object):
             if request.POST.get('prefilter_effect'):
                 filters["effect__in"] = request.POST.getlist('effects')
 
+            if request.POST.get("published_only"):
+                filters["animal_group__experiment__study__published"] = True
+
         if prefilters:
             filters.update(json.loads(prefilters))
+
+    def getFormName(self):
+        return self.form.__class__.__name__
 
     def setInitialForm(self):
         prefilters = json.loads(self.form.instance.prefilters)
@@ -528,6 +534,12 @@ class Prefilter(object):
                 self.form.fields["effects"].initial = v
                 self.form.fields["prefilter_effect"].initial = True
 
+        if self.getFormName() == "CrossviewForm":
+            published_only = prefilters.get("animal_group__experiment__study__published", False)
+            if self.form.instance.id is None:
+                published_only = True
+            self.form.fields["published_only"].initial = published_only
+
     def setPrefilters(self, data):
         prefilters = {}
 
@@ -536,6 +548,9 @@ class Prefilter(object):
 
         if data['prefilter_effect']:
             prefilters["effect__in"] = data.get("effects", [])
+
+        if self.getFormName() == "CrossviewForm" and data['published_only']:
+            prefilters["animal_group__experiment__study__published"] = True
 
         return json.dumps(prefilters)
 

@@ -96,6 +96,13 @@ class EndpointAggregationForm(VisualForm):
 
 class CrossviewForm(VisualForm):
 
+    published_only = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Published studies only",
+        help_text='Only present data from studies which have been marked as '
+                  '"published" in HAWC.')
+
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter by system",
