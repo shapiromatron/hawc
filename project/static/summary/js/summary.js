@@ -1298,9 +1298,15 @@ _.extend(CrossviewPlot, {
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
         "experiment_type": function(d){return d.data.animal_group.experiment.type; },
+        "route_of_exposure": function(d){return d.data.animal_group.dosing_regime.route_of_exposure; },
+        "lifestage_exposed": function(d){return d.data.animal_group.lifestage_exposed; },
         "species": function(d){return d.data.animal_group.species; },
         "sex": function(d){return d.data.animal_group.sex; },
-        "effects": function(d){return d.data.effects.map(function(v){return v.name; })}
+        "generation": function(d){return d.data.animal_group.generation; },
+        "effects": function(d){return d.data.effects.map(function(v){return v.name; })},
+        "system": function(d){return d.data.system; },
+        "organ": function(d){return d.data.organ; },
+        "effect": function(d){return d.data.effect; },
     }
 })
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
@@ -1350,9 +1356,15 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     _cw_filter_names: {
         "study": "Study",
         "experiment_type": "Experiment type",
+        "route_of_exposure": "Route of exposure",
+        "lifestage_exposed": "Lifestage exposed",
         "species": "Species",
         "sex": "Sex",
-        "effects": "Effect tags"
+        "generation": "Generation",
+        "effects": "Effect tags",
+        "system": "System",
+        "organ": "Organ",
+        "effect": "Effect"
     },
     build_labels: function(){
 
@@ -1428,10 +1440,14 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                                 .map(function(d){return d.filters[f.name];})
                                 .flatten()
                                 .sort()
-                                .uniq(true);
+                                .uniq(true)
+                                .filter(function(d){return d != "";});
                     }
                     return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d};}).value();
-               }).value();
+               })
+               .filter(function(d){return d.length>0;})
+               .value();
+
         _.extend(this, {
             dataset: dataset,
             filters: filters,
