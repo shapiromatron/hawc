@@ -281,7 +281,8 @@ class DataPivot(models.Model):
     assessment = models.ForeignKey(
         'assessment.assessment')
     title = models.CharField(
-        max_length=128)
+        max_length=128,
+        help_text="Enter the title of the visualization (spaces and special-characters allowed).")
     slug = models.SlugField(
         verbose_name="URL Name",
         help_text="The URL (web address) used to describe this object "
