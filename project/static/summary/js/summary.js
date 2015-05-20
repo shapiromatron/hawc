@@ -1892,8 +1892,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.trigger_resize();
     },
     get_plot_sizes: function(){
-        this.w = this.cell_px*this.studies.length;
-        this.h = this.cell_px*this.metrics.length;
+        this.w = this.cell_size*this.studies.length;
+        this.h = this.cell_size*this.metrics.length;
         var menu_spacing = 40;
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
             menu_spacing) + 'px'});
@@ -1902,7 +1902,6 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         _.extend(this, {
             firstPass: true,
             padding: {},
-            cell_px: 40,
             x_axis_settings: {
                 scale_type: 'ordinal',
                 text_orient: "top",
@@ -1967,6 +1966,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         }
 
         _.extend(this,{
+            cell_size: this.data.settings.cell_size,
             dataset: dataset,
             studies: studies,
             metrics: metrics,
@@ -2004,7 +2004,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     draw_visualization: function(){
         var x = this.x_scale,
             y = this.y_scale,
-            width = this.cell_px,
+            width = this.cell_size,
             half_width = width/2,
             self = this;
 
@@ -2097,14 +2097,14 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 draw_type = {
                     x: this.x_scale(v.study_label),
                     y: this.y_scale(v.metric_label),
-                    height: this.cell_px,
-                    width: this.cell_px};
+                    height: this.cell_size,
+                    width: this.cell_size};
                 break;
             case 'row':
                 draw_type = {
                     x: 0,
                     y: this.y_scale(v.textContent),
-                    height: this.cell_px,
+                    height: this.cell_size,
                     width: this.w};
                 break;
             case 'column':
@@ -2112,7 +2112,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                     x: this.x_scale(v.textContent),
                     y: 0,
                     height: this.h,
-                    width: this.cell_px};
+                    width: this.cell_size};
                 break;
         }
 

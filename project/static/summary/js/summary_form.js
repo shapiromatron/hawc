@@ -814,6 +814,12 @@ _.extend(RoBHeatmapForm, {
         },
         {
             type: IntegerField,
+            name: "cell_size",
+            label: "Cell-size (px)",
+            def: 40
+        },
+        {
+            type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
             def: 10
