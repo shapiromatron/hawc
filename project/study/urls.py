@@ -52,9 +52,5 @@ urlpatterns = patterns('',
     url(r'^study-quality/(?P<pk>\d+)/edit/$', views.SQEdit.as_view(), name='sq_update'),
     url(r'^study-quality/(?P<pk>\d+)/delete/$', views.SQDelete.as_view(), name='sq_delete'),
 
-    #aggregated study-quality
-    url(r'^assessment/(?P<pk>\d+)/study-qualities/heatmap/$', views.SQAggHeatmap.as_view(), name='sq_agg_heatmap'),
-    url(r'^assessment/(?P<pk>\d+)/study-qualities/stacked/$', views.SQAggStacked.as_view(), name='sq_agg_stacked_bars'),
-
     url(r'^api/', include(router.urls))
 )

@@ -27,13 +27,4 @@
 
   {% include "study/_study_list.html" %}
 
-  {% if assessment.enable_study_quality %}
-    <h3>Study-quality information</h3>
-
-    <ul>
-      <li><a href="{% url 'study:sq_agg_stacked_bars' assessment.pk %}">Assessment-level study-quality overview</a></li>
-      <li><a href="{% url 'study:sq_agg_heatmap' assessment.pk %}">Individual study quality heatmap</a></li>
-    </ul>
-  {% endif %}
-
 {% endblock %}

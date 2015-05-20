@@ -498,30 +498,6 @@ class SQsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
         return context
 
 
-class SQAggHeatmap(BaseList):
-    parent_model = Assessment
-    model = models.Study
-    template_name = "study/sq_agg.html"
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
-    def get_context_data(self, **kwargs):
-        context = super(SQAggHeatmap, self).get_context_data(**kwargs)
-        jsons = [study.get_json(json_encode=False) for study in self.object_list]
-        context['object_list_json'] = json.dumps(jsons, cls=HAWCDjangoJSONEncoder)
-        context['chart_type'] = 'heatmap'
-        return context
-
-
-class SQAggStacked(SQAggHeatmap):
-
-    def get_context_data(self, **kwargs):
-        context = super(SQAggStacked, self).get_context_data(**kwargs)
-        context['chart_type'] = 'stacked'
-        return context
-
-
 # Study quality views for endpoints
 class SQCreate(BaseCreate):
     success_message = 'Study-quality override created.'
