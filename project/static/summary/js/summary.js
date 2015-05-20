@@ -1887,7 +1887,6 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.add_axes();
         this.draw_visualization();
         this.resize_plot_dimensions();
-        this.add_final_rectangle();
         this.add_menu();
         this.build_labels();
         this.trigger_resize();
@@ -2227,7 +2226,6 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         this.build_plot_skeleton(true);
         this.add_axes();
         this.draw_visualizations();
-        this.add_final_rectangle();
         this.resize_plot_dimensions();
         this.trigger_resize();
         this.build_labels();
