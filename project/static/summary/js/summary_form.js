@@ -315,6 +315,9 @@ _.extend(VisualForm, {
             case 1:
                 Cls = CrossviewForm;
                 break;
+            case 2:
+                Cls = RoBHeatmapForm;
+                break;
             default:
                 throw "Error - unknown visualization-type: {0}".printf(visual_type);
         }
@@ -774,4 +777,62 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
             ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
         }).trigger('change');
     }
+});
+
+
+var RoBHeatmapForm = function($el){
+    VisualForm.apply(this, arguments);
+};
+_.extend(RoBHeatmapForm, {
+    schema: [
+        {
+            type: TextField,
+            name: "title",
+            label: "Title",
+            def: ""
+        },
+        {
+            type: TextField,
+            name: "xAxisLabel",
+            label: "X-axis label",
+            def: ""
+        },
+        {
+            type: TextField,
+            name: "yAxisLabel",
+            label: "Y-axis label",
+            def: ""
+        },
+        {
+            type: IntegerField,
+            name: "padding_top",
+            label: "Plot padding-top (px)",
+            def: 20
+        },
+        {
+            type: IntegerField,
+            name: "padding_right",
+            label: "Plot padding-right (px)",
+            def: 10
+        },
+        {
+            type: IntegerField,
+            name: "padding_bottom",
+            label: "Plot padding-bottom (px)",
+            def: 20
+        },
+        {
+            type: IntegerField,
+            name: "padding_left",
+            label: "Plot padding-left (px)",
+            def: 20
+        }
+    ]
+});
+_.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
+    buildPreview: function(){
+        var data = this.prepareData();
+        this.preview = new RoBHeatmap(data).displayAsPage( $("#preview").empty() );
+    },
+    updateSettingsFromPreview: function(){}
 });

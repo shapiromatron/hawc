@@ -6,11 +6,11 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from study.models import Study
 from animal.models import Endpoint
 from epi.models import AssessedOutcome, MetaResult
 from invitro.models import IVEndpoint
 from comments.models import Comment
-from study.models import Study
 
 from animal.exports import EndpointFlatDataPivot
 from epi.exports import AssessedOutcomeFlatDataPivot, MetaResultFlatDataPivot
@@ -19,7 +19,7 @@ from invitro.exports import IVEndpointFlatDataPivot
 import reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder
+from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper
 
 
 class SummaryText(MP_Node):
@@ -166,7 +166,9 @@ class Visual(models.Model):
 
     VISUAL_CHOICES = (
         (0, "animal bioassay endpoint aggregation"),
-        (1, "animal bioassay endpoint crossview"), )
+        (1, "animal bioassay endpoint crossview"),
+        (2, "risk of bias heatmap"),
+        (3, "risk of bias barchart"), )
 
     title = models.CharField(
         max_length=128)
@@ -189,6 +191,12 @@ class Visual(models.Model):
         'assessment.BaseEndpoint',
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
+        blank=True,
+        null=True)
+    studies = models.ManyToManyField(
+        Study,
+        related_name='visuals',
+        help_text="Studies to be included in visualization",
         blank=True,
         null=True)
     settings = models.TextField(
@@ -223,7 +231,7 @@ class Visual(models.Model):
         return self.assessment
 
     def get_endpoints(self, request=None):
-        qs = self.__class__.objects.none()
+        qs = Endpoint.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
         if self.visual_type==0:
@@ -250,15 +258,28 @@ class Visual(models.Model):
 
         return qs
 
+    def get_studies(self, request=None):
+        qs = Study.objects.none()
+        filters = {"assessment_id": self.assessment_id}
+
+        if self.visual_type in [2, 3]:
+            if request:
+                filters["id__in"] = request.POST.getlist('studies')
+                qs = Study.objects.filter(**filters)
+            else:
+                qs = self.studies.all()
+
+        return qs
+
     def get_editing_dataset(self, request):
         # Generate a pseudo-return when editing or creating a dataset.
         # Do not include the settings field; this will be set from the
-        # input-form.
+        # input-form. Should approximately mirror the Visual API from rest-framework.
 
         dose_units = None
         try:
             dose_units = int(request.POST.get("dose_units"))
-        except ValueError:
+        except TypeError:
             pass
 
         data = {
@@ -270,9 +291,15 @@ class Visual(models.Model):
             "last_updated": datetime.now().isoformat()
         }
 
-        if self.visual_type in [0, 1]:
-            qs = self.get_endpoints(request)
-            data["endpoints"] = Endpoint.d_responses(qs, json_encode=False)
+        data["endpoints"] = [
+            SerializerHelper.get_serialized(e, json=False)
+            for e in self.get_endpoints(request)
+        ]
+
+        data["studies"] = [
+            SerializerHelper.get_serialized(s, json=False)
+            for s in self.get_studies(request)
+        ]
 
         return json.dumps(data)
 

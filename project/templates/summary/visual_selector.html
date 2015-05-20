@@ -33,6 +33,14 @@
             data-showcase="#visual1"
             value="{% url 'summary:visualization_create' assessment.id 1 %}">
             Bioassay endpoint crossview</option>
+          <option
+            data-showcase="#visual2"
+            value="{% url 'summary:visualization_create' assessment.id 2 %}">
+            Risk of bias heatmap</option>
+          <option
+            data-showcase="#visual3"
+            value="{% url 'summary:visualization_create' assessment.id 3 %}">
+            Risk of bias barchart</option>
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -89,6 +97,14 @@
         customizable; results can be sorted and filter, and conditional-formatting
         can also be applied.
       </p>
+    </div>
+
+    <div id="visual2">
+      <h2>Risk of bias heatmap</h2>
+    </div>
+
+    <div id="visual3">
+      <h2>Risk of bias barchart</h2>
     </div>
 
   </div>

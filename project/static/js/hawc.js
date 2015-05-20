@@ -996,6 +996,7 @@ D3Plot.prototype = {
         return !((v[1]>this.h) || (v[1]<0) || (v[0]<0) || (v[0]>this.w));
     },
     add_menu: function(){
+        if(this.menu_div) return;  // singleton
         var plot = this;
 
         // show cog to toggle options menu

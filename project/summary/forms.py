@@ -2,6 +2,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from selectable import forms as selectable
 
+from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper
@@ -65,9 +66,11 @@ class VisualForm(forms.ModelForm):
             inputs = {
                 "legend_text": u"Create new visualization",
                 "help_text":   u"""
-                    Create a custom-visualization for this assessment.
-                    Generally, you will select a subset of available data, then
-                    customize the visualization the next-page.
+                    Create a custom-visualization.
+                    Generally, you will select a subset of available data on the
+                    "Data" tab, then will customize the visualization using the
+                    "Settings" tab. To view a preview of the visual at any time,
+                    select the "Preview" tab.
                 """,
                 "cancel_url": self.instance.get_list_url(self.instance.assessment.id)
             }
@@ -91,7 +94,7 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', 'visual_type', 'prefilters')
+        exclude = ('assessment', 'visual_type', 'prefilters', 'studies')
 
 
 class CrossviewForm(VisualForm):
@@ -148,14 +151,32 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', 'visual_type', 'endpoints')
+        exclude = ('assessment', 'visual_type', 'endpoints', 'studies')
+
+
+class RoBForm(VisualForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RoBForm, self).__init__(*args, **kwargs)
+        self.fields["studies"].queryset = \
+            self.fields["studies"]\
+                .queryset\
+                .filter(assessment=self.instance.assessment)
+        self.fields["studies"].widget.attrs['size'] = 10
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        exclude = ('assessment', 'visual_type', 'dose_units', 'prefilters', 'endpoints')
 
 
 def get_visual_form(visual_type):
     try:
         return {
             0: EndpointAggregationForm,
-            1: CrossviewForm
+            1: CrossviewForm,
+            2: RoBForm,
+            3: RoBForm
         }[visual_type]
     except:
         raise ValueError()

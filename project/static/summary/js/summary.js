@@ -361,6 +361,9 @@ _.extend(Visual, {
                 case "animal bioassay endpoint crossview":
                     Cls = Crossview;
                     break;
+                case "risk of bias heatmap":
+                    Cls = RoBHeatmap;
+                    break;
                 default:
                     throw "Error - unknown visualization-type: {0}".printf(d.visual_type);
             }
@@ -1828,3 +1831,350 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         }
     }
 });
+
+
+RoBHeatmap = function(data){
+    Visual.apply(this, arguments);
+    var studies = _.map(data.studies, function(d){return new Study(d);});
+    this.sqa = new StudyQualityAggregation(studies);
+    delete this.data.studies;
+};
+_.extend(RoBHeatmap.prototype, Visual.prototype, {
+    displayAsPage: function($el, options){
+        var title = $("<h1>").text(this.data.title),
+            caption = $('<div>').html(this.data.caption),
+            $plotDiv = $('<div>'),
+            data = this.getPlotData(),
+            options = options || {};
+
+        if (window.isEditable) title.append(this.addActionsMenu());
+
+        $el.empty()
+           .append(title)
+           .append($plotDiv)
+           .append(caption);
+
+        new RoBHeatmapPlot(this, data, options).render($plotDiv);
+    },
+    getPlotData: function(){
+        return {
+            aggregation: this.sqa,
+            settings: this.data.settings
+        }
+    }
+});
+
+
+RoBHeatmapPlot = function(parent, data, options){
+    // heatmap of study-quality information. Criteria are on the y-axis,
+    // and studies are on the x-axis
+    D3Visualization.apply(this, arguments);
+    this.setDefaults();
+    this.modal = new HAWCModal();
+};
+_.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
+    render: function($div){
+        this.plot_div = $div.html('');
+        this.processData();
+        if(this.dataset.length === 0){
+            return this.plot_div.html("<p>Error: no studies selected. Please select at least one study.</p>");
+        }
+        this.get_plot_sizes();
+        this.build_plot_skeleton(false);
+        this.add_axes();
+        this.draw_visualization();
+        this.resize_plot_dimensions();
+        this.add_final_rectangle();
+        this.add_menu();
+        this.build_labels();
+        this.trigger_resize();
+    },
+    get_plot_sizes: function(){
+        this.w = this.cell_px*this.studies.length;
+        this.h = this.cell_px*this.metrics.length;
+        var menu_spacing = 40;
+        this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
+            menu_spacing) + 'px'});
+    },
+    setDefaults: function(){
+        _.extend(this, {
+            firstPass: true,
+            padding: {},
+            cell_px: 40,
+            x_axis_settings: {
+                scale_type: 'ordinal',
+                text_orient: "top",
+                axis_class: 'axis x_axis',
+                gridlines: true,
+                gridline_class: 'primary_gridlines x_gridlines',
+                axis_labels: true,
+                label_format: undefined //default
+            },
+            y_axis_settings: {
+                scale_type: 'ordinal',
+                text_orient: 'left',
+                axis_class: 'axis y_axis',
+                gridlines: true,
+                gridline_class: 'primary_gridlines x_gridlines',
+                axis_labels: true,
+                label_format: undefined //default
+            }
+        });
+    },
+    processData: function(){
+
+        var dataset = [], studies, metrics;
+
+        _.each(this.data.aggregation.metrics_dataset, function(metric){
+            _.each(metric.study_qualities, function(sq){
+                dataset.push({
+                    study_quality:      sq,
+                    study:              sq.study,
+                    study_label:        sq.study.data.short_citation,
+                    metric:             sq.data.metric,
+                    metric_label:       sq.data.metric.metric,
+                    score:              sq.data.score,
+                    score_text:         sq.data.score_text,
+                    score_color:        sq.data.score_color,
+                    score_text_color:   sq.data.score_text_color
+                });
+            })
+        });
+
+        studies = _.chain(dataset)
+                   .map(function(d){return d.study_label;})
+                   .uniq()
+                   .value();
+
+        metrics = _.chain(dataset)
+                   .map(function(d){return d.metric_label;})
+                   .uniq()
+                   .value();
+
+        if(this.firstPass){
+            _.extend(this.padding, {
+                top:             this.data.settings.padding_top,
+                right:           this.data.settings.padding_right,
+                bottom:          this.data.settings.padding_bottom,
+                left:            this.data.settings.padding_left,
+                top_original:    this.data.settings.padding_top,
+                right_original:  this.data.settings.padding_right,
+                left_original:   this.data.settings.padding_left,
+            });
+            this.firstPass = false;
+        }
+
+        _.extend(this,{
+            dataset: dataset,
+            studies: studies,
+            metrics: metrics,
+            title_str: this.data.settings.title,
+            x_label_text: this.data.settings.xAxisLabel,
+            y_label_text: this.data.settings.yAxisLabel,
+        });
+    },
+    add_axes: function() {
+        _.extend(this.x_axis_settings, {
+            domain: this.studies,
+            rangeRound: [0, this.w],
+            number_ticks: this.studies.length,
+            x_translate: 0,
+            y_translate: 0
+        });
+
+        _.extend(this.y_axis_settings, {
+            domain: this.metrics,
+            number_ticks: this.metrics.length,
+            rangeRound: [0, this.h],
+            x_translate: 0,
+            y_translate: 0
+        });
+
+        this.build_y_axis();
+        this.build_x_axis();
+
+        d3.selectAll('.x_axis text')
+            .style("text-anchor", "start")
+            .attr("dx", "5px")
+            .attr("dy", "0px")
+            .attr("transform", "rotate(-25)");
+    },
+    draw_visualization: function(){
+        var x = this.x_scale,
+            y = this.y_scale,
+            width = this.cell_px,
+            half_width = width/2,
+            self = this;
+
+        this.cells_group = this.vis.append("g");
+
+        this.cells = this.cells_group.selectAll("svg.rect")
+            .data(this.dataset)
+          .enter().append("rect")
+            .attr("x", function(d){return x(d.study_label);})
+            .attr("y", function(d){return y(d.metric_label);})
+            .attr("height", width)
+            .attr("width", width)
+            .attr("class", "heatmap_selectable")
+            .style('fill', function(d){return d.score_color;})
+        .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
+        .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
+        .on('click', function(v){
+            self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]})
+            self.modal
+                .addHeader('<h4>Study Quality Details</h4>')
+                .addFooter("")
+                .show({maxWidth: 900});
+        });
+        this.score = this.cells_group.selectAll("svg.text")
+            .data(this.dataset)
+            .enter().append("text")
+                .attr("x", function(d){return (x(d.study_label) + half_width);})
+                .attr("y", function(d){return (y(d.metric_label) + half_width);})
+                .attr("text-anchor", "middle")
+                .attr("dy", "3.5px")
+                .attr("class", "uf_label")
+                .style("fill",  function(d){return d.score_text_color;})
+                .text(function(d){return d.score_text;});
+
+        $('.y_axis text').each(function(i, v){
+                var vals = self.dataset.filter(function(e,i,a){return e.metric_label===v.textContent;});
+                vals = vals.map(function(v){return v.study_quality;});
+                $(this).data('sqs', {type: 'metric', sqs: vals});
+            }).on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'row'});})
+            .attr('class', 'heatmap_selectable')
+            .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
+            .on('click', function(v){
+                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.modal
+                    .addHeader('<h4>Study Quality Details</h4>')
+                    .addFooter("")
+                    .show({maxWidth: 900});
+            });
+
+        $('.x_axis text').each(function(i, v){
+                var vals = self.dataset.filter(function(e,i,a){return e.study_label===v.textContent;});
+                vals = vals.map(function(v){return v.study_quality;});
+                $(this).data('sqs', {type: 'study', sqs: vals});
+            }).attr('class', 'heatmap_selectable')
+            .on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'column'});})
+            .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
+            .on('click', function(v){
+                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.modal
+                    .addHeader('<h4>Study Quality Details</h4>')
+                    .addFooter("")
+                    .show({maxWidth: 900});
+            });
+
+        this.hover_group = this.vis.append("g");
+    },
+    resize_plot_dimensions: function(){
+        // Resize plot based on the dimensions of the labels.
+        var ylabel_height = this.vis.select('.x_axis').node().getBoundingClientRect().height,
+            ylabel_width = this.vis.select('.x_axis').node().getBoundingClientRect().width,
+            xlabel_width = this.vis.select('.y_axis').node().getBoundingClientRect().width;
+
+        if ((this.padding.top < this.padding.top_original + ylabel_height) ||
+            (this.padding.left < this.padding.left_original + xlabel_width) ||
+            (this.padding.right < ylabel_width - this.w + this.padding.right_original)){
+
+            this.padding.top = this.padding.top_original + ylabel_height;
+            this.padding.left = this.padding.left_original + xlabel_width;
+            this.padding.right = ylabel_width - this.w + this.padding.right_original;
+            this.render(this.plot_div);
+        }
+    },
+    draw_hovers: function(v, options){
+        if (this.hover_study_bar) this.hover_study_bar.remove();
+        if (!options.draw) return;
+
+        var draw_type;
+        switch (options.type){
+            case 'cell':
+                draw_type = {
+                    x: this.x_scale(v.study_label),
+                    y: this.y_scale(v.metric_label),
+                    height: this.cell_px,
+                    width: this.cell_px};
+                break;
+            case 'row':
+                draw_type = {
+                    x: 0,
+                    y: this.y_scale(v.textContent),
+                    height: this.cell_px,
+                    width: this.w};
+                break;
+            case 'column':
+                draw_type = {
+                    x: this.x_scale(v.textContent),
+                    y: 0,
+                    height: this.h,
+                    width: this.cell_px};
+                break;
+        }
+
+        this.hover_study_bar = this.hover_group.selectAll("svg.rect")
+            .data([draw_type])
+            .enter().append("rect")
+                .attr("x", function(d){return d.x;})
+                .attr("y", function(d){return d.y;})
+                .attr("height", function(d){return d.height;})
+                .attr("width", function(d){return d.width;})
+                .attr('class', 'heatmap_hovered');
+    },
+    build_labels: function(){
+
+        var svg = d3.select(this.svg),
+            visMidX = parseInt(this.svg.getBoundingClientRect().width/2, 10),
+            visMidY = parseInt(this.svg.getBoundingClientRect().height/2, 10),
+            midX = d3.mean(this.x_scale.range());
+            midY = d3.mean(this.y_scale.range());
+
+        svg.append("svg:text")
+            .attr("x", visMidX)
+            .attr("y", 25)
+            .text(this.title_str)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_title");
+
+        var xLoc = this.padding.left + midX+20,
+            yLoc = visMidY*2-5;
+
+        svg.append("svg:text")
+            .attr("x", xLoc)
+            .attr("y", yLoc)
+            .text(this.x_label_text)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_axis_labels x_axis_label");
+
+        var yLoc = this.padding.top + midY;
+
+        svg.append("svg:text")
+            .attr("x", 15)
+            .attr("y", yLoc)
+            .attr("transform",'rotate(270, {0}, {1})'.printf(15, yLoc))
+            .text(this.y_label_text)
+            .attr("text-anchor", "middle")
+            .attr("class","dr_axis_labels y_axis_label");
+    },
+    print_details: function($div, d){
+        var content = [];
+
+        switch (d.type){
+            case 'cell':
+                content.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
+                break;
+            case 'study':
+                content.push(StudyQuality.build_metric_comparison_div(d.sqs));
+                break;
+            case 'metric':
+                content.push(StudyQuality.build_study_comparison_div(d.sqs));
+                break;
+        }
+
+        StudyQuality.display_details_divs($div, content);
+    }
+});
+
+

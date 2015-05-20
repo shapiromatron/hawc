@@ -52,10 +52,14 @@ class VisualSerializer(CollectionVisualSerializer):
         ret['url_update'] = instance.get_update_url()
         ret['url_delete'] = instance.get_delete_url()
 
-        eps = []
-        qs = instance.get_endpoints()
-        for e in qs:
-            eps.append(SerializerHelper.get_serialized(e.endpoint, json=False))
-        ret["endpoints"] = eps
+        ret["endpoints"] = [
+            SerializerHelper.get_serialized(d, json=False)
+            for d in instance.get_endpoints()
+        ]
+
+        ret["studies"] = [
+            SerializerHelper.get_serialized(d, json=False)
+            for d in instance.get_studies()
+        ]
 
         return ret
