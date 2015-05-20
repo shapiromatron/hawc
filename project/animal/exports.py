@@ -74,6 +74,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'animal description (with N)',
             'sex',
             'route',
+            'treatment period',
 
             'endpoint_name',
             'endpoint_url',
@@ -207,6 +208,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser['animal_group']['sex'],
                 ser['animal_group']['dosing_regime']['route_of_exposure'],
+                'placeholder',
 
                 ser['name'],
                 ser['url'],
