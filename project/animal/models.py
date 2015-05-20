@@ -1098,7 +1098,7 @@ class EndpointGroup(models.Model):
         # calculate stdev given re
         if variance_type == 1:
             return variance
-        elif variance and variance_type == 2:
+        elif type(variance) is float and variance_type == 2:
             return variance * math.sqrt(n)
         else:
             return None
