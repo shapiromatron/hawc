@@ -318,6 +318,9 @@ _.extend(VisualForm, {
             case 2:
                 Cls = RoBHeatmapForm;
                 break;
+            case 3:
+                Cls = RoBBarchartForm;
+                break;
             default:
                 throw "Error - unknown visualization-type: {0}".printf(visual_type);
         }
@@ -819,7 +822,7 @@ _.extend(RoBHeatmapForm, {
             type: IntegerField,
             name: "padding_bottom",
             label: "Plot padding-bottom (px)",
-            def: 20
+            def: 35
         },
         {
             type: IntegerField,
@@ -833,6 +836,70 @@ _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
     buildPreview: function(){
         var data = this.prepareData();
         this.preview = new RoBHeatmap(data).displayAsPage( $("#preview").empty() );
+    },
+    updateSettingsFromPreview: function(){}
+});
+
+
+var RoBBarchartForm = function($el){
+    VisualForm.apply(this, arguments);
+};
+_.extend(RoBBarchartForm, {
+    schema: [
+        {
+            type: TextField,
+            name: "title",
+            label: "Title",
+            def: "Title"
+        },
+        {
+            type: TextField,
+            name: "xAxisLabel",
+            label: "X-axis label",
+            def: "Percent of studies"
+        },
+        {
+            type: TextField,
+            name: "yAxisLabel",
+            label: "Y-axis label",
+            def: ""
+        },
+        {
+            type: IntegerField,
+            name: "padding_top",
+            label: "Plot padding-top (px)",
+            def: 40
+        },
+        {
+            type: IntegerField,
+            name: "padding_right",
+            label: "Plot padding-right (px)",
+            def: 25
+        },
+        {
+            type: IntegerField,
+            name: "padding_bottom",
+            label: "Plot padding-bottom (px)",
+            def: 40
+        },
+        {
+            type: IntegerField,
+            name: "padding_left",
+            label: "Plot padding-left (px)",
+            def: 25
+        },
+        {
+            type: CheckboxField,
+            name: "show_values",
+            label: "Show values on plot",
+            def: true
+        }
+    ]
+});
+_.extend(RoBBarchartForm.prototype, VisualForm.prototype, {
+    buildPreview: function(){
+        var data = this.prepareData();
+        this.preview = new RoBBarchart(data).displayAsPage( $("#preview").empty() );
     },
     updateSettingsFromPreview: function(){}
 });
