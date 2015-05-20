@@ -866,6 +866,18 @@ _.extend(RoBBarchartForm, {
         },
         {
             type: IntegerField,
+            name: "plot_width",
+            label: "Plot width (px)",
+            def: 400
+        },
+        {
+            type: IntegerField,
+            name: "row_height",
+            label: "Row height (px)",
+            def: 30
+        },
+        {
+            type: IntegerField,
             name: "padding_top",
             label: "Plot padding-top (px)",
             def: 40

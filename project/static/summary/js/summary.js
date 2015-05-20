@@ -2240,7 +2240,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         }
     },
     get_plot_sizes: function(){
-        this.h = this.cell_px * this.metrics.length;
+        this.h = this.row_height * this.metrics.length;
         var menu_spacing = 40;
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
             menu_spacing) + 'px'});
@@ -2249,8 +2249,6 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         _.extend(this, {
             firstPass: true,
             padding: {},
-            w: 400,
-            cell_px: 30,
             x_axis_settings: {
                 domain: [0, 1],
                 scale_type: "linear",
@@ -2316,13 +2314,15 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         }
 
         _.extend(this,{
-            dataset: dataset,
-            metrics: metrics,
-            stack_order: stack_order,
-            stack: stack,
-            title_str: this.data.settings.title,
-            x_label_text: this.data.settings.xAxisLabel,
-            y_label_text: this.data.settings.yAxisLabel,
+            w:              this.data.settings.plot_width,
+            row_height:     this.data.settings.row_height,
+            dataset:        dataset,
+            metrics:        metrics,
+            stack_order:    stack_order,
+            stack:          stack,
+            title_str:      this.data.settings.title,
+            x_label_text:   this.data.settings.xAxisLabel,
+            y_label_text:   this.data.settings.yAxisLabel,
         });
     },
     add_axes: function(){
