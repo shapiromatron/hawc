@@ -1892,8 +1892,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.trigger_resize();
     },
     get_plot_sizes: function(){
-        this.w = this.cell_size*this.studies.length;
-        this.h = this.cell_size*this.metrics.length;
+        this.w = this.cell_size*this.xVals.length;
+        this.h = this.cell_size*this.yVals.length;
         var menu_spacing = 40;
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
             menu_spacing) + 'px'});
@@ -1924,7 +1924,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     },
     processData: function(){
 
-        var dataset = [], studies, metrics;
+        var dataset = [], studies, metrics, xIsStudy;
 
         _.each(this.data.aggregation.metrics_dataset, function(metric){
             _.each(metric.study_qualities, function(sq){
@@ -1965,6 +1965,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             this.firstPass = false;
         }
 
+        xIsStudy = (this.data.settings.x_field!=="metric");
+
         _.extend(this,{
             cell_size: this.data.settings.cell_size,
             dataset: dataset,
@@ -1973,21 +1975,26 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             title_str: this.data.settings.title,
             x_label_text: this.data.settings.xAxisLabel,
             y_label_text: this.data.settings.yAxisLabel,
+            xIsStudy: xIsStudy,
+            xVals: (xIsStudy)  ? studies : metrics,
+            yVals: (!xIsStudy) ? studies : metrics,
+            xField: (xIsStudy)  ? "study_label" : "metric_label",
+            yField: (!xIsStudy) ? "study_label" : "metric_label"
         });
     },
     add_axes: function() {
         _.extend(this.x_axis_settings, {
-            domain: this.studies,
+            domain: this.xVals,
             rangeRound: [0, this.w],
-            number_ticks: this.studies.length,
+            number_ticks: this.xVals.length,
             x_translate: 0,
             y_translate: 0
         });
 
         _.extend(this.y_axis_settings, {
-            domain: this.metrics,
-            number_ticks: this.metrics.length,
+            domain: this.yVals,
             rangeRound: [0, this.h],
+            number_ticks: this.yVals.length,
             x_translate: 0,
             y_translate: 0
         });
@@ -2002,19 +2009,34 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             .attr("transform", "rotate(-25)");
     },
     draw_visualization: function(){
-        var x = this.x_scale,
+        var self = this,
+            x = this.x_scale,
             y = this.y_scale,
             width = this.cell_size,
             half_width = width/2,
-            self = this;
+            showSQs = function(v){
+                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.modal
+                    .addHeader('<h4>Study Quality Details: {0}</h4>'.printf(this.textContent))
+                    .addFooter("")
+                    .show({maxWidth: 900});
+            }, getMetricSQs = function(i, v){
+                var vals = self.dataset.filter(function(e,i,a){return e.metric_label===v.textContent;});
+                vals = vals.map(function(v){return v.study_quality;});
+                $(this).data('sqs', {type: 'metric', sqs: vals});
+            }, getStudySQs = function(i, v){
+                var vals = self.dataset.filter(function(e,i,a){return e.study_label===v.textContent;});
+                vals = vals.map(function(v){return v.study_quality;});
+                $(this).data('sqs', {type: 'study', sqs: vals});
+            }, hideHovers = function(v){self.draw_hovers(this, {draw: false});}
 
         this.cells_group = this.vis.append("g");
 
         this.cells = this.cells_group.selectAll("svg.rect")
             .data(this.dataset)
           .enter().append("rect")
-            .attr("x", function(d){return x(d.study_label);})
-            .attr("y", function(d){return y(d.metric_label);})
+            .attr("x", function(d){return x(d[self.xField]);})
+            .attr("y", function(d){return y(d[self.yField]);})
             .attr("height", width)
             .attr("width", width)
             .attr("class", "heatmap_selectable")
@@ -2031,43 +2053,25 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.score = this.cells_group.selectAll("svg.text")
             .data(this.dataset)
             .enter().append("text")
-                .attr("x", function(d){return (x(d.study_label) + half_width);})
-                .attr("y", function(d){return (y(d.metric_label) + half_width);})
+                .attr("x", function(d){return (x(d[self.xField]) + half_width);})
+                .attr("y", function(d){return (y(d[self.yField]) + half_width);})
                 .attr("text-anchor", "middle")
                 .attr("dy", "3.5px")
                 .attr("class", "uf_label")
                 .style("fill",  function(d){return d.score_text_color;})
                 .text(function(d){return d.score_text;});
 
-        $('.y_axis text').each(function(i, v){
-                var vals = self.dataset.filter(function(e,i,a){return e.metric_label===v.textContent;});
-                vals = vals.map(function(v){return v.study_quality;});
-                $(this).data('sqs', {type: 'metric', sqs: vals});
-            }).on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'row'});})
+        $('.x_axis text').each( (this.xIsStudy) ? getStudySQs : getMetricSQs )
             .attr('class', 'heatmap_selectable')
-            .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
-            .on('click', function(v){
-                self.print_details(self.modal.getBody(), $(this).data('sqs'))
-                self.modal
-                    .addHeader('<h4>Study Quality Details</h4>')
-                    .addFooter("")
-                    .show({maxWidth: 900});
-            });
-
-        $('.x_axis text').each(function(i, v){
-                var vals = self.dataset.filter(function(e,i,a){return e.study_label===v.textContent;});
-                vals = vals.map(function(v){return v.study_quality;});
-                $(this).data('sqs', {type: 'study', sqs: vals});
-            }).attr('class', 'heatmap_selectable')
             .on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'column'});})
-            .on('mouseout', function(v){self.draw_hovers(this, {draw: false});})
-            .on('click', function(v){
-                self.print_details(self.modal.getBody(), $(this).data('sqs'))
-                self.modal
-                    .addHeader('<h4>Study Quality Details</h4>')
-                    .addFooter("")
-                    .show({maxWidth: 900});
-            });
+            .on('mouseout', hideHovers)
+            .on('click', showSQs);
+
+        $('.y_axis text').each( (!this.xIsStudy) ? getStudySQs : getMetricSQs )
+            .attr('class', 'heatmap_selectable')
+            .on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'row'});})
+            .on('mouseout', hideHovers)
+            .on('click', showSQs);
 
         this.hover_group = this.vis.append("g");
     },
@@ -2095,8 +2099,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         switch (options.type){
             case 'cell':
                 draw_type = {
-                    x: this.x_scale(v.study_label),
-                    y: this.y_scale(v.metric_label),
+                    x: this.x_scale(v[this.xField]),
+                    y: this.y_scale(v[this.yField]),
                     height: this.cell_size,
                     width: this.cell_size};
                 break;

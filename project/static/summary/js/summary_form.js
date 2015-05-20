@@ -835,6 +835,16 @@ _.extend(RoBHeatmapForm, {
             name: "padding_left",
             label: "Plot padding-left (px)",
             def: 20
+        },
+        {
+            type: SelectField,
+            name: "x_field",
+            label: "X-axis field",
+            opts: [
+                ["study", "Study"],
+                ["metric", "RoB metric"]
+            ],
+            def: "metric"
         }
     ]
 });
