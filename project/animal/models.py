@@ -1143,18 +1143,19 @@ class EndpointGroup(models.Model):
                 mu_2 = eg['response']
                 sd_2 = eg.get('stdev')
 
-                if mu_1 != 0 and sd_1 and sd_2:
+                if mu_1 != 0:
                     mean = (mu_2-mu_1) / mu_1 * 100.
-                    sd = math.sqrt(
-                        math.pow(mu_1, -2) * (
-                            (math.pow(sd_2, 2)/n_2) +
-                            (math.pow(mu_2, 2)*math.pow(sd_1, 2)) / (n_1*math.pow(mu_1, 2))
+                    if sd_1 and sd_2:
+                        sd = math.sqrt(
+                            math.pow(mu_1, -2) * (
+                                (math.pow(sd_2, 2)/n_2) +
+                                (math.pow(mu_2, 2)*math.pow(sd_1, 2)) / (n_1*math.pow(mu_1, 2))
+                            )
                         )
-                    )
-                    ci   = (1.96 * sd) * 100
-                    rng  = sorted([ mean - ci, mean + ci ])
-                    low  = rng[0]
-                    high = rng[1]
+                        ci   = (1.96 * sd) * 100
+                        rng  = sorted([ mean - ci, mean + ci ])
+                        low  = rng[0]
+                        high = rng[1]
 
             elif data_type == "P":
                 mean = eg['response']
