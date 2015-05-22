@@ -405,6 +405,16 @@ DataPivot.prototype = {
                 // apply filters
                 var data_copy = DataPivot_visualization.filter(self.data,
                                   filters, self.settings.plot_settings.filter_logic);
+
+                data_copy = _.filter(data_copy,
+                  _.partial(
+                    DataPivot_visualization.shouldInclude,
+                    _,
+                    self.settings.dataline_settings[0],
+                    self.settings.datapoint_settings
+                  )
+                );
+
                 if(data_copy.length === 0 ){
                   rows.push('<tr><td colspan="6">No rows remaining after filtering criteria.</td></tr>');
                   return override_tbody.html(rows);
@@ -2025,6 +2035,13 @@ _.extend(DataPivot_visualization, {
     if(filter_logic==="or") new_arr = included.values();
 
     return new_arr;
+  },
+  shouldInclude: function(row, bar, points){
+    // Determine row inclusion. Rows can either be included by having any
+    // single data-point field being numeric, OR, if both the low-range and
+    // high-range fields are both true.
+    if (_.some(points, function(d){ return $.isNumeric(row[d.field_name]); })) return true;
+    return (($.isNumeric(row[bar.low_field_name])) && ($.isNumeric(row[bar.high_field_name])));
   }
 });
 _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
@@ -2104,7 +2121,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           "labels": [],
           "spacers": {},
           "spacer_lines": []},
-        rows = [],
+        rows,
         get_associated_style = function(style_type, style_name){
 
           var defaults = {"symbols": StyleSymbol.default_settings,
@@ -2180,53 +2197,35 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         settings.labels.push(d);
     });
 
-    // now, build data-objects for visualization
-    self.dp_data.forEach(function(row, i){
-      // Determine row inclusion. Rows can either be included by having any
-      // single data-point field being numeric, OR, if both the low-range and
-      // high-range fields are both true.
-      var include = false,
-          low_range_include = $.isNumeric(row[settings.bars.low_field_name]),
-          high_range_include = $.isNumeric(row[settings.bars.high_field_name]);
+    //build data-objects for visualization
+    rows = _.chain(self.dp_data)
+            .filter(
+              _.partial(
+                DataPivot_visualization.shouldInclude,
+                _,
+                settings.bars,
+                self.dp_settings.datapoint_settings
+              )
+            )
+            .map(function(d){
+              // unpack any column-level styles
+              var styles = {
+                bars: get_associated_style("lines", settings.bars.marker_style)
+              };
 
-      for(var j=0; j<self.dp_settings.datapoint_settings.length; j++){
-        var dp_setting = self.dp_settings.datapoint_settings[j];
-        if (dp_setting.field_name !== DataPivot.NULL_CASE){
-          var numeric = $.isNumeric(row[dp_setting.field_name]);
-          if (numeric){
-            include = numeric;
-            break;
-          }
-        }
-      }
+              _.chain(self.dp_settings.datapoint_settings)
+                .filter(function(d){return d.field_name !== DataPivot.NULL_CASE})
+                .each(function(d, i){
+                  styles["points_" + i] = get_associated_style("symbols", d.marker_style);
+              });
 
-      // check in case range but no points
-      if ((!include) && (low_range_include) && (high_range_include)) include = true;
-
-      // if row is included, add additional fields for plotting.
-      if (include) {
-        var additions = {"_styles": {}};
-
-        // unpack row-level styles for all points
-        self.dp_settings.datapoint_settings.forEach(function(datum, i){
-          var style_type = datum.marker_style;
-          if (datum.field_name !== DataPivot.NULL_CASE){
-            additions._styles["points_" + i] = get_associated_style("symbols", style_type);
-          }
-        });
-
-        // unpack row-level styles for all bars
-        var style_type = settings.bars.marker_style;
-        additions._styles["bars"] = get_associated_style("lines", style_type);
-
-        // unpack row-level styles for all text
-        self.dp_settings.description_settings.forEach(function(datum, i){
-          additions._styles["text_" + i] = get_associated_style("texts", datum.text_style);
-        });
-
-        rows.push($.extend(additions, row));
-      }
-    });
+              _.chain(self.dp_settings.description_settings)
+                .each(function(d, i){
+                  styles["text_" + i] = get_associated_style("texts", d.text_style);
+              });
+              return _.extend(d, {"_styles": styles});
+            })
+            .value();
 
     rows = DataPivot_visualization.filter(rows, settings.filters,
                                           this.dp_settings.plot_settings.filter_logic);
