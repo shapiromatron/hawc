@@ -190,6 +190,49 @@ _.extend(ReferenceRangeField.prototype, TableField.prototype, {
 });
 
 
+var ReferenceLabelField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(ReferenceLabelField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Caption</th>',
+                '<th>Style</th>',
+                '<th>X position</th>',
+                '<th>Y position</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        return $('<tr>')
+            .append(
+                this.addTdText('caption'),
+                this.addTdSelect('style', _.pluck(D3Visualization.styles.texts, 'name')),
+                this.addTdInt('x', 0),
+                this.addTdInt('y', 0),
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d,i) {
+        var row = this.addRow();
+        row.find('input[name="caption"]').val(d.caption);
+        row.find('select[name="style"]').val(d.style);
+        row.find('input[name="x"]').val(d.x);
+        row.find('input[name="y"]').val(d.y);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "caption": row.find('input[name="caption"]').val(),
+            "style": row.find('select[name="style"]').val(),
+            "x": parseInt(row.find('input[name="x"]').val(), 10),
+            "y": parseInt(row.find('input[name="y"]').val(), 10),
+        }
+    }
+});
+
+
 var TextField = function () {
     return InputField.apply(this, arguments);
 }
@@ -747,6 +790,13 @@ _.extend(CrossviewForm, {
             label: "Response reference range",
             name: "refranges_response",
             colWidths: [10, 10, 40, 20, 20],
+            tab: "references"
+        },
+        {
+            type: ReferenceLabelField,
+            prependSpacer: true,
+            name: "labels",
+            colWidths: [60, 10, 10, 10, 10],
             tab: "references"
         },
     ]

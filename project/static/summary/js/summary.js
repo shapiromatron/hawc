@@ -451,6 +451,19 @@ _.extend(D3Visualization, {
             {"name": "orange",  "fill": "#ffb100", "fill-opacity": 0.2, "stroke": "#dc8f00", "stroke-width": 0},
             {"name": "purple",  "fill": "#b82cff", "fill-opacity": 0.2, "stroke": "#5e5e5e", "stroke-width": 0},
             {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.2, "stroke": "#ab006c", "stroke-width": 0}
+        ],
+        "texts": [
+            {"name": "base",            "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000",    "fill-opacity": 1},
+            {"name": "header",          "font-size": "12px", "rotate": 0, "font-weight": "bold",   "text-anchor": "middle", "fill": "#000",    "fill-opacity": 1},
+            {"name": "title",           "font-size": "12px", "rotate": 0, "font-weight": "bold",   "text-anchor": "middle", "fill": "#000",    "fill-opacity": 1},
+            {"name": "transparent",     "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000000", "fill-opacity": 0},
+            {"name": "normal | black",  "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000000", "fill-opacity": 1},
+            {"name": "normal | red",    "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#6f0000", "fill-opacity": 1},
+            {"name": "normal | green",  "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#006a1e", "fill-opacity": 1},
+            {"name": "normal | blue",   "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#006dbe", "fill-opacity": 1},
+            {"name": "normal | orange", "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#dc8f00", "fill-opacity": 1},
+            {"name": "normal | purple", "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#b82cff", "fill-opacity": 1},
+            {"name": "normal | fuschia","font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#ab006c", "fill-opacity": 1}
         ]
     }
 })
@@ -463,6 +476,14 @@ _.extend(D3Visualization.prototype, D3Plot.prototype, {
     },
     processData: function(){
         throw "Abstract method; requires implementation";
+    },
+    apply_text_styles: function(obj, styles){
+        obj = d3.select(obj);
+        _.each(styles, function(v, k){ obj.style(k, v); })
+        if(styles.rotate>0){
+            obj.attr("transform", "rotate({0} {1},{2})".printf(
+            styles.rotate, obj.attr("x"), obj.attr("y")));
+        }
     }
 });
 
@@ -1623,6 +1644,70 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.g_reference_lines.selectAll("line")
             .append("svg:title").text(function(d) { return d.title; });
     },
+    _draw_labels: function(){
+
+        var self = this,
+            drag, dlabels, labels
+
+        dlabels = _.map(this.plot_settings.labels, function(d){
+            d._style = _.findWhere(D3Visualization.styles.texts, {name: d.style});
+            return d;
+        });
+
+        // add labels
+        if (this.options.dev){
+            drag = d3.behavior.drag()
+                .origin(Object)
+                .on("drag", function(d,i){
+                    var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                        p = d3.select(this),
+                        m = regexp.exec(p.attr("transform"));
+                        if (m !== null && m.length===3){
+                            var x = parseFloat(m[1]) + d3.event.dx,
+                                y = parseFloat(m[2]) + d3.event.dy;
+                            p.attr("transform", "translate(" + x + "," + y + ")");
+                            self.setLabelLocation(i, x, y);
+                        }
+                });
+        } else {
+            drag = function(){};
+        }
+
+        labels = this.vis.append("g")
+            .attr('class', 'label_holder')
+            .selectAll('g.labels')
+                .data(dlabels)
+            .enter().append('g')
+            .attr('class', 'labels')
+            .attr('transform', function(d,i){
+                return 'translate({0},{1})'.printf(d.x, d.y);
+            })
+            .attr("cursor", (this.options.dev) ? "pointer" : "auto")
+            .call(drag)
+            .each(function(d){
+                d3.select(this)
+                  .append("text")
+                      .attr('x', 0)
+                      .attr('y', 0)
+                      .text(function(d){return d.caption;})
+                      .each(function(d){self.apply_text_styles(this, d._style);});
+            })
+
+        if (this.options.dev){
+            labels.each(function(d){
+                var bb = this.getBBox();
+                d3.select(this)
+                    .insert("rect", ":first-child")
+                    .attr("fill", "orange")
+                    .attr("opacity", "0.1")
+                    .attr("x", bb.x)
+                    .attr("y", bb.y)
+                    .attr("width", bb.width)
+                    .attr("height", bb.height)
+                    .append("svg:title").text(function(d) { return "drag to reposition"; });
+            });
+        }
+    },
     draw_visualization: function(){
         var x = this.x_scale,
             y = this.y_scale,
@@ -1648,9 +1733,14 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .on('mouseover', function(d){self.change_show_selected_fields(this, d, true);})
             .on('mouseout', function(d){self.change_show_selected_fields(this, d, false);})
             .append("svg:title").text(function(d){return d[0].title;});
+
+        this._draw_labels();
     },
     setFilterLocation: function(i, x, y){
         _.extend(this.data.settings.filters[i], {"x": x, "y": y});
+    },
+    setLabelLocation: function(i, x, y){
+        _.extend(this.data.settings.labels[i], {"x": x, "y": y});
     },
     layout_filter: function(g, filters, i){
         var self = this,
