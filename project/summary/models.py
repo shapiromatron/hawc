@@ -240,6 +240,7 @@ class Visual(models.Model):
                 qs = Endpoint.objects.filter(**filters)
             else:
                 qs = self.endpoints.all()
+                qs.model = Endpoint
 
         elif self.visual_type==1:
             if request:
