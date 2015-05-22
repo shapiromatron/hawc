@@ -2436,10 +2436,12 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         everyOther = true,
         self = this,
         pushBG = function(first, last){
-          bgs.push({x: -self.text_width-self.padding.left,
-                    y: self.row_heights[first].min,
-                    w: self.text_width+self.padding.left,
-                    h: self.row_heights[last].max-self.row_heights[first].min})
+          bgs.push({
+            x: -self.text_width-self.padding.left,
+            y: self.row_heights[first].min,
+            w: self.text_width+self.padding.left,
+            h: self.row_heights[last].max-self.row_heights[first].min
+          });
         };
 
     if (this.datarows.length>0){
@@ -2451,12 +2453,11 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           everyOther = !everyOther;
           first_index = i;
           gridlines.push(self.row_heights[first_index].min);
-          // edge-case to push final-row if needed
-          if (i === this.datarows.length-1 && everyOther){
-            pushBG(first_index, i);
-          }
         }
+        // edge-case to push final-row if needed
+        if (i === this.datarows.length-1 && everyOther) pushBG(first_index, i);
       }
+
     }
     this.bg_rectangles_data = (this.dp_settings.plot_settings.text_background) ? bgs : [];
     this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
