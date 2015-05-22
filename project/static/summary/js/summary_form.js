@@ -795,8 +795,9 @@ _.extend(CrossviewForm, {
         {
             type: ReferenceLabelField,
             prependSpacer: true,
+            label: "Figure captions",
             name: "labels",
-            colWidths: [60, 10, 10, 10, 10],
+            colWidths: [50, 20, 10, 10, 10],
             tab: "references"
         },
     ]
