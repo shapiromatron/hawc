@@ -2064,6 +2064,9 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
   build_plot: function(){
     this.plot_div.html('');
     this.get_dataset();
+    if (this.datarows.length === 0 ){
+      return HAWCUtils.addAlert("<strong>Error: </strong>no data are available to be plotted", this.plot_div);
+    }
     this.build_plot_skeleton(true);
     this.set_font_style();
     this.layout_text();
