@@ -2807,7 +2807,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         text_rows = this.text_rows.selectAll('text');
 
     text_rows.forEach(function(v, i){
-
       for(var j=0; j<v.length; j++){
         var val = d3.select(v[j]);
         val.attr("y", textPadding+top);
@@ -2871,6 +2870,13 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       prior_extra = extra_space;
     });
 
+    // remove blank text elements; can mess-up size calculations
+    $(
+      _.filter(
+        this.g_text_columns.selectAll('text')[0],
+          function(d){return d.textContent.length===0;}
+      )
+    ).remove();
 
     // calculate plot-height, text-width, and save heights array
     var textDim = this.g_text_columns.node().getBBox();
