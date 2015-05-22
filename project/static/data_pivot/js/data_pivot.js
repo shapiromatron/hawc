@@ -2392,19 +2392,25 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
     }
   },
   add_axes: function(){
+    var get_domain = function(self){
+          var domain, fields;
+          // use user-specified domain if valid
+          domain = _.each(
+            self.dp_settings.plot_settings.domain.split(","),
+            _.partial(parseFloat, _, 10)
+          );
+          if ((domain.length === 2) && (_.all(domain, isFinite))) return domain;
 
-    var low_field = this.settings.bars.low_field_name,
-        high_field = this.settings.bars.high_field_name,
-        get_domain = function(self){
-          // use specified domain if found, otherwise fetch from data
-          var d_str = self.dp_settings.plot_settings.domain.split(',');
-          if ((d_str.length === 2) && isFinite(d_str[0]) && isFinite(d_str[1])){
-            return [parseFloat(d_str[0]),
-                    parseFloat(d_str[1])];
-          } else {
-            return [d3.min(self.datarows, function(v){return v[low_field];}),
-                    d3.max(self.datarows, function(v){return v[high_field];})];
-          }
+          // calculate domain from data
+          fields = _.pluck(self.settings.datapoints, "field_name");
+          fields.push(self.settings.bars.low_field_name, self.settings.bars.high_field_name);
+          return d3.extent(
+            _.chain(self.datarows)
+            .map(function(d){ return _.map(fields, function(f){ return d[f];}); })
+            .flatten()
+            .map(_.partial(parseFloat, _, 10))
+            .value()
+          )
         };
 
     $.extend(this.x_axis_settings, {
