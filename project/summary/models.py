@@ -260,15 +260,39 @@ class Visual(models.Model):
         return qs
 
     def get_studies(self, request=None):
+        """
+        If there are endpoint-level prefilters, we get all studies which
+        match this criteria. Otherwise, we use the M2M list of studies attached
+        to the model.
+        """
         qs = Study.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
         if self.visual_type in [2, 3]:
             if request:
-                filters["id__in"] = request.POST.getlist('studies')
+                efilters = {"assessment_id": self.assessment_id}
+                Prefilter.setRequestFilters(efilters, request=request)
+                if len(efilters)>1:
+                    filters["id__in"] = set(
+                        Endpoint.objects\
+                            .filter(**efilters)\
+                            .values_list('animal_group__experiment__study_id', flat=True))
+                else:
+                    filters["id__in"] = request.POST.getlist('studies')
+
                 qs = Study.objects.filter(**filters)
+
             else:
-                qs = self.studies.all()
+                if self.prefilters != "{}":
+                    efilters = {"assessment_id": self.assessment_id}
+                    Prefilter.setRequestFilters(efilters, prefilters=self.prefilters)
+                    filters["id__in"] = set(
+                        Endpoint.objects\
+                            .filter(**efilters)\
+                            .values_list('animal_group__experiment__study_id', flat=True))
+                    qs = Study.objects.filter(**filters)
+                else:
+                    qs = self.studies.all()
 
         return qs
 

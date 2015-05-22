@@ -2,7 +2,6 @@ from django import forms
 from django.core.urlresolvers import reverse
 from selectable import forms as selectable
 
-from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper
@@ -143,7 +142,6 @@ class CrossviewForm(VisualForm):
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
 
-
     def clean(self):
         cleaned_data = super(CrossviewForm, self).clean()
         cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
@@ -156,18 +154,56 @@ class CrossviewForm(VisualForm):
 
 class RoBForm(VisualForm):
 
+    prefilter_system = forms.BooleanField(
+        required=False,
+        label="Prefilter studies by system",
+        help_text="""Only studies which report Endpoints with the selected system(s) will be presented.""")
+
+    systems = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Systems to include",
+        help_text="""Select one or more systems to include.
+                     If no system is selected, no studies will be available.""")
+
+    prefilter_effect = forms.BooleanField(
+        required=False,
+        label="Prefilter by effect",
+        help_text="""Only studies which report Endpoints with the selected effect(s) will be presented.""")
+
+    effects = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Effects to include",
+        help_text="""Select one or more effects to include.
+                     If no effect is selected, no studies will be available.""")
+
     def __init__(self, *args, **kwargs):
         super(RoBForm, self).__init__(*args, **kwargs)
         self.fields["studies"].queryset = \
             self.fields["studies"]\
                 .queryset\
                 .filter(assessment=self.instance.assessment)
+
+        self.pf = models.Prefilter(self)
+        self.pf.setInitialForm()
+
+        self.fields["prefilters"].widget = forms.HiddenInput()
+        self.fields["systems"].choices = self.pf.getChoices("systems")
+        self.fields["effects"].choices = self.pf.getChoices("effects")
+
         self.fields["studies"].widget.attrs['size'] = 10
-        self.helper = self.setHelper()
+        self.fields["systems"].widget.attrs['size'] = 10
+        self.fields["effects"].widget.attrs['size'] = 10
+
+    def clean(self):
+        cleaned_data = super(RoBForm, self).clean()
+        cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
+        return cleaned_data
 
     class Meta:
         model = models.Visual
-        exclude = ('assessment', 'visual_type', 'dose_units', 'prefilters', 'endpoints')
+        exclude = ('assessment', 'visual_type', 'dose_units', 'endpoints')
 
 
 def get_visual_form(visual_type):

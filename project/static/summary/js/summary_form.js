@@ -853,6 +853,29 @@ _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
         var data = this.prepareData();
         this.preview = new RoBHeatmap(data).displayAsPage( $("#preview").empty() );
     },
+    initDataForm: function(){
+        var showHideDiv = function(shouldShow, $el){
+            (shouldShow) ? $el.show(1000) : $el.hide(0);
+        }, updateStudies = function(){
+            var shouldHide = (
+                $("#id_prefilter_system").prop('checked') ||
+                $("#id_prefilter_effect").prop('checked'));
+            showHideDiv(!shouldHide, $('#div_id_studies'));
+            if(shouldHide) $('#id_studies option').prop('selected', false);
+        };
+
+        $('#id_prefilter_system').on('change', function(){
+            var showOpts = $(this).prop('checked');
+            showHideDiv(showOpts, $('#div_id_systems'));
+            updateStudies();
+        }).trigger('change');
+
+        $('#id_prefilter_effect').on('change', function(){
+            var showOpts = $(this).prop('checked');
+            showHideDiv(showOpts, $('#div_id_effects'));
+            updateStudies();
+        }).trigger('change');
+    },
     updateSettingsFromPreview: function(){}
 });
 
@@ -924,10 +947,9 @@ _.extend(RoBBarchartForm, {
         }
     ]
 });
-_.extend(RoBBarchartForm.prototype, VisualForm.prototype, {
+_.extend(RoBBarchartForm.prototype, VisualForm.prototype, RoBHeatmapForm.prototype, {
     buildPreview: function(){
         var data = this.prepareData();
         this.preview = new RoBBarchart(data).displayAsPage( $("#preview").empty() );
-    },
-    updateSettingsFromPreview: function(){}
+    }
 });
