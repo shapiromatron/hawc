@@ -208,8 +208,7 @@ class Visual(models.Model):
         auto_now=True)
 
     class Meta:
-        unique_together = (("assessment", "title"),
-                           ("assessment", "slug"))
+        unique_together = (("assessment", "slug"), )
 
     def __unicode__(self):
         return self.title
@@ -352,8 +351,7 @@ class DataPivot(models.Model):
         auto_now=True)
 
     class Meta:
-        unique_together = (("assessment", "title"),
-                           ("assessment", "slug"))
+        unique_together = (("assessment", "slug"), )
         ordering = ('title', )
 
     def __unicode__(self):
@@ -375,9 +373,6 @@ class DataPivot(models.Model):
         pk_exclusion = {}
         if self.pk:
             pk_exclusion['pk'] = self.pk
-        if DataPivot.objects.filter(assessment=self.assessment,
-                                    title=self.title).exclude(**pk_exclusion).count() > 0:
-            raise ValidationError('Error- title must be unique for assessment.')
         if DataPivot.objects.filter(assessment=self.assessment,
                                     slug=self.slug).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- slug name must be unique for assessment.')
