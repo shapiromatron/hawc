@@ -236,11 +236,12 @@ class Visual(models.Model):
 
         if self.visual_type==0:
             if request:
-                filters["id__in"] = request.POST.getlist('endpoints_1')
-                qs = Endpoint.objects.filter(**filters)
+                ids = request.POST.getlist('endpoints_1')
             else:
-                qs = self.endpoints.all()
-                qs.model = Endpoint
+                ids = self.endpoints.values_list('id', flat=True)
+
+            filters["id__in"] = ids
+            qs = Endpoint.objects.filter(**filters)
 
         elif self.visual_type==1:
             if request:
