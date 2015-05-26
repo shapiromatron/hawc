@@ -153,7 +153,16 @@ AnimalGroup.prototype = {
             data = this.data.dosing_regime,
             tbl,
             getDurObs = function(d){
-                return (d) ? "{0} days".printf(d) : undefined;
+                var txt = data.duration_exposure_text,
+                    num = data.duration_exposure;
+
+                if (txt && txt.length>0){
+                    return txt;
+                } else if (num && num>=0){
+                    return "{0} days".printf(num);
+                } else {
+                    return undefined;
+                }
             },
             getDoses = function(doses){
 
@@ -183,7 +192,7 @@ AnimalGroup.prototype = {
         tbl = new DescriptiveTable()
             .add_tbody_tr("Dosed animals", getDosedAnimals(this.data.id, data.dosed_animals))
             .add_tbody_tr("Route of exposure", data.route_of_exposure)
-            .add_tbody_tr("Exposure duration", getDurObs(data.duration_exposure))
+            .add_tbody_tr("Exposure duration", getDurObs())
             .add_tbody_tr("Number of dose-groups", data.num_dose_groups)
             .add_tbody_tr("Positive control", data.positive_control)
             .add_tbody_tr("Negative control", data.negative_control)

@@ -476,6 +476,11 @@ class DosingRegime(models.Model):
         help_text="Length of exposure period (fractions allowed), used for sorting in visualizations",
         blank=True,
         null=True)
+    duration_exposure_text = models.CharField(
+        verbose_name="Exposure duration (text)",
+        max_length=128,
+        blank=True,
+        help_text="Text-description of the exposure duration (ex: 21 days, 104 wks, GD0 to PND9, GD0 to weaning)")
     num_dose_groups = models.PositiveSmallIntegerField(
         default=4,
         validators=[MinValueValidator(1)],
@@ -525,6 +530,7 @@ class DosingRegime(models.Model):
             "dosing_regime-dosed_animals",
             "dosing_regime-route_of_exposure",
             "dosing_regime-duration_exposure",
+            "dosing_regime-duration_exposure_text",
             "dosing_regime-num_dose_groups",
             "dosing_regime-positive_control",
             "dosing_regime-negative_control",
@@ -538,6 +544,7 @@ class DosingRegime(models.Model):
             AnimalGroup.getRelatedAnimalGroupID(ser['dosed_animals']),
             ser['route_of_exposure'],
             ser['duration_exposure'],
+            ser['duration_exposure_text'],
             ser['num_dose_groups'],
             ser['positive_control'],
             ser['negative_control'],

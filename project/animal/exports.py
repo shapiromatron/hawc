@@ -180,6 +180,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 return u"|{0}|".format(u"|".join(effs))
             return ""
 
+        def get_treatment_period(exp, dr):
+            txt = exp["type"].lower()
+            if txt.find("(")>=0:
+                txt = txt[:txt.find("(")]
+
+            if dr["duration_exposure_text"]:
+                txt = u"{0} ({1})".format(txt, dr["duration_exposure_text"])
+
+            return txt
+
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
@@ -208,7 +218,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser['animal_group']['sex'],
                 ser['animal_group']['dosing_regime']['route_of_exposure'].lower(),
-                'placeholder',
+                get_treatment_period(ser['animal_group']['experiment'], ser['animal_group']['dosing_regime']),
 
                 ser['name'],
                 ser['url'],

@@ -237,7 +237,7 @@ class DosingRegimeForm(ModelForm):
         helper.form_class = None
         helper.form_id = "dosing_regime"
         helper.add_fluid_row('route_of_exposure', 3, "span4")
-        helper.add_fluid_row('positive_control', 2, "span6")
+        helper.add_fluid_row('num_dose_groups', 3, "span4")
         return helper
 
 
