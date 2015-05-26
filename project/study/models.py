@@ -118,7 +118,7 @@ class Study(Reference):
         return self.assessment
 
     def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_attachments_json(self):
         d = []
@@ -198,6 +198,10 @@ class Study(Reference):
             "assessment": AssessmentSerializer().to_representation(assessment),
             "studies": studies
         }
+
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
 
 class Attachment(models.Model):
@@ -412,35 +416,30 @@ class StudyQuality(models.Model):
 
 @receiver(post_save, sender=Study)
 @receiver(pre_delete, sender=Study)
+def invalidate_endpoint_cache(sender, instance, **kwargs):
+    Model = None
+    filters = {}
+
+    if instance.study_type == 0:
+        Model = get_model('animal', 'Endpoint')
+        filters["animal_group__experiment__study"] = instance.id
+    elif instance.study_type == 1:
+        Model = get_model('epi', 'AssessedOutcome')
+        filters["exposure__study_population__study"] = instance.id
+    elif instance.study_type == 4:
+        Model = get_model('epi', 'MetaResult')
+        filters["protocol__study"] = instance.id
+
+    Study.delete_caches([instance.id])
+    if Model:
+        ids = Model.objects.filter(**filters).values_list('id', flat=True)
+        SerializerHelper.delete_caches(Model, ids)
+
+
 @receiver(post_save, sender=StudyQuality)
 @receiver(pre_delete, sender=StudyQuality)
-def invalidate_endpoint_cache(sender, instance, **kwargs):
-    Endpoint = get_model('animal', 'Endpoint')
-    AssessedOutcome = get_model('epi', 'AssessedOutcome')
-    MetaResult = get_model('epi', 'MetaResult')
-
-    if type(instance) is Study:
-        Model = None
-        filters = {}
-
-        if instance.study_type == 0:
-            Model = Endpoint
-            filters["animal_group__experiment__study"] = instance.id
-        elif instance.study_type == 1:
-            Model = AssessedOutcome
-            filters["exposure__study_population__study"] = instance.id
-        elif instance.study_type == 4:
-            Model = MetaResult
-            filters["protocol__study"] = instance.id
-
-        if Model:
-            ids = Model.objects.filter(**filters).values_list('id', flat=True)
-            Model.delete_caches(ids)
-
-    elif type(instance) is StudyQuality:
-
-        if type(instance.content_object) == Endpoint:
-            Endpoint.delete_caches([instance.object_id])
+def invalidate_study_cache(sender, instance, **kwargs):
+    instance.content_object.delete_caches([instance.object_id])
 
 
 reversion.register(Study)
