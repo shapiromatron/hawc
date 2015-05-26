@@ -207,7 +207,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=False),
                 get_gen_species_strain_sex(ser, withN=True),
                 ser['animal_group']['sex'],
-                ser['animal_group']['dosing_regime']['route_of_exposure'],
+                ser['animal_group']['dosing_regime']['route_of_exposure'].lower(),
                 'placeholder',
 
                 ser['name'],
