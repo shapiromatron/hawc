@@ -368,15 +368,6 @@ class DataPivot(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def clean(self):
-        # unique_together constraint checked above; not done in form because assessment is excluded
-        pk_exclusion = {}
-        if self.pk:
-            pk_exclusion['pk'] = self.pk
-        if DataPivot.objects.filter(assessment=self.assessment,
-                                    slug=self.slug).exclude(**pk_exclusion).count() > 0:
-            raise ValidationError('Error- slug name must be unique for assessment.')
-
     def get_download_url(self):
         # get download url for Excel file (default download-type)
         if hasattr(self, 'datapivotupload'):
@@ -548,7 +539,8 @@ class DataPivotQuery(DataPivot):
 
 class Prefilter(object):
     """
-    Helper-object to deal with the Visual.prefilters field
+    Helper-object to deal with DataPivot and Visual prefilters fields.
+    TODO: override TextField and add methods
     """
     def __init__(self, form):
         self.form = form

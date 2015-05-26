@@ -9,6 +9,17 @@ from utils.forms import BaseFormHelper
 from . import models
 
 
+def clean_slug(form):
+    # ensure unique slug for assessment
+    slug = form.cleaned_data.get("slug", None)
+    if form.instance.__class__.objects\
+           .filter(assessment_id=form.instance.assessment_id, slug=slug)\
+           .exclude(id=form.instance.id)\
+           .count()>0:
+        raise forms.ValidationError("URL name must be unique for this assessment.")
+    return slug
+
+
 class SummaryTextForm(forms.ModelForm):
 
     delete = forms.BooleanField(initial=False)
@@ -77,6 +88,9 @@ class VisualForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper
+
+    def clean_slug(self):
+        return clean_slug(self)
 
 
 class EndpointAggregationForm(VisualForm):
@@ -255,6 +269,9 @@ class DataPivotForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper
+
+    def clean_slug(self):
+        return clean_slug(self)
 
 
 class DataPivotUploadForm(DataPivotForm):
