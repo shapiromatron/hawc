@@ -304,7 +304,8 @@ class Visual(models.Model):
         dose_units = None
         try:
             dose_units = int(request.POST.get("dose_units"))
-        except TypeError:
+        except (TypeError, ValueError) as e:
+            # TypeError if dose_units is None; ValueError if dose_units is ""
             pass
 
         data = {
