@@ -467,12 +467,12 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if(i === 0){
                     response = v.response.toLocaleString();
-                    if(v.hasVariance) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    if(v.hasVariance && v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
                     tr.append("<td>{0}{1}</td>".printf(response, footnotes));
                     dr_control = v;
                 } else {
                     response = v.response.toLocaleString();
-                    if(v.hasVariance) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    if(v.hasVariance & v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
                     tr.append("<td>{0} ({1}%){2}</td>'".printf(response,
                         self._continuous_percent_difference_from_control(v, dr_control), footnotes));
                 }
