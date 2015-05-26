@@ -895,7 +895,7 @@ _.extend(RoBHeatmapForm, {
                 ["study", "Study"],
                 ["metric", "RoB metric"]
             ],
-            def: "metric"
+            def: "study"
         }
     ]
 });
