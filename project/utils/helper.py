@@ -68,7 +68,7 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                logging.info('using cache: {}'.format(name))
+                logging.debug('using cache: {}'.format(name))
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
             return cached
@@ -94,14 +94,13 @@ class SerializerHelper(object):
         json_str = JSONRenderer().render(serialized)
         serialized = OrderedDict(serialized)  # for pickling
 
-        logging.info('setting cache: {}'.format(name))
+        logging.debug('setting cache: {}'.format(name))
         cache.set_many({name: serialized, json_name: json_str})
 
         if json:
             return json_str
         else:
             return serialized
-
 
     @classmethod
     def add_serializer(cls, model, serializer):
@@ -111,7 +110,7 @@ class SerializerHelper(object):
     def delete_caches(cls, model, ids):
         names = [cls._get_cache_name(model, id, json=False) for id in ids]
         names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
-        logging.info("Removing caches: {}".format(', '.join(names)))
+        logging.debug("Removing caches: {}".format(', '.join(names)))
         cache.delete_many(names)
 
 

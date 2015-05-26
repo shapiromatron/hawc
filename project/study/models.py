@@ -416,7 +416,7 @@ class StudyQuality(models.Model):
 
 @receiver(post_save, sender=Study)
 @receiver(pre_delete, sender=Study)
-def invalidate_endpoint_cache(sender, instance, **kwargs):
+def invalidate_caches_study(sender, instance, **kwargs):
     Model = None
     filters = {}
 
@@ -436,9 +436,22 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
         SerializerHelper.delete_caches(Model, ids)
 
 
+@receiver(post_save, sender=StudyQualityDomain)
+@receiver(pre_delete, sender=StudyQualityDomain)
+@receiver(post_save, sender=StudyQualityMetric)
+@receiver(pre_delete, sender=StudyQualityMetric)
+def invalidate_caches_sq_metrics(sender, instance, **kwargs):
+    if sender is StudyQualityDomain:
+        assessment_id = instance.assessment_id
+    elif sender is StudyQualityMetric:
+        assessment_id = instance.domain.assessment_id
+
+    ids = Study.objects.filter(assessment_id=assessment_id).values_list('id', flat=True)
+    Study.delete_caches(ids)
+
 @receiver(post_save, sender=StudyQuality)
 @receiver(pre_delete, sender=StudyQuality)
-def invalidate_study_cache(sender, instance, **kwargs):
+def invalidate_caches_study_quality(sender, instance, **kwargs):
     instance.content_object.delete_caches([instance.object_id])
 
 
