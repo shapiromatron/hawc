@@ -18,11 +18,10 @@
 {% block content %}
 
   <h1>{{object}}
-    {% if crud == "Read" %}
+    {% if crud == "Read" and obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          {% if obj_perms.edit %}
             <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
             <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
             <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>
@@ -45,8 +44,6 @@
               <li class="disabled"><a tabindex="-1" href="#">Uncertainty Factors</a></li>
               <li><a href="{% url 'animal:ufs_list' endpoint.pk %}">View</a></li>
             {% endif %}
-          {% endif %}
-
         </ul>
       </div>
     {% endif %}
