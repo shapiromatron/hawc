@@ -493,16 +493,20 @@ VisualForm.prototype = {
         });
 
         this.fields.forEach(function(d){d.render();});
-        this.addPsuedoSubmitDiv($parent);
+        this.addPsuedoSubmitDiv($parent, this.packSettings);
     },
-    addPsuedoSubmitDiv: function($parent){
-        var submitter = this.$el.find('#data .form-actions input'),
+    addPsuedoSubmitDiv: function($parent, beforeSubmit){
+        var self = this,
+            submitter = this.$el.find('#data .form-actions input'),
             cancel_url = this.$el.find('#data .form-actions a').attr('href');
 
         $('<div class="form-actions">')
             .append(
                 $('<a class="btn btn-primary">Save</a>')
-                    .on('click', function(){submitter.trigger('click');})
+                    .on('click', function(){
+                        if (beforeSubmit) beforeSubmit.call(self);
+                        submitter.trigger('click');
+                    })
             ).append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
             .appendTo($parent);
     },
@@ -554,7 +558,7 @@ VisualForm.prototype = {
 
         data.settings = $.extend(false, {}, this.settings);
         this.buildPreview($el, data);
-        this.addPsuedoSubmitDiv($el);
+        this.addPsuedoSubmitDiv($el, this.updateSettingsFromPreview);
     },
     buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
