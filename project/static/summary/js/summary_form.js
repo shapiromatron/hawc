@@ -385,7 +385,7 @@ VisualForm.prototype = {
 
         // whenever data is synced, rebuild
         $settings.on('dataSynched', $.proxy(this.unpackSettings, this));
-        $preview.on('dataSynched', $.proxy(this.buildPreview, this));
+        $preview.on('dataSynched', $.proxy(this.buildPreviewDiv, this));
 
         $('a[data-toggle="tab"]').on('show', function(e){
             var toShow = $(e.target).attr('href'),
@@ -417,7 +417,7 @@ VisualForm.prototype = {
                 case "#preview":
                     self.setPreviewLoading();
                     if(self.dataSynced){
-                        $('a[data-toggle="tab"]').one('shown', $.proxy(self.buildPreview, self));
+                        $('a[data-toggle="tab"]').one('shown', $.proxy(self.buildPreviewDiv, self));
                     } else {
                         self.getData();
                     }
@@ -444,12 +444,6 @@ VisualForm.prototype = {
             self.dataSynced = true;
             $('#preview, #settings').trigger('dataSynched');
         });
-    },
-    prepareData: function(){
-        // deep-copy the data and make sure we have current settings
-        var data = $.extend(true, {}, this.data);
-        data.settings = $.extend(false, {}, this.settings);
-        return data;
     },
     initSettings: function(){
         var settings;
@@ -498,7 +492,19 @@ VisualForm.prototype = {
             self.fields.push(new d.type(d, getParent(d.tab), self));
         });
 
-        self.fields.forEach(function(d){d.render();});
+        this.fields.forEach(function(d){d.render();});
+        this.addPsuedoSubmitDiv($parent);
+    },
+    addPsuedoSubmitDiv: function($parent){
+        var submitter = this.$el.find('#data .form-actions input'),
+            cancel_url = this.$el.find('#data .form-actions a').attr('href');
+
+        $('<div class="form-actions">')
+            .append(
+                $('<a class="btn btn-primary">Save</a>')
+                    .on('click', function(){submitter.trigger('click');})
+            ).append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
+            .appendTo($parent);
     },
     buildSettingsSubtabs: function($parent){
         var self = this,
@@ -542,6 +548,14 @@ VisualForm.prototype = {
         div.children().show(800);
     },
     initDataForm: function(){},
+    buildPreviewDiv: function(){
+        var $el = $("#preview"),
+            data = $.extend(true, {}, this.data);
+
+        data.settings = $.extend(false, {}, this.settings);
+        this.buildPreview($el, data);
+        this.addPsuedoSubmitDiv($el);
+    },
     buildPreview: HAWCUtils.abstractMethod,
     removePreview: function(){
         this.updateSettingsFromPreview();
@@ -559,9 +573,8 @@ _.extend(EndpointAggregationForm, {
     schema: []
 });
 _.extend(EndpointAggregationForm.prototype, VisualForm.prototype, {
-    buildPreview: function(){
-        var data = this.prepareData();
-        this.preview = new EndpointAggregation(data).displayAsPage( $("#preview").empty() );
+    buildPreview: function($parent, data){
+        this.preview = new EndpointAggregation(data).displayAsPage( $parent.empty() );
     },
     updateSettingsFromPreview: function(){}
 });
@@ -803,10 +816,8 @@ _.extend(CrossviewForm, {
     ]
 });
 _.extend(CrossviewForm.prototype, VisualForm.prototype, {
-    buildPreview: function(){
-        var data = this.prepareData();
-        this.preview = new Crossview(data);
-        this.preview.displayAsPage( $("#preview").empty(), {"dev": true});
+    buildPreview: function($parent, data){
+        this.preview = new Crossview(data).displayAsPage( $parent.empty(), {"dev": true});
     },
     updateSettingsFromPreview: function(){
         settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
@@ -900,9 +911,8 @@ _.extend(RoBHeatmapForm, {
     ]
 });
 _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
-    buildPreview: function(){
-        var data = this.prepareData();
-        this.preview = new RoBHeatmap(data).displayAsPage( $("#preview").empty() );
+    buildPreview: function($parent, data){
+        this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty() );
     },
     initDataForm: function(){
         var showHideDiv = function(shouldShow, $el){
@@ -999,8 +1009,7 @@ _.extend(RoBBarchartForm, {
     ]
 });
 _.extend(RoBBarchartForm.prototype, VisualForm.prototype, RoBHeatmapForm.prototype, {
-    buildPreview: function(){
-        var data = this.prepareData();
-        this.preview = new RoBBarchart(data).displayAsPage( $("#preview").empty() );
+    buildPreview: function($parent, data){
+        this.preview = new RoBBarchart(data).displayAsPage( $parent.empty() );
     }
 });

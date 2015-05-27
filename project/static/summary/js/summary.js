@@ -524,6 +524,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
         this.buildTbl();
         this.plotData = this.getPlotData();
         this.buildPlot();
+        return this;
     },
     buildTbl: function(){
         if(this.table){
@@ -1290,6 +1291,7 @@ _.extend(Crossview.prototype, Visual.prototype, {
            .append(caption);
 
         new CrossviewPlot(this, data, options).render($plotDiv);
+        return this;
     },
     getPlotData: function(){
         return {
@@ -1948,6 +1950,7 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
            .append(caption);
 
         new RoBHeatmapPlot(this, data, options).render($plotDiv);
+        return this;
     },
     getPlotData: function(){
         return {
@@ -2293,6 +2296,7 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
            .append(caption);
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
+        return this;
     },
     getPlotData: function(){
         return {
