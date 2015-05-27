@@ -208,22 +208,6 @@ class DataPivotNew(BaseCreate):
                              kwargs={'pk': self.assessment.pk,
                                      'slug': self.object.slug})
 
-    def get_form_kwargs(self):
-        kwargs = super(DataPivotNew, self).get_form_kwargs()
-
-        # check if we have a template to use
-        try:
-            pk = int(self.request.GET.get('initial'))
-        except Exception:
-            pk = None
-
-        if pk:
-            obj = self.model.objects.filter(pk=pk).first()
-            if obj and obj.get_assessment() == self.assessment:
-                kwargs['instance'] = obj
-
-        return kwargs
-
 
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
@@ -234,7 +218,6 @@ class DataPivotQueryNew(DataPivotNew):
         context['file_loader'] = False
         return context
 
-
 class DataPivotFileNew(DataPivotNew):
     model = models.DataPivotUpload
     form_class = forms.DataPivotUploadForm
@@ -243,13 +226,6 @@ class DataPivotFileNew(DataPivotNew):
         context = super(DataPivotFileNew, self).get_context_data(**kwargs)
         context['file_loader'] = True
         return context
-
-    def get_form_kwargs(self):
-        kwargs = super(DataPivotFileNew, self).get_form_kwargs()
-        if kwargs.get('instance'):
-            # TODO: get file to copy properly when copying from existing
-            kwargs['instance'].file = None
-        return kwargs
 
 
 class DataPivotCopyAsNewSelector(BaseDetail):

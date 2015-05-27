@@ -32,17 +32,6 @@ class StudyPopulationCreate(BaseCreate):
     model = models.StudyPopulation
     form_class = forms.StudyPopulationForm
 
-    def get_form_kwargs(self):
-        kwargs = super(StudyPopulationCreate, self).get_form_kwargs()
-
-        # check if we have an object-template to be used
-        initial_pk = self.request.GET.get('initial', -1)
-        initial = self.model.objects.filter(pk=initial_pk).first()
-        if initial and initial.get_assessment() == self.assessment:
-            kwargs['instance'] = initial
-
-        return kwargs
-
 
 class StudyPopulationDetail(BaseDetail):
     model = models.StudyPopulation
@@ -81,17 +70,6 @@ class ExposureCreate(BaseCreateWithFormset):
     model = models.Exposure
     form_class = forms.ExposureForm
     formset_factory = forms.EGFormSet
-
-    def get_form_kwargs(self):
-        kwargs = super(ExposureCreate, self).get_form_kwargs()
-
-        # check if we have an object-template to be used
-        initial_pk = self.request.GET.get('initial', -1)
-        initial = self.model.objects.filter(pk=initial_pk).first()
-        if initial and initial.get_assessment() == self.assessment:
-            kwargs['instance'] = initial
-
-        return kwargs
 
     def post_object_save(self, form, formset):
         # Bind newly created exposure to exposure-group instance
@@ -175,13 +153,6 @@ class AssessedOutcomeCreate(BaseCreateWithFormset):
         # bind to assessment
         kwargs = super(AssessedOutcomeCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
-
-        # check if we have an object-template to be used
-        initial_pk = self.request.GET.get('initial', -1)
-        initial = self.model.objects.filter(pk=initial_pk).first()
-        if initial and initial.get_assessment() == self.assessment:
-            kwargs['instance'] = initial
-
         return kwargs
 
     def post_object_save(self, form, formset):
@@ -327,22 +298,6 @@ class MetaResultCreate(BaseCreateWithFormset):
     model = models.MetaResult
     form_class = forms.MetaResultForm
     formset_factory = forms.SingleResultFormset
-
-    def get_form_kwargs(self):
-        kwargs = super(MetaResultCreate, self).get_form_kwargs()
-
-        # check if we have a template to use
-        try:
-            pk = int(self.request.GET.get('initial'))
-        except Exception:
-            pk = None
-
-        if pk:
-            obj = self.model.objects.filter(pk=pk).first()
-            if obj and obj.get_assessment() == self.assessment:
-                kwargs['instance'] = obj
-
-        return kwargs
 
     def post_object_save(self, form, formset):
         # Bind newly created single-result outcome to meta-result instance

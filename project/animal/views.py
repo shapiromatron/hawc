@@ -1,7 +1,7 @@
 import json
 
 from django.db.models import Q
-from django.forms.models import inlineformset_factory, model_to_dict
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -286,20 +286,8 @@ class EndpointCreate(BaseCreate):
     form_class = forms.EndpointForm
 
     def get_form_kwargs(self):
-        # bind to assessment
         kwargs = super(EndpointCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
-
-        # check if we have an object-template to be used
-        initial_pk = self.request.GET.get('initial')
-        try:
-            initial = self.model.objects.filter(pk=initial_pk).first()
-        except ValueError:
-            pass
-
-        if initial and initial.assessment == self.assessment:
-            kwargs['initial'] = model_to_dict(initial)
-
         return kwargs
 
     def form_valid(self, form):

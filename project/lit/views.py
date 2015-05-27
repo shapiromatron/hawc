@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 
 from django.core.urlresolvers import reverse_lazy
+from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
@@ -122,16 +123,16 @@ class SearchNew(BaseCreate):
 
         # check if we have a template to use
         try:
-            pk = int(self.request.GET.get('initial'))
-        except Exception:
-            pk = None
+            pk = int(self.request.GET.get('initial', -1))
+        except ValueError:
+            pk = -1
 
-        if pk:
+        if pk > 0:
             obj = self.model.objects.filter(pk=pk).first()
             permitted_assesments = Assessment.get_viewable_assessments(
                 self.request.user, exclusion_id=self.assessment.pk)
             if obj and obj.assessment in permitted_assesments:
-                kwargs['instance'] = obj
+                kwargs['initial'] = model_to_dict(obj)
 
         return kwargs
 

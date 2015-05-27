@@ -7,6 +7,7 @@ from django.db.models.loading import get_model
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, Http404
 from django.utils.decorators import method_decorator
@@ -248,7 +249,21 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(BaseCreate, self).get_form_kwargs()
-        kwargs['parent'] = self.parent # all inputs require a parent field
+
+        # all inputs require a parent field
+        kwargs['parent'] = self.parent
+
+        # check if we have an object-template to be used
+        try:
+            pk = int(self.request.GET.get('initial', -1))
+        except ValueError:
+            pk = -1
+
+        if pk > 0:
+            initial = self.model.objects.filter(pk=pk).first()
+            if initial and initial.get_assessment() == self.assessment:
+                kwargs['initial'] = model_to_dict(initial)
+
         return kwargs
 
     def get_context_data(self, **kwargs):
