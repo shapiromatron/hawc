@@ -658,10 +658,14 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
         this.build_x_label();
         this.build_y_label();
         this.add_legend();
-        this.add_menu();
-        this.add_menu_button(this.parent.addPlotToggleButton());
         this.resize_plot_dimensions();
         this.trigger_resize();
+        if (this.menu_div){
+            this.menu_div.remove();
+            delete this.menu_div;
+        }
+        this.add_menu();
+        this.add_menu_button(this.parent.addPlotToggleButton());
     },
     processData: function(){
         var points = [],
@@ -993,6 +997,12 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
         this.customize_menu();
         this.resize_plot_dimensions();
         this.trigger_resize();
+        if (this.menu_div){
+            this.menu_div.remove();
+            delete this.menu_div;
+        }
+        this.add_menu();
+        this.add_menu_button(this.parent.addPlotToggleButton());
     },
     processData: function(){
         var min = Infinity,

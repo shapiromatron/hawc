@@ -1094,6 +1094,10 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.trigger_resize();
     },
     customize_menu: function(){
+        if (this.menu_div){
+            this.menu_div.remove();
+            delete this.menu_div;
+        }
         this.add_menu();
         if (this.parent){this.parent.add_toggle_button(this);}
         var plot = this;
@@ -1763,6 +1767,10 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
         this.trigger_resize();
     },
     customize_menu: function(){
+        if (this.menu_div){
+            this.menu_div.remove();
+            delete this.menu_div;
+        }
         this.add_menu();
         if (this.parent){this.parent.add_toggle_button(this);}
         var plot = this;
@@ -2126,6 +2134,10 @@ _.extend(BWPlot.prototype, D3Plot.prototype, {
         this.trigger_resize();
     },
     customize_menu: function(){
+        if (this.menu_div){
+            this.menu_div.remove();
+            delete this.menu_div;
+        }
         this.add_menu();
         if (this.parent){this.parent.add_toggle_button(this);}
         var plot = this;
