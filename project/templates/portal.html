@@ -57,16 +57,20 @@
   {% endblock messages %}
 
   <div class="row-fluid">
-    <div id='sidebar' class="span3 well" style="max-width: 300px;">
+    <div id='sidebar'
+         class="well span3"
+         style="max-width: 300px; {% if request.session.hideSidebar %}display:none;{% endif %}">
       {% include "assessment/sidebar.html" %}
     </div>
 
-    <div id='sidebar_mini' style="display: none; margin-left: 0%; max-width: 10px">
+    <div id="sidebar_mini"
+         style="margin-left: 0%; max-width: 10px; {% if not request.session.hideSidebar %}display:none;{% endif %}">
       <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
     </div>
 
     <!--Body content-->
-    <div id="content" class="span9">
+    <div id="content"
+         class="{% if request.session.hideSidebar %}span11{%else%}span9{% endif %}">
       <div class="{% block content_type %}{% endblock %}">
         {% block content %}{% endblock %}
         <br class="clear" />
@@ -80,25 +84,24 @@
 {% block portaljs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      var visible = true,
+      var hideSidebar = {{request.session.hideSidebar|default:"false"|lower}},
           trigger_resize = function(){$(window).trigger("resize");};
 
       $('.toggle_sidebar').click(function(e){
         e.preventDefault();
-        if(visible){
+        hideSidebar = !hideSidebar;
+        if(hideSidebar){
           $("#sidebar").fadeOut(function(){
-            $("#content").addClass("span11");
-            $("#content").removeClass("span9");
+            $("#content").addClass("span11").removeClass("span9");
             $('#sidebar_mini').fadeIn(trigger_resize);
           });
         } else {
           $('#sidebar_mini').fadeOut(function(){
-            $("#content").addClass("span9");
-            $("#content").removeClass("span11");
+            $("#content").addClass("span9").removeClass("span11");
             $('#sidebar').fadeIn(trigger_resize);
           });
         }
-        visible = !visible;
+        $.post("{% url 'update_session' %}", {"hideSidebar": hideSidebar});
       });
     });
   </script>

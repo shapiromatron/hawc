@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^500/$', views.Error500.as_view(), name='500'),
 
     # Change-log
+    url(r'^update-session/', views.UpdateSession.as_view(), name='update_session'),
     url(r'^change-log/$', views.ChangeLogList.as_view(), name='change_log'),
     url(r'^change-log/(?P<slug>[\w-]+)/$', views.ChangeLogDetail.as_view(), name='change_log_detail'),
 

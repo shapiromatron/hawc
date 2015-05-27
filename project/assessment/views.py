@@ -3,10 +3,10 @@ import json
 from django.db.models import Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DetailView, TemplateView, FormView
+from django.views.generic import View, ListView, DetailView, TemplateView, FormView
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse, get_object_or_404
 
@@ -143,7 +143,6 @@ class AssessmentReports(BaseList):
         return context
 
 
-
 class AssessmentDownloads(BaseDetail):
     """
     Download assessment-level Microsoft Excel reports
@@ -261,6 +260,17 @@ class CASDetails(TemplateView):
 
 class CloseWindow(TemplateView):
     template_name = "hawc/close_window.html"
+
+
+class UpdateSession(View):
+
+    http_method_names = (u'post', )
+
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseNotAllowed(['POST'])
+        request.session['hideSidebar'] = request.POST.get("hideSidebar", "true") == "true"
+        return HttpResponse(True)
 
 
 @csrf_exempt  # todo: get rid of this! update page to use csrf.js
