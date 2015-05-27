@@ -269,12 +269,12 @@ _.extend(EditEndpointIAD.prototype, EditEndpoint.prototype);
 var SampleSizeWidget = function(){
     this.btn = $('#ssBtn')
         .appendTo($("#hint_id_power_notes"))
-        .click($.proxy(this.setCalculator, this));
+        .click(this.setCalculator.bind(this));
     this.modal = $('#ssModal');
     this.form = $('#ssForm');
     this.result = this.form.find("#ssResult");
-    this.form.find("input").on('change keyup', $.proxy(this.recalculate, this));
-    $('#ssSavePower').click($.proxy(this.savePower, this));
+    this.form.find("input").on('change keyup', this.recalculate.bind(this));
+    $('#ssSavePower').click(this.savePower.bind(this));
 };
 SampleSizeWidget.prototype = {
     getSD: function(){

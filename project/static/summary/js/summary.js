@@ -629,7 +629,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             title: 'View alternate visualizations',
             text: '',
             icon: 'icon-circle-arrow-right',
-            on_click: $.proxy(this.buildPlot, this)
+            on_click: this.buildPlot.bind(this)
         };
     }
 });
@@ -1234,7 +1234,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             title: 'Change x-axis scale (shortcut: click the x-axis label)',
             text: '',
             icon: 'icon-resize-horizontal',
-            on_click: $.proxy(this.toggle_x_axis, this)
+            on_click: this.toggle_x_axis.bind(this)
         });
     },
     add_legend: function(){

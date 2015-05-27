@@ -55,7 +55,7 @@ _.extend(TableField.prototype, InputField.prototype, {
     thOrdering: function (options) {
         var th = $('<th>').html("Ordering&nbsp;"),
             add = $('<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>')
-                    .on('click', $.proxy(this.addRow, this));
+                    .on('click', this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
         return th;
@@ -384,8 +384,8 @@ VisualForm.prototype = {
         $data.find('.wysihtml5-sandbox').contents().find('body').on("keyup", setDataChanged);
 
         // whenever data is synced, rebuild
-        $settings.on('dataSynched', $.proxy(this.unpackSettings, this));
-        $preview.on('dataSynched', $.proxy(this.buildPreviewDiv, this));
+        $settings.on('dataSynched', this.unpackSettings.bind(this));
+        $preview.on('dataSynched', this.buildPreviewDiv.bind(this));
 
         $('a[data-toggle="tab"]').on('show', function(e){
             var toShow = $(e.target).attr('href'),
@@ -417,7 +417,7 @@ VisualForm.prototype = {
                 case "#preview":
                     self.setPreviewLoading();
                     if(self.dataSynced){
-                        $('a[data-toggle="tab"]').one('shown', $.proxy(self.buildPreviewDiv, self));
+                        $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
                     } else {
                         self.getData();
                     }
@@ -425,7 +425,7 @@ VisualForm.prototype = {
             }
         });
 
-        $('#data form').on('submit', $.proxy(this.packSettings, this));
+        $('#data form').on('submit', this.packSettings.bind(this));
     },
     getData: function(){
         var self = this,

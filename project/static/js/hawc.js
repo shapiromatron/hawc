@@ -1239,7 +1239,7 @@ var HAWCModal = function(){
             .append('<div class="modal-body"></div>')
             .append('<div class="modal-footer"></div>')
             .appendTo($('body'));
-        $(window).on('resize', $.proxy(this._resizeModal, this));
+        $(window).on('resize', this._resizeModal.bind(this));
     }
     this.$modalDiv = $modalDiv;
 };
