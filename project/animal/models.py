@@ -813,23 +813,6 @@ class Endpoint(BaseEndpoint):
     def dose_response_available(self):
         return self.data_reported and self.data_extracted
 
-    @property
-    def endpoint_groups(self, individual_animal_data=False):
-        if not hasattr(self, '_endpoint_groups'):
-            related_args = []
-            if individual_animal_data:
-                related_args = ['endpoint__endpoint_group__individual_data']
-            self._endpoint_groups = EndpointGroup.objects.filter(endpoint=self.pk).order_by('dose_group_id').select_related(*related_args)
-        return self._endpoint_groups
-
-    def get_endpoint_groups(self):
-        return self.endpoint_groups.all()
-
-    def get_m2m_representation(self):
-        return u'%s \u279E %s \u279E %s \u279E %s' % (self.animal_group.experiment.study,
-                                                      self.animal_group.experiment,
-                                                      self.animal_group, self.__unicode__())
-
     def get_doses_json(self, json_encode=True):
         """
         Return a dictionary containing the doses available for the selected

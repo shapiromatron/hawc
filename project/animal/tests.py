@@ -728,10 +728,6 @@ class EndpointFunctionality(TestCase):
     def test_endpoint_groups(self):
         self.assertEqual(self.endpoint_working.endpoint_groups.count(), 4)
 
-    def test_get_endpoint_groups(self):
-        egs = self.endpoint_working.get_endpoint_groups()
-        self.assertEqual(egs.count(), 4)
-
     def test_dataset_increasing(self):
         self.assertEqual(self.endpoint_working.dataset_increasing, True)
 
@@ -740,10 +736,6 @@ class EndpointFunctionality(TestCase):
 
     def test_get_bmds_session(self):
         self.assertEqual(self.endpoint_working.get_bmds_session(), None)
-
-    def test_get_m2m_representation(self):
-        self.assertEqual(self.endpoint_working.get_m2m_representation(),
-                         u'Foo et al. \u279E experiment name \u279E animal group name \u279E endpoint name')
 
 
 class EndpointGroupPercentControl(TestCase):

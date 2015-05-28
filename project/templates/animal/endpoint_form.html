@@ -89,7 +89,7 @@
           {% endif %}
 
           {% if crud == "Update" %}
-            {% for eg in object.get_endpoint_groups %}
+            {% for eg in object.endpoint_group.all %}
               <tr>
                 <td class="doses" id="dose_{{eg.dose_group_id}}"></td>
                 <td><input tabindex="2" class="span12" type="text" id="n_{{eg.dose_group_id}}" value="{{eg.n}}"></td>

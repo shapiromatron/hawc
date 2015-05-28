@@ -118,7 +118,7 @@
             {% endfor %}
           </tr>
         {% elif crud == "Update" %}
-          {% with egs=object.get_endpoint_groups %}
+          {% with egs=object.endpoint_group.all %}
             <tr>
               <th id="doses_title">Dose</th>
               {% for eg in egs %}

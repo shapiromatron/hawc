@@ -774,8 +774,7 @@ class AggregationEndpointFilter(BaseList):
                 doses = endpoint.get_doses_json(json_encode=False)
                 for dose in doses:
                     if dose['units_id'] == self.units.pk:
-                        context.append({'id': endpoint.pk,
-                                        'name': endpoint.get_m2m_representation()})
+                        context.append({'id': endpoint.pk, 'name': endpoint.name})
         return context
 
     def render_to_response(self, context, **response_kwargs):
