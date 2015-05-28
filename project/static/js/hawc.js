@@ -1408,7 +1408,9 @@ BaseTable.prototype = {
         if(cols){
             this._numCols = cols;
         } else if(this._numCols === undefined){
-            this._numCols = this.thead.first().children().first().children().length;
+            this._numCols = d3.sum(_.map(
+               this.thead.first().children().first().children(),
+               function(d){return parseInt($(d).attr('colspan'))||1;}));
         }
         return this._numCols;
     }, addHeaderRow: function(val){
@@ -1437,6 +1439,7 @@ BaseTable.prototype = {
     }, _set_footnotes: function(){
         var txt = this.footnotes.html_list().join('<br>'),
             colspan = this.numCols();
-        this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
+        if (txt.length>0)
+            this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
     }
 };

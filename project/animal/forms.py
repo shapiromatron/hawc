@@ -456,21 +456,25 @@ class EndpointGroupForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(EndpointGroupForm, self).clean()
-        if self.instance.endpoint.data_type == 'C':
+        data_type = self.instance.endpoint.data_type
+
+        if data_type == 'C':
             var = cleaned_data.get("variance")
             var_type = self.instance.endpoint.variance_type
-            if (var is None and var_type in (1,2)) or (var is not None and var_type in (0,3)):
-                raise ValidationError('Variance must be numeric, or variance-type should be not reported')
-            if cleaned_data.get("response") is None:
-                raise ValidationError('Response must be numeric')
-        elif self.instance.endpoint.data_type == 'P':
+            if var is not None and var_type in (0,3):
+                raise ValidationError('Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"')
+        elif data_type == 'P':
             if operator.xor(
                     cleaned_data.get("lower_ci") is None,
                     cleaned_data.get("upper_ci") is None):
-                raise ValidationError('Both confidence intervals must be provided, or left-blank')
-        else:
-            if cleaned_data.get("incidence") is None:
-                raise ValidationError('Incidence must be numeric')
+                raise ValidationError('Both confidence intervals must be provided for a dose-group, or left-blank')
+        elif data_type in ["D", "DC"]:
+            if operator.xor(
+                    cleaned_data.get("incidence") is None,
+                    cleaned_data.get("n") is None):
+                raise ValidationError('Both incidence and N must be provided for a dose-group, or left-blank')
+            if cleaned_data.get("n") < cleaned_data.get("incidence"):
+                raise ValidationError('Incidence must be less-than or equal-to N')
 
 
 class EndpointSelectorForm(forms.Form):
@@ -630,11 +634,14 @@ class Base_UFRefVal_FormSet(BaseModelFormSet):
             ufs.append(uf)
 
 
-UFRefValFormSet = inlineformset_factory(models.ReferenceValue,
-                                        models.UncertaintyFactorRefVal,
-                                        form=UncertaintyFactorRefValForm,
-                                        formset=Base_UFRefVal_FormSet,
-                                        extra=0, can_delete=False)
+UFRefValFormSet = inlineformset_factory(
+        models.ReferenceValue,
+        models.UncertaintyFactorRefVal,
+        form=UncertaintyFactorRefValForm,
+        formset=Base_UFRefVal_FormSet,
+        extra=0,
+        can_delete=False
+    )
 
 
 class SpeciesForm(ModelForm):

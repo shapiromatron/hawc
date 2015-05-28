@@ -52,9 +52,10 @@ EditEndpoint.prototype = {
         //now endpoint-group data
         $('#eg > tbody > tr').each(function(i, v){
             var row = {};
-            row['n'] = parseFloat($('#n_' + i).val());
-            row['incidence'] = parseFloat($('#inc_' + i).val());
+            row['n'] = parseInt($('#n_' + i).val());
+            row['incidence'] = parseInt($('#inc_' + i).val());
             row['response'] = parseFloat($('#resp_' + i).val());
+            row['isReported'] = $.isNumeric(row['response'] || row['incidence']);
             row['variance'] = parseFloat($('#variance_' + i).val());
             row['hasVariance'] = $.isNumeric(row['variance']);
             row['lower_ci'] = parseFloat($('#lower_ci_' + i).val());
@@ -280,16 +281,18 @@ SampleSizeWidget.prototype = {
     getSD: function(){
         var n = $("#n_1").val(),
             varType = $("#id_variance_type").val(),
-            variance = $("#variance_0").val();
+            variance = $("#variance_0").val(),
+            val = NaN;
 
         switch(varType){
             case "1": //SD
-                return variance;
+                val = variance;
             case "2": //SE
-                return Math.round(variance * Math.sqrt(n));
-            default:
-                return NaN;
+                if ($.isNumeric(variance) && $.isNumeric(n)){
+                    val =  Math.round(variance * Math.sqrt(n));
+                }
         }
+        return val;
     },
     setCalculator: function(){
         this.form.find("input[name=mean]").val( $("#resp_0").val() );

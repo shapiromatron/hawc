@@ -338,7 +338,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         // Add confidence interval data to dataset.
         if ((this.data !== undefined) &&
             (this.data.data_type !== undefined) &&
-            (this.data.endpoint_group.length>0)) {
+            (this.hasEGdata())) {
             if (this.data.data_type === 'C'){
                 this.add_continuous_confidence_intervals();
             } else if (this.data.data_type === 'P'){
@@ -366,7 +366,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         the 95% confidence intervals on the observed proportions (independent of
         model).
         */
-        this.data.endpoint_group.forEach(function(v, i){
+        _.chain(this.data.endpoint_group)
+         .filter(function(d){ return d.isReported; })
+         .each(function(v){
             var p = v.incidence/v.n,
                 q = 1-p,
                 z = 1.959963986120195;  // same as Math.ltqnorm(0.975);
@@ -377,25 +379,10 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         });
     },
     add_pd_confidence_intervals: function(){
-      this.data.endpoint_group.forEach(function(v, i){
+        _.each(this.data.endpoint_group, function(v){
            v.lower_limit = v.lower_ci;
            v.upper_limit = v.upper_ci;
         });
-    },
-    get_pd_string: function(eg){
-        var txt = "{0}%".printf(eg.response);
-        if(eg.lower_ci) txt += " ({0}-{1})".printf(eg.lower_ci, eg.upper_ci);
-        return txt
-    },
-    _calculate_stdev: function(eg){
-        // stdev is required for plotting; calculate if SE is specified
-        var convert = ((this.data.data_type === "C") &&
-                       (parseInt(this.data.variance_type, 10) === 2));
-        if(convert){
-            eg.stdev = eg.variance * Math.sqrt(eg.n);
-        } else {
-            eg.stdev = eg.variance;
-        }
     },
     add_continuous_confidence_intervals: function(){
         /*
@@ -416,15 +403,35 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            and upper ends of the error bar.
         */
         var self = this;
-        this.data.endpoint_group.forEach(function(v, i){
-            if (v.hasVariance){
-                if (v.stdev === undefined) self._calculate_stdev(v);
-                var se = v.stdev/Math.sqrt(v.n),
-                    z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
-                v.lower_limit = v.response - se * z;
-                v.upper_limit = v.response + se * z;
-            }
+        _.chain(this.data.endpoint_group)
+         .filter(function(d){ return d.isReported; })
+         .each(function(v){
+            if(!(v.variance) || !(v.n)) return;
+            if (v.stdev === undefined) self._calculate_stdev(v);
+            var se = v.stdev/Math.sqrt(v.n),
+                z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
+            v.lower_limit = v.response - se * z;
+            v.upper_limit = v.response + se * z;
         });
+    },
+    get_pd_string: function(eg){
+        var txt = "{0}%".printf(eg.response);
+        if(eg.lower_ci && eg.upper_ci) txt += " ({0}-{1})".printf(eg.lower_ci, eg.upper_ci);
+        return txt
+    },
+    _calculate_stdev: function(eg){
+        // stdev is required for plotting; calculate if SE is specified
+        var convert = ((this.data.data_type === "C") &&
+                       (parseInt(this.data.variance_type, 10) === 2));
+        if(convert){
+            if ($.isNumeric(eg.n)) {
+                eg.stdev = eg.variance * Math.sqrt(eg.n);
+            } else {
+                eg.stdev = undefined;
+            }
+        } else {
+            eg.stdev = eg.variance;
+        }
     },
     _build_ag_dose_rows: function(options){
 
@@ -459,45 +466,49 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
     },
     build_ag_n_key: function(){
-        return this.data.endpoint_group.map(function(v){return v.n;}).join('-');
+        return _.map(this.data.endpoint_group, function(v, i){return v.n || "NR-{}".printf(i);}).join('-');
     },
     _build_ag_n_row: function(options){
         return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
-            this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n);})));
+            this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n || "-");})));
     },
     _build_ag_response_row: function(footnote_object){
-        var self = this, footnotes, response,
-            tr = $('<tr>')
-                .append('<td><a href="{0}">{1}</a></td>'.printf(this.data.url, this.data.name));
+        var self = this, footnotes, response, td, txt
+            data_type = this.data.data_type,
+            tr = $('<tr>').append('<td><a href="{0}">{1}</a></td>'.printf(
+                    this.data.url, this.data.name));
 
-        if (this.data.data_type == "C"){
-            var dr_control;
-            this.data.endpoint_group.forEach(function(v, i){
+        this.data.endpoint_group.forEach(function(v, i){
+            td = $('<td>');
+            if(i === 0) dr_control = v;
+            if(!v.isReported){
+                td.text("-");
+            } else {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-                if(i === 0){
+                if (data_type === "C"){
                     response = v.response.toLocaleString();
-                    if(v.hasVariance && v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
-                    tr.append("<td>{0}{1}</td>".printf(response, footnotes));
-                    dr_control = v;
+                    if(v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    txt = "";
+                    if(i > 0){
+                        txt = self._continuous_percent_difference_from_control(v, dr_control);
+                        txt = (txt === "NR") ? "" : " ({0}%)".printf(txt);
+                    }
+                    td.html("{0}{1}{2}".printf(response, txt, footnotes));
+                } else if (data_type === "P") {
+                    td.html("{0}{1}".printf(self.get_pd_string(v), footnotes))
+                } else if (["D", "DC"].indexOf(data_type)>=0){
+                    td.html("{0}/{1} ({2}%){3}".printf(
+                        v.incidence,
+                        v.n,
+                        self._dichotomous_percent_change_incidence(v),
+                        self.add_endpoint_group_footnotes(footnote_object, i)
+                    ));
                 } else {
-                    response = v.response.toLocaleString();
-                    if(v.hasVariance & v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
-                    tr.append("<td>{0} ({1}%){2}</td>'".printf(response,
-                        self._continuous_percent_difference_from_control(v, dr_control), footnotes));
+                    console.log("unknown data-type");
                 }
-            });
-        } else if (this.data.data_type == "P"){
-            this.data.endpoint_group.forEach(function(v, i){
-                footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-                tr.append("<td>{0}{1}</td>".printf(self.get_pd_string(v), footnotes))
-            });
-        } else {
-            this.data.endpoint_group.forEach(function(v, i){
-            footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-                tr.append("<td>{0}/{1} ({2}%){3}</td>".printf(v.incidence, v.n,
-                        self._dichotomous_percent_change_incidence(v), footnotes));
-            });
-        }
+            }
+            tr.append(td);
+        });
         return tr;
     },
     _endpoint_detail_td: function(){
@@ -506,10 +517,10 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 <i class="icon-share-alt"></i></a>'.printf(this.data.name, this.data.response_units, this.data.url);
     },
     build_details_table: function(div){
-        var tbl = new DescriptiveTable(),
-            tbody = tbl.get_tbody(),
-            self = this,
+        var self = this,
+            tbl = new DescriptiveTable(),
             critical_dose = function(type){
+                if(self.data[type]<0) return;
                 var span = $("<span>"),
                     dose = new EndpointCriticalDose(self, span, type, true);
                 return span;
@@ -517,49 +528,48 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 if(tags.length === 0) return false;
                 var ul = $('<ul class="nav nav-pills nav-stacked">');
                 tags.forEach(function(v){
-                    ul.append('<li><a href="{0}">{1}</a></li>'.printf(Endpoint.getTagURL(assessment_id, v.slug), v.name));
+                    ul.append('<li><a href="{0}">{1}</a></li>'.printf(
+                      Endpoint.getTagURL(assessment_id, v.slug), v.name));
                 });
                 return ul;
+            }, getObsTime = function(d){
+                if (d.observation_time) return "{0} {1}".printf(
+                        d.observation_time, d.observation_time_units);
             };
 
-        tbl.add_tbody_tr("Endpoint name", this.data.name);
-        tbl.add_tbody_tr("System", this.data.system);
-        tbl.add_tbody_tr("Organ", this.data.organ);
-        tbl.add_tbody_tr("Effect", this.data.effect);
-        tbl.add_tbody_tr("Diagnostic description", this.data.diagnostic);
-
-        if(this.data.observation_time){
-            tbl.add_tbody_tr("Observation time", "{0} {1}".printf(
-                                this.data.observation_time,
-                                this.data.observation_time_units));
-        }
-
-        tbl.add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment));
-
-        tbl.add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported));
-        tbl.add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted));
-        tbl.add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated));
-        tbl.add_tbody_tr("Location in literature", this.data.data_location);
-
-        if(this.data.NOEL>0) tbl.add_tbody_tr("NOEL", critical_dose("NOEL"));
-        if(this.data.LOEL>0) tbl.add_tbody_tr("LOEL", critical_dose("LOEL"));
-        if(this.data.FEL>0) tbl.add_tbody_tr("FEL", critical_dose("FEL"));
-
-        tbl.add_tbody_tr("Monotonicity", this.data.monotonicity);
-        tbl.add_tbody_tr("Statistical test description", this.data.statistical_test);
-        tbl.add_tbody_tr("Trend result", this.data.trend_result);
-        tbl.add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value);
-        tbl.add_tbody_tr("Power notes", this.data.power_notes);
-        tbl.add_tbody_tr("Results notes", this.data.results_notes);
-        tbl.add_tbody_tr("General notes/methodology", this.data.endpoint_notes);
+        tbl.add_tbody_tr("Endpoint name", this.data.name)
+           .add_tbody_tr("System", this.data.system)
+           .add_tbody_tr("Organ", this.data.organ)
+           .add_tbody_tr("Effect", this.data.effect)
+           .add_tbody_tr("Diagnostic description", this.data.diagnostic)
+           .add_tbody_tr("Observation time", getObsTime(this.data))
+           .add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment))
+           .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))
+           .add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted))
+           .add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated))
+           .add_tbody_tr("Location in literature", this.data.data_location)
+           .add_tbody_tr("NOEL", critical_dose("NOEL"))
+           .add_tbody_tr("LOEL", critical_dose("LOEL"))
+           .add_tbody_tr("FEL",  critical_dose("FEL"))
+           .add_tbody_tr("Monotonicity", this.data.monotonicity)
+           .add_tbody_tr("Statistical test description", this.data.statistical_test)
+           .add_tbody_tr("Trend result", this.data.trend_result)
+           .add_tbody_tr("Trend <i>p</i>-value", this.data.trend_value)
+           .add_tbody_tr("Power notes", this.data.power_notes)
+           .add_tbody_tr("Results notes", this.data.results_notes)
+           .add_tbody_tr("General notes/methodology", this.data.endpoint_notes);
 
         $(div).html(tbl.get_tbl());
     },
     _dichotomous_percent_change_incidence: function(eg){
-        return Math.round((eg.incidence/eg.n*100), 3);
+        return (eg.isReported) ? Math.round((eg.incidence/eg.n*100), 3) : "NR";
     },
     _continuous_percent_difference_from_control: function(eg, eg_control){
-        return (eg_control.response === 0) ? "-" : Math.round(100*((eg.response - eg_control.response)/eg_control.response), 3);
+        var txt = "NR";
+        if (eg_control.isReported && eg.isReported && eg_control.response !== 0){
+            txt = Math.round(100*((eg.response - eg_control.response)/eg_control.response), 3).toString();
+        }
+        return txt;
     },
     _pd_percent_difference_from_control: function(eg){
         return eg.response;
@@ -607,9 +617,11 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                     this.data.endpoint_group[index],
                     this.data.endpoint_group[0]);
             } else if (this.data.data_type == "P"){
-                return this._pd_percent_difference_from_control(this.data.endpoint_group[index]);
+                return this._pd_percent_difference_from_control(
+                    this.data.endpoint_group[index]);
             } else {
-                return this._dichotomous_percent_change_incidence(this.data.endpoint_group[index]);
+                return this._dichotomous_percent_change_incidence(
+                    this.data.endpoint_group[index]);
             }
         } catch(err){
             return '-';
@@ -671,6 +683,12 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1200});
+    },
+    hasEGdata: function(){
+        return (
+            this.data.endpoint_group.length > 0 &&
+            _.any(_.pluck(this.data.endpoint_group, "isReported"))
+        );
     }
 });
 
@@ -759,16 +777,18 @@ var EndpointPlotContainer = function(endpoint, plot_id){
     this.plot_div = $(plot_id);
     this.plot_id = plot_id;
 
-    if(endpoint.data.endpoint_group.length>0){
+    if(!this.endpoint.hasEGdata()){
+        this.plot_div.html('<p>Plot unavailable.</p>');
+    } else {
         var options = {'build_plot_startup':false};
-        this.plot_style = [new Barplot(endpoint, this.plot_id, options, this),
-                           new DRPlot(endpoint, this.plot_id, options, this)];
-        if (endpoint.data.individual_animal_data){
+        this.plot_style = [
+            new Barplot(endpoint, this.plot_id, options, this),
+            new DRPlot(endpoint, this.plot_id, options, this)
+        ];
+        if(endpoint.data.individual_animal_data){
             this.plot_style.splice(1, 0, new BWPlot(endpoint, this.plot_id, options, this));
         }
         this.toggle_views();
-    } else {
-        this.plot_div.html('<p>Plot unavailable.</p>');
     }
 };
 EndpointPlotContainer.prototype = {
@@ -808,7 +828,7 @@ EndpointTable.prototype = {
         this.build_table();
     },
     build_table: function(){
-        if (this.endpoint.data.endpoint_group.length === 0){
+        if (!this.endpoint.hasEGdata()){
             this.tbl.html('<p>Dose-response data unavailable.</p>');
         } else {
             this.footnotes.reset();
@@ -819,6 +839,12 @@ EndpointTable.prototype = {
             this.tbl.html([this.colgroup, this.thead, this.tfoot, this.tbody]);
         }
         return this.tbl;
+    },
+    hasValues: function(val){
+        return _.chain(this.endpoint.data.endpoint_group)
+                .map(function(d){return d[val];})
+                .any($.isNumeric)
+                .value();
     },
     build_header: function(){
         var self = this,
@@ -835,8 +861,10 @@ EndpointTable.prototype = {
                 .appendTo(dose);
         }
 
-        tr.append(dose)
-          .append('<th>Number of Animals</th>');
+        tr.append(dose);
+
+        this.hasN = this.hasValues("n");
+        if(this.hasN) tr.append('<th>Number of Animals</th>');
 
         switch (d.data_type){
             case "D":
@@ -849,7 +877,7 @@ EndpointTable.prototype = {
                 break;
             case "C":
                 tr.append('<th>Response</th>');
-                this.hasVariance = d.endpoint_group[0].hasVariance;
+                this.hasVariance = this.hasValues("variance");
                 if(this.hasVariance) tr.append('<th>{0}</th>'.printf(d.variance_name));
                 break;
             default:
@@ -863,17 +891,21 @@ EndpointTable.prototype = {
         this.tbody = $('<tbody></tbody>');
         var self = this;
         this.endpoint.data.endpoint_group.forEach(function(v, i){
+
+            if (!v.isReported) return;
+
             var tr = $('<tr>'),
                 dose = v.dose.toLocaleString();
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
-            tr.append('<td>{0}</td>'.printf(dose))
-              .append('<td>{0}</td>'.printf(v.n));
+            tr.append('<td>{0}</td>'.printf(dose));
+
+            if(self.hasN) tr.append('<td>{0}</td>'.printf(v.n || "NR"));
 
             if (self.endpoint.data.data_type == 'C') {
                 tr.append('<td>{0}</td>'.printf(v.response));
-                if(self.hasVariance) tr.append('<td>{0}</td>'.printf(v.variance));
+                if(self.hasVariance) tr.append('<td>{0}</td>'.printf(v.variance || "NR"));
             } else if (self.endpoint.data.data_type == 'P') {
                 tr.append("<td>{0}</td>".printf(self.endpoint.get_pd_string(v)));
             } else {
@@ -930,8 +962,8 @@ EndpointListTable.prototype = {
 var AnimalGroupTable = function(endpoints){
     this.endpoints = endpoints;
     this.tbl = new BaseTable();
-    this.endpoints_no_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length === 0;}),
-    this.endpoints_dr = this.endpoints.filter(function(v){return v.data.endpoint_group.length > 0;});
+    this.endpoints_no_dr = this.endpoints.filter(function(v){return !v.hasEGdata();}),
+    this.endpoints_dr = this.endpoints.filter(function(v){return v.hasEGdata();});
 };
 _.extend(AnimalGroupTable, {
     render: function($div, endpoints){
@@ -953,15 +985,13 @@ AnimalGroupTable.prototype = {
         this._build_header();
         this._build_tbody();
         return this.tbl.getTbl();
-    }, _build_header: function(){
-        var self = this,
-            header = this.endpoints[0]._build_ag_dose_rows();
-
-        header.html.forEach(function(v){
-            self.tbl.addHeaderRow(v)
-        })
+    },
+    _build_header: function(){
+        var header = this.endpoints[0]._build_ag_dose_rows();
+        _.each(header.html, this.tbl.addHeaderRow.bind(this.tbl))
         this.ncols = header.ncols;
-    }, _build_tbody: function(){
+    },
+    _build_tbody: function(){
         var tbl = this.tbl,
             ngroups = this._sort_egs_by_n();
 
@@ -971,7 +1001,8 @@ AnimalGroupTable.prototype = {
                 tbl.addRow(v._build_ag_response_row(tbl.footnotes));
             });
         });
-    }, _sort_egs_by_n: function(){
+    },
+    _sort_egs_by_n: function(){
         /*
         Return an array of arrays of endpoints which have the same
         number of animals, to reduce printing duplicative N rows in table.
@@ -984,10 +1015,11 @@ AnimalGroupTable.prototype = {
             eps[key].push(v);
         });
         return _.values(eps);
-    }, build_no_dr_ul: function(){
+    },
+    build_no_dr_ul: function(){
         var ul = $('<ul>');
         this.endpoints_no_dr.forEach(function(v){
-            ul.append(v.build_ag_no_dr_li())
+            ul.append(v.build_ag_no_dr_li());
         });
         return ul;
     }
@@ -1319,51 +1351,72 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.add_title();
     },
     get_dataset_info: function(){
-        this.title_str = this.endpoint.data.name;
-        this.x_label_text = "Dose ({0})".printf(this.endpoint.dose_units);
-        this.y_label_text = "Response ({0})".printf(this.endpoint.data.response_units);
-
         // Get values to be used in dose-response plots
         var ep = this.endpoint.data,
-            values = [],
-            sigs_data = [],
             self = this,
+            values, sigs_data,
             dose_units = this.endpoint.dose_units;
 
-        ep.endpoint_group.forEach(function(v, i){
-            var value = {'x': v.dose, 'cls': 'dose_points',
-                         'y_lower':v.lower_limit, 'y_upper':v.upper_limit},
-                txt = ["Dose = {0} {1}".printf(v.dose, dose_units),
-                       "N = {0}".printf(v.n)];
+        values = _.chain(ep.endpoint_group)
+         .map(function(v, i){
+            var y,
+                cls = 'dose_points',
+                txts = [
+                    "Dose = {0} {1}".printf(v.dose, dose_units),
+                    "N = {0}".printf(v.n)
+                ];
+
             if (ep.data_type =='C'){
-                value.y = v.response;
-                txt.push("Response = {0} {1}".printf(v.response, ep.response_units),
-                         "{0} = {1}".printf(ep.variance_name, v.variance));
+                y = v.response;
+                txts.push(
+                    "Response = {0} {1}".printf(v.response, ep.response_units),
+                    "{0} = {1}".printf(ep.variance_name, v.variance)
+                );
             } else if (ep.data_type =='P'){
-                value.y = v.response;
-                txt.push("Response = {0}".printf(self.endpoint.get_pd_string(v)));
+                y = v.response;
+                txts.push("Response = {0}".printf(self.endpoint.get_pd_string(v)));
             } else {
-                value.y = v.incidence/v.n;
-                txt.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
-            }
-            if (ep.LOEL == i){value.cls = value.cls + ' LOEL'; }
-            if (ep.NOEL == i){value.cls = value.cls + ' NOEL'; }
-
-            if (v.significance_level>0){
-                sigs_data.push({'x': v.dose,
-                                'significance_level': v.significance_level,
-                                'y': v.upper_limit || value.y});
+                y = v.incidence/v.n;
+                txts.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
             }
 
-            value.txt = txt.join('\n');
-            values.push(value);
+            if (ep.LOEL == i) cls += ' LOEL';
+            if (ep.NOEL == i) cls += ' NOEL';
+
+            return {
+                x:          v.dose,
+                y:          y,
+                cls:        cls,
+                isReported: v.isReported,
+                y_lower:    v.lower_limit,
+                y_upper:    v.upper_limit,
+                txt:        txts.join('\n'),
+                significance_level: v.significance_level
+            }
+        })
+        .filter(function(d){return d.isReported;})
+        .value();
+
+        sigs_data = _.chain(values)
+            .filter(function(d){return d.significance_level>0;})
+            .map(function(v){
+                return {
+                    'x': v.x,
+                    'significance_level': v.significance_level,
+                    'y': v.y_upper || v.y
+                }
+            })
+            .value();
+
+        _.extend(this, {
+            title_str:      this.endpoint.data.name,
+            x_label_text:   "Dose ({0})".printf(this.endpoint.dose_units),
+            y_label_text:   "Response ({0})".printf(this.endpoint.data.response_units),
+            values:         values,
+            sigs_data:      sigs_data,
+            min_x:          d3.min(ep.endpoint_group, function(datum) { return datum.dose; }),
+            max_x:          d3.max(ep.endpoint_group, function(datum) { return datum.dose; }),
         });
-        this.values = values;
-        this.sigs_data = sigs_data;
-
-        // get plot domain
-        this.min_x = d3.min(ep.endpoint_group, function(datum) { return datum.dose; });
-        this.max_x = d3.max(ep.endpoint_group, function(datum) { return datum.dose; });
 
         if (ep.endpoint_group.length>0){
             var max_upper = d3.max(values, function(d){return d.y_upper || d.y;}),
@@ -1825,8 +1878,7 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
     dose_scale_change: function(){
         this.get_dataset_info();
         if (this.parent && this.parent.plot === this){
-            this.x_axis_settings.domain = this.endpoint.data.endpoint_group.map(
-                    function(d){return String(d.dose);});
+            this.x_axis_settings.domain = _.pluck(this.values, "dose");
             this.x_scale = this._build_scale(this.x_axis_settings);
             this.x_axis_change_chart_update();
             this.build_x_label();
@@ -1867,46 +1919,57 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
 
         this.get_plot_sizes();
         // space lines in half-increments
-        var min = Infinity, max = -Infinity, val, txt, cls, e,
+        var values, val, txt, cls, sigs_data,
             default_y_scale = this.default_y_scale,
-            values = [],
-            sigs_data = [];
+            e = this.endpoint,
+            data_type = e.data.data_type,
+            min = Infinity,
+            max = -Infinity;
 
-        e = this.endpoint;
-        this.endpoint.data.endpoint_group.forEach(function(v, i){
-            if(e.data.data_type=='C'){
-                val = v.response;
-                txt = v.response;
-            } else if (e.data.data_type =='P'){
-                val = v.response;
-                txt = e.get_pd_string(v);
-            } else{
-                val = v.incidence/v.n;
-                txt = val;
-            }
+        values = _.chain(this.endpoint.data.endpoint_group)
+            .map(function(v, i){
 
-            cls='dose_bars';
-            if(e.data.NOEL == i){cls+=' NOEL';}
-            if(e.data.LOEL == i){cls+=' LOEL';}
+                if(data_type=='C'){
+                    val = v.response;
+                    txt = v.response;
+                } else if (data_type =='P'){
+                    val = v.response;
+                    txt = e.get_pd_string(v);
+                } else{
+                    val = v.incidence/v.n;
+                    txt = val;
+                }
 
-            values.push({'dose': v.dose,
-                         'value':val,
-                         'high':v.upper_limit,
-                         'low':v.lower_limit,
-                         'txt':txt,
-                         'classes':cls});
-            min = Math.min(min, v.lower_limit || val);
-            max = Math.max(max, v.upper_limit || val);
+                cls = 'dose_bars'
+                if(e.data.NOEL == i) cls += ' NOEL';
+                if(e.data.LOEL == i) cls += ' LOEL';
 
-            if (v.significance_level>0){
-                sigs_data.push({'x': v.dose,
-                                'significance_level': v.significance_level,
-                                'y': v.upper_limit || val});
-            }
+                min = Math.min(min, v.lower_limit || val);
+                max = Math.max(max, v.upper_limit || val);
 
-        });
-        this.values = values;
-        this.sigs_data = sigs_data;
+                return {
+                    isReported: v.isReported,
+                    dose:       v.dose,
+                    value:      val,
+                    high:       v.upper_limit,
+                    low:        v.lower_limit,
+                    txt:        txt,
+                    classes:    cls,
+                    significance_level:     v.significance_level,
+                }
+            })
+            .filter(function(d){return d.isReported;})
+            .value();
+
+        sigs_data = _.chain(values)
+            .filter(function(v){return v.significance_level>0;})
+            .map(function(v){
+                return {
+                    x: v.dose,
+                    y: v.high || v.value,
+                    significance_level: v.significance_level,
+                }
+            }).value();
 
         if(this.endpoint.data.data_type=='C'){
             min = min - (max*this.buff);
@@ -1914,23 +1977,25 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             min = 0;
         }
         max = max*(1+this.buff);
-
         if (this.default_y_scale == "log"){
-            this.min_y = Math.pow(10, Math.floor(Math.log10(min)));
-            this.max_y = Math.pow(10, Math.ceil(Math.log10(max)));
-        } else {
-            this.min_y = min;
-            this.max_y = max;
+            min = Math.pow(10, Math.floor(Math.log10(min)));
+            max = Math.pow(10, Math.ceil(Math.log10(max)));
         }
 
-        this.title_str = this.endpoint.data.name;
-        this.x_label_text = "Doses ({0})".printf(this.endpoint.dose_units);
-        this.y_label_text = "Response ({0})".printf(this.endpoint.data.response_units);
+        _.extend(this, {
+            title_str: this.endpoint.data.name,
+            x_label_text: "Doses ({0})".printf(this.endpoint.dose_units),
+            y_label_text: "Response ({0})".printf(this.endpoint.data.response_units),
+            values: values,
+            sigs_data: sigs_data,
+            min_y: min,
+            max_y: max
+        });
     },
     add_axes: function() {
         $.extend(this.x_axis_settings, {
-            domain: this.endpoint.data.endpoint_group.map(function(d){return String(d.dose);}),
-            number_ticks: this.endpoint.data.endpoint_group.length,
+            domain: _.pluck(this.values, "dose"),
+            number_ticks: this.values.length,
             rangeRound: [0, this.w],
             x_translate: 0,
             y_translate: this.h

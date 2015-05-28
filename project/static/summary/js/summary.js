@@ -679,15 +679,14 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             },
             dose_units = this.data.endpoints[0].dose_units;
 
-        this.data.endpoints
-        .filter(function(e){
-            return e.data.endpoint_group.length>0;
-        })
-        .forEach(function(e){
+        _.chain(this.data.endpoints)
+         .filter(function(e){return e.hasEGdata();})
+         .each(function(e){
 
-            egs = e.data.endpoint_group;
+            egs = _.filter(e.data.endpoint_group, function(d){ return d.isReported; });
 
             endpoint_labels.push({
+                endpoint: e,
                 y: (y + (egs.length*0.5)),
                 label:  "{0}- {1}- {2}: {3}".printf(
                     e.data.animal_group.experiment.study.short_citation,
@@ -727,7 +726,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                     lower_ci = eg.lower_limit;
                     upper_ci = eg.upper_limit;
                 }
-                var coords = {
+                points.push({
                     'x':val,
                     'y':y,
                     'class': getCoordClass(e, i),
@@ -736,8 +735,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                     'lower_ci': lower_ci,
                     'upper_ci': upper_ci,
                     'endpoint': e
-                };
-                points.push(coords);
+                });
             });
             y+=1;
             lines.push({'y': y, 'endpoint': e.data.name});
@@ -749,7 +747,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
 
         // calculate dimensions
         var plot_width = parseInt(this.plot_div.width() - this.padding.right - this.padding.left, 10),
-            plot_height = parseInt(points.length*18, 10),
+            plot_height = parseInt(points.length*20, 10),
             container_height = parseInt(plot_height + this.padding.top + this.padding.bottom + 45, 10);
 
         // set settings to object
@@ -846,6 +844,9 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             self = this,
             lines = this.points.filter(function(v){
                 return ($.isNumeric(v.lower_ci)) && ($.isNumeric(v.upper_ci));
+            }),
+            points = this.points.filter(function(v){
+                return ($.isNumeric(v.x));
             });
 
         // horizontal confidence interval line
@@ -880,7 +881,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
 
         // central tendency of percent-change
         this.dots = this.vis.selectAll("path.dot")
-            .data(this.points)
+            .data(points)
           .enter().append("circle")
             .attr("r","7")
             .attr("class", function(d){ return "dose_points " + d.class;})
@@ -911,7 +912,9 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             .attr("y", function(v,i){return y_scale(v.y);})
             .attr('class','dr_title forest_plot_labels')
             .attr("text-anchor", "start")
-            .text(function(d,i) { return d.label;});
+            .style("cursor", "pointer")
+            .text(function(d,i) { return d.label;})
+            .on('click', function(v){v.endpoint.displayAsModal();});
     },
     add_legend: function(){
         var addItem = function(txt, cls, color){
@@ -1321,10 +1324,10 @@ CrossviewPlot = function(parent, data, options){
 _.extend(CrossviewPlot, {
     get_options: function(eps, fld, isLog){
         // get options for input field;
-        // should replicate processEndpoint in prototype below.
+        // should replicate processEndpoint in prototype below
         var numDG = CrossviewPlot._requiredGroups(isLog);
         return _.chain(eps)
-                .filter(_.partial(CrossviewPlot._filterEndpoint, numDG))
+                .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .map(CrossviewPlot._cw_filter_process[fld])
                 .flatten()
                 .sortBy()
@@ -1334,9 +1337,9 @@ _.extend(CrossviewPlot, {
     _requiredGroups: function(isLog){
         return (isLog) ? 3 : 2;
     },
-    _filterEndpoint: function(numDG, e){
-        // need at-least two non-zero dose-groups for visualization.
-        return e.data.endpoint_group.length>=numDG;
+    _filterEndpoint: function(e, numDG){
+        // need at-least two non-zero dose-groups for visualization
+        return d3.sum(_.pluck(e.data.endpoint_group, 'isReported'))>=numDG;
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
@@ -1469,7 +1472,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
             numDG = CrossviewPlot._requiredGroups(this.data.settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
-                .filter(_.partial(CrossviewPlot._filterEndpoint, numDG))
+                .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .map(processEndpoint)
                 .value(),
             container_height = this.data.settings.height + 50,  // menu-spacing
