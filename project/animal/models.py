@@ -516,12 +516,12 @@ class DosingRegime(models.Model):
     @property
     def dose_groups(self):
         if not hasattr(self, '_dose_groups'):
-            self._dose_groups = DoseGroup.objects.select_related('dose_units') \
+            self._dose_groups = DoseGroup.objects.select_related('dose_units')\
                                                  .filter(dose_regime=self.pk)
         return self._dose_groups
 
     def isAnimalsDosed(self, animal_group):
-        return self.dosed_animals==animal_group
+        return self.dosed_animals == animal_group
 
     @staticmethod
     def flat_complete_header_row():
@@ -570,7 +570,8 @@ class DosingRegime(models.Model):
         doses = {}
         dgs = self.dose_groups.order_by('dose_units', 'dose_group_id')
         for dg in dgs.distinct('dose_units'):
-            dose_values = dgs.filter(dose_units=dg.dose_units).values_list('dose', flat=True)
+            dose_values = dgs.filter(dose_units=dg.dose_units)\
+                             .values_list('dose', flat=True)
             doses[dg.dose_units.units] = list(dose_values)
         return doses
 
@@ -578,7 +579,8 @@ class DosingRegime(models.Model):
         doses = []
         dgs = self.dose_groups.order_by('dose_units', 'dose_group_id')
         for dg in dgs.distinct('dose_units'):
-            dose_values = dgs.filter(dose_units=dg.dose_units).values_list('dose', flat=True)
+            dose_values = dgs.filter(dose_units=dg.dose_units)\
+                             .values_list('dose', flat=True)
             doses.append({'units': dg.dose_units.units,
                           'units_id': dg.dose_units.pk,
                           'values': list(dose_values)})
@@ -611,7 +613,7 @@ class DoseGroup(models.Model):
     @classmethod
     def flat_complete_data_row(cls, ser_full, units, idx):
         cols = []
-        ser = [ v for v in ser_full if v["dose_group_id"] == idx ]
+        ser = [v for v in ser_full if v["dose_group_id"] == idx]
         for unit in units:
             v = None
             for s in ser:
@@ -866,7 +868,7 @@ class Endpoint(BaseEndpoint):
 
     def bmds_session_exists(self):
         """
-        Check if at least one BMDS session exists for the specified Endpoint ID.
+        Check if at least one BMDS session exists for the specified Endpoint ID
         """
         return BMD_session.objects.filter(endpoint=self.pk).count() > 0
 
@@ -917,7 +919,7 @@ class Endpoint(BaseEndpoint):
             ser['id'],
             ser['url'],
             ser['name'],
-            '|'.join([ d['name'] for d in ser['effects'] ]),
+            '|'.join([d['name'] for d in ser['effects']]),
             ser['system'],
             ser['organ'],
             ser['effect'],
@@ -974,18 +976,18 @@ class Endpoint(BaseEndpoint):
             if exp is None:
                 exp = thisExp
                 exp["ags"] = {}
-                study["exps"][exp["id"]]  = exp
+                study["exps"][exp["id"]] = exp
 
             ag = exp["ags"].get(thisAG["id"])
             if ag is None:
                 ag = thisAG
                 ag["eps"] = {}
-                exp["ags"][ag["id"]]  = ag
+                exp["ags"][ag["id"]] = ag
 
             ep = ag["eps"].get(thisEp["id"])
             if ep is None:
                 ep = thisEp
-                ag["eps"][ep["id"]]  = ep
+                ag["eps"][ep["id"]] = ep
 
         # convert value dictionaries to lists
         studies = sorted(
@@ -1015,7 +1017,7 @@ class Endpoint(BaseEndpoint):
                   .filter(assessment_id=assessment_id)\
                   .distinct('system')\
                   .values_list('system', flat=True)
-        return [ (obj, obj) for obj in sorted(objs) ]
+        return [(obj, obj) for obj in sorted(objs)]
 
     @classmethod
     def get_effect_choices(cls, assessment_id):
@@ -1023,7 +1025,7 @@ class Endpoint(BaseEndpoint):
                   .filter(assessment_id=assessment_id)\
                   .distinct('effect')\
                   .values_list('effect', flat=True)
-        return [ (obj, obj) for obj in sorted(objs) ]
+        return [(obj, obj) for obj in sorted(objs)]
 
 
 class EndpointGroup(models.Model):
@@ -1169,11 +1171,11 @@ class EndpointGroup(models.Model):
         Given a list of N values, return textual range of N values in the list.
         For example, may return "10-12", "7", or "N not-reported".
         """
-        if len(ns)==0:
+        if len(ns) == 0:
             return u"N not-reported"
         nmin = min(ns)
         nmax = max(ns)
-        if nmin==nmax:
+        if nmin == nmax:
             if nmin is None:
                 return u"N not-reported"
             else:
@@ -1212,9 +1214,9 @@ class EndpointGroup(models.Model):
             ser['upper_ci'],
             ser['significant'],
             ser['significance_level'],
-            ser['dose_group_id']==endpoint['NOEL'],
-            ser['dose_group_id']==endpoint['LOEL'],
-            ser['dose_group_id']==endpoint['FEL'],
+            ser['dose_group_id'] == endpoint['NOEL'],
+            ser['dose_group_id'] == endpoint['LOEL'],
+            ser['dose_group_id'] == endpoint['FEL'],
         )
 
 
@@ -1282,12 +1284,18 @@ class UncertaintyFactorEndpoint(UncertaintyFactorAbstract):
         unique_together = (("endpoint", "uf_type"),)
 
     def clean(self):
-        #ensure that only only UF type of the same type exists for an endpoint
-        #unique_together constraint checked above; not done in form because endpoint is excluded
+        """
+        Ensure that only only UF type of the same type exists for an endpoint,
+        unique_together constraint checked above; not done in form because
+        endpoint is excluded.
+        """
         pk_exclusion = {}
         if self.pk:
             pk_exclusion['pk'] = self.pk
-        if UncertaintyFactorEndpoint.objects.filter(endpoint=self.endpoint, uf_type=self.uf_type).exclude(**pk_exclusion).count() > 0:
+        if UncertaintyFactorEndpoint.objects.filter(
+                    endpoint=self.endpoint,
+                    uf_type=self.uf_type
+                ).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- uncertainty factor type already exists for this endpoint.')
 
     def get_assessment(self):
@@ -1308,13 +1316,19 @@ class UncertaintyFactorRefVal(UncertaintyFactorAbstract):
         unique_together = (("reference_value", "uf_type"),)
 
     def clean(self):
-        #ensure that only only UF type of the same type exists for a reference value
-        #unique_together constraint checked above; not done in form because reference value is excluded
+        """
+        ensure that only only UF type of the same type exists for a reference
+        value, unique_together constraint checked above; not done in form
+        because reference value is excluded
+        """
         if hasattr(self, 'reference_value'):
             pk_exclusion = {}
             if self.pk:
                 pk_exclusion['pk'] = self.pk
-            if UncertaintyFactorRefVal.objects.filter(reference_value=self.reference_value, uf_type=self.uf_type).exclude(**pk_exclusion).count() > 0:
+            if UncertaintyFactorRefVal.objects.filter(
+                        reference_value=self.reference_value,
+                        uf_type=self.uf_type
+                    ).exclude(**pk_exclusion).count() > 0:
                 raise ValidationError('Error- uncertainty factor type already exists for this reference value.')
 
     def get_assessment(self):
@@ -1397,7 +1411,9 @@ class Aggregation(models.Model):
         for version in versions:
             fields = version.field_dict
             fields['aggregation_type'] = get_foo_display(
-                    fields['aggregation_type'], Aggregation.AGGREGATION_TYPE_CHOICES)
+                fields['aggregation_type'],
+                Aggregation.AGGREGATION_TYPE_CHOICES
+            )
             fields['changed_by'] = version.revision.user.get_full_name()
             fields['updated'] = version.revision.date_created
             fields['endpoints'] = get_endpoints(fields['endpoints'])
@@ -1445,8 +1461,10 @@ class ReferenceValue(models.Model):
         unique_together = (("assessment", "type", "units"),)
 
     def __unicode__(self):
-        return u'{type_display} ({units})'.format(type_display=self.get_type_display(),
-                                                  units=self.units)
+        return u'{type_display} ({units})'.format(
+            type_display=self.get_type_display(),
+            units=self.units
+        )
 
     def get_absolute_url(self):
         return reverse('animal:ref_val', args=[self.pk])
@@ -1551,7 +1569,7 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     elif instance_type is UncertaintyFactorEndpoint:
         ids = [instance.endpoint_id]
 
-    if len(filters)>0:
+    if len(filters) > 0:
         ids = Endpoint.objects.filter(**filters).values_list('id', flat=True)
 
     Endpoint.delete_caches(ids)
@@ -1564,7 +1582,7 @@ reversion.register(AnimalGroup)
 reversion.register(DoseUnits)
 reversion.register(DosingRegime)
 # need to modify Update view to make this viable
-#reversion.register(IndividualAnimal)
+# reversion.register(IndividualAnimal)
 reversion.register(DoseGroup)
 reversion.register(Endpoint)
 reversion.register(UncertaintyFactorEndpoint)
