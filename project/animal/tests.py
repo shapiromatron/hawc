@@ -725,9 +725,6 @@ class EndpointFunctionality(TestCase):
     def setUp(self):
         build_endpoints_for_permission_testing(self)
 
-    def test_endpoint_groups(self):
-        self.assertEqual(self.endpoint_working.endpoint_groups.count(), 4)
-
     def test_dataset_increasing(self):
         self.assertEqual(self.endpoint_working.dataset_increasing, True)
 
