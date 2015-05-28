@@ -89,6 +89,7 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(EndpointGroupSerializer, self).to_representation(instance)
         ret['hasVariance'] = instance.hasVariance
+        ret['isReported'] = instance.isReported
         return ret
 
     class Meta:

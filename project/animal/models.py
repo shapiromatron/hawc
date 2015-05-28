@@ -853,12 +853,15 @@ class Endpoint(BaseEndpoint):
         Returns True if data are increasing or false if otherwise. Only used
         with continuous datasets.
         """
-        egs = self.endpoint_groups.all()
-        if self.data_type != 'C':
-            return True  # dichotomous datasets increase by default
+        # dichotomous datasets increase by definition,
+        # exit early for not-reported
+        if self.data_type in ["D", "DC", "NR"]:
+            return True
         change = 0
-        for i in xrange(1, len(egs)):
-            change += egs[i].response - egs[0].response
+        resps = self.endpoint_group.values_list('response', flat=True)
+        resps = filter(lambda (x): x is not None, resps)
+        for i in xrange(1, len(resps)):
+            change += resps[i] - resps[0]
         return change >= 0
 
     def bmds_session_exists(self):
@@ -1029,6 +1032,8 @@ class EndpointGroup(models.Model):
         related_name='endpoint_group')
     dose_group_id = models.IntegerField()
     n = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
         validators=[MinValueValidator(0)])
     incidence = models.PositiveSmallIntegerField(
         blank=True,
@@ -1067,6 +1072,10 @@ class EndpointGroup(models.Model):
         self.significant = (self.significance_level > 0)
 
     @property
+    def isReported(self):
+        return self.incidence is not None or self.response is not None
+
+    @property
     def hasVariance(self):
         return self.variance is not None
 
@@ -1088,7 +1097,7 @@ class EndpointGroup(models.Model):
         # calculate stdev given re
         if variance_type == 1:
             return variance
-        elif type(variance) is float and variance_type == 2:
+        elif variance_type == 2 and variance is not None and n is not None:
             return variance * math.sqrt(n)
         else:
             return None
@@ -1133,13 +1142,13 @@ class EndpointGroup(models.Model):
                 mu_2 = eg['response']
                 sd_2 = eg.get('stdev')
 
-                if mu_1 != 0:
+                if mu_1 and mu_2 and mu_1 != 0:
                     mean = (mu_2-mu_1) / mu_1 * 100.
-                    if sd_1 and sd_2:
+                    if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
-                            math.pow(mu_1, -2) * (
-                                (math.pow(sd_2, 2)/n_2) +
-                                (math.pow(mu_2, 2)*math.pow(sd_1, 2)) / (n_1*math.pow(mu_1, 2))
+                            pow(mu_1, -2) * (
+                                (pow(sd_2, 2)/n_2) +
+                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
                             )
                         )
                         ci   = (1.96 * sd) * 100
@@ -1158,14 +1167,17 @@ class EndpointGroup(models.Model):
     def getNRangeText(ns):
         """
         Given a list of N values, return textual range of N values in the list.
-        For example, may return "10-12", "7", or "Not available".
+        For example, may return "10-12", "7", or "N not-reported".
         """
         if len(ns)==0:
-            return "Not available"
+            return u"N not-reported"
         nmin = min(ns)
         nmax = max(ns)
         if nmin==nmax:
-            return unicode(nmin)
+            if nmin is None:
+                return u"N not-reported"
+            else:
+                return unicode(nmin)
         else:
             return u"{}-{}".format(nmin, nmax)
 
