@@ -30,9 +30,12 @@
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#id_title').on('keyup', function(){
-        $('#id_slug').val(URLify($(this).val(), 50));
-      });
+
+      {% if crud == "Create" %}
+        $('#id_title').on('keyup', function(){
+          $('#id_slug').val(URLify($(this).val(), 50));
+        });
+      {% endif %}
 
       $('#id_caption').wysihtml5({"stylesheets": false});
 

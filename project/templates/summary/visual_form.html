@@ -65,9 +65,12 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $('#id_caption').wysihtml5({"stylesheets": false});
-      $('#id_title').on('keyup', function(){
-        $('#id_slug').val(URLify($(this).val(), 50));
-      });
+
+      {% if crud == "Create" %}
+        $('#id_title').on('keyup', function(){
+          $('#id_slug').val(URLify($(this).val(), 50));
+        });
+      {% endif %}
 
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
 
