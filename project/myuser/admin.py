@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from . import models
+from . import forms, models
 
 
 class HAWCUserAdmin(admin.ModelAdmin):
@@ -11,6 +11,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
     list_filter = ('date_joined', )
     search_fields = ('last_name', 'first_name', 'email')
     ordering = ('-date_joined', )
+    form = forms.AdminUserForm
 
     def send_welcome_emails(modeladmin, request, queryset):
         for user in queryset:
@@ -28,6 +29,8 @@ class HAWCUserAdmin(admin.ModelAdmin):
         return HttpResponseRedirect(
             reverse('user:set_password', kwargs={'pk': queryset.first().id}))
 
+    def save_model(self, request, obj, form, change):
+        form.save(commit=True)
 
     set_password.short_description = "Set user-password"
     send_welcome_emails.short_description = "Send welcome email"

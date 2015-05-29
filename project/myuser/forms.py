@@ -3,6 +3,10 @@ from django.forms import ModelForm
 from django.contrib.auth import get_backends
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 
+from selectable.forms import AutoCompleteSelectMultipleField
+
+from assessment import lookups
+
 from . import models
 
 
@@ -139,3 +143,46 @@ class HAWCPasswordResetForm(PasswordResetForm):
             raise forms.ValidationError("Email address not found")
 
         return email
+
+
+class AdminUserForm(PasswordForm):
+
+    project_manager = AutoCompleteSelectMultipleField(
+        lookup_class=lookups.AssessmentLookup,
+        label='Project manager',
+        required=False)
+    team_member = AutoCompleteSelectMultipleField(
+        lookup_class=lookups.AssessmentLookup,
+        label='Team member',
+        required=False)
+    reviewer = AutoCompleteSelectMultipleField(
+        lookup_class=lookups.AssessmentLookup,
+        label='Reviewer',
+        required=False)
+
+    class Meta:
+        model = models.HAWCUser
+        fields = ("email", "first_name", "last_name",
+                  "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super(AdminUserForm, self).__init__(*args, **kwargs)
+        if self.instance.id:
+
+            self.fields['project_manager'].initial = self.instance\
+                .assessment_pms.all()\
+                .values_list('id', flat=True)
+            self.fields['team_member'].initial = self.instance\
+                .assessment_teams.all()\
+                .values_list('id', flat=True)
+            self.fields['reviewer'].initial = self.instance\
+                .assessment_reviewers.all()\
+                .values_list('id', flat=True)
+
+    def save(self, commit=True):
+        user = super(AdminUserForm, self).save(commit=commit)
+        if user.id:
+            user.assessment_pms.add(*self.cleaned_data['project_manager'])
+            user.assessment_teams.add(*self.cleaned_data['team_member'])
+            user.assessment_reviewers.add(*self.cleaned_data['reviewer'])
+        return user
