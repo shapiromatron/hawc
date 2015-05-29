@@ -113,7 +113,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'percentControlHigh'
         ]
 
-
     def _get_data_rows(self):
 
         units = self.kwargs.get('dose', None)
@@ -125,13 +124,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 units_id = units.id
             else:
                 units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
-            return [ d for d in ser['animal_group']['dosing_regime']['doses'] if units_id == d['dose_units']['id'] ]
+            return [
+                d for d in ser['animal_group']['dosing_regime']['doses']
+                if units_id == d['dose_units']['id']
+            ]
 
         def get_dose_units(doses):
             return doses[0]['dose_units']['units']
 
         def get_doses_str(doses):
-            values = u', '.join([ str(float(d['dose'])) for d in doses ])
+            values = u', '.join([str(float(d['dose'])) for d in doses])
             return u"{0} {1}".format(values, get_dose_units(doses))
 
         def get_dose(doses, idx):
@@ -149,12 +151,12 @@ class EndpointFlatDataPivot(FlatFileExporter):
         def get_gen_species_strain_sex(e, withN=False):
 
             gen = e['animal_group']['generation']
-            if len(gen)>0:
+            if len(gen) > 0:
                 gen += " "
 
             ns_txt = ""
             if withN:
-                ns = [ eg["n"] for eg in e["endpoint_group"] ]
+                ns = [eg["n"] for eg in e["endpoint_group"]]
                 ns_txt = " " + models.EndpointGroup.getNRangeText(ns)
 
             return u"{}{}, {} ({}{})".format(
@@ -169,20 +171,24 @@ class EndpointFlatDataPivot(FlatFileExporter):
             txt = ""
             if e["observation_time"]:
                 if e["observation_time"] % 1 == 0:
-                    txt = u"{} {}".format(int(e["observation_time"]), e["observation_time_units"])
+                    txt = u"{} {}".format(
+                            int(e["observation_time"]),
+                            e["observation_time_units"])
                 else:
-                    txt = u"{} {}".format(e["observation_time"], e["observation_time_units"])
+                    txt = u"{} {}".format(
+                            e["observation_time"],
+                            e["observation_time_units"])
             return txt
 
         def get_tags(e):
-            effs = [ tag["name"] for tag in e["effects"] ]
-            if len(effs)>0:
+            effs = [tag["name"] for tag in e["effects"]]
+            if len(effs) > 0:
                 return u"|{0}|".format(u"|".join(effs))
             return ""
 
         def get_treatment_period(exp, dr):
             txt = exp["type"].lower()
-            if txt.find("(")>=0:
+            if txt.find("(") >= 0:
                 txt = txt[:txt.find("(")]
 
             if dr["duration_exposure_text"]:
@@ -218,7 +224,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser['animal_group']['sex'],
                 ser['animal_group']['dosing_regime']['route_of_exposure'].lower(),
-                get_treatment_period(ser['animal_group']['experiment'], ser['animal_group']['dosing_regime']),
+                get_treatment_period(ser['animal_group']['experiment'],
+                                     ser['animal_group']['dosing_regime']),
 
                 ser['name'],
                 ser['url'],
@@ -235,7 +242,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             ]
 
             # dose-group specific information
-            if len(ser['endpoint_group'])>1:
+            if len(ser['endpoint_group']) > 1:
                 row.extend([
                     get_dose(doses, 1),  # first non-zero dose
                     get_dose(doses, ser['NOEL']),
@@ -247,7 +254,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 row.extend([None]*5)
 
             # BMD information
-            if ser['BMD'] and units and ser['BMD'].has_key('outputs') and ser['BMD']['dose_units_id'] == units.id:
+            if ser['BMD'] and units and ser['BMD'].get('outputs')\
+                    and ser['BMD']['dose_units_id'] == units.id:
                 row.extend([
                     ser['BMD']['outputs']['model_name'],
                     ser['BMD']['outputs']['BMDL'],
