@@ -6,15 +6,11 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from . import models
 
 
-class RegisterForm(forms.ModelForm):
-    # from https://docs.djangoproject.com/en/1.5/topics/auth/customizing/
-    _accept_license_help_text = "License must be accepted in order to create an account."
-    _password_help_text = ('Password must be at least eight characters in length, ' +
-                           'at least one special character, and at least one digit.')
+class PasswordForm(forms.ModelForm):
+    _password_help_text = (
+        'Password must be at least eight characters in length, ' +
+        'at least one special character, and at least one digit.')
 
-    accept_license = forms.BooleanField(label="Accept License",
-                                        required=False,
-                                        help_text=_accept_license_help_text)
     password1 = forms.CharField(label='Password',
                                 widget=forms.PasswordInput,
                                 help_text=_password_help_text)
@@ -23,17 +19,12 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = models.HAWCUser
-        fields = ("email", "first_name", "last_name",
-                  "password1", "password2")
-
-    def clean_accept_license(self):
-        if not self.cleaned_data['accept_license']:
-            raise forms.ValidationError(self._accept_license_help_text)
+        fields = ("password1", "password2")
 
     def clean_password1(self):
         special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
         password1 = self.cleaned_data['password1']
-        if ((len(password1)<8) or
+        if ((len(password1) < 8) or
             (not any(char.isdigit() for char in password1)) or
             (not any(char in special_characters for char in password1))):
             raise forms.ValidationError(self._password_help_text)
@@ -49,11 +40,29 @@ class RegisterForm(forms.ModelForm):
 
     def save(self, commit=True):
         # Save the provided password in hashed format
-        user = super(RegisterForm, self).save(commit=False)
+        user = super(PasswordForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
+
+
+class RegisterForm(PasswordForm):
+    _accept_license_help_text = "License must be accepted in order to create an account."
+
+    accept_license = forms.BooleanField(
+        label="Accept License",
+        required=False,
+        help_text=_accept_license_help_text)
+
+    class Meta:
+        model = models.HAWCUser
+        fields = ("email", "first_name", "last_name",
+                  "password1", "password2")
+
+    def clean_accept_license(self):
+        if not self.cleaned_data['accept_license']:
+            raise forms.ValidationError(self._accept_license_help_text)
 
 
 class UserProfileForm(ModelForm):
@@ -81,18 +90,18 @@ def hawc_authenticate(email=None, password=None):
     If the given credentials are valid, return a User object.
     From: http://www.shopfiber.com/case-insensitive-username-login-in-django/
     """
-    backend = get_backends()[0] # only works if one backend
+    backend = get_backends()[0]  # only works if one backend
     try:
-      user = models.HAWCUser.objects.get(email__iexact=email)
-      if user.check_password(password):
-        # Annotate the user object with the path of the backend.
-        user.backend = "%s.%s" % (backend.__module__,
-                                  backend.__class__.__name__)
-        return user
-      else:
-        return None
+        user = models.HAWCUser.objects.get(email__iexact=email)
+        if user.check_password(password):
+            # Annotate the user object with the path of the backend.
+            user.backend = "%s.%s" % (backend.__module__,
+                                      backend.__class__.__name__)
+            return user
+        else:
+            return None
     except models.HAWCUser.DoesNotExist:
-      return None
+        return None
 
 
 class HAWCAuthenticationForm(AuthenticationForm):

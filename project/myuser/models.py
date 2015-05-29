@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.template import Context
 
+
 class HAWCMgr(BaseUserManager):
     # from https://docs.djangoproject.com/en/1.5/topics/auth/customizing/
     # also from UserManager(BaseUserManager)

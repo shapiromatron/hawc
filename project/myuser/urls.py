@@ -29,4 +29,5 @@ urlpatterns = patterns('',
             name='reset_password_confirm'),
     url(r'^password-reset-done/$', password_reset_done, name='reset_password_done'),
     url(r'^password-reset/complete/$', views.PasswordResetSent.as_view(), name='reset_password_sent'),
+    url(r'^(?P<pk>\d+)/set-password/$', views.SetUserPassword.as_view(), name='set_password'),
 )

@@ -1,3 +1,4 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.urlresolvers import reverse_lazy
@@ -9,8 +10,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 
 from utils.views import LoginRequiredMixin, MessageMixin
 
-from . import forms
-from . import models
+from . import forms, models
 
 
 def create_account(request):
@@ -24,7 +24,7 @@ def create_account(request):
         form = forms.RegisterForm(post)
 
         if form.is_valid():
-            #create a new user
+            # create a new user
             user = models.HAWCUser.objects.create_user(post['email'],
                                                        post['password1'])
             user.first_name = post['first_name']
@@ -32,11 +32,11 @@ def create_account(request):
             user.full_clean()
             user.save()
 
-            #create a new user profile
+            # create a new user profile
             profile = models.UserProfile(user=user)
             profile.save()
 
-            #after save, log user in
+            # after save, log user in
             user = authenticate(username=post['email'],
                                 password=post['password1'])
             login(request, user)
@@ -90,3 +90,19 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
 
 class PasswordResetSent(TemplateView):
     template_name = 'registration/password_reset_sent.html'
+
+
+class SetUserPassword(MessageMixin, UpdateView):
+    """
+    Manually set HAWCUser password by staff-member.
+    """
+    model = models.HAWCUser
+    template_name = 'myuser/set_password.html'
+    success_url = reverse_lazy('admin:myuser_hawcuser_changelist')
+    form_class = forms.PasswordForm
+    success_message = 'Password changed.'
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(SetUserPassword, self).dispatch(request, *args, **kwargs)
