@@ -18,7 +18,7 @@ class DataPivot(AssessmentViewset):
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer
         if self.action == "list":
-            cls  = serializers.CollectionDataPivotSerializer
+            cls = serializers.CollectionDataPivotSerializer
         return cls
 
 
@@ -37,5 +37,5 @@ class Visual(AssessmentViewset):
     def get_serializer_class(self):
         cls = serializers.VisualSerializer
         if self.action == "list":
-            cls  = serializers.CollectionVisualSerializer
+            cls = serializers.CollectionVisualSerializer
         return cls
