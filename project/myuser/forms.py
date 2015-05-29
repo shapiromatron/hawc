@@ -28,6 +28,8 @@ class PasswordForm(forms.ModelForm):
     def clean_password1(self):
         special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
         password1 = self.cleaned_data['password1']
+        if not self.fields['password1'].required and password1 == "":
+            return password1
         if ((len(password1) < 8) or
             (not any(char.isdigit() for char in password1)) or
             (not any(char in special_characters for char in password1))):
@@ -38,6 +40,8 @@ class PasswordForm(forms.ModelForm):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
+        if not self.fields['password2'].required and password2 == "":
+            return password2
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
@@ -45,7 +49,8 @@ class PasswordForm(forms.ModelForm):
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super(PasswordForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
+        if self.cleaned_data["password1"] != "":
+            user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
@@ -168,6 +173,9 @@ class AdminUserForm(PasswordForm):
     def __init__(self, *args, **kwargs):
         super(AdminUserForm, self).__init__(*args, **kwargs)
         if self.instance.id:
+
+            self.fields['password1'].required = False
+            self.fields['password2'].required = False
 
             self.fields['project_manager'].initial = self.instance\
                 .assessment_pms.all()\
