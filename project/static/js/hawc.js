@@ -446,6 +446,40 @@ var HAWCUtils = {
                 $div.html(content);
             }
         });
+    },
+    updateDragLocationTransform: function(setDragCB){
+        // a new drag location, requires binding to d3.behavior.drag,
+        // and requires a _.partial injection of th settings module.
+        return d3.behavior.drag()
+                 .origin(Object)
+                 .on("drag", function(){
+                    var x, y,
+                        regexp = /\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/,
+                        p = d3.select(this),
+                        m = regexp.exec(p.attr("transform"));
+
+                    if (m !== null && m.length===3){
+                        x = parseInt(m[1], 10) + d3.event.dx;
+                        y = parseInt(m[2], 10) + d3.event.dy;
+                        p.attr("transform", "translate({0},{1})".printf(x, y));
+                        if(setDragCB) setDragCB.bind(this)(x, y);
+                    };
+                 });
+    },
+    updateDragLocationXY: function(setDragCB){
+        // a new drag location, requires binding to d3.behavior.drag,
+        // and requires a _.partial injection of th settings module.
+        return d3.behavior.drag()
+                 .origin(Object)
+                 .on("drag", function(){
+                    var p = d3.select(this),
+                        x = parseInt(p.attr('x'), 10) + d3.event.dx,
+                        y = parseInt(p.attr('y'), 10) + d3.event.dy;
+
+                    p.attr('x', x);
+                    p.attr('y', y);
+                    if(setDragCB) setDragCB.bind(this)(x, y);
+                  });
     }
 };
 

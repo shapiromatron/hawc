@@ -239,7 +239,8 @@ _.extend(DataPivot, {
 });
 DataPivot.prototype = {
   build_edit_settings: function(dom_bindings){
-    var self = this;
+    var self = this,
+        editable = true;
     this.style_manager = new StyleManager(this);
     this.$div = $(dom_bindings.container);
     this.$data_div = $(dom_bindings.data_div);
@@ -249,7 +250,7 @@ DataPivot.prototype = {
     // rebuild visualization whenever selected
     $('a[data-toggle="tab"]').on('shown', function(e){
       if (self.$display_div[0] === $($(e.target).attr('href'))[0]){
-        self.build_data_pivot_vis(self.$display_div);
+        self.build_data_pivot_vis(self.$display_div, editable);
       }
     });
 
@@ -257,9 +258,10 @@ DataPivot.prototype = {
     this.build_settings();
     this.$div.fadeIn();
   },
-  build_data_pivot_vis: function(div){
+  build_data_pivot_vis: function(div, editable){
     delete this.plot;
-    this.plot = new DataPivot_visualization(this.data, this.settings, div);
+    editable = editable || false;
+    this.plot = new DataPivot_visualization(this.data, this.settings, div, editable);
   },
   build_data_table: function(){
 
@@ -1916,9 +1918,10 @@ _DataPivot_settings_general.prototype = {
 };
 
 
-var DataPivot_visualization = function(dp_data, dp_settings, plot_div){
+var DataPivot_visualization = function(dp_data, dp_settings, plot_div, editable){
   // Metadata viewer visualization
   D3Plot.call(this); // call parent constructor
+  this.editable = editable || false;
   this.dp_data = dp_data;
   this.dp_settings = dp_settings;
   this.plot_div = plot_div;
@@ -2091,8 +2094,11 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
     this.add_axes();
     this.draw_visualizations();
     this.add_final_rectangle();
-    this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend,
-                                      this.dp_settings, {"offset": true});
+    this.legend = new DataPivotLegend(
+      this.vis,
+      this.dp_settings.legend,
+      this.dp_settings,
+      {"offset": true, "editable": this.editable});
     this.add_menu();
     this.trigger_resize();
   },
@@ -2487,7 +2493,25 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
                                                                obj.attr("x"),
                                                                obj.attr("y")));
           }
-        };
+        },
+        cursor = (this.editable) ? "pointer": "auto",
+        label_drag = (!this.editable) ? function(){} :
+          HAWCUtils.updateDragLocationXY(function(x, y){
+            var p = d3.select(this);
+            p.data()[0].x = x;
+            p.data()[0].y = y;
+          }),
+        title_drag = (!this.editable) ? function(){} :
+          HAWCUtils.updateDragLocationXY(function(x, y){
+            self.dp_settings.plot_settings.title_left = x;
+            self.dp_settings.plot_settings.title_top = y;
+          }),
+        xlabel_drag = (!this.editable) ? function(){} :
+          HAWCUtils.updateDragLocationXY(function(x, y){
+            self.dp_settings.plot_settings.xlabel_left = x;
+            self.dp_settings.plot_settings.xlabel_top = y;
+          });
+
 
     // construct inputs for background rectangles and y-gridlines
     this.build_background_rectangles();
@@ -2610,21 +2634,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
             .on("click", function(d){if(datum._dpe_datatype){self.dpe.render_plottip(datum, d);}});
     });
 
-
-    // add labels
-    var label_drag = d3.behavior.drag()
-            .origin(Object)
-            .on("drag", function(d, i){
-              var p = d3.select(this),
-                  x = parseInt(p.attr('x'), 10) +  d3.event.dx,
-                  y = parseInt(p.attr('y'), 10) +  d3.event.dy;
-
-              p.attr('x', x);
-              p.attr('y', y);
-              p.data()[0].x = x;
-              p.data()[0].y = y;
-            });
-
     this.g_labels = this.vis.append("g");
     this.text_labels = this.g_labels.selectAll("text")
         .data(this.settings.labels)
@@ -2632,48 +2641,21 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           .attr('x', function(d){return d.x;})
           .attr('y', function(d){return d.y;})
           .text(function(d){return d.text;})
-          .attr("cursor", "pointer")
+          .attr("cursor", cursor)
           .each(function(d){apply_text_styles(this, d._style);})
           .call(label_drag);
-
-
-    // add title and x-label
-    var title_drag = d3.behavior.drag()
-            .origin(Object)
-            .on("drag", function(d, i){
-              var p = d3.select(this),
-                  x = parseInt(p.attr('x'), 10) +  d3.event.dx,
-                  y = parseInt(p.attr('y'), 10) +  d3.event.dy;
-
-              p.attr('x', x);
-              p.attr('y', y);
-              self.dp_settings.plot_settings.title_left = x;
-              self.dp_settings.plot_settings.title_top = y;
-            }),
-        xlabel_drag = d3.behavior.drag()
-            .origin(Object)
-            .on("drag", function(d, i){
-              var p = d3.select(this),
-                  x = parseInt(p.attr('x'), 10) +  d3.event.dx,
-                  y = parseInt(p.attr('y'), 10) +  d3.event.dy;
-
-              p.attr('x', x);
-              p.attr('y', y);
-              self.dp_settings.plot_settings.xlabel_left = x;
-              self.dp_settings.plot_settings.xlabel_top = y;
-            });
 
     this.add_title(this.dp_settings.plot_settings.title_left,
                    this.dp_settings.plot_settings.title_top);
     this.title
-        .attr("cursor", "pointer")
+        .attr("cursor", cursor)
         .call(title_drag);
 
     this.build_x_label(this.dp_settings.plot_settings.xlabel_left,
                        this.dp_settings.plot_settings.xlabel_top);
 
     this.x_axis_label
-        .attr("cursor", "pointer")
+        .attr("cursor", cursor)
         .call(xlabel_drag);
   },
   layout_text: function(){
@@ -3227,33 +3209,25 @@ DataPivotLegend.prototype = {
       delete this.legend;
     }
 
-    var buffer = 5,
-        self = this,
-        drag = d3.behavior.drag()
-            .origin(Object)
-            .on("drag", function(d,i){
-              var regexp = /\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/,
-                  p = d3.select(this),
-                  m = regexp.exec(p.attr("transform"));
-                  if (m !== null && m.length===3){
-                    var x = parseFloat(m[1]) + d3.event.dx,
-                        y = parseFloat(m[2]) + d3.event.dy;
-                    p.attr("transform", "translate({0},{1})".printf(x,y));
-                    self.settings.left = x;
-                    self.settings.top = y;
-                  }
-                }),
+    var self = this,
+        cursor = (this.options.editable) ? "pointer" : "auto",
+        buffer = 5,
         apply_styles = function(d) {
           var obj = d3.select(this);
           for (var property in d.style) {
             obj.style(property, d.style[property]);
           }
-        };
+        },
+        drag = (!this.options.editable) ? function(){} :
+        HAWCUtils.updateDragLocationTransform(function(x, y){
+          self.settings.left = x;
+          self.settings.top = y;
+        });
 
     this.legend = this.vis.append("g");
 
     if (this.options.offset){
-      this.legend.attr("cursor", "pointer")
+      this.legend.attr("cursor", cursor)
           .attr("transform", "translate({0},{1})".printf(self.settings.left, self.settings.top))
           .call(drag);
     }
