@@ -209,7 +209,8 @@ class SQForm(forms.ModelForm):
         super(SQForm, self).__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
-        self.fields['notes'].widget.attrs['class'] = 'html5text span12'
+        self.fields['notes'].widget.attrs['class'] = 'html5text'
+        self.fields['notes'].widget.attrs['style'] = 'width: 100%;'
         self.fields['notes'].widget.attrs['rows'] = 4
         if content_object:
             self.instance.content_object = content_object
@@ -264,7 +265,9 @@ class BaseSQFormSet(BaseModelFormSet):
                 raise forms.ValidationError("Study quality metrics must be unique for a given study.")
             metrics.append(metric)
 
-SQFormSet = modelformset_factory(models.StudyQuality,
-                                 form=SQForm,
-                                 formset=BaseSQFormSet,
-                                 extra=0)
+
+SQFormSet = modelformset_factory(
+    models.StudyQuality,
+    form=SQForm,
+    formset=BaseSQFormSet,
+    extra=0)
