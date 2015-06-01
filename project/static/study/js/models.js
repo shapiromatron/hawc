@@ -172,7 +172,16 @@ var StudyQuality = function(study, data){
     this.data.metric.last_updated = new Date(this.data.metric.last_updated);
 };
 _.extend(StudyQuality, {
+    score_values: [0, 1, 2, 3, 4],
     score_text: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++'},
+    score_shades: {0: "#E8E8E8", 1: "#CC3333", 2: "#FFCC00", 3: "#6FFF00", 4: "#00CC00"},
+    score_text_description: {
+        0: 'Not applicable',
+        1: 'Definitely high risk of bias',
+        2: 'Probably high risk of bias',
+        3: 'Probably low risk of bias',
+        4: 'Definitely low risk of bias',
+    },
     display_details_divs: function($div, content){
         // insert content into selected div and then draw all animations
         // associated with this insertion.

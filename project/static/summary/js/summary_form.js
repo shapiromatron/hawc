@@ -474,7 +474,7 @@ VisualForm.prototype = {
         try {
             settings = JSON.parse($('#id_settings').val());
             _.each(settings, function(val, key){
-                if(self.settings[key]) self.settings[key] = val;
+                if(self.settings[key] !== undefined) self.settings[key] = val;
             });
         } catch(err) {}
         this.fields.forEach(function(d){ d.fromSerialized(); });
@@ -855,6 +855,7 @@ var RoBHeatmapForm = function($el){
 _.extend(RoBHeatmapForm, {
     tabs: [
         {name: "overall", label: "General settings"},
+        {name: "legend",  label: "Legend settings"},
     ],
     schema: [
         {
@@ -924,11 +925,34 @@ _.extend(RoBHeatmapForm, {
             def: "study",
             tab: "overall"
         },
+        {
+            type: CheckboxField,
+            name: "show_legend",
+            label: "Show legend",
+            def: true,
+            tab: "legend"
+        },
+        {
+            type: IntegerField,
+            name: "legend_x",
+            label: "Legend x-location (px)",
+            def: -1,
+            helpText: "Set to -1 to be at the left, or 9999 to be at the right",
+            tab: "legend"
+        },
+        {
+            type: IntegerField,
+            name: "legend_y",
+            label: "Legend y-location (px)",
+            def: 9999,
+            helpText: "Set to -1 to be at the top, or 9999 to be at the bottom",
+            tab: "legend"
+        },
     ]
 });
 _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
     buildPreview: function($parent, data){
-        this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty() );
+        this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty(), {"dev": true} );
     },
     initDataForm: function(){
         var showHideDiv = function(shouldShow, $el){
@@ -953,7 +977,10 @@ _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
             updateStudies();
         }).trigger('change');
     },
-    updateSettingsFromPreview: function(){}
+    updateSettingsFromPreview: function(){
+        settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
+        this.unpackSettings();
+    },
 });
 
 
@@ -963,6 +990,7 @@ var RoBBarchartForm = function($el){
 _.extend(RoBBarchartForm, {
     tabs: [
         {name: "overall", label: "General settings"},
+        {name: "legend",  label: "Legend settings"},
     ],
     schema: [
         {
@@ -1035,10 +1063,33 @@ _.extend(RoBBarchartForm, {
             def: true,
             tab: "overall"
         },
+        {
+            type: CheckboxField,
+            name: "show_legend",
+            label: "Show legend",
+            def: true,
+            tab: "legend"
+        },
+        {
+            type: IntegerField,
+            name: "legend_x",
+            label: "Legend x-location (px)",
+            def: -1,
+            helpText: "Set to -1 to be at the left, or 9999 to be at the right (or any value inbetween)",
+            tab: "legend"
+        },
+        {
+            type: IntegerField,
+            name: "legend_y",
+            label: "Legend y-location (px)",
+            def: 9999,
+            helpText: "Set to -1 to be at the top, or 9999 to be at the bottom (or any value inbetween)",
+            tab: "legend"
+        },
     ]
 });
 _.extend(RoBBarchartForm.prototype, VisualForm.prototype, RoBHeatmapForm.prototype, {
     buildPreview: function($parent, data){
-        this.preview = new RoBBarchart(data).displayAsPage( $parent.empty() );
+        this.preview = new RoBBarchart(data).displayAsPage( $parent.empty(), {"dev": true} );
     }
 });
