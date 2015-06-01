@@ -853,54 +853,65 @@ var RoBHeatmapForm = function($el){
     VisualForm.apply(this, arguments);
 };
 _.extend(RoBHeatmapForm, {
+    tabs: [
+        {name: "overall", label: "General settings"},
+    ],
     schema: [
         {
             type: TextField,
             name: "title",
             label: "Title",
-            def: ""
+            def: "",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "xAxisLabel",
             label: "X-axis label",
-            def: ""
+            def: "",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "yAxisLabel",
             label: "Y-axis label",
-            def: ""
+            def: "",
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_top",
             label: "Plot padding-top (px)",
-            def: 20
+            def: 20,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "cell_size",
             label: "Cell-size (px)",
-            def: 40
+            def: 40,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 10
+            def: 10,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_bottom",
             label: "Plot padding-bottom (px)",
-            def: 35
+            def: 35,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_left",
             label: "Plot padding-left (px)",
-            def: 20
+            def: 20,
+            tab: "overall"
         },
         {
             type: SelectField,
@@ -910,8 +921,9 @@ _.extend(RoBHeatmapForm, {
                 ["study", "Study"],
                 ["metric", "RoB metric"]
             ],
-            def: "study"
-        }
+            def: "study",
+            tab: "overall"
+        },
     ]
 });
 _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
@@ -949,67 +961,80 @@ var RoBBarchartForm = function($el){
     VisualForm.apply(this, arguments);
 };
 _.extend(RoBBarchartForm, {
+    tabs: [
+        {name: "overall", label: "General settings"},
+    ],
     schema: [
         {
             type: TextField,
             name: "title",
             label: "Title",
-            def: "Title"
+            def: "Title",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "xAxisLabel",
             label: "X-axis label",
-            def: "Percent of studies"
+            def: "Percent of studies",
+            tab: "overall"
         },
         {
             type: TextField,
             name: "yAxisLabel",
             label: "Y-axis label",
-            def: ""
+            def: "",
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "plot_width",
             label: "Plot width (px)",
-            def: 400
+            def: 400,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "row_height",
             label: "Row height (px)",
-            def: 30
+            def: 30,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_top",
             label: "Plot padding-top (px)",
-            def: 40
+            def: 40,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 25
+            def: 25,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_bottom",
             label: "Plot padding-bottom (px)",
-            def: 40
+            def: 40,
+            tab: "overall"
         },
         {
             type: IntegerField,
             name: "padding_left",
             label: "Plot padding-left (px)",
-            def: 25
+            def: 25,
+            tab: "overall"
         },
         {
             type: CheckboxField,
             name: "show_values",
             label: "Show values on plot",
-            def: true
-        }
+            def: true,
+            tab: "overall"
+        },
     ]
 });
 _.extend(RoBBarchartForm.prototype, VisualForm.prototype, RoBHeatmapForm.prototype, {
