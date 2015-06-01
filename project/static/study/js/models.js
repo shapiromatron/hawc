@@ -42,7 +42,7 @@ Study.prototype = {
             study_quality = [],
             gradient_colors = d3.scale.linear()
                 .domain([0, 1, 2, 3, 4])
-                .range(SQColors);
+                .range(_.values(StudyQuality.score_shades));
         this.data.qualities.forEach(function(v, i){
             v.score_color = gradient_colors(v.score);
             v.score_text_color = String.contrasting_color(v.score_color);
@@ -958,7 +958,7 @@ _.extend(StudyQualityAggregation_Stacked.prototype, D3Plot.prototype, {
             axis_labels: true,
             label_format: undefined //default
         };
-        this.color_scale = d3.scale.ordinal().range(SQColors);
+        this.color_scale = d3.scale.ordinal().range(_.values(StudyQuality.score_shades));
         this.x_label_text = "Fraction of studies evaluated";
     },
     get_dataset: function(){

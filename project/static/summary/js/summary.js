@@ -2295,7 +2295,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             buff = 5,
             title_offset = 8,
             dim = this.svg.getBBox(),
-            cursor = (this.options.dev) ? "pointer" : "auto";
+            cursor = (this.options.dev) ? "pointer" : "auto",
             drag = (this.options.dev) ? HAWCUtils.updateDragLocationTransform(function(x, y){
                       self.data.settings.legend_x = parseInt(x, 10);
                       self.data.settings.legend_y = parseInt(y, 10);
@@ -2479,7 +2479,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
                 axis_labels: true,
                 label_format: undefined //default
             },
-            color_scale: d3.scale.ordinal().range(SQColors)
+            color_scale: d3.scale.ordinal().range(_.values(StudyQuality.score_shades))
         });
     },
     processData: function(){

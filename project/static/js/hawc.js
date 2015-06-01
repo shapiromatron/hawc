@@ -1,5 +1,3 @@
-SQColors = ["#E8E8E8", "#CC3333", "#FFCC00", "#6FFF00", "#00CC00"]; // todo: move into study object?
-
 // Extend JS built-ins
 Object.defineProperty(Object.prototype, "rename_property", {
   value: function(old_name, new_name){
