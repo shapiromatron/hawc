@@ -292,9 +292,9 @@ def dosegroup_formset_factory(groups, num_dose_groups):
     }
 
     for i, v in enumerate(groups):
-        data[u"form-{}-dose_group_id".format(i)]  = str(v.get('dose_group_id', ""))
-        data[u"form-{}-dose_units".format(i)]     = str(v.get('dose_units', ""))
-        data[u"form-{}-dose".format(i)]           = str(v.get('dose', ""))
+        data[u"form-{}-dose_group_id".format(i)] = str(v.get('dose_group_id', ""))
+        data[u"form-{}-dose_units".format(i)] = str(v.get('dose_units', ""))
+        data[u"form-{}-dose".format(i)] = str(v.get('dose', ""))
 
     FS = modelformset_factory(
             models.DoseGroup,
@@ -356,7 +356,7 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
-        self.fields["name"].help_text="""
+        self.fields["name"].help_text = """
             Short-text used to describe the endpoint.
             Should include observation-time,
             if multiple endpoints have the same observation time."""
@@ -391,7 +391,6 @@ class EndpointForm(ModelForm):
         for fld in ('results_notes', 'endpoint_notes', 'power_notes'):
             self.fields[fld].widget.attrs['rows'] = 3
 
-
         # by default take-up the whole row-fluid
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
@@ -416,26 +415,27 @@ class EndpointForm(ModelForm):
 
         if obs_time and observation_time_units == 0:
             raise forms.ValidationError("If reporting an endpoint-observation "
-                "time, time-units must be specified.")
+                                        "time, time-units must be specified.")
 
         if not obs_time and observation_time_units > 0:
             raise forms.ValidationError("An observation-time must be reported"
-                " if time-units are specified")
+                                        " if time-units are specified")
 
     def clean_confidence_interval(self):
         confidence_interval = self.cleaned_data['confidence_interval']
         data_type = self.cleaned_data.get("data_type")
         if data_type == "P" and confidence_interval is None:
-            raise forms.ValidationError("Confidence-interval is required for percent-difference data")
+            raise forms.ValidationError("Confidence-interval is required for"
+                                        "percent-difference data")
         return confidence_interval
 
     def clean_variance_type(self):
         data_type = self.cleaned_data.get("data_type")
         variance_type = self.cleaned_data.get("variance_type")
-        if data_type == "C" and variance_type==0:
-            raise forms.ValidationError("If entering continuous data, the "
-                "variance type must be SD (standard-deviation) or SE "
-                "(standard error)")
+        if data_type == "C" and variance_type == 0:
+            raise forms.ValidationError(
+                "If entering continuous data, the variance type must be SD"
+                "(standard-deviation) or SE (standard error)")
         return variance_type
 
 
@@ -462,17 +462,21 @@ class EndpointGroupForm(ModelForm):
             var = cleaned_data.get("variance")
             var_type = self.instance.endpoint.variance_type
             if var is not None and var_type in (0,3):
-                raise ValidationError('Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"')
+                raise ValidationError('Variance must be numeric, or the'
+                                      'endpoint-field "variance-type" should'
+                                      'be "not reported"')
         elif data_type == 'P':
             if operator.xor(
                     cleaned_data.get("lower_ci") is None,
                     cleaned_data.get("upper_ci") is None):
-                raise ValidationError('Both confidence intervals must be provided for a dose-group, or left-blank')
+                raise ValidationError('Both confidence intervals must be'
+                                      'provided for a dose-group, or left-blank')
         elif data_type in ["D", "DC"]:
             if operator.xor(
                     cleaned_data.get("incidence") is None,
                     cleaned_data.get("n") is None):
-                raise ValidationError('Both incidence and N must be provided for a dose-group, or left-blank')
+                raise ValidationError('Both incidence and N must be provided'
+                                      'for a dose-group, or left-blank')
             if cleaned_data.get("n") < cleaned_data.get("incidence"):
                 raise ValidationError('Incidence must be less-than or equal-to N')
 
@@ -556,7 +560,8 @@ class UncertaintyFactorRefValForm(ModelForm):
         reference_value_pk = kwargs.pop('reference_value_pk', None)
         super(UncertaintyFactorRefValForm, self).__init__(*args, **kwargs)
         self.fields['value'].widget.attrs['class'] = 'span12 uf_values'
-        self.fields['uf_type'].widget = HiddenSelectBox(choices=models.UncertaintyFactorAbstract.UF_TYPE_CHOICES)
+        self.fields['uf_type'].widget = HiddenSelectBox(
+            choices=models.UncertaintyFactorAbstract.UF_TYPE_CHOICES)
         self.fields['uf_type'].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.attrs['class'] = 'span12 uf_descriptions'
         if reference_value_pk:
@@ -602,7 +607,8 @@ class AggregationSearchForm(forms.Form):
             query['name__icontains'] = self.cleaned_data['name']
 
         response_json = []
-        for obj in models.Aggregation.objects.filter(assessment=self.assessment).filter(**query):
+        for obj in models.Aggregation.objects\
+                         .filter(assessment=self.assessment).filter(**query):
             response_json.append(obj.get_json(json_encode=False))
         return response_json
 
@@ -614,7 +620,8 @@ class ReferenceValueForm(ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
-        self.fields['aggregation'].queryset = models.Aggregation.objects.filter(assessment=self.instance.assessment)
+        self.fields['aggregation'].queryset = models.Aggregation.objects\
+            .filter(assessment=self.instance.assessment)
 
     class Meta:
         model = models.ReferenceValue
@@ -630,7 +637,8 @@ class Base_UFRefVal_FormSet(BaseModelFormSet):
         for form in self.forms:
             uf = form.cleaned_data['uf_type']
             if uf in ufs:
-                raise ValidationError("Uncertainty-factors must be unique for a given reference-value.")
+                raise ValidationError("Uncertainty-factors must be unique for"
+                                      "a given reference-value.")
             ufs.append(uf)
 
 
@@ -744,13 +752,13 @@ class EndpointFilterForm(forms.Form):
         help_text="ex: Smith et al. 2010",
         required=False)
 
-    cas  = forms.CharField(
+    cas = forms.CharField(
         label='CAS',
         widget=selectable.AutoCompleteWidget(lookups.ExperimentCASLookup),
         help_text="ex: 107-02-8",
         required=False)
 
-    lifestage_exposed  = forms.CharField(
+    lifestage_exposed = forms.CharField(
         label='Lifestage exposed',
         widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
         help_text="ex: pup",
@@ -777,7 +785,7 @@ class EndpointFilterForm(forms.Form):
     sex = forms.MultipleChoiceField(
         choices=models.AnimalGroup.SEX_CHOICES,
         widget=forms.CheckboxSelectMultiple,
-        initial = [c[0] for c in models.AnimalGroup.SEX_CHOICES],
+        initial=[c[0] for c in models.AnimalGroup.SEX_CHOICES],
         required=False)
 
     data_extracted = forms.ChoiceField(
@@ -785,25 +793,25 @@ class EndpointFilterForm(forms.Form):
         initial=None,
         required=False)
 
-    system  = forms.CharField(
+    system = forms.CharField(
         label='System',
         widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
         help_text="ex: endocrine",
         required=False)
 
-    organ  = forms.CharField(
+    organ = forms.CharField(
         label='Organ',
         widget=selectable.AutoCompleteWidget(lookups.EndpointOrganLookup),
         help_text="ex: pituitary",
         required=False)
 
-    effect  = forms.CharField(
+    effect = forms.CharField(
         label='Effect',
         widget=selectable.AutoCompleteWidget(lookups.EndpointEffectLookup),
         help_text="ex: alanine aminotransferase (ALT)",
         required=False)
 
-    tags  = forms.CharField(
+    tags = forms.CharField(
         label='Tags',
         widget=selectable.AutoCompleteWidget(EffectTagLookup),
         help_text="ex: antibody response",
