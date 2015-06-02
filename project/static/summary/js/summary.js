@@ -1705,7 +1705,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                       .attr('x', 0)
                       .attr('y', 0)
                       .text(function(d){return d.caption;})
-                      .each(function(d){self.apply_text_styles(this, d._style);});
+                      .each(function(d){self.apply_text_styles(this, d._style);})
+                      .each(function(d){HAWCUtils.wrapText(this, d.max_width)});
             })
 
         if (this.options.dev){

@@ -2679,36 +2679,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
                                                                obj.attr("x"),
                                                                obj.attr("y")));
           }
-        }, wrap_text = function(texts, max_width){
-          texts.each(function(){
-            var text = d3.select(this),
-                words = text.text().split(/\s+/).reverse(),
-                word,
-                line = [],
-                lineNumber = 0,
-                lineHeight = this.getBBox().height, // px
-                x = text.attr("x"),
-                y = text.attr("y"),
-                tspan = text.text(null)
-                            .append("tspan")
-                            .attr("x", x)
-                            .attr("y", y);
-            while(word = words.pop()){
-              line.push(word);
-              tspan.text(line.join(" "));
-              if(tspan.node().getComputedTextLength() > max_width && line.length>1){
-                line.pop();
-                tspan.text(line.join(" "));
-                line = [word];
-                tspan = text.append("tspan")
-                            .attr("x", x)
-                            .attr("y", y)
-                            .attr("dy", ++lineNumber * lineHeight + "px")
-                            .text(word);
-              }
-            }
-          });
-        }, matrix =[],
+        },
+        matrix =[],
         row,
         textPadding = this.textPadding,
         left = this.padding.left,
@@ -2760,8 +2732,10 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
     // apply wrap text method
     this.headers.forEach(function(v,i){
-      var sel = self.g_text_columns.selectAll("text").filter(function(v){return v.col===i});
-      if (v.max_width) wrap_text(sel, v.max_width);
+      var sel = self.g_text_columns
+                    .selectAll("text")
+                    .filter(function(v){return v.col===i});
+      if (v.max_width) _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
 
       // get maximum column dimension and layout columns
       v.widths = d3.max(sel[0].map(function(v){return v.getBBox().width;}));

@@ -199,6 +199,7 @@ _.extend(ReferenceLabelField.prototype, TableField.prototype, {
             .append(
                 '<th>Caption</th>',
                 '<th>Style</th>',
+                '<th>Max width (px)</th>',
                 '<th>X position</th>',
                 '<th>Y position</th>',
                 this.thOrdering({showNew: true})
@@ -209,6 +210,7 @@ _.extend(ReferenceLabelField.prototype, TableField.prototype, {
             .append(
                 this.addTdText('caption'),
                 this.addTdSelect('style', _.pluck(D3Visualization.styles.texts, 'name')),
+                this.addTdInt('max_width', 0),
                 this.addTdInt('x', 0),
                 this.addTdInt('y', 0),
                 this.tdOrdering()
@@ -218,14 +220,16 @@ _.extend(ReferenceLabelField.prototype, TableField.prototype, {
         var row = this.addRow();
         row.find('input[name="caption"]').val(d.caption);
         row.find('select[name="style"]').val(d.style);
+        row.find('input[name="max_width"]').val(d.max_width);
         row.find('input[name="x"]').val(d.x);
         row.find('input[name="y"]').val(d.y);
     },
     toSerializedRow: function (row) {
         row = $(row);
         return {
-            "caption": row.find('input[name="caption"]').val(),
+            "caption":  row.find('input[name="caption"]').val(),
             "style": row.find('select[name="style"]').val(),
+            "max_width": parseInt(row.find('input[name="max_width"]').val(), 10),
             "x": parseInt(row.find('input[name="x"]').val(), 10),
             "y": parseInt(row.find('input[name="y"]').val(), 10),
         }
@@ -814,7 +818,7 @@ _.extend(CrossviewForm, {
             prependSpacer: true,
             label: "Figure captions",
             name: "labels",
-            colWidths: [50, 20, 10, 10, 10],
+            colWidths: [45, 15, 10, 10, 10, 10],
             tab: "references"
         },
     ]

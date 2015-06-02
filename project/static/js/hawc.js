@@ -478,6 +478,36 @@ var HAWCUtils = {
                     p.attr('y', y);
                     if(setDragCB) setDragCB.bind(this)(x, y);
                   });
+    },
+    wrapText: function(text, max_width){
+        if (!($.isNumeric(max_width)) || max_width<=0) return;
+        var $text = d3.select(text),
+            words = text.textContent.split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = text.getBBox().height, // px
+            x = $text.attr("x"),
+            y = $text.attr("y"),
+            tspan = $text.text(null)
+                        .append("tspan")
+                        .attr("x", x)
+                        .attr("y", y);
+
+        while(word = words.pop()){
+            line.push(word);
+            tspan.text(line.join(" "));
+            if(tspan.node().getComputedTextLength() > max_width && line.length>1){
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = $text.append("tspan")
+                             .attr("x", x)
+                             .attr("y", y)
+                             .attr("dy", ++lineNumber * lineHeight + "px")
+                             .text(word);
+            }
+        }
     }
 };
 
