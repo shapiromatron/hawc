@@ -1,6 +1,7 @@
 {% extends 'portal.html' %}
 {% load selectable_tags %}
 {% load add_class %}
+{% load url_replace %}
 
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
 
@@ -23,7 +24,6 @@
         <div id="EndpointForm" class="accordion-body collapse">
           <div class="accordion-inner row-fluid">
             <form action="." method="get">
-                {% csrf_token %}
               <fieldset>
                     {{ form.non_field_errors|add_class:"alert alert-error" }}
 
@@ -49,7 +49,7 @@
                     {% endfor %}
                 </fieldset>
                 <div class="row form-actions">
-                    <button type="submit" class="btn btn-primary">Filter endpoints</button>
+                    <button type="submit" class="btn btn-primary">Apply filters</button>
                 </div>
             </form>
           </div>
@@ -64,7 +64,7 @@
             <ul>
 
                 {% if page_obj.has_previous %}
-                    <li><a href="?page={{ page_obj.previous_page_number }}{{qs}}">&lt;&lt;</a></li>
+                    <li><a href="?{% url_replace request 'page' page_obj.previous_page_number %}">&lt;&lt;</a></li>
                 {% else %}
                     <li class="disabled"><a href="#">&lt;&lt;</a></li>
                 {% endif %}
@@ -72,7 +72,7 @@
                 <li class="disabled"><a href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
 
                 {% if page_obj.has_next %}
-                    <li><a href="?page={{ page_obj.next_page_number }}{{qs}}">&gt;&gt;</a></li>
+                    <li><a href="?{% url_replace request 'page' page_obj.next_page_number %}">&gt;&gt;</a></li>
                 {% else %}
                     <li class="disabled"><a href="#">&gt;&gt;</a></li>
                 {% endif %}

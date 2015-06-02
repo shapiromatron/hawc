@@ -780,8 +780,9 @@ class EndpointFilterForm(forms.Form):
         initial = [c[0] for c in models.AnimalGroup.SEX_CHOICES],
         required=False)
 
-    data_extracted = forms.BooleanField(
-        initial=True,
+    data_extracted = forms.ChoiceField(
+        choices=((True, "Yes"), (False, "No"), (None, "All data")),
+        initial=None,
         required=False)
 
     system  = forms.CharField(
@@ -838,8 +839,8 @@ class EndpointFilterForm(forms.Form):
             query &= Q(animal_group__strain__name__icontains=strain.name)
         if sex:
             query &= Q(animal_group__sex__in=sex)
-        # boolean field; we always include
-        query &= Q(data_extracted=data_extracted)
+        if data_extracted:
+            query &= Q(data_extracted=data_extracted == 'True')
         if system:
             query &= Q(system__icontains=system)
         if organ:
@@ -848,5 +849,4 @@ class EndpointFilterForm(forms.Form):
             query &= Q(effect__icontains=effect)
         if tags:
             query &= Q(effects__name__icontains=tags)
-
         return query
