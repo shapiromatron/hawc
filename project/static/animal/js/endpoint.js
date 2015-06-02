@@ -533,7 +533,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 });
                 return ul;
             }, getObsTime = function(d){
-                if (d.observation_time) return "{0} {1}".printf(
+                if ($.isNumeric(d.observation_time)) return "{0} {1}".printf(
                         d.observation_time, d.observation_time_units);
             };
 

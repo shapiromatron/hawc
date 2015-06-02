@@ -413,13 +413,13 @@ class EndpointForm(ModelForm):
         obs_time = cleaned_data.get("observation_time")
         observation_time_units = cleaned_data.get("observation_time_units")
 
-        if obs_time and observation_time_units == 0:
-            raise forms.ValidationError("If reporting an endpoint-observation "
-                                        "time, time-units must be specified.")
+        if obs_time is not None and observation_time_units == 0:
+            err = "If reporting an endpoint-observation time, time-units must be specified."
+            self.add_error('observation_time_units', err)
 
-        if not obs_time and observation_time_units > 0:
-            raise forms.ValidationError("An observation-time must be reported"
-                                        " if time-units are specified")
+        if obs_time is None and observation_time_units > 0:
+            err = "An observation-time must be reported if time-units are specified"
+            self.add_error('observation_time', err)
 
     def clean_confidence_interval(self):
         confidence_interval = self.cleaned_data['confidence_interval']
