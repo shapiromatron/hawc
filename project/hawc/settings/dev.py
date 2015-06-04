@@ -12,6 +12,10 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'project', 'static'),
 )
 
+# execute celery-tasks locally instead of sending to queue
+CELERY_ALWAYS_EAGER = True
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
