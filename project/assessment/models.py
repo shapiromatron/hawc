@@ -283,6 +283,14 @@ class EffectTag(models.Model):
     def get_name_list(self, queryset):
         return '|'.join(queryset.values_list("name", flat=True))
 
+    @classmethod
+    def get_choices(cls, assessment_id):
+        return cls.objects\
+                .filter(baseendpoint__assessment_id=assessment_id)\
+                .values_list('id', 'name')\
+                .distinct()\
+                .order_by('name')
+
 
 class BaseEndpoint(models.Model):
     """

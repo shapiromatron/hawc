@@ -204,7 +204,7 @@ class Study(Reference):
         SerializerHelper.delete_caches(cls, ids)
 
     @classmethod
-    def get_study_choices(cls, assessment_id):
+    def get_choices(cls, assessment_id):
         return cls.objects\
                   .filter(assessment_id=assessment_id)\
                   .values_list('id', 'short_citation')

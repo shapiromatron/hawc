@@ -854,6 +854,11 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
             var sys = $('#id_studies').parent().parent();
             ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
         }).trigger('change');
+
+        $('#id_prefilter_effect_tag').on('change', function(){
+              var sys = $('#id_effect_tags').parent().parent();
+              ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
+        }).trigger('change');
     }
 });
 

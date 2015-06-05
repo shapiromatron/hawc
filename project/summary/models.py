@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from assessment.models import EffectTag
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import AssessedOutcome, MetaResult
@@ -555,6 +556,9 @@ class Prefilter(object):
             if request.POST.get('prefilter_effect'):
                 filters["effect__in"] = request.POST.getlist('effects')
 
+            if request.POST.get('prefilter_effect_tag'):
+                filters["effects__in"] = request.POST.getlist('effect_tags')
+
             if request.POST.get('prefilter_study'):
                 filters["animal_group__experiment__study__in"] = request.POST.getlist('studies')
 
@@ -578,6 +582,10 @@ class Prefilter(object):
                 self.form.fields["effects"].initial = v
                 self.form.fields["prefilter_effect"].initial = True
 
+            if k == "effects__in":
+                self.form.fields["effect_tags"].initial = v
+                self.form.fields["prefilter_effect_tag"].initial = True
+
             if k == "animal_group__experiment__study__in":
                 self.form.fields["studies"].initial = v
                 self.form.fields["prefilter_study"].initial = True
@@ -600,6 +608,9 @@ class Prefilter(object):
         if data['prefilter_study']:
             prefilters["animal_group__experiment__study__in"] = data.get("studies", [])
 
+        if data['prefilter_effect_tag']:
+            prefilters["effects__in"] = data.get("effect_tags", [])
+
         if self.getFormName() == "CrossviewForm" and data['published_only']:
             prefilters["animal_group__experiment__study__published"] = True
 
@@ -613,8 +624,10 @@ class Prefilter(object):
             choices = list(Endpoint.get_system_choices(assessment_id))
         elif field_name == "effects":
             choices = list(Endpoint.get_effect_choices(assessment_id))
+        elif field_name == "effect_tags":
+            choices = EffectTag.get_choices(assessment_id)
         elif field_name == "studies":
-            choices = Study.get_study_choices(assessment_id)
+            choices = Study.get_choices(assessment_id)
         else:
             raise ValueError("Unknown field name: {}".format(field_name))
 

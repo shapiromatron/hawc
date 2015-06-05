@@ -155,6 +155,18 @@ class CrossviewForm(VisualForm):
         help_text="""Select one or more effects to include in the plot.
                      If no effect is selected, no endpoints will be available.""")
 
+    prefilter_effect_tag = forms.BooleanField(
+        required=False,
+        label="Prefilter by effect-tag",
+        help_text="Prefilter endpoints to include only selected effect-tags.")
+
+    effect_tags = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Studies to include",
+        help_text="""Select one or more effect-tags to include in the plot.
+                     If no study is selected, no endpoints will be available.""")
+
     def __init__(self, *args, **kwargs):
         super(CrossviewForm, self).__init__(*args, **kwargs)
 
@@ -165,10 +177,12 @@ class CrossviewForm(VisualForm):
         self.fields["systems"].choices = self.pf.getChoices("systems")
         self.fields["effects"].choices = self.pf.getChoices("effects")
         self.fields["studies"].choices = self.pf.getChoices("studies")
+        self.fields["effect_tags"].choices = self.pf.getChoices("effect_tags")
 
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
         self.fields["studies"].widget.attrs['size'] = 10
+        self.fields["effect_tags"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(CrossviewForm, self).clean()
@@ -339,11 +353,24 @@ class DataPivotQueryForm(DataPivotForm):
         label="Effects to include",
         help_text="""Select one or more effects to include in the plot.
                      If no effect is selected, no endpoints will be available.""")
+
+    prefilter_effect_tag = forms.BooleanField(
+        required=False,
+        label="Prefilter by effect-tag",
+        help_text="Prefilter endpoints to include only selected effect-tags.")
+
+    effect_tags = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Studies to include",
+        help_text="""Select one or more effect-tags to include in the plot.
+                     If no study is selected, no endpoints will be available.""")
+
     class Meta:
         model = models.DataPivotQuery
-        fields =('evidence_type', 'units', 'title',
-                 'slug', 'settings', 'caption',
-                 'published_only', 'prefilters')
+        fields = ('evidence_type', 'units', 'title',
+                  'slug', 'settings', 'caption',
+                  'published_only', 'prefilters')
 
     def __init__(self, *args, **kwargs):
         super(DataPivotQueryForm, self).__init__(*args, **kwargs)
@@ -360,10 +387,12 @@ class DataPivotQueryForm(DataPivotForm):
         self.fields["systems"].choices = self.pf.getChoices("systems")
         self.fields["effects"].choices = self.pf.getChoices("effects")
         self.fields["studies"].choices = self.pf.getChoices("studies")
+        self.fields["effect_tags"].choices = self.pf.getChoices("effect_tags")
 
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
         self.fields["studies"].widget.attrs['size'] = 10
+        self.fields["effect_tags"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(DataPivotQueryForm, self).clean()

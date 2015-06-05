@@ -1011,4 +1011,3 @@ class FullExport(BaseList):
                 sheet_name='bioassay-analysis',
                 assessment=self.assessment)
         return exporter.build_response()
-
