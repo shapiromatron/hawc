@@ -1830,25 +1830,11 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         }
     },
     draw_text: function(){
-        var self = this, drag;
-
-        if (self.options.dev){
-            drag = d3.behavior.drag()
-                .origin(Object)
-                .on("drag", function(d,i){
-                    var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                        p = d3.select(this),
-                        m = regexp.exec(p.attr("transform"));
-                        if (m !== null && m.length===3){
-                            var x = parseFloat(m[1]) + d3.event.dx,
-                                y = parseFloat(m[2]) + d3.event.dy;
-                            p.attr("transform", "translate(" + x + "," + y + ")");
-                            self.setFilterLocation(i, x, y);
-                        }
-                });
-        } else {
-            drag = function(){};
-        }
+        var self = this,
+            drag = (this.options.dev) ? HAWCUtils.updateDragLocationTransform(
+                    function(x, y){
+                        self.setFilterLocation($(this).index(), x, y);
+                    }) : function(){};
 
         this.vis.append("g")
             .attr('class', 'filter_holder')
