@@ -203,6 +203,12 @@ class Study(Reference):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
+    @classmethod
+    def get_study_choices(cls, assessment_id):
+        return cls.objects\
+                  .filter(assessment_id=assessment_id)\
+                  .values_list('id', 'short_citation')
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

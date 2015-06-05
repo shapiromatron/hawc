@@ -204,9 +204,10 @@ class DataPivotNew(BaseCreate):
     template_name = 'summary/datapivot_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('summary:dp_update',
-                             kwargs={'pk': self.assessment.pk,
-                                     'slug': self.object.slug})
+        return reverse_lazy(
+            'summary:dp_update',
+            kwargs={'pk': self.assessment.pk, 'slug': self.object.slug}
+        )
 
 
 class DataPivotQueryNew(DataPivotNew):
@@ -217,6 +218,7 @@ class DataPivotQueryNew(DataPivotNew):
         context = super(DataPivotQueryNew, self).get_context_data(**kwargs)
         context['file_loader'] = False
         return context
+
 
 class DataPivotFileNew(DataPivotNew):
     model = models.DataPivotUpload

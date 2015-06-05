@@ -119,6 +119,18 @@ class CrossviewForm(VisualForm):
         help_text='Only present data from studies which have been marked as '
                   '"published" in HAWC.')
 
+    prefilter_study = forms.BooleanField(
+        required=False,
+        label="Prefilter by study",
+        help_text="Prefilter endpoints to include only selected studies.")
+
+    studies = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Studies to include",
+        help_text="""Select one or more studies to include in the plot.
+                     If no study is selected, no endpoints will be available.""")
+
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter by system",
@@ -152,9 +164,11 @@ class CrossviewForm(VisualForm):
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")
         self.fields["effects"].choices = self.pf.getChoices("effects")
+        self.fields["studies"].choices = self.pf.getChoices("studies")
 
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
+        self.fields["studies"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(CrossviewForm, self).clean()
@@ -290,6 +304,18 @@ class DataPivotUploadForm(DataPivotForm):
 
 class DataPivotQueryForm(DataPivotForm):
 
+    prefilter_study = forms.BooleanField(
+        required=False,
+        label="Prefilter by study",
+        help_text="Prefilter endpoints to include only selected studies.")
+
+    studies = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Studies to include",
+        help_text="""Select one or more studies to include in the plot.
+                     If no study is selected, no endpoints will be available.""")
+
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter by system",
@@ -333,9 +359,11 @@ class DataPivotQueryForm(DataPivotForm):
         self.fields["prefilters"].widget = forms.HiddenInput()
         self.fields["systems"].choices = self.pf.getChoices("systems")
         self.fields["effects"].choices = self.pf.getChoices("effects")
+        self.fields["studies"].choices = self.pf.getChoices("studies")
 
         self.fields["systems"].widget.attrs['size'] = 10
         self.fields["effects"].widget.attrs['size'] = 10
+        self.fields["studies"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(DataPivotQueryForm, self).clean()

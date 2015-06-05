@@ -555,6 +555,9 @@ class Prefilter(object):
             if request.POST.get('prefilter_effect'):
                 filters["effect__in"] = request.POST.getlist('effects')
 
+            if request.POST.get('prefilter_study'):
+                filters["animal_group__experiment__study__in"] = request.POST.getlist('studies')
+
             if request.POST.get("published_only"):
                 filters["animal_group__experiment__study__published"] = True
 
@@ -566,7 +569,7 @@ class Prefilter(object):
 
     def setInitialForm(self):
         prefilters = json.loads(self.form.instance.prefilters)
-        for k,v in prefilters.iteritems():
+        for k, v in prefilters.iteritems():
             if k == "system__in":
                 self.form.fields["systems"].initial = v
                 self.form.fields["prefilter_system"].initial = True
@@ -574,6 +577,10 @@ class Prefilter(object):
             if k == "effect__in":
                 self.form.fields["effects"].initial = v
                 self.form.fields["prefilter_effect"].initial = True
+
+            if k == "animal_group__experiment__study__in":
+                self.form.fields["studies"].initial = v
+                self.form.fields["prefilter_study"].initial = True
 
         if self.getFormName() == "CrossviewForm":
             published_only = prefilters.get("animal_group__experiment__study__published", False)
@@ -590,6 +597,9 @@ class Prefilter(object):
         if data['prefilter_effect']:
             prefilters["effect__in"] = data.get("effects", [])
 
+        if data['prefilter_study']:
+            prefilters["animal_group__experiment__study__in"] = data.get("studies", [])
+
         if self.getFormName() == "CrossviewForm" and data['published_only']:
             prefilters["animal_group__experiment__study__published"] = True
 
@@ -603,6 +613,8 @@ class Prefilter(object):
             choices = list(Endpoint.get_system_choices(assessment_id))
         elif field_name == "effects":
             choices = list(Endpoint.get_effect_choices(assessment_id))
+        elif field_name == "studies":
+            choices = Study.get_study_choices(assessment_id)
         else:
             raise ValueError("Unknown field name: {}".format(field_name))
 
