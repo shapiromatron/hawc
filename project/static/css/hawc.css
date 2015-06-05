@@ -63,6 +63,21 @@ input[type=number] {
 }
 
 
+/* Logos on documentation page */
+.logos {
+  max-height: 75px;
+  margin-right: 35px;
+  margin-bottom: 40px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: 0.5s ease-in;
+}
+.logos:hover {
+    opacity: 0.8;
+    border: 2px solid gray;
+    transition: 0.5s ease-out;
+}
+
 /* Override bootstrap modal width */
 .modal {
   width: 950px;

@@ -8,32 +8,41 @@
 {% endblock %}
 
 {% block branding %}
-  <a class="brand" href="{% url 'portal' %}">HAWC{% server_role_text %}</a>
+  <a href="{% url 'portal' %}"><img class="pull-left" style="height: 40px;" src="{{STATIC_URL}}img/HAWC-120.png"></a>
+  <a class="brand" href="{% url 'portal' %}">{% server_role_text %}</a>
 {% endblock %}
 
 {% block topnavbar %}
-  <div class="btn-group pull-right">
-    {% if user.is_anonymous %}
-      <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
-    {% else %}
-      <button href="#" class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown">Settings <i class="icon-cog icon-white"></i></button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'contact' %}">Contact Us</a></li>
-        <li><a href="{% url 'documentation' %}">Documentation</a></li>
-        <li><a href="{% url 'portal' %}">Portal</a></li>
-        <li><a href="{% url 'user:settings' %}">Settings</a></li>
-        {% if user.is_staff %}
-          <li class="divider"></li>
-          <li><a href="{%url 'admin:index' %}">Admin</a></li>
-          {% if user.is_superuser %}
-           <li><a href="{% url 'assessment:full_list' %}">Superuser assessments list</a></li>
+
+  <ul class="nav pull-right">
+    <li><a href="{% url 'contact' %}">Contact us</a></li>
+    <li><a href="{% url 'documentation' %}">Info</a></li>
+    <li><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
+
+    <div class="btn-group pull-right">
+
+
+      {% if user.is_anonymous %}
+        <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
+      {% else %}
+        <button href="#" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown">My HAWC <i class="icon-cog icon-white"></i></button>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'portal' %}">My Portal</a></li>
+          <li><a href="{% url 'user:settings' %}">Settings</a></li>
+          {% if user.is_staff %}
+            <li class="divider"></li>
+            <li><a href="{%url 'admin:index' %}">Admin</a></li>
+            {% if user.is_superuser %}
+             <li><a href="{% url 'assessment:full_list' %}">Superuser assessments list</a></li>
+            {% endif %}
           {% endif %}
-        {% endif %}
-        <li class="divider"></li>
-        <li><a href="{% url 'user:logout' %}">Logout</a></li>
-      </ul>
-   {% endif %}
-  </div>
+          <li class="divider"></li>
+          <li><a href="{% url 'user:logout' %}">Logout</a></li>
+        </ul>
+     {% endif %}
+    </div>
+ </ul>
+
 {% endblock %}
 
 {% block messages_base %}{% endblock messages_base %}

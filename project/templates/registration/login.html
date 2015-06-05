@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block branding %}
-  <a class="brand" href="/">Health Assessment Workspace Collaborative (HAWC)</a>
+  <a href="{% url 'portal' %}"><img class="pull-left" style="height: 40px;" src="{{STATIC_URL}}img/HAWC-120.png"></a>
 {% endblock %}
 
 {% block messages %}

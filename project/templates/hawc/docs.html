@@ -4,6 +4,14 @@
 
   <div class="row-fluid">
     <div class="span10 offset1">
+      <h2>About us</h2>
+      <p>
+      HAWC development is a collaborative of several individuals and organizations who create, maintain and enhance the functionalities of this tool. The lead developer and conceptual designer of the project is Andy Shapiro who developed the prototype in partial fulfillment of the requirements for the degree of Master of Science in Public Health in the Department of Environmental Sciences and Engineering at the University of North Carolina at Chapel Hill under direction of Dr. Ivan Rusyn. Overall guidance to the process of development of HAWC is provided by a steering committee with representation from the National Toxicology Program (NTP/NIEHS), Texas A&amp;M University and the National Center for Computational Toxicology (US EPA).
+      </p>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span10 offset1">
       <h2>Posters and presentations</h2>
       <table class="table table-compressed table-hover">
         <colgroup>
@@ -14,7 +22,7 @@
         </colgroup>
         <thead>
           <tr>
-            <th>Date</th>
+            <th>Format</th>
             <th>Conference</th>
             <th>Title</th>
             <th>Download</th>
@@ -22,19 +30,19 @@
         </thead>
         <tbody>
           <tr>
-            <td>March 2013</td>
-            <td>Society of Toxicology (SOT)</td>
+            <td>Poster</td>
+            <td>2013 Society of Toxicology (SOT)</td>
             <td>Web-based Benchmark Dose Modeling Module as a Prototype Component of an Informatics-based System for Human Health Assessments of Chemicals</td>
             <td><a href="{{STATIC_URL}}docs/posters/2013_HAWC_SOT_final.pdf">Link</a></td>
           </tr>
           <tr>
-            <td>October 2013</td>
-            <td>OpenTox USA</td>
+            <td>Poster</td>
+            <td>2013 OpenTox USA</td>
             <td>HAWC (Health Assessment Workspace Collaborative): A Modular Web-based Interface to Facilitate Development of Human Health Assessments of Chemicals</td>
             <td><a href="{{STATIC_URL}}docs/posters/2013_HAWC_OpenTox_final.pdf">Link</a></td>
           </tr>
           <tr>
-            <td>January 2014</td>
+            <td>Youtube</td>
             <td>Webinar</td>
             <td>HAWC presentation overview and tutorial of key functionality including literature search, animal bioassay data extraction, and BMD modeling.</td>
             <td>
@@ -43,8 +51,8 @@
             </td>
           </tr>
           <tr>
-            <td>March 2014</td>
-            <td>Society of Toxicology (SOT)</td>
+            <td>Poster</td>
+            <td>2014 Society of Toxicology (SOT)</td>
             <td>HAWC (Health Assessment Workspace Collaborative): A Modular Web-based Interface to Facilitate Development of Human Health Assessments of Chemicals</td>
             <td><a href="{{STATIC_URL}}docs/posters/2014_HAWC_SOT_final.pdf">Link</a></td>
           </tr>
@@ -55,16 +63,52 @@
 
   <div class="row-fluid">
     <div class="span10 offset1">
-      <h2>HAWC Updates</h2>
-      <a href="{% url 'change_log' %}">View list of changes</a>
+      <h2>Latest Updates</h2>
+      <p>HAWC is actively under development; a <a href="{% url 'change_log' %}">change-log</a> is available to view updates being made to HAWC over time.</p>
     </div>
   </div>
 
   <div class="row-fluid">
      <div class="span10 offset1">
         <h2>License</h2>
+        <p>HAWC is open-source software; it is free to create an account to use the software. In addition, is is free to download, edit, and modify the source-code, so long as the resulting project is not sold for-profit. The full license is available below.</p>
         <a href="#license_modal" data-toggle="modal">Click to View</a>
         {% include "hawc_license.html" %}
+    </div>
+  </div>
+
+  <div class="row-fluid">
+     <div class="span10 offset1">
+        <h2>Acknowledgments</h2>
+
+        <p>
+        This project is supported, in part, by funding from the following sources:
+        <ul>
+          <li>The National Toxicology Program</li>
+          <li>Texas A&amp;M University</li>
+          <li>US EPA grants STAR RD83574701 and STAR RD83516601</li>
+          <li>NIH grant P42 ES005948</li>
+        </ul>
+        The contents of HAWC are solely the responsibility of the users and developers, and do not necessarily represent the official views of the EPA or NIH.  Further, the EPA or NIH do not endorse the purchase of any commercial or open-source products or services that were used in the process of development of HAWC.
+        </p>
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span8 offset2">
+
+    <a href="http://ntp.niehs.nih.gov">
+      <img class="logos" src="{{STATIC_URL}}img/ntplogo.jpg">
+    </a>
+
+    <a href="http://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/recipients.welcome/displayOption/grants">
+      <img class="logos" src="{{STATIC_URL}}img/epa-star-75.png">
+    </a>
+
+    <a href="http://vetmed.tamu.edu">
+        <img class="logos" src="{{STATIC_URL}}img/am-150.png">
+    </a>
+
     </div>
   </div>
 
