@@ -228,13 +228,13 @@ class SQEndpointForm(SQForm):
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an study-quality override.",
+                "help_text":   u"Update a risk-of-bias override.",
             }
         else:
             inputs = {
-                "legend_text": u"Create study-quality override",
+                "legend_text": u"Create risk-of-bias override",
                 "help_text":   u"""
-                    Create a study-quality metric which is overridden for this
+                    Create a risk-of-bias metric which is overridden for this
                     particular endpoint.
                     """,
             }
@@ -249,7 +249,7 @@ class SQEndpointForm(SQForm):
         qualities = self.instance.content_object.qualities.all()
         for quality in qualities:
             if metric == quality.metric and quality.id != self.instance.id:
-                raise forms.ValidationError("Study quality metrics must be unique for a given endpoint.")
+                raise forms.ValidationError("Risk-of-bias metrics must be unique for a given endpoint.")
         return metric
 
 
@@ -262,7 +262,7 @@ class BaseSQFormSet(BaseModelFormSet):
         for form in self.forms:
             metric = form.cleaned_data['metric']
             if metric in metrics:
-                raise forms.ValidationError("Study quality metrics must be unique for a given study.")
+                raise forms.ValidationError("Risk-of-bias metrics must be unique for a given study.")
             metrics.append(metric)
 
 

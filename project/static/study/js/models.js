@@ -37,7 +37,7 @@ Study.prototype = {
         return this.study_quality.length>0;
     },
     unpack_study_quality: function(){
-        // unpack study-quality information and nest by domain
+        // unpack risk-of-bias information and nest by domain
         var self = this,
             study_quality = [],
             gradient_colors = d3.scale.linear()
@@ -177,10 +177,10 @@ _.extend(StudyQuality, {
     score_shades: {0: "#E8E8E8", 1: "#CC3333", 2: "#FFCC00", 3: "#6FFF00", 4: "#00CC00"},
     score_text_description: {
         0: 'Not applicable',
-        1: 'Definitely high risk of bias',
-        2: 'Probably high risk of bias',
-        3: 'Probably low risk of bias',
-        4: 'Definitely low risk of bias',
+        1: 'Definitely high risk-of-bias',
+        2: 'Probably high risk-of-bias',
+        3: 'Probably low risk-of-bias',
+        4: 'Definitely low risk-of-bias',
     },
     display_details_divs: function($div, content){
         // insert content into selected div and then draw all animations
@@ -601,10 +601,10 @@ StudyQualityAggregation.prototype = {
 
         var score_binning = function(d){
             var score_bins = {'0': {study_qualities:[], score:0, score_text:'N/A', score_description: 'Not applicable'},
-                              '1': {study_qualities:[], score:1, score_text:'--', score_description: 'Definitely high risk of bias'},
-                              '2': {study_qualities:[], score:2, score_text:'-', score_description: 'Probably high risk of bias'},
-                              '3': {study_qualities:[], score:3, score_text:'+', score_description: 'Probably low risk of bias'},
-                              '4': {study_qualities:[], score:4, score_text:'++', score_description: 'Definitely low risk of bias'}};
+                              '1': {study_qualities:[], score:1, score_text:'--', score_description: 'Definitely high risk-of-bias'},
+                              '2': {study_qualities:[], score:2, score_text:'-', score_description: 'Probably high risk-of-bias'},
+                              '3': {study_qualities:[], score:3, score_text:'+', score_description: 'Probably low risk-of-bias'},
+                              '4': {study_qualities:[], score:4, score_text:'++', score_description: 'Definitely low risk-of-bias'}};
             d.study_qualities.forEach(function(sq){
                 score_bins[sq.data.score].study_qualities.push(sq);
             });

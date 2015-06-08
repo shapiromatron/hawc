@@ -28,8 +28,8 @@
 
             {% if assessment.enable_study_quality %}
               <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Study Bias Editing</a></li>
-              <li><a href="{% url 'study:sq_create' "endpoint" object.pk %}">Create study-quality override</a></li>
+              <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias editing</a></li>
+              <li><a href="{% url 'study:sq_create' "endpoint" object.pk %}">Create risk-of-bias override</a></li>
             {% endif %}
 
             {% if assessment.enable_bmd and object.dose_response_available %}
@@ -139,8 +139,8 @@
     endpoint.build_endpoint_table($('#dr-tbl'));
     if(qualityTbl.hasQualities()){
       $('#endpoint-details-table')
-        .append("<h3>Risk of bias overrides</h3>")
-        .append('<p class="help-block">Endpoint-level risk-of bias used to override study bias</p>')
+        .append("<h3>Risk-of-bias overrides</h3>")
+        .append('<p class="help-block">Endpoint-level risk-of bias used to override study-level risk-of-bias</p>')
         .append(qualityTbl.build_table({ "canEdit": {{obj_perms.edit|lower}} }));
     }
   </script>

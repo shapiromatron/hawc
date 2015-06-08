@@ -1962,7 +1962,7 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
 
 
 RoBHeatmapPlot = function(parent, data, options){
-    // heatmap of study-quality information. Criteria are on the y-axis,
+    // heatmap of risk-of-bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();
@@ -2111,7 +2111,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             showSQs = function(v){
                 self.print_details(self.modal.getBody(), $(this).data('sqs'))
                 self.modal
-                    .addHeader('<h4>Study Quality Details: {0}</h4>'.printf(this.textContent))
+                    .addHeader('<h4>Risk-of-bias details: {0}</h4>'.printf(this.textContent))
                     .addFooter("")
                     .show({maxWidth: 900});
             }, getMetricSQs = function(i, v){
@@ -2140,7 +2140,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         .on('click', function(v){
             self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]})
             self.modal
-                .addHeader('<h4>Study Quality Details</h4>')
+                .addHeader('<h4>Risk-of-bias details</h4>')
                 .addFooter("")
                 .show({maxWidth: 900});
         });
@@ -2407,7 +2407,7 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
 
 
 RoBBarchartPlot = function(parent, data, options){
-    // stacked-bars of study-quality information. Criteria are on the y-axis,
+    // stacked-bars of risk-of-bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();

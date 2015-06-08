@@ -78,7 +78,7 @@ class SQDOCXReport(DOCXReport):
         section.right_margin = Inches(0.5)
 
         # title
-        txt = "Risk of bias report: {0}".format(d['assessment']['name'])
+        txt = "Risk-of-bias report: {0}".format(d['assessment']['name'])
         doc.add_heading(txt, 0)
 
         # loop through each study

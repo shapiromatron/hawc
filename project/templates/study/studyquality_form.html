@@ -6,9 +6,9 @@
   {% if endpoint %}
     {{assessment}} | {{endpoint.animal_group.experiment.study}} | {{endpoint.animal_group.experiment}} | {{endpoint.animal_group}} | {{endpoint}}
     {% if crud == "Create" %}
-      | Create study quality override | HAWC
+      | Create risk-of-bias override | HAWC
     {% elif crud == "Update" %}
-      | Update study quality override | HAWC
+      | Update risk-of-bias override | HAWC
     {% endif %}
   {% endif %}
 {% endblock title %}
@@ -32,7 +32,7 @@
   {% endif %}
 
   {% if crud == "Create" %}
-    <li class="active">Create study quality override<span class="divider">/</span></li>
+    <li class="active">Create risk-of-bias override<span class="divider">/</span></li>
   {% elif crud == "Update" %}
     <li class="active">Update<span class="divider">/</span></li>
   {% endif %}

@@ -2,7 +2,7 @@
 
 {% block title %}
   {% if endpoint %}
-    {{assessment}} | {{endpoint.animal_group.experiment.study}} | {{endpoint.animal_group.experiment}} | {{endpoint.animal_group}} | {{endpoint}} | Delete study quality override | HAWC
+    {{assessment}} | {{endpoint.animal_group.experiment.study}} | {{endpoint.animal_group.experiment}} | {{endpoint.animal_group}} | {{endpoint}} | Delete risk-of-bias override | HAWC
   {% endif %}
 {% endblock title %}
 
@@ -26,5 +26,5 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="study-quality" notes="This will not remove the overall study risk-of-bias, but only the value for this endpoint." %}
+  {% include "hawc/_delete_block.html" with name="risk-of-bias" notes="This will not remove the overall study risk-of-bias, but only the value for this endpoint." %}
 {% endblock content %}

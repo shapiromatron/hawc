@@ -257,9 +257,9 @@ class StudyQualityDomain(models.Model):
     @classmethod
     def build_default(cls, assessment):
         """
-        Construct default study quality domains/metrics for an assessment.
-        The study-quality domains and metrics are those defined by NTP/OHAT
-        protocols for study-bias
+        Construct default risk of bias domains/metrics for an assessment.
+        The risk-of-bias domains and metrics are those defined by NTP/OHAT
+        protocols for risk-of-bias
         """
         fn = os.path.join(settings.PROJECT_PATH, 'study/fixtures/ohat_study_quality_defaults.json')
         with open(fn, 'r') as f:
@@ -313,7 +313,7 @@ class StudyQualityMetric(models.Model):
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
         """
-        Build multiple study-quality metrics given a domain django object and a
+        Build multiple risk-of-bias metrics given a domain django object and a
         list of python dictionaries for each metric.
         """
         objs = []
