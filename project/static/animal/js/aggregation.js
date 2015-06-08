@@ -513,9 +513,9 @@ _.extend(ERH_plot.prototype, D3Plot.prototype, {
     add_legend: function(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'LOEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'NOEL', 'color':undefined}); }
-        if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'BMDL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'dose_points LOEL', 'color':undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'dose_points NOEL', 'color':undefined}); }
+        if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'dose_points BMDL', 'color':undefined}); }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
         legend_settings.box_h = legend_settings.items.length*legend_settings.item_height;
@@ -786,9 +786,9 @@ _.extend(Forest_plot.prototype, D3Plot.prototype, {
     add_legend: function(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
-        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'LOEL', 'color':undefined}); }
-        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'NOEL', 'color':undefined}); }
-        if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'BMDL', 'color':undefined}); }
+        if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text':'LOEL', 'classes':'dose_points LOEL', 'color':undefined}); }
+        if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text':'NOEL', 'classes':'dose_points NOEL', 'color':undefined}); }
+        if (this.plot_div.find('.BMDL').length > 0) { legend_settings.items.push({'text':'BMDL', 'classes':'dose_points BMDL', 'color':undefined}); }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
         legend_settings.box_h = legend_settings.items.length*legend_settings.item_height;

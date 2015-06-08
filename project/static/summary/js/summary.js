@@ -926,9 +926,9 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                 addItem("Doses in Study", "dose_points")
             ];
 
-        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "LOEL"))
-        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "NOEL"))
-        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "dose_points LOEL"))
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "dose_points NOEL"))
+        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "dose_points BMDL"))
 
         this.build_legend({
             items: items,
@@ -1260,9 +1260,9 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                 addItem("Doses in Study", "dose_points")
             ];
 
-        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "LOEL"))
-        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "NOEL"))
-        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "BMDL"))
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "dose_points LOEL"))
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "dose_points NOEL"))
+        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "dose_points BMDL"))
 
         this.build_legend({
             items: items,
