@@ -1973,7 +1973,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no studies selected. Please select at least one study.</p>");
+            return this.plot_div.html("<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>");
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
@@ -2417,7 +2417,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no studies selected. Please select at least one study.</p>");
+            return this.plot_div.html("<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>");
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);

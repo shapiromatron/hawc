@@ -273,10 +273,10 @@ class Visual(models.Model):
             if request:
                 efilters = {"assessment_id": self.assessment_id}
                 Prefilter.setRequestFilters(efilters, request=request)
-                if len(efilters)>1:
+                if len(efilters) > 1:
                     filters["id__in"] = set(
-                        Endpoint.objects\
-                            .filter(**efilters)\
+                        Endpoint.objects
+                            .filter(**efilters)
                             .values_list('animal_group__experiment__study_id', flat=True))
                 else:
                     filters["id__in"] = request.POST.getlist('studies')
@@ -288,8 +288,8 @@ class Visual(models.Model):
                     efilters = {"assessment_id": self.assessment_id}
                     Prefilter.setRequestFilters(efilters, prefilters=self.prefilters)
                     filters["id__in"] = set(
-                        Endpoint.objects\
-                            .filter(**efilters)\
+                        Endpoint.objects
+                            .filter(**efilters)
                             .values_list('animal_group__experiment__study_id', flat=True))
                     qs = Study.objects.filter(**filters)
                 else:
