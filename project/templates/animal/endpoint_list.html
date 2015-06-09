@@ -7,7 +7,8 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'animal:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
+  <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
+  <li class="active">Animal bioassay<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
