@@ -51,16 +51,15 @@ unrecognized HTML expressions.
   stroke: black;
 }
 
-/* dose-response circles */
-circle {
+/* dose-response data points */
+.dose_points {
+  fill: #A8B2D3;
   r: 8;
   stroke: black;
   stroke-width: 1.5px;
 }
-
-/* dose-response data points */
-.dose_points {
-  fill: #A8B2D3;
+.dose_points:hover {
+  fill: yellow;
 }
 
 /* Data points are individual dose-response points, in boxplot. */
@@ -82,9 +81,6 @@ circle {
   stroke-width: 2px;
 }
 
-.dose_points:hover {
-  fill: yellow;
-}
 
 /* extra additions to these points */
 .NOEL {
@@ -177,6 +173,12 @@ rect.selected_overlay{
   stroke-width: 0px;
   font-size: 12px;
   font-weight: bold;
+}
+
+circle.ref_vals{
+  r: 8;
+  stroke: black;
+  stroke-width: 1.5px;
 }
 
 .pod{

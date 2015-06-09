@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Q
+from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
@@ -19,7 +20,7 @@ from celery import chain
 from . import forms, models, tasks
 
 
-#General views
+# General views
 class Home(TemplateView):
     template_name = 'hawc/home.html'
 
@@ -56,7 +57,7 @@ class Error500(TemplateView):
     template_name = '500.html'
 
 
-#Assessment Object
+# Assessment Object
 class AssessmentPortal(LoginRequiredMixin, ListView):
     model = models.Assessment
     template_name = "assessment/portal.html"
@@ -74,7 +75,10 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        return self.model.objects.filter(public=True)
+        return self.model.objects.filter(
+            public=True,
+            hide_from_public_page=False
+        ).order_by('name')
 
 
 class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
@@ -179,7 +183,7 @@ class AssessmentEmailManagers(MessageMixin, FormView):
         return super(AssessmentEmailManagers, self).form_valid(form)
 
 
-#Word Templates
+# Word Templates
 class ReportTemplateCreate(BaseCreate):
     success_message = 'Report template created.'
     parent_model = models.Assessment
@@ -213,7 +217,7 @@ class ReportTemplateDelete(BaseDelete):
         return reverse_lazy("assessment:template_list", kwargs={"pk": self.assessment.pk})
 
 
-#Endpoint objects
+# Endpoint objects
 class EndpointJSON(BaseDetail):
     model = models.BaseEndpoint
 
@@ -228,6 +232,46 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = 'assessment'
     model = models.EffectTag
     form_class = forms.EffectTagForm
+
+
+class BaseEndpointList(BaseList):
+    parent_model = models.Assessment
+    model = models.BaseEndpoint
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseEndpointList, self).get_context_data(**kwargs)
+
+        eps = self.model.endpoint\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        aos = self.model.assessedoutcome\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        mrs = get_model('epi', 'metaresult')\
+            .objects\
+            .filter(protocol__study__assessment_id=self.assessment.id)\
+            .count()
+
+        iveps = self.model.ivendpoint\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        alleps = eps + aos + mrs + iveps
+
+        context.update({
+            "ivendpoints": iveps,
+            "endpoints": eps,
+            "assessed_outcomes": aos,
+            "meta_results": mrs,
+            "total_endpoints": alleps
+        })
+
+        return context
 
 
 # Changelog views
@@ -246,7 +290,7 @@ class ChangeLogDetail(DetailView):
     model = models.ChangeLog
 
 
-#Assorted functionality
+# Assorted functionality
 class CASDetails(TemplateView):
 
     def get(self, request, *args, **kwargs):

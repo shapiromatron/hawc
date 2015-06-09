@@ -273,10 +273,10 @@ class Visual(models.Model):
             if request:
                 efilters = {"assessment_id": self.assessment_id}
                 Prefilter.setRequestFilters(efilters, request=request)
-                if len(efilters)>1:
+                if len(efilters) > 1:
                     filters["id__in"] = set(
-                        Endpoint.objects\
-                            .filter(**efilters)\
+                        Endpoint.objects
+                            .filter(**efilters)
                             .values_list('animal_group__experiment__study_id', flat=True))
                 else:
                     filters["id__in"] = request.POST.getlist('studies')
@@ -288,8 +288,8 @@ class Visual(models.Model):
                     efilters = {"assessment_id": self.assessment_id}
                     Prefilter.setRequestFilters(efilters, prefilters=self.prefilters)
                     filters["id__in"] = set(
-                        Endpoint.objects\
-                            .filter(**efilters)\
+                        Endpoint.objects
+                            .filter(**efilters)
                             .values_list('animal_group__experiment__study_id', flat=True))
                     qs = Study.objects.filter(**filters)
                 else:
@@ -599,19 +599,19 @@ class Prefilter(object):
     def setPrefilters(self, data):
         prefilters = {}
 
-        if data['prefilter_system']:
+        if data.get('prefilter_system') is True:
             prefilters["system__in"] = data.get("systems", [])
 
-        if data['prefilter_effect']:
+        if data.get('prefilter_effect') is True:
             prefilters["effect__in"] = data.get("effects", [])
 
-        if data['prefilter_study']:
+        if data.get('prefilter_study') is True:
             prefilters["animal_group__experiment__study__in"] = data.get("studies", [])
 
-        if data['prefilter_effect_tag']:
+        if data.get('prefilter_effect_tag') is True:
             prefilters["effects__in"] = data.get("effect_tags", [])
 
-        if self.getFormName() == "CrossviewForm" and data['published_only']:
+        if self.getFormName() == "CrossviewForm" and data.get('published_only') is True:
             prefilters["animal_group__experiment__study__published"] = True
 
         return json.dumps(prefilters)

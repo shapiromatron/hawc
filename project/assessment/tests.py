@@ -12,7 +12,6 @@ from django.core.management import call_command
 from selenium import webdriver
 
 
-
 class MainPageTests(TestCase):
 
     @classmethod
@@ -33,7 +32,7 @@ class CeleryTests(TestCase):
     def test_isRunning(self):
         insp = inspect()
         d = insp.stats()
-        self.assertTrue(d != None)
+        self.assertTrue(d is not None)
 
 
 def build_assessments_for_permissions_testing(obj):

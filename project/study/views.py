@@ -55,15 +55,15 @@ class StudyReport(GenerateReport):
 
 class StudyBiasExport(StudyList):
     """
-    Full XLS data export for the study bias.
+    Full XLS data export for the risk-of-bias.
     """
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyBiasExport, self).get_queryset()
         exporter = exports.StudyQualityFlatComplete(
                 self.object_list,
                 export_format="excel",
-                filename='{}-study-bias'.format(self.assessment),
-                sheet_name='study-bias')
+                filename='{}-risk-of-bias'.format(self.assessment),
+                sheet_name='risk-of-bias')
         return exporter.build_response()
 
 
@@ -250,7 +250,7 @@ class AttachmentRead(BaseDetail):
             return PermissionDenied
 
 
-# Assessment study-quality requirements
+# Assessment risk-of-bias requirements
 class ASQDetail(BaseList):
     parent_model = Assessment
     model = models.StudyQualityDomain
@@ -265,13 +265,13 @@ class ASQEdit(ASQDetail):
     crud = 'Update'
 
 
-# Study quality domain views
+# Risk-of-bias domain views
 class SQDomainCreate(BaseCreate):
     parent_model = Assessment
     parent_template_name = 'assessment'
     model = models.StudyQualityDomain
     form_class = forms.SQDomainForm
-    success_message = 'Study quality domain created.'
+    success_message = 'Risk-of-bias domain created.'
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
@@ -280,27 +280,27 @@ class SQDomainCreate(BaseCreate):
 class SQDomainUpdate(BaseUpdate):
     model = models.StudyQualityDomain
     form_class = forms.SQDomainForm
-    success_message = 'Study quality domain updated.'
+    success_message = 'Risk-of-bias domain updated.'
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
 
 
 class SQDomainDelete(BaseDelete):
-    success_message = 'Study quality domain deleted.'
+    success_message = 'Risk-of-bias domain deleted.'
     model = models.StudyQualityDomain
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
 
 
-# Study quality metric views
+# Risk-of-bias metric views
 class SQMetricCreate(BaseCreate):
     parent_model = models.StudyQualityDomain
     parent_template_name = 'domain'
     model = models.StudyQualityMetric
     form_class = forms.SQMetricForm
-    success_message = 'Study quality metric created.'
+    success_message = 'Risk-of-bias metric created.'
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
@@ -309,21 +309,21 @@ class SQMetricCreate(BaseCreate):
 class SQMetricUpdate(BaseUpdate):
     model = models.StudyQualityMetric
     form_class = forms.SQMetricForm
-    success_message = 'Study quality metric updated.'
+    success_message = 'Risk-of-bias metric updated.'
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
 
 
 class SQMetricDelete(BaseDelete):
-    success_message = 'Study quality metric deleted.'
+    success_message = 'Risk-of-bias metric deleted.'
     model = models.StudyQualityMetric
 
     def get_success_url(self):
         return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
 
 
-# Study quality views for study
+# Risk-of-bias views for study
 class SQFixedReport(GenerateFixedReport):
     parent_model = Assessment
     model = models.Study
@@ -347,7 +347,7 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
     model = models.Study
     template_name = "study/sq_edit.html"
     form_class = forms.SQForm
-    success_message = 'Study-quality information created.'
+    success_message = 'Risk-of-bias information created.'
     crud = 'Create'
 
     def get_success_url(self):
@@ -403,7 +403,7 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
 
 class SQsDetail(AssessmentPermissionsMixin, DetailView):
     """
-    Detailed view of study-quality metrics for reporting.
+    Detailed view of risk-of-bias metrics for reporting.
     """
     model = models.Study
     template_name = "study/sq_detail.html"
@@ -425,12 +425,12 @@ class SQsDetail(AssessmentPermissionsMixin, DetailView):
 
 class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
-    Edit settings for study quality metrics associated with study.
+    Edit settings for risk-of-bias metrics associated with study.
     """
     model = models.Study
     template_name = "study/sq_edit.html"
     form_class = forms.SQForm
-    success_message = 'Study quality updated.'
+    success_message = 'Risk-of-bias updated.'
     crud = 'Update'
 
     def get_success_url(self):
@@ -469,12 +469,12 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
 class SQsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     """
-    Delete all study quality-metrics associated with study.
+    Delete all risk-of-bias metrics associated with study.
     """
     model = models.Study
     template_name = "study/sq_delete.html"
     form_class = forms.SQForm
-    success_message = 'Study-quality information deleted.'
+    success_message = 'Risk-of-bias information deleted.'
     crud = 'Delete'
 
     def delete(self, request, *args, **kwargs):
@@ -498,9 +498,9 @@ class SQsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
         return context
 
 
-# Study quality views for endpoints
+# Risk-of-bias views for endpoints
 class SQCreate(BaseCreate):
-    success_message = 'Study-quality override created.'
+    success_message = 'Risk-of-bias override created.'
     model = models.StudyQuality
     form_class = forms.SQEndpointForm
 
@@ -522,7 +522,7 @@ class SQCreate(BaseCreate):
 class SQEdit(BaseUpdate):
     model = models.StudyQuality
     form_class = forms.SQEndpointForm
-    success_message = 'Study-quality metric updated.'
+    success_message = 'Risk-of-bias metric updated.'
 
     def get_context_data(self, **kwargs):
         context = super(SQEdit, self).get_context_data(**kwargs)
@@ -533,7 +533,7 @@ class SQEdit(BaseUpdate):
 
 class SQDelete(BaseDelete):
     model = models.StudyQuality
-    success_message = 'Study-quality metric deleted.'
+    success_message = 'Risk-of-bias metric deleted.'
 
     def get_context_data(self, **kwargs):
         context = super(SQDelete, self).get_context_data(**kwargs)

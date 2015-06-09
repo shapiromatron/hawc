@@ -532,7 +532,7 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
     @classmethod
     def build_default(cls, assessment):
         """
-        Constructor to define default study-quality metrics.
+        Constructor to define default literature-tags.
         """
         root = cls.add_root(name=cls.get_assessment_root_name(assessment.pk))
 

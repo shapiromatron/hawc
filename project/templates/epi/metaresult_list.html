@@ -1,0 +1,47 @@
+{% extends 'portal.html' %}
+{% load add_class %}
+
+{% block title %}{{assessment}} | Meta-analysis/pooled outcomes | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
+  <li class="active">Meta-analysis/pooled outcomes<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+    <h1>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h1>
+
+    <div>
+        <ul>
+            {% for object in object_list %}
+                <li><a href="{{object.get_absolute_url}}">{{object}}</a></li>
+            {% empty %}
+                <li><i>No outcomes are available.</i></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if is_paginated %}
+        <div class="pagination pagination-centered">
+            <ul>
+
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{page_obj.previous_page_number}}">&lt;&lt;</a></li>
+                {% else %}
+                    <li class="disabled"><a href="#">&lt;&lt;</a></li>
+                {% endif %}
+
+                <li class="disabled"><a href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{page_obj.next_page_number}}">&gt;&gt;</a></li>
+                {% else %}
+                    <li class="disabled"><a href="#">&gt;&gt;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock content %}

@@ -2,7 +2,7 @@
 
 
 {% block title %}
-  {{assessment}} | {{study}} | Study-quality | HAWC
+  {{assessment}} | {{study}} | Risk-of-bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -13,20 +13,20 @@
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
-    <li class="active"> Study-quality <span class="divider">/</span></li>
+    <li class="active"> Risk-of-bias <span class="divider">/</span></li>
   {% endblock %}
 {% endblock %}
 
 {% block content %}
 
-  <h2>{{object}}: Study-bias details
+  <h2>{{object}}: risk-of-bias details
     {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Study-bias Editing</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
             <li><a href="{% url 'study:sqs_update' object.pk %}">Update</a></li>
             <li><a href="{% url 'study:sqs_delete' object.pk %}">Delete</a></li>
         </ul>

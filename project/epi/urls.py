@@ -14,13 +14,13 @@ router.register(r'assessed-outcome', api.AssessedOutcome, base_name="assessed-ou
 urlpatterns = patterns('',
 
     # overall views
-    url(r'^assessment/(?P<pk>\d+)/$',
-        views.EpiStudyList.as_view(),
-        name='epistudy_list'),
-
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
         views.FullExport.as_view(),
         name='export'),
+
+    url(r'^assessment/(?P<pk>\d+)/assessed-outcomes/$',
+        views.AssessedOutcomeList.as_view(),
+        name='assessedoutcome_list'),
 
     url(r'^assessment/(?P<pk>\d+)/report/$',
         views.AssessedOutcomeReport.as_view(),
@@ -133,6 +133,10 @@ urlpatterns = patterns('',
         name='mp_delete'),
 
     # meta-result views
+    url(r'^assessment/(?P<pk>\d+)/meta-results/$',
+        views.MetaResultList.as_view(),
+        name='metaresult_list'),
+
     url(r'^meta-protocol/(?P<pk>\d+)/meta-result/create/$',
         views.MetaResultCreate.as_view(),
         name='mr_create'),

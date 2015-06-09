@@ -14,16 +14,6 @@ from study.views import StudyRead
 from . import forms, models, exports
 
 
-# Study-level
-class EpiStudyList(BaseList):
-    parent_model = Assessment
-    model = Study
-    template_name = 'epi/epistudy_list.html'
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment, study_type=1)
-
-
 # Study populations
 class StudyPopulationCreate(BaseCreate):
     success_message = 'Study-population created.'
@@ -101,8 +91,8 @@ class ExposureUpdate(BaseUpdateWithFormset):
     formset_factory = forms.EGFormSet
 
     def build_initial_formset_factory(self):
-        return forms.EGFormSet(queryset=self.object.groups.all()\
-                    .order_by('exposure_group_id'))
+        return forms.EGFormSet(queryset=self.object.groups.all()
+                                            .order_by('exposure_group_id'))
 
     def post_object_save(self, form, formset):
         for form in formset:
@@ -131,7 +121,7 @@ class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.StudyCriteriaForm
 
 
-#Factors
+# Factors
 class FactorCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = 'Factor created.'
     parent_model = Assessment
@@ -219,21 +209,30 @@ class AssessedOutcomeReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class FullExport(BaseList):
-    """
-    Full XLS data export for the epidemiology outcome.
-    """
+class AssessedOutcomeList(BaseList):
     parent_model = Assessment
     model = models.AssessedOutcome
-    crud = "Read"
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
             filters["exposure__study_population__study__published"] = True
-        return self.model.objects.filter(**filters)
+        return self.model.objects.filter(**filters).order_by('name')
 
+
+class FullExport(AssessedOutcomeList):
+    """
+    Full XLS data export for the epidemiology outcome.
+    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.AssessedOutcomeFlatComplete(
@@ -386,20 +385,30 @@ class MetaResultReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class MetaResultFullExport(BaseList):
-    """
-    Full XLS data export for the epidemiology meta-analyses.
-    """
+class MetaResultList(BaseList):
     parent_model = Assessment
     model = models.MetaResult
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
 
     def get_queryset(self):
         filters = {"protocol__study__assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
             filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters)
+        return self.model.objects.filter(**filters).order_by('label')
 
+
+class MetaResultFullExport(MetaResultList):
+    """
+    Full XLS data export for the epidemiology meta-analyses.
+    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(

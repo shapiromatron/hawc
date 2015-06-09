@@ -22,7 +22,6 @@ from utils.helper import HAWCDjangoJSONEncoder
 from myuser.models import HAWCUser
 
 
-
 def get_cas_url(cas):
     if cas:
         return u"{}?cas={}".format(reverse('assessment:cas_details'), urlquote(cas))
@@ -74,6 +73,10 @@ class Assessment(models.Model):
     public = models.BooleanField(
         default=False,
         help_text='The assessment can be viewed by the general public.')
+    hide_from_public_page = models.BooleanField(
+        default=False,
+        help_text="If public, anyone with a link can view, "
+                  "but do not show a link on the public-assessment page.")
     enable_literature_review = models.BooleanField(
         default=True,
         help_text="Search or import references from PubMed and other literature "
@@ -162,8 +165,8 @@ class Assessment(models.Model):
 
     def user_can_view_object(self, user):
         """
-        Superusers can view all, noneditible reviews can be viewed, team members or
-        project managers can view.
+        Superusers can view all, noneditible reviews can be viewed, team
+        members or project managers can view.
         Anonymous users on noneditable projects cannot view, nor can those who
         are non members of a project.
         """
@@ -204,7 +207,7 @@ class Assessment(models.Model):
     def user_can_view_attachments(self, user):
         """
         Used for permissions-checking if attachments for a study can be
-        viewed. Checks to ensure user is authenticated and at least a team-member.
+        viewed. Checks to ensure user is authenticated and >= team-member.
         """
         if user.is_superuser:
             return True
@@ -417,7 +420,7 @@ class ReportTemplate(models.Model):
     def get_by_report_type(cls, queryset):
         templates = OrderedDict()
         for typ in cls.REPORT_TYPE_CHOICES:
-            templates[typ[0]]=[]
+            templates[typ[0]] = []
 
         for obj in queryset:
             templates[obj.report_type].append(obj)

@@ -12,16 +12,29 @@ class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
 
-class EndpointsFullExport(BaseList):
+class EndpointsList(BaseList):
     parent_model = Assessment
     model = models.IVEndpoint
 
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
+
     def get_queryset(self):
         filters = {"assessment": self.assessment}
-        perms = super(EndpointsFullExport, self).get_obj_perms()
+        perms = super(EndpointsList, self).get_obj_perms()
         if not perms['edit']:
             filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+        return self.model.objects.filter(**filters).order_by('name')
+
+
+class EndpointsFullExport(EndpointsList):
+    parent_model = Assessment
+    model = models.IVEndpoint
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

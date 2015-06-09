@@ -3,7 +3,7 @@
 {% load add_class %}
 
 {% block title %}
-  {{assessment}} | {{study}} | Edit study-quality | HAWC
+  {{assessment}} | {{study}} | Edit risk-of-bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -14,18 +14,18 @@
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
-    <li><a href="{% url 'study:sqs_detail' study.pk %}">Study-quality</a><span class="divider">/</span></li>
+    <li><a href="{% url 'study:sqs_detail' study.pk %}">Risk-of-bias</a><span class="divider">/</span></li>
     <li class="active"> Edit <span class="divider">/</span></li>
   {% elif crud == "Create" %}
-    <li class="active"> Edit study-quality <span class="divider">/</span></li>
+    <li class="active"> Edit risk-of-bias <span class="divider">/</span></li>
   {% endif %}
 {% endblock %}
 
 {% block content %}
   <form method="post" action=".">
 
-    <legend>{{study}}: Study-quality details</legend>
-    <span class="help-block">Justification for study-quality assessment of selected. Each row contains has the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.</span><br>
+    <legend>{{study}}: risk-of-bias details</legend>
+    <span class="help-block">Justification for risk-of-bias assessment of selected. Each row contains has the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.</span><br>
 
     {{ formset.management_form }}
     {{ formset.non_form_errors.as_ul|add_class:"alert alert-error" }}
@@ -64,7 +64,7 @@
     </table>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">{{ crud }} study-quality</button>
+      <button type="submit" class="btn btn-primary">{{ crud }} risk-of-bias</button>
         <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'study:sqs_detail' study.pk %}{% endif %}" class="btn">Cancel</a>
     </div>
 

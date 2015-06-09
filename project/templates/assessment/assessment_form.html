@@ -33,4 +33,16 @@
 
 {% block extrajs %}
   {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      $('#id_public').on('change', function(){
+        var isPublic = $(this).prop('checked'),
+            hideFromPublic = $("#div_id_hide_from_public_page");
+
+        (isPublic) ? hideFromPublic.show() : hideFromPublic.hide();
+      }).trigger('change');
+
+    });
+  </script>
 {% endblock extrajs %}

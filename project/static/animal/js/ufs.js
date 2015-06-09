@@ -741,7 +741,7 @@ _.extend(UncertaintyFactorPlot.prototype, D3Plot.prototype, {
             .data(this.pods_data)
           .enter().append("circle")
             .attr("r","7")
-            .attr("class", "pod")
+            .attr("class", "ref_vals pod")
             .attr("transform", function(d) {
                     return "translate(" + x(d.x) +
                             "," + (y(d.y)+halfwidth) + ")"; })
@@ -753,7 +753,7 @@ _.extend(UncertaintyFactorPlot.prototype, D3Plot.prototype, {
             .data(this.rfds_data)
           .enter().append("circle")
             .attr("r","7")
-            .attr("class", "rfd")
+            .attr("class", "ref_vals rfd")
             .attr("transform", function(d) {
                     return "translate(" + (x(d.x)) +
                             "," + (y(d.y)+halfwidth) + ")"; })
@@ -817,11 +817,11 @@ _.extend(UncertaintyFactorPlot.prototype, D3Plot.prototype, {
         var items = [],
             self = this;
 
-        items.push({'text':'POD', 'classes':'pod', 'color':undefined});
+        items.push({'text':'POD', 'classes':'ref_vals pod', 'color':undefined});
         this.uf_order.forEach(function(v, i){
-            if (self.plot_div.find('.' + v).length > 0) {items.push({text: v, classes: v, color: undefined});}
+            if (self.plot_div.find('.' + v).length > 0) {items.push({text: v, classes: v + " ref_vals", color: undefined});}
         });
-        items.push({'text':'RfD', 'classes':'rfd', 'color':undefined});
+        items.push({'text':'RfD', 'classes':'ref_vals rfd', 'color':undefined});
 
         var legend_settings = {'items': items};
         legend_settings.box_padding = 5;
