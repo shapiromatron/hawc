@@ -45,9 +45,10 @@ class SVGConverter():
 
     def _process_svg(self, svg):
         """
-        CSS styles must be manually added to the SVG object; after trying numerous
-        tools they couldn't reliably get the information from the browser. Thus,
-        we load a predefined set of styles which are created using the stylesheets.
+        CSS styles must be manually added to the SVG object; after trying
+        numerous tools they couldn't reliably get the information from the
+        browser. Thus, we load a predefined set of styles created using the
+        stylesheets.
         """
         # decode from base64 and convert unicode characters
         svg = svg.decode('base64').replace('%u', '\\u').decode('unicode_escape')
@@ -91,9 +92,9 @@ class SVGConverter():
     @shared_task
     def convert_to_png(self, delete_and_return_object=True):
         """
-        Given an svg data object, convert to a png object, and return the status of
-        if conversion was successful and the object if complete. Uses Inkscape
-        executable software to convert, requires writing files to disk.
+        Given an svg data object, convert to a png object, and return the
+        status of if conversion was successful and the object if complete. Uses
+        Inkscape to convert, requires writing files to disk.
         """
         logger.info('Converting svg to png')
         png = None
@@ -197,9 +198,9 @@ class SVGConverter():
     @shared_task
     def convert_to_pdf(self):
         """
-        Given an svg data object, convert to a pdf object, and return the status of
-        if conversion was successful and the object if complete. Uses Inkscape
-        executable software to convert, requires writing files to disk.
+        Given an svg data object, convert to a pdf object, and return the
+        status of if conversion was successful and the object if complete.
+        Uses Inkscape to convert, requires writing files to disk.
         """
         logger.info('Converting svg to pdf')
         pdf = None
@@ -232,7 +233,7 @@ def get_chemspider_details(cas_number):
         if cas_number:
             try:
                 # get chemspider chem id
-                url='http://www.chemspider.com/Search.asmx/SimpleSearch'
+                url = 'http://www.chemspider.com/Search.asmx/SimpleSearch'
                 payload = {'query': cas_number,
                            'token': settings.CHEMSPIDER_TOKEN}
                 r = requests.post(url, data=payload)
@@ -240,12 +241,12 @@ def get_chemspider_details(cas_number):
                 id_val = re.search(r'\<int\>(\d+)\</int\>', r.content).group(1)
 
                 # get details
-                url='http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo'
+                url = 'http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo'
                 payload = {'CSID': id_val,
                            'token': settings.CHEMSPIDER_TOKEN}
                 r = requests.post(url, data=payload)
                 xml = ET.fromstring(r.content)
-                namespace='{http://www.chemspider.com/}'
+                namespace = '{http://www.chemspider.com/}'
                 d['CommonName'] = xml.find('{ns}CommonName'.format(ns=namespace)).text
                 d['SMILES'] = xml.find('{ns}SMILES'.format(ns=namespace)).text
                 d['MW'] = xml.find('{ns}MolecularWeight'.format(ns=namespace)).text

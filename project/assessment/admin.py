@@ -6,12 +6,17 @@ from pagedown.widgets import AdminPagedownWidget
 from . import models
 
 
-#http://www.b-list.org/weblog/2008/dec/24/admin/
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__', 'get_managers', 'get_team_members', 'get_reviewers')
+    list_display = (
+        '__unicode__', 'get_managers', 'get_team_members', 'get_reviewers'
+    )
     list_per_page = 10
-    search_fields = ('name', 'project_manager__last_name', 'team_members__last_name', 'reviewers__last_name')
     list_filter = ('editable', 'public', )
+
+    search_fields = (
+        'name', 'project_manager__last_name',
+        'team_members__last_name', 'reviewers__last_name'
+    )
 
     def queryset(self, request):
         qs = super(AssessmentAdmin, self).queryset(request)
@@ -60,14 +65,17 @@ class ChangeLogAdmin(admin.ModelAdmin):
 
     # form options
     formfield_overrides = {
-        TextField: {'widget': AdminPagedownWidget },
+        TextField: {'widget': AdminPagedownWidget},
     }
 
     prepopulated_fields = {"slug": ("date", "name")}
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):
-    list_display = ('assessment', 'get_report_type_display', 'description', 'created', 'last_updated')
+    list_display = (
+        'assessment', 'get_report_type_display', 'description',
+        'created', 'last_updated'
+    )
 
 
 admin.site.register(models.Assessment, AssessmentAdmin)

@@ -19,7 +19,7 @@ from celery import chain
 from . import forms, models, tasks
 
 
-#General views
+# General views
 class Home(TemplateView):
     template_name = 'hawc/home.html'
 
@@ -56,7 +56,7 @@ class Error500(TemplateView):
     template_name = '500.html'
 
 
-#Assessment Object
+# Assessment Object
 class AssessmentPortal(LoginRequiredMixin, ListView):
     model = models.Assessment
     template_name = "assessment/portal.html"
@@ -179,7 +179,7 @@ class AssessmentEmailManagers(MessageMixin, FormView):
         return super(AssessmentEmailManagers, self).form_valid(form)
 
 
-#Word Templates
+# Word Templates
 class ReportTemplateCreate(BaseCreate):
     success_message = 'Report template created.'
     parent_model = models.Assessment
@@ -213,7 +213,7 @@ class ReportTemplateDelete(BaseDelete):
         return reverse_lazy("assessment:template_list", kwargs={"pk": self.assessment.pk})
 
 
-#Endpoint objects
+# Endpoint objects
 class EndpointJSON(BaseDetail):
     model = models.BaseEndpoint
 
@@ -246,7 +246,7 @@ class ChangeLogDetail(DetailView):
     model = models.ChangeLog
 
 
-#Assorted functionality
+# Assorted functionality
 class CASDetails(TemplateView):
 
     def get(self, request, *args, **kwargs):
