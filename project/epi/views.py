@@ -385,20 +385,30 @@ class MetaResultReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class MetaResultFullExport(BaseList):
-    """
-    Full XLS data export for the epidemiology meta-analyses.
-    """
+class MetaResultList(BaseList):
     parent_model = Assessment
     model = models.MetaResult
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
 
     def get_queryset(self):
         filters = {"protocol__study__assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
             filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters)
+        return self.model.objects.filter(**filters).order_by('label')
 
+
+class MetaResultFullExport(MetaResultList):
+    """
+    Full XLS data export for the epidemiology meta-analyses.
+    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(

@@ -133,6 +133,10 @@ urlpatterns = patterns('',
         name='mp_delete'),
 
     # meta-result views
+    url(r'^assessment/(?P<pk>\d+)/meta-results/$',
+        views.MetaResultList.as_view(),
+        name='metaresult_list'),
+
     url(r'^meta-protocol/(?P<pk>\d+)/meta-result/create/$',
         views.MetaResultCreate.as_view(),
         name='mr_create'),
