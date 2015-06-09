@@ -18,6 +18,10 @@ urlpatterns = patterns('',
 
     # endpoint
     url(r'^endpoint/(?P<pk>\d+)/$',
+        views.EndpointsList.as_view(),
+        name='endpoint_list'),
+
+    url(r'^endpoint/(?P<pk>\d+)/$',
         views.EndpointDetail.as_view(),
         name='endpoint_detail'),
 
