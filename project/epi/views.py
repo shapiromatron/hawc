@@ -14,16 +14,6 @@ from study.views import StudyRead
 from . import forms, models, exports
 
 
-# Study-level
-class EpiStudyList(BaseList):
-    parent_model = Assessment
-    model = Study
-    template_name = 'epi/epistudy_list.html'
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment, study_type=1)
-
-
 # Study populations
 class StudyPopulationCreate(BaseCreate):
     success_message = 'Study-population created.'
@@ -101,8 +91,8 @@ class ExposureUpdate(BaseUpdateWithFormset):
     formset_factory = forms.EGFormSet
 
     def build_initial_formset_factory(self):
-        return forms.EGFormSet(queryset=self.object.groups.all()\
-                    .order_by('exposure_group_id'))
+        return forms.EGFormSet(queryset=self.object.groups.all()
+                                            .order_by('exposure_group_id'))
 
     def post_object_save(self, form, formset):
         for form in formset:
@@ -131,7 +121,7 @@ class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.StudyCriteriaForm
 
 
-#Factors
+# Factors
 class FactorCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = 'Factor created.'
     parent_model = Assessment

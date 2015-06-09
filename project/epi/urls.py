@@ -14,10 +14,6 @@ router.register(r'assessed-outcome', api.AssessedOutcome, base_name="assessed-ou
 urlpatterns = patterns('',
 
     # overall views
-    url(r'^assessment/(?P<pk>\d+)/$',
-        views.EpiStudyList.as_view(),
-        name='epistudy_list'),
-
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
         views.FullExport.as_view(),
         name='export'),
