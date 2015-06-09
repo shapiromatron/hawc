@@ -73,6 +73,10 @@ class Assessment(models.Model):
     public = models.BooleanField(
         default=False,
         help_text='The assessment can be viewed by the general public.')
+    hide_from_public_page = models.BooleanField(
+        default=False,
+        help_text="If public, anyone with a link can view, "
+                  "but do not show a link on the public-assessment page.")
     enable_literature_review = models.BooleanField(
         default=True,
         help_text="Search or import references from PubMed and other literature "

@@ -75,7 +75,10 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        return self.model.objects.filter(public=True)
+        return self.model.objects.filter(
+            public=True,
+            hide_from_public_page=False
+        ).order_by('name')
 
 
 class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
