@@ -209,21 +209,30 @@ class AssessedOutcomeReport(GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class FullExport(BaseList):
-    """
-    Full XLS data export for the epidemiology outcome.
-    """
+class AssessedOutcomeList(BaseList):
     parent_model = Assessment
     model = models.AssessedOutcome
-    crud = "Read"
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
 
     def get_queryset(self):
         filters = {"assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
             filters["exposure__study_population__study__published"] = True
-        return self.model.objects.filter(**filters)
+        return self.model.objects.filter(**filters).order_by('name')
 
+
+class FullExport(AssessedOutcomeList):
+    """
+    Full XLS data export for the epidemiology outcome.
+    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.AssessedOutcomeFlatComplete(

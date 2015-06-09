@@ -18,6 +18,10 @@ urlpatterns = patterns('',
         views.FullExport.as_view(),
         name='export'),
 
+    url(r'^assessment/(?P<pk>\d+)/assessed-outcomes/$',
+        views.AssessedOutcomeList.as_view(),
+        name='assessedoutcome_list'),
+
     url(r'^assessment/(?P<pk>\d+)/report/$',
         views.AssessedOutcomeReport.as_view(),
         name='ao_report'),
