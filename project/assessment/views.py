@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Q
+from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
@@ -228,6 +229,46 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = 'assessment'
     model = models.EffectTag
     form_class = forms.EffectTagForm
+
+
+class BaseEndpointList(BaseList):
+    parent_model = models.Assessment
+    model = models.BaseEndpoint
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseEndpointList, self).get_context_data(**kwargs)
+
+        eps = self.model.endpoint\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        aos = self.model.assessedoutcome\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        mrs = get_model('epi', 'metaresult')\
+            .objects\
+            .filter(protocol__study__assessment_id=self.assessment.id)\
+            .count()
+
+        iveps = self.model.ivendpoint\
+            .related.model.objects\
+            .filter(assessment_id=self.assessment.id)\
+            .count()
+
+        alleps = eps + aos + mrs + iveps
+
+        context.update({
+            "ivendpoints": iveps,
+            "endpoints": eps,
+            "assessed_outcomes": aos,
+            "meta_results": mrs,
+            "total_endpoints": alleps
+        })
+
+        return context
 
 
 # Changelog views

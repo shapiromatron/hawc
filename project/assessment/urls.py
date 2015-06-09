@@ -58,6 +58,9 @@ urlpatterns = patterns('assessment.views',
         name='template_delete'),
 
     # endpoint objects
+    url(r'^(?P<pk>\d+)/endpoints/$',
+        views.BaseEndpointList.as_view(),
+        name='endpoint_list'),
     url(r'^endpoint/(?P<pk>\d+)/json/$',
         views.EndpointJSON.as_view(),
         name='endpoint_json'),

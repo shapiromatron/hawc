@@ -12,7 +12,7 @@
 
     {% if assessment.enable_data_extraction %}
         <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
-        <li class=""><a href="{% url 'animal:endpoint_list' assessment.pk %}">Endpoint List</a></li>
+        <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint List</a></li>
         <li class=""><a href="{% url 'animal:assessment_endpoint_search' assessment.pk %}">Endpoint Search</a></li>
         <li class=""><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
     {% endif %}
