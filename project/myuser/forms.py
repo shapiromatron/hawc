@@ -114,6 +114,11 @@ class UserProfileForm(ModelForm):
         model = models.UserProfile
         fields = ("first_name", "last_name", "HERO_access")
 
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields["first_name"].initial = self.instance.user.first_name
+        self.fields["last_name"].initial = self.instance.user.last_name
+
     def save(self, commit=True):
         # save content to both UserProfile and User
         up = super(UserProfileForm, self).save(commit=False)
