@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth import get_backends
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 
 from selectable.forms import AutoCompleteSelectMultipleField
 
@@ -61,6 +61,30 @@ class PasswordForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class HAWCSetPasswordForm(SetPasswordForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCSetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].help_text = _PASSWORD_HELP
+
+    def clean_new_password1(self):
+        pw = self.cleaned_data['new_password1']
+        checkPasswordComplexity(pw)
+        return pw
+
+
+class HAWCPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].help_text = _PASSWORD_HELP
+
+    def clean_new_password1(self):
+        pw = self.cleaned_data['new_password1']
+        checkPasswordComplexity(pw)
+        return pw
 
 
 class RegisterForm(PasswordForm):

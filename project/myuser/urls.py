@@ -41,7 +41,10 @@ urlpatterns = patterns('',
         name='reset_password_sent'),
     url(r'^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
         password_reset_confirm,
-        {"post_reset_redirect": reverse_lazy("user:password_reset_complete")},
+        {
+            "set_password_form": forms.HAWCSetPasswordForm,
+            "post_reset_redirect": reverse_lazy("user:password_reset_complete")
+        },
         name='reset_password_confirm'),
     url(r'^password-reset-done/$',
         password_reset_done,

@@ -1,6 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import PasswordChangeForm
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
@@ -73,7 +72,7 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
     """
     template_name = 'myuser/userprofile_form.html'
     success_url = reverse_lazy('user:settings')
-    form_class = PasswordChangeForm
+    form_class = forms.HAWCPasswordChangeForm
     success_message = 'Password changed.'
 
     def get_object(self, queryset=None):
