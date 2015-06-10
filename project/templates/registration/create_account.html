@@ -1,43 +1,21 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
-{% load add_class %}
 
 {% block title %}
-  Create Account | HAWC
+  Create account | HAWC
 {% endblock %}
+
 
 {% block main_content %}
   <div class='row-fluid'>
     <div class="span8 offset2">
-      <form class="loginForm form-horizontal" method="post">
-      <fieldset>
-        <legend>Create an account</legend>
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {{field}}<br>
-              <p class='help-block'>{{field.help_text}}</p>
-              {{field.errors|add_class:"alert alert-error"}}
-            </div>
-          </div>
-        {% endfor %}
-        {{ form.non_field_errors }}
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Create account</button>
-          <a href='{% url 'user:login' %}' class='btn'>Cancel</a>
-        </div>
-
-        {% csrf_token %}
-
-      </fieldset>
-    </form>
-
-    {% include "hawc_license.html" %}
-
+      {% crispy form %}
+    </div>
   </div>
-  </div>
-{% endblock %}
+  {% include "hawc_license.html" %}
+{% endblock main_content %}
+
 
 {% block extrajs %}
   <script type="text/javascript">
