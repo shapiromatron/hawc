@@ -2,23 +2,6 @@
 
 {% load url from future %}
 
-{% block topnavbar %}
-  <div class="nav-collapse collapse">
-    <ul class="nav pull-right">
-      <li><a href="{% url 'contact' %}">Contact us</a></li>
-      <li><a href="{% url 'documentation' %}">Info</a></li>
-      <li><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
-      <div class="btn-group pull-right">
-      {% if user.is_authenticated %}
-        <li><a href="{% url 'portal' %}">Portal</a></li>
-      {% else %}
-        <li><a href="{% url 'portal' %}"  class="btn btn-inverse">Login</a></li>
-      {% endif %}
-      </div>
-    </ul>
-  </div>
-{% endblock %}
-
 {% block main_content %}
 
   <div class="row">

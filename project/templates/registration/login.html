@@ -8,30 +8,6 @@
   Login | HAWC
 {% endblock %}
 
-{% block branding %}
-  <a href="{% url 'portal' %}"><img class="pull-left" style="height: 40px;" src="{{STATIC_URL}}img/HAWC-120.png"></a>
-{% endblock %}
-
-{% block messages %}
-
-  {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
-    <div class="alert alert-error">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {% blocktrans count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
-    </div>
-  {% endif %}
-
-  {% if form.non_field_errors or form.this_is_the_login_form.errors %}
-    {% for error in form.non_field_errors|add:form.this_is_the_login_form.errors %}
-      <div class="alert alert-error">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ error }}
-      </div>
-    {% endfor %}
-  {% endif %}
-
-{% endblock messages %}
-
 {% block main_content %}
 
   <div class='row-fluid'>
