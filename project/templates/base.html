@@ -38,7 +38,7 @@
 
           {% block branding %}
           <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
-            <img class="pull-left" style="height: 40px;" src="{{STATIC_URL}}img/HAWC-120.png">
+            <img class="pull-left" src="{{STATIC_URL}}img/HAWC-40.png">
             <span class="brand">{% server_role_text %}</span>
           </a>
           {% endblock %}
