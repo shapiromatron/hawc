@@ -63,21 +63,6 @@ input[type=number] {
 }
 
 
-/* Logos on documentation page */
-.logos {
-  max-height: 75px;
-  margin-right: 35px;
-  margin-bottom: 40px;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  transition: 0.5s ease-in;
-}
-.logos:hover {
-    opacity: 0.8;
-    border: 2px solid gray;
-    transition: 0.5s ease-out;
-}
-
 /* Override bootstrap modal width */
 .modal {
   width: 950px;
@@ -89,6 +74,17 @@ input[type=number] {
 .modal.fade.in {
   top: 2%;
 }
+
+
+/* Login form */
+.loginForm{
+  margin-top: 15px;
+  padding: 30px 15px 0px 15px;
+  border: 2px solid gray;
+  border-radius: 5px;
+  box-shadow: 0 0 2em #888888;
+}
+
 
 
 /* Versioning */
@@ -108,6 +104,7 @@ input[type=number] {
   color: #8B1A1A;
   padding: 0 2px 0 2px;
 }
+
 
 /* Risk of Bias */
 .sq_score{

@@ -2,16 +2,20 @@
 
 {% load add_class %}
 
+
 {% block main_content %}
-  <div class="row-fluid">
-    <form class="span8 offset2 form-horizontal" action="." method="post">
 
+  <div class='row-fluid'>
+    <div class="span8 offset2">
+      <form class="loginForm" method="post">
       {% csrf_token %}
-
       <fieldset>
         <legend>Contact HAWC developers</legend>
-        <span class="help-block">Got a question? Use this form to contact the
-          HAWC providers and developers.</span><br>
+
+        <p class="help-block">
+          Have a question, comment, or need some help?
+          Use this form to to let us know what's going on.
+        </p>
 
         {{ form.non_field_errors|add_class:"alert alert-error" }}
 
@@ -20,20 +24,17 @@
             {{field.label_tag|add_class:"control-label"}}
             <div class="controls">
               {{field}}
-              <span class='help-inline'>{{field.help_text}}</span>
             </div>
             {{field.errors|add_class:"alert alert-error"}}
           </div>
         {% endfor %}
       </fieldset>
-
-      <div class="row-fluid">
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a class="btn" href="{{request.META.HTTP_REFERER}}">Cancel</a>
       </div>
-
     </form>
+  </div>
   </div>
 
 {% endblock %}

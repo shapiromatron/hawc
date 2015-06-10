@@ -7,13 +7,11 @@
 {% endblock %}
 
 {% block main_content %}
-  <div class="row-fluid">
-
-    <form class="form-horizontal span8 offset2" action="." method="post">
+  <div class='row-fluid'>
+    <div class="span8 offset2">
+      <form class="loginForm form-horizontal" method="post">
       <fieldset>
-        <legend>New account creation</legend>
-        <span class="help-block">Create a new HAWC account. Note that this software is currently in beta, so it recommended to use a unique password for accessing this account, as these may change dramatically with time (passwords can always be changed as well).</span><br>
-
+        <legend>Create an account</legend>
         {% for field in form %}
           <div class="control-group form-row">
             {{field.label_tag|add_class:"control-label"}}
@@ -27,7 +25,7 @@
         {{ form.non_field_errors }}
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Create account</button>
-          <a href='{% url 'home' %}' class='btn'>Cancel</a>
+          <a href='{% url 'user:login' %}' class='btn'>Cancel</a>
         </div>
 
         {% csrf_token %}
@@ -37,6 +35,7 @@
 
     {% include "hawc_license.html" %}
 
+  </div>
   </div>
 {% endblock %}
 

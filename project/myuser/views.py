@@ -8,6 +8,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
 
+from django.views.generic.base import RedirectView
 from utils.views import LoginRequiredMixin, MessageMixin
 
 from . import forms, models
@@ -106,3 +107,11 @@ class SetUserPassword(MessageMixin, UpdateView):
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(SetUserPassword, self).dispatch(request, *args, **kwargs)
+
+
+class PasswordChanged(MessageMixin, RedirectView):
+    success_message = "Password changed."
+
+    def get_redirect_url(self):
+        self.send_message()
+        return reverse_lazy('user:login')
