@@ -50,9 +50,6 @@ urlpatterns = patterns('',
         name='visualization_delete'),
 
     # DATA-PIVOT
-    url(r'^data-pivot/$',
-        views.GeneralDataPivot.as_view(),
-        name='dp_general'),
     url(r'^data-pivot/excel-unicode-saving/$',
         views.ExcelUnicode.as_view(),
         name="dp_excel-unicode"),
