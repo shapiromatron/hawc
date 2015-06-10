@@ -10,14 +10,25 @@ from assessment import lookups
 from . import models
 
 
+_PASSWORD_HELP = ('Password must be at least eight characters in length, ' +
+                  'at least one special character, and at least one digit.')
+
+
+def checkPasswordComplexity(pw):
+    special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
+    if (
+        (len(pw) < 8) or
+        (not any(char.isdigit() for char in pw)) or
+        (not any(char in special_characters for char in pw))
+    ):
+        raise forms.ValidationError(_PASSWORD_HELP)
+
+
 class PasswordForm(forms.ModelForm):
-    _password_help_text = (
-        'Password must be at least eight characters in length, ' +
-        'at least one special character, and at least one digit.')
 
     password1 = forms.CharField(label='Password',
                                 widget=forms.PasswordInput,
-                                help_text=_password_help_text)
+                                help_text=_PASSWORD_HELP)
     password2 = forms.CharField(label='Password confirmation',
                                 widget=forms.PasswordInput)
 
@@ -26,15 +37,11 @@ class PasswordForm(forms.ModelForm):
         fields = ("password1", "password2")
 
     def clean_password1(self):
-        special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
-        password1 = self.cleaned_data['password1']
-        if not self.fields['password1'].required and password1 == "":
-            return password1
-        if ((len(password1) < 8) or
-            (not any(char.isdigit() for char in password1)) or
-            (not any(char in special_characters for char in password1))):
-            raise forms.ValidationError(self._password_help_text)
-        return password1
+        pw = self.cleaned_data['password1']
+        if not self.fields['password1'].required and pw == "":
+            return pw
+        checkPasswordComplexity(pw)
+        return pw
 
     def clean_password2(self):
         # Check that the two password entries match
