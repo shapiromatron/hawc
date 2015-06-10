@@ -1,41 +1,23 @@
-{% extends 'hawc/home.html' %}
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
-{% load add_class %}
+
+{% block title %}
+  Login | HAWC
+{% endblock %}
 
 
 {% block main_content %}
-
   <div class='row-fluid'>
     <div class="span8 offset2">
-      <form class="loginForm" method="post">
-      {% csrf_token %}
-      <fieldset>
-        <legend>Contact HAWC developers</legend>
-
-        <p class="help-block">
-          Have a question, comment, or need some help?
-          Use this form to to let us know what's going on.
-        </p>
-
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {{field}}
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a class="btn" href="{{request.META.HTTP_REFERER}}">Cancel</a>
-      </div>
-    </form>
+      {% crispy form %}
+    </div>
   </div>
-  </div>
+{% endblock main_content %}
 
-{% endblock %}
 
+{% block extrajs %}
+  <script type="text/javascript">
+    document.getElementById('id_name').focus();
+  </script>
+{% endblock extrajs %}

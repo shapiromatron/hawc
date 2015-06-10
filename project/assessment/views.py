@@ -3,7 +3,7 @@ import json
 from django.db.models import Q
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -39,6 +39,12 @@ class ContactUs(MessageMixin, FormView):
     form_class = forms.ContactForm
     success_url = reverse_lazy('home')
     success_message = 'Your message has been sent!'
+
+    def get_form_kwargs(self):
+        kwargs = super(ContactUs, self).get_form_kwargs()
+        kwargs['back_href'] = self.request.META.get(
+            'HTTP_REFERER', reverse('portal'))
+        return kwargs
 
     def form_valid(self, form):
         form.send_email()
