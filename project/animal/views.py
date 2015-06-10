@@ -464,19 +464,6 @@ class EndpointReadJSON(BaseDetail):
         return HttpResponse(self.object.d_response(), content_type="application/json")
 
 
-class EndpointDRplot(EndpointRead):
-    """Dose-response plot for endpoint only"""
-    template_name = "animal/endpoint_dr.html"
-
-
-class EndpointTDRplot(TemplateView):
-    template_name = "animal/endpoint_tdr.html"
-
-
-class ReviewPlot(TemplateView):
-    template_name = "animal/review_plot.html"
-
-
 class EndpointDelete(BaseDelete):
     success_message = 'Endpoint deleted.'
     model = models.Endpoint
