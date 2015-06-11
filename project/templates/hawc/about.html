@@ -2,7 +2,7 @@
 
 
 {% block main_content %}
-<div class="row">
+  <div class="row">
     <div class="span12">
       <h1>About us</h1>
       <p>
@@ -140,6 +140,9 @@
         <li><a href="http://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/recipients.welcome/displayOption/grants">
           <img src="{{STATIC_URL}}img/epa-star-75.png"></a></li>
 
+        <li><a href="http://monographs.iarc.fr/">
+          <img src="{{STATIC_URL}}img/logoiarc.gif"
+               style="margin-top: 10px; max-width: 250px;"></a></li>
       </ul>
     </div>
     <div class="clearfix"></div>
@@ -147,10 +150,10 @@
       <p><i>
         The contents of HAWC are solely the responsibility of the users and
         developers, and do not necessarily represent the official views of the
-        EPA or NIH. Further, the EPA and NIH do not endorse the purchase
-        or use of any commercial or open-source products or services that were
-        used in the development of HAWC.
+        EPA, NIH, or WHO. Further, the EPA, NIH, and WHO do not endorse the
+        purchase or use of any commercial or open-source products or services
+        that were used in the development of HAWC.
       </i></p>
     </div>
-</div>
+  </div>
 {% endblock %}
