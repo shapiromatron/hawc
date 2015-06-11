@@ -6,9 +6,12 @@ from StringIO import StringIO
 
 from django.db import models
 from django.db.models.loading import get_model
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -239,6 +242,50 @@ class Assessment(models.Model):
             .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))\
             .exclude(id=exclusion_id)\
             .distinct()
+
+
+class Attachment(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    title = models.CharField(max_length=128)
+    attachment = models.FileField(upload_to="attachment")
+    publicly_available = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return self.content_object.get_absolute_url()
+
+    def get_edit_url(self):
+        return reverse('assessment:attachment_update', args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse('assessment:attachment_delete', args=[self.pk])
+
+    def get_dict(self):
+        return {
+            "url": self.get_absolute_url(),
+            "url_delete": self.get_delete_url(),
+            "url_update": self.get_update_url(),
+            "title": self.title,
+            "description": self.description
+        }
+
+    def get_assessment(self):
+        return self.content_object.get_assessment()
+
+    @classmethod
+    def get_attachments(cls, obj, isPublic):
+        filters = {
+            "content_type": ContentType.objects.get_for_model(obj),
+            "object_id": obj.id
+        }
+        if isPublic:
+            filters["publicly_available"] = True
+        return cls.objects.filter(**filters)
 
 
 @receiver(post_save, sender=Assessment)

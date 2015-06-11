@@ -22,6 +22,7 @@
           <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
           <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
           <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
+          <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
 
           {% if user.is_staff %}
             <li class="divider"></li>
@@ -158,6 +159,10 @@
       {% endif %}
     </tbody>
   </table>
+
+  {% if crud == "Read" %}
+    {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
+  {% endif %}
 
   {% if crud == "Read" and assessment.enable_reference_values and object.reference_values.count > 0 %}
     <h2>Reference Values</h2>

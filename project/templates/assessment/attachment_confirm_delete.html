@@ -1,0 +1,17 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+    {{object.content_object}} | {{object}} | Delete
+{% endblock title %}
+
+{% block breadcrumbs %}
+    <li><a href="{{object.get_absolute_url}}">{{object.content_object}}</a><span class="divider">/</span></li>
+    <li class="active">delete {{object}}<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <h1>Delete <a href="{{object.attachment.url}}">{{object}}</a></h1>
+    <p>{{object.description|safe}}</p>
+
+    {% include "hawc/_delete_block.html" with name="attachment" notes="This will remove the attachment." %}
+{% endblock content %}

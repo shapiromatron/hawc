@@ -2,6 +2,7 @@ from django.core.mail import send_mail, mail_admins
 from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.contenttypes.models import ContentType
 
 from selectable.forms import AutoCompleteWidget, AutoCompleteSelectMultipleWidget
 from pagedown.widgets import PagedownWidget
@@ -104,6 +105,41 @@ class AssessmentModulesForm(forms.ModelForm):
                 """,
             "cancel_url": self.instance.get_absolute_url()
         }
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
+
+
+class AttachmentForm(forms.ModelForm):
+    class Meta:
+        model = models.Attachment
+        exclude = ('content_type', 'object_id', 'content_object')
+
+    def __init__(self, *args, **kwargs):
+        obj = kwargs.pop('parent', None)
+        super(AttachmentForm, self).__init__(*args, **kwargs)
+        if obj:
+            self.instance.content_type = ContentType.objects.get_for_model(obj)
+            self.instance.object_id = obj.id
+            self.instance.content_object = obj
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+                widget.attrs['class'] += " html5text"
+
+        if self.instance.id:
+            inputs = {"legend_text": u"Update {}".format(self.instance)}
+        else:
+            inputs = {"legend_text": u"Create new attachment"}
+        inputs["cancel_url"] = self.instance.get_absolute_url()
+
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper

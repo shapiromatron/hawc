@@ -40,6 +40,20 @@ urlpatterns = patterns('assessment.views',
         views.AssessmentEmailManagers.as_view(),
         name='email_managers'),
 
+    # attachment objects
+    url(r'^(?P<pk>\d+)/attachment/create/$',
+        views.AttachmentCreate.as_view(),
+        name='attachment_create'),
+    url(r'^attachment/(?P<pk>\d+)/$',
+        views.AttachmentRead.as_view(),
+        name='attachment_detail'),
+    url(r'^attachment/(?P<pk>\d+)/update/$',
+        views.AttachmentUpdate.as_view(),
+        name='attachment_update'),
+    url(r'^attachment/(?P<pk>\d+)/delete/$',
+        views.AttachmentDelete.as_view(),
+        name='attachment_delete'),
+
     # report-template objects
     url(r'^(?P<pk>\d+)/templates/$',
         views.ReportTemplateList.as_view(),

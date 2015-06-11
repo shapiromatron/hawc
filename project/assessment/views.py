@@ -1,5 +1,7 @@
 import json
 
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
@@ -100,6 +102,10 @@ class AssessmentRead(BaseDetail):
         context = super(AssessmentRead, self).get_context_data(**kwargs)
         context['comment_object_type'] = "assessment"
         context['comment_object_id'] = self.object.pk
+        context['attachments'] = models.Attachment.get_attachments(
+            self.object,
+            not context['obj_perms']['edit']
+        )
         return context
 
 
@@ -181,6 +187,43 @@ class AssessmentEmailManagers(MessageMixin, FormView):
     def form_valid(self, form):
         form.send_email()
         return super(AssessmentEmailManagers, self).form_valid(form)
+
+
+# Attachment views
+class AttachmentCreate(BaseCreate):
+    success_message = 'Attachment added.'
+    parent_model = models.Assessment
+    parent_template_name = 'parent'
+    model = models.Attachment
+    form_class = forms.AttachmentForm
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+class AttachmentRead(BaseDetail):
+    model = models.Attachment
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.assessment.user_can_view_attachments(self.request.user):
+            return HttpResponseRedirect(self.object.attachment.url)
+        else:
+            return PermissionDenied
+
+
+class AttachmentUpdate(BaseUpdate):
+    success_message = 'Assessment updated.'
+    model = models.Attachment
+    form_class = forms.AttachmentForm
+
+
+class AttachmentDelete(BaseDelete):
+    success_message = 'Attachment deleted.'
+    model = models.Attachment
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 # Word Templates
