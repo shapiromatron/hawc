@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.http import HttpResponse
+from django.views.generic import TemplateView
 
 from assessment import views
 
@@ -10,7 +10,9 @@ urlpatterns = patterns('',
     #--------
     url(r'^$', views.Home.as_view(), name='home'),
     url(r'^portal/$', views.AssessmentPortal.as_view(), name='portal'),
-    url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
+    url(r'^robots\.txt$',
+        TemplateView.as_view(template_name='robots.txt',
+                             content_type='text/plain')),
     url(r'^about/$',
         views.About.as_view(), name='about'),
     url(r'^contact/$',
