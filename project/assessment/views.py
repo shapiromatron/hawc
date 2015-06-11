@@ -64,9 +64,9 @@ class Error500(TemplateView):
 
 
 # Assessment Object
-class AssessmentPortal(LoginRequiredMixin, ListView):
+class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
-    template_name = "assessment/portal.html"
+    template_name = "assessment/assessment_home.html"
 
 
 class AssessmentFullList(LoginRequiredMixin, ListView):
@@ -91,12 +91,6 @@ class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
     success_message = 'Assessment created.'
     model = models.Assessment
     form_class = forms.AssessmentForm
-    crud = 'Create'
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateView, self).get_context_data(**kwargs)
-        context['crud'] = self.crud
-        return context
 
 
 class AssessmentRead(BaseDetail):
@@ -115,9 +109,8 @@ class AssessmentUpdate(BaseUpdate):
     form_class = forms.AssessmentForm
 
 
-class AssessmentModulesUpdate(BaseUpdate):
+class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = 'Assessment modules updated.'
-    model = models.Assessment
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
 

@@ -39,7 +39,6 @@
       <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
     </div>
 
-    <!--Body content-->
     <div id="content"
          class="{% if request.session.hideSidebar %}span11{%else%}span9{% endif %}">
       <div class="{% block content_type %}{% endblock %}">
@@ -48,7 +47,6 @@
       </div>
     </div>
   </div>
-
 
 {% endblock %}
 

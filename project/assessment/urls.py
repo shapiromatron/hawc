@@ -6,7 +6,7 @@ from . import views
 urlpatterns = patterns('assessment.views',
 
     # assessment objects
-    url(r'^superuser/$',
+    url(r'^all/$',
         views.AssessmentFullList.as_view(),
         name='full_list'),
     url(r'^public/$',
