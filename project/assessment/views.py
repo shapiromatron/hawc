@@ -30,25 +30,25 @@ class Home(TemplateView):
         return super(Home, self).get(request, *args, **kwargs)
 
 
-class Documentation(TemplateView):
-    template_name = 'hawc/docs.html'
+class About(TemplateView):
+    template_name = 'hawc/about.html'
 
 
-class ContactUs(MessageMixin, FormView):
-    template_name = 'hawc/contact_us.html'
+class Contact(MessageMixin, FormView):
+    template_name = 'hawc/contact.html'
     form_class = forms.ContactForm
     success_url = reverse_lazy('home')
     success_message = 'Your message has been sent!'
 
     def get_form_kwargs(self):
-        kwargs = super(ContactUs, self).get_form_kwargs()
+        kwargs = super(Contact, self).get_form_kwargs()
         kwargs['back_href'] = self.request.META.get(
             'HTTP_REFERER', reverse('portal'))
         return kwargs
 
     def form_valid(self, form):
         form.send_email()
-        return super(ContactUs, self).form_valid(form)
+        return super(Contact, self).form_valid(form)
 
 
 class Error403(TemplateView):

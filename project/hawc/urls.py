@@ -11,8 +11,10 @@ urlpatterns = patterns('',
     url(r'^$', views.Home.as_view(), name='home'),
     url(r'^portal/$', views.AssessmentPortal.as_view(), name='portal'),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
-    url(r'^documentation/$', views.Documentation.as_view(), name='documentation'),
-    url(r'^contact-us/$', views.ContactUs.as_view(), name='contact'),
+    url(r'^about/$',
+        views.About.as_view(), name='about'),
+    url(r'^contact/$',
+        views.Contact.as_view(), name='contact'),
 
     # Apps
     #------
