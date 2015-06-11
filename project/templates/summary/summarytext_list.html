@@ -10,33 +10,6 @@
   class="fill" data-spy="scroll" data-target="#sidebar" data-offset="40"
 {% endblock %}
 
-{% block branding %}
-  <a class="brand" href="{% url 'portal' %}">HAWC</a>
-{% endblock %}
-
-{% block topnavbar %}
-  <div class="btn-group pull-right">
-    {% if user.is_anonymous %}
-      <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
-    {% else %}
-      <button href="#" class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown">Settings <i class="icon-cog icon-white"></i></button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'portal' %}">Portal</a></li>
-        <li><a href="{% url 'user:settings' %}">Settings</a></li>
-        {% if user.is_staff %}
-          <li class="divider"></li>
-          <li><a href="{%url 'admin:index' %}">Admin</a></li>
-          {% if user.is_superuser %}
-           <li><a href="{% url 'assessment:full_list' %}">Superuser assessments list</a></li>
-          {% endif %}
-        {% endif %}
-        <li class="divider"></li>
-        <li><a href="{% url 'user:logout' %}">Logout</a></li>
-      </ul>
-   {% endif %}
-  </div>
-{% endblock %}
-
 {% block main_content %}
   <div class="row-fluid">
     <ul class="breadcrumb">

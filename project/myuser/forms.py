@@ -1,23 +1,39 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth import get_backends
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from django.core.urlresolvers import reverse
+
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 
 from selectable.forms import AutoCompleteSelectMultipleField
 
 from assessment import lookups
+from utils.forms import BaseFormHelper
 
 from . import models
 
 
+_PASSWORD_HELP = ('Password must be at least eight characters in length, ' +
+                  'at least one special character, and at least one digit.')
+
+
+def checkPasswordComplexity(pw):
+    special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
+    if (
+        (len(pw) < 8) or
+        (not any(char.isdigit() for char in pw)) or
+        (not any(char in special_characters for char in pw))
+    ):
+        raise forms.ValidationError(_PASSWORD_HELP)
+
+
 class PasswordForm(forms.ModelForm):
-    _password_help_text = (
-        'Password must be at least eight characters in length, ' +
-        'at least one special character, and at least one digit.')
 
     password1 = forms.CharField(label='Password',
                                 widget=forms.PasswordInput,
-                                help_text=_password_help_text)
+                                help_text=_PASSWORD_HELP)
     password2 = forms.CharField(label='Password confirmation',
                                 widget=forms.PasswordInput)
 
@@ -26,15 +42,11 @@ class PasswordForm(forms.ModelForm):
         fields = ("password1", "password2")
 
     def clean_password1(self):
-        special_characters = r"""~!@#$%^&*()_-+=[]{};:'"\|,<.>/?"""
-        password1 = self.cleaned_data['password1']
-        if not self.fields['password1'].required and password1 == "":
-            return password1
-        if ((len(password1) < 8) or
-            (not any(char.isdigit() for char in password1)) or
-            (not any(char in special_characters for char in password1))):
-            raise forms.ValidationError(self._password_help_text)
-        return password1
+        pw = self.cleaned_data['password1']
+        if not self.fields['password1'].required and pw == "":
+            return pw
+        checkPasswordComplexity(pw)
+        return pw
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -56,6 +68,75 @@ class PasswordForm(forms.ModelForm):
         return user
 
 
+class HAWCSetPasswordForm(SetPasswordForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCSetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].help_text = _PASSWORD_HELP
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Password reset",
+            "help_text": u"Enter a new password for your account."
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = "loginForm"
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Change password'),
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(reverse('user:login'))),
+            )
+        )
+
+        return helper
+
+    def clean_new_password1(self):
+        pw = self.cleaned_data['new_password1']
+        checkPasswordComplexity(pw)
+        return pw
+
+
+class HAWCPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].help_text = _PASSWORD_HELP
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Change your password",
+            "help_text": u"Enter a new password for your account.",
+            "cancel_url": reverse("user:settings")
+
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+    def clean_new_password1(self):
+        pw = self.cleaned_data['new_password1']
+        checkPasswordComplexity(pw)
+        return pw
+
+
 class RegisterForm(PasswordForm):
     _accept_license_help_text = "License must be accepted in order to create an account."
 
@@ -68,6 +149,34 @@ class RegisterForm(PasswordForm):
         model = models.HAWCUser
         fields = ("email", "first_name", "last_name",
                   "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Create an account"
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = "loginForm"
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('login', 'Create account'),
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(reverse('user:login'))),
+            )
+        )
+
+        return helper
 
     def clean_accept_license(self):
         if not self.cleaned_data['accept_license']:
@@ -82,6 +191,28 @@ class UserProfileForm(ModelForm):
     class Meta:
         model = models.UserProfile
         fields = ("first_name", "last_name", "HERO_access")
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields["first_name"].initial = self.instance.user.first_name
+        self.fields["last_name"].initial = self.instance.user.last_name
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Update your profile",
+            "help_text": u"Change settings associated with your account",
+            "cancel_url": reverse('user:settings')
+        }
+        helper = BaseFormHelper(self, **inputs)
+        return helper
 
     def save(self, commit=True):
         # save content to both UserProfile and User
@@ -117,6 +248,38 @@ class HAWCAuthenticationForm(AuthenticationForm):
     """
     Modified to do a case-insensitive comparison of emails.
     """
+
+    def __init__(self, *args, **kwargs):
+        super(HAWCAuthenticationForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"HAWC login"
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = "loginForm"
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('login', 'Login'),
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(reverse('home'))),
+                cfl.HTML("""<br><br>"""),
+                cfl.HTML("""<a href="{0}">Forgot your password?</a><br>""".format(reverse('user:reset_password'))),
+                cfl.HTML("""<a href="{0}">Create an account</a><br>""".format(reverse('user:new')))
+            )
+        )
+
+        return helper
+
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -139,6 +302,35 @@ class HAWCPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super(HAWCPasswordResetForm, self).__init__(*args, **kwargs)
         self.fields['email'].help_text = "Email-addresses are case-sensitive."
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Password reset",
+            "help_text": u"""
+                Enter your email address below, and we'll email instructions
+                for setting a new password.
+            """
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = "loginForm"
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Send email confirmation'),
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(reverse('user:login')))
+            )
+        )
+
+        return helper
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

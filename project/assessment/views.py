@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -32,19 +32,25 @@ class Home(TemplateView):
         return super(Home, self).get(request, *args, **kwargs)
 
 
-class Documentation(TemplateView):
-    template_name = 'hawc/docs.html'
+class About(TemplateView):
+    template_name = 'hawc/about.html'
 
 
-class ContactUs(MessageMixin, FormView):
-    template_name = 'hawc/contact_us.html'
+class Contact(MessageMixin, FormView):
+    template_name = 'hawc/contact.html'
     form_class = forms.ContactForm
     success_url = reverse_lazy('home')
     success_message = 'Your message has been sent!'
 
+    def get_form_kwargs(self):
+        kwargs = super(Contact, self).get_form_kwargs()
+        kwargs['back_href'] = self.request.META.get(
+            'HTTP_REFERER', reverse('portal'))
+        return kwargs
+
     def form_valid(self, form):
         form.send_email()
-        return super(ContactUs, self).form_valid(form)
+        return super(Contact, self).form_valid(form)
 
 
 class Error403(TemplateView):
@@ -60,9 +66,9 @@ class Error500(TemplateView):
 
 
 # Assessment Object
-class AssessmentPortal(LoginRequiredMixin, ListView):
+class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
-    template_name = "assessment/portal.html"
+    template_name = "assessment/assessment_home.html"
 
 
 class AssessmentFullList(LoginRequiredMixin, ListView):
@@ -87,12 +93,6 @@ class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
     success_message = 'Assessment created.'
     model = models.Assessment
     form_class = forms.AssessmentForm
-    crud = 'Create'
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateView, self).get_context_data(**kwargs)
-        context['crud'] = self.crud
-        return context
 
 
 class AssessmentRead(BaseDetail):
@@ -115,9 +115,8 @@ class AssessmentUpdate(BaseUpdate):
     form_class = forms.AssessmentForm
 
 
-class AssessmentModulesUpdate(BaseUpdate):
+class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = 'Assessment modules updated.'
-    model = models.Assessment
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
 

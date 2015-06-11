@@ -76,6 +76,47 @@ input[type=number] {
 }
 
 
+/* Login form */
+.loginForm{
+  margin-top: 15px;
+  padding: 30px 15px 0px 15px;
+  border: 2px solid gray;
+  border-radius: 5px;
+  box-shadow: 0 0 2em #888888;
+}
+
+
+/* About-us page */
+ul.sponsors {
+  list-style-type: none;
+}
+.sponsors li {
+  display: block;
+  float: left;
+}
+.sponsors img {
+  max-height: 75px;
+  margin-right: 10px;
+  padding: 3px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: 0.5s ease-in-out;
+}
+.sponsors img:hover {
+    opacity: 0.8;
+    border: 2px solid black;
+    transition: 0.5s ease-in-out;
+}
+/* File format icons */
+.ff {
+  padding-left: 2px;
+  padding-bottom: 7px;
+}
+.ff.ytb {
+  max-height: 17px;
+}
+
+
 /* Versioning */
 .version_primary {
   background-color:#7ECEFD;
@@ -93,6 +134,7 @@ input[type=number] {
   color: #8B1A1A;
   padding: 0 2px 0 2px;
 }
+
 
 /* Risk of Bias */
 .sq_score{

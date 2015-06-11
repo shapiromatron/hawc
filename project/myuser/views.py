@@ -1,6 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import PasswordChangeForm
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
@@ -8,6 +7,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
 
+from django.views.generic.base import RedirectView
 from utils.views import LoginRequiredMixin, MessageMixin
 
 from . import forms, models
@@ -72,7 +72,7 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
     """
     template_name = 'myuser/userprofile_form.html'
     success_url = reverse_lazy('user:settings')
-    form_class = PasswordChangeForm
+    form_class = forms.HAWCPasswordChangeForm
     success_message = 'Password changed.'
 
     def get_object(self, queryset=None):
@@ -106,3 +106,11 @@ class SetUserPassword(MessageMixin, UpdateView):
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(SetUserPassword, self).dispatch(request, *args, **kwargs)
+
+
+class PasswordChanged(MessageMixin, RedirectView):
+    success_message = "Password changed."
+
+    def get_redirect_url(self):
+        self.send_message()
+        return reverse_lazy('user:login')

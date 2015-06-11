@@ -6,12 +6,7 @@
 
 {% block content %}
 
-  <h1>Available Assessments
-    {% if user.is_authenticated %}
-      <a class='btn btn-primary pull-right' href="{% url 'assessment:new' %}">Create new</a>
-    {% endif %}
-  </h1>
-
+  <h1>Available Assessments</h1>
   {% include "assessment/_assessment_list_tbl.html" %}
 
-{% endblock %}
+{% endblock content %}

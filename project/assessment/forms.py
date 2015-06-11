@@ -199,16 +199,41 @@ class AssessmentEmailManagersForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    sender = forms.EmailField(label="Your email")
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
 
     def send_email(self):
-        mail_admins(u'[Contact Us]: ' + self.cleaned_data['subject'],
-                    self.cleaned_data['message'] + u'\n\n ' + self.cleaned_data['sender'],
-                    fail_silently=False)
+        subject = u'[HAWC contact us]: {}'.format(self.cleaned_data['subject'])
+        content = u'{0}\n\n{1}\n{2}'.format(
+            self.cleaned_data['message'],
+            self.cleaned_data['name'],
+            self.cleaned_data['email']
+        )
+        mail_admins(subject, content, fail_silently=False)
 
     def __init__(self, *args, **kwargs):
+        self.back_href = kwargs.pop('back_href', None)
         super(ContactForm, self).__init__(*args, **kwargs)
-        for key in self.fields.keys():
-            self.fields[key].widget.attrs['class'] = 'span12'
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": u"Contact HAWC developers",
+            "help_text": u"""
+                Have a question, comment, or need some help?
+                Use this form to to let us know what's going on.
+            """,
+            "cancel_url": self.back_href
+
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = "loginForm"
+        return helper

@@ -7,35 +7,6 @@
   Portal | HAWC
 {% endblock %}
 
-{% block branding %}
-  <a class="brand" href="{% url 'portal' %}">HAWC{% server_role_text %}</a>
-{% endblock %}
-
-{% block topnavbar %}
-  <div class="btn-group pull-right">
-    {% if user.is_anonymous %}
-      <a href="{% url 'user:login' %}" class="btn btn-inverse">Login</a>
-    {% else %}
-      <button href="#" class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown">Settings <i class="icon-cog icon-white"></i></button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'contact' %}">Contact Us</a></li>
-        <li><a href="{% url 'documentation' %}">Documentation</a></li>
-        <li><a href="{% url 'portal' %}">Portal</a></li>
-        <li><a href="{% url 'user:settings' %}">Settings</a></li>
-        {% if user.is_staff %}
-          <li class="divider"></li>
-          <li><a href="{%url 'admin:index' %}">Admin</a></li>
-          {% if user.is_superuser %}
-           <li><a href="{% url 'assessment:full_list' %}">Superuser assessments list</a></li>
-          {% endif %}
-        {% endif %}
-        <li class="divider"></li>
-        <li><a href="{% url 'user:logout' %}">Logout</a></li>
-      </ul>
-   {% endif %}
-  </div>
-{% endblock %}
-
 {% block messages_base %}{% endblock messages_base %}
 
 {% block main_content %}
@@ -68,7 +39,6 @@
       <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
     </div>
 
-    <!--Body content-->
     <div id="content"
          class="{% if request.session.hideSidebar %}span11{%else%}span9{% endif %}">
       <div class="{% block content_type %}{% endblock %}">
@@ -77,7 +47,6 @@
       </div>
     </div>
   </div>
-
 
 {% endblock %}
 

@@ -166,14 +166,6 @@ class VisualizationDelete(BaseDelete):
 
 
 # DATA-PIVOT
-class GeneralDataPivot(TemplateView):
-    """
-    Generalized meta-data viewer, not tied to any assessment. No persistence.
-    Used to upload raw CSV data from a file.
-    """
-    template_name = "summary/datapivot_general.html"
-
-
 class ExcelUnicode(TemplateView):
     template_name = "summary/datapivot_save_as_unicode_modal.html"
 

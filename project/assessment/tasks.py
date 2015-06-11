@@ -172,11 +172,11 @@ class SVGConverter():
             slide.shapes.add_picture(fn_png, left, top, width, height)
 
             # add HAWC logo
-            left = Inches(9.5)
-            top = Inches(7)
-            width = Inches(0.5)
-            height = Inches(0.5)
-            logo_location = os.path.join(settings.STATIC_ROOT, "img/hawc.png")
+            left = Inches(8.55)
+            top = Inches(6.65)
+            width = Inches(1.4)
+            height = Inches(0.8)
+            logo_location = os.path.join(settings.STATIC_ROOT, "img/HAWC-120.png")
             slide.shapes.add_picture(logo_location, left, top, width, height)
 
             # save as object
