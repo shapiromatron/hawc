@@ -47,6 +47,10 @@ class Assessment(models.Model):
         verbose_name="Chemical identifier (CAS)",
         help_text="Add a single CAS-number if one is available to describe the "
                   "assessment, otherwise leave-blank.")
+    assessment_objective = models.TextField(
+        blank=True,
+        help_text="Describe the assessment objective(s), research questions, "
+                  "or clarification on the purpose of the assessment.")
     project_manager = models.ManyToManyField(HAWCUser,
         related_name='assessment_pms',
         null=False,  # todo: move all these into one m2m table w/ metadata
@@ -113,6 +117,12 @@ class Assessment(models.Model):
         help_text="Enable comments from reviewers or the general-public on "
                   "datasets or findings; comment-functionality and visibility "
                   "can be controlled in advanced-settings.")
+    conflicts_of_interest = models.TextField(
+        blank=True,
+        help_text="Describe any conflicts of interest by the assessment-team.")
+    funding_source = models.TextField(
+        blank=True,
+        help_text="Describe the funding-source(s) for this assessment.")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

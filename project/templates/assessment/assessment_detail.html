@@ -86,6 +86,13 @@
         <td>{{object.version}}</td>
       </tr>
 
+      {% if object.assessment_objective %}
+      <tr>
+        <th>Assessment objective</th>
+        <td>{{object.assessment_objective|safe}}</td>
+      </tr>
+      {% endif %}
+
       {% if obj_perms.edit_assessment %}
         <tr>
           <th>Project manager(s)</th>
@@ -129,16 +136,26 @@
         <td>{{object.public}}</td>
       </tr>
 
+      {% if object.public %}
       <tr>
-        <th>Date created</th>
-        <td>{{object.created}}</td>
+        <th>Hidden on public page?</th>
+        <td>{{object.hide_from_public_page}}</td>
       </tr>
+      {% endif %}
 
+      {% if object.conflicts_of_interest %}
       <tr>
-        <th>Last updated</th>
-        <td>{{object.last_updated}}</td>
+        <th>Conflicts of interest</th>
+        <td>{{object.conflicts_of_interest|safe}}</td>
       </tr>
+      {% endif %}
 
+      {% if object.funding_source %}
+      <tr>
+        <th>Funding source</th>
+        <td>{{object.funding_source|safe}}</td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 

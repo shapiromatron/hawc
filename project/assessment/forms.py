@@ -45,6 +45,9 @@ class AssessmentForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+                widget.attrs['class'] += " html5text"
 
         if self.instance.id:
             inputs = {
