@@ -179,8 +179,16 @@ class RegisterForm(PasswordForm):
         return helper
 
     def clean_accept_license(self):
-        if not self.cleaned_data['accept_license']:
+        license = self.cleaned_data.get('accept_license')
+        if not license:
             raise forms.ValidationError(self._accept_license_help_text)
+        return license
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if models.HAWCUser.objects.filter(email__iexact=email).count() > 0:
+            raise forms.ValidationError("HAWC user with this email already exists.")
+        return email
 
 
 class UserProfileForm(ModelForm):
