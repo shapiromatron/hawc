@@ -7,16 +7,18 @@
       <h1>About us</h1>
       <p>
       HAWC is a collaboration of several individuals and organizations who
-      create, maintain and enhance the functionalities of this tool. The lead
-      developer and conceptual designer of the project is Andy Shapiro,
-      who developed the prototype in partial fulfillment of the requirements
-      for the degree of Master of Science in Public Health in the Department
-      of Environmental Sciences and Engineering at the University of North
-      Carolina at Chapel Hill under direction of Dr. Ivan Rusyn.
-      Overall guidance to the process of development of HAWC is provided by a
+      create, maintain, and enhance the functionalities of this tool. The lead
+      developer of the project is Andy Shapiro, who created the prototype in
+      partial fulfillment of the requirements for the degree of Masters of
+      Science in Public Health in the Department of Environmental Sciences and
+      Engineering at the University of North Carolina at Chapel Hill under
+      direction of Dr. Ivan Rusyn.
+
+      Overall guidance on HAWC development is provided by a
       steering committee with representation from the National Toxicology
-      Program (NTP/NIEHS), Texas A&amp;M University and the National Center
-      for Computational Toxicology (US EPA).
+      Program at the National Institute of Environmental Health Sciences
+      (NIEHS/NTP), Texas A&amp;M University, and the National Center for
+      Computational Toxicology of the Environmental Protection Agency (EPA/NCCT).
       </p>
     </div>
     <div class="span12">
@@ -95,23 +97,20 @@
     <div class="span12">
       <h2>Latest updates</h2>
       <p>
-        HAWC is actively under development; a <a href="{% url 'change_log' %}">change-log</a>
+        HAWC is actively under development; a <a href="{% url 'change_log' %}">change log</a>
         is available to view updates being made to HAWC over time.
       </p>
     </div>
     <div class="span12">
         <h2>License</h2>
-        <p>
-          HAWC is open-source software; it is free to create an account to use
-          the software. In addition, is is free to download, edit, and modify
-          the source-code, so long as the resulting project is not sold
-          for-profit.
-        </p>
-
-        <p>
-          The <a href="#license_modal" data-toggle="modal">full license</a> is available.
-        </p>
-
+        <ul>
+          <li>HAWC is open-source software.</li>
+          <li>It is free to create an account to use the software.</li>
+          <li>It is free to download, edit, and modify the source code, so long
+              as the resulting project is not sold for profit.</li>
+          <li>The <a href="#license_modal" data-toggle="modal">full license</a>
+              is available.</li>
+        </ul>
         {% include "hawc_license.html" %}
     </div>
     <div class="span12">
@@ -121,11 +120,11 @@
           from the following sources:
         </p>
         <ul>
-          <li>The National Toxicology Program</li>
+          <li>National Toxicology Program (NIEHS/NTP)</li>
           <li>Texas A&amp;M University</li>
-          <li>US EPA grants STAR RD83574701 and STAR RD83516601</li>
+          <li>EPA grants STAR RD83574701 and STAR RD83516601</li>
           <li>NIH grant P42 ES005948</li>
-          <li>International Agency for Research on Cancer</li>
+          <li>The International Agency for Research on Cancer (WHO/IARC)</li>
         </ul>
     </div>
     <div class="span12">
@@ -135,22 +134,22 @@
 
         <li><a href="http://vetmed.tamu.edu">
             <img src="{{STATIC_URL}}img/am-150.png"
-                 style="margin-top: 15px; max-width: 270px;"></a></li>
+                 style="margin-top: 15px; max-width: 240px;"></a></li>
 
         <li><a href="http://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/recipients.welcome/displayOption/grants">
           <img src="{{STATIC_URL}}img/epa-star-75.png"></a></li>
 
         <li><a href="http://monographs.iarc.fr/">
           <img src="{{STATIC_URL}}img/logoiarc.gif"
-               style="margin-top: 10px; max-width: 250px;"></a></li>
+               style="margin-top: 5px; max-width: 250px;"></a></li>
       </ul>
     </div>
     <div class="clearfix"></div>
     <div class="span12">
       <p><i>
         The contents of HAWC are solely the responsibility of the users and
-        developers, and do not necessarily represent the official views of the
-        EPA, NIH, or WHO. Further, the EPA, NIH, and WHO do not endorse the
+        developers, and do not necessarily represent the official views of
+        EPA, NIH, NTP, or WHO. Further, EPA, NIH, NTP, and WHO do not endorse the
         purchase or use of any commercial or open-source products or services
         that were used in the development of HAWC.
       </i></p>
