@@ -9,6 +9,8 @@ from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
 from assessment.models import Assessment
@@ -834,6 +836,36 @@ class EndpointFilterForm(forms.Form):
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
         self.fields['studies'].widget.update_query_parameters(
             {'assessment': assessment_id})
+
+        # disabled; dramatically slows-down page rendering;
+        # involuntary context_switches
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
+                widget.attrs['class'] = 'span12'
+
+        helper = BaseFormHelper(self)
+
+        helper.form_method = "GET"
+        helper.form_class = None
+
+        helper.add_fluid_row('studies', 4, "span3")
+        helper.add_fluid_row('species', 4, "span3")
+        helper.add_fluid_row('system', 4, "span3")
+        helper.add_fluid_row('paginate_by', 4, "span3")
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Apply filters'),
+            )
+        )
+
+        return helper
 
     def get_query(self):
 
