@@ -17,7 +17,7 @@ class SpanFactory(object):
         if new_line:
             text += u"\n"
 
-        self.obj.append( {
+        self.obj.append({
             "text": text,
             "bold": bold,
             "italic": italic
@@ -26,9 +26,11 @@ class SpanFactory(object):
     def get_spans(self):
         return self.obj
 
+
 def build_header_cell(row, col, width, text, colspan=1):
     return {"row": row, "col": col, "width": width, "colspan": colspan,
-            "runs": [{ "text": text, "bold": True, "italic": False }]}
+            "runs": [{"text": text, "bold": True, "italic": False}]}
+
 
 def getDoses(ag):
     # dictionary-mapping where keys are dose-units and doses are list of floats
@@ -40,11 +42,14 @@ def getDoses(ag):
         doses[units].append(d['dose'])
     return doses
 
+
 def getDoseText(doses):
     dose_txt = []
     for unit in doses.keys():
-        dose_txt.append(u"{0} {1}".format(u", ".join([unicode(dose) for dose in doses[unit]]), unit))
+        dose_txt.append(u"{0} {1}".format(u", ".join([
+            unicode(dose) for dose in doses[unit]]), unit))
     return u"\n".join(dose_txt)
+
 
 def getPurityText(exp):
     if exp["purity_available"]:
@@ -52,29 +57,36 @@ def getPurityText(exp):
     else:
         return "NR"
 
+
 def getCOItext(study):
     txt = study["coi_reported"]
     if study["coi_details"] != "":
         txt = u"{} ({})".format(txt, study["coi_details"])
     return txt
 
+
 def getAdditionalEndpoints(eps):
-    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"]==False)
+    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is False)
+
 
 def getEndpointsText(eps):
-    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"]==True)
+    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is True)
+
 
 def getNText(eps):
     ns = []
     for ep in eps:
-        ns.extend([ eg["n"] for eg in ep["endpoint_group"]  ])
+        ns.extend([eg["n"] for eg in ep["endpoint_group"]])
     return models.EndpointGroup.getNRangeText(ns)
 
+
 def getStatisticalAnalysis(eps):
-    return u"; ".join(set([ep["statistical_test"] for ep in eps ]))
+    return u"; ".join(set([ep["statistical_test"] for ep in eps]))
+
 
 def getStatisticalPowers(eps):
-    return u"; ".join(set([ep["power_notes"] for ep in eps ]))
+    return u"; ".join(set([ep["power_notes"] for ep in eps]))
+
 
 class EndpointDOCXReport(DOCXReport):
 
@@ -133,8 +145,8 @@ class EndpointDOCXReport(DOCXReport):
         ]
 
         # build summary rows
-        ref = {"row":2, "col":0, "runs": self.getStudyDetails(ag, doses)}
-        ho = {"row":2, "col":1, "runs": self.getHealthOutcomes(ag)}
+        ref = {"row": 2, "col": 0, "runs": self.getStudyDetails(ag, doses)}
+        ho = {"row": 2, "col": 1, "runs": self.getHealthOutcomes(ag)}
 
         # build endpoint rows
         rows = 3
@@ -146,7 +158,7 @@ class EndpointDOCXReport(DOCXReport):
             cells.append({"row": rows, "col": 2, "colspan": 4,
                          "runs": [{"text": ep['name'], "italic": True}]})
             data_type = ep["data_type"]
-            rows +=1
+            rows += 1
             for i, eg in enumerate(ep["endpoint_group"]):
                 cells.append({"row": rows, "col": 2, "text": unicode(doses[firstDose][i])})
                 cells.append({"row": rows, "col": 3, "text": unicode(eg["n"])})
@@ -170,7 +182,7 @@ class EndpointDOCXReport(DOCXReport):
 
                 cells.append({"row": rows, "col": 4, "text": col1})
                 cells.append({"row": rows, "col": 5, "text": col2})
-                rows +=1
+                rows += 1
 
         # adjust rowspans for summary rows
         ref["rowspan"] = rows-2
@@ -190,8 +202,8 @@ class EndpointDOCXReport(DOCXReport):
         section.orientation = WD_ORIENT.LANDSCAPE
         section.left_margin = Inches(0.5)
         section.right_margin = Inches(0.5)
-        section.page_width  = Inches(11)
-        section.page_height  = Inches(8.5)
+        section.page_width = Inches(11)
+        section.page_height = Inches(8.5)
 
         # title
         txt = "Bioassay report: {0}".format(d['assessment']['name'])
