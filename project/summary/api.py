@@ -1,8 +1,13 @@
 from __future__ import absolute_import
 
 from assessment.api.views import AssessmentViewset
+from rest_framework.pagination import PageNumberPagination
 
 from . import models, serializers
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
 
 
 class DataPivot(AssessmentViewset):
@@ -13,7 +18,7 @@ class DataPivot(AssessmentViewset):
     """
     assessment_filter_args = "assessment"
     model = models.DataPivot
-    paginate_by = None
+    pagination_class = DisabledPagination
 
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer
@@ -32,7 +37,7 @@ class Visual(AssessmentViewset):
 
     assessment_filter_args = "assessment"
     model = models.Visual
-    paginate_by = None
+    pagination_class = DisabledPagination
 
     def get_serializer_class(self):
         cls = serializers.VisualSerializer

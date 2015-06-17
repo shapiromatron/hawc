@@ -234,7 +234,7 @@ CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN')
 # Django rest framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
-    'PAGINATE_BY': 10,
+    'PAGE_SIZE': 10,
     'COERCE_DECIMAL_TO_STRING': False
 }
 
