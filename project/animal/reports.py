@@ -161,24 +161,31 @@ class EndpointDOCXReport(DOCXReport):
             rows += 1
             for i, eg in enumerate(ep["endpoint_group"]):
                 cells.append({"row": rows, "col": 2, "text": unicode(doses[firstDose][i])})
-                cells.append({"row": rows, "col": 3, "text": unicode(eg["n"])})
+                cells.append({"row": rows, "col": 3, "text": unicode(eg["n"] or "-")})
 
                 col1 = ""
                 col2 = ""
                 if data_type == "C":
-                    col1 = u'{0} \u00B1 {1:.2f}'.format(eg["response"], eg["stdev"])
-                    col2 = u'{0:.1f} ({1:.1f}, {2:.1f})'.format(eg["percentControlMean"], eg["percentControlLow"], eg["percentControlHigh"])
+                    col1 = unicode(eg["response"] or "-")
+                    if eg["stdev"] is not None:
+                        col1 += u' \u00B1 {0:.2f}'.format(eg["stdev"])
+                    col2 = unicode(eg["percentControlMean"] or "-")
+                    if eg["percentControlLow"] and eg["percentControlHigh"]:
+                        col2 += u' ({0:.1f}, {1:.1f})'.format(eg["percentControlLow"], eg["percentControlHigh"])
                 elif data_type in ["D", "DC"]:
-                    col1 = u'{0}/{1}'.format(eg["incidence"], eg["n"])
+                    if eg["incidence"] is None:
+                        col1 = u"-"
+                    else:
+                        col1 = u'{0}/{1}'.format(eg["incidence"], eg["n"])
                     col2 = u'NR'
                 else:  # ["P"]
                     col1 = u'NR'
-                    if eg["percentControlMean"]:
-                        col2 = u'{0:.1f}'.format(eg["percentControlMean"])
-                    else:
+                    if eg["percentControlMean"] is None:
                         col2 = u"-"
-                    if eg["percentControlLow"]:
-                        col2 += u"({0:.1f}, {1:.1f})".format(eg["percentControlLow"], eg["percentControlHigh"])
+                    else:
+                        col2 = u'{0:.1f}'.format(eg["percentControlMean"])
+                    if eg["percentControlLow"] and eg["percentControlHigh"]:
+                        col2 += u" ({0:.1f}, {1:.1f})".format(eg["percentControlLow"], eg["percentControlHigh"])
 
                 cells.append({"row": rows, "col": 4, "text": col1})
                 cells.append({"row": rows, "col": 5, "text": col2})
