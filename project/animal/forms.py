@@ -821,6 +821,14 @@ class EndpointFilterForm(forms.Form):
        queryset=models.DoseUnits.objects.all(),
        required=False
     )
+
+    paginate_by = forms.IntegerField(
+        label='Items per page',
+        min_value=1,
+        initial=25,
+        max_value=10000,
+        required=False)
+
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
