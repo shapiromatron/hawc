@@ -817,6 +817,10 @@ class EndpointFilterForm(forms.Form):
         help_text="ex: antibody response",
         required=False)
 
+    dose_units = forms.ModelChoiceField(
+       queryset=models.DoseUnits.objects.all(),
+       required=False
+    )
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
@@ -825,18 +829,19 @@ class EndpointFilterForm(forms.Form):
 
     def get_query(self):
 
-        studies = self.cleaned_data['studies']
-        cas = self.cleaned_data['cas']
-        lifestage_exposed = self.cleaned_data['lifestage_exposed']
-        lifestage_assessed = self.cleaned_data['lifestage_assessed']
-        species = self.cleaned_data['species']
-        strain = self.cleaned_data['strain']
-        sex = self.cleaned_data['sex']
-        data_extracted = self.cleaned_data['data_extracted']
-        system = self.cleaned_data['system']
-        organ = self.cleaned_data['organ']
-        effect = self.cleaned_data['effect']
-        tags = self.cleaned_data['tags']
+        studies = self.cleaned_data.get('studies')
+        cas = self.cleaned_data.get('cas')
+        lifestage_exposed = self.cleaned_data.get('lifestage_exposed')
+        lifestage_assessed = self.cleaned_data.get('lifestage_assessed')
+        species = self.cleaned_data.get('species')
+        strain = self.cleaned_data.get('strain')
+        sex = self.cleaned_data.get('sex')
+        data_extracted = self.cleaned_data.get('data_extracted')
+        system = self.cleaned_data.get('system')
+        organ = self.cleaned_data.get('organ')
+        effect = self.cleaned_data.get('effect')
+        tags = self.cleaned_data.get('tags')
+        dose_units = self.cleaned_data.get('dose_units')
 
         query = Q()
         if studies:
@@ -863,4 +868,10 @@ class EndpointFilterForm(forms.Form):
             query &= Q(effect__icontains=effect)
         if tags:
             query &= Q(effects__name__icontains=tags)
+        if dose_units:
+            query &= Q(animal_group__dosed_animals__doses__dose_units=dose_units)
         return query
+
+    def get_dose_units_id(self):
+        if hasattr(self, "cleaned_data") and self.cleaned_data.get('dose_units'):
+            return self.cleaned_data.get('dose_units').id

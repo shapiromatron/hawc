@@ -605,9 +605,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.url,
                 this.data.name),
+            this.dose_units,
             this.get_special_dose_text("NOEL").toLocaleString(),
-            this.get_special_dose_text("LOEL").toLocaleString(),
-            this.get_special_dose_text("FEL").toLocaleString()
+            this.get_special_dose_text("LOEL").toLocaleString()
         ];
     },
     _percent_change_control: function(index){
@@ -929,8 +929,9 @@ EndpointTable.prototype = {
 };
 
 
-var EndpointListTable = function(endpoints){
-    this.endpoints = endpoints;
+var EndpointListTable = function(endpoints, dose_id){
+    if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
+    this.endpoints = _.sortBy(endpoints, function(e){return e.data.name});
     this.tbl = new BaseTable();
 };
 EndpointListTable.prototype = {
@@ -945,11 +946,11 @@ EndpointListTable.prototype = {
                 "Experiment",
                 "Animal Group",
                 "Endpoint",
+                "Units",
                 "NOEL",
-                "LOEL",
-                "FEL"
+                "LOEL"
             ];
-
+        this.tbl.setColGroup([12, 16, 17, 31, 10, 7, 7])
         this.tbl.addHeaderRow(headers);
         this.endpoints.map(function(v){
             self.tbl.addRow(v.build_endpoint_list_row());

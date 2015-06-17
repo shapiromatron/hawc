@@ -23,7 +23,8 @@
           </a>
         </div>
         <div id="EndpointForm" class="accordion-body collapse">
-          <div class="accordion-inner row-fluid">
+          <div class="accordion-inner container-fluid">
+
             <form action="." method="get">
               <fieldset>
                     {{ form.non_field_errors|add_class:"alert alert-error" }}
@@ -49,10 +50,11 @@
 
                     {% endfor %}
                 </fieldset>
-                <div class="row form-actions">
+                <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Apply filters</button>
                 </div>
             </form>
+
           </div>
         </div>
       </div>
@@ -89,11 +91,12 @@
     <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-            var endpoints = [];
+            var endpoints = [],
+                dose_units = {{dose_units|default_if_none:"undefined"}};
             {{endpoints_json|safe}}.forEach(function(datum){
                 endpoints.push(new Endpoint(datum));
             });
-            var tbl = new EndpointListTable(endpoints);
+            var tbl = new EndpointListTable(endpoints, dose_units);
             $("#endpointTbl").html(tbl.build_table());
         });
     </script>

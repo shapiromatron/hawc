@@ -383,10 +383,15 @@ class EndpointList(BaseList):
         return val
 
     def get(self, request, *args, **kwargs):
-        self.form = forms.EndpointFilterForm(
-            self.request.GET,
-            assessment_id=self.assessment.id
-        )
+        if len(self.request.GET) > 0:
+            self.form = forms.EndpointFilterForm(
+                self.request.GET,
+                assessment_id=self.assessment.id
+            )
+        else:
+            self.form = forms.EndpointFilterForm(
+                assessment_id=self.assessment.id
+            )
         return super(EndpointList, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -398,13 +403,14 @@ class EndpointList(BaseList):
         if self.form.is_valid():
             query &= self.form.get_query()
 
-        return self.model.objects.filter(query).order_by('name')
+        return self.model.objects.filter(query).distinct('id')
 
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['endpoints_json'] = self.model.d_responses(
             context['object_list'], json_encode=True)
+        context['dose_units'] = self.form.get_dose_units_id()
         return context
 
 
