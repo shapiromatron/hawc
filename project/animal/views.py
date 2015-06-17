@@ -383,7 +383,10 @@ class EndpointList(BaseList):
         return val
 
     def get(self, request, *args, **kwargs):
-        self.form = forms.EndpointFilterForm(self.request.GET)
+        self.form = forms.EndpointFilterForm(
+            self.request.GET,
+            assessment_id=self.assessment.id
+        )
         return super(EndpointList, self).get(request, *args, **kwargs)
 
     def get_queryset(self):

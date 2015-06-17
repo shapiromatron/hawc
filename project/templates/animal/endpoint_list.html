@@ -89,9 +89,6 @@
     <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-            var assessment = function(qry){qry.assessment = {{assessment.pk}};}
-            $('#id_study').djselectable('option', 'prepareQuery', assessment);
-
             var endpoints = [];
             {{endpoints_json|safe}}.forEach(function(datum){
                 endpoints.push(new Endpoint(datum));

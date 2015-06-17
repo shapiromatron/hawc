@@ -746,9 +746,9 @@ class DoseUnitsForm(ModelForm):
 
 class EndpointFilterForm(forms.Form):
 
-    study = forms.CharField(
+    studies = selectable.AutoCompleteSelectMultipleField(
         label='Study reference',
-        widget=selectable.AutoCompleteWidget(AnimalStudyLookup),
+        lookup_class=AnimalStudyLookup,
         help_text="ex: Smith et al. 2010",
         required=False)
 
@@ -817,9 +817,15 @@ class EndpointFilterForm(forms.Form):
         help_text="ex: antibody response",
         required=False)
 
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id')
+        super(EndpointFilterForm, self).__init__(*args, **kwargs)
+        self.fields['studies'].widget.update_query_parameters(
+            {'assessment': assessment_id})
+
     def get_query(self):
 
-        study = self.cleaned_data['study']
+        studies = self.cleaned_data['studies']
         cas = self.cleaned_data['cas']
         lifestage_exposed = self.cleaned_data['lifestage_exposed']
         lifestage_assessed = self.cleaned_data['lifestage_assessed']
@@ -833,8 +839,8 @@ class EndpointFilterForm(forms.Form):
         tags = self.cleaned_data['tags']
 
         query = Q()
-        if study:
-            query &= Q(animal_group__experiment__study__short_citation__icontains=study)
+        if studies:
+            query &= Q(animal_group__experiment__study__in=studies)
         if cas:
             query &= Q(animal_group__experiment__cas__icontains=cas)
         if lifestage_exposed:
