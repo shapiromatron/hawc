@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CommentSettings',
             fields=[
-                ('assessment', models.OneToOneField(related_name=b'comment_settings', primary_key=True, serialize=False, to='assessment.Assessment')),
+                ('assessment', models.OneToOneField(related_name='comment_settings', primary_key=True, serialize=False, to='assessment.Assessment')),
                 ('allow_comments', models.BooleanField(default=False, help_text=b'All logged-in users with access to the assessment will be able to provide comments on key assessment components,  including study-quality, endpoints, and summary-text.  Anonymous comments cannot be provided.')),
                 ('public_comments', models.BooleanField(default=False, help_text=b'Any comments made will be viewable by anyone with access to the assessment. Associated responses to comments will also be presented. ')),
             ],
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comment',
             name='commenter',
-            field=models.ForeignKey(related_name=b'commenters', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='commenters', to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(

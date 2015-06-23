@@ -17,8 +17,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('unique_id', models.IntegerField()),
-                ('database', models.IntegerField(choices=[(0, b'Manually imported'), (1, b'PubMed'), (2, b'HERO')])),
+                ('database', models.IntegerField(choices=[(0, b'External link'), (1, b'PubMed'), (2, b'HERO')])),
                 ('content', models.TextField()),
+                ('url', models.URLField(blank=True)),
             ],
             options={
             },
@@ -50,8 +51,8 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('block_id', models.DateTimeField(help_text=b'Used internally for determining when reference was originally added', null=True, blank=True)),
-                ('assessment', models.ForeignKey(related_name=b'references', to='assessment.Assessment')),
-                ('identifiers', models.ManyToManyField(related_name=b'references', to='lit.Identifiers', blank=True)),
+                ('assessment', models.ForeignKey(related_name='references', to='assessment.Assessment')),
+                ('identifiers', models.ManyToManyField(related_name='references', to='lit.Identifiers', blank=True)),
             ],
             options={
             },
@@ -61,11 +62,11 @@ class Migration(migrations.Migration):
             name='ReferenceFilterTag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=100, verbose_name='Name')),
-                ('slug', models.SlugField(max_length=100, verbose_name='Slug')),
                 ('path', models.CharField(unique=True, max_length=255)),
                 ('depth', models.PositiveIntegerField()),
                 ('numchild', models.PositiveIntegerField(default=0)),
+                ('name', models.CharField(max_length=100, verbose_name='Name')),
+                ('slug', models.SlugField(max_length=100, verbose_name='Slug')),
             ],
             options={
                 'abstract': False,
@@ -77,7 +78,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('content_object', models.ForeignKey(to='lit.Reference')),
-                ('tag', models.ForeignKey(related_name=b'lit_referencetags_items', to='lit.ReferenceFilterTag')),
+                ('tag', models.ForeignKey(related_name='lit_referencetags_items', to='lit.ReferenceFilterTag')),
             ],
             options={
                 'abstract': False,
@@ -89,14 +90,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('search_type', models.CharField(max_length=1, choices=[(b's', b'Search'), (b'i', b'Import')])),
-                ('source', models.PositiveSmallIntegerField(choices=[(0, b'Manually imported'), (1, b'PubMed'), (2, b'HERO')])),
-                ('title', models.CharField(max_length=128)),
+                ('source', models.PositiveSmallIntegerField(help_text=b'Database used to identify literature.', choices=[(0, b'External link'), (1, b'PubMed'), (2, b'HERO')])),
+                ('title', models.CharField(help_text=b'A brief-description to describe the identified literature.', max_length=128)),
                 ('slug', models.SlugField(help_text=b'The URL (web address) used to describe this object (no spaces or special-characters).', verbose_name=b'URL Name')),
-                ('description', models.TextField()),
-                ('search_string', models.TextField(help_text=b'The raw text of what was used to search using an online database')),
+                ('description', models.TextField(help_text=b'A more detailed description of the literature search or import strategy.', blank=True)),
+                ('search_string', models.TextField(help_text=b'The search-text used to query an online database. Use colors to separate search-terms (optional).')),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('assessment', models.ForeignKey(related_name=b'literature_searches', to='assessment.Assessment')),
+                ('assessment', models.ForeignKey(related_name='literature_searches', to='assessment.Assessment')),
             ],
             options={
                 'ordering': ['-last_updated'],
@@ -112,7 +113,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='reference',
             name='searches',
-            field=models.ManyToManyField(related_name=b'references', to='lit.Search'),
+            field=models.ManyToManyField(related_name='references', to='lit.Search'),
             preserve_default=True,
         ),
         migrations.AddField(
