@@ -147,8 +147,8 @@ class Search(models.Model):
         # already has an assessment-specific Reference object associated with
         # it, just associate the current reference with this search.
         ref_ids = Reference.objects \
-            .filter(assessment=self.assessment,
-                    identifiers__unique_id__in=results['added']) \
+            .filter(assessment=self.assessment, identifiers__unique_id__in=results['added'])\
+            .exclude(searches=self)\
             .values_list('pk', flat=True)
         ids_count = ref_ids.count()
 
