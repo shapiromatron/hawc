@@ -30,12 +30,14 @@ SEARCH_SOURCES = ((0, 'External link'),
 SEARCH_TYPES = (('s', 'Search'),
                 ('i', 'Import'),)
 
+
 class TooManyPubMedResults(Exception):
     """
     Raised when returned Query is too large
     """
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
 
@@ -44,7 +46,7 @@ class Search(models.Model):
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='literature_searches')
-    search_type =  models.CharField(
+    search_type = models.CharField(
         max_length=1,
         choices=SEARCH_TYPES)
     source = models.PositiveSmallIntegerField(
@@ -150,7 +152,7 @@ class Search(models.Model):
             .values_list('pk', flat=True)
         ids_count = ref_ids.count()
 
-        if ids_count>0:
+        if ids_count > 0:
             logging.debug("Starting bulk creation of existing search-thorough values")
             ref_searches = []
             for ref in ref_ids:
@@ -159,23 +161,21 @@ class Search(models.Model):
             RefSearchM2M.objects.bulk_create(ref_searches)
             logging.debug("Completed bulk creation of {c} search-thorough values".format(c=len(ref_searches)))
 
-
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
         # proper subset.
-        ids = Identifiers.objects \
-                         .filter(database=self.source, unique_id__in=results['added']) \
-                         .exclude(references__in=
-                            Reference.objects.filter(assessment=self.assessment)) \
-                         .order_by('pk')
+        ids = Identifiers.objects\
+            .filter(database=self.source, unique_id__in=results['added'])\
+            .exclude(references__in=Reference.objects.filter(assessment=self.assessment))\
+            .order_by('pk')
         ids_count = ids.count()
 
-        if ids_count>0:
+        if ids_count > 0:
             block_id = datetime.now()
 
             # create list of references for each identifier
-            refs = [ i.create_reference(self.assessment, block_id) for i in ids ]
-            id_pks = [ i.pk for i in ids ]
+            refs = [i.create_reference(self.assessment, block_id) for i in ids]
+            id_pks = [i.pk for i in ids]
 
             logging.debug("Starting  bulk creation of {c} references".format(c=len(refs)))
             Reference.objects.bulk_create(refs)
@@ -185,7 +185,7 @@ class Search(models.Model):
             refs = Reference.objects.filter(assessment=self.assessment,
                                             block_id=block_id).order_by('pk')
 
-            #associate identifiers with each
+            # associate identifiers with each
             ref_searches = []
             ref_ids = []
             logging.debug("Starting  bulk creation of {c} reference-thorough values".format(c=refs.count()))
@@ -229,7 +229,7 @@ class Search(models.Model):
         Constructor to define default search when a new assessment is created.
         """
         s = Search(assessment=assessment,
-                   source=0, #manual import
+                   source=0,  # manual import
                    search_type='i',
                    title="Manual import",
                    slug="manual-import",
@@ -241,7 +241,7 @@ class Search(models.Model):
     def get_manually_added(cls, assessment):
         try:
             return Search.objects.get(assessment=assessment,
-                                      source=0, #manual import
+                                      source=0,  # manual import
                                       title="Manual import",
                                       slug="manual-import")
         except Exception:
@@ -309,13 +309,13 @@ class PubMedQuery(models.Model):
         # Create new PubMed identifiers for any PMIDs which are not already in
         # our database.
         new_ids = json.loads(self.results)['added']
-        existing_pmids = list(Identifiers.objects.filter(database=1,
-                                                         unique_id__in=new_ids)
-                                            .values_list('unique_id', flat=True))
+        existing_pmids = list(Identifiers.objects
+            .filter(database=1, unique_id__in=new_ids)
+            .values_list('unique_id', flat=True))
         ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
 
-        block_size=1000.
+        block_size = 1000.
         logging.debug("{c} IDs to be added".format(c=ids_to_add_len))
         for i in xrange(int(ceil(ids_to_add_len/block_size))):
             start_index = int(i*block_size)
@@ -335,7 +335,8 @@ class PubMedQuery(models.Model):
         def get_len(obj):
             if obj is not None:
                 return len(obj)
-            else: return 0
+            else:
+                return 0
 
         details = json.loads(self.results)
         d = {"query_date": self.query_date,
@@ -362,10 +363,10 @@ class Identifiers(models.Model):
 
     def get_url(self):
         url = self.url
-        if self.database == 1: # PubMed
+        if self.database == 1:  # PubMed
             url = r'http://www.ncbi.nlm.nih.gov/pubmed/{unique_id}'.format(
                         unique_id=self.unique_id)
-        elif self.database == 2: # HERO
+        elif self.database == 2:  # HERO
             url = r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={unique_id}'.format(
                         unique_id=self.unique_id)
         return url
@@ -409,8 +410,8 @@ class Identifiers(models.Model):
 
         # Filter HERO IDs to those which need to be imported
         idents = list(Identifiers.objects
-                        .filter(database=2, unique_id__in=hero_ids)
-                        .values_list('unique_id', flat=True))
+            .filter(database=2, unique_id__in=hero_ids)
+            .values_list('unique_id', flat=True))
         need_import = tuple(set(hero_ids) - set(idents))
 
         # Grab HERO objects
@@ -434,8 +435,8 @@ class Identifiers(models.Model):
 
         # Filter IDs which need to be imported
         idents = list(Identifiers.objects
-                        .filter(database=1, unique_id__in=ids)
-                        .values_list('unique_id', flat=True))
+            .filter(database=1, unique_id__in=ids)
+            .values_list('unique_id', flat=True))
         need_import = tuple(set(ids) - set(idents))
 
         # Grab Pubmed objects
@@ -453,7 +454,8 @@ class Identifiers(models.Model):
 
     @classmethod
     def get_max_external_id(cls):
-        return cls.objects.filter(database=0).aggregate(models.Max('unique_id'))["unique_id__max"]
+        return cls.objects.filter(database=0)\
+            .aggregate(models.Max('unique_id'))["unique_id__max"]
 
 
 class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
@@ -568,13 +570,14 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         siblings = list(self.get_siblings())
         index = siblings.index(self)
         related = siblings[index+offset]
-        pos = 'right' if (offset>0) else 'left'
+        pos = 'right' if (offset > 0) else 'left'
         self.move(related, pos)
 
     @classmethod
     def get_flattened_taglist(cls, tagslist, include_parent=True):
         # expects tags dictionary dump_bulk format
         lst = []
+
         def appendChildren(obj, parents):
             parents = parents + '|' if parents != "" else parents
             txt = parents + obj['data']['name']
@@ -592,12 +595,12 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
 
 
 class ReferenceTags(ItemBase):
+    # required to be copied when overridden tag object. See GitHub bug report:
+    # https://github.com/alex/django-taggit/issues/101
+    # copied directly and unchanged from "TaggedItemBase"
     tag = models.ForeignKey(ReferenceFilterTag, related_name="%(app_label)s_%(class)s_items")
     content_object = models.ForeignKey('Reference')
 
-    #required to be copied when overridden tag object. See GitHub bug report:
-    # https://github.com/alex/django-taggit/issues/101
-    # copied directly and unchanged from "TaggedItemBase"
     @classmethod
     def tags_for(cls, model, instance=None):
         if instance is not None:
@@ -621,7 +624,8 @@ class Reference(models.Model):
     tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    block_id = models.DateTimeField(blank=True, null=True, help_text="Used internally for determining when reference was originally added")
+    block_id = models.DateTimeField(blank=True, null=True,
+        help_text="Used internally for determining when reference was originally added")
 
     def get_absolute_url(self):
         return reverse('lit:ref_detail', kwargs={'pk': self.pk})
@@ -637,7 +641,6 @@ class Reference(models.Model):
         for ref in self.identifiers.all():
             d['identifiers'].append(ref.get_json(json_encode=False))
 
-        # ajs todo: refactor JSON to use list of dictionaries instead of two lists
         d['tags'] = list(self.tags.all().values_list('pk', flat=True))
         d['tags_text'] = list(self.tags.all().values_list('name', flat=True))
         if json_encode:
@@ -650,7 +653,7 @@ class Reference(models.Model):
         txt = u""
         for itm in [self.authors, self.title, self.journal]:
             txt += itm
-            if ((len(itm)>0) and (itm[-1] != ".")):
+            if ((len(itm) > 0) and (itm[-1] != ".")):
                 txt += ". "
             else:
                 txt += " "
@@ -660,16 +663,16 @@ class Reference(models.Model):
         citation = ""
 
         # get authors guess
-        if ((self.authors.find('and')>-1) or (self.authors.find('et al.')>-1)):
-            citation = re.sub(r' ([A-Z]{2})','',self.authors) # get rid of initials
+        if ((self.authors.find('and') > -1) or (self.authors.find('et al.') > -1)):
+            citation = re.sub(r' ([A-Z]{2})', '', self.authors)  # remove initials
         else:
             authors = re.findall(r"[\w']+", self.authors)
-            if len(authors)>0:
+            if len(authors) > 0:
                 citation = authors[0]
 
         # get year guess
         year = re.findall(r' (\d+);', self.journal)
-        if len(year)>0:
+        if len(year) > 0:
             citation += " " + year[0]
 
         return citation
@@ -699,8 +702,9 @@ class Reference(models.Model):
     def get_untagged_references(cls, assessment):
         # get all untagged references for the specified assessment.
         refs = Reference.objects.filter(assessment=assessment)
-        tagged = list(ReferenceTags.objects.filter(content_object__in=refs)
-                                   .values_list('content_object', flat=True))
+        tagged = list(ReferenceTags.objects
+            .filter(content_object__in=refs)
+            .values_list('content_object', flat=True))
         return refs.exclude(pk__in=tagged)
 
     @classmethod
@@ -708,8 +712,8 @@ class Reference(models.Model):
         # Get an overview of tagging progress for an assessment
         refs = Reference.objects.filter(assessment=assessment)
         total = refs.count()
-        total_tagged = refs.annotate(tag_count=models.Count('tags')) \
-                     .filter(tag_count__gt=0).count()
+        total_tagged = refs.annotate(tag_count=models.Count('tags'))\
+            .filter(tag_count__gt=0).count()
         total_untagged = total-total_tagged
         total_searched = refs.filter(searches__search_type='s').distinct().count()
         total_imported = total - total_searched
@@ -749,16 +753,18 @@ class Reference(models.Model):
             root_inclusion = ReferenceFilterTag.objects \
                 .get(name='assessment-{a}'.format(a=assessment.pk)) \
                 .get_descendants().get(name='Inclusion')
-            inclusion_tags = list(root_inclusion.get_descendants() \
-                                    .values_list('pk', flat=True))
+            inclusion_tags = list(
+                root_inclusion.get_descendants().values_list('pk', flat=True))
             inclusion_tags.append(root_inclusion.pk)
         except:
-            inclusion_tags=[]
+            inclusion_tags = []
         study_model = get_model('study', 'Study')
-        return Reference.objects.filter(assessment=assessment,
-                                 referencetags__tag_id__in=inclusion_tags) \
-                    .exclude(pk__in=study_model.objects.filter(assessment=assessment)
-                              .values_list('pk', flat=True)).distinct()
+
+        return Reference.objects\
+            .filter(assessment=assessment, referencetags__tag_id__in=inclusion_tags)\
+            .exclude(pk__in=study_model.objects
+                .filter(assessment=assessment).values_list('pk', flat=True))\
+            .distinct()
 
     @classmethod
     def get_hero_references(cls, search, identifiers):
@@ -769,20 +775,22 @@ class Reference(models.Model):
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
-        refs = Reference.objects.filter(assessment=search.assessment,
-                                        identifiers__in=identifiers).exclude(searches=search)
+        refs = Reference.objects\
+            .filter(assessment=search.assessment, identifiers__in=identifiers)\
+            .exclude(searches=search)
         logging.debug("Starting bulk creation of search-thorough values")
         RefSearchM2M = Reference.searches.through
         ref_searches = []
         for ref in refs:
-            ref_searches.append(RefSearchM2M(reference_id=ref.pk,
-                                             search_id=search.pk))
+            ref_searches.append(
+                RefSearchM2M(reference_id=ref.pk, search_id=search.pk))
         RefSearchM2M.objects.bulk_create(ref_searches)
 
         # get references associated with these identifiers, and get a subset of
         # identifiers which have no reference associated with them
-        refs = list(Reference.objects.filter(assessment=search.assessment,
-                                             identifiers__in=identifiers))
+        refs = list(
+            Reference.objects.filter(
+                assessment=search.assessment, identifiers__in=identifiers))
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
@@ -793,15 +801,16 @@ class Reference(models.Model):
             pmid = content.get('PMID', None)
 
             if pmid:
-                ref = Reference.objects.filter(assessment=search.assessment,
-                                               identifiers__unique_id=pmid,
-                                               identifiers__database=1)  # PubMed
+                ref = Reference.objects.filter(
+                    assessment=search.assessment,
+                    identifiers__unique_id=pmid,
+                    identifiers__database=1)  # PubMed
             else:
                 ref = Reference.objects.none()
 
-            if ref.count()==1:
+            if ref.count() == 1:
                 ref = ref[0]
-            elif ref.count()>1:
+            elif ref.count() > 1:
                 raise Exception("Duplicate HERO reference found")
             else:
                 ref = identifier.create_reference(search.assessment)
@@ -823,8 +832,9 @@ class Reference(models.Model):
         # but are not associated with the current search and save this search
         # as well to this Reference.
 
-        refs = Reference.objects.filter(assessment=search.assessment,
-                                        identifiers__in=identifiers).exclude(searches=search)
+        refs = Reference.objects\
+            .filter(assessment=search.assessment, identifiers__in=identifiers)\
+            .exclude(searches=search)
         logging.debug("Starting bulk creation of search-thorough values")
         RefSearchM2M = Reference.searches.through
         ref_searches = []
@@ -833,9 +843,9 @@ class Reference(models.Model):
                                              search_id=search.pk))
         RefSearchM2M.objects.bulk_create(ref_searches)
 
-        # Get any references which already are associated with these identifiers
-        refs = list(Reference.objects.filter(assessment=search.assessment,
-                                             identifiers__in=identifiers))
+        # Get any references already are associated with these identifiers
+        refs = list(Reference.objects
+            .filter(assessment=search.assessment, identifiers__in=identifiers))
 
         # Only process identifiers which have no reference
         if refs:
@@ -853,13 +863,6 @@ class Reference(models.Model):
 
     def get_assessment(self):
         return self.assessment
-
-    @classmethod
-    def excel_export(cls, queryset, tags, sheet_name="hawc-reference-export", include_parent_tag=False):
-        headers = cls.get_excel_export_header(tags, include_parent_tag)
-        data_rows_func = cls.build_excel_rows
-        excel = build_excel_file(sheet_name, headers, queryset, data_rows_func, tags=tags, include_parent_tag=include_parent_tag)
-        return excel
 
     @classmethod
     def get_docx_template_context(cls, queryset):
@@ -893,4 +896,3 @@ class Reference(models.Model):
                 },
             ]
         }
-
