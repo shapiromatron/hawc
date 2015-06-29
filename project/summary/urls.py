@@ -1,5 +1,4 @@
-
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
@@ -11,7 +10,8 @@ router.register(r'visual', api.Visual, base_name="visual")
 router.register(r'data_pivot', api.DataPivot, base_name="data_pivot")
 
 
-urlpatterns = patterns('',
+urlpatterns = [
+
     # API
     url(r'^api/', include(router.urls)),
 
@@ -90,4 +90,4 @@ urlpatterns = patterns('',
     url(r'^data-pivot/assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/delete/$',
         views.DataPivotDelete.as_view(),
         name='dp_delete'),
-)
+]

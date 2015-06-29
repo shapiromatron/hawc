@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.views import (login, logout, password_reset,
                                        password_reset_done,
                                        password_reset_confirm)
@@ -8,7 +8,8 @@ from . import forms
 from . import views
 
 
-urlpatterns = patterns('',
+urlpatterns = [
+
     url(r'^login/$',
         login,
         {'authentication_form': forms.HAWCAuthenticationForm},
@@ -59,4 +60,4 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/set-password/$',
         views.SetUserPassword.as_view(),
         name='set_password'),
-)
+]

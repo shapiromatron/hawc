@@ -1,9 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib import admin
 
 from . import views
 
-urlpatterns = patterns('assessment.views',
+urlpatterns = [
 
     # assessment objects
     url(r'^all/$',
@@ -92,6 +92,6 @@ urlpatterns = patterns('assessment.views',
     url(r'^close-window/$',
         views.CloseWindow.as_view(),
         name='close_window'),
-)
+]
 
 admin.autodiscover()

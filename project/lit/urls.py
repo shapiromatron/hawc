@@ -1,8 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from . import views
 
-urlpatterns = patterns('study.views',
+urlpatterns = [
+
     url(r'^assessment/(?P<pk>\d+)/$', views.LitOverview.as_view(), name='overview'),
 
     url(r'^assessment/tags/json/$', views.TagsJSON.as_view(), name='tags_list'),
@@ -37,4 +38,4 @@ urlpatterns = patterns('study.views',
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tag/$', views.SearchTagsEdit.as_view(), name='search_tags_edit'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags/$', views.SearchRefList.as_view(), name='search_tags'),
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags-visuals/$', views.SearchTagsVisualization.as_view(), name='search_tags_visual'),
-)
+]

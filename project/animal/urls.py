@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
@@ -11,8 +11,7 @@ router.register(r'experiment', api.Experiment, base_name="experiment")
 router.register(r'animal-group', api.AnimalGroup, base_name="animal_group")
 
 
-urlpatterns = patterns('animal.views',
-
+urlpatterns = [
     # Overall views
     url(r'^assessment/(?P<pk>\d+)/full-export/$', views.FullExport.as_view(), name='export'),
     url(r'^assessment/(?P<pk>\d+)/report/$', views.EndpointsReport.as_view(), name='endpoints_report'),
@@ -82,4 +81,4 @@ urlpatterns = patterns('animal.views',
     url(r'^assessment/(?P<pk>\d+)/dose-units/create/$', views.DoseUnitsCreate.as_view(), name='dose_units_create'),
 
     url(r'^api/', include(router.urls))
-)
+]

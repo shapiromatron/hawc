@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
@@ -9,7 +9,7 @@ router.register(r'chemical', api.IVChemical, base_name="chemical")
 router.register(r'experiment', api.IVExperiment, base_name="experiment")
 router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
 
-urlpatterns = patterns('',
+urlpatterns = [
 
     # experiment
     url(r'^experiment/(?P<pk>\d+)/$',
@@ -34,4 +34,4 @@ urlpatterns = patterns('',
         name='endpoints_report'),
 
     url(r'^api/', include(router.urls)),
-)
+]

@@ -1,9 +1,10 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from . import views
 
 
-urlpatterns = patterns('comments.views',
+urlpatterns = [
+
     url(r'^assessment/(?P<pk>\d+)/settings/$',
         views.CommentSettingsDetail.as_view(),
         name='comment_settings_details'),
@@ -28,4 +29,4 @@ urlpatterns = patterns('comments.views',
     url(r'^assessment/(?P<pk>\d+)/all/word/$',
         views.CommentReport.as_view(),
         name='comment_report'),
-)
+]

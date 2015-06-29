@@ -1,11 +1,11 @@
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
 from assessment import views
 
-urlpatterns = patterns('',
+urlpatterns = [
 
     # Portal
     url(r'^$',
@@ -21,25 +21,25 @@ urlpatterns = patterns('',
         views.Contact.as_view(), name='contact'),
 
     # Apps
-    (r'^user/',
+    url(r'^user/',
         include('myuser.urls', namespace='user')),
-    (r'^assessment/',
+    url(r'^assessment/',
         include('assessment.urls', namespace='assessment')),
-    (r'^study/',
+    url(r'^study/',
         include('study.urls', namespace='study')),
-    (r'^ani/',
+    url(r'^ani/',
         include('animal.urls', namespace='animal')),
-    (r'^epi/',
+    url(r'^epi/',
         include('epi.urls', namespace='epi')),
-    (r'^in-vitro/',
+    url(r'^in-vitro/',
         include('invitro.urls', namespace='invitro')),
-    (r'^bmd/',
+    url(r'^bmd/',
         include('bmd.urls', namespace='bmd')),
-    (r'^lit/',
+    url(r'^lit/',
         include('lit.urls', namespace='lit')),
-    (r'^summary/',
+    url(r'^summary/',
         include('summary.urls', namespace='summary')),
-    (r'^comments/',
+    url(r'^comments/',
         include('comments.urls', namespace='comments')),
 
     # Error-pages
@@ -63,14 +63,14 @@ urlpatterns = patterns('',
         include(admin.site.urls), name='master_admin'),
     url(r'^selectable/',
         include('selectable.urls')),
-)
+]
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^media/(?P<path>.*)$',
             'django.views.static.serve',
             {'document_root': settings.MEDIA_ROOT, }),
-    )
+    ]
 
 admin.autodiscover()

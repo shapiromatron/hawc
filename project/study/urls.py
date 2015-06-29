@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
@@ -8,7 +8,8 @@ from . import views, api
 router = DefaultRouter()
 router.register(r'study', api.Study, base_name="study")
 
-urlpatterns = patterns('',
+urlpatterns = [
+
     # assessment risk-of-bias
     url(r'^assessment/(?P<pk>\d+)/risk-of-bias/$', views.ASQDetail.as_view(), name='asq_detail'),
     url(r'^assessment/(?P<pk>\d+)/risk-of-bias/edit/$', views.ASQEdit.as_view(), name='asq_update'),
@@ -53,4 +54,4 @@ urlpatterns = patterns('',
     url(r'^risk-of-bias/(?P<pk>\d+)/delete/$', views.SQDelete.as_view(), name='sq_delete'),
 
     url(r'^api/', include(router.urls))
-)
+]

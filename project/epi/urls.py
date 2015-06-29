@@ -1,9 +1,8 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
-from . import views
-from . import api
+from . import views, api
 
 router = DefaultRouter()
 router.register(r'meta-result', api.MetaResult, base_name="meta-result")
@@ -11,7 +10,7 @@ router.register(r'study-population', api.StudyPopulation, base_name="study-popul
 router.register(r'exposure', api.Exposure, base_name="exposure")
 router.register(r'assessed-outcome', api.AssessedOutcome, base_name="assessed-outcome")
 
-urlpatterns = patterns('',
+urlpatterns = [
 
     # overall views
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
@@ -162,4 +161,4 @@ urlpatterns = patterns('',
         name='mr_delete'),
 
     url(r'^api/', include(router.urls)),
-)
+]
