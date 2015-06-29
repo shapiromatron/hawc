@@ -192,14 +192,12 @@ class Visual(models.Model):
         'assessment.BaseEndpoint',
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
-        blank=True,
-        null=True)
+        blank=True)
     studies = models.ManyToManyField(
         Study,
         related_name='visuals',
         help_text="Studies to be included in visualization",
-        blank=True,
-        null=True)
+        blank=True)
     settings = models.TextField(
         default="{}")
     caption = models.TextField()

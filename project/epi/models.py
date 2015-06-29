@@ -499,18 +499,15 @@ class StudyPopulation(Demographics):
     inclusion_criteria = models.ManyToManyField(
         StudyCriteria,
         related_name='inclusion_criteria',
-        blank=True,
-        null=True)
+        blank=True)
     exclusion_criteria = models.ManyToManyField(
         StudyCriteria,
         related_name='exclusion_criteria',
-        blank=True,
-        null=True)
+        blank=True)
     confounding_criteria = models.ManyToManyField(
         StudyCriteria,
         related_name='confounding_criteria',
-        blank=True,
-        null=True)
+        blank=True)
 
     class Meta:
         ordering = ('name', )
@@ -738,14 +735,13 @@ class AssessedOutcome(BaseEndpoint):
     adjustment_factors = models.ManyToManyField(Factor,
         help_text="All factors which were included in final model",
         related_name='adjustments',
-        blank=True, null=True)
+        blank=True)
     confounders_considered = models.ManyToManyField(Factor,
         verbose_name= "Adjustment factors considered",
         help_text="All factors which were examined "
                   "(including those which were included in final model)",
         related_name='confounders',
-        blank=True,
-        null=True)
+        blank=True)
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
         help_text="Was a dose-response trend observed?",
@@ -1185,13 +1181,11 @@ class MetaProtocol(models.Model):
     inclusion_criteria = models.ManyToManyField(
         StudyCriteria,
         related_name='meta_inclusion_criteria',
-        blank=True,
-        null=True)
+        blank=True)
     exclusion_criteria = models.ManyToManyField(
         StudyCriteria,
         related_name='meta_exclusion_criteria',
-        blank=True,
-        null=True)
+        blank=True)
     total_studies_identified = models.PositiveIntegerField(
         verbose_name="Total number of studies identified",
         help_text="Total references identified for inclusion after application "
@@ -1296,8 +1290,7 @@ class MetaResult(models.Model):
         Factor,
         help_text="All factors which were included in final model",
         related_name='meta_adjustments',
-        blank=True,
-        null=True)
+        blank=True)
     notes = models.TextField(
         blank=True)
 

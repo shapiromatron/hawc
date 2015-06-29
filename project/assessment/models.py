@@ -56,20 +56,17 @@ class Assessment(models.Model):
                   "or clarification on the purpose of the assessment.")
     project_manager = models.ManyToManyField(HAWCUser,
         related_name='assessment_pms',
-        null=False,  # todo: move all these into one m2m table w/ metadata
         help_text="Has complete assessment control, including the ability to "
                   "add team members, make public, or delete an assessment. "
                   "You can add multiple project-managers.")
     team_members = models.ManyToManyField(HAWCUser,
         related_name='assessment_teams',
-        null=True,
         blank=True,
         help_text="Can view and edit assessment components, "
                   "if project is editable. "
                   "You can add multiple team-members")
     reviewers = models.ManyToManyField(HAWCUser,
         related_name='assessment_reviewers',
-        null=True,
         blank=True,
         help_text="Can view the assessment even if the assessment is not public, "
                   "but cannot add or change content. Reviewers may optionally add "
@@ -363,8 +360,7 @@ class BaseEndpoint(models.Model):
     # in assessment; major use case in HAWC.
 
     name = models.CharField(max_length=128, verbose_name="Endpoint name")
-    effects = models.ManyToManyField(EffectTag, blank=True, null=True,
-                                     verbose_name="Tags")
+    effects = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

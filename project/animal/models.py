@@ -276,8 +276,7 @@ class AnimalGroup(models.Model):
         "self",
         related_name="children",
         symmetrical=False,
-        blank=True,
-        null=True)
+        blank=True)
     dosing_regime = models.ForeignKey(
         'DosingRegime',
         help_text='Specify an existing dosing regime or create a new dosing regime below',
