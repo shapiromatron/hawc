@@ -711,10 +711,10 @@ class Endpoint(BaseEndpoint):
     data_type = models.CharField(
         max_length=2,
         choices=DATA_TYPE_CHOICES,
-        default="D",
+        default="C",
         verbose_name="Dataset type")
     variance_type = models.PositiveSmallIntegerField(
-        default=0,
+        default=1,
         choices=VARIANCE_TYPE_CHOICES)
     confidence_interval = models.FloatField(
         blank=True,
@@ -1063,6 +1063,7 @@ class EndpointGroup(models.Model):
         verbose_name="Statistically significant from control")
     significance_level = models.FloatField(
         null=True,
+        blank=True,
         default=None,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Statistical significance level")
