@@ -5,7 +5,6 @@ from json import loads, dumps
 from django.conf import settings
 from django.utils import unittest
 
-import xlwt
 import shutil
 
 from animal.models import Endpoint, EndpointGroup
