@@ -1,11 +1,10 @@
 import os
 import logging
+import unittest
+import shutil
 
 from json import loads, dumps
 from django.conf import settings
-from django.utils import unittest
-
-import shutil
 
 from animal.models import Endpoint, EndpointGroup
 from animal.tests import build_endpoints_for_permission_testing

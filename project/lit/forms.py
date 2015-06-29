@@ -154,6 +154,7 @@ class ReferenceFilterTagForm(forms.ModelForm):
 
     class Meta:
         model = models.ReferenceFilterTag
+        fields = '__all__'
 
 
 class ReferenceSearchForm(forms.Form):
@@ -164,7 +165,7 @@ class ReferenceSearchForm(forms.Form):
     journal = forms.CharField(
         required=False,
         help_text="Use shorthand name for journals.")
-    db_id  = forms.IntegerField(
+    db_id = forms.IntegerField(
         label='Database ID',
         help_text="Enter a PubMed or HERO database ID, for example 8675309",
         required=False)
@@ -209,3 +210,9 @@ class TagsCopyForm(forms.Form):
 
     def copy_tags(self):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data['assessment'])
+
+
+class NullForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        pass

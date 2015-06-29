@@ -36,8 +36,6 @@ class AssessmentForm(forms.ModelForm):
         self.fields['reviewers'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
 
-        remove_holddown_helptext(self, ('project_manager', 'team_members', 'reviewers'))
-
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -149,6 +147,7 @@ class EffectTagForm(forms.ModelForm):
 
     class Meta:
         model = models.EffectTag
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent')

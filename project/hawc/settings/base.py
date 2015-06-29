@@ -29,28 +29,40 @@ MANAGERS = ADMINS
 
 
 # Template processors
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.request"
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [
+            os.path.join(PROJECT_PATH, 'templates'),
+        ],
+        'OPTIONS': {
+            'context_processors': (
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.request"
+            ),
+        }
+    },
+]
 
 
 # Middleware
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 )
 
 
@@ -73,7 +85,6 @@ INSTALLED_APPS = (
     'selectable',
     'pagedown',
     'markdown_deux',
-    'static_precompiler',
     'crispy_forms',
 
     # Custom apps
@@ -114,10 +125,10 @@ CELERYD_CONCURRENCY = 3
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': os.getenv('DJANGO_CACHE_SOCK'),
         'OPTIONS': {
-            'CLIENT_CLASS': 'redis_cache.client.DefaultClient'
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
         },
         'TIMEOUT': None
     }
@@ -162,19 +173,9 @@ STATICFILES_DIRS = (
     os.getenv('DJANGO_STATIC_DIR2'),
 )
 
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_PATH, 'templates'),
-)
-
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'static_precompiler.finders.StaticPrecompilerFinder',
-)
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
 )
 
 
@@ -246,12 +247,6 @@ PAGEDOWN_WIDGET_CSS = ('pagedown/demo/browser/demo.css', "css/pagedown.css",)
 # Django selectable settings
 SELECTABLE_MAX_LIMIT = 10
 
-# Django-static-precompiler settings
-STATIC_PRECOMPILER_COMPILERS = (
-    'static_precompiler.compilers.CoffeeScript',
-)
-
-STATIC_PRECOMPILER_OUTPUT_DIR = 'compiled'
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap'

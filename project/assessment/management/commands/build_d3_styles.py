@@ -11,13 +11,9 @@ style information from external-style sheets."""
 
 
 class Command(BaseCommand):
-    args = ''
     help = HELP_TEXT
 
     def handle(self, *args, **options):
-        if len(args)>0:
-            raise CommandError("No inputs are taken for this command.")
-
         static_path = os.path.abspath(os.path.join(settings.PROJECT_PATH, 'static'))
 
         def remove_spacing(txt, character):

@@ -284,12 +284,12 @@ class BaseEndpointList(BaseList):
         context = super(BaseEndpointList, self).get_context_data(**kwargs)
 
         eps = self.model.endpoint\
-            .related.model.objects\
+            .related.related_model.objects\
             .filter(assessment_id=self.assessment.id)\
             .count()
 
         aos = self.model.assessedoutcome\
-            .related.model.objects\
+            .related.related_model.objects\
             .filter(assessment_id=self.assessment.id)\
             .count()
 
@@ -299,7 +299,7 @@ class BaseEndpointList(BaseList):
             .count()
 
         iveps = self.model.ivendpoint\
-            .related.model.objects\
+            .related.related_model.objects\
             .filter(assessment_id=self.assessment.id)\
             .count()
 

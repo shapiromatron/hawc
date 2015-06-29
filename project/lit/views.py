@@ -497,6 +497,7 @@ class TagsUpdate(BaseUpdate):
     """
     model = Assessment
     template_name = "lit/tags_update.html"
+    form_class = forms.NullForm
 
     def get_context_data(self, **kwargs):
         context = super(TagsUpdate, self).get_context_data(**kwargs)

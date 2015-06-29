@@ -522,6 +522,7 @@ class IndividualAnimalForm(ModelForm):
 
     class Meta:
         model = models.IndividualAnimal
+        fields = '__all__'
 
 
 class UncertaintyFactorEndpointForm(ModelForm):
@@ -546,6 +547,7 @@ class AJAXUncertaintyFactorEndpointForm(ModelForm):
     """
     class Meta:
         model = models.UncertaintyFactorEndpoint
+        fields = '__all__'
 
 
 class HiddenSelectBox(Select):
@@ -676,6 +678,7 @@ class SpeciesForm(ModelForm):
 
     class Meta:
         model = models.Species
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
@@ -689,6 +692,7 @@ class StrainForm(ModelForm):
 
     class Meta:
         model = models.Strain
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)

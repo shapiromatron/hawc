@@ -436,10 +436,11 @@ class EndpointSearch(AssessmentPermissionsMixin, FormView):
 
 
 class EndpointRead(BaseDetail):
-    queryset = models.Endpoint.objects.select_related('animal_group',
-                                                      'animal_group__dosing_regime',
-                                                      'animal_group__dosing_regime__experiment',
-                                                      'animal_group__dosing_regime__experiment__study')
+    queryset = models.Endpoint.objects\
+        .select_related('animal_group',
+                        'animal_group__dosing_regime',
+                        'animal_group__experiment',
+                        'animal_group__experiment__study')
 
     def get_context_data(self, **kwargs):
         context = super(EndpointRead, self).get_context_data(**kwargs)

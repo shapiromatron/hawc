@@ -3,7 +3,9 @@ from .base import *
 import logging
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+for tmp in TEMPLATES:
+    tmp['OPTIONS']['debug'] = True
+
 SERVER_ROLE = "dev"
 
 INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')

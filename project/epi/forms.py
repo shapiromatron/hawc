@@ -3,7 +3,7 @@ from copy import copy
 from django import forms
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.widgets import CheckboxInput, TextInput
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 
 from selectable import forms as selectable
 
@@ -434,7 +434,7 @@ class SingleResultForm(forms.ModelForm):
                  'exposure_name', 'weight', 'n',
                  'estimate', 'lower_ci', 'upper_ci', 'ci_units', 'notes')
         tmp = copy(self.fields)
-        self.fields = SortedDict()
+        self.fields = OrderedDict()
         for item in order:
             self.fields[item] = tmp[item]
 

@@ -2,7 +2,6 @@
 
 import os
 import re
-from optparse import make_option
 
 import xlsxwriter
 import unicodedata
@@ -17,30 +16,34 @@ HELP_TEXT = """Remove control characters from a text field"""
 
 class Command(BaseCommand):
     help = HELP_TEXT
-    args = "<appname> <modelname> <fieldname>"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-t", "--test",
+    def add_arguments(self, parser):
+        parser.add_argument('appname', type=str)
+        parser.add_argument('modelname', type=str)
+        parser.add_argument('fieldname', type=str)
+
+        parser.add_argument(
+            "-t", "--test",
+            required=False,
             action="store_true",
             help="Create an Excel spreadsheet which shows differences, but don't execute in database",
-            dest="test_only"),
-        )
+            dest="test_only")
 
     def handle(self, *args, **options):
         # check inputs are valid
-        if len(args) == 3:
-            app = get_app(args[0])
-            model = get_model(args[0], args[1])
-            field = model._meta.get_field_by_name(args[2])
+        if len(options) >= 3:
+            app = get_app(options['appname'])
+            model = get_model(options['appname'], options['modelname'])
+            field = model._meta.get_field(options['fieldname'])
             # get all objects
             qs = model.objects.all()
         else:
-            raise CommandError("Requires three arguments: {}".format(self.args))
+            raise CommandError("Requires three arguments: {}".format(options))
 
         if options.get('test_only'):
-            self.test_clean_field(qs, args[2])
+            self.test_clean_field(qs, options['fieldname'])
         else:
-            self.clean_field(qs, args[2])
+            self.clean_field(qs, options['fieldname'])
 
     def clean_field(self, qs, field):
         mods = 0

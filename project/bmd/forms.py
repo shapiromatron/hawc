@@ -15,12 +15,14 @@ class LogicFieldForm(ModelForm):
 
     class Meta:
         model = models.LogicField
+        fields = '__all__'
 
 
 class BMD_SessionForm(ModelForm):
 
     class Meta:
         model = models.BMD_session
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
