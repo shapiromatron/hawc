@@ -441,46 +441,64 @@ class EndpointForm(ModelForm):
         return variance_type
 
 
-class EndpointGroupForm(ModelForm):
+class EndpointGroupForm(forms.ModelForm):
 
     class Meta:
+        exclude = ('endpoint', 'dose_group_id', 'significant')
         model = models.EndpointGroup
-        fields = ('dose_group_id', 'n', 'incidence',
-                  'response', 'variance', 'lower_ci',
-                  'upper_ci', 'significance_level')
-        exclude = ('endpoint', 'significant', )
 
     def __init__(self, *args, **kwargs):
         endpoint = kwargs.pop('endpoint', None)
         super(EndpointGroupForm, self).__init__(*args, **kwargs)
         if endpoint:
             self.instance.endpoint = endpoint
+        for fld in self.fields:
+            self.fields[fld].widget.attrs['class'] = 'span12'
 
     def clean(self):
-        cleaned_data = super(EndpointGroupForm, self).clean()
-        data_type = self.instance.endpoint.data_type
+        super(EndpointGroupForm, self).clean()
+        data = self.cleaned_data
+        data_type = self.endpoint_form.cleaned_data['data_type']
+        var_type = self.endpoint_form.cleaned_data.get('variance_type', 0)
 
         if data_type == 'C':
-            var = cleaned_data.get("variance")
-            var_type = self.instance.endpoint.variance_type
-            if var is not None and var_type in (0,3):
-                raise ValidationError('Variance must be numeric, or the'
-                                      'endpoint-field "variance-type" should'
-                                      'be "not reported"')
+            var = data.get("variance")
+            if var is not None and var_type in (0, 3):
+                msg = 'Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"'
+                self.add_error('variance', msg)
         elif data_type == 'P':
-            if operator.xor(
-                    cleaned_data.get("lower_ci") is None,
-                    cleaned_data.get("upper_ci") is None):
-                raise ValidationError('Both confidence intervals must be'
-                                      'provided for a dose-group, or left-blank')
+            if data.get("lower_ci") is None and data.get("upper_ci") is not None:
+                msg = 'A lower CI must be provided if an upper CI is provided'
+                self.add_error('lower_ci', msg)
+            if data.get("lower_ci") is not None and data.get("upper_ci") is None:
+                msg = 'An upper CI must be provided if an lower CI is provided'
+                self.add_error('upper_ci', msg)
         elif data_type in ["D", "DC"]:
-            if operator.xor(
-                    cleaned_data.get("incidence") is None,
-                    cleaned_data.get("n") is None):
-                raise ValidationError('Both incidence and N must be provided'
-                                      'for a dose-group, or left-blank')
-            if cleaned_data.get("n") < cleaned_data.get("incidence"):
-                raise ValidationError('Incidence must be less-than or equal-to N')
+            if data.get("incidence") is None and data.get("n") is not None:
+                msg = 'An Incidence must be provided if an N is provided'
+                self.add_error('incidence', msg)
+            if data.get("incidence") is not None and data.get("n") is None:
+                msg = 'An N must be provided if an Incidence is provided'
+                self.add_error('n', msg)
+            if data.get("n") < data.get("incidence"):
+                msg = 'Incidence must be less-than or equal-to N'
+                self.add_error('incidence', msg)
+
+        return data
+
+
+class BaseEndpointGroupFormSet(BaseModelFormSet):
+
+    def __init__(self, **defaults):
+        super(BaseEndpointGroupFormSet, self).__init__(**defaults)
+        self.forms[0].fields['significance_level'].widget.attrs['class'] += " hidden"
+
+
+EndpointGroupFormSet = modelformset_factory(
+    models.EndpointGroup,
+    form=EndpointGroupForm,
+    formset=BaseEndpointGroupFormSet,
+    extra=0)
 
 
 class EndpointSelectorForm(forms.Form):

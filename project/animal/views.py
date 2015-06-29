@@ -1,7 +1,7 @@
 import json
 
 from django.db.models import Q
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, modelformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -16,7 +16,8 @@ from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         BaseVersion, GenerateReport, GenerateFixedReport)
+                         BaseVersion, GenerateReport, GenerateFixedReport,
+                         BaseCreateWithFormset, BaseUpdateWithFormset)
 
 from . import forms, models, exports, reports
 
@@ -278,94 +279,76 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
 
 # Endpoint Views
-class EndpointCreate(BaseCreate):
-    success_message = 'Endpoint created.'
+class EndpointCreate(BaseCreateWithFormset):
+    success_message = 'Assessed-outcome created.'
     parent_model = models.AnimalGroup
     parent_template_name = 'animal_group'
     model = models.Endpoint
     form_class = forms.EndpointForm
+    formset_factory = forms.EndpointGroupFormSet
 
     def get_form_kwargs(self):
         kwargs = super(EndpointCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
-    def form_valid(self, form):
-        """
-        Check if endpoint-group formset is valid
-        """
-        self.object = form.save(commit=False)
+    def build_initial_formset_factory(self):
+        Formset = modelformset_factory(
+            models.EndpointGroup,
+            form=forms.EndpointGroupForm,
+            formset=forms.BaseEndpointGroupFormSet,
+            extra=self.parent.dosing_regime.num_dose_groups
+        )
+        return Formset(queryset=models.EndpointGroup.objects.none())
 
-        # check if endpoint-groups are valid
-        egs = json.loads(self.request.POST['egs_json'])
-        egs_forms = []
-        for eg in egs:
-            eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
-            if eg_form.is_valid():
-               egs_forms.append(eg_form)
-            else:
-                self.egs_errors = form_error_list_to_ul(eg_form)
-                return self.form_invalid(form)
+    def pre_validate(self, form, formset):
+        # required for dataset-type checks
+        for egform in formset.forms:
+            egform.endpoint_form = form
 
-        # save endpoint and endpoint-groups
+    def form_valid(self, form, formset):
         self.object = form.save()
-        for eg_form in egs_forms:
-            eg_form.instance.endpoint = self.object
-            eg_form.save()
-
+        if self.object.dose_response_available:
+            self.post_object_save(form, formset)
+            for egform in formset.forms:
+                # save all EGs, even if no data
+                egform.save()
+            self.post_formset_save(form, formset)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_context_data(self, **kwargs):
-        context = super(EndpointCreate, self).get_context_data(**kwargs)
-        context['animal_group'] = self.parent
-        if self.request.method == 'POST':  # send back errors and previous representation
-            context['endpoint_json'] = self.request.POST['endpoint_json']
-            if hasattr(self, 'egs_errors'):
-                context['egs_errors'] = self.egs_errors
-        return context
+    def post_object_save(self, form, formset):
+        for i, egform in enumerate(formset.forms):
+            egform.instance.endpoint = self.object
+            egform.instance.dose_group_id = i
 
 
-class EndpointUpdate(BaseUpdate):
+class EndpointUpdate(BaseUpdateWithFormset):
     success_message = 'Endpoint updated.'
     model = models.Endpoint
     form_class = forms.EndpointForm
+    formset_factory = forms.EndpointGroupFormSet
 
-    def form_valid(self, form):
-        """
-        Check if endpoint-group formset is valid
-        """
-        valid_forms = [form]
-        egs = json.loads(self.request.POST['egs_json'])
-        for i, eg in enumerate(egs):
-            try:
-                eg_form = forms.EndpointGroupForm(eg,
-                    instance=models.EndpointGroup.objects.get(endpoint=self.object, dose_group_id=i),
-                    endpoint=self.object)
-            except:
-                eg_form = forms.EndpointGroupForm(eg, endpoint=self.object)
-            if eg_form.is_valid():
-                valid_forms.append(eg_form)
-            else:
-                self.egs_errors = form_error_list_to_ul(eg_form)
-                return self.form_invalid(form)
+    def build_initial_formset_factory(self):
+        return forms.EndpointGroupFormSet(queryset=self.object.endpoint_group.all())
 
-        #now, save each form, and delete any existing dose groups greater than max
-        for form in valid_forms:
-            form.save()
-        models.EndpointGroup.objects.filter(endpoint=self.object.pk,
-                                            dose_group_id__gt=len(egs)-1).delete()
+    def pre_validate(self, form, formset):
+        for egform in formset.forms:
+            egform.endpoint_form = form
 
-        self.send_message()  # replicate MessageMixin
+    def form_valid(self, form, formset):
+        self.object = form.save()
+        self.post_object_save(form, formset)
+        for egform in formset.forms:
+            # save all EGs, even if no data
+            egform.save()
+        self.post_formset_save(form, formset)
+        self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super(EndpointUpdate, self).get_context_data(**kwargs)
         context['animal_group'] = self.object.animal_group
-        if self.request.method == 'POST':  # send back errors and previous representation
-            context['endpoint_json'] = self.request.POST['endpoint_json']
-            if hasattr(self, 'egs_errors'):
-                context['egs_errors'] = self.egs_errors
         return context
 
 

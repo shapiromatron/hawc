@@ -571,4 +571,3 @@ class MetaResultSelectorForm(forms.Form):
         super(MetaResultSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
-

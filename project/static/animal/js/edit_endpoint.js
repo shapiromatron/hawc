@@ -1,7 +1,12 @@
 // Endpoint subclass with editing functionality
-var EditEndpoint = function(endpoint, eg_table){
+var EditEndpoint = function(endpoint, doses, eg_table, plot){
     Endpoint.call(this, endpoint); // call parent constructor
-    this.eg_table = $(eg_table);
+    this.doses = endpoint.doses;
+    this.eg_table = eg_table;
+    this.plot_div = plot;
+    this.inject_doses(doses);
+    this.setOELS();
+    this.update_endpoint_from_form();
 };
 _.extend(EditEndpoint, {
     getVarianceType: function(variance_type){
@@ -21,24 +26,6 @@ _.extend(EditEndpoint, {
     }
 });
 EditEndpoint.prototype = {
-    build_eg_submission: function(){
-        var submission = [];
-        if (this.endpoint_groups_available()){
-            this.data.endpoint_group.forEach(function(v,i){
-                submission.push({
-                    "dose_group_id": i,
-                    "n": v.n,
-                    "incidence": v.incidence,
-                    "response": v.response,
-                    "variance": v.variance,
-                    "lower_ci": v.lower_ci,
-                    "upper_ci": v.upper_ci,
-                    "significance_level": v.significance_level
-                });
-            });
-        }
-        return JSON.stringify(submission);
-    },
     update_endpoint_from_form: function(){
         var vals = { 'endpoint_group': [] };
         //save form values
@@ -50,103 +37,46 @@ EditEndpoint.prototype = {
         vals['FEL'] = $('#id_FEL option:selected').val();
 
         //now endpoint-group data
-        $('#eg > tbody > tr').each(function(i, v){
+        this.eg_table.find('tbody > tr').each(function(i, tr){
             var row = {};
-            row['n'] = parseInt($('#n_' + i).val());
-            row['incidence'] = parseInt($('#inc_' + i).val());
-            row['response'] = parseFloat($('#resp_' + i).val());
+            $(tr).find(':input').each(function(i, d){
+                var name = d.name.split("-").pop();
+                row[name] = parseFloat(d.value, 10);
+            });
             row['isReported'] = $.isNumeric(row['response'] || row['incidence']);
-            row['variance'] = parseFloat($('#variance_' + i).val());
             row['hasVariance'] = $.isNumeric(row['variance']);
-            row['lower_ci'] = parseFloat($('#lower_ci_' + i).val());
-            row['upper_ci'] = parseFloat($('#upper_ci_' + i).val());
-            row['significance_level'] = parseFloat($('#significance_level_' + i).val()) || 0;
             vals['endpoint_group'].push(row);
         });
         delete vals[""]; // cleanup
-        vals['doses'] = window.doses;
-
+        vals['doses'] = this.doses;
         this.data = vals;
         this.add_confidence_intervals();
-        this.toggle_dose_units();
-        this.build_form_representation();
+        this._switch_dose(0);
+        new DRPlot(this, '#endpoint_plot').build_plot();
     },
     inject_doses: function(doses){
-        // hack for injecting dose-units into endpoint-representation
-        if (this.data.animal_group) return; // only for cases where json object not available
-        var new_doses = []
-        doses.forEach(function(v){
-            new_doses.push({
+        // add dose-units into endpoint-representation
+        this.doses = _.map(doses, function(v){
+            return {
                 "key": v.units_id.toString(),
                 "units": v.units,
                 "values": v.values.map(function(v2){return {dose: v2};})
-            });
+            };
         });
-        endpoint.doses = new_doses;
         this._switch_dose(0);
     },
-    endpoint_groups_available: function(){
-        return ($('#id_data_reported').prop('checked') &&
-                $('#id_data_extracted').prop('checked'));
-    },
-    build_form_representation: function(){
-        var self = this;
-        // rebuild the endpoint data used for an endpoint
-        this.change_dataset_type();
-        this.change_dose_pulldowns();
-        window.plot = new DRPlot(endpoint, '#endpoint_plot');
-        window.plot.build_plot();
+    setOELS: function(){
+      // set NOEL, LOEL, FEL
+      var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
+            .html("<option value=-999>&lt;None&gt;</option>");
 
-        var toggle_eg_visibility = function(){
-            if (self.endpoint_groups_available()){
-                $('#endpointGroups').fadeIn();
-            } else {
-                $('#endpointGroups').fadeOut();
-            }
-        };
-        $('#id_data_reported, #id_data_extracted').on('change', toggle_eg_visibility);
-        toggle_eg_visibility();
-    },
-    change_dose_pulldowns: function(){
-        var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
-                        .html("<option value=-999>&lt;None&gt;</option>");
+      $('.doses').each(function(i, v){
+          fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
+      });
 
-        $('.doses').each(function(i, v){
-            fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
-        });
-
-        // select pre-existing selection (if appropriate)
-        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
-        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
-        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
-    },
-    change_dataset_type: function(){
-        //Change the endpoint group edit fields
-        var shows, hides;
-        if (this.data.data_type == 'C'){
-            shows = ".c_only,.pc_only";
-            hides =  ".d_only,.p_only";
-        } else if (this.data.data_type == 'P'){
-            shows = ".p_only,.pc_only";
-            hides =  ".c_only,.d_only";
-        } else {
-            shows = ".d_only";
-            hides =  ".c_only,.p_only,.pc_only";
-        }
-        $(shows).show();
-        $(hides).hide();
-    },
-    load_values_into_form: function(){
-        // load values from object representation into form
-        this.data.endpoint_group.forEach(function(v, i){
-            $('#n_' + i).val(v.n);
-            $('#inc_' + i).val(v.incidence);
-            $('#resp_' + i).val(v.response);
-            $('#variance_' + i).val(v.variance);
-            $('#lower_ci_' + i).val(v.lower_ci);
-            $('#upper_ci_' + i).val(v.upper_ci);
-            $('#significance_level_' + i).val(v.significance_level ||'-');
-        });
+      $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
+      $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
+      $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
     }
 };
 _.extend(EditEndpoint.prototype, Endpoint.prototype);
@@ -203,7 +133,7 @@ EditEndpointIAD.prototype = {
             this._calculate_summary_stats(row.individual_responses, i);
 
             // recalculate statistics
-            $.extend(row, {response: parseFloat($('#resp_' + i).val()),
+            $.extend(row, {response: parseFloat($('#response_' + i).val()),
                            variance: parseFloat($('#variance_' + i).val())});
             vals['endpoint_group'].push(row);
         }
