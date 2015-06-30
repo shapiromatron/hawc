@@ -12,7 +12,7 @@ TEMPLATE_DEBUG = DEBUG
 
 # Basic setup
 WSGI_APPLICATION = 'hawc.wsgi.application'
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 TIME_ZONE = 'America/Chicago'
