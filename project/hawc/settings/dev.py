@@ -65,7 +65,7 @@ CACHES = {
     }
 }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 
 # Compressor settings
@@ -81,7 +81,6 @@ if 'test' in sys.argv[1:]:
 
         def __getitem__(self, item):
             return "notmigrations"
-
 
     DEBUG = False
     DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
