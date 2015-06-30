@@ -22,9 +22,11 @@ USE_TZ = True
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
 
-ADMINS = (
-    ('Andy Shapiro', 'shapiromatron@gmail.com'),
-)
+ADMINS = []
+_admin_names = os.getenv('DJANGO_ADMIN_NAMES', "")
+_admin_emails = os.getenv('DJANGO_ADMIN_EMAILS', "")
+if (len(_admin_names) > 0 and len(_admin_emails) > 0):
+    ADMINS = zip(_admin_names.split("|"), _admin_emails.split("|"))
 MANAGERS = ADMINS
 
 
