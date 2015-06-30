@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from selectable.forms import AutoCompleteWidget, AutoCompleteSelectMultipleWidget
 from pagedown.widgets import PagedownWidget
 from markdown_deux import markdown
-from utils.forms import BaseFormHelper, remove_holddown_helptext
+from utils.forms import BaseFormHelper
 
 from myuser.lookups import HAWCUserLookup
 
