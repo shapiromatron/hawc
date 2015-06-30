@@ -170,12 +170,7 @@ TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
 BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH')
 INKSCAPE = os.getenv('DJANGO_INKSCAPE')
 RSVG_CONVERT = os.getenv('DJANGO_RSVG_CONVERT_PATH')
-
-STATICFILES_DIRS = (
-    os.getenv('DJANGO_STATIC_DIR1'),
-    os.getenv('DJANGO_STATIC_DIR2'),
-)
-
+STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
