@@ -16,16 +16,17 @@
     {% block extrahead %}{% endblock %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/twitter-bootstrap/2.2.2/css/bootstrap.css" />
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" /> <!-- must be before responsive -->
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css" />
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/jqueryui/1.10.3/css/jquery-ui.css">
     {% else %}
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" />
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" /> <!-- must be before responsive -->
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css">
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/d3.css">
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css">
+    {% endcompress %}
     {% block extrastyle %}{% endblock %}
   </head>
 

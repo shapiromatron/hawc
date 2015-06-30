@@ -6,7 +6,7 @@ iframe {
   resize: both;
 }
 tfoot > tr > td {
-  font-size:80%;
+  font-size: 80%;
   border-top: none;
 }
 code {
@@ -19,7 +19,7 @@ code {
   color: #444;
 }
 .hidden {
-  display:none;
+  display: none;
 }
 .showOptsCaret:hover .optsCaret {
   opacity: 1.0;
