@@ -42,7 +42,6 @@
 
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}epi/js/models.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       window.mr = new MetaResult({{object.get_json|safe}});

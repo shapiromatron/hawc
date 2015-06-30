@@ -55,11 +55,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}study/js/models.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/endpoint.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}epi/js/models.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}invitro/js/models.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}data_pivot/js/data_pivot.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       DataPivot.get_object({{object.id}}, function(dp){

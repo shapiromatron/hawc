@@ -15,7 +15,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}invitro/js/models.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       IVEndpoint.displayAsPage({{object.id}}, $(".ivEndpoint"));

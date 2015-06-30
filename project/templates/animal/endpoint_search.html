@@ -80,8 +80,6 @@
 
 {% block extrajs %}
 {% if endpoints %}
-  <script src="{{ STATIC_URL }}animal/js/endpoint.js" type="text/javascript"></script>
-  <script src="{{ STATIC_URL }}animal/js/aggregation.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       var results = {{endpoints|safe}},

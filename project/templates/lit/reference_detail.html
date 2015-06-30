@@ -27,7 +27,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}lit/js/models.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       window.tagtree = new TagTree({{tags|safe}});
