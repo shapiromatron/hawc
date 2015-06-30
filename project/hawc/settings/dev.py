@@ -68,6 +68,10 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 
+# Compressor settings
+COMPRESS_ENABLED = False
+
+
 if 'test' in sys.argv[1:]:
 
     class DisableMigrations(object):

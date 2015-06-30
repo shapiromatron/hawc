@@ -1,4 +1,4 @@
-{% load url from future %}
+{% load compress %}
 {% load server_role %}
 
 <!DOCTYPE html>
@@ -122,6 +122,7 @@
         </script>
       {% endblock google_analytics %}
     {% endif %}
+    {% compress js %}
     <script type="text/javascript" src="{{STATIC_URL}}js/hawc.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}js/d3.v3.min.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}assessment/js/models.js"></script>
@@ -136,6 +137,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}summary/js/smart_tags.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}summary/js/summary.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}comments/js/comments.js"></script>
+    {% endcompress %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}
   </body>

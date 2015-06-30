@@ -2,7 +2,7 @@ import os
 import sys
 from django.core.urlresolvers import reverse_lazy
 
-PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ),
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                os.path.join(os.pardir, os.pardir)))
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
 
@@ -86,6 +86,7 @@ INSTALLED_APPS = (
     'pagedown',
     'markdown_deux',
     'crispy_forms',
+    'compressor',
 
     # Custom apps
     'utils',
@@ -176,6 +177,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 
@@ -251,6 +253,11 @@ SELECTABLE_MAX_LIMIT = 10
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
+
+# Compressor settings
+COMPRESS_ENABLED = True
+
+
 # Testing settings
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 if ((not DEBUG) and
@@ -267,4 +274,3 @@ if ((not DEBUG) and
             'PORT': '32410',
         }
     }
-
