@@ -12,10 +12,6 @@ DATABASES = {
     }
 }
 
-# CELERY SETTINGS
-BROKER_URL = 'amqp://guest:guest@localhost//'
-CELERY_RESULT_BACKEND = 'amqp'
-
 # EMAIL SETTINGS
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

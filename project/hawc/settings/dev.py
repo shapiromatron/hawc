@@ -1,5 +1,6 @@
 from .base import *
 
+import sys
 import logging
 
 DEBUG = True
@@ -26,15 +27,14 @@ CACHES = {
     }
 }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 LOGGING['loggers']['']['handlers'] = ['console']
 
 
-# Compressor settings
 COMPRESS_ENABLED = False
 
 
+# Testing settings
 if 'test' in sys.argv[1:]:
 
     class DisableMigrations(object):

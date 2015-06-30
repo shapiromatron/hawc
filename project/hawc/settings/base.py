@@ -1,5 +1,4 @@
 import os
-import sys
 from django.core.urlresolvers import reverse_lazy
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -156,26 +155,30 @@ SESSION_CACHE_ALIAS = 'default'
 
 # Server URL settings
 ROOT_URLCONF = 'hawc.urls'
-MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
 LOGIN_URL = reverse_lazy('user:login')
 LOGOUT_URL = reverse_lazy('user:logout')
 LOGIN_REDIRECT_URL = reverse_lazy('portal')
 
 
-# Filesystem settings
-MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
+# Static files
+STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT')
-TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
-BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH')
-INKSCAPE = os.getenv('DJANGO_INKSCAPE')
-RSVG_CONVERT = os.getenv('DJANGO_RSVG_CONVERT_PATH')
 STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
+
+
+# Filesystem settings
+TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
+INKSCAPE = os.getenv('DJANGO_INKSCAPE')
 
 
 # Logging configuration
@@ -240,13 +243,14 @@ LOGGING = {
 
 
 # BMD modeling settings
+BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH')
 BMD_PLOT = r'gnuplot'
 BMD_EXTENSION = ''
 BMD_SHELL = 'x11'
 
 
 # Chemspider token details
-CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN')
+CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN', '')
 
 
 # Django rest framework settings
@@ -271,21 +275,3 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Compressor settings
 COMPRESS_ENABLED = True
-
-
-# Testing settings
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-if ((not DEBUG) and
-    (('test' in sys.argv) or
-     ('test_coverage' in sys.argv))):
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'django_test_db',
-            'USER': 'django_test_user',
-            'PASSWORD': 'passsword',
-            'HOST': 'localhost',
-            'PORT': '32410',
-        }
-    }
