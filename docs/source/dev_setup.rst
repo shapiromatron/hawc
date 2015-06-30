@@ -6,10 +6,10 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - Python 2.7
-- `pip >= 1.5.6 <http://www.pip-installer.org/>`_
-- `virtualenv >= 1.91 <http://www.virtualenv.org/>`_
+- `pip >= 1.5 <http://www.pip-installer.org/>`_
+- `virtualenv >= 1.9 <http://www.virtualenv.org/>`_
 - `virtualenvwrapper >= 3.5 <http://pypi.python.org/pypi/virtualenvwrapper>`_
-- Postgres >= 9.1
+- Postgres >= 9.3
 - git >= 1.7
 
 
@@ -35,7 +35,6 @@ Next, update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivat
     export "PATH=/Library/PostgreSQL/9.4/bin:${PATH}"
 
     # django environment-variable settings
-    export "DJANGO_SECRET_KEY=dge)%8j^94jtu0sioz2%q1ermqp!9f*eq^b_yorddc7_)&^tuf"
     export "DJANGO_SETTINGS_MODULE=hawc.settings.local"
     export "DJANGO_STATIC_ROOT=$HOME/dev/temp/hawc/static"
     export "DJANGO_MEDIA_ROOT=$HOME/dev/temp/hawc/media"
@@ -55,9 +54,8 @@ Create a PostgreSQL database and run the initial syncdb/migrate::
 Next, we'll run a few management command and apply migrations::
 
     python manage.py build_d3_styles
-    python manage.py syncdb
     python manage.py migrate
-    python manage.py createcachetable dev_cache_table
+    python manage.py createcachetable
 
 You should now be able to run the development server::
 

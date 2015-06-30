@@ -22,7 +22,8 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'hawc_cache_table',
         'TIMEOUT': 60*60*24  # seconds
     }
 }
