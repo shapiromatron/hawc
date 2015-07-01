@@ -27,6 +27,8 @@ six==1.9.0
 sqlparse==0.1.15
 unicodecsv==0.13.0
 XlsxWriter==0.7.3
+xlrd==0.9.3
+xlwt==1.0.0
 
 #docx-templating requirements (dev)
 git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
