@@ -6,8 +6,6 @@ from collections import OrderedDict
 from StringIO import StringIO
 import re
 
-from celery import shared_task
-
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
@@ -15,10 +13,11 @@ from django.utils import html
 
 from rest_framework.renderers import JSONRenderer
 
-import docx
 
 import unicodecsv
 import xlsxwriter
+
+from docxUtils.reports import DOCXReport
 
 
 def HAWCtoDateString(datetime):
@@ -26,6 +25,7 @@ def HAWCtoDateString(datetime):
     Helper function to ensure dates are consistent.
     """
     return datetime.strftime("%B %d %Y, %I:%M %p")
+
 
 def cleanHTML(txt):
     return html.strip_entities(
@@ -59,7 +59,8 @@ class SerializerHelper(object):
     @classmethod
     def _get_cache_name(cls, model, id, json=True):
         name = "{}.{}.{}".format(model.__module__, model.__name__, id)
-        if json: name += ".json"
+        if json:
+            name += ".json"
         return name
 
     @classmethod
@@ -269,98 +270,7 @@ class TSVFileBuilder(FlatFile):
         return response
 
 
-class DOCXReport(object):
+class HAWCDOCXReport(DOCXReport):
 
-    def __init__(self, fn, context):
-        self.fn = fn
-        self.context = context
-
-    @shared_task
-    def build_report(self):
-        """
-        Build DOCX report, apply context, and return Django HTTP response
-        """
-        self.doc = docx.Document()
-        self.create_context()
-        return self.django_response()
-
-    @abc.abstractmethod
-    def create_context(self):
-        """
-        Main-method called to generate the content in a Word report
-        """
-        pass
-
-    def django_response(self):
-        """
-        Create an HttpResponse object with the appropriate headers.
-        """
-        docx_file = StringIO()
-        self.doc.save(docx_file)
-        docx_file.seek(0)
-        response = HttpResponse(docx_file)
-        response['Content-Disposition'] = 'attachment; filename={}'.format(self.fn)
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return response
-
-    def build_table(self, numRows, numCols, cells, numHeaders=1):
-        """
-        Helper function to build a table.
-
-        - numRows: (int)
-        - numCols: (int)
-        - cells: (list) in the following format:
-            [
-                {"row":0, "col":0, "text":"value"},
-                {"row":1, "col":0, "text":"value", "rowspan": 2},
-                {"row":1, "col":0, "text":"value", "colspan": 2},
-                {"row":0, "col":0, "runs":[
-                    {"text": "standard text"},
-                    {"text": "bolded text", "bold": True}
-                ]},
-            ]
-
-        """
-
-        tbl = self.doc.add_table(rows=numRows, cols=numCols, style='Light Shading')
-        tbl.autofit = False
-
-        for cell in cells:
-            cellD = tbl.cell(cell["row"], cell["col"])
-            p = cellD.paragraphs[0]
-
-            # merge cells if needed
-            rowspan = cell.get("rowspan", None)
-            colspan = cell.get("colspan", None)
-            if rowspan or colspan:
-                rowIdx = cell["row"] + cell.get("rowspan", 1) - 1
-                colIdx = cell["col"] + cell.get("colspan", 1) - 1
-                cellD.merge(tbl.cell(rowIdx, colIdx))
-
-            # add cell-shading if needed
-            if "shade" in cell:
-                shade_elm = docx.oxml.parse_xml(r'<w:shd {} w:fill="{}"/>'.format(
-                    docx.oxml.ns.nsdecls('w'), cell["shade"]))
-                cellD._tc.get_or_add_tcPr().append(shade_elm)
-
-            # add content
-            if "width" in cell:
-                cellD.width = docx.shared.Inches(cell["width"])
-
-            if "text" in cell:
-                p.text = cell["text"]
-
-            if "runs" in cell:
-                for runD in cell["runs"]:
-                    run = p.add_run(runD["text"])
-                    run.bold = runD.get("bold", False)
-                    run.italic = runD.get("italic", False)
-
-        # mark rows as headers to break on pages
-        if numHeaders>=1:
-            for i in xrange(numHeaders):
-                tblHeader = docx.oxml.parse_xml(r'<w:tblHeader {} />'.format(
-                    docx.oxml.ns.nsdecls('w')))
-                tbl.rows[i]._tr.get_or_add_trPr().append(tblHeader)
-
-        return tbl
+    def get_template_fn(self):
+        return "base.docx"

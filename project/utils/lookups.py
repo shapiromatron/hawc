@@ -19,4 +19,3 @@ class DistinctStringLookup(ModelLookup):
 
     def get_item_label(self, item):
         return getattr(item, self.distinct_field)
-

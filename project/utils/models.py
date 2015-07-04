@@ -17,6 +17,7 @@ from utils.helper import HAWCDjangoJSONEncoder
 def NotImplementedAttribute(self):
     raise NotImplementedError
 
+
 class NonUniqueTagBase(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=100)
     slug = models.SlugField(verbose_name=_('Slug'), max_length=100)

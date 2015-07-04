@@ -1,14 +1,15 @@
+import os
 import logging
+import celery
 
-from celery.exceptions import TimeoutError
-
+from django.conf import settings
 from django.shortcuts import HttpResponse
 from django.db.models.loading import get_model
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404, Http404
 from django.utils.decorators import method_decorator
 from django.contrib import messages
@@ -456,7 +457,7 @@ class GenerateFixedReport(BaseList):
     """
     Generate a docx report given an assessment, data-type, using method as template.
     """
-    ReportClass = None # required; class used to generate report
+    ReportClass = None  # required; class used to generate report
 
     def get_context(self, queryset):
         raise NotImplementedError("Requires report-context object")
@@ -468,10 +469,18 @@ class GenerateFixedReport(BaseList):
         self.object_list = self.get_queryset()
         context = self.get_context(self.object_list)
         filename = self.get_filename()
-        report = self.ReportClass(filename, context)
+        root_path = os.path.join(settings.PROJECT_PATH, 'templates', 'hawc')
+        report = self.ReportClass(root_path, context)
         try:
-            task = report. build_report.delay(report)
+            task = self.getResponse.delay(self, report, filename)
             response = task.get(timeout=120)
-        except TimeoutError:
-            response = HttpResponse("<p>An error in processing occurred - report not generated.</p>")
+        except celery.exceptions.TimeoutError:
+            response = HttpResponseServerError("<p>An error in processing occurred - report not generated.</p>")
+        return response
+
+    @celery.shared_task
+    def getResponse(self, report, filename):
+        response = HttpResponse(report.build_report())
+        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
