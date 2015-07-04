@@ -491,7 +491,8 @@ class BaseEndpointGroupFormSet(BaseModelFormSet):
 
     def __init__(self, **defaults):
         super(BaseEndpointGroupFormSet, self).__init__(**defaults)
-        self.forms[0].fields['significance_level'].widget.attrs['class'] += " hidden"
+        if len(self.forms) > 0:
+            self.forms[0].fields['significance_level'].widget.attrs['class'] += " hidden"
 
 
 EndpointGroupFormSet = modelformset_factory(
