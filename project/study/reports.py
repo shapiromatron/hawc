@@ -7,8 +7,6 @@ from utils.helper import HAWCDOCXReport
 from . import models
 
 
-
-
 class SQDOCXReport(HAWCDOCXReport):
 
     def create_content(self):

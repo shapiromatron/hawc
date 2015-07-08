@@ -32,7 +32,7 @@ xlwt==1.0.0
 
 # docx helper-tools
 git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
-git+git://github.com/shapiromatron/docxUtils@0.0.1
+git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
 
 # for import scripts
 numpy==1.9.2

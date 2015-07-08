@@ -1,152 +1,159 @@
 from django.utils.html import strip_tags
 
-from docx.shared import Inches
-from docx.enum.section import WD_ORIENT
+from docxUtils.tables import TableMaker
 
-from utils.helper import DOCXReport
+from utils.helper import HAWCDOCXReport
 
 from animal import models
 
 
-class SpanFactory(object):
+class EndpointDOCXReport(HAWCDOCXReport):
 
-    def __init__(self):
-        self.obj = []
+    @staticmethod
+    def getDoses(ag):
+        # dictionary-mapping where keys are dose-units and doses are list of floats
+        doses = {}
+        for d in ag['dosing_regime']['doses']:
+            units = d['dose_units']['units']
+            if units not in doses:
+                doses[units] = []
+            doses[units].append(d['dose'])
+        return doses
 
-    def append(self, text, bold=False, italic=False, new_line=False):
-        if new_line:
-            text += u"\n"
+    @staticmethod
+    def getDoseText(doses):
+        dose_txt = []
+        for unit in doses.keys():
+            dose_txt.append(u"{0} {1}".format(u", ".join([
+                unicode(dose) for dose in doses[unit]]), unit))
+        return u"\n".join(dose_txt)
 
-        self.obj.append({
-            "text": text,
-            "bold": bold,
-            "italic": italic
-        })
+    @staticmethod
+    def getPurityText(exp):
+        txt = u"NR"
+        if exp["purity_available"]:
+            txt = u">{0}%".format(exp["purity"])
+            if exp["chemical_source"]:
+                txt += u" {}".format(exp["chemical_source"])
+        return txt
 
-    def get_spans(self):
-        return self.obj
+    @staticmethod
+    def getStrainSource(ag):
+        return u"{} {}".format(ag["strain"], ag["animal_source"])
 
+    @staticmethod
+    def getCOItext(study):
+        txt = study["coi_reported"]
+        if study["coi_details"] != "":
+            txt = u"{} ({})".format(txt, study["coi_details"])
+        return txt
 
-def build_header_cell(row, col, width, text, colspan=1):
-    return {"row": row, "col": col, "width": width, "colspan": colspan,
-            "runs": [{"text": text, "bold": True, "italic": False}]}
+    @staticmethod
+    def getAdditionalEndpoints(eps):
+        return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is False)
 
+    @staticmethod
+    def getEndpointsText(eps):
+        return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is True)
 
-def getDoses(ag):
-    # dictionary-mapping where keys are dose-units and doses are list of floats
-    doses = {}
-    for d in ag['dosing_regime']['doses']:
-        units = d['dose_units']['units']
-        if units not in doses:
-            doses[units] = []
-        doses[units].append(d['dose'])
-    return doses
+    @staticmethod
+    def getNText(eps):
+        ns = []
+        for ep in eps:
+            ns.extend([eg["n"] for eg in ep["endpoint_group"]])
+        return models.EndpointGroup.getNRangeText(ns)
 
+    @staticmethod
+    def getStatisticalAnalysis(eps):
+        return u"; ".join(set([ep["statistical_test"] for ep in eps]))
 
-def getDoseText(doses):
-    dose_txt = []
-    for unit in doses.keys():
-        dose_txt.append(u"{0} {1}".format(u", ".join([
-            unicode(dose) for dose in doses[unit]]), unit))
-    return u"\n".join(dose_txt)
+    @staticmethod
+    def getStatisticalPowers(eps):
+        return u"; ".join(set([ep["power_notes"] for ep in eps]))
 
+    @staticmethod
+    def printField(runs, heading, text):
+        """
+        Create a field-level run. The heading is bolded, the text is not-bolded.
+        They will appear with no newline character between the two.
+        """
+        runs.append(TableMaker.new_run(heading, b=True, newline=False))
+        runs.append(TableMaker.new_run(text))
 
-def getPurityText(exp):
-    if exp["purity_available"]:
-        return ">{0}%".format(exp["purity"])
-    else:
-        return "NR"
+    def getStudyDetailsRuns(self, ag, doses):
 
+        runs = []
 
-def getCOItext(study):
-    txt = study["coi_reported"]
-    if study["coi_details"] != "":
-        txt = u"{} ({})".format(txt, study["coi_details"])
-    return txt
+        txt = "({})".format(ag['experiment']['study']['short_citation'])
+        runs.append(TableMaker.new_run(txt, b=True))
 
+        self.printField(
+            runs, "Species: ", ag["species"])
+        self.printField(
+            runs, "Strain (source): ", self.getStrainSource(ag))
+        self.printField(
+            runs, "Sex: ", ag["sex"])
+        self.printField(
+            runs, "Doses: ", self.getDoseText(doses))
+        self.printField(
+            runs, "Purity (source): ", self.getPurityText(ag["experiment"]))
+        self.printField(
+            runs, "Dosing period: ", strip_tags(ag["dosing_regime"]["description"]))
+        self.printField(
+            runs, "Route: ", ag["dosing_regime"]["route_of_exposure"])
+        self.printField(
+            runs, "Diet: ", ag["experiment"]["diet"])
+        self.printField(
+            runs, "Negative controls: ", ag["dosing_regime"]["negative_control"])
+        self.printField(
+            runs, "Funding source: ", ag["experiment"]["study"]["funding_source"])
+        self.printField(
+            runs, "Author conflict of interest: ", self.getCOItext(ag["experiment"]["study"]))
+        self.printField(
+            runs, "Comments: ", strip_tags(ag["experiment"]["description"]))
 
-def getAdditionalEndpoints(eps):
-    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is False)
-
-
-def getEndpointsText(eps):
-    return u", ".join(ep["name"] for ep in eps if ep["data_extracted"] is True)
-
-
-def getNText(eps):
-    ns = []
-    for ep in eps:
-        ns.extend([eg["n"] for eg in ep["endpoint_group"]])
-    return models.EndpointGroup.getNRangeText(ns)
-
-
-def getStatisticalAnalysis(eps):
-    return u"; ".join(set([ep["statistical_test"] for ep in eps]))
-
-
-def getStatisticalPowers(eps):
-    return u"; ".join(set([ep["power_notes"] for ep in eps]))
-
-
-class EndpointDOCXReport(DOCXReport):
-
-    def printField(self, spans, heading, text):
-        spans.append(heading, bold=True)
-        spans.append(text, new_line=True)
-
-    def getStudyDetails(self, ag, doses):
-        spans = SpanFactory()
-
-        txt = "({})\n".format(ag['experiment']['study']['short_citation'])
-        spans.append(txt, bold=True)
-
-        self.printField(spans, "Species: ", ag["species"])
-        self.printField(spans, "Strain (source): ", ag["strain"] + u" (data not in HAWC)")
-        self.printField(spans, "Sex: ", ag["sex"])
-        self.printField(spans, "Doses: ", getDoseText(doses))
-        self.printField(spans, "Purity (source): ", getPurityText(ag["experiment"]) + u" (data not in HAWC)")
-        self.printField(spans, "Dosing period: ", strip_tags(ag["dosing_regime"]["description"]))
-        self.printField(spans, "Route: ", ag["dosing_regime"]["route_of_exposure"])
-        self.printField(spans, "Diet: ", "(data not in HAWC)")
-        self.printField(spans, "Negative controls: ", ag["dosing_regime"]["negative_control"])
-        self.printField(spans, "Funding source: ", ag["experiment"]["study"]["funding_source"])
-        self.printField(spans, "Author conflict of interest: ", getCOItext(ag["experiment"]["study"]))
-        self.printField(spans, "Comments: ", strip_tags(ag["experiment"]["description"]))
-
-        return spans.get_spans()
+        return runs
 
     def getHealthOutcomes(self, ag):
-        spans = SpanFactory()
-        self.printField(spans, "Endpoints: ", getEndpointsText(ag["eps"]))
-        self.printField(spans, "Age at exposure: ", ag["lifestage_exposed"])
-        self.printField(spans, "Age at assessment: ", ag["lifestage_assessed"])
-        self.printField(spans, "N: ", getNText(ag["eps"]))
-        self.printField(spans, "Statistical analysis: ", getStatisticalAnalysis(ag["eps"]))
-        self.printField(spans, "Control for litter effects: ", " (data not in HAWC)")
-        self.printField(spans, "Statistical power: ", getStatisticalPowers(ag["eps"]))
-        self.printField(spans, "Additional endpoints not extracted: ", getAdditionalEndpoints(ag["eps"]))
-        return spans.get_spans()
+        runs = []
+        self.printField(
+            runs, "Endpoints: ", self.getEndpointsText(ag["eps"]))
+        self.printField(
+            runs, "Age at exposure: ", ag["lifestage_exposed"])
+        self.printField(
+            runs, "Age at assessment: ", ag["lifestage_assessed"])
+        self.printField(
+            runs, "N: ", self.getNText(ag["eps"]))
+        self.printField(
+            runs, "Statistical analysis: ", self.getStatisticalAnalysis(ag["eps"]))
+        self.printField(
+            runs, "Control for litter effects: ", ag["experiment"]["litter_effects"])
+        self.printField(
+            runs, "Statistical power: ", self.getStatisticalPowers(ag["eps"]))
+        self.printField(
+            runs, "Additional endpoints not extracted: ", self.getAdditionalEndpoints(ag["eps"]))
+
+        return runs
 
     def build_summary_table(self, ag):
+        widths = [2.5, 2.7, 1.5, 0.5, 1.2, 1.6]
+        tbl = TableMaker(widths, numHeaders=3, firstRowCaption=True, tblStyle="ntpTbl")
 
-        doses = getDoses(ag)
+        doses = self.getDoses(ag)
         firstDose = doses.keys()[0]
 
-        # build header rows
-        cells = [
-            build_header_cell(0, 0, 10,  r'Template Option 1: Animal Study', colspan=6),
-            build_header_cell(1, 0, 2.5, r'Reference, Animal Model, and Dosing'),
-            build_header_cell(1, 1, 2.7, r'Health Outcome'),
-            build_header_cell(1, 2, 3,   r'Results', colspan=4),
-            build_header_cell(2, 2, 1.5, u'Dose ({0})'.format(firstDose)),
-            build_header_cell(2, 3, 0.5, r'N'),
-            build_header_cell(2, 4, 1.2, u'Mean \u00B1 SD'),
-            build_header_cell(2, 5, 1.6, r'% control (95% CI)'),
-        ]
+        # add caption
+        tbl.new_td_txt(0, 0, ag['name'], colspan=6)
 
-        # build summary rows
-        ref = {"row": 2, "col": 0, "runs": self.getStudyDetails(ag, doses)}
-        ho = {"row": 2, "col": 1, "runs": self.getHealthOutcomes(ag)}
+        # add headers
+        tbl.new_th(1, 0, r'Reference, Animal Model, and Dosing', rowspan=2)
+        tbl.new_th(1, 1, r'Health outcome', rowspan=2)
+        tbl.new_th(1, 2, r'Results', colspan=4)
+
+        tbl.new_th(2, 2, u'Dose ({0})'.format(firstDose))
+        tbl.new_th(2, 3, r'N')
+        tbl.new_th(2, 4, u'Mean \u00B1 SD',)
+        tbl.new_th(2, 5, r'% control (95% CI)')
 
         # build endpoint rows
         rows = 3
@@ -155,70 +162,71 @@ class EndpointDOCXReport(DOCXReport):
             if ep["data_extracted"] == False:
                 continue
 
-            cells.append({"row": rows, "col": 2, "colspan": 4,
-                         "runs": [{"text": ep['name'], "italic": True}]})
-            data_type = ep["data_type"]
+            # add endpoint-name as first-row
+            tbl.new_td_run(
+                rows, 2,
+                [TableMaker.new_run(ep["name"], i=True, newline=False)],
+                colspan=4
+            )
             rows += 1
+
+            # build column-header table
+            data_type = ep["data_type"]
             for i, eg in enumerate(ep["endpoint_group"]):
-                cells.append({"row": rows, "col": 2, "text": unicode(doses[firstDose][i])})
-                cells.append({"row": rows, "col": 3, "text": unicode(eg["n"] or "-")})
 
-                col1 = ""
-                col2 = ""
+                ci = []
+                resp = u"-"
+
                 if data_type == "C":
-                    col1 = unicode(eg["response"] or "-")
-                    if eg["stdev"] is not None:
-                        col1 += u' \u00B1 {0:.2f}'.format(eg["stdev"])
-                    col2 = unicode(eg["percentControlMean"] or "-")
-                    if eg["percentControlLow"] and eg["percentControlHigh"]:
-                        col2 += u' ({0:.1f}, {1:.1f})'.format(eg["percentControlLow"], eg["percentControlHigh"])
+                    resp = unicode(eg.get("response", "-"))
+                    if eg.get('stdev') is not None:
+                        resp += u' \u00B1 {0:.2f}'.format(eg["stdev"])
                 elif data_type in ["D", "DC"]:
-                    if eg["incidence"] is None:
-                        col1 = u"-"
-                    else:
-                        col1 = u'{0}/{1}'.format(eg["incidence"], eg["n"])
-                    col2 = u'NR'
+                    if eg.get("incidence") is not None:
+                        resp = u'{0}/{1}'.format(eg["incidence"], eg["n"])
+                    ci.append(u"NR")
                 else:  # ["P"]
-                    col1 = u'NR'
-                    if eg["percentControlMean"] is None:
-                        col2 = u"-"
-                    else:
-                        col2 = u'{0:.1f}'.format(eg["percentControlMean"])
-                    if eg["percentControlLow"] and eg["percentControlHigh"]:
-                        col2 += u" ({0:.1f}, {1:.1f})".format(eg["percentControlLow"], eg["percentControlHigh"])
+                    resp = u'NR'
 
-                cells.append({"row": rows, "col": 4, "text": col1})
-                cells.append({"row": rows, "col": 5, "text": col2})
+                if i != 0 and eg.get("percentControlMean") is not None:
+                    ci.append("{0:.1f}".format(eg["percentControlMean"]))
+                if eg.get("percentControlLow") is not None and eg.get("percentControlHigh") is not None:
+                    ci.append(u'({0:.1f}, {1:.1f})'.format(eg["percentControlLow"], eg["percentControlHigh"]))
+                ci = u" ".join(ci)
+
+                tbl.new_td_txt(rows, 2, unicode(doses[firstDose][i]))
+                tbl.new_td_txt(rows, 3, unicode(eg.get("n", "-")))
+                tbl.new_td_txt(rows, 4, resp)
+                tbl.new_td_txt(rows, 5, ci)
                 rows += 1
+        else:
+            # add blank cells if none-exist
+            tbl.new_td_txt(3, 2, "")
+            tbl.new_td_txt(3, 3, "")
+            tbl.new_td_txt(3, 4, "")
+            tbl.new_td_txt(3, 5, "")
 
         # adjust rowspans for summary rows
-        ref["rowspan"] = rows-2
-        ho["rowspan"] = rows-2
-        cells.extend([ref, ho])
+        rowspan = rows - 3
+        tbl.new_td_run(3, 0, self.getStudyDetailsRuns(ag, doses), rowspan=rowspan)
+        tbl.new_td_run(3, 1, self.getHealthOutcomes(ag), rowspan=rowspan)
 
-        # send to the printers...
-        self.build_table(rows, 6, cells, numHeaders=2)
+        tbl.render(self.doc)
         self.doc.add_paragraph("\n")
 
-    def create_context(self):
-        doc = self.doc
+    def create_content(self):
         d = self.context
 
-        # make landscape
-        section = doc.sections[-1]
-        section.orientation = WD_ORIENT.LANDSCAPE
-        section.left_margin = Inches(0.5)
-        section.right_margin = Inches(0.5)
-        section.page_width = Inches(11)
-        section.page_height = Inches(8.5)
+        self.setLandscape()
+        self.setMargins(left=0.5, right=0.5)
 
         # title
         txt = "Bioassay report: {0}".format(d['assessment']['name'])
-        doc.add_heading(txt, 0)
+        self.doc.add_heading(txt, 1)
 
         # loop through each study
         for study in d['studies']:
-            doc.add_heading(study['short_citation'], 1)
+            self.doc.add_heading(study['short_citation'], 2)
             for exp in study['exps']:
                 for ag in exp['ags']:
                     self.build_summary_table(ag)
