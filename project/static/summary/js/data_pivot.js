@@ -3611,7 +3611,7 @@ _.extend(StyleLine, {
   default_reference_line: function(){
     return {
       "name": "reference line",
-      "stroke": "#00000",
+      "stroke": "#000000",
       "stroke-dasharray": "none",
       "stroke-opacity": 0.8,
       "stroke-width": 2,
