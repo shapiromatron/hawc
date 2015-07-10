@@ -66,17 +66,17 @@ EditEndpoint.prototype = {
         this._switch_dose(0);
     },
     setOELS: function(){
-      // set NOEL, LOEL, FEL
-      var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
+        // set NOEL, LOEL, FEL
+        var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
             .html("<option value=-999>&lt;None&gt;</option>");
 
-      $('.doses').each(function(i, v){
+        $('.doses').each(function(i, v){
           fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
-      });
+        });
 
-      $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
-      $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
-      $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
+        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
+        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
+        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
     }
 };
 _.extend(EditEndpoint.prototype, Endpoint.prototype);

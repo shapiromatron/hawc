@@ -182,12 +182,16 @@
         $(v).html(doses[0].values[i]);
       });
 
-      var endpoint = new EditEndpoint({}, doses, $('#eg'), $('#endpoint_plot'));
+      var endpoint = new EditEndpoint({
+        "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+        "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+        "FEL": {{form.FEL.value|default_if_none:"-999"}}
+      }, doses, $('#eg'), $('#endpoint_plot'));
 
       // whenever input changes, update data form
-      $('body').on('keyup', 'input, select', function(i, v){
-          endpoint.update_endpoint_from_form();
-      });
+      $('body')
+        .on('keyup', 'input', endpoint.update_endpoint_from_form.bind(endpoint))
+        .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
 
       // toggle the name of the variance column header as the value changes
       $('#id_variance_type')
