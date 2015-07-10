@@ -973,15 +973,16 @@ _.extend(AnimalGroupTable, {
         $div.append(tbl.build_table());
 
         if (tbl.endpoints_no_dr.length>0){
-            $div.append("<h3>Additional endpoints (not extracted)</h3>")
+            $div.append("<h3>Additional endpoints</h3>")
+                .append("<p>Endpoints which have no dose-response data extracted.</p>")
                 .append(tbl.build_no_dr_ul());
         }
     }
 });
 AnimalGroupTable.prototype = {
     build_table: function(){
-        if(this.endpoints.length === 0)
-            return "<p>No endpoints available.</p>";
+        if(this.endpoints_dr.length === 0)
+            return "<p>No endpoints with dose-response data extracted are available.</p>";
 
         this._build_header();
         this._build_tbody();
