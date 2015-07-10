@@ -850,7 +850,8 @@ EndpointTable.prototype = {
         var self = this,
             d = this.endpoint.data,
             dose = $('<th>Dose ({0})</th>'.printf(this.endpoint.dose_units)),
-            tr = $('<tr>');
+            tr = $('<tr>'),
+            txt;
 
         if (this.endpoint.doses.length>1){
             $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>')
@@ -876,7 +877,11 @@ EndpointTable.prototype = {
                 tr.append('<th>Response ({0}% CI)</th>'.printf(d.confidence_interval*100));
                 break;
             case "C":
-                tr.append('<th>Response</th>');
+                txt = "Response"
+                if (this.endpoint.data.response_units){
+                    txt += " ({0})".printf(this.endpoint.data.response_units);
+                }
+                tr.append($("<th>").text(txt));
                 this.hasVariance = this.hasValues("variance");
                 if(this.hasVariance) tr.append('<th>{0}</th>'.printf(d.variance_name));
                 break;
