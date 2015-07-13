@@ -68,52 +68,59 @@ class ExperimentForm(ModelForm):
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")
-        helper.add_fluid_row('purity_available', 3, "span4")
+        helper.add_fluid_row('purity_available', 4, ["span2", "span2", "span2", "span6"])
         helper.add_fluid_row('litter_effects', 2, "span6")
         helper.add_fluid_row('diet', 2, "span6")
         return helper
 
+    PURITY_QUALIFIER_REQ = "Qualifier must be specified"
+    PURITY_QUALIFIER_NOT_REQ = "Qualifier must be blank if purity is not available"
+    PURITY_REQ = "A purity value must be specified"
+    PURITY_NOT_REQ = "Purity must be blank if purity is not available"
+    LIT_EFF_REQ = "Litter effects required if a reproductive/developmental study"
+    LIT_EFF_NOT_REQ = "Litter effects must be NA if non-reproductive/developmental study"
+    LIT_EFF_NOTES_REQ = 'Notes are required if litter effects are "Other"'
+    LIT_EFF_NOTES_NOT_REQ = "Litter effect notes should be blank if effects are not-applicable"
+
     def clean(self):
-        super(ExperimentForm, self).clean()
+        cleaned_data = super(ExperimentForm, self).clean()
 
-        # If purity was provided, make sure purity_available is True
-        if self.cleaned_data.get('purity', None) is not None:
-            self.cleaned_data['purity_available'] = True
+        purity_available = cleaned_data.get("purity_available")
+        purity_qualifier = cleaned_data.get("purity_qualifier")
+        purity = cleaned_data.get("purity")
+        type_ = cleaned_data.get('type')
+        litter_effects = cleaned_data.get("litter_effects")
+        litter_effect_notes = cleaned_data.get("litter_effect_notes")
 
-        return self.cleaned_data
+        if purity_available and purity_qualifier is u"":
+            self.add_error('purity_qualifier', self.PURITY_QUALIFIER_REQ)
 
-    def clean_purity(self):
-        purity = self.cleaned_data.get("purity", None)
-        purity_available = self.cleaned_data.get("purity_available")
         if purity_available and purity is None:
-            raise forms.ValidationError("If purity data are available, value must be provided.")
-        return purity
+            self.add_error('purity', self.PURITY_REQ)
 
-    def clean_purity_available(self):
-        purity = self.cleaned_data.get("purity", None)
-        purity_available = self.cleaned_data.get("purity_available")
-        if purity is not None:
-            purity_available = True
-        return purity_available
+        if not purity_available and purity_qualifier is not u"":
+            self.add_error('purity_qualifier', self.PURITY_QUALIFIER_NOT_REQ)
 
-    def clean_litter_effects(self):
-        type = self.cleaned_data.get("type")
-        litter_effects = self.cleaned_data.get("litter_effects")
-        if type in ["Rp", "Dv"]:
+        if not purity_available and purity is not None:
+            self.add_error('purity', self.PURITY_NOT_REQ)
+
+        if type_ in ["Rp", "Dv"]:
             if litter_effects == "NA":
-                raise forms.ValidationError("Litter effects required if a reproductive/developmental study")
-        elif type != "Ot" and litter_effects != "NA":
-            raise forms.ValidationError("Litter effects must be NA if non-reproductive/developmental study")
-        return litter_effects
+                self.add_error('litter_effects', self.LIT_EFF_REQ)
+        elif type_ != "Ot" and litter_effects != "NA":
+            self.add_error('litter_effects', self.LIT_EFF_NOT_REQ)
 
-    def clean_litter_effect_notes(self):
-        litter_effects = self.cleaned_data.get("litter_effects")
-        litter_effect_notes = self.cleaned_data.get("litter_effect_notes")
-        if litter_effects == "NA" and litter_effect_notes != "":
-            raise forms.ValidationError("Litter effect notes should be blank if effects are not-applicable")
         if litter_effects == "O" and litter_effect_notes == "":
-            raise forms.ValidationError('Notes are required if litter effects are "Other"')
-        return litter_effect_notes
+            self.add_error('litter_effect_notes', self.LIT_EFF_NOTES_REQ)
+
+        if litter_effects == "NA" and litter_effect_notes != "":
+            self.add_error('litter_effect_notes', self.LIT_EFF_NOTES_NOT_REQ)
+
+        return cleaned_data
+
+    def clean_purity_qualifier(self):
+        # if None value returned, change to ""
+        return self.cleaned_data.get("purity_qualifier", "")
 
 
 class AnimalGroupForm(ModelForm):

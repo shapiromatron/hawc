@@ -8,7 +8,10 @@ from django.test.client import Client
 from animal.models import (Experiment, AnimalGroup,  Species, Strain,
                            DosingRegime, Endpoint, EndpointGroup,
                            UncertaintyFactorEndpoint, DoseUnits, DoseGroup, Aggregation)
+from . import forms
 from study.tests import build_studies_for_permission_testing
+
+from utils.tests import FormTester
 
 
 def build_experiments_for_permission_testing(obj):
@@ -818,6 +821,53 @@ class EndpointGroupPercentControl(TestCase):
         self.assertAlmostEqual(egs[0]["percentControlMean"], 1)
         self.assertAlmostEqual(egs[0]["percentControlLow"],  2)
         self.assertAlmostEqual(egs[0]["percentControlHigh"], 3)
+
+
+class ExperimentForm(FormTester):
+
+    def setUp(self):
+        self.Form = forms.ExperimentForm
+        self.baseInps = {
+            'name': 'Example',
+            'type': 'Ac',
+            'litter_effects': 'NA',
+            'purity_available': False,
+            'purity_qualifier': "",
+            'purity': None
+        }
+        build_studies_for_permission_testing(self)
+
+    def createTestForm(self, inps, *args, **kwargs):
+        return self.Form(inps, parent=self.study_working)
+
+    def test_valid_form(self):
+        self.assertTrue(self.createTestForm(self.baseInps).is_valid())
+
+    def test_purity(self):
+        inps = self.baseInps.copy()
+
+        inps.update(purity_available=True, purity=None, purity_qualifier="")
+        self.fieldHasError(inps, "purity", self.Form.PURITY_REQ)
+        self.fieldHasError(inps, "purity_qualifier", self.Form.PURITY_QUALIFIER_REQ)
+
+        inps.update(purity_available=False, purity=95, purity_qualifier=">")
+        self.fieldHasError(inps, "purity", self.Form.PURITY_NOT_REQ)
+        self.fieldHasError(inps, "purity_qualifier", self.Form.PURITY_QUALIFIER_NOT_REQ)
+
+    def test_litter_effects(self):
+        inps = self.baseInps.copy()
+
+        inps.update(type="Rp", litter_effects="NA")
+        self.fieldHasError(inps, "litter_effects", self.Form.LIT_EFF_REQ)
+
+        inps.update(type="Ac", litter_effects="NR")
+        self.fieldHasError(inps, "litter_effects", self.Form.LIT_EFF_NOT_REQ)
+
+        inps.update(type="Ac", litter_effects="NA", litter_effect_notes="Test")
+        self.fieldHasError(inps, "litter_effect_notes",  self.Form.LIT_EFF_NOTES_NOT_REQ)
+
+        inps.update(type="Rp", litter_effects="O", litter_effect_notes="")
+        self.fieldHasError(inps, "litter_effect_notes",  self.Form.LIT_EFF_NOTES_REQ)
 
 
 class EndpointGroupFunctionality(TestCase):

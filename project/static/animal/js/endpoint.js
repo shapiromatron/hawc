@@ -37,7 +37,8 @@ Experiment.prototype = {
                 return (self.data.purity_available) ? "Chemical purity" : "Chemical purity available";
             },
             getPurity = function(){
-                return (self.data.purity) ? ">{0}%".printf(self.data.purity) : "No";
+                var qualifier = (self.data.purity_qualifier === "=") ? "" : self.data.purity_qualifier;
+                return (self.data.purity) ? "{0}{1}%".printf(qualifier, self.data.purity) : "No";
             },
             tbl, casTd;
 

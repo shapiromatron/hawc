@@ -76,8 +76,14 @@ class Experiment(models.Model):
         ("NR", "Not-reported"),
         ("YS", "Yes, statistical controls"),
         ("YD", "Yes, study-design"),
-        ("N" , "No"),
-        ("O" , "Other"))
+        ("N",  "No"),
+        ("O",  "Other"))
+
+    PURITY_QUALIFIER_CHOICES = (
+        (u'>', u'>'),
+        (u'≥', u'≥'),
+        (u'=', u'='),
+        (u'',  u''))
 
     study = models.ForeignKey(
         'study.Study',
@@ -106,11 +112,16 @@ class Experiment(models.Model):
     purity_available = models.BooleanField(
         default=True,
         verbose_name="Chemical purity available?")
+    purity_qualifier = models.CharField(
+        max_length=1,
+        choices=PURITY_QUALIFIER_CHOICES,
+        blank=True,
+        default=u'')
     purity = models.FloatField(
         blank=True,
         null=True,
         verbose_name="Chemical purity (%)",
-        help_text="Assumed to be greater-than numeric-value specified (ex: > 95.5%)",
+        help_text="Percentage (ex: 95%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)])
     vehicle = models.CharField(
         max_length=64,
@@ -174,6 +185,7 @@ class Experiment(models.Model):
             'experiment-cas',
             'experiment-chemical_source',
             'experiment-purity_available',
+            'experiment-purity_qualifier',
             'experiment-purity',
             'experiment-vehicle',
             'experiment-diet',
@@ -194,6 +206,7 @@ class Experiment(models.Model):
             ser['cas'],
             ser['chemical_source'],
             ser['purity_available'],
+            ser['purity_qualifier'],
             ser['purity'],
             ser['vehicle'],
             ser['diet'],
