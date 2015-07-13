@@ -199,8 +199,9 @@ class Assessment(models.Model):
         elif user.is_anonymous():
             return False
         else:
-            return ((user in self.project_manager.all()) or
-                    (user in self.team_members.all()))
+            return (self.editable and
+                    (user in self.project_manager.all() or
+                     user in self.team_members.all()))
 
     def user_can_edit_assessment(self, user):
         """
