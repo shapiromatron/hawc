@@ -57,18 +57,21 @@ class BaseFormHelper(cf.FormHelper):
         self[first:first+numFields].wrap_together(cfl.Div, css_class="row-fluid")
 
 
-def form_error_list_to_ul(form):
-    #Convert a list of errors from a form into a ul, used for endpoint group
-    # since everything is controlled by AJAX and JSON
-    txt = ['<ul>']
+def form_error_list_to_lis(form):
+    # Convert a list of errors from a form into a list of li,
+    # used for endpoint group since everything is controlled by AJAX and JSON
+    lis = []
     for key, values in form.errors.iteritems():
         for value in values:
             if key == '__all__':
-                txt.append("<li>" + value + "</li>")
+                lis.append("<li>" + value + "</li>")
             else:
-                txt.append("<li>" + key + ": " + value + "</li>")
-    txt.append('</ul>')
-    return ' '.join(txt)
+                lis.append("<li>" + key + ": " + value + "</li>")
+    return lis
+
+
+def form_error_lis_to_ul(lis):
+    return u"<ul>{0}</ul>".format("".join(lis))
 
 
 class FormsetWithIgnoredFields(forms.BaseModelFormSet):

@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, FormView
 
 from assessment.models import Assessment
 from study.models import Study
-from utils.forms import form_error_list_to_ul
+from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, CloseIfSuccessMixin,
@@ -129,11 +129,13 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
             else:
                 # invalid formset; extract formset errors
+                lis = []
                 for f in fs.forms:
-                    if len(f.errors.keys())>0:
-                        self.dose_groups_errors = form_error_list_to_ul(f)
-                        break
-
+                    if len(f.errors.keys()) > 0:
+                        lis.extend(form_error_list_to_lis(f))
+                if len(fs._non_form_errors) > 0:
+                    lis.extend(fs._non_form_errors)
+                self.dose_groups_errors = form_error_lis_to_ul(lis)
                 return self.form_invalid(form)
         else:
             # invalid dosing-regime
@@ -251,11 +253,13 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
         else:
             # invalid formset; extract formset errors
+            lis = []
             for f in fs.forms:
-                if len(f.errors.keys())>0:
-                    self.dose_groups_errors = form_error_list_to_ul(f)
-                    break
-
+                if len(f.errors.keys()) > 0:
+                    lis.extend(form_error_list_to_lis(f))
+            if len(fs._non_form_errors) > 0:
+                lis.extend(fs._non_form_errors)
+            self.dose_groups_errors = form_error_lis_to_ul(lis)
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -538,11 +542,13 @@ class EndpointIndividualAnimalCreate(EndpointCreate):
                         if iad_form.is_valid():
                             iad_form.save()
                         else:
-                            self.iad_errors = form_error_list_to_ul(iad_form)
+                            self.iad_errors = form_error_lis_to_ul(
+                                form_error_list_to_lis(iad_form))
                             self.object.delete()
                             return self.form_invalid(form)
                 else:
-                    self.egs_errors = form_error_list_to_ul(eg_form)
+                    self.egs_errors = form_error_lis_to_ul(
+                        form_error_list_to_lis(eg_form))
                     self.object.delete()
                     return self.form_invalid(form)
         else:
@@ -581,8 +587,9 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
             for i, eg in enumerate(egs):
                 eg['endpoint'] = self.object.pk
                 try:
-                    eg_form = forms.EndpointGroupForm(eg,
-                        instance=models.EndpointGroup.objects.get(endpoint=self.object.pk, dose_group_id=i))
+                    eg_form = forms.EndpointGroupForm(
+                        eg, instance=models.EndpointGroup.objects.get(
+                            endpoint=self.object.pk, dose_group_id=i))
                 except:
                     eg_form = forms.EndpointGroupForm(eg)
                 if eg_form.is_valid():
@@ -598,10 +605,12 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
                         if iad_form.is_valid():
                             valid_iad_forms.append(iad_form)
                         else:
-                            self.iad_errors = form_error_list_to_ul(iad_form)
+                            self.iad_errors = form_error_lis_to_ul(
+                                form_error_list_to_lis(iad_form))
                             return self.form_invalid(form)
                 else:
-                    self.egs_errors = form_error_list_to_ul(eg_form)
+                    self.egs_errors = form_error_lis_to_ul(
+                        form_error_list_to_lis(eg_form))
                     return self.form_invalid(form)
         else:
             return self.form_invalid(form)
