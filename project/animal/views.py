@@ -509,7 +509,7 @@ class EndpointIndividualAnimalCreate(EndpointCreate):
     template_name = "animal/endpoint_iad_form.html"
 
     def post(self, request, *args, **kwargs):
-        #first, try to save endpoint
+        # first, try to save endpoint
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
@@ -520,7 +520,7 @@ class EndpointIndividualAnimalCreate(EndpointCreate):
             endpoint_model.save()
             form.save_m2m()
             self.object = endpoint_model
-            #now, try to save each endpoint-group
+            # now, try to save each endpoint-group
             egs = json.loads(request.POST['egs_json'])
             iads = json.loads(request.POST['iad_json'])
             for i, eg in enumerate(egs):
@@ -528,7 +528,10 @@ class EndpointIndividualAnimalCreate(EndpointCreate):
                 eg_form = forms.EndpointGroupForm(eg)
                 if eg_form.is_valid():
                     eg_form.save()
-                    iads_for_eg = [v for v in iads if v['dose_group_id'] == eg_form.instance.dose_group_id]
+                    iads_for_eg = [
+                        v for v in iads
+                        if v['dose_group_id'] == eg_form.instance.dose_group_id
+                    ]
                     for iad in iads_for_eg:
                         iad['endpoint_group'] = eg_form.instance.pk
                         iad_form = forms.IndividualAnimalForm(iad)
@@ -572,7 +575,7 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         if form.is_valid():
-            #now, try to save each endpoint
+            # now, try to save each endpoint
             egs = json.loads(request.POST['egs_json'])
             iads = json.loads(request.POST['iad_json'])
             for i, eg in enumerate(egs):
@@ -584,8 +587,11 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
                     eg_form = forms.EndpointGroupForm(eg)
                 if eg_form.is_valid():
                     valid_endpoint_forms.append(eg_form)
-                    #check individual animal groups
-                    iads_for_eg = [v for v in iads if v['dose_group_id'] == eg_form.instance.dose_group_id]
+                    # check individual animal groups
+                    iads_for_eg = [
+                        v for v in iads if v['dose_group_id'] ==
+                        eg_form.instance.dose_group_id
+                    ]
                     for iad in iads_for_eg:
                         iad['endpoint_group'] = eg_form.instance.pk
                         iad_form = forms.IndividualAnimalForm(iad)
@@ -600,7 +606,7 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
         else:
             return self.form_invalid(form)
 
-        #now, save each form, and delete any existing fields not found here
+        # now, save each form, and delete any existing fields not found here
         form.save()
 
         valid_eg_pks = []
@@ -608,16 +614,16 @@ class EndpointIndividualAnimalUpdate(EndpointUpdate):
             valid_eg = form.save()
             valid_eg_pks.append(valid_eg.pk)
         models.EndpointGroup.objects\
-                .filter(endpoint=self.object.pk)\
-                .exclude(pk__in=valid_eg_pks).delete()
+            .filter(endpoint=self.object.pk)\
+            .exclude(pk__in=valid_eg_pks).delete()
 
         valid_iad_models = []
         for form in valid_iad_forms:
             valid_iad_models.append(form.save(commit=False))
 
-        # NOTE that this doesn't update existing objects, but creates entirely new
-        # ones. If update is required for auditing-logs, will need to pass the pk
-        # for each group-back and forth from model. TODO in future?
+        # NOTE that this doesn't update existing objects, but creates new
+        # ones. If update is required for auditing-logs, will need to pass pk
+        # for each group-back and forth from model.
         models.IndividualAnimal.objects.filter(endpoint_group__in=valid_eg_pks).delete()
         models.IndividualAnimal.objects.bulk_create(valid_iad_models)
 

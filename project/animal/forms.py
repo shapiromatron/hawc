@@ -1,6 +1,5 @@
 from collections import Counter
 import json
-import operator
 
 from django import forms
 from django.forms import ModelForm, ValidationError, Select
