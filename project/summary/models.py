@@ -113,8 +113,7 @@ class SummaryText(MP_Node):
             # left-most child of parent node
             if parent.assessment != self.assessment:
                 raise Exception("Parent node assessment not for selected assessment")
-            if self.get_parent() != parent:
-                self.move(parent, pos='first-child')
+            self.move(parent, pos='first-child')
         elif sibling:
             # move self to right of sibling (position is counterintuitive)
             if sibling.assessment != self.assessment:

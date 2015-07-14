@@ -746,7 +746,7 @@ class EndpointSearchForm(forms.Form):
             if self.cleaned_data['endpoint_name'] is not "":
                 query['name__icontains'] = self.cleaned_data['endpoint_name']
             if self.cleaned_data['tags'] is not None:
-               query['effects__name'] = self.cleaned_data['tags']
+                query['effects__name'] = self.cleaned_data['tags']
 
             # filter endpoints
             endpoints = models.Endpoint.objects.filter(**query).distinct()

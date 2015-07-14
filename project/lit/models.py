@@ -75,7 +75,7 @@ class Search(models.Model):
         unique_together = (("assessment", "slug"),
                            ("assessment", "title"))
         ordering = ['-last_updated']
-        get_latest_by = ('last_updated', )
+        get_latest_by = 'last_updated'
 
     def __unicode__(self):
         return self.title

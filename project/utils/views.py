@@ -71,7 +71,11 @@ class AssessmentPermissionsMixin(object):
 
     def permission_check_user_can_edit(self):
         logging.debug('Permissions checked')
-        if not self.assessment.user_can_edit_object(self.request.user):
+        if self.model == Assessment:
+            canEdit = self.assessment.user_can_edit_assessment(self.request.user)
+        else:
+            canEdit = self.assessment.user_can_edit_object(self.request.user)
+        if not canEdit:
             raise PermissionDenied
 
     def get_object(self, **kwargs):
@@ -137,9 +141,11 @@ class AssessmentPermissionsMixin(object):
             return {'view': False, 'edit': False, 'edit_assessment': False}
 
         logging.debug('Permissions added')
-        return {'view': self.assessment.user_can_view_object(self.request.user),
-                'edit': self.assessment.user_can_edit_object(self.request.user),
-                'edit_assessment': self.assessment.user_can_edit_assessment(self.request.user)}
+        return {
+            'view': self.assessment.user_can_view_object(self.request.user),
+            'edit': self.assessment.user_can_edit_object(self.request.user),
+            'edit_assessment': self.assessment.user_can_edit_assessment(self.request.user)
+        }
 
 
 class CanCreateMixin(object):

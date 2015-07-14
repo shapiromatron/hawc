@@ -1,6 +1,6 @@
 import json
 
-from study.tests import build_studies_for_permission_testing
+from study.tests.utils import build_studies_for_permission_testing
 from animal import models
 
 

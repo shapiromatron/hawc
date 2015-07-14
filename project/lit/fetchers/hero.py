@@ -3,7 +3,7 @@ import json
 
 import requests
 
-from .general import get_author_short_text
+from .utils import get_author_short_text
 
 
 """

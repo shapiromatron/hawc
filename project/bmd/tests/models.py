@@ -1,23 +1,19 @@
 import os
+from json import dumps
 import logging
 import unittest
 import shutil
 
-from json import loads, dumps
 from django.conf import settings
+import xlwt
 
-from animal.models import Endpoint, EndpointGroup
-from animal.tests import build_endpoints_for_permission_testing
-from assessment.models import Assessment
-from study.models import Study
-
-import bmds.bmd_models as bmd
+from bmd.bmds import bmd_models as bmd
 from bmd.models import BMD_model_run, BMD_session
 from bmd.bmds.bmds import BMDS
-from bmd.bmds.output_parser import BMD_output_parser
 
 
 BMDS_TEST_PATH = os.path.join(settings.BMD_ROOT_PATH, 'bmds_test_cases')
+
 
 class ModelCompilationReport(unittest.TestCase):
     """
@@ -66,7 +62,7 @@ class ModelCompilationReport(unittest.TestCase):
             y = [float(v) for v in l.split()]
             dataset['dose'].append(y[0])
             dataset['incidence'].append(y[1])
-            dataset['n'].append(y[2]+y[1])
+            dataset['n'].append(y[2] + y[1])
         f.close()
         return dataset
 
@@ -97,7 +93,8 @@ class ModelCompilationReport(unittest.TestCase):
         ws.horz_split_pos = 1
 
         # write header
-        for col, val in enumerate(['ID', 'Filename', 'Model', 'BMD', 'BMDL', "AIC"]):
+        headers = ['ID', 'Filename', 'Model', 'BMD', 'BMDL', "AIC"]
+        for col, val in enumerate(headers):
             ws.write(0, col, val, style=header_fmt)
 
         return (wb, ws)
@@ -110,12 +107,12 @@ class ModelCompilationReport(unittest.TestCase):
         so we simplify this process to what is required.
         """
         drs = []
-        for i,v in enumerate(dataset['dose']):
+        for i, v in enumerate(dataset['dose']):
             drs.append({
                 'dose': dataset['dose'][i],
                 'incidence': dataset['incidence'][i],
                 'n': dataset['n'][i]
-                })
+            })
 
         return {'numDG': len(drs), 'dr': drs}
 
@@ -127,7 +124,7 @@ class ModelCompilationReport(unittest.TestCase):
         so we simplify this process to what is required.
         """
         drs = []
-        for i,v in enumerate(dataset['dose']):
+        for i, v in enumerate(dataset['dose']):
             drs.append({
                 'dose': dataset['dose'][i],
                 'n': dataset['n'][i],
@@ -135,7 +132,7 @@ class ModelCompilationReport(unittest.TestCase):
                 'stdev': dataset['stdev'][i]
                 })
 
-        inc = dataset['response'][i]>dataset['response'][0]
+        inc = dataset['response'][i] > dataset['response'][0]
 
         return {'numDG': len(drs), 'dr': drs, 'dataset_increasing': inc}
 
@@ -161,7 +158,7 @@ class ModelCompilationReport(unittest.TestCase):
         that this causes the standard BMDS models to hard-hang and therefore,
         removed the high dose from this case which fixed modeling issue.
         """
-        output_folder =  version.replace(".", "") + "_outputs"
+        output_folder = version.replace(".", "") + "_outputs"
         input_path = os.path.join(BMDS_TEST_PATH, 'dichotomous', 'inputs')
         output_path = os.path.join(BMDS_TEST_PATH, 'dichotomous', output_folder)
         if os.path.exists(output_path):
@@ -169,7 +166,7 @@ class ModelCompilationReport(unittest.TestCase):
         os.makedirs(output_path)
 
         wb, ws = self._create_xls_wb()
-        row=0
+        row = 0
 
         # begin model runs
         bmds = BMDS.versions[version]()
@@ -179,8 +176,8 @@ class ModelCompilationReport(unittest.TestCase):
             dataset = self._load_dichotomous(fn)
             endpoint_d = self._get_dichotomous_endpoint_d(dataset)
             for setting in self.default_d_models:
-                row+=1
-                #change the poly degree for the multistage model
+                row += 1
+                # change the poly degree for the multistage model
                 if setting['model_name'] == 'Multistage':
                     setting['override']['degree_poly'] = len(dataset)-1
 
@@ -196,9 +193,9 @@ class ModelCompilationReport(unittest.TestCase):
                                              create_image=False)
                 file_identifier = f[:(len(f)-4)]
                 model_name = run_instance.model_name
-                self._print_individual_run(ws, results, file_identifier,
-                                           model_name, row, output_path,
-                                           d_file)
+                self._print_individual_run(
+                    ws, results, file_identifier,
+                    model_name, row, output_path, d_file)
 
         # save excel file
         wb.save(os.path.join(output_path, 'outputs.xls'))
@@ -209,7 +206,7 @@ class ModelCompilationReport(unittest.TestCase):
             - 012.txt resp & stdev changed from 0.0 to 0.1. Confirmed that this
               session file causes the BMDS GUI to crash as well.
         """
-        output_folder =  version.replace(".", "") + "_outputs"
+        output_folder = version.replace(".", "") + "_outputs"
         input_path = os.path.join(BMDS_TEST_PATH, 'continuous', 'inputs')
         output_path = os.path.join(BMDS_TEST_PATH, 'continuous', output_folder)
         if os.path.exists(output_path):
@@ -217,7 +214,7 @@ class ModelCompilationReport(unittest.TestCase):
         os.makedirs(output_path)
 
         wb, ws = self._create_xls_wb()
-        row=0
+        row = 0
 
         # begin model runs
         bmds = BMDS.versions[version]()
@@ -231,12 +228,12 @@ class ModelCompilationReport(unittest.TestCase):
                 run_instance = bmds.models['C'][setting['model_name']]()
                 runnable = endpoint_d['numDG'] >= run_instance.minimum_DG
                 if runnable:
-                    row+=1
+                    row += 1
                     logging.debug('Running {0}:{1}'.format(f, setting['model_name']))
 
-                    #change the poly degree for the multistage model
+                    # change the poly degree for the multistage model
                     if setting['model_name'] == 'Polynomial':
-                        setting['override']['degree_poly'] = endpoint_d['numDG']-1
+                        setting['override']['degree_poly'] = endpoint_d['numDG'] - 1
                         if endpoint_d['dataset_increasing']:
                             setting['override']['restrict_polynomial'] = 1
                         else:
@@ -282,8 +279,8 @@ class ModelCompilationReport(unittest.TestCase):
 
 class DFileComparisons(unittest.TestCase):
     """
-    Ensure that "default" d-file settings using BMDS GUI are equivalent to those
-    generated using HAWC.
+    Ensure that "default" d-file settings using BMDS GUI are equivalent to
+    those generated using HAWC.
     """
     def _clean_d_file(self, txt):
         """
@@ -304,7 +301,7 @@ class DFileComparisons(unittest.TestCase):
                 dataset = self.load_from_file(fn)
                 endpoint_d = self.get_endpoint_d(dataset)
 
-                #change the poly degree for the multistage model
+                # change the poly degree for the multistage model
                 for setting in self.default_models:
                     if setting['model_name'] == 'Multistage':
                         setting['override']['degree_poly'] = len(dataset)-1
@@ -516,18 +513,19 @@ class BMDRunTests(unittest.TestCase):
             m_run = self.v.models['D'][run['type']]()
             if 'override' in run:
                 m_run.update_model(run['override'], run['override_text'], self.bmr_d)
-            m = BMD_model_run(model_name=run['type'],
-                              BMD_session=session,
-                              option_override={},
-                              option_override_text=[""])
+            m = BMD_model_run(
+                model_name=run['type'],
+                BMD_session=session,
+                option_override={},
+                option_override_text=[""])
             m.run_model(self.v, m_run, self.dataset_dichotomous)
             output_text = m.output_text.splitlines()[10:]
-            fn = os.path.join(BMDS_231_TESTPATH, run['fn'])
+            fn = os.path.join(BMDS_TEST_PATH, run['fn'])
             gold_standard = self.import_bmds_output_file(fn)
-            # f = file(os.path.join(BMDS_231_TESTPATH, 'test_output.txt'), 'w')
+            # f = file(os.path.join(BMDS_TEST_PATH, 'test_output.txt'), 'w')
             # f.write('\n'.join(output_text))
             # f.close()
-            # f = file(os.path.join(BMDS_231_TESTPATH, 'gold_standard.txt'), 'w')
+            # f = file(os.path.join(BMDS_TEST_PATH, 'gold_standard.txt'), 'w')
             # f.write('\n'.join(gold_standard))
             # f.close()
             self.assertTrue(output_text == gold_standard)
@@ -584,20 +582,19 @@ class BMDRunTests(unittest.TestCase):
             m_run = self.v.models['C'][run['type']]()
             if 'override' in run:
                 m_run.update_model(run['override'], run['override_text'], self.bmr_c)
-            m = BMD_model_run(model_name=run['type'],
-                              BMD_session=session,
-                              option_override={},
-                              option_override_text=[""])
+            m = BMD_model_run(
+                model_name=run['type'],
+                BMD_session=session,
+                option_override={},
+                option_override_text=[""])
             m.run_model(self.v, m_run, self.dataset_continuous)
             output_text = m.output_text.splitlines()[10:]
-            fn = os.path.join(BMDS_231_TESTPATH, run['fn'])
+            fn = os.path.join(BMDS_TEST_PATH, run['fn'])
             gold_standard = self.import_bmds_output_file(fn)
-            # f = file(os.path.join(BMDS_231_TESTPATH, 'test_output.txt'), 'w')
-            # f.write('\n'.join(output_text))
-            # f.close()
-            # f = file(os.path.join(BMDS_231_TESTPATH, 'gold_standard.txt'), 'w')
-            # f.write('\n'.join(gold_standard))
-            # f.close()
+            # with open(os.path.join(BMDS_TEST_PATH, 'test_output.txt'), 'w') as f:
+            #     f.write('\n'.join(output_text))
+            # with open(os.path.join(BMDS_TEST_PATH, 'gold_standard.txt'), 'w') as f:
+            #     f.write('\n'.join(gold_standard))
             self.assertTrue(output_text == gold_standard)
 
     def test_force_kill(self):
@@ -607,19 +604,25 @@ class BMDRunTests(unittest.TestCase):
         cause an infinite loop, and thus should be killed.
         """
 
-        dataset = {'dose': [0., 75., 250.],
-                   'n': [11, 11, 11],
-                   'response': [0., 0.3, 1.8],
-                   'stdev': [0., 0.544, 2.01]}
+        dataset = {
+            'dose': [0., 75., 250.],
+            'n': [11, 11, 11],
+            'response': [0., 0.3, 1.8],
+            'stdev': [0., 0.544, 2.01]
+        }
         endpoint = self.save_endpoint(dataset)
 
         settings = {
-            'options': [{'model_name': 'Exponential-M2',
-                         'override': {},
-                         'override_text': []}],
-            'bmrs': [{'type': 'Std. Dev.',
-                      'value': 1.0,
-                      'confidence_level': 0.95}],
+            'options': [{
+                'model_name': 'Exponential-M2',
+                'override': {},
+                'override_text': []
+            }],
+            'bmrs': [{
+                'type': 'Std. Dev.',
+                'value': 1.0,
+                'confidence_level': 0.95
+            }],
         }
 
         session = BMD_session(endpoint=endpoint,
