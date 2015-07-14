@@ -81,6 +81,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'system',
             'organ',
             'effect',
+            'diagnostic',
             'tags',
             'observation_time',
             'data_type',
@@ -229,6 +230,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['system'],
                 ser['organ'],
                 ser['effect'],
+                ser['diagnostic'],
                 get_tags(ser),
                 get_observation_time(
                     ser["observation_time"],
