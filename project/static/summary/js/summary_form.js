@@ -85,7 +85,7 @@ _.extend(TableField.prototype, InputField.prototype, {
     },
     addTdText: function(name, val){
         val = (val!==undefined) ? val : "";
-        return '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val);
+        return $('<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val));
     },
     addTdInt: function(name, val){
         val = (val!==undefined) ? val : "";
@@ -596,6 +596,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         return $('<tr>')
             .append(
                 '<th>Field name</th>',
+                '<th>Header name</th>',
                 '<th>Values</th>',
                 '<th>Number of columns</th>',
                 '<th>X position</th>',
@@ -605,19 +606,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
     },
     addRow: function () {
         var self = this,
-            nameTd = this.addTdSelect('name', [
-                    'study',
-                    'experiment_type',
-                    'route_of_exposure',
-                    'lifestage_exposed',
-                    'species',
-                    'sex',
-                    'generation',
-                    'effects',
-                    'system',
-                    'organ',
-                    'effect',
-                ]).attr('class', 'valuesSome'),
+            nameTd = this.addTdSelect('name', _.keys(CrossviewPlot._filters)).attr('class', 'valuesSome'),
             valuesTd = this.addTdSelectMultiple('values', []),
             values = valuesTd.find('select').attr('size', 8).css('overflow-y', 'scroll'),
             name = nameTd.find('select'),
@@ -627,7 +616,11 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
                             .map(function(d){return '<option value="{0}" selected>{0}</option>'.printf(d)})
                             .value();
                 values.html(opts);
-            }, allValues, allValuesLeg;
+            }, allValues, allValuesLeg,
+            headerNameTd = this.addTdText('headerName', ""),
+            setDefaultHeaderName = function(val){
+                headerNameTd.find('input').val(CrossviewPlot._filters[val]);
+            };
 
         allValues = $('<input name="allValues" type="checkbox" checked>').on('change', function(){
             if ($(this).prop('checked')){
@@ -643,11 +636,16 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
             .append("Use all values")
             .prependTo(valuesTd);
 
-        name.on('change', function(d){setValues($(this).val());});
+        name.on('change', function(d){
+            var val = $(this).val();
+            setValues(val);
+            setDefaultHeaderName(val);
+        }).trigger('change');
 
         return $('<tr>')
             .append(
                 nameTd,
+                headerNameTd,
                 valuesTd,
                 this.addTdInt('columns', 1),
                 this.addTdInt('x', 0),
@@ -658,6 +656,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
     fromSerializedRow: function (d,i) {
         var row = this.addRow();
         row.find('select[name="name"]').val(d.name);
+        row.find('input[name="headerName"]').val(d.headerName);
         row.find('input[name="allValues"]').prop('checked', d.allValues).trigger('change');
         row.find('select[name="values"]').val(d.values);
         row.find('input[name="columns"]').val(d.columns);
@@ -668,6 +667,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
         row = $(row);
         return {
             "name": row.find('select[name="name"]').val(),
+            "headerName": row.find('input[name="headerName"]').val(),
             "allValues": row.find('input[name="allValues"]').prop('checked'),
             "values": row.find('select[name="values"]').val(),
             "columns": parseInt(row.find('input[name="columns"]').val(), 10),
@@ -778,7 +778,7 @@ _.extend(CrossviewForm, {
             type: CrossviewSelectorField,
             prependSpacer: false,
             name: "filters",
-            colWidths: [24, 25, 12, 12, 12, 15],
+            colWidths: [15, 20, 20, 10, 10, 10, 15],
             tab: "filters"
         },
         {

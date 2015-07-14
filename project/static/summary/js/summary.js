@@ -1341,6 +1341,20 @@ _.extend(CrossviewPlot, {
         // need at-least two non-zero dose-groups for visualization
         return d3.sum(_.pluck(e.data.endpoint_group, 'isReported'))>=numDG;
     },
+    _filters: {
+        "study": "Study",
+        "experiment_type": "Experiment type",
+        "route_of_exposure": "Route of exposure",
+        "lifestage_exposed": "Lifestage exposed",
+        "species": "Species",
+        "sex": "Sex",
+        "generation": "Generation",
+        "effects": "Effect tags",
+        "system": "System",
+        "organ": "Organ",
+        "effect": "Effect",
+        "monotonicity": "Monotonicity",
+    },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
         "experiment_type": function(d){return d.data.animal_group.experiment.type; },
@@ -1397,19 +1411,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this.build_labels();
         this.add_menu();
         this.trigger_resize();
-    },
-    _cw_filter_names: {
-        "study": "Study",
-        "experiment_type": "Experiment type",
-        "route_of_exposure": "Route of exposure",
-        "lifestage_exposed": "Lifestage exposed",
-        "species": "Species",
-        "sex": "Sex",
-        "generation": "Generation",
-        "effects": "Effect tags",
-        "system": "System",
-        "organ": "Organ",
-        "effect": "Effect"
     },
     build_labels: function(){
 
@@ -1490,7 +1491,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                                 .uniq(true)
                                 .filter(function(d){return d != "";});
                     }
-                    return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d};}).value();
+                    return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d, 'headerName': f.headerName};}).value();
                })
                .filter(function(d){return d.length>0;})
                .value();
@@ -1777,7 +1778,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("y", -this.settings.tag_height)
             .attr("text-anchor", "start")
             .attr('class', 'crossview_title')
-            .text(self._cw_filter_names[filters[0].field]);
+            .text(filters[0].headerName);
 
         //build column-groups
         colg = d3.select(g).selectAll("g.crossview_cols")
