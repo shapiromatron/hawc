@@ -1441,16 +1441,17 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     },
     processData: function(){
         var self = this,
+            settings = this.data.settings,
             getFilters = function(d){
                 var obj = {}, fld;
-                self.data.settings.filters.forEach(function(fld){
+                settings.filters.forEach(function(fld){
                     obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d);
                 });
                 return obj;
             },
             processEndpoint = function(e){
                 var filters = getFilters(e),
-                    egFilter = (self.data.settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
+                    egFilter = (settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
                     egs = e.data.endpoint_group
                     .filter(egFilter)
                     .map(function(eg){
@@ -1471,16 +1472,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 };
             },
             dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
-            numDG = CrossviewPlot._requiredGroups(this.data.settings.dose_isLog),
+            numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .map(processEndpoint)
                 .value(),
-            container_height = this.data.settings.height + 50,  // menu-spacing
-            dose_scale = (this.data.settings.dose_isLog) ? "log" : "linear";
+            container_height = settings.height + 50,  // menu-spacing
+            dose_scale = (settings.dose_isLog) ? "log" : "linear";
 
         // build filters
-        var filters = _.chain(this.data.settings.filters)
+        var filters = _.chain(settings.filters)
                .map(function(f){
                     var vals = _.chain(f.values);
                     if(f.allValues){
@@ -1500,16 +1501,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             dataset: dataset,
             filters: filters,
             active_filters: [],
-            plot_settings: this.data.settings,
-            w: this.data.settings.inner_width,
-            h: this.data.settings.inner_height,
+            plot_settings: settings,
+            w: settings.inner_width,
+            h: settings.inner_height,
             dose_scale: dose_scale,
             padding: {
-                "top": this.data.settings.padding_top,
-                "right": this.data.settings.width-this.data.settings.padding_left-this.data.settings.inner_width,
-                "bottom": this.data.settings.height-this.data.settings.padding_top-this.data.settings.inner_height,
-                "left": this.data.settings.padding_left,
-                "left_original": this.data.settings.padding_left
+                "top": settings.padding_top,
+                "right": settings.width-settings.padding_left-settings.inner_width,
+                "bottom": settings.height-settings.padding_top-settings.inner_height,
+                "left": settings.padding_left,
+                "left_original": settings.padding_left
             }
         });
         this._set_ranges();
