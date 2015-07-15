@@ -1353,7 +1353,6 @@ _.extend(CrossviewPlot, {
         "system": "System",
         "organ": "Organ",
         "effect": "Effect",
-        "monotonicity": "Monotonicity",
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
@@ -1441,6 +1440,11 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("class","dr_axis_labels y_axis_label");
     },
     processData: function(){
+
+        this.data.settings.colorFilters.forEach(function(d,i){
+            d.className = "_cv_colorFilter"+i;
+        });
+
         var self = this,
             settings = this.data.settings,
             getFilters = function(d){
@@ -1453,17 +1457,32 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             processEndpoint = function(e){
                 var filters = getFilters(e),
                     egFilter = (settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
-                    egs = e.data.endpoint_group
-                    .filter(egFilter)
-                    .map(function(eg){
-                        return {
-                            'dose': eg.dose,
-                            'resp': e._percent_change_control(eg.dose_group_id)/100,
-                            'title': e.data.name,
-                            'endpoint': e,
-                            'filters': filters
-                        }
-                    });
+                    classes = [],
+                    egs, i, stroke, filt, vals;
+
+                // apply color filters (reverse order)
+                for (i = settings.colorFilters.length-1; i>=0; i--){
+                    colorFilt = settings.colorFilters[i];
+                    vals = CrossviewPlot._cw_filter_process[colorFilt.field](e)
+                    if(self.isMatch(vals, colorFilt.value)){
+                        stroke = colorFilt.color;
+                        classes.push(colorFilt.className);
+                    }
+                }
+
+                egs = e.data.endpoint_group
+                        .filter(egFilter)
+                        .map(function(eg){
+                            return {
+                                'dose': eg.dose,
+                                'resp': e._percent_change_control(eg.dose_group_id)/100,
+                                'title': e.data.name,
+                                'endpoint': e,
+                                'filters': filters,
+                                'stroke': stroke,
+                                'classes': classes,
+                            }
+                        });
 
                 return {
                     'filters': filters,
@@ -1502,15 +1521,14 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         var css_rules = [
             "path.crossview_paths {stroke: {0};}".printf(settings.colorBase),
 
-            "path.crossview_selected {stroke: {0};}".printf(settings.colorSelected),
+            "path.crossview_selected {stroke: {0} !important;}".printf(settings.colorSelected),
             "text.crossview_selected {fill: {0} !important;}".printf(settings.colorSelected),
 
-            "text.crossview_fields:hover{fill: {0};}".printf(settings.colorHover),
-            "path.crossview_hover {stroke: {0};}".printf(settings.colorHover),
-            "path.crossview_path_hover {stroke: {0};}".printf(settings.colorHover),
+            ".crossview_fields:hover{fill: {0};}".printf(settings.colorHover),
+            ".crossview_hover {stroke: {0} !important;}".printf(settings.colorHover),
+            "path.crossview_path_hover {stroke: {0} !important;}".printf(settings.colorHover),
             "text.crossview_path_hover {fill: {0};}".printf(settings.colorHover),
         ].join("\n");
-
 
         _.extend(this, {
             dataset: dataset,
@@ -1748,6 +1766,64 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             });
         }
     },
+    _bringColorFilterToFront: function(d){
+        this.vis.selectAll("." + d.className).moveToFront();
+    },
+    _draw_colorFilterLabels: function(){
+        if (!this.plot_settings.colorFilterLegend || this.plot_settings.colorFilters.length === 0) return;
+
+        var self = this,
+            translate = 'translate({0},{1})'.printf(
+                this.plot_settings.colorFilterLegendX,
+                this.plot_settings.colorFilterLegendY),
+            height = 15,
+            drag = (!this.options.dev) ? function(){} :
+                HAWCUtils.updateDragLocationTransform(function(x, y){
+                  self.plot_settings.colorFilterLegendX = x;
+                  self.plot_settings.colorFilterLegendY = y;
+                }),
+            labels = this.vis.append("g")
+                .attr('class', 'colorFilterLabels')
+                .attr('transform', translate)
+                .call(drag);
+
+            labels
+                .append('text')
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("text-anchor", "start")
+                .attr('class', 'crossview_title')
+                .text(this.plot_settings.colorFilterLegendLabel);
+
+            labels.selectAll('g.labels')
+                .data(this.plot_settings.colorFilters)
+                .enter().append('g')
+                .each(function(d){
+                    d3.select(this)
+                      .append("text")
+                          .attr('x', 0)
+                          .attr('y', height)
+                          .text(d.headerName)
+                          .attr('class', 'crossview_colorFilter')
+                          .style('fill', d.color);
+                    height += 15;
+                })
+                .on('mouseover', function(d){self._bringColorFilterToFront(d)});
+
+        if (this.options.dev){
+            var bb = labels.node().getBBox();
+            d3.select(labels.node())
+                .insert("rect", ":first-child")
+                .attr("cursor", "pointer")
+                .attr("fill", "orange")
+                .attr("opacity", "0.1")
+                .attr("x", bb.x)
+                .attr("y", bb.y)
+                .attr("width", bb.width)
+                .attr("height", bb.height)
+                .append("svg:title").text(function(d) { return "drag to reposition"; });
+        }
+    },
     draw_visualization: function(){
         var x = this.x_scale,
             y = this.y_scale,
@@ -1767,14 +1843,20 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         response_centerlines.selectAll(".crossview_paths")
             .data(plotData)
           .enter().append("path")
-            .attr("class", "crossview_paths")
+            .attr("class", function(d){return "crossview_paths " + d[0].classes.join(" ");})
             .attr("d", line)
+            .style("stroke", function(d){return d[0].stroke;})
             .on('click', function(d){d[0].endpoint.displayAsModal();})
             .on('mouseover', function(d){self.change_show_selected_fields(this, d, true);})
             .on('mouseout', function(d){self.change_show_selected_fields(this, d, false);})
             .append("svg:title").text(function(d){return d[0].title;});
 
         this._draw_labels();
+        this._draw_colorFilterLabels();
+
+        for (i = this.plot_settings.colorFilters.length-1; i>=0; i--){
+            this._bringColorFilterToFront(this.plot_settings.colorFilters[i]);
+        };
     },
     setFilterLocation: function(i, x, y){
         _.extend(this.data.settings.filters[i], {"x": x, "y": y});

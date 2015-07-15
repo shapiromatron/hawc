@@ -26,7 +26,7 @@ _.extend(TableField.prototype, InputField.prototype, {
     fromSerialized: function () {
         var arr = this.parent.settings[this.schema.name] || [];
         this.$tbody.empty();
-        if (arr.length === 0) {
+        if (arr.length === 0 && this.schema.addBlankRowIfNone) {
             this.addRow();
         } else {
             _.each(arr, this.fromSerializedRow, this);
@@ -44,6 +44,7 @@ _.extend(TableField.prototype, InputField.prototype, {
 
         if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
         if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
+        if (this.schema.helpText) new HelpTextNullField(this.schema, this.$parent).render();
 
         this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
         this.setColgroup();
@@ -84,16 +85,21 @@ _.extend(TableField.prototype, InputField.prototype, {
         return td;
     },
     addTdText: function(name, val){
-        val = (val!==undefined) ? val : "";
+        val = val || "";
         return $('<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val));
     },
     addTdInt: function(name, val){
-        val = (val!==undefined) ? val : "";
+        val = val || "";
         return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(name, val);
     },
     addTdFloat: function(name, val){
-        val = (val!==undefined) ? val : "";
+        val = val || "";
         return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(name, val);
+    },
+    addTdColor: function(name, val){
+        val = val || "#000000";
+        return $('<td>')
+           .append($('<input type="color" <input name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
     },
     addTdSelect: function(name, values){
         var sel = $('<select name="{0}" class="span12">'.printf(name))
@@ -330,24 +336,40 @@ _.extend(SelectField.prototype, TextField.prototype, {
 });
 
 
-var SpacerNullField = function () {
-    return TextField.apply(this, arguments);
+var NullField = function () {
+    return InputField.apply(this, arguments);
 }
-_.extend(SpacerNullField.prototype, InputField.prototype, {
+_.extend(NullField.prototype, InputField.prototype, {
     toSerialized: function () {},
     fromSerialized: function () {},
-    render: function () {
-        this.$parent.append("<hr>");
-    }
+    render: function () {}
+});
+
+
+var SpacerNullField = function () {
+    return NullField.apply(this, arguments);
+}
+_.extend(SpacerNullField.prototype, NullField.prototype, {
+    render: function () { this.$parent.append("<hr>"); }
 });
 
 
 var HeaderNullField = function () {
-    return SpacerNullField.apply(this, arguments);
+    return NullField.apply(this, arguments);
 }
-_.extend(HeaderNullField.prototype, SpacerNullField.prototype, {
+_.extend(HeaderNullField.prototype, NullField.prototype, {
     render: function () {
         this.$parent.append( $("<h4>").text(this.schema.label) );
+    }
+});
+
+
+var HelpTextNullField = function () {
+    return NullField.apply(this, arguments);
+}
+_.extend(HelpTextNullField.prototype, NullField.prototype, {
+    render: function () {
+        this.$parent.append('<span class="help-inline">{0}</span>'.printf(this.schema.helpText));
     }
 });
 
@@ -688,6 +710,71 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
 });
 
 
+var CrossviewColorFilterField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(CrossviewColorFilterField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Field name</th>',
+                '<th>Field value</th>',
+                '<th>Legend name</th>',
+                '<th>Color</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        var self = this,
+            fieldTd = this.addTdSelect('field', _.keys(CrossviewPlot._filters)).attr('class', 'valuesSome'),
+            valueTd = this.addTdSelect('value', []),
+            headerNameTd = this.addTdText('headerName'),
+            headerName = headerNameTd.find('input'),
+            field = fieldTd.find('select'),
+            value = valueTd.find('select'),
+            setValues = function(){
+                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                    opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog))
+                            .map(function(d){return '<option value="{0}" selected>{0}</option>'.printf(d)})
+                            .value();
+                value.html(opts);
+            },
+            setDefaultHeaderName = function(val){headerName.val(value.val());};
+
+        field.on('change', function(d){
+            setValues();
+            setDefaultHeaderName();
+        }).trigger('change');
+        value.on('change', setDefaultHeaderName).trigger('change');
+
+        return $('<tr>')
+            .append(
+                fieldTd,
+                valueTd,
+                headerNameTd,
+                this.addTdColor('color', '#8BA870'),
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d, i) {
+        var row = this.addRow();
+        row.find('select[name="field"]').val(d.field).trigger('change');
+        row.find('select[name="value"]').val(d.value);
+        row.find('input[name="headerName"]').val(d.headerName);
+        row.find('input[name="color"]').val(d.color);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "field": row.find('select[name="field"]').val(),
+            "value": row.find('select[name="value"]').val(),
+            "headerName": row.find('input[name="headerName"]').val(),
+            "color": row.find('input[name="color"]').val(),
+        }
+    }
+});
+
+
 var CrossviewForm = function(){
     VisualForm.apply(this, arguments);
 };
@@ -790,6 +877,7 @@ _.extend(CrossviewForm, {
             prependSpacer: false,
             name: "filters",
             colWidths: [15, 20, 20, 10, 10, 10, 15],
+            addBlankRowIfNone: true,
             tab: "filters"
         },
         {
@@ -798,6 +886,7 @@ _.extend(CrossviewForm, {
             label: "Dose reference line",
             name: "reflines_dose",
             colWidths: [20, 40, 20, 20],
+            addBlankRowIfNone: true,
             tab: "references"
         },
         {
@@ -806,6 +895,7 @@ _.extend(CrossviewForm, {
             label: "Dose reference range",
             name: "refranges_dose",
             colWidths: [10, 10, 40, 20, 20],
+            addBlankRowIfNone: true,
             tab: "references"
         },
         {
@@ -814,6 +904,7 @@ _.extend(CrossviewForm, {
             label: "Response reference line",
             name: "reflines_response",
             colWidths: [20, 40, 20, 20],
+            addBlankRowIfNone: true,
             tab: "references"
         },
         {
@@ -822,6 +913,7 @@ _.extend(CrossviewForm, {
             label: "Response reference range",
             name: "refranges_response",
             colWidths: [10, 10, 40, 20, 20],
+            addBlankRowIfNone: true,
             tab: "references"
         },
         {
@@ -830,6 +922,7 @@ _.extend(CrossviewForm, {
             label: "Figure captions",
             name: "labels",
             colWidths: [45, 15, 10, 10, 10, 10],
+            addBlankRowIfNone: true,
             tab: "references"
         },
         {
@@ -852,7 +945,45 @@ _.extend(CrossviewForm, {
             label: "Selected path color",
             tab: "styles",
             helpText: 'Must be valid CSS color name',
-        }
+        },
+        {
+            type: CrossviewColorFilterField,
+            prependSpacer: false,
+            label: "Dose reference range",
+            name: "colorFilters",
+            colWidths: [23, 23, 22, 22, 10],
+            addBlankRowIfNone: false,
+            tab: "styles",
+            helpText: 'Apply colors to paths based on selectors; the first-row is applied last.',
+        },
+        {
+            type: CheckboxField,
+            name: "colorFilterLegend",
+            label: "Show color filter legend",
+            def: false,
+            tab: "styles"
+        },
+        {
+            type: TextField,
+            name: "colorFilterLegendLabel",
+            label: "Color filter legend",
+            def: "Color filters",
+            tab: "styles"
+        },
+        {
+            type: IntegerField,
+            name: "colorFilterLegendX",
+            label: "Color filter legend X position",
+            def: 0,
+            tab: "styles"
+        },
+        {
+            type: IntegerField,
+            name: "colorFilterLegendY",
+            label: "Color filter legend Y position",
+            def: 0,
+            tab: "styles"
+        },
     ]
 });
 _.extend(CrossviewForm.prototype, VisualForm.prototype, {

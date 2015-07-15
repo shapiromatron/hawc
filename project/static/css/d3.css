@@ -335,19 +335,28 @@ rect.heatmap_hovered {
 /*
  * Crossview Plot
  */
+.crossview_title{
+  font-weight: bold;
+}
 
-path.crossview_paths {
+.crossview_paths {
   fill: none;
   stroke-width: 3px;
   cursor: pointer;
 }
 
-text.crossview_title{
-  font-weight: bold;
+.crossview_fields{
+  cursor: pointer;
+}
+.crossview_fields:hover{
+  text-decoration: underline;
 }
 
-text.crossview_fields{
+.crossview_colorFilter{
   cursor: pointer;
+}
+.crossview_colorFilter:hover{
+  text-decoration: underline;
 }
 
 
