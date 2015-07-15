@@ -1404,6 +1404,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if(this.dataset.length === 0){
             return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>");
         }
+        this._set_css();
         this.build_plot_skeleton(false);
         this.add_axes();
         this.draw_visualization();
@@ -1497,10 +1498,25 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                .filter(function(d){return d.length>0;})
                .value();
 
+        // build css styles
+        var css_rules = [
+            "path.crossview_paths {stroke: {0};}".printf(settings.colorBase),
+
+            "path.crossview_selected {stroke: {0};}".printf(settings.colorSelected),
+            "text.crossview_selected {fill: {0} !important;}".printf(settings.colorSelected),
+
+            "text.crossview_fields:hover{fill: {0};}".printf(settings.colorHover),
+            "path.crossview_hover {stroke: {0};}".printf(settings.colorHover),
+            "path.crossview_path_hover {stroke: {0};}".printf(settings.colorHover),
+            "text.crossview_path_hover {fill: {0};}".printf(settings.colorHover),
+        ].join("\n");
+
+
         _.extend(this, {
             dataset: dataset,
             filters: filters,
             active_filters: [],
+            css_rules: css_rules,
             plot_settings: settings,
             w: settings.inner_width,
             h: settings.inner_height,
@@ -1515,6 +1531,12 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         });
         this._set_ranges();
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
+    },
+    _set_css: function(){
+        $("#cv_css").remove();
+        $('<style id="cv_css" type="text/css" >')
+            .html(this.css_rules)
+            .appendTo("head");
     },
     _set_ranges: function(){
         var parseRange = function(txt){

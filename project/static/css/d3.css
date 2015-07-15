@@ -338,9 +338,7 @@ rect.heatmap_hovered {
 
 path.crossview_paths {
   fill: none;
-  stroke: #ccc;
   stroke-width: 3px;
-
   cursor: pointer;
 }
 
@@ -352,29 +350,6 @@ text.crossview_fields{
   cursor: pointer;
 }
 
-text.crossview_fields:hover{
-  fill: #ff4040;
-}
-
-path.crossview_selected {
- stroke: #6495ed;
-}
-
-text.crossview_selected {
-  fill: #6495ed !important;
-}
-
-path.crossview_hover {
- stroke: #ff4040;
-}
-
-path.crossview_path_hover {
- stroke: #ff4040;
-}
-
-text.crossview_path_hover {
-  fill: #ff4040;
-}
 
 /*
  * Tag Tree layout

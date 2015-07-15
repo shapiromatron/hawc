@@ -292,6 +292,16 @@ _.extend(FloatField.prototype, TextField.prototype, {
 });
 
 
+var ColorField = function () {
+    return TextField.apply(this, arguments);
+}
+_.extend(ColorField.prototype, TextField.prototype, {
+    _setInput: function(){
+        this.$inp = $('<input type="color" name="{0}" class="span12" required>'.printf(this.schema.name));
+    },
+});
+
+
 var CheckboxField = function () {
     return TextField.apply(this, arguments);
 }
@@ -685,7 +695,8 @@ _.extend(CrossviewForm, {
     tabs: [
         {name: "overall",       label: "General settings"},
         {name: "filters",       label: "Crossview filters"},
-        {name: "references",    label: "References"}
+        {name: "references",    label: "References"},
+        {name: "styles",        label: "Styles"}
     ],
     schema: [
         {
@@ -821,6 +832,27 @@ _.extend(CrossviewForm, {
             colWidths: [45, 15, 10, 10, 10, 10],
             tab: "references"
         },
+        {
+            type: ColorField,
+            name: "colorBase",
+            label: "Base path color",
+            tab: "styles",
+            helpText: 'Must be valid CSS color name',
+        },
+        {
+            type: ColorField,
+            name: "colorHover",
+            label: "Hover path color",
+            tab: "styles",
+            helpText: 'Must be valid CSS color name',
+        },
+        {
+            type: ColorField,
+            name: "colorSelected",
+            label: "Selected path color",
+            tab: "styles",
+            helpText: 'Must be valid CSS color name',
+        }
     ]
 });
 _.extend(CrossviewForm.prototype, VisualForm.prototype, {
