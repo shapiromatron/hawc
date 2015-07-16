@@ -1808,7 +1808,14 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                           .style('fill', d.color);
                     height += 15;
                 })
-                .on('mouseover', function(d){self._bringColorFilterToFront(d)});
+                .on('mouseover', function(d){
+                    self.vis.selectAll("." + d.className)
+                        .style("stroke", self.plot_settings.colorHover);
+                    self._bringColorFilterToFront(d)
+                }).on('mouseout', function(d){
+                    self.vis.selectAll("." + d.className)
+                        .style("stroke", d.color);
+                });
 
         if (this.options.dev){
             var bb = labels.node().getBBox();
