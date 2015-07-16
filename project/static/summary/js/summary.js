@@ -1353,6 +1353,7 @@ _.extend(CrossviewPlot, {
         "system": "System",
         "organ": "Organ",
         "effect": "Effect",
+        "monotonicity": "Monotonicity",
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
@@ -1366,6 +1367,7 @@ _.extend(CrossviewPlot, {
         "system": function(d){return d.data.system; },
         "organ": function(d){return d.data.organ; },
         "effect": function(d){return d.data.effect; },
+        "monotonicity": function(d){return d.data.monotonicity; },
     }
 })
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
