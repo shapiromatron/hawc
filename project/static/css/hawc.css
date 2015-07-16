@@ -399,6 +399,11 @@ div.inline-smart-tag {
   }
 }
 
+/* Visual forms */
+.helpTextForTable {
+  padding-bottom: 0.7em;
+}
+
 
 /* FORM FORMATTING */
 .control-label {

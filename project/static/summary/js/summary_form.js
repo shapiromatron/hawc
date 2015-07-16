@@ -391,7 +391,7 @@ var HelpTextNullField = function () {
 }
 _.extend(HelpTextNullField.prototype, NullField.prototype, {
     render: function () {
-        this.$parent.append('<span class="help-inline">{0}</span>'.printf(this.schema.helpText));
+        this.$parent.append('<p class="helpTextForTable help-inline">{0}</p>'.printf(this.schema.helpText));
     }
 });
 
