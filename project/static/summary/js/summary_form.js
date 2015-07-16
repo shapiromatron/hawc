@@ -106,6 +106,12 @@ _.extend(TableField.prototype, InputField.prototype, {
                 .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d)}));
         return $('<td>').append(sel);
     },
+    addTdSelectLabels: function(name, options){
+        var sel = $('<select name="{0}" class="span12">'.printf(name))
+                .append(_.map(options, function(d){return '<option value="{0}">{1}</option>'.printf(
+                        d.value, d.label)}));
+        return $('<td>').append(sel);
+    },
     addTdSelectMultiple: function(name, values){
         var sel = $('<select name="{0}" class="span12" multiple>'.printf(name))
                 .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d)}));
@@ -797,15 +803,77 @@ _.extend(CrossviewColorFilterField.prototype, TableField.prototype, {
 });
 
 
+var CrossviewEndpointFilterField = function () {
+    return TableField.apply(this, arguments);
+}
+_.extend(CrossviewEndpointFilterField.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Field name</th>',
+                '<th>Filter type</th>',
+                '<th>Value</th>',
+                this.thOrdering({showNew: true})
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        var self = this,
+            filterOpts = [
+                {"label": ">", "value": "gt"},
+                {"label": "≥", "value": "gte"},
+                {"label": "<", "value": "le"},
+                {"label": "≤", "value": "lte"},
+                {"label": "exact", "value": "exact"},
+                {"label": "contains", "value": "contains"},
+                {"label": "does not contain", "value": "not_contains"},
+            ]
+            fieldTd = this.addTdSelect('field', _.keys(CrossviewPlot._filters)),
+            field = fieldTd.find('select'),
+            valueTd = this.addTdText('value'),
+            value = valueTd.find('input'),
+            setAutocomplete = function(){
+                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                    opts = CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog);
+                value.autocomplete({"source": opts});
+            };
+
+        field.on('change', setAutocomplete).trigger('change');
+
+        return $('<tr>')
+            .append(
+                fieldTd,
+                this.addTdSelectLabels('filterType', filterOpts),
+                valueTd,
+                this.tdOrdering()
+            ).appendTo(this.$tbody);
+    },
+    fromSerializedRow: function (d, i) {
+        var row = this.addRow();
+        row.find('select[name="field"]').val(d.field).trigger('change');
+        row.find('select[name="filterType"]').val(d.filterType);
+        row.find('input[name="value"]').val(d.value);
+    },
+    toSerializedRow: function (row) {
+        row = $(row);
+        return {
+            "field": row.find('select[name="field"]').val(),
+            "filterType": row.find('select[name="filterType"]').val(),
+            "value": row.find('input[name="value"]').val()
+        }
+    }
+});
+
+
 var CrossviewForm = function(){
     VisualForm.apply(this, arguments);
 };
 _.extend(CrossviewForm, {
     tabs: [
-        {name: "overall",       label: "General settings"},
-        {name: "filters",       label: "Crossview filters"},
-        {name: "references",    label: "References"},
-        {name: "styles",        label: "Styles"}
+        {name: "overall",         label: "General settings"},
+        {name: "filters",         label: "Crossview filters"},
+        {name: "references",      label: "References"},
+        {name: "styles",          label: "Styles"},
+        {name: "endpointFilters", label: "Endpoint filters"}
     ],
     schema: [
         {
@@ -896,6 +964,7 @@ _.extend(CrossviewForm, {
         },
         {
             type: CrossviewSelectorField,
+            helpText: "Crossview filters are displayed as text on the chart, which is highlighted when a relevant endpoint is selected.",
             prependSpacer: false,
             name: "filters",
             colWidths: [15, 20, 20, 10, 10, 10, 15],
@@ -982,7 +1051,7 @@ _.extend(CrossviewForm, {
             type: CheckboxField,
             name: "colorFilterLegend",
             label: "Show color filter legend",
-            def: false,
+            def: true,
             tab: "styles"
         },
         {
@@ -1006,6 +1075,24 @@ _.extend(CrossviewForm, {
             def: 0,
             tab: "styles"
         },
+        {
+            type: CrossviewEndpointFilterField,
+            helpText: "Filters used to determine which dose-response datasets should be included; by default all plottable datasets are included.",
+            prependSpacer: false,
+            name: "endpointFilters",
+            colWidths: [25 ,25, 38, 12],
+            addBlankRowIfNone: false,
+            tab: "endpointFilters"
+        },
+        {
+            type: RadioField,
+            label: "Filter logic",
+            helpText: "Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?",
+            name: "endpointFilterLogic",
+            def: "and",
+            options: [{"label": "AND", "value": "and"}, {"label": "OR", "value": "or"}],
+            tab: "endpointFilters"
+        }
     ]
 });
 _.extend(CrossviewForm.prototype, VisualForm.prototype, {

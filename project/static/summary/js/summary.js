@@ -1442,11 +1442,46 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("class","dr_axis_labels y_axis_label");
     },
     processData: function(){
-
+        // create new class for each colorFilter
         this.data.settings.colorFilters.forEach(function(d,i){
             d.className = "_cv_colorFilter"+i;
         });
 
+        // get filter function
+        var filters_map = d3.map({
+            lt: function(val, tgt){return val<tgt;},
+            lte: function(val, tgt){return val<=tgt;},
+            gt: function(val, tgt){return val>tgt;},
+            gte: function(val, tgt){return val>=tgt;},
+            contains: function(val, tgt){
+                if (val instanceof Array) val = val.join("|")
+                val = val.toString().toLowerCase();
+                tgt = tgt.toString().toLowerCase();
+                return val.indexOf(tgt.toLowerCase())>-1;
+            },
+            not_contains: function(val, tgt){
+                if (val instanceof Array) val = val.join("|").toLowerCase();
+                val = val.toString().toLowerCase();
+                tgt = tgt.toString().toLowerCase();
+                return val.indexOf(tgt.toLowerCase())===1;
+            },
+            exact: function(val, tgt){
+                tgt = tgt.toString().toLowerCase();
+                if (val instanceof Array){
+                    return _.chain(val)
+                            .map(function(itm){return itm.toString().toLowerCase() === tgt;})
+                            .any()
+                            .value();
+                } else {
+                    return val.toString().toLowerCase() === tgt;
+                }
+            },
+        });
+        this.data.settings.endpointFilters.forEach(function(d){
+            d.fn = _.partial(filters_map.get(d.filterType), _, d.value);
+        });
+
+        // filter endpoints
         var self = this,
             settings = this.data.settings,
             getFilters = function(d){
@@ -1493,10 +1528,20 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     'resp_extent': d3.extent(egs, function(d){return d.resp})
                 };
             },
+            applyEndpointFilters = function(e){
+                if (settings.endpointFilterLogic.length === 0) return true;
+                var val,
+                    res = _.map(settings.endpointFilters, function(filter){
+                        val = CrossviewPlot._cw_filter_process[filter.field](this)
+                        return filter.fn(val);
+                    }, e);
+                return (settings.endpointFilterLogic==="and") ? _.all(res) : _.any(res);
+            },
             dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
+                .filter(applyEndpointFilters)
                 .map(processEndpoint)
                 .value(),
             container_height = settings.height + 50,  // menu-spacing
