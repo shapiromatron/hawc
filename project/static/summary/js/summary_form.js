@@ -324,6 +324,28 @@ _.extend(CheckboxField.prototype, TextField.prototype, {
 });
 
 
+var RadioField = function () {
+    return TextField.apply(this, arguments);
+}
+_.extend(RadioField.prototype, TextField.prototype, {
+    toSerialized: function () {
+        var sel = 'input[name="{0}"]:checked'.printf(this.schema.name);
+        this.parent.settings[this.schema.name] = this.$inp.find(sel).val();
+    },
+    fromSerialized: function () {
+        var sel = 'input[value="{0}"]'.printf(this.parent.settings[this.schema.name]);
+        this.$inp.find(sel).prop('checked', true);
+    },
+    _setInput: function(){
+        var radios = _.map(this.schema.options, function(d){
+            return '<label class="radio inline">{0}<input name="{1}" type="radio" value="{2}"></label>'.printf(
+                d.label, this.schema.name, d.value);
+        }, this);
+        this.$inp = $('<div>').html(radios.join("\n"));
+    }
+});
+
+
 var SelectField = function () {
     return TextField.apply(this, arguments);
 }
