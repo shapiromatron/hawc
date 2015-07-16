@@ -1804,49 +1804,53 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             translate = 'translate({0},{1})'.printf(
                 this.plot_settings.colorFilterLegendX,
                 this.plot_settings.colorFilterLegendY),
-            height = 15,
+            height = 0,
             drag = (!this.options.dev) ? function(){} :
                 HAWCUtils.updateDragLocationTransform(function(x, y){
                   self.plot_settings.colorFilterLegendX = x;
                   self.plot_settings.colorFilterLegendY = y;
                 }),
-            labels = this.vis.append("g")
-                .attr('class', 'colorFilterLabels')
-                .attr('transform', translate)
-                .call(drag);
+            labels, bb;
 
-            labels
-                .append('text')
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("text-anchor", "start")
-                .attr('class', 'crossview_title')
-                .text(this.plot_settings.colorFilterLegendLabel);
+        labels = this.vis.append("g")
+            .attr('class', 'colorFilterLabels')
+            .attr('transform', translate)
+            .call(drag);
 
-            labels.selectAll('g.labels')
-                .data(this.plot_settings.colorFilters)
-                .enter().append('g')
-                .each(function(d){
-                    d3.select(this)
-                      .append("text")
-                          .attr('x', 0)
-                          .attr('y', height)
-                          .text(d.headerName)
-                          .attr('class', 'crossview_colorFilter')
-                          .style('fill', d.color);
+        labels
+            .append('text')
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("text-anchor", "start")
+            .attr('class', 'crossview_title')
+            .text(this.plot_settings.colorFilterLegendLabel);
+
+        labels.selectAll('g.labels')
+            .data(this.plot_settings.colorFilters)
+            .enter().append('text')
+                .attr('class', 'crossview_colorFilter')
+                .attr('x', 0)
+                .attr('y', function(d){
                     height += 15;
+                    return height;
                 })
+                .text(function(d){return d.headerName;})
+                .style('fill', function(d){ return d.color; })
                 .on('mouseover', function(d){
+                    d3.select(this)
+                        .style("fill", self.plot_settings.colorHover);
                     self.vis.selectAll("." + d.className)
                         .style("stroke", self.plot_settings.colorHover);
-                    self._bringColorFilterToFront(d)
+                    self._bringColorFilterToFront(d);
                 }).on('mouseout', function(d){
+                    d3.select(this)
+                        .style("fill", d.color);
                     self.vis.selectAll("." + d.className)
                         .style("stroke", d.color);
                 });
 
         if (this.options.dev){
-            var bb = labels.node().getBBox();
+            bb = labels.node().getBBox();
             d3.select(labels.node())
                 .insert("rect", ":first-child")
                 .attr("cursor", "pointer")

@@ -1039,13 +1039,13 @@ _.extend(CrossviewForm, {
         },
         {
             type: CrossviewColorFilterField,
-            prependSpacer: false,
-            label: "Dose reference range",
+            prependSpacer: true,
+            label: "Color filters",
             name: "colorFilters",
             colWidths: [23, 23, 22, 22, 10],
             addBlankRowIfNone: false,
             tab: "styles",
-            helpText: 'Apply colors to paths based on selectors; the first-row is applied last.',
+            helpText: 'Custom colors can be applied to paths; these colors are applied based on selectors added below. The first-row is applied last; so if two rules match the same path, the upper-row color will be applied.',
         },
         {
             type: CheckboxField,
@@ -1057,7 +1057,7 @@ _.extend(CrossviewForm, {
         {
             type: TextField,
             name: "colorFilterLegendLabel",
-            label: "Color filter legend",
+            label: "Color filter legend title",
             def: "Color filters",
             tab: "styles"
         },
