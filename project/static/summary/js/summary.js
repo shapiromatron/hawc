@@ -1405,7 +1405,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if(this.dataset.length === 0){
             return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>");
         }
-        this._set_css();
         this.build_plot_skeleton(false);
         this.add_axes();
         this.draw_visualization();
@@ -1495,7 +1494,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 var filters = getFilters(e),
                     egFilter = (settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
                     classes = [],
-                    egs, i, stroke, filt, vals;
+                    stroke = settings.colorBase,
+                    egs, i, filt, vals;
 
                 // apply color filters (reverse order)
                 for (i = settings.colorFilters.length-1; i>=0; i--){
@@ -1516,7 +1516,8 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                                 'title': e.data.name,
                                 'endpoint': e,
                                 'filters': filters,
-                                'stroke': stroke,
+                                'baseStroke': stroke,
+                                'currentStroke': stroke,
                                 'classes': classes,
                             }
                         });
@@ -1564,24 +1565,10 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                .filter(function(d){return d.length>0;})
                .value();
 
-        // build css styles
-        var css_rules = [
-            "path.crossview_paths {stroke: {0};}".printf(settings.colorBase),
-
-            "path.crossview_selected {stroke: {0} !important;}".printf(settings.colorSelected),
-            "text.crossview_selected {fill: {0} !important;}".printf(settings.colorSelected),
-
-            ".crossview_fields:hover{fill: {0};}".printf(settings.colorHover),
-            ".crossview_hover {stroke: {0} !important;}".printf(settings.colorHover),
-            "path.crossview_path_hover {stroke: {0} !important;}".printf(settings.colorHover),
-            "text.crossview_path_hover {fill: {0};}".printf(settings.colorHover),
-        ].join("\n");
-
         _.extend(this, {
             dataset: dataset,
             filters: filters,
             active_filters: [],
-            css_rules: css_rules,
             plot_settings: settings,
             w: settings.inner_width,
             h: settings.inner_height,
@@ -1596,12 +1583,6 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         });
         this._set_ranges();
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
-    },
-    _set_css: function(){
-        $("#cv_css").remove();
-        $('<style id="cv_css" type="text/css" >')
-            .html(this.css_rules)
-            .appendTo("head");
     },
     _set_ranges: function(){
         var parseRange = function(txt){
@@ -1899,10 +1880,19 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
           .enter().append("path")
             .attr("class", function(d){return "crossview_paths " + d[0].classes.join(" ");})
             .attr("d", line)
-            .style("stroke", function(d){return d[0].stroke;})
+            .style("stroke", function(d){return d[0].currentStroke;})
             .on('click', function(d){d[0].endpoint.displayAsModal();})
-            .on('mouseover', function(d){self.change_show_selected_fields(this, d, true);})
-            .on('mouseout', function(d){self.change_show_selected_fields(this, d, false);})
+            .on('mouseover', function(d){
+                if ((self.active_filters.length===0) ||
+                    (d[0].currentStroke === self.plot_settings.colorSelected)){
+                    d3.select(this).style('stroke', self.plot_settings.colorHover);
+                }
+                self.change_show_selected_fields(this, d, true);
+            })
+            .on('mouseout', function(d){
+                d3.select(this).style('stroke', d[0].currentStroke);
+                self.change_show_selected_fields(this, d, false);
+            })
             .append("svg:title").text(function(d){return d[0].title;});
 
         this._draw_labels();
@@ -1956,8 +1946,13 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr('class', 'crossview_fields')
             .text(function(v) {return v.text;})
             .on('click', function(v){self.change_active_filters(v, this);})
-            .on('mouseover', function(d){self._update_hover_filters(d);})
-            .on('mouseout', function(d) {self._update_hover_filters( );});
+            .on('mouseover', function(d){
+                d3.select(this).attr('fill', self.plot_settings.colorHover);
+                self._update_hover_filters(d);})
+            .on('mouseout', function(d) {
+                d3.select(this).attr('fill', null);
+                self._update_hover_filters( );
+            });
 
         // offset filter-column groups to prevent overlap
         colg.each(function(d){
@@ -2028,23 +2023,34 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if (this.path_subset && (!d3.select(path).classed('crossview_selected'))) return;
 
         d3.select(path).classed('crossview_path_hover', hover_on).moveToFront();
-        d3.selectAll('.crossview_fields').classed('crossview_path_hover', false);
+        d3.selectAll('.crossview_fields')
+            .attr('fill', null)
+            .classed('crossview_path_hover', false);
+
         if(hover_on){
-            d3.selectAll('.crossview_fields').filter(filterMatches).classed('crossview_path_hover', true);
+            d3.selectAll('.crossview_fields')
+                .filter(filterMatches)
+                .attr("fill", this.plot_settings.colorHover)
+                .classed('crossview_path_hover', true);
         }
     },
     change_active_filters: function(v, text){
         // check if filter already on; if on then turn off, else add
         var idx = this.active_filters.indexOf(v),
-            isNew = (idx<0);
+            isNew = (idx<0),
+            color;
 
         if(isNew){
             this.active_filters.push(v);
+            color = this.plot_settings.colorSelected;
         } else {
+            color = null;
             this.active_filters.splice(idx, 1);
         }
+
         d3.select(text)
             .classed('crossview_selected', isNew)
+            .style("fill", color)
             .classed('crossview_hover', false);
 
         this._update_selected_filters();
@@ -2052,18 +2058,22 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     _update_selected_filters: function(){
         // find all paths which match all selected-filters.
         var self = this,
-            sel = d3.selectAll('.crossview_paths');
+            paths = d3.selectAll('.crossview_paths');
 
         d3.selectAll('.crossview_paths')
-          .classed('crossview_selected', false);
+            .each(function(d){d[0].currentStroke = d[0].baseStroke;})
+            .style("stroke", null)
+            .classed('crossview_selected', false);
         this.path_subset = undefined;
 
         if(this.active_filters.length>0){
             this.active_filters.forEach(function(filter){
-                sel = sel.filter(function(d){return self.isMatch(d[0].filters[filter.field], filter.text);});
+                paths = paths.filter(function(d){return self.isMatch(d[0].filters[filter.field], filter.text);});
             });
-            sel.classed('crossview_selected', true).moveToFront();
-            this.path_subset = sel;
+            paths.classed('crossview_selected', true)
+                .each(function(d){d[0].currentStroke = self.plot_settings.colorSelected;})
+                .moveToFront();
+            this.path_subset = paths;
         }
 
         this._update_hover_filters();
@@ -2077,10 +2087,12 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             };
 
         d3.selectAll('.crossview_paths')
-          .classed('crossview_hover', false);
+            .style("stroke", function(d){return d[0].currentStroke;})
+            .classed('crossview_hover', false);
 
         if(hover_filter){
             paths.filter(isMatching)
+                .style("stroke", this.plot_settings.colorHover)
                 .classed('crossview_hover', true)
                 .moveToFront();
         }
