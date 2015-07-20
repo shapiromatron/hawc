@@ -1,7 +1,7 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Comment Summary | HAWC
+    {{assessment}} | Comment Summary | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -11,31 +11,31 @@
 
 {% block content %}
 
-  <h1>Comment summary
+<h1>Comment summary
     <div class="btn-group pull-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
-      <ul class="dropdown-menu">
-        <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
-        <li><a href="{% url 'comments:comment_report' assessment.pk %}">Download</a></li>
-      </ul>
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li class="disabled"><a tabindex="-1" href="#">Reporting</a></li>
+            <li><a href="{% url 'comments:comment_report' assessment.pk %}">Download</a></li>
+        </ul>
     </div>
-  </h1>
+</h1>
 
-  <div id="comments_block">
-  </div>
+<div id="comments_block"></div>
 
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-      $(document).ready(function(){
-          window.cm = new CommentManager({"object_type": "assessment_all",
-                                          "object_id": "{{assessment.pk}}",
-                                          "commenting_public": {{assessment.comment_settings.public_comments|lower}},
-                                          "commenting_enabled": false,
-                                          "fetch_comments": true,
-                                          "comment_div_selector": "#comments_block",
-                                          "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}});
-      });
-  </script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        new CommentManager($("#comments_block"), {
+                "displayAsTable": true,
+                "object_type": "assessment_all",
+                "object_id": "{{assessment.pk}}",
+                "commenting_public": {{assessment.comment_settings.public_comments|lower}},
+                "commenting_enabled": false,
+                "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
+            });
+    });
+</script>
 {% endblock %}

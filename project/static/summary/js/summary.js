@@ -214,13 +214,15 @@ var SummaryText = function(obj, depth, tree, sibling_id, parent){
     this.depth = depth;
     this.id = obj.id;
     this.data = obj.data;
-    if (tree.options.commenting_public || tree.options.commenting_enabled){
-        this.comment_manager = new CommentManager({"object_type": "summary_text",
-                                                   "object_id": this.id,
-                                                   "commenting_public": this.tree.options.commenting_public,
-                                                   "commenting_enabled": this.tree.options.commenting_enabled,
-                                                   "user": this.tree.options.user,
-                                                   "fetch_comments": false}, this);
+    if ((window.comment_module_enabled) && (tree.options.commenting_public || tree.options.commenting_enabled)){
+        this.comment_manager = new CommentManager(null, {
+            "displayAsTable": false,
+            "object_type": "summary_text",
+            "object_id": this.id,
+            "commenting_public": this.tree.options.commenting_public,
+            "commenting_enabled": this.tree.options.commenting_enabled,
+            "user": this.tree.options.user,
+        }, this);
     }
     this.section_label = (parent) ? (this.parent.section_label +
                                      (sibling_id+1).toString() + ".") : ("");
@@ -265,7 +267,7 @@ SummaryText.prototype = {
                                                      this.depth)),
             content = $('<div>{0}</div>'.printf(this.data.text));
 
-        if(this.comment_manager){this.comment_manager.build_popup_button(header);}
+        if(this.comment_manager){this.comment_manager.add_popup_button(header);}
         return div.append(header, content);
     },
     render_header: function(lst){

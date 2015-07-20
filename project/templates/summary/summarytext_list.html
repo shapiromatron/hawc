@@ -65,14 +65,17 @@
       }
 
       window.assessment_pk = {{assessment.pk}};
-      window.stt = new SummaryTextTree({"assessment_id": {{assessment.pk}},
-                                        "mode": "read",
-                                        "read_headers_ul": $('#st_headers_ul'),
-                                        "read_text_div": $('#st_text_div'),
-                                        "commenting_public": {{assessment.comment_settings.public_comments|lower}},
-                                        "commenting_enabled": {{assessment.comment_settings.allow_comments|lower}},
-                                        "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}},
-                                        load_smart_tags);
+      window.comment_module_enabled = {{assessment.enable_comments|lower}};
+      window.stt = new SummaryTextTree(
+          {
+            "assessment_id": {{assessment.pk}},
+            "mode": "read",
+            "read_headers_ul": $('#st_headers_ul'),
+            "read_text_div": $('#st_text_div'),
+            "commenting_public": {{assessment.comment_settings.public_comments|lower}},
+            "commenting_enabled": {{assessment.comment_settings.allow_comments|lower}},
+            "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
+          }, load_smart_tags);
     });
   </script>
 {% endblock extrajs %}
