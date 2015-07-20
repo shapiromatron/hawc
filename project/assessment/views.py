@@ -38,6 +38,7 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(About, self).get_context_data(**kwargs)
+        context['object_list'] = models.ChangeLog.objects.all()[:5]
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
         return context
@@ -326,7 +327,7 @@ class BaseEndpointList(BaseList):
 # Changelog views
 class ChangeLogList(ListView):
     model = models.ChangeLog
-    paginate_by = 20
+    paginate_by = 30
 
 
 class ChangeLogDetail(DetailView):

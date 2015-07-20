@@ -100,13 +100,20 @@
   <div class="row">
     <div class="span12">
       <h2>Latest updates</h2>
+
       <p>
-        HAWC is actively under development; a <a href="{% url 'change_log' %}">change log</a>
-        is available to view updates being made to HAWC over time.
+        <strong>Current version: </strong><a href="{{COMMIT_URL}}">{{GIT_COMMIT}}</a>
       </p>
+
       <p>
-        Current version: <a href="{{COMMIT_URL}}">{{GIT_COMMIT}}</a>.
+        The HAWC software is constantly being updated; a list of the latest changes
+        are shown below:
       </p>
+
+      {% include "assessment/_changelog_tbl.html" %}
+
+      <a class='btn btn-link' href="{% url 'change_log' %}">View the complete change log.</a>
+
     </div>
   </div>
   <div class="row">

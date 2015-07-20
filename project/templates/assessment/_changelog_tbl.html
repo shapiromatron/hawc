@@ -1,0 +1,29 @@
+{% load markdown_deux_tags %}
+
+<table class="table table-condensed table-striped table-hover">
+
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Release</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+
+    <colgroup>
+        <col width="10%"></col>
+        <col width="20%"></col>
+        <col width="70%"></col>
+    </colgroup>
+
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>{{object.date|date:"Y-M-d"}}</td>
+            <td><a href="{{object.get_absolute_url}}">{{object.name}}</a></td>
+            <td>{{object.header|markdown}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>

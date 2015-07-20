@@ -1,7 +1,5 @@
 {% extends 'hawc/home.html' %}
 
-{% load markdown_deux_tags %}
-
 
 {% block main_content %}
 
@@ -16,16 +14,7 @@
             are logged below.
             </p>
 
-            <!-- object list -->
-            {% for object in object_list %}
-                <h2><a href="{{object.get_absolute_url}}">{{object.name}}</a></h2>
-                <p class="lead">{{object.date|date:"F d, Y"}}</p>
-                {{object.header|markdown}}
-                {{object.detailed_list|markdown}}
-
-                <hr>
-
-            {% endfor %}
+            {% include "assessment/_changelog_tbl.html" %}
 
             <!-- pagination -->
             {% if is_paginated %}
