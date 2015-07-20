@@ -1,5 +1,7 @@
 import os
+import subprocess
 from django.core.urlresolvers import reverse_lazy
+
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                os.path.join(os.pardir, os.pardir)))
@@ -240,6 +242,16 @@ LOGGING = {
         }
     }
 }
+
+
+# commit information
+def get_git_commit():
+    path = PROJECT_ROOT
+    cmd = "git log -1 --format=%H"
+    return subprocess.check_output(cmd.split(), cwd=path).strip()
+
+GIT_COMMIT = get_git_commit()
+COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMMIT)
 
 
 # BMD modeling settings

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +35,12 @@ class Home(TemplateView):
 
 class About(TemplateView):
     template_name = 'hawc/about.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(About, self).get_context_data(**kwargs)
+        context['GIT_COMMIT'] = settings.GIT_COMMIT
+        context['COMMIT_URL'] = settings.COMMIT_URL
+        return context
 
 
 class Contact(MessageMixin, FormView):
