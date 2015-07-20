@@ -9,33 +9,19 @@
         <div class="span10 offset1">
 
             <!-- header -->
-            <h1>HAWC Updates
-                {% if detailed %}
-                    <a class="btn btn-primary pull-right"
-                       href="{% url 'change_log' %}">Hide details</a>
-                {% else %}
-                    <a class="btn btn-primary pull-right"
-                       href="{% url 'change_log' %}?detailed=True">Show details</a>
-               {% endif %}
-            </h1>
+            <h1>HAWC Updates</h1>
 
             <p class="help-block">
-            The HAWC software is constantly being updated, with bi-weekly software updates
-            being released to the site. Feature updates and changes are logged below, to
-            learn more about what's changed since you've last visited the site.
+            The HAWC software is constantly updated. Major updates and changes
+            are logged below.
             </p>
 
             <!-- object list -->
             {% for object in object_list %}
-                <h3>{{object.date|date:"F d, Y"}}: <i>{{object.name}}</i></h3>
-
+                <h2><a href="{{object.get_absolute_url}}">{{object.name}}</a></h2>
+                <p class="lead">{{object.date|date:"F d, Y"}}</p>
                 {{object.header|markdown}}
-
-                {% if detailed %}
-                    {{object.detailed_list|markdown}}
-                {% else %}
-                    <a href="{{object.get_absolute_url}}">View details</a>
-                {% endif %}
+                {{object.detailed_list|markdown}}
 
                 <hr>
 

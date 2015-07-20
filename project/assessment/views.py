@@ -326,13 +326,7 @@ class BaseEndpointList(BaseList):
 # Changelog views
 class ChangeLogList(ListView):
     model = models.ChangeLog
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super(ChangeLogList, self).get_context_data(**kwargs)
-        if self.request.GET.get('detailed'):
-            context['detailed'] = True
-        return context
+    paginate_by = 20
 
 
 class ChangeLogDetail(DetailView):
