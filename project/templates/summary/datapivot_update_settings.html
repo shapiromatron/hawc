@@ -63,13 +63,16 @@
         .row(function(d, i){ return DataPivot.massage_row(d, i); })
         .get(function(error, data){
           $('#loading_div').fadeOut();
-          window.dp = new DataPivot(data,
-                                    {{object.settings|safe}},
-                                    {"update": true,
-                                     "container": '#data_pivot',
-                                     "data_div": '#dp_data',
-                                     "settings_div": '#dp_settings',
-                                     "display_div": '#dp_display'});
+          window.dp = new DataPivot(
+            data,
+            {{object.settings|safe}},
+            {
+              "update": true,
+              "container": '#data_pivot',
+              "data_div": '#dp_data',
+              "settings_div": '#dp_settings',
+              "display_div": '#dp_display'
+            });
         });
 
     });

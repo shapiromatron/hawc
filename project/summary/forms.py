@@ -421,4 +421,49 @@ class DataPivotSelectorForm(forms.Form):
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
 
-        self.fields['dp'].queryset = self.fields['dp'].queryset.filter(assessment_id = assessment_id)
+        self.fields['dp'].queryset = self.fields['dp'].queryset.filter(assessment_id=assessment_id)
+
+
+class SmartTagForm(forms.Form):
+    RESOURCE_CHOICES = (
+        ('study', 'Study'),
+        ('endpoint', 'Endpoint'),
+        ('visual', 'Visualization'),
+        ('data_pivot', 'Data Pivot'),
+    )
+    DISPLAY_TYPE_CHOICES = (
+        ('popup', 'Popup'),
+        ('inline', 'Inline'),
+    )
+    resource = forms.ChoiceField(
+        choices=RESOURCE_CHOICES)
+    study = selectable.AutoCompleteSelectField(
+        lookup_class=StudyLookup,
+        help_text="Type a few characters of the study name, then click to select.")
+    endpoint = selectable.AutoCompleteSelectField(
+        lookup_class=EndpointByAssessmentLookup,
+        help_text="Type a few characters of the endpoint name, then click to select.")
+    visual = selectable.AutoCompleteSelectField(
+        lookup_class=lookups.VisualLookup,
+        help_text="Type a few characters of the visual name, then click to select.")
+    data_pivot = selectable.AutoCompleteSelectField(
+        lookup_class=lookups.DataPivotLookup,
+        help_text="Type a few characters of the data-pivot name, then click to select.")
+    display_type = forms.ChoiceField(
+        choices=DISPLAY_TYPE_CHOICES,
+        help_text="A popup will appear as a hyperlink which a user can select to see more details; an inline visual is shown on page-load.")
+    title = forms.CharField(
+        help_text="This is the inline text-displayed as a hyperlink; if user clicks, then the resource is presented in a popup.")
+    caption = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3}),
+        help_text="This is caption presented beneath an inline display of the selected resource.")
+
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id', -1)
+        super(SmartTagForm, self).__init__(*args, **kwargs)
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            widget.attrs['class'] = 'span12'
+            if hasattr(widget, 'update_query_parameters'):
+                widget.update_query_parameters({'assessment_id': assessment_id})
+                widget.attrs['class'] += " smartTagSearch"

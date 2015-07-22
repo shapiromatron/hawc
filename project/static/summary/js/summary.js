@@ -190,8 +190,11 @@ SummaryTextTree.prototype = {
                 });
             };
 
-        $.when(InlineRendering.reset_renderings($(smart_tag_object.composer.doc)))
-            .done(post());
+        $.when(
+            InlineRendering.reset_renderings($(smart_tag_object.composer.doc))
+        ).done(
+            post()
+        );
     },
     enable_affix: function(){
         $('.affix-sidenav a').click(function(e){
@@ -378,6 +381,9 @@ _.extend(Visual, {
     displayAsPage: function(id, $el){
         $el.html("<p>Loading... <img src='/static/img/loading.gif'></p>");
         Visual.get_object(id, function(d){d.displayAsPage($el);});
+    },
+    displayAsModal: function(id, options){
+        Visual.get_object(id, function(d){d.displayAsModal(options);});
     }
 });
 Visual.prototype = {
@@ -390,7 +396,10 @@ Visual.prototype = {
             this.data.last_updated.toString()
         ]
     },
-    displayAsPage: function($el){
+    displayAsPage: function($el, options){
+        throw "Abstract method; requires implementation";
+    },
+    displayAsModal: function($el, options){
         throw "Abstract method; requires implementation";
     },
     addActionsMenu: function(){
@@ -398,6 +407,12 @@ Visual.prototype = {
            {url: this.data.url_update, text: "Update visualization"},
            {url: this.data.url_delete, text: "Delete visualization"}
         ]);
+    },
+    object_hyperlink: function(){
+        return $('<a>')
+            .attr("href", this.data.url)
+            .attr("target", "_blank")
+            .text(this.data.title);
     }
 };
 
@@ -500,10 +515,12 @@ EndpointAggregation = function(data){
     delete this.data.endpoints;
 };
 _.extend(EndpointAggregation.prototype, Visual.prototype, {
-    displayAsPage: function($el){
+    displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption)
             self = this;
+
+        options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
@@ -514,19 +531,45 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             .append('<i class="icon-chevron-right"></i>')
             .click(function(){self.buildTbl();});
 
+
+        if (window.isEditable) title.append(this.addActionsMenu());
+
         $el.empty()
-           .append(title)
-           .append("<h2>Visualization</h2>")
            .append(this.$plotDiv)
-           .append($("<h2>Summary table&nbsp;</h2>").append(btn))
-           .append(this.$tblDiv)
-           .append("<h2>Caption</h2>")
-           .append(caption);
+           .append(this.$tblDiv);
+
+        if (!options.visualOnly){
+            $el.prepend(title)
+                .append("<h2>Caption</h2>")
+                .append(caption);
+        }
 
         this.buildTbl();
         this.plotData = this.getPlotData();
         this.buildPlot();
         return this;
+    },
+    displayAsModal: function(options){
+        options = options || {};
+
+        var self = this,
+            modal = new HAWCModal();
+
+        this.$tblDiv = $('<div>');
+        this.$plotDiv = $('<div>');
+
+        modal.getModal().on('shown', $.proxy(this.buildPlot, this));
+
+        this.buildTbl();
+        this.plotData = this.getPlotData();
+        modal.addHeader($('<h4>').text(this.data.title))
+            .addBody($('<div>').append(
+                this.$plotDiv,
+                this.$tblDiv,
+                $('<div>').html(this.data.caption))
+            )
+            .addFooter("")
+            .show({maxWidth: 1200});
     },
     buildTbl: function(){
         if(this.table){
@@ -1171,7 +1214,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
         this.build_y_axis();
 
         var lines_data = this.lines_data;
-        d3.selectAll('.y_axis text')
+        d3.select(this.svg).selectAll('.y_axis text')
             .text(function(v, i){
                 var name;
                 lines_data.forEach(function(endpoint){
@@ -1295,18 +1338,36 @@ _.extend(Crossview.prototype, Visual.prototype, {
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption),
             $plotDiv = $('<div>'),
-            data = this.getPlotData(),
-            options = options || {};
+            data = this.getPlotData();
+
+        options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
-        $el.empty()
-           .append(title)
-           .append($plotDiv)
-           .append(caption);
+        $el.empty().append($plotDiv);
+
+        if (!options.visualOnly) $el.prepend(title).append(caption);
 
         new CrossviewPlot(this, data, options).render($plotDiv);
         return this;
+    },
+    displayAsModal: function(options){
+        options = options || {};
+
+        var self = this,
+            data = this.getPlotData(),
+            $caption = $('<div>').html(this.data.caption),
+            $plotDiv = $('<div>'),
+            modal = new HAWCModal();
+
+        modal.getModal().on('shown', function(){
+            new CrossviewPlot(self, data, options).render($plotDiv);
+        });
+
+        modal.addHeader($('<h4>').text(this.data.title))
+            .addBody([$plotDiv, $caption])
+            .addFooter("")
+            .show({maxWidth: 1200});
     },
     getPlotData: function(){
         return {
@@ -2029,12 +2090,12 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if (this.path_subset && (!d3.select(path).classed('crossview_selected'))) return;
 
         d3.select(path).classed('crossview_path_hover', hover_on).moveToFront();
-        d3.selectAll('.crossview_fields')
+        d3.select(this.svg).selectAll('.crossview_fields')
             .attr('fill', null)
             .classed('crossview_path_hover', false);
 
         if(hover_on){
-            d3.selectAll('.crossview_fields')
+            d3.select(this.svg).selectAll('.crossview_fields')
                 .filter(filterMatches)
                 .attr("fill", this.plot_settings.colorHover)
                 .classed('crossview_path_hover', true);
@@ -2064,9 +2125,9 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     _update_selected_filters: function(){
         // find all paths which match all selected-filters.
         var self = this,
-            paths = d3.selectAll('.crossview_paths');
+            paths = d3.select(this.svg).selectAll('.crossview_paths');
 
-        d3.selectAll('.crossview_paths')
+        d3.select(this.svg).selectAll('.crossview_paths')
             .each(function(d){d[0].currentStroke = d[0].baseStroke;})
             .style("stroke", null)
             .classed('crossview_selected', false);
@@ -2087,12 +2148,12 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     _update_hover_filters: function(hover_filter){
         // if a hover_filter exists, toggle hover-css for selected paths
         var self = this,
-            paths = this.path_subset || d3.selectAll('.crossview_paths'),
+            paths = this.path_subset || d3.select(this.svg).selectAll('.crossview_paths'),
             isMatching = function(d){
                 return self.isMatch(d[0].filters[hover_filter.field], hover_filter.text);
             };
 
-        d3.selectAll('.crossview_paths')
+        d3.select(this.svg).selectAll('.crossview_paths')
             .style("stroke", function(d){return d[0].currentStroke;})
             .classed('crossview_hover', false);
 
@@ -2117,18 +2178,35 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption),
             $plotDiv = $('<div>'),
-            data = this.getPlotData(),
-            options = options || {};
+            data = this.getPlotData();
+
+        options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
-        $el.empty()
-           .append(title)
-           .append($plotDiv)
-           .append(caption);
+        $el.empty().append($plotDiv);
+        if (!options.visualOnly) $el.prepend(title).append(caption);
 
         new RoBHeatmapPlot(this, data, options).render($plotDiv);
         return this;
+    },
+    displayAsModal: function(options){
+        options = options || {};
+
+        var self = this,
+            data = this.getPlotData(),
+            $caption = $('<div>').html(this.data.caption),
+            $plotDiv = $('<div>'),
+            modal = new HAWCModal();
+
+        modal.getModal().on('shown', function(){
+            new RoBHeatmapPlot(self, data, options).render($plotDiv);
+        });
+
+        modal.addHeader($('<h4>').text(this.data.title))
+            .addBody([$plotDiv, $caption])
+            .addFooter("")
+            .show({maxWidth: 1200});
     },
     getPlotData: function(){
         return {
@@ -2274,7 +2352,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.build_y_axis();
         this.build_x_axis();
 
-        d3.selectAll('.x_axis text')
+        d3.select(this.svg).selectAll('.x_axis text')
             .style("text-anchor", "start")
             .attr("dx", "5px")
             .attr("dy", "0px")
@@ -2562,18 +2640,35 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
         var title = $("<h1>").text(this.data.title),
             caption = $('<div>').html(this.data.caption),
             $plotDiv = $('<div>'),
-            data = this.getPlotData(),
-            options = options || {};
+            data = this.getPlotData();
+
+        options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
-        $el.empty()
-           .append(title)
-           .append($plotDiv)
-           .append(caption);
+        $el.empty().append($plotDiv);
+        if (!options.visualOnly) $el.prepend(title).append(caption);
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
         return this;
+    },
+    displayAsModal: function(options){
+        options = options || {};
+
+        var self = this,
+            data = this.getPlotData(),
+            $caption = $('<div>').html(this.data.caption),
+            $plotDiv = $('<div>'),
+            modal = new HAWCModal();
+
+        modal.getModal().on('shown', function(){
+            new RoBBarchartPlot(self, data, options).render($plotDiv);
+        });
+
+        modal.addHeader($('<h4>').text(this.data.title))
+            .addBody([$plotDiv, $caption])
+            .addFooter("")
+            .show({maxWidth: 1200});
     },
     getPlotData: function(){
         return {

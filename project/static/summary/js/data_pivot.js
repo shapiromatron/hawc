@@ -1,8 +1,9 @@
-var DataPivot = function(data, settings, dom_bindings, title){
+var DataPivot = function(data, settings, dom_bindings, title, url){
   this.data = data;
   this.settings = settings || DataPivot.default_plot_settings();
   if(dom_bindings.update) this.build_edit_settings(dom_bindings);
   this.title = title;
+  this.url = url;
 };
 _.extend(DataPivot, {
   NULL_CASE: "---",
@@ -14,7 +15,8 @@ _.extend(DataPivot, {
           var dp = new DataPivot(data,
               d.settings,
               {},
-              d.title);
+              d.title,
+              d.url);
           if(callback){callback(dp);} else {return dp;}
         });
     });
@@ -1043,6 +1045,12 @@ DataPivot.prototype = {
         .addBody($content)
         .addFooter("")
         .show();
+  },
+  object_hyperlink: function(){
+      return $('<a>')
+          .attr("href", this.url)
+          .attr("target", "_blank")
+          .text(this.title);
   }
 };
 

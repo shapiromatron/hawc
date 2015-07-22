@@ -1,12 +1,12 @@
 var SmartTag = function(tag){
     var self = this;
-    this.$tag = $(tag).data('d', this);
+    this.$tag = $(tag).data('obj', this);
     this.type = this.$tag.data('type');
     this.pk = this.$tag.data('pk');
     this.resource = undefined;
     this.rendering = this.$tag.is('span') ? "tooltip" : "inline";
     if (this.rendering === "tooltip"){
-        this.$tag.on('click', function(e){self.display_modal(e);});
+        this.$tag.on('click', $.proxy(this.display_modal, this));
     } else {
         this.display_inline();
     }
@@ -20,119 +20,131 @@ _.extend(SmartTag, {
         var doc = $frame || $(document);
 
         doc.find('span.smart-tag')
-            .each(function(i, v){ if(!$(this).data('d')){new SmartTag(v);}})
+            .each(function(i, v){ if(!$(this).data('obj')){new SmartTag(v);}})
             .addClass('active');
 
         doc.find('div.smart-tag')
-            .each(function(i, v){if(!$(this).data('d')){new SmartTag(v);}});
+            .each(function(i, v){if(!$(this).data('obj')){new SmartTag(v);}});
     },
     context: {
         "endpoint":     {"Cls": Endpoint,    "inline_func": "display_endpoint"},
         "study":        {"Cls": Study,       "inline_func": "display_study"},
-        "aggregation":  {"Cls": Aggregation, "inline_func": "display_aggregation"},
+        "visual":       {"Cls": Visual,      "inline_func": "display_visual"},
         "data_pivot":   {"Cls": DataPivot,   "inline_func": "display_data_pivot"},
     },
+    getExistingTag: function($node){
+        // if the node is an existing Tag; return the $node; else return none.
+        var smart_tags = $node.parents('.smart-tag'),
+            smart_divs = $node.parents('.inlineSmartTagContainer');
+
+        if(smart_tags.length>0) return smart_tags[0];
+        if(smart_divs.length>0){
+          // reset inline representation to basic div caption
+          var inline = $(smart_divs[0]).data('obj');
+          inline.reset_rendering();
+          return inline.data.$tag[0];
+        }
+        return null;
+    }
 });
 _.extend(SmartTag.prototype, {
     display_inline: function(){
         var self = this,
             Cls = SmartTag.context[this.type].Cls,
             inline_func = SmartTag.context[this.type].inline_func,
-            cb = function(resource){
-                self.resource = resource;
-                self.inline = new InlineRendering(self);
-                self.inline[inline_func](self.resource);
-            };
-        Cls.get_object(this.pk, cb);
+            cb = function(obj){ new InlineRendering(this)[inline_func](obj);};
+
+        Cls.get_object(this.pk, $.proxy(cb, this));
     },
     display_modal: function(e){
+        if(!$(e.target).hasClass('active')) return;
         SmartTag.context[this.type].Cls.displayAsModal(this.pk);
     }
 });
 
 
-InlineRendering = function(smart_tag){
-    this.smart_tag = smart_tag;
-    this.$title_div = $('<div></div>');
-    this.$div = $('<div class="inline-content"></div>');
-    this.$caption = $('<div class="caption">{0}</div>'.printf(smart_tag.$tag.text()));
-    this.$container = $('<div class="inline-smart-tag-container row-fluid"></div>')
-                        .data('d', this)
-                        .append(this.$div, this.$caption);
+InlineRendering = function(data){
+    this.data = data;
+    this.$title = $('<div class="row-fluid inlineSmartTagTitle">');
+    this.$div = $('<div class="row-fluid">');
+    this.$caption = $('<div class="row-fluid inlineSmartTagCaption">').html(data.$tag.text());
+    this.$container = $('<div class="inlineSmartTagContainer container-fluid">')
+                        .append([this.$title, this.$div, this.$caption])
+                        .data('obj', this);
 
-    $('<div class="span10 offset1 inline-smart-tag"></div>')
-        .appendTo(this.$container)
-        .append([this.$title_div, this.$div, this.$caption]);
-
-    this.smart_tag.$tag.replaceWith(this.$container);
+    this.data.$tag.replaceWith(this.$container);
     return this;
 };
 _.extend(InlineRendering, {
     reset_renderings: function($frame){
-        var doc = $frame || $(document);
-        doc.find('.inline-smart-tag-container').each(function(){
-            var rendering = $(this).data('d');
-            rendering.$container.replaceWith(rendering.smart_tag.$tag);
+        $frame = $frame || $(document);
+        $frame.find('.inlineSmartTagContainer').each(function(){
+            console.log($(this).data('obj'))
+            $(this).data('obj').reset_rendering();
         });
+    },
+    getInline: function($node){
+        return $node.parents('.inlineSmartTagContainer');
     }
 });
 _.extend(InlineRendering.prototype, {
-    _build_title: function($content){
-        var self = this,
-            toggler = $('<a title="click to toggle visibility" class="toggler btn btn-small pull-right"><i class="icon-minus"></i></a>');
-        this.$title_div.append($content.append(toggler));
-        this.maximized = true;
-        this.$title_div.on('click', '.toggler', function(){
-            var v = (self.maximized) ? self.minimize_content() : self.maximize_content();
-        });
-    },
-    minimize_content: function(){
-        this.$title_div.find('.icon-minus').removeClass('icon-minus').addClass('icon-plus');
-        this.$div.fadeOut("slow");
-        this.maximized = false;
-    },
-    maximize_content: function(){
-        this.$title_div.find('.icon-plus').removeClass('icon-plus').addClass('icon-minus');
-        this.$div.fadeIn("slow");
-        this.maximized = true;
-    },
-    display_endpoint: function(endpoint){
-        var title  = $('<h4><b>{0}</b></h4>'.printf(endpoint.build_breadcrumbs())),
-            plot_div = $('<div style="height:350px; width:350px"></div'),
-            tbl = $(endpoint.build_endpoint_table($('<table class="table table-condensed table-striped"></table>'))),
-            content = [plot_div,
-                       tbl];
-        this._build_title(title);
-        this.$div.html(content);
-        new EndpointPlotContainer(endpoint, plot_div);
-    },
-    display_study: function(study){
-        var title  = $('<h4><b>{0}</b></h4>'.printf(study.build_breadcrumbs())),
-            content = $('<div></div');
-        this.$div.html([content]);
-        this._build_title(title);
-        new StudyQuality_TblCompressed(study, content, {'show_all_details_startup': false});
-    },
-    display_aggregation: function(aggregation){
-        var title  = $('<h4>{0}</h4>'.printf(aggregation.name)),
-            plot_div = $('<div></div>'),
-            tbl_div = $('<div></div>'),
-            tbl_toggle = $('<a class="btn btn-small" id="table_toggle">Toggle table style <i class="icon-chevron-right"></i></a>'),
-            content = [plot_div, tbl_div, tbl_toggle];
-        aggregation.build_table(tbl_div);
-        this.$div.html(content);
-        this._build_title(title);
-        aggregation.build_plot(plot_div);
-    },
-    display_data_pivot: function(data_pivot){
-        var title  = $('<h4>{0}</h4>'.printf(data_pivot.title)),
-            plot_div = $('<div>');
+    setTitle: function($content){
+        var isMax = true,
+            clickHandler = $.proxy(function(){
+                if (isMax){
+                    this.$title.find('.icon-minus').removeClass('icon-minus').addClass('icon-plus');
+                    this.$div.fadeOut("slow");
+                } else {
+                    this.$title.find('.icon-plus').removeClass('icon-plus').addClass('icon-minus');
+                    this.$div.fadeIn("slow");
+                }
+                isMax = !isMax;
+            }, this),
+            toggler = $('<a title="click to toggle visibility" class="toggler btn btn-mini pull-right"></a>')
+                .append('<i class="icon-minus"></i>')
+                .click(clickHandler);
 
-        this.$div.html(plot_div);
-        this._build_title(title);
-        data_pivot.build_data_pivot_vis(plot_div);
+        this.$title.append($content.append(toggler));
+    },
+    setMainContent: function($content){
+        this.$div.html($content);
     },
     reset_rendering: function(){
-        this.$container.replaceWith(this.smart_tag.$tag);
+        this.$container.replaceWith(this.data.$tag);
+        return this.data.$tag[0];
+    },
+    display_endpoint: function(obj){
+        var title  = $('<h4>').html(obj.build_breadcrumbs()),
+            plot_div = $('<div style="height:350px; width:350px">'),
+            tbl = $(obj.build_endpoint_table($('<table class="table table-condensed table-striped">'))),
+            content = [plot_div, tbl];
+
+        this.setTitle(title);
+        this.setMainContent(content);
+        new EndpointPlotContainer(obj, plot_div);
+    },
+    display_study: function(obj){
+        var title  = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),
+            content = $('<div>');
+
+        this.setTitle(title);
+        this.setMainContent(content);
+        new StudyQuality_TblCompressed(obj, content, {'show_all_details_startup': false});
+    },
+    display_visual: function(obj){
+        var title = $('<h4>').html(obj.object_hyperlink()),
+            content = $('<div>');
+
+        this.setTitle(title);
+        this.setMainContent(content);
+        obj.displayAsPage(content, {visualOnly: true});
+    },
+    display_data_pivot: function(obj){
+        var title  = $('<h4>').html(obj.object_hyperlink()),
+            content = $('<div>');
+
+        this.setTitle(title);
+        this.setMainContent(content);
+        obj.build_data_pivot_vis(content);
     }
 });

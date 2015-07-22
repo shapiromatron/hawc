@@ -113,58 +113,10 @@
             "</li>";
         },
 
-        "hawc": function(locale, options) {
+        "smartTag": function(locale, options) {
             var size = (options && options.size) ? ' btn-'+options.size : '';
             return "<li>" +
               "<div class='btn-group'>" +
-                "<div class='insert-smart-tag-modal modal hide fade'>" +
-                  "<div class='modal-header'>" +
-                    "<a class='close' data-dismiss='modal'>&times;</a>" +
-                    "<h3>Insert HAWC Smart Tag</h3>" +
-                  "</div>" +
-                  "<div class='modal-body'>" +
-                    "<legend>Resource<button style='display: none;' class='change_resource pull-right btn btn-primary'>Change Resource</button></legend>" +
-                    "<div class='resource_options'>" +
-                      "<label>Resource type:</label>" +
-                        "<select class='resource-type input-xlarge'>" +
-                          "<option value='endpoint'>Endpoint</option>" +
-                          "<option value='study'>Study</option>" +
-                          "<option value='aggregation'>Endpoint Aggregation</option>" +
-                          "<option value='data_pivot'>Data Pivot</option>" +
-                        "</select>" +
-                      "<label>Search bar:</label>" +
-                        "<input class='search input-xlarge'>" +
-                      "<div class='search_results'></div>" +
-                      "<input style='display: none;' class='unique-pk input-xlarge'>" +
-                    "</div>" +
-                    "<div class='resource_settings' style='display: none;'>" +
-                      "<p>Resource type: <span class='resource_type_value'><span></p>" +
-                      "<p>Resource: <span class='resource_name'></span></p>" +
-                    "</div>" +
-                    "<div class='display_options' style='display: none;'>" +
-                      "<legend>Display Options</legend>" +
-                      "<label>Display type: </label>" +
-                        "<select class='display_type input-xlarge'>" +
-                          "<option value='click'>Click</option>" +
-                          "<option value='inline'>Inline</option>" +
-                        "</select>" +
-                      "<div class='click_options'>" +
-                        "<label>Inline text: </label>" +
-                          "<input class='smart-tag-title input-xlarge'></input>" +
-                          "<span class='help-block'>This text is the hyperlink displayed for a user to click on.</span>" +
-                      "</div>" +
-                      "<div class='inline_options'>" +
-                        "<label>Caption: </label>" +
-                          "<textarea class='smart-tag-caption input-xlarge'></textarea>" +
-                          "<span class='help-block'>This is displayed underneath the inline display of the selected resource.</span>" +
-                      "</div>" +
-                    "</div>" +
-                  "</div>" +
-                  "<div class='modal-footer'>" +
-                    "<a href='#' class='btn' data-dismiss='modal'>Cancel</a>" +
-                    "<a href='#' class='btn btn-primary' data-dismiss='modal'>Insert</a>" +
-                  "</div>" +
-                "</div>" +
                 "<a class='btn" + size + "' data-wysihtml5-command='insertSmartTag' title='HAWC Smart-Tag' tabindex='-1'><i class='icon-tag'></i></a>" +
               "</div>" +
             "</li>";
@@ -251,8 +203,8 @@
                         this.initInsertImage(toolbar);
                     }
 
-                    if(key === "hawc") {
-                        this.initInsertSmartTag(toolbar);
+                    if(key === "smartTag") {
+                        this.initInsertSmartTag(toolbar, $(options.smartTagModal));
                     }
                 }
             }
@@ -331,78 +283,6 @@
                     caretBookmark = self.editor.composer.selection.getBookmark();
                     insertImageModal.appendTo('body').modal('show');
                     insertImageModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
-                        e.stopPropagation();
-                    });
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            });
-        },
-
-        initInsertSmartTag: function(toolbar) {
-            var self = this,
-                insertSmartTagModal = toolbar.find('.insert-smart-tag-modal'),
-                input_resource_type = insertSmartTagModal.find('.resource-type'),
-                input_unique_pk = insertSmartTagModal.find('.unique-pk'),
-                input_display_type = insertSmartTagModal.find('.display_type'),
-                input_title = insertSmartTagModal.find('.smart-tag-title'),
-                input_caption = insertSmartTagModal.find('.smart-tag-caption'),
-                insertButton = insertSmartTagModal.find('a.btn-primary'),
-                caretBookmark;
-
-            var getExistingTag = function() {
-                var anchor = $(editor.composer.selection.getSelection().anchorNode),
-                    smart_tags = anchor.parents('.smart-tag'),
-                    smart_divs = anchor.parents('.inline-smart-tag-container');
-                if(smart_tags.length>0) return smart_tags[0];
-                if(smart_divs.length>0){
-                  // reset inline representation to basic div caption
-                  var inline = $(smart_divs[0]).data('d');
-                  inline.reset_rendering();
-                  return inline.smart_tag.$tag[0];
-                }
-                return undefined;
-            };
-
-            var insertSmartTag = function() {
-                var resource_type = input_resource_type.find('option:selected').val(),
-                    unique_pk = input_unique_pk.val(),
-                    display_type  = input_display_type.find('option:selected').val(),
-                    title = input_title.val(),
-                    caption = input_caption.val();
-                self.editor.currentView.element.focus();
-                if (caretBookmark) {
-                  self.editor.composer.selection.setBookmark(caretBookmark);
-                  caretBookmark = null;
-                }
-                self.editor.composer.commands.exec("createSmartTag",
-                    {"data-type": resource_type,
-                     "data-pk": unique_pk,
-                     "display_type": display_type,
-                     "caption": caption,
-                     "title": title,
-                     "existing": getExistingTag()});
-            };
-
-            insertButton.click(insertSmartTag);
-
-            insertSmartTagModal.on('shown', function() {
-                input_resource_type.focus();
-            });
-
-            insertSmartTagModal.on('hide', function() {
-                self.editor.currentView.element.focus();
-            });
-
-            toolbar.find('a[data-wysihtml5-command=insertSmartTag]').click(function() {
-                var activeButton = $(this).hasClass("wysihtml5-command-active");
-                if (!activeButton) {
-                    self.editor.currentView.element.focus(false);
-                    caretBookmark = self.editor.composer.selection.getBookmark();
-                    insertSmartTagModal.appendTo('body').modal('show');
-                    insertSmartTagModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
                         e.stopPropagation();
                     });
                     return false;
@@ -516,7 +396,7 @@
         "font-styles": true,
         "color": false,
         "emphasis": true,
-        "hawc": false,
+        "smartTag": false,
         "lists": true,
         "html": true,
         "link": true,

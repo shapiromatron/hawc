@@ -237,7 +237,7 @@ var Endpoint = function(data, options){
 };
 _.extend(Endpoint, {
     get_object: function(id, cb){
-        $.get('/ani/endpoint/{0}/json/'.printf(id), function(d){
+        $.get('/ani/api/endpoint/{0}/'.printf(id), function(d){
             cb(new Endpoint(d));
         });
     },

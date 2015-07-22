@@ -185,18 +185,15 @@ span.smart-tag.active{
 span.smart-tag.active:hover{
   color: orange;
 }
-div.inline-smart-tag {
-  border: 2px solid gray;
+.inlineSmartTagContainer {
+  margin: 0 2em 0 2em;
+  border: 2px solid #B2B2B2;
   border-radius: 5px;
-  padding: 5px;
-  margin: 5px 0;
+  box-shadow: 0 0 1em #888888;
+  padding: 0 7px 0 7px;
 }
-.inline-smart-tag .caption{
-  border-top: 2px dashed gray;
-  padding: 3px 8px;
-  color: gray;
-  background-color: #ddd;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+.inlineSmartTagCaption{
+  padding: 7px 0 7px 0;
 }
 .summary_toc {
   margin: 0;

@@ -185,7 +185,7 @@ var AssessedOutcome = function(data){
 };
 _.extend(AssessedOutcome, {
     get_object: function(id, cb){
-        $.get('/assessment/endpoint/{0}/json/'.printf(id), function(d){
+        $.get('/epi/api/assessed-outcome/{0}/'.printf(id), function(d){
             cb(new AssessedOutcome(d));
         });
     },
