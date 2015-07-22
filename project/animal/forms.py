@@ -136,10 +136,6 @@ class AnimalGroupForm(ModelForm):
         if parent:
             self.instance.experiment = parent
 
-        if self.instance.id:
-            self.fields['strain'].queryset = models.Strain.objects.filter(
-                species=self.instance.species)
-
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
             allow_new=True)
@@ -153,6 +149,17 @@ class AnimalGroupForm(ModelForm):
 
         self.helper = self.setHelper()
         self.fields['comments'].widget.attrs['rows'] = 4
+
+    def clean(self):
+        cleaned_data = super(AnimalGroupForm, self).clean()
+
+        species = cleaned_data.get("species")
+        strain = cleaned_data.get("strain")
+        if strain and species and species != strain.species:
+            err = "Selected strain is not of the selected species."
+            self.add_error('strain', err)
+
+        return cleaned_data
 
     def setHelper(self):
         for fld in self.fields.keys():
