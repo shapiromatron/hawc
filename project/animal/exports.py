@@ -75,6 +75,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'sex',
             'route',
             'treatment period',
+            'duration exposure',
 
             'endpoint_name',
             'endpoint_url',
@@ -224,6 +225,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['dosing_regime']['route_of_exposure'].lower(),
                 get_treatment_period(ser['animal_group']['experiment'],
                                      ser['animal_group']['dosing_regime']),
+                ser['animal_group']['dosing_regime']['duration_exposure_text'],
 
                 ser['name'],
                 ser['url'],
