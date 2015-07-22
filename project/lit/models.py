@@ -5,7 +5,7 @@ import logging
 import re
 import HTMLParser
 
-from django.db import models
+from django.db import connection, models
 from django.db.models.loading import get_model
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -485,8 +485,15 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         if tags:
             logging.info('cache used: {0}'.format(key))
         else:
+
             root = cls.get_assessment_root(assessment.pk)
-            tags = cls.dump_bulk(root)
+            try:
+                tags = cls.dump_bulk(root)
+            except KeyError as e:
+                logging.exception(e)
+                cls.clean_orphans()
+                tags = cls.dump_bulk(root)
+                logging.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
             logging.info('cache set: {0}'.format(key))
 
@@ -592,6 +599,27 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
                 appendChildren(child, "")
 
         return lst
+
+    @classmethod
+    def clean_orphans(cls):
+        """
+        Treebeard can sometimes delete parents but retain orphans; this will
+        remove all orphans from the tree.
+        """
+        logging.warning("ReferenceFilterTag: attempting to recover...")
+        problems = ReferenceFilterTag.find_problems()
+        ReferenceFilterTag.fix_tree()
+        problems = ReferenceFilterTag.find_problems()
+        logging.warning("ReferenceFilterTag: problems identified: {}".format(problems))
+        orphan_ids = problems[2]
+        if len(orphan_ids) > 0:
+            cursor = connection.cursor()
+            for orphan_id in orphan_ids:
+                orphan = cls.objects.get(id=orphan_id)
+                logging.warning('ReferenceFilterTag "{}" {} is orphaned [path={}]. Deleting.'.format(
+                    orphan.name, orphan.id, orphan.path))
+                cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
+            cursor.close()
 
 
 class ReferenceTags(ItemBase):
