@@ -262,8 +262,6 @@ class EndpointPermissions(TestCase):
             reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_final.pk, 'tag_slug': 'foo'}),
             reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_working.pk}),
             reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_final.pk}),
-            reverse('animal:endpoint_json', kwargs={'pk': self.endpoint_working.pk}),
-            reverse('animal:endpoint_json', kwargs={'pk': self.endpoint_final.pk}),
         ]
 
         for client in clients:
@@ -286,8 +284,6 @@ class EndpointPermissions(TestCase):
             {'view': reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_final.pk, 'tag_slug': 'foo'}), 'status': 200},
             {'view': reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_working.pk}), 'status': 403},
             {'view': reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_final.pk}), 'status': 200},
-            {'view': reverse('animal:endpoint_json', kwargs={'pk': self.endpoint_working.pk}), 'status': 403},
-            {'view': reverse('animal:endpoint_json', kwargs={'pk': self.endpoint_final.pk}), 'status': 200},
         ]
         for view in views:
             response = c.get(view['view'])

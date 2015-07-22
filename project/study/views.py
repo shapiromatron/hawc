@@ -154,43 +154,6 @@ class StudyRead(BaseDetail):
         return context
 
 
-class StudySearch(AssessmentPermissionsMixin, FormView):
-    """ Returns JSON representations from study search. POST only."""
-    template_name = "study/study_search.html"
-    form_class = forms.StudySearchForm
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        self.permission_check_user_can_view()
-        return super(StudySearch, self).dispatch(*args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(FormView, self).get_form_kwargs()
-        kwargs['assessment_pk'] = self.assessment.pk
-        return kwargs
-
-    def get(self, request, *args, **kwargs):
-        raise Http404
-
-    def form_invalid(self, form):
-        return HttpResponse(json.dumps({"status": "fail",
-                                        "studies": [],
-                                        "error": "invalid form format"}),
-                            content_type="application/json")
-
-    def form_valid(self, form):
-        studies = form.search()
-        return HttpResponse(json.dumps({"status": "success",
-                                        "studies": studies},
-                                       cls=HAWCDjangoJSONEncoder),
-                            content_type="application/json")
-
-    def get_context_data(self, **kwargs):
-        context = super(StudySearch, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        return context
-
-
 class StudyReadJSON(BaseDetail):
     model = models.Study
 

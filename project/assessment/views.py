@@ -268,14 +268,6 @@ class ReportTemplateDelete(BaseDelete):
 
 
 # Endpoint objects
-class EndpointJSON(BaseDetail):
-    model = models.BaseEndpoint
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return HttpResponse(self.object.get_json(), content_type="application/json")
-
-
 class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = 'Effect tag created.'
     parent_model = models.Assessment

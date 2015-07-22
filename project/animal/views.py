@@ -453,14 +453,6 @@ class EndpointRead(BaseDetail):
         return context
 
 
-class EndpointReadJSON(BaseDetail):
-    model = models.Endpoint
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return HttpResponse(self.object.d_response(), content_type="application/json")
-
-
 class EndpointDelete(BaseDelete):
     success_message = 'Endpoint deleted.'
     model = models.Endpoint

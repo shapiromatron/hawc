@@ -102,6 +102,12 @@ class EndpointByAssessmentLookup(ModelLookup):
         )
 
     def get_item_value(self, obj):
+        return self.get_item_label(obj)
+
+
+class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
+
+    def get_item_value(self, obj):
         return '<a href="{}" target="_blank">{}</a>'.format(
             obj.get_absolute_url(),
             self.get_item_label(obj)
@@ -120,3 +126,4 @@ registry.register(EndpointEffectLookup)
 registry.register(EndpointStatisticalTestLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
+registry.register(EndpointByAssessmentLookupHtml)

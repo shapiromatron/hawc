@@ -67,9 +67,6 @@ urlpatterns = [
         views.DataPivotCopyAsNewSelector.as_view(),
         name='dp_copy_selector'),
 
-    url(r'^data-pivot/assessment/(?P<pk>\d+)/search/json/$',
-        views.DataPivotSearch.as_view(),
-        name='dp_search'),
     url(r'^data-pivot/assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/$',
         views.DataPivotDetail.as_view(),
         name='dp_detail'),

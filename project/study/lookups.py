@@ -10,8 +10,8 @@ class StudyLookup(ModelLookup):
 
     def get_query(self, request, term):
         results = super(StudyLookup, self).get_query(request, term)
-        assessment = request.GET.get('assessment', -1)  # return none if no assessment specified
-        return results.filter(assessment=assessment)
+        assessment_id = request.GET.get('assessment_id', -1)
+        return results.filter(assessment_id=assessment_id)
 
 
 class AnimalStudyLookup(StudyLookup):

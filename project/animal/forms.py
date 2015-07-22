@@ -864,7 +864,7 @@ class EndpointFilterForm(forms.Form):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
         self.fields['studies'].widget.update_query_parameters(
-            {'assessment': assessment_id})
+            {'assessment_id': assessment_id})
 
         # disabled; dramatically slows-down page rendering;
         # involuntary context_switches

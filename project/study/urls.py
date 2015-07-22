@@ -28,7 +28,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/$', views.StudyList.as_view(), name='list'),
     url(r'^(?P<pk>\d+)/add-details/$', views.StudyCreateFromReference.as_view(), name='new_study'),
     url(r'^assessment/(?P<pk>\d+)/new-study/$', views.ReferenceStudyCreate.as_view(), name='new_ref'),
-    url(r'^assessment/(?P<pk>\d+)/search/$', views.StudySearch.as_view(), name='search'),
     url(r'^assessment/(?P<pk>\d+)/report/', views.StudyReport.as_view(), name='studies_report'),
 
     url(r'^(?P<pk>\d+)/$', views.StudyRead.as_view(), name='detail'),

@@ -86,6 +86,11 @@ class SummaryTextModify(BaseCreate):
         return HttpResponse(json.dumps(response, cls=HAWCDjangoJSONEncoder),
                             content_type="application/json")
 
+    def get_context_data(self, **kwargs):
+        context = super(SummaryTextModify, self).get_context_data(**kwargs)
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        return context
+
 
 # VISUALIZATIONS
 class VisualizationList(BaseList):
@@ -315,34 +320,3 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
-
-
-class DataPivotSearch(AssessmentPermissionsMixin, FormView):
-    """ Returns JSON representations from data pivot search. POST only."""
-    form_class = forms.DataPivotSearchForm
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        self.permission_check_user_can_view()
-        return super(DataPivotSearch, self).dispatch(*args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        raise Http404
-
-    def get_form_kwargs(self):
-        kwargs = super(FormView, self).get_form_kwargs()
-        kwargs['assessment'] = self.assessment
-        return kwargs
-
-    def form_invalid(self, form):
-        return HttpResponse(json.dumps({"status": "fail",
-                                        "dps": [],
-                                        "error": "invalid form format"}),
-                            content_type="application/json")
-
-    def form_valid(self, form):
-        dps = form.search()
-        return HttpResponse(json.dumps({"status": "success",
-                                        "dps": dps},
-                                       cls=HAWCDjangoJSONEncoder),
-                            content_type="application/json")

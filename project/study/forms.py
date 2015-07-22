@@ -118,26 +118,6 @@ class AttachmentForm(forms.ModelForm):
             self.instance.study = study
 
 
-class StudySearchForm(forms.Form):
-    short_citation = forms.CharField(required=True)
-
-    def __init__(self, *args, **kwargs):
-        assessment_pk = kwargs.pop('assessment_pk', None)
-        super(StudySearchForm, self).__init__(*args, **kwargs)
-        if assessment_pk:
-            self.assessment = Assessment.objects.get(pk=assessment_pk)
-
-    def search(self):
-        query = {}
-        if self.cleaned_data['short_citation']:
-            query['short_citation__icontains'] = self.cleaned_data['short_citation']
-
-        response_json = []
-        for obj in models.Study.objects.filter(assessment=self.assessment).filter(**query):
-            response_json.append(obj.get_json(json_encode=False))
-        return response_json
-
-
 class SQDomainForm(forms.ModelForm):
 
     class Meta:

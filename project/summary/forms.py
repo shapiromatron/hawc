@@ -2,11 +2,12 @@ from django import forms
 from django.core.urlresolvers import reverse
 from selectable import forms as selectable
 
-from animal.lookups import EndpointByAssessmentLookup
+from study.lookups import StudyLookup
+from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper
 
-from . import models
+from . import models, lookups
 
 
 def clean_slug(form):
@@ -98,7 +99,7 @@ class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super(EndpointAggregationForm, self).__init__(*args, **kwargs)
         self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
-            lookup_class=EndpointByAssessmentLookup,
+            lookup_class=EndpointByAssessmentLookupHtml,
             label='Endpoints',
             widget=selectable.AutoCompleteSelectMultipleWidget)
         self.fields["endpoints"].widget.update_query_parameters(
@@ -405,22 +406,6 @@ class DataPivotSettingsForm(forms.ModelForm):
     class Meta:
         model = models.DataPivot
         fields = ('settings', )
-
-
-class DataPivotSearchForm(forms.Form):
-    title = forms.CharField(required=True)
-
-    def __init__(self, *args, **kwargs):
-        self.assessment = kwargs.pop('assessment', None)
-        super(DataPivotSearchForm, self).__init__(*args, **kwargs)
-
-    def search(self):
-        response_json = []
-        query = {'assessment': self.assessment,
-                 'title__icontains': self.cleaned_data['title']}
-        for obj in models.DataPivot.objects.filter(**query):
-            response_json.append(obj.get_json(json_encode=False))
-        return response_json
 
 
 class DataPivotSelectorForm(forms.Form):
