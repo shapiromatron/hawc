@@ -27,7 +27,7 @@ _.extend(EditEndpoint, {
 });
 EditEndpoint.prototype = {
     update_endpoint_from_form: function(){
-        var vals = { 'endpoint_group': [] };
+        var vals = { 'groups': [] };
         //save form values
         $('#endpoint :input').each(function() {
             vals[this.name] = $(this).val();
@@ -45,7 +45,7 @@ EditEndpoint.prototype = {
             });
             row['isReported'] = $.isNumeric(row['response'] || row['incidence']);
             row['hasVariance'] = $.isNumeric(row['variance']);
-            vals['endpoint_group'].push(row);
+            vals.groups.push(row);
         });
         delete vals[""]; // cleanup
         vals['doses'] = this.doses;
@@ -99,16 +99,16 @@ EditEndpointIAD.prototype = {
     build_submission: function(){
         endpoint_groups = EditEndpoint.prototype.build_eg_submission.apply(this);
         var submission = [];
-        this.data.endpoint_group.forEach(function(v1, i1){
+        this.data.groups.forEach(function(v1, i1){
             v1.individual_responses.forEach(function(v2, i2){
                 submission.push({dose_group_id: i1, response: v2});
             });
         });
-        return {endpoint_group: endpoint_groups,
+        return {groups: endpoint_groups,
                 iad: JSON.stringify(submission)};
     },
     update_endpoint_from_form: function(){
-        var vals = { 'endpoint_group':[], 'doses': this.doses};
+        var vals = { 'groups':[], 'doses': this.doses};
         $('#endpoint :input').each(function() {
             vals[this.name] = $(this).val();
         });
@@ -135,7 +135,7 @@ EditEndpointIAD.prototype = {
             // recalculate statistics
             $.extend(row, {response: parseFloat($('#response_' + i).val()),
                            variance: parseFloat($('#variance_' + i).val())});
-            vals['endpoint_group'].push(row);
+            vals.groups.push(row);
         }
 
         delete vals[""]; // cleanup
@@ -164,15 +164,15 @@ EditEndpointIAD.prototype = {
         EditEndpoint.prototype.change_dose_pulldowns.apply(this);
     },
     build_iad_rows: function(){
-        var num_rows = d3.max(this.data.endpoint_group.map(function(v){return v.n;})) || 0,
+        var num_rows = d3.max(this.data.groups.map(function(v){return v.n;})) || 0,
             tbody = $('<tbody>');
         for(var i=0; i<num_rows; i++){
             var tr = $('<tr>').append($('<td>').text('ID {0}'.printf(i+1)));
             for(var j=0; j<this.dose_groups; j++){
                 var td = $('<td>');
-                if(this.data.endpoint_group[j].n>i){
+                if(this.data.groups[j].n>i){
                     td.html('<input tabindex="{0}" class="span12 response_fields" type="text" id="response_d{1}_id{2}" value="{3}">'
-                            .printf(j+10,j,i,this.data.endpoint_group[j].individual_responses[i]));
+                            .printf(j+10,j,i,this.data.groups[j].individual_responses[i]));
                 }
                 tr.append(td);
             }
@@ -183,7 +183,7 @@ EditEndpointIAD.prototype = {
     },
     load_values_into_form: function(){
         // load values from object representation into form
-        this.data.endpoint_group.forEach(function(v, i){
+        this.data.groups.forEach(function(v, i){
             $('#n_' + i).val(v.n);
             $('#inc_' + i).val(v.incidence);
             $('#resp_' + i).val(v.response);

@@ -100,7 +100,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     effects = EffectTagsSerializer()
     animal_group = AnimalGroupSerializer()
-    endpoint_group = EndpointGroupSerializer(many=True)
+    groups = EndpointGroupSerializer(many=True)
     qualities = StudyQualitySerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
@@ -113,12 +113,12 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret['monotonicity'] = instance.get_monotonicity_display()
         ret['trend_result'] = instance.get_trend_result_display()
         ret['additional_fields'] = json.loads(instance.additional_fields)
-        models.EndpointGroup.getStdevs(ret['variance_type'], ret['endpoint_group'])
-        models.EndpointGroup.percentControl(ret['data_type'], ret['endpoint_group'])
+        models.EndpointGroup.getStdevs(ret['variance_type'], ret['groups'])
+        models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
 
         # get individual animal data
         if instance.individual_animal_data:
-            models.EndpointGroup.getIndividuals(instance, ret['endpoint_group'])
+            models.EndpointGroup.getIndividuals(instance, ret['groups'])
 
         # get BMD
         ret['BMD'] = None

@@ -118,7 +118,7 @@
             {% endfor %}
           </tr>
         {% elif crud == "Update" %}
-          {% with egs=object.endpoint_group.all %}
+          {% with egs=object.groups.all %}
             <tr>
               <th id="doses_title">Dose</th>
               {% for eg in egs %}
@@ -201,7 +201,7 @@
     $('#endpoint').submit(function(){
         endpoint.update_endpoint_from_form();
         var results = endpoint.build_submission();
-        $('#egs_json').val(results.endpoint_group);
+        $('#egs_json').val(results.groups);
         $('#iad_json').val(results.iad);
         $('#endpoint_json').val(JSON.stringify(endpoint.data));
         $('#id_data_type').prop('disabled', false);

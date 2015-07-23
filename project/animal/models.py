@@ -812,7 +812,7 @@ class Endpoint(BaseEndpoint):
                 'animal_group__experiment',
                 'animal_group__experiment__study',
             ).prefetch_related(
-                'endpoint_group',
+                'groups',
                 'effects',
                 'animal_group__dosed_animals__doses',
             )
@@ -872,7 +872,7 @@ class Endpoint(BaseEndpoint):
         if self.data_type in ["D", "DC", "NR"]:
             return True
         change = 0
-        resps = self.endpoint_group.values_list('response', flat=True)
+        resps = self.groups.values_list('response', flat=True)
         resps = filter(lambda (x): x is not None, resps)
         for i in xrange(1, len(resps)):
             change += resps[i] - resps[0]
@@ -1043,7 +1043,7 @@ class Endpoint(BaseEndpoint):
 class EndpointGroup(models.Model):
     endpoint = models.ForeignKey(
         Endpoint,
-        related_name='endpoint_group')
+        related_name='groups')
     dose_group_id = models.IntegerField()
     n = models.PositiveSmallIntegerField(
         blank=True,
@@ -1097,7 +1097,7 @@ class EndpointGroup(models.Model):
     @classmethod
     def getIndividuals(cls, endpoint, egs):
         individuals = cls.objects.filter(endpoint=endpoint.id)\
-                         .select_related('endpoint_group__individual_data')\
+                         .select_related('groups__individual_data')\
                          .values('dose_group_id', 'individual_data__response')
 
         for i, eg in enumerate(egs):
@@ -1280,5 +1280,5 @@ reversion.register(AnimalGroup)
 reversion.register(DoseUnits)
 reversion.register(DosingRegime)
 reversion.register(DoseGroup)
-reversion.register(Endpoint, follow=('endpoint_group', ))
+reversion.register(Endpoint, follow=('groups', ))
 reversion.register(EndpointGroup, follow=('endpoint', ))

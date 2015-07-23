@@ -331,7 +331,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
     formset_factory = forms.EndpointGroupFormSet
 
     def build_initial_formset_factory(self):
-        return forms.EndpointGroupFormSet(queryset=self.object.endpoint_group.all())
+        return forms.EndpointGroupFormSet(queryset=self.object.groups.all())
 
     def pre_validate(self, form, formset):
         for egform in formset.forms:

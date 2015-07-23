@@ -60,7 +60,7 @@ class EndpointDOCXReport(HAWCDOCXReport):
     def getNText(eps):
         ns = []
         for ep in eps:
-            ns.extend([eg["n"] for eg in ep["endpoint_group"]])
+            ns.extend([eg["n"] for eg in ep["groups"]])
         return models.EndpointGroup.getNRangeText(ns)
 
     @staticmethod
@@ -172,7 +172,7 @@ class EndpointDOCXReport(HAWCDOCXReport):
 
             # build column-header table
             data_type = ep["data_type"]
-            for i, eg in enumerate(ep["endpoint_group"]):
+            for i, eg in enumerate(ep["groups"]):
 
                 ci = []
                 resp = u"-"

@@ -30,7 +30,7 @@ class Endpoint(AssessmentViewset):
                 'animal_group__experiment',
                 'animal_group__experiment__study',
             ).prefetch_related(
-                'endpoint_group',
+                'groups',
                 'effects',
                 'animal_group__dosed_animals__doses',
             )

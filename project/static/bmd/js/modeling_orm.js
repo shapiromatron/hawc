@@ -145,7 +145,7 @@ OptionFile.prototype = {
         //set the default number of betas equal to number of dose groups - 1
         var beta_models = ['Polynomial', 'Multistage', 'Multistage-Cancer'];
         if ($.inArray(this.model_name, beta_models) >= 0){
-            var degree_poly = Math.min(this.parent.endpoint.data.endpoint_group.length-1, 8);
+            var degree_poly = Math.min(this.parent.endpoint.data.groups.length-1, 8);
             this.override['degree_poly'] = degree_poly;
             this.option_override_text.push('Degree of Polynomial = ' + degree_poly);
         }
@@ -290,7 +290,7 @@ OptionFile.prototype = {
                 break;
             case 'dd': // drop-dose
                 sel = $('<select id="bmd_setting_' + id + '"></select>');
-                var l = dataset.endpoint_group.length-2; // must have 2 dose-groups
+                var l = dataset.groups.length-2; // must have 2 dose-groups
                 for (var i = 0; i <= l; i++) {
                     (v == i) ? (val='selected') : (val='');
                     sel.append('<option value="' + i + '" ' + val + '>' + i + '</option>');
@@ -1399,7 +1399,7 @@ BMD_UnitTests.prototype = {
         window.foo = this
         var ratio, BMD, high_dose;
         try{
-            high_dose = this.parent.parent.endpoint.data.endpoint_group[this.parent.parent.endpoint.data.endpoint_group.length-1].dose; // maximum-dose
+            high_dose = this.parent.parent.endpoint.data.groups[this.parent.parent.endpoint.data.groups.length-1].dose; // maximum-dose
             if (this.parent.outputs.BMD != -999){ BMD = this.parent.outputs.BMD; }
             ratio = BMD/high_dose;
         } catch(err) {
@@ -1411,7 +1411,7 @@ BMD_UnitTests.prototype = {
     high_bmdl: function(){
         var ratio, BMDL, high_dose;
         try{
-            high_dose = this.parent.parent.endpoint.data.endpoint_group[this.parent.parent.endpoint.data.endpoint_group.length-1].dose; // maximum-dose
+            high_dose = this.parent.parent.endpoint.data.groups[this.parent.parent.endpoint.data.groups.length-1].dose; // maximum-dose
             if (this.parent.outputs.BMDL != -999){ BMDL = this.parent.outputs.BMDL; }
             ratio = BMDL/high_dose;
         } catch(err) {
@@ -1423,7 +1423,7 @@ BMD_UnitTests.prototype = {
     low_bmd: function(){
         var ratio, BMD, low_dose;
         try{
-            low_dose = this.parent.parent.endpoint.data.endpoint_group[1].dose; // first non-zero dose
+            low_dose = this.parent.parent.endpoint.data.groups[1].dose; // first non-zero dose
             if (this.parent.outputs.BMD != -999){ BMD = this.parent.outputs.BMD; }
             ratio = low_dose/BMD;
         } catch(err) {
@@ -1435,7 +1435,7 @@ BMD_UnitTests.prototype = {
     low_bmdl: function(){
         var ratio, BMDL, low_dose;
         try{
-            low_dose = this.parent.parent.endpoint.data.endpoint_group[1].dose; // first non-zero dose
+            low_dose = this.parent.parent.endpoint.data.groups[1].dose; // first non-zero dose
             if (this.parent.outputs.BMDL != -999){ BMDL = this.parent.outputs.BMDL; }
             ratio = low_dose/BMDL;
         } catch(err) {

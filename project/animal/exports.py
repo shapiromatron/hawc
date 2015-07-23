@@ -34,7 +34,7 @@ class EndpointFlatComplete(FlatFileExporter):
             row.extend(models.AnimalGroup.flat_complete_data_row(ser['animal_group']))
             row.extend(models.DosingRegime.flat_complete_data_row(ser['animal_group']['dosing_regime']))
             row.extend(models.Endpoint.flat_complete_data_row(ser))
-            for i, eg in enumerate(ser['endpoint_group']):
+            for i, eg in enumerate(ser['groups']):
                 row_copy = copy(row)
                 row_copy.extend(models.DoseGroup.flat_complete_data_row(
                     ser['animal_group']['dosing_regime']['doses'],
@@ -157,7 +157,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
             ns_txt = ""
             if withN:
-                ns = [eg["n"] for eg in e["endpoint_group"]]
+                ns = [eg["n"] for eg in e["groups"]]
                 ns_txt = " " + models.EndpointGroup.getNRangeText(ns)
 
             return u"{}{}, {} ({}{})".format(
@@ -243,13 +243,13 @@ class EndpointFlatDataPivot(FlatFileExporter):
             ]
 
             # dose-group specific information
-            if len(ser['endpoint_group']) > 1:
+            if len(ser['groups']) > 1:
                 row.extend([
                     get_dose(doses, 1),  # first non-zero dose
                     get_dose(doses, ser['NOEL']),
                     get_dose(doses, ser['LOEL']),
                     get_dose(doses, ser['FEL']),
-                    get_dose(doses, len(ser['endpoint_group'])-1),
+                    get_dose(doses, len(ser['groups'])-1),
                 ])
             else:
                 row.extend([None]*5)
@@ -268,7 +268,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 row.extend([None]*5)
 
             # endpoint-group information
-            for i, eg in enumerate(ser['endpoint_group']):
+            for i, eg in enumerate(ser['groups']):
                 row_copy = copy(row)
                 row_copy.extend([
                     eg['id'],

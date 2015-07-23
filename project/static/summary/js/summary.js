@@ -728,7 +728,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
          .filter(function(e){return e.hasEGdata();})
          .each(function(e){
 
-            egs = _.filter(e.data.endpoint_group, function(d){ return d.isReported; });
+            egs = _.filter(e.data.groups, function(d){ return d.isReported; });
 
             endpoint_labels.push({
                 endpoint: e,
@@ -1062,9 +1062,9 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             egs;
 
         this.data.endpoints.filter(function(e){
-            return e.data.endpoint_group.length>0;
+            return e.data.groups.length>0;
         }).forEach(function(e){
-            egs = e.data.endpoint_group;
+            egs = e.data.groups;
 
             // get min/max information
             min = (default_x_scale == "log") ? Math.min(min, egs[1].dose) : Math.min(min, egs[0].dose);
@@ -1402,7 +1402,7 @@ _.extend(CrossviewPlot, {
     },
     _filterEndpoint: function(e, numDG){
         // need at-least two non-zero dose-groups for visualization
-        return d3.sum(_.pluck(e.data.endpoint_group, 'isReported'))>=numDG;
+        return d3.sum(_.pluck(e.data.groups, 'isReported'))>=numDG;
     },
     _filters: {
         "study": "Study",
@@ -1570,7 +1570,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     }
                 }
 
-                egs = e.data.endpoint_group
+                egs = e.data.groups
                         .filter(egFilter)
                         .map(function(eg){
                             return {

@@ -276,7 +276,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     _switch_dose: function(idx){
         // switch doses to the selected index
         try {
-            var egs = this.data.endpoint_group,
+            var egs = this.data.groups,
                 doses = this.doses[idx];
 
             this.dose_units_id = doses.key;
@@ -309,7 +309,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{
-            return this.data.endpoint_group[this.data[name]].dose;
+            return this.data.groups[this.data[name]].dose;
         }catch(err){
             return '-';
         }
@@ -367,7 +367,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         the 95% confidence intervals on the observed proportions (independent of
         model).
         */
-        _.chain(this.data.endpoint_group)
+        _.chain(this.data.groups)
          .filter(function(d){ return d.isReported; })
          .each(function(v){
             var p = v.incidence/v.n,
@@ -380,7 +380,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         });
     },
     add_pd_confidence_intervals: function(){
-        _.each(this.data.endpoint_group, function(v){
+        _.each(this.data.groups, function(v){
            v.lower_limit = v.lower_ci;
            v.upper_limit = v.upper_ci;
         });
@@ -404,7 +404,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            and upper ends of the error bar.
         */
         var self = this;
-        _.chain(this.data.endpoint_group)
+        _.chain(this.data.groups)
          .filter(function(d){ return d.isReported; })
          .each(function(v){
             if(!(v.variance) || !(v.n)) return;
@@ -467,11 +467,11 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
     },
     build_ag_n_key: function(){
-        return _.map(this.data.endpoint_group, function(v, i){return v.n || "NR-{}".printf(i);}).join('-');
+        return _.map(this.data.groups, function(v, i){return v.n || "NR-{}".printf(i);}).join('-');
     },
     _build_ag_n_row: function(options){
         return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
-            this.data.endpoint_group.map(function(v){return '<td>{0}</td>'.printf(v.n || "-");})));
+            this.data.groups.map(function(v){return '<td>{0}</td>'.printf(v.n || "-");})));
     },
     _build_ag_response_row: function(footnote_object){
         var self = this, footnotes, response, td, txt
@@ -479,7 +479,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             tr = $('<tr>').append('<td><a href="{0}">{1}</a></td>'.printf(
                     this.data.url, this.data.name));
 
-        this.data.endpoint_group.forEach(function(v, i){
+        this.data.groups.forEach(function(v, i){
             td = $('<td>');
             if(i === 0) dr_control = v;
             if(!v.isReported){
@@ -577,9 +577,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     },
     add_endpoint_group_footnotes: function(footnote_object, endpoint_group_index){
         var footnotes = [], self = this;
-        if (self.data.endpoint_group[endpoint_group_index].significant){
+        if (self.data.groups[endpoint_group_index].significant){
             footnotes.push('Significantly different from control (<i>p</i> < {0})'.printf(
-                self.data.endpoint_group[endpoint_group_index].significance_level));
+                self.data.groups[endpoint_group_index].significance_level));
         }
         if (self.data.LOEL == endpoint_group_index) {
             footnotes.push('LOEL (Lowest Observed Effect Level)');
@@ -615,14 +615,14 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         try{
             if (this.data.data_type == "C"){
                 return this._continuous_percent_difference_from_control(
-                    this.data.endpoint_group[index],
-                    this.data.endpoint_group[0]);
+                    this.data.groups[index],
+                    this.data.groups[0]);
             } else if (this.data.data_type == "P"){
                 return this._pd_percent_difference_from_control(
-                    this.data.endpoint_group[index]);
+                    this.data.groups[index]);
             } else {
                 return this._dichotomous_percent_change_incidence(
-                    this.data.endpoint_group[index]);
+                    this.data.groups[index]);
             }
         } catch(err){
             return '-';
@@ -687,8 +687,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     },
     hasEGdata: function(){
         return (
-            this.data.endpoint_group.length > 0 &&
-            _.any(_.pluck(this.data.endpoint_group, "isReported"))
+            this.data.groups.length > 0 &&
+            _.any(_.pluck(this.data.groups, "isReported"))
         );
     }
 });
@@ -842,7 +842,7 @@ EndpointTable.prototype = {
         return this.tbl;
     },
     hasValues: function(val){
-        return _.chain(this.endpoint.data.endpoint_group)
+        return _.chain(this.endpoint.data.groups)
                 .map(function(d){return d[val];})
                 .any($.isNumeric)
                 .value();
@@ -896,7 +896,7 @@ EndpointTable.prototype = {
     build_body: function(){
         this.tbody = $('<tbody></tbody>');
         var self = this;
-        this.endpoint.data.endpoint_group.forEach(function(v, i){
+        this.endpoint.data.groups.forEach(function(v, i){
 
             if (!v.isReported) return;
 
@@ -1192,7 +1192,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     toggle_x_axis: function(){
         // get minimum non-zero dose and then set all control doses
         // equal to ten-times lower than the lowest dose
-        var egs = this.endpoint.data.endpoint_group;
+        var egs = this.endpoint.data.groups;
         if(window.event && window.event.stopPropagation) event.stopPropagation();
         if (this.x_axis_settings.scale_type == 'linear'){
             this.x_axis_settings.scale_type = 'log';
@@ -1309,55 +1309,6 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.add_dose_response(true);
         this.build_bmd_lines();
     },
-    dr_plot_update: function(){
-        // Rebuild the dose-response based on an updated dataset (used with time-dose-response plots).
-
-        this.get_dataset_info();
-        this.y_axis_settings.domain = [this.min_y-this.max_y*this.buff, this.max_y*(1+this.buff)];
-        this.y_scale = this._build_scale(this.y_axis_settings);
-
-        var y = this.y_scale,
-            x = this.x_scale;
-
-        //rebuild y-axis
-        this.yAxis
-            .scale(y);
-
-        this.vis.selectAll('.y_axis')
-            .transition()
-            .duration(250)
-            .call(this.yAxis);
-
-        this.rebuild_y_gridlines({animate: true, duration: 250});
-
-        //rebuild error-bars
-        var opt = {
-            data: this.values,
-            duration: 250,
-            y1:function(d) { return y(d.y_lower);},
-            y2:function(d) { return y(d.y_upper);}
-        };
-        this.build_line(opt, this.error_bars_vertical);
-
-        opt.y2  = function(d) { return y(d.y_lower);};
-        this.build_line(opt, this.error_bars_lower);
-
-        $.extend(opt, {
-            y1:function(d) { return y(d.y_upper);},
-            y2:function(d) { return y(d.y_upper);}});
-        this.build_line(opt, this.error_bars_upper);
-
-        //rebuild dose-response-points
-        this.dots
-            .data(this.values)
-            .transition()
-            .duration(250)
-            .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-
-        //rebuild title
-        this.title_str = this.endpoint.data.name + ' (' + this.endpoint.data.endpoint_group[0].time +' hrs)';
-        this.add_title();
-    },
     get_dataset_info: function(){
         // Get values to be used in dose-response plots
         var ep = this.endpoint.data,
@@ -1365,7 +1316,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             values, sigs_data,
             dose_units = this.endpoint.dose_units;
 
-        values = _.chain(ep.endpoint_group)
+        values = _.chain(ep.groups)
          .map(function(v, i){
             var y,
                 cls = 'dose_points',
@@ -1422,11 +1373,11 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             y_label_text:   "Response ({0})".printf(this.endpoint.data.response_units),
             values:         values,
             sigs_data:      sigs_data,
-            min_x:          d3.min(ep.endpoint_group, function(datum) { return datum.dose; }),
-            max_x:          d3.max(ep.endpoint_group, function(datum) { return datum.dose; }),
+            min_x:          d3.min(ep.groups, function(datum) { return datum.dose; }),
+            max_x:          d3.max(ep.groups, function(datum) { return datum.dose; }),
         });
 
-        if (ep.endpoint_group.length>0){
+        if (ep.groups.length>0){
             var max_upper = d3.max(values, function(d){return d.y_upper || d.y;}),
                 max_sig = d3.max(sigs_data, function(d){return d.y;});
 
@@ -1934,7 +1885,7 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             min = Infinity,
             max = -Infinity;
 
-        values = _.chain(this.endpoint.data.endpoint_group)
+        values = _.chain(this.endpoint.data.groups)
             .map(function(v, i){
 
                 if(data_type=='C'){
@@ -2285,7 +2236,7 @@ _.extend(BWPlot.prototype, D3Plot.prototype, {
             threshold = this.y_scale.invert(y_value);
 
         var txt = [], x = this.x_scale;
-        this.endpoint.data.endpoint_group.forEach(function(v, i){
+        this.endpoint.data.groups.forEach(function(v, i){
             var exceed = v.individual_responses.filter(function(e){return e>threshold;}).length;
             txt.push({'x':i+1, 'txt': exceed + '/' + v.individual_responses.length + ' (' + Math.round(exceed/v.individual_responses.length*100,2) +'%)'});
         });
@@ -2332,7 +2283,7 @@ _.extend(BWPlot.prototype, D3Plot.prototype, {
         var y_min = Infinity, y_max = -Infinity,
             values = [], stats = [], bars = [];
 
-        this.endpoint.data.endpoint_group.forEach(function(v, i){
+        this.endpoint.data.groups.forEach(function(v, i){
             var stat = {x: v.dose,
                         min: d3.min(v.individual_responses),
                         five: v.response - 1.645*v.stdev,
@@ -2372,8 +2323,8 @@ _.extend(BWPlot.prototype, D3Plot.prototype, {
     },
     add_axes: function() {
         $.extend(this.x_axis_settings, {
-            domain: this.endpoint.data.endpoint_group.map(function(d){return String(d.dose);}),
-            number_ticks: this.endpoint.data.endpoint_group.length,
+            domain: this.endpoint.data.groups.map(function(d){return String(d.dose);}),
+            number_ticks: this.endpoint.data.groups.length,
             rangeRound: [0, this.w],
             x_translate: 0,
             y_translate: this.h
