@@ -2407,7 +2407,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 .attr("y", function(d){return (y(d[self.yField]) + half_width);})
                 .attr("text-anchor", "middle")
                 .attr("dy", "3.5px")
-                .attr("class", "uf_label")
+                .attr("class", "centeredLabel")
                 .style("fill",  function(d){return d.score_text_color;})
                 .text(function(d){return d.score_text;});
 
@@ -2579,7 +2579,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
              .attr("y", function(d, i){return i*width + half_width + title_offset;})
              .attr("text-anchor", "middle")
              .attr("dy", "3.5px")
-             .attr("class", "uf_label")
+             .attr("class", "centeredLabel")
              .style("fill",  function(d){return d.text_color;})
              .text(function(d){return d.text;});
 
@@ -2848,12 +2848,10 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
             labels = groups.selectAll("text")
                 .data(Object)
                 .enter().append("text")
-                .attr("class", "uf_label")
+                .attr("class", "centeredLabel")
+                .style("fill", "#555")
                 .attr("x", function(d){return (x(d.y0) + x(d.y)/2);})
                 .attr("y", function(d){return (y(d.x)+20);})
-                .attr("text-anchor", "middle")
-                .style("fill", "#555")
-                .style("opacity", 1)
                 .text(function(d){return (d.y>0) ? fmt(d.y) : "";});
         }
     },

@@ -372,7 +372,7 @@ _.extend(StudyQuality_Donut.prototype, D3Plot.prototype, {
                 .data(this.pie_layout(this.domain_donut_data))
             .enter()
                 .append("text")
-                .attr("class", "uf_label domain_arc")
+                .attr("class", "centeredLabel domain_arc")
                 .attr("transform", function(d) { return "translate(" + (domain_arc.centroid(d)) + ")"; })
                 .attr("text-anchor", "middle")
                 .text(function(d) { return d.data.domain; });
@@ -381,7 +381,7 @@ _.extend(StudyQuality_Donut.prototype, D3Plot.prototype, {
                 .data(this.pie_layout(this.domain_donut_data))
             .enter()
                 .append("text")
-                .attr("class", "uf_label")
+                .attr("class", "centeredLabel")
                 .style("fill",  function(d){return d.data.score_text_color;})
                 .attr("transform", function(d){
                     var centroid = domain_arc.centroid(d);
@@ -392,7 +392,7 @@ _.extend(StudyQuality_Donut.prototype, D3Plot.prototype, {
         this.detail_labels = this.detail_label_group.selectAll("text")
             .data(this.pie_layout(this.question_donut_data))
             .enter().append("text")
-            .attr("class", "uf_label")
+            .attr("class", "centeredLabel")
             .style("fill",  function(d){return d.data.score_text_color;})
             .attr("transform", function(d) { return "translate(" + (details_arc.centroid(d)) + ")"; })
             .attr("text-anchor", "middle")

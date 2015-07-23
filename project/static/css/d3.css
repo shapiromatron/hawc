@@ -112,81 +112,12 @@ rect.selected_overlay{
   fill-opacity:0.5;
 }
 
-/*
- * UNCERTAINTY FACTOR
- */
-
-.UFA {
-  fill: blue;
-}
-
-.UFH {
-  fill: red;
-}
-
-.UFS {
-  fill: green;
-}
-
-.UFL {
-  fill: lightgreen;
-}
-
-.UFD {
-  fill: violet;
-}
-
-.UFO {
-  fill: purple;
-}
-
-.uf_bar {
-  stroke: black;
-  stroke-width: 2px;
-  fill-opacity: 0.8;
-}
-
-.hovered_bar {
-  transition: 0.6s;
-  fill-opacity: 1.0;
-}
-
-.unhovered_bar {
-  transition: 0.6s;
-  fill: #ccc;
-}
-
-.uf_label {
+.centeredLabel {
   pointer-events: none;
   text-anchor: middle;
-  fill:white;
-  stroke: white;
   stroke-width: 0px;
   font-size: 12px;
   font-weight: bold;
-}
-
-.data_label {
-  pointer-events: none;
-  fill:black;
-  stroke: white;
-  stroke-width: 0px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-circle.ref_vals{
-  r: 8;
-  stroke: black;
-  stroke-width: 1.5px;
-}
-
-.pod{
-  fill:yellow;
-}
-
-.rfd{
-  fill:orange;
 }
 
 
