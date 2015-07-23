@@ -754,9 +754,6 @@ class Endpoint(BaseEndpoint):
     values_estimated = models.BooleanField(
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods")
-    individual_animal_data = models.BooleanField(
-        default=False,
-        help_text="If individual response data are available for each animal.")
     monotonicity = models.PositiveSmallIntegerField(
         default=8,
         choices=MONOTONICITY_CHOICES)
@@ -791,10 +788,7 @@ class Endpoint(BaseEndpoint):
         related_query_name='endpoints')
 
     def get_update_url(self):
-        if self.individual_animal_data:
-            return reverse('animal:endpoint_individual_animal_update', args=[self.pk])
-        else:
-            return reverse('animal:endpoint_update', args=[self.pk])
+        return reverse('animal:endpoint_update', args=[self.pk])
 
     @classmethod
     def delete_caches(cls, ids):
@@ -913,7 +907,6 @@ class Endpoint(BaseEndpoint):
             "endpoint-data_reported",
             "endpoint-data_extracted",
             "endpoint-values_estimated",
-            "endpoint-individual_animal_data",
             "endpoint-monotonicity",
             "endpoint-statistical_test",
             "endpoint-trend_value",
@@ -945,7 +938,6 @@ class Endpoint(BaseEndpoint):
             ser['data_reported'],
             ser['data_extracted'],
             ser['values_estimated'],
-            ser['individual_animal_data'],
             ser['monotonicity'],
             ser['statistical_test'],
             ser['trend_value'],
@@ -1094,19 +1086,6 @@ class EndpointGroup(models.Model):
     def hasVariance(self):
         return self.variance is not None
 
-    @classmethod
-    def getIndividuals(cls, endpoint, egs):
-        individuals = cls.objects.filter(endpoint=endpoint.id)\
-                         .select_related('groups__individual_data')\
-                         .values('dose_group_id', 'individual_data__response')
-
-        for i, eg in enumerate(egs):
-            eg['individual_responses'] = [
-                    v['individual_data__response']
-                    for v in individuals
-                    if v['dose_group_id'] == eg['dose_group_id']
-                ]
-
     @staticmethod
     def stdev(variance_type, variance, n):
         # calculate stdev given re
@@ -1231,16 +1210,6 @@ class EndpointGroup(models.Model):
             ser['dose_group_id'] == endpoint['LOEL'],
             ser['dose_group_id'] == endpoint['FEL'],
         )
-
-
-class IndividualAnimal(models.Model):
-    endpoint_group = models.ForeignKey(
-        EndpointGroup,
-        related_name='individual_data')
-    response = models.FloatField()
-
-    def __unicode__(self):
-        return str(self.response)
 
 
 @receiver(post_save, sender=Experiment)

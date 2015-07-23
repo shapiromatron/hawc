@@ -62,18 +62,6 @@ unrecognized HTML expressions.
   fill: yellow;
 }
 
-/* Data points are individual dose-response points, in boxplot. */
-.data_point_above {
-  fill: red;
-  stroke: black;
-  stroke-width: 0.5px;
-}
-
-.data_point {
-  fill: black;
-  opacity: 0.7;
-}
-
 /* dose-response data points */
 .dose_bars {
   fill: #A8B2D3;

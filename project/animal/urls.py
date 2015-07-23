@@ -37,10 +37,8 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/endpoints/$', views.EndpointList.as_view(), name='endpoint_list'),
     url(r'^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$', views.EndpointTags.as_view(), name='assessment_endpoint_taglist'),
     url(r'^animal-group/(?P<pk>\d+)/endpoint/new/$', views.EndpointCreate.as_view(), name='endpoint_new'),
-    url(r'^animal-group/(?P<pk>\d+)/endpoint/individual-animal-data/new/$', views.EndpointIndividualAnimalCreate.as_view(), name='endpoint_individual_animal_new'),
     url(r'^endpoint/(?P<pk>\d+)/$', views.EndpointRead.as_view(), name='endpoint_detail'),
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
-    url(r'^endpoint/(?P<pk>\d+)/individual-animal-data/edit/$', views.EndpointIndividualAnimalUpdate.as_view(), name='endpoint_individual_animal_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
 
     # (Other)

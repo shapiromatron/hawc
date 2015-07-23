@@ -10,7 +10,7 @@ class SpeciesAdmin(admin.ModelAdmin):
 
 class StrainAdmin(admin.ModelAdmin):
     list_select_related = ('species', )
-    list_display = ('id', 'name', 'species' )
+    list_display = ('id', 'name', 'species')
     list_display_links = ('name', )
     list_filter = ('species', )
 

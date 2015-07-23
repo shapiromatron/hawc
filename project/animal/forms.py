@@ -1,11 +1,8 @@
 from collections import Counter
-import json
 
 from django import forms
-from django.forms import ModelForm, Select
+from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
-from django.forms.util import flatatt
-from django.utils.safestring import mark_safe
 from django.db.models import Q
 
 from crispy_forms import layout as cfl
@@ -14,7 +11,6 @@ from selectable import forms as selectable
 
 from assessment.lookups import EffectTagLookup
 from study.lookups import AnimalStudyLookup
-from utils.helper import HAWCDjangoJSONEncoder
 from utils.forms import BaseFormHelper
 
 from . import models, lookups
@@ -522,13 +518,6 @@ class EndpointSelectorForm(forms.Form):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-
-
-class IndividualAnimalForm(ModelForm):
-
-    class Meta:
-        model = models.IndividualAnimal
-        fields = '__all__'
 
 
 class SpeciesForm(ModelForm):

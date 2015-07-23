@@ -116,10 +116,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['groups'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
 
-        # get individual animal data
-        if instance.individual_animal_data:
-            models.EndpointGroup.getIndividuals(instance, ret['groups'])
-
         # get BMD
         ret['BMD'] = None
         try:
