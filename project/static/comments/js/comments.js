@@ -13,7 +13,7 @@ var CommentManager = function($el, data, object){
 _.extend(CommentManager, {
     content_types: [
         "SummaryText", "ReferenceValue", "Assessment", "Study",
-        "Aggregation", "Experiment", "AnimalGroup", "Endpoint"
+        "Experiment", "AnimalGroup", "Endpoint"
     ]
 });
 CommentManager.prototype = {

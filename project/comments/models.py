@@ -40,7 +40,6 @@ COMMENT_MODEL_CROSSWALK = {
     "experiment": {"app_label": "animal", "model": "experiment"},
     "animal_group": {"app_label": "animal", "model": "animalgroup"},
     "endpoint":     {"app_label": "animal", "model": "endpoint"},
-    "aggregation":  {"app_label": "animal", "model": "aggregation"},
     "reference_value": {"app_label": "animal", "model": "referencevalue"},
     "summary_text": {"app_label": "summary", "model": "summarytext"}}
 

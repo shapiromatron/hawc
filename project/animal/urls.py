@@ -43,35 +43,6 @@ urlpatterns = [
     url(r'^endpoint/(?P<pk>\d+)/individual-animal-data/edit/$', views.EndpointIndividualAnimalUpdate.as_view(), name='endpoint_individual_animal_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
 
-    # Endpoint-level uncertainty factor
-    url(r'^endpoint/(?P<pk>\d+)/ufs/$', views.UFList.as_view(), name='ufs_list'),
-    url(r'^endpoint/(?P<pk>\d+)/uf/create/$', views.UFCreate.as_view(), name='uf_create'),
-    url(r'^endpoint/uf/(?P<pk>\d+)/$', views.UFRead.as_view(), name='uf_detail'),
-    url(r'^endpoint/uf/(?P<pk>\d+)/edit/$', views.UFEdit.as_view(), name='uf_edit'),
-    url(r'^endpoint/uf/(?P<pk>\d+)/delete/$', views.UFDelete.as_view(), name='uf_delete'),
-
-    # Aggregation-level uncertainty views
-    url(r'^aggregation/(?P<pk>\d+)/ufs/edit/$', views.UFsAggEdit.as_view(), name='ufs_agg_edit'),
-    url(r'^aggregation/(?P<pk>\d+)/ufs/$', views.UFsAggRead.as_view(), name='ufs_agg_read'),
-
-    # Aggregations
-    url(r'^(?P<pk>\d+)/aggregation/$', views.AggregationAssessmentList.as_view(), name='aggregation_list'),
-    url(r'^(?P<pk>\d+)/aggregation/new/$', views.AggregationCreate.as_view(), name='aggregation_new'),
-    url(r'^(?P<pk>\d+)/aggregation/search/$', views.AggregationSearch.as_view(), name='aggregation_search'),
-    url(r'^aggregation/(?P<pk>\d+)/edit/$', views.AggregationUpdate.as_view(), name='aggregation_update'),
-    url(r'^aggregation/(?P<pk>\d+)/delete/$', views.AggregationDelete.as_view(), name='aggregation_delete'),
-    url(r'^aggregation/(?P<pk>\d+)/versions/$', views.AggregationVersions.as_view(), name='aggregation_versions'),
-    url(r'^aggregation/(?P<pk>\d+)/$', views.AggregationRead.as_view(), name='aggregation_detail'),
-    url(r'^aggregation/(?P<pk>\d+)/json/$', views.AggregationReadJSON.as_view(), name='aggregation_json'),
-    url(r'^assessment/(?P<pk>\d+)/aggregation-endpoint-filter/$', views.AggregationEndpointFilter.as_view(), name='aggregation_endpoint_filter'),
-
-    # Reference Values
-    url(r'^assessment/(?P<pk>\d+)/reference-value/create/$', views.RefValCreate.as_view(), name='ref_val_create'),
-    url(r'^assessment/(?P<pk>\d+)/reference-values/$', views.RefValList.as_view(), name='ref_val_list'),
-    url(r'^reference-value/(?P<pk>\d+)/$', views.RefValRead.as_view(), name='ref_val'),
-    url(r'^reference-value/(?P<pk>\d+)/edit/$', views.RefValUpdate.as_view(), name='ref_val_update'),
-    url(r'^reference-value/(?P<pk>\d+)/delete/$', views.RefValDelete.as_view(), name='ref_val_delete'),
-
     # (Other)
     url(r'^strains/', views.getStrains.as_view(), name='get_strains'),
     url(r'^assessment/(?P<pk>\d+)/species/create/$', views.SpeciesCreate.as_view(), name='species_create'),

@@ -38,12 +38,6 @@
               <li><a href="{% url 'bmd:edit' object.pk %}">
                 {% if object.bmds_session_exists %}Update{% else %}Create{% endif %}</a></li>
             {% endif %}
-
-            {% if assessment.enable_reference_values %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Uncertainty Factors</a></li>
-              <li><a href="{% url 'animal:ufs_list' endpoint.pk %}">View</a></li>
-            {% endif %}
         </ul>
       </div>
     {% endif %}
@@ -100,18 +94,6 @@
           <p><a href="{% url 'bmd:read' object.pk %}">View Details</a></p>
         {% endif %}
       </div>
-    {% endif %}
-
-    <!-- UF details -->
-    {% if assessment.enable_reference_values %}
-      {% with ufs=object.ufs.all %}
-        {% if ufs.count > 0 %}
-          <div class="row-fluid">
-            <h4>Uncertainty Factors</h4>
-            {% include "animal/_uf_list_table.html" with object_list=ufs %}
-          </div>
-        {% endif %}
-      {% endwith %}
     {% endif %}
 
     <!-- Comments -->

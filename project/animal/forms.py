@@ -2,8 +2,8 @@ from collections import Counter
 import json
 
 from django import forms
-from django.forms import ModelForm, ValidationError, Select
-from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
+from django.forms import ModelForm, Select
+from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 from django.db.models import Q
@@ -12,7 +12,6 @@ from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
-from assessment.models import Assessment
 from assessment.lookups import EffectTagLookup
 from study.lookups import AnimalStudyLookup
 from utils.helper import HAWCDjangoJSONEncoder
@@ -530,155 +529,6 @@ class IndividualAnimalForm(ModelForm):
     class Meta:
         model = models.IndividualAnimal
         fields = '__all__'
-
-
-class UncertaintyFactorEndpointForm(ModelForm):
-    """
-    Custom form for UF to ensure that the endpoint is not changed when a user
-    edits the form.
-    """
-    def __init__(self, *args, **kwargs):
-        endpoint = kwargs.pop('parent', None)
-        super(UncertaintyFactorEndpointForm, self).__init__(*args, **kwargs)
-        if endpoint:
-            self.instance.endpoint = endpoint
-
-    class Meta:
-        model = models.UncertaintyFactorEndpoint
-        exclude = ('endpoint', )
-
-
-class AJAXUncertaintyFactorEndpointForm(ModelForm):
-    """
-    No manipulation of endpoint with form.
-    """
-    class Meta:
-        model = models.UncertaintyFactorEndpoint
-        fields = '__all__'
-
-
-class HiddenSelectBox(Select):
-    """
-    Special-case for a select-box where the selector should be hidden and a
-    text-version of the selected field should be displayed.
-    """
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = ''
-        pretty_choice = ''
-        for k, v in self.choices:
-            if k == value:
-                pretty_choice = v
-
-        final_attrs = self.build_attrs(attrs, name=name)
-        final_attrs['style'] = ' '.join([final_attrs.get('style', ''), 'display:none;'])
-        output = [u'<b>' + unicode(pretty_choice) + '</b><select%s>' % flatatt(final_attrs)]
-        options = self.render_options(choices, [value])
-        if options:
-            output.append(options)
-        output.append(u'</select>')
-        return mark_safe(u'\n'.join(output))
-
-
-class UncertaintyFactorRefValForm(ModelForm):
-    """
-    Custom form for UF to ensure that the endpoint is not changed when a user
-    edits the form.
-    """
-
-    def __init__(self, *args, **kwargs):
-        reference_value_pk = kwargs.pop('reference_value_pk', None)
-        super(UncertaintyFactorRefValForm, self).__init__(*args, **kwargs)
-        self.fields['value'].widget.attrs['class'] = 'span12 uf_values'
-        self.fields['uf_type'].widget = HiddenSelectBox(
-            choices=models.UncertaintyFactorAbstract.UF_TYPE_CHOICES)
-        self.fields['uf_type'].widget.attrs['class'] = 'span12'
-        self.fields['description'].widget.attrs['class'] = 'span12 uf_descriptions'
-        if reference_value_pk:
-            self.instance.reference_value = models.ReferenceValue.objects.get(pk=reference_value_pk)
-
-    class Meta:
-        model = models.UncertaintyFactorRefVal
-        exclude = ('reference_value', )
-
-
-class AggregationForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop('parent', None)
-        super(AggregationForm, self).__init__(*args, **kwargs)
-
-        if assessment:
-            self.instance.assessment = assessment
-
-        # endpoints dependent on dose-units
-        if self.instance.pk is None:
-            self.fields['endpoints'].queryset = models.Endpoint.objects.none()
-        else:
-            self.fields['endpoints'].queryset = self.instance.endpoints.all()
-
-    class Meta:
-        model = models.Aggregation
-        exclude = ('assessment',)
-
-
-class AggregationSearchForm(forms.Form):
-    name = forms.CharField(required=True)
-
-    def __init__(self, *args, **kwargs):
-        assessment_pk = kwargs.pop('assessment_pk', None)
-        super(AggregationSearchForm, self).__init__(*args, **kwargs)
-        if assessment_pk:
-            self.assessment = Assessment.objects.get(pk=assessment_pk)
-
-    def search(self):
-        query = {}
-        if self.cleaned_data['name']:
-            query['name__icontains'] = self.cleaned_data['name']
-
-        response_json = []
-        for obj in models.Aggregation.objects\
-                         .filter(assessment=self.assessment).filter(**query):
-            response_json.append(obj.get_json(json_encode=False))
-        return response_json
-
-
-class ReferenceValueForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop('parent', None)
-        super(ReferenceValueForm, self).__init__(*args, **kwargs)
-        if assessment:
-            self.instance.assessment = assessment
-
-        self.fields['aggregation'].queryset = models.Aggregation.objects\
-            .filter(assessment=self.instance.assessment)
-
-    class Meta:
-        model = models.ReferenceValue
-        exclude = ('assessment', 'aggregate_uf', 'reference_value')
-
-
-class Base_UFRefVal_FormSet(BaseModelFormSet):
-    def clean(self):
-        """Checks that all uncertainty-factor types are unique."""
-        if any(self.errors):
-            return
-        ufs = []
-        for form in self.forms:
-            uf = form.cleaned_data['uf_type']
-            if uf in ufs:
-                raise ValidationError("Uncertainty-factors must be unique for"
-                                      "a given reference-value.")
-            ufs.append(uf)
-
-
-UFRefValFormSet = inlineformset_factory(
-        models.ReferenceValue,
-        models.UncertaintyFactorRefVal,
-        form=UncertaintyFactorRefValForm,
-        formset=Base_UFRefVal_FormSet,
-        extra=0,
-        can_delete=False
-    )
 
 
 class SpeciesForm(ModelForm):

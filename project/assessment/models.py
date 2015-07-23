@@ -103,10 +103,6 @@ class Assessment(models.Model):
         help_text="Conduct benchmark dose (BMD) modeling on animal bioassay data "
                   "available in the HAWC database, using the US EPA's Benchmark "
                   "Dose Modeling Software (BMDS).")
-    enable_reference_values = models.BooleanField(
-        default=True,
-        help_text="Define a point-of-departure, apply uncertainty factors, and "
-                  "derive reference values by route of exposure.")
     enable_summary_text = models.BooleanField(
         default=True,
         help_text="Create custom-text to describe methodology and results of the "

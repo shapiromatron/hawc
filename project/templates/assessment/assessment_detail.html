@@ -48,11 +48,6 @@
           <li><a href="{% url 'assessment:template_list' object.pk %}">Word report templates</a></li>
           {% endif %}
 
-          {% if assessment.enable_reference_values %}
-            <li class="divider"></li>
-            <li class="disabled"><a tabindex="-1" href="#">Reference Values</a></li>
-            <li><a href="{% url 'animal:ref_val_create' object.pk %}">Create new</a></li>
-          {% endif %}
         </ul>
       </div>
     {% endif %}
@@ -162,12 +157,6 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
-  {% endif %}
-
-  {% if crud == "Read" and assessment.enable_reference_values and object.reference_values.count > 0 %}
-    <h2>Reference Values</h2>
-    {% include "animal/_ref_val_list_tbl.html" with object_list=object.reference_values.all %}
-
     <div id="comments_block"></div>
   {% endif %}
 

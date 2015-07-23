@@ -116,38 +116,6 @@ def build_endpoints_for_permission_testing(obj):
     models.EndpointGroup.objects.bulk_create(egs)
 
 
-def build_aggregations_for_permission_testing(obj):
-    build_endpoints_for_permission_testing(obj)
-    obj.aggregation_working = models.Aggregation.objects.create(
-        assessment=obj.assessment_working,
-        name="foo",
-        aggregation_type="CD",
-        dose_units=obj.dose_units)
-    obj.aggregation_working.endpoints.add(obj.endpoint_working)
-
-    obj.aggregation_final = models.Aggregation.objects.create(
-        assessment=obj.assessment_final,
-        name="foo",
-        aggregation_type="CD",
-        dose_units=obj.dose_units)
-    obj.aggregation_final.endpoints.add(obj.endpoint_final)
-
-
-def build_ufs_for_permission_testing(obj):
-    build_endpoints_for_permission_testing(obj)
-    obj.ufa_working = models.UncertaintyFactorEndpoint.objects.create(
-        endpoint=obj.endpoint_working,
-        uf_type='UFA',
-        value=10,
-        description='')
-
-    obj.ufa_final = models.UncertaintyFactorEndpoint.objects.create(
-      endpoint=obj.endpoint_final,
-      uf_type='UFA',
-      value=10,
-      description='')
-
-
 def build_dosing_datasets_json(dose_units):
     # build a DoseGroup dataset with four dose groups
     dose_groups = []

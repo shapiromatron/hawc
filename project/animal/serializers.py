@@ -96,25 +96,11 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         model = models.EndpointGroup
 
 
-class UncertaintyFactorEndpointSerializer(serializers.ModelSerializer):
-    endpoint = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super(UncertaintyFactorEndpointSerializer, self).to_representation(instance)
-        ret['url'] = instance.get_absolute_url()
-        ret['uf_type_verbose'] = instance.get_uf_type_display()
-        return ret
-
-    class Meta:
-        model = models.UncertaintyFactorEndpoint
-
-
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     effects = EffectTagsSerializer()
     animal_group = AnimalGroupSerializer()
     endpoint_group = EndpointGroupSerializer(many=True)
-    ufs = UncertaintyFactorEndpointSerializer(many=True)
     qualities = StudyQualitySerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
@@ -149,12 +135,4 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
-class AggregationSerializer(serializers.ModelSerializer):
-    endpoints = EndpointSerializer(many=True)
-
-    class Meta:
-        model = models.Aggregation
-
-
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
-SerializerHelper.add_serializer(models.Aggregation, AggregationSerializer)

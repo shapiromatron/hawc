@@ -21,7 +21,6 @@ class AssessmentForm(forms.ModelForm):
                    'enable_data_extraction',
                    'enable_study_quality',
                    'enable_bmd',
-                   'enable_reference_values',
                    'enable_summary_text',
                    'enable_comments')
         model = models.Assessment
@@ -81,7 +80,6 @@ class AssessmentModulesForm(forms.ModelForm):
                   'enable_data_extraction',
                   'enable_study_quality',
                   'enable_bmd',
-                  'enable_reference_values',
                   'enable_summary_text',
                   'enable_comments')
         model = models.Assessment
