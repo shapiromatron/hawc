@@ -69,10 +69,14 @@ class EndpointByStudyLookup(ModelLookup):
         return self.model.objects.filter(**filters).order_by('animal_group')
 
     def get_item_label(self, obj):
-        return u"{} | {} | {}".format(obj.animal_group.experiment, obj.animal_group, obj)
+        return u"{} | {} | {}".format(
+            obj.animal_group.experiment,
+            obj.animal_group,
+            obj
+        )
 
     def get_item_value(self, obj):
-        return u"{} | {} | {}".format(obj.animal_group.experiment, obj.animal_group, obj)
+        return self.get_item_label(obj)
 
 
 class EndpointByAssessmentLookup(ModelLookup):
