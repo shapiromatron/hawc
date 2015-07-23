@@ -709,56 +709,6 @@ class StrainForm(ModelForm):
         return self.cleaned_data['name'].title()
 
 
-class EndpointSearchForm(forms.Form):
-
-    endpoint_name = forms.CharField(required=False)
-
-    tags = selectable.AutoCompleteSelectField(
-        lookup_class=EffectTagLookup,
-        label='Endpoint effect tag',
-        required=False,
-    )
-
-    def clean(self):
-        cleaned_data = super(EndpointSearchForm, self).clean()
-        if ((cleaned_data['endpoint_name'] == u"") and
-                (cleaned_data['tags'] == None)):
-            raise forms.ValidationError("At least one search criteria should be specified.")
-        return cleaned_data
-
-    def get_search_results_div(self):
-        return """
-        <div>
-        <b>Query details:</b><br>
-        <ul>
-            <li><b>Endpoint name: </b>{n}</li>
-            <li><b>Tags: </b>{t}</li>
-        </ul>
-        </div>
-        """.format(n=self.cleaned_data['endpoint_name'],
-                   t=self.cleaned_data['tags'])
-
-    def search(self, assessment):
-        response = {'status': 'ok', 'endpoints': []}
-        try:
-            # build query
-            query = {"assessment": assessment}
-            if self.cleaned_data['endpoint_name'] is not "":
-                query['name__icontains'] = self.cleaned_data['endpoint_name']
-            if self.cleaned_data['tags'] is not None:
-                query['effects__name'] = self.cleaned_data['tags']
-
-            # filter endpoints
-            endpoints = models.Endpoint.objects.filter(**query).distinct()
-
-            # build response
-            for endpoint in endpoints:
-                response['endpoints'].append(endpoint.d_response(json_encode=False))
-        except:
-            response['status'] = 'An error occurred.'
-        return json.dumps(response, cls=HAWCDjangoJSONEncoder)
-
-
 class DoseUnitsForm(ModelForm):
 
     class Meta:

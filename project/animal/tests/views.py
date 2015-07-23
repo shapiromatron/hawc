@@ -256,8 +256,6 @@ class EndpointPermissions(TestCase):
         views = [
             reverse('animal:endpoint_list', kwargs={'pk': self.assessment_working.pk}),
             reverse('animal:endpoint_list', kwargs={'pk': self.assessment_final.pk}),
-            reverse('animal:assessment_endpoint_search', kwargs={'pk': self.assessment_working.pk}),
-            reverse('animal:assessment_endpoint_search', kwargs={'pk': self.assessment_final.pk}),
             reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_working.pk, 'tag_slug': 'foo'}),
             reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_final.pk, 'tag_slug': 'foo'}),
             reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_working.pk}),
@@ -278,8 +276,6 @@ class EndpointPermissions(TestCase):
         views = [
             {'view': reverse('animal:endpoint_list', kwargs={'pk': self.assessment_working.pk}), 'status': 403},
             {'view': reverse('animal:endpoint_list', kwargs={'pk': self.assessment_final.pk}), 'status': 200},
-            {'view': reverse('animal:assessment_endpoint_search', kwargs={'pk': self.assessment_working.pk}), 'status': 403},
-            {'view': reverse('animal:assessment_endpoint_search', kwargs={'pk': self.assessment_final.pk}), 'status': 200},
             {'view': reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_working.pk, 'tag_slug': 'foo'}), 'status': 403},
             {'view': reverse('animal:assessment_endpoint_taglist', kwargs={'pk': self.assessment_final.pk, 'tag_slug': 'foo'}), 'status': 200},
             {'view': reverse('animal:endpoint_detail', kwargs={'pk': self.endpoint_working.pk}), 'status': 403},

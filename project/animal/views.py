@@ -413,32 +413,6 @@ class EndpointTags(EndpointList):
                                         study__in=Study.objects.filter(assessment=self.assessment.pk))))
 
 
-class EndpointSearch(AssessmentPermissionsMixin, FormView):
-    """
-    Animal endpoint search form.
-    """
-    crud = 'Read'
-    template_name = "animal/endpoint_search.html"
-    form_class = forms.EndpointSearchForm
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        self.permission_check_user_can_view()
-        return super(EndpointSearch, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(EndpointSearch, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        return context
-
-    def form_valid(self, form):
-        endpoint_dicts = form.search(self.assessment)
-        context = self.get_context_data()
-        context['endpoints'] = endpoint_dicts
-        context['search_terms_div'] = form.get_search_results_div()
-        return self.render_to_response(context)
-
-
 class EndpointRead(BaseDetail):
     queryset = models.Endpoint.objects\
         .select_related('animal_group',
