@@ -50,11 +50,17 @@ _.extend(SmartTag, {
 _.extend(SmartTag.prototype, {
     display_inline: function(){
         var self = this,
-            Cls = SmartTag.context[this.type].Cls,
-            inline_func = SmartTag.context[this.type].inline_func,
-            cb = function(obj){ new InlineRendering(this)[inline_func](obj);};
+            context = SmartTag.context[this.type],
+            cb;
 
-        Cls.get_object(this.pk, $.proxy(cb, this));
+        if (context === undefined){
+            console.log('unknown context: {0}'.printf(this.type))
+        } else {
+            cb = $.proxy(
+                function(obj){new InlineRendering(this)[context.inline_func](obj);},
+                this);
+            context.Cls.get_object(this.pk, cb);
+        }
     },
     display_modal: function(e){
         if(!$(e.target).hasClass('active')) return;
