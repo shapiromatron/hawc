@@ -3,6 +3,7 @@ from unittest import skip
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from assessment.models import Species, DoseUnits
 from animal import models
 
 from . import utils
@@ -37,7 +38,7 @@ class AnimalGroup(TestCase):
         utils.build_animal_groups_for_permission_testing(self)
 
     def test_clean(self):
-        new_species = models.Species.objects.create(name='foo')
+        new_species = Species.objects.create(name='foo')
         new_animal_group = models.AnimalGroup(
             experiment=self.experiment_working,
             name='animal group name',
@@ -90,7 +91,7 @@ class DosingRegime(TestCase):
     def setUp(self):
         utils.build_dosing_regimes_for_permission_testing(self)
 
-        self.alt_dose_units = models.DoseUnits.objects.create(
+        self.alt_dose_units = DoseUnits.objects.create(
             units='mg/L',
             administered=True,
             converted=True,

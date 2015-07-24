@@ -1,8 +1,10 @@
+from copy import copy
+
+from assessment.models import DoseUnits
 from study.models import Study
 from utils.helper import FlatFileExporter
-from . import models
 
-from copy import copy
+from . import models
 
 
 class EndpointFlatComplete(FlatFileExporter):
@@ -12,7 +14,7 @@ class EndpointFlatComplete(FlatFileExporter):
     """
 
     def _get_header_row(self):
-        self.doses = models.DoseUnits.doses_in_assessment(self.kwargs.get('assessment'))
+        self.doses = DoseUnits.get_animal_units(self.kwargs.get('assessment'))
 
         header = []
         header.extend(Study.flat_complete_header_row())

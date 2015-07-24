@@ -6,7 +6,6 @@ from StringIO import StringIO
 
 from django.db import models
 from django.db.models.loading import get_model
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
@@ -315,6 +314,13 @@ class DoseUnits(models.Model):
     units = models.CharField(
         max_length=20,
         unique=True)
+    administered = models.BooleanField(
+        default=False)
+    converted = models.BooleanField(
+        default=False)
+    hed = models.BooleanField(
+        default=False,
+        verbose_name="Human Equivalent Dose")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -337,25 +343,31 @@ class DoseUnits(models.Model):
 
     @classmethod
     def json_all(cls):
-        return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
+        return json.dumps(list(cls.objects.all().values()))
 
-    # @classmethod
-    # def doses_in_assessment(cls, assessment):
-    #     """
-    #     Returns a list of the dose-units which are used in the selected
-    #     assessment for animal bioassay data.
-    #     """
-    #     Study = models.get_model('study', 'Study')
-    #     return DoseUnits.objects.filter(dosegroup__in=
-    #                 DoseGroup.objects.filter(dose_regime__in=
-    #                 DosingRegime.objects.filter(dosed_animals__in=
-    #                 AnimalGroup.objects.filter(experiment__in=
-    #                 Experiment.objects.filter(study__in=
-    #                 Study.objects.filter(assessment=assessment)))))) \
-    #             .values_list('units', flat=True).distinct()
+    @classmethod
+    def get_animal_units(cls, assessment):
+        """
+        Returns a list of the dose-units which are used in the selected
+        assessment for animal bioassay data.
+        """
+        Study = get_model('study', 'Study')
+        Experiment = get_model('animal', 'Experiment')
+        AnimalGroup = get_model('animal', 'AnimalGroup')
+        DosingRegime = get_model('animal', 'DosingRegime')
+        DoseGroup = get_model('animal', 'DoseGroup')
+        return cls.objects.filter(
+            dosegroup__in=DoseGroup.objects.filter(
+                dose_regime__in=DosingRegime.objects.filter(
+                    dosed_animals__in=AnimalGroup.objects.filter(
+                        experiment__in=Experiment.objects.filter(
+                            study__in=Study.objects.filter(
+                                assessment=assessment))))))\
+            .values_list('units', flat=True)\
+            .distinct()
 
     def __unicode__(self):
-        return self.name
+        return self.units
 
 
 class Species(models.Model):

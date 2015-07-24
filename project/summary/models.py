@@ -106,8 +106,8 @@ class SummaryText(MP_Node):
         self.move_summarytext(parent=kwargs.get('parent', [None])[0],
                               sibling=kwargs.get('sibling', [None])[0])
 
-    def move_summarytext(self, parent, sibling):
-        if parent and sibling:
+    def move_summarytext(self, parent=None, sibling=None):
+        if (parent and sibling) or (parent is None and sibling is None):
             return Exception("Should only specify one argument")
         if parent:
             # left-most child of parent node

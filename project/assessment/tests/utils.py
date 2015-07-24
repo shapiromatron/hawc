@@ -1,7 +1,25 @@
 from django.core.management import call_command
 
 from myuser.models import HAWCUser
-from assessment.models import Assessment
+from assessment import models
+
+
+def build_dose_units_for_permission_testing(obj):
+    obj.dose_units = models.DoseUnits.objects.create(
+       units='mg/kg/day',
+       administered=True,
+       converted=True,
+       hed=True)
+
+
+def build_species_for_permission_testing(obj):
+    obj.species = models.Species.objects.create(name='orangutan')
+
+
+def build_strain_for_permission_testing(obj):
+    obj.strain = models.Strain.objects.create(
+        name='sumatran',
+        species=obj.species)
 
 
 def build_assessments_for_permissions_testing(obj):
@@ -19,7 +37,7 @@ def build_assessments_for_permissions_testing(obj):
     obj.reviewer = HAWCUser.objects.create_user('rev@rev.com', 'pw')
 
     # setup working assessment
-    obj.assessment_working = Assessment.objects.create(
+    obj.assessment_working = models.Assessment.objects.create(
         name='working',
         year=1999,
         version='1.0',
@@ -32,7 +50,7 @@ def build_assessments_for_permissions_testing(obj):
     obj.assessment_working.reviewers.add(obj.reviewer)
 
     # setup final assessment
-    obj.assessment_final = Assessment.objects.create(
+    obj.assessment_final = models.Assessment.objects.create(
         name='final',
         year=2001,
         version='final',
@@ -42,3 +60,8 @@ def build_assessments_for_permissions_testing(obj):
     obj.assessment_final.project_manager.add(obj.project_manager)
     obj.assessment_final.team_members.add(obj.team_member)
     obj.assessment_final.reviewers.add(obj.reviewer)
+
+    # additional assessment-level requirements
+    build_species_for_permission_testing(obj)
+    build_strain_for_permission_testing(obj)
+    build_dose_units_for_permission_testing(obj)

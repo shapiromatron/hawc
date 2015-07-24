@@ -20,20 +20,8 @@ def build_experiments_for_permission_testing(obj):
         description='No description.')
 
 
-def build_species_for_permission_testing(obj):
-    obj.species = models.Species.objects.create(name='orangutan')
-
-
-def build_strain_for_permission_testing(obj):
-    obj.strain = models.Strain.objects.create(
-        name='sumatran',
-        species=obj.species)
-
-
 def build_animal_groups_for_permission_testing(obj):
     build_experiments_for_permission_testing(obj)
-    build_species_for_permission_testing(obj)
-    build_strain_for_permission_testing(obj)
 
     obj.animal_group_working = models.AnimalGroup.objects.create(
         experiment=obj.experiment_working,
@@ -50,17 +38,8 @@ def build_animal_groups_for_permission_testing(obj):
         sex='M')
 
 
-def build_dose_units_for_permission_testing(obj):
-    obj.dose_units = models.DoseUnits.objects.create(
-       units='mg/kg/day',
-       administered=True,
-       converted=True,
-       hed=True)
-
-
 def build_dosing_regimes_for_permission_testing(obj):
     build_animal_groups_for_permission_testing(obj)
-    build_dose_units_for_permission_testing(obj)
 
     obj.dosing_regime_working = models.DosingRegime.objects.create(
         dosed_animals=obj.animal_group_working,
