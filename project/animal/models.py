@@ -5,7 +5,6 @@ import json
 import math
 
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -276,14 +275,6 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
-
-    def clean(self):
-        #ensure that strain is of the correct species
-        try:
-            if self.strain.species != self.species:
-                raise ValidationError('Error- selected strain is not of the selected species.')
-        except:
-            raise ValidationError('Error- selected strain is not of the selected species.')
 
     @property
     def is_generational(self):

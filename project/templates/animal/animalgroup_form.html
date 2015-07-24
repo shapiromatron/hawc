@@ -79,19 +79,17 @@
       // load strains
       var load_strains = function(){
         // only show proper strains for a given species
+        var selected = $('#id_strain option:selected').val();
         $.get('{% url 'assessment:get_strains' %}',{'species': $('#id_species').val()}, function(d){
-          $('#id_strain').prop("disabled", true);
-          var selected = $('#id_strain option:selected').val();
-          var opts = ['<option value="">---------</option>'];
-          d.forEach(function(v, i){
-            opts.push('<option value="' + v.id + '">' + v.name + "</option>");
-          });
-          $('#id_strain').html(opts.join("")).prop("disabled", (opts.length<2));
+          var opts = _.map(d, function(v, i){
+            return '<option value="{0}">{1}</option>'.printf(v.id, v.name)
+          }).join("");
+          $('#id_strain').html(opts);
           $('#id_strain option[value="{0}"]'.printf(selected)).prop('selected', true);
         });
+
       };
-      $('#id_species').on('change', load_strains);
-      load_strains();
+      $('#id_species').on('change', load_strains).trigger('change');
 
       {% if crud == "Create" %}  // has dosing-regime
         var drc = $('#dosingRegimeContainer'),

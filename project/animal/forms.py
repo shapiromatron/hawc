@@ -132,10 +132,6 @@ class AnimalGroupForm(ModelForm):
         if parent:
             self.instance.experiment = parent
 
-        if self.instance.id:
-            self.fields['strain'].queryset = Strain.objects.filter(
-                species=self.instance.species)
-
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
             allow_new=True)
@@ -186,6 +182,17 @@ class AnimalGroupForm(ModelForm):
         if "generation" in self.fields:
             helper.add_fluid_row('siblings', 3, "span4")
         return helper
+
+    def clean(self):
+        cleaned_data = super(AnimalGroupForm, self).clean()
+
+        species = cleaned_data.get("species")
+        strain = cleaned_data.get("strain")
+        if strain and species and species != strain.species:
+            err = "Selected strain is not of the selected species."
+            self.add_error('strain', err)
+
+        return cleaned_data
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):

@@ -340,7 +340,7 @@ class DoseUnits(models.Model):
 
     @classmethod
     def json_all(cls):
-        return json.dumps(list(cls.objects.all().values()))
+        return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
 
     @classmethod
     def get_animal_units(cls, assessment):
