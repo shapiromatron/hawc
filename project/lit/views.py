@@ -537,6 +537,7 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
     """
     Remove exiting tags and copy all tags from a separate assessment.
     """
+    model = Assessment
     template_name = "lit/tags_copy.html"
     form_class = forms.TagsCopyForm
     success_message = 'Literature tags for this assessment have been updated'
