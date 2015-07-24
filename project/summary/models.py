@@ -413,6 +413,9 @@ class DataPivotUpload(DataPivot):
 
 
 class DataPivotQuery(DataPivot):
+
+    MAXIMUM_QUERYSET_COUNT = 500
+
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,
         default=0)
@@ -430,6 +433,25 @@ class DataPivotQuery(DataPivot):
         verbose_name="Published studies only",
         help_text='Only present data from studies which have been marked as '
                   '"published" in HAWC.')
+
+    def clean(self):
+        count = self.get_queryset().count()
+
+        if count == 0:
+            err = """
+                Current settings returned 0 results; make your filtering
+                settings less restrictive (check units and/or prefilters).
+            """
+            raise ValidationError(err)
+
+        if count > self.MAXIMUM_QUERYSET_COUNT:
+            err = """
+                Current settings returned too many results
+                ({0} returned; a maximum of {1} are allowed);
+                make your filtering settings more restrictive
+                (check units and/or prefilters).
+            """.format(count, self.MAXIMUM_QUERYSET_COUNT)
+            raise ValidationError(err)
 
     def _get_dataset_filters(self):
         filters = {}
@@ -510,9 +532,12 @@ class DataPivotQuery(DataPivot):
 
         return exporter
 
-    def get_dataset(self, format_):
+    def get_queryset(self):
         filters = self._get_dataset_filters()
-        qs = self._get_dataset_queryset(filters)
+        return self._get_dataset_queryset(filters)
+
+    def get_dataset(self, format_):
+        qs = self.get_queryset()
         exporter = self._get_dataset_exporter(qs, format_)
         return exporter.build_response()
 
