@@ -311,16 +311,9 @@ def default_configuration(sender, instance, created, **kwargs):
 
 
 class DoseUnits(models.Model):
-    units = models.CharField(
+    name = models.CharField(
         max_length=20,
         unique=True)
-    administered = models.BooleanField(
-        default=False)
-    converted = models.BooleanField(
-        default=False)
-    hed = models.BooleanField(
-        default=False,
-        verbose_name="Human Equivalent Dose")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -328,6 +321,10 @@ class DoseUnits(models.Model):
 
     class Meta:
         verbose_name_plural = "dose units"
+        ordering = ("name", )
+
+    def __unicode__(self):
+        return self.name
 
     @property
     def animal_dose_group_count(self):
@@ -363,11 +360,8 @@ class DoseUnits(models.Model):
                         experiment__in=Experiment.objects.filter(
                             study__in=Study.objects.filter(
                                 assessment=assessment))))))\
-            .values_list('units', flat=True)\
+            .values_list('name', flat=True)\
             .distinct()
-
-    def __unicode__(self):
-        return self.units
 
 
 class Species(models.Model):

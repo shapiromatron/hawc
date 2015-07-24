@@ -50,7 +50,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 
 class DoseUnitsAdmin(admin.ModelAdmin):
-    list_display = ('units',
+    list_display = ('name',
                     'animal_dose_group_count',
                     'epi_exposure_count',
                     'invitro_experiment_count')

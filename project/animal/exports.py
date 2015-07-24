@@ -133,7 +133,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             ]
 
         def get_dose_units(doses):
-            return doses[0]['dose_units']['units']
+            return doses[0]['dose_units']['name']
 
         def get_doses_str(doses):
             values = u', '.join([str(float(d['dose'])) for d in doses])

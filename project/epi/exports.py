@@ -109,7 +109,7 @@ class AssessedOutcomeFlatDataPivot(FlatFileExporter):
                 ser['exposure']['id'],
                 ser['exposure']['metric'],
                 ser['exposure']['url'],
-                ser['exposure']['metric_units']['units'],
+                ser['exposure']['metric_units']['name'],
 
                 ser['name'],
                 ser['population_description'],

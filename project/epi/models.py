@@ -648,7 +648,7 @@ class Exposure(models.Model):
             ser['unknown_route'],
             ser['exposure_form_definition'],
             ser['metric'],
-            ser['metric_units']['units'],
+            ser['metric_units']['name'],
             ser['metric_description'],
             ser['analytical_method'],
             ser['control_description'],

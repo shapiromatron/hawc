@@ -130,7 +130,7 @@ DosingRegimeForm.prototype = {
       var th = $('<th>');
       var select = $('<select class="input-medium dose_types"></select>');
       this.dose_types.forEach(function(v, i){
-        select.append('<option value="{0}">{1}</option>'.printf(v.id, v.units));
+        select.append('<option value="{0}">{1}</option>'.printf(v.id, v.name));
       });
       if (this.dose_units[j]){
         select.find('option[value={0}]'.printf(this.dose_units[j])).prop('selected', true);

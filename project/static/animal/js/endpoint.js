@@ -171,7 +171,7 @@ AnimalGroup.prototype = {
 
                 var grps = _.chain(doses)
                             .sortBy(function(d){return d.dose_group_id;})
-                            .groupBy(function(d){return d.dose_units.units;})
+                            .groupBy(function(d){return d.dose_units.name;})
                             .value(),
                     units = _.keys(grps),
                     doses = _.zip.apply(null,
@@ -255,7 +255,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                .key(function(d){return d.dose_units.id})
                .entries(this.data.animal_group.dosing_regime.doses);
 
-        this.doses.forEach(function(v){ v.units= v.values[0].dose_units.units; });
+        this.doses.forEach(function(v){ v.name = v.values[0].dose_units.name; });
         this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
         this.switch_dose_units(this.dose_units_id);
     },
@@ -265,11 +265,10 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             new_idx = (idx < units.length-1) ? (idx+1) : 0;
         this._switch_dose(new_idx);
     },
-    switch_dose_units: function(units_id){
-      var units_id = units_id.toString()
+    switch_dose_units: function(id_){
+      id_ = id_.toString();
       for(var i=0; i<this.doses.length; i++){
-            if(this.doses[i].key === units_id)
-                return this._switch_dose(i);
+            if(this.doses[i].key === id_) return this._switch_dose(i);
         }
         console.log("Error: dose units not found");
     },
@@ -280,7 +279,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 doses = this.doses[idx];
 
             this.dose_units_id = doses.key;
-            this.dose_units = doses.units;
+            this.dose_units = doses.name;
 
             egs.forEach(function(eg, i){ eg.dose = doses.values[i].dose; });
 
@@ -444,9 +443,9 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             txt;
 
         // build top-row
-        txt =  "Groups ".printf(this.doses[0].units);
+        txt =  "Groups ".printf(this.doses[0].name);
         this.doses.forEach(function(v, i){
-            txt += (i===0) ? v.units : " ({0})".printf(v.units);
+            txt += (i===0) ? v.name : " ({0})".printf(v.name);
         });
 
         tr1.append('<th rowspan="2">Endpoint</th>')
@@ -759,7 +758,7 @@ EndpointCriticalDose.prototype = {
         var txt = "",
             self = this,
             doses = this.endpoint.doses.filter(function(v){
-                return v.units === self.endpoint.dose_units;});
+                return v.name === self.endpoint.dose_units;});
         try {
             txt = doses[0].values[this.critical_effect_idx].dose.toLocaleString();
             if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);

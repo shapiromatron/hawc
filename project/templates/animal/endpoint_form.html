@@ -177,7 +177,7 @@
       var doses = {{animal_group.get_doses_json|safe}};
 
       //update values in doses table
-      $('#doses_title').html('Dose<br>(' + doses[0].units + ')');
+      $('#doses_title').html('Dose<br>(' + doses[0].name + ')');
       $('.doses').each(function(i, v){
         $(v).html(doses[0].values[i]);
       });

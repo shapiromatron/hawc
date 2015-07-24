@@ -98,7 +98,7 @@ IVExperiment.prototype = {
             .add_tbody_tr("Negative control", neg)
             .add_tbody_tr("Vehicle control", veh)
             .add_tbody_tr("Control notes", this.data.control_notes)
-            .add_tbody_tr("Dose units", this.data.dose_units.units)
+            .add_tbody_tr("Dose units", this.data.dose_units.name)
             .get_tbl();
     },
     build_endpoint_list: function(){
@@ -184,7 +184,7 @@ IVEndpoint.prototype = {
                 return "{0}: {1}".printf(d.benchmark, d.value);
             }, getCriticalValue = function(idx){
                 try{
-                    return "{0} {1}".printf(self.egs[idx].data.dose, self.data.experiment.dose_units.units);
+                    return "{0} {1}".printf(self.egs[idx].data.dose, self.data.experiment.dose_units.name);
                 }catch(err){
                     return undefined;
                 }

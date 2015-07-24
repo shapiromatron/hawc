@@ -21,6 +21,7 @@ class StrainLookup(ModelLookup):
 
 class DoseUnitsLookup(ModelLookup):
     model = models.DoseUnits
+    search_fields = ('name__icontains', )
 
 
 class BaseEndpointLookup(ModelLookup):

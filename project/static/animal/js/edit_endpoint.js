@@ -58,8 +58,8 @@ EditEndpoint.prototype = {
         // add dose-units into endpoint-representation
         this.doses = _.map(doses, function(v){
             return {
-                "key": v.units_id.toString(),
-                "units": v.units,
+                "key": v.id.toString(),
+                "name": v.name,
                 "values": v.values.map(function(v2){return {dose: v2};})
             };
         });

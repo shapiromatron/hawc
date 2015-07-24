@@ -473,39 +473,17 @@ class DosingRegime(models.Model):
             cleanHTML(ser['description']),
         )
 
-    def get_dose_groups_for_animal_form(self):
-        groups = list(self.dose_groups.order_by('dose_group_id', 'dose_units').values('dose_group_id', 'dose_units', 'dose'))
-        return json.dumps(groups, cls=HAWCDjangoJSONEncoder)
-
-    def get_dose_groups(self):
-        dose_units = []
-        dg = self.dose_groups.order_by('dose_group_id', 'dose_units')
-        for group in dg.distinct('dose_group_id'):
-            dose_units.append(dg.filter(dose_group_id=group.dose_group_id))
-        return dose_units
-
-    def get_doses_name_dict(self):
-        """
-        Return a dictionary where each key are the dose-units and each value is
-        a list of doses for this dosing regime of this dose-unit
-        """
-        doses = {}
-        dgs = self.dose_groups.order_by('dose_units', 'dose_group_id')
-        for dg in dgs.distinct('dose_units'):
-            dose_values = dgs.filter(dose_units=dg.dose_units)\
-                             .values_list('dose', flat=True)
-            doses[dg.dose_units.units] = list(dose_values)
-        return doses
-
     def get_doses_json(self, json_encode=True):
         doses = []
-        dgs = self.dose_groups.order_by('dose_units', 'dose_group_id')
+        dgs = self.dose_groups.order_by('dose_units_id', 'dose_group_id')
         for dg in dgs.distinct('dose_units'):
             dose_values = dgs.filter(dose_units=dg.dose_units)\
                              .values_list('dose', flat=True)
-            doses.append({'units': dg.dose_units.units,
-                          'units_id': dg.dose_units.pk,
-                          'values': list(dose_values)})
+            doses.append({
+                'id': dg.dose_units.id,
+                'name': dg.dose_units.name,
+                'values': list(dose_values)
+            })
         if json_encode:
             return json.dumps(doses, cls=HAWCDjangoJSONEncoder)
         else:
@@ -539,7 +517,7 @@ class DoseGroup(models.Model):
         for unit in units:
             v = None
             for s in ser:
-                if s["dose_units"]["units"] == unit:
+                if s["dose_units"]["name"] == unit:
                     v = s["dose"]
                     break
 
@@ -735,7 +713,6 @@ class Endpoint(BaseEndpoint):
         """
         Return a dictionary containing the doses available for the selected
         endpoint, and also saves a copy to the instance.
-        Format is a list: [{'units':'mg/kg/day', 'values':[1,2,3,4]},]
         """
         if not hasattr(self, 'doses'):
             self.doses = self.animal_group.get_doses_json(False)

@@ -117,7 +117,7 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['experiment']['cell_type']['cell_type'],
                 ser['experiment']['cell_type']['tissue'],
 
-                ser['experiment']['dose_units']['units'],
+                ser['experiment']['dose_units']['name'],
                 ser['experiment']['metabolic_activation'],
                 ser['experiment']['transfection'],
                 ser['experiment']['cell_line'],

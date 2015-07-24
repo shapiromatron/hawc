@@ -531,9 +531,6 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             .append('<i class="icon-chevron-right"></i>')
             .click(function(){self.buildTbl();});
 
-
-        if (window.isEditable) title.append(this.addActionsMenu());
-
         $el.empty()
            .append(this.$plotDiv)
            .append(this.$tblDiv);

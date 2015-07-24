@@ -231,7 +231,7 @@ class Visual(models.Model):
         qs = Endpoint.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
-        if self.visual_type==0:
+        if self.visual_type == 0:
             if request:
                 ids = request.POST.getlist('endpoints_1')
             else:
@@ -240,7 +240,7 @@ class Visual(models.Model):
             filters["id__in"] = ids
             qs = Endpoint.objects.filter(**filters)
 
-        elif self.visual_type==1:
+        elif self.visual_type == 1:
             if request:
                 try:
                     dose_id = int(request.POST.get('dose_units', -1))

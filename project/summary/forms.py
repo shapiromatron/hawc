@@ -16,7 +16,7 @@ def clean_slug(form):
     if form.instance.__class__.objects\
            .filter(assessment_id=form.instance.assessment_id, slug=slug)\
            .exclude(id=form.instance.id)\
-           .count()>0:
+           .count() > 0:
         raise forms.ValidationError("URL name must be unique for this assessment.")
     return slug
 

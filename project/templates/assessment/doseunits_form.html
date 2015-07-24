@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load selectable_tags %}
 {% load add_class %}
 
 {% block title %}{{assessment}} | Create Dose Units {% endblock title %}
@@ -38,3 +39,8 @@
   </form>
 
 {% endblock main_content %}
+
+
+{% block extrajs %}
+  {{ form.media }}
+{% endblock extrajs %}

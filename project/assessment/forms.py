@@ -173,12 +173,12 @@ class DoseUnitsForm(forms.ModelForm):
 
     class Meta:
         model = models.DoseUnits
-        fields = ("units", )
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
         super(DoseUnitsForm, self).__init__(*args, **kwargs)
-        self.fields['units'].widget = AutoCompleteWidget(
+        self.fields['name'].widget = AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup,
             allow_new=True)
         for fld in self.fields.keys():

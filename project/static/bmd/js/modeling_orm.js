@@ -87,8 +87,11 @@ Session.prototype = {
         });
     },
     submit_settings: function(){
-        var d = {'options':[], 'bmrs':[],
-                 'dose_units_id': this.endpoint.data.doses[this.endpoint.data.dose_units_index].units_id};
+        var d = {
+            'options':[],
+            'bmrs':[],
+            'dose_units_id': this.endpoint.dose_units_id
+        };
         d.endpoint_id =  this.endpoint.data.pk;
         this.option_files.forEach(function(v){
             d.options.push(v.send_settings());

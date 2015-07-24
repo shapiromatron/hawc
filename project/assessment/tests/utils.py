@@ -5,11 +5,7 @@ from assessment import models
 
 
 def build_dose_units_for_permission_testing(obj):
-    obj.dose_units = models.DoseUnits.objects.create(
-       units='mg/kg/day',
-       administered=True,
-       converted=True,
-       hed=True)
+    obj.dose_units = models.DoseUnits.objects.create(name='mg/kg/day')
 
 
 def build_species_for_permission_testing(obj):

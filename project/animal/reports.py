@@ -14,7 +14,7 @@ class EndpointDOCXReport(HAWCDOCXReport):
         # dictionary-mapping where keys are dose-units and doses are list of floats
         doses = {}
         for d in ag['dosing_regime']['doses']:
-            units = d['dose_units']['units']
+            units = d['dose_units']['name']
             if units not in doses:
                 doses[units] = []
             doses[units].append(d['dose'])

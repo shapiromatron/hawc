@@ -113,7 +113,7 @@ Exposure.prototype = {
             .add_tbody_tr_list("Known exposure routes", this.get_exposure_li())
             .add_tbody_tr("Measurement metric", this.data.metric)
             .add_tbody_tr("Measurement description", this.data.metric_description)
-            .add_tbody_tr("Measurement metric units", this.data.metric_units.units)
+            .add_tbody_tr("Measurement metric units", this.data.metric_units.name)
             .add_tbody_tr("Analytical method", this.data.analytical_method)
             .add_tbody_tr("Exposure description", this.data.exposure_description)
             .add_tbody_tr("Control description", this.data.control_description)

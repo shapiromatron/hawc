@@ -82,7 +82,7 @@ class AnimalGroup(TestCase):
             dose_group_id=1,
             dose=50.)
         self.assertEqual(
-            '[{{"units": "mg/kg/day", "values": [0.0, 50.0], "units_id": {0}}}]'.format(str(self.dose_units.pk)),
+            '[{{"name": "mg/kg/day", "values": [0.0, 50.0], "id_": {0}}}]'.format(str(self.dose_units.pk)),
             self.animal_group_working.get_doses_json())
 
 
@@ -91,11 +91,7 @@ class DosingRegime(TestCase):
     def setUp(self):
         utils.build_dosing_regimes_for_permission_testing(self)
 
-        self.alt_dose_units = DoseUnits.objects.create(
-            units='mg/L',
-            administered=True,
-            converted=True,
-            hed=True)
+        self.alt_dose_units = DoseUnits.objects.create(name='mg/L')
 
         self.dose_group_1 = models.DoseGroup.objects.create(
             dose_regime=self.dosing_regime_working,
@@ -124,18 +120,11 @@ class DosingRegime(TestCase):
     def test_dose_groups(self):
         self.assertTrue(len(self.dosing_regime_working.dose_groups) == 4)
 
-    def test_get_dose_groups(self):
-        v = self.dosing_regime_working.get_dose_groups()
-        self.assertEqual(v[0][0], self.dose_group_1)
-        self.assertEqual(v[0][1], self.alt_dose_group_1)
-        self.assertEqual(v[1][0], self.dose_group_2)
-        self.assertEqual(v[1][1], self.alt_dose_group_2)
-
     def test_get_doses_json(self):
         v = self.dosing_regime_working.get_doses_json(json_encode=False)
-        self.assertEqual(v[0]['units'], 'mg/kg/day')
+        self.assertEqual(v[0]['name'], 'mg/kg/day')
         self.assertItemsEqual(v[0]['values'], [0., 50.])
-        self.assertEqual(v[1]['units'], 'mg/L')
+        self.assertEqual(v[1]['name'], 'mg/L')
         self.assertItemsEqual(v[1]['values'], [100, 150.])
 
 
