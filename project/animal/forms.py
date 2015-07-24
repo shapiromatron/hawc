@@ -9,7 +9,8 @@ from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
-from assessment.lookups import EffectTagLookup
+from assessment.models import DoseUnits, Strain
+from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
 from study.lookups import AnimalStudyLookup
 from utils.forms import BaseFormHelper
 
@@ -132,7 +133,7 @@ class AnimalGroupForm(ModelForm):
             self.instance.experiment = parent
 
         if self.instance.id:
-            self.fields['strain'].queryset = models.Strain.objects.filter(
+            self.fields['strain'].queryset = Strain.objects.filter(
                 species=self.instance.species)
 
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
@@ -178,8 +179,8 @@ class AnimalGroupForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.form_id = "animal_group"
-        helper.add_adder("addSpecies", "Add new species", '{% url "animal:species_create" assessment.pk %}')
-        helper.add_adder("addStrain", "Add new strain", '{% url "animal:strain_create" assessment.pk %}')
+        helper.add_adder("addSpecies", "Add new species", '{% url "assessment:species_create" assessment.pk %}')
+        helper.add_adder("addStrain", "Add new strain", '{% url "assessment:strain_create" assessment.pk %}')
         helper.add_fluid_row('species', 3, "span4")
         helper.add_fluid_row('lifestage_exposed', 3, "span4")
         if "generation" in self.fields:
@@ -520,50 +521,6 @@ class UploadFileForm(forms.Form):
     file = forms.FileField()
 
 
-class SpeciesForm(ModelForm):
-
-    class Meta:
-        model = models.Species
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('parent', None)
-        super(SpeciesForm, self).__init__(*args, **kwargs)
-
-    def clean_name(self):
-        return self.cleaned_data['name'].title()
-
-
-class StrainForm(ModelForm):
-
-    class Meta:
-        model = models.Strain
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('parent', None)
-        super(StrainForm, self).__init__(*args, **kwargs)
-
-    def clean_name(self):
-        return self.cleaned_data['name'].title()
-
-
-class DoseUnitsForm(ModelForm):
-
-    class Meta:
-        model = models.DoseUnits
-        fields = ("units", )
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('parent', None)
-        super(DoseUnitsForm, self).__init__(*args, **kwargs)
-        self.fields['units'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.DoseUnitsLookup,
-            allow_new=True)
-        for fld in self.fields.keys():
-            self.fields[fld].widget.attrs['class'] = 'span12'
-
-
 class EndpointFilterForm(forms.Form):
 
     studies = selectable.AutoCompleteSelectMultipleField(
@@ -592,13 +549,13 @@ class EndpointFilterForm(forms.Form):
 
     species = selectable.AutoCompleteSelectField(
         label='Species',
-        lookup_class=lookups.SpeciesLookup,
+        lookup_class=SpeciesLookup,
         help_text="ex: Mouse",
         required=False)
 
     strain = selectable.AutoCompleteSelectField(
         label='Strain',
-        lookup_class=lookups.StrainLookup,
+        lookup_class=StrainLookup,
         help_text="ex: B6C3F1",
         required=False)
 
@@ -638,7 +595,7 @@ class EndpointFilterForm(forms.Form):
         required=False)
 
     dose_units = forms.ModelChoiceField(
-       queryset=models.DoseUnits.objects.all(),
+       queryset=DoseUnits.objects.all(),
        required=False
     )
 

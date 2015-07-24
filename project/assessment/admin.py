@@ -49,6 +49,25 @@ class AssessmentAdmin(admin.ModelAdmin):
     get_reviewers.allow_tags = True
 
 
+class DoseUnitsAdmin(admin.ModelAdmin):
+    list_display = ('units',
+                    'animal_dose_group_count',
+                    'epi_exposure_count',
+                    'invitro_experiment_count')
+
+
+class SpeciesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', )
+    list_display_links = ('name', )
+
+
+class StrainAdmin(admin.ModelAdmin):
+    list_select_related = ('species', )
+    list_display = ('id', 'name', 'species')
+    list_display_links = ('name', )
+    list_filter = ('species', )
+
+
 class EffectTagAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'id')
     search_fields = ('name', )
@@ -79,6 +98,9 @@ class ReportTemplateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Assessment, AssessmentAdmin)
+admin.site.register(models.DoseUnits, DoseUnitsAdmin)
+admin.site.register(models.Species, SpeciesAdmin)
+admin.site.register(models.Strain, StrainAdmin)
 admin.site.register(models.EffectTag, EffectTagAdmin)
 admin.site.register(models.ChangeLog, ChangeLogAdmin)
 admin.site.register(models.ReportTemplate, ReportTemplateAdmin)

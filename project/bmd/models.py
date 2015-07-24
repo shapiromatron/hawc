@@ -31,7 +31,7 @@ LOGIC_BIN_CHOICES = (
 class BMD_session(models.Model):
     endpoint = models.ForeignKey('animal.Endpoint',
                                  related_name='BMD_session', null=True)
-    dose_units = models.ForeignKey('animal.DoseUnits')
+    dose_units = models.ForeignKey('assessment.DoseUnits')
     BMDS_version = models.CharField(max_length=10, choices=BMDS_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

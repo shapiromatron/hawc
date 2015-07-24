@@ -182,7 +182,7 @@ class Visual(models.Model):
     visual_type = models.PositiveSmallIntegerField(
         choices=VISUAL_CHOICES)
     dose_units = models.ForeignKey(
-        'animal.DoseUnits',
+        'assessment.DoseUnits',
         blank=True,
         null=True)
     prefilters = models.TextField(
@@ -417,7 +417,7 @@ class DataPivotQuery(DataPivot):
         choices=Study.STUDY_TYPE_CHOICES,
         default=0)
     units = models.ForeignKey(
-        'animal.doseunits',
+        'assessment.doseunits',
         blank=True,
         null=True,
         help_text="If kept-blank, dose-units will be random for each "

@@ -2,12 +2,11 @@ import json
 
 from django.db.models import Q
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, FormView
+from django.views.generic.edit import CreateView, UpdateView
 
-from assessment.models import Assessment
+from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from utils.views import (MessageMixin, CanCreateMixin,
@@ -143,7 +142,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         context["crud"] = self.crud
         context["experiment"] = self.experiment
         context["assessment"] = self.assessment
-        context["dose_types"] = models.DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.json_all()
 
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
@@ -189,7 +188,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = models.DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.json_all()
         return context
 
 
@@ -263,7 +262,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = models.DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.json_all()
 
         if self.request.method == 'POST':  # send back dose-group errors
             context['dose_groups_json'] = self.request.POST['dose_groups_json']
@@ -468,44 +467,6 @@ class EndpointsFixedReport(GenerateFixedReport):
 
     def get_context(self, queryset):
         return self.model.get_docx_template_context(self.assessment, queryset)
-
-
-# Assorted helper functions
-class getStrains(TemplateView):
-    # Return the valid strains for the requested species in JSON
-
-    def get(self, request, *args, **kwargs):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get('species'))
-            strains = list(models.Strain.objects.filter(species=sp).values('id', 'name'))
-        except:
-            pass
-        return HttpResponse(json.dumps(strains), content_type="application/json")
-
-
-class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):
-    success_message = 'Species created.'
-    parent_model = Assessment
-    parent_template_name = 'assessment'
-    model = models.Species
-    form_class = forms.SpeciesForm
-
-
-class StrainCreate(CloseIfSuccessMixin, BaseCreate):
-    success_message = 'Strain created.'
-    parent_model = Assessment
-    parent_template_name = 'assessment'
-    model = models.Strain
-    form_class = forms.StrainForm
-
-
-class DoseUnitsCreate(CloseIfSuccessMixin, BaseCreate):
-    success_message = 'Dose units created.'
-    parent_model = Assessment
-    parent_template_name = 'assessment'
-    model = models.DoseUnits
-    form_class = forms.DoseUnitsForm
 
 
 class FullExport(BaseList):

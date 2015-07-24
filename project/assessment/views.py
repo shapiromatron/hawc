@@ -276,6 +276,43 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.EffectTagForm
 
 
+class getStrains(TemplateView):
+    # Return the valid strains for the requested species in JSON
+
+    def get(self, request, *args, **kwargs):
+        strains = []
+        try:
+            sp = models.Species.objects.get(pk=request.GET.get('species'))
+            strains = list(models.Strain.objects.filter(species=sp).values('id', 'name'))
+        except:
+            pass
+        return HttpResponse(json.dumps(strains), content_type="application/json")
+
+
+class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):
+    success_message = 'Species created.'
+    parent_model = models.Assessment
+    parent_template_name = 'assessment'
+    model = models.Species
+    form_class = forms.SpeciesForm
+
+
+class StrainCreate(CloseIfSuccessMixin, BaseCreate):
+    success_message = 'Strain created.'
+    parent_model = models.Assessment
+    parent_template_name = 'assessment'
+    model = models.Strain
+    form_class = forms.StrainForm
+
+
+class DoseUnitsCreate(CloseIfSuccessMixin, BaseCreate):
+    success_message = 'Dose units created.'
+    parent_model = models.Assessment
+    parent_template_name = 'assessment'
+    model = models.DoseUnits
+    form_class = forms.DoseUnitsForm
+
+
 class BaseEndpointList(BaseList):
     parent_model = models.Assessment
     model = models.BaseEndpoint

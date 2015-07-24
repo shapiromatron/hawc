@@ -328,9 +328,9 @@ var HAWCUtils = {
         return (value) ? "☑" : "☒";
     },
     newWindowPopupLink: function(triggeringLink) {
-        //Force new window to be a popup window
+        // Force new window to be a popup window
         href = triggeringLink.href + '?_popup=1';
-        var win = window.open(href, "_blank", 'height=500,width=800,resizable=yes,scrollbars=yes');
+        var win = window.open(href, "_blank", 'height=500,width=980,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
     },

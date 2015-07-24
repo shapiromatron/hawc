@@ -41,11 +41,5 @@ urlpatterns = [
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
 
-    # (Other)
-    url(r'^strains/', views.getStrains.as_view(), name='get_strains'),
-    url(r'^assessment/(?P<pk>\d+)/species/create/$', views.SpeciesCreate.as_view(), name='species_create'),
-    url(r'^assessment/(?P<pk>\d+)/strain/create/$', views.StrainCreate.as_view(), name='strain_create'),
-    url(r'^assessment/(?P<pk>\d+)/dose-units/create/$', views.DoseUnitsCreate.as_view(), name='dose_units_create'),
-
     url(r'^api/', include(router.urls))
 ]

@@ -5,16 +5,6 @@ from . import models
 from utils.lookups import DistinctStringLookup
 
 
-class SpeciesLookup(ModelLookup):
-    model = models.Species
-    search_fields = ('name__icontains', )
-
-
-class StrainLookup(ModelLookup):
-    model = models.Strain
-    search_fields = ('name__icontains', )
-
-
 class ExperimentCASLookup(DistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
@@ -28,10 +18,6 @@ class AnimalGroupLifestageExposedLookup(DistinctStringLookup):
 class AnimalGroupLifestageAssessedLookup(DistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_assessed"
-
-
-class DoseUnitsLookup(ModelLookup):
-    model = models.DoseUnits
 
 
 class EndpointSystemLookup(DistinctStringLookup):
@@ -118,12 +104,9 @@ class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
         )
 
 
-registry.register(SpeciesLookup)
-registry.register(StrainLookup)
 registry.register(ExperimentCASLookup)
 registry.register(AnimalGroupLifestageExposedLookup)
 registry.register(AnimalGroupLifestageAssessedLookup)
-registry.register(DoseUnitsLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)

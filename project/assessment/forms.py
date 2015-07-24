@@ -141,6 +141,50 @@ class AttachmentForm(forms.ModelForm):
         return helper
 
 
+class SpeciesForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Species
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('parent', None)
+        super(SpeciesForm, self).__init__(*args, **kwargs)
+
+    def clean_name(self):
+        return self.cleaned_data['name'].title()
+
+
+class StrainForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Strain
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('parent', None)
+        super(StrainForm, self).__init__(*args, **kwargs)
+
+    def clean_name(self):
+        return self.cleaned_data['name'].title()
+
+
+class DoseUnitsForm(forms.ModelForm):
+
+    class Meta:
+        model = models.DoseUnits
+        fields = ("units", )
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('parent', None)
+        super(DoseUnitsForm, self).__init__(*args, **kwargs)
+        self.fields['units'].widget = AutoCompleteWidget(
+            lookup_class=lookups.DoseUnitsLookup,
+            allow_new=True)
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span12'
+
+
 class EffectTagForm(forms.ModelForm):
 
     class Meta:

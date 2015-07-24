@@ -311,6 +311,89 @@ def default_configuration(sender, instance, created, **kwargs):
         get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
 
 
+class DoseUnits(models.Model):
+    units = models.CharField(
+        max_length=20,
+        unique=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "dose units"
+
+    @property
+    def animal_dose_group_count(self):
+        return self.dosegroup_set.count()
+
+    @property
+    def epi_exposure_count(self):
+        return self.exposure_set.count()
+
+    @property
+    def invitro_experiment_count(self):
+        return self.ivexperiments.count()
+
+    @classmethod
+    def json_all(cls):
+        return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
+
+    # @classmethod
+    # def doses_in_assessment(cls, assessment):
+    #     """
+    #     Returns a list of the dose-units which are used in the selected
+    #     assessment for animal bioassay data.
+    #     """
+    #     Study = models.get_model('study', 'Study')
+    #     return DoseUnits.objects.filter(dosegroup__in=
+    #                 DoseGroup.objects.filter(dose_regime__in=
+    #                 DosingRegime.objects.filter(dosed_animals__in=
+    #                 AnimalGroup.objects.filter(experiment__in=
+    #                 Experiment.objects.filter(study__in=
+    #                 Study.objects.filter(assessment=assessment)))))) \
+    #             .values_list('units', flat=True).distinct()
+
+    def __unicode__(self):
+        return self.name
+
+
+class Species(models.Model):
+    name = models.CharField(
+        max_length=30,
+        help_text="Enter species in singular (ex: Mouse, not Mice)",
+        unique=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "species"
+        ordering = ("name", )
+
+    def __unicode__(self):
+        return self.name
+
+
+class Strain(models.Model):
+    species = models.ForeignKey(
+        Species)
+    name = models.CharField(
+        max_length=30)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        unique_together = (("species", "name"),)
+        ordering = ("species", "name")
+
+    def __unicode__(self):
+        return self.name
+
+
 class EffectTag(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(max_length=128, unique=True,
@@ -493,6 +576,8 @@ class ReportTemplate(models.Model):
 
 reversion.register(Assessment)
 reversion.register(EffectTag)
+reversion.register(Species)
+reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)
 reversion.register(ReportTemplate)

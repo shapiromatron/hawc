@@ -21,42 +21,6 @@ from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 
 
-class Species(models.Model):
-    name = models.CharField(
-        max_length=30,
-        help_text="Enter species in singular (ex: Mouse, not Mice)",
-        unique=True)
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
-
-    class Meta:
-        verbose_name_plural = "species"
-        ordering = ("name", )
-
-    def __unicode__(self):
-        return self.name
-
-
-class Strain(models.Model):
-    species = models.ForeignKey(
-        Species)
-    name = models.CharField(
-        max_length=30)
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
-
-    class Meta:
-        unique_together = (("species", "name"),)
-        ordering = ("species", "name")
-
-    def __unicode__(self):
-        return self.name
-
-
 class Experiment(models.Model):
 
     EXPERIMENT_TYPE_CHOICES = (
@@ -249,9 +213,9 @@ class AnimalGroup(models.Model):
         help_text="Short description of the animals (i.e. Male Fischer F344 rats, Female C57BL/6 mice)"
         )
     species = models.ForeignKey(
-        Species)
+        'assessment.Species')
     strain = models.ForeignKey(
-        Strain)
+        'assessment.Strain')
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
@@ -386,60 +350,6 @@ class AnimalGroup(models.Model):
             ser['species'],
             ser['strain']
         )
-
-
-class DoseUnits(models.Model):
-    units = models.CharField(
-        max_length=20,
-        unique=True)
-    administered = models.BooleanField(
-        default=False)
-    converted = models.BooleanField(
-        default=False)
-    hed = models.BooleanField(
-        default=False,
-        verbose_name="Human Equivalent Dose")
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
-
-    class Meta:
-        verbose_name_plural = "dose units"
-
-    @property
-    def animal_dose_group_count(self):
-        return self.dosegroup_set.count()
-
-    @property
-    def epi_exposure_count(self):
-        return self.exposure_set.count()
-
-    @property
-    def invitro_experiment_count(self):
-        return self.ivexperiments.count()
-
-    @classmethod
-    def json_all(cls):
-        return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
-
-    @classmethod
-    def doses_in_assessment(cls, assessment):
-        """
-        Returns a list of the dose-units which are used in the selected
-        assessment for animal bioassay data.
-        """
-        Study = models.get_model('study', 'Study')
-        return DoseUnits.objects.filter(dosegroup__in=
-                    DoseGroup.objects.filter(dose_regime__in=
-                    DosingRegime.objects.filter(dosed_animals__in=
-                    AnimalGroup.objects.filter(experiment__in=
-                    Experiment.objects.filter(study__in=
-                    Study.objects.filter(assessment=assessment)))))) \
-                .values_list('units', flat=True).distinct()
-
-    def __unicode__(self):
-        return self.units
 
 
 class DosingRegime(models.Model):
@@ -607,7 +517,7 @@ class DoseGroup(models.Model):
         DosingRegime,
         related_name='doses')
     dose_units = models.ForeignKey(
-        DoseUnits)
+        'assessment.DoseUnits')
     dose_group_id = models.PositiveSmallIntegerField()
     dose = models.FloatField(
         validators=[MinValueValidator(0)])
@@ -1242,11 +1152,8 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     Endpoint.delete_caches(ids)
 
 
-reversion.register(Species)
-reversion.register(Strain)
 reversion.register(Experiment)
 reversion.register(AnimalGroup)
-reversion.register(DoseUnits)
 reversion.register(DosingRegime)
 reversion.register(DoseGroup)
 reversion.register(Endpoint, follow=('groups', ))

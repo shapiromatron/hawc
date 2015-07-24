@@ -9,6 +9,20 @@ class AssessmentLookup(ModelLookup):
     search_fields = ('name__icontains', )
 
 
+class SpeciesLookup(ModelLookup):
+    model = models.Species
+    search_fields = ('name__icontains', )
+
+
+class StrainLookup(ModelLookup):
+    model = models.Strain
+    search_fields = ('name__icontains', )
+
+
+class DoseUnitsLookup(ModelLookup):
+    model = models.DoseUnits
+
+
 class BaseEndpointLookup(ModelLookup):
     model = models.BaseEndpoint
     search_fields = ('name__icontains', )
@@ -20,5 +34,8 @@ class EffectTagLookup(ModelLookup):
 
 
 registry.register(AssessmentLookup)
-registry.register(BaseEndpointLookup)
+registry.register(SpeciesLookup)
+registry.register(DoseUnitsLookup)
+registry.register(StrainLookup)
 registry.register(EffectTagLookup)
+registry.register(BaseEndpointLookup)

@@ -71,6 +71,24 @@ urlpatterns = [
         views.ReportTemplateDelete.as_view(),
         name='template_delete'),
 
+    # species
+    url(r'^assessment/(?P<pk>\d+)/species/create/$',
+        views.SpeciesCreate.as_view(),
+        name='species_create'),
+
+    # strain
+    url(r'^strains/',
+        views.getStrains.as_view(),
+        name='get_strains'),
+    url(r'^assessment/(?P<pk>\d+)/strain/create/$',
+        views.StrainCreate.as_view(),
+        name='strain_create'),
+
+    # dose units
+    url(r'^assessment/(?P<pk>\d+)/dose-units/create/$',
+        views.DoseUnitsCreate.as_view(),
+        name='dose_units_create'),
+
     # endpoint objects
     url(r'^(?P<pk>\d+)/endpoints/$',
         views.BaseEndpointList.as_view(),

@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse
 import reversion
 
 from assessment.models import BaseEndpoint
-from animal.models import DoseUnits
 from utils.helper import SerializerHelper
 from utils.models import AssessmentRootedTagTree
 
@@ -150,7 +149,7 @@ class IVExperiment(models.Model):
         blank=True,
         help_text="Additional details related to controls")
     dose_units = models.ForeignKey(
-        DoseUnits,
+        'assessment.DoseUnits',
         related_name='ivexperiments')
 
     def __unicode__(self):

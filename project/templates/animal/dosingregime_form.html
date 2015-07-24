@@ -29,7 +29,7 @@
     <legend>Dose-groups
       <span class='pull-right'>
         <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-        <a class='btn btn-primary' href="{% url 'animal:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+        <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
       </span>
     </legend>
 

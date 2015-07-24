@@ -6,10 +6,9 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.views.generic import TemplateView
-from django.views.generic.edit import UpdateView
 
-from assessment.models import Assessment
-from animal.models import Endpoint, DoseUnits
+from assessment.models import Assessment, DoseUnits
+from animal.models import Endpoint
 from utils.views import (BaseCreate, BaseUpdate, BaseDetail)
 
 from bmds.bmds import BMDS

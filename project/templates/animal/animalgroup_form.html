@@ -46,7 +46,7 @@
         <legend>Dose-groups
           <span class='pull-right'>
             <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary' href="{% url 'animal:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
           </span>
         </legend>
 
@@ -79,7 +79,7 @@
       // load strains
       var load_strains = function(){
         // only show proper strains for a given species
-        $.get('{% url 'animal:get_strains' %}',{'species': $('#id_species').val()}, function(d){
+        $.get('{% url 'assessment:get_strains' %}',{'species': $('#id_species').val()}, function(d){
           $('#id_strain').prop("disabled", true);
           var selected = $('#id_strain option:selected').val();
           var opts = ['<option value="">---------</option>'];

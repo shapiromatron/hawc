@@ -14,7 +14,6 @@ import reversion
 
 from assessment.models import BaseEndpoint
 from assessment.serializers import AssessmentSerializer
-from animal.models import DoseUnits
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
 
@@ -587,7 +586,7 @@ class Exposure(models.Model):
     metric = models.TextField(
         verbose_name="Measurement Metric")
     metric_units = models.ForeignKey(
-        DoseUnits)
+        'assessment.DoseUnits')
     metric_description = models.TextField(
         verbose_name="Measurement Description")
     analytical_method = models.TextField(
