@@ -569,7 +569,15 @@ class Prefilter(object):
         return self.form.__class__.__name__
 
     def setInitialForm(self):
-        prefilters = json.loads(self.form.instance.prefilters)
+        try:
+            if self.form.instance.id is not None:
+                txt = self.form.instance.prefilters
+            else:
+                txt = self.form.initial.get('prefilters', "{}")
+            prefilters = json.loads(txt)
+        except ValueError:
+            prefilters = {}
+
         for k, v in prefilters.iteritems():
             if k == "system__in":
                 self.form.fields["systems"].initial = v
