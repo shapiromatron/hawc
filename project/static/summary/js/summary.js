@@ -1,14 +1,13 @@
-var SummaryTextTree = function(options, callback){
+var SummaryTextTree = function(options){
     var self = this;
     this.options = options;
     this.root = undefined;
     this.get_summaries();
-    if(callback){this.callback=callback;}
 };
 SummaryTextTree.prototype = {
     get_summaries: function(){
         var self = this,
-            url = '/summary/assessment/{0}/summaries/json/'.printf(this.options.assessment_id);
+            url = SummaryText.assessment_list_url(this.options.assessment_id);
         $.get(url, function(d){
             self.root = new SummaryText(d[0], 1, self, 0);
             if((self.root.data.comments) && (self.root.data.comments.length>0)){
@@ -25,28 +24,26 @@ SummaryTextTree.prototype = {
         this.render_docheaders();
         this.render_doctext();
         this.enable_affix();
-        if(this.callback){this.callback();}
+        this._setSmartTags();
     },
     _unpack_comments: function(){
-        var self = this;
-        this.root.data.comments.forEach(function(v){
-            self.root._add_comment(v);
-        });
+        _.each(this.root.data.comments, function(d){
+            this.root._add_comment(d);
+        }, this);
     },
     _update_modified: function(){
         this.options.update_textdiv.fadeOut();
         this.render_doctree();
         this.set_modify_events();
-        if(this.callback){this.callback();}
     },
     render_docheaders: function(){
-        var contents = [];
-        var txt = '<li><a href="#"><i>No summary-text is available.</i></a></li>';
+        var contents = [], txt;
         if (this.root.children.length===0){
+            txt = '<li><a href="#"><i>No summary-text is available.</i></a></li>';
             contents.push(txt);
         } else {
-            this.root.children.forEach(function(v){
-                v.render_header(contents);
+            _.each(this.root.children, function(d){
+                d.render_header(contents);
             });
         }
         this.options.read_headers_ul.html(contents);
@@ -63,91 +60,76 @@ SummaryTextTree.prototype = {
         this.options.read_text_div.html(contents);
     },
     update_textdiv: function(obj){
-
+        this.selected = obj;
         var self = this,
-            new_object = (obj===undefined),
-            parent_options = function(summary_text, new_object){
+            isNew = (obj===undefined),
+            parent_options = function(){
                 var lst = [],
                     select = self.options.update_textdiv.find('select#id_parent');
                 self.root.get_option_item(lst);
                 select.html(lst);
-                if(!new_object){
-                    select.find('option[value="{0}"]'.printf(summary_text.parent.id)).prop('selected', true);
+                if(!isNew){
+                    select.find('option[value="{0}"]'.printf(obj.parent.id)).prop('selected', true);
                 }
-            }, sibling_options = function(summary_text, new_object){
+            }, sibling_options = function(){
                 var select = self.options.update_textdiv.find('select#id_sibling'),
                     text_node_id = parseInt(self.options.update_textdiv.find('select#id_parent option:selected').val(), 10),
-                    lst =['<option value="-1">(none)</option>'],
+                    lst =['<option value="">(none)</option>'],
                     parent = self.get_summarytext_node(text_node_id);
                 parent.get_children_option_items(lst);
                 select.html(lst);
-                if(!new_object){
-                    select.find('option[value="{0}"]'.printf(summary_text.get_prior_sibling_id())).prop('selected', true);
+                if(!isNew){
+                    select.find('option[value="{0}"]'.printf(obj.get_prior_sibling_id())).prop('selected', true);
                 }
-            }, load_contents = function(obj){
-                self.options.update_textdiv.find('#id_delete').prop('checked', false);
+            }, load_contents = function(){
+
                 if (obj){
                     self.options.update_textdiv.find('#id_title').val(obj.data.title);
                     self.options.update_textdiv.find('#id_slug').val(obj.data.slug);
-                    self.options.update_smart_tag_editor.setValue(obj.data.text);
+                    self.options.text_editor.setContent(obj.data.text);
                     self.options.update_textdiv.find('#id_text').val(obj.data.text);
-                    self.options.update_textdiv.find('#id_id').val(obj.id);
                 } else {
                     self.options.update_textdiv.find('#id_title').val("");
                     self.options.update_textdiv.find('#id_slug').val("");
-                    self.options.update_smart_tag_editor.setValue("");
-                    self.options.update_textdiv.find('#id_id').val("-1");
+                    self.options.text_editor.setContent("");
                 }
-                SmartTag.initialize_tags($(self.options.update_smart_tag_editor.composer.element));
             },
-            legend_text;
+            toggleEditOptions = function(isNew){
+                var sel = self.options.update_textdiv.find("#deleteSTBtn");
+                (isNew) ? sel.hide() : sel.show();
+            };
 
-        if (obj){
-            self._show_move_node_options(false);
-            legend_text = 'Update {0}'.printf(obj.data.title);
-            load_contents(obj);
-        } else {
-            obj = self.root;
-            self._show_move_node_options(true);
-            legend_text = 'Create new section';
-            load_contents();
-        }
-
-        parent_options(obj, new_object);
-        sibling_options(obj, new_object);
-        self.options.update_textdiv.find('legend.summary_text_legend').text(legend_text);
+        load_contents();
+        toggleEditOptions();
+        parent_options();
+        sibling_options();
         self.options.update_textdiv.fadeIn();
         self.options.update_textdiv.find('select#id_parent')
-            .on('change', function(){sibling_options(obj, new_object);});
-    },
-    _show_move_node_options: function(show){
-        if(show){
-            this.options.update_textdiv.find("select#id_parent").parent().parent().fadeIn();
-            this.options.update_textdiv.find("select#id_sibling").parent().parent().fadeIn();
-        } else {
-            this.options.update_textdiv.find("select#id_parent").parent().parent().fadeOut();
-            this.options.update_textdiv.find("select#id_sibling").parent().parent().fadeOut();
-        }
+            .on('change', function(){sibling_options(obj, isNew);});
     },
     set_modify_events: function(){
         var self = this;
 
-        this.options.update_new.unbind()
+        this.options.update_new
+            .unbind()
             .on('click', function(){self.update_textdiv();});
 
-        this.options.update_move.unbind()
-            .on('click', function(){self._show_move_node_options(true);});
-
-        this.options.update_textdiv.find('form').unbind()
-            .submit(function(e){e.preventDefault(); self.submit();});
-
-        this.options.update_delete.unbind()
-            .on('click', function(){
-                self.options.update_textdiv.find('form #id_delete').prop('checked', true);
+        this.options.update_textdiv.find('form')
+            .unbind()
+            .submit(function(e){
+                e.preventDefault();
                 self.submit();
             });
 
-        this.options.update_doctree.unbind()
+        this.options.update_delete
+            .unbind()
+            .on('click', function(){
+                var url = SummaryText.delete_url(self.selected.id);
+                $.post(url, $.proxy(self._redraw, self));
+            });
+
+        this.options.update_doctree
+            .unbind()
             .on('click', '.summary_toc', function(){
                 self.update_textdiv($(this).data('d'));
             });
@@ -174,27 +156,24 @@ SummaryTextTree.prototype = {
         return node;
     },
     submit: function(){
-        var self = this,
-            smart_tag_object = this.options.update_smart_tag_editor,
-            post = function(){
-                smart_tag_object.synchronizer.sync();
-                var form = self.options.update_textdiv.find('form'),
-                    data = form.serialize();
-                $.post('.', data, function(d){
-                    if (d.status=="ok"){
-                        self.root = new SummaryText(d.content[0], 1, self);
-                        self._update_modified();
-                    } else {
-                        console.log(d.content);
-                    }
-                });
-            };
-
-        $.when(
-            InlineRendering.reset_renderings($(smart_tag_object.composer.doc))
-        ).done(
-            post()
-        );
+        this.options.text_editor.prepareSubmission();
+        var form = this.options.update_textdiv.find('form'),
+            data = form.serialize(),
+            url = '.';
+        if (this.selected && this.selected.id){
+            url = SummaryText.update_url(this.selected.id);
+        }
+        $.post(url, data, $.proxy(this._redraw, this));
+        return false;
+    },
+    _redraw: function(res){
+        this.options.update_textdiv.find(".alert").remove();
+        if (res.status=="ok"){
+            this.root = new SummaryText(res.content[0], 1, this);
+            this._update_modified();
+        } else {
+            HAWCUtils.addAlert(res, this.options.update_textdiv);
+        }
     },
     enable_affix: function(){
         $('.affix-sidenav a').click(function(e){
@@ -207,6 +186,9 @@ SummaryTextTree.prototype = {
         $('[data-spy="scroll"]').each(function () {
             var $spy = $(this).scrollspy('refresh');
         });
+    },
+    _setSmartTags: function(){
+        new SmartTagHolder(this.options.read_text_div, undefined, {showOnStartup: true});
     }
 };
 
@@ -239,6 +221,17 @@ var SummaryText = function(obj, depth, tree, sibling_id, parent){
     }
     this.children = children;
 };
+_.extend(SummaryText, {
+    update_url: function(id){
+        return "/summary/{0}/update/".printf(id);
+    },
+    delete_url: function(id){
+        return "/summary/{0}/delete/".printf(id);
+    },
+    assessment_list_url: function(assessment_id){
+        return '/summary/assessment/{0}/summaries/json/'.printf(assessment_id);
+    }
+});
 SummaryText.prototype = {
     get_option_item: function(lst){
         var title = (this.depth===1) ? "(document root)" : this.data.title;

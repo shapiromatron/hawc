@@ -29,13 +29,19 @@ class BaseFormHelper(cf.FormHelper):
             layout.insert(1, cfl.HTML("""<p class="help-block">{}</p><br>""".format(self.kwargs.get('help_text'))))
 
         if self.kwargs.get('cancel_url'):
-            layout.append(
-                cfb.FormActions(
-                    cfl.Submit('save', 'Save'),
-                    cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(self.kwargs.get('cancel_url'))),
-            ))
+            self.addCustomFormActions(layout, [
+                cfl.Submit('save', 'Save'),
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(self.kwargs.get('cancel_url')))
+            ])
+
+        if self.kwargs.get('form_actions'):
+            self.addCustomFormActions(layout, self.kwargs.get('form_actions'))
 
         return layout
+
+    @classmethod
+    def addCustomFormActions(cls, layout, items):
+        layout.append(cfb.FormActions(*items))
 
     def add_adder(self, cls, title, url):
         """

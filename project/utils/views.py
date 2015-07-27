@@ -27,7 +27,8 @@ class MessageMixin(object):
     """
     def send_message(self):
         logging.debug('MessagingMixin called')
-        messages.success(self.request, self.success_message, extra_tags='alert alert-success')
+        if self.success_message is not None:
+            messages.success(self.request, self.success_message, extra_tags='alert alert-success')
 
     def delete(self, request, *args, **kwargs):
         self.send_message()

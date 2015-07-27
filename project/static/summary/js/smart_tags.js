@@ -69,6 +69,63 @@ _.extend(SmartTag.prototype, {
 });
 
 
+var SmartTagHolder = function($el, content, options){
+    this.$el = $el;
+
+    if (content){
+        this.$el.html(content);
+    }
+
+    this.$el.on('smartTagDivReady', function(){
+        SmartTag.initialize_tags($el)
+    });
+
+    if (options.showOnStartup) this.divReady();
+}
+_.extend(SmartTagHolder.prototype, {
+    divReady: function(){
+        this.$el.trigger('smartTagDivReady');
+    }
+});
+
+
+var SmartTagEditor = function($el){
+    this.$el = $el
+    this.init();
+}
+_.extend(SmartTagEditor.prototype, {
+    init: function(){
+      this.$el
+        .css("height", "300px")
+        .wysihtml5({
+          "smartTag": true,
+          "smartTagModal": "#smartTagModal",
+          "font-styles": false,
+          "stylesheets": [
+            "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css",
+            "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css",
+            "/static/css/hawc.css",
+            "/static/css/d3.css"
+          ]
+        });
+
+      var editor = this.$el.data("wysihtml5").editor;
+      editor.on("load", function(){
+        SmartTag.initialize_tags($(editor.composer.doc));
+      });
+      this.editor = editor;
+    },
+    prepareSubmission: function(){
+        InlineRendering.reset_renderings($(this.editor.composer.doc))
+        this.editor.synchronizer.sync();
+    },
+    setContent: function(content){
+        this.editor.setValue(content);
+        SmartTag.initialize_tags($(this.editor.composer.element));
+    }
+});
+
+
 InlineRendering = function(data){
     this.data = data;
     this.$title = $('<div class="row-fluid inlineSmartTagTitle">');
@@ -85,7 +142,6 @@ _.extend(InlineRendering, {
     reset_renderings: function($frame){
         $frame = $frame || $(document);
         $frame.find('.inlineSmartTagContainer').each(function(){
-            console.log($(this).data('obj'))
             $(this).data('obj').reset_rendering();
         });
     },

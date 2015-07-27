@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load url from future %}
-
 {% block title %}
   {{assessment}} | Summaries | HAWC
 {% endblock %}
@@ -27,55 +25,54 @@
   </div>
 
   <div class="row-fluid">
-
-
-  </div>
-
-  <div class="row-fluid">
     <div id="sidebar" class="span3">
       <ul id="st_headers_ul" class="nav nav-list well affix-sidenav" data-spy="affix" data-offset-top="65">
       </ul>
     </div>
 
     <div class="span9">
-      <h1>{{assessment}} Summary<div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
-          {% if obj_perms.edit %}
-            <li><a href="{% url 'summary:modify' assessment.pk %}">Update text</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </h1>
-        <div id="st_text_div"></div>
+
+      <h1>{{assessment}} Summary
+        <div class="btn-group pull-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
+            {% if obj_perms.edit %}
+              <li><a href="{% url 'summary:create' assessment.pk %}">Update text</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </h1>
+
+      <div id="st_text_div"></div>
+
     </div>
   </div>
 {% endblock %}
+
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
 
-      var load_smart_tags = function(){
-        SmartTag.initialize_tags();
-        $('#smart_tag_toggle').on('click', function(e){SmartTag.toggle_disabled(e);})
-      }
-
-      window.assessment_pk = {{assessment.pk}};
       window.comment_module_enabled = {{assessment.enable_comments|lower}};
-      window.stt = new SummaryTextTree(
-          {
-            "assessment_id": {{assessment.pk}},
-            "mode": "read",
-            "read_headers_ul": $('#st_headers_ul'),
-            "read_text_div": $('#st_text_div'),
-            "commenting_public": {{assessment.comment_settings.public_comments|lower}},
-            "commenting_enabled": {{assessment.comment_settings.allow_comments|lower}},
-            "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
-          }, load_smart_tags);
+
+      new SummaryTextTree({
+        "assessment_id": {{assessment.pk}},
+        "mode": "read",
+        "read_headers_ul": $('#st_headers_ul'),
+        "read_text_div": $('#st_text_div'),
+        "commenting_public": {{assessment.comment_settings.public_comments|lower}},
+        "commenting_enabled": {{assessment.comment_settings.allow_comments|lower}},
+        "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
+      });
+
+      $('#smart_tag_toggle').on('click', function(e){
+        SmartTag.toggle_disabled(e);
+      })
+
     });
   </script>
 {% endblock extrajs %}

@@ -32,36 +32,12 @@
 
     <div class="span9">
       <div id="summarytext_edit" style="display:none;">
-        <form id="summary_text" class="form-horizontal" action="." method="post">
-          <fieldset>
-            <legend class="summary_text_legend"></legend>
-            {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-            {% for field in form %}
-              <div class="control-group form-row">
-                {{field.label_tag|add_class:"control-label"}}
-                <div class="controls">
-                  {{field|add_class:"span12"}}
-                  <span class='help-inline'>{{field.help_text}}</span>
-                </div>
-                {{field.errors|add_class:"alert alert-error"}}
-              </div>
-            {% endfor %}
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary save_summary">Save</button>
-              <a class="btn move_summary">Move</a>
-              <a class="btn btn-danger" href="#delete_confirm" data-toggle="modal">Delete</a>
-            </div>
-
-            {% csrf_token %}
-          </fieldset>
-        </form>
+        {% crispy form %}
       </div>
     </div>
   </div>
 
-  <div id="delete_confirm" class="modal hide fade">
+  <div id="deleteST" class="modal hide fade">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h3>Delete Text?</h3>
@@ -71,8 +47,8 @@
       <p><i><b>Warning: </b>This will remove any nested-texts attached to this object as well!</i></p>
     </div>
     <div class="modal-footer">
-      <button id="delete_summary" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Confirm</button>
-      <button href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <a id="deleteSTconfirm" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Confirm</a>
+      <button href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
   </div>
 
@@ -101,42 +77,20 @@
   <script>
     $(document).ready(function(){
 
-      window.assessment_pk = {{assessment.pk}};
-
-      $('#id_id').parent().parent().hide();
-      $('#id_delete').parent().parent().hide();
-      $('#id_title').on('keyup', function(){$('#id_slug').val(URLify($(this).val()));});
-      $('#id_text')
-        .css("height", "400px")
-        .wysihtml5({
-          "smartTag": true,
-          "smartTagModal": "#smartTagModal",
-          "font-styles": false,
-          "stylesheets": [
-            "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css",
-            "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css",
-            "{{STATIC_URL}}css/hawc.css",
-            "{{STATIC_URL}}css/d3.css"
-          ]
-        });
-
-      var editor = $('#id_text').data("wysihtml5").editor;
-      editor.on("load", function(){
-        SmartTag.initialize_tags($(editor.composer.doc));
+      $('#id_title').on('keyup', function(){
+        $('#id_slug').val(URLify($(this).val()));
       });
 
-      window.stt = new SummaryTextTree({
+      new SummaryTextTree({
         "assessment_id": {{assessment.pk}},
         "mode": "modify",
         "update_doctree": $('#doctree'),
         "update_textdiv": $('#summarytext_edit'),
         "update_new": $('.new_summary'),
-        "update_move": $('.move_summary'),
-        "update_delete": $('#delete_summary'),
-        "update_smart_tag_editor": editor
-       });
+        "update_delete": $('#deleteSTconfirm'),
+        "text_editor": new SmartTagEditor($('#id_text'))
+      });
 
     });
   </script>
 {% endblock extrajs %}
-

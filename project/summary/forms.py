@@ -1,10 +1,10 @@
+from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
 from selectable import forms as selectable
 
 from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
-from assessment.models import Assessment
 from utils.forms import BaseFormHelper
 
 from . import models, lookups
@@ -23,24 +23,80 @@ def clean_slug(form):
 
 class SummaryTextForm(forms.ModelForm):
 
-    delete = forms.BooleanField(initial=False)
-    parent = forms.ChoiceField(choices=(), required=True)
-    sibling = forms.ChoiceField(label="Insert After", choices=(), required=True)
-    id = forms.IntegerField()
+    parent = forms.ModelChoiceField(
+        queryset=models.SummaryText.objects.all(),
+        required=False)
+    sibling = forms.ModelChoiceField(
+        label="Insert After",
+        queryset=models.SummaryText.objects.all(),
+        required=False)
 
     class Meta:
         model = models.SummaryText
         fields = ('title', 'slug', 'text', )
 
     def __init__(self, *args, **kwargs):
-        parent = kwargs.pop('parent')
-        assessment_pk = kwargs.pop('assessment_pk', None)
+        assessment = kwargs.pop('parent', None)
         super(SummaryTextForm, self).__init__(*args, **kwargs)
-        self.fields['text'].widget.attrs['rows'] = 30
-        if assessment_pk:
-            self.instance.assessment = Assessment.objects.get(pk=assessment_pk)
-        self.fields.keyOrder = ['delete', 'id', 'parent',
-                                'sibling', 'title', 'slug', 'text']
+        if assessment:
+            self.instance.assessment = assessment
+        qs = models.SummaryText.get_assessment_qs(self.instance.assessment.id)
+        self.fields['parent'].queryset = qs
+        self.fields['sibling'].queryset = qs
+        self.helper = self.setHelper()
+
+    def clean_parent(self):
+        parent = self.cleaned_data.get('parent')
+        if parent is not None and parent.assessment != self.instance.assessment:
+            err = "Parent must be from the same assessment"
+            raise forms.ValidationError(err)
+        return parent
+
+    def clean_sibling(self):
+        sibling = self.cleaned_data.get('sibling')
+        if sibling is not None and sibling.assessment != self.instance.assessment:
+            err = "Sibling must be from the same assessment"
+            raise forms.ValidationError(err)
+        return sibling
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        pk_exclusion = {'id': self.instance.id or -1}
+        if models.SummaryText.objects\
+                .filter(assessment=self.instance.assessment, title=title)\
+                .exclude(**pk_exclusion).count() > 0:
+                    err = "Title must be unique for assessment."
+                    raise forms.ValidationError(err)
+        return title
+
+    def clean_slug(self):
+        slug = self.cleaned_data['slug']
+        pk_exclusion = {'id': self.instance.id or -1}
+        if models.SummaryText.objects\
+                .filter(assessment=self.instance.assessment, slug=slug)\
+                .exclude(**pk_exclusion).count() > 0:
+                    err = "Title must be unique for assessment."
+                    raise forms.ValidationError(err)
+        return slug
+
+    def setHelper(self):
+
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "form_actions": [
+                cfl.Submit('save', 'Save'),
+                cfl.HTML('<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'),
+                cfl.HTML('<a class="btn" href="{0}" >Cancel</a>'.format(
+                    reverse("summary:list", kwargs={'pk': self.instance.assessment.id}))),
+            ]
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
 
 
 class VisualForm(forms.ModelForm):

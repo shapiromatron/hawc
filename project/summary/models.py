@@ -42,27 +42,36 @@ class SummaryText(MP_Node):
         return self.title
 
     @classmethod
-    def get_assessment_root_node(cls, assessment):
-        return SummaryText.objects.get(title='assessment-{pk}'.format(pk=assessment.pk))
+    def get_assessment_root_node(cls, assessment_id):
+        return SummaryText.objects.get(title='assessment-{}'.format(assessment_id))
+
+    @classmethod
+    def get_assessment_queryset(cls, assessment_id):
+        return cls.get_assessment_root_node(assessment_id).get_descendants()
 
     @classmethod
     def build_default(cls, assessment):
         assessment = SummaryText.add_root(
-                       assessment=assessment,
-                       title='assessment-{pk}'.format(pk=assessment.pk),
-                       slug='assessment-{pk}-slug'.format(pk=assessment.pk),
-                       text="Root-level text")
+            assessment=assessment,
+            title='assessment-{pk}'.format(pk=assessment.pk),
+            slug='assessment-{pk}-slug'.format(pk=assessment.pk),
+            text="Root-level text")
 
     @classmethod
-    def get_all_tags(cls, assessment, json_encode=True):
-        root = SummaryText.objects.get(title='assessment-{pk}'.format(pk=assessment.pk))
+    def get_assessment_descendants(cls, assessment_id, json_encode=True):
+        """
+        Return all, excluding root
+        """
+        root = cls.get_assessment_root_node(assessment_id)
         tags = SummaryText.dump_bulk(root)
 
         if root.assessment.comment_settings.public_comments:
-            descendants=root.get_descendants()
+            descendants = root.get_descendants()
             obj_type = Comment.get_content_object_type('summary_text')
-            comments=Comment.objects.filter(content_type=obj_type,
-                                            object_id__in=descendants)
+            comments = Comment.objects.filter(
+                content_type=obj_type,
+                object_id__in=descendants
+            )
             tags[0]['data']['comments'] = Comment.get_jsons(comments, json_encode=False)
 
         if json_encode:
@@ -71,67 +80,50 @@ class SummaryText(MP_Node):
             return tags
 
     @classmethod
-    def add_summarytext(cls, **kwargs):
-        for k, v in kwargs.iteritems():
-            if type(kwargs[k]) == list:
-                kwargs[k] = v[0]
+    def get_assessment_qs(cls, assessment_id):
+        """
+        Return queryset, including root.
+        """
+        root = cls.get_assessment_root_node(assessment_id)
+        return cls.get_tree(parent=root)
 
-        parent = kwargs.pop('parent', None)
-        sibling = kwargs.pop('sibling', None)
-        assessment = kwargs.get('assessment', None)
-        if parent:
-            if parent.assessment != assessment:
-                raise Exception("Parent node assessment not for selected assessment")
-            # left-most parent node
-            if parent.get_children_count()>0:
-                sibling = parent.get_first_child()
-                return sibling.add_sibling(pos="first-sibling", **kwargs)
-            else:
-                return parent.add_child(**kwargs)
-        elif sibling:
-            # right of sibling
-            if sibling.assessment != assessment:
-                raise Exception("Sibling node assessment not for selected assessment")
-            return sibling.add_sibling(pos="right", **kwargs)
+    @classmethod
+    def create(cls, form):
+        instance = form.save(commit=False)
+        sibling = form.cleaned_data.get('sibling')
+        if sibling:
+            return sibling.add_sibling(pos="right", instance=instance)
         else:
-            # right-most of assessment root
-            parent = SummaryText.get_assessment_root_node(assessment)
-            return parent.add_child(**kwargs)
+            parent = form.cleaned_data.get(
+                'parent',
+                SummaryText.get_assessment_root_node(instance.assessment.id)
+            )
+            sibling = parent.get_first_child()
+            if sibling:
+                return sibling.add_sibling(pos="first-sibling", instance=instance)
+            else:
+                return parent.add_child(instance=instance)
 
-    def modify(self, **kwargs):
-        self.title = kwargs['title'][0]
-        self.slug = kwargs['slug'][0]
-        self.text = kwargs['text'][0]
+    def update(self, form):
+        data = form.cleaned_data
+        self.title = data['title']
+        self.slug = data['slug']
+        self.text = data['text']
         self.save()
-        self.move_summarytext(parent=kwargs.get('parent', [None])[0],
-                              sibling=kwargs.get('sibling', [None])[0])
+        self.move_st(parent=data.get('parent'), sibling=data.get('sibling'))
 
-    def move_summarytext(self, parent=None, sibling=None):
-        if (parent and sibling) or (parent is None and sibling is None):
-            return Exception("Should only specify one argument")
-        if parent:
-            # left-most child of parent node
-            if parent.assessment != self.assessment:
-                raise Exception("Parent node assessment not for selected assessment")
-            self.move(parent, pos='first-child')
-        elif sibling:
-            # move self to right of sibling (position is counterintuitive)
-            if sibling.assessment != self.assessment:
-                raise Exception("Sibling node assessment not for selected assessment")
+    def move_st(self, parent=None, sibling=None):
+        if parent is not None and parent.assessment != self.assessment:
+            raise Exception("Parent assessment != self assessment")
+
+        if sibling is not None and sibling.assessment != self.assessment:
+            raise Exception("Sibling assessment != self assessment")
+
+        if sibling:
             if self.get_prev_sibling() != sibling:
-                self.move(sibling, pos='left')
-
-    def clean(self):
-        # unique_together constraint checked above; not done in form because assessment is excluded
-        pk_exclusion = {}
-        if self.pk:
-            pk_exclusion['pk'] = self.pk
-        if SummaryText.objects.filter(assessment=self.assessment,
-                                      title=self.title).exclude(**pk_exclusion).count() > 0:
-            raise ValidationError('Error- title must be unique for assessment.')
-        if SummaryText.objects.filter(assessment=self.assessment,
-                                      slug=self.slug).exclude(**pk_exclusion).count() > 0:
-            raise ValidationError('Error- slug name must be unique for assessment.')
+                self.move(sibling, pos='right')
+        elif parent:
+            self.move(parent, pos='first-child')
 
     def get_absolute_url(self):
         return '{url}#{id}'.format(url=reverse('summary:list', kwargs={'assessment': self.assessment.pk}),
@@ -156,7 +148,7 @@ class SummaryText(MP_Node):
                 for node in node['children']:
                     print_node(node, depth+1)
 
-        nodes = SummaryText.get_all_tags(assessment, json_encode=False)
+        nodes = SummaryText.get_assessment_descendants(assessment.id, json_encode=False)
         if nodes[0].get('children', None):
             for node in nodes[0]['children']:
                 print_node(node, 2)

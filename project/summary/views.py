@@ -1,14 +1,13 @@
 import json
 
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView
 
 from assessment.models import Assessment
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.views import (AssessmentPermissionsMixin, BaseList, BaseCreate,
-                         BaseDetail, BaseUpdate, BaseDelete)
+from utils.views import (BaseList, BaseCreate, BaseDetail, BaseUpdate, BaseDelete)
 
 from . import forms, models
 
@@ -23,7 +22,7 @@ class SummaryTextJSON(BaseDetail):
         return super(SummaryTextJSON, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        content = self.model.get_all_tags(self.assessment, json_encode=True)
+        content = self.model.get_all_tags(self.assessment.id, json_encode=True)
         return HttpResponse(content, content_type="application/json")
 
 
@@ -32,64 +31,81 @@ class SummaryTextList(BaseList):
     model = models.SummaryText
 
     def get_queryset(self):
-        rt = self.model.get_assessment_root_node(assessment=self.assessment)
+        rt = self.model.get_assessment_root_node(self.assessment.id)
         return self.model.objects.filter(pk__in=[rt.pk])
 
 
-class SummaryTextModify(BaseCreate):
-    # handles Create, Update, Delete for Summary Text
+def validSummaryTextChange(assessment_id):
+    response = {
+        "status": "ok",
+        "content": models.SummaryText.get_all_tags(assessment_id, json_encode=False)
+    }
+    return HttpResponse(
+        json.dumps(response, cls=HAWCDjangoJSONEncoder),
+        content_type="application/json"
+    )
+
+
+class SummaryTextCreate(BaseCreate):
+    # Base view for all Create, Update, Delete GET operations
     parent_model = Assessment
     parent_template_name = 'assessment'
     model = models.SummaryText
     form_class = forms.SummaryTextForm
 
     def post(self, request, *args, **kwargs):
-        status = "fail"
-        result = []
-        if request.is_ajax() and request.user.is_authenticated():
-            try:
-                post = self.request.POST.copy()
-                post.pop('csrfmiddlewaretoken')
-                post.pop('_wysihtml5_mode', None)
-                post['assessment'] = self.assessment
-                existing_id = int(post.pop(u'id', -1)[0])
-                delete = post.pop(u'delete', [False])[0]
+        if not request.is_ajax() or not request.user.is_authenticated():
+            raise HttpResponseNotAllowed()
+        return super(SummaryTextCreate, self).post(request, *args, **kwargs)
 
-                if int(post.get('sibling', -1))>0:
-                    post['sibling'] = get_object_or_404(self.model, pk=post['sibling'])
-                    post.pop('parent')
-                else:
-                    post.pop('sibling')
+    def form_invalid(self, form):
+        return HttpResponse(json.dumps(form.errors))
 
-                if int(post.get('parent', -1))>0:
-                    post['parent'] = get_object_or_404(self.model, pk=post['parent'])
-                else:
-                    post.pop('parent', None)
-
-                if existing_id>0:
-                    obj = get_object_or_404(self.model, pk=existing_id)
-                    if delete:
-                        obj.delete()
-                    else:
-                        if obj.assessment != self.assessment:
-                            raise Exception("Selected object is not from the same assessment")
-                        obj.modify(**post)
-                else:
-                    self.model.add_summarytext(**post)
-
-                status = "ok"
-                result = self.model.get_all_tags(self.assessment, json_encode=False)
-            except Exception as e:
-                result.append(unicode(e))
-
-        response = {"status": status, "content": result}
-        return HttpResponse(json.dumps(response, cls=HAWCDjangoJSONEncoder),
-                            content_type="application/json")
+    def form_valid(self, form):
+        self.object = self.model.create(form)
+        return validSummaryTextChange(self.assessment.id)
 
     def get_context_data(self, **kwargs):
-        context = super(SummaryTextModify, self).get_context_data(**kwargs)
+        context = super(SummaryTextCreate, self).get_context_data(**kwargs)
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
+
+
+class SummaryTextUpdate(BaseUpdate):
+    # AJAX POST-only
+    model = models.SummaryText
+    form_class = forms.SummaryTextForm
+    success_message = None
+    http_method_names = ['post', ]
+
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            raise HttpResponseNotAllowed()
+        return super(SummaryTextUpdate, self).post(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        return HttpResponse(json.dumps(form.errors))
+
+    def form_valid(self, form):
+        self.object = self.object.update(form)
+        return validSummaryTextChange(self.assessment.id)
+
+
+class SummaryTextDelete(BaseDelete):
+    # AJAX POST-only
+    model = models.SummaryText
+    success_message = None
+    http_method_names = ['post', ]
+
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            raise HttpResponseNotAllowed()
+        return super(SummaryTextDelete, self).post(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return validSummaryTextChange(self.assessment.id)
 
 
 # VISUALIZATIONS
