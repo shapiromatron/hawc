@@ -54,6 +54,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
       var hideSidebar = {{request.session.hideSidebar|default:"false"|lower}},
+          hideBrowserWarning = {{request.session.hideBrowserWarning|default:"false"|lower}},
           trigger_resize = function(){$(window).trigger("resize");};
 
       $('.toggle_sidebar').click(function(e){
@@ -72,6 +73,12 @@
         }
         $.post("{% url 'update_session' %}", {"hideSidebar": hideSidebar});
       });
+
+      if(!hideBrowserWarning) HAWCUtils.browserCheck();
+      $('#hideBrowserWarning').click(function(e){
+        $.post("{% url 'update_session' %}", {"hideBrowserWarning": true});
+      });
+
     });
   </script>
 {% endblock portaljs %}

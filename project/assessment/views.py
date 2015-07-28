@@ -383,10 +383,16 @@ class UpdateSession(View):
 
     http_method_names = (u'post', )
 
+    def isTruthy(self, request, field):
+        return request.POST.get(field, "true") == "true"
+
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
             return HttpResponseNotAllowed(['POST'])
-        request.session['hideSidebar'] = request.POST.get("hideSidebar", "true") == "true"
+        if request.POST.get("hideSidebar"):
+            request.session['hideSidebar'] = self.isTruthy(request, 'hideSidebar')
+        if request.POST.get("hideBrowserWarning"):
+            request.session['hideBrowserWarning'] = self.isTruthy(request, 'hideBrowserWarning')
         return HttpResponse(True)
 
 
