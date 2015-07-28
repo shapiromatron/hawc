@@ -65,7 +65,7 @@ unrecognized HTML expressions.
 /* dose-response data points */
 .dose_bars {
   fill: #A8B2D3;
-  stroke: #666;
+  stroke: #666666;
   stroke-width: 2px;
 }
 
@@ -85,7 +85,7 @@ unrecognized HTML expressions.
 
 rect.bounding_rectangle {
   fill: none;
-  stroke: #666;
+  stroke: #666666;
   stroke-width: 2px;
 }
 
@@ -112,7 +112,7 @@ rect.selected_overlay{
 /* LEGEND */
 rect.legend {
   fill: white;
-  stroke: #666;
+  stroke: #666666;
   stroke-width: 2px;
 }
 
@@ -311,7 +311,7 @@ path.tagslink {
 }
 
 .dp_header{
-  stroke: #666;
+  stroke: #666666;
   stroke-width: 2px;
 }
 
