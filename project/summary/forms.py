@@ -192,7 +192,7 @@ class CrossviewForm(VisualForm):
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter by system",
-        help_text="Prefilter endpoints on plot to include on select systems.")
+        help_text="Prefilter endpoints on plot to include selected systems.")
 
     systems = forms.MultipleChoiceField(
         required=False,
@@ -201,10 +201,22 @@ class CrossviewForm(VisualForm):
         help_text="""Select one or more systems to include in the plot.
                      If no system is selected, no endpoints will be available.""")
 
+    prefilter_organ = forms.BooleanField(
+        required=False,
+        label="Prefilter by organ",
+        help_text="Prefilter endpoints on plot to include selected organs.")
+
+    organs = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Organs to include",
+        help_text="""Select one or more organs to include in the plot.
+                     If no organ is selected, no endpoints will be available.""")
+
     prefilter_effect = forms.BooleanField(
         required=False,
         label="Prefilter by effect",
-        help_text="Use this box to limit the effects.")
+        help_text="Prefilter endpoints on plot to include selected effects.")
 
     effects = forms.MultipleChoiceField(
         required=False,
@@ -227,20 +239,8 @@ class CrossviewForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
         super(CrossviewForm, self).__init__(*args, **kwargs)
-
         self.pf = models.Prefilter(self)
         self.pf.setInitialForm()
-
-        self.fields["prefilters"].widget = forms.HiddenInput()
-        self.fields["systems"].choices = self.pf.getChoices("systems")
-        self.fields["effects"].choices = self.pf.getChoices("effects")
-        self.fields["studies"].choices = self.pf.getChoices("studies")
-        self.fields["effect_tags"].choices = self.pf.getChoices("effect_tags")
-
-        self.fields["systems"].widget.attrs['size'] = 10
-        self.fields["effects"].widget.attrs['size'] = 10
-        self.fields["studies"].widget.attrs['size'] = 10
-        self.fields["effect_tags"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(CrossviewForm, self).clean()
@@ -257,26 +257,38 @@ class RoBForm(VisualForm):
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter studies by system",
-        help_text="""Only studies which report Endpoints with the selected system(s) will be presented.""")
+        help_text="Prefilter endpoints on plot to include selected systems.")
 
     systems = forms.MultipleChoiceField(
         required=False,
         widget=forms.SelectMultiple,
         label="Systems to include",
-        help_text="""Select one or more systems to include.
-                     If no system is selected, no studies will be available.""")
+        help_text="""Select one or more systems to include in the plot.
+                     If no system is selected, no endpoints will be available.""")
+
+    prefilter_organ = forms.BooleanField(
+        required=False,
+        label="Prefilter studies by organ",
+        help_text="Prefilter endpoints on plot to include selected organs.")
+
+    organs = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Organs to include",
+        help_text="""Select one or more organs to include in the plot.
+                     If no organ is selected, no endpoints will be available.""")
 
     prefilter_effect = forms.BooleanField(
         required=False,
-        label="Prefilter by effect",
-        help_text="""Only studies which report Endpoints with the selected effect(s) will be presented.""")
+        label="Prefilter studies by effect",
+        help_text="Prefilter endpoints on plot to include selected effects.")
 
     effects = forms.MultipleChoiceField(
         required=False,
         widget=forms.SelectMultiple,
         label="Effects to include",
-        help_text="""Select one or more effects to include.
-                     If no effect is selected, no studies will be available.""")
+        help_text="""Select one or more effects to include in the plot.
+                     If no effect is selected, no endpoints will be available.""")
 
     def __init__(self, *args, **kwargs):
         super(RoBForm, self).__init__(*args, **kwargs)
@@ -287,14 +299,6 @@ class RoBForm(VisualForm):
 
         self.pf = models.Prefilter(self)
         self.pf.setInitialForm()
-
-        self.fields["prefilters"].widget = forms.HiddenInput()
-        self.fields["systems"].choices = self.pf.getChoices("systems")
-        self.fields["effects"].choices = self.pf.getChoices("effects")
-
-        self.fields["studies"].widget.attrs['size'] = 10
-        self.fields["systems"].widget.attrs['size'] = 10
-        self.fields["effects"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(RoBForm, self).clean()
@@ -392,7 +396,7 @@ class DataPivotQueryForm(DataPivotForm):
     prefilter_system = forms.BooleanField(
         required=False,
         label="Prefilter by system",
-        help_text="Prefilter endpoints on plot to include on select systems.")
+        help_text="Prefilter endpoints on plot to include selected systems.")
 
     systems = forms.MultipleChoiceField(
         required=False,
@@ -401,10 +405,22 @@ class DataPivotQueryForm(DataPivotForm):
         help_text="""Select one or more systems to include in the plot.
                      If no system is selected, no endpoints will be available.""")
 
+    prefilter_organ = forms.BooleanField(
+        required=False,
+        label="Prefilter by organ",
+        help_text="Prefilter endpoints on plot to include selected organs.")
+
+    organs = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Organs to include",
+        help_text="""Select one or more organs to include in the plot.
+                     If no organ is selected, no endpoints will be available.""")
+
     prefilter_effect = forms.BooleanField(
         required=False,
         label="Prefilter by effect",
-        help_text="Use this box to limit the effects.")
+        help_text="Prefilter endpoints on plot to include selected effects.")
 
     effects = forms.MultipleChoiceField(
         required=False,
@@ -441,17 +457,6 @@ class DataPivotQueryForm(DataPivotForm):
 
         self.pf = models.Prefilter(self)
         self.pf.setInitialForm()
-
-        self.fields["prefilters"].widget = forms.HiddenInput()
-        self.fields["systems"].choices = self.pf.getChoices("systems")
-        self.fields["effects"].choices = self.pf.getChoices("effects")
-        self.fields["studies"].choices = self.pf.getChoices("studies")
-        self.fields["effect_tags"].choices = self.pf.getChoices("effect_tags")
-
-        self.fields["systems"].widget.attrs['size'] = 10
-        self.fields["effects"].widget.attrs['size'] = 10
-        self.fields["studies"].widget.attrs['size'] = 10
-        self.fields["effect_tags"].widget.attrs['size'] = 10
 
     def clean(self):
         cleaned_data = super(DataPivotQueryForm, self).clean()

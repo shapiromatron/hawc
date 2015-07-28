@@ -902,6 +902,14 @@ class Endpoint(BaseEndpoint):
         return [(obj, obj) for obj in sorted(objs)]
 
     @classmethod
+    def get_organ_choices(cls, assessment_id):
+        objs = cls.objects\
+                  .filter(assessment_id=assessment_id)\
+                  .distinct('organ')\
+                  .values_list('organ', flat=True)
+        return [(obj, obj) for obj in sorted(objs)]
+
+    @classmethod
     def get_effect_choices(cls, assessment_id):
         objs = cls.objects\
                   .filter(assessment_id=assessment_id)\

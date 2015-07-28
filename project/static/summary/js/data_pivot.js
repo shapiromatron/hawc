@@ -3163,7 +3163,7 @@ DataPivotLegend.default_settings = function(){
     "left": 5,
     "top": 5,
     "columns": 1,
-    "style": {"border_color": "#666", "border_width": "2px"},
+    "style": {"border_color": "#666666", "border_width": "2px"},
     "fields": []
   };
 };

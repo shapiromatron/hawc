@@ -1112,25 +1112,20 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
         this.endpoints = endpoints;
     },
     initDataForm: function(){
-        $('#id_prefilter_system').on('change', function(){
-            var sys = $('#id_systems').parent().parent();
-            ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
-        }).trigger('change');
+        var fields = [
+            ["system", "systems"],
+            ["organ", "organs"],
+            ["effect", "effects"],
+            ["study", "studies"],
+            ["effect_tag", "effect_tags"]
+        ];
 
-        $('#id_prefilter_effect').on('change', function(){
-            var sys = $('#id_effects').parent().parent();
-            ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
-        }).trigger('change');
-
-        $('#id_prefilter_study').on('change', function(){
-            var sys = $('#id_studies').parent().parent();
-            ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
-        }).trigger('change');
-
-        $('#id_prefilter_effect_tag').on('change', function(){
-              var sys = $('#id_effect_tags').parent().parent();
-              ($(this).prop('checked')) ? sys.show(1000) : sys.hide(0);
-        }).trigger('change');
+        _.each(fields, function(d){
+            $('#id_prefilter_{0}'.printf(d[0])).on('change', function(){
+                var div = $('#div_id_{0}'.printf(d[1]));
+                ($(this).prop('checked')) ? div.show(1000) : div.hide(0);
+            }).trigger('change');
+        });
     }
 });
 
@@ -1246,22 +1241,18 @@ _.extend(RoBHeatmapForm.prototype, VisualForm.prototype, {
         }, updateStudies = function(){
             var shouldHide = (
                 $("#id_prefilter_system").prop('checked') ||
+                $("#id_prefilter_organ").prop('checked') ||
                 $("#id_prefilter_effect").prop('checked'));
             showHideDiv(!shouldHide, $('#div_id_studies'));
             if(shouldHide) $('#id_studies option').prop('selected', false);
         };
 
-        $('#id_prefilter_system').on('change', function(){
-            var showOpts = $(this).prop('checked');
-            showHideDiv(showOpts, $('#div_id_systems'));
-            updateStudies();
-        }).trigger('change');
-
-        $('#id_prefilter_effect').on('change', function(){
-            var showOpts = $(this).prop('checked');
-            showHideDiv(showOpts, $('#div_id_effects'));
-            updateStudies();
-        }).trigger('change');
+        _.each(["system", "organ", "effect"], function(d){
+            $('#id_prefilter_{0}'.printf(d)).on('change', function(){
+                var div = $('#div_id_{0}s'.printf(d));
+                ($(this).prop('checked')) ? div.show(1000) : div.hide(0);
+            }).trigger('change');
+        });
     },
     updateSettingsFromPreview: function(){
         settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));

@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 
 from django.db import models
+from django import forms
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
@@ -567,6 +568,9 @@ class Prefilter(object):
             if request.POST.get('prefilter_system'):
                 filters["system__in"] = request.POST.getlist('systems')
 
+            if request.POST.get('prefilter_organ'):
+                filters["organ__in"] = request.POST.getlist('organs')
+
             if request.POST.get('prefilter_effect'):
                 filters["effect__in"] = request.POST.getlist('effects')
 
@@ -600,6 +604,10 @@ class Prefilter(object):
                 self.form.fields["systems"].initial = v
                 self.form.fields["prefilter_system"].initial = True
 
+            if k == "organ__in":
+                self.form.fields["organs"].initial = v
+                self.form.fields["prefilter_organ"].initial = True
+
             if k == "effect__in":
                 self.form.fields["effects"].initial = v
                 self.form.fields["prefilter_effect"].initial = True
@@ -618,11 +626,25 @@ class Prefilter(object):
                 published_only = True
             self.form.fields["published_only"].initial = published_only
 
+        # widget settings
+        if self.form.fields.get('prefilters'):
+            self.form.fields["prefilters"].widget = forms.HiddenInput()
+
+        fields = ["systems", "organs", "effects", "effect_tags", "studies", ]
+        for fldname in fields:
+            field = self.form.fields.get(fldname)
+            if field:
+                field.choices = self.getChoices(fldname)
+                field.widget.attrs['size'] = 10
+
     def setPrefilters(self, data):
         prefilters = {}
 
         if data.get('prefilter_system') is True:
             prefilters["system__in"] = data.get("systems", [])
+
+        if data.get('prefilter_organ') is True:
+            prefilters["organ__in"] = data.get("organs", [])
 
         if data.get('prefilter_effect') is True:
             prefilters["effect__in"] = data.get("effects", [])
@@ -644,6 +666,8 @@ class Prefilter(object):
 
         if field_name == "systems":
             choices = list(Endpoint.get_system_choices(assessment_id))
+        elif field_name == "organs":
+            choices = list(Endpoint.get_organ_choices(assessment_id))
         elif field_name == "effects":
             choices = list(Endpoint.get_effect_choices(assessment_id))
         elif field_name == "effect_tags":
