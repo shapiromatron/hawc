@@ -1022,6 +1022,7 @@ _.extend(CrossviewForm, {
             label: "Base path color",
             tab: "styles",
             helpText: 'Must be valid CSS color name',
+            def: "#cccccc",
         },
         {
             type: ColorField,
@@ -1029,6 +1030,7 @@ _.extend(CrossviewForm, {
             label: "Hover path color",
             tab: "styles",
             helpText: 'Must be valid CSS color name',
+            def: "#ff4040",
         },
         {
             type: ColorField,
@@ -1036,6 +1038,7 @@ _.extend(CrossviewForm, {
             label: "Selected path color",
             tab: "styles",
             helpText: 'Must be valid CSS color name',
+            def: "#6495ed",
         },
         {
             type: CrossviewColorFilterField,
