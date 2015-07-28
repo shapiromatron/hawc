@@ -1503,10 +1503,13 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr("class","dr_axis_labels y_axis_label");
     },
     processData: function(){
+
         // create new class for each colorFilter
-        this.data.settings.colorFilters.forEach(function(d,i){
-            d.className = "_cv_colorFilter"+i;
-        });
+        if (this.data.settings.colorFilters){
+            this.data.settings.colorFilters.forEach(function(d,i){
+                d.className = "_cv_colorFilter"+i;
+            });
+        }
 
         // get filter function
         var filters_map = d3.map({
@@ -1538,9 +1541,11 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 }
             },
         });
-        this.data.settings.endpointFilters.forEach(function(d){
-            d.fn = _.partial(filters_map.get(d.filterType), _, d.value);
-        });
+        if(this.data.settings.endpointFilters){
+            this.data.settings.endpointFilters.forEach(function(d){
+                d.fn = _.partial(filters_map.get(d.filterType), _, d.value);
+            });
+        }
 
         // filter endpoints
         var self = this,
