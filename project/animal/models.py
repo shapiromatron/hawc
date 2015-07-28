@@ -582,6 +582,10 @@ class Endpoint(BaseEndpoint):
         max_length=128,
         blank=True,
         help_text="Effect, using common-vocabulary")
+    effect_subtype = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Effect subtype, using common-vocabulary")
     observation_time = models.FloatField(
         blank=True,
         null=True,
@@ -775,6 +779,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-system",
             "endpoint-organ",
             "endpoint-effect",
+            "endpoint-effect_subtype",
             "endpoint-observation_time",
             "endpoint-observation_time_units",
             "endpoint-data_location",
@@ -806,6 +811,7 @@ class Endpoint(BaseEndpoint):
             ser['system'],
             ser['organ'],
             ser['effect'],
+            ser['effect_subtype'],
             ser['observation_time'],
             ser['observation_time_units'],
             ser['data_location'],

@@ -541,6 +541,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            .add_tbody_tr("System", this.data.system)
            .add_tbody_tr("Organ", this.data.organ)
            .add_tbody_tr("Effect", this.data.effect)
+           .add_tbody_tr("Effect subtype", this.data.effect_subtype)
            .add_tbody_tr("Diagnostic description", this.data.diagnostic)
            .add_tbody_tr("Observation time", getObsTime(this.data))
            .add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment))

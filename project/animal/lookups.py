@@ -35,6 +35,11 @@ class EndpointEffectLookup(DistinctStringLookup):
     distinct_field = "effect"
 
 
+class EndpointEffectSubtypeLookup(DistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "effect_subtype"
+
+
 class EndpointStatisticalTestLookup(DistinctStringLookup):
     model = models.Endpoint
     distinct_field = "statistical_test"
@@ -110,6 +115,7 @@ registry.register(AnimalGroupLifestageAssessedLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)
+registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)

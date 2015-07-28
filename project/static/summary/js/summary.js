@@ -1413,6 +1413,7 @@ _.extend(CrossviewPlot, {
         "system": "System",
         "organ": "Organ",
         "effect": "Effect",
+        "effect_subtype": "Effect subtype",
         "monotonicity": "Monotonicity",
     },
     _cw_filter_process: {
@@ -1427,6 +1428,7 @@ _.extend(CrossviewPlot, {
         "system": function(d){return d.data.system; },
         "organ": function(d){return d.data.organ; },
         "effect": function(d){return d.data.effect; },
+        "effect_subtype": function(d){return d.data.effect_subtype; },
         "monotonicity": function(d){return d.data.monotonicity; },
     }
 })

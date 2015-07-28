@@ -328,7 +328,7 @@ class EndpointForm(ModelForm):
     class Meta:
         model = models.Endpoint
         fields = ('name',
-                  'system', 'organ', 'effect',
+                  'system', 'organ', 'effect', 'effect_subtype',
                   'effects', 'diagnostic',
                   'observation_time', 'observation_time_units',
                   'data_reported', 'data_extracted', 'values_estimated',
@@ -357,6 +357,10 @@ class EndpointForm(ModelForm):
 
         self.fields['effect'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EndpointEffectLookup,
+            allow_new=True)
+
+        self.fields['effect_subtype'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.EndpointEffectSubtypeLookup,
             allow_new=True)
 
         self.fields['statistical_test'].widget = selectable.AutoCompleteWidget(
@@ -408,7 +412,7 @@ class EndpointForm(ModelForm):
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
-        helper.add_fluid_row('system', 3, "span4")
+        helper.add_fluid_row('system', 4, "span3")
         helper.add_fluid_row('effects', 2, "span6")
         helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('observation_time', 2, "span6")
