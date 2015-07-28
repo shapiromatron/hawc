@@ -47,18 +47,20 @@
 
 </div>
 
+{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+
 {% endblock %}
 
 
 {% block extrajs %}
-  {{ form.media }}
+  {{ smart_tag_form.media }}
   <script src="{{STATIC_URL}}admin/js/urlify.js" type="text/javascript" ></script>
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/summary_form.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}summary/js/smart_tags_edit.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#id_caption').wysihtml5({"stylesheets": false});
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
@@ -67,8 +69,9 @@
       {% endif %}
 
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
-
       new VisualForm.create({{visual_type}}, $('.tabbable'));
+      new SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
+
     });
   </script>
 {% endblock %}

@@ -188,7 +188,7 @@ SummaryTextTree.prototype = {
         });
     },
     _setSmartTags: function(){
-        new SmartTagHolder(this.options.read_text_div, undefined, {showOnStartup: true});
+        new SmartTagContainer(this.options.read_text_div, {showOnStartup: true});
     }
 };
 
@@ -510,7 +510,7 @@ EndpointAggregation = function(data){
 _.extend(EndpointAggregation.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
-            caption = $('<div>').html(this.data.caption)
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             self = this;
 
         options = options || {};
@@ -531,24 +531,29 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
         if (!options.visualOnly){
             $el.prepend(title)
                 .append("<h2>Caption</h2>")
-                .append(caption);
+                .append(caption.getEl());
         }
 
         this.buildTbl();
         this.plotData = this.getPlotData();
         this.buildPlot();
+        caption.ready();
         return this;
     },
     displayAsModal: function(options){
         options = options || {};
 
         var self = this,
-            modal = new HAWCModal();
+            modal = new HAWCModal()
+            caption = new SmartTagContainer($('<div>').html(this.data.caption));
 
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
-        modal.getModal().on('shown', $.proxy(this.buildPlot, this));
+        modal.getModal().on('shown', function(){
+            self.buildPlot();
+            caption.ready();
+        });
 
         this.buildTbl();
         this.plotData = this.getPlotData();
@@ -556,8 +561,8 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             .addBody($('<div>').append(
                 this.$plotDiv,
                 this.$tblDiv,
-                $('<div>').html(this.data.caption))
-            )
+                caption.getEl()
+            ))
             .addFooter("")
             .show({maxWidth: 1200});
     },
@@ -1326,7 +1331,7 @@ Crossview = function(data){
 _.extend(Crossview.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
-            caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
 
@@ -1336,9 +1341,10 @@ _.extend(Crossview.prototype, Visual.prototype, {
 
         $el.empty().append($plotDiv);
 
-        if (!options.visualOnly) $el.prepend(title).append(caption);
+        if (!options.visualOnly) $el.prepend(title).append(caption.getEl());
 
         new CrossviewPlot(this, data, options).render($plotDiv);
+        caption.ready();
         return this;
     },
     displayAsModal: function(options){
@@ -1346,16 +1352,17 @@ _.extend(Crossview.prototype, Visual.prototype, {
 
         var self = this,
             data = this.getPlotData(),
-            $caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
         modal.getModal().on('shown', function(){
             new CrossviewPlot(self, data, options).render($plotDiv);
+            caption.ready();
         });
 
         modal.addHeader($('<h4>').text(this.data.title))
-            .addBody([$plotDiv, $caption])
+            .addBody([$plotDiv, caption.getEl()])
             .addFooter("")
             .show({maxWidth: 1200});
     },
@@ -2166,7 +2173,7 @@ RoBHeatmap = function(data){
 _.extend(RoBHeatmap.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
-            caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
 
@@ -2175,9 +2182,10 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
         if (window.isEditable) title.append(this.addActionsMenu());
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(caption);
+        if (!options.visualOnly) $el.prepend(title).append(caption.getEl());
 
         new RoBHeatmapPlot(this, data, options).render($plotDiv);
+        caption.ready();
         return this;
     },
     displayAsModal: function(options){
@@ -2185,16 +2193,17 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
 
         var self = this,
             data = this.getPlotData(),
-            $caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
         modal.getModal().on('shown', function(){
             new RoBHeatmapPlot(self, data, options).render($plotDiv);
+            caption.ready();
         });
 
         modal.addHeader($('<h4>').text(this.data.title))
-            .addBody([$plotDiv, $caption])
+            .addBody([$plotDiv, caption.getEl()])
             .addFooter("")
             .show({maxWidth: 1200});
     },
@@ -2628,7 +2637,7 @@ RoBBarchart = function(data){
 _.extend(RoBBarchart.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
         var title = $("<h1>").text(this.data.title),
-            caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
 
@@ -2637,9 +2646,10 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
         if (window.isEditable) title.append(this.addActionsMenu());
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(caption);
+        if (!options.visualOnly) $el.prepend(title).append(caption.getEl());
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
+        caption.ready();
         return this;
     },
     displayAsModal: function(options){
@@ -2647,16 +2657,17 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
 
         var self = this,
             data = this.getPlotData(),
-            $caption = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
         modal.getModal().on('shown', function(){
             new RoBBarchartPlot(self, data, options).render($plotDiv);
+            caption.ready();
         });
 
         modal.addHeader($('<h4>').text(this.data.title))
-            .addBody([$plotDiv, $caption])
+            .addBody([$plotDiv, caption.getEl()])
             .addFooter("")
             .show({maxWidth: 1200});
     },

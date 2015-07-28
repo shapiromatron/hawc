@@ -22,7 +22,7 @@ class SummaryTextJSON(BaseDetail):
         return super(SummaryTextJSON, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        content = self.model.get_all_tags(self.assessment.id, json_encode=True)
+        content = self.model.get_assessment_descendants(self.assessment.id, json_encode=True)
         return HttpResponse(content, content_type="application/json")
 
 
@@ -38,7 +38,7 @@ class SummaryTextList(BaseList):
 def validSummaryTextChange(assessment_id):
     response = {
         "status": "ok",
-        "content": models.SummaryText.get_all_tags(assessment_id, json_encode=False)
+        "content": models.SummaryText.get_assessment_descendants(assessment_id, json_encode=False)
     }
     return HttpResponse(
         json.dumps(response, cls=HAWCDjangoJSONEncoder),
@@ -147,6 +147,7 @@ class VisualizationCreate(BaseCreate):
     def get_context_data(self, **kwargs):
         context = super(VisualizationCreate, self).get_context_data(**kwargs)
         context['visual_type'] = int(self.kwargs.get('visual_type'))
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -175,6 +176,7 @@ class VisualizationUpdate(BaseUpdate):
     def get_context_data(self, **kwargs):
         context = super(VisualizationUpdate, self).get_context_data(**kwargs)
         context['visual_type'] = self.object.visual_type
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -230,6 +232,7 @@ class DataPivotQueryNew(DataPivotNew):
     def get_context_data(self, **kwargs):
         context = super(DataPivotQueryNew, self).get_context_data(**kwargs)
         context['file_loader'] = False
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -240,6 +243,7 @@ class DataPivotFileNew(DataPivotNew):
     def get_context_data(self, **kwargs):
         context = super(DataPivotFileNew, self).get_context_data(**kwargs)
         context['file_loader'] = True
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -314,6 +318,7 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
     def get_context_data(self, **kwargs):
         context = super(DataPivotUpdateQuery, self).get_context_data(**kwargs)
         context['file_loader'] = False
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -326,6 +331,7 @@ class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
     def get_context_data(self, **kwargs):
         context = super(DataPivotUpdateFile, self).get_context_data(**kwargs)
         context['file_loader'] = True
+        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 

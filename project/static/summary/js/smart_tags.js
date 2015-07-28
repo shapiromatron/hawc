@@ -69,29 +69,38 @@ _.extend(SmartTag.prototype, {
 });
 
 
-var SmartTagHolder = function($el, content, options){
+var SmartTagContainer = function($el, options){
+    options = options || {};
     this.$el = $el;
 
-    if (content){
-        this.$el.html(content);
-    }
-
-    this.$el.on('smartTagDivReady', function(){
+    this.$el.on('SmartTagContainerReady', function(){
         SmartTag.initialize_tags($el)
     });
 
-    if (options.showOnStartup) this.divReady();
+    if (options.showOnStartup) this.ready();
 }
-_.extend(SmartTagHolder.prototype, {
-    divReady: function(){
-        this.$el.trigger('smartTagDivReady');
+_.extend(SmartTagContainer.prototype, {
+    ready: function(){
+        this.$el.trigger('SmartTagContainerReady');
+    },
+    getEl: function(){
+        return this.$el;
     }
 });
 
 
-var SmartTagEditor = function($el){
+var SmartTagEditor = function($el, options){
+    options = options || {};
     this.$el = $el
     this.init();
+
+    if (options.submitEl){
+        var self = this;
+        $(options.submitEl).submit(function(){
+            self.prepareSubmission();
+            return true;
+        });
+    }
 }
 _.extend(SmartTagEditor.prototype, {
     init: function(){

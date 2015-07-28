@@ -144,6 +144,7 @@ class VisualForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
+        helper.form_id = "visualForm"
         return helper
 
     def clean_slug(self):
@@ -353,6 +354,7 @@ class DataPivotForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
+        helper.form_id = "dataPivotForm"
         return helper
 
     def clean_slug(self):

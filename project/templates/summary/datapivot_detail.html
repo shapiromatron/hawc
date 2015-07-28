@@ -45,9 +45,7 @@
       <p>Fetching the latest data from {{assessment}}... <img src="{{STATIC_URL}}img/loading.gif"></p>
     </div>
 
-    {% if object.caption %}
-      <div class="well">{{object.caption|safe}}</div>
-    {% endif %}
+    <div id="caption">{{object.caption|safe}}</div>
 
 
   {% endblock dp_content %}
@@ -62,6 +60,7 @@
           dp.build_data_pivot_vis($('#dp_display'));
         });
       });
+      new SmartTagContainer($('#caption'), {showOnStartup: true});
     });
   </script>
 {% endblock %}
