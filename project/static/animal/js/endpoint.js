@@ -690,6 +690,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             this.data.groups.length > 0 &&
             _.any(_.pluck(this.data.groups, "isReported"))
         );
+    },
+    defaultDoseAxis: function(){
+        var doses = _.chain(this.data.groups)
+            .pluck('dose')
+            .filter(function(d){return d>0;})
+            .value();
+        doses = d3.extent(doses)
+        if (doses.length !== 2) return "linear";
+        return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? "log" : "linear";
     }
 });
 
@@ -1189,31 +1198,30 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     toggle_x_axis: function(){
         // get minimum non-zero dose and then set all control doses
         // equal to ten-times lower than the lowest dose
-        var egs = this.endpoint.data.groups;
         if(window.event && window.event.stopPropagation) event.stopPropagation();
+        var egs = this.endpoint.data.groups;
         if (this.x_axis_settings.scale_type == 'linear'){
             this.x_axis_settings.scale_type = 'log';
             this.x_axis_settings.number_ticks = 1;
-            var formatNumber = d3.format(",.f");
-            this.x_axis_settings.label_format = formatNumber;
-            if(egs[0].dose === 0){
-                egs[0].dose = egs[1].dose/10;
-                egs[0].dose_original = 0;
-            }
-            this.min_x = egs[0].dose;
-            this.x_axis_settings.domain = [this.min_x/10, this.max_x*(1+this.buff)];
+            this.x_axis_settings.label_format = d3.format(",.f");
         } else {
             this.x_axis_settings.scale_type = 'linear';
             this.x_axis_settings.number_ticks = 5;
             this.x_axis_settings.label_format = undefined;
-            if (egs[0].dose_original !== undefined){
-                egs[0].dose = egs[0].dose_original;
-            }
-            this.min_x = egs[0].dose;
-            this.x_axis_settings.domain = [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)];
         }
+        this._setPlottableDoseValues();
         this.x_scale = this._build_scale(this.x_axis_settings);
         this.x_axis_change_chart_update();
+    },
+    _setPlottableDoseValues: function(){
+        var egs = this.endpoint.data.groups;
+        if (this.x_axis_settings.scale_type == 'linear'){
+            this.min_x = d3.min(_.pluck(this.values, 'x'));
+            this.x_axis_settings.domain = [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)];
+        } else {
+            this.min_x = d3.min(_.pluck(this.values, 'x_log'));
+            this.x_axis_settings.domain = [this.min_x/10, this.max_x*(1+this.buff)];
+        }
     },
     set_defaults: function(){
         // Default settings for a DR plot instance
@@ -1222,7 +1230,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.buff = 0.05; // addition numerical-spacing around dose/response units
         this.radius = 7;
         this.x_axis_settings = {
-            'scale_type': this.options.default_y_axis || 'linear',
+            'scale_type': this.endpoint.defaultDoseAxis(),
             'text_orient': "bottom",
             'axis_class': 'axis x_axis',
             'gridlines': true,
@@ -1233,7 +1241,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         };
 
         this.y_axis_settings = {
-            'scale_type': this.options.default_x_axis || 'linear',
+            'scale_type': 'linear',
             'text_orient': "left",
             'axis_class': 'axis y_axis',
             'gridlines': true,
@@ -1341,6 +1349,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
             return {
                 x:          v.dose,
+                x_log:      v.dose,
                 y:          y,
                 cls:        cls,
                 isReported: v.isReported,
@@ -1352,6 +1361,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         })
         .filter(function(d){return d.isReported;})
         .value();
+
+        if(values.length>2) values[0].x_log = values[1].x_log/10;
 
         sigs_data = _.chain(values)
             .filter(function(d){return d.significance_level>0;})
@@ -1370,9 +1381,10 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             y_label_text:   "Response ({0})".printf(this.endpoint.data.response_units),
             values:         values,
             sigs_data:      sigs_data,
-            min_x:          d3.min(ep.groups, function(datum) { return datum.dose; }),
             max_x:          d3.max(ep.groups, function(datum) { return datum.dose; }),
         });
+
+        this._setPlottableDoseValues();
 
         if (ep.groups.length>0){
             var max_upper = d3.max(values, function(d){return d.y_upper || d.y;}),
@@ -1384,9 +1396,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     },
     add_axes: function(){
         // customizations for axis updates
-
         $.extend(this.x_axis_settings, {
-            'domain': [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)],
             'rangeRound': [0, this.w],
             'x_translate': 0,
             'y_translate': this.h
