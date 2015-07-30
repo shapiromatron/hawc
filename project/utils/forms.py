@@ -62,6 +62,11 @@ class BaseFormHelper(cf.FormHelper):
             self[first+i].wrap(cfl.Field, wrapper_class=v)
         self[first:first+numFields].wrap_together(cfl.Div, css_class="row-fluid")
 
+    def add_header(self, firstField, text):
+        self.layout.insert(
+            self.layout.index(firstField),
+            cfl.HTML("""<h4>{0}</h4>""".format(text)))
+
 
 def form_error_list_to_lis(form):
     # Convert a list of errors from a form into a list of li,

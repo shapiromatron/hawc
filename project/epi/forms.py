@@ -78,8 +78,6 @@ class StudyPopulationForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-
-        # by default take-up the whole row-fluid
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -133,7 +131,7 @@ class ExposureForm(forms.ModelForm):
         study_population = kwargs.pop('parent', None)
         super(ExposureForm, self).__init__(*args, **kwargs)
         if study_population:
-            self.instance.study_population=study_population
+            self.instance.study_population = study_population
         self.fields['exposure_form_definition'].widget = TextInput()
         for fld in self.fields.keys():
             f = self.fields[fld].widget
@@ -142,6 +140,41 @@ class ExposureForm(forms.ModelForm):
         for fld in ('metric', 'metric_description', 'analytical_method',
                     'control_description'):
             self.fields[fld].widget.attrs['rows'] = 3
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing exposure.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new exposure",
+                "help_text":   u"""
+                    Create a new exposure. An exposure is a description of
+                    the metric used to evaluate an individual's exposure.
+                    Each exposure is associated with a particular study
+                     population, and there may be multiple exposure
+                     metrics for that population.""",
+                "cancel_url": self.instance.study_population.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_header("inhalation", "Known exposure routes")
+        helper.add_header("metric", "Additional exposure information")
+        helper.add_fluid_row('inhalation', 6, "span2")
+        helper.add_fluid_row('metric', 3, "span4")
+        helper.add_fluid_row('analytical_method', 2, "span6")
+        return helper
 
 
 class ExposureGroupForm(forms.ModelForm):

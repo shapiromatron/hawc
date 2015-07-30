@@ -1,5 +1,6 @@
 {% extends 'portal.html' %}
 
+{% load crispy_forms_tags %}
 {% load add_class %}
 
 {% block title %}
@@ -26,87 +27,12 @@
 {% endblock %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
 
-    {% csrf_token %}
+  <div id="eForm">
+    {% crispy form %}
+  </div>
 
-    <div class='row-fluid'>
-      <fieldset>
-        {# Exposure Form #}
-        {% if crud == "Create" %}
-          <legend>Create new exposure</legend>
-          <span class="help-block">Create a new exposure. An exposure is a description of the metric used to evaluate an individual's exposure to "{{assessment.name}}". Each exposure is associated with a particular study population, and there may be multiple exposure metrics for that population.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update  {{ object }} </legend>
-          <span class="help-block">Update an existing exposure.</span><br>
-        {% endif %}
-
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
-        {% for hidden in form.hidden_fields %}
-          {{ hidden }}
-        {% endfor %}
-
-        <table class='table table-condensed'>
-
-          {# Exposure Route Information #}
-          <h4>Known Exposure Routes</h4>
-          <thead><tr>
-            {% for field in form %}
-              {% if forloop.counter < 7 %}
-                <th>{{ field.label|capfirst }}</th>
-              {% endif %}
-            {% endfor %}
-          </tr></thead>
-
-          <tbody><tr>
-            {% for field in form %}
-              {% if forloop.counter < 7 %}
-                <td>
-                  {# Include the hidden fields in the form #}
-                  {% if forloop.first %}
-                    {% for hidden in form.hidden_fields %}
-                      {{ hidden }}
-                    {% endfor %}
-                  {% endif %}
-                  {{ field.errors|add_class:"alert alert-error" }}
-                  {{ field }}
-                </td>
-              {% endif %}
-            {% endfor %}
-          </tr></tbody>
-        </table>
-
-        {# Additional Exposure Information #}
-        <h4>Additional Exposure Details</h4>
-        {% for field in form %}
-          {% if forloop.counter >= 7 %}
-            <div class="control-group form-row">
-              {{field.label_tag|add_class:"control-label"}}
-              <div class="controls">
-                {% if field.label == "Metric units" %}
-                  <div class="row-fluid">
-                    <div class="span11">
-                      {{field}}
-                    </div>
-                    <div class="span1">
-                      <a class='btn btn-primary'
-                         href="{% url 'assessment:dose_units_create' assessment.pk %}"
-                         onclick="return HAWCUtils.newWindowPopupLink(this);"
-                         title="Add new exposure-units">+</a>
-                    </div>
-                  </div>
-                {% else %}
-                  {{field}}
-                {% endif %}
-                <span class='help-inline'>{{field.help_text}}</span>
-              </div>
-              {{field.errors|add_class:"alert alert-error"}}
-            </div>
-          {% endif %}
-        {% endfor %}
-      </fieldset>
-    </div>
-
+  <div id="egFormset">
     {# Exposure Group formset #}
     <legend>Exposure Groups
         <button class="pull-right btn btn-primary"
@@ -119,24 +45,15 @@
       <b>Once created, additional exposure groups cannot be added. It is assumed that the first exposure-group has the lowest exposure, with each subsequent group having a greater exposure. Up to a maximum of eight exposure-groups can be added.</b></span><br>
     {% endif %}
     {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+  </div>
 
-    {# Submission area #}
-    <div class="row-fluid">
-      <div class="form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} exposure</button>
-        {% if crud == "Create" %}
-          <a href='{% url "epi:sp_detail" study_population.pk %}' class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'epi:exposure_detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-    </div>
-  </form>
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).on('ready', function(){
+      $('#egFormset').insertBefore($('#eForm .form-actions'));
+      // TODO: Fix after module-rebuild complete.
       $('#addExposureGroup').click(function(){return HAWCUtils.dfAddForm(this, 'form');});
       $('.deleteForm').click(function(){return HAWCUtils.dfDeleteForm(this, 'form');})
     });
