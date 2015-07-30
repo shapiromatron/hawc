@@ -30,27 +30,13 @@ class StudyPopulationForm(forms.ModelForm):
         required=False)
 
     class Meta:
-        fields = ('name',
-                  'design',
-                  'country',
-                  'region',
-                  'state',
-                  'sex',
-                  'ethnicity',
-                  'fraction_male',
-                  'fraction_male_calculated',
-                  'n',
-                  'starting_n',
-                  'age_mean',
-                  'age_mean_type',
-                  'age_calculated',
-                  'age_description',
-                  'age_sd',
-                  'age_sd_type',
-                  'age_lower',
-                  'age_lower_type',
-                  'age_upper',
-                  'age_upper_type',
+        fields = ('name', 'design',
+                  'country', 'region', 'state',
+                  'sex', 'ethnicity', 'fraction_male', 'fraction_male_calculated',
+                  'n', 'starting_n',
+                  'age_mean', 'age_mean_type', 'age_calculated',
+                  'age_description', 'age_sd', 'age_sd_type',
+                  'age_lower', 'age_lower_type', 'age_upper', 'age_upper_type',
                   'inclusion_criteria',
                   'exclusion_criteria',
                   'confounding_criteria')
@@ -66,23 +52,18 @@ class StudyPopulationForm(forms.ModelForm):
         self.fields['state'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.StateLookup,
             allow_new=True)
-        for fld in self.fields.keys():
-            widget = self.fields[fld].widget
-            if type(widget) != CheckboxInput:
-                widget.attrs['class'] = 'span12'
         if study:
             self.instance.study = study
-        for fld in ["inclusion_criteria", "exclusion_criteria", "confounding_criteria"]:
-            self.fields[fld].widget.update_query_parameters({'related': self.instance.study.assessment_id})
-
         self.helper = self.setHelper()
 
     def setHelper(self):
+        for fld in ["inclusion_criteria", "exclusion_criteria", "confounding_criteria"]:
+            self.fields[fld].widget.update_query_parameters({'related': self.instance.study.assessment_id})
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ['inclusion_criteria', 'exclusion_criteria', 'confounding_criteria']:
-                    widget.attrs['class'] = 'span10'
+                    widget.attrs['class'] = 'span11'
                 else:
                     widget.attrs['class'] = 'span12'
 
@@ -132,18 +113,15 @@ class ExposureForm(forms.ModelForm):
         super(ExposureForm, self).__init__(*args, **kwargs)
         if study_population:
             self.instance.study_population = study_population
+        self.helper = self.setHelper()
+
+    def setHelper(self):
         self.fields['exposure_form_definition'].widget = TextInput()
-        for fld in self.fields.keys():
-            f = self.fields[fld].widget
-            if f.__class__ != CheckboxInput:
-                f.attrs['class'] = 'span12'
+
         for fld in ('metric', 'metric_description', 'analytical_method',
                     'control_description'):
             self.fields[fld].widget.attrs['rows'] = 3
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

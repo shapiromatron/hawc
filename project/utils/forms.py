@@ -48,7 +48,7 @@ class BaseFormHelper(cf.FormHelper):
         Add a "plus" button to add a new creator item in a new window.
         """
         self.layout.append(
-            cfl.HTML("""<a class="btn btn-primary adders {}"
+            cfl.HTML("""<a class="btn btn-primary adders pull-right {}"
                            title="{}" href="{}"
                            onclick="return HAWCUtils.newWindowPopupLink(this);">
                                 <i class="icon-plus icon-white"></i></a>""".format(
