@@ -9,7 +9,7 @@ from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
-from assessment.models import DoseUnits, Strain
+from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
 from study.lookups import AnimalStudyLookup
 from utils.forms import BaseFormHelper

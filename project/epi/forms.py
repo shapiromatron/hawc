@@ -5,10 +5,12 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.widgets import CheckboxInput, TextInput
 from collections import OrderedDict
 
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
-from utils.forms import FormsetWithIgnoredFields, anyNull
+from utils.forms import FormsetWithIgnoredFields, anyNull, BaseFormHelper
 
 from . import models, lookups
 
@@ -72,6 +74,53 @@ class StudyPopulationForm(forms.ModelForm):
             self.instance.study = study
         for fld in ["inclusion_criteria", "exclusion_criteria", "confounding_criteria"]:
             self.fields[fld].widget.update_query_parameters({'related': self.instance.study.assessment_id})
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                if fld in ['inclusion_criteria', 'exclusion_criteria', 'confounding_criteria']:
+                    widget.attrs['class'] = 'span10'
+                else:
+                    widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing study-population.",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new study-population",
+                "help_text":   u"""
+                    Create a new study population. Each study-population is a
+                    associated with an epidemiology study. There may be
+                    multiple study populations with a single study,
+                    though this is typically unlikely.""",
+                "cancel_url": self.instance.study.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('country', 3, "span4")
+        helper.add_fluid_row('sex', 4, "span3")
+        helper.add_fluid_row('n', 2, "span6")
+        helper.add_fluid_row('age_mean', 3, "span4")
+        helper.add_fluid_row('age_description', 3, "span4")
+        helper.add_fluid_row('age_lower', 4, "span3")
+
+        url = '{% url "epi:studycriteria_create" assessment.pk %}'
+        helper.add_adder("addIncCriteria", "Add new criteria", url)
+        helper.add_adder("addExcCriteria", "Add new criteria", url)
+        helper.add_adder("addConCriteria", "Add new criteria", url)
+
+        return helper
 
 
 class ExposureForm(forms.ModelForm):
