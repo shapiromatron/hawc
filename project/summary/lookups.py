@@ -1,33 +1,19 @@
-from selectable.base import ModelLookup
 from selectable.registry import registry
 
+from utils.lookups import RelatedLookup
 from . import models
 
 
-class DataPivotLookup(ModelLookup):
+class DataPivotLookup(RelatedLookup):
     model = models.DataPivot
     search_fields = ('title__icontains', )
-
-    def get_query(self, request, term):
-        try:
-            pk = int(request.GET.get('assessment_id'))
-            self.filters = {'assessment_id': pk}
-        except Exception:
-            return self.model.objects.none()
-        return super(DataPivotLookup, self).get_query(request, term)
+    related_filter = 'assessment_id'
 
 
-class VisualLookup(ModelLookup):
+class VisualLookup(RelatedLookup):
     model = models.Visual
     search_fields = ('title__icontains', )
-
-    def get_query(self, request, term):
-        try:
-            pk = int(request.GET.get('assessment_id'))
-            self.filters = {'assessment_id': pk}
-        except Exception:
-            return self.model.objects.none()
-        return super(VisualLookup, self).get_query(request, term)
+    related_filter = 'assessment_id'
 
 
 registry.register(DataPivotLookup)

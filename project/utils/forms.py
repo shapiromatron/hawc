@@ -80,6 +80,13 @@ def form_error_lis_to_ul(lis):
     return u"<ul>{0}</ul>".format("".join(lis))
 
 
+def anyNull(dict, fields):
+    for field in fields:
+        if dict.get(field) is None:
+            return True
+    return False
+
+
 class FormsetWithIgnoredFields(forms.BaseModelFormSet):
 
     ignored_fields = []   # list of field names to be ignored

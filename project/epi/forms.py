@@ -8,7 +8,7 @@ from collections import OrderedDict
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
-from utils.forms import FormsetWithIgnoredFields
+from utils.forms import FormsetWithIgnoredFields, anyNull
 
 from . import models, lookups
 
@@ -69,7 +69,9 @@ class StudyPopulationForm(forms.ModelForm):
             if type(widget) != CheckboxInput:
                 widget.attrs['class'] = 'span12'
         if study:
-            self.instance.study=study
+            self.instance.study = study
+        for fld in ["inclusion_criteria", "exclusion_criteria", "confounding_criteria"]:
+            self.fields[fld].widget.update_query_parameters({'related': self.instance.study.assessment_id})
 
 
 class ExposureForm(forms.ModelForm):
@@ -148,17 +150,17 @@ class BaseEGFormSet(BaseModelFormSet):
                     raise forms.ValidationError("Exposure-groups must have unique descriptions.")
                 descriptions.append(description)
 
-        # update new forms with  exposure_group_id, first get max ID
+        # update new forms with exposure_group_id, first get max ID
         max_exposure_group_id = -1
         for form in self.forms:
-            if form.instance.exposure_group_id>max_exposure_group_id:
+            if form.instance.exposure_group_id > max_exposure_group_id:
                 max_exposure_group_id = form.instance.exposure_group_id
 
         # now increment
         for form in self.extra_forms:
             if form.is_valid() and form.clean():
                 if self.exposure:
-                    form.instance.exposure=self.exposure
+                    form.instance.exposure = self.exposure
                 max_exposure_group_id += 1
                 form.instance.exposure_group_id = max_exposure_group_id
 
@@ -168,13 +170,18 @@ class BaseEGFormSet(BaseModelFormSet):
             raise forms.ValidationError("At least one-exposure group is required.")
 
     def rebuild_exposure_group_id(self):
-        # the exposure-group-id must start at zero and continue sequentially; this
-        # method rebuilds the exposure-groups-ides in increasing order properly.
-        # Note: cannot add into clean() because has_changed flag may not have been set.
-        deleted_ids = sorted([form.instance.exposure_group_id for form in self.deleted_forms], reverse=True)
+        # the exposure-group-id must start at zero and continue sequentially;
+        # this method rebuilds the exposure-groups-ides in increasing order
+        # properly. Note: cannot add into clean() because has_changed flag
+        # may not have been set.
+        deleted_ids = sorted([
+            form.instance.exposure_group_id
+            for form in self.
+            deleted_forms], reverse=True)
         for deleted_id in deleted_ids:
             for form in self.forms:
-                if ((form not in self.deleted_forms) and (form.instance.exposure_group_id>deleted_id)):
+                if ((form not in self.deleted_forms) and
+                        (form.instance.exposure_group_id > deleted_id)):
                     form.instance.exposure_group_id -= 1
                     form.instance.save()
 
@@ -208,6 +215,8 @@ class FactorForm(forms.ModelForm):
         self.instance.assessment = assessment
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
+        self.fields['description'].widget.update_query_parameters(
+            {'related': self.instance.assessment.id})
 
     def clean(self):
         super(FactorForm, self).clean()
@@ -217,10 +226,10 @@ class FactorForm(forms.ModelForm):
         crits = models.Factor.objects \
             .filter(assessment=self.instance.assessment,
                     description=self.cleaned_data.get('description', "")) \
-            .exclude(pk=pk).values_list('pk', flat=True)
+            .exclude(pk=pk)
 
-        if crits.count()>0:
-            raise forms.ValidationError("Description must be unique for assessment.")
+        if crits.count() > 0:
+            self.add_error("description", "Must be unique for assessment")
 
         return self.cleaned_data
 
@@ -240,6 +249,8 @@ class StudyCriteriaForm(forms.ModelForm):
         self.instance.assessment = assessment
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
+        self.fields['description'].widget.update_query_parameters(
+            {'related': self.instance.assessment.id})
 
     def clean(self):
         super(StudyCriteriaForm, self).clean()
@@ -249,10 +260,10 @@ class StudyCriteriaForm(forms.ModelForm):
         crits = models.StudyCriteria.objects \
             .filter(assessment=self.instance.assessment,
                     description=self.cleaned_data.get('description', "")) \
-            .exclude(pk=pk).values_list('pk', flat=True)
+            .exclude(pk=pk)
 
-        if crits.count()>0:
-            raise forms.ValidationError("Description must be unique for assessment.")
+        if crits.count() > 0:
+            self.add_error("description", "Must be unique for assessment")
 
         return self.cleaned_data
 
@@ -270,11 +281,6 @@ class AssessedOutcomeForm(forms.ModelForm):
         lookup_class=lookups.FactorLookup,
         required=False)
 
-    effects = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=EffectTagLookup,
-        required=False,
-        help_text="Tags used to help categorize effect description.")
-
     class Meta:
         model = models.AssessedOutcome
         exclude = ('assessment', 'exposure')
@@ -286,13 +292,23 @@ class AssessedOutcomeForm(forms.ModelForm):
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
+
+        self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
+            lookup_class=EffectTagLookup)
+        self.fields['effects'].help_text = 'Tags used to help categorize effect description.'
+
         if assessment:
             self.instance.assessment = assessment
         if exposure:
             self.instance.exposure = exposure
-        self.fields['main_finding'].queryset = \
-                self.fields['main_finding'].queryset.filter(
-                        exposure=self.instance.exposure)
+
+        self.fields['adjustment_factors'].widget.update_query_parameters(
+            {'related': self.instance.assessment.id})
+        self.fields['confounders_considered'].widget.update_query_parameters(
+            {'related': self.instance.assessment.id})
+
+        self.fields['main_finding'].queryset = self.fields['main_finding']\
+            .queryset.filter(exposure=self.instance.exposure)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
         for fld in ('diagnostic_description', 'summary', 'prevalence_incidence',
@@ -361,7 +377,11 @@ class MetaProtocolForm(forms.ModelForm):
             if type(widget) != CheckboxInput:
                 widget.attrs['class'] = 'span12'
         if parent:
-            self.instance.study=parent
+            self.instance.study = parent
+        self.fields['inclusion_criteria'].widget.update_query_parameters(
+            {'related': self.instance.study.assessment_id})
+        self.fields['exclusion_criteria'].widget.update_query_parameters(
+            {'related': self.instance.study.assessment_id})
 
 
 class MetaResultForm(forms.ModelForm):
@@ -377,6 +397,7 @@ class MetaResultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
+        assessment_id = kwargs.pop('assessment_id')
         super(MetaResultForm, self).__init__(*args, **kwargs)
 
         self.fields['health_outcome'].widget = selectable.AutoCompleteWidget(
@@ -395,7 +416,14 @@ class MetaResultForm(forms.ModelForm):
             if type(widget) != CheckboxInput:
                 widget.attrs['class'] = 'span12'
         if parent:
-            self.instance.protocol=parent
+            self.instance.protocol = parent
+
+        self.fields['adjustment_factors'].widget.update_query_parameters(
+                {'related': assessment_id})
+        self.fields['health_outcome'].widget.update_query_parameters(
+                {'related': assessment_id})
+        self.fields['exposure_name'].widget.update_query_parameters(
+                {'related': assessment_id})
 
 
 class SingleResultForm(forms.ModelForm):
@@ -445,8 +473,8 @@ class SingleResultForm(forms.ModelForm):
         if assessment:
             # used with a single form; not used in formset_factory
             return forms.ModelChoiceField(
-                queryset=self.fields["study"].queryset\
-                             .filter(assessment=assessment, study_type=1))
+                queryset=self.fields["study"].queryset.filter(
+                assessment=assessment, study_type=1))
 
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
@@ -458,11 +486,11 @@ class SingleResultForm(forms.ModelForm):
         updateClasses(("ao", "outcome_group", ), "span11 isAOG")
         updateClasses(("n", "estimate", "lower_ci", "upper_ci", 'ci_units'), "span12 isntAOG")
         self.fields['study'].widget.attrs["class"] += " studySearch"
-        self.fields['ao'].widget.attrs["class"]  += " aoSearch"
+        self.fields['ao'].widget.attrs["class"] += " aoSearch"
         self.fields['outcome_group'].widget.attrs["class"] += " aogSearch"
 
         if parent:
-            self.instance.meta_result=parent
+            self.instance.meta_result = parent
 
     def clean_weight(self):
         weight = self.cleaned_data.get('weight')
@@ -475,20 +503,16 @@ class SingleResultForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(SingleResultForm, self).clean()
 
-        def anyNull(dict, fields):
-            for field in fields:
-                if dict.get(field) is None:
-                    return True
-            return False
-
         if int(cleaned_data.get('resultSelector')) == 0:
             if anyNull(cleaned_data, ('n', 'estimate', 'lower_ci', 'upper_ci')):
-                raise forms.ValidationError("If manually entering single-study data, "
-                                      "N, Risk estimate, and upper and lower CI are required.")
+                raise forms.ValidationError(
+                    "If manually entering single-study data, "
+                    "N, Risk estimate, and upper and lower CI are required.")
         else:
             if anyNull(cleaned_data, ('study', 'ao', 'outcome_group')):
-                raise forms.ValidationError("If entering single-study data using an Assessed Outcome Group, "
-                                      "Study, Assessed-Outcome, and Assessed-Outcome Group are required.")
+                raise forms.ValidationError(
+                    "If entering single-study data using an Assessed Outcome Group, "
+                    "Study, Assessed-Outcome, and Assessed-Outcome Group are required.")
 
         return cleaned_data
 
@@ -529,9 +553,12 @@ class StudyPopulationSelectorForm(forms.Form):
         widget=selectable.AutoComboboxSelectWidget)
 
     def __init__(self, *args, **kwargs):
+        study_id = kwargs.pop('study_id')
         super(StudyPopulationSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
+        self.fields['selector'].widget.update_query_parameters(
+            {'related': study_id})
 
 
 class ExposureSelectorForm(forms.Form):
@@ -542,9 +569,12 @@ class ExposureSelectorForm(forms.Form):
         widget=selectable.AutoComboboxSelectWidget)
 
     def __init__(self, *args, **kwargs):
+        study_id = kwargs.pop('study_id')
         super(ExposureSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
+        self.fields['selector'].widget.update_query_parameters(
+            {'related': study_id})
 
 
 class AssesedOutcomeSelectorForm(forms.Form):
@@ -555,9 +585,12 @@ class AssesedOutcomeSelectorForm(forms.Form):
         widget=selectable.AutoComboboxSelectWidget)
 
     def __init__(self, *args, **kwargs):
+        study_id = kwargs.pop('study_id')
         super(AssesedOutcomeSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
+        self.fields['selector'].widget.update_query_parameters(
+            {'related': study_id})
 
 
 class MetaResultSelectorForm(forms.Form):
@@ -568,6 +601,9 @@ class MetaResultSelectorForm(forms.Form):
         widget=selectable.AutoComboboxSelectWidget)
 
     def __init__(self, *args, **kwargs):
+        study_id = kwargs.pop("study_id")
         super(MetaResultSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
+        self.fields['selector'].widget.update_query_parameters(
+            {'related': study_id})

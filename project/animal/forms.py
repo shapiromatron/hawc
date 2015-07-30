@@ -520,12 +520,16 @@ class EndpointSelectorForm(forms.Form):
     selector = selectable.AutoCompleteSelectField(
         lookup_class=lookups.EndpointByStudyLookup,
         label='Endpoint',
+        help_text="Type keywords in search-box to filter endpoints by name",
         widget=selectable.AutoComboboxSelectWidget)
 
     def __init__(self, *args, **kwargs):
+        study_id = kwargs.pop("study_id")
         super(EndpointSelectorForm, self).__init__(*args, **kwargs)
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span11'
+        self.fields['selector'].widget.update_query_parameters(
+            {'related': study_id})
 
 
 class UploadFileForm(forms.Form):
@@ -621,7 +625,7 @@ class EndpointFilterForm(forms.Form):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
         self.fields['studies'].widget.update_query_parameters(
-            {'assessment_id': assessment_id})
+            {'related': assessment_id})
 
         # disabled; dramatically slows-down page rendering;
         # involuntary context_switches

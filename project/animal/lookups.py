@@ -1,8 +1,7 @@
-from selectable.base import ModelLookup
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import DistinctStringLookup
+from utils.lookups import DistinctStringLookup, RelatedLookup
 
 
 class ExperimentCASLookup(DistinctStringLookup):
@@ -45,19 +44,15 @@ class EndpointStatisticalTestLookup(DistinctStringLookup):
     distinct_field = "statistical_test"
 
 
-class EndpointByStudyLookup(ModelLookup):
+class EndpointByStudyLookup(RelatedLookup):
     # Return names of endpoints available for a particular study
     model = models.Endpoint
-    search_fields = ('name__icontains', 'animal_group__name__icontains')
-    filter_string = 'animal_group__experiment__study'
-
-    def get_query(self, request, term):
-        try:
-            pk = int(request.GET.get('related'))
-        except Exception:
-            return self.model.objects.none()
-        filters = {self.filter_string: pk}
-        return self.model.objects.filter(**filters).order_by('animal_group')
+    search_fields = (
+        'name__icontains',
+        'animal_group__name__icontains',
+        'animal_group__experiment__name__icontains',
+    )
+    related_filter = 'animal_group__experiment__study'
 
     def get_item_label(self, obj):
         return u"{} | {} | {}".format(
@@ -70,7 +65,7 @@ class EndpointByStudyLookup(ModelLookup):
         return self.get_item_label(obj)
 
 
-class EndpointByAssessmentLookup(ModelLookup):
+class EndpointByAssessmentLookup(RelatedLookup):
     # Return names of endpoints available for a assessment study
     model = models.Endpoint
     search_fields = (
@@ -79,14 +74,7 @@ class EndpointByAssessmentLookup(ModelLookup):
         'animal_group__experiment__name__icontains',
         'animal_group__experiment__study__short_citation__icontains'
     )
-
-    def get_query(self, request, term):
-        try:
-            pk = int(request.GET.get('assessment_id'))
-            self.filters = {'assessment_id': pk}
-        except Exception:
-            return self.model.objects.none()
-        return super(EndpointByAssessmentLookup, self).get_query(request, term)
+    related_filter = 'assessment_id'
 
     def get_item_label(self, obj):
         return u"{} | {} | {} | {}".format(

@@ -381,13 +381,8 @@ var HAWCUtils = {
     },
     InitialForm: function(config){
 
-        var selector = config.form.find('#id_selector_0'),
-            selector_val = config.form.find('#id_selector_1'),
+        var selector_val = config.form.find('#id_selector_1'),
             submitter = config.form.find('#submit_form');
-
-        selector.djselectable('option', 'prepareQuery', function(qry){
-            qry.related = config.related;
-        });
 
         submitter.on('click', function(){
             var val = parseInt(selector_val.val(), 10);

@@ -48,7 +48,7 @@ class StudyPopulationCopyAsNewSelector(StudyRead):
 
     def get_context_data(self, **kwargs):
         context = super(StudyPopulationCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.StudyPopulationSelectorForm()
+        context['form'] = forms.StudyPopulationSelectorForm(study_id=self.object.id)
         return context
 
 
@@ -108,7 +108,7 @@ class ExposureCopyAsNewSelector(StudyPopulationDetail):
 
     def get_context_data(self, **kwargs):
         context = super(ExposureCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ExposureSelectorForm()
+        context['form'] = forms.ExposureSelectorForm(study_id=self.object.study.id)
         return context
 
 
@@ -140,7 +140,6 @@ class AssessedOutcomeCreate(BaseCreateWithFormset):
     formset_factory = forms.AOGFormSet
 
     def get_form_kwargs(self):
-        # bind to assessment
         kwargs = super(AssessedOutcomeCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
@@ -249,7 +248,7 @@ class AssessedOutcomeCopyAsNewSelector(ExposureDetail):
 
     def get_context_data(self, **kwargs):
         context = super(AssessedOutcomeCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.AssesedOutcomeSelectorForm()
+        context['form'] = forms.AssesedOutcomeSelectorForm(study_id=self.object.study_population.study.id)
         return context
 
 
@@ -308,14 +307,21 @@ class MetaResultCreate(BaseCreateWithFormset):
         def get_initial_data(field, **kwargs):
             formfield = field.formfield(**kwargs)
             if field.name == "study":
-                formfield.queryset = formfield.queryset.filter(assessment=self.assessment, study_type=1)
+                formfield.queryset = formfield.queryset.filter(
+                    assessment=self.assessment, study_type=1)
             return formfield
 
-        return modelformset_factory(models.SingleResult,
-                                    form=forms.SingleResultForm,
-                                    formset=forms.EmptySingleResultFormset,
-                                    formfield_callback=get_initial_data,
-                                    extra=1)
+        return modelformset_factory(
+            models.SingleResult,
+            form=forms.SingleResultForm,
+            formset=forms.EmptySingleResultFormset,
+            formfield_callback=get_initial_data,
+            extra=1)
+
+    def get_form_kwargs(self):
+        kwargs = super(MetaResultCreate, self).get_form_kwargs()
+        kwargs['assessment_id'] = self.assessment.id
+        return kwargs
 
 
 class MetaResultCopyAsNewSelector(MetaProtocolDetail):
@@ -324,7 +330,7 @@ class MetaResultCopyAsNewSelector(MetaProtocolDetail):
 
     def get_context_data(self, **kwargs):
         context = super(MetaResultCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.MetaResultSelectorForm()
+        context['form'] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
         return context
 
 
@@ -350,6 +356,11 @@ class MetaResultUpdate(BaseUpdateWithFormset):
         formset = forms.SingleResultFormset(queryset=self.object.single_results.all().order_by('pk'))
         forms.meta_result_clean_update_formset(formset, self.assessment)
         return formset
+
+    def get_form_kwargs(self):
+        kwargs = super(MetaResultUpdate, self).get_form_kwargs()
+        kwargs['assessment_id'] = self.assessment.id
+        return kwargs
 
     def post_object_save(self, form, formset):
         # Bind newly single-result outcome to meta-result instance, if adding new

@@ -1,156 +1,110 @@
-from selectable.base import ModelLookup
 from selectable.registry import registry
 
+from utils.lookups import DistinctStringLookup, RelatedLookup
 from . import models
 
 
-class StudyPopulationByStudyLookup(ModelLookup):
+class StudyPopulationByStudyLookup(RelatedLookup):
     # Return names of study populations available for a particular study
     model = models.StudyPopulation
-    search_fields = ('name__icontains')
-    filter_string = 'study'
-
-    def get_query(self, request, term):
-        try:
-            pk = int(request.GET.get('related'))
-        except Exception:
-            return self.model.objects.none()
-        filters = {self.filter_string: pk}
-        return self.model.objects.filter(**filters)
+    search_fields = ('name__icontains', )
+    related_filter = 'study_id'
 
 
-class RegionLookup(ModelLookup):
+class RegionLookup(DistinctStringLookup):
     model = models.StudyPopulation
-    search_fields = ('region__icontains', )
-
-    def get_item_value(self, item):
-        return item.region
-
-    def get_item_label(self, item):
-        return item.region
+    distinct_field = "region"
 
 
-class StateLookup(ModelLookup):
+class StateLookup(DistinctStringLookup):
     model = models.StudyPopulation
-    search_fields = ('state__icontains', )
-
-    def get_item_value(self, item):
-        return item.state
-
-    def get_item_label(self, item):
-        return item.state
+    distinct_field = "state"
 
 
-class StudyCriteriaLookup(ModelLookup):
+class StudyCriteriaLookup(RelatedLookup):
     model = models.StudyCriteria
     search_fields = ('description__icontains', )
-
-    def get_query(self, request, term):
-        results = super(StudyCriteriaLookup, self).get_query(request, term)
-        assessment = request.GET.get('assessment', -1)  # return none if no assessment specified
-        results = results.filter(assessment=assessment)
-        return results
+    related_filter = 'assessment_id'
 
 
 class ExposureByStudyLookup(StudyPopulationByStudyLookup):
     # Return names of exposures available for a particular study
     model = models.Exposure
-    search_fields = ('exposure_form_definition__icontains')
-    filter_string = 'study_population__study'
+    search_fields = ('exposure_form_definition__icontains', )
+    related_filter = 'study_population__study_id'
 
     def get_item_label(self, obj):
         return u"{} | {}".format(obj.study_population, obj)
 
     def get_item_value(self, obj):
-        return u"{} | {}".format(obj.study_population, obj)
+        return self.get_item_label(obj)
 
 
-class FactorLookup(ModelLookup):
+class FactorLookup(RelatedLookup):
     model = models.Factor
     search_fields = ('description__icontains', )
-
-    def get_query(self, request, term):
-        results = super(FactorLookup, self).get_query(request, term)
-        assessment = request.GET.get('assessment', -1)  # return none if no assessment specified
-        results = results.filter(assessment=assessment)
-        return results
+    related_filter = 'assessment__id'
 
 
 class AssessedOutcomeByStudyLookup(StudyPopulationByStudyLookup):
     # Return names of assessed outcomes available for a particular study
     model = models.AssessedOutcome
-    search_fields = ('name__icontains', 'exposure__exposure_form_definition__icontains')
-    filter_string = 'exposure__study_population__study'
+    search_fields = (
+        'name__icontains',
+        'exposure__exposure_form_definition__icontains'
+    )
+    related_filter = 'exposure__study_population__study'
 
     def get_query(self, request, term):
-        qs = super(AssessedOutcomeByStudyLookup, self).get_query(request, term)
-        return qs.order_by('exposure')
+        return super(AssessedOutcomeByStudyLookup, self)\
+                .get_query(request, term).order_by('exposure')
 
     def get_item_label(self, obj):
         return u"{} | {} | {}".format(obj.exposure.study_population, obj.exposure, obj)
 
     def get_item_value(self, obj):
-        return u"{} | {} | {}".format(obj.exposure.study_population, obj.exposure, obj)
+        return self.get_item_label(obj)
 
 
-class AssessedOutcomeGroupByAOLookup(ModelLookup):
+class AssessedOutcomeGroupByAOLookup(RelatedLookup):
     model = models.AssessedOutcomeGroup
-
-    def get_query(self, request, term):
-        try:
-            ao_pk = int(request.GET.get('related'))
-        except Exception:
-            return self.model.objects.none()
-        return self.model.objects.filter(assessed_outcome=ao_pk)
+    related_filter = 'assessed_outcome'
 
 
-class MetaResultByStudyLookup(ModelLookup):
-    # Return names of meta-results available for a particular study
+class MetaResultByStudyLookup(RelatedLookup):
     model = models.MetaResult
     search_fields = ('label__icontains', )
-
-    def get_query(self, request, term):
-        try:
-            study_pk = int(request.GET.get('related'))
-        except Exception:
-            return self.model.objects.none()
-        return self.model.objects.filter(protocol__study=study_pk)
+    related_filter = 'protocol__study'
 
 
-class MetaResultHealthOutcomeLookup(ModelLookup):
+class MetaResultHealthOutcomeLookup(DistinctStringLookup):
     model = models.MetaResult
+    distinct_field = 'health_outcome'
     search_fields = ('health_outcome__icontains', )
 
     def get_query(self, request, term):
         try:
-            pk = int(request.GET.get('assessment'))
+            id_ = int(request.GET.get('related', -1))
         except Exception:
-            return self.model.objects.none()
-        return self.model.objects.filter(protocol__study__assessment_id=pk)
-
-    def get_item_value(self, item):
-        return item.health_outcome
-
-    def get_item_label(self, item):
-        return item.health_outcome
+            id_ = -1
+        return self.model.objects.filter(
+            protocol__study__assessment_id=id_,
+            health_outcome__icontains=term)
 
 
-class MetaResultExposureNameLookup(ModelLookup):
+class MetaResultExposureNameLookup(DistinctStringLookup):
     model = models.MetaResult
+    distinct_field = 'exposure_name'
     search_fields = ('exposure_name__icontains', )
 
     def get_query(self, request, term):
         try:
-            pk = int(request.GET.get('assessment'))
+            id_ = int(request.GET.get('related', -1))
         except Exception:
-            return self.model.objects.none()
-        return self.model.objects.filter(protocol__study__assessment_id=pk)
-
-    def get_item_value(self, item):
-        return item.exposure_name
-
-    def get_item_label(self, item):
-        return item.exposure_name
+            id_ = -1
+        return self.model.objects.filter(
+            protocol__study__assessment_id=id_,
+            exposure_name__icontains=term)
 
 
 registry.register(StudyPopulationByStudyLookup)

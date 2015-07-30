@@ -160,7 +160,7 @@ class EndpointAggregationForm(VisualForm):
             label='Endpoints',
             widget=selectable.AutoCompleteSelectMultipleWidget)
         self.fields["endpoints"].widget.update_query_parameters(
-            {'assessment_id': self.instance.assessment_id})
+            {'related': self.instance.assessment_id})
         self.helper = self.setHelper()
 
     class Meta:
@@ -528,5 +528,5 @@ class SmartTagForm(forms.Form):
             widget = self.fields[fld].widget
             widget.attrs['class'] = 'span12'
             if hasattr(widget, 'update_query_parameters'):
-                widget.update_query_parameters({'assessment_id': assessment_id})
+                widget.update_query_parameters({'related': assessment_id})
                 widget.attrs['class'] += " smartTagSearch"

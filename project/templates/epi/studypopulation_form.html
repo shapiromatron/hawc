@@ -83,12 +83,4 @@
 
 {% block extrajs %}
   {{ form.media }}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
-      $('#id_inclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_exclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_confounding_criteria_0').djselectable('option', 'prepareQuery', assessment);
-    });
-  </script>
 {% endblock extrajs %}

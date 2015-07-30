@@ -106,15 +106,15 @@
   {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-      // meta-result lookups
-      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
-      $('#id_adjustment_factors_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_health_outcome').djselectable('option', 'prepareQuery', assessment);
-      $('#id_exposure_name').djselectable('option', 'prepareQuery', assessment);
 
       // dynamic formset settings
-      $('#addFormInFormset').click(function(){return HAWCUtils.dfAddForm(this, 'form');});
-      $('.formset').on('click', '.deleteForm', function(){return HAWCUtils.dfDeleteForm(this, 'form');});
+      $('#addFormInFormset').click(function(){
+        return HAWCUtils.dfAddForm(this, 'form');
+      });
+
+      $('.formset').on('click', '.deleteForm', function(){
+        return HAWCUtils.dfDeleteForm(this, 'form');
+      });
 
       // single study result dynamic field visibility
       var toggleVisibleFields = function(event){
@@ -143,11 +143,8 @@
         });
       }, bindMetaResultSelectables = function($el){
         updateSelectables($el.find('.aoSearch'), '.studySearch');
-        updateSelectables($el.find('.aogSearch'), '.aoSearch[type=hidden]');
+        // updateSelectables($el.find('.aogSearch'), '.aoSearch');
       };
-
-      // update visible forms on-load
-      bindMetaResultSelectables($('.formset'));
 
       // clear AO/AOG on study change
       $('.formset').on('change', '.studySearch', function(){
@@ -168,10 +165,13 @@
             AOGtd = tr.find('.aogSearch').parent();
         AOtd.html(AOtd.find('input').detach());
         AOGtd.html(AOGtd.find('input').detach());
-        window.bindSelectables(tr); // global django-selectable function
+        window.bindSelectables(tr);
         bindMetaResultSelectables(tr);
         tr.find('.singleResultType').trigger('change');
       });
+
+      // TODO: fix!
+      bindMetaResultSelectables($('.formset'));
 
     });
   </script>

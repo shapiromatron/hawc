@@ -206,7 +206,7 @@ class EndpointCopyAsNewSelector(AnimalGroupRead):
 
     def get_context_data(self, **kwargs):
         context = super(EndpointCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.EndpointSelectorForm()
+        context['form'] = forms.EndpointSelectorForm(study_id=self.object.experiment.study_id)
         return context
 
 

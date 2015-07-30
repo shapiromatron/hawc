@@ -115,16 +115,10 @@
       // don't display unrelated exposure-groups
       $('.eg_fields option:not(:selected)').remove();
 
-      // setup factor lookups
-      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
-      $('#id_adjustment_factors_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_confounders_considered_0').djselectable('option', 'prepareQuery', assessment);
-
       // add selected adjustment-factors to confounders-considered list
       $('#id_adjustment_factors_0').on('djselectableadd', function(e,v){
         var item = $(v.input),
             confounders_dj = $('#id_confounders_considered_0').djselectable().data().uiDjselectable;
-
         confounders_dj.select({id:item.attr('value'), value:item.attr('title')})
       });
 
