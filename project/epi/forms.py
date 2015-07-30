@@ -330,6 +330,19 @@ class StudyCriteriaForm(forms.ModelForm):
 
 class AssessedOutcomeForm(forms.ModelForm):
 
+    HELP_TEXT_CREATE = """Create a new assessed outcome. An assessed
+        outcome is an response measured in an epidemiological study,
+        associated with an exposure-metric. The overall assessed outcome is
+        described, and then quantitative differences in response based on
+        different exposure-metric groups is detailed below.
+    """
+    HELP_TEXT_UPDATE = """Create a new assessed outcome. An assessed
+        outcome is an response measured in an epidemiological study,
+        associated with an exposure-metric. The overall assessed outcome is
+        described, and then quantitative differences in response based on
+        different exposure-metric groups is detailed below.
+    """
+
     adjustment_factors = selectable.AutoCompleteSelectMultipleField(
         help_text="All factors which were included in final model",
         lookup_class=lookups.FactorLookup,
@@ -352,11 +365,9 @@ class AssessedOutcomeForm(forms.ModelForm):
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
-
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
         self.fields['effects'].help_text = 'Tags used to help categorize effect description.'
-
         if assessment:
             self.instance.assessment = assessment
         if exposure:
@@ -369,12 +380,55 @@ class AssessedOutcomeForm(forms.ModelForm):
 
         self.fields['main_finding'].queryset = self.fields['main_finding']\
             .queryset.filter(exposure=self.instance.exposure)
-        for fld in self.fields.keys():
-            self.fields[fld].widget.attrs['class'] = 'span12'
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
         for fld in ('diagnostic_description', 'summary', 'prevalence_incidence',
                     'statistical_power_details', 'dose_response_details',
                     'statistical_metric_description'):
             self.fields[fld].widget.attrs['rows'] = 3
+
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                if fld in ["adjustment_factors", "confounders_considered", "effects"]:
+                    widget.attrs['class'] = 'span11'
+                else:
+                    widget.attrs['class'] = 'span12'
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text": self.HELP_TEXT_UPDATE,
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new exposure",
+                "help_text": self.HELP_TEXT_CREATE,
+                "cancel_url": self.instance.exposure.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('effects', 2, "span6")
+        helper.add_fluid_row('diagnostic', 2, "span6")
+        helper.add_fluid_row('summary', 2, "span6")
+        helper.add_fluid_row('adjustment_factors', 2, "span6")
+        helper.add_fluid_row('dose_response', 2, "span6")
+        helper.add_fluid_row('statistical_power', 2, "span6")
+        helper.add_fluid_row('main_finding', 2, "span6")
+        helper.add_fluid_row('statistical_metric', 2, "span6")
+
+        url = "{% url 'assessment:effect_tag_create' assessment.pk %}"
+        helper.add_adder("addEffectTags", "Add new effect tag", url)
+
+        url = "{% url 'epi:factor_create' assessment.pk %}"
+        helper.add_adder("addAdj", "Add new adjustment factor", url)
+        helper.add_adder("addAdjCons", "Add new adjustment factor", url)
+
+        return helper
 
 
 class AOGForm(forms.ModelForm):

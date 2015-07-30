@@ -1,7 +1,7 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
 {% load selectable_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   {{assessment}} |
@@ -33,84 +33,31 @@
 {% endblock %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
 
-    {% csrf_token %}
+  <div id="aoForm">
+    {% crispy form %}
+  </div>
 
-    <div class='row-fluid'>
-      <fieldset>
-        {# Assessed Outcome Form #}
-        {% if crud == "Create" %}
-          <legend>Create new assessed outcome</legend>
-          <span class="help-block">Create a new assessed outcome. An assessed
-            outcome is an response measured in an epidemiological study,
-            associated with an exposure-metric. The overall assessed outcome is
-            described, and then quantitative differences in response based on
-            different exposure-metric groups is detailed below.</span><br>
-        {% elif crud == "Update" %}
-          <legend>Update {{ object }} </legend>
-          <span class="help-block">Update an existing assessed outcome.</span><br>
-        {% endif %}
-
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {% if field.label == "Adjustment factors" or field.label == "Adjustment factors considered" %}
-                <div class="row-fluid">
-                  <div class="span11">
-                    {{field}}
-                  </div>
-                  <div class="span1">
-                    <a class ='btn btn-primary'href="{% url 'epi:factor_create' assessment.pk %}"onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new adjustment factor">+</a>
-                  </div>
-                </div>
-              {% elif field.label == "Effects" %}
-                <div class="row-fluid">
-                  <div class="span11">
-                    {{field}}
-                  </div>
-                  <div class="span1">
-                    <a class ='btn btn-primary'href="{% url 'assessment:effect_tag_create' assessment.pk %}"onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new effect tag">+</a>
-                  </div>
-                </div>
-              {% else %}
-                {{field}}
-              {% endif %}
-              <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-    </div>
-
-    {# Assessed Outcome Groups formset #}
+  <div id="aogFormset">
     <legend>Assessed Outcome Groups</legend>
-    <span class="help-block">Response data for each individual assessed outcome (hover over headers for more details).</span><br>
-
+    <p class="help-block">
+      Response data for each individual assessed outcome
+      (hover over headers for more details).
+    </p>
     {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+  </div>
 
-    {# Submission area #}
-    <div class="row-fluid">
-      <div class="form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }} assessed outcome</button>
-        {% if crud == "Create" %}
-          <a href='{% url "epi:exposure_detail" object.pk %}' class="btn">Cancel</a>
-        {% elif crud = "Update" %}
-          <a href="{% url 'epi:assessedoutcome_detail' object.pk %}" class="btn">Cancel</a>
-        {% endif %}
-      </div>
-    </div>
-  </form>
 {% endblock %}
 
 {% block extrajs %}
   {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
+
+      $('#aogFormset').insertBefore($('#aoForm .form-actions'));
+      $('.addEffectTags').insertAfter($('#id_effects_0'));
+      $('.addAdj').insertAfter($('#id_adjustment_factors_0'));
+      $('.addAdjCons').insertAfter($('#id_confounders_considered_0'));
 
       // don't display unrelated exposure-groups
       $('.eg_fields option:not(:selected)').remove();
