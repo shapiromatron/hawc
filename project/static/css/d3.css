@@ -147,28 +147,6 @@ path.dr_line {
   border: 2px solid gray;
 }
 
-.d3hovertooltip {
-  position: absolute;
-  background: white;
-  border: 3px solid gray;
-  border-radius: 8px;
-  pointer-events: none;
-  max-width: 700px;
-}
-
-.d3plottooltip{
-  position: absolute !important;
-  background: white;
-  border: 3px solid gray;
-  border-radius: 8px;
-  overflow: auto;
-  z-index: 1150;
-}
-
-.d3plottooltip .popover-title{
-  cursor: pointer;
-}
-
 .scorebox{
   display: inline-block;
   width: 30px;

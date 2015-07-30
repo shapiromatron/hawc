@@ -373,14 +373,11 @@ AssessedOutcome.prototype = {
 
 var AssessedOutcomeGroup = function(data){
     this.data = data;
-    this.tooltip = new PlotTooltip({"width": "500px", "height": "380px"});
 };
 AssessedOutcomeGroup.prototype = {
     build_aog_table_row: function(footnotes, hasSE, hasEstimates){
-        var self = this,
-            name = this.data.exposure_group.description,
-            tds,
-            link;
+        var name = this.getName(),
+            tds, link;
 
         if(this.data.main_finding){
             name = name + footnotes.add_footnote(["Main finding as selected by HAWC assessment authors."]);
@@ -389,10 +386,7 @@ AssessedOutcomeGroup.prototype = {
         link = $('<a>')
             .attr('href', '#')
             .html(name)
-            .on('click', function(e){
-                e.preventDefault();
-                self.tooltip.display_exposure_group_table(self, e);
-            });
+            .on('click', $.proxy(this.show_eg_tooltip, this));
 
         tds = [
             link,
@@ -409,6 +403,15 @@ AssessedOutcomeGroup.prototype = {
         }
 
         return tds;
+    },
+    show_eg_tooltip: function(e){
+        e.preventDefault();
+        var tooltip = new HawcTooltip({"width": "700px", "height": "380px"});
+        tooltip.show(
+            e,
+            "Exposure Group Details: {0}".printf(this.getName()),
+            this.build_exposure_group_table()
+        );
     },
     get_confidence_interval: function(){
         var txt = "";
@@ -433,8 +436,11 @@ AssessedOutcomeGroup.prototype = {
     hasEstimates: function(){
         return this.data.estimate !== null || this.data.lower_ci !== null;
     },
-    build_exposure_group_table: function(div){
-        div.html(Exposure.prototype.build_eg_table.call(this, this.data.exposure_group));
+    build_exposure_group_table: function(){
+        return Exposure.prototype.build_eg_table.call(this, this.data.exposure_group);
+    },
+    getName: function(){
+        return this.data.exposure_group.description;
     }
 };
 
@@ -635,7 +641,7 @@ _.extend(AOForestPlot.prototype, D3Plot.prototype, {
           .attr("cx", function(d){return x(d.estimate);})
           .attr("cy", function(d){return y(d.name) + mid;})
           .style("cursor", "pointer")
-          .on('click', function(d){d.aog.tooltip.display_exposure_group_table(d.aog, d3.event);})
+          .on('click', function(d){d.aog.show_eg_tooltip(d3.event);})
           .append('title').text(function(d){return "{0}: click to view exposure-group details".printf(d.estimate);});
     },
     resize_plot_dimensions: function(){

@@ -674,12 +674,6 @@ if(diff_match_patch){
 
 // Generic parent for all d3.js visualizations
 var D3Plot = function(){
-    // add one div to be used for tooltips
-    if(!this.tooltip){
-        this.tooltip = d3.select("body").append("div")
-                                .attr("class", "d3hovertooltip")
-                                .style("opacity", 0);
-    }
 };
 D3Plot.prototype = {
     add_title: function(x, y){
@@ -1182,79 +1176,37 @@ D3Plot.prototype = {
 
         svg_object.blob = new Blob(svg_object.source, {"type" : "text\/xml"});
         return svg_object;
-    },
-    show_tooltip: function(title, content){
-        // used for hovering-only
-        this.tooltip.transition()
-                    .delay(800)
-                    .duration(200)
-                    .style("opacity", 1.0);
-
-        this.tooltip.html('<h3 class="popover-title">' + title + '</h3><div class="popover-content">' + content + '</div>')
-            .style("left", (d3.event.pageX + 10) + "px")
-            .style("top", (d3.event.pageY - 20) + "px");
-    },
-    hide_tooltip: function(){
-        this.tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0);
     }
 };
 
 
 // Generic tooltip
-var PlotTooltip = function(styles){
-    var self = this;
-    this.tooltip_title = $('<h3 class="popover-title" title="drag to reposition"></h3>');
-    this.tooltip_body = $('<div class="popover-content"></div>');
+var HawcTooltip = function(styles){
+    // singleton instance
+    var self = this,
+        tooltip = $('.hawcTooltip'),
+        heading, close;
 
-    this.tooltip = $('<div class="d3plottooltip" style="display: none;"></div>')
-        .css(styles || {})
-        .append(this.tooltip_title)
-        .append(this.tooltip_body)
-        .draggable()
-        .resizable({"handles": "se", "autoHide": true})
-        .appendTo('body');
-    this.close_button = $('<button type="button" title="click or press ESC to close" class="close">&times;</button>');
+    if (tooltip.length === 0){
+        close = $('<button type="button" title="click or press ESC to close" class="close">&times;</button>')
+            .click($.proxy(this.hide, this));
+        heading = $('<div class="popover-title" title="drag to reposition">')
+            .append(close)
+            .append('<div class="hawcTooltipHeading">');
 
-    $(document).keyup(function(e){if(e.keyCode === 27){self.hide_tooltip();}});
-    $('.d3plottooltip').on('click', '.close', function(){self.hide_tooltip();});
+        tooltip = $('<div class="hawcTooltip popover" style="display: none;">')
+            .append(heading)
+            .append('<div class="hawcTooltipContent popover-content">')
+            .draggable()
+            .resizable({"handles": "se", "autoHide": true})
+            .appendTo('body');
+    }
+
+    // reapply new styles
+    this.tooltip = tooltip.css(styles || {});
 };
-PlotTooltip.prototype = {
-    display_endpoint: function(endpoint, e){
-        var title  = '<small><b>{0}</b></small>'.printf(endpoint.build_breadcrumbs()),
-            plot_div = $('<div style="height:300px; width:300px"></div'),
-            details_div = $("<div></div>"),
-            content = [details_div,
-                       plot_div,
-                       endpoint.build_endpoint_table($('<table class="table table-condensed table-striped"></table>'))];
-        endpoint.build_details_table(details_div);
-        this._show_tooltip(title, content, e);
-        new EndpointPlotContainer(endpoint, plot_div);
-    },
-    display_comments: function(comment_manager, e){
-        var title='Comments for {0}'.printf(comment_manager.object.data.title),
-            content=[];
-        comment_manager.$div = $('<div></div>');
-        if(comment_manager.data.commenting_public){
-            comment_manager._build_comment_list(content);
-        }
-        if(comment_manager.data.commenting_enabled){
-            var form = $('<form"></form>');
-            comment_manager._create_comment_form(form);
-            content.push(form);
-        }
-        comment_manager.$div.html(content);
-        this._show_tooltip(title, comment_manager.$div, e);
-    },
-    display_exposure_group_table: function(heg, e){
-        var title = $('<span class="lead">').text("Exposure Group Details: " + heg.data.exposure_group.description),
-            div = $('<div>');
-
-        heg.build_exposure_group_table(div);
-        this._show_tooltip(title, div, e);
-    },
-    _calculate_position: function(){
+HawcTooltip.prototype = {
+    _calculate_position: function(e){
         // Determine the top and left coordinates for the popup box. Tries to put
         // to the right, then the left, then above, then below, and then finally if
         // none work, stick in the top-right corner.
@@ -1266,8 +1218,8 @@ PlotTooltip.prototype = {
             half_width = width/2,
             height = this.tooltip.height(),
             half_height = height/2,
-            x = this.event.pageX - off_x,
-            y = this.event.pageY - off_y,
+            x = e.pageX - off_x,
+            y = e.pageY - off_y,
             wh = window.innerHeight,
             ww = $('body').innerWidth(),  // includes scrollbar
             l, t;
@@ -1290,16 +1242,22 @@ PlotTooltip.prototype = {
 
         return {"top": (t + off_y) + "px", "left": (l + off_x) + "px"};
     },
-    _show_tooltip: function(title, content, e, plot_object){
-        this.tooltip_title.html([this.close_button, title]);
-        this.tooltip_body.html(content);
-        this.show_tooltip(e);
+    hide: function(){
+        this.tooltip.fadeOut("slow");
+        $(document).unbind('keyup');
     },
-    hide_tooltip: function(){this.tooltip.fadeOut("slow");},
-    show_tooltip: function(e){
-        this.event = e;
-        this.tooltip.css(this._calculate_position()).fadeIn("slow").scrollTop();
-    }
+    show: function(e, title, content){
+        this.tooltip.find('.hawcTooltipHeading').html(title);
+        this.tooltip.find('.hawcTooltipContent').html(content);
+        this.tooltip
+            .css(this._calculate_position(e))
+            .fadeIn("slow")
+            .scrollTop();
+
+        $(document).bind('keyup', $.proxy(function(e){
+            if(e.keyCode===27)this.hide();
+        }, this));
+    },
 };
 
 

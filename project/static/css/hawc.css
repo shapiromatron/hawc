@@ -76,6 +76,15 @@ input[type=number] {
 }
 
 
+/* Tooltips */
+.hawcTooltip{
+  position: absolute !important;
+  border: 3px solid gray;
+  border-radius: 8px;
+  overflow: auto;
+  z-index: 1150;
+}
+
 /* Login form */
 .loginForm{
   margin-top: 15px;

@@ -2841,16 +2841,14 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
             .style("fill", function(d, i){return colors(i);})
             .style("stroke", function(d, i){return d3.rgb(colors(i)).darker();});
 
-        // Add a rect for each date.
+        // Add a rect for each score.
         rects = groups.selectAll("rect")
             .data(Object)
             .enter().append("svg:rect")
             .attr("x", function(d) { return x(d.y0); })
             .attr("y", function(d) { return y(d.x)+5; })
             .attr("width", function(d) { return x(d.y); })
-            .attr("height", 20)
-            .on('mouseover', function(d){ self.show_tooltip(d.x, fmt(d.y)); })
-            .on('mouseout', function(){ self.hide_tooltip(); });
+            .attr("height", 20);
 
         if(this.data.settings.show_values){
             labels = groups.selectAll("text")
