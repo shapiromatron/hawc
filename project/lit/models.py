@@ -269,6 +269,15 @@ class Search(models.Model):
         return self.references.all().annotate(tag_count=models.Count('tags')) \
                                 .filter(tag_count=0).count()
 
+    def get_json(self):
+        d = {}
+        fields = ('pk', 'title')
+        for field in fields:
+            d[field] = getattr(self, field)
+        d['url'] = self.get_absolute_url()
+        d['search_type'] = self.get_search_type_display()
+        return d
+
 
 class PubMedQuery(models.Model):
     search = models.ForeignKey(Search)
@@ -661,13 +670,18 @@ class Reference(models.Model):
     def __unicode__(self):
         return self.get_short_citation_estimate()
 
-    def get_json(self, json_encode=True):
-        d = {"identifiers": [], "tags": []}
+    def get_json(self, json_encode=True, searches=False):
+        d = {}
         fields = ('pk', 'title', 'authors', 'year', 'journal', 'abstract')
         for field in fields:
             d[field] = getattr(self, field)
-        for ref in self.identifiers.all():
-            d['identifiers'].append(ref.get_json(json_encode=False))
+
+        d['identifiers'] = [
+            ref.get_json(json_encode=False)
+            for ref in self.identifiers.all()
+        ]
+        if searches:
+            d['searches'] = [ref.get_json() for ref in self.searches.all()]
 
         d['tags'] = list(self.tags.all().values_list('pk', flat=True))
         d['tags_text'] = list(self.tags.all().values_list('name', flat=True))

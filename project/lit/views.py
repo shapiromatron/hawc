@@ -454,7 +454,7 @@ class RefsJSON(BaseDetail):
             pks = [int(pk) for pk in pks]
             self.queryset = models.Reference.objects.filter(pk__in=pks, assessment=self.assessment)
             for ref in self.queryset:
-                response["refs"].append(ref.get_json(json_encode=False))
+                response["refs"].append(ref.get_json(json_encode=False, searches=True))
         except:
             response["status"] = "fail"
         return response

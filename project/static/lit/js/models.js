@@ -67,7 +67,7 @@ _.extend(Reference.prototype, Observee.prototype, {
                 if(data.journal)
                     return '<p class="ref_small">{0}</p>'.printf(data.journal);
             },
-            get_pubmed = function(){
+            get_identifiers = function(){
                 var p;
                 data.identifiers.forEach(function(v){
                     if(v.database === "PubMed"){
@@ -86,36 +86,44 @@ _.extend(Reference.prototype, Observee.prototype, {
                 if(data.abstract)
                     return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
             },
-            populate_div = function(authors){
-                return [
-                    '<hr>',
-                    authors,
-                    get_title(),
-                    get_journal(),
-                    get_abstract(),
-                    get_pubmed()
-
-                ];
-            };
-
-        var authors = $('<p class="ref_small">{0} {1}</p>'.printf(
+            get_authors_row = function(){
+                var p = $('<p class="ref_small">{0} {1}</p>'.printf(
                             data.authors || Reference.no_authors_text,
                             data.year || ""));
 
-        if(abs_btn || edit_btn){
-            var ul = $('<ul class="dropdown-menu">');
+                if(abs_btn || edit_btn){
+                    var ul = $('<ul class="dropdown-menu">');
 
-            if (abs_btn) ul.append($('<li>').append(abs_btn));
-            if (edit_btn) ul.append($('<li>').append(edit_btn));
+                    if (abs_btn) ul.append($('<li>').append(abs_btn));
+                    if (edit_btn) ul.append($('<li>').append(edit_btn));
 
-            $('<div class="btn-group pull-right">')
-                .append('<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>')
-                .append(ul)
-                .appendTo(authors);
+                    $('<div class="btn-group pull-right">')
+                        .append('<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>')
+                        .append(ul)
+                        .appendTo(p);
+                }
 
-        }
+                return p;
+            },
+            get_searches = function(){
+                if(data.searches){
+                    var title = "<p><strong>HAWC searches/imports:</strong></p>",
+                        ul = $('<ul>').html(_.map(data.searches, function(d){return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.title);}));
+                    return $('<div>').append(title, ul);
+                }
+            },
+            populate_div = function(){
+                return [
+                    '<hr>',
+                    get_authors_row(),
+                    get_title(),
+                    get_journal(),
+                    get_abstract(),
+                    get_identifiers(),
+                ];
+            };
 
-        return div.html(populate_div(authors).concat(this.print_taglist()));
+        return div.html(populate_div().concat(this.print_taglist())).append(get_searches());
     },
     get_abstract_button: function(div){
         // get abstract button if abstract available, or return undefined
