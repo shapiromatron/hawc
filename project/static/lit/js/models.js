@@ -243,10 +243,12 @@ ReferencesViewer.prototype = {
         this.$table_div.html('<p>Loading: <img src="/static/img/loading.gif"/></p>');
     },
     _build_reference_table: function(){
-        var content = [];
-        this.refs.forEach(function(v){
-            content.push(v.print_div_row());
-        });
+        var content
+        if(this.refs.length===0){
+            content = "<p>No references found.</p>";
+        } else {
+            content = _.map(this.refs, function(d){ return d.print_div_row()});
+        }
         this.$table_div.html(content);
     }
 };

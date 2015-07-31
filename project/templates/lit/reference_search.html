@@ -66,9 +66,10 @@
                 data: form.serialize()})
           .done(function(results){
             if(results.status=="success"){
-                refs = [];
-                results.refs.forEach(function(datum){refs.push(new Reference(datum, window.tagtree));});
-                window.refviewer.set_references(refs);
+              window.refviewer.set_references(
+                _.map(results.refs, function(d){
+                  return new Reference(d, window.tagtree);
+                }));
             } else {
                 window.refviewer.set_error();
             };
