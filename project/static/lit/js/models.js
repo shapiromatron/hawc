@@ -16,12 +16,13 @@ _.extend(Reference, {
 });
 _.extend(Reference.prototype, Observee.prototype, {
     print_self: function(show_taglist){
-        var taglist = show_taglist || false;
-
-        var content = ['<h4>Reference details:</h4>',
-                       '<p class="ref_small">{0}</p>'.printf(this.data.journal),
-                       '<p class="ref_title">{0}</p>'.printf(this.data.title),
-                       '<p class="ref_small">{0}</p>'.printf(this.data.authors || Reference.no_authors_text)];
+        var taglist = show_taglist || false,
+            content = [
+                '<h4>Reference details:</h4>',
+                '<p class="ref_small">{0}</p>'.printf(this.data.journal),
+                '<p class="ref_title">{0}</p>'.printf(this.data.title),
+                '<p class="ref_small">{0}</p>'.printf(this.data.authors || Reference.no_authors_text)
+            ];
         if(taglist){
             content = content.concat(this.print_taglist());
         }
@@ -35,16 +36,17 @@ _.extend(Reference.prototype, Observee.prototype, {
         return content;
     },
     print_taglist: function(){
-        var tags = [];
-        this.data.tags.forEach(function(v){
-            tags.push($('<span title="click to remove" class="ref_tag">{0}</span>'.printf(v.get_full_name())).data('d', v));
+        var title = (window.isEdit) ? "click to remove" : "",
+            cls = (window.isEdit) ? "refTag refTagEditing" : "refTag";
+        return _.map(this.data.tags, function(d){
+            return $('<span title="{0}" class="{1}">{2}</span>'
+                        .printf(title, cls, d.get_full_name())).data('d', d);
         });
-        return tags;
     },
     print_name: function(){
-        this.$list = $('<p class="reference">{0} {1}</p>'.printf(this.data.authors || Reference.no_authors_text,
-                                                                 this.data.year || ""))
-                                                         .data('d', this);
+        this.$list = $('<p class="reference">{0} {1}</p>'.printf(
+            this.data.authors || Reference.no_authors_text, this.data.year || ""))
+            .data('d', this);
         return this.$list;
     },
     select_name: function(){
@@ -56,7 +58,7 @@ _.extend(Reference.prototype, Observee.prototype, {
     print_div_row: function(){
 
         var data = this.data,
-            div = $('<div></div>'),
+            div = $('<div>'),
             abs_btn = this.get_abstract_button(div),
             edit_btn = this.get_edit_button(),
             get_title = function(){
@@ -220,7 +222,7 @@ ReferencesViewer.prototype = {
                 '<li><a href="/lit/reference-tag/{0}/tag/">Edit references with this tag (but not descendants)</a></li>'.printf(this.options.tag.data.pk));
 
             h3.text("References tagged ")
-              .append("<span class='ref_tag'>{0}</span>".printf(tag_name))
+              .append("<span class='refTag refTagEditing'>{0}</span>".printf(tag_name))
               .append(actions)
               .on('click', '.show_abstracts', function(){
                 var sel = $(this);
@@ -302,7 +304,7 @@ EditReferenceContainer.prototype = {
                 .html([header, this.$tags_content]);
         this.$div_content.html([this.$div_reflist, this.$div_ref, this.$div_tags]);
 
-        this.$div_selected_tags.on('click', '.ref_tag', function(){
+        this.$div_selected_tags.on('click', '.refTag', function(){
             self.loaded_ref.remove_tag($(this).data('d'));
         });
 
@@ -585,7 +587,7 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     get_nested_list_item: function(parent, padding, options){
         var div = $('<div></div>'),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
-            txtspan = $('<span class="nested-tag"></span>'),
+            txtspan = $('<p class="nestedTag"></p>'),
             text = '{0}{1}'.printf(padding, this.data.name);
 
         if(options && options.show_refs_count) text += " ({0})".printf(this.get_reference_count());
@@ -596,7 +598,7 @@ _.extend(NestedTag.prototype, Observee.prototype, {
         parent.append(div);
 
         if(this.children.length>0){
-            var toggle = $('<a></a>')
+            var toggle = $('<a>')
                 .attr('title', "Collapse tags: {0}".printf(this.data.name))
                 .attr('data-toggle', "collapse")
                 .attr('href', "#collapseTag{0}".printf(this.data.pk))
@@ -678,7 +680,7 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     },
     get_full_name: function(){
         if(this.parent && this.parent.get_full_name){
-            return this.parent.get_full_name() + '/' + this.data.name;
+            return this.parent.get_full_name() + ' ➤ ' + this.data.name;
         } else {
             return this.data.name;
         }

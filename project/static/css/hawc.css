@@ -236,41 +236,42 @@ span.smart-tag.active:hover{
   font-weight: bold;
   margin: .375em 0;
 }
-.ref_tag {
+.refTag {
   color: #ffffff;
   background-color: maroon;
   border-radius: 8px;
   font-weight: bold;
   padding: 3px 5px 3px 5px;
-  margin-right: 5px;
+  margin: 0 3px 3px 0;
+  display: inline-block;
+}
+.refTagEditing {
   cursor: pointer;
 }
 .abstract_label{
-  font-weight:bold;
+  font-weight: bold;
 }
-.nested-tag{
-  padding: 3px 3px 3px 14px;
+.nestedTag{
+  padding-left: 14px;
   white-space: pre;
   border: 2px solid transparent;
+  margin: 0;
+  cursor: pointer;
+}
+.nestedTag:hover{
+  font-weight: bold;
+  border: 2px solid #ababab;
+  background-color: #FFEF8E;
+}
+.nestedTag.selected{
+  color: #0044cc;
+  font-weight: bold;
+  border: 2px solid #ababab;
+  background-color: gold;
 }
 .nestedTagCollapser{
   position: absolute;
-  width: 13px;
-  height: 13px;
-  display: inline-block;
-  vertical-align: middle;
-}
-.nested-tag:hover{
-  color: #aaa;
-  font-weight: bold;
-  cursor: pointer;
-  background-color: lightgoldenrodyellow;
-}
-.nested-tag.selected{
-  border: 2px solid gray;
-  font-weight: bold;
-  cursor: pointer;
-  background-color: gold;
+  padding: 2px 0 0 2px;
 }
 .reference:hover {
   cursor: pointer;

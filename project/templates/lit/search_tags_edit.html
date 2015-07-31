@@ -25,6 +25,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
+      window.isEdit = true;
       {% if obj_perms.edit_assessment %}
         window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
       {% endif %}

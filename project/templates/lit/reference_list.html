@@ -44,7 +44,7 @@
       $('#taglist')
         .html(tagtree.get_nested_list({"show_refs_count": true}))
         .on('hawc-tagClicked', function(e){
-          $('.nested-tag').removeClass("selected");
+          $('.nestedTag').removeClass("selected");
           $(e.target).addClass("selected");
           var tag = $(e.target).data('d'),
               options = {tag: tag,

@@ -90,7 +90,7 @@
       window.editor = new EditTagTreeContainer(window.tagtree, $('#tags'));
 
       $(document).on('hawc-tagMoved', '#tags', function(e, item, offset){
-        var tag = $(item).find('>.nested-tag').data('d');
+        var tag = $(item).find('>.nestedTag').data('d');
         tag.move_self(offset);
       }).on('show', '#delete_tag_form', function(){
         var options = window.tagtree.get_options();
