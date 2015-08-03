@@ -1,3 +1,7 @@
+import operator
+
+from django.db.models import Q
+
 from selectable.base import ModelLookup
 
 
@@ -8,9 +12,8 @@ class DistinctStringLookup(ModelLookup):
     distinct_field = None
 
     def get_query(self, request, term):
-        self.search_fields = (self.distinct_field + "__icontains", )
-        return super(DistinctStringLookup, self)\
-            .get_query(request, term)\
+        return self.model.objects\
+            .filter(**{self.distinct_field + "__icontains": term})\
             .order_by(self.distinct_field)\
             .distinct(self.distinct_field)
 
@@ -22,6 +25,13 @@ class DistinctStringLookup(ModelLookup):
 
 
 class RelatedLookup(ModelLookup):
+    """
+    Perform a search where related_filter is required, and search fields are
+    ORd together. Ex:
+
+        WHERE (self.related_filter = related_id) AND
+              ( ... OR ... OR ...) for search fields
+    """
     related_filter = None  # filter-string
 
     def get_query(self, request, term):
@@ -29,5 +39,11 @@ class RelatedLookup(ModelLookup):
             id_ = int(request.GET.get('related', -1))
         except ValueError:
             id_ = -1
-        self.filters.update({self.related_filter: id_})
-        return super(RelatedLookup, self).get_query(request, term)
+        search_fields = [
+            Q(**{field: term})
+            for field in self.search_fields
+        ]
+        return self.model.objects.filter(
+            Q(**{self.related_filter: id_}) &
+            reduce(operator.or_, search_fields)
+        )
