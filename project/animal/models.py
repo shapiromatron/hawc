@@ -1134,6 +1134,36 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     Endpoint.delete_caches(ids)
 
 
+@receiver(post_save, sender=DosingRegime)
+def change_num_dg(sender, instance, **kwargs):
+    # Ensure number endpoint-groups == dose-groups
+
+    # get endpoints associated with this dosing-regime
+    eps = Endpoint.objects.filter(
+            animal_group_id__in=AnimalGroup.objects.filter(
+                dosing_regime=instance))
+
+    if eps.count() == 0:
+        return
+
+    # get dose-ids
+    dose_ids = instance.doses.all().values_list('dose_group_id', flat=True)
+
+    # create endpoint-groups, as needed
+    egs = []
+    for dose_id in dose_ids:
+        egs.extend([
+           EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id) for
+           ep in eps.exclude(groups__dose_group_id=dose_id)
+        ])
+    EndpointGroup.objects.bulk_create(egs)
+
+    # delete endpoint-groups without a dose-group, as needed
+    EndpointGroup.objects.filter(endpoint__in=eps)\
+        .exclude(dose_group_id__in=dose_ids)\
+        .delete()
+
+
 reversion.register(Experiment)
 reversion.register(AnimalGroup)
 reversion.register(DosingRegime)
