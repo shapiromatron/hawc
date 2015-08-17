@@ -1,0 +1,83 @@
+[
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "American Indian or Alaskan Native",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Asian",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Black or African American",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Hispanic/Latino",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Native American of Other Pacific Islander",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Two or More Races",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "White",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Unknown/Unspecified",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "last_updated": "2013-02-16T14:30:00.001Z",
+            "name": "Other",
+            "created": "2013-02-16T14:30:00.001Z"
+        },
+        "model": "epi2.ethnicity",
+        "pk": 9
+    }
+]
