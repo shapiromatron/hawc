@@ -34,6 +34,12 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class GroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Group
+
+
 class GroupCollectionLinkSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
@@ -75,6 +81,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 class GroupCollectionSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
+    groups = GroupSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super(GroupCollectionSerializer, self).to_representation(instance)

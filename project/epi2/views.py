@@ -91,22 +91,39 @@ class OutcomeDelete(BaseDelete):
 
 
 # Group collection + group
-class GroupCollectionCreate(BaseCreate):
-    success_message = 'Group collection created.'
+class GroupCollectionCreate(BaseCreateWithFormset):
+    success_message = 'Groups created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
     model = models.GroupCollection
     form_class = forms.GroupCollection
+    formset_factory = forms.GroupFormset
+
+    def post_object_save(self, form, formset):
+        for form in formset.forms:
+            form.instance.collection = self.object
+
+    def build_initial_formset_factory(self):
+        return forms.BlankGroupFormset(queryset=models.Group.objects.none())
 
 
 class GroupCollectionDetail(BaseDetail):
     model = models.GroupCollection
 
 
-class GroupCollectionUpdate(BaseUpdate):
-    success_message = "Group collection updated."
+class GroupCollectionUpdate(BaseUpdateWithFormset):
+    success_message = "Groups updated."
     model = models.GroupCollection
     form_class = forms.GroupCollection
+    formset_factory = forms.GroupFormset
+
+    def build_initial_formset_factory(self):
+        return forms.GroupFormset(queryset=self.object.groups.all()
+                                            .order_by('group_id'))
+
+    def post_object_save(self, form, formset):
+        for form in formset:
+            form.instance.collection = self.object
 
 
 class GroupCollectionDelete(BaseDelete):

@@ -541,6 +541,9 @@ class Group(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    class Meta:
+        ordering = ('collection', 'group_id', )
+
 
 class Exposure2(models.Model):
     group_collection = models.OneToOneField(

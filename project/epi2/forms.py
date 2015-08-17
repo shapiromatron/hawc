@@ -393,3 +393,46 @@ class GroupCollection(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper
+
+
+class GroupForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Group
+        exclude = ('collection', 'group_id')
+
+
+class BaseGroupFormset(BaseModelFormSet):
+
+    def clean(self):
+        super(BaseGroupFormset, self).clean()
+
+        # set group_id
+        group_id = 0
+        for form in self.forms:
+            if form.is_valid() and form not in self.deleted_forms:
+                form.instance.group_id = group_id
+                if form.has_changed() is False:
+                    # ensure new group_id saved to db
+                    form.instance.save()
+                group_id += 1
+
+        # check that there is at least one exposure-group
+        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        if count < 1:
+            raise forms.ValidationError("At least one group is required.")
+
+
+GroupFormset = modelformset_factory(
+    models.Group,
+    form=GroupForm,
+    formset=BaseGroupFormset,
+    can_delete=True,
+    extra=0)
+
+BlankGroupFormset = modelformset_factory(
+    models.Group,
+    form=GroupForm,
+    formset=BaseGroupFormset,
+    can_delete=False,
+    extra=1)
