@@ -1,0 +1,54 @@
+{% extends 'portal.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {{assessment}} |
+  {% if crud == "Create" %}
+    {{study_population.study}} | {{study_population}} | Create Outcome
+  {% elif crud == "Update" %}
+    {{object.study_population.study}} | {{object.study_population}} | Update {{object}}
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">
+      {{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{{study_population.study.get_absolute_url}}">
+        {{study_population.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{study_population.get_absolute_url}}">
+        {{study_population|truncatechars:40}}</a><span class="divider">/</span></li>
+    <li class="active">Create Outcome</li>
+  {% elif crud == "Update" %}
+    <li><a href="{{object.study_population.study.get_absolute_url}}">
+        {{object.study_population.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.study_population.get_absolute_url}}">
+        {{object.study_population|truncatechars:40}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">
+        {{exposure}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div id="oForm">
+    {% crispy form %}
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.addEffectTags').insertAfter($('#id_effects_0'));
+      $('.addAdj').insertAfter($('#id_adjustment_factors_0'));
+      $('.addAdjCons').insertAfter($('#id_confounders_considered_0'));
+    });
+  </script>
+{% endblock extrajs %}

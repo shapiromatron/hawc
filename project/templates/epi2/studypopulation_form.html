@@ -1,0 +1,44 @@
+{% extends 'portal.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {{assessment}} |
+  {% if crud == "Create" %}
+    {{study}} | Create Study Population
+  {% elif crud == "Update" %}
+    {{object.study}} | Update {{object}}
+  {% endif %}
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  {% if crud == "Create" %}
+    <li><a href="{{study.get_absolute_url}}">{{study}}</a><span class="divider">/</span></li>
+    <li class="active">Create Study Population</li>
+  {% elif crud == "Update" %}
+    <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
+    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="active">Update</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% crispy form %}
+{% endblock %}
+
+{% block extrajs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.addIncCriteria').insertAfter($('#id_inclusion_criteria_0'));
+      $('.addExcCriteria').insertAfter($('#id_exclusion_criteria_0'));
+      $('.addConCriteria').insertAfter($('#id_confounding_criteria_0'));
+    });
+  </script>
+{% endblock extrajs %}

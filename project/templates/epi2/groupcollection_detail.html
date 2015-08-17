@@ -1,0 +1,39 @@
+{% extends 'portal.html' %}
+
+{% block title %}{{assessment}} | {{object.study}} | Study Population {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.study_population.get_absolute_url}}">{{object.study_population|truncatechars:40}}</a><span class="divider">/</span>
+  {% block breadcrumbs_self %}
+    <li class="active">{{object|truncatechars:40}}<span class="divider">/</span></li>
+  {% endblock breadcrumbs_self %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{object.name}}
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">Group collection editing</a></li>
+                <li><a href="{% url 'epi2:gc_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi2:gc_delete' pk=object.pk %}">Delete</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+{% endblock %}
+
+
+{% block extrajs %}
+  <script type="text/javascript">
+    var content = $('#content');
+    $.get("{% url 'epi2:api:groups-detail' object.id %}", function(d){
+      $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content)
+    });
+  </script>
+{% endblock %}
