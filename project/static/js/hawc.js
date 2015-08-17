@@ -334,43 +334,6 @@ var HAWCUtils = {
         win.focus();
         return false;
     },
-    dfUpdateElementIndex: function(el, prefix, ndx) {
-        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-        var id_regex = new RegExp('(' + prefix + '-\\d+)'),
-            replacement = prefix + '-' + ndx;
-        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-        if (el.id) el.id = el.id.replace(id_regex, replacement);
-        if (el.name) el.name = el.name.replace(id_regex, replacement);
-    },
-    dfAddForm: function(btn, prefix) {
-        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val(), 10),
-            row = $('.dynamic-form:last').clone(false).get(0);
-        $(row).removeAttr('id').insertAfter($('.dynamic-form:last')).children('.hidden').removeClass('hidden');
-        $(row).children().not(':last').children().each(function() {
-            HAWCUtils.dfUpdateElementIndex(this, prefix, formCount);
-            $(this).val('');
-        });
-        $(row).find('.delete-row').click(function() {
-            HAWCUtils.dfDeleteForm(this, prefix);
-        });
-        $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
-        $(row).trigger('dynamicFormset-formAdded');
-        return false;
-    },
-    dfDeleteForm: function(btn, prefix) {
-        // Dynamic formset, modified from https://djangosnippets.org/snippets/1389/
-        $(btn).parents('.dynamic-form').remove();
-        var forms = $('.dynamic-form');
-        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-        for (var i=0, formCount=forms.length; i<formCount; i++) {
-            $(forms.get(i)).children().not(':last').children().each(function() {
-                HAWCUtils.dfUpdateElementIndex(this, prefix, i);
-            });
-        }
-        $(forms).trigger('dynamicFormset-formRemoved');
-        return false;
-    },
     build_breadcrumbs: function(arr){
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
@@ -522,6 +485,76 @@ var HAWCUtils = {
         }
     }
 };
+
+
+// Dynamic formset to add and remove forms via JS
+var DynamicFormset = function($formset, prefix, options){
+    // Modified from https://djangosnippets.org/snippets/1389/
+    this.$el = $formset;
+    this.prefix = prefix;
+    this.options = options || {oneFormRequired: false};
+    this.$el.find('.formset th').tooltip({trigger: "hover"});
+    this.$el.on('click', '#addFormToFormset', this.addForm.bind(this));
+    this.$el.on('click', '.deleteForm', this.deleteForm.bind(this));
+};
+DynamicFormset.prototype = {
+   updateElementIndex: function(el, idx) {
+        var id_regex = new RegExp('(' + this.prefix + '-\\d+)'),
+            replacement = this.prefix + '-' + idx;
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    },
+    addForm: function() {
+        // clone row and remove values
+        var forms = this._formsInFormset(),
+            row = forms.last().clone(false);
+
+        row.find("input,select").val("");
+        row.insertAfter(forms.last());
+
+        // update form index
+        this._updateFieldIndices();
+
+        // update form count
+        this._updateTotalFormsField();
+
+        // trigger events
+        this._formsInFormset().trigger('dynamicFormset-formAdded');
+    },
+    _updateFieldIndices: function(){
+        var self = this;
+        this._formsInFormset().each(function(i, tr){
+            _.each(inps = $(tr).find('input,select'), function(inp){
+                self.updateElementIndex(inp, i);
+            });
+        })
+    },
+    _formsInFormset: function(){
+        return this.$el.find('.dynamic-form');
+    },
+    _updateTotalFormsField: function(){
+        $('#id_{0}-TOTAL_FORMS'.printf(this.prefix)).val(this._formsInFormset().length);
+    },
+    deleteForm: function(e) {
+        if (this.options.oneFormRequired &&
+            this._formsInFormset().length <= 1){
+            return alert("Cannot remove all forms.");
+        }
+
+        // remove current form
+        $(e.target).parents('.dynamic-form').remove();
+
+        // update form count
+        this._updateTotalFormsField();
+
+        // update form index
+        this._updateFieldIndices();
+
+        // trigger events
+        this._formsInFormset().trigger('dynamicFormset-formRemoved');
+    },
+};
+
 
 // Observer design pattern; observers require an `update` method.
 var Observee = function(){

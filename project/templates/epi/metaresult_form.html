@@ -73,19 +73,21 @@
     </fieldset>
 
     {# Single-Result formset #}
-        <legend>Single-Study Results
-        <button class="pull-right btn btn-primary"
-                title="Add new row to single-result"
-                type="button"
-                id="addFormInFormset">+</button>
-    </legend>
-    <span class="help-block">Add individual study-finding which were used for the meta-analysis.
-      Results can be associated with data already present in HAWC, or can be
-      manually-entered with key findings. Hover-over field-titles for more help-text.<br>
-      If you choose to not include-any individual results, delete all rows from this table
-      before submitting.</span><br>
+    <div id="srFormset">
+      <legend>Single-Study Results
+          <button class="pull-right btn btn-primary"
+                  title="Add new row to single-result"
+                  type="button"
+                  id="addFormToFormset">+</button>
+      </legend>
+      <span class="help-block">Add individual study-finding which were used for the meta-analysis.
+        Results can be associated with data already present in HAWC, or can be
+        manually-entered with key findings. Hover-over field-titles for more help-text.<br>
+        If you choose to not include-any individual results, delete all rows from this table
+        before submitting.</span><br>
 
-    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+      {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+    </div>
 
     {# Submission area #}
     <div class="row-fluid">
@@ -107,14 +109,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      // dynamic formset settings
-      $('#addFormInFormset').click(function(){
-        return HAWCUtils.dfAddForm(this, 'form');
-      });
-
-      $('.formset').on('click', '.deleteForm', function(){
-        return HAWCUtils.dfDeleteForm(this, 'form');
-      });
+      new DynamicFormset($('#srFormset'), 'form');
 
       // single study result dynamic field visibility
       var toggleVisibleFields = function(event){
@@ -143,7 +138,7 @@
         });
       }, bindMetaResultSelectables = function($el){
         updateSelectables($el.find('.aoSearch'), '.studySearch');
-        // updateSelectables($el.find('.aogSearch'), '.aoSearch');
+        updateSelectables($el.find('.aogSearch'), '.aoSearch');
       };
 
       // clear AO/AOG on study change
@@ -170,7 +165,6 @@
         tr.find('.singleResultType').trigger('change');
       });
 
-      // TODO: fix!
       bindMetaResultSelectables($('.formset'));
 
     });
