@@ -40,8 +40,21 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'url')
 
 
+class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
+    mean_type = serializers.CharField(source='get_mean_type_display', read_only=True)
+    variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
+    lower_type = serializers.CharField(source='get_lower_type_display', read_only=True)
+    upper_type = serializers.CharField(source='get_upper_type_display', read_only=True)
+
+    class Meta:
+        model = models.GroupNumericalDescriptions
+        exclude = ('group', )
+
+
 class GroupSerializer(serializers.ModelSerializer):
+    descriptions = GroupNumericalDescriptionsSerializer(many=True)
     ethnicities = EthnicitySerializer(many=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
         model = models.Group

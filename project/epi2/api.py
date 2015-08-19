@@ -21,3 +21,9 @@ class GroupCollection(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.GroupCollection
     serializer_class = serializers.GroupCollectionSerializer
+
+
+class Group(AssessmentViewset):
+    assessment_filter_args = "assessment"
+    model = models.Group
+    serializer_class = serializers.GroupSerializer

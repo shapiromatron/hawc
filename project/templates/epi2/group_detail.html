@@ -4,8 +4,9 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study_population.get_absolute_url}}">{{object.study_population|truncatechars:40}}</a><span class="divider">/</span>
+  <li><a href="{{object.collection.study_population.study.get_absolute_url}}">{{object.collection.study_population.study}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.collection.study_population.get_absolute_url}}">{{object.collection.study_population|truncatechars:40}}</a><span class="divider">/</span>
+  <li><a href="{{object.collection.get_absolute_url}}">{{object.collection|truncatechars:40}}</a><span class="divider">/</span>
   {% block breadcrumbs_self %}
     <li class="active">{{object|truncatechars:40}}<span class="divider">/</span></li>
   {% endblock breadcrumbs_self %}
@@ -20,8 +21,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">Group collection editing</a></li>
-                <li><a href="{% url 'epi2:gc_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi2:gc_delete' pk=object.pk %}">Delete</a></li>
+                <li><a href="{% url 'epi2:g_update' object.pk %}">Update</a></li>
             </ul>
           </div>
         {% endif %}
@@ -32,15 +32,8 @@
 {% block extrajs %}
   <script type="text/javascript">
     var content = $('#content');
-    $.get("{% url 'epi2:api:groups-detail' object.id %}", function(d){
+    $.get("{% url 'epi2:api:group-detail' object.id %}", function(d){
       $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content)
-
-      $('<h2>Groups</h2>').appendTo(content);
-      $('<ul>').append(
-          _.map(d.groups, function(d){
-            return "<li><a href='{0}'>{1}</a></li>".printf(d.url, d.name);
-          })
-        ).appendTo(content)
     });
   </script>
 {% endblock %}

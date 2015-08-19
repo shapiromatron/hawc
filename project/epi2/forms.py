@@ -402,6 +402,37 @@ class GroupForm(forms.ModelForm):
         exclude = ('collection', 'group_id')
 
 
+class SingleGroupForm(GroupForm):
+
+    HELP_TEXT_UPDATE = """Update an existing group and group descriptions."""
+
+    def __init__(self, *args, **kwargs):
+        super(SingleGroupForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        inputs = {
+            "legend_text": u"Update {}".format(self.instance),
+            "help_text": self.HELP_TEXT_UPDATE,
+            "cancel_url": self.instance.get_absolute_url()
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('name', 3, "span4")
+        helper.add_fluid_row('sex', 2, "span6")
+        helper.add_fluid_row('n', 2, "span6")
+        helper.add_fluid_row('fraction_male', 3, "span4")
+        return helper
+
+
 class BaseGroupFormset(BaseModelFormSet):
 
     def clean(self):
@@ -435,4 +466,23 @@ BlankGroupFormset = modelformset_factory(
     form=GroupForm,
     formset=BaseGroupFormset,
     can_delete=False,
+    extra=1)
+
+
+class GroupNumericalDescriptionsForm(forms.ModelForm):
+
+    class Meta:
+        model = models.GroupNumericalDescriptions
+        exclude = ('group', )
+
+
+class BaseGroupNumericalDescriptionsFormset(BaseModelFormSet):
+    pass
+
+
+GroupNumericalDescriptionsFormset = modelformset_factory(
+    models.GroupNumericalDescriptions,
+    form=GroupNumericalDescriptionsForm,
+    formset=BaseGroupNumericalDescriptionsFormset,
+    can_delete=True,
     extra=1)

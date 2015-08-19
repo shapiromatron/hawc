@@ -285,6 +285,7 @@ class Group(models.Model):
         default=False,
         help_text="Was the fraction-male value calculated/estimated from literature?")
     isControl = models.NullBooleanField(
+        verbose_name="Control?",
         default=None,
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group")
@@ -295,6 +296,15 @@ class Group(models.Model):
 
     class Meta:
         ordering = ('collection', 'group_id', )
+
+    def get_absolute_url(self):
+        return reverse('epi2:g_detail', kwargs={'pk': self.pk})
+
+    def get_assessment(self):
+        return self.collection.get_assessment()
+
+    def __unicode__(self):
+        return self.name
 
 
 class Exposure2(models.Model):
@@ -372,6 +382,10 @@ class GroupNumericalDescriptions(models.Model):
     group = models.ForeignKey(
         Group,
         related_name="descriptions")
+    description = models.CharField(
+        max_length=128,
+        help_text="Description if numeric ages do not make sense for this "
+                  "study-population (ex: longitudinal studies)")
     mean = models.FloatField(
         blank=True,
         null=True,
@@ -383,11 +397,6 @@ class GroupNumericalDescriptions(models.Model):
     is_calculated = models.BooleanField(
         default=False,
         help_text="Was value calculated/estimated from literature?")
-    description = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="Description if numeric ages do not make sense for this "
-                  "study-population (ex: longitudinal studies)")
     variance = models.FloatField(
         blank=True,
         null=True)
@@ -406,6 +415,9 @@ class GroupNumericalDescriptions(models.Model):
     upper_type = models.PositiveSmallIntegerField(
         choices=UPPER_LIMIT_CHOICES,
         default=0)
+
+    def __unicode__(self):
+        return self.description
 
 
 class StatisticalMetric(models.Model):

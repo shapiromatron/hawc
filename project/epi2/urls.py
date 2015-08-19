@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register(r'study-population', api.StudyPopulation, base_name="study-population")
 router.register(r'outcome', api.Outcome, base_name="outcome")
 router.register(r'groups', api.GroupCollection, base_name="groups")
+router.register(r'group', api.Group, base_name="group")
 
 
 urlpatterns = [
@@ -75,4 +76,12 @@ urlpatterns = [
     url(r'^groups/(?P<pk>\d+)/delete/$',
         views.GroupCollectionDelete.as_view(),
         name='gc_delete'),
+
+    url(r'^group/(?P<pk>\d+)/$',
+        views.GroupDetail.as_view(),
+        name='g_detail'),
+    url(r'^group/(?P<pk>\d+)/update/$',
+        views.GroupUpdate.as_view(),
+        name='g_update'),
+
 ]

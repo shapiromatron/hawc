@@ -133,3 +133,22 @@ class GroupCollectionDelete(BaseDelete):
     def get_success_url(self):
         self.parent = self.object.study_population
         return reverse("epi2:sp_detail", kwargs={"pk": self.parent.pk})
+
+
+class GroupDetail(BaseDetail):
+    model = models.Group
+
+
+class GroupUpdate(BaseUpdateWithFormset):
+    success_message = "Groups updated."
+    model = models.Group
+    form_class = forms.SingleGroupForm
+    formset_factory = forms.GroupNumericalDescriptionsFormset
+
+    def build_initial_formset_factory(self):
+        return forms.GroupNumericalDescriptionsFormset(
+            queryset=self.object.descriptions.all())
+
+    def post_object_save(self, form, formset):
+        for form in formset:
+            form.instance.group = self.object
