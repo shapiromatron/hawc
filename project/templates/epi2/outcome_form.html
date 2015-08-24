@@ -4,12 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} |
-  {% if crud == "Create" %}
-    {{study_population.study}} | {{study_population}} | Create Outcome
-  {% elif crud == "Update" %}
-    {{object.study_population.study}} | {{object.study_population}} | Update {{object}}
-  {% endif %}
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block extrastyle %}
@@ -17,66 +12,13 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">
-      {{assessment}}</a><span class="divider">/</span></li>
-  {% if crud == "Create" %}
-    <li><a href="{{study_population.study.get_absolute_url}}">
-        {{study_population.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{study_population.get_absolute_url}}">
-        {{study_population|truncatechars:40}}</a><span class="divider">/</span></li>
-    <li class="active">Create Outcome</li>
-  {% elif crud == "Update" %}
-    <li><a href="{{object.study_population.study.get_absolute_url}}">
-        {{object.study_population.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{object.study_population.get_absolute_url}}">
-        {{object.study_population|truncatechars:40}}</a><span class="divider">/</span></li>
-    <li><a href="{{object.get_absolute_url}}">
-        {{object}}</a><span class="divider">/</span></li>
-    <li class="active">Update</li>
-  {% endif %}
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-  <div id="oForm">
-    {% crispy form %}
-  </div>
-
-  <div id="rmFormset">
-    <legend>Result metrics
-        <button class="pull-right btn btn-primary"
-                title="Add new group"
-                type="button"
-                id="addFormToFormset">+</button>
-    </legend>
-    <p class="help-block">
-      {% if crud == "Create" %}
-        Create new result metrics. Multiple metrics may be associated with a
-        single outcome. Each one of these metrics will be associated with
-        a group collections.
-      {% else %}
-        Update existing or add new result metrics.
-      {% endif %}
-     </p>
-
-     <table class="table table-condensed table-striped">
-       <tbody>
-         {% for form in formset %}
-          <tr>
-            {% crispy form %}
-          </tr>
-         {% endfor %}
-       </tbody>
-     </table>
-  </div>
-
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
   {{ form.media }}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      // new DynamicFormset($('#rmFormset'), 'form', {oneFormRequired: true});
-      $('#rmFormset').insertBefore($('#oForm .form-actions'));
-    });
-  </script>
 {% endblock extrajs %}

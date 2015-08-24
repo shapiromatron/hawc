@@ -85,47 +85,27 @@ class ExposureDelete(BaseDelete):
 
 
 # Outcome
-class OutcomeCreate(BaseCreateWithFormset):
+class OutcomeCreate(BaseCreate):
     success_message = 'Outcome created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
     model = models.Outcome
     form_class = forms.OutcomeForm
-    formset_factory = forms.ResultMeasurementFormset
 
     def get_form_kwargs(self):
         kwargs = super(OutcomeCreate, self).get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
-    def post_object_save(self, form, formset):
-        for form in formset.forms:
-            form.instance.outcome = self.object
-
-    def build_initial_formset_factory(self):
-        return forms.BlankResultMeasurementFormset(
-            queryset=models.ResultMeasurement.objects.none(),
-            assessment=self.assessment)
-
 
 class OutcomeDetail(BaseDetail):
     model = models.Outcome
 
 
-class OutcomeUpdate(BaseUpdateWithFormset):
+class OutcomeUpdate(BaseUpdate):
     success_message = "Outcome updated."
     model = models.Outcome
     form_class = forms.OutcomeForm
-    formset_factory = forms.ResultMeasurementFormset
-
-    def build_initial_formset_factory(self):
-        return forms.ResultMeasurementFormset(
-            queryset=self.object.results.all(),
-            assessment=self.assessment)
-
-    def post_object_save(self, form, formset):
-        for form in formset:
-            form.instance.outcome = self.object
 
 
 class OutcomeDelete(BaseDelete):
