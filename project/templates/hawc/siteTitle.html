@@ -1,0 +1,3 @@
+{% for crumb in crumbs %}
+    {% if forloop.last %}{{crud}} {{crumb.0}} | HAWC{% else %}{{crumb.0}} | {% endif %}
+{% endfor %}

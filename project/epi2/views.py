@@ -106,8 +106,7 @@ class OutcomeDelete(BaseDelete):
     model = models.Outcome
 
     def get_success_url(self):
-        self.parent = self.object.study_population
-        return reverse("epi2:sp_detail", kwargs={"pk": self.parent.pk})
+        return self.object.study_population.get_absolute_url()
 
 
 # Group collection + group

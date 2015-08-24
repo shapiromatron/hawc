@@ -20,6 +20,7 @@ from django.shortcuts import HttpResponse
 from mailmerge import MailMerge
 import reversion
 
+from utils.models import get_crumbs
 from utils.helper import HAWCDjangoJSONEncoder
 from myuser.models import HAWCUser
 
@@ -235,6 +236,9 @@ class Assessment(models.Model):
             .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))\
             .exclude(id=exclusion_id)\
             .distinct()
+
+    def get_crumbs(self):
+        return get_crumbs(self)
 
 
 class Attachment(models.Model):

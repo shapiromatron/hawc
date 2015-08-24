@@ -1,13 +1,11 @@
 {% extends 'portal.html' %}
 
-{% block title %}{{assessment}} | {{object.study}} | Study Population {% endblock title %}
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
-  {% block breadcrumbs_self %}
-    <li class="active">{{object|truncatechars:40}}<span class="divider">/</span></li>
-  {% endblock breadcrumbs_self %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
@@ -21,10 +19,12 @@
                 <li class="disabled"><a tabindex="-1" href="#">Study Population Editing</a></li>
                 <li><a href="{% url 'epi2:sp_update' object.pk %}">Update</a></li>
                 <li><a href="{% url 'epi2:sp_delete' pk=object.pk %}">Delete</a></li>
-                <li class="disabled"><a tabindex="-1" href="#">Outcomes</a></li>
-                <li><a href="{% url 'epi2:outcome_create' object.pk %}">Create</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">Exposures</a></li>
+                <li><a href="{% url 'epi2:exp_create' object.pk %}">Create</a></li>
                 <li class="disabled"><a tabindex="-1" href="#">Groups</a></li>
                 <li><a href="{% url 'epi2:gc_create' object.pk %}">Create</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">Outcomes</a></li>
+                <li><a href="{% url 'epi2:outcome_create' object.pk %}">Create</a></li>
             </ul>
           </div>
         {% endif %}
@@ -37,6 +37,13 @@
     var content = $('#content');
     $.get("{% url 'epi2:api:study-population-detail' object.id %}", function(d){
       $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content)
+
+      $('<h2>Exposures</h2>').appendTo(content);
+      $('<ul>').append(
+          _.map(d.exposures, function(d){
+            return "<li><a href='{0}'>{1}</a></li>".printf(d.url, d.name);
+          })
+        ).appendTo(content)
 
       $('<h2>Group collections</h2>').appendTo(content);
       $('<ul>').append(

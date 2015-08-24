@@ -201,6 +201,9 @@ class Outcome(BaseEndpoint):
     def get_absolute_url(self):
         return reverse('epi2:outcome_detail', kwargs={'pk': self.pk})
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study_population)
+
 
 class GroupCollection(models.Model):
     """
@@ -233,6 +236,9 @@ class GroupCollection(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study_population)
 
 
 class Group(models.Model):
@@ -310,6 +316,9 @@ class Group(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.collection)
 
 
 class Exposure2(models.Model):

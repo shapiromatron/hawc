@@ -1,0 +1,15 @@
+{% for crumb in crumbs %}
+    {% if forloop.last %}
+        {% if crud == "Read" %}
+            <li class="active">{{crumb.0}}<span class="divider">/</span></li>
+        {% else %}
+            <li class="active">{{crud}} {{crumb.0}}<span class="divider">/</span></li>
+        {% endif %}
+
+    {% else %}
+        <li>
+            <a href="{{crumb.1}}">{{crumb.0}}</a>
+            <span class="divider">/</span>
+        </li>
+    {% endif %}
+{% endfor %}
