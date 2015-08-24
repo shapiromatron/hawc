@@ -33,7 +33,6 @@ class AdjustmentFactorLookup(RelatedLookup):
     related_filter = 'assessment__id'
 
 
-
 # class ExposureByStudyLookup(StudyPopulationByStudyLookup):
 #     # Return names of exposures available for a particular study
 #     model = models.Exposure

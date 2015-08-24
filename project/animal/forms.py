@@ -1,6 +1,7 @@
 from collections import Counter
 
 from django import forms
+from django.core.urlresolvers import reverse
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.db.models import Q
@@ -175,10 +176,17 @@ class AnimalGroupForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.form_id = "animal_group"
-        helper.add_adder("addSpecies", "Add new species", '{% url "assessment:species_create" assessment.pk %}')
-        helper.add_adder("addStrain", "Add new strain", '{% url "assessment:strain_create" assessment.pk %}')
         helper.add_fluid_row('species', 3, "span4")
         helper.add_fluid_row('lifestage_exposed', 3, "span4")
+
+        assessment_id = self.instance.experiment.study.assessment.pk
+
+        url = reverse('assessment:species_create', kwargs={'pk': assessment_id})
+        helper.addBtnLayout(helper.layout[3], 0, url, "Add new species", "span4")
+
+        url = reverse('assessment:strain_create', kwargs={'pk': assessment_id})
+        helper.addBtnLayout(helper.layout[3], 1, url, "Add new strain", "span4")
+
         if "generation" in self.fields:
             helper.add_fluid_row('siblings', 3, "span4")
         return helper
@@ -398,9 +406,6 @@ class EndpointForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.form_id = "endpoint"
-        helper.add_adder("addEffectTag",
-                         "Add new effect tag",
-                         '{% url "assessment:effect_tag_create" assessment.pk %}')
 
         self.fields['diagnostic'].widget.attrs['rows'] = 2
         for fld in ('results_notes', 'endpoint_notes', 'power_notes'):
@@ -410,16 +415,22 @@ class EndpointForm(ModelForm):
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs['class'] = 'span12'
+                if fld in ["effects"]:
+                    widget.attrs['class'] = 'span10'
+                else:
+                    widget.attrs['class'] = 'span12'
 
         helper.add_fluid_row('system', 4, "span3")
         helper.add_fluid_row('effects', 2, "span6")
-        helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('observation_time', 2, "span6")
-        helper.add_fluid_row('data_reported', 4, "span4")
+        helper.add_fluid_row('data_reported', 3, "span4")
+        helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('response_units', 2, "span6")
         helper.add_fluid_row('NOEL', 3, "span4")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
+
+        url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.assessment.pk})
+        helper.addBtnLayout(helper.layout[4], 0, url, "Add new effect tag", "span6")
 
         return helper
 

@@ -2,6 +2,7 @@ from copy import copy
 from itertools import chain
 
 from django import forms
+from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.widgets import CheckboxInput, TextInput
 from collections import OrderedDict
@@ -187,10 +188,11 @@ class StudyPopulationForm(forms.ModelForm):
         helper.add_fluid_row('country', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 3, "span4")
 
-        url = '{% url "epi2:studycriteria_create" assessment.pk %}'
-        helper.add_adder("addIncCriteria", "Create criteria", url)
-        helper.add_adder("addExcCriteria", "Create criteria", url)
-        helper.add_adder("addConCriteria", "Create criteria", url)
+        url = reverse('epi2:studycriteria_create',
+                      kwargs={'pk': self.instance.study.assessment.pk})
+        helper.addBtnLayout(helper.layout[4], 0, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[4], 1, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[4], 2, url, "Create criteria", "span4")
 
         return helper
 
@@ -298,11 +300,6 @@ class OutcomeForm(forms.ModelForm):
         if study_population:
             self.instance.study_population = study_population
 
-        # self.fields['adjustment_factors'].widget.update_query_parameters(
-        #     {'related': self.instance.assessment.id})
-        # self.fields['confounders_considered'].widget.update_query_parameters(
-        #     {'related': self.instance.assessment.id})
-
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -336,12 +333,8 @@ class OutcomeForm(forms.ModelForm):
         helper.add_fluid_row('diagnostic', 2, "span6")
         helper.add_fluid_row('summary', 2, "span6")
 
-        url = "{% url 'assessment:effect_tag_create' assessment.pk %}"
-        helper.add_adder("addEffectTags", "Add new effect tag", url)
-
-        # url = "{% url 'epi2:af_create' assessment.pk %}"
-        # helper.add_adder("addAdj", "Create adjustment factor", url)
-        # helper.add_adder("addAdjCons", "Create adjustment factor", url)
+        url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.assessment.pk})
+        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
 
         return helper
 

@@ -4,6 +4,10 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
 
+from django.template.loader import render_to_string
+
+from crispy_forms.utils import flatatt, TEMPLATE_PACK
+
 
 class BaseFormHelper(cf.FormHelper):
 
@@ -43,16 +47,17 @@ class BaseFormHelper(cf.FormHelper):
     def addCustomFormActions(cls, layout, items):
         layout.append(cfb.FormActions(*items))
 
-    def add_adder(self, cls, title, url):
+    def addBtnLayout(self, lst, idx, url, title, wrapper_class):
         """
-        Add a "plus" button to add a new creator item in a new window.
+        Render field plus an "add new" button to the right.
         """
-        self.layout.append(
-            cfl.HTML("""<a class="btn btn-primary adders pull-right {}"
-                           title="{}" href="{}"
-                           onclick="return HAWCUtils.newWindowPopupLink(this);">
-                                <i class="icon-plus icon-white"></i></a>""".format(
-            cls, title, url)))
+        if type(lst[idx]) is str:
+            fields = [lst[idx]]
+        else:
+            fields = lst[idx].fields
+        lst[idx] = AdderLayout(
+                *fields, adderURL=url, adderTitle=title,
+                wrapper_class=wrapper_class)
 
     def add_fluid_row(self, firstField, numFields, wrapperClasses):
         first = self.layout.index(firstField)
@@ -90,6 +95,27 @@ def anyNull(dict, fields):
         if dict.get(field) is None:
             return True
     return False
+
+
+class AdderLayout(cfl.Field):
+    """
+    Adder layout object. It contains a link-button to add a new field.
+    """
+    template = "crispy_forms/layout/inputAdder.html"
+
+    def __init__(self, *args, **kwargs):
+        self.adderURL = kwargs.pop('adderURL', '')
+        self.adderTitle = kwargs.pop('adderTitle', '')
+        super(AdderLayout, self).__init__(*args, **kwargs)
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs):
+        if extra_context is None:
+            extra_context = {}
+        extra_context["adderURL"] = self.adderURL
+        extra_context["adderTitle"] = self.adderTitle
+        return super(AdderLayout, self).render(form, form_style, context,
+                                               template_pack, extra_context,
+                                               **kwargs)
 
 
 class FormsetWithIgnoredFields(forms.BaseModelFormSet):

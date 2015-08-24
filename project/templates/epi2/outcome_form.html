@@ -68,9 +68,6 @@
     $(document).ready(function(){
       new DynamicFormset($('#rmFormset'), 'form', {oneFormRequired: true});
       $('#rmFormset').insertBefore($('#oForm .form-actions'));
-      $('.addEffectTags').insertAfter($('#id_effects_0'));
-      $('.addAdj').insertAfter($('#id_adjustment_factors_0'));
-      $('.addAdjCons').insertAfter($('#id_confounders_considered_0'));
     });
   </script>
 {% endblock extrajs %}
