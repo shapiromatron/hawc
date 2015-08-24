@@ -477,7 +477,8 @@ class ResultMeasurement(models.Model):
         related_name="results")
     metric = models.ForeignKey(
         ResultMetric,
-        related_name="results")
+        related_name="results",
+        help_text="&nbsp;")
     metric_description = models.TextField(
         blank=True,
         help_text="Add additional text describing the metric used, if needed.")
@@ -488,7 +489,7 @@ class ResultMeasurement(models.Model):
         blank=True)
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
-        help_text="Was a dose-response trend observed?",
+        help_text="Was a trend observed?",
         default=0,
         choices=DOSE_RESPONSE_CHOICES)
     dose_response_details = models.TextField(

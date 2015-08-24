@@ -77,7 +77,8 @@ class OutcomeCreate(BaseCreateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.BlankResultMeasurementFormset(
-            queryset=models.ResultMeasurement.objects.none())
+            queryset=models.ResultMeasurement.objects.none(),
+            assessment=self.assessment)
 
 
 class OutcomeDetail(BaseDetail):
@@ -92,7 +93,8 @@ class OutcomeUpdate(BaseUpdateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.ResultMeasurementFormset(
-            queryset=self.object.results.all())
+            queryset=self.object.results.all(),
+            assessment=self.assessment)
 
     def post_object_save(self, form, formset):
         for form in formset:

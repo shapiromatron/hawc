@@ -67,6 +67,10 @@ class BaseFormHelper(cf.FormHelper):
             self[first+i].wrap(cfl.Field, wrapper_class=v)
         self[first:first+numFields].wrap_together(cfl.Div, css_class="row-fluid")
 
+    def add_td(self, firstField, numFields):
+        first = self.layout.index(firstField)
+        self[first:first+numFields].wrap_together(TdLayout)
+
     def add_header(self, firstField, text):
         self.layout.insert(
             self.layout.index(firstField),
@@ -95,6 +99,27 @@ def anyNull(dict, fields):
         if dict.get(field) is None:
             return True
     return False
+
+
+class TdLayout(cfl.LayoutObject):
+    """
+    Layout object. It wraps fields in a <td>
+    """
+    template = "crispy_forms/layout/td.html"
+
+    def __init__(self, *fields, **kwargs):
+        self.fields = list(fields)
+        self.css_class = kwargs.pop('css_class', '')
+        self.css_id = kwargs.pop('css_id', None)
+        self.template = kwargs.pop('template', self.template)
+        self.flat_attrs = flatatt(kwargs)
+
+    def render(self, form, form_style, context, **kwargs):
+        fields = self.get_rendered_fields(form, form_style, context, **kwargs)
+        return render_to_string(
+            self.template,
+            {'td': self, 'fields': fields, 'form_style': form_style}
+        )
 
 
 class AdderLayout(cfl.Field):

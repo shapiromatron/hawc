@@ -57,7 +57,16 @@
         Update existing or add new result metrics.
       {% endif %}
      </p>
-    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+
+     <table class="table table-condensed table-striped">
+       <tbody>
+         {% for form in formset %}
+          <tr>
+            {% crispy form %}
+          </tr>
+         {% endfor %}
+       </tbody>
+     </table>
   </div>
 
 {% endblock %}
@@ -66,7 +75,7 @@
   {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-      new DynamicFormset($('#rmFormset'), 'form', {oneFormRequired: true});
+      // new DynamicFormset($('#rmFormset'), 'form', {oneFormRequired: true});
       $('#rmFormset').insertBefore($('#oForm .form-actions'));
     });
   </script>

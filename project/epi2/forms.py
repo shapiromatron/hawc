@@ -5,6 +5,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.widgets import CheckboxInput, TextInput
+from django.utils.functional import curry
 from collections import OrderedDict
 
 from crispy_forms import layout as cfl
@@ -269,18 +270,6 @@ class OutcomeForm(forms.ModelForm):
     """
     HELP_TEXT_UPDATE = """Update an existing outcome."""
 
-    # TODO: move to ResultMeasurement
-    # adjustment_factors = selectable.AutoCompleteSelectMultipleField(
-    #     help_text="Adjustment factors included in final model",
-    #     lookup_class=lookups.AdjustmentFactorLookup,
-    #     required=False)
-
-    # confounders_considered = selectable.AutoCompleteSelectMultipleField(
-    #     label="Adjustment factors considered",
-    #     help_text="Adjustment factors examined, but not included, in final model",
-    #     lookup_class=lookups.AdjustmentFactorLookup,
-    #     required=False)
-
     class Meta:
         model = models.Outcome
         exclude = ('assessment', 'study_population')
@@ -484,13 +473,59 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
 
 class ResultMeasurementForm(forms.ModelForm):
 
+    adjustment_factors = selectable.AutoCompleteSelectMultipleField(
+        help_text="All factors which were included in final model",
+        lookup_class=lookups.AdjustmentFactorLookup,
+        required=False)
+
+    confounders_considered = selectable.AutoCompleteSelectMultipleField(
+        label="Adjustment factors considered",
+        help_text="All factors which were examined (including those which were included in final model)",
+        lookup_class=lookups.AdjustmentFactorLookup,
+        required=False)
+
     class Meta:
         model = models.Group
         exclude = ('outcome', 'adjustment_factors')
 
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop('assessment', None)
+        super(ResultMeasurementForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                if fld in ["adjustment_factors", "confounders_considered"]:
+                    widget.attrs['class'] = 'span10'
+                else:
+                    widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        helper = BaseFormHelper(self)
+        helper.form_class = None
+        helper.form_tag = False
+
+        helper.add_td('metric', 2)
+        helper.add_td('dose_response', 2)
+        helper.add_td('statistical_power', 2)
+        helper.add_td('adjustment_factors', 4)
+
+        url = reverse('assessment:effect_tag_create', kwargs={'pk': self.assessment.id})
+        helper.addBtnLayout(helper.layout[3], 0, url, "Add new effect tag", "")
+        helper.addBtnLayout(helper.layout[3], 1, url, "Add new effect tag", "")
+
+        return helper
+
 
 class BaseResultMeasurementFormset(BaseModelFormSet):
-    pass
+
+    def __init__(self, **kwargs):
+        self.assessment = kwargs.pop('assessment', None)
+        super(BaseResultMeasurementFormset, self).__init__(**kwargs)
+        self.form = curry(self.form, assessment=self.assessment)
 
 
 ResultMeasurementFormset = modelformset_factory(
