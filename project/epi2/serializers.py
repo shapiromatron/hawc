@@ -5,6 +5,8 @@ from study.serializers import StudySerializer
 
 from utils.helper import SerializerHelper
 
+from assessment.serializers import EffectTagsSerializer
+
 from . import models
 
 
@@ -81,9 +83,26 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
         model = models.StudyPopulation
 
 
+class ResultMetricSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.ResultMetric
+
+
+class ResultMeasurementSerializer(serializers.ModelSerializer):
+    metric = ResultMetricSerializer()
+    dose_response = serializers.CharField(source='get_dose_response_display', read_only=True)
+    statistical_power = serializers.CharField(source='get_statistical_power_display', read_only=True)
+
+    class Meta:
+        model = models.ResultMeasurement
+
+
 class OutcomeSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
+    effects = EffectTagsSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+    results = ResultMeasurementSerializer(many=True)
 
     class Meta:
         model = models.Outcome

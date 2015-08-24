@@ -29,6 +29,7 @@ class Criteria(models.Model):
     class Meta:
         ordering = ('description', )
         unique_together = ('assessment', 'description')
+        verbose_name_plural = "Criteria"
 
     def __unicode__(self):
         return self.description
@@ -44,6 +45,7 @@ class Country(models.Model):
 
     class Meta:
         ordering = ('name', )
+        verbose_name_plural = "Countries"
 
     def __unicode__(self):
         return self.name
@@ -74,6 +76,9 @@ class Ethnicity(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Ethnicities"
 
     def __unicode__(self):
         return self.name
@@ -420,7 +425,7 @@ class GroupNumericalDescriptions(models.Model):
         return self.description
 
 
-class StatisticalMetric(models.Model):
+class ResultMetric(models.Model):
     metric = models.CharField(
         max_length=128,
         unique=True)
@@ -428,13 +433,21 @@ class StatisticalMetric(models.Model):
         max_length=32)
     isLog = models.BooleanField(
         default=True,
-        verbose_name="Log-results",
-        help_text="When  plotting, use a log base 10 scale")
+        verbose_name="Display as log",
+        help_text="When plotting, use a log base 10 scale")
+    reference_value = models.FloatField(
+        help_text="Null hypothesis value for reference, if applicable",
+        default=1,
+        blank=True,
+        null=True)
     order = models.PositiveSmallIntegerField(
         help_text="Order as they appear in option-list")
 
     class Meta:
         ordering = ('order', )
+
+    def __unicode__(self):
+        return self.metric
 
 
 class ResultAdjustmentFactor(models.Model):
@@ -461,20 +474,13 @@ class ResultMeasurement(models.Model):
 
     outcome = models.ForeignKey(
         Outcome,
-        related_name="groups")
-    dose_response_details = models.TextField(
-        blank=True)
-    statistical_power = models.PositiveSmallIntegerField(
-        help_text="Is the study sufficiently powered?",
-        default=0,
-        choices=STATISTICAL_POWER_CHOICES)
-    statistical_power_details = models.TextField(
-        blank=True)
-    statistical_metric = models.ForeignKey(
-        StatisticalMetric)
-    statistical_metric_description = models.TextField(
+        related_name="results")
+    metric = models.ForeignKey(
+        ResultMetric,
+        related_name="results")
+    metric_description = models.TextField(
         blank=True,
-        help_text="Add additional text describing the statistical metric used, if needed.")
+        help_text="Add additional text describing the metric used, if needed.")
     adjustment_factors = models.ManyToManyField(
         AdjustmentFactor,
         through=ResultAdjustmentFactor,
@@ -485,6 +491,14 @@ class ResultMeasurement(models.Model):
         help_text="Was a dose-response trend observed?",
         default=0,
         choices=DOSE_RESPONSE_CHOICES)
+    dose_response_details = models.TextField(
+        blank=True)
+    statistical_power = models.PositiveSmallIntegerField(
+        help_text="Is the study sufficiently powered?",
+        default=0,
+        choices=STATISTICAL_POWER_CHOICES)
+    statistical_power_details = models.TextField(
+        blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -505,9 +519,11 @@ class GroupResult(models.Model):
         (0, "not-supportive"))
 
     measurement = models.ForeignKey(
-        ResultMeasurement)
+        ResultMeasurement,
+        related_name="results")
     group = models.ForeignKey(
-        Group)
+        Group,
+        related_name="results")
     n = models.PositiveIntegerField(
         blank=True,
         null=True,

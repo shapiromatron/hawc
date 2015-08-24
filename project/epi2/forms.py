@@ -461,6 +461,7 @@ GroupFormset = modelformset_factory(
     can_delete=True,
     extra=0)
 
+
 BlankGroupFormset = modelformset_factory(
     models.Group,
     form=GroupForm,
@@ -485,4 +486,30 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
     form=GroupNumericalDescriptionsForm,
     formset=BaseGroupNumericalDescriptionsFormset,
     can_delete=True,
+    extra=1)
+
+
+class ResultMeasurementForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Group
+        exclude = ('outcome', 'adjustment_factors')
+
+
+class BaseResultMeasurementFormset(BaseModelFormSet):
+    pass
+
+
+ResultMeasurementFormset = modelformset_factory(
+    models.ResultMeasurement,
+    form=ResultMeasurementForm,
+    formset=BaseResultMeasurementFormset,
+    can_delete=True,
+    extra=1)
+
+BlankResultMeasurementFormset = modelformset_factory(
+    models.ResultMeasurement,
+    form=ResultMeasurementForm,
+    formset=BaseResultMeasurementFormset,
+    can_delete=False,
     extra=1)

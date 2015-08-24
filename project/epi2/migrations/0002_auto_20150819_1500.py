@@ -14,11 +14,13 @@ def load_fixture(apps, schema_editor):
     fixture_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../fixtures'))
     call_command('loaddata', os.path.join(fixture_dir, 'ethnicity.json'), app_label='epi2')
     call_command('loaddata', os.path.join(fixture_dir, 'countries.json'), app_label='epi2')
+    call_command('loaddata', os.path.join(fixture_dir, 'resultmetric.json'), app_label='epi2')
 
 
 def unload_fixture(apps, schema_editor):
-    apps.get_model("epi2", "ethnicity").objects.all().delete()
-    apps.get_model("epi2", "country").objects.all().delete()
+    apps.get_model("epi2", "Ethnicity").objects.all().delete()
+    apps.get_model("epi2", "Country").objects.all().delete()
+    apps.get_model("epi2", "ResultMetric").objects.all().delete()
 
 
 class Migration(migrations.Migration):

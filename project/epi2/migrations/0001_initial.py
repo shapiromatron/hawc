@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
             name='Country',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('code', models.CharField(max_length=2)),
-                ('name', models.CharField(max_length=64)),
+                ('code', models.CharField(unique=True, max_length=2)),
+                ('name', models.CharField(unique=True, max_length=64)),
             ],
             options={
                 'ordering': ('name',),
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('starting_n', models.PositiveIntegerField(null=True, blank=True)),
                 ('fraction_male', models.FloatField(blank=True, help_text=b'Expects a value between 0 and 1, inclusive (leave blank if unknown)', null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(1)])),
                 ('fraction_male_calculated', models.BooleanField(default=False, help_text=b'Was the fraction-male value calculated/estimated from literature?')),
-                ('isControl', models.NullBooleanField(default=None, help_text=b'Should this group be interpreted as a null/control group', choices=[(True, b'Yes'), (False, b'No'), (None, b'N/A')])),
+                ('isControl', models.NullBooleanField(default=None, choices=[(True, b'Yes'), (False, b'No'), (None, b'N/A')], help_text=b'Should this group be interpreted as a null/control group', verbose_name=b'Control?')),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
             ],
@@ -97,10 +97,10 @@ class Migration(migrations.Migration):
             name='GroupNumericalDescriptions',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('description', models.CharField(help_text=b'Description if numeric ages do not make sense for this study-population (ex: longitudinal studies)', max_length=128)),
                 ('mean', models.FloatField(null=True, verbose_name=b'Central estimate', blank=True)),
                 ('mean_type', models.PositiveSmallIntegerField(default=0, verbose_name=b'Central estimate type', choices=[(0, None), (1, b'mean'), (2, b'geometric mean'), (3, b'median'), (3, b'other')])),
                 ('is_calculated', models.BooleanField(default=False, help_text=b'Was value calculated/estimated from literature?')),
-                ('description', models.CharField(help_text=b'Description if numeric ages do not make sense for this study-population (ex: longitudinal studies)', max_length=128, blank=True)),
                 ('variance', models.FloatField(null=True, blank=True)),
                 ('variance_type', models.PositiveSmallIntegerField(default=0, choices=[(0, None), (1, b'SD'), (2, b'SEM'), (3, b'GSD'), (4, b'other')])),
                 ('lower', models.FloatField(null=True, blank=True)),
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('is_main_finding', models.BooleanField(help_text=b'Is this the main-finding for this outcome?', verbose_name=b'Main finding')),
                 ('main_finding_support', models.PositiveSmallIntegerField(default=1, help_text=b'Are the results supportive of the main-finding?', choices=[(3, b'not-reported'), (2, b'supportive'), (1, b'inconclusive'), (0, b'not-supportive')])),
-                ('group', models.ForeignKey(to='epi2.Group')),
+                ('group', models.ForeignKey(related_name='results', to='epi2.Group')),
             ],
             options={
                 'ordering': ('measurement', 'group__group_id'),
@@ -166,16 +166,16 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('adjustment_factors', models.ManyToManyField(related_name='outcome_measurements', through='epi2.ResultAdjustmentFactor', to='epi2.AdjustmentFactor', blank=True)),
-                ('outcome', models.ForeignKey(related_name='groups', to='epi2.Outcome')),
             ],
         ),
         migrations.CreateModel(
-            name='StatisticalMetric',
+            name='ResultMetric',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('metric', models.CharField(unique=True, max_length=128)),
                 ('abbreviation', models.CharField(max_length=32)),
-                ('isLog', models.BooleanField(default=True, help_text=b'When  plotting, use a log base 10 scale', verbose_name=b'Log-results')),
+                ('isLog', models.BooleanField(default=True, help_text=b'When plotting, use a log base 10 scale', verbose_name=b'Display as log')),
+                ('reference_value', models.FloatField(default=1, help_text=b'Null hypothesis value for reference, if applicable', null=True, blank=True)),
                 ('order', models.PositiveSmallIntegerField(help_text=b'Order as they appear in option-list')),
             ],
             options={
@@ -243,8 +243,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='resultmeasurement',
-            name='statistical_metric',
-            field=models.ForeignKey(to='epi2.StatisticalMetric'),
+            name='metric',
+            field=models.ForeignKey(related_name='results', to='epi2.ResultMetric'),
+        ),
+        migrations.AddField(
+            model_name='resultmeasurement',
+            name='outcome',
+            field=models.ForeignKey(related_name='results', to='epi2.Outcome'),
         ),
         migrations.AddField(
             model_name='resultadjustmentfactor',
@@ -259,7 +264,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='groupresult',
             name='measurement',
-            field=models.ForeignKey(to='epi2.ResultMeasurement'),
+            field=models.ForeignKey(related_name='results', to='epi2.ResultMeasurement'),
         ),
         migrations.AddField(
             model_name='groupcollection',
