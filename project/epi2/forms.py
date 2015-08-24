@@ -260,6 +260,60 @@ class AdjustmentFactorForm(forms.ModelForm):
         return helper
 
 
+class ExposureForm(forms.ModelForm):
+
+    HELP_TEXT_CREATE = """Create a new exposure."""
+    HELP_TEXT_UPDATE = """Update an existing exposure."""
+
+    class Meta:
+        model = models.Exposure2
+        exclude = ('study_population', )
+
+    def __init__(self, *args, **kwargs):
+        study_population = kwargs.pop('parent', None)
+        super(ExposureForm, self).__init__(*args, **kwargs)
+        if study_population:
+            self.instance.study_population = study_population
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                if fld in ["metric_units"]:
+                    widget.attrs['class'] = 'span10'
+                else:
+                    widget.attrs['class'] = 'span12'
+
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text": self.HELP_TEXT_UPDATE,
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new exposure",
+                "help_text": self.HELP_TEXT_CREATE,
+                "cancel_url": self.instance.study_population.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('inhalation', 6, "span2")
+        helper.add_fluid_row('metric', 3, "span4")
+        helper.add_fluid_row('analytical_method', 2, "span6")
+
+        url = reverse('assessment:dose_units_create',
+                      kwargs={'pk': self.instance.study_population.study.assessment.pk})
+        helper.addBtnLayout(helper.layout[4], 1, url, "Create units", "span4")
+
+        return helper
+
+
 class OutcomeForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = """Create a new outcome. An

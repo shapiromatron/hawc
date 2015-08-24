@@ -15,6 +15,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from assessment.serializers import AssessmentSerializer
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.models import get_crumbs
 
 
 class Criteria(models.Model):
@@ -160,6 +161,9 @@ class StudyPopulation(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
 
 class Outcome(BaseEndpoint):
 
@@ -218,6 +222,12 @@ class GroupCollection(models.Model):
         blank=True)
     name = models.CharField(
         max_length=256)
+    exposure = models.ForeignKey(
+        "Exposure2",
+        related_name="groups",
+        help_text="Exposure-group associated with this group",
+        blank=True,
+        null=True)
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
@@ -322,10 +332,11 @@ class Group(models.Model):
 
 
 class Exposure2(models.Model):
-    group_collection = models.OneToOneField(
-        GroupCollection,
-        primary_key=True,
-        related_name="exposure")
+    study_population = models.ForeignKey(
+        StudyPopulation,
+        related_name='exposures')
+    name = models.TextField(
+        help_text='Name of exposure-route')
     inhalation = models.BooleanField(
         default=False)
     dermal = models.BooleanField(
@@ -339,8 +350,6 @@ class Exposure2(models.Model):
         verbose_name="Intravenous (IV)")
     unknown_route = models.BooleanField(
         default=False)
-    exposure_form_definition = models.TextField(
-        help_text='Name of exposure-route')
     metric = models.TextField(
         verbose_name="Measurement Metric")
     metric_units = models.ForeignKey(
@@ -362,7 +371,21 @@ class Exposure2(models.Model):
         auto_now=True)
 
     class Meta:
-        ordering = ('exposure_form_definition', )
+        ordering = ('name', )
+        verbose_name = "Exposure"
+        verbose_name_plural = "Exposures"
+
+    def __unicode__(self):
+        return self.name
+
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse('epi2:exp_detail', kwargs={'pk': self.pk})
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study_population)
 
 
 class GroupNumericalDescriptions(models.Model):
@@ -483,6 +506,9 @@ class ResultMeasurement(models.Model):
 
     outcome = models.ForeignKey(
         Outcome,
+        related_name="results")
+    groups = models.ForeignKey(
+        GroupCollection,
         related_name="results")
     metric = models.ForeignKey(
         ResultMetric,

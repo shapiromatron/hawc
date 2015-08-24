@@ -57,6 +57,33 @@ class AdjustmentFactorCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.AdjustmentFactorForm
 
 
+# Exposure
+class ExposureCreate(BaseCreate):
+    success_message = 'Exposure created.'
+    parent_model = models.StudyPopulation
+    parent_template_name = 'study_population'
+    model = models.Exposure2
+    form_class = forms.ExposureForm
+
+
+class ExposureDetail(BaseDetail):
+    model = models.Exposure2
+
+
+class ExposureUpdate(BaseUpdate):
+    success_message = "Study Population updated."
+    model = models.Exposure2
+    form_class = forms.ExposureForm
+
+
+class ExposureDelete(BaseDelete):
+    success_message = "Study Population deleted."
+    model = models.Exposure2
+
+    def get_success_url(self):
+        return self.object.study_population.get_absolute_url()
+
+
 # Outcome
 class OutcomeCreate(BaseCreateWithFormset):
     success_message = 'Outcome created.'

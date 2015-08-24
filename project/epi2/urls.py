@@ -7,6 +7,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r'study-population', api.StudyPopulation, base_name="study-population")
+router.register(r'exposure', api.Exposure, base_name="exposure")
 router.register(r'outcome', api.Outcome, base_name="outcome")
 router.register(r'groups', api.GroupCollection, base_name="groups")
 router.register(r'group', api.Group, base_name="group")
@@ -38,10 +39,19 @@ urlpatterns = [
         views.StudyPopulationDelete.as_view(),
         name='sp_delete'),
 
-    # Adjustment factor
-    url(r'^assessment/(?P<pk>\d+)/factors/create/$',
-        views.AdjustmentFactorCreate.as_view(),
-        name='af_create'),
+    # Exposure
+    url(r'^study/(?P<pk>\d+)/exposure/create/$',
+        views.ExposureCreate.as_view(),
+        name='exp_create'),
+    url(r'^exposure/(?P<pk>\d+)/$',
+        views.ExposureDetail.as_view(),
+        name='exp_detail'),
+    url(r'^exposure/(?P<pk>\d+)/update/$',
+        views.ExposureUpdate.as_view(),
+        name='exp_update'),
+    url(r'^exposure/(?P<pk>\d+)/delete/$',
+        views.ExposureDelete.as_view(),
+        name='exp_delete'),
 
     # Outcome
     url(r'^study-population/(?P<pk>\d+)/outcome/create/$',

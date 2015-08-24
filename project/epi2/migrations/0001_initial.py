@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('name',),
+                'verbose_name_plural': 'Countries',
             },
         ),
         migrations.CreateModel(
@@ -48,6 +49,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('description',),
+                'verbose_name_plural': 'Criteria',
             },
         ),
         migrations.CreateModel(
@@ -58,6 +60,33 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
             ],
+            options={
+                'verbose_name_plural': 'Ethnicities',
+            },
+        ),
+        migrations.CreateModel(
+            name='Exposure2',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.TextField(help_text=b'Name of exposure-route')),
+                ('inhalation', models.BooleanField(default=False)),
+                ('dermal', models.BooleanField(default=False)),
+                ('oral', models.BooleanField(default=False)),
+                ('in_utero', models.BooleanField(default=False)),
+                ('iv', models.BooleanField(default=False, verbose_name=b'Intravenous (IV)')),
+                ('unknown_route', models.BooleanField(default=False)),
+                ('metric', models.TextField(verbose_name=b'Measurement Metric')),
+                ('metric_description', models.TextField(verbose_name=b'Measurement Description')),
+                ('analytical_method', models.TextField(help_text=b'Include details on the lab-techniques for exposure measurement in samples.')),
+                ('control_description', models.TextField()),
+                ('exposure_description', models.CharField(help_text=b'May be used to describe the exposure distribution, for example, "2.05 \xc2\xb5g/g creatinine (urine), geometric mean; 25th percentile = 1.18, 75th percentile = 3.33"', max_length=128, blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('last_updated', models.DateTimeField(auto_now=True)),
+                ('metric_units', models.ForeignKey(to='assessment.DoseUnits')),
+            ],
+            options={
+                'ordering': ('name',),
+            },
         ),
         migrations.CreateModel(
             name='Group',
@@ -88,6 +117,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
+                ('exposure', models.ForeignKey(related_name='groups', blank=True, to='epi2.Exposure2', null=True)),
             ],
             options={
                 'ordering': ('name',),
@@ -158,14 +188,15 @@ class Migration(migrations.Migration):
             name='ResultMeasurement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('metric_description', models.TextField(help_text=b'Add additional text describing the metric used, if needed.', blank=True)),
+                ('dose_response', models.PositiveSmallIntegerField(default=0, help_text=b'Was a trend observed?', verbose_name=b'Dose Response Trend', choices=[(0, b'not-applicable'), (1, b'monotonic'), (2, b'non-monotonic'), (3, b'no trend'), (4, b'not reported')])),
                 ('dose_response_details', models.TextField(blank=True)),
                 ('statistical_power', models.PositiveSmallIntegerField(default=0, help_text=b'Is the study sufficiently powered?', choices=[(0, b'not reported or calculated'), (1, b'appears to be adequately powered (sample size met)'), (2, b'somewhat underpowered (sample size is 75% to <100% of recommended)'), (3, b'underpowered (sample size is 50 to <75% required)'), (4, b'severely underpowered (sample size is <50% required)')])),
                 ('statistical_power_details', models.TextField(blank=True)),
-                ('statistical_metric_description', models.TextField(help_text=b'Add additional text describing the statistical metric used, if needed.', blank=True)),
-                ('dose_response', models.PositiveSmallIntegerField(default=0, help_text=b'Was a dose-response trend observed?', verbose_name=b'Dose Response Trend', choices=[(0, b'not-applicable'), (1, b'monotonic'), (2, b'non-monotonic'), (3, b'no trend'), (4, b'not reported')])),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('adjustment_factors', models.ManyToManyField(related_name='outcome_measurements', through='epi2.ResultAdjustmentFactor', to='epi2.AdjustmentFactor', blank=True)),
+                ('groups', models.ForeignKey(related_name='results', to='epi2.GroupCollection')),
             ],
         ),
         migrations.CreateModel(
@@ -207,30 +238,6 @@ class Migration(migrations.Migration):
                 ('study_population', models.ForeignKey(related_name='spcriteria', to='epi2.StudyPopulation')),
             ],
         ),
-        migrations.CreateModel(
-            name='Exposure2',
-            fields=[
-                ('group_collection', models.OneToOneField(related_name='exposure', primary_key=True, serialize=False, to='epi2.GroupCollection')),
-                ('inhalation', models.BooleanField(default=False)),
-                ('dermal', models.BooleanField(default=False)),
-                ('oral', models.BooleanField(default=False)),
-                ('in_utero', models.BooleanField(default=False)),
-                ('iv', models.BooleanField(default=False, verbose_name=b'Intravenous (IV)')),
-                ('unknown_route', models.BooleanField(default=False)),
-                ('exposure_form_definition', models.TextField(help_text=b'Name of exposure-route')),
-                ('metric', models.TextField(verbose_name=b'Measurement Metric')),
-                ('metric_description', models.TextField(verbose_name=b'Measurement Description')),
-                ('analytical_method', models.TextField(help_text=b'Include details on the lab-techniques for exposure measurement in samples.')),
-                ('control_description', models.TextField()),
-                ('exposure_description', models.CharField(help_text=b'May be used to describe the exposure distribution, for example, "2.05 \xc2\xb5g/g creatinine (urine), geometric mean; 25th percentile = 1.18, 75th percentile = 3.33"', max_length=128, blank=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('metric_units', models.ForeignKey(to='assessment.DoseUnits')),
-            ],
-            options={
-                'ordering': ('exposure_form_definition',),
-            },
-        ),
         migrations.AddField(
             model_name='studypopulation',
             name='criteria',
@@ -244,7 +251,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resultmeasurement',
             name='metric',
-            field=models.ForeignKey(related_name='results', to='epi2.ResultMetric'),
+            field=models.ForeignKey(related_name='results', to='epi2.ResultMetric', help_text=b'&nbsp;'),
         ),
         migrations.AddField(
             model_name='resultmeasurement',
@@ -285,6 +292,11 @@ class Migration(migrations.Migration):
             model_name='group',
             name='ethnicities',
             field=models.ManyToManyField(to='epi2.Ethnicity', blank=True),
+        ),
+        migrations.AddField(
+            model_name='exposure2',
+            name='study_population',
+            field=models.ForeignKey(related_name='exposures', to='epi2.StudyPopulation'),
         ),
         migrations.AlterUniqueTogether(
             name='criteria',

@@ -31,7 +31,15 @@ class StudyPopulationCriteriaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.StudyPopulationCriteria
-        fields = ('id', 'description')
+        fields = ('id', 'description', 'criteria_type')
+
+
+class ExposureLinkSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = models.Exposure2
+        fields = ('id', 'name', 'url')
 
 
 class OutcomeLinkSerializer(serializers.ModelSerializer):
@@ -74,6 +82,7 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source='spcriteria', many=True)
     outcomes = OutcomeLinkSerializer(many=True)
+    exposures = ExposureLinkSerializer(many=True)
     group_collections = GroupCollectionLinkSerializer(many=True)
     country = serializers.CharField(source='country.name', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -81,6 +90,14 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.StudyPopulation
+
+
+class ExposureSerializer(serializers.ModelSerializer):
+    study_population = StudyPopulationSerializer()
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = models.Exposure2
 
 
 class ResultMetricSerializer(serializers.ModelSerializer):

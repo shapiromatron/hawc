@@ -11,6 +11,12 @@ class StudyPopulation(AssessmentViewset):
     serializer_class = serializers.StudyPopulationSerializer
 
 
+class Exposure(AssessmentViewset):
+    assessment_filter_args = "study_population__study__assessment"
+    model = models.Exposure2
+    serializer_class = serializers.ExposureSerializer
+
+
 class Outcome(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Outcome
@@ -18,12 +24,12 @@ class Outcome(AssessmentViewset):
 
 
 class GroupCollection(AssessmentViewset):
-    assessment_filter_args = "assessment"
+    assessment_filter_args = "assessment"  # todo: fix
     model = models.GroupCollection
     serializer_class = serializers.GroupCollectionSerializer
 
 
 class Group(AssessmentViewset):
-    assessment_filter_args = "assessment"
+    assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer
