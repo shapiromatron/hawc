@@ -180,7 +180,7 @@ class Outcome(BaseEndpoint):
         max_length=128,
         blank=True,
         help_text="Details on where the data are found in the literature "
-                  "(ex: Figure 1, Table 2, etc.)")
+                  "(ex: Figure 1, Table 2, etc.)")  # TODO: move this to results
     population_description = models.CharField(
         max_length=128,
         help_text='Detailed description of the population being studied for this outcome, '
@@ -287,6 +287,7 @@ class Group(models.Model):
         blank=True)
     sex = models.CharField(
         max_length=1,
+        default="U",
         choices=SEX_CHOICES)
     ethnicities = models.ManyToManyField(
         Ethnicity,
@@ -483,8 +484,10 @@ class ResultMetric(models.Model):
 
 
 class ResultAdjustmentFactor(models.Model):
-    adjustment_factor = models.ForeignKey('AdjustmentFactor')
-    result_measurement = models.ForeignKey('ResultMeasurement')
+    adjustment_factor = models.ForeignKey('AdjustmentFactor',
+        related_name='resfactors')
+    result_measurement = models.ForeignKey('ResultMeasurement',
+        related_name='resfactors')
     included_in_final_model = models.BooleanField(default=True)
 
 
@@ -520,7 +523,7 @@ class ResultMeasurement(models.Model):
     adjustment_factors = models.ManyToManyField(
         AdjustmentFactor,
         through=ResultAdjustmentFactor,
-        related_name='outcome_measurements',
+        related_name='outcomes',
         blank=True)
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
@@ -539,6 +542,26 @@ class ResultMeasurement(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+
+    @property
+    def factors_applied(self):
+        return self.adjustment_factors.filter(resfactors__included_in_final_model=True)
+
+    @property
+    def factors_considered(self):
+        return self.adjustment_factors.filter(resfactors__included_in_final_model=False)
+
+    def __unicode__(self):
+        return u"{0}: {1}".format(self.groups, self.metric)
+
+    def get_assessment(self):
+        return self.outcome.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse('epi2:result_detail', kwargs={'pk': self.pk})
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.outcome)
 
 
 class GroupResult(models.Model):

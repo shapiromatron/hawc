@@ -20,6 +20,8 @@
                 <li class="disabled"><a tabindex="-1" href="#">Outcome editing</a></li>
                 <li><a href="{% url 'epi2:outcome_update' object.pk %}">Update</a></li>
                 <li><a href="{% url 'epi2:outcome_delete' pk=object.pk %}">Delete</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">Results</a></li>
+                <li><a href="{% url 'epi2:result_create' object.pk %}">Create</a></li>
             </ul>
           </div>
         {% endif %}
@@ -30,9 +32,18 @@
 {% block extrajs %}
   <script type="text/javascript">
     $.get("{% url 'epi2:api:outcome-detail' object.id %}", function(d){
-        $('#content').append(
-            $('<pre>').html(JSON.stringify(d, null, '\t'))
-        );
+
+        var content = $('#content');
+
+        $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content);
+
+        $('<h2>Results</h2>').appendTo(content);
+
+        $('<ul>').append(
+            _.map(d.results, function(d){
+              return "<li><a href='{0}'>{1}: {2}</a></li>".printf(d.url, d.groups.name, d.metric.metric);
+            })
+          ).appendTo(content);
     });
   </script>
 {% endblock %}

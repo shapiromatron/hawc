@@ -527,71 +527,188 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
 
 class ResultMeasurementForm(forms.ModelForm):
 
-    adjustment_factors = selectable.AutoCompleteSelectMultipleField(
-        help_text="All factors which were included in final model",
+    HELP_TEXT_CREATE = """Add."""
+    HELP_TEXT_UPDATE = """Add."""
+    ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
+
+    factors_applied = selectable.AutoCompleteSelectMultipleField(
+        help_text="All factors included in final model",
         lookup_class=lookups.AdjustmentFactorLookup,
         required=False)
 
-    confounders_considered = selectable.AutoCompleteSelectMultipleField(
+    factors_considered = selectable.AutoCompleteSelectMultipleField(
         label="Adjustment factors considered",
-        help_text="All factors which were examined (including those which were included in final model)",
+        help_text="Factors considered, but not included in the final model",
         lookup_class=lookups.AdjustmentFactorLookup,
         required=False)
 
     class Meta:
-        model = models.Group
+        model = models.ResultMeasurement
         exclude = ('outcome', 'adjustment_factors')
 
     def __init__(self, *args, **kwargs):
-        self.assessment = kwargs.pop('assessment', None)
+        outcome = kwargs.pop('parent', None)
         super(ResultMeasurementForm, self).__init__(*args, **kwargs)
+        if outcome:
+            self.instance.outcome = outcome
+        for fld in self.ADJUSTMENT_FIELDS:
+            self.fields[fld].widget.update_query_parameters(
+                {'related': self.instance.outcome.assessment_id})
+            if self.instance.id:
+                self.fields[fld].initial = getattr(self.instance, fld)
+
         self.helper = self.setHelper()
+
+    def save_factors(self):
+        """
+        Adjustment factors is a through model; requires the inclusion type.
+        We save the m2m relations using the additional information from the
+        field-name
+        """
+        self.instance.resfactors.all().delete()
+        objs = []
+
+        applied = self.cleaned_data.get("factors_applied", [])
+        objs.extend([
+            models.ResultAdjustmentFactor(
+                    adjustment_factor=af,
+                    result_measurement=self.instance,
+                    included_in_final_model=True)
+            for af in applied
+        ])
+
+        considered = self.cleaned_data.get("factors_considered", [])
+        considered = set(considered) - set(applied)
+        objs.extend([
+            models.ResultAdjustmentFactor(
+                    adjustment_factor=af,
+                    result_measurement=self.instance,
+                    included_in_final_model=False)
+            for af in considered
+        ])
+
+        models.ResultAdjustmentFactor.objects.bulk_create(objs)
+
+    def save(self, commit=True):
+        instance = super(ResultMeasurementForm, self).save(commit)
+        if commit:
+            self.save_factors()
+        return instance
 
     def setHelper(self):
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in ["adjustment_factors", "confounders_considered"]:
+                if fld in self.ADJUSTMENT_FIELDS:
                     widget.attrs['class'] = 'span10'
                 else:
                     widget.attrs['class'] = 'span12'
             if type(widget) == forms.Textarea:
                 widget.attrs['rows'] = 3
 
-        helper = BaseFormHelper(self)
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text": self.HELP_TEXT_UPDATE,
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new set of results",
+                "help_text": self.HELP_TEXT_CREATE,
+                "cancel_url": self.instance.outcome.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.form_tag = False
 
-        helper.add_td('metric', 2)
-        helper.add_td('dose_response', 2)
-        helper.add_td('statistical_power', 2)
-        helper.add_td('adjustment_factors', 4)
+        helper.add_fluid_row('metric', 2, "span6")
+        helper.add_fluid_row('dose_response', 2, "span6")
+        helper.add_fluid_row('statistical_power', 2, "span6")
+        helper.add_fluid_row('factors_applied', 2, "span6")
 
-        url = reverse('assessment:effect_tag_create', kwargs={'pk': self.assessment.id})
-        helper.addBtnLayout(helper.layout[3], 0, url, "Add new effect tag", "")
-        helper.addBtnLayout(helper.layout[3], 1, url, "Add new effect tag", "")
+        url = reverse('epi2:adjustmentfactor_create',
+                      kwargs={'pk': self.instance.outcome.assessment_id})
+        helper.addBtnLayout(helper.layout[6], 0, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[6], 1, url, "Add new adjustment factor", "span6")
 
         return helper
 
 
-class BaseResultMeasurementFormset(BaseModelFormSet):
+class ResultMeasurementUpdateForm(ResultMeasurementForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ResultMeasurementUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['groups'].widget.attrs['disabled'] = True
+
+
+class GroupResultForm(forms.ModelForm):
+
+    class Meta:
+        model = models.GroupResult
+        exclude = ('measurement', )
+
+    def __init__(self, *args, **kwargs):
+        sp = kwargs.pop('study_population', None)
+        result = kwargs.pop('result', None)
+        super(GroupResultForm, self).__init__(*args, **kwargs)
+        self.fields["group"].queryset = models.Group.objects.filter(collection__study_population=sp)
+        if result:
+            self.instance.measurement = result
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if fld == "group":
+                widget.attrs['class'] = "groupField"
+                widget.attrs['style'] = "display: none;"
+
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+
+        return helper
+
+
+class BaseGroupResultFormset(BaseModelFormSet):
 
     def __init__(self, **kwargs):
-        self.assessment = kwargs.pop('assessment', None)
-        super(BaseResultMeasurementFormset, self).__init__(**kwargs)
-        self.form = curry(self.form, assessment=self.assessment)
+        study_population = kwargs.pop('study_population', None)
+        self.result = kwargs.pop('result', None)
+        super(BaseGroupResultFormset, self).__init__(**kwargs)
+        self.form = curry(self.form, study_population=study_population, result=self.result)
+
+    def clean(self):
+        super(BaseGroupResultFormset, self).clean()
+
+        # check that there is at least one result-group
+        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        if count < 1:
+            raise forms.ValidationError("At least one group is required.")
+
+        # Ensure all groups in group collection are accounted for, and no other
+        # groups exist
+        group_ids = [form.cleaned_data['group'].id for form in self.forms]
+        collection_id = int(self.data.get('groups', self.result.groups_id))
+        selectedGroups = models.Group.objects\
+            .filter(id__in=group_ids, collection_id=collection_id)
+        allGroups = models.Group.objects\
+            .filter(collection_id=collection_id)
+        if selectedGroups.count() != allGroups.count():
+            raise forms.ValidationError("Missing a result-group for this result-collection")
 
 
-ResultMeasurementFormset = modelformset_factory(
-    models.ResultMeasurement,
-    form=ResultMeasurementForm,
-    formset=BaseResultMeasurementFormset,
-    can_delete=True,
-    extra=1)
+GroupResultFormset = modelformset_factory(
+    models.GroupResult,
+    form=GroupResultForm,
+    formset=BaseGroupResultFormset,
+    can_delete=False,
+    extra=0)
 
-BlankResultMeasurementFormset = modelformset_factory(
-    models.ResultMeasurement,
-    form=ResultMeasurementForm,
-    formset=BaseResultMeasurementFormset,
+
+BlankGroupResultFormset = modelformset_factory(
+    models.GroupResult,
+    form=GroupResultForm,
+    formset=BaseGroupResultFormset,
     can_delete=False,
     extra=1)

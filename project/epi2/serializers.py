@@ -106,13 +106,34 @@ class ResultMetricSerializer(serializers.ModelSerializer):
         model = models.ResultMetric
 
 
+class GroupResultSerializer(serializers.ModelSerializer):
+    group = GroupSerializer()
+
+    class Meta:
+        model = models.GroupResult
+
+
+class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source="adjustment_factor.id")
+    description = serializers.ReadOnlyField(source="adjustment_factor.description")
+
+    class Meta:
+        model = models.ResultAdjustmentFactor
+        fields = ('id', 'description', 'included_in_final_model')
+
+
 class ResultMeasurementSerializer(serializers.ModelSerializer):
     metric = ResultMetricSerializer()
+    factors = ResultAdjustmentFactorSerializer(source='resfactors', many=True)
     dose_response = serializers.CharField(source='get_dose_response_display', read_only=True)
     statistical_power = serializers.CharField(source='get_statistical_power_display', read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    results = GroupResultSerializer(many=True)
+    groups = GroupCollectionLinkSerializer()
 
     class Meta:
         model = models.ResultMeasurement
+        exclude = ('adjustment_factors', )
 
 
 class OutcomeSerializer(serializers.ModelSerializer):

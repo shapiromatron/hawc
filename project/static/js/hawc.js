@@ -509,7 +509,7 @@ DynamicFormset.prototype = {
         var forms = this._formsInFormset(),
             row = forms.last().clone(false);
 
-        row.find("input,select").val("");
+        this.clearForm(row);
         row.insertAfter(forms.last());
 
         // update form index
@@ -553,6 +553,9 @@ DynamicFormset.prototype = {
         // trigger events
         this._formsInFormset().trigger('dynamicFormset-formRemoved');
     },
+    clearForm: function($row) {
+        $row.find("input,select").val("");
+    }
 };
 
 

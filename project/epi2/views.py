@@ -116,6 +116,65 @@ class OutcomeDelete(BaseDelete):
         return self.object.study_population.get_absolute_url()
 
 
+# Result
+class ResultCreate(BaseCreateWithFormset):
+    success_message = 'Result created.'
+    parent_model = models.Outcome
+    parent_template_name = 'outcome'
+    model = models.ResultMeasurement  # TODO: rename model to Result
+    form_class = forms.ResultMeasurementForm
+    formset_factory = forms.GroupResultFormset
+
+    def post_object_save(self, form, formset):
+        for form in formset.forms:
+            form.instance.measurement = self.object
+
+    def get_formset_kwargs(self):
+        return {"study_population": self.parent.study_population}
+
+    def build_initial_formset_factory(self):
+        return forms.BlankGroupResultFormset(
+            queryset=models.Group.objects.none(),
+            **self.get_formset_kwargs())
+
+
+class ResultDetail(BaseDetail):
+    model = models.ResultMeasurement
+
+
+class ResultUpdate(BaseUpdateWithFormset):
+    success_message = "Result updated."
+    model = models.ResultMeasurement
+    form_class = forms.ResultMeasurementUpdateForm
+    formset_factory = forms.GroupResultFormset
+
+    def build_initial_formset_factory(self):
+        return forms.GroupResultFormset(
+            queryset=self.object.results.all(),
+            **self.get_formset_kwargs())
+
+    def get_formset_kwargs(self):
+        return {
+            "study_population": self.object.outcome.study_population,
+            "result": self.object
+        }
+
+    def post_object_save(self, form, formset):
+        # delete other results not associated with the selected collection
+        models.GroupResult.objects\
+            .filter(measurement=self.object)\
+            .exclude(group__collection=self.object.groups)\
+            .delete()
+
+
+class ResultDelete(BaseDelete):
+    success_message = "Result deleted."
+    model = models.ResultMeasurement
+
+    def get_success_url(self):
+        return self.object.outcome.get_absolute_url()
+
+
 # Group collection + group
 class GroupCollectionCreate(BaseCreateWithFormset):
     success_message = 'Groups created.'
@@ -130,7 +189,8 @@ class GroupCollectionCreate(BaseCreateWithFormset):
             form.instance.collection = self.object
 
     def build_initial_formset_factory(self):
-        return forms.BlankGroupFormset(queryset=models.Group.objects.none())
+        return forms.BlankGroupFormset(
+            queryset=models.Group.objects.none())
 
 
 class GroupCollectionDetail(BaseDetail):

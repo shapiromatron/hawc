@@ -330,12 +330,15 @@ class BaseCreateWithFormset(BaseCreate):
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        formset = self.formset_factory(data=self.request.POST)
+        formset = self.formset_factory(data=self.request.POST, **self.get_formset_kwargs())
         self.pre_validate(form, formset)
         if form.is_valid() and formset.is_valid():
             return self.form_valid(form, formset)
         else:
             return self.form_invalid(form, formset)
+
+    def get_formset_kwargs(self):
+        return {}
 
     def form_valid(self, form, formset):
         self.object = form.save()
@@ -387,12 +390,15 @@ class BaseUpdateWithFormset(BaseUpdate):
         self.object = self.get_object()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        formset = self.formset_factory(data=self.request.POST)
+        formset = self.formset_factory(data=self.request.POST, **self.get_formset_kwargs())
         self.pre_validate(form, formset)
         if form.is_valid() and formset.is_valid():
             return self.form_valid(form, formset)
         else:
             return self.form_invalid(form, formset)
+
+    def get_formset_kwargs(self, request):
+        return {}
 
     def form_valid(self, form, formset):
         self.object = form.save()
