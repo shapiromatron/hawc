@@ -31,35 +31,14 @@
           </div>
         {% endif %}
     </h1>
+    <div id="objContainer"></div>
 {% endblock %}
 
 
 {% block extrajs %}
   <script type="text/javascript">
-    var content = $('#content');
-    $.get("{% url 'epi2:api:study-population-detail' object.id %}", function(d){
-      $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content)
-
-      $('<h2>Exposures</h2>').appendTo(content);
-      $('<ul>').append(
-          _.map(d.exposures, function(d){
-            return "<li><a href='{0}'>{1}</a></li>".printf(d.url, d.name);
-          })
-        ).appendTo(content)
-
-      $('<h2>Group collections</h2>').appendTo(content);
-      $('<ul>').append(
-          _.map(d.group_collections, function(d){
-            return "<li><a href='{0}'>{1}</a></li>".printf(d.url, d.name);
-          })
-        ).appendTo(content)
-
-      $('<h2>Outcomes</h2>').appendTo(content);
-      $('<ul>').append(
-          _.map(d.outcomes, function(d){
-            return "<li><a href='{0}'>{1}</a></li>".printf(d.url, d.name);
-          })
-        ).appendTo(content)
+    $(document).ready(function(){
+      StudyPopulation.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

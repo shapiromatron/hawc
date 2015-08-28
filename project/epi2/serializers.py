@@ -83,6 +83,7 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
     criteria = StudyPopulationCriteriaSerializer(source='spcriteria', many=True)
     outcomes = OutcomeLinkSerializer(many=True)
     exposures = ExposureLinkSerializer(many=True)
+    can_create_groups = serializers.BooleanField(read_only=True)
     group_collections = GroupCollectionLinkSerializer(many=True)
     country = serializers.CharField(source='country.name', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -98,6 +99,7 @@ class ExposureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Exposure2
+        depth = 1
 
 
 class ResultMetricSerializer(serializers.ModelSerializer):
