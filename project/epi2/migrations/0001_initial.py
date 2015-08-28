@@ -86,6 +86,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('name',),
+                'verbose_name': 'Exposure',
+                'verbose_name_plural': 'Exposures',
             },
         ),
         migrations.CreateModel(
@@ -96,7 +98,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=256)),
                 ('numeric', models.FloatField(help_text=b'Numerical value, can be used for sorting', null=True, verbose_name=b'Numerical value (sorting)', blank=True)),
                 ('comparative_name', models.CharField(help_text=b'Group and value, displayed in plots, for example "1.5-2.5(Q2) vs \xe2\x89\xa41.5(Q1)", or if only one group is available, "4.8\xc2\xb10.2 (mean\xc2\xb1SEM)"', max_length=64, verbose_name=b'Comparative Name', blank=True)),
-                ('sex', models.CharField(max_length=1, choices=[(b'U', b'Not reported'), (b'M', b'Male'), (b'F', b'Female'), (b'B', b'Male and Female')])),
+                ('sex', models.CharField(default=b'U', max_length=1, choices=[(b'U', b'Not reported'), (b'M', b'Male'), (b'F', b'Female'), (b'B', b'Male and Female')])),
                 ('n', models.PositiveIntegerField(null=True, blank=True)),
                 ('starting_n', models.PositiveIntegerField(null=True, blank=True)),
                 ('fraction_male', models.FloatField(blank=True, help_text=b'Expects a value between 0 and 1, inclusive (leave blank if unknown)', null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(1)])),
@@ -117,7 +119,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('exposure', models.ForeignKey(related_name='groups', blank=True, to='epi2.Exposure2', null=True)),
+                ('exposure', models.ForeignKey(related_name='groups', blank=True, to='epi2.Exposure2', help_text=b'Exposure-group associated with this group', null=True)),
             ],
             options={
                 'ordering': ('name',),
@@ -181,7 +183,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('included_in_final_model', models.BooleanField(default=True)),
-                ('adjustment_factor', models.ForeignKey(to='epi2.AdjustmentFactor')),
+                ('adjustment_factor', models.ForeignKey(related_name='resfactors', to='epi2.AdjustmentFactor')),
             ],
         ),
         migrations.CreateModel(
@@ -195,7 +197,7 @@ class Migration(migrations.Migration):
                 ('statistical_power_details', models.TextField(blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('adjustment_factors', models.ManyToManyField(related_name='outcome_measurements', through='epi2.ResultAdjustmentFactor', to='epi2.AdjustmentFactor', blank=True)),
+                ('adjustment_factors', models.ManyToManyField(related_name='outcomes', through='epi2.ResultAdjustmentFactor', to='epi2.AdjustmentFactor', blank=True)),
                 ('groups', models.ForeignKey(related_name='results', to='epi2.GroupCollection')),
             ],
         ),
@@ -261,7 +263,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resultadjustmentfactor',
             name='result_measurement',
-            field=models.ForeignKey(to='epi2.ResultMeasurement'),
+            field=models.ForeignKey(related_name='resfactors', to='epi2.ResultMeasurement'),
         ),
         migrations.AddField(
             model_name='outcome',
@@ -275,13 +277,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='groupcollection',
-            name='outcomes',
-            field=models.ManyToManyField(related_name='group_collections', to='epi2.Outcome', blank=True),
+            name='outcome',
+            field=models.ForeignKey(related_name='group_collections', to='epi2.Outcome', null=True),
         ),
         migrations.AddField(
             model_name='groupcollection',
             name='study_population',
-            field=models.ForeignKey(related_name='group_collections', to='epi2.StudyPopulation'),
+            field=models.ForeignKey(related_name='group_collections', to='epi2.StudyPopulation', null=True),
         ),
         migrations.AddField(
             model_name='group',
