@@ -185,8 +185,15 @@ class GroupCollectionCreate(BaseCreateWithFormset):
     formset_factory = forms.GroupFormset
 
     def post_object_save(self, form, formset):
+        group_id = 0
         for form in formset.forms:
             form.instance.collection = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.group_id = group_id
+                if form.has_changed() is False:
+                    # ensure new group_id saved to db
+                    form.instance.save()
+                group_id += 1
 
     def build_initial_formset_factory(self):
         return forms.BlankGroupFormset(
@@ -208,8 +215,15 @@ class GroupCollectionUpdate(BaseUpdateWithFormset):
                                             .order_by('group_id'))
 
     def post_object_save(self, form, formset):
-        for form in formset:
+        group_id = 0
+        for form in formset.forms:
             form.instance.collection = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.group_id = group_id
+                if form.has_changed() is False:
+                    # ensure new group_id saved to db
+                    form.instance.save()
+                group_id += 1
 
 
 class GroupCollectionDelete(BaseDelete):

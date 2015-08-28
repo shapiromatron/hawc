@@ -474,16 +474,6 @@ class BaseGroupFormset(BaseModelFormSet):
     def clean(self):
         super(BaseGroupFormset, self).clean()
 
-        # set group_id
-        group_id = 0
-        for form in self.forms:
-            if form.is_valid() and form not in self.deleted_forms:
-                form.instance.group_id = group_id
-                if form.has_changed() is False:
-                    # ensure new group_id saved to db
-                    form.instance.save()
-                group_id += 1
-
         # check that there is at least one exposure-group
         count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
         if count < 1:

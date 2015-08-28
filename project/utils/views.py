@@ -397,7 +397,7 @@ class BaseUpdateWithFormset(BaseUpdate):
         else:
             return self.form_invalid(form, formset)
 
-    def get_formset_kwargs(self, request):
+    def get_formset_kwargs(self):
         return {}
 
     def form_valid(self, form, formset):
