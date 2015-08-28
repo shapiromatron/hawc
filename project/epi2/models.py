@@ -3,6 +3,7 @@
 
 import hashlib
 import json
+from operator import xor
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -164,6 +165,9 @@ class StudyPopulation(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
+    def can_create_groups(self):
+        return self.design in ["CT", "CS", "CP", "RT"]
+
 
 class Outcome(BaseEndpoint):
 
@@ -208,6 +212,9 @@ class Outcome(BaseEndpoint):
     def get_crumbs(self):
         return get_crumbs(self, self.study_population)
 
+    def can_create_groups(self):
+            return not self.study_population.can_create_groups()
+
 
 class GroupCollection(models.Model):
     """
@@ -215,11 +222,12 @@ class GroupCollection(models.Model):
     """
     study_population = models.ForeignKey(
         StudyPopulation,
-        related_name='group_collections')
-    outcomes = models.ManyToManyField(
+        related_name='group_collections',
+        null=True)
+    outcome = models.ForeignKey(
         Outcome,
         related_name='group_collections',
-        blank=True)
+        null=True)
     name = models.CharField(
         max_length=256)
     exposure = models.ForeignKey(
@@ -238,17 +246,28 @@ class GroupCollection(models.Model):
     class Meta:
         ordering = ('name', )
 
+    def save(self, *args, **kwargs):
+        if not xor(self.outcome is None, self.study_population is None):
+            raise ValueError("An outcome or study-population is required.")
+        super(GroupCollection, self).save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('epi2:gc_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        if self.outcome:
+            return self.outcome.get_assessment()
+        else:
+            return self.study_population.get_assessment()
 
     def __unicode__(self):
         return self.name
 
     def get_crumbs(self):
-        return get_crumbs(self, self.study_population)
+        if self.outcome:
+            return get_crumbs(self, self.outcome)
+        else:
+            return get_crumbs(self, self.study_population)
 
 
 class Group(models.Model):

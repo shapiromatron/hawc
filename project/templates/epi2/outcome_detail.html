@@ -22,6 +22,10 @@
                 <li><a href="{% url 'epi2:outcome_delete' pk=object.pk %}">Delete</a></li>
                 <li class="disabled"><a tabindex="-1" href="#">Results</a></li>
                 <li><a href="{% url 'epi2:result_create' object.pk %}">Create</a></li>
+                {% if object.can_create_groups %}
+                  <li class="disabled"><a tabindex="-1" href="#">Group collections</a></li>
+                  <li><a href="{% url 'epi2:gc_outcome_create' object.pk %}">Create</a></li>
+                {% endif %}
             </ul>
           </div>
         {% endif %}

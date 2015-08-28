@@ -21,8 +21,10 @@
                 <li><a href="{% url 'epi2:sp_delete' pk=object.pk %}">Delete</a></li>
                 <li class="disabled"><a tabindex="-1" href="#">Exposures</a></li>
                 <li><a href="{% url 'epi2:exp_create' object.pk %}">Create</a></li>
-                <li class="disabled"><a tabindex="-1" href="#">Groups</a></li>
-                <li><a href="{% url 'epi2:gc_create' object.pk %}">Create</a></li>
+                {% if object.can_create_groups %}
+                  <li class="disabled"><a tabindex="-1" href="#">Groups</a></li>
+                  <li><a href="{% url 'epi2:gc_create' object.pk %}">Create</a></li>
+                {% endif %}
                 <li class="disabled"><a tabindex="-1" href="#">Outcomes</a></li>
                 <li><a href="{% url 'epi2:outcome_create' object.pk %}">Create</a></li>
             </ul>

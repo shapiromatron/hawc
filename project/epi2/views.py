@@ -200,6 +200,11 @@ class GroupCollectionCreate(BaseCreateWithFormset):
             queryset=models.Group.objects.none())
 
 
+class GroupCollectionOutcomeCreate(GroupCollectionCreate):
+    parent_model = models.Outcome
+    parent_template_name = 'outcome'
+
+
 class GroupCollectionDetail(BaseDetail):
     model = models.GroupCollection
 

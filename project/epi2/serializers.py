@@ -141,6 +141,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = ResultMeasurementSerializer(many=True)
+    group_collections = GroupCollectionLinkSerializer(many=True)
 
     class Meta:
         model = models.Outcome
@@ -148,6 +149,8 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 class GroupCollectionSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+    exposure = ExposureSerializer()
+    outcome = OutcomeSerializer()
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True)
 

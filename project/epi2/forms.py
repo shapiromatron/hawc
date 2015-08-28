@@ -396,13 +396,16 @@ class GroupCollection(forms.ModelForm):
 
     class Meta:
         model = models.GroupCollection
-        exclude = ('study_population', 'outcomes')
+        exclude = ('study_population', 'outcome')
 
     def __init__(self, *args, **kwargs):
-        study_population = kwargs.pop('parent', None)
+        self.parent = kwargs.pop('parent', None)
         super(GroupCollection, self).__init__(*args, **kwargs)
-        if study_population:
-            self.instance.study_population = study_population
+        if self.parent:
+            if type(self.parent).__name__ == "StudyPopulation":
+                self.instance.study_population = self.parent
+            elif type(self.parent).__name__ == "Outcome":
+                self.instance.outcome = self.parent
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -414,16 +417,20 @@ class GroupCollection(forms.ModelForm):
                 widget.attrs['rows'] = 3
 
         if self.instance.id:
+            if self.instance.outcome:
+                url = self.instance.outcome.get_absolute_url()
+            else:
+                url = self.instance.study_population.get_absolute_url()
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
-                "cancel_url": self.instance.get_absolute_url()
+                "cancel_url": url
             }
         else:
             inputs = {
                 "legend_text": u"Create new collection of groups",
                 "help_text": self.HELP_TEXT_CREATE,
-                "cancel_url": self.instance.study_population.get_absolute_url()
+                "cancel_url": self.parent.get_absolute_url()
             }
 
         helper = BaseFormHelper(self, **inputs)
