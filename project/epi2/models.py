@@ -487,6 +487,10 @@ class ResultMetric(models.Model):
         default=True,
         verbose_name="Display as log",
         help_text="When plotting, use a log base 10 scale")
+    showForestPlot = models.BooleanField(
+        default=True,
+        verbose_name="Show on forest plot",
+        help_text="Does forest-plot representation of result make sense?")
     reference_value = models.FloatField(
         help_text="Null hypothesis value for reference, if applicable",
         default=1,
@@ -586,9 +590,9 @@ class ResultMeasurement(models.Model):
 class GroupResult(models.Model):
 
     P_VALUE_QUALIFIER_CHOICES = (
+        ('-', 'n.s.'),
         ('<', '<'),
-        ('=', '='),
-        ('-', 'n.s.'))
+        ('=', '='))
 
     MAIN_FINDING_CHOICES = (
         (3, "not-reported"),

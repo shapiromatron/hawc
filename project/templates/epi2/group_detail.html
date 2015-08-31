@@ -22,14 +22,14 @@
           </div>
         {% endif %}
     </h1>
+    <div id="objContainer"></div>
 {% endblock %}
 
 
 {% block extrajs %}
   <script type="text/javascript">
-    var content = $('#content');
-    $.get("{% url 'epi2:api:group-detail' object.id %}", function(d){
-      $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content)
+    $(document).ready(function(){
+      Group.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

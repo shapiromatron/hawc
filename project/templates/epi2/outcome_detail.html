@@ -30,24 +30,14 @@
           </div>
         {% endif %}
     </h1>
+    <div id="objContainer"></div>
 {% endblock %}
 
 
 {% block extrajs %}
   <script type="text/javascript">
-    $.get("{% url 'epi2:api:outcome-detail' object.id %}", function(d){
-
-        var content = $('#content');
-
-        $('<pre>').html(JSON.stringify(d, null, '\t')).appendTo(content);
-
-        $('<h2>Results</h2>').appendTo(content);
-
-        $('<ul>').append(
-            _.map(d.results, function(d){
-              return "<li><a href='{0}'>{1}: {2}</a></li>".printf(d.url, d.groups.name, d.metric.metric);
-            })
-          ).appendTo(content);
+    $(document).ready(function(){
+      Outcome.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

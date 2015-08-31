@@ -24,15 +24,14 @@
           </div>
         {% endif %}
     </h1>
+    <div id="objContainer"></div>
 {% endblock %}
 
 
 {% block extrajs %}
   <script type="text/javascript">
-    $.get("{% url 'epi2:api:result-detail' object.id %}", function(d){
-        $('#content').append(
-            $('<pre>').html(JSON.stringify(d, null, '\t'))
-        );
+    $(document).ready(function(){
+      Result.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

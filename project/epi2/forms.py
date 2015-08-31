@@ -2,6 +2,7 @@ from copy import copy
 from itertools import chain
 
 from django import forms
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.widgets import CheckboxInput, TextInput
@@ -349,8 +350,8 @@ class OutcomeForm(forms.ModelForm):
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in ["adjustment_factors", "confounders_considered", "effects"]:
-                    widget.attrs['class'] = 'span11'
+                if fld in ["effects"]:
+                    widget.attrs['class'] = 'span10'
                 else:
                     widget.attrs['class'] = 'span12'
             if type(widget) == forms.Textarea:
@@ -546,8 +547,18 @@ class ResultMeasurementForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
         super(ResultMeasurementForm, self).__init__(*args, **kwargs)
+
         if outcome:
             self.instance.outcome = outcome
+        else:
+            outcome = self.instance.outcome
+
+        self.fields["groups"].queryset = models.GroupCollection.objects\
+            .filter(
+                Q(study_population=outcome.study_population) |
+                Q(outcome=outcome)
+            )
+
         for fld in self.ADJUSTMENT_FIELDS:
             self.fields[fld].widget.update_query_parameters(
                 {'related': self.instance.outcome.assessment_id})
@@ -646,10 +657,15 @@ class GroupResultForm(forms.ModelForm):
         exclude = ('measurement', )
 
     def __init__(self, *args, **kwargs):
-        sp = kwargs.pop('study_population', None)
+        study_population = kwargs.pop('study_population', None)
+        outcome = kwargs.pop('outcome', None)
         result = kwargs.pop('result', None)
         super(GroupResultForm, self).__init__(*args, **kwargs)
-        self.fields["group"].queryset = models.Group.objects.filter(collection__study_population=sp)
+        self.fields["group"].queryset = models.Group.objects\
+            .filter(
+                Q(collection__study_population=study_population) |
+                Q(collection__outcome=outcome)
+            )
         if result:
             self.instance.measurement = result
         self.helper = self.setHelper()
@@ -671,9 +687,10 @@ class BaseGroupResultFormset(BaseModelFormSet):
 
     def __init__(self, **kwargs):
         study_population = kwargs.pop('study_population', None)
+        outcome = kwargs.pop('outcome', None)
         self.result = kwargs.pop('result', None)
         super(BaseGroupResultFormset, self).__init__(**kwargs)
-        self.form = curry(self.form, study_population=study_population, result=self.result)
+        self.form = curry(self.form, study_population=study_population, outcome=outcome, result=self.result)
 
     def clean(self):
         super(BaseGroupResultFormset, self).clean()
@@ -686,7 +703,10 @@ class BaseGroupResultFormset(BaseModelFormSet):
         # Ensure all groups in group collection are accounted for, and no other
         # groups exist
         group_ids = [form.cleaned_data['group'].id for form in self.forms]
-        collection_id = int(self.data.get('groups', self.result.groups_id))
+        if self.result:
+            collection_id = self.result.groups_id
+        else:
+            collection_id = int(self.data['groups'])
         selectedGroups = models.Group.objects\
             .filter(id__in=group_ids, collection_id=collection_id)
         allGroups = models.Group.objects\

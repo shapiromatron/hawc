@@ -130,7 +130,10 @@ class ResultCreate(BaseCreateWithFormset):
             form.instance.measurement = self.object
 
     def get_formset_kwargs(self):
-        return {"study_population": self.parent.study_population}
+        return {
+            "outcome": self.parent,
+            "study_population": self.parent.study_population
+        }
 
     def build_initial_formset_factory(self):
         return forms.BlankGroupResultFormset(
@@ -156,6 +159,7 @@ class ResultUpdate(BaseUpdateWithFormset):
     def get_formset_kwargs(self):
         return {
             "study_population": self.object.outcome.study_population,
+            "outcome": self.object.outcome,
             "result": self.object
         }
 

@@ -21,7 +21,8 @@ class EthnicityAdmin(admin.ModelAdmin):
 
 class ResultMetricAdmin(admin.ModelAdmin):
     list_display = (
-        "metric", "abbreviation", "isLog", "reference_value", "order",
+        "metric", "abbreviation", "showForestPlot",
+        "isLog", "reference_value", "order",
     )
 
 

@@ -62,6 +62,7 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    sex = serializers.CharField(source='get_sex_display', read_only=True)
     descriptions = GroupNumericalDescriptionsSerializer(many=True)
     ethnicities = EthnicitySerializer(many=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -109,6 +110,8 @@ class ResultMetricSerializer(serializers.ModelSerializer):
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
+    main_finding_support = serializers.CharField(source='get_main_finding_support_display', read_only=True)
+    p_value_qualifier = serializers.CharField(source='get_p_value_qualifier_display', read_only=True)
     group = GroupSerializer()
 
     class Meta:
@@ -141,6 +144,7 @@ class ResultMeasurementSerializer(serializers.ModelSerializer):
 class OutcomeSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
     effects = EffectTagsSerializer()
+    diagnostic = serializers.CharField(source='get_diagnostic_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = ResultMeasurementSerializer(many=True)
     group_collections = GroupCollectionLinkSerializer(many=True)
