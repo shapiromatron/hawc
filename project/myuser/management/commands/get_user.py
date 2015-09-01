@@ -2,8 +2,7 @@ from importlib import import_module
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
-from myuser.models import HAWCUser
+from django.contrib.auth import get_user_model
 
 
 HELP_TEXT = """Given a session ID, attempt to get user name and email."""
@@ -21,8 +20,9 @@ class Command(BaseCommand):
         SessionStore = engine.SessionStore
         session = SessionStore(session_id)
         user_id = session.get('_auth_user_id')
+        User = get_user_model()
         if user_id:
-            user = HAWCUser.objects.get(pk=session.get('_auth_user_id'))
+            user = User.objects.get(pk=session.get('_auth_user_id'))
             print "Session found!"
             print "Full name: {}".format(user.get_full_name())
             print "Email: {}".format(user.email)
