@@ -25,8 +25,8 @@ class Outcome(AssessmentViewset):
 
 class Result(AssessmentViewset):
     assessment_filter_args = "outcome__assessment"
-    model = models.ResultMeasurement
-    serializer_class = serializers.ResultMeasurementSerializer  # todo rename to Result
+    model = models.Result
+    serializer_class = serializers.ResultSerializer
 
 
 class GroupCollection(AssessmentViewset):

@@ -121,8 +121,8 @@ class ResultCreate(BaseCreateWithFormset):
     success_message = 'Result created.'
     parent_model = models.Outcome
     parent_template_name = 'outcome'
-    model = models.ResultMeasurement  # TODO: rename model to Result
-    form_class = forms.ResultMeasurementForm
+    model = models.Result
+    form_class = forms.ResultForm
     formset_factory = forms.GroupResultFormset
 
     def post_object_save(self, form, formset):
@@ -142,13 +142,13 @@ class ResultCreate(BaseCreateWithFormset):
 
 
 class ResultDetail(BaseDetail):
-    model = models.ResultMeasurement
+    model = models.Result
 
 
 class ResultUpdate(BaseUpdateWithFormset):
     success_message = "Result updated."
-    model = models.ResultMeasurement
-    form_class = forms.ResultMeasurementUpdateForm
+    model = models.Result
+    form_class = forms.ResultUpdateForm
     formset_factory = forms.GroupResultFormset
 
     def build_initial_formset_factory(self):
@@ -173,7 +173,7 @@ class ResultUpdate(BaseUpdateWithFormset):
 
 class ResultDelete(BaseDelete):
     success_message = "Result deleted."
-    model = models.ResultMeasurement
+    model = models.Result
 
     def get_success_url(self):
         return self.object.outcome.get_absolute_url()

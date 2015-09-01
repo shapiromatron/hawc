@@ -523,7 +523,7 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
     extra=1)
 
 
-class ResultMeasurementForm(forms.ModelForm):
+class ResultForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = """Add."""
     HELP_TEXT_UPDATE = """Add."""
@@ -541,12 +541,12 @@ class ResultMeasurementForm(forms.ModelForm):
         required=False)
 
     class Meta:
-        model = models.ResultMeasurement
+        model = models.Result
         exclude = ('outcome', 'adjustment_factors')
 
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
-        super(ResultMeasurementForm, self).__init__(*args, **kwargs)
+        super(ResultForm, self).__init__(*args, **kwargs)
 
         if outcome:
             self.instance.outcome = outcome
@@ -580,7 +580,7 @@ class ResultMeasurementForm(forms.ModelForm):
         objs.extend([
             models.ResultAdjustmentFactor(
                     adjustment_factor=af,
-                    result_measurement=self.instance,
+                    result=self.instance,
                     included_in_final_model=True)
             for af in applied
         ])
@@ -590,7 +590,7 @@ class ResultMeasurementForm(forms.ModelForm):
         objs.extend([
             models.ResultAdjustmentFactor(
                     adjustment_factor=af,
-                    result_measurement=self.instance,
+                    result=self.instance,
                     included_in_final_model=False)
             for af in considered
         ])
@@ -598,7 +598,7 @@ class ResultMeasurementForm(forms.ModelForm):
         models.ResultAdjustmentFactor.objects.bulk_create(objs)
 
     def save(self, commit=True):
-        instance = super(ResultMeasurementForm, self).save(commit)
+        instance = super(ResultForm, self).save(commit)
         if commit:
             self.save_factors()
         return instance
@@ -643,10 +643,10 @@ class ResultMeasurementForm(forms.ModelForm):
         return helper
 
 
-class ResultMeasurementUpdateForm(ResultMeasurementForm):
+class ResultUpdateForm(ResultForm):
 
     def __init__(self, *args, **kwargs):
-        super(ResultMeasurementUpdateForm, self).__init__(*args, **kwargs)
+        super(ResultUpdateForm, self).__init__(*args, **kwargs)
         self.fields['groups'].widget.attrs['disabled'] = True
 
 

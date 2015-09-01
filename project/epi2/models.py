@@ -509,12 +509,12 @@ class ResultMetric(models.Model):
 class ResultAdjustmentFactor(models.Model):
     adjustment_factor = models.ForeignKey('AdjustmentFactor',
         related_name='resfactors')
-    result_measurement = models.ForeignKey('ResultMeasurement',
+    result = models.ForeignKey('Result',
         related_name='resfactors')
     included_in_final_model = models.BooleanField(default=True)
 
 
-class ResultMeasurement(models.Model):
+class Result(models.Model):
 
     DOSE_RESPONSE_CHOICES = (
         (0, "not-applicable"),
@@ -601,7 +601,7 @@ class GroupResult(models.Model):
         (0, "not-supportive"))
 
     measurement = models.ForeignKey(
-        ResultMeasurement,
+        Result,
         related_name="results")
     group = models.ForeignKey(
         Group,

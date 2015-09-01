@@ -127,7 +127,7 @@ class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
         fields = ('id', 'description', 'included_in_final_model')
 
 
-class ResultMeasurementSerializer(serializers.ModelSerializer):
+class ResultSerializer(serializers.ModelSerializer):
     metric = ResultMetricSerializer()
     factors = ResultAdjustmentFactorSerializer(source='resfactors', many=True)
     dose_response = serializers.CharField(source='get_dose_response_display', read_only=True)
@@ -137,7 +137,7 @@ class ResultMeasurementSerializer(serializers.ModelSerializer):
     groups = GroupCollectionLinkSerializer()
 
     class Meta:
-        model = models.ResultMeasurement
+        model = models.Result
         exclude = ('adjustment_factors', )
 
 
@@ -146,7 +146,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
     diagnostic = serializers.CharField(source='get_diagnostic_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    results = ResultMeasurementSerializer(many=True)
+    results = ResultSerializer(many=True)
     group_collections = GroupCollectionLinkSerializer(many=True)
 
     class Meta:
