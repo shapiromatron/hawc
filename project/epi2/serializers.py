@@ -132,6 +132,7 @@ class ResultSerializer(serializers.ModelSerializer):
     results = GroupResultSerializer(many=True)
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
+    full_name = serializers.CharField(source='__unicode__', read_only=True)
     groups = GroupCollectionLinkSerializer()
 
     class Meta:

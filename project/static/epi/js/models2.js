@@ -167,7 +167,10 @@ Exposure.prototype = {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
-    }
+    },
+    build_link: function(){
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
+    },
 };
 
 
@@ -301,7 +304,7 @@ Result.prototype = {
         return '<li {0}><a href="#{1}" data-toggle="tab">{2}</a></li>'.printf(
             cls,
             this.get_tab_id(),
-            this.data.metric.metric
+            this.data.full_name
         );
     },
     build_content_tab: function(isActive){
@@ -427,6 +430,8 @@ Result.prototype = {
 var GroupCollection = function(data){
     this.data = data;
     this.groups = _.map(this.data.groups, function(d){ return new Group(d) });
+    if (this.data.exposure)
+        this.exposure = new Exposure(this.data.exposure);
 };
 _.extend(GroupCollection, {
     get_object: function(id, cb){
@@ -447,8 +452,10 @@ GroupCollection.prototype = {
             .fadeIn();
     },
     build_details_table: function(){
+        var exposure = (this.exposure) ? this.exposure.build_link() : undefined;
         return new DescriptiveTable()
             .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Exposure", exposure)
             .add_tbody_tr("Description", this.data.description)
             .get_tbl();
     },
@@ -490,9 +497,6 @@ GroupCollection.prototype = {
         addLI("Is control?", d.isControl);
 
         return [url, ul];
-    },
-    _build_group_details: function(d){
-
     }
 };
 

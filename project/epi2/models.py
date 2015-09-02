@@ -95,6 +95,7 @@ class StudyPopulationCriteria(models.Model):
 class StudyPopulation(models.Model):
 
     DESIGN_CHOICES = (
+        ('CO', 'Cohort'),
         ('CC', 'Case control'),
         ('NC', 'Nested case control'),
         ('CR', 'Case report'),
@@ -543,12 +544,14 @@ class Result(models.Model):
         (3, 'underpowered (sample size is 50 to <75% required)'),
         (4, 'severely underpowered (sample size is <50% required)'))
 
-    MEAN_TYPE_CHOICES = (
+    ESTIMATE_TYPE_CHOICES = (
         (0, None),
         (1, "mean"),
         (2, "geometric mean"),
         (3, "median"),
-        (4, "other"))
+        (5, "point"),
+        (4, "other"),
+    )
 
     VARIANCE_TYPE_CHOICES = (
         (0, None),
@@ -605,7 +608,7 @@ class Result(models.Model):
         related_name='outcomes',
         blank=True)
     estimate_type = models.PositiveSmallIntegerField(
-        choices=MEAN_TYPE_CHOICES,
+        choices=ESTIMATE_TYPE_CHOICES,
         verbose_name="Central estimate type",
         default=0)
     variance_type = models.PositiveSmallIntegerField(
@@ -701,10 +704,6 @@ class GroupResult(models.Model):
         blank=True,
         null=True,
         verbose_name='p-value')
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
     is_main_finding = models.BooleanField(
         blank=True,
         verbose_name="Main finding",
@@ -713,6 +712,10 @@ class GroupResult(models.Model):
         choices=MAIN_FINDING_CHOICES,
         help_text="Are the results supportive of the main-finding?",
         default=1)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         ordering = ('measurement', 'group__group_id')

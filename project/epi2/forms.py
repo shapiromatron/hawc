@@ -412,6 +412,14 @@ class GroupCollection(forms.ModelForm):
                 self.instance.study_population = self.parent
             elif type(self.parent).__name__ == "Outcome":
                 self.instance.outcome = self.parent
+
+        filters = {}
+        if self.instance.study_population:
+            filters["study_population"] = self.instance.study_population
+        else:
+            filters["study_population"] = self.instance.outcome.study_population
+        self.fields["exposure"].queryset = self.fields["exposure"].queryset.filter(**filters)
+
         self.helper = self.setHelper()
 
     def setHelper(self):
