@@ -3,10 +3,6 @@ from rest_framework import serializers
 from assessment.serializers import EffectTagsSerializer
 from study.serializers import StudySerializer
 
-from utils.helper import SerializerHelper
-
-from assessment.serializers import EffectTagsSerializer
-
 from . import models
 
 

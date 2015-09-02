@@ -1,21 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
-
-import hashlib
-import json
 from operator import xor
 
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
-
-import reversion
 
 from assessment.models import BaseEndpoint
-from assessment.serializers import AssessmentSerializer
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from utils.models import get_crumbs
 
 

@@ -1,20 +1,14 @@
-from copy import copy
-from itertools import chain
-
 from django import forms
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
-from django.forms.widgets import CheckboxInput, TextInput
 from django.utils.functional import curry
-from collections import OrderedDict
 
 from crispy_forms import layout as cfl
-from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
-from utils.forms import FormsetWithIgnoredFields, anyNull, BaseFormHelper
+from utils.forms import BaseFormHelper
 
 from . import models, lookups
 
