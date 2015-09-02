@@ -305,9 +305,12 @@ class ExposureForm(forms.ModelForm):
         helper.add_fluid_row('inhalation', 6, "span2")
         helper.add_fluid_row('metric', 3, "span4")
         helper.add_fluid_row('analytical_method', 2, "span6")
+        helper.add_fluid_row('duration', 2, "span6")
 
-        url = reverse('assessment:dose_units_create',
-                      kwargs={'pk': self.instance.study_population.study.assessment.pk})
+        url = reverse(
+            'assessment:dose_units_create',
+            kwargs={'pk': self.instance.study_population.study.assessment_id}
+        )
         helper.addBtnLayout(helper.layout[4], 1, url, "Create units", "span4")
 
         return helper

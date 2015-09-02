@@ -361,7 +361,8 @@ class Exposure2(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='exposures')
-    name = models.TextField(
+    name = models.CharField(
+        max_length=128,
         help_text='Name of exposure-route')
     inhalation = models.BooleanField(
         default=False)
@@ -383,9 +384,16 @@ class Exposure2(models.Model):
     metric_description = models.TextField(
         verbose_name="Measurement Description")
     analytical_method = models.TextField(
-        help_text="Include details on the lab-techniques for exposure measurement in samples.")
-    control_description = models.TextField()
-    exposure_description = models.CharField(
+        help_text="Include details on the lab-techniques for exposure "
+                  "measurement in samples.")
+    sampling_period = models.CharField(
+        max_length=128,
+        help_text='Exposure sampling period')
+    duration = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text='Exposure duration')
+    exposure_distribution = models.CharField(
         max_length=128,
         blank=True,
         help_text='May be used to describe the exposure distribution, for '
@@ -395,6 +403,8 @@ class Exposure2(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+    control_description = models.TextField(
+        blank=True)
 
     class Meta:
         ordering = ('name', )
