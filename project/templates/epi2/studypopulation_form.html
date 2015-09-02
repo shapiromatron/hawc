@@ -24,9 +24,17 @@
   {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-      $('.addIncCriteria').insertAfter($('#id_inclusion_criteria_0'));
-      $('.addExcCriteria').insertAfter($('#id_exclusion_criteria_0'));
-      $('.addConCriteria').insertAfter($('#id_confounding_criteria_0'));
+
+      // show-hide N fields for cohort level fields only
+      var nDiv = $("#id_eligible_n").closest('.row-fluid');
+      $('#id_design').on('change', function(e){
+        if (_.contains(['CC'], e.target.value)){
+          nDiv.hide();
+        } else {
+          nDiv.show();
+        }
+      }).trigger('change');
+
     });
   </script>
 {% endblock extrajs %}

@@ -31,9 +31,13 @@ StudyPopulation.prototype = {
             .add_tbody_tr("Country", this.data.country)
             .add_tbody_tr("State", this.data.state)
             .add_tbody_tr("Region", this.data.region)
+            .add_tbody_tr("Eligible N", this.data.eligible_n)
+            .add_tbody_tr("Invited N", this.data.invited_n)
+            .add_tbody_tr("Participant N", this.data.participant_n)
             .add_tbody_tr_list("Inclusion criteria", _.pluck(this.inclusion_criteria, "description"))
             .add_tbody_tr_list("Exclusion criteria", _.pluck(this.exclusion_criteria, "description"))
             .add_tbody_tr_list("Confounding criteria", _.pluck(this.confounding_criteria, "description"))
+            .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     },
     build_links_div: function(){

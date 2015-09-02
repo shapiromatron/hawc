@@ -124,6 +124,7 @@ class StudyPopulationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
         super(StudyPopulationForm, self).__init__(*args, **kwargs)
+        self.fields['comments'] = self.fields.pop('comments')  # move to end
         self.fields['region'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup,
             allow_new=True)
@@ -170,6 +171,8 @@ class StudyPopulationForm(forms.ModelForm):
                     widget.attrs['class'] = 'span10'
                 else:
                     widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
 
         if self.instance.id:
             inputs = {
@@ -188,13 +191,14 @@ class StudyPopulationForm(forms.ModelForm):
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('country', 3, "span4")
+        helper.add_fluid_row('eligible_n', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 3, "span4")
 
         url = reverse('epi2:studycriteria_create',
                       kwargs={'pk': self.instance.study.assessment.pk})
-        helper.addBtnLayout(helper.layout[4], 0, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[4], 1, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[4], 2, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[5], 2, url, "Create criteria", "span4")
 
         return helper
 

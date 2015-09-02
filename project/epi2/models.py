@@ -105,12 +105,11 @@ class StudyPopulation(models.Model):
 
     DESIGN_CHOICES = (
         ('CC', 'Case control'),
+        ('NC', 'Nested case control'),
         ('CR', 'Case report'),
         ('SE', 'Case series'),
         ('CT', 'Controlled trial'),
         ('CS', 'Cross sectional'),
-        ('CP', 'Prospective'),
-        ('RT', 'Retrospective'),
     )
 
     study = models.ForeignKey(
@@ -129,10 +128,26 @@ class StudyPopulation(models.Model):
     state = models.CharField(
         max_length=128,
         blank=True)
+    eligible_n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Eligible N")
+    invited_n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Invited N")
+    participant_n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Participant N")
     criteria = models.ManyToManyField(
         Criteria,
         through=StudyPopulationCriteria,
         related_name='populations')
+    comments = models.TextField(
+        blank=True,
+        help_text="Note matching criteria, etc."
+    )
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -166,7 +181,7 @@ class StudyPopulation(models.Model):
         return get_crumbs(self, self.study)
 
     def can_create_groups(self):
-        return self.design in ["CT", "CS", "CP", "RT"]
+        return self.design not in ("CC", "NC")
 
 
 class Outcome(BaseEndpoint):
