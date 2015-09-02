@@ -520,7 +520,9 @@ Group.prototype = {
         addLI("Sex", d.sex);
         addLI("Ethnicities", _.pluck(d.ethnicities, "name").join(", "));
         addLI("N", d.n);
-        addLI("Starting N", d.starting_n);
+        addLI("Eligible N", d.eligible_n)
+        addLI("Invited N", d.invited_n)
+        addLI("Participant N", d.participant_n)
         addLI("Fraction male", d.fraction_male);
         addLI("Fraction male calculated", d.fraction_male_calculated);  // todo: only show if above is true
         addLI("Is control?", d.isControl);

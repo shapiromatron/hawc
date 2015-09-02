@@ -317,12 +317,18 @@ class Group(models.Model):
     ethnicities = models.ManyToManyField(
         Ethnicity,
         blank=True)
-    n = models.PositiveIntegerField(
+    eligible_n = models.PositiveIntegerField(
         blank=True,
-        null=True)
-    starting_n = models.PositiveIntegerField(
+        null=True,
+        verbose_name="Eligible N")
+    invited_n = models.PositiveIntegerField(
         blank=True,
-        null=True)
+        null=True,
+        verbose_name="Invited N")
+    participant_n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Participant N")
     fraction_male = models.FloatField(
         blank=True,
         null=True,
