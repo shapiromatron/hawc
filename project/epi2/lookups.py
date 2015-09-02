@@ -33,8 +33,14 @@ class AdjustmentFactorLookup(RelatedLookup):
     search_fields = ('description__icontains', )
 
 
+class EffectLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "effect"
+
+
 registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
+registry.register(EffectLookup)

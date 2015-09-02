@@ -193,6 +193,7 @@ Outcome.prototype = {
     build_details_table: function(){
         return new DescriptiveTable()
             .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Effect", this.data.effect)
             .add_tbody_tr_list("Effect tags", _.pluck(this.data.effects, "name"))
             .add_tbody_tr("Diagnostic", this.data.diagnostic)
             .add_tbody_tr("Diagnostic description", this.data.diagnostic_description)
@@ -584,7 +585,6 @@ Group.prototype = {
         return tbl.getTbl();
     }
 };
-
 
 
 var GroupDescription = function(data){

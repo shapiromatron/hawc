@@ -186,6 +186,10 @@ class Outcome(BaseEndpoint):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='outcomes')
+    effect = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Effect, using common-vocabulary")
     diagnostic = models.PositiveSmallIntegerField(
         choices=DIAGNOSTIC_CHOICES)
     diagnostic_description = models.TextField()
