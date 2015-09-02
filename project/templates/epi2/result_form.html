@@ -91,6 +91,24 @@
         }
       }).trigger('change');
 
+      // change header-text based on result fields
+      var thEst = $("th:contains('Estimate')"),
+          thVar = $("th:contains('Variance')");
+
+      $('#id_estimate_type').change(function(e){
+        var txt = (e.target.value === "0")
+          ? "Estimate" :
+          "Estimate<br>({0})".printf($(e.target).find('option:selected').text());
+        thEst.html(txt);
+      }).trigger('change');
+
+      $('#id_variance_type').change(function(e){
+        var txt = (e.target.value === "0")
+          ? "Variance" :
+          "Variance<br>({0})".printf($(e.target).find('option:selected').text());
+        thVar.html(txt);
+      }).trigger('change');
+
       // pass group-id back to server
       $("form").submit(function(){
         $('#id_groups').prop('disabled', false);

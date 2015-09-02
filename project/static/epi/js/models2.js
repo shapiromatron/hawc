@@ -346,20 +346,37 @@ Result.prototype = {
             .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     },
+    _get_result_group_table_header: function(){
+        var estTxt, varTxt, ciTxt;
+
+        ciTxt = (_.isNumber(this.data.ci_units)) ?
+            "{0}% confidence intervals".printf(this.data.ci_units*100) :
+            "Confidence intervals";
+
+        estTxt = (!_.contains([null, "other"], this.data.estimate_type)) ?
+            estTxt = "Estimate ({0})".printf(this.data.estimate_type) :
+            "Estimate";
+
+        varTxt = (!_.contains([null, "other"], this.data.variance_type)) ?
+            "Variance ({0})".printf(this.data.variance_type) :
+            "Variance";
+
+        return headers = [
+            "Group",
+            "N",
+            estTxt,
+            varTxt,
+            ciTxt,
+            "<i>p</i>-value"
+        ];
+    },
     build_result_group_table: function(){
+        // TODO: don't show all fields in table unless data are available
         var self = this,
             tbl = new BaseTable(),
-            headers = [
-                "Group",
-                "N",
-                "Estimate",
-                "Standard error",
-                "Confidence intervals",
-                "<i>p</i>-value"
-            ],
             colgroups = [20, 10, 15, 15, 25, 15];
 
-        tbl.addHeaderRow(headers);
+        tbl.addHeaderRow(this._get_result_group_table_header());
         tbl.setColGroup(colgroups);
 
         _.each(this.data.results, function(d){

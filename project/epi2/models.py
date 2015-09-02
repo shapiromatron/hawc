@@ -424,7 +424,7 @@ class GroupNumericalDescriptions(models.Model):
         (1, "mean"),
         (2, "geometric mean"),
         (3, "median"),
-        (3, "other"))
+        (4, "other"))
 
     VARIANCE_TYPE_CHOICES = (
         (0, None),
@@ -539,6 +539,20 @@ class Result(models.Model):
         (3, 'underpowered (sample size is 50 to <75% required)'),
         (4, 'severely underpowered (sample size is <50% required)'))
 
+    MEAN_TYPE_CHOICES = (
+        (0, None),
+        (1, "mean"),
+        (2, "geometric mean"),
+        (3, "median"),
+        (4, "other"))
+
+    VARIANCE_TYPE_CHOICES = (
+        (0, None),
+        (1, "SD"),
+        (2, "SEM"),
+        (3, "GSD"),
+        (4, "other"))
+
     outcome = models.ForeignKey(
         Outcome,
         related_name="results")
@@ -586,6 +600,19 @@ class Result(models.Model):
         through=ResultAdjustmentFactor,
         related_name='outcomes',
         blank=True)
+    estimate_type = models.PositiveSmallIntegerField(
+        choices=MEAN_TYPE_CHOICES,
+        verbose_name="Central estimate type",
+        default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=VARIANCE_TYPE_CHOICES,
+        default=0)
+    ci_units = models.FloatField(
+        blank=True,
+        null=True,
+        default=0.95,
+        verbose_name='Confidence Interval (CI)',
+        help_text='A 95% CI is written as 0.95.')
     comments = models.TextField(
         blank=True,
         help_text='Summarize main findings of outcome, or describe why no '
@@ -646,11 +673,11 @@ class GroupResult(models.Model):
         blank=True,
         null=True,
         help_text="Central tendency estimate for group")
-    se = models.FloatField(
+    variance = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Standard Error (SE)',
-        help_text="Standard error estimate for group")
+        verbose_name='Variance',
+        help_text="Variance estimate for group")
     lower_ci = models.FloatField(
         blank=True,
         null=True,
@@ -661,12 +688,6 @@ class GroupResult(models.Model):
         null=True,
         verbose_name='Upper CI',
         help_text="Numerical value for upper-confidence interval")
-    ci_units = models.FloatField(
-        blank=True,
-        null=True,
-        default=0.95,
-        verbose_name='Confidence Interval (CI)',
-        help_text='A 95% CI is written as 0.95.')
     p_value_qualifier = models.CharField(
         max_length=1,
         choices=P_VALUE_QUALIFIER_CHOICES,

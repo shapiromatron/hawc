@@ -635,11 +635,12 @@ class ResultForm(forms.ModelForm):
         helper.add_fluid_row('dose_response', 2, "span6")
         helper.add_fluid_row('statistical_power', 2, "span6")
         helper.add_fluid_row('factors_applied', 2, "span6")
+        helper.add_fluid_row('estimate_type', 3, "span4")
 
         url = reverse('epi2:adjustmentfactor_create',
                       kwargs={'pk': self.instance.outcome.assessment_id})
-        helper.addBtnLayout(helper.layout[8], 0, url, "Add new adjustment factor", "span6")
-        helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[9], 0, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[9], 1, url, "Add new adjustment factor", "span6")
 
         return helper
 
