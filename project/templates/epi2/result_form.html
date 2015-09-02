@@ -41,6 +41,8 @@
           fs = new DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           group_id = {{ form.groups.value|default:"null" }},
           updateFormset = function(d){
+            var n;
+
             if (_.isUndefined(d)) return elFormset.hide();
 
             // update formset name
@@ -58,6 +60,8 @@
             // bind each row to a different group-id
             fs.$el.find('tbody tr').each(function(i, v){
               $(v).find('.groupField').val(d.groups[i].id);
+              n = d.groups[i].participant_n;
+              if (_.isNumber(n)) $(v).find('.nField').val(n);
             });
             updateLabels();
 

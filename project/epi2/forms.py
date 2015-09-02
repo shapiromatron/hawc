@@ -676,6 +676,8 @@ class GroupResultForm(forms.ModelForm):
             if fld == "group":
                 widget.attrs['class'] = "groupField"
                 widget.attrs['style'] = "display: none;"
+            if fld == "n":
+                widget.attrs['class'] = "nField"
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
