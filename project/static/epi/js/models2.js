@@ -194,13 +194,10 @@ Outcome.prototype = {
         return new DescriptiveTable()
             .add_tbody_tr("Name", this.data.name)
             .add_tbody_tr_list("Effect tags", _.pluck(this.data.effects, "name"))
-            .add_tbody_tr("Data location", this.data.data_location)
-            .add_tbody_tr("Population description", this.data.population_description)
             .add_tbody_tr("Diagnostic", this.data.diagnostic)
             .add_tbody_tr("Diagnostic description", this.data.diagnostic_description)
             .add_tbody_tr("Outcome N", this.data.outcome_n)
             .add_tbody_tr("Summary", this.data.diagnostic)
-            .add_tbody_tr("Prevalence incidence", this.data.prevalence_incidence)
             .get_tbl();
     },
     build_results_tabs: function(){
@@ -336,6 +333,8 @@ Result.prototype = {
         return new DescriptiveTable()
             .add_tbody_tr("Results", txt)
             .add_tbody_tr("Groups", this.group.build_link())
+            .add_tbody_tr("Data location", this.data.data_location)
+            .add_tbody_tr("Population description", this.data.population_description)
             .add_tbody_tr("Metric Description", this.data.metric_description)
             .add_tbody_tr_list("Factors", _.pluck(this.factors, "description"))
             .add_tbody_tr_list("Additional factors considered", _.pluck(this.factors_considered, "description"))
@@ -343,6 +342,8 @@ Result.prototype = {
             .add_tbody_tr("Dose response details", this.data.dose_response_details)
             .add_tbody_tr("Statistical power", this.data.statistical_power)
             .add_tbody_tr("Statistical power details", this.data.statistical_power_details)
+            .add_tbody_tr("Prevalence incidence", this.data.prevalence_incidence)
+            .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     },
     build_result_group_table: function(){

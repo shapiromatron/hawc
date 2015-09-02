@@ -374,9 +374,7 @@ class OutcomeForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
-        helper.add_fluid_row('data_location', 2, "span6")
         helper.add_fluid_row('diagnostic', 2, "span6")
-        helper.add_fluid_row('summary', 2, "span6")
 
         url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.assessment.pk})
         helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
@@ -473,7 +471,7 @@ class SingleGroupForm(GroupForm):
         helper.form_class = None
         helper.add_fluid_row('name', 3, "span4")
         helper.add_fluid_row('sex', 2, "span6")
-        helper.add_fluid_row('n', 2, "span6")
+        helper.add_fluid_row('eligible_n', 3, "span4")
         helper.add_fluid_row('fraction_male', 3, "span4")
         return helper
 
@@ -548,6 +546,7 @@ class ResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
         super(ResultForm, self).__init__(*args, **kwargs)
+        self.fields['comments'] = self.fields.pop('comments')  # move to end
 
         if outcome:
             self.instance.outcome = outcome
@@ -632,14 +631,15 @@ class ResultForm(forms.ModelForm):
         helper.form_class = None
 
         helper.add_fluid_row('metric', 2, "span6")
+        helper.add_fluid_row('data_location', 2, "span6")
         helper.add_fluid_row('dose_response', 2, "span6")
         helper.add_fluid_row('statistical_power', 2, "span6")
         helper.add_fluid_row('factors_applied', 2, "span6")
 
         url = reverse('epi2:adjustmentfactor_create',
                       kwargs={'pk': self.instance.outcome.assessment_id})
-        helper.addBtnLayout(helper.layout[6], 0, url, "Add new adjustment factor", "span6")
-        helper.addBtnLayout(helper.layout[6], 1, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[8], 0, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")
 
         return helper
 

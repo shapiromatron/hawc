@@ -186,17 +186,6 @@ class Outcome(BaseEndpoint):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='outcomes')
-    data_location = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="Details on where the data are found in the literature "
-                  "(ex: Figure 1, Table 2, etc.)")  # TODO: move this to results
-    population_description = models.CharField(
-        max_length=128,
-        help_text='Detailed description of the population being studied for this outcome, '
-                  'which may be a subset of the entire study-population. For example, '
-                  '"US (national) NHANES 2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
-        blank=True)
     diagnostic = models.PositiveSmallIntegerField(
         choices=DIAGNOSTIC_CHOICES)
     diagnostic_description = models.TextField()
@@ -209,8 +198,6 @@ class Outcome(BaseEndpoint):
         help_text='Summarize main findings of outcome, or describe why no '
                   'details are presented (for example, "no association '
                   '(data not shown)")')
-    prevalence_incidence = models.TextField(
-        blank=True)
 
     def get_absolute_url(self):
         return reverse('epi2:outcome_detail', kwargs={'pk': self.pk})
@@ -565,10 +552,21 @@ class Result(models.Model):
     metric_description = models.TextField(
         blank=True,
         help_text="Add additional text describing the metric used, if needed.")
-    adjustment_factors = models.ManyToManyField(
-        AdjustmentFactor,
-        through=ResultAdjustmentFactor,
-        related_name='outcomes',
+    data_location = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Details on where the data are found in the literature "
+                  "(ex: Figure 1, Table 2, etc.)")
+    population_description = models.CharField(
+        max_length=128,
+        help_text='Detailed description of the population being studied for'
+                  'this outcome, which may be a subset of the entire'
+                  'study-population. For example, "US (national) NHANES'
+                  '2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
+        blank=True)
+    prevalence_incidence = models.CharField(
+        max_length=128,
+        verbose_name="Overall incidence prevalence",
         blank=True)
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
@@ -583,6 +581,16 @@ class Result(models.Model):
         choices=STATISTICAL_POWER_CHOICES)
     statistical_power_details = models.TextField(
         blank=True)
+    adjustment_factors = models.ManyToManyField(
+        AdjustmentFactor,
+        through=ResultAdjustmentFactor,
+        related_name='outcomes',
+        blank=True)
+    comments = models.TextField(
+        blank=True,
+        help_text='Summarize main findings of outcome, or describe why no '
+                  'details are presented (for example, "no association '
+                  '(data not shown)")')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -590,11 +598,13 @@ class Result(models.Model):
 
     @property
     def factors_applied(self):
-        return self.adjustment_factors.filter(resfactors__included_in_final_model=True)
+        return self.adjustment_factors\
+            .filter(resfactors__included_in_final_model=True)
 
     @property
     def factors_considered(self):
-        return self.adjustment_factors.filter(resfactors__included_in_final_model=False)
+        return self.adjustment_factors\
+            .filter(resfactors__included_in_final_model=False)
 
     def __unicode__(self):
         return u"{0}: {1}".format(self.groups, self.metric)
