@@ -135,8 +135,10 @@ Exposure.prototype = {
         if (this.data.unknown_route) lis.push("Unknown route");
         return lis;
     },
-    build_details_table: function(){
+    build_details_table: function(showLink){
+        var link = (showLink === true) ? this.build_link() : undefined;
         return new DescriptiveTable()
+            .add_tbody_tr("Name", link)
             .add_tbody_tr("Measurement metric", this.data.metric)
             .add_tbody_tr("Measurement metric units", this.data.metric_units.name)
             .add_tbody_tr("Measurement description", this.data.metric_description)
@@ -446,18 +448,22 @@ _.extend(GroupCollection, {
 GroupCollection.prototype = {
     displayFullPager: function($el){
         $el.hide()
-            .append(this.build_details_table())
+            .append(this.build_details_div())
+            .append(this.build_exposure_table())
             .append("<h2>Groups</h2>")
             .append(this.build_groups_table())
             .fadeIn();
     },
-    build_details_table: function(){
-        var exposure = (this.exposure) ? this.exposure.build_link() : undefined;
-        return new DescriptiveTable()
-            .add_tbody_tr("Name", this.data.name)
-            .add_tbody_tr("Exposure", exposure)
-            .add_tbody_tr("Description", this.data.description)
-            .get_tbl();
+    build_details_div: function(){
+        return (this.data.description) ?
+            $('<div>').html(this.data.description) :
+            null;
+    },
+    build_exposure_table: function(){
+        if (this.exposure === undefined) return;
+        return $("<div>")
+            .append("<h2>Exposure details</h2>")
+            .append(this.exposure.build_details_table(true));
     },
     build_groups_table: function(){
         var tbl = new BaseTable(),
