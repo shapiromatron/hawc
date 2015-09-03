@@ -127,9 +127,13 @@ class StudyPopulationForm(forms.ModelForm):
             allow_new=True)
         if study:
             self.instance.study = study
-        if self.instance.id:
-            for fld in self.CRITERION_FIELDS:
+
+        for fld in self.CRITERION_FIELDS:
+            self.fields[fld].widget.update_query_parameters(
+                    {'related': self.instance.study.assessment_id})
+            if self.instance.id:
                 self.fields[fld].initial = getattr(self.instance, fld)
+
         self.helper = self.setHelper()
 
     def save_criteria(self):
@@ -155,9 +159,6 @@ class StudyPopulationForm(forms.ModelForm):
         return instance
 
     def setHelper(self):
-        for fld in self.CRITERION_FIELDS:
-            self.fields[fld].widget.update_query_parameters(
-                {'related': self.instance.study.assessment_id})
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

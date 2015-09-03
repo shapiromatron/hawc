@@ -31,6 +31,7 @@ class CriteriaLookup(RelatedLookup):
 class AdjustmentFactorLookup(RelatedLookup):
     model = models.AdjustmentFactor
     search_fields = ('description__icontains', )
+    related_filter = 'assessment_id'
 
 
 class EffectLookup(DistinctStringLookup):
