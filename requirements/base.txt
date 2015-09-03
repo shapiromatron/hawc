@@ -3,7 +3,7 @@ amqp==1.4.6
 anyjson==0.3.3
 billiard==3.3.0.20
 celery==3.1.18
-django-crispy-forms==1.5.0
+django-crispy-forms==1.5.1
 django-compressor==1.5
 django-redis==4.1.0
 django-markdown-deux==1.0.5
