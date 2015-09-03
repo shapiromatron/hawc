@@ -8,7 +8,10 @@ class CriteriaAdmin(admin.ModelAdmin):
 
 
 class CountryAdmin(admin.ModelAdmin):
-    pass
+
+    search_fields = (
+        'name',
+    )
 
 
 class AdjustmentFactorAdmin(admin.ModelAdmin):
