@@ -1990,5 +1990,21 @@
         },
         "model": "epi2.country",
         "pk": 249
+    },
+    {
+        "fields": {
+            "code": "",
+            "name": "Unknown/Unspecified"
+        },
+        "model": "epi2.country",
+        "pk": 250
+    },
+    {
+        "fields": {
+            "code": "",
+            "name": "Socialist Federal Republic of Yugoslavia"
+        },
+        "model": "epi2.country",
+        "pk": 251
     }
 ]

@@ -30,7 +30,7 @@ class Criteria(models.Model):
 
 class Country(models.Model):
     code = models.CharField(
-        unique=True,
+        blank=True,
         max_length=2)
     name = models.CharField(
         unique=True,
@@ -182,7 +182,11 @@ class Outcome(BaseEndpoint):
         (0, 'not reported'),
         (1, 'medical professional or test'),
         (2, 'medical records'),
-        (3, 'self-reported'))
+        (3, 'self-reported'),
+        (4, 'questionnaire'),
+        (5, 'hospital admission'),
+        (6, 'other'),
+    )
 
     study_population = models.ForeignKey(
         StudyPopulation,
@@ -660,9 +664,12 @@ class Result(models.Model):
 class GroupResult(models.Model):
 
     P_VALUE_QUALIFIER_CHOICES = (
+        (' ', ' '),
         ('-', 'n.s.'),
         ('<', '<'),
-        ('=', '='))
+        ('=', '='),
+        ('>', '>'),
+    )
 
     MAIN_FINDING_CHOICES = (
         (3, "not-reported"),
@@ -672,7 +679,7 @@ class GroupResult(models.Model):
 
     measurement = models.ForeignKey(
         Result,
-        related_name="results")
+        related_name="results")  # todo: rename measurement to result
     group = models.ForeignKey(
         Group,
         related_name="results")

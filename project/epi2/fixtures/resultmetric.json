@@ -262,5 +262,17 @@
         },
         "model": "epi2.ResultMetric",
         "pk": 22
+    },
+    {
+        "fields": {
+            "abbreviation": "SMR",
+            "metric": "standardized mortality ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 21,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 23
     }
 ]
