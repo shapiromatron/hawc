@@ -187,6 +187,10 @@ class Outcome(BaseEndpoint):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='outcomes')
+    system = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Relevant biological system")
     effect = models.CharField(
         max_length=128,
         blank=True,

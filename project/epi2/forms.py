@@ -338,6 +338,9 @@ class OutcomeForm(forms.ModelForm):
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
+        self.fields['system'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.SystemLookup,
+            allow_new=True)
         self.fields['effect'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EffectLookup,
             allow_new=True)
@@ -377,14 +380,14 @@ class OutcomeForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row('name', 3, "span4")
+        helper.add_fluid_row('name', 4, "span3")
         helper.add_fluid_row('diagnostic', 2, "span6")
 
         url = reverse(
             'assessment:effect_tag_create',
             kwargs={'pk': self.instance.assessment.pk}
         )
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span4")
+        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span3")
 
         return helper
 

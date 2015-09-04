@@ -198,6 +198,7 @@ Outcome.prototype = {
     build_details_table: function(){
         return new DescriptiveTable()
             .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("System", this.data.system)
             .add_tbody_tr("Effect", this.data.effect)
             .add_tbody_tr_list("Effect tags", _.pluck(this.data.effects, "name"))
             .add_tbody_tr("Diagnostic", this.data.diagnostic)

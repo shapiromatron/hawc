@@ -39,9 +39,15 @@ class EffectLookup(DistinctStringLookup):
     distinct_field = "effect"
 
 
+class SystemLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "system"
+
+
 registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
 registry.register(EffectLookup)
+registry.register(SystemLookup)
