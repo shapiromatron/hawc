@@ -593,11 +593,11 @@ class Exposure(models.Model):
         help_text="Include details on the lab-techniques for exposure measurement in samples.")
     control_description = models.TextField()
     exposure_description = models.CharField(
-            max_length=128,
-            blank=True,
-            help_text='May be used to describe the exposure distribution, for '
-                      'example, "2.05 µg/g creatinine (urine), geometric mean; '
-                      '25th percentile = 1.18, 75th percentile = 3.33"')
+        max_length=128,
+        blank=True,
+        help_text='May be used to describe the exposure distribution, for '
+                  'example, "2.05 µg/g creatinine (urine), geometric mean; '
+                  '25th percentile = 1.18, 75th percentile = 3.33"')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(

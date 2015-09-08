@@ -4,6 +4,10 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
 
+from django.template.loader import render_to_string
+
+from crispy_forms.utils import flatatt, TEMPLATE_PACK
+
 
 class BaseFormHelper(cf.FormHelper):
 
@@ -43,16 +47,17 @@ class BaseFormHelper(cf.FormHelper):
     def addCustomFormActions(cls, layout, items):
         layout.append(cfb.FormActions(*items))
 
-    def add_adder(self, cls, title, url):
+    def addBtnLayout(self, lst, idx, url, title, wrapper_class):
         """
-        Add a "plus" button to add a new creator item in a new window.
+        Render field plus an "add new" button to the right.
         """
-        self.layout.append(
-            cfl.HTML("""<a class="btn btn-primary adders pull-right {}"
-                           title="{}" href="{}"
-                           onclick="return HAWCUtils.newWindowPopupLink(this);">
-                                <i class="icon-plus icon-white"></i></a>""".format(
-            cls, title, url)))
+        if type(lst[idx]) is str:
+            fields = [lst[idx]]
+        else:
+            fields = lst[idx].fields
+        lst[idx] = AdderLayout(
+                *fields, adderURL=url, adderTitle=title,
+                wrapper_class=wrapper_class)
 
     def add_fluid_row(self, firstField, numFields, wrapperClasses):
         first = self.layout.index(firstField)
@@ -61,6 +66,10 @@ class BaseFormHelper(cf.FormHelper):
         for i, v in enumerate(wrapperClasses):
             self[first+i].wrap(cfl.Field, wrapper_class=v)
         self[first:first+numFields].wrap_together(cfl.Div, css_class="row-fluid")
+
+    def add_td(self, firstField, numFields):
+        first = self.layout.index(firstField)
+        self[first:first+numFields].wrap_together(TdLayout)
 
     def add_header(self, firstField, text):
         self.layout.insert(
@@ -90,6 +99,48 @@ def anyNull(dict, fields):
         if dict.get(field) is None:
             return True
     return False
+
+
+class TdLayout(cfl.LayoutObject):
+    """
+    Layout object. It wraps fields in a <td>
+    """
+    template = "crispy_forms/layout/td.html"
+
+    def __init__(self, *fields, **kwargs):
+        self.fields = list(fields)
+        self.css_class = kwargs.pop('css_class', '')
+        self.css_id = kwargs.pop('css_id', None)
+        self.template = kwargs.pop('template', self.template)
+        self.flat_attrs = flatatt(kwargs)
+
+    def render(self, form, form_style, context, **kwargs):
+        fields = self.get_rendered_fields(form, form_style, context, **kwargs)
+        return render_to_string(
+            self.template,
+            {'td': self, 'fields': fields, 'form_style': form_style}
+        )
+
+
+class AdderLayout(cfl.Field):
+    """
+    Adder layout object. It contains a link-button to add a new field.
+    """
+    template = "crispy_forms/layout/inputAdder.html"
+
+    def __init__(self, *args, **kwargs):
+        self.adderURL = kwargs.pop('adderURL', '')
+        self.adderTitle = kwargs.pop('adderTitle', '')
+        super(AdderLayout, self).__init__(*args, **kwargs)
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs):
+        if extra_context is None:
+            extra_context = {}
+        extra_context["adderURL"] = self.adderURL
+        extra_context["adderTitle"] = self.adderTitle
+        return super(AdderLayout, self).render(form, form_style, context,
+                                               template_pack, extra_context,
+                                               **kwargs)
 
 
 class FormsetWithIgnoredFields(forms.BaseModelFormSet):

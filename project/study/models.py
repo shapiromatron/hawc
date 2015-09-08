@@ -18,6 +18,7 @@ import reversion
 from assessment.serializers import AssessmentSerializer
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
+from utils.models import get_crumbs
 from utils.helper import cleanHTML
 
 
@@ -208,6 +209,9 @@ class Study(Reference):
         return cls.objects\
                   .filter(assessment_id=assessment_id)\
                   .values_list('id', 'short_citation')
+
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
 
 
 class Attachment(models.Model):

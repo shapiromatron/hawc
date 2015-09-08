@@ -1,0 +1,44 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{object.name}}
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">Study Population Editing</a></li>
+                <li><a href="{% url 'epi2:sp_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi2:sp_delete' pk=object.pk %}">Delete</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">Exposures</a></li>
+                <li><a href="{% url 'epi2:exp_create' object.pk %}">Create</a></li>
+                {% if object.can_create_groups %}
+                  <li class="disabled"><a tabindex="-1" href="#">Groups</a></li>
+                  <li><a href="{% url 'epi2:gc_create' object.pk %}">Create</a></li>
+                {% endif %}
+                <li class="disabled"><a tabindex="-1" href="#">Outcomes</a></li>
+                <li><a href="{% url 'epi2:outcome_create' object.pk %}">Create</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+    <div id="objContainer"></div>
+{% endblock %}
+
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      StudyPopulation.displayFullPager($("#objContainer"), {{object.id}});
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,278 @@
+[
+    {
+        "fields": {
+            "abbreviation": "",
+            "metric": "not reported",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 0,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "abbreviation": "adjRR",
+            "metric": "adjusted relative risk",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 1,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "abbreviation": "RR",
+            "metric": "relative risk",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 2,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "abbreviation": "adjPR",
+            "metric": "adjusted prevalence ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 3,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "abbreviation": "PR",
+            "metric": "prevalence ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 4,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "abbreviation": "adjHR",
+            "metric": "adjusted hazard ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 5,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "abbreviation": "HR",
+            "metric": "hazard ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 6,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "abbreviation": "adjβ",
+            "metric": "adjusted beta",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 7,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "abbreviation": "adjusted coefficient",
+            "metric": "adjusted coefficient",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 8,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "abbreviation": "OR",
+            "metric": "crude odds ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 9,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 10
+    },
+    {
+        "fields": {
+            "abbreviation": "adjOR",
+            "metric": "adjusted odds ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 10,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 11
+    },
+    {
+        "fields": {
+            "abbreviation": "crude relative difference",
+            "metric": "crude relative difference",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 11,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 12
+    },
+    {
+        "fields": {
+            "abbreviation": "adjusted relative difference",
+            "metric": "adjusted relative difference",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 12,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 13
+    },
+    {
+        "fields": {
+            "abbreviation": "mean",
+            "metric": "mean",
+            "showForestPlot": true,
+            "isLog": false,
+            "order": 13,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 14
+    },
+    {
+        "fields": {
+            "abbreviation": "mean change",
+            "metric": "mean change",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 14,
+            "reference_value": 0
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 15
+    },
+    {
+        "fields": {
+            "abbreviation": "t-test",
+            "metric": "t-test",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 15,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 16
+    },
+    {
+        "fields": {
+            "abbreviation": "Wilcoxon Test",
+            "metric": "Wilcoxon Test",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 16,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 17
+    },
+    {
+        "fields": {
+            "abbreviation": "other",
+            "metric": "other",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 50,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 18
+    },
+    {
+        "fields": {
+            "abbreviation": "r",
+            "metric": "correlation",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 17,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 19
+    },
+    {
+        "fields": {
+            "abbreviation": "coefficient",
+            "metric": "regression coefficient",
+            "showForestPlot": false,
+            "isLog": false,
+            "order": 18,
+            "reference_value": null
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 20
+    },
+    {
+        "fields": {
+            "abbreviation": "IRR",
+            "metric": "crude incidence rate ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 19,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 21
+    },
+    {
+        "fields": {
+            "abbreviation": "adjIRR",
+            "metric": "adjusted incidence rate ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 20,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 22
+    },
+    {
+        "fields": {
+            "abbreviation": "SMR",
+            "metric": "standardized mortality ratio",
+            "showForestPlot": true,
+            "isLog": true,
+            "order": 21,
+            "reference_value": 1
+        },
+        "model": "epi2.ResultMetric",
+        "pk": 23
+    }
+]

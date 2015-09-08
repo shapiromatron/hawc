@@ -138,7 +138,7 @@ Exposure.prototype = {
         this.data.groups.forEach(function(d){
             tbl.add_tbody_tr_list(d.description, extract_as_list(self.build_eg_table(d)));
         });
-        return tbl.get_tbl()
+        return tbl.get_tbl();
     },
     build_eg_table: function(d){
         return new DescriptiveTable()

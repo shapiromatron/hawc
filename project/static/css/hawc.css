@@ -146,6 +146,24 @@ ul.sponsors {
 }
 
 
+/* Formset field labels */
+.formsetFieldLabel{
+  cursor: pointer;
+  color: inherit;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+.formsetFieldLabel:hover{
+  color: #738ffe;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+
 /* Risk of Bias */
 .sq_score{
   border-radius: 25px;

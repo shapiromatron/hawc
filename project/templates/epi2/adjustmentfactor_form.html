@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{assessment}} | {{ crud }} adjustment factor {% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block main_content %}
+  {% crispy form %}
+{% endblock main_content %}
+
+{% block extrajs %}
+  {{ form.media }}
+{% endblock extrajs %}
