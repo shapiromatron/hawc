@@ -485,6 +485,12 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         return Assessment.objects.get(pk=int(name[name.find('-')+1:]))
 
     @classmethod
+    def get_tag_in_assessment(cls, assessment_pk, tag_id):
+        tag = cls.objects.get(id=tag_id)
+        assert tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
+        return tag
+
+    @classmethod
     def get_all_tags(cls, assessment, json_encode=True):
         """
         Get all tags for the selected assessment.
@@ -902,6 +908,13 @@ class Reference(models.Model):
             refs.append(ref)
 
         return refs
+
+    @classmethod
+    def get_references_with_tag(cls, tag, descendants=False):
+        tag_ids = [tag.id]
+        if descendants:
+            tag_ids.extend(list(tag.get_descendants().values_list('pk', flat=True)))
+        return cls.objects.filter(tags__in=tag_ids).distinct('pk')
 
     def get_assessment(self):
         return self.assessment

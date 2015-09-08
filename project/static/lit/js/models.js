@@ -656,10 +656,11 @@ _.extend(NestedTag.prototype, Observee.prototype, {
         }
         return refs.getUnique();
     },
-    get_reference_objects: function(reference_viewer){
-        var url = '/lit/assessment/{0}/references/json/'.printf(window.assessment_pk),
-            data = {'pks': this.get_references([])};
-        $.get(url, data, function(results){
+    get_reference_objects_by_tag: function(reference_viewer){
+        var url = '/lit/assessment/{0}/references/{1}/json/'
+            .printf(window.assessment_pk, this.data.pk);
+
+        $.get(url, function(results){
             if(results.status=="success"){
                 refs = [];
                 results.refs.forEach(function(datum){refs.push(new Reference(datum, window.tagtree));});
@@ -826,7 +827,7 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
                 .addBody(div)
                 .addFooter("")
                 .show({maxWidth: 800});
-            nested_tag.get_reference_objects(refviewer);
+            nested_tag.get_reference_objects_by_tag(refviewer);
         }
 
         function update(source) {

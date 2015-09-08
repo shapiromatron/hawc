@@ -50,7 +50,7 @@
               options = {tag: tag,
                          download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"}
           window.refviewer = new ReferencesViewer($('#references_detail_div'), options);
-          tag.get_reference_objects(window.refviewer);
+          tag.get_reference_objects_by_tag(window.refviewer);
         });
     });
   </script>

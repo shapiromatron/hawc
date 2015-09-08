@@ -79,8 +79,9 @@ class RefDownloadExcel(BaseList):
 
     def get(self, request, *args, **kwargs):
         try:
-            self.tag = models.ReferenceFilterTag.objects.get(
-                pk=int(request.GET.get('tag_id')))
+            tag_id = int(request.GET.get('tag_id'))
+            self.tag = models.ReferenceFilterTag.get_tag_in_assessment(
+                self.assessment.id, tag_id)
         except:
             self.tag = None
         return super(RefDownloadExcel, self).get(request, *args, **kwargs)
@@ -99,13 +100,10 @@ class RefDownloadExcel(BaseList):
                 assessment=self.assessment, json_encode=False)
 
     def get_queryset(self):
-        filts = {"assessment": self.assessment}
         if self.tag:
-            tag_ids = [self.tag.id]
-            tag_ids.extend(
-                list(self.tag.get_descendants().values_list('pk', flat=True)))
-            filts["tags__in"] = tag_ids
-        return self.model.objects.filter(**filts).distinct('pk')
+            return self.model.get_references_with_tag(self.tag, descendants=True)
+        else:
+            return self.model.objects.filter(assessment=self.assessment)
 
     def render_to_response(self, context, **response_kwargs):
         exporter = exports.ReferenceFlatComplete(
@@ -452,25 +450,23 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
         return context
 
 
-class RefsJSON(BaseDetail):
+class RefsByTagJSON(BaseDetail):
     model = Assessment
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        pks = self.request.GET.getlist('pks[]')
-        response = self.get_refs(pks)
-        return HttpResponse(json.dumps(response), content_type="application/json")
-
-    def get_refs(self, pks):
+    def get_context_data(self, **kwargs):
         response = {"status": "success", "refs": []}
         try:
-            pks = [int(pk) for pk in pks]
-            self.queryset = models.Reference.objects.filter(pk__in=pks, assessment=self.assessment)
-            for ref in self.queryset:
+            tag = models.ReferenceFilterTag.get_tag_in_assessment(
+                self.assessment.id, int(self.kwargs.get('tag_id')))
+            refs = models.Reference.get_references_with_tag(tag, descendants=True)
+            for ref in refs:
                 response["refs"].append(ref.get_json(json_encode=False, searches=True))
         except:
             response["status"] = "fail"
-        return response
+        self.response = response
+
+    def render_to_response(self, context, **response_kwargs):
+        return HttpResponse(json.dumps(self.response), content_type="application/json")
 
 
 class RefVisualization(BaseDetail):
