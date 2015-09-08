@@ -69,40 +69,53 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
 
 
 class RefDownloadExcel(BaseList):
+    """
+    If a tag primary-key is specified, download all references associated
+    with that tag or any child tags for the selected assessment. Otherwise,
+    download a full export of data.
+    """
     parent_model = Assessment
     model = models.Reference
 
     def get(self, request, *args, **kwargs):
-        """
-        If a tag primary-key is specified, download all references associated
-        with that tag or any child tags for the selected assessment. Otherwise,
-        download a full export of data.
-        """
-        queryset = self.model.objects.filter(assessment=self.assessment)
-        fn = "{}-refs".format(self.assessment)
-        sheet_name = unicode(self.assessment)
         try:
-            tag_pk = int(request.GET.get('tag_pk', None))
-            tag = models.ReferenceFilterTag.objects.get(pk=tag_pk)
-            tags_pks = [tag.pk]
-            tags_pks.extend(list(tag.get_descendants().values_list('pk', flat=True)))
-            queryset = queryset.filter(tags__in=tags_pks).distinct('pk')
-            fn = "{}-{}".format(tag.name, fn)
-            sheet_name = tag.name
-            tags = models.ReferenceFilterTag.dump_bulk(tag)
-            include_parent_tag=True
+            self.tag = models.ReferenceFilterTag.objects.get(
+                pk=int(request.GET.get('tag_id')))
         except:
-            tags = models.ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False)
-            include_parent_tag=False
+            self.tag = None
+        return super(RefDownloadExcel, self).get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        if self.tag:
+            self.include_parent_tag = True
+            self.fn = "{}-{}-refs".format(self.tag.name, self.assessment)
+            self.sheet_name = self.tag.name
+            self.tags = models.ReferenceFilterTag.dump_bulk(self.tag)
+        else:
+            self.include_parent_tag = False
+            self.fn = "{}-refs".format(self.assessment)
+            self.sheet_name = unicode(self.assessment)
+            self.tags = models.ReferenceFilterTag.get_all_tags(
+                assessment=self.assessment, json_encode=False)
+
+    def get_queryset(self):
+        filts = {"assessment": self.assessment}
+        if self.tag:
+            tag_ids = [self.tag.id]
+            tag_ids.extend(
+                list(self.tag.get_descendants().values_list('pk', flat=True)))
+            filts["tags__in"] = tag_ids
+        return self.model.objects.filter(**filts).distinct('pk')
+
+    def render_to_response(self, context, **response_kwargs):
         exporter = exports.ReferenceFlatComplete(
-            queryset,
+            self.object_list,
             export_format="excel",
-            filename=fn,
-            sheet_name=sheet_name,
+            filename=self.fn,
+            sheet_name=self.sheet_name,
             assessment=self.assessment,
-            tags=tags,
-            include_parent_tag=include_parent_tag)
+            tags=self.tags,
+            include_parent_tag=self.include_parent_tag)
         return exporter.build_response()
 
 

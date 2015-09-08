@@ -213,7 +213,7 @@ ReferencesViewer.prototype = {
                 actions = $('<div class="btn-group pull-right">' +
                               '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>' +
                               '<ul class="dropdown-menu">' +
-                                '<li><a href="{0}?tag_pk={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
+                                '<li><a href="{0}?tag_id={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
                                 '<li><a href="#" class="show_abstracts">Show all abstracts</a></li>' +
                               '</ul>' +
                             '</div>');
