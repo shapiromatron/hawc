@@ -78,14 +78,14 @@
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% elif study.study_type == 1 %}
       <h2>Available study populations</h2>
-      {% comment %}
       {% include "epi/_study_population_list.html" with object_list=object.study_populations.all %}
-      {% endcomment %}
+      {% comment %}
       <ul>
         {% for obj in object.study_populations2.all %}
           <li><a href="{{obj.get_absolute_url}}">{{obj}}</a></li>
         {% endfor %}
       </ul>
+      {% endcomment %}
     {% elif study.study_type == 2 %}
       <h2>Available experiments</h2>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
