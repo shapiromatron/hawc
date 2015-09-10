@@ -66,6 +66,16 @@ class IVCellType(models.Model):
         'na': u'N/A',
         'nr': u'not reported'}
 
+    CULTURE_TYPE_CHOICES = (
+        ("nr", "not reported"),
+        ("im", "Immortalized cell line"),
+        ("pc", "Primary culture"),
+        ("tt", "Transient transfected cell line"),
+        ("st", "Stably transfected cell line"),
+        ("ts", "Transient transfected into stably transfected cell line"),
+        ("na", "not applicable"),
+    )
+
     study = models.ForeignKey(
         'study.Study',
         related_name='ivcelltypes')
@@ -79,6 +89,9 @@ class IVCellType(models.Model):
         choices=SEX_CHOICES)
     cell_type = models.CharField(
         max_length=64)
+    culture_type = models.CharField(
+        max_length=2,
+        choices=CULTURE_TYPE_CHOICES)
     tissue = models.CharField(
         max_length=64)
     source = models.CharField(
@@ -103,6 +116,8 @@ class IVExperiment(models.Model):
     study = models.ForeignKey(
         'study.Study',
         related_name='ivexperiments')
+    name = models.CharField(
+        max_length=128)
     cell_type = models.ForeignKey(
         IVCellType,
         related_name='ivexperiments')
@@ -110,8 +125,8 @@ class IVExperiment(models.Model):
         max_length=256,
         help_text="Details on transfection methodology and details on genes or "
                   "other genetic material introduced into assay, or \"not-applicable\"")
-    cell_line = models.CharField(
-        max_length=128,
+    cell_notes = models.TextField(
+        blank=True,
         help_text="Description of type of cell-line used (ex: "
                   "primary cell-line, immortalized cell-line, stably transfected "
                   "cell-line, transient transfected cell-line, etc.)")
@@ -126,6 +141,8 @@ class IVExperiment(models.Model):
     serum = models.CharField(
         max_length=128,
         verbose_name="Percent serum, serum-type, and/or description")
+    has_naive_control = models.BooleanField(
+        default=False)
     has_positive_control = models.BooleanField(
         default=False)
     positive_control = models.CharField(
@@ -153,7 +170,7 @@ class IVExperiment(models.Model):
         related_name='ivexperiments')
 
     def __unicode__(self):
-        return unicode(self.cell_type)
+        return self.name
 
     def get_assessment(self):
         return self.study.assessment
@@ -207,14 +224,15 @@ class IVEndpoint(BaseEndpoint):
         (3, "decrease"),
         (4, "decrease, then increase"),
         (7, "decrease, then no change"),
-        (5, "no clear pattern"))
+        (5, "no clear pattern"),
+        (8, "no change"))
 
     TREND_TEST_RESULT_CHOICES = (
-        (0, "not-reported"),
-        (1, "not-analyzed"),
-        (2, "not-applicable"),
+        (0, "not reported"),
+        (1, "not analyzed"),
+        (2, "not applicable"),
         (3, "significant"),
-        (4, "not-significant"))
+        (4, "not significant"))
 
     OBSERVATION_TIME_UNITS = (
         (0, "not-reported"),
@@ -231,7 +249,8 @@ class IVEndpoint(BaseEndpoint):
     chemical = models.ForeignKey(
         IVChemical,
         related_name="endpoints")
-    category = models.ForeignKey(IVEndpointCategory,
+    category = models.ForeignKey(
+        IVEndpointCategory,
         blank=True,
         null=True,
         related_name="endpoints")
@@ -259,8 +278,12 @@ class IVEndpoint(BaseEndpoint):
     response_units = models.CharField(
         max_length=64,
         verbose_name="Response units")
-    observation_time = models.FloatField(
-        default=-999)
+    values_estimated = models.BooleanField(
+        default=False,
+        help_text="Response values were estimated using a digital ruler or other methods")
+    observation_time = models.CharField(
+        blank=True,
+        max_length=16)
     observation_time_units = models.PositiveSmallIntegerField(
         default=0,
         choices=OBSERVATION_TIME_UNITS)
@@ -305,54 +328,31 @@ class IVEndpoint(BaseEndpoint):
         return reverse('invitro:endpoint_detail', args=[str(self.id)])
 
     @classmethod
-    def get_maximum_number_doses(cls, queryset):
+    def max_dose_count(cls, queryset):
         max_val = 0
         qs = queryset\
-                .annotate(max_egs=models.Count('groups'))\
-                .values_list('max_egs', flat=True)
-        if len(qs)>0: max_val = max(qs)
+            .annotate(max_egs=models.Count('groups'))\
+            .values_list('max_egs', flat=True)
+        if len(qs) > 0:
+            max_val = max(qs)
         return max_val
 
     @classmethod
-    def get_maximum_number_benchmarks(cls, queryset):
+    def max_benchmark_count(cls, queryset):
         max_val = 0
         qs = queryset\
-                .annotate(max_benchmarks=models.Count('benchmarks'))\
-                .values_list('max_benchmarks', flat=True)
-        if len(qs)>0: max_val = max(qs)
+            .annotate(max_benchmarks=models.Count('benchmarks'))\
+            .values_list('max_benchmarks', flat=True)
+        if len(qs) > 0:
+            max_val = max(qs)
         return max_val
 
     @classmethod
     def get_docx_template_context(cls, queryset):
         return {
-            "field1": "body and mind",
-            "field2": "well respected man",
-            "field3": 1234,
-            "nested": {"object": {"here": u"you got it!"}},
-            "extra": "tests",
-            "tables": [
-                {
-                    "title": "Tom's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 123,
-                    "row4": 6/7.,
-                },
-                {
-                    "title": "Frank's table",
-                    "row1": 'abc',
-                    "row2": 'def',
-                    "row3": 223,
-                    "row4": 5/7.,
-                },
-                {
-                    "title": "Gerry's table",
-                    "row1": 'cats',
-                    "row2": 'dogs',
-                    "row3": 123,
-                    "row4": 4/7.,
-                },
-            ]
+            "field1": "a",
+            "field2": "b",
+            "field3": "c",
         }
 
 

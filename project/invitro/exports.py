@@ -28,7 +28,6 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             'Dose units',
             'Metabolic activation',
             'Transfection',
-            'Cell line',
 
             'IVEndpoint name',
             'IVEndpoint HAWC ID',
@@ -52,17 +51,23 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
         num_cats = 0
         if self.queryset.count()>0:
             IVEndpointCategory = get_model("invitro", "IVEndpointCategory")
-            num_cats = IVEndpointCategory.get_maximum_depth(self.queryset[0].assessment_id)
-        header.extend(["Category {0}".format(i) for i in xrange(1, num_cats+1)])
+            num_cats = IVEndpointCategory.get_maximum_depth(
+                self.queryset[0].assessment_id)
+        header.extend([
+            "Category {0}".format(i)
+            for i in xrange(1, num_cats+1)
+        ])
 
-        num_doses = self.queryset.model.get_maximum_number_doses(self.queryset)
-        header.extend(["Dose {0}".format(i)        for i in xrange(1, num_doses+1)])
-        header.extend(["Change Control {0}".format(i) for i in xrange(1, num_doses+1)])
-        header.extend(["Significant {0}".format(i) for i in xrange(1, num_doses+1)])
+        num_doses = self.queryset.model.max_dose_count(self.queryset)
+        rng = xrange(1, num_doses+1)
+        header.extend(["Dose {0}".format(i) for i in rng])
+        header.extend(["Change Control {0}".format(i) for i in rng])
+        header.extend(["Significant {0}".format(i) for i in rng])
 
-        num_bms = self.queryset.model.get_maximum_number_benchmarks(self.queryset)
-        header.extend(["Benchmark Type {0}".format(i)  for i in xrange(1, num_bms+1)])
-        header.extend(["Benchmark Value {0}".format(i) for i in xrange(1, num_bms+1)])
+        num_bms = self.queryset.model.max_benchmark_count(self.queryset)
+        rng = xrange(1, num_bms+1)
+        header.extend(["Benchmark Type {0}".format(i) for i in rng])
+        header.extend(["Benchmark Value {0}".format(i) for i in rng])
 
         self.num_cats = num_cats
         self.num_doses = num_doses
@@ -87,12 +92,15 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             # get min and max doses or None
             min_dose = None
             max_dose = None
-            doses = [ eg['dose'] for eg in ser['groups'] ]
-            diffs = [ eg['difference_control']  for eg in ser['groups'] ]
-            sigs  = [ eg['significant_control'] for eg in ser['groups'] ]
+            doses = filter(
+                lambda x: x > 0,
+                [eg['dose'] for eg in ser['groups']]
+            )
+            diffs = [eg['difference_control'] for eg in ser['groups']]
+            sigs = [eg['significant_control'] for eg in ser['groups']]
             number_doses = len(doses)
-            if number_doses>0:
-                min_dose = min(d for d in doses if d>0)
+            if number_doses > 0:
+                min_dose = min(d for d in doses if d > 0)
                 max_dose = max(doses)
 
             bm_types = [bm["benchmark"] for bm in ser["benchmarks"]]
@@ -120,7 +128,6 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['experiment']['dose_units']['name'],
                 ser['experiment']['metabolic_activation'],
                 ser['experiment']['transfection'],
-                ser['experiment']['cell_line'],
 
                 ser['name'],
                 ser['id'],
@@ -160,5 +167,3 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             rows.append(row)
 
         return rows
-
-

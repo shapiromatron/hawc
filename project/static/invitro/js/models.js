@@ -62,15 +62,14 @@ IVExperiment.prototype = {
     initEndpoints: function(){
         this.endpoints = [];
         if(this.data.endpoints){
-            for (var i=0; i<this.data.endpoints.length; i++){
-                this.endpoints.push(new IVEndpoint(this.data.endpoints[i]));
-            }
+            this.endpoints = _.map(
+               this.data.endpoints,
+               function(d){return new IVEndpoint(d);});
             delete this.data.endpoints;
         }
     },
     build_title: function(){
-        return $("<h1>")
-            .text(this.data.title);
+        return $("<h1>").text(this.data.name);
     },
     build_details_table: function(){
         var getControlText = function(bool, str) {
@@ -80,7 +79,8 @@ IVExperiment.prototype = {
             },
             pos = getControlText(this.data.has_positive_control, this.data.positive_control),
             neg = getControlText(this.data.has_negative_control, this.data.negative_control),
-            veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control);
+            veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control),
+            naive = getControlText(this.data.has_naive_control, "");
 
         return new DescriptiveTable()
             .add_tbody_tr("Cell type", this.data.cell_type.cell_type)
@@ -89,11 +89,13 @@ IVExperiment.prototype = {
             .add_tbody_tr("Strain", this.data.cell_type.strain)
             .add_tbody_tr("Sex", this.data.cell_type.sex_symbol)
             .add_tbody_tr("Cell source", this.data.cell_type.source)
+            .add_tbody_tr("Culture type", this.data.cell_type.culture_type)
             .add_tbody_tr("Transfection", this.data.transfection)
-            .add_tbody_tr("Cell line", this.data.cell_line)
+            .add_tbody_tr("Cell notes", this.data.cell_notes)
             .add_tbody_tr("Dosing notes", this.data.dosing_notes)
             .add_tbody_tr("Metabolic activation", this.data.metabolic_activation)
             .add_tbody_tr("Serum", this.data.serum)
+            .add_tbody_tr("Naive control", naive)
             .add_tbody_tr("Positive control", pos)
             .add_tbody_tr("Negative control", neg)
             .add_tbody_tr("Vehicle control", veh)
@@ -189,7 +191,7 @@ IVEndpoint.prototype = {
                     return undefined;
                 }
             }, getObservationTime = function(){
-                if (self.data.observation_time>=0)
+                if (self.data.observation_time.length > 0)
                     return "{0} {1}".printf(self.data.observation_time, self.data.observation_time_units);
             }, getCategory = function(cat){
                 if (cat) return cat.names.join("→");
@@ -204,6 +206,7 @@ IVEndpoint.prototype = {
            .add_tbody_tr("Data type", this.data.data_type)
            .add_tbody_tr("Variance type", this.data.variance_type)
            .add_tbody_tr("Response units", this.data.response_units)
+           .add_tbody_tr("Values estimated", HAWCUtils.booleanCheckbox(this.data.values_estimated))
            .add_tbody_tr("Observation time", getObservationTime())
            .add_tbody_tr("NOEL", getCriticalValue(this.data.NOEL))
            .add_tbody_tr("LOEL", getCriticalValue(this.data.LOEL))
@@ -218,7 +221,7 @@ IVEndpoint.prototype = {
            .add_tbody_tr_list("Benchmarks", this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
-        _.map(this.data.additional_fields, function(val, key){
+        _.each(this.data.additional_fields, function(val, key){
             tbl.add_tbody_tr(HAWCUtils.prettifyVariableName(key), val);
         });
 

@@ -12,11 +12,8 @@ from . import models
 
 class IVCellTypeSerializer(serializers.ModelSerializer):
     sex_symbol = serializers.CharField(source='get_sex_symbol', read_only=True)
-
-    def to_representation(self, instance):
-        ret = super(IVCellTypeSerializer, self).to_representation(instance)
-        ret['sex'] = instance.get_sex_display()
-        return ret
+    culture_type = serializers.CharField(source='get_culture_type_display', read_only=True)
+    sex = serializers.CharField(source='get_sex_display', read_only=True)
 
     class Meta:
         model = models.IVCellType
@@ -25,13 +22,8 @@ class IVCellTypeSerializer(serializers.ModelSerializer):
 class IVExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer()
     cell_type = IVCellTypeSerializer()
-
-    def to_representation(self, instance):
-        ret = super(IVExperimentSerializer, self).to_representation(instance)
-        ret['url'] = instance.get_absolute_url()
-        ret['metabolic_activation'] = instance.get_metabolic_activation_display()
-        ret['title'] = unicode(self.instance)
-        return ret
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    metabolic_activation = serializers.CharField(source='get_metabolic_activation_display', read_only=True)
 
     class Meta:
         model = models.IVExperiment
