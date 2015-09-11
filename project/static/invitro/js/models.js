@@ -274,7 +274,7 @@ IVEndpoint.prototype = {
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.data.name),
+            title = '<h4><a href="{0}">{1}</a></h4>'.printf(this.data.url, this.data.name),
             $details = $('<div class="span12">'),
             $eg_tbl = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
