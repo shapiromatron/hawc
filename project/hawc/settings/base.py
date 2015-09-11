@@ -99,7 +99,7 @@ INSTALLED_APPS = (
     'study',
     'animal',
     'epi',
-    # 'epi2',
+    'epi2',
     'invitro',
     'bmd',
     'summary',
