@@ -85,6 +85,26 @@ class ExposureDelete(BaseDelete):
 
 
 # Outcome
+class OutcomeList(BaseList):
+    parent_model = Assessment
+    model = models.Outcome
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
+
+    def get_queryset(self):
+        filters = {"assessment": self.assessment}
+        perms = self.get_obj_perms()
+        if not perms['edit']:
+            filters["study_population__study__published"] = True
+        return self.model.objects.filter(**filters).order_by('name')
+
+
 class OutcomeCreate(BaseCreate):
     success_message = 'Outcome created.'
     parent_model = models.StudyPopulation

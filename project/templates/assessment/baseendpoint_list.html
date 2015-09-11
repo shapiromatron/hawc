@@ -28,6 +28,12 @@
             </a></li>
         {% endif %}
 
+        {% if outcomes > 0 %}
+        <li><a href="{% url 'epi2:outcome_list' assessment.id %}">
+            {{outcomes}} epidemiological outcomes assessed
+            </a></li>
+        {% endif %}
+
         {% if meta_results > 0 %}
         <li><a href="{% url 'epi:metaresult_list' assessment.id %}">
             {{meta_results}} epidemiological meta-analyses results

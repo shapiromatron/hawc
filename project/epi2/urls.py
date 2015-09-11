@@ -60,6 +60,9 @@ urlpatterns = [
         name='exp_delete'),
 
     # Outcome
+    url(r'^assessment/(?P<pk>\d+)/outcomes/$',
+        views.OutcomeList.as_view(),
+        name='outcome_list'),
     url(r'^study-population/(?P<pk>\d+)/outcome/create/$',
         views.OutcomeCreate.as_view(),
         name='outcome_create'),
