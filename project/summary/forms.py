@@ -1,7 +1,14 @@
+from collections import OrderedDict
+import json
+
 from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
 from selectable import forms as selectable
+
+from assessment.models import EffectTag
+from study.models import Study
+from animal.models import Endpoint
 
 from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
@@ -19,6 +26,193 @@ def clean_slug(form):
            .count() > 0:
         raise forms.ValidationError("URL name must be unique for this assessment.")
     return slug
+
+
+class PrefilterMixin(object):
+
+    PREFILTER_COMBO_FIELDS = [
+         "studies", "systems", "organs",
+         "effects", "effect_tags",
+    ]
+
+    def createFields(self):
+        fields = OrderedDict()
+
+        if "study" in self.prefilter_include:
+            fields.update([
+                ("published_only", forms.BooleanField(
+                    required=False,
+                    initial=True,
+                    label="Published studies only",
+                    help_text='Only present data from studies which have been marked as '
+                              '"published" in HAWC.')),
+                ("prefilter_study", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by study",
+                    help_text="Prefilter endpoints to include only selected studies.")),
+                ("studies", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Studies to include",
+                    help_text="""Select one or more studies to include in the plot.
+                                 If no study is selected, no endpoints will be available.""")),
+            ])
+
+        if "bioassay" in self.prefilter_include:
+            fields.update([
+                ("prefilter_system", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by system",
+                    help_text="Prefilter endpoints on plot to include selected systems.")),
+                ("systems", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Systems to include",
+                    help_text="""Select one or more systems to include in the plot.
+                                 If no system is selected, no endpoints will be available.""")),
+                ("prefilter_organ", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by organ",
+                    help_text="Prefilter endpoints on plot to include selected organs.")),
+                ("organs", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Organs to include",
+                    help_text="""Select one or more organs to include in the plot.
+                                 If no organ is selected, no endpoints will be available.""")),
+                ("prefilter_effect", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by effect",
+                    help_text="Prefilter endpoints on plot to include selected effects.")),
+                ("effects", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Effects to include",
+                    help_text="""Select one or more effects to include in the plot.
+                                 If no effect is selected, no endpoints will be available.""")),
+            ])
+
+        if "effect_tags" in self.prefilter_include:
+            fields.update([
+                ("prefilter_effect_tag", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by effect-tag",
+                    help_text="Prefilter endpoints to include only selected effect-tags.")),
+                ("effect_tags", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Studies to include",
+                    help_text="""Select one or more effect-tags to include in the plot.
+                                 If no study is selected, no endpoints will be available.""")),
+            ])
+
+        for k, v in fields.iteritems():
+            self.fields[k] = v
+
+    def setInitialValues(self):
+        try:
+            if self.instance.id is not None:
+                txt = self.instance.prefilters
+            else:
+                txt = self.initial.get('prefilters', "{}")
+            prefilters = json.loads(txt)
+        except ValueError:
+            prefilters = {}
+
+        for k, v in prefilters.iteritems():
+            if k == "system__in":
+                self.fields["systems"].initial = v
+                self.fields["prefilter_system"].initial = True
+
+            if k == "organ__in":
+                self.fields["organs"].initial = v
+                self.fields["prefilter_organ"].initial = True
+
+            if k == "effect__in":
+                self.fields["effects"].initial = v
+                self.fields["prefilter_effect"].initial = True
+
+            if k == "effects__in":
+                self.fields["effect_tags"].initial = v
+                self.fields["prefilter_effect_tag"].initial = True
+
+            if k == "animal_group__experiment__study__in":
+                self.fields["studies"].initial = v
+                self.fields["prefilter_study"].initial = True
+
+        if self.__class__.__name__ == "CrossviewForm":
+            published_only = prefilters.get("animal_group__experiment__study__published", False)
+            if self.form.instance.id is None:
+                published_only = True
+            self.form.fields["published_only"].initial = published_only
+
+        for fldname in self.PREFILTER_COMBO_FIELDS:
+            field = self.fields.get(fldname)
+            if field:
+                field.choices = self.getPrefilterQueryset(fldname)
+
+    def getPrefilterQueryset(self, field_name):
+        assessment_id = self.instance.assessment_id
+        choices = None
+
+        if field_name == "systems":
+            choices = list(Endpoint.get_system_choices(assessment_id))
+        elif field_name == "organs":
+            choices = list(Endpoint.get_organ_choices(assessment_id))
+        elif field_name == "effects":
+            choices = list(Endpoint.get_effect_choices(assessment_id))
+        elif field_name == "effect_tags":
+            choices = EffectTag.get_choices(assessment_id)
+        elif field_name == "studies":
+            choices = Study.get_choices(assessment_id)
+        else:
+            raise ValueError("Unknown field name: {}".format(field_name))
+
+        return choices
+
+    def setFieldStyles(self):
+        if self.fields.get('prefilters'):
+            self.fields["prefilters"].widget = forms.HiddenInput()
+
+        for fldname in self.PREFILTER_COMBO_FIELDS:
+            field = self.fields.get(fldname)
+            if field:
+                field.widget.attrs['size'] = 10
+
+    def setPrefilters(self, data):
+        prefilters = {}
+
+        if data.get('prefilter_system') is True:
+            prefilters["system__in"] = data.get("systems", [])
+
+        if data.get('prefilter_organ') is True:
+            prefilters["organ__in"] = data.get("organs", [])
+
+        if data.get('prefilter_effect') is True:
+            prefilters["effect__in"] = data.get("effects", [])
+
+        if data.get('prefilter_study') is True:
+            prefilters["animal_group__experiment__study__in"] = data.get("studies", [])
+
+        if data.get('prefilter_effect_tag') is True:
+            prefilters["effects__in"] = data.get("effect_tags", [])
+
+        if self.__class__.__name__ == "CrossviewForm" and \
+           data.get('published_only') is True:
+            prefilters["animal_group__experiment__study__published"] = True
+
+        return json.dumps(prefilters)
+
+    def clean(self):
+        cleaned_data = super(PrefilterMixin, self).clean()
+        cleaned_data["prefilters"] = self.setPrefilters(cleaned_data)
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super(PrefilterMixin, self).__init__(*args, **kwargs)
+        self.createFields()
+        self.setInitialValues()
+        self.setFieldStyles()
 
 
 class SummaryTextForm(forms.ModelForm):
@@ -114,7 +308,6 @@ class VisualForm(forms.ModelForm):
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
-        self.helper = self.setHelper()
 
     def setHelper(self):
 
@@ -168,127 +361,21 @@ class EndpointAggregationForm(VisualForm):
         exclude = ('assessment', 'visual_type', 'prefilters', 'studies')
 
 
-class CrossviewForm(VisualForm):
-
-    published_only = forms.BooleanField(
-        required=False,
-        initial=True,
-        label="Published studies only",
-        help_text='Only present data from studies which have been marked as '
-                  '"published" in HAWC.')
-
-    prefilter_study = forms.BooleanField(
-        required=False,
-        label="Prefilter by study",
-        help_text="Prefilter endpoints to include only selected studies.")
-
-    studies = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                     If no study is selected, no endpoints will be available.""")
-
-    prefilter_system = forms.BooleanField(
-        required=False,
-        label="Prefilter by system",
-        help_text="Prefilter endpoints on plot to include selected systems.")
-
-    systems = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Systems to include",
-        help_text="""Select one or more systems to include in the plot.
-                     If no system is selected, no endpoints will be available.""")
-
-    prefilter_organ = forms.BooleanField(
-        required=False,
-        label="Prefilter by organ",
-        help_text="Prefilter endpoints on plot to include selected organs.")
-
-    organs = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Organs to include",
-        help_text="""Select one or more organs to include in the plot.
-                     If no organ is selected, no endpoints will be available.""")
-
-    prefilter_effect = forms.BooleanField(
-        required=False,
-        label="Prefilter by effect",
-        help_text="Prefilter endpoints on plot to include selected effects.")
-
-    effects = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Effects to include",
-        help_text="""Select one or more effects to include in the plot.
-                     If no effect is selected, no endpoints will be available.""")
-
-    prefilter_effect_tag = forms.BooleanField(
-        required=False,
-        label="Prefilter by effect-tag",
-        help_text="Prefilter endpoints to include only selected effect-tags.")
-
-    effect_tags = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Studies to include",
-        help_text="""Select one or more effect-tags to include in the plot.
-                     If no study is selected, no endpoints will be available.""")
+class CrossviewForm(PrefilterMixin, VisualForm):
+    prefilter_include = ('study', 'bioassay', 'effect_tags')
 
     def __init__(self, *args, **kwargs):
         super(CrossviewForm, self).__init__(*args, **kwargs)
-        self.pf = models.Prefilter(self)
-        self.pf.setInitialForm()
-
-    def clean(self):
-        cleaned_data = super(CrossviewForm, self).clean()
-        cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
-        return cleaned_data
+        self.helper = self.setHelper()
 
     class Meta:
         model = models.Visual
         exclude = ('assessment', 'visual_type', 'endpoints', 'studies')
 
 
-class RoBForm(VisualForm):
+class RoBForm(PrefilterMixin, VisualForm):
 
-    prefilter_system = forms.BooleanField(
-        required=False,
-        label="Prefilter studies by system",
-        help_text="Prefilter endpoints on plot to include selected systems.")
-
-    systems = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Systems to include",
-        help_text="""Select one or more systems to include in the plot.
-                     If no system is selected, no endpoints will be available.""")
-
-    prefilter_organ = forms.BooleanField(
-        required=False,
-        label="Prefilter studies by organ",
-        help_text="Prefilter endpoints on plot to include selected organs.")
-
-    organs = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Organs to include",
-        help_text="""Select one or more organs to include in the plot.
-                     If no organ is selected, no endpoints will be available.""")
-
-    prefilter_effect = forms.BooleanField(
-        required=False,
-        label="Prefilter studies by effect",
-        help_text="Prefilter endpoints on plot to include selected effects.")
-
-    effects = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Effects to include",
-        help_text="""Select one or more effects to include in the plot.
-                     If no effect is selected, no endpoints will be available.""")
+    prefilter_include = ('bioassay', )
 
     def __init__(self, *args, **kwargs):
         super(RoBForm, self).__init__(*args, **kwargs)
@@ -296,14 +383,7 @@ class RoBForm(VisualForm):
             self.fields["studies"]\
                 .queryset\
                 .filter(assessment=self.instance.assessment)
-
-        self.pf = models.Prefilter(self)
-        self.pf.setInitialForm()
-
-    def clean(self):
-        cleaned_data = super(RoBForm, self).clean()
-        cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
-        return cleaned_data
+        self.helper = self.setHelper()
 
     class Meta:
         model = models.Visual
@@ -379,67 +459,9 @@ class DataPivotUploadForm(DataPivotForm):
             """.format(reverse('summary:dp_excel-unicode'))
 
 
-class DataPivotQueryForm(DataPivotForm):
+class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
-    prefilter_study = forms.BooleanField(
-        required=False,
-        label="Prefilter by study",
-        help_text="Prefilter endpoints to include only selected studies.")
-
-    studies = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                     If no study is selected, no endpoints will be available.""")
-
-    prefilter_system = forms.BooleanField(
-        required=False,
-        label="Prefilter by system",
-        help_text="Prefilter endpoints on plot to include selected systems.")
-
-    systems = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Systems to include",
-        help_text="""Select one or more systems to include in the plot.
-                     If no system is selected, no endpoints will be available.""")
-
-    prefilter_organ = forms.BooleanField(
-        required=False,
-        label="Prefilter by organ",
-        help_text="Prefilter endpoints on plot to include selected organs.")
-
-    organs = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Organs to include",
-        help_text="""Select one or more organs to include in the plot.
-                     If no organ is selected, no endpoints will be available.""")
-
-    prefilter_effect = forms.BooleanField(
-        required=False,
-        label="Prefilter by effect",
-        help_text="Prefilter endpoints on plot to include selected effects.")
-
-    effects = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Effects to include",
-        help_text="""Select one or more effects to include in the plot.
-                     If no effect is selected, no endpoints will be available.""")
-
-    prefilter_effect_tag = forms.BooleanField(
-        required=False,
-        label="Prefilter by effect-tag",
-        help_text="Prefilter endpoints to include only selected effect-tags.")
-
-    effect_tags = forms.MultipleChoiceField(
-        required=False,
-        widget=forms.SelectMultiple,
-        label="Studies to include",
-        help_text="""Select one or more effect-tags to include in the plot.
-                     If no study is selected, no endpoints will be available.""")
+    prefilter_include = ('study', 'bioassay', 'effect_tags')
 
     class Meta:
         model = models.DataPivotQuery
@@ -454,14 +476,7 @@ class DataPivotQueryForm(DataPivotForm):
             (1, 'Epidemiology'),
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
-
-        self.pf = models.Prefilter(self)
-        self.pf.setInitialForm()
-
-    def clean(self):
-        cleaned_data = super(DataPivotQueryForm, self).clean()
-        cleaned_data["prefilters"] = self.pf.setPrefilters(cleaned_data)
-        return cleaned_data
+        self.helper = self.setHelper()
 
 
 class DataPivotSettingsForm(forms.ModelForm):

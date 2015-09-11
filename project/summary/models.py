@@ -239,11 +239,11 @@ class Visual(models.Model):
                     dose_id = int(request.POST.get('dose_units', -1))
                 except ValueError:
                     dose_id = -1
-                Prefilter.setRequestFilters(filters, request=request)
+                Prefilter.setFiltersFromForm(filters, request.POST)
 
             else:
                 dose_id = self.dose_units_id
-                Prefilter.setRequestFilters(filters, prefilters=self.prefilters)
+                Prefilter.setFiltersFromObj(filters, self.prefilters)
 
             filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
             qs = Endpoint.objects.filter(**filters).distinct('id')
@@ -262,7 +262,7 @@ class Visual(models.Model):
         if self.visual_type in [2, 3]:
             if request:
                 efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setRequestFilters(efilters, request=request)
+                Prefilter.setFiltersFromForm(efilters, request.POST)
                 if len(efilters) > 1:
                     filters["id__in"] = set(
                         Endpoint.objects
@@ -276,7 +276,7 @@ class Visual(models.Model):
             else:
                 if self.prefilters != "{}":
                     efilters = {"assessment_id": self.assessment_id}
-                    Prefilter.setRequestFilters(efilters, prefilters=self.prefilters)
+                    Prefilter.setFiltersFromObj(efilters, self.prefilters)
                     filters["id__in"] = set(
                         Endpoint.objects
                             .filter(**efilters)
@@ -407,7 +407,7 @@ class DataPivotUpload(DataPivot):
 
 class DataPivotQuery(DataPivot):
 
-    MAXIMUM_QUERYSET_COUNT = 500
+    MAXIMUM_QUERYSET_COUNT = 1000
 
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,
@@ -456,7 +456,7 @@ class DataPivotQuery(DataPivot):
                 filters["animal_group__experiment__study__published"] = True
             if self.units_id:
                 filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
-            Prefilter.setRequestFilters(filters, prefilters=self.prefilters)
+            Prefilter.setFiltersFromObj(filters, self.prefilters)
 
         elif self.evidence_type == 1:  # Epidemiology
 
@@ -557,127 +557,30 @@ class DataPivotQuery(DataPivot):
 class Prefilter(object):
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
-    TODO: override TextField and add methods
     """
-    def __init__(self, form):
-        self.form = form
+    @classmethod
+    def setFiltersFromForm(cls, filters, d):
+        if d.get('prefilter_system'):
+            filters["system__in"] = d.getlist('systems')
+
+        if d.get('prefilter_organ'):
+            filters["organ__in"] = d.getlist('organs')
+
+        if d.get('prefilter_effect'):
+            filters["effect__in"] = d.getlist('effects')
+
+        if d.get('prefilter_effect_tag'):
+            filters["effects__in"] = d.getlist('effect_tags')
+
+        if d.get('prefilter_study'):
+            filters["animal_group__experiment__study__in"] = d.getlist('studies')
+
+        if d.get("published_only"):
+            filters["animal_group__experiment__study__published"] = True
 
     @classmethod
-    def setRequestFilters(cls, filters, request=None, prefilters=None):
-        if request:
-            if request.POST.get('prefilter_system'):
-                filters["system__in"] = request.POST.getlist('systems')
-
-            if request.POST.get('prefilter_organ'):
-                filters["organ__in"] = request.POST.getlist('organs')
-
-            if request.POST.get('prefilter_effect'):
-                filters["effect__in"] = request.POST.getlist('effects')
-
-            if request.POST.get('prefilter_effect_tag'):
-                filters["effects__in"] = request.POST.getlist('effect_tags')
-
-            if request.POST.get('prefilter_study'):
-                filters["animal_group__experiment__study__in"] = request.POST.getlist('studies')
-
-            if request.POST.get("published_only"):
-                filters["animal_group__experiment__study__published"] = True
-
-        if prefilters:
-            filters.update(json.loads(prefilters))
-
-    def getFormName(self):
-        return self.form.__class__.__name__
-
-    def setInitialForm(self):
-        try:
-            if self.form.instance.id is not None:
-                txt = self.form.instance.prefilters
-            else:
-                txt = self.form.initial.get('prefilters', "{}")
-            prefilters = json.loads(txt)
-        except ValueError:
-            prefilters = {}
-
-        for k, v in prefilters.iteritems():
-            if k == "system__in":
-                self.form.fields["systems"].initial = v
-                self.form.fields["prefilter_system"].initial = True
-
-            if k == "organ__in":
-                self.form.fields["organs"].initial = v
-                self.form.fields["prefilter_organ"].initial = True
-
-            if k == "effect__in":
-                self.form.fields["effects"].initial = v
-                self.form.fields["prefilter_effect"].initial = True
-
-            if k == "effects__in":
-                self.form.fields["effect_tags"].initial = v
-                self.form.fields["prefilter_effect_tag"].initial = True
-
-            if k == "animal_group__experiment__study__in":
-                self.form.fields["studies"].initial = v
-                self.form.fields["prefilter_study"].initial = True
-
-        if self.getFormName() == "CrossviewForm":
-            published_only = prefilters.get("animal_group__experiment__study__published", False)
-            if self.form.instance.id is None:
-                published_only = True
-            self.form.fields["published_only"].initial = published_only
-
-        # widget settings
-        if self.form.fields.get('prefilters'):
-            self.form.fields["prefilters"].widget = forms.HiddenInput()
-
-        fields = ["systems", "organs", "effects", "effect_tags", "studies", ]
-        for fldname in fields:
-            field = self.form.fields.get(fldname)
-            if field:
-                field.choices = self.getChoices(fldname)
-                field.widget.attrs['size'] = 10
-
-    def setPrefilters(self, data):
-        prefilters = {}
-
-        if data.get('prefilter_system') is True:
-            prefilters["system__in"] = data.get("systems", [])
-
-        if data.get('prefilter_organ') is True:
-            prefilters["organ__in"] = data.get("organs", [])
-
-        if data.get('prefilter_effect') is True:
-            prefilters["effect__in"] = data.get("effects", [])
-
-        if data.get('prefilter_study') is True:
-            prefilters["animal_group__experiment__study__in"] = data.get("studies", [])
-
-        if data.get('prefilter_effect_tag') is True:
-            prefilters["effects__in"] = data.get("effect_tags", [])
-
-        if self.getFormName() == "CrossviewForm" and data.get('published_only') is True:
-            prefilters["animal_group__experiment__study__published"] = True
-
-        return json.dumps(prefilters)
-
-    def getChoices(self, field_name):
-        assessment_id = self.form.instance.assessment_id
-        choices = None
-
-        if field_name == "systems":
-            choices = list(Endpoint.get_system_choices(assessment_id))
-        elif field_name == "organs":
-            choices = list(Endpoint.get_organ_choices(assessment_id))
-        elif field_name == "effects":
-            choices = list(Endpoint.get_effect_choices(assessment_id))
-        elif field_name == "effect_tags":
-            choices = EffectTag.get_choices(assessment_id)
-        elif field_name == "studies":
-            choices = Study.get_choices(assessment_id)
-        else:
-            raise ValueError("Unknown field name: {}".format(field_name))
-
-        return choices
+    def setFiltersFromObj(cls, filters, prefilters):
+        filters.update(json.loads(prefilters))
 
 
 reversion.register(SummaryText)
