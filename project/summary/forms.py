@@ -9,6 +9,7 @@ from selectable import forms as selectable
 from assessment.models import EffectTag
 from study.models import Study
 from animal.models import Endpoint
+from invitro.models import IVEndpointCategory
 
 from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
@@ -31,8 +32,10 @@ def clean_slug(form):
 class PrefilterMixin(object):
 
     PREFILTER_COMBO_FIELDS = [
-         "studies", "systems", "organs",
-         "effects", "effect_tags",
+         "studies",
+         "systems", "organs", "effects",
+         "iv_categories",
+         "effect_tags",
     ]
 
     def createFields(self):
@@ -92,6 +95,20 @@ class PrefilterMixin(object):
                                  If no effect is selected, no endpoints will be available.""")),
             ])
 
+        if "invitro" in self.prefilter_include:
+            fields.update([
+                ("prefilter_iv_category", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by category",
+                    help_text="Prefilter endpoints to include only selected category.")),
+                ("iv_categories", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Categories to include",
+                    help_text="""Select one or more categories to include in the plot.
+                                 If no study is selected, no endpoints will be available.""")),
+            ])
+
         if "effect_tags" in self.prefilter_include:
             fields.update([
                 ("prefilter_effect_tag", forms.BooleanField(
@@ -101,7 +118,7 @@ class PrefilterMixin(object):
                 ("effect_tags", forms.MultipleChoiceField(
                     required=False,
                     widget=forms.SelectMultiple,
-                    label="Studies to include",
+                    label="Tags to include",
                     help_text="""Select one or more effect-tags to include in the plot.
                                  If no study is selected, no endpoints will be available.""")),
             ])
@@ -121,27 +138,31 @@ class PrefilterMixin(object):
 
         for k, v in prefilters.iteritems():
             if k == "system__in":
-                self.fields["systems"].initial = v
                 self.fields["prefilter_system"].initial = True
+                self.fields["systems"].initial = v
 
             if k == "organ__in":
-                self.fields["organs"].initial = v
                 self.fields["prefilter_organ"].initial = True
+                self.fields["organs"].initial = v
 
             if k == "effect__in":
-                self.fields["effects"].initial = v
                 self.fields["prefilter_effect"].initial = True
+                self.fields["effects"].initial = v
 
             if k == "effects__in":
-                self.fields["effect_tags"].initial = v
                 self.fields["prefilter_effect_tag"].initial = True
+                self.fields["effect_tags"].initial = v
+
+            if k == "category__in":
+                self.fields["prefilter_iv_category"].initial = True
+                self.fields["iv_categories"].initial = v
 
             if k in [
                     "animal_group__experiment__study__in",
                     "exposure__study_population__study__in",
                     "experiment__study__in"]:
-                self.fields["studies"].initial = v
                 self.fields["prefilter_study"].initial = True
+                self.fields["studies"].initial = v
 
         if self.__class__.__name__ == "CrossviewForm":
             published_only = prefilters.get("animal_group__experiment__study__published", False)
@@ -164,6 +185,8 @@ class PrefilterMixin(object):
             choices = list(Endpoint.get_organ_choices(assessment_id))
         elif field_name == "effects":
             choices = list(Endpoint.get_effect_choices(assessment_id))
+        elif field_name == "iv_categories":
+            choices = IVEndpointCategory.get_choices(assessment_id)
         elif field_name == "effect_tags":
             choices = EffectTag.get_choices(assessment_id)
         elif field_name == "studies":
@@ -185,6 +208,15 @@ class PrefilterMixin(object):
     def setPrefilters(self, data):
         prefilters = {}
 
+        if data.get('prefilter_study') is True:
+            studies = data.get("studies", [])
+            if data.get('evidence_type') == 1:  # Epi
+                prefilters["exposure__study_population__study__in"] = studies
+            elif data.get('evidence_type') == 2:  # in-vitro
+                prefilters["experiment__study__in"] = studies
+            else:  # assume bioassay
+                prefilters["animal_group__experiment__study__in"] = studies
+
         if data.get('prefilter_system') is True:
             prefilters["system__in"] = data.get("systems", [])
 
@@ -194,14 +226,8 @@ class PrefilterMixin(object):
         if data.get('prefilter_effect') is True:
             prefilters["effect__in"] = data.get("effects", [])
 
-        if data.get('prefilter_study') is True:
-            studies = data.get("studies", [])
-            if data.get('evidence_type') == 1:  # Epi
-                prefilters["exposure__study_population__study__in"] = studies
-            elif data.get('evidence_type') == 2:  # in-vitro
-                prefilters["experiment__study__in"] = studies
-            else:  # assume bioassay
-                prefilters["animal_group__experiment__study__in"] = studies
+        if data.get('prefilter_iv_category') is True:
+            prefilters["category__in"] = data.get("iv_categories", [])
 
         if data.get('prefilter_effect_tag') is True:
             prefilters["effects__in"] = data.get("effect_tags", [])
@@ -470,7 +496,7 @@ class DataPivotUploadForm(DataPivotForm):
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
-    prefilter_include = ('study', 'bioassay', 'effect_tags')
+    prefilter_include = ('study', 'bioassay', 'invitro', 'effect_tags')
 
     class Meta:
         model = models.DataPivotQuery

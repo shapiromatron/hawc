@@ -407,7 +407,7 @@ class DataPivotUpload(DataPivot):
 
 class DataPivotQuery(DataPivot):
 
-    MAXIMUM_QUERYSET_COUNT = 1000
+    MAXIMUM_QUERYSET_COUNT = 500
 
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,

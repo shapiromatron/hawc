@@ -192,6 +192,17 @@ class IVEndpointCategory(AssessmentRootedTagTree):
         lst.append(self.name)
         return lst
 
+    def get_choice_representation(self):
+        # em-dash space
+        return (self.id, u"\u2003"*(self.depth-2) + self.name)
+
+    @classmethod
+    def get_choices(cls, assessment_id):
+        return [
+            cat.get_choice_representation()
+            for cat in cls.get_root(assessment_id).get_descendants()
+        ]
+
 
 class IVEndpoint(BaseEndpoint):
 
