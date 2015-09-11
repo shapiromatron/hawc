@@ -456,7 +456,6 @@ class DataPivotQuery(DataPivot):
                 filters["animal_group__experiment__study__published"] = True
             if self.units_id:
                 filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
-            Prefilter.setFiltersFromObj(filters, self.prefilters)
 
         elif self.evidence_type == 1:  # Epidemiology
 
@@ -476,6 +475,7 @@ class DataPivotQuery(DataPivot):
             if self.published_only:
                 filters["experiment__study__published"] = True
 
+        Prefilter.setFiltersFromObj(filters, self.prefilters)
         return filters
 
     def _get_dataset_queryset(self, filters):
@@ -573,7 +573,13 @@ class Prefilter(object):
             filters["effects__in"] = d.getlist('effect_tags')
 
         if d.get('prefilter_study'):
-            filters["animal_group__experiment__study__in"] = d.getlist('studies')
+            studies = d.get("studies", [])
+            if d.get('evidence_type') == 1:  # Epi
+                filters["exposure__study_population__study__in"] = studies
+            elif d.get('evidence_type') == 2:  # in-vitro
+                filters["experiment__study__in"] = studies
+            else:  # assume bioassay
+                filters["animal_group__experiment__study__in"] = studies
 
         if d.get("published_only"):
             filters["animal_group__experiment__study__published"] = True
