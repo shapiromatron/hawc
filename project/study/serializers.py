@@ -49,6 +49,13 @@ class StudySerializer(serializers.ModelSerializer):
         model = models.Study
 
 
+class SimpleStudySerializer(StudySerializer):
+
+    class Meta:
+        model = models.Study
+        exclude = ('searches', 'identifiers', )
+
+
 class VerboseStudySerializer(StudySerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
