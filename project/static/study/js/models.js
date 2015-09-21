@@ -21,7 +21,7 @@ var Study = function(data){
 };
 _.extend(Study, {
     get_object: function(id, cb){
-        $.get('/study/{0}/json/'.printf(id), function(d){
+        $.get('/study/api/study/{0}/'.printf(id), function(d){
             cb(new Study(d));
         });
     },

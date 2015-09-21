@@ -154,14 +154,6 @@ class StudyRead(BaseDetail):
         return context
 
 
-class StudyReadJSON(BaseDetail):
-    model = models.Study
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return HttpResponse(self.object.get_json(), content_type="application/json")
-
-
 class StudyUpdate(BaseUpdate):
     model = models.Study
     form_class = forms.StudyForm

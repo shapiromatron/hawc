@@ -31,7 +31,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/report/', views.StudyReport.as_view(), name='studies_report'),
 
     url(r'^(?P<pk>\d+)/$', views.StudyRead.as_view(), name='detail'),
-    url(r'^(?P<pk>\d+)/json/', views.StudyReadJSON.as_view(), name='json'),
     url(r'^(?P<pk>\d+)/edit/$', views.StudyUpdate.as_view(), name='update'),
     url(r'^(?P<pk>\d+)/delete/$', views.StudyDelete.as_view(), name='delete'),
     url(r'^(?P<pk>\d+)/versions/$', views.StudyVersions.as_view(), name='versions'),
