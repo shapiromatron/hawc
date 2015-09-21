@@ -1,13 +1,9 @@
 from __future__ import absolute_import
 
 from assessment.api.views import AssessmentViewset
-from rest_framework.pagination import PageNumberPagination
+from utils.api import DisabledPagination
 
 from . import models, serializers
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
 
 
 class DataPivot(AssessmentViewset):
