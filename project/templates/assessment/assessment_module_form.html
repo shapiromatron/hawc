@@ -6,11 +6,13 @@
     {{block.super}}: enabled modules
 {% endblock title %}
 
-{% block extrastyle %}{% endblock %}
-
 {% block breadcrumbs %}
     <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
     <li class="active"> Update enabled modules <span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 
-{% block extrajs %}{% endblock extrajs %}
+{% block extrastyle %}
+{% endblock %}
+
+{% block extrajs %}
+{% endblock extrajs %}

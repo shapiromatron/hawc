@@ -3,27 +3,18 @@
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
 
+
 {% block title %}
-  {{crud}}
-  {% if crud == "Create" %}
-    Assessment
-  {% else %}
-    {{object}}
-  {% endif %}
+   {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block extrastyle %}
   {% include_ui_theme %}
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
-{% block breadcrumbs %}
-  {% if crud == "Update" %}
-    <li><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active"> {{ crud }} <span class="divider">/</span></li>
-  {% elif crud = "Create" %}
-    <li class="active"> {{ crud }}  Assessment<span class="divider">/</span></li>
-  {% endif %}
 {% endblock %}
 
 {% block content %}

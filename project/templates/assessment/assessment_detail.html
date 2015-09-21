@@ -1,13 +1,12 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{object}} | HAWC
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li  class="active">{{object}}<span class="divider">/</span></li>
-{% endblock breadcrumbs %}
-
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
 
 {% block content %}
   <h1>{{object}}
