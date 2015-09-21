@@ -2889,9 +2889,9 @@ _.extend(DataPivotExtension, {
           "endpoint_complete":{_dpe_key: "Endpoint Key",         _dpe_datatype: "endpoint", _dpe_cls: Endpoint, options: {complete: true}},
           "study_population": {_dpe_key: "Study Population Key", _dpe_datatype: "study_population", _dpe_cls: StudyPopulation},
           "exposure":         {_dpe_key: "Exposure Key",         _dpe_datatype: "exposure", _dpe_cls: Exposure},
-          "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome", _dpe_cls: AssessedOutcome},
-          "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol", _dpe_cls: MetaProtocol},
-          "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result", _dpe_cls: MetaResult},
+          // "assessed_outcome": {_dpe_key: "Assessed Outcome Key", _dpe_datatype: "assessed_outcome", _dpe_cls: AssessedOutcome},
+          // "meta_protocol":    {_dpe_key: "Protocol Primary Key", _dpe_datatype: "meta_protocol", _dpe_cls: MetaProtocol},
+          // "meta_result":      {_dpe_key: "Result Primary Key",   _dpe_datatype: "meta_result", _dpe_cls: MetaResult},
           "iv_chemical":      {_dpe_key: "Chemical HAWC ID",     _dpe_datatype: "iv_chemical", _dpe_cls: IVChemical},
           "iv_experiment":    {_dpe_key: "IVExperiment HAWC ID", _dpe_datatype: "iv_experiment", _dpe_cls: IVExperiment},
           "iv_endpoint":      {_dpe_key: "IVEndpoint HAWC ID",   _dpe_datatype: "iv_endpoint", _dpe_cls: IVEndpoint}
