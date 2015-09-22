@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, APIException
+from rest_framework.exceptions import APIException
 from rest_framework import viewsets
 from rest_framework import filters
 
@@ -15,37 +15,39 @@ class RequiresAssessmentID(APIException):
 class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-
-        assessment = obj.get_assessment()
-
-        # (GET, HEAD or OPTIONS)
+        view.assessment = obj.get_assessment()
         if request.method in permissions.SAFE_METHODS:
-            return assessment.user_can_view_object(request.user)
-
-        # (POST, PUT, DELETE)
-        if obj == assessment:
-            return assessment.user_can_edit_assessment(request.user)
+            return view.assessment.user_can_view_object(request.user)
+        elif obj == view.assessment:
+            return view.assessment.user_can_edit_assessment(request.user)
         else:
-            return assessment.user_can_edit_object(request.user)
+            return view.assessment.user_can_edit_object(request.user)
+
+    def has_permission(self, request, view):
+        if view.action == 'list':
+            assessment_id = request.GET.get('assessment_id', None)
+            if assessment_id is None:
+                raise RequiresAssessmentID
+
+            view.assessment = Assessment.objects.filter(id=assessment_id).first()
+            if (view.assessment is None) or \
+               (view.assessment and not view.assessment.user_can_view_object(request.user)):
+                return False
+
+        return True
 
 
 class InAssessmentFilter(filters.BaseFilterBackend):
     """
     Filter objects which are in a particular assessment.
+
+    Requires AssessmentLevelPermissions to set assessment
     """
     def filter_queryset(self, request, queryset, view):
         if view.action != 'list':
             return queryset
 
-        assessment_id = request.GET.get('assessment_id', None)
-        if assessment_id is None:
-            raise RequiresAssessmentID
-
-        assessment = Assessment.objects.filter(id=assessment_id).first()
-        if assessment and not assessment.user_can_view_object(request.user):
-            raise PermissionDenied
-
-        filters = {view.assessment_filter_args: assessment_id}
+        filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
 
 
