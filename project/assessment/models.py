@@ -166,6 +166,13 @@ class Assessment(models.Model):
     def __unicode__(self):
         return "%s (%s)" % (self.name, self.year)
 
+    def user_permissions(self, user):
+        return {
+            'view': self.user_can_view_object(user),
+            'edit': self.user_can_edit_object(user),
+            'edit_assessment': self.user_can_edit_assessment(user)
+        }
+
     def get_project_manager_emails(self):
         return self.project_manager.all().values_list('email', flat=True)
 

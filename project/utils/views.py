@@ -142,11 +142,7 @@ class AssessmentPermissionsMixin(object):
             return {'view': False, 'edit': False, 'edit_assessment': False}
 
         logging.debug('Permissions added')
-        return {
-            'view': self.assessment.user_can_view_object(self.request.user),
-            'edit': self.assessment.user_can_edit_object(self.request.user),
-            'edit_assessment': self.assessment.user_can_edit_assessment(self.request.user)
-        }
+        return self.assessment.user_permissions(self.request.user)
 
 
 class CanCreateMixin(object):
