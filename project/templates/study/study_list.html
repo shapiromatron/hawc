@@ -11,7 +11,7 @@
 
 {% block content %}
 
-  <h2>Extracted studies
+  <h2>Available studies
     {% if obj_perms.edit and crud == "Read" %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
@@ -25,6 +25,13 @@
     {% endif %}
   </h2>
 
-  {% include "study/_study_list.html" %}
+  <div id="studyTbl"></div>
 
 {% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+  StudyCollection.render({{assessment.id}}, $('#studyTbl'));
+</script>
+{% endblock extrajs %}

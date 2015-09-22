@@ -11,7 +11,6 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from lit.models import Reference
 from assessment.models import Assessment
-from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
@@ -23,15 +22,6 @@ from . import models, forms, exports, reports
 class StudyList(BaseList):
     parent_model = Assessment
     model = models.Study
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
-
-    def get_context_data(self, **kwargs):
-        context = super(StudyList, self).get_context_data(**kwargs)
-        if not context['obj_perms']['edit']:
-            context['object_list'] = context['object_list'].filter(published=True)
-        return context
 
 
 class StudyReport(GenerateReport):

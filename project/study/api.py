@@ -34,8 +34,13 @@ class Study(viewsets.ReadOnlyModelViewSet):
         return cls
 
     def get_queryset(self):
+        filters = {}
         prefetch = ()
-        if self.action != "list":
+
+        if self.action == "list":
+            if not self.assessment.user_can_edit_object(self.request.user):
+                filters["published"] = True
+        else:
             prefetch = (
                 'qualities',
                 'identifiers',
@@ -43,6 +48,5 @@ class Study(viewsets.ReadOnlyModelViewSet):
                 'qualities__metric__domain'
             )
 
-        return self.model.objects.all()\
-                   .select_related('assessment')\
+        return self.model.objects.filter(**filters)\
                    .prefetch_related(*prefetch)
