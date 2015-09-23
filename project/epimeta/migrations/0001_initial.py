@@ -8,8 +8,8 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('epi2', '0002_auto_20150923_0951'),
         ('study', '0001_initial'),
-        ('epi2', '0005_auto_20150904_1557'),
     ]
 
     operations = [

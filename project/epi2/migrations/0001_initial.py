@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             name='Country',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('code', models.CharField(unique=True, max_length=2)),
+                ('code', models.CharField(max_length=2, blank=True)),
                 ('name', models.CharField(unique=True, max_length=64)),
             ],
             options={
@@ -154,12 +154,12 @@ class Migration(migrations.Migration):
                 ('variance', models.FloatField(help_text=b'Variance estimate for group', null=True, verbose_name=b'Variance', blank=True)),
                 ('lower_ci', models.FloatField(help_text=b'Numerical value for lower-confidence interval', null=True, verbose_name=b'Lower CI', blank=True)),
                 ('upper_ci', models.FloatField(help_text=b'Numerical value for upper-confidence interval', null=True, verbose_name=b'Upper CI', blank=True)),
-                ('p_value_qualifier', models.CharField(default=b'-', max_length=1, verbose_name=b'p-value qualifier', choices=[(b'-', b'n.s.'), (b'<', b'<'), (b'=', b'=')])),
+                ('p_value_qualifier', models.CharField(default=b'-', max_length=1, verbose_name=b'p-value qualifier', choices=[(b' ', b' '), (b'-', b'n.s.'), (b'<', b'<'), (b'=', b'='), (b'>', b'>')])),
                 ('p_value', models.FloatField(null=True, verbose_name=b'p-value', blank=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
                 ('is_main_finding', models.BooleanField(help_text=b'Is this the main-finding for this outcome?', verbose_name=b'Main finding')),
                 ('main_finding_support', models.PositiveSmallIntegerField(default=1, help_text=b'Are the results supportive of the main-finding?', choices=[(3, b'not-reported'), (2, b'supportive'), (1, b'inconclusive'), (0, b'not-supportive')])),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('last_updated', models.DateTimeField(auto_now=True)),
                 ('group', models.ForeignKey(related_name='results', to='epi2.Group')),
             ],
             options={
@@ -170,8 +170,9 @@ class Migration(migrations.Migration):
             name='Outcome',
             fields=[
                 ('baseendpoint_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='assessment.BaseEndpoint')),
+                ('system', models.CharField(help_text=b'Relevant biological system', max_length=128, blank=True)),
                 ('effect', models.CharField(help_text=b'Effect, using common-vocabulary', max_length=128, blank=True)),
-                ('diagnostic', models.PositiveSmallIntegerField(choices=[(0, b'not reported'), (1, b'medical professional or test'), (2, b'medical records'), (3, b'self-reported')])),
+                ('diagnostic', models.PositiveSmallIntegerField(choices=[(0, b'not reported'), (1, b'medical professional or test'), (2, b'medical records'), (3, b'self-reported'), (4, b'questionnaire'), (5, b'hospital admission'), (6, b'other')])),
                 ('diagnostic_description', models.TextField()),
                 ('outcome_n', models.PositiveIntegerField(null=True, verbose_name=b'Outcome N', blank=True)),
                 ('summary', models.TextField(help_text=b'Summarize main findings of outcome, or describe why no details are presented (for example, "no association (data not shown)")', blank=True)),
@@ -190,7 +191,7 @@ class Migration(migrations.Migration):
                 ('dose_response_details', models.TextField(blank=True)),
                 ('statistical_power', models.PositiveSmallIntegerField(default=0, help_text=b'Is the study sufficiently powered?', choices=[(0, b'not reported or calculated'), (1, b'appears to be adequately powered (sample size met)'), (2, b'somewhat underpowered (sample size is 75% to <100% of recommended)'), (3, b'underpowered (sample size is 50 to <75% required)'), (4, b'severely underpowered (sample size is <50% required)')])),
                 ('statistical_power_details', models.TextField(blank=True)),
-                ('estimate_type', models.PositiveSmallIntegerField(default=0, verbose_name=b'Central estimate type', choices=[(0, None), (1, b'mean'), (2, b'geometric mean'), (3, b'median'), (4, b'other')])),
+                ('estimate_type', models.PositiveSmallIntegerField(default=0, verbose_name=b'Central estimate type', choices=[(0, None), (1, b'mean'), (2, b'geometric mean'), (3, b'median'), (5, b'point'), (4, b'other')])),
                 ('variance_type', models.PositiveSmallIntegerField(default=0, choices=[(0, None), (1, b'SD'), (2, b'SEM'), (3, b'GSD'), (4, b'other')])),
                 ('ci_units', models.FloatField(default=0.95, help_text=b'A 95% CI is written as 0.95.', null=True, verbose_name=b'Confidence Interval (CI)', blank=True)),
                 ('comments', models.TextField(help_text=b'Summarize main findings of outcome, or describe why no details are presented (for example, "no association (data not shown)")', blank=True)),
@@ -227,7 +228,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('design', models.CharField(max_length=2, choices=[(b'CC', b'Case control'), (b'NC', b'Nested case control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross sectional')])),
+                ('design', models.CharField(max_length=2, choices=[(b'CO', b'Cohort'), (b'CC', b'Case control'), (b'NC', b'Nested case control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross sectional')])),
                 ('region', models.CharField(max_length=128, blank=True)),
                 ('state', models.CharField(max_length=128, blank=True)),
                 ('eligible_n', models.PositiveIntegerField(null=True, verbose_name=b'Eligible N', blank=True)),
