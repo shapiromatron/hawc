@@ -557,6 +557,7 @@ class Endpoint(BaseEndpoint):
         (4, "days"),
         (5, "weeks"),
         (6, "months"),
+        (9, "years"),
         (7, "PND"),
         (8, "GD"))
 
