@@ -166,9 +166,9 @@ class PrefilterMixin(object):
 
         if self.__class__.__name__ == "CrossviewForm":
             published_only = prefilters.get("animal_group__experiment__study__published", False)
-            if self.form.instance.id is None:
+            if self.instance.id is None:
                 published_only = True
-            self.form.fields["published_only"].initial = published_only
+            self.fields["published_only"].initial = published_only
 
         for fldname in self.PREFILTER_COMBO_FIELDS:
             field = self.fields.get(fldname)
