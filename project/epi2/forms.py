@@ -185,15 +185,16 @@ class StudyPopulationForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('age_profile', 2, "span6")
         helper.add_fluid_row('country', 3, "span4")
         helper.add_fluid_row('eligible_n', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 3, "span4")
 
         url = reverse('epi2:studycriteria_create',
                       kwargs={'pk': self.instance.study.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[5], 2, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[6], 0, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[6], 1, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[6], 2, url, "Create criteria", "span4")
 
         return helper
 
@@ -304,15 +305,15 @@ class ExposureForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.add_fluid_row('inhalation', 6, "span2")
-        helper.add_fluid_row('metric', 3, "span4")
-        helper.add_fluid_row('analytical_method', 2, "span6")
+        helper.add_fluid_row('measured', 3, "span4")
+        helper.add_fluid_row('metric_description', 3, "span4")
         helper.add_fluid_row('duration', 2, "span6")
 
         url = reverse(
             'assessment:dose_units_create',
             kwargs={'pk': self.instance.study_population.study.assessment_id}
         )
-        helper.addBtnLayout(helper.layout[4], 1, url, "Create units", "span4")
+        helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "span4")
 
         return helper
 
@@ -650,15 +651,15 @@ class ResultForm(forms.ModelForm):
 
         helper.add_fluid_row('metric', 2, "span6")
         helper.add_fluid_row('data_location', 2, "span6")
-        helper.add_fluid_row('dose_response', 2, "span6")
-        helper.add_fluid_row('statistical_power', 2, "span6")
+        helper.add_fluid_row('dose_response', 3, "span4")
+        helper.add_fluid_row('statistical_power', 3, "span4")
         helper.add_fluid_row('factors_applied', 2, "span6")
         helper.add_fluid_row('estimate_type', 3, "span4")
 
         url = reverse('epi2:adjustmentfactor_create',
                       kwargs={'pk': self.instance.outcome.assessment_id})
-        helper.addBtnLayout(helper.layout[9], 0, url, "Add new adjustment factor", "span6")
-        helper.addBtnLayout(helper.layout[9], 1, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[8], 0, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")
 
         return helper
 
@@ -721,6 +722,14 @@ class BaseGroupResultFormset(BaseModelFormSet):
         count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
         if count < 1:
             raise forms.ValidationError("At least one group is required.")
+
+        mfs = 0
+        for form in self.forms:
+            if form.cleaned_data['is_main_finding']:
+                mfs += 1
+
+        if mfs > 1:
+            raise forms.ValidationError("Only one-group can be the main-finding.")
 
         # Ensure all groups in group collection are accounted for, and no other
         # groups exist

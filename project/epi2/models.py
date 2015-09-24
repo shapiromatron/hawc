@@ -395,7 +395,8 @@ class Exposure2(models.Model):
                   "measurement in samples.")
     sampling_period = models.CharField(
         max_length=128,
-        help_text='Exposure sampling period')
+        help_text='Exposure sampling period',
+        blank=True)
     duration = models.CharField(
         max_length=128,
         blank=True,
@@ -594,10 +595,6 @@ class Result(models.Model):
                   'study-population. For example, "US (national) NHANES'
                   '2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
         blank=True)
-    prevalence_incidence = models.CharField(
-        max_length=128,
-        verbose_name="Overall incidence prevalence",
-        blank=True)
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
         help_text="Was a trend observed?",
@@ -605,16 +602,21 @@ class Result(models.Model):
         choices=DOSE_RESPONSE_CHOICES)
     dose_response_details = models.TextField(
         blank=True)
-    trend_test = models.CharField(
+    prevalence_incidence = models.CharField(
         max_length=128,
-        blank=True,
-        help_text=u"Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
+        verbose_name="Overall incidence prevalence",
+        blank=True)
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?",
         default=0,
         choices=STATISTICAL_POWER_CHOICES)
     statistical_power_details = models.TextField(
         blank=True)
+    trend_test = models.CharField(
+        verbose_name="Trend test result",
+        max_length=128,
+        blank=True,
+        help_text=u"Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
     adjustment_factors = models.ManyToManyField(
         AdjustmentFactor,
         through=ResultAdjustmentFactor,

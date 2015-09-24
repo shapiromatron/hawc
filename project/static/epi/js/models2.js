@@ -28,6 +28,8 @@ StudyPopulation.prototype = {
     build_details_table: function(){
         return new DescriptiveTable()
             .add_tbody_tr("Study design", this.data.design)
+            .add_tbody_tr("Age profile", this.data.age_profile)
+            .add_tbody_tr("Source", this.data.source)
             .add_tbody_tr("Country", this.data.country)
             .add_tbody_tr("State", this.data.state)
             .add_tbody_tr("Region", this.data.region)
@@ -139,6 +141,7 @@ Exposure.prototype = {
         var link = (showLink === true) ? this.build_link() : undefined;
         return new DescriptiveTable()
             .add_tbody_tr("Name", link)
+            .add_tbody_tr("What was measured", this.data.measured)
             .add_tbody_tr("Measurement metric", this.data.metric)
             .add_tbody_tr("Measurement metric units", this.data.metric_units.name)
             .add_tbody_tr("Measurement description", this.data.metric_description)
@@ -148,7 +151,7 @@ Exposure.prototype = {
             .add_tbody_tr("Sampling period", this.data.sampling_period)
             .add_tbody_tr("Duration", this.data.duration)
             .add_tbody_tr("Exposure distribution", this.data.exposure_distribution)
-            .add_tbody_tr("Control description", this.data.control_description)
+            .add_tbody_tr("Description", this.data.description)
             .get_tbl();
     },
     displayFullPager: function($el){
@@ -353,8 +356,8 @@ Result.prototype = {
             .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     },
-    _get_result_group_table_header: function(){
-        var estTxt, varTxt, ciTxt;
+    _get_result_group_table_header: function(footnotes){
+        var estTxt, varTxt, ciTxt, grpTxt;
 
         ciTxt = (_.isNumber(this.data.ci_units)) ?
             "{0}% confidence intervals".printf(this.data.ci_units*100) :
@@ -368,8 +371,14 @@ Result.prototype = {
             "Variance ({0})".printf(this.data.variance_type) :
             "Variance";
 
+        grpTxt = "Group";
+        if (this.data.trend_test){
+            grpTxt = grpTxt + footnotes.add_footnote(
+                ["Trend-test result: ({0}).".printf(this.data.trend_test)]);
+        }
+
         return headers = [
-            "Group",
+            grpTxt,
             "N",
             estTxt,
             varTxt,
@@ -383,7 +392,7 @@ Result.prototype = {
             tbl = new BaseTable(),
             colgroups = [20, 10, 15, 15, 25, 15];
 
-        tbl.addHeaderRow(this._get_result_group_table_header());
+        tbl.addHeaderRow(this._get_result_group_table_header(tbl.footnotes));
         tbl.setColGroup(colgroups);
 
         _.each(this.data.results, function(d){
@@ -484,27 +493,6 @@ ComparisonGroups.prototype = {
     build_link: function(){
         return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
     },
-    _build_group_tr: function(d){ // todo: make new Group object
-        var ul = $('<ul>'),
-            url = '<a href="{0}">{1}</a>'.printf(d.url, d.name),
-            addLI = function(key, val){
-                if(val){
-                    ul.append("<li><strong>{0}:</strong> {1}</li>".printf(key, val));
-                }
-            }
-
-        addLI("Numerical value", d.numeric);
-        addLI("Comparative name", d.comparative_name);
-        addLI("Sex", d.sex);
-        addLI("Ethnicities", _.pluck(d.ethnicities, "name").join(", "));
-        addLI("N", d.n);
-        addLI("Starting N", d.starting_n);
-        addLI("Fraction male", d.fraction_male);
-        addLI("Fraction male calculated", d.fraction_male_calculated);  // todo: only show if above is true
-        addLI("Is control?", d.isControl);
-
-        return [url, ul];
-    }
 };
 
 
@@ -535,6 +523,23 @@ Group.prototype = {
 
         $el.fadeIn();
     },
+    get_content: function(){
+        var d = this.data,
+            vals = [],
+            addTuple = function(lbl, val){
+                if(val) vals.push([lbl, val]);
+            }
+        addTuple("Numerical value", d.numeric);
+        addTuple("Comparative name", d.comparative_name);
+        addTuple("Sex", d.sex);
+        addTuple("Ethnicities", _.pluck(d.ethnicities, "name"));
+        addTuple("Eligible N", d.eligible_n)
+        addTuple("Invited N", d.invited_n)
+        addTuple("Participant N", d.participant_n)
+        addTuple("Is control?", d.isControl);
+        addTuple("Comments", d.comments);
+        return vals;
+    },
     build_tr: function(){
         var d = this.data,
             ul = $('<ul>'),
@@ -543,36 +548,29 @@ Group.prototype = {
                 if(val){
                     ul.append("<li><strong>{0}:</strong> {1}</li>".printf(key, val));
                 }
-            }
+            },
+            content = this.get_content();
 
-        addLI("Numerical value", d.numeric);
-        addLI("Comparative name", d.comparative_name);
-        addLI("Sex", d.sex);
-        addLI("Ethnicities", _.pluck(d.ethnicities, "name").join(", "));
-        addLI("N", d.n);
-        addLI("Eligible N", d.eligible_n)
-        addLI("Invited N", d.invited_n)
-        addLI("Participant N", d.participant_n)
-        addLI("Fraction male", d.fraction_male);
-        addLI("Fraction male calculated", d.fraction_male_calculated);  // todo: only show if above is true
-        addLI("Is control?", d.isControl);
+        _.each(content, function(d){
+            var val = (d[1] instanceof Array) ? d[1].join(", ") : d[1];
+            addLI(d[0], val);
+        });
 
         return [url, ul];
     },
     build_details_table: function(){
-        // todo: redundant; duplicates build_tr
-        var d = this.data;
-        return new DescriptiveTable()
-            .add_tbody_tr("Numerical value", d.numeric)
-            .add_tbody_tr("Comparative name", d.comparative_name)
-            .add_tbody_tr("Sex", d.sex)
-            .add_tbody_tr_list("Ethnicities", _.pluck(d.ethnicities, "name"))
-            .add_tbody_tr("N", d.n)
-            .add_tbody_tr("Starting N", d.starting_n)
-            .add_tbody_tr("Fraction male", d.fraction_male)
-            .add_tbody_tr("Fraction male calculated", d.fraction_male_calculated)  // todo: only show if above is true
-            .add_tbody_tr("Is control?", d.isControl)
-            .get_tbl();
+        var content = this.get_content(),
+            tbl = new DescriptiveTable();
+
+            _.each(content, function(d){
+                if (d[1] instanceof Array){
+                    tbl.add_tbody_tr_list(d[0], d[1]);
+                } else {
+                    tbl.add_tbody_tr(d[0], d[1]);
+                }
+            });
+
+        return tbl.get_tbl();
     },
     build_group_descriptions_table: function(){
         var tbl = new BaseTable(),
