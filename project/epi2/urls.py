@@ -10,7 +10,7 @@ router.register(r'study-population', api.StudyPopulation, base_name="study-popul
 router.register(r'exposure', api.Exposure, base_name="exposure")
 router.register(r'outcome', api.Outcome, base_name="outcome")
 router.register(r'result', api.Result, base_name="result")
-router.register(r'groups', api.GroupCollection, base_name="groups")
+router.register(r'groups', api.ComparisonGroups, base_name="groups")
 router.register(r'group', api.Group, base_name="group")
 
 
@@ -95,22 +95,22 @@ urlpatterns = [
 
     # Group collection
     url(r'^study-population/(?P<pk>\d+)/groups/create/$',
-        views.GroupCollectionCreate.as_view(),
+        views.ComparisonGroupsCreate.as_view(),
         name='gc_create'),
     url(r'^outcome/(?P<pk>\d+)/groups/create/$',
-        views.GroupCollectionOutcomeCreate.as_view(),
+        views.ComparisonGroupsOutcomeCreate.as_view(),
         name='gc_outcome_create'),
     # url(r'^exposure/(?P<pk>\d+)/outcome/copy-as-new-selector/$',
     #     views.OutcomeCopyAsNewSelector.as_view(),
     #     name='outcome_copy_selector'),
     url(r'^groups/(?P<pk>\d+)/$',
-        views.GroupCollectionDetail.as_view(),
+        views.ComparisonGroupsDetail.as_view(),
         name='gc_detail'),
     url(r'^groups/(?P<pk>\d+)/update/$',
-        views.GroupCollectionUpdate.as_view(),
+        views.ComparisonGroupsUpdate.as_view(),
         name='gc_update'),
     url(r'^groups/(?P<pk>\d+)/delete/$',
-        views.GroupCollectionDelete.as_view(),
+        views.ComparisonGroupsDelete.as_view(),
         name='gc_delete'),
 
     url(r'^group/(?P<pk>\d+)/$',

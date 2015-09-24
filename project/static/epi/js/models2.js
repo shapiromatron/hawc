@@ -54,19 +54,19 @@ StudyPopulation.prototype = {
         }
 
         if (this.data.can_create_groups){
-            $el.append("<h2>Group collections</h2>");
+            $el.append("<h2>Comparison groups</h2>");
             if (this.data.group_collections.length>0){
                 $el.append(HAWCUtils.buildUL(this.data.group_collections, liFunc));
             } else {
-                $el.append("<p class='help-block'>No group collections are available.</p>");
+                $el.append("<p class='help-block'>No comparison groups are available.</p>");
             }
         }
 
-        $el.append("<h2>Exposures</h2>");
+        $el.append("<h2>Exposure measurements</h2>");
         if (this.data.exposures.length>0){
            $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
-            $el.append("<p class='help-block'>No exposures are available.</p>");
+            $el.append("<p class='help-block'>No exposure measurements are available.</p>");
         }
         return $el;
     },
@@ -179,7 +179,7 @@ Exposure.prototype = {
 var Outcome = function(data){
     this.data = data;
     this.results = _.map(data.results, function(d){return new Result(d);});
-    this.groups =  _.map(data.group_collections, function(d){return new GroupCollection(d);});
+    this.groups =  _.map(data.group_collections, function(d){return new ComparisonGroups(d);});
 };
 _.extend(Outcome, {
     get_object: function(id, cb){
@@ -244,7 +244,7 @@ Outcome.prototype = {
         if (grps.length === 0) return;
 
         return $('<div>')
-            .append("<h2>Group collections</h2>")
+            .append("<h2>Comparison groups</h2>")
             .append(ul);
     },
     displayFullPager: function($el){
@@ -276,7 +276,7 @@ Outcome.prototype = {
 
 var Result = function(data){
     this.data = data;
-    this.group = new GroupCollection(data.groups);
+    this.group = new ComparisonGroups(data.groups);
     this.factors = _.where(this.data.factors, {"included_in_final_model": true});
     this.factors_considered = _.where(this.data.factors, {"included_in_final_model": false});
 };
@@ -343,7 +343,7 @@ Result.prototype = {
             .add_tbody_tr("Data location", this.data.data_location)
             .add_tbody_tr("Population description", this.data.population_description)
             .add_tbody_tr("Metric Description", this.data.metric_description)
-            .add_tbody_tr_list("Factors", _.pluck(this.factors, "description"))
+            .add_tbody_tr_list("Adjustment factors", _.pluck(this.factors, "description"))
             .add_tbody_tr_list("Additional factors considered", _.pluck(this.factors_considered, "description"))
             .add_tbody_tr("Dose response", this.data.dose_response)
             .add_tbody_tr("Dose response details", this.data.dose_response_details)
@@ -430,23 +430,23 @@ Result.prototype = {
 };
 
 
-var GroupCollection = function(data){
+var ComparisonGroups = function(data){
     this.data = data;
     this.groups = _.map(this.data.groups, function(d){ return new Group(d) });
     if (this.data.exposure)
         this.exposure = new Exposure(this.data.exposure);
 };
-_.extend(GroupCollection, {
+_.extend(ComparisonGroups, {
     get_object: function(id, cb){
         $.get('/epi2/api/groups/{0}/'.printf(id), function(d){
-            cb(new GroupCollection(d));
+            cb(new ComparisonGroups(d));
         });
     },
     displayFullPager: function($el, id){
-      GroupCollection.get_object(id, function(d){d.displayFullPager($el);});
+      ComparisonGroups.get_object(id, function(d){d.displayFullPager($el);});
     }
 });
-GroupCollection.prototype = {
+ComparisonGroups.prototype = {
     displayFullPager: function($el){
         $el.hide()
             .append(this.build_details_div())

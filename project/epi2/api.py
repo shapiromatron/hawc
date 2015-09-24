@@ -29,10 +29,10 @@ class Result(AssessmentViewset):
     serializer_class = serializers.ResultSerializer
 
 
-class GroupCollection(AssessmentViewset):
+class ComparisonGroups(AssessmentViewset):
     assessment_filter_args = "assessment"  # todo: fix
-    model = models.GroupCollection
-    serializer_class = serializers.GroupCollectionSerializer
+    model = models.ComparisonGroups
+    serializer_class = serializers.ComparisonGroupsSerializer
 
 
 class Group(AssessmentViewset):

@@ -200,12 +200,12 @@ class ResultDelete(BaseDelete):
 
 
 # Group collection + group
-class GroupCollectionCreate(BaseCreateWithFormset):
+class ComparisonGroupsCreate(BaseCreateWithFormset):
     success_message = 'Groups created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
-    model = models.GroupCollection
-    form_class = forms.GroupCollection
+    model = models.ComparisonGroups
+    form_class = forms.ComparisonGroups
     formset_factory = forms.GroupFormset
 
     def post_object_save(self, form, formset):
@@ -224,19 +224,19 @@ class GroupCollectionCreate(BaseCreateWithFormset):
             queryset=models.Group.objects.none())
 
 
-class GroupCollectionOutcomeCreate(GroupCollectionCreate):
+class ComparisonGroupsOutcomeCreate(ComparisonGroupsCreate):
     parent_model = models.Outcome
     parent_template_name = 'outcome'
 
 
-class GroupCollectionDetail(BaseDetail):
-    model = models.GroupCollection
+class ComparisonGroupsDetail(BaseDetail):
+    model = models.ComparisonGroups
 
 
-class GroupCollectionUpdate(BaseUpdateWithFormset):
+class ComparisonGroupsUpdate(BaseUpdateWithFormset):
     success_message = "Groups updated."
-    model = models.GroupCollection
-    form_class = forms.GroupCollection
+    model = models.ComparisonGroups
+    form_class = forms.ComparisonGroups
     formset_factory = forms.GroupFormset
 
     def build_initial_formset_factory(self):
@@ -255,9 +255,9 @@ class GroupCollectionUpdate(BaseUpdateWithFormset):
                 group_id += 1
 
 
-class GroupCollectionDelete(BaseDelete):
+class ComparisonGroupsDelete(BaseDelete):
     success_message = "Group collection deleted."
-    model = models.GroupCollection
+    model = models.ComparisonGroups
 
     def get_success_url(self):
         self.parent = self.object.study_population

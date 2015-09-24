@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='GroupCollection',
+            name='ComparisonGroups',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
@@ -228,7 +228,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('design', models.CharField(max_length=2, choices=[(b'CO', b'Cohort'), (b'CC', b'Case control'), (b'NC', b'Nested case control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross sectional')])),
+                ('design', models.CharField(max_length=2, choices=[(b'CO', b'Cohort'), (b'CC', b'Case-control'), (b'NC', b'Nested case-control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross sectional')])),
                 ('region', models.CharField(max_length=128, blank=True)),
                 ('state', models.CharField(max_length=128, blank=True)),
                 ('eligible_n', models.PositiveIntegerField(null=True, verbose_name=b'Eligible N', blank=True)),
@@ -270,7 +270,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='result',
             name='groups',
-            field=models.ForeignKey(related_name='results', to='epi2.GroupCollection'),
+            field=models.ForeignKey(related_name='results', to='epi2.ComparisonGroups'),
         ),
         migrations.AddField(
             model_name='result',
@@ -293,19 +293,19 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='results', to='epi2.Result'),
         ),
         migrations.AddField(
-            model_name='groupcollection',
+            model_name='ComparisonGroups',
             name='outcome',
             field=models.ForeignKey(related_name='group_collections', to='epi2.Outcome', null=True),
         ),
         migrations.AddField(
-            model_name='groupcollection',
+            model_name='ComparisonGroups',
             name='study_population',
             field=models.ForeignKey(related_name='group_collections', to='epi2.StudyPopulation', null=True),
         ),
         migrations.AddField(
             model_name='group',
             name='collection',
-            field=models.ForeignKey(related_name='groups', to='epi2.GroupCollection'),
+            field=models.ForeignKey(related_name='groups', to='epi2.ComparisonGroups'),
         ),
         migrations.AddField(
             model_name='group',

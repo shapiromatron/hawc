@@ -96,8 +96,8 @@ class StudyPopulation(models.Model):
 
     DESIGN_CHOICES = (
         ('CO', 'Cohort'),
-        ('CC', 'Case control'),
-        ('NC', 'Nested case control'),
+        ('CC', 'Case-control'),
+        ('NC', 'Nested case-control'),
         ('CR', 'Case report'),
         ('SE', 'Case series'),
         ('CT', 'Controlled trial'),
@@ -112,6 +112,14 @@ class StudyPopulation(models.Model):
     design = models.CharField(
         max_length=2,
         choices=DESIGN_CHOICES)
+    age_profile = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Age profile of population (ex: adults, children, pregnant women, etc.)")
+    source = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Population source (ex: general population, environmental exposure, occupational cohort)")
     country = models.ForeignKey(
         Country)
     region = models.CharField(
@@ -138,8 +146,7 @@ class StudyPopulation(models.Model):
         related_name='populations')
     comments = models.TextField(
         blank=True,
-        help_text="Note matching criteria, etc."
-    )
+        help_text="Note matching criteria, etc.")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -222,10 +229,7 @@ class Outcome(BaseEndpoint):
             return not self.study_population.can_create_groups()
 
 
-class GroupCollection(models.Model):
-    """
-    A collection of comparable groups of individuals.
-    """
+class ComparisonGroups(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='group_collections',
@@ -255,7 +259,7 @@ class GroupCollection(models.Model):
     def save(self, *args, **kwargs):
         if not xor(self.outcome is None, self.study_population is None):
             raise ValueError("An outcome or study-population is required.")
-        super(GroupCollection, self).save(*args, **kwargs)
+        super(ComparisonGroups, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('epi2:gc_detail', kwargs={'pk': self.pk})
@@ -277,9 +281,6 @@ class GroupCollection(models.Model):
 
 
 class Group(models.Model):
-    """
-    A collection of individuals.
-    """
     SEX_CHOICES = (
         ("U", "Not reported"),
         ("M", "Male"),
@@ -293,7 +294,7 @@ class Group(models.Model):
     )
 
     collection = models.ForeignKey(
-        GroupCollection,
+        ComparisonGroups,
         related_name="groups")
     group_id = models.PositiveSmallIntegerField()
     name = models.CharField(
@@ -329,19 +330,14 @@ class Group(models.Model):
         blank=True,
         null=True,
         verbose_name="Participant N")
-    fraction_male = models.FloatField(
-        blank=True,
-        null=True,
-        help_text="Expects a value between 0 and 1, inclusive (leave blank if unknown)",
-        validators=[MinValueValidator(0), MaxValueValidator(1)])
-    fraction_male_calculated = models.BooleanField(
-        default=False,
-        help_text="Was the fraction-male value calculated/estimated from literature?")
     isControl = models.NullBooleanField(
         verbose_name="Control?",
         default=None,
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group")
+    comments = models.TextField(
+        blank=True,
+        help_text="Any other comments related to this group")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -369,7 +365,7 @@ class Exposure2(models.Model):
         related_name='exposures')
     name = models.CharField(
         max_length=128,
-        help_text='Name of exposure-route')
+        help_text='Name of exposure and exposure-route')
     inhalation = models.BooleanField(
         default=False)
     dermal = models.BooleanField(
@@ -383,7 +379,12 @@ class Exposure2(models.Model):
         verbose_name="Intravenous (IV)")
     unknown_route = models.BooleanField(
         default=False)
-    metric = models.TextField(
+    measured = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="What was measured")
+    metric = models.CharField(
+        max_length=128,
         verbose_name="Measurement Metric")
     metric_units = models.ForeignKey(
         'assessment.DoseUnits')
@@ -405,12 +406,12 @@ class Exposure2(models.Model):
         help_text='May be used to describe the exposure distribution, for '
                   'example, "2.05 µg/g creatinine (urine), geometric mean; '
                   '25th percentile = 1.18, 75th percentile = 3.33"')
+    description = models.TextField(
+        blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
-    control_description = models.TextField(
-        blank=True)
 
     class Meta:
         ordering = ('name', )
@@ -572,7 +573,7 @@ class Result(models.Model):
         Outcome,
         related_name="results")
     groups = models.ForeignKey(
-        GroupCollection,
+        ComparisonGroups,
         related_name="results")
     metric = models.ForeignKey(
         ResultMetric,
@@ -604,6 +605,10 @@ class Result(models.Model):
         choices=DOSE_RESPONSE_CHOICES)
     dose_response_details = models.TextField(
         blank=True)
+    trend_test = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text=u"Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?",
         default=0,
@@ -664,7 +669,7 @@ class Result(models.Model):
 class GroupResult(models.Model):
 
     P_VALUE_QUALIFIER_CHOICES = (
-        (' ', ' '),
+        (' ', '-'),
         ('-', 'n.s.'),
         ('<', '<'),
         ('=', '='),
@@ -714,7 +719,8 @@ class GroupResult(models.Model):
     p_value = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='p-value')
+        verbose_name='p-value',
+        validators=[MinValueValidator(0.), MaxValueValidator(1.)])
     is_main_finding = models.BooleanField(
         blank=True,
         verbose_name="Main finding",

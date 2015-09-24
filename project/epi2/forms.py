@@ -392,7 +392,7 @@ class OutcomeForm(forms.ModelForm):
         return helper
 
 
-class GroupCollection(forms.ModelForm):
+class ComparisonGroups(forms.ModelForm):
 
     HELP_TEXT_CREATE = """Create a collection of groups. Each group is a
         collection of people, and all groups in this collection may be
@@ -405,12 +405,12 @@ class GroupCollection(forms.ModelForm):
     HELP_TEXT_UPDATE = """Update an existing group and group collection."""
 
     class Meta:
-        model = models.GroupCollection
+        model = models.ComparisonGroups
         exclude = ('study_population', 'outcome')
 
     def __init__(self, *args, **kwargs):
         self.parent = kwargs.pop('parent', None)
-        super(GroupCollection, self).__init__(*args, **kwargs)
+        super(ComparisonGroups, self).__init__(*args, **kwargs)
         if self.parent:
             if type(self.parent).__name__ == "StudyPopulation":
                 self.instance.study_population = self.parent
@@ -571,7 +571,7 @@ class ResultForm(forms.ModelForm):
         else:
             outcome = self.instance.outcome
 
-        self.fields["groups"].queryset = models.GroupCollection.objects\
+        self.fields["groups"].queryset = models.ComparisonGroups.objects\
             .filter(
                 Q(study_population=outcome.study_population) |
                 Q(outcome=outcome)

@@ -67,11 +67,11 @@ class GroupSerializer(serializers.ModelSerializer):
         model = models.Group
 
 
-class GroupCollectionLinkSerializer(serializers.ModelSerializer):
+class ComparisonGroupsLinkSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        model = models.GroupCollection
+        model = models.ComparisonGroups
         fields = ('id', 'name', 'url')
 
 
@@ -81,7 +81,7 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
     outcomes = OutcomeLinkSerializer(many=True)
     exposures = ExposureLinkSerializer(many=True)
     can_create_groups = serializers.BooleanField(read_only=True)
-    group_collections = GroupCollectionLinkSerializer(many=True)
+    group_collections = ComparisonGroupsLinkSerializer(many=True)
     country = serializers.CharField(source='country.name', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     design = serializers.CharField(source='get_design_display', read_only=True)
@@ -133,7 +133,7 @@ class ResultSerializer(serializers.ModelSerializer):
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     full_name = serializers.CharField(source='__unicode__', read_only=True)
-    groups = GroupCollectionLinkSerializer()
+    groups = ComparisonGroupsLinkSerializer()
 
     class Meta:
         model = models.Result
@@ -146,13 +146,13 @@ class OutcomeSerializer(serializers.ModelSerializer):
     diagnostic = serializers.CharField(source='get_diagnostic_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = ResultSerializer(many=True)
-    group_collections = GroupCollectionLinkSerializer(many=True)
+    group_collections = ComparisonGroupsLinkSerializer(many=True)
 
     class Meta:
         model = models.Outcome
 
 
-class GroupCollectionSerializer(serializers.ModelSerializer):
+class ComparisonGroupsSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     exposure = ExposureSerializer()
     outcome = OutcomeSerializer()
@@ -160,4 +160,4 @@ class GroupCollectionSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True)
 
     class Meta:
-        model = models.GroupCollection
+        model = models.ComparisonGroups
