@@ -10,7 +10,7 @@ from django.dispatch import receiver
 import reversion
 
 from assessment.serializers import AssessmentSerializer
-from epi2.models import Criteria, ResultMetric, AdjustmentFactor, GroupResult
+from epi2.models import Criteria, ResultMetric, AdjustmentFactor
 from utils.helper import SerializerHelper
 
 
@@ -333,11 +333,6 @@ class SingleResult(models.Model):
         related_name="single_results2",
         blank=True,
         null=True)
-    result_group = models.ForeignKey(
-        GroupResult,
-        related_name="single_results2",
-        blank=True,
-        null=True)
     exposure_name = models.CharField(
         max_length=128,
         help_text='Enter a descriptive-name for the single study result '
@@ -392,7 +387,6 @@ class SingleResult(models.Model):
         return (
             'single_result-pk',
             'single_result-study',
-            'single_result-outcome_group',
             'single_result-exposure_name',
             'single_result-weight',
             'single_result-n',
@@ -412,16 +406,9 @@ class SingleResult(models.Model):
         except TypeError:
             pass
 
-        aog = None
-        try:
-            aog = ser['outcome_group']['id']
-        except TypeError:
-            pass
-
         return (
             ser['id'],
             study,
-            aog,
             ser['exposure_name'],
             ser['weight'],
             ser['n'],
