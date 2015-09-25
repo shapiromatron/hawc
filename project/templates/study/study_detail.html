@@ -91,7 +91,7 @@
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
     {% elif study.study_type == 4 %}
       <h2>Available epidemiological meta-analyses</h2>
-      {% include "epi/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
+      {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols2.all %}
     {% endif %}
 
     <div id="comments_block"></div>

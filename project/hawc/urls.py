@@ -33,6 +33,8 @@ urlpatterns = [
         include('epi.urls', namespace='epi')),
     url(r'^epi2/',
         include('epi2.urls', namespace='epi2')),
+    url(r'^epi-meta/',
+        include('epimeta.urls', namespace='meta')),
     url(r'^in-vitro/',
         include('invitro.urls', namespace='invitro')),
     url(r'^bmd/',

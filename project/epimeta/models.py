@@ -12,6 +12,7 @@ import reversion
 from assessment.serializers import AssessmentSerializer
 from epi2.models import Criteria, ResultMetric, AdjustmentFactor
 from utils.helper import SerializerHelper
+from utils.models import get_crumbs
 
 
 class MetaProtocol(models.Model):
@@ -76,8 +77,11 @@ class MetaProtocol(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
     def get_absolute_url(self):
-        return reverse('epi:mp_detail', kwargs={'pk': self.pk})
+        return reverse('meta:protocol_detail', kwargs={'pk': self.pk})
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
@@ -175,11 +179,14 @@ class MetaResult(models.Model):
     def __unicode__(self):
         return self.label
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.protocol)
+
     def get_assessment(self):
         return self.protocol.get_assessment()
 
     def get_absolute_url(self):
-        return reverse('epi:mr_detail', kwargs={'pk': self.pk})
+        return reverse('meta:result_detail', kwargs={'pk': self.pk})
 
     @property
     def estimate_formatted(self):
@@ -233,7 +240,7 @@ class MetaResult(models.Model):
             ser['exposure_name'],
             ser['exposure_details'],
             ser['number_studies'],
-            ser['statistical_metric']['metric'],
+            ser['metric']['metric'],
             ser['statistical_notes'],
             ser['n'],
             ser['estimate'],
