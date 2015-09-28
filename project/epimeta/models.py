@@ -150,6 +150,9 @@ class MetaResult(models.Model):
     n = models.PositiveIntegerField(
         help_text="Number of individuals included from all analyses")
     estimate = models.FloatField()
+    heterogeneity = models.CharField(
+        max_length=256,
+        blank=True)
     lower_ci = models.FloatField(
         verbose_name="Lower CI",
         help_text="Numerical value for lower-confidence interval")
@@ -162,9 +165,6 @@ class MetaResult(models.Model):
         default=0.95,
         verbose_name='Confidence Interval (CI)',
         help_text='A 95% CI is written as 0.95.')
-    heterogeneity = models.CharField(
-        max_length=256,
-        blank=True)
     adjustment_factors = models.ManyToManyField(
         AdjustmentFactor,
         help_text="All factors which were included in final model",

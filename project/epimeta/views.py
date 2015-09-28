@@ -50,25 +50,17 @@ class MetaResultCreate(utilViews.BaseCreateWithFormset):
         for form in formset.forms:
             form.instance.meta_result = self.object
 
+    def get_formset_kwargs(self):
+        return {"assessment": self.assessment}
+
     def build_initial_formset_factory(self):
-
-        def get_initial_data(field, **kwargs):
-            formfield = field.formfield(**kwargs)
-            if field.name == "study":
-                formfield.queryset = formfield.queryset.filter(
-                    assessment=self.assessment, study_type=1)
-            return formfield
-
-        return modelformset_factory(
-            models.SingleResult,
-            form=forms.SingleResultForm,
-            formset=forms.EmptySingleResultFormset,
-            formfield_callback=get_initial_data,
-            extra=1)
+        return forms.SingleResultFormset(
+            queryset=models.SingleResult.objects.none(),
+            **self.get_formset_kwargs())
 
     def get_form_kwargs(self):
         kwargs = super(MetaResultCreate, self).get_form_kwargs()
-        kwargs['assessment_id'] = self.assessment.id
+        kwargs['assessment'] = self.assessment
         return kwargs
 
 
@@ -92,15 +84,17 @@ class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
     form_class = forms.MetaResultForm
     formset_factory = forms.SingleResultFormset
 
+    def get_formset_kwargs(self):
+        return {"assessment": self.assessment}
+
     def build_initial_formset_factory(self):
-        formset = forms.SingleResultFormset(
-            queryset=self.object.single_results.all().order_by('pk'))
-        forms.meta_result_clean_update_formset(formset, self.assessment)
-        return formset
+        return forms.SingleResultFormset(
+            queryset=self.object.single_results2.all().order_by('pk'),
+            **self.get_formset_kwargs())
 
     def get_form_kwargs(self):
         kwargs = super(MetaResultUpdate, self).get_form_kwargs()
-        kwargs['assessment_id'] = self.assessment.id
+        kwargs['assessment'] = self.assessment
         return kwargs
 
     def post_object_save(self, form, formset):
