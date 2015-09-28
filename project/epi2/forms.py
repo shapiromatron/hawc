@@ -713,7 +713,12 @@ class BaseGroupResultFormset(BaseModelFormSet):
         outcome = kwargs.pop('outcome', None)
         self.result = kwargs.pop('result', None)
         super(BaseGroupResultFormset, self).__init__(**kwargs)
-        self.form = curry(self.form, study_population=study_population, outcome=outcome, result=self.result)
+        self.form = curry(
+            self.form,
+            study_population=study_population,
+            outcome=outcome,
+            result=self.result
+        )
 
     def clean(self):
         super(BaseGroupResultFormset, self).clean()
