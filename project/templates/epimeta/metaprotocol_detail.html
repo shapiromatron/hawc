@@ -18,8 +18,8 @@
         </a>
         <ul class="dropdown-menu">
             <li class="disabled"><a tabindex="-1" href="#">Meta-protocol editing</a></li>
-            <li><a href="{% url 'epi:mp_update' object.pk %}">Update</a></li>
-            <li><a href="{% url 'meta:protocol_delete' pk=object.pk %}">Delete</a></li>
+            <li><a href="{% url 'meta:protocol_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'meta:protocol_delete' object.pk %}">Delete</a></li>
 
             <li class="disabled"><a tabindex="-1" href="#">Meta-result editing</a></li>
             <li><a href="{% url 'epi:mr_create' object.pk %}">Create new</a></li>

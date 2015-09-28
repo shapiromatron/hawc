@@ -2,18 +2,31 @@ from collections import OrderedDict
 from copy import copy
 
 from django import forms
+from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.forms.widgets import CheckboxInput
 
 from selectable import forms as selectable
 
-from utils.forms import FormsetWithIgnoredFields, anyNull
+from utils.forms import FormsetWithIgnoredFields, anyNull, BaseFormHelper
 from epi2.lookups import AdjustmentFactorLookup, CriteriaLookup
 
 from . import models, lookups
 
 
 class MetaProtocolForm(forms.ModelForm):
+
+    CREATE_LEGEND = u"Create a new meta-protocol"
+
+    CREATE_HELP_TEXT = u"""
+        Create a new meta-protocol for an epidemiological
+        assessment. A meta-protocol contains the methodology behind a
+        meta-analysis or pooled analysis, which are frequently used
+        techniques used to quantitatively summarize results from
+        multiple studies or reference populations.
+    """
+
+    UPDATE_HELP_TEXT = u"Update an existing meta-protocol"
 
     inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=CriteriaLookup,
@@ -22,6 +35,11 @@ class MetaProtocolForm(forms.ModelForm):
     exclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=CriteriaLookup,
         required=False)
+
+    CRITERION_FIELDS = [
+        "inclusion_criteria",
+        "exclusion_criteria",
+    ]
 
     class Meta:
         model = models.MetaProtocol
@@ -42,6 +60,45 @@ class MetaProtocolForm(forms.ModelForm):
             {'related': self.instance.study.assessment_id})
         self.fields['exclusion_criteria'].widget.update_query_parameters(
             {'related': self.instance.study.assessment_id})
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                if fld in self.CRITERION_FIELDS:
+                    widget.attrs['class'] = 'span10'
+                else:
+                    widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   self.UPDATE_HELP_TEXT,
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": self.CREATE_LEGEND,
+                "help_text":   self.CREATE_HELP_TEXT,
+                "cancel_url": self.instance.study.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('lit_search_strategy', 2, "span6")
+        helper.add_fluid_row('lit_search_start_date', 3, "span4")
+        helper.add_fluid_row('inclusion_criteria', 2, "span6")
+
+        url = reverse('epi2:studycriteria_create',
+                      kwargs={'pk': self.instance.study.assessment.pk})
+        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "span6")
+        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "span6")
+
+        return helper
 
 
 class MetaResultForm(forms.ModelForm):
