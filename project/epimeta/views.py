@@ -64,12 +64,11 @@ class MetaResultCreate(utilViews.BaseCreateWithFormset):
         return kwargs
 
 
-class MetaResultCopyAsNewSelector(MetaProtocolDetail):
-    # Select an existing meta-result as a template for a new one
-    template_name = 'epi/metaresult_copy_selector.html'
+class MetaResultCopyAsNew(MetaProtocolDetail):
+    template_name = 'epimeta/metaresult_copy_selector.html'
 
     def get_context_data(self, **kwargs):
-        context = super(MetaResultCopyAsNewSelector, self).get_context_data(**kwargs)
+        context = super(MetaResultCopyAsNew, self).get_context_data(**kwargs)
         context['form'] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
         return context
 
