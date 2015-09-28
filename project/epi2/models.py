@@ -6,6 +6,8 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+import reversion
+
 from assessment.models import BaseEndpoint
 from utils.models import get_crumbs
 
@@ -738,3 +740,7 @@ class GroupResult(models.Model):
 
     class Meta:
         ordering = ('measurement', 'group__group_id')
+
+
+reversion.register(Criteria)
+reversion.register(AdjustmentFactor)

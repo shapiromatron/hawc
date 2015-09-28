@@ -292,13 +292,14 @@ class MetaResult(models.Model):
                 pro["exclusion_list"] = u', '.join(pro["exclusion_criteria"])
                 pro["results"] = {}
                 pro["statistical_methods"] = {}
-                study["protocols"][pro["id"]]  = pro
+                study["protocols"][pro["id"]] = pro
 
             mr = pro["results"].get(thisMr["id"])
             if mr is None:
                 mr = thisMr
-                mr["ci_percent"] = int(mr["ci_units"]*100.)
-                mr["adjustments_list"] = u', '.join(sorted(mr["adjustment_factors"]))
+                mr["ci_percent"] = int(mr["ci_units"] * 100.)
+                mr["adjustments_list"] = u', '.join(
+                    sorted(mr["adjustment_factors"]))
                 pro["results"][mr["id"]] = mr
 
             statKey, statVal = getStatMethods(thisMr)
@@ -323,7 +324,9 @@ class MetaResult(models.Model):
                     key=lambda obj: (obj["label"].lower()))
                 pro["statistical_methods"] = pro["statistical_methods"].values()
                 for obj in pro["statistical_methods"]:
-                    obj["sm_endpoints"] = u"; ".join([ d["label"] for d in obj["sm_endpoints"] ])
+                    obj["sm_endpoints"] = u"; ".join([
+                        d["label"] for d in obj["sm_endpoints"]
+                    ])
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
@@ -449,7 +452,14 @@ def invalidate_meta_result_cache(sender, instance, **kwargs):
     MetaResult.delete_caches(ids)
 
 
-reversion.register(MetaProtocol,
-    follow=('inclusion_criteria', 'exclusion_criteria'))
-reversion.register(MetaResult, follow=('adjustment_factors', ))
-reversion.register(SingleResult)
+reversion.register(
+    MetaProtocol,
+    follow=('inclusion_criteria', 'exclusion_criteria')
+)
+reversion.register(
+    MetaResult,
+    follow=('adjustment_factors', 'single_results2')
+)
+reversion.register(
+    SingleResult
+)
