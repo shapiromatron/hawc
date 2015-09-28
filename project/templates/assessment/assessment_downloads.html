@@ -36,7 +36,8 @@
     {% if assessment.enable_data_extraction %}
     <li>
         <b>Animal bioassay data</b><br>
-        <a class='btn btn-primary' href="{% url 'animal:export' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary' href="{% url 'animal:export' assessment.pk %}">Complete export</a> &nbsp;
+        <a class='btn btn-primary' href="{% url 'animal:endpoint_export' assessment.pk %}">Endpoint summary</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
 

@@ -492,3 +492,18 @@ class FullExport(BaseList):
                 sheet_name='bioassay-analysis',
                 assessment=self.assessment)
         return exporter.build_response()
+
+
+class EndpointExport(FullExport):
+    """
+    Compressed summary for viewing endpoint-level information.
+    """
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        exporter = exports.EndpointSummary(
+                self.object_list,
+                export_format="excel",
+                filename='{}-animal-bioassay'.format(self.assessment),
+                sheet_name='endpoint-summary',
+                assessment=self.assessment)
+        return exporter.build_response()

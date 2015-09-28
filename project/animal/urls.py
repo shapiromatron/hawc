@@ -14,6 +14,7 @@ router.register(r'animal-group', api.AnimalGroup, base_name="animal_group")
 urlpatterns = [
     # Overall views
     url(r'^assessment/(?P<pk>\d+)/full-export/$', views.FullExport.as_view(), name='export'),
+    url(r'^assessment/(?P<pk>\d+)/endpoint-export/$', views.EndpointExport.as_view(), name='endpoint_export'),
     url(r'^assessment/(?P<pk>\d+)/report/$', views.EndpointsReport.as_view(), name='endpoints_report'),
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$', views.EndpointsFixedReport.as_view(), name='endpoints_fixedreport'),
 
