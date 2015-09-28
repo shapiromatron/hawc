@@ -48,12 +48,6 @@ class MetaProtocolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
         super(MetaProtocolForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
-            if fld in ('lit_search_notes', 'notes'):
-                self.fields[fld].widget.attrs['rows'] = 3
-            widget = self.fields[fld].widget
-            if type(widget) != CheckboxInput:
-                widget.attrs['class'] = 'span12'
         if parent:
             self.instance.study = parent
         self.fields['inclusion_criteria'].widget.update_query_parameters(
