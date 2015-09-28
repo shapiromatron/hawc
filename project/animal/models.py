@@ -595,6 +595,10 @@ class Endpoint(BaseEndpoint):
     observation_time_units = models.PositiveSmallIntegerField(
         default=0,
         choices=OBSERVATION_TIME_UNITS)
+    observation_time_text = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text='Text for reported observation time (ex: "60-90 PND")')
     data_location = models.CharField(
         max_length=128,
         blank=True,
@@ -783,6 +787,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-effect_subtype",
             "endpoint-observation_time",
             "endpoint-observation_time_units",
+            "endpoint-observation_time_text",
             "endpoint-data_location",
             "endpoint-response_units",
             "endpoint-data_type",
@@ -815,6 +820,7 @@ class Endpoint(BaseEndpoint):
             ser['effect_subtype'],
             ser['observation_time'],
             ser['observation_time_units'],
+            ser['observation_time_text'],
             ser['data_location'],
             ser['response_units'],
             ser['data_type'],

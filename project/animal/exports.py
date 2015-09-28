@@ -173,16 +173,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ns_txt
             )
 
-        def get_observation_time(time, units):
-            txt = ""
-            if time:
-                if time % 1 == 0:
-                    time = int(time)
-                txt = u"{} {}".format(time, units)
-            else:
-                txt = units
-            return txt
-
         def get_tags(e):
             effs = [tag["name"] for tag in e["effects"]]
             if len(effs) > 0:
@@ -240,9 +230,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['effect_subtype'],
                 ser['diagnostic'],
                 get_tags(ser),
-                get_observation_time(
-                    ser["observation_time"],
-                    ser["observation_time_units"]),
+                ser['observation_time_text'],
                 ser['data_type_label'],
                 get_doses_str(doses),
                 get_dose_units(doses),

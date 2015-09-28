@@ -532,9 +532,6 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                       Endpoint.getTagURL(assessment_id, v.slug), v.name));
                 });
                 return ul;
-            }, getObsTime = function(d){
-                if ($.isNumeric(d.observation_time)) return "{0} {1}".printf(
-                        d.observation_time, d.observation_time_units);
             };
 
         tbl.add_tbody_tr("Endpoint name", this.data.name)
@@ -543,7 +540,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            .add_tbody_tr("Effect", this.data.effect)
            .add_tbody_tr("Effect subtype", this.data.effect_subtype)
            .add_tbody_tr("Diagnostic description", this.data.diagnostic)
-           .add_tbody_tr("Observation time", getObsTime(this.data))
+           .add_tbody_tr("Observation time", this.data.observation_time_text)
            .add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment))
            .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))
            .add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted))
