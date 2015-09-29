@@ -292,6 +292,7 @@ class EndpointSummary(FlatFileExporter):
     def _get_header_row(self):
         return [
             "study-short_citation",
+            "study-study_identifier",
             "experiment-chemical",
             "animal_group-name",
             "animal_group-sex",
@@ -300,6 +301,8 @@ class EndpointSummary(FlatFileExporter):
             "dosing_regime-duration_exposure_text",
             "species-name",
             "strain-name",
+            "endpoint-id",
+            "endpoint-url",
             "endpoint-system",
             "endpoint-organ",
             "endpoint-effect",
@@ -359,6 +362,7 @@ class EndpointSummary(FlatFileExporter):
             # build endpoint-group independent data
             row = [
                 ser['animal_group']['experiment']['study']['short_citation'],
+                ser['animal_group']['experiment']['study']['study_identifier'],
                 ser['animal_group']['experiment']['chemical'],
                 ser['animal_group']['name'],
                 ser['animal_group']['sex'],
@@ -368,6 +372,8 @@ class EndpointSummary(FlatFileExporter):
                                      ser['animal_group']['dosing_regime']),
                 ser['animal_group']['species'],
                 ser['animal_group']['strain'],
+                ser['id'],
+                ser['url'],
                 ser['system'],
                 ser['organ'],
                 ser['effect'],
