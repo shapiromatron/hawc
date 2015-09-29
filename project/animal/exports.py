@@ -313,6 +313,7 @@ class EndpointSummary(FlatFileExporter):
             "Doses",
             "Responses",
             "Doses and responses",
+            "Response direction",
         ]
 
     def _get_data_rows(self):
@@ -352,6 +353,20 @@ class EndpointSummary(FlatFileExporter):
                     txts.append(txt)
             return u", ".join(txts)
 
+        def getResponseDirection(responses, data_type):
+            txt = u"↔"
+            for resp in responses:
+                if resp['significant']:
+                    if data_type in ["C", "P"]:
+                        if resp["response"] > responses[0]["response"]:
+                            txt = u"↑"
+                        else:
+                            txt = u"↓"
+                    else:
+                        txt = u"↑"
+                    break
+            return txt
+
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
@@ -383,6 +398,7 @@ class EndpointSummary(FlatFileExporter):
             ]
 
             responsesList = getResponses(ser['groups'])
+            responseDirection = getResponseDirection(ser['groups'], ser['data_type'])
             for unit in units:
                 row_copy = copy(row)
                 dosesList = getDoses(doses, unit)
@@ -391,6 +407,7 @@ class EndpointSummary(FlatFileExporter):
                     u", ".join(dosesList),  # Doses
                     u", ".join(responsesList),  # Responses w/ units
                     getDR(dosesList, responsesList, unit),
+                    responseDirection
                 ])
                 rows.append(row_copy)
 
