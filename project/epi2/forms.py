@@ -8,7 +8,7 @@ from crispy_forms import layout as cfl
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
-from utils.forms import BaseFormHelper
+from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 
 from . import models, lookups
 
@@ -199,6 +199,11 @@ class StudyPopulationForm(forms.ModelForm):
         return helper
 
 
+class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
+    label = 'Study Population'
+    lookup_class = lookups.StudyPopulationByStudyLookup
+
+
 class AdjustmentFactorForm(forms.ModelForm):
 
     CREATE_LEGEND = u"Create new adjustment factor"
@@ -318,6 +323,11 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
+class ExposureSelectorForm(CopyAsNewSelectorForm):
+    label = 'Exposure'
+    lookup_class = lookups.ExposureByStudyPopulationLookup
+
+
 class OutcomeForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = """Create a new outcome. An
@@ -393,6 +403,11 @@ class OutcomeForm(forms.ModelForm):
         return helper
 
 
+class OutcomeSelectorForm(CopyAsNewSelectorForm):
+    label = 'Outcome'
+    lookup_class = lookups.OutcomeByStudyPopulationLookup
+
+
 class ComparisonGroups(forms.ModelForm):
 
     HELP_TEXT_CREATE = """Create a collection of groups. Each group is a
@@ -455,6 +470,16 @@ class ComparisonGroups(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         return helper
+
+
+class ComparisonGroupsByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
+    label = 'Comparison groups'
+    lookup_class = lookups.ComparisonGroupsByStudyPopulationLookup
+
+
+class ComparisonGroupsByOutcomeSelectorForm(CopyAsNewSelectorForm):
+    label = 'Comparison groups'
+    lookup_class = lookups.ComparisonGroupsByOutcomeLookup
 
 
 class GroupForm(forms.ModelForm):
@@ -662,6 +687,11 @@ class ResultForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")
 
         return helper
+
+
+class ResultSelectorForm(CopyAsNewSelectorForm):
+    label = 'Result'
+    lookup_class = lookups.ResultByOutcomeLookup
 
 
 class ResultUpdateForm(ResultForm):

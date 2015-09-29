@@ -21,12 +21,15 @@
                 <li><a href="{% url 'epi2:sp_delete' pk=object.pk %}">Delete</a></li>
                 <li class="disabled"><a tabindex="-1" href="#">Exposure measurements</a></li>
                 <li><a href="{% url 'epi2:exp_create' object.pk %}">Create</a></li>
+                <li><a href="{% url 'epi2:exp_copy_selector' object.pk %}">Copy from existing</a></li>
                 {% if object.can_create_groups %}
                   <li class="disabled"><a tabindex="-1" href="#">Comparison groups</a></li>
                   <li><a href="{% url 'epi2:gc_create' object.pk %}">Create</a></li>
+                  <li><a href="{% url 'epi2:gc_copy_selector' object.pk %}">Copy from existing</a></li>
                 {% endif %}
                 <li class="disabled"><a tabindex="-1" href="#">Outcomes</a></li>
                 <li><a href="{% url 'epi2:outcome_create' object.pk %}">Create</a></li>
+                <li><a href="{% url 'epi2:outcome_copy_selector' object.pk %}">Copy from existing</a></li>
             </ul>
           </div>
         {% endif %}

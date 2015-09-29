@@ -3,10 +3,11 @@ from django import forms
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
+from crispy_forms.utils import flatatt, TEMPLATE_PACK
 
 from django.template.loader import render_to_string
 
-from crispy_forms.utils import flatatt, TEMPLATE_PACK
+from selectable import forms as selectable
 
 
 class BaseFormHelper(cf.FormHelper):
@@ -75,6 +76,26 @@ class BaseFormHelper(cf.FormHelper):
         self.layout.insert(
             self.layout.index(firstField),
             cfl.HTML("""<h4>{0}</h4>""".format(text)))
+
+
+class CopyAsNewSelectorForm(forms.Form):
+    label = None
+    lookup_class = None
+
+    def __init__(self, *args, **kwargs):
+        parent_id = kwargs.pop('parent_id')
+        super(CopyAsNewSelectorForm, self).__init__(*args, **kwargs)
+        self.setupSelector(parent_id)
+
+    def setupSelector(self, parent_id):
+        fld = selectable.AutoCompleteSelectField(
+            lookup_class=self.lookup_class,
+            allow_new=False,
+            label=self.label,
+            widget=selectable.AutoComboboxSelectWidget)
+        fld.widget.update_query_parameters({'related': parent_id})
+        fld.widget.attrs['class'] = 'span11'
+        self.fields['selector'] = fld
 
 
 def form_error_list_to_lis(form):

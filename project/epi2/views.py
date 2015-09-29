@@ -7,6 +7,7 @@ from utils.views import (BaseDetail, BaseDelete,
 
 from assessment.models import Assessment
 from study.models import Study
+from study.views import StudyRead
 
 from . import forms, models
 
@@ -27,6 +28,15 @@ class StudyPopulationCreate(BaseCreate):
     parent_template_name = 'study'
     model = models.StudyPopulation
     form_class = forms.StudyPopulationForm
+
+
+class StudyPopulationCopyAsNewSelector(StudyRead):
+    template_name = 'epi2/studypopulation_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudyPopulationCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.StudyPopulationSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class StudyPopulationDetail(BaseDetail):
@@ -64,6 +74,15 @@ class ExposureCreate(BaseCreate):
     parent_template_name = 'study_population'
     model = models.Exposure2
     form_class = forms.ExposureForm
+
+
+class ExposureCopyAsNewSelector(StudyPopulationDetail):
+    template_name = 'epi2/exposure_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ExposureCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ExposureSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class ExposureDetail(BaseDetail):
@@ -118,6 +137,15 @@ class OutcomeCreate(BaseCreate):
         return kwargs
 
 
+class OutcomeCopyAsNewSelector(StudyPopulationDetail):
+    template_name = 'epi2/outcome_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OutcomeCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.OutcomeSelectorForm(parent_id=self.object.id)
+        return context
+
+
 class OutcomeDetail(BaseDetail):
     model = models.Outcome
 
@@ -159,6 +187,15 @@ class ResultCreate(BaseCreateWithFormset):
         return forms.BlankGroupResultFormset(
             queryset=models.Group.objects.none(),
             **self.get_formset_kwargs())
+
+
+class ResultCopyAsNewSelector(OutcomeDetail):
+    template_name = 'epi2/result_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ResultCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ResultSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class ResultDetail(BaseDetail):
@@ -227,6 +264,24 @@ class ComparisonGroupsCreate(BaseCreateWithFormset):
 class ComparisonGroupsOutcomeCreate(ComparisonGroupsCreate):
     parent_model = models.Outcome
     parent_template_name = 'outcome'
+
+
+class ComparisonGroupsStudyPopCopySelector(StudyPopulationDetail):
+    template_name = 'epi2/comparisongroups_sp_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ComparisonGroupsStudyPopCopySelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ComparisonGroupsByStudyPopulationSelectorForm(parent_id=self.object.id)
+        return context
+
+
+class ComparisonGroupsOutcomeCopySelector(OutcomeDetail):
+    template_name = 'epi2/comparisongroups_outcome_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ComparisonGroupsOutcomeCopySelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ComparisonGroupsByOutcomeSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class ComparisonGroupsDetail(BaseDetail):

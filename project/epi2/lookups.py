@@ -6,7 +6,6 @@ from . import models
 
 
 class StudyPopulationByStudyLookup(RelatedLookup):
-    # Return names of study populations available for a particular study
     model = models.StudyPopulation
     search_fields = ('name__icontains', )
     related_filter = 'study_id'
@@ -34,6 +33,28 @@ class AdjustmentFactorLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
 
+class ComparisonGroupsByStudyPopulationLookup(RelatedLookup):
+    model = models.ComparisonGroups
+    search_fields = ('name__icontains', )
+    related_filter = 'study_population_id'
+
+
+class ComparisonGroupsByOutcomeLookup(ComparisonGroupsByStudyPopulationLookup):
+    related_filter = 'outcome_id'
+
+
+class ExposureByStudyPopulationLookup(RelatedLookup):
+    model = models.Exposure2
+    search_fields = ('name__icontains', )
+    related_filter = 'study_population_id'
+
+
+class OutcomeByStudyPopulationLookup(RelatedLookup):
+    model = models.Outcome
+    search_fields = ('name__icontains', )
+    related_filter = 'study_population_id'
+
+
 class EffectLookup(DistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect"
@@ -44,10 +65,21 @@ class SystemLookup(DistinctStringLookup):
     distinct_field = "system"
 
 
+class ResultByOutcomeLookup(RelatedLookup):
+    model = models.Result
+    search_fields = ('metric__metric__icontains', 'groups__name__icontains')
+    related_filter = 'outcome_id'
+
+
 registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
+registry.register(ExposureByStudyPopulationLookup)
+registry.register(ComparisonGroupsByStudyPopulationLookup)
+registry.register(ComparisonGroupsByOutcomeLookup)
+registry.register(OutcomeByStudyPopulationLookup)
 registry.register(EffectLookup)
 registry.register(SystemLookup)
+registry.register(ResultByOutcomeLookup)

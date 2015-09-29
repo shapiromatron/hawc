@@ -1,0 +1,33 @@
+{% extends 'epi2/studypopulation_detail.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+
+{% block title %}
+  {{block.super}} | Copy Exposure
+{% endblock title %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "hawc/_copy_as_new.html" with name="exposure" notes="Select an existing exposure as a template to create a new one." %}
+
+{% endblock content %}
+
+{% block extrajs %}
+  {{ form.media }}
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      new HAWCUtils.InitialForm({
+        "form": $('form'),
+        "base_url": "{% url 'epi2:exp_create' object.pk %}"
+      });
+
+    });
+  </script>
+{% endblock extrajs %}
+

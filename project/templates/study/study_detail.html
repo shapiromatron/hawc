@@ -44,11 +44,8 @@
               <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new</a></li>
             {% elif object.study_type == 1 %}
               <li class="disabled"><a tabindex="-1" href="#">Study Population</a></li>
-              {% comment %}
-              <li><a href="{% url 'epi:sp_create' object.pk %}">Create new</a></li>
-              <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
-              {% endcomment %}
               <li><a href="{% url 'epi2:sp_create' object.pk %}">Create new</a></li>
+              <li><a href="{% url 'epi2:sp_copy_selector' object.pk %}">Copy from existing</a></li>
             {% elif object.study_type == 4 %}
               <li class="disabled"><a tabindex="-1" href="#">Meta-analysis</a></li>
               <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new</a></li>
@@ -78,9 +75,6 @@
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% elif study.study_type == 1 %}
       <h2>Available study populations</h2>
-      {% comment %}
-      {% include "epi/_study_population_list.html" with object_list=object.study_populations.all %}
-      {% endcomment %}
       <ul>
         {% for obj in object.study_populations2.all %}
           <li><a href="{{obj.get_absolute_url}}">{{obj}}</a></li>
