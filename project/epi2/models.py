@@ -1083,5 +1083,16 @@ def invalidate_outcome_cache(sender, instance, **kwargs):
     Outcome.delete_caches(ids)
 
 
+reversion.register(Country)
 reversion.register(Criteria)
+reversion.register(Ethnicity)
+reversion.register(StudyPopulationCriteria)
 reversion.register(AdjustmentFactor)
+reversion.register(ResultAdjustmentFactor)
+reversion.register(StudyPopulation, follow=('country', 'spcriteria'))
+reversion.register(ComparisonGroups)
+reversion.register(Exposure2)
+reversion.register(Outcome, follow=('effects',))
+reversion.register(Group, follow=('ethnicities',))
+reversion.register(Result, follow=('adjustment_factors', 'resfactors', 'results'))
+reversion.register(GroupResult)
