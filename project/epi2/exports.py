@@ -4,7 +4,7 @@ from utils.helper import FlatFileExporter
 from . import models
 
 
-class OutcomeFlatComplete(FlatFileExporter):
+class OutcomeComplete(FlatFileExporter):
 
     def _get_header_row(self):
         header = []

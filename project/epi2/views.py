@@ -130,7 +130,7 @@ class OutcomeExport(OutcomeList):
     """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        exporter = exports.OutcomeFlatComplete(
+        exporter = exports.OutcomeComplete(
                 self.object_list,
                 export_format="excel",
                 filename='{}-epi'.format(self.assessment),
