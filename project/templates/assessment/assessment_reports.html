@@ -105,8 +105,9 @@
               <option value="{{object.pk}}">{{object.description}}</option>
             {% endfor %}
           </select><br>
-          <a class='btn btn-primary download-report'
-             data-basehref="{% url 'epi:ao_report' assessment.pk %}"
+          <a class='btn btn-primary download-report disabled'
+             data-basehref="#"
+             title="Disabled; please contact HAWC developers if required"
              href="#">Download</a><br>
         </li><br>
       {% endif %}
