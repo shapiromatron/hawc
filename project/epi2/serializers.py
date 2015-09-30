@@ -118,6 +118,7 @@ class ExposureSerializer(serializers.ModelSerializer):
 class GroupResultSerializer(serializers.ModelSerializer):
     main_finding_support = serializers.CharField(source='get_main_finding_support_display', read_only=True)
     p_value_qualifier = serializers.CharField(source='get_p_value_qualifier_display', read_only=True)
+    p_value_text = serializers.CharField(read_only=True)
     group = GroupSerializer()
 
     class Meta:

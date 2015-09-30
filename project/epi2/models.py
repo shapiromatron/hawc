@@ -1009,6 +1009,17 @@ class GroupResult(models.Model):
     class Meta:
         ordering = ('measurement', 'group__group_id')
 
+    @property
+    def p_value_text(self):
+        txt = self.get_p_value_qualifier_display()
+        if self.p_value is not None:
+            if txt in ["=", "-", "n.s."]:
+                txt = u"{0:g}".format(self.p_value)
+            else:
+                txt = u"{0}{1:g}".format(txt, self.p_value)
+
+        return txt
+
     @staticmethod
     def flat_complete_header_row():
         return (
