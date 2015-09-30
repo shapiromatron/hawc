@@ -10,6 +10,7 @@ import reversion
 
 from assessment.models import BaseEndpoint
 from utils.models import get_crumbs
+from utils.helper import SerializerHelper
 
 
 class Criteria(models.Model):
@@ -154,6 +155,59 @@ class StudyPopulation(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "sp-id",
+            "sp-url",
+            "sp-name",
+            "sp-design",
+            "sp-age_profile",
+            "sp-source",
+            "sp-country",
+            "sp-region",
+            "sp-state",
+            "sp-eligible_n",
+            "sp-invited_n",
+            "sp-participant_n",
+            "sp-inclusion_criteria",
+            "sp-exclusion_criteria",
+            "sp-confounding_criteria",
+            "sp-comments",
+            "sp-created",
+            "sp-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+
+        def getCriteriaList(lst, filt):
+            return u'|'.join([
+                d['description'] for d in
+                filter(lambda (d): d['criteria_type'] == filt, lst)
+            ])
+
+        return (
+            ser["id"],
+            ser["url"],
+            ser["name"],
+            ser["design"],
+            ser["age_profile"],
+            ser["source"],
+            ser["country"],
+            ser["region"],
+            ser["state"],
+            ser["eligible_n"],
+            ser["invited_n"],
+            ser["participant_n"],
+            getCriteriaList(ser['criteria'], 'Inclusion'),
+            getCriteriaList(ser['criteria'], 'Exclusion'),
+            getCriteriaList(ser['criteria'], 'Confounding'),
+            ser["comments"],
+            ser["created"],
+            ser["last_updated"],
+        )
+
     class Meta:
         ordering = ('name', )
 
@@ -221,6 +275,9 @@ class Outcome(BaseEndpoint):
                   'details are presented (for example, "no association '
                   '(data not shown)")')
 
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     def get_absolute_url(self):
         return reverse('epi2:outcome_detail', kwargs={'pk': self.pk})
 
@@ -229,6 +286,40 @@ class Outcome(BaseEndpoint):
 
     def can_create_groups(self):
             return not self.study_population.can_create_groups()
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "outcome-id",
+            "outcome-url",
+            "outcome-name",
+            "outcome-effects",
+            "outcome-system",
+            "outcome-effect",
+            "outcome-diagnostic",
+            "outcome-diagnostic_description",
+            "outcome-outcome_n",
+            "outcome-summary",
+            "outcome-created",
+            "outcome-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['url'],
+            ser['name'],
+            '|'.join([unicode(d['name']) for d in ser['effects']]),
+            ser['system'],
+            ser['effect'],
+            ser['diagnostic'],
+            ser['diagnostic_description'],
+            ser['outcome_n'],
+            ser['summary'],
+            ser['created'],
+            ser['last_updated'],
+        )
 
 
 class ComparisonGroups(models.Model):
@@ -280,6 +371,28 @@ class ComparisonGroups(models.Model):
             return get_crumbs(self, self.outcome)
         else:
             return get_crumbs(self, self.study_population)
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "cg-id",
+            "cg-url",
+            "cg-name",
+            "cg-description",
+            "cg-created",
+            "cg-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["id"],
+            ser["url"],
+            ser["name"],
+            ser["description"],
+            ser["created"],
+            ser["last_updated"],
+        )
 
 
 class Group(models.Model):
@@ -360,6 +473,44 @@ class Group(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.collection)
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "group-id",
+            "group-group_id",
+            "group-name",
+            "group-numeric",
+            "group-comparative_name",
+            "group-sex",
+            "group-ethnicities",
+            "group-eligible_n",
+            "group-invited_n",
+            "group-participant_n",
+            "group-isControl",
+            "group-comments",
+            "group-created",
+            "group-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['group_id'],
+            ser['name'],
+            ser['numeric'],
+            ser['comparative_name'],
+            ser['sex'],
+            u"|".join([d["name"] for d in ser['ethnicities']]),
+            ser['eligible_n'],
+            ser['invited_n'],
+            ser['participant_n'],
+            ser['isControl'],
+            ser['comments'],
+            ser['created'],
+            ser['last_updated'],
+        )
+
 
 class Exposure2(models.Model):
     study_population = models.ForeignKey(
@@ -432,6 +583,58 @@ class Exposure2(models.Model):
 
     def get_crumbs(self):
         return get_crumbs(self, self.study_population)
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "exposure-id",
+            "exposure-url",
+            "exposure-name",
+            "exposure-inhalation",
+            "exposure-dermal",
+            "exposure-oral",
+            "exposure-in_utero",
+            "exposure-iv",
+            "exposure-unknown_route",
+            "exposure-measured",
+            "exposure-metric",
+            "exposure-metric_units_id",
+            "exposure-metric_units_name",
+            "exposure-metric_description",
+            "exposure-analytical_method",
+            "exposure-sampling_period",
+            "exposure-duration",
+            "exposure-exposure_distribution",
+            "exposure-description",
+            "exposure-created",
+            "exposure-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["id"],
+            ser["url"],
+            ser["name"],
+            ser["inhalation"],
+            ser["dermal"],
+            ser["oral"],
+            ser["in_utero"],
+            ser["iv"],
+            ser["unknown_route"],
+            ser["measured"],
+            ser["metric"],
+            ser["metric_units"]["id"],
+            ser["metric_units"]["name"],
+            ser["metric_description"],
+            ser["analytical_method"],
+            ser["sampling_period"],
+            ser["duration"],
+            ser["exposure_distribution"],
+            ser["description"],
+            ser["created"],
+            ser["last_updated"],
+        )
 
 
 class GroupNumericalDescriptions(models.Model):
@@ -669,6 +872,65 @@ class Result(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.outcome)
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "metric-id",
+            "metric-name",
+            "metric-abbreviation",
+            "result-id",
+            "result-metric_description",
+            "result-data_location",
+            "result-population_description",
+            "result-dose_response",
+            "result-dose_response_details",
+            "result-prevalence_incidence",
+            "result-statistical_power",
+            "result-statistical_power_details",
+            "result-trend_test",
+            "result-adjustment_factors",
+            "result-adjustment_factors_considered",
+            "result-estimate_type",
+            "result-variance_type",
+            "result-ci_units",
+            "result-comments",
+            "result-created",
+            "result-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+
+        def getFactorList(lst, isIncluded):
+            return u'|'.join([
+                d['description'] for d in
+                filter(lambda (d): d['included_in_final_model'] == isIncluded, lst)
+            ])
+
+        return (
+            ser['metric']['id'],
+            ser['metric']['metric'],
+            ser['metric']['abbreviation'],
+            ser['id'],
+            ser['metric_description'],
+            ser['data_location'],
+            ser['population_description'],
+            ser['dose_response'],
+            ser['dose_response_details'],
+            ser['prevalence_incidence'],
+            ser['statistical_power'],
+            ser['statistical_power_details'],
+            ser['trend_test'],
+            getFactorList(ser['factors'], True),
+            getFactorList(ser['factors'], False),
+            ser['estimate_type'],
+            ser['variance_type'],
+            ser['ci_units'],
+            ser['comments'],
+            ser['created'],
+            ser['last_updated'],
+        )
+
 
 class GroupResult(models.Model):
 
@@ -740,6 +1002,41 @@ class GroupResult(models.Model):
 
     class Meta:
         ordering = ('measurement', 'group__group_id')
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "result_group-id",
+            "result_group-n",
+            "result_group-estimate",
+            "result_group-variance",
+            "result_group-lower_ci",
+            "result_group-upper_ci",
+            "result_group-p_value_qualifier",
+            "result_group-p_value",
+            "result_group-is_main_finding",
+            "result_group-main_finding_support",
+            "result_group-created",
+            "result_group-last_updated",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["id"],
+            ser["n"],
+            ser["estimate"],
+            ser["variance"],
+            ser["lower_ci"],
+            ser["upper_ci"],
+            ser["p_value_qualifier"],
+            ser["p_value"],
+            ser["is_main_finding"],
+            ser["main_finding_support"],
+            ser["created"],
+            ser["last_updated"],
+        )
+
 
 
 reversion.register(Criteria)

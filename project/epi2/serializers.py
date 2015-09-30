@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
-from assessment.serializers import EffectTagsSerializer
+from assessment.serializers import EffectTagsSerializer, DoseUnitsSerializer
 from study.serializers import StudySerializer
+
+from utils.helper import SerializerHelper
 
 from . import models
 
@@ -67,6 +69,20 @@ class GroupSerializer(serializers.ModelSerializer):
         model = models.Group
 
 
+class ResultMetricSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.ResultMetric
+
+
+class SimpleExposureSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    metric_units = DoseUnitsSerializer()
+
+    class Meta:
+        model = models.Exposure2
+
+
 class ComparisonGroupsLinkSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -93,16 +109,10 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
 class ExposureSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+    metric_units = DoseUnitsSerializer()
 
     class Meta:
         model = models.Exposure2
-        depth = 1
-
-
-class ResultMetricSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.ResultMetric
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
@@ -123,6 +133,14 @@ class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
         fields = ('id', 'description', 'included_in_final_model')
 
 
+class SimpleComparisonGroupsSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    exposure = SimpleExposureSerializer()
+
+    class Meta:
+        model = models.ComparisonGroups
+
+
 class ResultSerializer(serializers.ModelSerializer):
     metric = ResultMetricSerializer()
     factors = ResultAdjustmentFactorSerializer(source='resfactors', many=True)
@@ -133,7 +151,7 @@ class ResultSerializer(serializers.ModelSerializer):
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     full_name = serializers.CharField(source='__unicode__', read_only=True)
-    groups = ComparisonGroupsLinkSerializer()
+    groups = SimpleComparisonGroupsSerializer()
 
     class Meta:
         model = models.Result
@@ -161,3 +179,6 @@ class ComparisonGroupsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ComparisonGroups
+
+
+SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

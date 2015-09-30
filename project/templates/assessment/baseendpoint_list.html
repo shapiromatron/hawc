@@ -22,12 +22,6 @@
             </a></li>
         {% endif %}
 
-        {% if assessed_outcomes > 0 %}
-        <li><a href="{% url 'epi:assessedoutcome_list' assessment.id %}">
-            {{assessed_outcomes}} epidemiological outcomes assessed
-            </a></li>
-        {% endif %}
-
         {% if outcomes > 0 %}
         <li><a href="{% url 'epi2:outcome_list' assessment.id %}">
             {{outcomes}} epidemiological outcomes assessed

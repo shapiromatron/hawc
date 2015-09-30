@@ -9,7 +9,7 @@ from assessment.models import Assessment
 from study.models import Study
 from study.views import StudyRead
 
-from . import forms, models
+from . import forms, exports, models
 
 
 # Study criteria
@@ -122,6 +122,20 @@ class OutcomeList(BaseList):
         if not perms['edit']:
             filters["study_population__study__published"] = True
         return self.model.objects.filter(**filters).order_by('name')
+
+
+class OutcomeExport(OutcomeList):
+    """
+    Full XLS data export for the epidemiology outcome.
+    """
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        exporter = exports.OutcomeFlatComplete(
+                self.object_list,
+                export_format="excel",
+                filename='{}-epi'.format(self.assessment),
+                sheet_name='epi')
+        return exporter.build_response()
 
 
 class OutcomeCreate(BaseCreate):

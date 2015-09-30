@@ -23,3 +23,9 @@ class EffectTagsSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         # obj is a model-manager in this case; convert to list to serialize
         return list(obj.values('slug', 'name'))
+
+
+class DoseUnitsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.DoseUnits
