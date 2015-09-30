@@ -5,6 +5,8 @@ from operator import xor
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
 
 import reversion
 
@@ -277,6 +279,10 @@ class Outcome(BaseEndpoint):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
         return reverse('epi2:outcome_detail', kwargs={'pk': self.pk})
@@ -1037,6 +1043,44 @@ class GroupResult(models.Model):
             ser["last_updated"],
         )
 
+
+@receiver(post_save, sender=StudyPopulation)
+@receiver(pre_delete, sender=StudyPopulation)
+@receiver(post_save, sender=ComparisonGroups)
+@receiver(pre_delete, sender=ComparisonGroups)
+@receiver(post_save, sender=Exposure2)
+@receiver(pre_delete, sender=Exposure2)
+@receiver(post_save, sender=Group)
+@receiver(pre_delete, sender=Group)
+@receiver(post_save, sender=Outcome)
+@receiver(pre_delete, sender=Outcome)
+@receiver(post_save, sender=Result)
+@receiver(pre_delete, sender=Result)
+@receiver(post_save, sender=GroupResult)
+@receiver(pre_delete, sender=GroupResult)
+def invalidate_outcome_cache(sender, instance, **kwargs):
+    ids = []
+    instance_type = type(instance)
+    filters = {}
+    if instance_type is StudyPopulation:
+        filters["study_population_id"] = instance.id
+    elif instance_type is ComparisonGroups:
+        filters["results__groups_id"] = instance.id
+    elif instance_type is Exposure2:
+        filters["results__groups__exposure_id"] = instance.id
+    elif instance_type is Group:
+        filters["results__groups__groups"] = instance.id
+    elif instance_type is Outcome:
+        ids = [instance.id]
+    elif instance_type is Result:
+        ids = [instance.outcome_id]
+    elif instance_type is GroupResult:
+        ids = [instance.measurement.outcome_id]
+
+    if len(filters) > 0:
+        ids = Outcome.objects.filter(**filters).values_list('id', flat=True)
+
+    Outcome.delete_caches(ids)
 
 
 reversion.register(Criteria)
