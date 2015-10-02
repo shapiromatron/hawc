@@ -12,7 +12,7 @@ class OutcomeComplete(FlatFileExporter):
         header.extend(models.StudyPopulation.flat_complete_header_row())
         header.extend(models.Outcome.flat_complete_header_row())
         header.extend(models.Exposure2.flat_complete_header_row())
-        header.extend(models.ComparisonGroups.flat_complete_header_row())
+        header.extend(models.ComparisonSet.flat_complete_header_row())
         header.extend(models.Result.flat_complete_header_row())
         header.extend(models.Group.flat_complete_header_row())
         header.extend(models.GroupResult.flat_complete_header_row())
@@ -28,8 +28,8 @@ class OutcomeComplete(FlatFileExporter):
             row.extend(models.Outcome.flat_complete_data_row(ser))
             for res in ser['results']:
                 row_copy = list(row)
-                row_copy.extend(models.Exposure2.flat_complete_data_row(res["groups"]["exposure"]))
-                row_copy.extend(models.ComparisonGroups.flat_complete_data_row(res["groups"]))
+                row_copy.extend(models.Exposure2.flat_complete_data_row(res["comparison_set"]["exposure"]))
+                row_copy.extend(models.ComparisonSet.flat_complete_data_row(res["comparison_set"]))
                 row_copy.extend(models.Result.flat_complete_data_row(res))
                 for rg in res['results']:
                     row_copy2 = list(row_copy)
@@ -112,11 +112,11 @@ class OutcomeDataPivot(FlatFileExporter):
             for res in ser['results']:
                 row_copy = list(row)
                 row_copy.extend([
-                    res["groups"]["exposure"]["name"],
-                    res["groups"]["exposure"]["id"],
-                    res["groups"]["exposure"]["metric"],
-                    res["groups"]["exposure"]["url"],
-                    res["groups"]["exposure"]["metric_units"]["name"],
+                    res["comparison_set"]["exposure"]["name"],
+                    res["comparison_set"]["exposure"]["id"],
+                    res["comparison_set"]["exposure"]["metric"],
+                    res["comparison_set"]["exposure"]["url"],
+                    res["comparison_set"]["exposure"]["metric_units"]["name"],
 
                     res['population_description'],
                     res['metric']['metric'],

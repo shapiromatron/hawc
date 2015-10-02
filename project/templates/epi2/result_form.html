@@ -20,7 +20,7 @@
     {% crispy form %}
   </div>
 
-  <div id="rFormset" style="display: {% if form.groups.value %}inline{% else %}none{% endif %}">
+  <div id="rFormset" style="display: {% if form.comparison_set.value %}inline{% else %}none{% endif %}">
     <legend id="formsetName"></legend>
     {% if crud == "Create" %}
       <p class="help-block">
@@ -38,8 +38,9 @@
     $(document).on('ready', function(){
 
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
+          isNew = "{{crud|lower}}" == "create",
           fs = new DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
-          group_id = {{ form.groups.value|default:"null" }},
+          comparison_set_id = {{ form.comparison_set.value|default:"null" }},
           updateFormset = function(d){
             var n;
 
@@ -80,14 +81,14 @@
       updateLabels();
 
       // bind formset change to group-change
-      $('#id_groups').change(function(){
+      $('#id_comparison_set').change(function(){
         var val = parseInt(this.value),
-            url = "/epi2/api/groups/{0}/".printf(val);
+            url = "/epi2/api/comparison-set/{0}/".printf(val);
         if (_.isNaN(val)){
           updateFormset();
-        } else if (val !== group_id){
+        } else if (val !== comparison_set_id || isNew){
           $.get(url, updateFormset);
-          group_id = val;
+          comparison_set_id = val;
         }
       }).trigger('change');
 
@@ -111,7 +112,7 @@
 
       // pass group-id back to server
       $("form").submit(function(){
-        $('#id_groups').prop('disabled', false);
+        $('#id_comparison_set').prop('disabled', false);
         return true;
       });
 

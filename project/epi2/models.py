@@ -88,9 +88,11 @@ class StudyPopulationCriteria(models.Model):
         ("E", "Exclusion"),
         ("C", "Confounding")
     )
-    criteria = models.ForeignKey('Criteria',
+    criteria = models.ForeignKey(
+        'Criteria',
         related_name='spcriteria')
-    study_population = models.ForeignKey('StudyPopulation',
+    study_population = models.ForeignKey(
+        'StudyPopulation',
         related_name='spcriteria')
     criteria_type = models.CharField(
         max_length=1,
@@ -120,11 +122,13 @@ class StudyPopulation(models.Model):
     age_profile = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Age profile of population (ex: adults, children, pregnant women, etc.)")
+        help_text="Age profile of population (ex: adults, children, "
+                  "pregnant women, etc.)")
     source = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Population source (ex: general population, environmental exposure, occupational cohort)")
+        help_text="Population source (ex: general population, environmental "
+                  "exposure, occupational cohort)")
     country = models.ForeignKey(
         Country)
     region = models.CharField(
@@ -237,7 +241,7 @@ class StudyPopulation(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
-    def can_create_groups(self):
+    def can_create_sets(self):
         return self.design not in ("CC", "NC")
 
 
@@ -290,8 +294,8 @@ class Outcome(BaseEndpoint):
     def get_crumbs(self):
         return get_crumbs(self, self.study_population)
 
-    def can_create_groups(self):
-            return not self.study_population.can_create_groups()
+    def can_create_sets(self):
+            return not self.study_population.can_create_sets()
 
     @staticmethod
     def flat_complete_header_row():
@@ -328,20 +332,20 @@ class Outcome(BaseEndpoint):
         )
 
 
-class ComparisonGroups(models.Model):
+class ComparisonSet(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation,
-        related_name='group_collections',
+        related_name='comparison_sets',
         null=True)
     outcome = models.ForeignKey(
         Outcome,
-        related_name='group_collections',
+        related_name='comparison_sets',
         null=True)
     name = models.CharField(
         max_length=256)
     exposure = models.ForeignKey(
         "Exposure2",
-        related_name="groups",
+        related_name="comparison_sets",
         help_text="Exposure-group associated with this group",
         blank=True,
         null=True)
@@ -358,10 +362,10 @@ class ComparisonGroups(models.Model):
     def save(self, *args, **kwargs):
         if not xor(self.outcome is None, self.study_population is None):
             raise ValueError("An outcome or study-population is required.")
-        super(ComparisonGroups, self).save(*args, **kwargs)
+        super(ComparisonSet, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('epi2:gc_detail', kwargs={'pk': self.pk})
+        return reverse('epi2:cs_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
         if self.outcome:
@@ -381,12 +385,12 @@ class ComparisonGroups(models.Model):
     @staticmethod
     def flat_complete_header_row():
         return (
-            "cg-id",
-            "cg-url",
-            "cg-name",
-            "cg-description",
-            "cg-created",
-            "cg-last_updated",
+            "cs-id",
+            "cs-url",
+            "cs-name",
+            "cs-description",
+            "cs-created",
+            "cs-last_updated",
         )
 
     @staticmethod
@@ -414,8 +418,8 @@ class Group(models.Model):
         (None, "N/A"),
     )
 
-    collection = models.ForeignKey(
-        ComparisonGroups,
+    comparison_set = models.ForeignKey(
+        ComparisonSet,
         related_name="groups")
     group_id = models.PositiveSmallIntegerField()
     name = models.CharField(
@@ -429,8 +433,8 @@ class Group(models.Model):
         max_length=64,
         verbose_name="Comparative Name",
         help_text='Group and value, displayed in plots, for example '
-                  '"1.5-2.5(Q2) vs ≤1.5(Q1)", or if only one group is available, '
-                  '"4.8±0.2 (mean±SEM)"',
+                  '"1.5-2.5(Q2) vs ≤1.5(Q1)", or if only one group is '
+                  'available, "4.8±0.2 (mean±SEM)"',
         blank=True)
     sex = models.CharField(
         max_length=1,
@@ -465,19 +469,19 @@ class Group(models.Model):
         auto_now=True)
 
     class Meta:
-        ordering = ('collection', 'group_id', )
+        ordering = ('comparison_set', 'group_id', )
 
     def get_absolute_url(self):
         return reverse('epi2:g_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
-        return self.collection.get_assessment()
+        return self.comparison_set.get_assessment()
 
     def __unicode__(self):
         return self.name
 
     def get_crumbs(self):
-        return get_crumbs(self, self.collection)
+        return get_crumbs(self, self.comparison_set)
 
     @staticmethod
     def flat_complete_header_row():
@@ -784,8 +788,8 @@ class Result(models.Model):
     outcome = models.ForeignKey(
         Outcome,
         related_name="results")
-    groups = models.ForeignKey(
-        ComparisonGroups,
+    comparison_set = models.ForeignKey(
+        ComparisonSet,
         related_name="results")
     metric = models.ForeignKey(
         ResultMetric,
@@ -867,7 +871,7 @@ class Result(models.Model):
             .filter(resfactors__included_in_final_model=False)
 
     def __unicode__(self):
-        return u"{0}: {1}".format(self.groups, self.metric)
+        return u"{0}: {1}".format(self.comparison_set, self.metric)
 
     def get_assessment(self):
         return self.outcome.get_assessment()
@@ -954,9 +958,9 @@ class GroupResult(models.Model):
         (1, "inconclusive"),
         (0, "not-supportive"))
 
-    measurement = models.ForeignKey(
+    result = models.ForeignKey(
         Result,
-        related_name="results")  # todo: rename measurement to result
+        related_name="results")
     group = models.ForeignKey(
         Group,
         related_name="results")
@@ -1007,7 +1011,7 @@ class GroupResult(models.Model):
         auto_now=True)
 
     class Meta:
-        ordering = ('measurement', 'group__group_id')
+        ordering = ('result', 'group__comparison_set_id')
 
     @property
     def p_value_text(self):
@@ -1057,8 +1061,8 @@ class GroupResult(models.Model):
 
 @receiver(post_save, sender=StudyPopulation)
 @receiver(pre_delete, sender=StudyPopulation)
-@receiver(post_save, sender=ComparisonGroups)
-@receiver(pre_delete, sender=ComparisonGroups)
+@receiver(post_save, sender=ComparisonSet)
+@receiver(pre_delete, sender=ComparisonSet)
 @receiver(post_save, sender=Exposure2)
 @receiver(pre_delete, sender=Exposure2)
 @receiver(post_save, sender=Group)
@@ -1075,18 +1079,18 @@ def invalidate_outcome_cache(sender, instance, **kwargs):
     filters = {}
     if instance_type is StudyPopulation:
         filters["study_population_id"] = instance.id
-    elif instance_type is ComparisonGroups:
-        filters["results__groups_id"] = instance.id
+    elif instance_type is ComparisonSet:
+        filters["results__comparison_set_id"] = instance.id
     elif instance_type is Exposure2:
-        filters["results__groups__exposure_id"] = instance.id
+        filters["results__comparison_set__exposure_id"] = instance.id
     elif instance_type is Group:
-        filters["results__groups__groups"] = instance.id
+        filters["results__comparison_set__groups"] = instance.id
     elif instance_type is Outcome:
         ids = [instance.id]
     elif instance_type is Result:
         ids = [instance.outcome_id]
     elif instance_type is GroupResult:
-        ids = [instance.measurement.outcome_id]
+        ids = [instance.result.outcome_id]
 
     if len(filters) > 0:
         ids = Outcome.objects.filter(**filters).values_list('id', flat=True)
@@ -1101,7 +1105,7 @@ reversion.register(StudyPopulationCriteria)
 reversion.register(AdjustmentFactor)
 reversion.register(ResultAdjustmentFactor)
 reversion.register(StudyPopulation, follow=('country', 'spcriteria'))
-reversion.register(ComparisonGroups)
+reversion.register(ComparisonSet)
 reversion.register(Exposure2)
 reversion.register(Outcome, follow=('effects',))
 reversion.register(Group, follow=('ethnicities',))

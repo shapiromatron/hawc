@@ -1,5 +1,3 @@
-from django.core.urlresolvers import reverse
-
 from utils.views import (BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseCreateWithFormset, BaseUpdateWithFormset,
@@ -54,8 +52,7 @@ class StudyPopulationDelete(BaseDelete):
     model = models.StudyPopulation
 
     def get_success_url(self):
-        self.parent = self.object.study
-        return reverse("study:detail", kwargs={"pk": self.parent.pk})
+        return self.object.study.get_absolute_url()
 
 
 # Factors
@@ -189,7 +186,7 @@ class ResultCreate(BaseCreateWithFormset):
 
     def post_object_save(self, form, formset):
         for form in formset.forms:
-            form.instance.measurement = self.object
+            form.instance.result = self.object
 
     def get_formset_kwargs(self):
         return {
@@ -199,7 +196,7 @@ class ResultCreate(BaseCreateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.BlankGroupResultFormset(
-            queryset=models.Group.objects.none(),
+            queryset=models.GroupResult.objects.none(),
             **self.get_formset_kwargs())
 
 
@@ -237,8 +234,8 @@ class ResultUpdate(BaseUpdateWithFormset):
     def post_object_save(self, form, formset):
         # delete other results not associated with the selected collection
         models.GroupResult.objects\
-            .filter(measurement=self.object)\
-            .exclude(group__collection=self.object.groups)\
+            .filter(result=self.object)\
+            .exclude(group__comparison_set=self.object.comparison_set)\
             .delete()
 
 
@@ -250,24 +247,23 @@ class ResultDelete(BaseDelete):
         return self.object.outcome.get_absolute_url()
 
 
-# Group collection + group
-class ComparisonGroupsCreate(BaseCreateWithFormset):
+# Comparison set + group
+class ComparisonSetCreate(BaseCreateWithFormset):
     success_message = 'Groups created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
-    model = models.ComparisonGroups
-    form_class = forms.ComparisonGroups
+    model = models.ComparisonSet
+    form_class = forms.ComparisonSet
     formset_factory = forms.GroupFormset
 
     def post_object_save(self, form, formset):
         group_id = 0
         for form in formset.forms:
-            form.instance.collection = self.object
+            form.instance.comparison_set = self.object
             if form.is_valid() and form not in formset.deleted_forms:
                 form.instance.group_id = group_id
                 if form.has_changed() is False:
-                    # ensure new group_id saved to db
-                    form.instance.save()
+                    form.instance.save()  # ensure new group_id saved to db
                 group_id += 1
 
     def build_initial_formset_factory(self):
@@ -275,37 +271,37 @@ class ComparisonGroupsCreate(BaseCreateWithFormset):
             queryset=models.Group.objects.none())
 
 
-class ComparisonGroupsOutcomeCreate(ComparisonGroupsCreate):
+class ComparisonSetOutcomeCreate(ComparisonSetCreate):
     parent_model = models.Outcome
     parent_template_name = 'outcome'
 
 
-class ComparisonGroupsStudyPopCopySelector(StudyPopulationDetail):
-    template_name = 'epi2/comparisongroups_sp_copy_selector.html'
+class ComparisonSetStudyPopCopySelector(StudyPopulationDetail):
+    template_name = 'epi2/comparisonset_sp_copy_selector.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ComparisonGroupsStudyPopCopySelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ComparisonGroupsByStudyPopulationSelectorForm(parent_id=self.object.id)
+        context = super(ComparisonSetStudyPopCopySelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ComparisonSetByStudyPopulationSelectorForm(parent_id=self.object.id)
         return context
 
 
-class ComparisonGroupsOutcomeCopySelector(OutcomeDetail):
-    template_name = 'epi2/comparisongroups_outcome_copy_selector.html'
+class ComparisonSetOutcomeCopySelector(OutcomeDetail):
+    template_name = 'epi2/comparisonset_outcome_copy_selector.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ComparisonGroupsOutcomeCopySelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ComparisonGroupsByOutcomeSelectorForm(parent_id=self.object.id)
+        context = super(ComparisonSetOutcomeCopySelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ComparisonSetByOutcomeSelectorForm(parent_id=self.object.id)
         return context
 
 
-class ComparisonGroupsDetail(BaseDetail):
-    model = models.ComparisonGroups
+class ComparisonSetDetail(BaseDetail):
+    model = models.ComparisonSet
 
 
-class ComparisonGroupsUpdate(BaseUpdateWithFormset):
-    success_message = "Groups updated."
-    model = models.ComparisonGroups
-    form_class = forms.ComparisonGroups
+class ComparisonSetUpdate(BaseUpdateWithFormset):
+    success_message = "Comparison set updated."
+    model = models.ComparisonSet
+    form_class = forms.ComparisonSet
     formset_factory = forms.GroupFormset
 
     def build_initial_formset_factory(self):
@@ -315,22 +311,23 @@ class ComparisonGroupsUpdate(BaseUpdateWithFormset):
     def post_object_save(self, form, formset):
         group_id = 0
         for form in formset.forms:
-            form.instance.collection = self.object
+            form.instance.comparison_set = self.object
             if form.is_valid() and form not in formset.deleted_forms:
                 form.instance.group_id = group_id
                 if form.has_changed() is False:
-                    # ensure new group_id saved to db
-                    form.instance.save()
+                    form.instance.save()  # ensure new group_id saved to db
                 group_id += 1
 
 
-class ComparisonGroupsDelete(BaseDelete):
-    success_message = "Group collection deleted."
-    model = models.ComparisonGroups
+class ComparisonSetDelete(BaseDelete):
+    success_message = "Comparison set deleted."
+    model = models.ComparisonSet
 
     def get_success_url(self):
-        self.parent = self.object.study_population
-        return reverse("epi2:sp_detail", kwargs={"pk": self.parent.pk})
+        if self.object.study_population:
+            return self.object.study_population.get_absolute_url()
+        else:
+            return self.object.outcome.get_absolute_url()
 
 
 class GroupDetail(BaseDetail):

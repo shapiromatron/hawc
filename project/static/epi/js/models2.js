@@ -55,12 +55,12 @@ StudyPopulation.prototype = {
             $el.append("<p class='help-block'>No outcomes are available.</p>");
         }
 
-        if (this.data.can_create_groups){
-            $el.append("<h2>Comparison groups</h2>");
-            if (this.data.group_collections.length>0){
-                $el.append(HAWCUtils.buildUL(this.data.group_collections, liFunc));
+        if (this.data.can_create_sets){
+            $el.append("<h2>Comparison sets</h2>");
+            if (this.data.comparison_sets.length>0){
+                $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
             } else {
-                $el.append("<p class='help-block'>No comparison groups are available.</p>");
+                $el.append("<p class='help-block'>No comparison sets are available.</p>");
             }
         }
 
@@ -179,23 +179,23 @@ Exposure.prototype = {
 };
 
 
-var ComparisonGroups = function(data){
+var ComparisonSet = function(data){
     this.data = data;
     this.groups = _.map(this.data.groups, function(d){ return new Group(d) });
     if (this.data.exposure)
         this.exposure = new Exposure(this.data.exposure);
 };
-_.extend(ComparisonGroups, {
+_.extend(ComparisonSet, {
     get_object: function(id, cb){
-        $.get('/epi2/api/groups/{0}/'.printf(id), function(d){
-            cb(new ComparisonGroups(d));
+        $.get('/epi2/api/comparison-set/{0}/'.printf(id), function(d){
+            cb(new ComparisonSet(d));
         });
     },
     displayFullPager: function($el, id){
-      ComparisonGroups.get_object(id, function(d){d.displayFullPager($el);});
+      ComparisonSet.get_object(id, function(d){d.displayFullPager($el);});
     }
 });
-ComparisonGroups.prototype = {
+ComparisonSet.prototype = {
     displayFullPager: function($el){
         $el.hide()
             .append(this.build_details_div())
@@ -455,7 +455,7 @@ ResultGroup.prototype = {
 var Outcome = function(data){
     this.data = data;
     this.results = _.map(data.results, function(d){return new Result(d);});
-    this.groups =  _.map(data.group_collections, function(d){return new ComparisonGroups(d);});
+    this.comparison_sets = _.map(data.comparison_sets, function(d){return new ComparisonSet(d);});
 };
 _.extend(Outcome, {
     get_object: function(id, cb){
@@ -508,29 +508,32 @@ Outcome.prototype = {
             .append(tabs)
             .append(content);
     },
-    get_unused_groups: function(){
-        // get groups associated with no results
+    get_unused_comparison_sets: function(){
+        // get comparison sets associated with no results
         var usedGroups = _.pluck(this.results, 'group');
-        return _.filter(this.groups, function(d2){
+        return _.filter(this.comparison_sets, function(d2){
             return (!_.any(_.map(usedGroups, function(d1){ return d1.isEqual(d2)})));
         });
     },
-    build_groups_bullets: function(){
-        var grps = this.get_unused_groups(),
-            ul = HAWCUtils.buildUL(grps, function(d){
-                return '<li>{0}</li>'.printf(d.build_link());
-            });
-
-        if (grps.length === 0) return;
-
-        return $('<div>')
-            .append("<h2>Comparison groups</h2>")
-            .append(ul);
+    build_comparison_set_bullets: function(){
+        if (this.data.can_create_sets){
+            var $el = $('<div>'),
+                grps = this.get_unused_comparison_sets();
+            $el.append("<h2>Unused comparison sets</h2>");
+            if (grps.length > 0){
+                $el.append(HAWCUtils.buildUL(grps, function(d){
+                    return '<li>{0}</li>'.printf(d.build_link());
+                }));
+            } else {
+                $el.append("<p class='help-block'>No comparison sets are available.</p>");
+            }
+        }
+        return $el;
     },
     displayFullPager: function($el){
         $el.hide()
             .append(this.build_details_table())
-            .append(this.build_groups_bullets())
+            .append(this.build_comparison_set_bullets())
             .append(this.build_results_tabs())
             .fadeIn(this.triggerFirstTabShown.bind(this, $el));
     },
@@ -560,7 +563,7 @@ Outcome.prototype = {
 
 var Result = function(data){
     this.data = data;
-    this.group = new ComparisonGroups(data.groups);
+    this.group = new ComparisonSet(data.comparison_set);
     this.resultGroups = _.map(data.results, function(d){return new ResultGroup(d);});
     this.factors = _.where(this.data.factors, {"included_in_final_model": true});
     this.factors_considered = _.where(this.data.factors, {"included_in_final_model": false});

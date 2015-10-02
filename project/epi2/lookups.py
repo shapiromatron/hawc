@@ -33,13 +33,13 @@ class AdjustmentFactorLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
 
-class ComparisonGroupsByStudyPopulationLookup(RelatedLookup):
-    model = models.ComparisonGroups
+class ComparisonSetByStudyPopulationLookup(RelatedLookup):
+    model = models.ComparisonSet
     search_fields = ('name__icontains', )
     related_filter = 'study_population_id'
 
 
-class ComparisonGroupsByOutcomeLookup(ComparisonGroupsByStudyPopulationLookup):
+class ComparisonSetByOutcomeLookup(ComparisonSetByStudyPopulationLookup):
     related_filter = 'outcome_id'
 
 
@@ -67,7 +67,10 @@ class SystemLookup(DistinctStringLookup):
 
 class ResultByOutcomeLookup(RelatedLookup):
     model = models.Result
-    search_fields = ('metric__metric__icontains', 'groups__name__icontains')
+    search_fields = (
+        'metric__metric__icontains',
+        'comparison_set__name__icontains'
+    )
     related_filter = 'outcome_id'
 
 
@@ -77,8 +80,8 @@ registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
 registry.register(ExposureByStudyPopulationLookup)
-registry.register(ComparisonGroupsByStudyPopulationLookup)
-registry.register(ComparisonGroupsByOutcomeLookup)
+registry.register(ComparisonSetByStudyPopulationLookup)
+registry.register(ComparisonSetByOutcomeLookup)
 registry.register(OutcomeByStudyPopulationLookup)
 registry.register(EffectLookup)
 registry.register(SystemLookup)

@@ -5,7 +5,7 @@
 {% load selectable_tags %}
 
 {% block title %}
-  {{block.super}} | Copy comparison groups
+  {{block.super}} | Copy comparison set
 {% endblock title %}
 
 {% block extrastyle %}
@@ -25,7 +25,7 @@
 
       new HAWCUtils.InitialForm({
         "form": $('form'),
-        "base_url": "{% url 'epi2:gc_create' object.pk %}"
+        "base_url": "{% url 'epi2:cs_create' object.pk %}"
       });
 
     });

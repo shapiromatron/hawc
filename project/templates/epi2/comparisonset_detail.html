@@ -18,8 +18,8 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">Comparison group editing</a></li>
-                <li><a href="{% url 'epi2:gc_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi2:gc_delete' pk=object.pk %}">Delete</a></li>
+                <li><a href="{% url 'epi2:cs_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi2:cs_delete' object.pk %}">Delete</a></li>
             </ul>
           </div>
         {% endif %}
@@ -31,7 +31,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      ComparisonGroups.displayFullPager($("#objContainer"), {{object.id}});
+      ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

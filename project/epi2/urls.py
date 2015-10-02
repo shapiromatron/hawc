@@ -10,7 +10,7 @@ router.register(r'study-population', api.StudyPopulation, base_name="study-popul
 router.register(r'exposure', api.Exposure, base_name="exposure")
 router.register(r'outcome', api.Outcome, base_name="outcome")
 router.register(r'result', api.Result, base_name="result")
-router.register(r'groups', api.ComparisonGroups, base_name="groups")
+router.register(r'comparison-set', api.ComparisonSet, base_name="set")
 router.register(r'group', api.Group, base_name="group")
 
 
@@ -102,29 +102,30 @@ urlpatterns = [
         views.ResultDelete.as_view(),
         name='result_delete'),
 
-    # Group collection
+    # Comparison set
     url(r'^study-population/(?P<pk>\d+)/groups/create/$',
-        views.ComparisonGroupsCreate.as_view(),
-        name='gc_create'),
+        views.ComparisonSetCreate.as_view(),
+        name='cs_create'),
     url(r'^study-population/(?P<pk>\d+)/result/copy-as-new-selector/$',
-        views.ComparisonGroupsStudyPopCopySelector.as_view(),
-        name='gc_copy_selector'),
+        views.ComparisonSetStudyPopCopySelector.as_view(),
+        name='cs_copy_selector'),
     url(r'^outcome/(?P<pk>\d+)/groups/create/$',
-        views.ComparisonGroupsOutcomeCreate.as_view(),
-        name='gc_outcome_create'),
+        views.ComparisonSetOutcomeCreate.as_view(),
+        name='cs_outcome_create'),
     url(r'^outcome/(?P<pk>\d+)/groups/copy-as-new-selector/$',
-        views.ComparisonGroupsOutcomeCopySelector.as_view(),
-        name='gc_outcome_copy_selector'),
+        views.ComparisonSetOutcomeCopySelector.as_view(),
+        name='cs_outcome_copy_selector'),
     url(r'^groups/(?P<pk>\d+)/$',
-        views.ComparisonGroupsDetail.as_view(),
-        name='gc_detail'),
+        views.ComparisonSetDetail.as_view(),
+        name='cs_detail'),
     url(r'^groups/(?P<pk>\d+)/update/$',
-        views.ComparisonGroupsUpdate.as_view(),
-        name='gc_update'),
+        views.ComparisonSetUpdate.as_view(),
+        name='cs_update'),
     url(r'^groups/(?P<pk>\d+)/delete/$',
-        views.ComparisonGroupsDelete.as_view(),
-        name='gc_delete'),
+        views.ComparisonSetDelete.as_view(),
+        name='cs_delete'),
 
+    # Groups (in comparison set)
     url(r'^group/(?P<pk>\d+)/$',
         views.GroupDetail.as_view(),
         name='g_detail'),

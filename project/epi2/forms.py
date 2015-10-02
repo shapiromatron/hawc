@@ -408,29 +408,29 @@ class OutcomeSelectorForm(CopyAsNewSelectorForm):
     lookup_class = lookups.OutcomeByStudyPopulationLookup
 
 
-class ComparisonGroups(forms.ModelForm):
+class ComparisonSet(forms.ModelForm):
 
-    HELP_TEXT_CREATE = """Create a collection of groups. Each group is a
-        collection of people, and all groups in this collection may be
-        comparable to one-another. For example, you may a set group which
-        contains cases and controls (with a group-collection name of
-        case-control), or you may have a group of individuals with which
-        blood serum levels were collected, and each group is a different
-        quartile of exposure.
+    HELP_TEXT_CREATE = """Create a new comparison set. Each group is a
+        collection of people, and all groups in this collection are
+        comparable to one-another. For example, you may a new comparison set
+        which contains two groups: cases and controls. Alternatively, for
+        cohort-based studies, you may create a new comparison set with four
+        different groups, one for each quartile of exposure based on exposure
+        measurements.
     """
-    HELP_TEXT_UPDATE = """Update an existing group and group collection."""
+    HELP_TEXT_UPDATE = """Update an existing comparison set."""
 
     class Meta:
-        model = models.ComparisonGroups
+        model = models.ComparisonSet
         exclude = ('study_population', 'outcome')
 
     def __init__(self, *args, **kwargs):
         self.parent = kwargs.pop('parent', None)
-        super(ComparisonGroups, self).__init__(*args, **kwargs)
+        super(ComparisonSet, self).__init__(*args, **kwargs)
         if self.parent:
-            if type(self.parent).__name__ == "StudyPopulation":
+            if type(self.parent) == models.StudyPopulation:
                 self.instance.study_population = self.parent
-            elif type(self.parent).__name__ == "Outcome":
+            elif type(self.parent) == models.Outcome:
                 self.instance.outcome = self.parent
 
         filters = {}
@@ -462,7 +462,7 @@ class ComparisonGroups(forms.ModelForm):
             }
         else:
             inputs = {
-                "legend_text": u"Create new collection of groups",
+                "legend_text": u"Create new comparison set",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.parent.get_absolute_url()
             }
@@ -472,21 +472,21 @@ class ComparisonGroups(forms.ModelForm):
         return helper
 
 
-class ComparisonGroupsByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
-    label = 'Comparison groups'
-    lookup_class = lookups.ComparisonGroupsByStudyPopulationLookup
+class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
+    label = 'Comparison set'
+    lookup_class = lookups.ComparisonSetByStudyPopulationLookup
 
 
-class ComparisonGroupsByOutcomeSelectorForm(CopyAsNewSelectorForm):
-    label = 'Comparison groups'
-    lookup_class = lookups.ComparisonGroupsByOutcomeLookup
+class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorForm):
+    label = 'Comparison set'
+    lookup_class = lookups.ComparisonSetByOutcomeLookup
 
 
 class GroupForm(forms.ModelForm):
 
     class Meta:
         model = models.Group
-        exclude = ('collection', 'group_id')
+        exclude = ('comparison_set', 'group_id')
 
 
 class SingleGroupForm(GroupForm):
@@ -516,7 +516,6 @@ class SingleGroupForm(GroupForm):
         helper.add_fluid_row('name', 3, "span4")
         helper.add_fluid_row('sex', 2, "span6")
         helper.add_fluid_row('eligible_n', 3, "span4")
-        helper.add_fluid_row('fraction_male', 3, "span4")
         return helper
 
 
@@ -568,8 +567,8 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
 
 class ResultForm(forms.ModelForm):
 
-    HELP_TEXT_CREATE = """Add."""
-    HELP_TEXT_UPDATE = """Add."""
+    HELP_TEXT_CREATE = """Describe results found for measured outcome."""
+    HELP_TEXT_UPDATE = """Update results found for measured outcome."""
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
 
     factors_applied = selectable.AutoCompleteSelectMultipleField(
@@ -597,7 +596,7 @@ class ResultForm(forms.ModelForm):
         else:
             outcome = self.instance.outcome
 
-        self.fields["groups"].queryset = models.ComparisonGroups.objects\
+        self.fields["comparison_set"].queryset = models.ComparisonSet.objects\
             .filter(
                 Q(study_population=outcome.study_population) |
                 Q(outcome=outcome)
@@ -698,14 +697,14 @@ class ResultUpdateForm(ResultForm):
 
     def __init__(self, *args, **kwargs):
         super(ResultUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['groups'].widget.attrs['disabled'] = True
+        self.fields['comparison_set'].widget.attrs['disabled'] = True
 
 
 class GroupResultForm(forms.ModelForm):
 
     class Meta:
         model = models.GroupResult
-        exclude = ('measurement', )
+        exclude = ('result', )
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop('study_population', None)
@@ -714,11 +713,11 @@ class GroupResultForm(forms.ModelForm):
         super(GroupResultForm, self).__init__(*args, **kwargs)
         self.fields["group"].queryset = models.Group.objects\
             .filter(
-                Q(collection__study_population=study_population) |
-                Q(collection__outcome=outcome)
+                Q(comparison_set__study_population=study_population) |
+                Q(comparison_set__outcome=outcome)
             )
         if result:
-            self.instance.measurement = result
+            self.instance.result = result
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -770,15 +769,15 @@ class BaseGroupResultFormset(BaseModelFormSet):
         # groups exist
         group_ids = [form.cleaned_data['group'].id for form in self.forms]
         if self.result:
-            collection_id = self.result.groups_id
+            comparison_set_id = self.result.comparison_set_id
         else:
-            collection_id = int(self.data['groups'])
+            comparison_set_id = int(self.data['comparison_set'])
         selectedGroups = models.Group.objects\
-            .filter(id__in=group_ids, collection_id=collection_id)
+            .filter(id__in=group_ids, comparison_set_id=comparison_set_id)
         allGroups = models.Group.objects\
-            .filter(collection_id=collection_id)
+            .filter(comparison_set_id=comparison_set_id)
         if selectedGroups.count() != allGroups.count():
-            raise forms.ValidationError("Missing a result-group for this result-collection")
+            raise forms.ValidationError("Missing group(s) in this comparison set")
 
 
 GroupResultFormset = modelformset_factory(

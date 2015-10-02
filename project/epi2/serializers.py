@@ -83,11 +83,11 @@ class SimpleExposureSerializer(serializers.ModelSerializer):
         model = models.Exposure2
 
 
-class ComparisonGroupsLinkSerializer(serializers.ModelSerializer):
+class ComparisonSetLinkSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        model = models.ComparisonGroups
+        model = models.ComparisonSet
         fields = ('id', 'name', 'url')
 
 
@@ -96,8 +96,8 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
     criteria = StudyPopulationCriteriaSerializer(source='spcriteria', many=True)
     outcomes = OutcomeLinkSerializer(many=True)
     exposures = ExposureLinkSerializer(many=True)
-    can_create_groups = serializers.BooleanField(read_only=True)
-    group_collections = ComparisonGroupsLinkSerializer(many=True)
+    can_create_sets = serializers.BooleanField(read_only=True)
+    comparison_sets = ComparisonSetLinkSerializer(many=True)
     country = serializers.CharField(source='country.name', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     design = serializers.CharField(source='get_design_display', read_only=True)
@@ -134,12 +134,12 @@ class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
         fields = ('id', 'description', 'included_in_final_model')
 
 
-class SimpleComparisonGroupsSerializer(serializers.ModelSerializer):
+class SimpleComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     exposure = SimpleExposureSerializer()
 
     class Meta:
-        model = models.ComparisonGroups
+        model = models.ComparisonSet
 
 
 class ResultSerializer(serializers.ModelSerializer):
@@ -152,7 +152,7 @@ class ResultSerializer(serializers.ModelSerializer):
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     full_name = serializers.CharField(source='__unicode__', read_only=True)
-    groups = SimpleComparisonGroupsSerializer()
+    comparison_set = SimpleComparisonSetSerializer()
 
     class Meta:
         model = models.Result
@@ -161,17 +161,18 @@ class ResultSerializer(serializers.ModelSerializer):
 
 class OutcomeSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
+    can_create_sets = serializers.BooleanField(read_only=True)
     effects = EffectTagsSerializer()
     diagnostic = serializers.CharField(source='get_diagnostic_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = ResultSerializer(many=True)
-    group_collections = ComparisonGroupsLinkSerializer(many=True)
+    comparison_sets = ComparisonSetLinkSerializer(many=True)
 
     class Meta:
         model = models.Outcome
 
 
-class ComparisonGroupsSerializer(serializers.ModelSerializer):
+class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     exposure = ExposureSerializer()
     outcome = OutcomeSerializer()
@@ -179,7 +180,7 @@ class ComparisonGroupsSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True)
 
     class Meta:
-        model = models.ComparisonGroups
+        model = models.ComparisonSet
 
 
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

@@ -23,10 +23,10 @@
                 <li class="disabled"><a tabindex="-1" href="#">Results</a></li>
                 <li><a href="{% url 'epi2:result_create' object.pk %}">Create</a></li>
                 <li><a href="{% url 'epi2:result_copy_selector' object.pk %}">Copy as new</a></li>
-                {% if object.can_create_groups %}
-                  <li class="disabled"><a tabindex="-1" href="#">Comparison groups</a></li>
-                  <li><a href="{% url 'epi2:gc_outcome_create' object.pk %}">Create</a></li>
-                  <li><a href="{% url 'epi2:gc_outcome_copy_selector' object.pk %}">Copy from existing</a></li>
+                {% if object.can_create_sets %}
+                  <li class="disabled"><a tabindex="-1" href="#">Comparison sets</a></li>
+                  <li><a href="{% url 'epi2:cs_outcome_create' object.pk %}">Create</a></li>
+                  <li><a href="{% url 'epi2:cs_outcome_copy_selector' object.pk %}">Copy from existing</a></li>
                 {% endif %}
             </ul>
           </div>
