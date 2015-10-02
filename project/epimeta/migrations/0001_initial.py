@@ -8,8 +8,8 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi2', '0002_auto_20150923_0951'),
         ('study', '0001_initial'),
+        ('epi2', '0001_initial'),
     ]
 
     operations = [
@@ -48,10 +48,10 @@ class Migration(migrations.Migration):
                 ('statistical_notes', models.TextField(blank=True)),
                 ('n', models.PositiveIntegerField(help_text=b'Number of individuals included from all analyses')),
                 ('estimate', models.FloatField()),
+                ('heterogeneity', models.CharField(max_length=256, blank=True)),
                 ('lower_ci', models.FloatField(help_text=b'Numerical value for lower-confidence interval', verbose_name=b'Lower CI')),
                 ('upper_ci', models.FloatField(help_text=b'Numerical value for upper-confidence interval', verbose_name=b'Upper CI')),
                 ('ci_units', models.FloatField(default=0.95, help_text=b'A 95% CI is written as 0.95.', null=True, verbose_name=b'Confidence Interval (CI)', blank=True)),
-                ('heterogeneity', models.CharField(max_length=256, blank=True)),
                 ('notes', models.TextField(blank=True)),
                 ('adjustment_factors', models.ManyToManyField(help_text=b'All factors which were included in final model', related_name='meta_adjustments', to='epi2.AdjustmentFactor', blank=True)),
                 ('metric', models.ForeignKey(to='epi2.ResultMetric')),
@@ -74,7 +74,6 @@ class Migration(migrations.Migration):
                 ('ci_units', models.FloatField(default=0.95, help_text=b'A 95% CI is written as 0.95.', null=True, verbose_name=b'Confidence Interval (CI)', blank=True)),
                 ('notes', models.TextField(blank=True)),
                 ('meta_result', models.ForeignKey(related_name='single_results2', to='epimeta.MetaResult')),
-                ('result_group', models.ForeignKey(related_name='single_results2', blank=True, to='epi2.GroupResult', null=True)),
                 ('study', models.ForeignKey(related_name='single_results2', blank=True, to='study.Study', null=True)),
             ],
         ),
