@@ -2918,6 +2918,11 @@ _.extend(DataPivotExtension, {
               _dpe_datatype:  "study_population",
               _dpe_cls:       StudyPopulation
           },
+          "comparison_set": {
+              _dpe_key:       "Comparison Set ID",
+              _dpe_datatype:  "comparison_set",
+              _dpe_cls:       ComparisonSet
+          },
           "exposure": {
               _dpe_key:       "Exposure Key",
               _dpe_datatype:  "exposure",
@@ -2927,6 +2932,11 @@ _.extend(DataPivotExtension, {
               _dpe_key:       "Assessed Outcome Key",
               _dpe_datatype:  "assessed_outcome",
               _dpe_cls:       Outcome
+          },
+          "result": {
+              _dpe_key:       "Result ID",
+              _dpe_datatype:  "result",
+              _dpe_cls:       Result
           },
           "meta_protocol": {
               _dpe_key:       "Protocol Primary Key",
@@ -2972,6 +2982,7 @@ _.extend(DataPivotExtension, {
             "Study HAWC ID":        ['<option value="study">Show Study</option>'],
             "Study Population Key": ['<option value="study_population">Show Study Population</option>'],
             "Exposure Key":         ['<option value="exposure">Show Exposure</option>'],
+            "Comparison Set ID":    ['<option value="comparison_set">Show comparison set</option>'],
             "Protocol Primary Key": ['<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>'],
             "Result Primary Key":   ['<option value="meta_result">Show Epidemiology Meta-Result</option>'],
             "Experiment ID":        ['<option value="experiment">Show Experiment</option>'],
@@ -2981,6 +2992,7 @@ _.extend(DataPivotExtension, {
               '<option value="endpoint_complete">Show Endpoint Complete Summary</option>'
             ],
             "Assessed Outcome Key": ['<option value="assessed_outcome">Show Assessed Outcome</option>'],
+            "Result ID":            ['<option value="result">Show Result</option>'],
             "Chemical HAWC ID":     ['<option value="iv_chemical">Show In Vitro Chemical</option>'],
             "IVExperiment HAWC ID": ['<option value="iv_experiment">Show In Vitro Experiment</option>'],
             "IVEndpoint HAWC ID":   ['<option value="iv_endpoint">Show In Vitro Endpoint</option>'],

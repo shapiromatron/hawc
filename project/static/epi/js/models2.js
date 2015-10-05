@@ -81,14 +81,14 @@ StudyPopulation.prototype = {
     displayAsModal: function(){
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
-            $details = $('<div class="span12">').append(this.build_details_table()),
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
+                .append($('<div class="row-fluid">').append(this.build_details_table()))
+                .append($('<div class="row-fluid">').append(this.build_links_div()));
 
         modal.addHeader(title)
             .addBody($content)
             .addFooter("")
-            .show({maxWidth: 800});
+            .show({maxWidth: 1000});
     }
 };
 
@@ -122,7 +122,7 @@ Exposure.prototype = {
             },
             {
                 url: this.data.url,
-                name: this.data.exposure_form_definition
+                name: this.data.name
             }
         ];
         return HAWCUtils.build_breadcrumbs(urls);
@@ -192,8 +192,11 @@ _.extend(ComparisonSet, {
         });
     },
     displayFullPager: function($el, id){
-      ComparisonSet.get_object(id, function(d){d.displayFullPager($el);});
-    }
+        ComparisonSet.get_object(id, function(d){d.displayFullPager($el);});
+    },
+    displayAsModal: function(id){
+        ComparisonSet.get_object(id, function(d){d.displayAsModal();});
+    },
 });
 ComparisonSet.prototype = {
     displayFullPager: function($el){
@@ -203,6 +206,54 @@ ComparisonSet.prototype = {
             .append("<h2>Groups</h2>")
             .append(this.build_groups_table())
             .fadeIn();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = $('<h4>').html(this.build_breadcrumbs()),
+            $content = $('<div class="container-fluid">')
+                .append(this.build_details_div())
+                .append("<h2>Groups</h2>")
+                .append(this.build_groups_table());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 1000});
+    },
+    build_breadcrumbs: function(){
+        var urls;
+        if (this.data.outcome){
+            urls = [
+                {
+                    url: this.data.outcome.study_population.study.url,
+                    name: this.data.outcome.study_population.study.short_citation
+                },
+                {
+                    url: this.data.outcome.study_population.url,
+                    name: this.data.outcome.study_population.name
+                },
+                {
+                    url: this.data.outcome.url,
+                    name: this.data.outcome.name
+                },
+            ];
+        } else {
+            urls = [
+                {
+                    url: this.data.study_population.study.url,
+                    name: this.data.study_population.study.short_citation
+                },
+                {
+                    url: this.data.study_population.url,
+                    name: this.data.study_population.name
+                }
+            ];
+        }
+        urls.push({
+            url: this.data.url,
+            name: this.data.name
+        });
+        return HAWCUtils.build_breadcrumbs(urls);
     },
     build_details_div: function(){
         return (this.data.description) ?
@@ -500,7 +551,8 @@ Outcome.prototype = {
             content.append(d.build_content_tab(isActive));
         });
 
-        container.on('shown', 'a[data-toggle="tab"]', function(){
+        container.on('shown', 'a[data-toggle="tab"]', function(e){
+            e.stopPropagation();
             $(this.getAttribute('href')).trigger("plotDivShown");
         });
 
@@ -530,30 +582,43 @@ Outcome.prototype = {
         }
         return $el;
     },
+    build_breadcrumbs: function(){
+        var urls = [
+            {
+                url: this.data.study_population.study.url,
+                name: this.data.study_population.study.short_citation
+            },
+            {
+                url: this.data.study_population.url,
+                name: this.data.study_population.name
+            },
+            {
+                url: this.data.url,
+                name: this.data.name
+            },
+        ];
+        return HAWCUtils.build_breadcrumbs(urls);
+    },
     displayFullPager: function($el){
         $el.hide()
             .append(this.build_details_table())
-            .append(this.build_comparison_set_bullets())
             .append(this.build_results_tabs())
+            .append(this.build_comparison_set_bullets())
             .fadeIn(this.triggerFirstTabShown.bind(this, $el));
     },
     displayAsModal: function(){
         var opts = {maxWidth: 1000},
             modal = new HAWCModal(),
             title = $('<h4>').html(this.build_breadcrumbs()),
-            $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
-
-        $details
-            .append(this.build_details_table())
-            .append(this.build_results_tabs())
-            .append(this.build_groups_bullets());
+                .append(this.build_details_table())
+                .append(this.build_results_tabs())
+                .append(this.build_comparison_set_bullets());
 
         modal.addHeader(title)
             .addBody($content)
             .addFooter("")
-            .show(opts, this.triggerFirstTabShown.bind(this, $details));
+            .show(opts, this.triggerFirstTabShown.bind(this, $content));
     },
     triggerFirstTabShown: function($el){
         $el.find('.nav-tabs .active a').trigger('shown');
@@ -576,7 +641,10 @@ _.extend(Result, {
     },
     displayFullPager: function($el, id){
       Result.get_object(id, function(d){d.displayFullPager($el);});
-    }
+    },
+    displayAsModal: function(id){
+        Result.get_object(id, function(d){d.displayAsModal();});
+    },
 });
 Result.prototype = {
     displayFullPager: function($el){
@@ -584,6 +652,29 @@ Result.prototype = {
             .append(this.build_content($el, {tabbed: false}))
             .fadeIn()
             .trigger('plotDivShown');
+    },
+    displayAsModal: function(){
+        var opts = {maxWidth: 1000},
+            modal = new HAWCModal(),
+            title = $('<h4>').html(this.build_breadcrumbs()),
+            $content = $('<div class="container-fluid">');
+
+        $content.append(this.build_content($content, {tabbed: false}));
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show(opts, function(){
+                $content.trigger('plotDivShown');
+            });
+    },
+    build_breadcrumbs: function(){
+        var urls = [
+            {
+                url: this.data.url,
+                name: this.data.full_name
+            },
+        ];
+        return HAWCUtils.build_breadcrumbs(urls);
     },
     get_tab_id: function(){
         return "result" + this.data.id;

@@ -1294,7 +1294,8 @@ HawcTooltip.prototype = {
             .scrollTop();
 
         $(document).bind('keyup', $.proxy(function(e){
-            if(e.keyCode===27)this.hide();
+            e.stopPropagation();
+            if(e.keyCode === 27) this.hide();
         }, this));
     },
 };
@@ -1315,12 +1316,13 @@ var HAWCModal = function(){
     this.$modalDiv = $modalDiv;
 };
 HAWCModal.prototype = {
-    show: function(options){
+    show: function(options, cb){
         this.fixedSize = options && options.fixedSize || false;
         this.maxWidth = options && options.maxWidth || Infinity;
         this.maxHeight = options && options.maxHeight || Infinity;
         this._resizeModal();
         this.getBody().scrollTop(0);
+        if(cb) this.$modalDiv.on('shown', cb);
         this.$modalDiv.modal('show');
         return this;
     }, hide: function(){

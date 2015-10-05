@@ -57,12 +57,16 @@ class OutcomeDataPivot(FlatFileExporter):
             'Assessed Outcome Name',
             'Diagnostic',
 
+            'Comparison Set ID',
+            'Comparison Set name',
+
             'Exposure',
             'Exposure Key',
             'Exposure Metric',
             'Exposure URL',
             'Dose Units',
 
+            'Result ID',
             'Assessed Outcome Population Description',
             'Statistical Metric',
             'Statistical Metric Abbreviation',
@@ -112,12 +116,16 @@ class OutcomeDataPivot(FlatFileExporter):
             for res in ser['results']:
                 row_copy = list(row)
                 row_copy.extend([
+                    res["comparison_set"]["id"],
+                    res["comparison_set"]["name"],
+
                     res["comparison_set"]["exposure"]["name"],
                     res["comparison_set"]["exposure"]["id"],
                     res["comparison_set"]["exposure"]["metric"],
                     res["comparison_set"]["exposure"]["url"],
                     res["comparison_set"]["exposure"]["metric_units"]["name"],
 
+                    res['id'],
                     res['population_description'],
                     res['metric']['metric'],
                     res['metric']['abbreviation'],
