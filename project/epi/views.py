@@ -29,7 +29,7 @@ class StudyPopulationCreate(BaseCreate):
 
 
 class StudyPopulationCopyAsNewSelector(StudyRead):
-    template_name = 'epi2/studypopulation_copy_selector.html'
+    template_name = 'epi/studypopulation_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(StudyPopulationCopyAsNewSelector, self).get_context_data(**kwargs)
@@ -74,7 +74,7 @@ class ExposureCreate(BaseCreate):
 
 
 class ExposureCopyAsNewSelector(StudyPopulationDetail):
-    template_name = 'epi2/exposure_copy_selector.html'
+    template_name = 'epi/exposure_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(ExposureCopyAsNewSelector, self).get_context_data(**kwargs)
@@ -149,7 +149,7 @@ class OutcomeCreate(BaseCreate):
 
 
 class OutcomeCopyAsNewSelector(StudyPopulationDetail):
-    template_name = 'epi2/outcome_copy_selector.html'
+    template_name = 'epi/outcome_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(OutcomeCopyAsNewSelector, self).get_context_data(**kwargs)
@@ -201,7 +201,7 @@ class ResultCreate(BaseCreateWithFormset):
 
 
 class ResultCopyAsNewSelector(OutcomeDetail):
-    template_name = 'epi2/result_copy_selector.html'
+    template_name = 'epi/result_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(ResultCopyAsNewSelector, self).get_context_data(**kwargs)
@@ -277,7 +277,7 @@ class ComparisonSetOutcomeCreate(ComparisonSetCreate):
 
 
 class ComparisonSetStudyPopCopySelector(StudyPopulationDetail):
-    template_name = 'epi2/comparisonset_sp_copy_selector.html'
+    template_name = 'epi/comparisonset_sp_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(ComparisonSetStudyPopCopySelector, self).get_context_data(**kwargs)
@@ -286,7 +286,7 @@ class ComparisonSetStudyPopCopySelector(StudyPopulationDetail):
 
 
 class ComparisonSetOutcomeCopySelector(OutcomeDetail):
-    template_name = 'epi2/comparisonset_outcome_copy_selector.html'
+    template_name = 'epi/comparisonset_outcome_copy_selector.html'
 
     def get_context_data(self, **kwargs):
         context = super(ComparisonSetOutcomeCopySelector, self).get_context_data(**kwargs)
