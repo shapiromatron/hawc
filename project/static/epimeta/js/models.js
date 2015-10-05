@@ -40,11 +40,9 @@ MetaProtocol.prototype = {
     displayAsModal: function(){
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
-            $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
-
-        this.build_details_table($details);
+                .append(this.build_details_table())
+                .append(this.build_links_div());
 
         modal.addHeader(title)
             .addBody($content)
@@ -148,20 +146,20 @@ MetaResult.prototype = {
         var self = this,
             modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
-            $details = $('<div class="span12">'),
-            $tbl = $('<div class="span12">'),
-            $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
+            $content = $('<div class="container-fluid">');
 
-        this.build_details_table($details);
-        if(this.has_single_results()){
-            $content
-                .append($('<div class="row-fluid">')
-                    .append('<div class="span12"><h4>Individual study-results</h4></div>'))
-                .append($('<div class="row-fluid">')
-                    .append($tbl));
-            this.build_single_results_table($tbl);
+        var $singleResultsDiv = $('<div>');
+        if (this.has_single_results()){
+            $singleResultsDiv
+                .append("<h2>Individual study results</h2>")
+                .append(this.build_single_results_table());
         }
+        $content
+           .append(this.build_details_table())
+           .append($singleResultsDiv);
+
+
+
 
         modal.addHeader(title)
             .addBody($content)

@@ -2,20 +2,20 @@ from datetime import datetime
 import json
 
 from django.db import models
-from django import forms
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
-from assessment.models import EffectTag
 from study.models import Study
 from animal.models import Endpoint
-from epi.models import AssessedOutcome, MetaResult
+from epi2.models import Outcome
+from epimeta.models import MetaResult
 from invitro.models import IVEndpoint
 from comments.models import Comment
 
 from animal.exports import EndpointFlatDataPivot
-from epi.exports import AssessedOutcomeFlatDataPivot, MetaResultFlatDataPivot
+from epi2.exports import OutcomeDataPivot
+from epimeta.exports import MetaResultFlatDataPivot
 from invitro.exports import IVEndpointFlatDataPivot
 
 import reversion
@@ -461,7 +461,7 @@ class DataPivotQuery(DataPivot):
 
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
-                filters["exposure__study_population__study__published"] = True
+                filters["study_population__study__published"] = True
 
         elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
 
@@ -483,7 +483,7 @@ class DataPivotQuery(DataPivot):
             qs = Endpoint.objects.filter(**filters).distinct('pk')
 
         elif self.evidence_type == 1:  # Epidemiology
-            qs = AssessedOutcome.objects.filter(**filters)
+            qs = Outcome.objects.filter(**filters)
 
         elif self.evidence_type == 4:  # Epidemiology meta-analysis/pooled analysis
             qs = MetaResult.objects.filter(**filters)
@@ -503,7 +503,7 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == 1:  # Epidemiology
-            exporter = AssessedOutcomeFlatDataPivot(
+            exporter = OutcomeDataPivot(
                 qs,
                 export_format=format_,
                 filename='{}-epi'.format(self.assessment)
