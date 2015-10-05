@@ -122,8 +122,8 @@ class Migration(migrations.Migration):
                 ('comments', models.TextField(help_text=b'Any other comments related to this group', blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('comparison_set', models.ForeignKey(related_name='groups', to='epi2.ComparisonSet')),
-                ('ethnicities', models.ManyToManyField(to='epi2.Ethnicity', blank=True)),
+                ('comparison_set', models.ForeignKey(related_name='groups', to='epi.ComparisonSet')),
+                ('ethnicities', models.ManyToManyField(to='epi.Ethnicity', blank=True)),
             ],
             options={
                 'ordering': ('comparison_set', 'group_id'),
@@ -143,7 +143,7 @@ class Migration(migrations.Migration):
                 ('lower_type', models.PositiveSmallIntegerField(default=0, choices=[(0, None), (1, b'lower limit'), (2, b'5% CI'), (3, b'other')])),
                 ('upper', models.FloatField(null=True, blank=True)),
                 ('upper_type', models.PositiveSmallIntegerField(default=0, choices=[(0, None), (1, b'upper limit'), (2, b'95% CI'), (3, b'other')])),
-                ('group', models.ForeignKey(related_name='descriptions', to='epi2.Group')),
+                ('group', models.ForeignKey(related_name='descriptions', to='epi.Group')),
             ],
         ),
         migrations.CreateModel(
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
                 ('main_finding_support', models.PositiveSmallIntegerField(default=1, help_text=b'Are the results supportive of the main-finding?', choices=[(3, b'not-reported'), (2, b'supportive'), (1, b'inconclusive'), (0, b'not-supportive')])),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('group', models.ForeignKey(related_name='results', to='epi2.Group')),
+                ('group', models.ForeignKey(related_name='results', to='epi.Group')),
             ],
             options={
                 'ordering': ('result', 'group__comparison_set_id'),
@@ -206,8 +206,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('included_in_final_model', models.BooleanField(default=True)),
-                ('adjustment_factor', models.ForeignKey(related_name='resfactors', to='epi2.AdjustmentFactor')),
-                ('result', models.ForeignKey(related_name='resfactors', to='epi2.Result')),
+                ('adjustment_factor', models.ForeignKey(related_name='resfactors', to='epi.AdjustmentFactor')),
+                ('result', models.ForeignKey(related_name='resfactors', to='epi.Result')),
             ],
         ),
         migrations.CreateModel(
@@ -241,7 +241,7 @@ class Migration(migrations.Migration):
                 ('comments', models.TextField(help_text=b'Note matching criteria, etc.', blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('country', models.ForeignKey(to='epi2.Country')),
+                ('country', models.ForeignKey(to='epi.Country')),
             ],
             options={
                 'ordering': ('name',),
@@ -252,14 +252,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('criteria_type', models.CharField(max_length=1, choices=[(b'I', b'Inclusion'), (b'E', b'Exclusion'), (b'C', b'Confounding')])),
-                ('criteria', models.ForeignKey(related_name='spcriteria', to='epi2.Criteria')),
-                ('study_population', models.ForeignKey(related_name='spcriteria', to='epi2.StudyPopulation')),
+                ('criteria', models.ForeignKey(related_name='spcriteria', to='epi.Criteria')),
+                ('study_population', models.ForeignKey(related_name='spcriteria', to='epi.StudyPopulation')),
             ],
         ),
         migrations.AddField(
             model_name='studypopulation',
             name='criteria',
-            field=models.ManyToManyField(related_name='populations', through='epi2.StudyPopulationCriteria', to='epi2.Criteria'),
+            field=models.ManyToManyField(related_name='populations', through='epi.StudyPopulationCriteria', to='epi.Criteria'),
         ),
         migrations.AddField(
             model_name='studypopulation',
@@ -269,52 +269,52 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='result',
             name='adjustment_factors',
-            field=models.ManyToManyField(related_name='outcomes', through='epi2.ResultAdjustmentFactor', to='epi2.AdjustmentFactor', blank=True),
+            field=models.ManyToManyField(related_name='outcomes', through='epi.ResultAdjustmentFactor', to='epi.AdjustmentFactor', blank=True),
         ),
         migrations.AddField(
             model_name='result',
             name='comparison_set',
-            field=models.ForeignKey(related_name='results', to='epi2.ComparisonSet'),
+            field=models.ForeignKey(related_name='results', to='epi.ComparisonSet'),
         ),
         migrations.AddField(
             model_name='result',
             name='metric',
-            field=models.ForeignKey(related_name='results', to='epi2.ResultMetric', help_text=b'&nbsp;'),
+            field=models.ForeignKey(related_name='results', to='epi.ResultMetric', help_text=b'&nbsp;'),
         ),
         migrations.AddField(
             model_name='result',
             name='outcome',
-            field=models.ForeignKey(related_name='results', to='epi2.Outcome'),
+            field=models.ForeignKey(related_name='results', to='epi.Outcome'),
         ),
         migrations.AddField(
             model_name='outcome',
             name='study_population',
-            field=models.ForeignKey(related_name='outcomes', to='epi2.StudyPopulation'),
+            field=models.ForeignKey(related_name='outcomes', to='epi.StudyPopulation'),
         ),
         migrations.AddField(
             model_name='groupresult',
             name='result',
-            field=models.ForeignKey(related_name='results', to='epi2.Result'),
+            field=models.ForeignKey(related_name='results', to='epi.Result'),
         ),
         migrations.AddField(
-            model_name='exposure2',
+            model_name='Exposure',
             name='study_population',
-            field=models.ForeignKey(related_name='exposures', to='epi2.StudyPopulation'),
+            field=models.ForeignKey(related_name='exposures', to='epi.StudyPopulation'),
         ),
         migrations.AddField(
             model_name='comparisonset',
             name='exposure',
-            field=models.ForeignKey(related_name='comparison_sets', blank=True, to='epi2.Exposure', help_text=b'Exposure-group associated with this group', null=True),
+            field=models.ForeignKey(related_name='comparison_sets', blank=True, to='epi.Exposure', help_text=b'Exposure-group associated with this group', null=True),
         ),
         migrations.AddField(
             model_name='comparisonset',
             name='outcome',
-            field=models.ForeignKey(related_name='comparison_sets', to='epi2.Outcome', null=True),
+            field=models.ForeignKey(related_name='comparison_sets', to='epi.Outcome', null=True),
         ),
         migrations.AddField(
             model_name='comparisonset',
             name='study_population',
-            field=models.ForeignKey(related_name='comparison_sets', to='epi2.StudyPopulation', null=True),
+            field=models.ForeignKey(related_name='comparison_sets', to='epi.StudyPopulation', null=True),
         ),
         migrations.AlterUniqueTogether(
             name='criteria',

@@ -16,27 +16,27 @@ def load_fixture(apps, schema_editor):
     call_command(
         'loaddata',
         os.path.join(fixture_dir, 'ethnicity.json'),
-        app_label='epi2')
+        app_label='epi')
     call_command(
         'loaddata',
         os.path.join(fixture_dir, 'countries.json'),
-        app_label='epi2')
+        app_label='epi')
     call_command(
         'loaddata',
         os.path.join(fixture_dir, 'resultmetric.json'),
-        app_label='epi2')
+        app_label='epi')
 
 
 def unload_fixture(apps, schema_editor):
-    apps.get_model("epi2", "Ethnicity").objects.all().delete()
-    apps.get_model("epi2", "Country").objects.all().delete()
-    apps.get_model("epi2", "ResultMetric").objects.all().delete()
+    apps.get_model("epi", "Ethnicity").objects.all().delete()
+    apps.get_model("epi", "Country").objects.all().delete()
+    apps.get_model("epi", "ResultMetric").objects.all().delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi2', '0001_initial'),
+        ('epi', '0001_initial'),
     ]
 
     operations = [
