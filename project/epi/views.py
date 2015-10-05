@@ -69,7 +69,7 @@ class ExposureCreate(BaseCreate):
     success_message = 'Exposure created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
-    model = models.Exposure2
+    model = models.Exposure
     form_class = forms.ExposureForm
 
 
@@ -83,18 +83,18 @@ class ExposureCopyAsNewSelector(StudyPopulationDetail):
 
 
 class ExposureDetail(BaseDetail):
-    model = models.Exposure2
+    model = models.Exposure
 
 
 class ExposureUpdate(BaseUpdate):
     success_message = "Study Population updated."
-    model = models.Exposure2
+    model = models.Exposure
     form_class = forms.ExposureForm
 
 
 class ExposureDelete(BaseDelete):
     success_message = "Study Population deleted."
-    model = models.Exposure2
+    model = models.Exposure
 
     def get_success_url(self):
         return self.object.study_population.get_absolute_url()

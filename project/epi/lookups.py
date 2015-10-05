@@ -44,7 +44,7 @@ class ComparisonSetByOutcomeLookup(ComparisonSetByStudyPopulationLookup):
 
 
 class ExposureByStudyPopulationLookup(RelatedLookup):
-    model = models.Exposure2
+    model = models.Exposure
     search_fields = ('name__icontains', )
     related_filter = 'study_population_id'
 

@@ -272,7 +272,7 @@ class ExposureForm(forms.ModelForm):
     HELP_TEXT_UPDATE = """Update an existing exposure."""
 
     class Meta:
-        model = models.Exposure2
+        model = models.Exposure
         exclude = ('study_population', )
 
     def __init__(self, *args, **kwargs):

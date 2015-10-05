@@ -36,7 +36,7 @@ class ExposureLinkSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        model = models.Exposure2
+        model = models.Exposure
         fields = ('id', 'name', 'url')
 
 
@@ -80,7 +80,7 @@ class SimpleExposureSerializer(serializers.ModelSerializer):
     metric_units = DoseUnitsSerializer()
 
     class Meta:
-        model = models.Exposure2
+        model = models.Exposure
 
 
 class ComparisonSetLinkSerializer(serializers.ModelSerializer):
@@ -112,7 +112,7 @@ class ExposureSerializer(serializers.ModelSerializer):
     metric_units = DoseUnitsSerializer()
 
     class Meta:
-        model = models.Exposure2
+        model = models.Exposure
 
 
 class GroupResultSerializer(serializers.ModelSerializer):

@@ -344,7 +344,7 @@ class ComparisonSet(models.Model):
     name = models.CharField(
         max_length=256)
     exposure = models.ForeignKey(
-        "Exposure2",
+        "Exposure",
         related_name="comparison_sets",
         help_text="Exposure-group associated with this group",
         blank=True,
@@ -522,7 +522,7 @@ class Group(models.Model):
         )
 
 
-class Exposure2(models.Model):
+class Exposure(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='exposures')
@@ -1063,8 +1063,8 @@ class GroupResult(models.Model):
 @receiver(pre_delete, sender=StudyPopulation)
 @receiver(post_save, sender=ComparisonSet)
 @receiver(pre_delete, sender=ComparisonSet)
-@receiver(post_save, sender=Exposure2)
-@receiver(pre_delete, sender=Exposure2)
+@receiver(post_save, sender=Exposure)
+@receiver(pre_delete, sender=Exposure)
 @receiver(post_save, sender=Group)
 @receiver(pre_delete, sender=Group)
 @receiver(post_save, sender=Outcome)
@@ -1081,7 +1081,7 @@ def invalidate_outcome_cache(sender, instance, **kwargs):
         filters["study_population_id"] = instance.id
     elif instance_type is ComparisonSet:
         filters["results__comparison_set_id"] = instance.id
-    elif instance_type is Exposure2:
+    elif instance_type is Exposure:
         filters["results__comparison_set__exposure_id"] = instance.id
     elif instance_type is Group:
         filters["results__comparison_set__groups"] = instance.id
@@ -1106,7 +1106,7 @@ reversion.register(AdjustmentFactor)
 reversion.register(ResultAdjustmentFactor)
 reversion.register(StudyPopulation, follow=('country', 'spcriteria'))
 reversion.register(ComparisonSet)
-reversion.register(Exposure2)
+reversion.register(Exposure)
 reversion.register(Outcome, follow=('effects',))
 reversion.register(Group, follow=('ethnicities',))
 reversion.register(Result, follow=('adjustment_factors', 'resfactors', 'results'))

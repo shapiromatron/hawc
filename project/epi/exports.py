@@ -11,7 +11,7 @@ class OutcomeComplete(FlatFileExporter):
         header.extend(Study.flat_complete_header_row())
         header.extend(models.StudyPopulation.flat_complete_header_row())
         header.extend(models.Outcome.flat_complete_header_row())
-        header.extend(models.Exposure2.flat_complete_header_row())
+        header.extend(models.Exposure.flat_complete_header_row())
         header.extend(models.ComparisonSet.flat_complete_header_row())
         header.extend(models.Result.flat_complete_header_row())
         header.extend(models.Group.flat_complete_header_row())
@@ -28,7 +28,7 @@ class OutcomeComplete(FlatFileExporter):
             row.extend(models.Outcome.flat_complete_data_row(ser))
             for res in ser['results']:
                 row_copy = list(row)
-                row_copy.extend(models.Exposure2.flat_complete_data_row(res["comparison_set"]["exposure"]))
+                row_copy.extend(models.Exposure.flat_complete_data_row(res["comparison_set"]["exposure"]))
                 row_copy.extend(models.ComparisonSet.flat_complete_data_row(res["comparison_set"]))
                 row_copy.extend(models.Result.flat_complete_data_row(res))
                 for rg in res['results']:

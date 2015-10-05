@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Exposure2',
+            name='Exposure',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Name of exposure and exposure-route', max_length=128)),
@@ -304,7 +304,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comparisonset',
             name='exposure',
-            field=models.ForeignKey(related_name='comparison_sets', blank=True, to='epi2.Exposure2', help_text=b'Exposure-group associated with this group', null=True),
+            field=models.ForeignKey(related_name='comparison_sets', blank=True, to='epi2.Exposure', help_text=b'Exposure-group associated with this group', null=True),
         ),
         migrations.AddField(
             model_name='comparisonset',

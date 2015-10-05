@@ -13,7 +13,7 @@ class StudyPopulation(AssessmentViewset):
 
 class Exposure(AssessmentViewset):
     assessment_filter_args = "study_population__study__assessment"
-    model = models.Exposure2
+    model = models.Exposure
     serializer_class = serializers.ExposureSerializer
 
 
