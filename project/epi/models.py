@@ -108,7 +108,7 @@ class StudyPopulation(models.Model):
         ('CR', 'Case report'),
         ('SE', 'Case series'),
         ('CT', 'Controlled trial'),
-        ('CS', 'Cross sectional'),
+        ('CS', 'Cross-sectional'),
     )
 
     study = models.ForeignKey(
