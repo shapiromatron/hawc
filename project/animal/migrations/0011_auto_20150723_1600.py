@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('animal', '0010_auto_20150723_1536'),
         ('bmd', '0002_auto_20150723_1557'),
-        ('epi', '0003_auto_20150723_1544'),
+        ('epi', '0001_initial'),
         ('invitro', '0002_auto_20150723_1542'),
         ('summary', '0003_auto_20150723_1557'),
     ]
