@@ -218,7 +218,7 @@ class StudyPopulation(models.Model):
         ordering = ('name', )
 
     def get_absolute_url(self):
-        return reverse('epi2:sp_detail', kwargs={'pk': self.pk})
+        return reverse('epi:sp_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -289,7 +289,7 @@ class Outcome(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
-        return reverse('epi2:outcome_detail', kwargs={'pk': self.pk})
+        return reverse('epi:outcome_detail', kwargs={'pk': self.pk})
 
     def get_crumbs(self):
         return get_crumbs(self, self.study_population)
@@ -365,7 +365,7 @@ class ComparisonSet(models.Model):
         super(ComparisonSet, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('epi2:cs_detail', kwargs={'pk': self.pk})
+        return reverse('epi:cs_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
         if self.outcome:
@@ -472,7 +472,7 @@ class Group(models.Model):
         ordering = ('comparison_set', 'group_id', )
 
     def get_absolute_url(self):
-        return reverse('epi2:g_detail', kwargs={'pk': self.pk})
+        return reverse('epi:g_detail', kwargs={'pk': self.pk})
 
     def get_assessment(self):
         return self.comparison_set.get_assessment()
@@ -589,7 +589,7 @@ class Exposure(models.Model):
         return self.study_population.get_assessment()
 
     def get_absolute_url(self):
-        return reverse('epi2:exp_detail', kwargs={'pk': self.pk})
+        return reverse('epi:exp_detail', kwargs={'pk': self.pk})
 
     def get_crumbs(self):
         return get_crumbs(self, self.study_population)
@@ -877,7 +877,7 @@ class Result(models.Model):
         return self.outcome.get_assessment()
 
     def get_absolute_url(self):
-        return reverse('epi2:result_detail', kwargs={'pk': self.pk})
+        return reverse('epi:result_detail', kwargs={'pk': self.pk})
 
     def get_crumbs(self):
         return get_crumbs(self, self.outcome)

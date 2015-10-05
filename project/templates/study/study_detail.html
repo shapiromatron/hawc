@@ -44,8 +44,8 @@
               <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new</a></li>
             {% elif object.study_type == 1 %}
               <li class="disabled"><a tabindex="-1" href="#">Study Population</a></li>
-              <li><a href="{% url 'epi2:sp_create' object.pk %}">Create new</a></li>
-              <li><a href="{% url 'epi2:sp_copy_selector' object.pk %}">Copy from existing</a></li>
+              <li><a href="{% url 'epi:sp_create' object.pk %}">Create new</a></li>
+              <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
             {% elif object.study_type == 4 %}
               <li class="disabled"><a tabindex="-1" href="#">Meta-analysis</a></li>
               <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new</a></li>

@@ -18,15 +18,15 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">Outcome editing</a></li>
-                <li><a href="{% url 'epi2:outcome_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi2:outcome_delete' pk=object.pk %}">Delete</a></li>
+                <li><a href="{% url 'epi:outcome_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi:outcome_delete' pk=object.pk %}">Delete</a></li>
                 <li class="disabled"><a tabindex="-1" href="#">Results</a></li>
-                <li><a href="{% url 'epi2:result_create' object.pk %}">Create</a></li>
-                <li><a href="{% url 'epi2:result_copy_selector' object.pk %}">Copy as new</a></li>
+                <li><a href="{% url 'epi:result_create' object.pk %}">Create</a></li>
+                <li><a href="{% url 'epi:result_copy_selector' object.pk %}">Copy as new</a></li>
                 {% if object.can_create_sets %}
                   <li class="disabled"><a tabindex="-1" href="#">Comparison sets</a></li>
-                  <li><a href="{% url 'epi2:cs_outcome_create' object.pk %}">Create</a></li>
-                  <li><a href="{% url 'epi2:cs_outcome_copy_selector' object.pk %}">Copy from existing</a></li>
+                  <li><a href="{% url 'epi:cs_outcome_create' object.pk %}">Create</a></li>
+                  <li><a href="{% url 'epi:cs_outcome_copy_selector' object.pk %}">Copy from existing</a></li>
                 {% endif %}
             </ul>
           </div>

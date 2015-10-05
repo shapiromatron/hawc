@@ -190,7 +190,7 @@ class StudyPopulationForm(forms.ModelForm):
         helper.add_fluid_row('eligible_n', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 3, "span4")
 
-        url = reverse('epi2:studycriteria_create',
+        url = reverse('epi:studycriteria_create',
                       kwargs={'pk': self.instance.study.assessment.pk})
         helper.addBtnLayout(helper.layout[6], 0, url, "Create criteria", "span4")
         helper.addBtnLayout(helper.layout[6], 1, url, "Create criteria", "span4")
@@ -680,7 +680,7 @@ class ResultForm(forms.ModelForm):
         helper.add_fluid_row('factors_applied', 2, "span6")
         helper.add_fluid_row('estimate_type', 3, "span4")
 
-        url = reverse('epi2:adjustmentfactor_create',
+        url = reverse('epi:adjustmentfactor_create',
                       kwargs={'pk': self.instance.outcome.assessment_id})
         helper.addBtnLayout(helper.layout[8], 0, url, "Add new adjustment factor", "span6")
         helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")

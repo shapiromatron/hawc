@@ -17,8 +17,8 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">Exposure editing</a></li>
-                <li><a href="{% url 'epi2:exp_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi2:exp_delete' pk=object.pk %}">Delete</a></li>
+                <li><a href="{% url 'epi:exp_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi:exp_delete' pk=object.pk %}">Delete</a></li>
             </ul>
           </div>
         {% endif %}

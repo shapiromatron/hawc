@@ -23,7 +23,7 @@
         {% endif %}
 
         {% if outcomes > 0 %}
-        <li><a href="{% url 'epi2:outcome_list' assessment.id %}">
+        <li><a href="{% url 'epi:outcome_list' assessment.id %}">
             {{outcomes}} epidemiological outcomes assessed
             </a></li>
         {% endif %}

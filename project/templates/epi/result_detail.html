@@ -18,8 +18,8 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">Result editing</a></li>
-                <li><a href="{% url 'epi2:result_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi2:result_delete' object.pk %}">Delete</a></li>
+                <li><a href="{% url 'epi:result_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi:result_delete' object.pk %}">Delete</a></li>
             </ul>
           </div>
         {% endif %}
