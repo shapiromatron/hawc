@@ -83,7 +83,7 @@
       // bind formset change to group-change
       $('#id_comparison_set').change(function(){
         var val = parseInt(this.value),
-            url = "/epi2/api/comparison-set/{0}/".printf(val);
+            url = "/epi/api/comparison-set/{0}/".printf(val);
         if (_.isNaN(val)){
           updateFormset();
         } else if (val !== comparison_set_id || isNew){
