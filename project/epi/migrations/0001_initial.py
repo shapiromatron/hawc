@@ -264,7 +264,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='studypopulation',
             name='study',
-            field=models.ForeignKey(related_name='study_populations2', to='study.Study'),
+            field=models.ForeignKey(related_name='study_populations', to='study.Study'),
         ),
         migrations.AddField(
             model_name='result',

@@ -113,7 +113,7 @@ class StudyPopulation(models.Model):
 
     study = models.ForeignKey(
         'study.Study',
-        related_name="study_populations2")
+        related_name="study_populations")
     name = models.CharField(
         max_length=256)
     design = models.CharField(
