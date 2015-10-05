@@ -98,7 +98,6 @@ INSTALLED_APPS = (
     'lit',
     'study',
     'animal',
-    'epi',
     'epi2',
     'epimeta',
     'invitro',
