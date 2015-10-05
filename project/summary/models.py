@@ -8,13 +8,13 @@ from django.utils.html import strip_tags
 
 from study.models import Study
 from animal.models import Endpoint
-from epi2.models import Outcome
+from epi.models import Outcome
 from epimeta.models import MetaResult
 from invitro.models import IVEndpoint
 from comments.models import Comment
 
 from animal.exports import EndpointFlatDataPivot
-from epi2.exports import OutcomeDataPivot
+from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
 from invitro.exports import IVEndpointFlatDataPivot
 

@@ -10,7 +10,7 @@ from django.dispatch import receiver
 import reversion
 
 from assessment.serializers import AssessmentSerializer
-from epi2.models import Criteria, ResultMetric, AdjustmentFactor
+from epi.models import Criteria, ResultMetric, AdjustmentFactor
 from utils.helper import SerializerHelper
 from utils.models import get_crumbs
 

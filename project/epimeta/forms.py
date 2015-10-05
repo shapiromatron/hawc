@@ -6,7 +6,7 @@ from django.utils.functional import curry
 from selectable import forms as selectable
 
 from utils.forms import BaseFormHelper
-from epi2.lookups import AdjustmentFactorLookup, CriteriaLookup
+from epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 
 from . import models, lookups
 

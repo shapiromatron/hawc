@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from epi2.serializers import ResultMetricSerializer
+from epi.serializers import ResultMetricSerializer
 from study.serializers import StudySerializer
 from utils.helper import SerializerHelper
 
