@@ -27,12 +27,12 @@ class MetaResultFlatComplete(FlatFileExporter):
             row.extend(models.MetaProtocol.flat_complete_data_row(ser['protocol']))
             row.extend(models.MetaResult.flat_complete_data_row(ser))
 
-            if len(ser['single_results2']) == 0:
+            if len(ser['single_results']) == 0:
                 # print one-row with no single-results
                 rows.append(row)
             else:
                 # print each single-result as a new row
-                for sr in ser['single_results2']:
+                for sr in ser['single_results']:
                     row_copy = list(row)  # clone
                     row_copy.extend(models.SingleResult.flat_complete_data_row(sr))
                     rows.append(row_copy)

@@ -62,8 +62,8 @@ MetaProtocol.prototype = {
             };
 
         $el.append("<h2>Results</h2>");
-        if (this.data.results2.length>0){
-            $el.append(HAWCUtils.buildUL(this.data.results2, liFunc));
+        if (this.data.results.length>0){
+            $el.append(HAWCUtils.buildUL(this.data.results, liFunc));
         } else {
             $el.append("<p class='help-block'>No results are available for this protocol.</p>");
         }
@@ -94,7 +94,7 @@ _.extend(MetaResult, {
 MetaResult.prototype = {
     _unpack_single_results: function(){
         var single_results = this.single_results;
-        this.data.single_results2.forEach(function(v,i){
+        this.data.single_results.forEach(function(v,i){
             single_results.push(new SingleStudyResult(v));
         });
         this.data.single_results = [];

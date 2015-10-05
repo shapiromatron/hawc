@@ -26,7 +26,7 @@ class MetaProtocol(models.Model):
         (1, "Other"))
 
     study = models.ForeignKey('study.Study',
-        related_name="meta_protocols2")
+        related_name="meta_protocols")
     name = models.CharField(
         verbose_name="Protocol name",
         max_length=128)
@@ -126,7 +126,7 @@ class MetaProtocol(models.Model):
 class MetaResult(models.Model):
     protocol = models.ForeignKey(
         MetaProtocol,
-        related_name="results2")
+        related_name="results")
     label = models.CharField(
         max_length=128)
     data_location = models.CharField(
@@ -337,10 +337,10 @@ class MetaResult(models.Model):
 class SingleResult(models.Model):
     meta_result = models.ForeignKey(
         MetaResult,
-        related_name="single_results2")
+        related_name="single_results")
     study = models.ForeignKey(
         'study.Study',
-        related_name="single_results2",
+        related_name="single_results",
         blank=True,
         null=True)
     exposure_name = models.CharField(
@@ -458,7 +458,7 @@ reversion.register(
 )
 reversion.register(
     MetaResult,
-    follow=('adjustment_factors', 'single_results2')
+    follow=('adjustment_factors', 'single_results')
 )
 reversion.register(
     SingleResult

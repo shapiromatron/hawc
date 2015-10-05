@@ -35,7 +35,7 @@ class MetaProtocolSerializer(serializers.ModelSerializer):
     url = serializers.ReadOnlyField(source="get_absolute_url")
     protocol_type = serializers.ReadOnlyField(source="get_protocol_type_display")
     lit_search_strategy = serializers.ReadOnlyField(source="get_lit_search_strategy_display")
-    results2 = MetaResultLinkSerializer(many=True)
+    results = MetaResultLinkSerializer(many=True)
 
     class Meta:
         model = models.MetaProtocol
@@ -46,7 +46,7 @@ class MetaResultSerializer(serializers.ModelSerializer):
     url = serializers.ReadOnlyField(source="get_absolute_url")
     metric = ResultMetricSerializer()
     adjustment_factors = serializers.StringRelatedField(many=True)
-    single_results2 = SingleResultSerializer(many=True)
+    single_results = SingleResultSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super(MetaResultSerializer, self).to_representation(instance)
