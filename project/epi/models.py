@@ -103,6 +103,8 @@ class StudyPopulation(models.Model):
 
     DESIGN_CHOICES = (
         ('CO', 'Cohort'),
+        ('CX', 'Cohort (Retrospective)'),
+        ('CY', 'Cohort (Prospective)'),
         ('CC', 'Case-control'),
         ('NC', 'Nested case-control'),
         ('CR', 'Case report'),
@@ -110,6 +112,8 @@ class StudyPopulation(models.Model):
         ('CT', 'Controlled trial'),
         ('CS', 'Cross-sectional'),
     )
+
+    OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
     study = models.ForeignKey(
         'study.Study',
@@ -242,7 +246,7 @@ class StudyPopulation(models.Model):
         return get_crumbs(self, self.study)
 
     def can_create_sets(self):
-        return self.design not in ("CC", "NC")
+        return self.design not in self.OUTCOME_GROUP_DESIGNS
 
 
 class Outcome(BaseEndpoint):

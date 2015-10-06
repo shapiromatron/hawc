@@ -230,7 +230,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('design', models.CharField(max_length=2, choices=[(b'CO', b'Cohort'), (b'CC', b'Case-control'), (b'NC', b'Nested case-control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross-sectional')])),
+                ('design', models.CharField(max_length=2, choices=[(b'CO', b'Cohort'), (b'CX', b'Cohort (Retrospective)'), (b'CY', b'Cohort (Prospective)'), (b'CC', b'Case-control'), (b'NC', b'Nested case-control'), (b'CR', b'Case report'), (b'SE', b'Case series'), (b'CT', b'Controlled trial'), (b'CS', b'Cross-sectional')])),
                 ('age_profile', models.CharField(help_text=b'Age profile of population (ex: adults, children, pregnant women, etc.)', max_length=128, blank=True)),
                 ('source', models.CharField(help_text=b'Population source (ex: general population, environmental exposure, occupational cohort)', max_length=128, blank=True)),
                 ('region', models.CharField(max_length=128, blank=True)),
