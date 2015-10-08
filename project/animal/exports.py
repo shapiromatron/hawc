@@ -89,19 +89,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
     def _get_header_row(self):
         return [
-            'study',
-            'study_url',
-            'Study HAWC ID',
-            'Study Published',
+            'study id',
+            'study name',
+            'study published',
 
-            'Experiment ID',
-            'experiment',
-            'experiment_url',
+            'experiment id',
+            'experiment name',
             'chemical',
 
-            'Animal Group ID',
-            'animal_group',
-            'animal_group_url',
+            'animal group id',
+            'animal group name',
             'lifestage exposed',
             'lifestage assessed',
             'species',
@@ -114,20 +111,19 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'treatment period',
             'duration exposure',
 
-            'endpoint_name',
-            'endpoint_url',
+            'endpoint id',
+            'endpoint name',
             'system',
             'organ',
             'effect',
             'effect subtype',
             'diagnostic',
             'tags',
-            'observation_time',
-            'data_type',
+            'observation time',
+            'data type',
             'doses',
-            'dose_units',
-            'response_units',
-            'Endpoint Key',
+            'dose units',
+            'response units',
 
             'low_dose',
             'NOEL',
@@ -141,16 +137,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'BMDU',
             'CSF',
 
-            'Row Key',
-            'dose_index',
+            'key',
+            'dose index',
             'dose',
-            'n',
+            'N',
             'incidence',
             'response',
-            'stdev',
-            'percentControlMean',
-            'percentControlLow',
-            'percentControlHigh'
+            'variance',
+            'percent control mean',
+            'percent control low',
+            'percent control high'
         ]
 
     def _get_data_rows(self):
@@ -201,19 +197,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
             # build endpoint-group independent data
             row = [
-                ser['animal_group']['experiment']['study']['short_citation'],
-                ser['animal_group']['experiment']['study']['url'],
                 ser['animal_group']['experiment']['study']['id'],
+                ser['animal_group']['experiment']['study']['short_citation'],
                 ser['animal_group']['experiment']['study']['published'],
 
                 ser['animal_group']['experiment']['id'],
                 ser['animal_group']['experiment']['name'],
-                ser['animal_group']['experiment']['url'],
                 ser['animal_group']['experiment']['chemical'],
 
                 ser['animal_group']['id'],
                 ser['animal_group']['name'],
-                ser['animal_group']['url'],
                 ser['animal_group']['lifestage_exposed'],
                 ser['animal_group']['lifestage_assessed'],
                 ser['animal_group']['species'],
@@ -227,8 +220,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
                                      ser['animal_group']['dosing_regime']),
                 ser['animal_group']['dosing_regime']['duration_exposure_text'],
 
+                ser['id'],
                 ser['name'],
-                ser['url'],
                 ser['system'],
                 ser['organ'],
                 ser['effect'],
@@ -240,7 +233,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_doses_str(doses),
                 get_dose_units(doses),
                 ser['response_units'],
-                ser['id']
             ]
 
             # dose-group specific information

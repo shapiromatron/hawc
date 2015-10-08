@@ -7,45 +7,43 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
 
     def _get_header_row(self):
         header = [
-            'Study',
-            'Study HAWC ID',
-            'Study identifier',
-            'Study URL',
-            'Study Published',
+            'study id',
+            'study name',
+            'study identifier',
+            'study published',
 
-            'Chemical name',
-            'Chemical HAWC ID',
-            'Chemical CAS',
-            'Chemical purity',
+            'chemical id',
+            'chemical name',
+            'chemical CAS',
+            'chemical purity',
 
-            'IVExperiment HAWC ID',
-            'IVExperiment URL',
-            'Cell species',
-            'Cell sex',
-            'Cell type',
-            'Cell tissue',
+            'IVExperiment id',
+            'cell species',
+            'cell sex',
+            'cell type',
+            'cell tissue',
 
             'Dose units',
             'Metabolic activation',
             'Transfection',
 
+            'key',
+            'IVEndpoint id',
             'IVEndpoint name',
-            'IVEndpoint HAWC ID',
-            'IVEndpoint URL',
             'IVEndpoint description tags',
-            'Assay type',
-            'Endpoint description',
-            'Endpoint response units',
-            'Observation time',
-            'Observation time units',
+            'assay type',
+            'endpoint description',
+            'endpoint response units',
+            'observation time',
+            'observation time units',
             'NOEL',
             'LOEL',
-            'Monotonicity',
-            'Overall pattern',
-            'Trend test result',
-            'Minimum dose',
-            'Maximum dose',
-            'Number of doses'
+            'monotonicity',
+            'overall pattern',
+            'trend test result',
+            'minimum dose',
+            'maximum dose',
+            'number of doses',
         ]
 
         num_cats = 0
@@ -107,19 +105,17 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             bm_values = [bm["value"] for bm in ser["benchmarks"]]
 
             row = [
-                ser['experiment']['study']['short_citation'],
                 ser['experiment']['study']['id'],
+                ser['experiment']['study']['short_citation'],
                 ser['experiment']['study']['study_identifier'],
-                ser['experiment']['study']['url'],
                 ser['experiment']['study']['published'],
 
-                ser['chemical']['name'],
                 ser['chemical']['id'],
+                ser['chemical']['name'],
                 ser['chemical']['cas'],
                 ser['chemical']['purity'],
 
                 ser['experiment']['id'],
-                ser['experiment']['url'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],
@@ -129,9 +125,9 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['experiment']['metabolic_activation'],
                 ser['experiment']['transfection'],
 
-                ser['name'],
+                ser['id'],  # repeat for data-pivot key
                 ser['id'],
-                ser['url'],
+                ser['name'],
                 '|'.join([d['name'] for d in ser['effects']]),
                 ser['assay_type'],
                 ser['short_description'],

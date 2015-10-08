@@ -43,55 +43,52 @@ class OutcomeDataPivot(FlatFileExporter):
 
     def _get_header_row(self):
         return [
-            'Study',
-            'Study URL',
-            'Study HAWC ID',
-            'Study Published?',
+            'study id',
+            'study name',
+            'study published',
 
-            'Study Population Name',
-            'Study Population Key',
-            'Design',
-            'Study Population URL',
+            'study population id',
+            'study population name',
+            'design',
 
-            'Assessed Outcome Key',
-            'Assessed Outcome Name',
-            'Diagnostic',
+            'outcome id',
+            'outcome name',
+            'diagnostic',
 
-            'Comparison Set ID',
-            'Comparison Set name',
+            'comparison set id',
+            'comparison set name',
 
-            'Exposure',
-            'Exposure Key',
-            'Exposure Metric',
-            'Exposure URL',
-            'Dose Units',
+            'exposure id',
+            'exposure name',
+            'exposure metric',
+            'dose units',
 
-            'Result ID',
-            'Assessed Outcome Population Description',
-            'Statistical Metric',
-            'Statistical Metric Abbreviation',
-            'Statistical Metric Description',
-            'Outcome Summary',
-            'Dose Response',
-            'Statistical Power',
+            'result id',
+            'result population description',
+            'statistical metric',
+            'statistical metric abbreviation',
+            'statistical metric description',
+            'result summary',
+            'dose response',
+            'statistical power',
             'CI units',
 
-            'Exposure Group Name',
-            'Exposure Group Comparative Description Name',
-            'Exposure Group Order',
-            'Exposure Group Numeric',
+            'exposure group order',
+            'exposure group name',
+            'exposure group comparison name',
+            'exposure group numeric',
 
-            'Row Key',
-            'Assessed Outcome Group Primary Key',
+            'key',
+            'result group id',
             'N',
-            'Estimate',
-            'Lower CI',
-            'Upper CI',
-            'SE',
-            'Statistical Significance',
-            'Statistical Significance (numeric)',
-            'Main Finding',
-            'Support Main Finding',
+            'estimate',
+            'lower CI',
+            'upper CI',
+            'variance',
+            'statistical significance',
+            'statistical significance (numeric)',
+            'main finding',
+            'main finding support',
         ]
 
     def _get_data_rows(self):
@@ -99,15 +96,13 @@ class OutcomeDataPivot(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = [
-                ser['study_population']['study']['short_citation'],
-                ser['study_population']['study']['url'],
                 ser['study_population']['study']['id'],
+                ser['study_population']['study']['short_citation'],
                 ser['study_population']['study']['published'],
 
-                ser['study_population']['name'],
                 ser['study_population']['id'],
+                ser['study_population']['name'],
                 ser['study_population']['design'],
-                ser['study_population']['url'],
 
                 ser['id'],
                 ser['name'],
@@ -119,10 +114,9 @@ class OutcomeDataPivot(FlatFileExporter):
                     res["comparison_set"]["id"],
                     res["comparison_set"]["name"],
 
-                    res["comparison_set"]["exposure"]["name"],
                     res["comparison_set"]["exposure"]["id"],
+                    res["comparison_set"]["exposure"]["name"],
                     res["comparison_set"]["exposure"]["metric"],
-                    res["comparison_set"]["exposure"]["url"],
                     res["comparison_set"]["exposure"]["metric_units"]["name"],
 
                     res['id'],
@@ -138,13 +132,13 @@ class OutcomeDataPivot(FlatFileExporter):
                 for rg in res['results']:
                     row_copy2 = list(row_copy)
                     row_copy2.extend([
+                        rg['group']['group_id'],
                         rg['group']['name'],
                         rg['group']['comparative_name'],
-                        rg['group']['group_id'],
                         rg['group']['numeric'],
 
-                        rg['id'],  # repeat for data-pivot key
                         rg['id'],
+                        rg['id'],  # repeat for data-pivot key
                         rg['n'],
                         rg['estimate'],
                         rg['lower_ci'],
