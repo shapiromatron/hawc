@@ -159,8 +159,10 @@ class PrefilterMixin(object):
 
             if k in [
                     "animal_group__experiment__study__in",
-                    "exposure__study_population__study__in",
-                    "experiment__study__in"]:
+                    "study_population__study__in",
+                    "experiment__study__in",
+                    "protocol__study__in",
+                    ]:
                 self.fields["prefilter_study"].initial = True
                 self.fields["studies"].initial = v
 
@@ -210,12 +212,17 @@ class PrefilterMixin(object):
 
         if data.get('prefilter_study') is True:
             studies = data.get("studies", [])
-            if data.get('evidence_type') == 1:  # Epi
-                prefilters["exposure__study_population__study__in"] = studies
-            elif data.get('evidence_type') == 2:  # in-vitro
-                prefilters["experiment__study__in"] = studies
-            else:  # assume bioassay
+            evidence_type = data.get('evidence_type', None)
+            if evidence_type == 0:  # Bioassay
                 prefilters["animal_group__experiment__study__in"] = studies
+            if evidence_type == 1:  # Epi
+                prefilters["study_population__study__in"] = studies
+            elif evidence_type == 2:  # in-vitro
+                prefilters["experiment__study__in"] = studies
+            elif evidence_type == 4:  # meta
+                prefilters["protocol__study__in"] = studies
+            else:
+                raise ValueError("Unknown evidence type")
 
         if data.get('prefilter_system') is True:
             prefilters["system__in"] = data.get("systems", [])
