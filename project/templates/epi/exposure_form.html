@@ -1,61 +1,20 @@
 {% extends 'portal.html' %}
 
+{% load selectable_tags %}
 {% load crispy_forms_tags %}
-{% load add_class %}
 
 {% block title %}
-  {{assessment}} |
-  {% if crud == "Create" %}
-    {{study_population.study}} | {{study_population}} | Create Exposure
-  {% elif crud == "Update" %}
-    {{object.study_population.study}} | {{object.study_population}} | Update {{object}}
-  {% endif %}
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock title %}
 
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  {% if crud == "Create" %}
-    <li><a href="{{study_population.study.get_absolute_url}}">{{study_population.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{study_population.get_absolute_url}}">{{study_population|truncatechars:40}}</a><span class="divider">/</span></li>
-    <li class="active">Create Exposure</li>
-  {% elif crud == "Update" %}
-    <li><a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{object.study_population.get_absolute_url}}">{{object.study_population|truncatechars:40}}</a><span class="divider">/</span></li>
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">Update</li>
-  {% endif %}
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-
-  <div id="eForm">
     {% crispy form %}
-  </div>
-
-  <div id="egFormset">
-    {# Exposure Group formset #}
-    <legend>Exposure Groups
-        <button class="pull-right btn btn-primary"
-                title="Add new exposure-group"
-                type="button"
-                id="addExposureGroup">+</button>
-    </legend>
-    {% if crud == "Create" %}
-      <span class="help-block">Exposure-groups are associated with each exposure, and each is a subset of the exposure population. The total number of individuals in all exposure groups should equal the total number of individuals in the exposure-population. For example, exposure-group descriptions may be "quartile 1 (≤1.0)", "quartile 2 (1.0-2.5)", etc.<br><br>
-      <b>Once created, additional exposure groups cannot be added. It is assumed that the first exposure-group has the lowest exposure, with each subsequent group having a greater exposure. Up to a maximum of eight exposure-groups can be added.</b></span><br>
-    {% endif %}
-    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
-  </div>
-
 {% endblock %}
-
-{% block extrajs %}
-  <script type="text/javascript">
-    $(document).on('ready', function(){
-      $('#egFormset').insertBefore($('#eForm .form-actions'));
-      // TODO: Fix after module-rebuild complete.
-      $('#addExposureGroup').click(function(){return HAWCUtils.dfAddForm(this, 'form');});
-      $('.deleteForm').click(function(){return HAWCUtils.dfDeleteForm(this, 'form');})
-    });
-  </script>
-{% endblock extrajs %}

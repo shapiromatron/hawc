@@ -325,17 +325,12 @@ class BaseEndpointList(BaseList):
             .filter(assessment_id=self.assessment.id)\
             .count()
 
-        aos = self.model.assessedoutcome\
+        os = self.model.outcome\
             .related.related_model.objects\
             .filter(assessment_id=self.assessment.id)\
             .count()
 
-        aos2 = self.model.outcome\
-            .related.related_model.objects\
-            .filter(assessment_id=self.assessment.id)\
-            .count()
-
-        mrs = get_model('epi', 'metaresult')\
+        mrs = get_model('epimeta', 'metaresult')\
             .objects\
             .filter(protocol__study__assessment_id=self.assessment.id)\
             .count()
@@ -345,13 +340,12 @@ class BaseEndpointList(BaseList):
             .filter(assessment_id=self.assessment.id)\
             .count()
 
-        alleps = eps + aos + aos2 + mrs + iveps
+        alleps = eps + os + mrs + iveps
 
         context.update({
             "ivendpoints": iveps,
             "endpoints": eps,
-            "assessed_outcomes": aos,
-            "outcomes": aos2,
+            "outcomes": os,
             "meta_results": mrs,
             "total_endpoints": alleps
         })

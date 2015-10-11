@@ -1,5 +1,6 @@
 {% extends 'portal.html' %}
 
+
 {% block title %}
   {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
@@ -9,15 +10,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{object.name}}
+    <h1>{{object}}
         {% if obj_perms.edit and crud == "Read" %}
           <div class="btn-group pull-right">
             <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li class="disabled"><a tabindex="-1" href="#">Group editing</a></li>
-                <li><a href="{% url 'epi2:g_update' object.pk %}">Update</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">Result editing</a></li>
+                <li><a href="{% url 'epi:result_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi:result_delete' object.pk %}">Delete</a></li>
             </ul>
           </div>
         {% endif %}
@@ -29,7 +31,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Group.displayFullPager($("#objContainer"), {{object.id}});
+      Result.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

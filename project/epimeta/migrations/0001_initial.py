@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('study', '0001_initial'),
-        ('epi2', '0001_initial'),
+        ('epi', '0001_initial'),
     ]
 
     operations = [
@@ -26,9 +26,9 @@ class Migration(migrations.Migration):
                 ('total_references', models.PositiveIntegerField(help_text=b'References identified through initial literature-search before application of inclusion/exclusion criteria', null=True, verbose_name=b'Total number of references found', blank=True)),
                 ('total_studies_identified', models.PositiveIntegerField(help_text=b'Total references identified for inclusion after application of literature review and screening criteria', verbose_name=b'Total number of studies identified')),
                 ('notes', models.TextField(blank=True)),
-                ('exclusion_criteria', models.ManyToManyField(related_name='meta_exclusion_criteria', to='epi2.Criteria', blank=True)),
-                ('inclusion_criteria', models.ManyToManyField(related_name='meta_inclusion_criteria', to='epi2.Criteria', blank=True)),
-                ('study', models.ForeignKey(related_name='meta_protocols2', to='study.Study')),
+                ('exclusion_criteria', models.ManyToManyField(related_name='meta_exclusion_criteria', to='epi.Criteria', blank=True)),
+                ('inclusion_criteria', models.ManyToManyField(related_name='meta_inclusion_criteria', to='epi.Criteria', blank=True)),
+                ('study', models.ForeignKey(related_name='meta_protocols', to='study.Study')),
             ],
             options={
                 'ordering': ('name',),
@@ -53,9 +53,9 @@ class Migration(migrations.Migration):
                 ('upper_ci', models.FloatField(help_text=b'Numerical value for upper-confidence interval', verbose_name=b'Upper CI')),
                 ('ci_units', models.FloatField(default=0.95, help_text=b'A 95% CI is written as 0.95.', null=True, verbose_name=b'Confidence Interval (CI)', blank=True)),
                 ('notes', models.TextField(blank=True)),
-                ('adjustment_factors', models.ManyToManyField(help_text=b'All factors which were included in final model', related_name='meta_adjustments', to='epi2.AdjustmentFactor', blank=True)),
-                ('metric', models.ForeignKey(to='epi2.ResultMetric')),
-                ('protocol', models.ForeignKey(related_name='results2', to='epimeta.MetaProtocol')),
+                ('adjustment_factors', models.ManyToManyField(help_text=b'All factors which were included in final model', related_name='meta_adjustments', to='epi.AdjustmentFactor', blank=True)),
+                ('metric', models.ForeignKey(to='epi.ResultMetric')),
+                ('protocol', models.ForeignKey(related_name='results', to='epimeta.MetaProtocol')),
             ],
             options={
                 'ordering': ('label',),
@@ -73,8 +73,8 @@ class Migration(migrations.Migration):
                 ('upper_ci', models.FloatField(help_text=b'Numerical value for upper-confidence interval', null=True, verbose_name=b'Upper CI', blank=True)),
                 ('ci_units', models.FloatField(default=0.95, help_text=b'A 95% CI is written as 0.95.', null=True, verbose_name=b'Confidence Interval (CI)', blank=True)),
                 ('notes', models.TextField(blank=True)),
-                ('meta_result', models.ForeignKey(related_name='single_results2', to='epimeta.MetaResult')),
-                ('study', models.ForeignKey(related_name='single_results2', blank=True, to='study.Study', null=True)),
+                ('meta_result', models.ForeignKey(related_name='single_results', to='epimeta.MetaResult')),
+                ('study', models.ForeignKey(related_name='single_results', blank=True, to='study.Study', null=True)),
             ],
         ),
     ]

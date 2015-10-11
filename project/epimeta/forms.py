@@ -6,7 +6,7 @@ from django.utils.functional import curry
 from selectable import forms as selectable
 
 from utils.forms import BaseFormHelper
-from epi2.lookups import AdjustmentFactorLookup, CriteriaLookup
+from epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 
 from . import models, lookups
 
@@ -84,7 +84,7 @@ class MetaProtocolForm(forms.ModelForm):
         helper.add_fluid_row('lit_search_start_date', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 2, "span6")
 
-        url = reverse('epi2:studycriteria_create',
+        url = reverse('epi:studycriteria_create',
                       kwargs={'pk': self.instance.study.assessment.pk})
         helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "span6")
         helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "span6")
@@ -172,7 +172,7 @@ class MetaResultForm(forms.ModelForm):
         helper.add_fluid_row('adjustment_factors', 2, "span6")
 
         url = reverse(
-            'epi2:adjustmentfactor_create',
+            'epi:adjustmentfactor_create',
             kwargs={'pk': self.instance.protocol.study.assessment.pk}
         )
         helper.addBtnLayout(helper.layout[8], 0, url, "Create criteria", "span6")

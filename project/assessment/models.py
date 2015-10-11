@@ -473,8 +473,8 @@ class BaseEndpoint(models.Model):
         return an empty object.
         """
         d = {}
-        if hasattr(self, 'assessedoutcome'):
-            d = self.assessedoutcome.get_json(*args, **kwargs)
+        if hasattr(self, 'outcome'):
+            d = self.outcome.get_json(*args, **kwargs)
         elif hasattr(self, 'endpoint'):
             d = self.endpoint.d_response(*args, **kwargs)
         elif hasattr(self, 'ivendpoint'):

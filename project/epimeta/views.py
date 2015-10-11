@@ -88,7 +88,7 @@ class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.SingleResultFormset(
-            queryset=self.object.single_results2.all().order_by('pk'),
+            queryset=self.object.single_results.all().order_by('pk'),
             **self.get_formset_kwargs())
 
     def get_form_kwargs(self):

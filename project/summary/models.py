@@ -8,13 +8,13 @@ from django.utils.html import strip_tags
 
 from study.models import Study
 from animal.models import Endpoint
-from epi2.models import Outcome
+from epi.models import Outcome
 from epimeta.models import MetaResult
 from invitro.models import IVEndpoint
 from comments.models import Comment
 
 from animal.exports import EndpointFlatDataPivot
-from epi2.exports import OutcomeDataPivot
+from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
 from invitro.exports import IVEndpointFlatDataPivot
 
@@ -560,6 +560,7 @@ class Prefilter(object):
     """
     @classmethod
     def setFiltersFromForm(cls, filters, d):
+        evidence_type = d.get('evidence_type')
         if d.get('prefilter_system'):
             filters["system__in"] = d.getlist('systems')
 
@@ -574,15 +575,28 @@ class Prefilter(object):
 
         if d.get('prefilter_study'):
             studies = d.get("studies", [])
-            if d.get('evidence_type') == 1:  # Epi
-                filters["exposure__study_population__study__in"] = studies
-            elif d.get('evidence_type') == 2:  # in-vitro
-                filters["experiment__study__in"] = studies
-            else:  # assume bioassay
+            if evidence_type == 0:  # Bioassay
                 filters["animal_group__experiment__study__in"] = studies
+            if evidence_type == 1:  # Epi
+                filters["study_population__study__in"] = studies
+            elif evidence_type == 2:  # in-vitro
+                filters["experiment__study__in"] = studies
+            elif evidence_type == 4:  # meta
+                filters["protocol__study__in"] = studies
+            else:
+                raise ValueError("Unknown evidence type")
 
         if d.get("published_only"):
-            filters["animal_group__experiment__study__published"] = True
+            if evidence_type == 0:  # Bioassay
+                filters["animal_group__experiment__study__published"] = True
+            if evidence_type == 1:  # Epi
+                filters["study_population__study__published"] = True
+            elif evidence_type == 2:  # in-vitro
+                filters["experiment__study__published"] = True
+            elif evidence_type == 4:  # meta
+                filters["protocol__study__published"] = True
+            else:
+                raise ValueError("Unknown evidence type")
 
     @classmethod
     def setFiltersFromObj(cls, filters, prefilters):

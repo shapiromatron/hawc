@@ -27,12 +27,12 @@ class MetaResultFlatComplete(FlatFileExporter):
             row.extend(models.MetaProtocol.flat_complete_data_row(ser['protocol']))
             row.extend(models.MetaResult.flat_complete_data_row(ser))
 
-            if len(ser['single_results2']) == 0:
+            if len(ser['single_results']) == 0:
                 # print one-row with no single-results
                 rows.append(row)
             else:
                 # print each single-result as a new row
-                for sr in ser['single_results2']:
+                for sr in ser['single_results']:
                     row_copy = list(row)  # clone
                     row_copy.extend(models.SingleResult.flat_complete_data_row(sr))
                     rows.append(row_copy)
@@ -47,33 +47,30 @@ class MetaResultFlatDataPivot(FlatFileExporter):
 
     def _get_header_row(self):
         return [
-            'Study',
-            'Study URL',
-            'Study HAWC ID',
-            'Study Published?',
+            'study id',
+            'study name',
+            'study published',
 
-            'Protocol Primary Key',
-            'Protocol URL',
-            'Protocol Name',
-            'Protocol Type',
-            'Total References',
-            'Identified References',
+            'protocol id',
+            'protocol name',
+            'protocol type',
+            'total references',
+            'identified references',
 
-            'Row Key',
-            'Result Primary Key',
-            'Result URL',
-            'Result Label',
-            'Health Outcome',
-            'Exposure',
-            'Result References',
-            'Statistical Metric',
-            'Statistical Metric Abbreviation',
+            'key',
+            'meta result id',
+            'meta result label',
+            'health outcome',
+            'exposure',
+            'result references',
+            'statistical metric',
+            'statistical metric abbreviation',
             'N',
-            'Estimate',
-            'Lower CI',
-            'Upper CI',
+            'estimate',
+            'lower CI',
+            'upper CI',
             'CI units',
-            'Heterogeneity'
+            'heterogeneity'
         ]
 
     def _get_data_rows(self):
@@ -81,13 +78,11 @@ class MetaResultFlatDataPivot(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = [
-                ser['protocol']['study']['short_citation'],
-                ser['protocol']['study']['url'],
                 ser['protocol']['study']['id'],
+                ser['protocol']['study']['short_citation'],
                 ser['protocol']['study']['published'],
 
                 ser['protocol']['id'],
-                ser['protocol']['url'],
                 ser['protocol']['name'],
                 ser['protocol']['protocol_type'],
                 ser['protocol']['total_references'],
@@ -95,7 +90,6 @@ class MetaResultFlatDataPivot(FlatFileExporter):
 
                 ser['id'],  # repeat for data-pivot key
                 ser['id'],
-                ser['url'],
                 ser['label'],
                 ser['health_outcome'],
                 ser['exposure_name'],

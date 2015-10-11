@@ -5,7 +5,7 @@
             "name": "American Indian or Alaskan Native",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 1
     },
     {
@@ -14,7 +14,7 @@
             "name": "Asian",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 2
     },
     {
@@ -23,7 +23,7 @@
             "name": "Black or African American",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 3
     },
     {
@@ -32,7 +32,7 @@
             "name": "Hispanic/Latino",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 4
     },
     {
@@ -41,7 +41,7 @@
             "name": "Native American of Other Pacific Islander",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 5
     },
     {
@@ -50,7 +50,7 @@
             "name": "Two or More Races",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 6
     },
     {
@@ -59,7 +59,7 @@
             "name": "White",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 7
     },
     {
@@ -68,7 +68,7 @@
             "name": "Unknown/Unspecified",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 8
     },
     {
@@ -77,7 +77,7 @@
             "name": "Other",
             "created": "2013-02-16T14:30:00.001Z"
         },
-        "model": "epi2.ethnicity",
+        "model": "epi.ethnicity",
         "pk": 9
     }
 ]

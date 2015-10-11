@@ -179,7 +179,7 @@ _.extend(DataPivot, {
 
     // add data-pivot row-level key and index
     row._dp_y  = i;
-    row._dp_pk = row['Row Key'] || i;
+    row._dp_pk = row['key'] || i;
 
     return row;
   },
@@ -303,7 +303,7 @@ DataPivot.prototype = {
     this.data_headers = data_headers;
   },
   build_settings: function(){
-
+    this.dpe_options = DataPivotExtension.get_options(this);
     var self = this,
         build_description_tab = function(){
           var tab = $('<div class="tab-pane active" id="data_pivot_settings_description"></div>'),
@@ -1348,7 +1348,7 @@ var _DataPivot_settings_description = function(data_pivot, values){
     "header_style": this.data_pivot.style_manager.add_select("texts", values.header_style),
     "text_style": this.data_pivot.style_manager.add_select("texts", values.text_style),
     "max_width": $('<input class="span12" type="number">'),
-    "dpe": $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot))
+    "dpe": $('<select class="span12"></select>').html(this.data_pivot.dpe_options)
   };
 
   // set default values
@@ -1416,7 +1416,7 @@ var _DataPivot_settings_pointdata = function(data_pivot, values){
     "header_name": $('<input class="span12" type="text">'),
     "marker_style": this.data_pivot.style_manager.add_select(style_type, values.marker_style),
     "conditional_formatting": this.conditional_formatter.data,
-    "dpe": $('<select class="span12"></select>').html(DataPivotExtension.get_options(data_pivot))
+    "dpe": $('<select class="span12"></select>').html(this.data_pivot.dpe_options)
   };
 
   // set default values
@@ -2641,8 +2641,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
                 obj.style(property, d._styles['points_' + i][property]);
               }
             })
-            .style('cursor', function(d){return(datum._dpe_datatype)?'pointer':'auto';})
-            .on("click", function(d){if(datum._dpe_datatype){self.dpe.render_plottip(datum, d);}});
+            .style('cursor', function(d){return(datum._dpe_key)?'pointer':'auto';})
+            .on("click", function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
     });
 
     this.g_labels = this.vis.append("g");
@@ -2714,9 +2714,9 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           "col": j,
           "text": txt.toLocaleString(),
           "style": v._styles['text_' + j],
-          "cursor": (desc._dpe_datatype)?'pointer':'auto',
+          "cursor": (desc._dpe_key)?'pointer':'auto',
           "onclick": function(){
-            if(desc._dpe_datatype)self.dpe.render_plottip(desc, v);
+            if(desc._dpe_key)self.dpe.render_plottip(desc, v);
           }
         })
       });
@@ -2880,126 +2880,140 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
 DataPivotExtension = function(){};
 _.extend(DataPivotExtension, {
+  values: [
+    {
+      _dpe_name:        "study",
+      _dpe_key:         "study id",
+      _dpe_cls:         Study,
+      _dpe_option_txt:  "Show study",
+    },
+    {
+      _dpe_name:        "experiment",
+      _dpe_key:         "experiment id",
+      _dpe_cls:         Experiment,
+      _dpe_option_txt:  "Show experiment",
+    },
+    {
+      _dpe_name:        "animal_group",
+      _dpe_key:         "animal group id",
+      _dpe_cls:         AnimalGroup,
+      _dpe_option_txt:  "Show animal group",
+    },
+    {
+      _dpe_name:        "endpoint",
+      _dpe_key:         "endpoint id",
+      _dpe_cls:         Endpoint,
+      _dpe_option_txt:  "Show endpoint (basic)",
+      _dpe_options: {
+          complete: false
+      },
+    },
+    {
+      _dpe_name:        "endpoint_complete",
+      _dpe_key:         "endpoint id",
+      _dpe_cls:         Endpoint,
+      _dpe_option_txt:  "Show endpoint (complete)",
+      _dpe_options: {
+          complete: true
+      },
+    },
+    {
+      _dpe_name:        "study_population",
+      _dpe_key:         "study population id",
+      _dpe_cls:         StudyPopulation,
+      _dpe_option_txt:  "Show study population",
+    },
+    {
+      _dpe_name:        "comparison_set",
+      _dpe_key:         "comparison set id",
+      _dpe_cls:         ComparisonSet,
+      _dpe_option_txt:  "Show comparison set",
+    },
+    {
+      _dpe_name:        "exposure",
+      _dpe_key:         "exposure id",
+      _dpe_cls:         Exposure,
+      _dpe_option_txt:  "Show exposure",
+    },
+    {
+      _dpe_name:        "outcome",
+      _dpe_key:         "outcome id",
+      _dpe_cls:         Outcome,
+      _dpe_option_txt:  "Show outcome",
+    },
+    {
+      _dpe_name:        "result",
+      _dpe_key:         "result id",
+      _dpe_cls:         Result,
+      _dpe_option_txt:  "Show result",
+    },
+    {
+      _dpe_name:        "meta_protocol",
+      _dpe_key:         "protocol id",
+      _dpe_cls:         MetaProtocol,
+      _dpe_option_txt:  "Show protocol",
+    },
+    {
+      _dpe_name:        "meta_result",
+      _dpe_key:         "meta result id",
+      _dpe_cls:         MetaResult,
+      _dpe_option_txt:  "Show meta result",
+    },
+    {
+      _dpe_name:        "iv_chemical",
+      _dpe_key:         "chemical id",
+      _dpe_cls:         IVChemical,
+      _dpe_option_txt:  "Show chemical",
+    },
+    {
+      _dpe_name:        "iv_experiment",
+      _dpe_key:         "IVExperiment id",
+      _dpe_cls:         IVExperiment,
+      _dpe_option_txt:  "Show experiment",
+    },
+    {
+      _dpe_name:        "iv_endpoint",
+      _dpe_key:         "IVEndpoint id",
+      _dpe_cls:         IVEndpoint,
+      _dpe_option_txt:  "Show endpoint",
+    }
+  ],
+  extByName: function(){
+    return _.indexBy(DataPivotExtension.values, '_dpe_name');
+  },
+  extByColumnKey: function(){
+    return _.groupBy(DataPivotExtension.values, '_dpe_key');
+  },
   update_extensions: function(obj, key){
-    var map = d3.map({
-          "study": {
-              _dpe_key:       "Study HAWC ID",
-              _dpe_datatype:  "study",
-              _dpe_cls:       Study
-          },
-          "experiment": {
-              _dpe_key:       "Experiment ID",
-              _dpe_datatype:  "experiment",
-              _dpe_cls:       Experiment
-          },
-          "animal_group": {
-              _dpe_key:       "Animal Group ID",
-              _dpe_datatype:  "animal_group",
-              _dpe_cls:       AnimalGroup
-          },
-          "endpoint": {
-              _dpe_key:       "Endpoint Key",
-              _dpe_datatype:  "endpoint",
-              _dpe_cls:       Endpoint,
-              options: {
-                  complete: false
-              }
-          },
-          "endpoint_complete": {
-              _dpe_key:       "Endpoint Key",
-              _dpe_datatype:  "endpoint",
-              _dpe_cls:       Endpoint,
-              options: {
-                  complete: true
-              }
-          },
-          "study_population": {
-              _dpe_key:       "Study Population Key",
-              _dpe_datatype:  "study_population",
-              _dpe_cls:       StudyPopulation
-          },
-          "comparison_set": {
-              _dpe_key:       "Comparison Set ID",
-              _dpe_datatype:  "comparison_set",
-              _dpe_cls:       ComparisonSet
-          },
-          "exposure": {
-              _dpe_key:       "Exposure Key",
-              _dpe_datatype:  "exposure",
-              _dpe_cls:       Exposure
-          },
-          "assessed_outcome": {
-              _dpe_key:       "Assessed Outcome Key",
-              _dpe_datatype:  "assessed_outcome",
-              _dpe_cls:       Outcome
-          },
-          "result": {
-              _dpe_key:       "Result ID",
-              _dpe_datatype:  "result",
-              _dpe_cls:       Result
-          },
-          "meta_protocol": {
-              _dpe_key:       "Protocol Primary Key",
-              _dpe_datatype:  "meta_protocol",
-              _dpe_cls:       MetaProtocol
-          },
-          "meta_result": {
-              _dpe_key:       "Result Primary Key",
-              _dpe_datatype:  "meta_result",
-              _dpe_cls:       MetaResult
-          },
-          "iv_chemical": {
-              _dpe_key:       "Chemical HAWC ID",
-              _dpe_datatype:  "iv_chemical",
-              _dpe_cls:       IVChemical
-          },
-          "iv_experiment": {
-              _dpe_key:       "IVExperiment HAWC ID",
-              _dpe_datatype:  "iv_experiment",
-              _dpe_cls:       IVExperiment
-          },
-          "iv_endpoint": {
-              _dpe_key:       "IVEndpoint HAWC ID",
-              _dpe_datatype:  "iv_endpoint",
-              _dpe_cls:       IVEndpoint
-          }
-      }),
-        match = map.get(key);
-
+    var dpe_keys = DataPivotExtension.extByName(),
+        match = dpe_keys[key];
     if (match){
-      $.extend(obj, match);
+      _.extend(obj, match);
     } else {
       console.log("Unrecognized DPE key: {0}".printf(key));
     }
   },
   get_options: function(dp){
     // extension options dependent on available data-columns
-    var opts = ['<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE)];
+    var build_opt = function(val, txt){
+        return '<option value="{0}">{1}</option>'.printf(val, txt)
+      },
+      opts = [
+        build_opt(DataPivot.NULL_CASE, DataPivot.NULL_CASE)
+      ],
+      headers;
 
     if (dp.data.length>0){
-      var headers = d3.set(d3.map(dp.data[0]).keys()),
-          options = d3.map({
-            "Study HAWC ID":        ['<option value="study">Show Study</option>'],
-            "Study Population Key": ['<option value="study_population">Show Study Population</option>'],
-            "Exposure Key":         ['<option value="exposure">Show Exposure</option>'],
-            "Comparison Set ID":    ['<option value="comparison_set">Show comparison set</option>'],
-            "Protocol Primary Key": ['<option value="meta_protocol">Show Epidemiology Meta-Protocol</option>'],
-            "Result Primary Key":   ['<option value="meta_result">Show Epidemiology Meta-Result</option>'],
-            "Experiment ID":        ['<option value="experiment">Show Experiment</option>'],
-            "Animal Group ID":      ['<option value="animal_group">Show Animal Group</option>'],
-            "Endpoint Key":         [
-              '<option value="endpoint">Show Endpoint</option>',
-              '<option value="endpoint_complete">Show Endpoint Complete Summary</option>'
-            ],
-            "Assessed Outcome Key": ['<option value="assessed_outcome">Show Assessed Outcome</option>'],
-            "Result ID":            ['<option value="result">Show Result</option>'],
-            "Chemical HAWC ID":     ['<option value="iv_chemical">Show In Vitro Chemical</option>'],
-            "IVExperiment HAWC ID": ['<option value="iv_experiment">Show In Vitro Experiment</option>'],
-            "IVEndpoint HAWC ID":   ['<option value="iv_endpoint">Show In Vitro Endpoint</option>'],
-          });
-
-      options.entries().forEach(function(v){
-        if(headers.has(v.key)) opts.push.apply(opts, v.value);
+      headers = d3.set(d3.map(dp.data[0]).keys());
+      _.each(DataPivotExtension.extByColumnKey(), function(vals, key){
+        if(headers.has(key)){
+          opts.push.apply(
+            opts,
+            vals.map(function(d){
+              return build_opt(d._dpe_name, d._dpe_option_txt);
+            })
+          );
+        }
       });
     }
     return opts;
@@ -3007,10 +3021,10 @@ _.extend(DataPivotExtension, {
 });
 DataPivotExtension.prototype = {
   render_plottip: function(settings, datarow){
-    var Cls = settings._dpe_cls,
-        key = settings._dpe_key,
-        options = settings.options
-    Cls.displayAsModal(datarow[key], options);
+    settings._dpe_cls.displayAsModal(
+      datarow[settings._dpe_key],
+      settings._dpe_options
+    );
   }
 };
 

@@ -1,63 +1,36 @@
 {% extends 'portal.html' %}
 
-
-{% block title %}{{assessment}} | {{object.study_population.study}} | {{object.study_population}} | {{object}} {% endblock title %}
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study_population.get_absolute_url}}">{{object.study_population|truncatechars:40}}</a><span class="divider">/</span></li>
-  {% block breadcrumbs_self %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
-  {% endblock breadcrumbs_self %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-
-  <h1>{{object}}
-    {% if obj_perms.edit and crud == "Read" %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Exposure Editing</a></li>
-            <li><a href="{% url 'epi:exposure_update' object.pk %}">Update</a></li>
-            <li><a href="{% url 'epi:exposure_delete' pk=object.pk %}">Delete</a></li>
-            <li class="disabled"><a tabindex="-1" href="#">Assessed Outcome Editing</a></li>
-            <li><a href="{% url 'epi:assessedoutcome_create' object.pk %}">Create new</a></li>
-            <li><a href="{% url 'epi:assessedoutcome_copy_selector' object.pk %}">Copy from existing</a></li>
-            {% comment %}
-              <li><a href="{% url 'animal:experiment_versions' object.pk %}">View prior versions</a></li>
-            {% endcomment %}
-        </ul>
-      </div>
-    {% endif %}
-  </h1>
-
-  {% if crud == "Read" %}
-  <h2>Assessed Outcomes</h2>
-  <ul>
-      {% for ao in object.outcomes.all %}
-        <li><a href="{{ao.get_absolute_url}}">{{ao}}</a></li>
-      {% empty %}
-        <li><i>No assessed-outcomes are available for this exposure.</i></li>
-      {% endfor %}
-  </ul>
-  {% endif %}
-
+    <h1>{{object.name}}
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">Exposure editing</a></li>
+                <li><a href="{% url 'epi:exp_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'epi:exp_delete' pk=object.pk %}">Delete</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+    <div id="objContainer"></div>
 {% endblock %}
 
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Exposure.get_object({{object.id}}, function(d){
-        $('h1')
-          .after(d.build_egs_table())
-          .after("<h2>Exposure groups</h2>")
-          .after(d.build_details_table());
-      });
+      Exposure.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

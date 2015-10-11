@@ -6,7 +6,7 @@ var StudyPopulation = function(data){
 };
 _.extend(StudyPopulation, {
     get_object: function(id, cb){
-        $.get('/epi2/api/study-population/{0}/'.printf(id), function(d){
+        $.get('/epi/api/study-population/{0}/'.printf(id), function(d){
             cb(new StudyPopulation(d));
         });
     },
@@ -98,7 +98,7 @@ var Exposure = function(data){
 };
 _.extend(Exposure, {
     get_object: function(id, cb){
-        $.get('/epi2/api/exposure/{0}/'.printf(id), function(d){
+        $.get('/epi/api/exposure/{0}/'.printf(id), function(d){
             cb(new Exposure(d));
         });
     },
@@ -187,7 +187,7 @@ var ComparisonSet = function(data){
 };
 _.extend(ComparisonSet, {
     get_object: function(id, cb){
-        $.get('/epi2/api/comparison-set/{0}/'.printf(id), function(d){
+        $.get('/epi/api/comparison-set/{0}/'.printf(id), function(d){
             cb(new ComparisonSet(d));
         });
     },
@@ -293,7 +293,7 @@ var Group = function(data){
 };
 _.extend(Group, {
     get_object: function(id, cb){
-        $.get('/epi2/api/group/{0}/'.printf(id), function(d){
+        $.get('/epi/api/group/{0}/'.printf(id), function(d){
             cb(new Group(d));
         });
     },
@@ -510,7 +510,7 @@ var Outcome = function(data){
 };
 _.extend(Outcome, {
     get_object: function(id, cb){
-        $.get('/epi2/api/outcome/{0}/'.printf(id), function(d){
+        $.get('/epi/api/outcome/{0}/'.printf(id), function(d){
             cb(new Outcome(d));
         });
     },
@@ -635,7 +635,7 @@ var Result = function(data){
 };
 _.extend(Result, {
     get_object: function(id, cb){
-        $.get('/epi2/api/result/{0}/'.printf(id), function(d){
+        $.get('/epi/api/result/{0}/'.printf(id), function(d){
             cb(new Result(d));
         });
     },

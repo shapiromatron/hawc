@@ -4,7 +4,7 @@
             "code": "AF",
             "name": "Afghanistan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 1
     },
     {
@@ -12,7 +12,7 @@
             "code": "AX",
             "name": "Åland Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 2
     },
     {
@@ -20,7 +20,7 @@
             "code": "AL",
             "name": "Albania"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 3
     },
     {
@@ -28,7 +28,7 @@
             "code": "DZ",
             "name": "Algeria"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 4
     },
     {
@@ -36,7 +36,7 @@
             "code": "AS",
             "name": "American Samoa"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 5
     },
     {
@@ -44,7 +44,7 @@
             "code": "AD",
             "name": "Andorra"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 6
     },
     {
@@ -52,7 +52,7 @@
             "code": "AO",
             "name": "Angola"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 7
     },
     {
@@ -60,7 +60,7 @@
             "code": "AI",
             "name": "Anguilla"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 8
     },
     {
@@ -68,7 +68,7 @@
             "code": "AQ",
             "name": "Antarctica"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 9
     },
     {
@@ -76,7 +76,7 @@
             "code": "AG",
             "name": "Antigua And Barbuda"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 10
     },
     {
@@ -84,7 +84,7 @@
             "code": "AR",
             "name": "Argentina"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 11
     },
     {
@@ -92,7 +92,7 @@
             "code": "AM",
             "name": "Armenia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 12
     },
     {
@@ -100,7 +100,7 @@
             "code": "AW",
             "name": "Aruba"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 13
     },
     {
@@ -108,7 +108,7 @@
             "code": "AU",
             "name": "Australia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 14
     },
     {
@@ -116,7 +116,7 @@
             "code": "AT",
             "name": "Austria"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 15
     },
     {
@@ -124,7 +124,7 @@
             "code": "AZ",
             "name": "Azerbaijan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 16
     },
     {
@@ -132,7 +132,7 @@
             "code": "BS",
             "name": "Bahamas"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 17
     },
     {
@@ -140,7 +140,7 @@
             "code": "BH",
             "name": "Bahrain"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 18
     },
     {
@@ -148,7 +148,7 @@
             "code": "BD",
             "name": "Bangladesh"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 19
     },
     {
@@ -156,7 +156,7 @@
             "code": "BB",
             "name": "Barbados"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 20
     },
     {
@@ -164,7 +164,7 @@
             "code": "BY",
             "name": "Belarus"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 21
     },
     {
@@ -172,7 +172,7 @@
             "code": "BE",
             "name": "Belgium"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 22
     },
     {
@@ -180,7 +180,7 @@
             "code": "BZ",
             "name": "Belize"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 23
     },
     {
@@ -188,7 +188,7 @@
             "code": "BJ",
             "name": "Benin"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 24
     },
     {
@@ -196,7 +196,7 @@
             "code": "BM",
             "name": "Bermuda"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 25
     },
     {
@@ -204,7 +204,7 @@
             "code": "BT",
             "name": "Bhutan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 26
     },
     {
@@ -212,7 +212,7 @@
             "code": "BO",
             "name": "Bolivia, Plurinational State Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 27
     },
     {
@@ -220,7 +220,7 @@
             "code": "BQ",
             "name": "Bonaire, Sint Eustatius And Saba"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 28
     },
     {
@@ -228,7 +228,7 @@
             "code": "BA",
             "name": "Bosnia And Herzegovina"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 29
     },
     {
@@ -236,7 +236,7 @@
             "code": "BW",
             "name": "Botswana"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 30
     },
     {
@@ -244,7 +244,7 @@
             "code": "BV",
             "name": "Bouvet Island"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 31
     },
     {
@@ -252,7 +252,7 @@
             "code": "BR",
             "name": "Brazil"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 32
     },
     {
@@ -260,7 +260,7 @@
             "code": "IO",
             "name": "British Indian Ocean Territory"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 33
     },
     {
@@ -268,7 +268,7 @@
             "code": "BN",
             "name": "Brunei Darussalam"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 34
     },
     {
@@ -276,7 +276,7 @@
             "code": "BG",
             "name": "Bulgaria"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 35
     },
     {
@@ -284,7 +284,7 @@
             "code": "BF",
             "name": "Burkina Faso"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 36
     },
     {
@@ -292,7 +292,7 @@
             "code": "BI",
             "name": "Burundi"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 37
     },
     {
@@ -300,7 +300,7 @@
             "code": "KH",
             "name": "Cambodia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 38
     },
     {
@@ -308,7 +308,7 @@
             "code": "CM",
             "name": "Cameroon"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 39
     },
     {
@@ -316,7 +316,7 @@
             "code": "CA",
             "name": "Canada"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 40
     },
     {
@@ -324,7 +324,7 @@
             "code": "CV",
             "name": "Cape Verde"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 41
     },
     {
@@ -332,7 +332,7 @@
             "code": "KY",
             "name": "Cayman Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 42
     },
     {
@@ -340,7 +340,7 @@
             "code": "CF",
             "name": "Central African Republic"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 43
     },
     {
@@ -348,7 +348,7 @@
             "code": "TD",
             "name": "Chad"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 44
     },
     {
@@ -356,7 +356,7 @@
             "code": "CL",
             "name": "Chile"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 45
     },
     {
@@ -364,7 +364,7 @@
             "code": "CN",
             "name": "China"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 46
     },
     {
@@ -372,7 +372,7 @@
             "code": "CX",
             "name": "Christmas Island"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 47
     },
     {
@@ -380,7 +380,7 @@
             "code": "CC",
             "name": "Cocos (Keeling) Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 48
     },
     {
@@ -388,7 +388,7 @@
             "code": "CO",
             "name": "Colombia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 49
     },
     {
@@ -396,7 +396,7 @@
             "code": "KM",
             "name": "Comoros"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 50
     },
     {
@@ -404,7 +404,7 @@
             "code": "CG",
             "name": "Congo"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 51
     },
     {
@@ -412,7 +412,7 @@
             "code": "CD",
             "name": "Congo, The Democratic Republic Of The"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 52
     },
     {
@@ -420,7 +420,7 @@
             "code": "CK",
             "name": "Cook Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 53
     },
     {
@@ -428,7 +428,7 @@
             "code": "CR",
             "name": "Costa Rica"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 54
     },
     {
@@ -436,7 +436,7 @@
             "code": "CI",
             "name": "Côte D'Ivoire"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 55
     },
     {
@@ -444,7 +444,7 @@
             "code": "HR",
             "name": "Croatia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 56
     },
     {
@@ -452,7 +452,7 @@
             "code": "CU",
             "name": "Cuba"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 57
     },
     {
@@ -460,7 +460,7 @@
             "code": "CW",
             "name": "Curaçao"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 58
     },
     {
@@ -468,7 +468,7 @@
             "code": "CY",
             "name": "Cyprus"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 59
     },
     {
@@ -476,7 +476,7 @@
             "code": "CZ",
             "name": "Czech Republic"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 60
     },
     {
@@ -484,7 +484,7 @@
             "code": "DK",
             "name": "Denmark"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 61
     },
     {
@@ -492,7 +492,7 @@
             "code": "DJ",
             "name": "Djibouti"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 62
     },
     {
@@ -500,7 +500,7 @@
             "code": "DM",
             "name": "Dominica"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 63
     },
     {
@@ -508,7 +508,7 @@
             "code": "DO",
             "name": "Dominican Republic"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 64
     },
     {
@@ -516,7 +516,7 @@
             "code": "EC",
             "name": "Ecuador"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 65
     },
     {
@@ -524,7 +524,7 @@
             "code": "EG",
             "name": "Egypt"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 66
     },
     {
@@ -532,7 +532,7 @@
             "code": "SV",
             "name": "El Salvador"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 67
     },
     {
@@ -540,7 +540,7 @@
             "code": "GQ",
             "name": "Equatorial Guinea"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 68
     },
     {
@@ -548,7 +548,7 @@
             "code": "ER",
             "name": "Eritrea"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 69
     },
     {
@@ -556,7 +556,7 @@
             "code": "EE",
             "name": "Estonia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 70
     },
     {
@@ -564,7 +564,7 @@
             "code": "ET",
             "name": "Ethiopia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 71
     },
     {
@@ -572,7 +572,7 @@
             "code": "FK",
             "name": "Falkland Islands (Malvinas)"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 72
     },
     {
@@ -580,7 +580,7 @@
             "code": "FO",
             "name": "Faroe Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 73
     },
     {
@@ -588,7 +588,7 @@
             "code": "FJ",
             "name": "Fiji"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 74
     },
     {
@@ -596,7 +596,7 @@
             "code": "FI",
             "name": "Finland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 75
     },
     {
@@ -604,7 +604,7 @@
             "code": "FR",
             "name": "France"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 76
     },
     {
@@ -612,7 +612,7 @@
             "code": "GF",
             "name": "French Guiana"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 77
     },
     {
@@ -620,7 +620,7 @@
             "code": "PF",
             "name": "French Polynesia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 78
     },
     {
@@ -628,7 +628,7 @@
             "code": "TF",
             "name": "French Southern Territories"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 79
     },
     {
@@ -636,7 +636,7 @@
             "code": "GA",
             "name": "Gabon"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 80
     },
     {
@@ -644,7 +644,7 @@
             "code": "GM",
             "name": "Gambia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 81
     },
     {
@@ -652,7 +652,7 @@
             "code": "GE",
             "name": "Georgia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 82
     },
     {
@@ -660,7 +660,7 @@
             "code": "DE",
             "name": "Germany"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 83
     },
     {
@@ -668,7 +668,7 @@
             "code": "GH",
             "name": "Ghana"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 84
     },
     {
@@ -676,7 +676,7 @@
             "code": "GI",
             "name": "Gibraltar"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 85
     },
     {
@@ -684,7 +684,7 @@
             "code": "GR",
             "name": "Greece"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 86
     },
     {
@@ -692,7 +692,7 @@
             "code": "GL",
             "name": "Greenland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 87
     },
     {
@@ -700,7 +700,7 @@
             "code": "GD",
             "name": "Grenada"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 88
     },
     {
@@ -708,7 +708,7 @@
             "code": "GP",
             "name": "Guadeloupe"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 89
     },
     {
@@ -716,7 +716,7 @@
             "code": "GU",
             "name": "Guam"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 90
     },
     {
@@ -724,7 +724,7 @@
             "code": "GT",
             "name": "Guatemala"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 91
     },
     {
@@ -732,7 +732,7 @@
             "code": "GG",
             "name": "Guernsey"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 92
     },
     {
@@ -740,7 +740,7 @@
             "code": "GN",
             "name": "Guinea"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 93
     },
     {
@@ -748,7 +748,7 @@
             "code": "GW",
             "name": "Guinea-Bissau"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 94
     },
     {
@@ -756,7 +756,7 @@
             "code": "GY",
             "name": "Guyana"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 95
     },
     {
@@ -764,7 +764,7 @@
             "code": "HT",
             "name": "Haiti"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 96
     },
     {
@@ -772,7 +772,7 @@
             "code": "HM",
             "name": "Heard Island And Mcdonald Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 97
     },
     {
@@ -780,7 +780,7 @@
             "code": "VA",
             "name": "Holy See (Vatican City State)"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 98
     },
     {
@@ -788,7 +788,7 @@
             "code": "HN",
             "name": "Honduras"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 99
     },
     {
@@ -796,7 +796,7 @@
             "code": "HK",
             "name": "Hong Kong"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 100
     },
     {
@@ -804,7 +804,7 @@
             "code": "HU",
             "name": "Hungary"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 101
     },
     {
@@ -812,7 +812,7 @@
             "code": "IS",
             "name": "Iceland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 102
     },
     {
@@ -820,7 +820,7 @@
             "code": "IN",
             "name": "India"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 103
     },
     {
@@ -828,7 +828,7 @@
             "code": "ID",
             "name": "Indonesia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 104
     },
     {
@@ -836,7 +836,7 @@
             "code": "IR",
             "name": "Iran, Islamic Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 105
     },
     {
@@ -844,7 +844,7 @@
             "code": "IQ",
             "name": "Iraq"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 106
     },
     {
@@ -852,7 +852,7 @@
             "code": "IE",
             "name": "Ireland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 107
     },
     {
@@ -860,7 +860,7 @@
             "code": "IM",
             "name": "Isle Of Man"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 108
     },
     {
@@ -868,7 +868,7 @@
             "code": "IL",
             "name": "Israel"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 109
     },
     {
@@ -876,7 +876,7 @@
             "code": "IT",
             "name": "Italy"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 110
     },
     {
@@ -884,7 +884,7 @@
             "code": "JM",
             "name": "Jamaica"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 111
     },
     {
@@ -892,7 +892,7 @@
             "code": "JP",
             "name": "Japan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 112
     },
     {
@@ -900,7 +900,7 @@
             "code": "JE",
             "name": "Jersey"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 113
     },
     {
@@ -908,7 +908,7 @@
             "code": "JO",
             "name": "Jordan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 114
     },
     {
@@ -916,7 +916,7 @@
             "code": "KZ",
             "name": "Kazakhstan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 115
     },
     {
@@ -924,7 +924,7 @@
             "code": "KE",
             "name": "Kenya"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 116
     },
     {
@@ -932,7 +932,7 @@
             "code": "KI",
             "name": "Kiribati"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 117
     },
     {
@@ -940,7 +940,7 @@
             "code": "KP",
             "name": "Korea, Democratic People's Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 118
     },
     {
@@ -948,7 +948,7 @@
             "code": "KR",
             "name": "Korea, Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 119
     },
     {
@@ -956,7 +956,7 @@
             "code": "KW",
             "name": "Kuwait"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 120
     },
     {
@@ -964,7 +964,7 @@
             "code": "KG",
             "name": "Kyrgyzstan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 121
     },
     {
@@ -972,7 +972,7 @@
             "code": "LA",
             "name": "Lao People's Democratic Republic"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 122
     },
     {
@@ -980,7 +980,7 @@
             "code": "LV",
             "name": "Latvia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 123
     },
     {
@@ -988,7 +988,7 @@
             "code": "LB",
             "name": "Lebanon"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 124
     },
     {
@@ -996,7 +996,7 @@
             "code": "LS",
             "name": "Lesotho"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 125
     },
     {
@@ -1004,7 +1004,7 @@
             "code": "LR",
             "name": "Liberia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 126
     },
     {
@@ -1012,7 +1012,7 @@
             "code": "LY",
             "name": "Libya"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 127
     },
     {
@@ -1020,7 +1020,7 @@
             "code": "LI",
             "name": "Liechtenstein"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 128
     },
     {
@@ -1028,7 +1028,7 @@
             "code": "LT",
             "name": "Lithuania"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 129
     },
     {
@@ -1036,7 +1036,7 @@
             "code": "LU",
             "name": "Luxembourg"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 130
     },
     {
@@ -1044,7 +1044,7 @@
             "code": "MO",
             "name": "Macao"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 131
     },
     {
@@ -1052,7 +1052,7 @@
             "code": "MK",
             "name": "Macedonia, The Former Yugoslav Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 132
     },
     {
@@ -1060,7 +1060,7 @@
             "code": "MG",
             "name": "Madagascar"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 133
     },
     {
@@ -1068,7 +1068,7 @@
             "code": "MW",
             "name": "Malawi"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 134
     },
     {
@@ -1076,7 +1076,7 @@
             "code": "MY",
             "name": "Malaysia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 135
     },
     {
@@ -1084,7 +1084,7 @@
             "code": "MV",
             "name": "Maldives"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 136
     },
     {
@@ -1092,7 +1092,7 @@
             "code": "ML",
             "name": "Mali"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 137
     },
     {
@@ -1100,7 +1100,7 @@
             "code": "MT",
             "name": "Malta"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 138
     },
     {
@@ -1108,7 +1108,7 @@
             "code": "MH",
             "name": "Marshall Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 139
     },
     {
@@ -1116,7 +1116,7 @@
             "code": "MQ",
             "name": "Martinique"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 140
     },
     {
@@ -1124,7 +1124,7 @@
             "code": "MR",
             "name": "Mauritania"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 141
     },
     {
@@ -1132,7 +1132,7 @@
             "code": "MU",
             "name": "Mauritius"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 142
     },
     {
@@ -1140,7 +1140,7 @@
             "code": "YT",
             "name": "Mayotte"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 143
     },
     {
@@ -1148,7 +1148,7 @@
             "code": "MX",
             "name": "Mexico"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 144
     },
     {
@@ -1156,7 +1156,7 @@
             "code": "FM",
             "name": "Micronesia, Federated States Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 145
     },
     {
@@ -1164,7 +1164,7 @@
             "code": "MD",
             "name": "Moldova, Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 146
     },
     {
@@ -1172,7 +1172,7 @@
             "code": "MC",
             "name": "Monaco"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 147
     },
     {
@@ -1180,7 +1180,7 @@
             "code": "MN",
             "name": "Mongolia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 148
     },
     {
@@ -1188,7 +1188,7 @@
             "code": "ME",
             "name": "Montenegro"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 149
     },
     {
@@ -1196,7 +1196,7 @@
             "code": "MS",
             "name": "Montserrat"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 150
     },
     {
@@ -1204,7 +1204,7 @@
             "code": "MA",
             "name": "Morocco"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 151
     },
     {
@@ -1212,7 +1212,7 @@
             "code": "MZ",
             "name": "Mozambique"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 152
     },
     {
@@ -1220,7 +1220,7 @@
             "code": "MM",
             "name": "Myanmar"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 153
     },
     {
@@ -1228,7 +1228,7 @@
             "code": "NA",
             "name": "Namibia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 154
     },
     {
@@ -1236,7 +1236,7 @@
             "code": "NR",
             "name": "Nauru"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 155
     },
     {
@@ -1244,7 +1244,7 @@
             "code": "NP",
             "name": "Nepal"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 156
     },
     {
@@ -1252,7 +1252,7 @@
             "code": "NL",
             "name": "Netherlands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 157
     },
     {
@@ -1260,7 +1260,7 @@
             "code": "NC",
             "name": "New Caledonia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 158
     },
     {
@@ -1268,7 +1268,7 @@
             "code": "NZ",
             "name": "New Zealand"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 159
     },
     {
@@ -1276,7 +1276,7 @@
             "code": "NI",
             "name": "Nicaragua"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 160
     },
     {
@@ -1284,7 +1284,7 @@
             "code": "NE",
             "name": "Niger"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 161
     },
     {
@@ -1292,7 +1292,7 @@
             "code": "NG",
             "name": "Nigeria"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 162
     },
     {
@@ -1300,7 +1300,7 @@
             "code": "NU",
             "name": "Niue"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 163
     },
     {
@@ -1308,7 +1308,7 @@
             "code": "NF",
             "name": "Norfolk Island"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 164
     },
     {
@@ -1316,7 +1316,7 @@
             "code": "MP",
             "name": "Northern Mariana Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 165
     },
     {
@@ -1324,7 +1324,7 @@
             "code": "NO",
             "name": "Norway"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 166
     },
     {
@@ -1332,7 +1332,7 @@
             "code": "OM",
             "name": "Oman"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 167
     },
     {
@@ -1340,7 +1340,7 @@
             "code": "PK",
             "name": "Pakistan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 168
     },
     {
@@ -1348,7 +1348,7 @@
             "code": "PW",
             "name": "Palau"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 169
     },
     {
@@ -1356,7 +1356,7 @@
             "code": "PS",
             "name": "Palestine, State Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 170
     },
     {
@@ -1364,7 +1364,7 @@
             "code": "PA",
             "name": "Panama"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 171
     },
     {
@@ -1372,7 +1372,7 @@
             "code": "PG",
             "name": "Papua New Guinea"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 172
     },
     {
@@ -1380,7 +1380,7 @@
             "code": "PY",
             "name": "Paraguay"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 173
     },
     {
@@ -1388,7 +1388,7 @@
             "code": "PE",
             "name": "Peru"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 174
     },
     {
@@ -1396,7 +1396,7 @@
             "code": "PH",
             "name": "Philippines"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 175
     },
     {
@@ -1404,7 +1404,7 @@
             "code": "PN",
             "name": "Pitcairn"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 176
     },
     {
@@ -1412,7 +1412,7 @@
             "code": "PL",
             "name": "Poland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 177
     },
     {
@@ -1420,7 +1420,7 @@
             "code": "PT",
             "name": "Portugal"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 178
     },
     {
@@ -1428,7 +1428,7 @@
             "code": "PR",
             "name": "Puerto Rico"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 179
     },
     {
@@ -1436,7 +1436,7 @@
             "code": "QA",
             "name": "Qatar"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 180
     },
     {
@@ -1444,7 +1444,7 @@
             "code": "RE",
             "name": "Réunion"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 181
     },
     {
@@ -1452,7 +1452,7 @@
             "code": "RO",
             "name": "Romania"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 182
     },
     {
@@ -1460,7 +1460,7 @@
             "code": "RU",
             "name": "Russian Federation"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 183
     },
     {
@@ -1468,7 +1468,7 @@
             "code": "RW",
             "name": "Rwanda"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 184
     },
     {
@@ -1476,7 +1476,7 @@
             "code": "BL",
             "name": "Saint Barthélemy"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 185
     },
     {
@@ -1484,7 +1484,7 @@
             "code": "SH",
             "name": "Saint Helena, Ascension And Tristan Da Cunha"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 186
     },
     {
@@ -1492,7 +1492,7 @@
             "code": "KN",
             "name": "Saint Kitts And Nevis"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 187
     },
     {
@@ -1500,7 +1500,7 @@
             "code": "LC",
             "name": "Saint Lucia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 188
     },
     {
@@ -1508,7 +1508,7 @@
             "code": "MF",
             "name": "Saint Martin (French Part)"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 189
     },
     {
@@ -1516,7 +1516,7 @@
             "code": "PM",
             "name": "Saint Pierre And Miquelon"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 190
     },
     {
@@ -1524,7 +1524,7 @@
             "code": "VC",
             "name": "Saint Vincent And The Grenadines"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 191
     },
     {
@@ -1532,7 +1532,7 @@
             "code": "WS",
             "name": "Samoa"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 192
     },
     {
@@ -1540,7 +1540,7 @@
             "code": "SM",
             "name": "San Marino"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 193
     },
     {
@@ -1548,7 +1548,7 @@
             "code": "ST",
             "name": "Sao Tome And Principe"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 194
     },
     {
@@ -1556,7 +1556,7 @@
             "code": "SA",
             "name": "Saudi Arabia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 195
     },
     {
@@ -1564,7 +1564,7 @@
             "code": "SN",
             "name": "Senegal"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 196
     },
     {
@@ -1572,7 +1572,7 @@
             "code": "RS",
             "name": "Serbia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 197
     },
     {
@@ -1580,7 +1580,7 @@
             "code": "SC",
             "name": "Seychelles"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 198
     },
     {
@@ -1588,7 +1588,7 @@
             "code": "SL",
             "name": "Sierra Leone"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 199
     },
     {
@@ -1596,7 +1596,7 @@
             "code": "SG",
             "name": "Singapore"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 200
     },
     {
@@ -1604,7 +1604,7 @@
             "code": "SX",
             "name": "Sint Maarten (Dutch Part)"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 201
     },
     {
@@ -1612,7 +1612,7 @@
             "code": "SK",
             "name": "Slovakia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 202
     },
     {
@@ -1620,7 +1620,7 @@
             "code": "SI",
             "name": "Slovenia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 203
     },
     {
@@ -1628,7 +1628,7 @@
             "code": "SB",
             "name": "Solomon Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 204
     },
     {
@@ -1636,7 +1636,7 @@
             "code": "SO",
             "name": "Somalia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 205
     },
     {
@@ -1644,7 +1644,7 @@
             "code": "ZA",
             "name": "South Africa"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 206
     },
     {
@@ -1652,7 +1652,7 @@
             "code": "GS",
             "name": "South Georgia And The South Sandwich Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 207
     },
     {
@@ -1660,7 +1660,7 @@
             "code": "SS",
             "name": "South Sudan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 208
     },
     {
@@ -1668,7 +1668,7 @@
             "code": "ES",
             "name": "Spain"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 209
     },
     {
@@ -1676,7 +1676,7 @@
             "code": "LK",
             "name": "Sri Lanka"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 210
     },
     {
@@ -1684,7 +1684,7 @@
             "code": "SD",
             "name": "Sudan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 211
     },
     {
@@ -1692,7 +1692,7 @@
             "code": "SR",
             "name": "Suriname"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 212
     },
     {
@@ -1700,7 +1700,7 @@
             "code": "SJ",
             "name": "Svalbard And Jan Mayen"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 213
     },
     {
@@ -1708,7 +1708,7 @@
             "code": "SZ",
             "name": "Swaziland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 214
     },
     {
@@ -1716,7 +1716,7 @@
             "code": "SE",
             "name": "Sweden"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 215
     },
     {
@@ -1724,7 +1724,7 @@
             "code": "CH",
             "name": "Switzerland"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 216
     },
     {
@@ -1732,7 +1732,7 @@
             "code": "SY",
             "name": "Syrian Arab Republic"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 217
     },
     {
@@ -1740,7 +1740,7 @@
             "code": "TW",
             "name": "Taiwan, Province Of China"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 218
     },
     {
@@ -1748,7 +1748,7 @@
             "code": "TJ",
             "name": "Tajikistan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 219
     },
     {
@@ -1756,7 +1756,7 @@
             "code": "TZ",
             "name": "Tanzania, United Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 220
     },
     {
@@ -1764,7 +1764,7 @@
             "code": "TH",
             "name": "Thailand"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 221
     },
     {
@@ -1772,7 +1772,7 @@
             "code": "TL",
             "name": "Timor-Leste"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 222
     },
     {
@@ -1780,7 +1780,7 @@
             "code": "TG",
             "name": "Togo"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 223
     },
     {
@@ -1788,7 +1788,7 @@
             "code": "TK",
             "name": "Tokelau"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 224
     },
     {
@@ -1796,7 +1796,7 @@
             "code": "TO",
             "name": "Tonga"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 225
     },
     {
@@ -1804,7 +1804,7 @@
             "code": "TT",
             "name": "Trinidad And Tobago"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 226
     },
     {
@@ -1812,7 +1812,7 @@
             "code": "TN",
             "name": "Tunisia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 227
     },
     {
@@ -1820,7 +1820,7 @@
             "code": "TR",
             "name": "Turkey"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 228
     },
     {
@@ -1828,7 +1828,7 @@
             "code": "TM",
             "name": "Turkmenistan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 229
     },
     {
@@ -1836,7 +1836,7 @@
             "code": "TC",
             "name": "Turks And Caicos Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 230
     },
     {
@@ -1844,7 +1844,7 @@
             "code": "TV",
             "name": "Tuvalu"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 231
     },
     {
@@ -1852,7 +1852,7 @@
             "code": "UG",
             "name": "Uganda"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 232
     },
     {
@@ -1860,7 +1860,7 @@
             "code": "UA",
             "name": "Ukraine"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 233
     },
     {
@@ -1868,7 +1868,7 @@
             "code": "AE",
             "name": "United Arab Emirates"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 234
     },
     {
@@ -1876,7 +1876,7 @@
             "code": "GB",
             "name": "United Kingdom"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 235
     },
     {
@@ -1884,7 +1884,7 @@
             "code": "US",
             "name": "United States"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 236
     },
     {
@@ -1892,7 +1892,7 @@
             "code": "UM",
             "name": "United States Minor Outlying Islands"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 237
     },
     {
@@ -1900,7 +1900,7 @@
             "code": "UY",
             "name": "Uruguay"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 238
     },
     {
@@ -1908,7 +1908,7 @@
             "code": "UZ",
             "name": "Uzbekistan"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 239
     },
     {
@@ -1916,7 +1916,7 @@
             "code": "VU",
             "name": "Vanuatu"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 240
     },
     {
@@ -1924,7 +1924,7 @@
             "code": "VE",
             "name": "Venezuela, Bolivarian Republic Of"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 241
     },
     {
@@ -1932,7 +1932,7 @@
             "code": "VN",
             "name": "Viet Nam"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 242
     },
     {
@@ -1940,7 +1940,7 @@
             "code": "VG",
             "name": "Virgin Islands, British"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 243
     },
     {
@@ -1948,7 +1948,7 @@
             "code": "VI",
             "name": "Virgin Islands, U.S."
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 244
     },
     {
@@ -1956,7 +1956,7 @@
             "code": "WF",
             "name": "Wallis And Futuna"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 245
     },
     {
@@ -1964,7 +1964,7 @@
             "code": "EH",
             "name": "Western Sahara"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 246
     },
     {
@@ -1972,7 +1972,7 @@
             "code": "YE",
             "name": "Yemen"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 247
     },
     {
@@ -1980,7 +1980,7 @@
             "code": "ZM",
             "name": "Zambia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 248
     },
     {
@@ -1988,7 +1988,7 @@
             "code": "ZW",
             "name": "Zimbabwe"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 249
     },
     {
@@ -1996,7 +1996,7 @@
             "code": "",
             "name": "Unknown/Unspecified"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 250
     },
     {
@@ -2004,7 +2004,7 @@
             "code": "",
             "name": "Socialist Federal Republic of Yugoslavia"
         },
-        "model": "epi2.country",
+        "model": "epi.country",
         "pk": 251
     }
 ]

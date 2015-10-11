@@ -1,11 +1,11 @@
-{% extends 'epi2/studypopulation_detail.html' %}
+{% extends 'epi/studypopulation_detail.html' %}
 
 
 {% load add_class %}
 {% load selectable_tags %}
 
 {% block title %}
-  {{block.super}} | Copy Result
+  {{block.super}} | Copy Outcome
 {% endblock title %}
 
 {% block extrastyle %}
@@ -14,7 +14,7 @@
 
 {% block content %}
 
-  {% include "hawc/_copy_as_new.html" with name="result" notes="Select an existing result as a template to create a new one." %}
+  {% include "hawc/_copy_as_new.html" with name="outcome" notes="Select an existing outcome as a template to create a new one." %}
 
 {% endblock content %}
 
@@ -25,7 +25,7 @@
 
       new HAWCUtils.InitialForm({
         "form": $('form'),
-        "base_url": "{% url 'epi2:result_create' object.pk %}"
+        "base_url": "{% url 'epi:outcome_create' object.pk %}"
       });
 
     });

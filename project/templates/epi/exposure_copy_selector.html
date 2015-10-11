@@ -1,6 +1,5 @@
 {% extends 'epi/studypopulation_detail.html' %}
 
-
 {% load add_class %}
 {% load selectable_tags %}
 
@@ -11,11 +10,6 @@
 {% block extrastyle %}
   {% include_ui_theme %}
 {% endblock %}
-
-{% block breadcrumbs_self %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">Copy outcome<span class="divider">/</span></li>
-{% endblock breadcrumbs_self %}
 
 {% block content %}
 
@@ -30,7 +24,7 @@
 
       new HAWCUtils.InitialForm({
         "form": $('form'),
-        "base_url": "{% url 'epi:exposure_create' object.pk %}"
+        "base_url": "{% url 'epi:exp_create' object.pk %}"
       });
 
     });
