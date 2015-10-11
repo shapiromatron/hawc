@@ -1015,7 +1015,7 @@ class GroupResult(models.Model):
         auto_now=True)
 
     class Meta:
-        ordering = ('result', 'group__comparison_set_id')
+        ordering = ('result', 'group__group_id')
 
     @property
     def p_value_text(self):
