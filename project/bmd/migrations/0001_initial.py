@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('bmrs', models.TextField(blank=True)),
                 ('notes', models.TextField()),
-                ('dose_units', models.ForeignKey(to='animal.DoseUnits')),
+                ('dose_units', models.ForeignKey(to='assessment.DoseUnits')),
                 ('endpoint', models.ForeignKey(related_name='BMD_session', to='animal.Endpoint', null=True)),
                 ('selected_model', models.OneToOneField(related_name='selected', null=True, blank=True, to='bmd.BMD_model_run')),
             ],
