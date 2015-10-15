@@ -36,6 +36,11 @@ def cleanHTML(txt):
                        .replace("&nbsp;", " ")))
 
 
+def listToUl(list_):
+    return u"<ul>{0}</ul>".format(
+        u"".join([u"<li>{0}</li>".format(d) for d in list_]))
+
+
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.

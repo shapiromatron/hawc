@@ -1,3 +1,7 @@
+import logging
+import numpy as np
+import pandas as pd
+
 from django.core.urlresolvers import reverse_lazy
 from django import forms
 
@@ -216,3 +220,49 @@ class NullForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         pass
+
+
+class ReferenceExcelUploadForm(forms.Form):
+
+    excel_file = forms.FileField(
+        required=True,
+        help_text='Upload an Excel file which contains at least two columns: '
+                  'a "HAWC ID" column for the reference identifier, and a '
+                  '"Full text URL" column which contains the URL for the '
+                  'full text.')
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop('assessment')
+        super(ReferenceExcelUploadForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = {
+            "legend_text": "Upload full-text URLs",
+            "help_text":   "Using an Excel file, upload full-text URLs "
+                           "for multiple references",
+            "cancel_url": reverse_lazy("lit:overview", args=[self.assessment.id])
+        }
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+    def clean_excel_file(self):
+        fn = self.cleaned_data['excel_file']
+        if fn.name[-5:] not in ['.xlsx', '.xlsm'] and fn.name[-4:] not in ['.xls']:
+            raise forms.ValidationError("Must be an Excel file with an "
+                                        "extension xlsx, xlsm, or xls")
+
+        try:
+            df = pd.read_excel(fn.file)
+            df = df[["HAWC ID", "Full text URL"]]
+            df["Full text URL"].fillna("", inplace=True)
+            assert df["HAWC ID"].dtype == np.int64
+            assert df["Full text URL"].dtype == np.object0
+            self.cleaned_data['df'] = df
+        except Exception as e:
+            logging.warning(e)
+            raise forms.ValidationError(
+                'Invalid Excel format. The first worksheet in the workbook '
+                'must contain at least two columns -"HAWC ID", and '
+                '"Full text URL"')
+        return fn

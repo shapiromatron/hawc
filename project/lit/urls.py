@@ -51,6 +51,9 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/references/download/$',
         views.RefDownloadExcel.as_view(),
         name='ref_download_excel'),
+    url(r'^assessment/(?P<pk>\d+)/references/upload/$',
+        views.RefUploadExcel.as_view(),
+        name='ref_upload'),
 
     # CRUD searches
     url(r'^assessment/(?P<pk>\d+)/searches/$',

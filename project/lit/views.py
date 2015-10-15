@@ -10,7 +10,8 @@ from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
                          BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
-                         GenerateReport)
+                         GenerateReport, ProjectManagerOrHigherMixin)
+from utils.helper import listToUl
 from assessment.models import Assessment
 
 from . import forms, exports, models
@@ -386,6 +387,40 @@ class RefList(BaseList):
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
         context['untagged'] = models.Reference.get_untagged_references(self.assessment).count()
         return context
+
+
+class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+    """
+    Upload Excel files and update reference details.
+    """
+    model = Assessment
+    template_name = "lit/reference_upload_excel.html"
+    form_class = forms.ReferenceExcelUploadForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=kwargs['pk'])
+
+    def get_form_kwargs(self):
+        kwargs = super(RefUploadExcel, self).get_form_kwargs()
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        errors = models.Reference.process_excel(
+            form.cleaned_data['df'],
+            self.assessment.id
+        )
+        if len(errors) > 0:
+            msg = u"""References updated, but some errors were found
+                (references with errors were not updated): {0}"""\
+                .format(listToUl(errors))
+        else:
+            msg = "References updated."
+        self.success_message = msg
+        return super(RefUploadExcel, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('lit:overview', args=[self.assessment.pk])
 
 
 class RefReport(GenerateReport):

@@ -10,6 +10,7 @@ from django.db.models.loading import get_model
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.validators import URLValidator
 from django.utils.html import strip_tags
 
 from taggit.models import ItemBase
@@ -923,6 +924,36 @@ class Reference(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    @classmethod
+    def process_excel(cls, df, assessment_id):
+        """
+        Expects a data-frame with two columns - HAWC ID and Full text URL
+        """
+        errors = []
+
+        def fn(d):
+            if d["HAWC ID"] in cw and d["Full text URL"] != cw[d["HAWC ID"]]:
+                try:
+                    validator(d["Full text URL"])
+                    cls.objects\
+                        .filter(id=d["HAWC ID"])\
+                        .update(full_text_url=d["Full text URL"])
+                except ValidationError:
+                    errors.append("HAWC ID {0}, invalid URL: {1}".format(
+                        d["HAWC ID"], d["Full text URL"]))
+
+        cw = {}
+        validator = URLValidator()
+        existing = cls.objects.filter(
+                id__in=df["HAWC ID"].unique(),
+                assessment_id=assessment_id)\
+            .values_list('id', 'full_text_url')
+        for obj in existing:
+            cw[obj[0]] = obj[1]
+        df.apply(fn, axis=1)
+
+        return errors
 
     @classmethod
     def get_docx_template_context(cls, queryset):

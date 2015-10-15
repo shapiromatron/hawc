@@ -19,6 +19,7 @@ kombu==3.0.26
 lxml==3.4.4
 pillow==2.8.2
 psycopg2==2.5.5
+pandas==0.16.2
 python-docx==0.8.5
 python-pptx==0.5.7
 pytz==2015.4
@@ -37,5 +38,4 @@ git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc
 
 # for import scripts
 numpy==1.9.2
-pandas==0.16.2
 python-dateutil==2.4.2

@@ -28,6 +28,7 @@
           {% if obj_perms.edit_assessment %}
             <li class="disabled"><a tabindex="-1" href="#">Assessment-level editing</a></li>
             <li><a href="{% url 'lit:tags_update' assessment.pk %}">Update literature tags</a></li>
+            <li><a href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a></li>
           {% endif %}
           <li class="disabled"><a tabindex="-1" href="#">Exports</a></li>
           <li><a href="{% url 'lit:ref_download_excel' assessment.pk %}">Download all references</a></li>
