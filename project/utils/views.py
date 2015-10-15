@@ -1,3 +1,4 @@
+import abc
 import os
 import logging
 import celery
@@ -143,6 +144,31 @@ class AssessmentPermissionsMixin(object):
 
         logging.debug('Permissions added')
         return self.assessment.user_permissions(self.request.user)
+
+
+class ProjectManagerOrHigherMixin(object):
+    """
+    Mixin for project-manager access to page.
+    Requires a get_assessment method; checked for all HTTP verbs.
+    """
+    model = Assessment
+
+    @abc.abstractmethod
+    def get_assessment(self, request, *args, **kwargs):
+        pass
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = self.get_assessment(request, *args, **kwargs)
+        if not self.assessment.user_can_edit_assessment(request.user):
+            raise PermissionDenied
+        return super(ProjectManagerOrHigherMixin, self)\
+            .dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectManagerOrHigherMixin, self)\
+            .get_context_data(**kwargs)
+        context['assessment'] = self.assessment
+        return context
 
 
 class CanCreateMixin(object):
