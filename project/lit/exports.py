@@ -17,7 +17,7 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         headers = ['HAWC ID', 'PubMed ID', 'Citation','Full Citation',
                    'Title', 'Authors', 'Year', 'Journal',  'Abstract',
-                   'Created', 'Last updated']
+                   'Full text URL', 'Created', 'Last updated']
         if tags:
             headers.extend(models.ReferenceFilterTag.get_flattened_taglist(tags, include_parent_tag))
         return headers
@@ -88,6 +88,7 @@ class ReferenceFlatComplete(FlatFileExporter):
                 ref.year,
                 ref.journal,
                 strip_tags(ref.abstract),
+                ref.full_text_url,
                 ref.created,
                 ref.last_updated
             ]

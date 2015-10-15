@@ -665,6 +665,10 @@ class Reference(models.Model):
     journal = models.TextField(blank=True)
     abstract = models.TextField(blank=True)
     tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
+    full_text_url = models.URLField(
+        blank=True,
+        help_text="Link to full-text publication (may require increased "
+                  "access privileges, only reviewers and team-members)")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     block_id = models.DateTimeField(blank=True, null=True,
@@ -678,7 +682,8 @@ class Reference(models.Model):
 
     def get_json(self, json_encode=True, searches=False):
         d = {}
-        fields = ('pk', 'title', 'authors', 'year', 'journal', 'abstract')
+        fields = ('pk', 'title', 'authors', 'year',
+                  'journal', 'abstract', 'full_text_url')
         for field in fields:
             d[field] = getattr(self, field)
 

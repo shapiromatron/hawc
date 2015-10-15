@@ -27,12 +27,7 @@ _.extend(Reference.prototype, Observee.prototype, {
             content = content.concat(this.print_taglist());
         }
         content.push('<p>{0}</p>'.printf(this.data.abstract));
-        this.data.identifiers.forEach(function(v,i){
-            if(v.url){
-                content.push('<p class="ref_small">{0} link: <a target="_blank" href="{1}">{2}</a></p>'
-                             .printf(v.database, v.url, v.id));
-            }
-        });
+        content.push(this.getLinks());
         return content;
     },
     print_taglist: function(){
@@ -55,9 +50,31 @@ _.extend(Reference.prototype, Observee.prototype, {
     deselect_name: function(){
         this.$list.removeClass("selected");
     },
+    getLinks: function(){
+        var links = $('<p>');
+
+        _.chain(this.data.identifiers)
+            .filter(function(v){return v.url.length>0;})
+            .each(function(v){
+                links.append('<a class="btn btn-mini btn-success" target="_blank" href="{0}">{1} ID {2}</a>'.printf(
+                    v.url, v.database, v.id));
+                links.append('<span>&nbsp;</span>');
+            });
+
+        if (this.data.full_text_url){
+            links.append($('<a>')
+                .attr("class", 'btn btn-mini btn-success')
+                .attr('target', '_blank')
+                .attr('href', this.data.full_text_url)
+                .text("Full text link"));
+        }
+
+        return (links.children().length>0) ? links : null;
+    },
     print_div_row: function(){
 
-        var data = this.data,
+        var self = this,
+            data = this.data,
             div = $('<div>'),
             abs_btn = this.get_abstract_button(div),
             edit_btn = this.get_edit_button(),
@@ -68,21 +85,6 @@ _.extend(Reference.prototype, Observee.prototype, {
             get_journal = function(){
                 if(data.journal)
                     return '<p class="ref_small">{0}</p>'.printf(data.journal);
-            },
-            get_identifiers = function(){
-                var p;
-                data.identifiers.forEach(function(v){
-                    if(v.database === "PubMed"){
-                        p = $('<p>')
-                            .attr('class', 'ref_small')
-                            .append('<strong>Pubmed ID: </strong>')
-                            .append($('<a>')
-                                        .attr('target', '_blank')
-                                        .attr('href', v.url)
-                                        .text(v.id));
-                    }
-                });
-                return p;
             },
             get_abstract = function(){
                 if(data.abstract)
@@ -121,7 +123,7 @@ _.extend(Reference.prototype, Observee.prototype, {
                     get_title(),
                     get_journal(),
                     get_abstract(),
-                    get_identifiers(),
+                    self.getLinks(),
                 ];
             };
 

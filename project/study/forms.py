@@ -20,7 +20,7 @@ class BaseStudyForm(forms.ModelForm):
         fields = ('short_citation', 'study_identifier',
                   'full_citation', 'study_type',
                   'coi_reported', 'coi_details',
-                  'funding_source',
+                  'funding_source', 'full_text_url',
                   'contact_author', 'ask_author',
                   'summary', 'published')
 
@@ -46,6 +46,8 @@ class BaseStudyForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
+        if 'authors' in self.fields:
+            helper.add_fluid_row('authors', 2, "span6")
         helper.add_fluid_row('short_citation', 2, "span6")
         helper.add_fluid_row('coi_reported', 2, "span6")
         helper.add_fluid_row('contact_author', 2, "span6")
@@ -89,7 +91,7 @@ class ReferenceStudyForm(BaseStudyForm):
                   'title', 'authors', 'journal',
                   'abstract', 'study_type',
                   'coi_reported', 'coi_details',
-                  'funding_source',
+                  'funding_source', 'full_text_url',
                   'contact_author', 'ask_author',
                   'summary', 'published')
 
