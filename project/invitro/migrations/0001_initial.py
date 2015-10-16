@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
                 ('vehicle_control', models.CharField(help_text=b'Vehicle control chemical or other notes', max_length=128, blank=True)),
                 ('control_notes', models.CharField(help_text=b'Additional details related to controls', max_length=256, blank=True)),
                 ('cell_type', models.ForeignKey(related_name='ivexperiments', to='invitro.IVCellType')),
-                ('dose_units', models.ForeignKey(related_name='ivexperiments', to='animal.DoseUnits')),
+                ('dose_units', models.ForeignKey(related_name='ivexperiments', to='assessment.DoseUnits')),
                 ('study', models.ForeignKey(related_name='ivexperiments', to='study.Study')),
             ],
             options={
