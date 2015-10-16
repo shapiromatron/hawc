@@ -256,6 +256,15 @@ class Search(models.Model):
         else:
             return ref_objs
 
+    def get_references_with_tag(self, tag=None, descendants=False):
+        if tag is None:
+            return self.references_untagged
+        else:
+            tag_ids = [tag.id]
+            if descendants:
+                tag_ids.extend(list(tag.get_descendants().values_list('pk', flat=True)))
+            return self.references.filter(tags__in=tag_ids).distinct('pk')
+
     @property
     def references_count(self):
         return self.references.all().count()
@@ -266,9 +275,10 @@ class Search(models.Model):
                                 .filter(tag_count__gt=0).count()
 
     @property
-    def references_untagged_count(self):
-        return self.references.all().annotate(tag_count=models.Count('tags')) \
-                                .filter(tag_count=0).count()
+    def references_untagged(self):
+        return self.references.all()\
+                   .annotate(tag_count=models.Count('tags'))\
+                   .filter(tag_count=0)
 
     def get_json(self):
         d = {}
@@ -754,12 +764,10 @@ class Reference(models.Model):
 
     @classmethod
     def get_untagged_references(cls, assessment):
-        # get all untagged references for the specified assessment.
-        refs = Reference.objects.filter(assessment=assessment)
-        tagged = list(ReferenceTags.objects
-            .filter(content_object__in=refs)
-            .values_list('content_object', flat=True))
-        return refs.exclude(pk__in=tagged)
+        return cls.objects\
+                .filter(assessment_id=assessment.id)\
+                .annotate(tag_count=models.Count('tags'))\
+                .filter(tag_count=0)
 
     @classmethod
     def get_overview_details(cls, assessment):

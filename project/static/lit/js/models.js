@@ -206,39 +206,48 @@ ReferencesViewer.prototype = {
         this.$table_div.html('<p>An error has occured</p>');
     },
     _print_header: function(){
-        var h3 = $('<h3></h3>')
-            self = this;
-        if(this.options.fixed_title){
-            h3.text(this.options.fixed_title);
-        } else {
-            var tag_name = this.options.tag.get_full_name(),
-                actions = $('<div class="btn-group pull-right">' +
-                              '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>' +
-                              '<ul class="dropdown-menu">' +
-                                '<li><a href="{0}?tag_id={1}">Download references</a></li>'.printf(this.options.download_url, this.options.tag.data.pk) +
-                                '<li><a href="#" class="show_abstracts">Show all abstracts</a></li>' +
-                              '</ul>' +
-                            '</div>');
+        var h3 = $('<h3>')
+            $div = this.$div,
+            actionLinks = this.options.actionLinks || [],
+            txt = this.options.fixed_title || "References";
 
-            if (window.canEdit) actions.find(".dropdown-menu").append(
-                '<li><a href="/lit/reference-tag/{0}/tag/">Edit references with this tag (but not descendants)</a></li>'.printf(this.options.tag.data.pk));
+        if(this.options.tag){
+            txt = "References tagged: <span class='refTag'>{0}</span>".printf(this.options.tag.get_full_name());
 
-            h3.text("References tagged ")
-              .append("<span class='refTag refTagEditing'>{0}</span>".printf(tag_name))
-              .append(actions)
-              .on('click', '.show_abstracts', function(){
-                var sel = $(this);
-                if(sel.text() === "Show all abstracts"){
-                    self.$div.find('.abstracts').collapse('show');
-                    sel.text("Hide all abstracts");
-                    self.$div.find('.abstractToggle').text('Hide abstract');
+            actionLinks.push({
+                url: "{0}?tag_id={1}".printf(this.options.download_url, this.options.tag.data.pk),
+                text: "Download references"
+            },{
+                url: "#",
+                text: "Show all abstracts",
+                cls: "show_abstracts"
+            });
+
+            if (window.canEdit){
+                actionLinks.push({
+                    url: "/lit/tag/{0}/tag/".printf(this.options.tag.data.pk),
+                    text: "Edit references with this tag (but not descendants)"
+                });
+            }
+
+            h3.on('click', '.show_abstracts', function(e){
+                e.preventDefault();
+                if(this.textContent === "Show all abstracts"){
+                    $div.find('.abstracts').collapse('show');
+                    this.textContent = "Hide all abstracts";
+                    $div.find('.abstractToggle').text('Hide abstract');
                 } else {
-                    self.$div.find('.abstracts').collapse('hide');
-                    sel.text("Show all abstracts");
-                    self.$div.find('.abstractToggle').text('Show abstract');
+                    $div.find('.abstracts').collapse('hide');
+                    this.textContent = "Show all abstracts";
+                    $div.find('.abstractToggle').text('Show abstract');
                 }
-              });
+            });
         }
+
+        h3.html(txt);
+        if(actionLinks.length>0)
+            h3.append(HAWCUtils.pageActionsButton(actionLinks));
+
         return h3;
     },
     _set_loading_view: function(){
@@ -565,7 +574,23 @@ _.extend(TagTree.prototype, Observee.prototype, {
     },
     get_refs_count: function(name){
         this.tags.forEach(function(v){v.get_reference_count();});
-    }
+    },
+    view_untagged_references: function(reference_viewer){
+        var url = '/lit/assessment/{0}/references/untagged/json/'.printf(window.assessment_pk);
+        if (window.search_id) url += "?search_id={0}".printf(window.search_id);
+
+        $.get(url, function(results){
+            if(results.status=="success"){
+                refs = [];
+                results.refs.forEach(function(datum){
+                    refs.push(new Reference(datum, window.tagtree));
+                });
+                reference_viewer.set_references(refs);
+            } else {
+                reference_viewer.set_error();
+            }
+        });
+    },
 });
 
 
@@ -661,6 +686,7 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     get_reference_objects_by_tag: function(reference_viewer){
         var url = '/lit/assessment/{0}/references/{1}/json/'
             .printf(window.assessment_pk, this.data.pk);
+        if (window.search_id) url += "?search_id={0}".printf(window.search_id);
 
         $.get(url, function(results){
             if(results.status=="success"){
@@ -851,7 +877,11 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
                         .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
                         .on("click", function(d){
                             if(d3.event.ctrlKey || d3.event.metaKey){
-                                fetch_references(d);
+                                if (d.depth == 0){
+                                   alert("Cannot view details on root-node.");
+                                } else {
+                                    fetch_references(d);
+                                }
                             } else {
                                 toggle(d);
                                 update(d);

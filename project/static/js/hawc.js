@@ -368,11 +368,11 @@ var HAWCUtils = {
     pageActionsButton: function(items){
         var $menu = $('<ul class="dropdown-menu">');
         items.forEach(function(d){
-            $menu.append('<li><a href="{0}">{1}</a></li>'.printf(d.url, d.text));
+            $menu.append('<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls||"", d.text));
         });
         return $('<div class="btn-group pull-right">')
             .append("<a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>Actions <span class='caret'></span></a>")
-            .append($menu)
+            .append($menu);
     },
     addAlert: function(content, $div){
         $div = $div || $("#content");

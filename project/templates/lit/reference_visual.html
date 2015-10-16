@@ -16,7 +16,7 @@
 {% block content %}
 
   <div id="tagtree"></div><br><br>
-  <p class='help-block'>CTRL-click to view references associated with an node.</p>
+  <p class='help-block'>Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references associated with an node (except root-node).</p>
 {% endblock %}
 
 {% block extrajs %}
@@ -28,6 +28,7 @@
       window.tagtree.get_refs_count();
       window.tagtree.build_top_level_node("{{assessment}}");
       window.canEdit = {{obj_perms.edit|lower}};
+      window.search_id = {% if objectType == "Search" %} parseInt("{{object.id}}", 10) {% else %} null {% endif %};
 
       var title = {% if object_type == 'reference' %}
           "{{assessment}}: Literature Tagtree"; {% else %}

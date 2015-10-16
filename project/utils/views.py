@@ -159,6 +159,7 @@ class ProjectManagerOrHigherMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
+        logging.debug("Permissions checked")
         if not self.assessment.user_can_edit_assessment(request.user):
             raise PermissionDenied
         return super(ProjectManagerOrHigherMixin, self)\
@@ -166,6 +167,32 @@ class ProjectManagerOrHigherMixin(object):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectManagerOrHigherMixin, self)\
+            .get_context_data(**kwargs)
+        context['assessment'] = self.assessment
+        return context
+
+
+class TeamMemberOrHigherMixin(object):
+    """
+    Mixin for team-member access to page.
+    Requires a get_assessment method; checked for all HTTP verbs.
+    """
+    model = Assessment
+
+    @abc.abstractmethod
+    def get_assessment(self, request, *args, **kwargs):
+        pass
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = self.get_assessment(request, *args, **kwargs)
+        logging.debug("Permissions checked")
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied
+        return super(TeamMemberOrHigherMixin, self)\
+            .dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamMemberOrHigherMixin, self)\
             .get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context

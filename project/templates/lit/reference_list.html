@@ -20,7 +20,7 @@
       <h3>Taglist</h3>
       <div id="taglist">
       </div><br>
-      <p>Untagged References: ({{untagged}})</p>
+      <p class='nestedTag' id="untaggedReferences">Untagged References: ({{untagged.count}})</p>
     </div>
     <div class="span9">
       <div id="references_detail_div">
@@ -38,6 +38,7 @@
       window.assessment_pk = {{assessment.pk}};
       window.tagtree = new TagTree({{tags|safe}});
       window.canEdit = {{obj_perms.edit|lower}};
+      window.search_id = parseInt("{{object.id}}", 10) || null;
 
       tagtree.add_references({{ref_objs|safe}});
 
@@ -47,10 +48,29 @@
           $('.nestedTag').removeClass("selected");
           $(e.target).addClass("selected");
           var tag = $(e.target).data('d'),
-              options = {tag: tag,
-                         download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"}
-          window.refviewer = new ReferencesViewer($('#references_detail_div'), options);
-          tag.get_reference_objects_by_tag(window.refviewer);
+              options = {
+                tag: tag,
+                download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
+              },
+              refviewer = new ReferencesViewer($('#references_detail_div'), options);
+          tag.get_reference_objects_by_tag(refviewer);
+        });
+
+        $('#untaggedReferences').click(function(e){
+          $('.nestedTag').removeClass("selected");
+          $(e.target).addClass("selected");
+          var options = {
+                fixed_title: "Untagged references",
+                actionLinks: [
+                  {
+                    url: "{% url 'lit:tag_untagged' assessment.id %}",
+                    text: "Tag untagged references"
+                  }
+                ],
+                download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
+              },
+              refviewer = new ReferencesViewer($('#references_detail_div'), options);
+          tagtree.view_untagged_references(refviewer);
         });
     });
   </script>

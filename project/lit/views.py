@@ -1,3 +1,4 @@
+import abc
 import json
 
 from datetime import datetime
@@ -10,7 +11,8 @@ from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
                          BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
-                         GenerateReport, ProjectManagerOrHigherMixin)
+                         GenerateReport, ProjectManagerOrHigherMixin,
+                         TeamMemberOrHigherMixin)
 from utils.helper import listToUl
 from assessment.models import Assessment
 
@@ -252,41 +254,30 @@ class SearchQuery(BaseUpdate):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class SearchTagsEdit(BaseUpdate):
+class TagReferences(TeamMemberOrHigherMixin, FormView):
     """
-    Custom view to edit references for a given search. Uses Search as object
-    based on URL and also for permissions checking. POST requests send a
-    Reference form and user-settings to be returned and altered back to the
-    server.
-
-    TODO:
-        - batch-send all changes at once, rather than individual changes for each references
-        - maybe not fetch all references if there are hundreds?
+    Abstract base-class to tag references, using various methods to get instance.
     """
-    model = models.Search
-    form_class = forms.SearchForm
+    form_class = forms.TagReferenceForm
     template_name = "lit/search_tags_edit.html"
 
-    def post(self, request, *args, **kwargs):
-        if self.request.is_ajax():
-            self.object = self.get_object()  # permissions check
-            response = self.update_reference_tags()
-            return HttpResponse(json.dumps(response), content_type="application/json")
-        else:
-            raise Http404
+    @abc.abstractmethod
+    def get_assessment(self, request, *args, **kwargs):
+        pass
 
-    def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model,
-                                slug=self.kwargs.get(self.slug_url_kwarg),
-                                assessment=self.kwargs.get('pk'))
-        return super(SearchTagsEdit, self).get_object(object=obj)
+    def post(self, request, *args, **kwargs):
+        if not self.request.is_ajax():
+            raise Http404
+        response = self.update_reference_tags()
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
     def update_reference_tags(self):
         # find reference, check that the assessment is the same as the one we
         # have permissions-checked for, and if so, update reference-tags
         response = {"status": "fail"}
         pk = self.request.POST.get('pk', -1)
-        ref = models.Reference.objects.filter(pk=pk, assessment=self.assessment).first()
+        ref = models.Reference.objects\
+            .filter(pk=pk, assessment=self.assessment).first()
         if ref:
             tag_pks = self.request.POST.getlist('tags[]', [])
             ref.tags.set(tag_pks)
@@ -296,46 +287,91 @@ class SearchTagsEdit(BaseUpdate):
         return response
 
     def get_context_data(self, **kwargs):
-        context = super(SearchTagsEdit, self).get_context_data(**kwargs)
-        context['references'] = models.Reference.objects.filter(searches=self.object) \
-                                                .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context = super(TagReferences, self).get_context_data(**kwargs)
+        context['object'] = self.object
         context['model'] = self.model.__name__
         return context
 
 
-class ReferenceTagsEdit(SearchTagsEdit):
-    model = models.Reference
-    form_class = forms.ReferenceForm
+class TagBySearch(TagReferences):
+    """
+    Edit tags for a single Search.
+    """
+    model = models.Search
 
-    def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
-        return super(SearchTagsEdit, self).get_object(object=obj)
-
-    def get_context_data(self, **kwargs):
-        context = super(SearchTagsEdit, self).get_context_data(**kwargs)
-        context['references'] = self.model.objects.filter(pk=self.object.pk).prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
-        context['model'] = self.model.__name__
-        return context
-
-
-class TagsEditByTag(SearchTagsEdit):
-    model = models.ReferenceFilterTag
-    form_class = forms.ReferenceFilterTagForm
-
-    def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
-        return super(SearchTagsEdit, self).get_object(object=obj)
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(
+            self.model,
+            slug=self.kwargs.get('slug'),
+            assessment=self.kwargs.get('pk'))
+        return self.object.get_assessment()
 
     def get_context_data(self, **kwargs):
-        context = super(SearchTagsEdit, self).get_context_data(**kwargs)
+        context = super(TagBySearch, self).get_context_data(**kwargs)
         context['references'] = models.Reference.objects\
-                                      .filter(tags=self.object.pk)\
-                                      .distinct()\
-                                      .prefetch_related('identifiers')
+            .filter(searches=self.object)\
+            .prefetch_related('identifiers')
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
-        context['model'] = self.model.__name__
+        return context
+
+
+class TagByReference(TagReferences):
+    """
+    Edit tags for on a single reference.
+    """
+    model = models.Reference
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(
+            self.model,
+            pk=self.kwargs.get('pk'))
+        return self.object.get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super(TagByReference, self).get_context_data(**kwargs)
+        context['references'] = self.model.objects\
+            .filter(pk=self.object.pk)\
+            .prefetch_related('identifiers')
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        return context
+
+
+class TagByTag(TagReferences):
+    """
+    Tag references with a specific tag.
+    """
+    model = models.ReferenceFilterTag
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(
+            self.model,
+            pk=self.kwargs.get('pk'))
+        return self.object.get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super(TagByTag, self).get_context_data(**kwargs)
+        context['references'] = models.Reference.objects\
+            .filter(tags=self.object.pk)\
+            .distinct()\
+            .prefetch_related('identifiers')
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        return context
+
+
+class TagByUntagged(TagReferences):
+    """
+    View to tag all untagged references for an assessment.
+    """
+    model = Assessment
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Assessment, id=self.kwargs.get('pk'))
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super(TagByUntagged, self).get_context_data(**kwargs)
+        context['references'] = models.Reference.get_untagged_references(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
         return context
 
 
@@ -354,7 +390,7 @@ class SearchRefList(BaseDetail):
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['object_type'] = 'search'
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
-        context['untagged'] = self.object.references_untagged_count
+        context['untagged'] = self.object.references_untagged
         return context
 
 
@@ -373,6 +409,7 @@ class SearchTagsVisualization(BaseDetail):
         context['object_type'] = 'search'
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['objectType'] = self.model.__name__
         return context
 
 
@@ -385,7 +422,7 @@ class RefList(BaseList):
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
-        context['untagged'] = models.Reference.get_untagged_references(self.assessment).count()
+        context['untagged'] = models.Reference.get_untagged_references(self.assessment)
         return context
 
 
@@ -490,14 +527,28 @@ class RefsByTagJSON(BaseDetail):
 
     def get_context_data(self, **kwargs):
         response = {"status": "success", "refs": []}
-        try:
+        search_id = self.request.GET.get('search_id', None)
+        if search_id is not None:
+            search_id = int(search_id)
+
+        tag_id = self.kwargs.get('tag_id', None)
+        tag = None
+        if tag_id != "untagged":
             tag = models.ReferenceFilterTag.get_tag_in_assessment(
-                self.assessment.id, int(self.kwargs.get('tag_id')))
+                self.assessment.id, int(tag_id))
+
+        if search_id:
+            search = models.Search.objects.get(id=search_id)
+            refs = search.get_references_with_tag(tag=tag, descendants=True)
+        elif tag:
             refs = models.Reference.get_references_with_tag(tag, descendants=True)
-            for ref in refs:
-                response["refs"].append(ref.get_json(json_encode=False, searches=True))
-        except:
-            response["status"] = "fail"
+        else:
+            refs = models.Reference.get_untagged_references(self.assessment)
+
+        response["refs"] = [
+            ref.get_json(json_encode=False, searches=True)
+            for ref in refs
+        ]
         self.response = response
 
     def render_to_response(self, context, **response_kwargs):
@@ -513,6 +564,7 @@ class RefVisualization(BaseDetail):
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['objectType'] = self.model.__name__
         return context
 
 
