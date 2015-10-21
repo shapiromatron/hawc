@@ -25,11 +25,16 @@ class RisImporter(object):
         with open(fn, 'r') as f:
             reader = readris(f, mapping=self.custom_mapping())
             contents = [content for content in reader]
-        self.contents = contents
+        self.raw_references = contents
 
-    def format(self):
+    @property
+    def references(self):
+        if not hasattr(self, "_references"):
+            self._references = self._format()
+
+    def _format(self):
         formatted_content = []
-        for content in self.contents:
+        for content in self.raw_references:
             parser = ReferenceParser(content)
             formatted_content.append(parser.format())
         return formatted_content
@@ -37,10 +42,8 @@ class RisImporter(object):
     def to_excel(self, fn):
         header = ReferenceParser.EXTRACTED_FIELDS
         data_rows = []
-        for content in self.contents:
-            parser = ReferenceParser(content)
-            formatted = parser.format()
-            data_rows.append([formatted[fld] for fld in header])
+        for ref in self.references:
+            data_rows.append([ref[fld] for fld in header])
 
         wb = xlsxwriter.Workbook(fn)
         ws = wb.add_worksheet()
