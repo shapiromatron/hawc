@@ -12,6 +12,9 @@ PubMed API:
 http://www.ncbi.nlm.nih.gov/books/NBK25499/
 
 """
+THIS_TOOL = "HAWC"
+THIS_EMAIL = "andy.shapiro@nih.gov"
+
 
 class PubMedSearch(object):
     """
@@ -19,11 +22,13 @@ class PubMedSearch(object):
     list of PubMed IDs from the selected search term.
     """
     base_url = r'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
-    default_settings = {"retmax": 5000,
-                        "db": "pubmed",
-                        "term": "",
-                        "tool": "hawc",
-                        "email": "ajshapir@email.unc.edu"}
+    default_settings = {
+        "retmax": 5000,
+        "db": "pubmed",
+        "term": "",
+        "tool": THIS_TOOL,
+        "email": THIS_EMAIL,
+    }
 
     def __init__(self, **kwargs):
         if not kwargs.get('term'):
@@ -33,9 +38,11 @@ class PubMedSearch(object):
             self.settings[k] = v
 
     def _get_id_count(self):
-        data = {"db": self.settings["db"],
-                "term": self.settings["term"],
-                "rettype": "count"}
+        data = {
+            "db": self.settings["db"],
+            "term": self.settings["term"],
+            "rettype": "count"
+        }
         r = requests.post(PubMedSearch.base_url, data=data)
         if r.status_code == 200:
             txt = ET.fromstring(r.text)
@@ -79,8 +86,10 @@ class PubMedSearch(object):
         Returns a dictionary showing the additions and removals when comparing
         a new search to the old, in set notation.
         """
-        return {'added': set(self.ids) - set(old_ids_list),
-                'removed': set(old_ids_list) - set(self.ids)}
+        return {
+            'added': set(self.ids) - set(old_ids_list),
+            'removed': set(old_ids_list) - set(self.ids)
+        }
 
 
 class PubMedFetch(object):
@@ -89,11 +98,13 @@ class PubMedFetch(object):
     list of dictionaries of PubMed citation information.
     """
     base_url = r'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-    default_settings = {"retmax": 1000,
-                        "db": "pubmed",
-                        "retmode": "xml",
-                        "tool": "hawc",
-                        "email": "ajshapir@email.unc.edu"}
+    default_settings = {
+        "retmax": 1000,
+        "db": "pubmed",
+        "retmode": "xml",
+        "tool": THIS_TOOL,
+        "email": THIS_EMAIL,
+    }
 
     def __init__(self, id_list, **kwargs):
         if id_list is None:
@@ -122,12 +133,14 @@ class PubMedFetch(object):
     def _parse_article(self, article):
         pmid = int(PubMedFetch._try_single_find(article, "MedlineCitation/PMID"))
         logging.debug('Parsing results for PMID: {pmid}'.format(pmid=pmid))
-        d = {"xml": ET.tostring(article, encoding='utf-8'),
-             "PMID": pmid,
-             "title": PubMedFetch._try_single_find(article, "MedlineCitation/Article/ArticleTitle"),
-             "abstract": self._get_abstract(article),
-             "citation": self._journal_info(article),
-             "year": self._get_year(article)}
+        d = {
+            "xml": ET.tostring(article, encoding='utf-8'),
+            "PMID": pmid,
+            "title": PubMedFetch._try_single_find(article, "MedlineCitation/Article/ArticleTitle"),
+            "abstract": self._get_abstract(article),
+            "citation": self._journal_info(article),
+            "year": self._get_year(article)
+        }
         d.update(self._authors_info(article))
         return d
 
@@ -163,26 +176,40 @@ class PubMedFetch(object):
         auths = article.findall('MedlineCitation/Article/AuthorList/Author')
         for auth in auths:
             try:
-                names.append(u'{last_name} {initials}'.format(last_name=auth.find('LastName').text,
-                                                              initials=auth.find('Initials').text))
+                names.append(u'{0} {1}'.format(
+                    auth.find('LastName').text,
+                    auth.find('Initials').text))
             except:
                 pass
 
             try:
-                names.append(u'{name}'.format(name=auth.find('CollectiveName').text))
+                names.append(auth.find('CollectiveName').text)
             except:
                 pass
 
-        return {'authors_list': names,
-                'authors_short': get_author_short_text(names)}
+        return {
+            'authors_list': names,
+            'authors_short': get_author_short_text(names)
+        }
 
     def _journal_info(self, article):
         return u'{journal} {year}; {volume} ({issue}):{pages}'.format(
-            journal=PubMedFetch._try_single_find(article, 'MedlineCitation/Article/Journal/ISOAbbreviation'),
-            year=PubMedFetch._try_single_find(article, 'MedlineCitation/Article/Journal/JournalIssue/PubDate/Year'),
-            volume=PubMedFetch._try_single_find(article, 'MedlineCitation/Article/Journal/JournalIssue/Volume'),
-            issue=PubMedFetch._try_single_find(article, 'MedlineCitation/Article/Journal/JournalIssue/Issue'),
-            pages=PubMedFetch._try_single_find(article, 'MedlineCitation/Article/Pagination/MedlinePgn'))
+            journal=PubMedFetch._try_single_find(
+                article,
+                'MedlineCitation/Article/Journal/ISOAbbreviation'),
+            year=PubMedFetch._try_single_find(
+                article,
+                'MedlineCitation/Article/Journal/JournalIssue/PubDate/Year'),
+            volume=PubMedFetch._try_single_find(
+                article,
+                'MedlineCitation/Article/Journal/JournalIssue/Volume'),
+            issue=PubMedFetch._try_single_find(
+                article,
+                'MedlineCitation/Article/Journal/JournalIssue/Issue'),
+            pages=PubMedFetch._try_single_find(
+                article,
+                'MedlineCitation/Article/Pagination/MedlinePgn')
+        )
 
     def _get_year(self, et):
         year = et.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")

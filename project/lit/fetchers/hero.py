@@ -29,6 +29,7 @@ http://hero.epa.gov/ws/index.cfm/api/1.0/search/criteria/1200,1201,1203,1204/rec
 
 """
 
+
 class HEROFetch(object):
     """
     Given a list of HERO IDs, fetch the content for each one and return a
@@ -52,9 +53,13 @@ class HEROFetch(object):
     def get_content(self):
         rng = range(0, self.ids_count, self.settings['recordsperpage'])
         for recstart in rng:
-            pks = ','.join([str(pk) for pk in
-                           self.ids[recstart:recstart+self.settings['recordsperpage']]])
-            url = HEROFetch.base_url.format(pks=pks, rpp=self.settings['recordsperpage'])
+            pks = u','.join([
+                str(pk) for pk in
+                self.ids[recstart:recstart + self.settings['recordsperpage']]
+            ])
+            url = HEROFetch.base_url.format(
+                pks=pks,
+                rpp=self.settings['recordsperpage'])
             try:
                 r = requests.get(url, timeout=30.)
                 if r.status_code == 200:
@@ -73,8 +78,8 @@ class HEROFetch(object):
     def _get_missing_HEROIDS(self):
         found_ids = set([v['HEROID'] for v in self.content])
         needed_ids = set(self.ids)
-        missing=list(needed_ids-found_ids)
-        if len(missing)>0:
+        missing = list(needed_ids - found_ids)
+        if len(missing) > 0:
             self.failures.extend(missing)
 
     def _force_float_or_none(self, val):
@@ -92,14 +97,18 @@ class HEROFetch(object):
             return v
 
     def _parse_article(self, article):
-        d = {"json": json.dumps(article, encoding='utf-8'),
-             "HEROID": self._parse_pseudo_json(article, 'REFERENCE_ID'),
-             "PMID": self._parse_pseudo_json(article, 'PMID'),
-             "title": self._parse_pseudo_json(article, 'TITLE'),
-             "abstract": self._parse_pseudo_json(article, 'ABSTRACT'),
-             "source": self._parse_pseudo_json(article, 'SOURCE'),
-             "year":  self._force_float_or_none(self._parse_pseudo_json(article, 'YEAR'))}
-        logging.debug('Parsing results for HEROID: {heroid}'.format(heroid=d['HEROID']))
+        d = {
+            "json": json.dumps(article, encoding='utf-8'),
+            "HEROID": self._parse_pseudo_json(article, 'REFERENCE_ID'),
+            "PMID": self._parse_pseudo_json(article, 'PMID'),
+            "title": self._parse_pseudo_json(article, 'TITLE'),
+            "abstract": self._parse_pseudo_json(article, 'ABSTRACT'),
+            "source": self._parse_pseudo_json(article, 'SOURCE'),
+            "year":  self._force_float_or_none(
+                self._parse_pseudo_json(article, 'YEAR'))
+        }
+        logging.debug('Parsing results for HEROID: {heroid}'.format(
+            heroid=d['HEROID']))
         d.update(self._authors_info(article.get('AUTHORS', None)))
         return d
 
@@ -115,5 +124,7 @@ class HEROFetch(object):
         if names_string:
             names = names_string.split('; ')
             names = [name.replace(', ', ' ') for name in names]
-        return {'authors_list': names,
-                'authors_short': get_author_short_text(names)}
+        return {
+            'authors_list': names,
+            'authors_short': get_author_short_text(names)
+        }
