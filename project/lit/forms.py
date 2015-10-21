@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django import forms
 
 from assessment.models import Assessment
-from utils.forms import BaseFormHelper
+from utils.forms import BaseFormHelper, addPopupLink
 
 from . import models
 
@@ -32,7 +32,9 @@ class SearchForm(forms.ModelForm):
 
         self.fields['source'].choices = [(1, 'PubMed')] # only current choice
         self.fields['description'].widget.attrs['rows'] = 3
-        self.fields['search_string'].widget.attrs['rows'] = 5
+        if 'search_string' in self.fields:
+            self.fields['search_string'].widget.attrs['rows'] = 5
+            self.fields['search_string'].required = True
         # by default take-up the whole row-fluid
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
@@ -120,9 +122,56 @@ class ImportForm(SearchForm):
         return ids
 
 
+class RISForm(SearchForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RISForm, self).__init__(*args, **kwargs)
+        self.fields['source'].choices = [(3, 'RIS (Endnote/Refman)')]
+        self.instance.search_type = 'i'
+        self.fields['import_file'].required = True
+        self.fields['import_file'].help_text = """Unicode RIS export file
+            ({0} for Endnote library preparation)""".format(
+            addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": u"Update {}".format(self.instance),
+                "help_text":   u"Update an existing literature search",
+                "cancel_url": self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                "legend_text": u"Create new literature import",
+                "help_text":   u"""
+                    Import a list of literature from an RIS export; this is a
+                    universal data-format which is used by reference management
+                    software solutions such as Endnote or Refman.
+                """,
+                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+    class Meta:
+        model = models.Search
+        fields = ('source', 'title', 'slug', 'description', 'import_file')
+
+    def clean_import_file(self):
+        file_ = self.cleaned_data['import_file']
+        if file_.size > 1024*1024*10:
+            raise forms.ValidationError("Input file must be < 10 MB")
+        if file_.name[-4:] not in (".txt", ".ris", ):
+            raise forms.ValidationError('File must have an ".ris" or ".txt" file-extension')
+        return file_
+
+
 class SearchModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-         return "{} | {{{}}} | {}".format(obj.assessment, obj.get_search_type_display(), obj)
+        return "{} | {{{}}} | {}".format(obj.assessment, obj.get_search_type_display(), obj)
 
 
 class SearchSelectorForm(forms.Form):
@@ -131,7 +180,7 @@ class SearchSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        assessment = kwargs.pop('assessment', None)
+        kwargs.pop('assessment', None)
 
         super(SearchSelectorForm, self).__init__(*args, **kwargs)
 

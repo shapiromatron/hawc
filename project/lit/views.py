@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
@@ -126,10 +127,11 @@ class SearchNew(BaseCreate):
     parent_template_name = 'assessment'
     model = models.Search
     form_class = forms.SearchForm
+    search_type = 'Search'
 
     def get_context_data(self, **kwargs):
         context = super(SearchNew, self).get_context_data(**kwargs)
-        context['type'] = 'Search'
+        context['type'] = self.search_type
         return context
 
     def get_form_kwargs(self):
@@ -154,14 +156,18 @@ class SearchNew(BaseCreate):
 class ImportNew(SearchNew):
     success_message = "Import created."
     form_class = forms.ImportForm
-
-    def get_context_data(self, **kwargs):
-        context = super(ImportNew, self).get_context_data(**kwargs)
-        context['type'] = 'Import'
-        return context
+    search_type = 'Import'
 
     def post_object_save(self, form):
         self.object.run_new_import()
+
+
+class ImportRISNew(ImportNew):
+    form_class = forms.RISForm
+
+
+class RISExportInstructions(TemplateView):
+    template_name = 'lit/ris_export_instructions.html'
 
 
 class SearchDetail(BaseDetail):

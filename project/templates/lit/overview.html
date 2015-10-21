@@ -21,6 +21,7 @@
           <li class="disabled"><a tabindex="-1" href="#">Search/import editing</a></li>
           <li><a href="{% url 'lit:search_new' assessment.pk %}">New search</a></li>
           <li><a href="{% url 'lit:import_new' assessment.pk %}">New import</a></li>
+          <li><a href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a></li>
           <li><a href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a></li>
           <li class="disabled"><a tabindex="-1" href="#">Reference editing</a></li>
           <li><a href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a></li>

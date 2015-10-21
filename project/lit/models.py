@@ -26,7 +26,8 @@ from . import managers
 
 SEARCH_SOURCES = ((0, 'External link'),
                   (1, 'PubMed'),
-                  (2, 'HERO'))
+                  (2, 'HERO'),
+                  (3, 'RIS (Endnote/Refman)'))
 
 SEARCH_TYPES = (('s', 'Search'),
                 ('i', 'Import'),)
@@ -64,8 +65,10 @@ class Search(models.Model):
         blank=True,
         help_text="A more detailed description of the literature search or import strategy.")
     search_string = models.TextField(
+        blank=True,
         help_text="The search-text used to query an online database. "
                   "Use colors to separate search-terms (optional).")
+    import_file = models.FileField(upload_to="lit-search-import", blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -124,16 +127,23 @@ class Search(models.Model):
         else:
             raise Exception("Search functionality disabled")
 
+    @property
+    def import_ids(self):
+        return [int(v) for v in self.search_string_text.split(',')]
+
     def run_new_import(self):
-        ids = [int(v) for v in self.search_string_text.split(',')]
         if self.source == 0:  # Manually imported
             raise Exception("Import functionality disabled for manual import")
         elif self.source == 1:  # PubMed
-            identifiers = Identifiers.get_pubmed_identifiers(ids)
+            identifiers = Identifiers.get_pubmed_identifiers(self.import_ids)
             Reference.get_pubmed_references(self, identifiers)
         elif self.source == 2:  # HERO
-            identifiers = Identifiers.get_hero_identifiers(ids)
+            identifiers = Identifiers.get_hero_identifiers(self.import_ids)
             Reference.get_hero_references(self, identifiers)
+        elif self.source == 3:  # RIS
+            raise NotImplementedError()
+        else:
+            raise ValueError("Unknown import type")
 
     def create_new_references(self, results):
         # Create assessment-specific references for each value which return

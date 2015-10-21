@@ -88,6 +88,9 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/import/new/$',
         views.ImportNew.as_view(),
         name='import_new'),
+    url(r'^assessment/(?P<pk>\d+)/ris-import/new/$',
+        views.ImportRISNew.as_view(),
+        name='import_ris_new'),
 
     # Edit tags
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tag/$',
@@ -99,4 +102,8 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags-visuals/$',
         views.SearchTagsVisualization.as_view(),
         name='search_tags_visual'),
+
+    url(r'^ris-export-instructions/$',
+        views.RISExportInstructions.as_view(),
+        name='ris_export_instructions'),
 ]

@@ -122,6 +122,11 @@ def anyNull(dict, fields):
     return False
 
 
+def addPopupLink(href, text):
+    return """<a href="{0}"
+                 onclick="return HAWCUtils.newWindowPopupLink(this);")>{1}</a>""".format(href, text)
+
+
 class TdLayout(cfl.LayoutObject):
     """
     Layout object. It wraps fields in a <td>
