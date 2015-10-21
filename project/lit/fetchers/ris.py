@@ -102,6 +102,7 @@ class ReferenceParser(object):
         "accession_number",
         "accession_db",
         "reference_type",
+        "id",
         "json",
     ]
 
@@ -124,6 +125,7 @@ class ReferenceParser(object):
                 "accession_number": self._get_accession_number(),
                 "accession_db": self.content.get("name_of_database", None),
                 "reference_type": self.content.get("type_of_reference", None),
+                "id": int(self.content["id"]),
                 "json": json.dumps(self.content),
             }
         return self._formatted
