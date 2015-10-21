@@ -15,7 +15,7 @@ class ReferenceFlatComplete(FlatFileExporter):
         tags = self.kwargs.get('tags', None)
         include_parent_tag = self.kwargs.get('include_parent_tag', False)
 
-        headers = ['HAWC ID', 'PubMed ID', 'Citation','Full Citation',
+        headers = ['HAWC ID', 'PubMed ID', 'Citation', 'Full Citation',
                    'Title', 'Authors', 'Year', 'Journal',  'Abstract',
                    'Full text URL', 'Created', 'Last updated']
         if tags:
@@ -27,7 +27,7 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         def resetTags(tags):
             def setFalse(obj):
-                obj['isTagged']=False
+                obj['isTagged'] = False
                 for child in obj.get('children', []):
                     setFalse(child)
 
@@ -40,6 +40,7 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         def getTagRow(tags):
             row = []
+
             def printStatus(obj):
                 row.append(obj['isTagged'])
                 for child in obj.get('children', []):
