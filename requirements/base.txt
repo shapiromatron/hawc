@@ -40,3 +40,4 @@ git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc
 # for import scripts
 numpy==1.9.2
 python-dateutil==2.4.2
+fuzzywuzzy==0.7.0
