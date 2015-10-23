@@ -722,6 +722,9 @@ class Reference(models.Model):
         else:
             return d
 
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
+
     @property
     def reference_citation(self):
         txt = u""

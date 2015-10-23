@@ -148,12 +148,13 @@ _.extend(Reference.prototype, Observee.prototype, {
         };
     },
     get_edit_button: function(){
-        // get edit button if editing enabled, or return undefined
+        // return content or undefined
         if(window.canEdit){
-            return $('<a>')
-                .text('Edit tags')
-                .attr('href', this.edit_tags_url())
-                .attr('target', '_blank');
+            return $('<div>')
+                .append('<li><a href="{0}" target="_blank">Edit tags</a></li>'.printf(
+                        this.edit_tags_url()))
+                .append('<li><a href="{0}" target="_blank">Edit reference</a></li>'.printf(
+                        this.edit_reference_url()))
         }
     },
     add_tag: function(tag){
@@ -166,6 +167,9 @@ _.extend(Reference.prototype, Observee.prototype, {
     },
     edit_tags_url: function(){
         return "/lit/reference/{0}/tag/".printf(this.data.pk);
+    },
+    edit_reference_url: function(){
+        return "/lit/reference/{0}/edit/".printf(this.data.pk);
     },
     remove_tag: function(tag){
         this.data.tags.splice_object(tag);
@@ -283,9 +287,10 @@ EditReferenceContainer.prototype = {
         this.$div_details = $('<div></div>');
         this.$div_error = $('<div></div>');
         this.saved_icon = $('<span class="btn litSavedIcon" style="display: none;">Saved!</span>');
+        this.$editRef = $('<a class="btn pull-right" target="_blank" href="#" title="Cleanup imported reference details">Edit</a>');
 
         var self = this,
-            save_txt = (this.refs.length>1) ? "Save and go to next untagged" : "Save",
+            save_txt = (this.refs.length>1) ? "Save and go to next untagged" : "Save tags",
             button_save_and_next = $('<button class="btn btn-primary"></button>')
                 .text(save_txt)
                 .click(function(){self.save_and_next();}),
@@ -296,7 +301,8 @@ EditReferenceContainer.prototype = {
                          this.$div_selected_tags,
                          button_save_and_next,
                          button_reset_tags,
-                         this.saved_icon]);
+                         this.saved_icon,
+                         this.$editRef]);
 
         this.$div_reflist = $('<div class="span3"></div>');
         this._populate_reflist();
@@ -341,6 +347,7 @@ EditReferenceContainer.prototype = {
             this.loaded_ref.addObserver(this);
             this.loaded_ref.select_name();
             this.$div_details.html(this.loaded_ref.print_self());
+            this.$editRef.attr('href', this.loaded_ref.edit_reference_url());
             this.clear_errors();
             this._build_tagslist();
         }

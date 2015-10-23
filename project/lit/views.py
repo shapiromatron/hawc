@@ -501,6 +501,12 @@ class RefDetail(BaseDetail):
         return context
 
 
+class RefEdit(BaseUpdate):
+    success_message = 'Reference updated.'
+    model = models.Reference
+    form_class = forms.ReferenceForm
+
+
 class RefSearch(AssessmentPermissionsMixin, FormView):
     template_name = 'lit/reference_search.html'
     form_class = forms.ReferenceSearchForm

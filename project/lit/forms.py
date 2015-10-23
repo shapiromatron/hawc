@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+from crispy_forms import layout as cfl
 from django.core.urlresolvers import reverse_lazy
 from django import forms
 
@@ -116,7 +117,7 @@ class ImportForm(SearchForm):
         if len(vals) != len(set(vals)):
             raise forms.ValidationError("IDs must be unique.")
 
-        if valid_id == False:
+        if not valid_id:
             raise forms.ValidationError("Please enter a comma-separated list of numeric IDs.")
 
         return ids
@@ -200,7 +201,34 @@ class ReferenceForm(forms.ModelForm):
 
     class Meta:
         model = models.Reference
-        fields = ('tags',)
+        fields = ('title', 'authors', 'year',
+                  'journal', 'abstract', 'full_text_url', )
+
+    def __init__(self, *args, **kwargs):
+        super(ReferenceForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if fld in ['title', 'authors', 'journal']:
+                widget.attrs['rows'] = 3
+
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": "Update reference details",
+            "help_text":   """Update reference information which was fetched
+                              from database or reference upload.""",
+            "cancel_url": self.instance.get_absolute_url()
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.add_fluid_row('title', 2, "span6")
+        helper.add_fluid_row('year', 2, "span6")
+        helper.form_class = None
+        return helper
 
 
 class ReferenceFilterTagForm(forms.ModelForm):
