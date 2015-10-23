@@ -31,6 +31,7 @@ class RisImporter(object):
     def references(self):
         if not hasattr(self, "_references"):
             self._references = self._format()
+        return self._references
 
     def _format(self):
         formatted_content = []

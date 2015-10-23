@@ -17,10 +17,11 @@ from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.models import NonUniqueTagBase
+from utils.models import NonUniqueTagBase, get_crumbs
 
 from fetchers.pubmed import PubMedSearch, PubMedFetch
 from fetchers.hero import HEROFetch
+from fetchers import ris
 from . import managers
 
 
@@ -141,7 +142,9 @@ class Search(models.Model):
             identifiers = Identifiers.get_hero_identifiers(self.import_ids)
             Reference.get_hero_references(self, identifiers)
         elif self.source == 3:  # RIS
-            raise NotImplementedError()
+            importer = ris.RisImporter(self.import_file.path)
+            old, new = Identifiers.get_from_ris(self.id, importer.references)
+            Reference.update_from_ris_identifiers(self, old, new)
         else:
             raise ValueError("Unknown import type")
 
@@ -380,13 +383,14 @@ class PubMedQuery(models.Model):
 
 
 class Identifiers(models.Model):
-    unique_id = models.IntegerField()
+    unique_id = models.CharField(max_length=32, db_index=True)
     database = models.IntegerField(choices=SEARCH_SOURCES)
     content = models.TextField()
     url = models.URLField(blank=True)
 
     class Meta:
         unique_together = (("database", "unique_id"),)
+        index_together = (("database", "unique_id"),)
 
     def __unicode__(self):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
@@ -399,6 +403,8 @@ class Identifiers(models.Model):
         elif self.database == 2:  # HERO
             url = r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={unique_id}'.format(
                         unique_id=self.unique_id)
+        elif self.database == 3:  # RIS
+            pass
         return url
 
     def create_reference(self, assessment, block_id=None):
@@ -429,9 +435,11 @@ class Identifiers(models.Model):
         return ref
 
     def get_json(self, json_encode=True):
-        return {"id": self.unique_id,
-                "database": self.get_database_display(),
-                "url": self.get_url()}
+        return {
+            "id": self.unique_id,
+            "database": self.get_database_display(),
+            "url": self.get_url()
+        }
 
     @classmethod
     def get_hero_identifiers(cls, hero_ids):
@@ -481,6 +489,44 @@ class Identifiers(models.Model):
             idents.append(ident.unique_id)
 
         return Identifiers.objects.filter(database=1, unique_id__in=idents)
+
+    @classmethod
+    def get_from_ris(cls, search_id, references):
+        # Return a queryset of identifiers for each object in RIS file.
+        # Either get or create an identifier, whatever is required
+
+        # Create id based on search_id and id from RIS file.
+        ids = []
+        for ref in references:
+            id_ = "s{}-id{}".format(search_id, ref['id'])
+            ref["hawc_id"] = id_
+            ids.append(id_)
+
+        # assert ids are unique (id from RIS not guaranteed unique)
+        assert len(set(ids)) == len(ids)
+
+        # Filter IDs which need to be imported
+        existing = Identifiers.objects.filter(database=3, unique_id__in=ids)
+        existing_ids = set(existing.values_list('unique_id', flat=True))
+
+        # Update existing and create new
+        new_identifiers = []
+        for ref in references:
+            id_ = ref["hawc_id"]
+            content = json.dumps(ref, encoding='utf8')
+            if id_ in existing_ids:
+                existing.filter(unique_id=id_).update(content=content)
+            else:
+                new_identifiers.append(
+                    Identifiers(unique_id=id_, database=3, content=content))
+
+        # bulk-create and requery to get objects w/ ids
+        Identifiers.objects.bulk_create(new_identifiers)
+        new_identifiers = Identifiers.objects\
+            .filter(database=3, unique_id__in=ids)\
+            .exclude(database=3, unique_id__in=existing_ids)
+
+        return existing, new_identifiers
 
     @classmethod
     def get_max_external_id(cls):
@@ -851,6 +897,61 @@ class Reference(models.Model):
             .distinct()
 
     @classmethod
+    def update_from_ris_identifiers(cls, search, old, new):
+        # n+2 queries required for update/creation
+        for ident in old:
+            content = json.loads(ident.content)
+            Reference.objects.filter(
+                identifiers=ident
+            ).update(
+                title=content['title'],
+                authors=content['authors_short'],
+                year=content['year'],
+                journal=content['citation'],
+                abstract=content['abstract'],
+            )
+
+        new_refs = []
+        new_ref_idents = []
+        for ident in new:
+            content = json.loads(ident.content)
+            ref = Reference.objects.create(
+                assessment_id=search.assessment_id,
+                title=content['title'],
+                authors=content['authors_short'],
+                year=content['year'],
+                journal=content['citation'],
+                abstract=content['abstract'],
+            )
+            new_refs.append(ref)
+            new_ref_idents.append((ref.id, ident.id,))
+
+        cls.build_ref_search_m2m(new_refs, search)
+        cls.build_ref_ident_m2m(new_ref_idents)
+
+    @classmethod
+    def build_ref_search_m2m(cls, refs, search):
+        # Bulk-create reference-search relationships
+        logging.debug("Starting bulk creation of reference-search values")
+        m2m = Reference.searches.through
+        objects = [
+            m2m(reference_id=ref.id, search_id=search.id)
+            for ref in refs
+        ]
+        m2m.objects.bulk_create(objects)
+
+    @classmethod
+    def build_ref_ident_m2m(cls, objs):
+        # Bulk-create reference-search relationships
+        logging.debug("Starting bulk creation of reference-identifer values")
+        m2m = Reference.identifiers.through
+        objects = [
+            m2m(reference_id=ref_id, identifiers_id=ident_id)
+            for ref_id, ident_id in objs
+        ]
+        m2m.objects.bulk_create(objects)
+
+    @classmethod
     def get_hero_references(cls, search, identifiers):
         """
         Given a list of Identifiers, return a list of references associated
@@ -862,13 +963,7 @@ class Reference(models.Model):
         refs = Reference.objects\
             .filter(assessment=search.assessment, identifiers__in=identifiers)\
             .exclude(searches=search)
-        logging.debug("Starting bulk creation of search-thorough values")
-        RefSearchM2M = Reference.searches.through
-        ref_searches = []
-        for ref in refs:
-            ref_searches.append(
-                RefSearchM2M(reference_id=ref.pk, search_id=search.pk))
-        RefSearchM2M.objects.bulk_create(ref_searches)
+        cls.build_ref_search_m2m(refs, search)
 
         # get references associated with these identifiers, and get a subset of
         # identifiers which have no reference associated with them
@@ -915,17 +1010,10 @@ class Reference(models.Model):
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
-
         refs = Reference.objects\
             .filter(assessment=search.assessment, identifiers__in=identifiers)\
             .exclude(searches=search)
-        logging.debug("Starting bulk creation of search-thorough values")
-        RefSearchM2M = Reference.searches.through
-        ref_searches = []
-        for ref in refs:
-            ref_searches.append(RefSearchM2M(reference_id=ref.pk,
-                                             search_id=search.pk))
-        RefSearchM2M.objects.bulk_create(ref_searches)
+        cls.build_ref_search_m2m(refs, search)
 
         # Get any references already are associated with these identifiers
         refs = list(Reference.objects
