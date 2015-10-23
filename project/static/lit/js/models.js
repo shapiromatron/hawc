@@ -217,10 +217,6 @@ ReferencesViewer.prototype = {
             actionLinks.push({
                 url: "{0}?tag_id={1}".printf(this.options.download_url, this.options.tag.data.pk),
                 text: "Download references"
-            },{
-                url: "#",
-                text: "Show all abstracts",
-                cls: "show_abstracts"
             });
 
             if (window.canEdit){
@@ -229,24 +225,29 @@ ReferencesViewer.prototype = {
                     text: "Edit references with this tag (but not descendants)"
                 });
             }
-
-            h3.on('click', '.show_abstracts', function(e){
-                e.preventDefault();
-                if(this.textContent === "Show all abstracts"){
-                    $div.find('.abstracts').collapse('show');
-                    this.textContent = "Hide all abstracts";
-                    $div.find('.abstractToggle').text('Hide abstract');
-                } else {
-                    $div.find('.abstracts').collapse('hide');
-                    this.textContent = "Show all abstracts";
-                    $div.find('.abstractToggle').text('Show abstract');
-                }
-            });
         }
 
         h3.html(txt);
+
         if(actionLinks.length>0)
-            h3.append(HAWCUtils.pageActionsButton(actionLinks));
+            actionLinks.push({
+                url: "#",
+                text: "Show all abstracts",
+                cls: "show_abstracts"
+            });
+            h3.append(HAWCUtils.pageActionsButton(actionLinks))
+                .on('click', '.show_abstracts', function(e){
+                    e.preventDefault();
+                    if(this.textContent === "Show all abstracts"){
+                        $div.find('.abstracts').collapse('show');
+                        this.textContent = "Hide all abstracts";
+                        $div.find('.abstractToggle').text('Hide abstract');
+                    } else {
+                        $div.find('.abstracts').collapse('hide');
+                        this.textContent = "Show all abstracts";
+                        $div.find('.abstractToggle').text('Show abstract');
+                    }
+                });
 
         return h3;
     },
