@@ -53,6 +53,15 @@ _.extend(Reference.prototype, Observee.prototype, {
     getLinks: function(){
         var links = $('<p>');
 
+        if (this.data.full_text_url){
+            links.append($('<a>')
+                .attr("class", 'btn btn-mini btn-primary')
+                .attr('target', '_blank')
+                .attr('href', this.data.full_text_url)
+                .text("Full text link"));
+            links.append('<span>&nbsp;</span>');
+        }
+
         _.chain(this.data.identifiers)
             .filter(function(v){return v.url.length>0;})
             .each(function(v){
@@ -61,13 +70,14 @@ _.extend(Reference.prototype, Observee.prototype, {
                 links.append('<span>&nbsp;</span>');
             });
 
-        if (this.data.full_text_url){
-            links.append($('<a>')
-                .attr("class", 'btn btn-mini btn-success')
-                .attr('target', '_blank')
-                .attr('href', this.data.full_text_url)
-                .text("Full text link"));
-        }
+        _.chain(this.data.identifiers)
+            .reject(function(v){return v.url.length>0 || v.database === "External link"})
+            .each(function(v){
+                links.append('<button class="btn btn-mini disabled" >{0}</button>'.printf(
+                    v.database));
+                links.append('<span>&nbsp;</span>');
+            });
+
 
         return (links.children().length>0) ? links : null;
     },
