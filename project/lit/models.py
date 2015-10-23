@@ -737,7 +737,7 @@ class Reference(models.Model):
         return txt
 
     def get_short_citation_estimate(self):
-        citation = ""
+        citation = u""
 
         # get authors guess
         if ((self.authors.find('and') > -1) or (self.authors.find('et al.') > -1)):
@@ -746,11 +746,20 @@ class Reference(models.Model):
             authors = re.findall(r"[\w']+", self.authors)
             if len(authors) > 0:
                 citation = authors[0]
+            else:
+                citation = "[No authors listed]"
 
         # get year guess
-        year = re.findall(r' (\d+);', self.journal)
+        year = u""
+        if self.year is not None:
+            year = unicode(self.year)
+        else:
+            m = re.findall(r' (\d+);', self.journal)
+            if len(m) > 0:
+                year = m[0]
+
         if len(year) > 0:
-            citation += " " + year[0]
+            citation += u" " + year
 
         return citation
 
