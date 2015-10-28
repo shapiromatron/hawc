@@ -14,7 +14,8 @@ from assessment.models import Assessment
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList, GenerateReport, GenerateFixedReport)
+                         BaseList, GenerateReport, GenerateFixedReport,
+                         TeamMemberOrHigherMixin)
 
 from . import models, forms, exports, reports
 
@@ -161,6 +162,39 @@ class StudyDelete(BaseDelete):
 class StudyVersions(BaseVersion):
     model = models.Study
     template_name = "study/study_versions.html"
+
+
+class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
+    """
+    Copy one or more studies from one assessment to another. This will copy
+    all nested data as well.
+    """
+    template_name = "study/studies_copy.html"
+    form_class = forms.StudiesCopy
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
+
+    def get_context_data(self, **kwargs):
+        context = super(StudiesCopy, self).get_context_data(**kwargs)
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(StudiesCopy, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        models.Study.copy_across_assessments(
+            form.cleaned_data['studies'],
+            form.cleaned_data['assessment'])
+        msg = "Studies copied!"
+        self.success_message = msg
+        return super(StudiesCopy, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('study:list', kwargs={'pk': self.assessment.id})
 
 
 # Attachment views

@@ -244,6 +244,18 @@ class Assessment(models.Model):
             .exclude(id=exclusion_id)\
             .distinct()
 
+    @classmethod
+    def get_editable_assessments(cls, user, exclusion_id=None):
+        """
+        Return queryset of all assessments which that user is able to edit,
+        optionally excluding assessment exclusion_id,
+        not including public assessments
+        """
+        return Assessment.objects\
+            .filter(Q(project_manager=user) | Q(team_members=user))\
+            .exclude(id=exclusion_id)\
+            .distinct()
+
     def get_crumbs(self):
         return get_crumbs(self)
 

@@ -1,6 +1,7 @@
 import json
 import os
 import collections
+import itertools
 
 from django.db import models
 from django.db.models.loading import get_model
@@ -101,6 +102,50 @@ class Study(Reference):
             attrs[field.name] = getattr(reference, field.name)
         return Study.objects.create(**attrs)
 
+    @classmethod
+    def copy_across_assessments(cls, studies, assessment):
+        # copy selected studies from one assessment to another.
+        cw = {"studies": {}}
+        for study in studies:
+            print "Copying {} to  {}".format(study, assessment)
+
+            # get child-types before changing
+            type_ = study.study_type
+            if type_ == 0:  # bioassay
+                children = list(study.experiments.all())
+            elif type_ == 1:  # epi
+                children = list(study.study_population.all())
+            elif type_ == 2:  # in-vitro
+                children = list(itertools.chain(
+                    study.ivchemicals.all(),
+                    study.ivcelltypes.all(),
+                    study.ivexperiments.all()))
+            elif type_ == 3:  # other
+                children = list()
+            elif type_ == 4:  # meta-analysis
+                children = list(study.meta_protocols.all())
+
+            # copy reference and identifiers
+            # (except RIS which is assessment-specific)
+            ref = study.reference_ptr
+            idents = ref.identifiers.filter(database__in=[0, 1, 2])\
+                        .values_list('id', flat=True)
+            ref.id = None
+            ref.assessment = assessment
+            ref.save()
+            ref.identifiers.add(*idents)
+
+            # copy study
+            cw["studies"][study.id] = None
+            study.id = None
+            study.reference_ptr = ref
+            study.assessment = assessment
+            new_study = study.save()
+            cw["studies"][study.id] = new_study.id
+
+            for child in children:
+                child.copy_across_assessments(cw, assessment)
+
     def clean(self):
         pk_exclusion = {}
         if self.pk:
@@ -149,7 +194,7 @@ class Study(Reference):
         Experiment = get_model('animal', 'Experiment')
         AnimalGroup = get_model('animal', 'AnimalGroup')
 
-        if  self.study_type != 0: # not a bioassay study
+        if self.study_type != 0:  # not a bioassay study
             return Endpoint.objects.none()
 
         return Endpoint.objects.filter(
@@ -458,6 +503,7 @@ def invalidate_caches_sq_metrics(sender, instance, **kwargs):
 
     ids = Study.objects.filter(assessment_id=assessment_id).values_list('id', flat=True)
     Study.delete_caches(ids)
+
 
 @receiver(post_save, sender=StudyQuality)
 @receiver(pre_delete, sender=StudyQuality)

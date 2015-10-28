@@ -248,6 +248,48 @@ class BaseSQFormSet(BaseModelFormSet):
             metrics.append(metric)
 
 
+class StudiesCopy(forms.Form):
+    # TODO: remove study-type restriction
+
+    HELP_TEXT = """
+    Clone multiple studies and move from one assessment to  another assessment.
+    Clones are complete and include most nested data.  Cloned studies do not
+    include risk of bias information.
+    """
+
+    studies = forms.ModelMultipleChoiceField(
+        queryset=models.Study.objects.all(),
+        help_text="Select studies to copy (for now, epi-only).")
+    assessment = forms.ModelChoiceField(
+        queryset=Assessment.objects.all(),
+        help_text="Select assessment you wish to copy these studies to.")
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        assessment = kwargs.pop('assessment')
+        super(StudiesCopy, self).__init__(*args, **kwargs)
+        self.fields['assessment'].queryset = self.fields['assessment']\
+            .queryset.model.get_editable_assessments(user, assessment.id)
+        self.fields['studies'].queryset = self.fields['studies']\
+            .queryset.filter(assessment_id=assessment.id, study_type=1)
+        self.helper = self.setHelper(assessment)
+
+    def setHelper(self, assessment):
+        self.fields['studies'].widget.attrs['size'] = 15
+        for fld in self.fields.keys():
+            self.fields[fld].widget.attrs['class'] = 'span12'
+
+        inputs = {
+            "legend_text": "Copy studies across assessments",
+            "help_text": self.HELP_TEXT,
+            "cancel_url": reverse("study:list", args=[assessment.id]),
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
+
+
 SQFormSet = modelformset_factory(
     models.StudyQuality,
     form=SQForm,

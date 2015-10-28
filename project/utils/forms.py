@@ -28,15 +28,18 @@ class BaseFormHelper(cf.FormHelper):
         layout = cfl.Layout(*form.fields.keys())
 
         if self.kwargs.get('legend_text'):
-            layout.insert(0, cfl.HTML(u"<legend>{}</legend>".format(self.kwargs.get('legend_text'))))
+            layout.insert(0, cfl.HTML(u"<legend>{}</legend>".format(
+                self.kwargs.get('legend_text'))))
 
         if self.kwargs.get('help_text'):
-            layout.insert(1, cfl.HTML("""<p class="help-block">{}</p><br>""".format(self.kwargs.get('help_text'))))
+            layout.insert(1, cfl.HTML("""<p class="help-block">{}</p><br>""".format(
+                self.kwargs.get('help_text'))))
 
         if self.kwargs.get('cancel_url'):
             self.addCustomFormActions(layout, [
                 cfl.Submit('save', 'Save'),
-                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(self.kwargs.get('cancel_url')))
+                cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
+                    self.kwargs.get('cancel_url')))
             ])
 
         if self.kwargs.get('form_actions'):

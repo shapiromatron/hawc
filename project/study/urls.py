@@ -58,6 +58,9 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/report/',
         views.StudyReport.as_view(),
         name='studies_report'),
+    url(r'^assessment/(?P<pk>\d+)/copy-studies/$',
+        views.StudiesCopy.as_view(),
+        name='studies_copy'),
 
     url(r'^(?P<pk>\d+)/$',
         views.StudyRead.as_view(),
