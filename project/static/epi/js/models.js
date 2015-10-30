@@ -334,7 +334,7 @@ Group.prototype = {
     build_tr: function(){
         var d = this.data,
             ul = $('<ul>'),
-            url = '<a href="{0}">{1}</a>'.printf(d.url, d.name),
+            url = $('<a>').attr('href', d.url).text(d.name),
             addLI = function(key, val){
                 if(val){
                     ul.append("<li><strong>{0}:</strong> {1}</li>".printf(key, val));
