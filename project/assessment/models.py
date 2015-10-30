@@ -122,6 +122,8 @@ class Assessment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    COPY_NAME = 'assessments'
+
     def get_prior_versions_json(self):
         """
         Return a JSON list of other prior versions of selected model

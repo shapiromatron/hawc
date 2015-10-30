@@ -1,9 +1,10 @@
 import json
+import logging
 import os
 import collections
 import itertools
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models.loading import get_model
 from django.conf import settings
 from django.contrib.contenttypes import generic
@@ -16,6 +17,7 @@ from django.dispatch import receiver
 
 import reversion
 
+from assessment.models import Assessment
 from assessment.serializers import AssessmentSerializer
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
@@ -83,6 +85,8 @@ class Study(Reference):
         help_text="Study summary or details on data-extraction needs.")
     qualities = generic.GenericRelation('StudyQuality', related_query_name='studies')
 
+    COPY_NAME = "studies"
+
     class Meta:
         verbose_name_plural = "Studies"
         ordering = ("short_citation", )
@@ -103,25 +107,28 @@ class Study(Reference):
         return Study.objects.create(**attrs)
 
     @classmethod
+    @transaction.atomic
     def copy_across_assessments(cls, studies, assessment):
         # copy selected studies from one assessment to another.
-        cw = {"studies": {}}
+        cw = collections.defaultdict(dict)
+
         for study in studies:
-            print "Copying {} to  {}".format(study, assessment)
+            cw[Assessment.COPY_NAME][study.assessment_id] = assessment.id
+            logging.info("Copying {} to  {}".format(study, assessment))
 
             # get child-types before changing
             type_ = study.study_type
             if type_ == 0:  # bioassay
                 children = list(study.experiments.all())
             elif type_ == 1:  # epi
-                children = list(study.study_population.all())
+                children = list(study.study_populations.all())
             elif type_ == 2:  # in-vitro
                 children = list(itertools.chain(
                     study.ivchemicals.all(),
                     study.ivcelltypes.all(),
                     study.ivexperiments.all()))
             elif type_ == 3:  # other
-                children = list()
+                children = []
             elif type_ == 4:  # meta-analysis
                 children = list(study.meta_protocols.all())
 
@@ -136,15 +143,15 @@ class Study(Reference):
             ref.identifiers.add(*idents)
 
             # copy study
-            cw["studies"][study.id] = None
+            old_id = study.id
             study.id = None
             study.reference_ptr = ref
             study.assessment = assessment
-            new_study = study.save()
-            cw["studies"][study.id] = new_study.id
+            study.save()
+            cw[cls.COPY_NAME][old_id] = study.id
 
             for child in children:
-                child.copy_across_assessments(cw, assessment)
+                child.copy_across_assessments(cw)
 
     def clean(self):
         pk_exclusion = {}

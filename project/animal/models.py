@@ -930,22 +930,6 @@ class Endpoint(BaseEndpoint):
                   .values_list('effect', flat=True)
         return [(obj, obj) for obj in sorted(objs)]
 
-    def copy_across_assessments(self, cw, assessment):
-        # todo: implement on study
-        if "experiments" not in cw:
-            cw["experiments"] = {}
-        ags = self.animal_groups.all()
-
-        cw["experiments"][self.id] = None
-        self.id = None
-        self.study_id = cw['studies'][self.study_id]
-        self.save()
-        cw["experiments"][self.id] = self.id
-
-        for ag in ags:
-            pass
-
-
 
 class EndpointGroup(models.Model):
     endpoint = models.ForeignKey(
