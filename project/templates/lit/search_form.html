@@ -59,6 +59,13 @@
                   .replace(/ +/g,'-');
       }
       $('#id_title').on('keyup', function(){$('#id_slug').val(slugify($(this).val()));});
+
+      // add a loading notification
+      $('input[type=submit]').click(function(e){
+        $(e.target).addClass('disabled').css('pointer-events', 'none');
+        $(e.target).parent().append('<p><br>Please wait, loading... <img src="/static/img/loading.gif"></p>');
+        return true;
+      });
     });
   </script>
 {% endblock extrajs %}
