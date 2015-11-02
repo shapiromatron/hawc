@@ -69,7 +69,9 @@ class Search(models.Model):
         blank=True,
         help_text="The search-text used to query an online database. "
                   "Use colors to separate search-terms (optional).")
-    import_file = models.FileField(upload_to="lit-search-import", blank=True)
+    import_file = models.FileField(
+        upload_to="lit-search-import",
+        blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -304,9 +306,12 @@ class Search(models.Model):
 
 
 class PubMedQuery(models.Model):
-    search = models.ForeignKey(Search)
-    results = models.TextField(blank=True)
-    query_date = models.DateTimeField(auto_now_add=True)
+    search = models.ForeignKey(
+        Search)
+    results = models.TextField(
+        blank=True)
+    query_date = models.DateTimeField(
+        auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "PubMed Queries"
@@ -383,10 +388,14 @@ class PubMedQuery(models.Model):
 
 
 class Identifiers(models.Model):
-    unique_id = models.CharField(max_length=32, db_index=True)
-    database = models.IntegerField(choices=SEARCH_SOURCES)
+    unique_id = models.CharField(
+        max_length=32,
+        db_index=True)
+    database = models.IntegerField(
+        choices=SEARCH_SOURCES)
     content = models.TextField()
-    url = models.URLField(blank=True)
+    url = models.URLField(
+        blank=True)
 
     class Meta:
         unique_together = (("database", "unique_id"),)
@@ -723,23 +732,44 @@ class ReferenceTags(ItemBase):
 
 
 class Reference(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment', related_name='references')
-    searches = models.ManyToManyField(Search, blank=False, related_name='references')
-    identifiers = models.ManyToManyField(Identifiers, blank=True, related_name='references')
-    title = models.TextField(blank=True)
-    authors = models.TextField(blank=True)
-    year = models.PositiveSmallIntegerField(blank=True, null=True)
-    journal = models.TextField(blank=True)
-    abstract = models.TextField(blank=True)
-    tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='references')
+    searches = models.ManyToManyField(
+        Search,
+        blank=False,
+        related_name='references')
+    identifiers = models.ManyToManyField(
+        Identifiers,
+        blank=True,
+        related_name='references')
+    title = models.TextField(
+        blank=True)
+    authors = models.TextField(
+        blank=True)
+    year = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True)
+    journal = models.TextField(
+        blank=True)
+    abstract = models.TextField(
+        blank=True)
+    tags = managers.ReferenceFilterTagManager(
+        through=ReferenceTags,
+        blank=True)
     full_text_url = models.URLField(
         blank=True,
         help_text="Link to full-text publication (may require increased "
                   "access privileges, only reviewers and team-members)")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    block_id = models.DateTimeField(blank=True, null=True,
-        help_text="Used internally for determining when reference was originally added")
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+    block_id = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Used internally for determining when reference was "
+                  "originally added")
 
     def get_absolute_url(self):
         return reverse('lit:ref_detail', kwargs={'pk': self.pk})
