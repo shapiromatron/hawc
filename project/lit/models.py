@@ -166,8 +166,8 @@ class Search(models.Model):
             Reference.get_hero_references(self, identifiers)
         elif self.source == RIS:
             importer = ris.RisImporter(self.import_file.path)
-            old, new = Identifiers.get_from_ris(self.id, importer.references)
-            Reference.update_from_ris_identifiers(self, old, new)
+            identifiers = Identifiers.get_from_ris(self.id, importer.references)
+            Reference.update_from_ris_identifiers(self, identifiers)
         else:
             raise ValueError("Unknown import type")
 
@@ -537,40 +537,69 @@ class Identifiers(models.Model):
     @classmethod
     def get_from_ris(cls, search_id, references):
         # Return a queryset of identifiers for each object in RIS file.
-        # Either get or create an identifier, whatever is required
-
-        # Create id based on search_id and id from RIS file.
-        ids = []
+        # Expensive; requires a maximum of ~5N queries
+        pimdsFetch = []
+        refs = []
         for ref in references:
+            ids = []
+            db = ref['accession_db'].lower()
+            id_ = ref['accession_number']
+
+            # Create Endnote identifier
+            # create id based on search_id and id from RIS file.
             id_ = "s{}-id{}".format(search_id, ref['id'])
-            ref["hawc_id"] = id_
-            ids.append(id_)
-
-        # assert ids are unique (id from RIS not guaranteed unique)
-        assert len(set(ids)) == len(ids)
-
-        # Filter IDs which need to be imported
-        existing = Identifiers.objects.filter(database=3, unique_id__in=ids)
-        existing_ids = set(existing.values_list('unique_id', flat=True))
-
-        # Update existing and create new
-        new_identifiers = []
-        for ref in references:
-            id_ = ref["hawc_id"]
             content = json.dumps(ref, encoding='utf8')
-            if id_ in existing_ids:
-                existing.filter(unique_id=id_).update(content=content)
+            ident = Identifiers.objects\
+                .filter(database=RIS, unique_id=id_)\
+                .first()
+            if ident:
+                ident.update(content=content)
             else:
-                new_identifiers.append(
-                    Identifiers(unique_id=id_, database=3, content=content))
+                ident = Identifiers.objects\
+                    .create(database=RIS, unique_id=id_, content=content)
+            ids.append(ident)
 
-        # bulk-create and requery to get objects w/ ids
-        Identifiers.objects.bulk_create(new_identifiers)
-        new_identifiers = Identifiers.objects\
-            .filter(database=3, unique_id__in=ids)\
-            .exclude(database=3, unique_id__in=existing_ids)
+            # create DOI identifier
+            if ref["doi"] is not None:
+                ident, _ = Identifiers.objects\
+                    .get_or_create(database=DOI, unique_id=ref['doi'], content="None")
+                ids.append(ident)
 
-        return existing, new_identifiers
+            # create PMID identifier
+            # (some may include both an accession number and PMID)
+            if ref["PMID"] is not None or db == "nlm":
+                id_ = ref['PMID'] or ref['accession_number']
+                ident, created = Identifiers.objects\
+                    .get_or_create(database=PUBMED, unique_id=id_, content="None")
+                ids.append(ident)
+                if created:
+                    pimdsFetch.append(ident)
+
+            # create other accession identifiers
+            if ref['accession_db'] is not None and ref['accession_number'] is not None:
+                db_id = None
+                if db == "wos":
+                    db_id = WOS
+                elif db == "scopus":
+                    db_id = SCOPUS
+                elif db == "emb":
+                    db_id = EMBASE
+
+                if db_id:
+                    id_ = ref['accession_number']
+                    ident, _ = Identifiers.objects\
+                                .get_or_create(database=db_id, unique_id=id_, content="None")
+                    ids.append(ident)
+
+            refs.append(ids)
+
+        Identifiers.update_pubmed_content(pimdsFetch)
+
+        return refs
+
+    @classmethod
+    def update_pubmed_content(cls, idents):
+        tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
     @classmethod
     def get_max_external_id(cls):
@@ -964,37 +993,44 @@ class Reference(models.Model):
             ).distinct()
 
     @classmethod
-    def update_from_ris_identifiers(cls, search, old, new):
-        # n+2 queries required for update/creation
-        for ident in old:
-            content = json.loads(ident.content)
-            Reference.objects.filter(
-                identifiers=ident
-            ).update(
-                title=content['title'],
-                authors=content['authors_short'],
-                year=content['year'],
-                journal=content['citation'],
-                abstract=content['abstract'],
-            )
+    def update_from_ris_identifiers(cls, search, identifiers):
+        """
+        Create or update Reference from list of lists of identifiers.
+        Expensive; each reference requires 4N queries.
+        """
+        assessment_id = search.assessment_id
+        for idents in identifiers:
 
-        new_refs = []
-        new_ref_idents = []
-        for ident in new:
-            content = json.loads(ident.content)
-            ref = Reference.objects.create(
-                assessment_id=search.assessment_id,
-                title=content['title'],
-                authors=content['authors_short'],
-                year=content['year'],
-                journal=content['citation'],
-                abstract=content['abstract'],
-            )
-            new_refs.append(ref)
-            new_ref_idents.append((ref.id, ident.id,))
+            # check if existing reference is found
+            ref = cls.objects\
+                .filter(assessment_id=assessment_id, identifiers__in=idents)\
+                .first()
 
-        cls.build_ref_search_m2m(new_refs, search)
-        cls.build_ref_ident_m2m(new_ref_idents)
+            # find ref if exists and update content
+            # first identifier is from RIS file; use this content
+            content = json.loads(idents[0].content)
+            if ref:
+                ref.__dict__.update(
+                    title=content['title'],
+                    authors=content['authors_short'],
+                    year=content['year'],
+                    journal=content['citation'],
+                    abstract=content['abstract'],
+                )
+                ref.save()
+            else:
+                ref = cls.objects.create(
+                    assessment_id=assessment_id,
+                    title=content['title'],
+                    authors=content['authors_short'],
+                    year=content['year'],
+                    journal=content['citation'],
+                    abstract=content['abstract'],
+                )
+
+            # add all identifiers and searches
+            ref.identifiers.add(*idents)
+            ref.searches.add(search)
 
     @classmethod
     def build_ref_search_m2m(cls, refs, search):
