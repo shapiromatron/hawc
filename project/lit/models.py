@@ -339,6 +339,9 @@ class Search(models.Model):
 
 
 class PubMedQuery(models.Model):
+
+    MAX_QUERY_SIZE = 5000
+
     search = models.ForeignKey(
         Search)
     results = models.TextField(
@@ -356,16 +359,15 @@ class PubMedQuery(models.Model):
         search = PubMedSearch(term=self.search.search_string_text)
         search.get_ids_count()
 
-        query_size_limit = 5000
-        if search.id_count > query_size_limit:
+        if search.id_count > self.MAX_QUERY_SIZE:
             raise TooManyPubMedResults(
                 "Too many PubMed references found: {0}; reduce query scope to "
-                "fewer than {1}".format(search.id_count, query_size_limit))
+                "fewer than {1}".format(search.id_count, self.MAX_QUERY_SIZE))
 
         search.get_ids()
         results = {"ids": search.ids,
                    "added": search.ids,
-                   "removed": None}
+                   "removed": []}
 
         if prior_query:
             old_ids_list = json.loads(prior_query.results)['ids']
@@ -389,11 +391,11 @@ class PubMedQuery(models.Model):
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.
-        logging.debug("{c} IDs to be added".format(c=ids_to_add_len))
+        logging.debug("{0} IDs to be added".format(ids_to_add_len))
         for i in xrange(int(ceil(ids_to_add_len/block_size))):
             start_index = int(i*block_size)
             end_index = min(int(i*block_size+block_size), ids_to_add_len)
-            logging.debug("Building from {s} to {e}".format(s=start_index, e=end_index))
+            logging.debug("Building from {0} to {1}".format(start_index, end_index))
             fetch = PubMedFetch(id_list=ids_to_add[start_index:end_index],
                                 retmax=int(block_size))
             identifiers = []

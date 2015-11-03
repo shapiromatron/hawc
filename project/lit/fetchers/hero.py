@@ -99,8 +99,8 @@ class HEROFetch(object):
     def _parse_article(self, article):
         d = {
             "json": json.dumps(article, encoding='utf-8'),
-            "HEROID": self._parse_pseudo_json(article, 'REFERENCE_ID'),
-            "PMID": self._parse_pseudo_json(article, 'PMID'),
+            "HEROID": str(self._parse_pseudo_json(article, 'REFERENCE_ID')),
+            "PMID": str(self._parse_pseudo_json(article, 'PMID')),
             "title": self._parse_pseudo_json(article, 'TITLE'),
             "abstract": self._parse_pseudo_json(article, 'ABSTRACT'),
             "source": self._parse_pseudo_json(article, 'SOURCE'),

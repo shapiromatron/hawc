@@ -54,7 +54,7 @@ class PubMedSearch(object):
     def _parse_ids(self, txt):
 
         def parse_id(xml):
-            return int(xml.text)
+            return str(xml.text)
 
         id_list = ET.fromstring(txt).find("IdList")
         ids = id_list.findall("Id")
@@ -131,7 +131,7 @@ class PubMedFetch(object):
         return self.content
 
     def _parse_article(self, article):
-        pmid = int(PubMedFetch._try_single_find(article, "MedlineCitation/PMID"))
+        pmid = str(PubMedFetch._try_single_find(article, "MedlineCitation/PMID"))
         logging.debug('Parsing results for PMID: {pmid}'.format(pmid=pmid))
         d = {
             "xml": ET.tostring(article, encoding='utf-8'),
