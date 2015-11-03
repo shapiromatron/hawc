@@ -16,7 +16,7 @@ class PubMedSearchTests(TestCase):
     """
     def setUp(self):
         self.term = "science[journal] AND breast cancer AND 2008[pdat]"
-        self.results_list = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
+        self.results_list = ['19008416', '18927361', '18787170', '18487186', '18239126', '18239125']
 
     def test_standard_query(self):
         self.search = PubMedSearch(term=self.term)
@@ -36,10 +36,10 @@ class PubMedSearchTests(TestCase):
         self.search = PubMedSearch(term=self.term)
         self.search.get_ids_count()
         self.search.get_ids()
-        old_ids_list = [999999, 19008416, 18927361, 18787170, 18487186]
+        old_ids_list = ['999999', '19008416', '18927361', '18787170', '18487186']
         changes = self.search.get_changes_from_previous_search(old_ids_list=old_ids_list)
-        self.assertEqual(changes['added'], set([18239126, 18239125]))
-        self.assertEqual(changes['removed'], set([999999]))
+        self.assertEqual(changes['added'], set(['18239126', '18239125']))
+        self.assertEqual(changes['removed'], set(['999999']))
 
     def test_complex_query(self):
         """
@@ -68,7 +68,7 @@ class PubMedFetchTests(TestCase):
 
     """
     def setUp(self):
-        self.ids = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
+        self.ids = ['19008416', '18927361', '18787170', '18487186', '18239126', '18239125']
 
     def test_standard_query(self):
         self.fetch = PubMedFetch(id_list=self.ids)
@@ -150,7 +150,7 @@ class HEROFetchTests(TestCase):
 
     def test_success_query(self):
         # ensure that we get the correct query returned
-        ids = (1201, )
+        ids = ('1201', )
         hero_getter = HEROFetch(id_list=ids)
         hero_getter.get_content()
         self.assertListEqual(hero_getter.failures, [])
@@ -159,8 +159,8 @@ class HEROFetchTests(TestCase):
         val = hero_getter.content[0]
 
         # test individual components
-        self.assertEqual(val['HEROID'], 1201)
-        self.assertEqual(val['PMID'], 9922222)
+        self.assertEqual(val['HEROID'], '1201')
+        self.assertEqual(val['PMID'], '9922222')
         self.assertListEqual(val['authors_list'], [
             u'Farman CA', u'Watkins K', u'Van Hoozen B',
             u'Last JA', u'Witschi H', u'Pinkerton KE'
@@ -186,7 +186,7 @@ class HEROFetchTests(TestCase):
         self.assertEqual(len(hero_getter.failures), 7)
         self.assertListEqual(
             hero_getter.failures,
-            [1349, 1319, 1224, 1227, 1228, 1361, 1366])
+            ['1349', '1319', '1224', '1227', '1228', '1361', '1366'])
 
 
 class AuthorParsingTests(TestCase):
