@@ -1,5 +1,6 @@
 from datetime import datetime
 from math import ceil
+import urllib
 import json
 import logging
 import re
@@ -436,16 +437,19 @@ class Identifiers(models.Model):
     def __unicode__(self):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
+    URL_TEMPLATES = {
+        PUBMED: ur'http://www.ncbi.nlm.nih.gov/pubmed/{0}',
+        HERO: ur'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
+        DOI: ur'https://doi.org/{0}',
+        WOS: ur'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
+        SCOPUS: ur'http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist',
+    }
+
     def get_url(self):
         url = self.url
-        if self.database == 1:  # PubMed
-            url = r'http://www.ncbi.nlm.nih.gov/pubmed/{unique_id}'.format(
-                        unique_id=self.unique_id)
-        elif self.database == 2:  # HERO
-            url = r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={unique_id}'.format(
-                        unique_id=self.unique_id)
-        elif self.database == 3:  # RIS
-            pass
+        template = self.URL_TEMPLATES.get(self.database, None)
+        if template:
+            url = template.format(urllib.quote(self.unique_id))
         return url
 
     def create_reference(self, assessment, block_id=None):
