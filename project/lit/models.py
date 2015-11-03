@@ -6,7 +6,7 @@ import logging
 import re
 import HTMLParser
 
-from django.db import connection, models
+from django.db import connection, models, transaction
 from django.db.models.loading import get_model
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -139,6 +139,7 @@ class Search(models.Model):
         html_parser = HTMLParser.HTMLParser()
         return html_parser.unescape(strip_tags(self.search_string))
 
+    @transaction.atomic
     def run_new_query(self):
         if self.source == PUBMED:
             prior_query = None
@@ -156,6 +157,7 @@ class Search(models.Model):
     def import_ids(self):
         return [int(v) for v in self.search_string_text.split(',')]
 
+    @transaction.atomic
     def run_new_import(self):
         if self.source == EXTERNAL_LINK:
             raise Exception("Import functionality disabled for manual import")
