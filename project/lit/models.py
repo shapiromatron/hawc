@@ -489,6 +489,7 @@ class Identifiers(models.Model):
         return {
             "id": self.unique_id,
             "database": self.get_database_display(),
+            "database_id": self.database,
             "url": self.get_url()
         }
 
@@ -577,11 +578,14 @@ class Identifiers(models.Model):
             # (some may include both an accession number and PMID)
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref['PMID'] or ref['accession_number']
-                ident, created = Identifiers.objects\
-                    .get_or_create(database=PUBMED, unique_id=id_, content="None")
-                ids.append(ident)
-                if created:
+                ident = Identifiers.objects\
+                    .filter(database=PUBMED, unique_id=id_)\
+                    .first()
+                if not ident:
+                    ident = Identifiers.objects.create(
+                        database=PUBMED, unique_id=id_, content="None")
                     pimdsFetch.append(ident)
+                ids.append(ident)
 
             # create other accession identifiers
             if ref['accession_db'] is not None and ref['accession_number'] is not None:
@@ -857,8 +861,8 @@ class Reference(models.Model):
             d[field] = getattr(self, field)
 
         d['identifiers'] = [
-            ref.get_json(json_encode=False)
-            for ref in self.identifiers.all()
+            ident.get_json(json_encode=False)
+            for ident in self.identifiers.all()
         ]
         if searches:
             d['searches'] = [ref.get_json() for ref in self.searches.all()]

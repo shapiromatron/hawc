@@ -64,6 +64,7 @@ _.extend(Reference.prototype, Observee.prototype, {
 
         _.chain(this.data.identifiers)
             .filter(function(v){return v.url.length>0;})
+            .sortBy(function(v){return v.database_id;})
             .each(function(v){
                 links.append('<a class="btn btn-mini btn-success" target="_blank" href="{0}" title="ID {1}">{2}</a>'.printf(
                     v.url, v.id, v.database));
@@ -72,6 +73,7 @@ _.extend(Reference.prototype, Observee.prototype, {
 
         _.chain(this.data.identifiers)
             .reject(function(v){return v.url.length>0 || v.database === "External link"})
+            .sortBy(function(v){return v.database_id;})
             .each(function(v){
                 links.append('<button class="btn btn-mini disabled" title="ID {0}">{1}</button>'.printf(
                     v.id, v.database));
