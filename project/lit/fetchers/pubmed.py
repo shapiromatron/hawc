@@ -139,7 +139,8 @@ class PubMedFetch(object):
             "title": PubMedFetch._try_single_find(article, "MedlineCitation/Article/ArticleTitle"),
             "abstract": self._get_abstract(article),
             "citation": self._journal_info(article),
-            "year": self._get_year(article)
+            "year": self._get_year(article),
+            "doi": self._get_doi(article),
         }
         d.update(self._authors_info(article))
         return d
@@ -221,3 +222,8 @@ class PubMedFetch(object):
             year = re.search(r'(\d+){4}', medline_date.text)
             if year is not None:
                 return int(year.group(0))
+
+    def _get_doi(self, et):
+        doi = et.find('MedlineCitation/Article/ELocationID[@EIdType="doi"]')
+        if doi is not None:
+            return doi.text
