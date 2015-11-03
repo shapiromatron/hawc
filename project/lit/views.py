@@ -551,11 +551,17 @@ class RefsByTagJSON(BaseDetail):
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
-            refs = search.get_references_with_tag(tag=tag, descendants=True)
+            refs = search\
+                .get_references_with_tag(tag=tag, descendants=True)\
+                .prefetch_related('searches', 'identifiers')
         elif tag:
-            refs = models.Reference.get_references_with_tag(tag, descendants=True)
+            refs = models.Reference\
+                .get_references_with_tag(tag, descendants=True)\
+                .prefetch_related('searches', 'identifiers')
         else:
-            refs = models.Reference.get_untagged_references(self.assessment)
+            refs = models.Reference\
+                .get_untagged_references(self.assessment)\
+                .prefetch_related('searches', 'identifiers')
 
         response["refs"] = [
             ref.get_json(json_encode=False, searches=True)
