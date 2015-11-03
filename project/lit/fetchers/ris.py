@@ -145,12 +145,12 @@ class ReferenceParser(object):
         if "pubmed_id" in self.content:
             pubmed_id = self.content["pubmed_id"]
             if type(pubmed_id) is int:
-                return pubmed_id
+                return str(pubmed_id)
             else:
                 m = self.re_pmid.findall(pubmed_id)
                 if len(m) > 0:
                     # no try/catch req'd; return first matching int
-                    return int(m[0])
+                    return str(m[0])
 
         # get value accession number is NLM
         if (self.content.get("name_of_database", "") == "NLM" and
