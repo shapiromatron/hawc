@@ -1,0 +1,61 @@
+TY  - JOUR
+AB  - Bromate, a common disinfectant byproduct of drinking water ozonation, has been linked to human and animal renal toxicity, including renal cell carcinomas in multiple animal species. Here, we evaluate changes in protein and gene expression through two-dimensional difference gel electrophoresis (2D-DIGE) and Affymetrix arrays to identify potential modes of action involved in potassium bromate carcinogenicity. Male rats were exposed to potassium bromate in drinking water at concentrations of 0, 1, 20 and 400 ppm for two weeks. Differential expression of glycolytic proteins including enolase 1 (Eno1), triosephosphate isomerase 1 (Tpi1) and glyceraldehyde-3-phosphate dehydrogenase (Gapdh) suggests that bromate toxicity is associated with changes in energy consumption and utilization in renal cells involving up-regulation of glycolytic processes that may be the result of altered mitochondrial function. Several alterations in glycolysis and mitochondrial gene transcripts were also observed to be consistent with this mode of action. These studies provide insight into early events in renal cell physiology altered by bromate exposure.
+AD  - United States Environmental Protection Agency, National Health and Environmental Effects Research Laboratory, Environmental Carcinogenesis Division, B143-06, 109 T.W. Alexander Drive, Research Triangle Park, NC 27711, United States.
+PM  - 19425233
+AN  - 19425233
+AU  - Ahlborn, G. J.
+AU  - Delker, D. A.
+AU  - Roop, B. C.
+AU  - Geter, D. R.
+AU  - Allen, J. W.
+AU  - DeAngelo, A. B.
+AU  - Winnik, W. M.
+C1  - Non-U.S. Gov't
+DA  - Jun
+DB  - NLM
+DO  - 10.1016/j.fct.2009.02.003
+ET  - 2009/05/09
+J2  - Food and chemical toxicology : an international journal published for the British Industrial Biological Research Association
+KW  - Animals
+Bromates/*toxicity
+Cell Line
+Disinfection
+Electrophoresis, Gel, Two-Dimensional
+Energy Metabolism/drug effects
+Gene Expression/*drug effects
+Glycolysis/drug effects
+Kidney/cytology/*drug effects/*metabolism
+Male
+Membrane Potentials/drug effects
+Mitochondria/drug effects/metabolism
+Mitochondrial Membranes/drug effects
+Oligonucleotide Array Sequence Analysis
+Proteins/*metabolism
+Rats
+Rats, Inbred F344
+Tandem Mass Spectrometry
+Trypsin/chemistry
+Water Supply
+LA  - eng
+M1  - 6
+N1  - 1873-6351
+Ahlborn, Gene J
+Delker, Don A
+Roop, Barbara C
+Geter, David R
+Allen, James W
+DeAngelo, Anthony B
+Winnik, Witold M
+England
+Food Chem Toxicol. 2009 Jun;47(6):1154-60. doi: 10.1016/j.fct.2009.02.003.
+PY  - 2009
+SN  - 0278-6915
+SP  - 1154-60
+ST  - Early alterations in protein and gene expression in rat kidney following bromate exposure
+T2  - Food Chem Toxicol
+TI  - Early alterations in protein and gene expression in rat kidney following bromate exposure
+VL  - 47
+ID  - 37
+ER  - 
+
+

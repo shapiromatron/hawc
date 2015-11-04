@@ -1,4 +1,5 @@
 from unittest import skip
+import os
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -244,3 +245,66 @@ class HEROTest(TestCase):
         ref = models.Reference.objects.all()[0]
         self.assertEqual(ref.searches.count(), 2)
         self.assertEqual(ref.identifiers.count(), 2)
+
+
+class TestFile(object):
+    def __init__(self, fn):
+        self.path = fn
+
+
+class RISImportTest(TestCase):
+
+    def setUp(self):
+        build_assessments_for_permissions_testing(self)
+        self.search = models.Search.objects.create(
+            assessment_id=self.assessment_working.pk,
+            search_type="i",
+            source=models.RIS,
+            title="ris",
+            slug="ris",
+            description="-",
+        )
+        self.search.import_file = TestFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
+
+    def test_import(self):
+        # check initially blank
+        self.assertEqual(models.Reference.objects.count(), 0)
+        self.assertEqual(models.Search.objects.count(), 3)
+        self.assertEqual(models.Identifiers.objects.count(), 0)
+
+        self.search.run_new_import()
+        self.assertEqual(models.Reference.objects.count(), 1)
+        self.assertEqual(models.Identifiers.objects.count(), 3)
+        self.assertEqual(models.Reference.objects.first().identifiers.count(), 3)
+
+        self.assertEqual(models.Identifiers.objects.filter(database=models.PUBMED).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=models.RIS).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=models.DOI).count(), 1)
+
+        # assert Pubmed XML content is loaded
+        self.assertTrue(
+            "<PubmedArticle>" in
+            models.Identifiers.objects.filter(database=models.PUBMED).first().content
+        )
+
+    def test_import_with_existing(self):
+        # check initially blank
+        self.assertEqual(models.Reference.objects.count(), 0)
+        self.assertEqual(models.Search.objects.count(), 3)
+        self.assertEqual(models.Identifiers.objects.count(), 0)
+
+        # create existing identifiers
+        models.Identifiers.objects.create(
+            database=models.PUBMED, unique_id="19425233", content="None")
+        models.Identifiers.objects.create(
+            database=models.DOI, unique_id="10.1016/j.fct.2009.02.003", content="None")
+
+        self.search.run_new_import()
+        self.assertEqual(models.Reference.objects.count(), 1)
+        self.assertEqual(models.Identifiers.objects.count(), 3)
+        self.assertEqual(models.Reference.objects.first().identifiers.count(), 3)
+
+        # ensure new ones aren't created
+        self.assertEqual(models.Identifiers.objects.filter(database=models.PUBMED).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=models.RIS).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=models.DOI).count(), 1)
