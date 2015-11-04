@@ -1,6 +1,7 @@
 from .dev import *
 
-# DATABASE SETTIGNS
+
+# DATABASE SETTINGS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

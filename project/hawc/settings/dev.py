@@ -1,7 +1,5 @@
 from .base import *
 
-import sys
-import logging
 
 DEBUG = True
 for tmp in TEMPLATES:
@@ -33,23 +31,3 @@ LOGGING['loggers']['']['handlers'] = ['console']
 
 
 COMPRESS_ENABLED = False
-
-
-# Testing settings
-if 'test' in sys.argv[1:]:
-
-    class DisableMigrations(object):
-
-        def __contains__(self, item):
-            return True
-
-        def __getitem__(self, item):
-            return "notmigrations"
-
-    DEBUG = False
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
-    PASSWORD_HASHERS = (
-        'django.contrib.auth.hashers.MD5PasswordHasher',
-    )
-    logging.disable(logging.CRITICAL)
-    MIGRATION_MODULES = DisableMigrations()
