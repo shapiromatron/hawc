@@ -53,7 +53,9 @@ class OutcomeDataPivot(FlatFileExporter):
 
             'outcome id',
             'outcome name',
+            'outcome effect subtype',
             'diagnostic',
+            'age of outcome measurement',
 
             'comparison set id',
             'comparison set name',
@@ -63,6 +65,7 @@ class OutcomeDataPivot(FlatFileExporter):
             'exposure metric',
             'exposure measured',
             'dose units',
+            'age of exposure',
 
             'result id',
             'result population description',
@@ -107,7 +110,9 @@ class OutcomeDataPivot(FlatFileExporter):
 
                 ser['id'],
                 ser['name'],
+                ser['effect_subtype'],
                 ser['diagnostic'],
+                ser['age_of_measurement'],
             ]
             for res in ser['results']:
                 row_copy = list(row)
@@ -120,6 +125,7 @@ class OutcomeDataPivot(FlatFileExporter):
                     res["comparison_set"]["exposure"]["metric"],
                     res["comparison_set"]["exposure"]["measured"],
                     res["comparison_set"]["exposure"]["metric_units"]["name"],
+                    res["comparison_set"]["exposure"]["age_of_exposure"],
 
                     res['id'],
                     res['population_description'],
