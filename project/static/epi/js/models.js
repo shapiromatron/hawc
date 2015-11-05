@@ -631,7 +631,7 @@ Outcome.prototype = {
 
 var Result = function(data){
     this.data = data;
-    this.group = new ComparisonSet(data.comparison_set);
+    this.comparison_set = new ComparisonSet(data.comparison_set);
     this.resultGroups = _.map(data.results, function(d){return new ResultGroup(d);});
     this.factors = _.where(this.data.factors, {"included_in_final_model": true});
     this.factors_considered = _.where(this.data.factors, {"included_in_final_model": false});
@@ -723,7 +723,7 @@ Result.prototype = {
         var txt = (withURL===true) ? this.build_link() : this.data.metric.metric;
         return new DescriptiveTable()
             .add_tbody_tr("Results", txt)
-            .add_tbody_tr("Groups", this.group.build_link())
+            .add_tbody_tr("Comparison set", this.comparison_set.build_link())
             .add_tbody_tr("Data location", this.data.data_location)
             .add_tbody_tr("Population description", this.data.population_description)
             .add_tbody_tr("Metric Description", this.data.metric_description)
