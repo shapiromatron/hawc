@@ -317,6 +317,10 @@ class Outcome(BaseEndpoint):
         max_length=128,
         blank=True,
         help_text="Effect, using common-vocabulary")
+    effect_subtype = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Effect subtype, using common-vocabulary")
     diagnostic = models.PositiveSmallIntegerField(
         choices=DIAGNOSTIC_CHOICES)
     diagnostic_description = models.TextField()
@@ -324,6 +328,18 @@ class Outcome(BaseEndpoint):
         blank=True,
         null=True,
         verbose_name="Outcome N")
+    age_of_measurement = models.CharField(
+        max_length=32,
+        blank=True,
+        verbose_name="Age at outcome measurement",
+        help_text='Textual age description when outcomes were measured '
+                  '[examples include:  specific age indicated in the study '
+                  '(e.g., "3 years of age, 10-12 years of age") OR standard '
+                  'age categories: "infancy (1-12 months), toddler (1-2 years)'
+                  ', middle childhood (6-11 years, early adolescence (12-18 '
+                  'years), late adolescence (19-21 years), adulthood (>21), '
+                  'older adulthood (varies)" - based on NICHD Integrated '
+                  'pediatric terminology]')
     summary = models.TextField(
         blank=True,
         help_text='Summarize main findings of outcome, or describe why no '
@@ -672,6 +688,20 @@ class Exposure(models.Model):
         max_length=128,
         help_text='Exposure sampling period',
         blank=True)
+    age_of_exposure = models.CharField(
+        max_length=32,
+        blank=True,
+        help_text='Textual age description for when exposure measurement '
+                  'sample was taken, treatment given, or age for which survey '
+                  'data apply [examples include:  specific age indicated in '
+                  'the study (e.g., "gestational week 20, 3 years of age, '
+                  '10-12 years of age, previous 12 months") OR standard age '
+                  'categories: "fetal (in utero), neonatal (0-27 days), '
+                  'infancy (1-12 months) toddler (1-2 years), middle '
+                  'childhood (6-11 years, early adolescence (12-18 years),'
+                  'late adolescence (19-21 years), adulthood (>21),'
+                  'older adulthood (varies)" – based on NICHD Integrated'
+                  'pediatric terminology]')
     duration = models.CharField(
         max_length=128,
         blank=True,
