@@ -49,6 +49,16 @@ class ExposureByStudyPopulationLookup(RelatedLookup):
     related_filter = 'study_population_id'
 
 
+class ExposureMeasuredLookup(DistinctStringLookup):
+    model = models.Exposure
+    distinct_field = "measured"
+
+
+class ExposureMetricLookup(DistinctStringLookup):
+    model = models.Exposure
+    distinct_field = "metric"
+
+
 class AgeOfExposureLookup(DistinctStringLookup):
     model = models.Exposure
     distinct_field = "age_of_exposure"
@@ -95,6 +105,8 @@ registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
 registry.register(ExposureByStudyPopulationLookup)
+registry.register(ExposureMeasuredLookup)
+registry.register(ExposureMetricLookup)
 registry.register(AgeOfExposureLookup)
 registry.register(ComparisonSetByStudyPopulationLookup)
 registry.register(ComparisonSetByOutcomeLookup)

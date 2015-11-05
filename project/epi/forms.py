@@ -278,6 +278,12 @@ class ExposureForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop('parent', None)
         super(ExposureForm, self).__init__(*args, **kwargs)
+        self.fields['measured'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExposureMeasuredLookup,
+            allow_new=True)
+        self.fields['metric'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExposureMetricLookup,
+            allow_new=True)
         self.fields['age_of_exposure'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AgeOfExposureLookup,
             allow_new=True)
