@@ -148,9 +148,9 @@ Exposure.prototype = {
             .add_tbody_tr_list("Known exposure routes", this.get_exposure_li())
             .add_tbody_tr("Analytical method", this.data.analytical_method)
             .add_tbody_tr("Exposure description", this.data.exposure_description)
-            .add_tbody_tr("Sampling period", this.data.sampling_period)
             .add_tbody_tr("Age of exposure", this.data.age_of_exposure)
             .add_tbody_tr("Duration", this.data.duration)
+            .add_tbody_tr("Sampling period", this.data.sampling_period)
             .add_tbody_tr("Exposure distribution", this.data.exposure_distribution)
             .add_tbody_tr("Description", this.data.description)
             .get_tbl();
