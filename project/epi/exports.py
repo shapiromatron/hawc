@@ -53,6 +53,8 @@ class OutcomeDataPivot(FlatFileExporter):
 
             'outcome id',
             'outcome name',
+            'outcome system',
+            'outcome effect',
             'outcome effect subtype',
             'diagnostic',
             'age of outcome measurement',
@@ -110,6 +112,8 @@ class OutcomeDataPivot(FlatFileExporter):
 
                 ser['id'],
                 ser['name'],
+                ser['system'],
+                ser['effect'],
                 ser['effect_subtype'],
                 ser['diagnostic'],
                 ser['age_of_measurement'],
