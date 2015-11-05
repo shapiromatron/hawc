@@ -312,7 +312,7 @@ class ExposureForm(forms.ModelForm):
         helper.add_fluid_row('inhalation', 6, "span2")
         helper.add_fluid_row('measured', 3, "span4")
         helper.add_fluid_row('metric_description', 3, "span4")
-        helper.add_fluid_row('duration', 2, "span6")
+        helper.add_fluid_row('age_of_exposure', 3, "span6")
 
         url = reverse(
             'assessment:dose_units_create',
@@ -391,14 +391,16 @@ class OutcomeForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row('name', 4, "span3")
+        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('system', 3, "span4")
         helper.add_fluid_row('diagnostic', 2, "span6")
+        helper.add_fluid_row('outcome_n', 2, "span6")
 
         url = reverse(
             'assessment:effect_tag_create',
             kwargs={'pk': self.instance.assessment.pk}
         )
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span3")
+        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
 
         return helper
 
