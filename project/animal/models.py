@@ -8,8 +8,6 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 
 import reversion
 
@@ -1109,66 +1107,6 @@ class EndpointGroup(models.Model):
             ser['dose_group_id'] == endpoint['LOEL'],
             ser['dose_group_id'] == endpoint['FEL'],
         )
-
-
-@receiver(post_save, sender=Experiment)
-@receiver(pre_delete, sender=Experiment)
-@receiver(post_save, sender=AnimalGroup)
-@receiver(pre_delete, sender=AnimalGroup)
-@receiver(post_save, sender=DosingRegime)
-@receiver(pre_delete, sender=DosingRegime)
-@receiver(post_save, sender=Endpoint)
-@receiver(pre_delete, sender=Endpoint)
-@receiver(post_save, sender=EndpointGroup)
-@receiver(pre_delete, sender=EndpointGroup)
-def invalidate_endpoint_cache(sender, instance, **kwargs):
-    instance_type = type(instance)
-    filters = {}
-    if instance_type is Experiment:
-        filters["animal_group__experiment"] = instance.id
-    elif instance_type is AnimalGroup:
-        filters["animal_group"] = instance.id
-    elif instance_type is DosingRegime:
-        filters["animal_group__dosing_regime"] = instance.id
-    elif instance_type is Endpoint:
-        ids = [instance.id]
-    elif instance_type is EndpointGroup:
-        ids = [instance.endpoint_id]
-
-    if len(filters) > 0:
-        ids = Endpoint.objects.filter(**filters).values_list('id', flat=True)
-
-    Endpoint.delete_caches(ids)
-
-
-@receiver(post_save, sender=DosingRegime)
-def change_num_dg(sender, instance, **kwargs):
-    # Ensure number endpoint-groups == dose-groups
-
-    # get endpoints associated with this dosing-regime
-    eps = Endpoint.objects.filter(
-            animal_group_id__in=AnimalGroup.objects.filter(
-                dosing_regime=instance))
-
-    if eps.count() == 0:
-        return
-
-    # get dose-ids
-    dose_ids = instance.doses.all().values_list('dose_group_id', flat=True)
-
-    # create endpoint-groups, as needed
-    egs = []
-    for dose_id in dose_ids:
-        egs.extend([
-           EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id) for
-           ep in eps.exclude(groups__dose_group_id=dose_id)
-        ])
-    EndpointGroup.objects.bulk_create(egs)
-
-    # delete endpoint-groups without a dose-group, as needed
-    EndpointGroup.objects.filter(endpoint__in=eps)\
-        .exclude(dose_group_id__in=dose_ids)\
-        .delete()
 
 
 reversion.register(Experiment)

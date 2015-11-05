@@ -4,8 +4,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 
 import reversion
 
@@ -25,7 +23,8 @@ class MetaProtocol(models.Model):
         (0, "Systematic"),
         (1, "Other"))
 
-    study = models.ForeignKey('study.Study',
+    study = models.ForeignKey(
+        'study.Study',
         related_name="meta_protocols")
     name = models.CharField(
         verbose_name="Protocol name",
@@ -428,28 +427,6 @@ class SingleResult(models.Model):
             ser['ci_units'],
             ser['notes'],
         )
-
-
-@receiver(post_save, sender=MetaProtocol)
-@receiver(pre_delete, sender=MetaProtocol)
-@receiver(post_save, sender=MetaResult)
-@receiver(pre_delete, sender=MetaResult)
-@receiver(post_save, sender=SingleResult)
-@receiver(pre_delete, sender=SingleResult)
-def invalidate_meta_result_cache(sender, instance, **kwargs):
-    instance_type = type(instance)
-    filters = {}
-    if instance_type is MetaProtocol:
-        filters["protocol"] = instance.id
-    elif instance_type is MetaResult:
-        ids = [instance.id]
-    elif instance_type is SingleResult:
-        ids = [instance.meta_result_id]
-
-    if len(filters) > 0:
-        ids = MetaResult.objects.filter(**filters).values_list('id', flat=True)
-
-    MetaResult.delete_caches(ids)
 
 
 reversion.register(

@@ -6,8 +6,6 @@ import itertools
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 
 import reversion
 
@@ -1262,45 +1260,6 @@ class GroupResult(models.Model):
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
-
-
-@receiver(post_save, sender=StudyPopulation)
-@receiver(pre_delete, sender=StudyPopulation)
-@receiver(post_save, sender=ComparisonSet)
-@receiver(pre_delete, sender=ComparisonSet)
-@receiver(post_save, sender=Exposure)
-@receiver(pre_delete, sender=Exposure)
-@receiver(post_save, sender=Group)
-@receiver(pre_delete, sender=Group)
-@receiver(post_save, sender=Outcome)
-@receiver(pre_delete, sender=Outcome)
-@receiver(post_save, sender=Result)
-@receiver(pre_delete, sender=Result)
-@receiver(post_save, sender=GroupResult)
-@receiver(pre_delete, sender=GroupResult)
-def invalidate_outcome_cache(sender, instance, **kwargs):
-    ids = []
-    instance_type = type(instance)
-    filters = {}
-    if instance_type is StudyPopulation:
-        filters["study_population_id"] = instance.id
-    elif instance_type is ComparisonSet:
-        filters["results__comparison_set_id"] = instance.id
-    elif instance_type is Exposure:
-        filters["results__comparison_set__exposure_id"] = instance.id
-    elif instance_type is Group:
-        filters["results__comparison_set__groups"] = instance.id
-    elif instance_type is Outcome:
-        ids = [instance.id]
-    elif instance_type is Result:
-        ids = [instance.outcome_id]
-    elif instance_type is GroupResult:
-        ids = [instance.result.outcome_id]
-
-    if len(filters) > 0:
-        ids = Outcome.objects.filter(**filters).values_list('id', flat=True)
-
-    Outcome.delete_caches(ids)
 
 
 reversion.register(Country)

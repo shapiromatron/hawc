@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import logging
 import json
 import os
 from StringIO import StringIO
@@ -12,8 +11,6 @@ from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
@@ -304,35 +301,6 @@ class Attachment(models.Model):
         if isPublic:
             filters["publicly_available"] = True
         return cls.objects.filter(**filters)
-
-
-@receiver(post_save, sender=Assessment)
-def default_configuration(sender, instance, created, **kwargs):
-    """
-    Created default assessment settings when a new assessment instance
-    is created.
-    """
-    if created:
-
-        logging.info("Creating default literature inclusion/exclusion tags")
-        get_model('lit', 'ReferenceFilterTag').build_default(instance)
-        get_model('lit', 'Search').build_default(instance)
-
-        logging.info("Creating default settings for study-quality criteria")
-        get_model('study', 'StudyQualityDomain').build_default(instance)
-
-        logging.info("Creating new BMD settings assessment creation")
-        get_model('bmd', 'LogicField').build_defaults(instance)
-        get_model('bmd', 'BMD_Assessment_Settings')(assessment=instance).save()
-
-        logging.info("Creating default summary text")
-        get_model('summary', 'SummaryText').build_default(instance)
-
-        logging.info("Building default comment settings")
-        get_model('comments', 'CommentSettings')(assessment=instance).save()
-
-        logging.info("Building in-vitro endpoint category-root")
-        get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
 
 
 class DoseUnits(models.Model):
