@@ -61,6 +61,7 @@ class OutcomeDataPivot(FlatFileExporter):
             'exposure id',
             'exposure name',
             'exposure metric',
+            'exposure measured',
             'dose units',
 
             'result id',
@@ -117,6 +118,7 @@ class OutcomeDataPivot(FlatFileExporter):
                     res["comparison_set"]["exposure"]["id"],
                     res["comparison_set"]["exposure"]["name"],
                     res["comparison_set"]["exposure"]["metric"],
+                    res["comparison_set"]["exposure"]["measured"],
                     res["comparison_set"]["exposure"]["metric_units"]["name"],
 
                     res['id'],
