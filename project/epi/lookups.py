@@ -49,10 +49,20 @@ class ExposureByStudyPopulationLookup(RelatedLookup):
     related_filter = 'study_population_id'
 
 
+class AgeOfExposureLookup(DistinctStringLookup):
+    model = models.Exposure
+    distinct_field = "age_of_exposure"
+
+
 class OutcomeByStudyPopulationLookup(RelatedLookup):
     model = models.Outcome
     search_fields = ('name__icontains', )
     related_filter = 'study_population_id'
+
+
+class SystemLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "system"
 
 
 class EffectLookup(DistinctStringLookup):
@@ -60,9 +70,14 @@ class EffectLookup(DistinctStringLookup):
     distinct_field = "effect"
 
 
-class SystemLookup(DistinctStringLookup):
+class EffectSubtypeLookup(DistinctStringLookup):
     model = models.Outcome
-    distinct_field = "system"
+    distinct_field = "effect_subtype"
+
+
+class AgeOfMeasurement(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "age_of_measurement"
 
 
 class ResultByOutcomeLookup(RelatedLookup):
@@ -80,9 +95,12 @@ registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
 registry.register(ExposureByStudyPopulationLookup)
+registry.register(AgeOfExposureLookup)
 registry.register(ComparisonSetByStudyPopulationLookup)
 registry.register(ComparisonSetByOutcomeLookup)
 registry.register(OutcomeByStudyPopulationLookup)
-registry.register(EffectLookup)
 registry.register(SystemLookup)
+registry.register(EffectLookup)
+registry.register(EffectSubtypeLookup)
+registry.register(AgeOfMeasurement)
 registry.register(ResultByOutcomeLookup)

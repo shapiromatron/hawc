@@ -16,5 +16,10 @@
 {% endblock %}
 
 {% block content %}
-    {% crispy form %}
+  {% crispy form %}
 {% endblock %}
+
+{% block extrajs %}
+  {{ form.media }}
+{% endblock extrajs %}
+

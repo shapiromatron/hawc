@@ -278,6 +278,9 @@ class ExposureForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop('parent', None)
         super(ExposureForm, self).__init__(*args, **kwargs)
+        self.fields['age_of_exposure'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.AgeOfExposureLookup,
+            allow_new=True)
         if study_population:
             self.instance.study_population = study_population
         self.helper = self.setHelper()
@@ -354,6 +357,12 @@ class OutcomeForm(forms.ModelForm):
             allow_new=True)
         self.fields['effect'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.EffectLookup,
+            allow_new=True)
+        self.fields['effect_subtype'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.EffectSubtypeLookup,
+            allow_new=True)
+        self.fields['age_of_measurement'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.AgeOfMeasurement,
             allow_new=True)
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
