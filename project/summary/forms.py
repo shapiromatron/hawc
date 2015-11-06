@@ -215,7 +215,7 @@ class PrefilterMixin(object):
             evidence_type = data.get('evidence_type', None)
             if evidence_type == 0:  # Bioassay
                 prefilters["animal_group__experiment__study__in"] = studies
-            if evidence_type == 1:  # Epi
+            elif evidence_type == 1:  # Epi
                 prefilters["study_population__study__in"] = studies
             elif evidence_type == 2:  # in-vitro
                 prefilters["experiment__study__in"] = studies
