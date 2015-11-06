@@ -2013,8 +2013,8 @@ _.extend(DataPivot_visualization, {
           lte: function(v){return v[field_name]<=value;},
           gt: function(v){return v[field_name]>value;},
           gte: function(v){return v[field_name]>=value;},
-          contains: function(v){return v[field_name].toString().toLowerCase().search(value.toLowerCase())>=0;},
-          not_contains: function(v){return v[field_name].toString().toLowerCase().search(value.toLowerCase())<0;},
+          contains: function(v){return v[field_name].toString().toLowerCase().indexOf(value.toLowerCase())>=0;},
+          not_contains: function(v){return v[field_name].toString().toLowerCase().indexOf(value.toLowerCase())<0;},
           exact: function(v){return v[field_name].toString().toLowerCase() === value.toLowerCase();},
         }), isWithin = function(obj, arr){
           var within = false;
