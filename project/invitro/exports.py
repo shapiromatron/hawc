@@ -90,15 +90,19 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             # get min and max doses or None
             min_dose = None
             max_dose = None
-            doses = filter(
-                lambda x: x > 0,
-                [eg['dose'] for eg in ser['groups']]
-            )
+
+            doses = [eg['dose'] for eg in ser['groups']]
             diffs = [eg['difference_control'] for eg in ser['groups']]
             sigs = [eg['significant_control'] for eg in ser['groups']]
+
+            if doses[0] == 0:
+                doses.pop(0)
+                diffs.pop(0)
+                sigs.pop(0)
+
             number_doses = len(doses)
             if number_doses > 0:
-                min_dose = min(d for d in doses if d > 0)
+                min_dose = min(doses)
                 max_dose = max(doses)
 
             bm_types = [bm["benchmark"] for bm in ser["benchmarks"]]
