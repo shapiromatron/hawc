@@ -176,6 +176,11 @@ class AssessmentRootedTagTree(MP_Node):
     @classmethod
     def get_maximum_depth(cls, assessment_id):
         # get maximum depth; subtracting root-level
-        return max(cls.get_root(assessment_id)
-                      .get_descendants()
-                      .values_list('depth', flat=True))-1
+        depth = 0
+        descendants = cls\
+            .get_root(assessment_id)\
+            .get_descendants()\
+            .values_list('depth', flat=True)
+        if descendants:
+            depth = max(descendants) - 1
+        return depth
