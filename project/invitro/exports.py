@@ -47,23 +47,23 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
         ]
 
         num_cats = 0
-        if self.queryset.count()>0:
+        if self.queryset.count() > 0:
             IVEndpointCategory = get_model("invitro", "IVEndpointCategory")
             num_cats = IVEndpointCategory.get_maximum_depth(
                 self.queryset[0].assessment_id)
         header.extend([
             "Category {0}".format(i)
-            for i in xrange(1, num_cats+1)
+            for i in xrange(1, num_cats + 1)
         ])
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
-        rng = xrange(1, num_doses+1)
+        rng = xrange(1, num_doses + 1)
         header.extend(["Dose {0}".format(i) for i in rng])
         header.extend(["Change Control {0}".format(i) for i in rng])
         header.extend(["Significant {0}".format(i) for i in rng])
 
         num_bms = self.queryset.model.max_benchmark_count(self.queryset)
-        rng = xrange(1, num_bms+1)
+        rng = xrange(1, num_bms + 1)
         header.extend(["Benchmark Type {0}".format(i) for i in rng])
         header.extend(["Benchmark Value {0}".format(i) for i in rng])
 
