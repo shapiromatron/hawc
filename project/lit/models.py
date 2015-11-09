@@ -155,7 +155,7 @@ class Search(models.Model):
 
     @property
     def import_ids(self):
-        return [int(v) for v in self.search_string_text.split(',')]
+        return [v.strip() for v in self.search_string_text.split(',')]
 
     @transaction.atomic
     def run_new_import(self):
