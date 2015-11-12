@@ -565,9 +565,9 @@ Outcome.prototype = {
     },
     get_unused_comparison_sets: function(){
         // get comparison sets associated with no results
-        var usedGroups = _.pluck(this.results, 'group');
+        var usedSets = _.pluck(this.results, 'comparison_set');
         return _.filter(this.comparison_sets, function(d2){
-            return (!_.any(_.map(usedGroups, function(d1){ return d1.isEqual(d2)})));
+            return (!_.any(_.map(usedSets, function(d1){ return d1.isEqual(d2)})));
         });
     },
     build_comparison_set_bullets: function(){
