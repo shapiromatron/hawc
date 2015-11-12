@@ -534,7 +534,7 @@ Outcome.prototype = {
             .add_tbody_tr("Diagnostic description", this.data.diagnostic_description)
             .add_tbody_tr("Age of outcome measurement", this.data.age_of_measurement)
             .add_tbody_tr("Outcome N", this.data.outcome_n)
-            .add_tbody_tr("Summary", this.data.diagnostic)
+            .add_tbody_tr("Summary", this.data.summary)
             .get_tbl();
     },
     build_results_tabs: function(){
