@@ -18,7 +18,7 @@ from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.models import NonUniqueTagBase, get_crumbs
+from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField
 
 from fetchers.pubmed import PubMedSearch, PubMedFetch
 from fetchers.hero import HEROFetch
@@ -833,7 +833,7 @@ class Reference(models.Model):
     tags = managers.ReferenceFilterTagManager(
         through=ReferenceTags,
         blank=True)
-    full_text_url = models.URLField(
+    full_text_url = CustomURLField(
         blank=True,
         help_text="Link to full-text publication (may require increased "
                   "access privileges, only reviewers and team-members)")

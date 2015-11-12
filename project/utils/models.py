@@ -3,6 +3,7 @@ import logging
 
 import django
 from django.db import models, IntegrityError, transaction
+from django.db.models import URLField
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.template.defaultfilters import slugify as default_slugify
@@ -11,6 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder
+
+from . import forms, validators
 
 
 @property
@@ -184,3 +187,17 @@ class AssessmentRootedTagTree(MP_Node):
         if descendants:
             depth = max(descendants) - 1
         return depth
+
+
+class CustomURLField(URLField):
+    default_validators = [validators.CustomURLValidator()]
+
+    def formfield(self, **kwargs):
+        # As with CharField, this will cause URL validation to be performed
+        # twice.
+        defaults = {
+            'form_class': forms.CustomURLField,
+        }
+        defaults.update(kwargs)
+        return super(CustomURLField, self).formfield(**defaults)
+

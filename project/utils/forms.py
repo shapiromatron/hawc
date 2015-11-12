@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 
 from selectable import forms as selectable
 
+from . import validators
+
 
 class BaseFormHelper(cf.FormHelper):
 
@@ -184,3 +186,7 @@ class FormsetWithIgnoredFields(forms.BaseModelFormSet):
                 value = self.data.get('form-{0}-{1}'.format(i, field_name))
                 if value:
                     form.fields[field_name].initial = value
+
+
+class CustomURLField(forms.URLField):
+    default_validators = [validators.CustomURLValidator()]
