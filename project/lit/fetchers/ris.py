@@ -17,7 +17,8 @@ class RisImporter(object):
         mapping.update({
             "AT": "accession_type",
             "PM": "pubmed_id",
-            'N2': "abstract2",
+            "N2": "abstract2",
+            "SV": "serial_volume",
         })
         return mapping
 
