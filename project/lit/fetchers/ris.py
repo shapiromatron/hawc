@@ -22,10 +22,14 @@ class RisImporter(object):
         })
         return mapping
 
-    def __init__(self, fn):
-        with open(fn, 'r') as f:
-            reader = readris(f, mapping=self.custom_mapping())
-            contents = [content for content in reader]
+    def __init__(self, fileObj):
+        if isinstance(fileObj, basestring):
+            f = open(fileObj, 'r')
+        else:
+            f = fileObj
+        reader = readris(f, mapping=self.custom_mapping())
+        contents = [content for content in reader]
+        f.close()
         self.raw_references = contents
 
     @property
