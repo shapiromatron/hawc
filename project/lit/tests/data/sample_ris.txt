@@ -1,4 +1,4 @@
-﻿TY  - JOUR
+TY  - JOUR
 AB  - When chlorine is introduced into public drinking water for disinfection, it can react with organic compounds in surface waters to form toxic by-products such as 3-chloro-4-(dichloromethyl)-5-hydroxy-2[5H]-furanone (MX). We investigated the effect of exposure to MX on cytochrome P450 2E1 (CYP2E1)-like activity and total glutathione (GSH) in the liver of the small fish model, medaka (Oryzias latipes). The multi-site carcinogen methylazoxymethanol acetate (MAMAc) was the positive control compound. Both medaka liver microsome preparations and S-9 fractions catalyzed the hydroxylation of p-nitrophenol (PNP), suggesting CYP2E1-like activity in the medaka. Male medaka exposed for 96 h to the CYP2E1 inducers ethanol and acetone under fasted conditions showed significant increases in PNP-hydroxylation activity. Furthermore, total reduced hepatic GSH was reduced in fish fasted for 96 h, indicating that normal feeding is a factor in maintaining xenobiotic defenses. Exposure to MX and MAMAc induced significant increases in hepatic CYP2E1-like activity, however MX exposure did not alter hepatic GSH levels. These data strengthen the role of the medaka as a suitable species for examining cytochrome P450 and GSH detoxification processes and the role these systems play in chemical carcinogenesis. © 2003 Elsevier Science Inc. All rights reserved.
 AD  - (Geter D.R., geter.david@epa.gov; Brouwer M.H.; Hawkins W.E.) Department of Coastal Sciences, Gulf Coast Research Laboratory, University of Southern Mississippi, Ocean Springs, MS 39564, United States. (Fournie J.W.) Natl. Hlth./Environ. Effects Res. L., Office of Research and Development, US Environmental Protection Agency, Gulf Breeze, FL 32561, United States. (Geter D.R., geter.david@epa.gov; DeAngelo A.B.) Natl. Hlth./Environ. Effects Res. L., Office of Research and Development, US Environmental Protection Agency, Research Triangle Park, NC 27711, United States.
 PM  - 12643982 (http://www.ncbi.nlm.nih.gov/pubmed/12643982)
@@ -416,4 +416,144 @@ VL  - 48
 ID  - 291
 ER  - 
 
+
+TY  - JOUR
+AB  - N-acetylcysteine (NAC) a derivative of amino acid L-cysteine is currently used mainly as an antioxidant. Sulfhydryl group (-SH) within its molecule makes possible to directly scavenge reactive oxygen species (ROS). Indirect antioxidant action of NAC rely on augmentation of the level of reduced glutathione (GSH) - a major body's antioxidant. Since oxidative stress takes a part in pathogenesis of a broad spectrum of diseases, NAC could became a valuable supplement to conventional treatment. N-acetylcysteine has been used as an antidote for aminophen intoxication. N-acetylcysteine seems to be promising in some pulmonary diseases and gynecological disorders. Supplementation of this antioxidant caused also positive results in some eye disorders: diabetic retinopathy, age macular degeneration, cataract and dry eye syndrome. It was also found to have some preventative capabilities in cancer, influenza and in contrast-induced nephropathy.
+AN  - http://www.scopus.com/inward/record.url?eid=2-s2.0-84860307791&partnerID=40&md5=7deec8599dd806379f479b5be52e4840
+AU  - Radomska-Leśniewska, D. M.
+AU  - Skopiński, P.
+DB  - Scopus
+J2  - Central-European Journal of Immunology
+KW  - Cancer
+Contrast-induced nephropathy
+Endometriosis
+Eye disorders
+N-acetylcysteine
+Oxidative stress
+Polycystic ovary syndrome
+Pulmonary disease
+acetylcysteine
+alpha tocopherol
+anthracycline
+azathioprine
+benzyloxycarbonylleucylleucylleucinal
+berberine
+beta 2 adrenergic receptor stimulating agent
+carnitine
+cholinergic receptor blocking agent
+contrast medium
+corticosteroid
+curcumin
+doxorubicin
+ellagic acid
+epigallocatechin gallate
+glutathione
+glutathione peroxidase
+malonaldehyde
+melatonin
+placebo
+prednisone
+reactive oxygen metabolite
+resveratrol
+retinol
+selenium derivative
+sodium selenite
+theophylline
+ubidecarenone
+unindexed drug
+vasculotropin
+acute kidney failure
+acute lymphoblastic leukemia
+add on therapy
+adenomatous polyp
+adjuvant therapy
+airway obstruction
+antiangiogenic activity
+antiinflammatory activity
+antioxidant activity
+breast metastasis
+cancer adjuvant therapy
+cancer chemotherapy
+cancer patient
+cancer prevention
+cancer radiotherapy
+cancer relapse
+cancer risk
+cardiotoxicity
+cataract
+chronic obstructive lung disease
+clinical trial (topic)
+colon cancer
+colon polyp
+contrast induced nephropathy
+controlled clinical trial (topic)
+cystic fibrosis
+diabetes mellitus
+diabetic retinopathy
+disease association
+DNA damage
+dose response
+drug intoxication
+drug megadose
+dry eye
+eye burning
+fibrosing alveolitis
+genotoxicity
+ginseng
+human
+Human immunodeficiency virus infection
+hyperglycemia
+immune deficiency
+influenza
+insulin sensitivity
+low drug dose
+lymphoma
+meibomian gland
+melanoma
+meta analysis
+nonhuman
+ocular pruritus
+ovary polycystic disease
+pathogenesis
+pathophysiology
+phase 1 clinical trial (topic)
+prostate carcinoma
+randomized controlled trial (topic)
+retina macula age related degeneration
+review
+risk factor
+sebaceous gland disease
+second cancer
+Sjoegren syndrome
+subretinal neovascularization
+supplementation
+toxic hepatitis
+vitamin supplementation
+LA  - English
+M1  - 1
+PY  - 2012
+SN  - 14263912 (ISSN)
+SP  - 57-66
+ST  - N-acetylcysteine as an anti-oxidant and anti-inflammatory drug and its some clinical applications
+T2  - Cent.-Eur. J. Immunol.
+TI  - N-acetylcysteine as an anti-oxidant and anti-inflammatory drug and its some clinical applications
+VL  - 37
+ID  - 906
+ER  - 
+
+
+TY  - CONF
+AB  - The proceedings contain 169 papers. The special focus in this conference is on Human Health and Medical Engineering. The topics include: Study on formulation of hemorrhoids and the mechanism of acupuncture by means of acupuncture combined with trimming hands and feet; expression and clinical significance of E-cadherin and MMP-2 in human colorectal carcinoma; finite element modeling of internal carotid siphon segment based on CT data; based on the genetic algorithm to optimize the BP neural network of knee osteoarthritis diagnosed; improved medical image registration based on mutual information and gradient information; risk factors, microbiological data, and cost of stroke-associated pneumonia; development of portable surface Plasmon resonance biochemical sensing system based on fixed optical structure for field use; muscle ultrasound as a diagnostic tool in neuromuscular diseases; a review of the methods to assess cerebral autoregulation; transcranial sonography for the diagnosis of Parkinson's disease; the study of cerebral autoregulation in patients with severe carotid artery stenosis or occlusions; isomap algorithm for visualization of microarray data; a rat model of methamphetamine reinstatement behavior induced by methamphetamine-priming; permanent bilateral subclavian steal syndrome; relationship between blood pressure and prognosis in patients in the acute stage of intracerebral hemorrhage; experimental research of explosive blast brain injury within closed environment; the anti-inflammatory effect of external use and the impact on scalded mice model of arisaema; effect of total alkali in Leonuri Herba in rabbit ear acne model; the study of near infrared spectral characteristics of knee osteoarthritis; stellate ganglion block for the treatment of breast cancer-related lymphedema in breast cancer survivors; the effect of substrate stiffness on wound repair cells; the design and implementation of clinical pathway based on MVC framework; the study on mechanics characteristics of lumbar disk under the condition of bending; cascade pulse coupled neural network for multimodal medical image fusion; the suspected encephalitis of globoid cell leukodystrophy; nursing care of skin defect repaired by the bridge cross flaps transplant in perioperative period; detection of P16 and APC gene methylation in peripheral blood with liver cancer patients; fixation of ozone and used as therapeutic agent in medicine; structure and function of ubiquitin-conjugating enzymes; D-arabitol dehydrogenase and xylitol dehydrogenase for microbial production of xylitol; development of an RP-HPLC method for evaluation of the content of cefotiam hydrochloride for injection; DNA binding and cytotoxic activity of two isomers of nitrosylruthenium complex; genomewide expression profile analysis in different TNM stages of lung adenocarcinoma; a method of clinical EEG signals analysis based on the symbolic entropy; a model of recognition for human pulse wave types by the BP neural network; the protective effect of reduced glutathione on cadmium-induced DNA double-strand breaks; optimize the prescription compatibility of the dachengqi decoction based on partial least squares regression; research on the quality of formula granule of liquidambaris fructus; study on sludge reduction of a new uncoupler in A/O process; prediction of chaotic EEG signal using multiple wavelet neural network; the effects of different host plants on the components and DNA of the herbal plants of Cuscuta; topical anti-inflammatory effects of aloe Vera juice; DNA damage and effects on antioxidative enzymes in mouse marrow induced by Berberine; liquichip detection technique of chloramphenieol residue in aquatic products; identification study using Fourier transform infrared spectroscopy for several herbs of the genus selaginella; research the prescription compatibility of the dachengqi decoction using partial least squares and multi-objective optimization; mathematical modeling and computer simulation of cellulose production; research and development of self-organized protocol n w reless body area network; the synergistic effect of glucocorticoid on the mesenteric microcirculation in hemorrhagic shock rat; computer simulation of synergistic effects in enzymatic hydrolysis of cellulose; modeling and computer simulation of early pulse aeration effects on ethanol fermentation; toxicity comparison of Para-halogenated diphenyl ethers from views of polarizability and frontier molecular orbital; 16 PAHs identification combined with Raman and infrared spectra signature through density functional theory; the observation of pollen viability and pollen tube germination in limonium bicolor; influence of temperature fluctuation on rice tillering and corresponding characteristics of DUS test; the application of PBL model in teaching of molecular biology; a biomechanical study of the dynamic behavior of the organ of Corti; the process optimization of natto by using mixed beans; adsorption of biological active alkaloid from traditional Chinese medicine on benzothiazolium ionic liquid-supported silica; the expression of PI3K, AKT, and PTEN in medulloblastoma; periodic changes of the pulsatility index of the cerebral artery by transcranial Doppler sonography as a clue for leptomeningeal carcinoma; reintroduction of Epstein-Barr virus in nasopharyngeal carcinoma cell lines visulized by GFP; neurosyphilis presenting as brainstem encephalitis and myelitis; antitumor activity of different fractions of cynanchum komarocii in vitro; markerless deletion of a rhodanese in acidithiobacillus caldus MTH-04; hepatoid adenocarcinoma of the esophagus with dysphagia as initial symptom; effects of polymerized whey protein on physicochemical and textural properties of Chinese style Greek yoghurt; quantitative sandwich ELISA for the determination of walnut protein in foods; MicroRNAs expression signature in human lung cancer cell; study on immunogenicity and protective efficacy of a new vaccine expressing Ag85B and MPT83 fusion protein from mycobacterium tuberculosis; changes of nissl bodies and expression of NeuN in hippocampus of rats with vascular dementia; antitumor and immunoregulation effects of black garlic extract on H22 xenografts; screening of an algicidal bacteria A-4 and the exploration of its algicidal effect; degradation of orange II over sulforhodamine B (SRB) sensitized TiO2 under visible irradiation; optimization of curcin expression conditions; UVC-induced damage in mouse spleen lymphocytes and anti-radiation effect of exogenous nucleotides; the c-met signaling pathway; neuroprotective effects of honghua on oxygen-glucose deprivation in PC12 cells; neuroprotective effects of Smad7-siRNA on oxygen-glucose deprivation (OGD) in PC12 cells; function mechanism influenced by emotion and mood in the construction of an effective learning system; groundwater quality and pollution evaluation in Xinjiang plain area; the influence of metallic foreign bodies in body after firearm wound; research on rehabilitation training control based on virtual force feedback; preference strategies of prevention and control of noninfectious chronic disease against the background of the new health care reform in China; study on zoning methods in chemical accident emergency rescue; analysis of the emergency response on kaixian gas well blowout accident; study on characteristics of chemical terrorist attack on subway station and its handling; activated sludge degradation of oil; the influence of temperature on the storage quality of postharvest white celery; a survey of brain fitness products consumption practices among high school students; preliminary study on removal of nitrate nitrogen in aqueous samples by microbial nano-silica ball; an empirical analysis of relationship between environmental protection and economic development in China; model experimental study on heat flow distribution of single room fire in underground engineering; the effects of environmental electromagnetic radiation on college students' peripheral blood cells; wastewater irrigation and associated risks to public health; problems and countermeasures of medical wast man gement and disposal in China; investigation of toxicological effects caused by gamma radiation delivered by different dose rates; main organic pollutants migration and transformation laws in sewage sludge landfill and composting process; the research on cyclists knee and hip forces at different saddle heights; the study on physical and mental health of the empty nest elderly; an investigation on psychological health education mode for senior nursing majors in universities; a correlation research on procrastination and self-efficacy in nursing students; health education intervention for diabetic elderly patients in community; the study of current situation in nursing care at elderly welfare institution in Jilin province; development of stevioside cake with high dietary fiber and low sugar; a survey and analysis on the mental state of the expectant mothers at hospital; analysis and simulation of the corporate pharmaceutical patent infringement litigation warning indicator system and effect of motor relearning program on recovery of event-related potential of cerebral infarction.
+C3  - WIT Transactions on Biomedicine and Health
+DB  - Scopus
+LA  - English
+N1  - Export Date: 11 November 2015
+PY  - 2014
+SN  - 17433525 (ISSN); 9781845648923 (ISBN); 9781845648923 (ISBN)
+ST  - 2013 International Conference on Human Health and Medical Engineering, HHME 2013
+TI  - 2013 International Conference on Human Health and Medical Engineering, HHME 2013
+UR  - http://www.scopus.com/inward/record.url?eid=2-s2.0-84905167602&partnerID=40&md5=1e0a0405ac7ee730232d462e9cde2da9
+VL  - 18
+ID  - 823
+ER  - 
 

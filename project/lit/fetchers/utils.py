@@ -2,7 +2,8 @@
 def get_author_short_text(authors):
     # Given a list of authors, return citation
     nAuthors = len(authors)
-    authors = [a.decode('utf-8') for a in authors]
+    if nAuthors > 0 and isinstance(authors[0], str):
+        authors = [a.decode('utf-8') for a in authors]
     if nAuthors == 0:
         return u''
     elif nAuthors == 1:

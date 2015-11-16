@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 import json
 import os
 from django.test import TestCase
@@ -242,7 +244,7 @@ class RISParsingTests(TestCase):
         # assert successful import of all references
         importer = RisImporter(fn)
         refs = importer.references
-        self.assertEqual(len(refs), 8)
+        self.assertEqual(len(refs), 9)
 
         # test journal-style import
         test = u'''{
@@ -279,3 +281,25 @@ class RISParsingTests(TestCase):
         ref = refs[5]
         ref.pop('json')
         self.assertJSONEqual(json.dumps(ref), test)
+
+        # test conference-style import
+        test = u'''{
+            "accession_number": null,
+            "citation": "2013 International Conference on Human Health and Medical Engineering, HHME 2013",
+            "authors_short": "",
+            "year": "2014",
+            "id": 823,
+            "doi": null,
+            "title": "2013 International Conference on Human Health and Medical Engineering, HHME 2013",
+            "reference_type": "CONF",
+            "accession_db": "Scopus",
+            "PMID": null
+        }'''
+        ref = refs[9]
+        ref.pop('json')
+        ref.pop('abstract')
+        self.assertJSONEqual(json.dumps(ref), test)
+
+        # test unicode-authors
+        test = u"Radomska-Leśniewska, D. M. and Skopiński, P."
+        self.assertEqual(test, refs[8]['authors_short'])
