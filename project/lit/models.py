@@ -168,8 +168,12 @@ class Search(models.Model):
             identifiers = Identifiers.get_hero_identifiers(self.import_ids)
             Reference.get_hero_references(self, identifiers)
         elif self.source == RIS:
-            importer = ris.RisImporter(self.import_file.path)
-            identifiers = Identifiers.get_from_ris(self.id, importer.references)
+            # check if importer references are cached on object
+            refs = getattr(self, '_references', None)
+            if refs is None:
+                importer = ris.RisImporter(self.import_file.path)
+                refs = importer.references
+            identifiers = Identifiers.get_from_ris(self.id, refs)
             Reference.update_from_ris_identifiers(self, identifiers)
         else:
             raise ValueError("Unknown import type")

@@ -1,3 +1,4 @@
+from cStringIO import StringIO
 import logging
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ from django import forms
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper, addPopupLink
 
-from . import models
+from . import models, fetchers
 
 
 class SearchForm(forms.ModelForm):
@@ -168,6 +169,19 @@ class RISForm(SearchForm):
         if file_.name[-4:] not in (".txt", ".ris", ):
             raise forms.ValidationError('File must have an ".ris" or ".txt" file-extension')
         return file_
+
+    def clean(self):
+        """
+        In the clean-step, ensure RIS file is valid and references can be
+        exported from file before save method. Cache the references on the
+        instance method, so that upon import we don't need to re-read file.
+        """
+        cleaned_data = super(RISForm, self).clean()
+        if not self._errors:
+            # create a copy for RisImporter to open/close
+            f = StringIO(cleaned_data['import_file'].read())
+            importer = fetchers.ris.RisImporter(f)
+            self.instance._references = importer.references
 
 
 class SearchModelChoiceField(forms.ModelChoiceField):
