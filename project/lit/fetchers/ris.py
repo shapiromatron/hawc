@@ -235,6 +235,8 @@ class ReferenceParser(object):
             citation = u" ".join(vals)
         elif refType == "SER":
             citation = self.content.get("alternate_title1", "")
+        elif refType == "CONF":
+            citation = self.content.get("short_title", "")
         else:
             id_ = self.content.get('id', None)
             logging.warning('Unknown type: "{}", id="{}"'.format(refType, id_))
