@@ -2,10 +2,11 @@
 def get_author_short_text(authors):
     # Given a list of authors, return citation
     nAuthors = len(authors)
+    authors = [a.decode('utf-8') for a in authors]
     if nAuthors == 0:
         return u''
     elif nAuthors == 1:
-        return authors[0]
+        return unicode(authors[0])
     elif nAuthors == 2:
         return u'{0} and {1}'.format(*authors)
     elif nAuthors == 3:
