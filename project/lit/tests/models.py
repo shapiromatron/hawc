@@ -244,7 +244,7 @@ class RISParsingTests(TestCase):
         # assert successful import of all references
         importer = RisImporter(fn)
         refs = importer.references
-        self.assertEqual(len(refs), 9)
+        self.assertEqual(len(refs), 10)
 
         # test journal-style import
         test = u'''{
