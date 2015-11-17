@@ -182,9 +182,11 @@ class ReferenceParser(object):
         self._authors = []
         for fld in self.AUTHOR_LIST_FIELDS:
             if fld in self.content:
+                # attempt changing "Smith D. L." to "Smith DL"
                 for author in self.content[fld]:
-                    # attempt changing "Smith D. L." to "Smith DL"
-                    txt = author
+                    if isinstance(author, str):
+                        # make sure we're dealing w/ unicode
+                        txt = unicode(author.decode('utf-8'))
                     m = self.re_author.match(txt)
                     if m:
                         initials = re.sub(r"[\s\.]", "", m.group(2))

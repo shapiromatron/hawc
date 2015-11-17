@@ -301,5 +301,5 @@ class RISParsingTests(TestCase):
         self.assertJSONEqual(json.dumps(ref), test)
 
         # test unicode-authors
-        test = u"Radomska-Leśniewska, D. M. and Skopiński, P."
+        test = u"Radomska-Leśniewska DM and Skopiński P"
         self.assertEqual(test, refs[8]['authors_short'])
