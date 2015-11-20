@@ -958,9 +958,10 @@ class Result(models.Model):
     VARIANCE_TYPE_CHOICES = (
         (0, None),
         (1, "SD"),
-        (2, "SEM"),
-        (3, "GSD"),
-        (4, "other"))
+        (2, "SE"),
+        (3, "SEM"),
+        (4, "GSD"),
+        (5, "other"))
 
     outcome = models.ForeignKey(
         Outcome,
