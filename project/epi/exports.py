@@ -120,17 +120,28 @@ class OutcomeDataPivot(FlatFileExporter):
             ]
             for res in ser['results']:
                 row_copy = list(row)
+
+                # comparison set
                 row_copy.extend([
                     res["comparison_set"]["id"],
                     res["comparison_set"]["name"],
+                ])
 
-                    res["comparison_set"]["exposure"]["id"],
-                    res["comparison_set"]["exposure"]["name"],
-                    res["comparison_set"]["exposure"]["metric"],
-                    res["comparison_set"]["exposure"]["measured"],
-                    res["comparison_set"]["exposure"]["metric_units"]["name"],
-                    res["comparison_set"]["exposure"]["age_of_exposure"],
+                # exposure (may be missing)
+                if res["comparison_set"]["exposure"]:
+                    row_copy.extend([
+                        res["comparison_set"]["exposure"]["id"],
+                        res["comparison_set"]["exposure"]["name"],
+                        res["comparison_set"]["exposure"]["metric"],
+                        res["comparison_set"]["exposure"]["measured"],
+                        res["comparison_set"]["exposure"]["metric_units"]["name"],
+                        res["comparison_set"]["exposure"]["age_of_exposure"],
+                    ])
+                else:
+                    row_copy.extend(['-'] * 6)
 
+                # outcome details
+                row_copy.extend([
                     res['id'],
                     res['population_description'],
                     res['metric']['metric'],
@@ -141,6 +152,7 @@ class OutcomeDataPivot(FlatFileExporter):
                     res['statistical_power'],
                     res['ci_units'],
                 ])
+
                 for rg in res['results']:
                     row_copy2 = list(row_copy)
                     row_copy2.extend([
