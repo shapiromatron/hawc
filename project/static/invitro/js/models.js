@@ -231,6 +231,7 @@ IVEndpoint.prototype = {
         var self = this,
             tbl = new BaseTable(),
             opts = {},
+            units = this.data.experiment.dose_units.name,
             getAvailableColumns = function(){
                 var opts = {
                     hasN: false,
@@ -253,7 +254,7 @@ IVEndpoint.prototype = {
                 return opts;
             }, opts = getAvailableColumns(),
             headers = function(opts){
-                var arr = ["Dose"];
+                var arr = ["Dose ({0})".printf(units)];
                 if (opts.hasN) arr.push("N");
                 if (opts.hasResponse) arr.push("Response");
                 if (opts.hasVariance) arr.push("Variance");
