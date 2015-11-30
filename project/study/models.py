@@ -62,7 +62,7 @@ class Study(Reference):
         blank=True,
         verbose_name="Internal study identifier",
         help_text="Reference descriptor for assessment-tracking purposes "
-                  "(for example, \"{Author, year, #EndnoteNumber}\")")
+                  "(for example, \"{Author, year, #EndNoteNumber}\")")
     contact_author = models.BooleanField(
         default=False,
         help_text="Was the author contacted for clarification of methods or results?")

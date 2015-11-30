@@ -128,11 +128,11 @@ class RISForm(SearchForm):
 
     def __init__(self, *args, **kwargs):
         super(RISForm, self).__init__(*args, **kwargs)
-        self.fields['source'].choices = [(3, 'RIS (Endnote/Refman)')]
+        self.fields['source'].choices = [(3, 'RIS (EndNote/Reference Manager)')]
         self.instance.search_type = 'i'
         self.fields['import_file'].required = True
         self.fields['import_file'].help_text = """Unicode RIS export file
-            ({0} for Endnote library preparation)""".format(
+            ({0} for EndNote library preparation)""".format(
             addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
 
         self.helper = self.setHelper()
@@ -150,7 +150,7 @@ class RISForm(SearchForm):
                 "help_text":   u"""
                     Import a list of literature from an RIS export; this is a
                     universal data-format which is used by reference management
-                    software solutions such as Endnote or Refman.
+                    software solutions such as EndNote or Reference Manager.
                 """,
                 "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
             }
