@@ -517,6 +517,13 @@ class DoseGroup(models.Model):
 
 class Endpoint(BaseEndpoint):
 
+    TEXT_CLEANUP_FIELDS = (
+        'system',
+        'organ',
+        'effect',
+        'effect_subtype',
+    )
+
     DATA_TYPE_CHOICES = (
         ('C', 'Continuous'),
         ('D', 'Dichotomous'),
@@ -927,6 +934,10 @@ class Endpoint(BaseEndpoint):
                   .distinct('effect')\
                   .values_list('effect', flat=True)
         return [(obj, obj) for obj in sorted(objs)]
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
 
 
 class EndpointGroup(models.Model):

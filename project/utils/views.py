@@ -546,3 +546,7 @@ class GenerateFixedReport(BaseList):
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
+
+
+class ProjectManagerBatchUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+    crud = 'Update'
