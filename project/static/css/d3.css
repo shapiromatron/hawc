@@ -24,7 +24,7 @@ unrecognized HTML expressions.
 }
 
 .with_whitespace {
- white-space: pre;
+  white-space: pre;
 }
 
 .dr_axis_labels{
