@@ -2654,6 +2654,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           .attr('y', function(d){return d.y;})
           .text(function(d){return d.text;})
           .attr("cursor", cursor)
+          .attr("class", "with_whitespace")
           .each(function(d){apply_text_styles(this, d._style);})
           .call(label_drag);
 
@@ -2737,6 +2738,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       .enter().append("text")
           .attr("x", 0)
           .attr("y", 0)
+          .attr("class", "with_whitespace")
           .text(function(d){return d.text;})
           .style("cursor", function(d){return d.cursor;})
           .on("click", function(d){return d.onclick();})
