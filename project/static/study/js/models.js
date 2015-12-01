@@ -170,6 +170,7 @@ Study.prototype = {
         tbl.add_tbody_tr("Abstract", this.data.abstract);
         if (links.children().length>0) tbl.add_tbody_tr("Reference hyperlink", links);
         tbl.add_tbody_tr_list("Literature review tags", this.data.tags.map(function(d){return d.name;}));
+        if (this.data.full_text_url) tbl.add_tbody_tr("Full-text link", "<a href={0}>{0}</a>".printf(this.data.full_text_url));
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
         tbl.add_tbody_tr("COI details", this.data.coi_details);
         tbl.add_tbody_tr("Funding source", this.data.funding_source);
