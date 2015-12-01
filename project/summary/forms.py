@@ -528,20 +528,28 @@ class DataPivotSettingsForm(forms.ModelForm):
         fields = ('settings', )
 
 
+class DataPivotModelChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        return "{}: {}".format(obj.assessment, obj)
+
+
 class DataPivotSelectorForm(forms.Form):
 
-    dp = forms.ModelChoiceField(label="Data Pivot",
-                                queryset=models.DataPivot.objects.all(),
-                                empty_label=None)
+    dp = DataPivotModelChoiceField(
+        label="Data Pivot",
+        queryset=models.DataPivot.objects.all(),
+        empty_label=None)
 
     def __init__(self, *args, **kwargs):
-        assessment_id = kwargs.pop('assessment_id', -1)
+        user = kwargs.pop('user')
         super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
 
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
 
-        self.fields['dp'].queryset = self.fields['dp'].queryset.filter(assessment_id=assessment_id)
+        self.fields['dp'].queryset = models.DataPivot\
+            .clonable_queryset(user)
 
 
 class SmartTagForm(forms.Form):

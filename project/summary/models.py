@@ -388,6 +388,18 @@ class DataPivot(models.Model):
         except ValueError:
             return None
 
+    @classmethod
+    def clonable_queryset(cls, user):
+        """
+        Return data-pivots which can cloned by a specific user
+        """
+        assessment_ids = Assessment\
+            .get_viewable_assessments(user, public=True)\
+            .values_list('id', flat=True)
+        return cls.objects.filter(assessment__in=assessment_ids)\
+            .select_related('assessment')\
+            .order_by('assessment__name', 'title')
+
 
 class DataPivotUpload(DataPivot):
     file = models.FileField(

@@ -254,7 +254,7 @@ class DataPivotCopyAsNewSelector(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(DataPivotCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.DataPivotSelectorForm(assessment_id=self.assessment.pk)
+        context['form'] = forms.DataPivotSelectorForm(user=self.request.user)
         return context
 
     def post(self, request, *args, **kwargs):
