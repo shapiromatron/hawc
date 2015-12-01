@@ -263,7 +263,8 @@ DataPivot.prototype = {
   build_data_pivot_vis: function(div, editable){
     delete this.plot;
     editable = editable || false;
-    this.plot = new DataPivot_visualization(this.data, this.settings, div, editable);
+    var data = JSON.parse(JSON.stringify(this.data));  // deep-copy
+    this.plot = new DataPivot_visualization(data, this.settings, div, editable);
   },
   build_data_table: function(){
 
@@ -2355,7 +2356,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
     });
 
     // with final datarows subset, add index for rendered order
-    rows.forEach(function(v, i){v._dp_index = i;})
+    rows.forEach(function(v, i){v._dp_index = i;});
 
     // unpack extra spacers
     this.dp_settings.spacers.forEach(function(v){
