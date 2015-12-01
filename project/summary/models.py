@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from assessment.models import Assessment, DoseUnits, BaseEndpoint
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import Outcome
@@ -25,7 +26,7 @@ from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelp
 
 
 class SummaryText(MP_Node):
-    assessment = models.ForeignKey('assessment.Assessment')
+    assessment = models.ForeignKey(Assessment)
     title = models.CharField(max_length=128)
     slug = models.SlugField(verbose_name="URL Name",
                             help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
@@ -170,18 +171,18 @@ class Visual(models.Model):
         help_text="The URL (web address) used to describe this object "
                   "(no spaces or special-characters).")
     assessment = models.ForeignKey(
-        'assessment.Assessment',
+        Assessment,
         related_name='visuals')
     visual_type = models.PositiveSmallIntegerField(
         choices=VISUAL_CHOICES)
     dose_units = models.ForeignKey(
-        'assessment.DoseUnits',
+        DoseUnits,
         blank=True,
         null=True)
     prefilters = models.TextField(
         default="{}")
     endpoints = models.ManyToManyField(
-        'assessment.BaseEndpoint',
+        BaseEndpoint,
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
         blank=True)
@@ -323,7 +324,7 @@ class Visual(models.Model):
 
 class DataPivot(models.Model):
     assessment = models.ForeignKey(
-        'assessment.assessment')
+        Assessment)
     title = models.CharField(
         max_length=128,
         help_text="Enter the title of the visualization (spaces and special-characters allowed).")
@@ -413,7 +414,7 @@ class DataPivotQuery(DataPivot):
         choices=Study.STUDY_TYPE_CHOICES,
         default=0)
     units = models.ForeignKey(
-        'assessment.doseunits',
+        DoseUnits,
         blank=True,
         null=True,
         help_text="If kept-blank, dose-units will be random for each "
