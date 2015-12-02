@@ -353,6 +353,11 @@ class BaseEndpointList(BaseList):
         return context
 
 
+class EndpointCleanupList(BaseEndpointList):
+    template_name = 'assessment/endpointcleanup_list.html'
+    pass
+
+
 # Changelog views
 class ChangeLogList(ListView):
     model = models.ChangeLog
