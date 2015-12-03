@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from rest_framework.response import Response
 
 from assessment.api.views import AssessmentViewset
 
@@ -39,3 +40,12 @@ class Group(AssessmentViewset):
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer
+
+class CleanupFields(AssessmentViewset):
+    assessment_filter_args = "assessment"
+    model = models.Outcome
+    serializer_class = serializers.CleanupSerializer
+
+    def list(self, request, format=None):
+        cleanup_fields = self.model.text_cleanup_fields()
+        return Response({'text_cleanup_fields': cleanup_fields})

@@ -438,9 +438,9 @@ class Outcome(BaseEndpoint):
         for child in children:
             child.copy_across_assessments(cw)
 
-        @classmethod
-        def text_cleanup_fields(cls):
-            return cls.TEXT_CLEANUP_FIELDS
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
 
 
 class ComparisonSet(models.Model):
