@@ -131,4 +131,15 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
+class CleanupSerializer(serializers.ModelSerializer):
+    text_cleanup_fields = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Endpoint
+        fields = ('text_cleanup_fields',)
+
+    def get_text_cleanup_fields(self, instance):
+        return instance.text_cleanup_fields()
+
+
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

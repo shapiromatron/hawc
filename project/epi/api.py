@@ -1,9 +1,9 @@
 from __future__ import absolute_import
-from rest_framework.response import Response
 
 from assessment.api.views import AssessmentViewset
 
 from . import models, serializers
+from utils.api import CleanupFieldsApiView
 
 
 class StudyPopulation(AssessmentViewset):
@@ -41,11 +41,6 @@ class Group(AssessmentViewset):
     model = models.Group
     serializer_class = serializers.GroupSerializer
 
-class CleanupFields(AssessmentViewset):
-    assessment_filter_args = "assessment"
-    model = models.Outcome
+class CleanupFieldsView(CleanupFieldsApiView):
     serializer_class = serializers.CleanupSerializer
-
-    def list(self, request, format=None):
-        cleanup_fields = self.model.text_cleanup_fields()
-        return Response({'text_cleanup_fields': cleanup_fields})
+    model = serializer_class.Meta.model
