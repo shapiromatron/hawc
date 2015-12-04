@@ -184,13 +184,10 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
 
 
 class CleanupFieldsSerializer(serializers.ModelSerializer):
-    text_cleanup_fields = serializers.CharField(
-        source='get_text_cleanup_fields_display',
-        read_only=True)
 
     class Meta:
         model = models.Outcome
-        fields = ('text_cleanup_fields',)
+        fields = ('id', 'name', 'system', 'effect', 'effect_subtype')
 
 
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

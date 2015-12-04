@@ -12,7 +12,7 @@ router.register(r'outcome', api.Outcome, base_name="outcome")
 router.register(r'result', api.Result, base_name="result")
 router.register(r'comparison-set', api.ComparisonSet, base_name="set")
 router.register(r'group', api.Group, base_name="group")
-router.register(r'cleanup-fields', api.CleanupFieldsView, base_name="cleanup-fields")
+router.register(r'cleanup', api.Cleanup, base_name="cleanup")
 
 
 urlpatterns = [
