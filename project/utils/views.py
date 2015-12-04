@@ -151,7 +151,6 @@ class ProjectManagerOrHigherMixin(object):
     Mixin for project-manager access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
     """
-    model = Assessment
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
@@ -546,7 +545,3 @@ class GenerateFixedReport(BaseList):
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         return response
-
-
-class ProjectManagerBatchUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
-    crud = 'Update'
