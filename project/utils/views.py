@@ -14,10 +14,10 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404, Http404
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
+from rest_framework import permissions
 from assessment.models import Assessment
 
 
