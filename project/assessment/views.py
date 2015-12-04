@@ -16,7 +16,7 @@ from django.shortcuts import HttpResponse, get_object_or_404
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList)
+                         BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
 
 from celery import chain
 
@@ -353,9 +353,11 @@ class BaseEndpointList(BaseList):
         return context
 
 
-class EndpointCleanupList(BaseEndpointList):
+class EndpointCleanupList(ProjectManagerOrHigherMixin, BaseEndpointList):
     template_name = 'assessment/endpointcleanup_list.html'
-    pass
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
 
 # Changelog views
