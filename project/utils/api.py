@@ -23,7 +23,7 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, viewsets.Model
     template_name = 'assessment/endpointcleanup_list.html'
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
+        return get_object_or_404(self.parent_model, pk=request.GET.get('assessment_id'))
 
     def get_queryset(self):
         return self.model.objects.all()
