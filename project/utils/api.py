@@ -32,3 +32,25 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, viewsets.Model
     def fields(self, request, format=None):
         cleanup_fields = self.model.text_cleanup_fields()
         return Response({'text_cleanup_fields': cleanup_fields})
+
+
+class DynamicFieldsMixin(object):
+    """
+    A serializer mixin that takes an additional `fields` argument that controls
+    which fields should be displayed.
+    Usage::
+        class MySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+            class Meta:
+                model = MyModel
+    """
+    def __init__(self, *args, **kwargs):
+        super(DynamicFieldsMixin, self).__init__(*args, **kwargs)
+        fields = self.context['request'].query_params.get('fields')
+        if fields:
+            fields = fields.split(',')
+            # Drop any fields that are not specified in the `fields` argument.
+            fields.extend(['id' ,'name'])
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)

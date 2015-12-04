@@ -3,6 +3,7 @@ from rest_framework import serializers
 from assessment.serializers import EffectTagsSerializer, DoseUnitsSerializer
 from study.serializers import StudySerializer
 
+from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
@@ -183,7 +184,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
         model = models.ComparisonSet
 
 
-class CleanupFieldsSerializer(serializers.ModelSerializer):
+class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Outcome

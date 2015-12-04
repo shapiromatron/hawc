@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 
-from assessment.api.views import AssessmentViewset
+from rest_framework.decorators import list_route
 
+from assessment.api.views import AssessmentViewset
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
 
@@ -45,3 +46,8 @@ class Group(AssessmentViewset):
 class Cleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.CleanupFieldsSerializer
     model = serializer_class.Meta.model
+
+    @list_route(methods=['get', 'post'])
+    def system(self, request, format=None):
+        self.serializer_class = serializers.CleanupSystemSerializer
+        outcome_systems = self.model.objects.all()
