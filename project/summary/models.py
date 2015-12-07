@@ -432,7 +432,10 @@ class DataPivotQuery(DataPivot):
         default=0)
     export_style = models.PositiveSmallIntegerField(
         choices=EXPORT_STYLE_CHOICES,
-        default=0)
+        default=0,
+        help_text="The export style changes the level at which the "
+                  "data are aggregated, and therefore which columns and types "
+                  "of data are presented in the export, for use in the visual.")
     units = models.ForeignKey(
         DoseUnits,
         blank=True,
