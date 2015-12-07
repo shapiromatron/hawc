@@ -422,8 +422,16 @@ class DataPivotQuery(DataPivot):
 
     MAXIMUM_QUERYSET_COUNT = 500
 
+    EXPORT_STYLE_CHOICES = (
+        (0, "One row per Endpoint-group/Result-group"),
+        (1, "One row per Endpoint/Result"),
+    )
+
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,
+        default=0)
+    export_style = models.PositiveSmallIntegerField(
+        choices=EXPORT_STYLE_CHOICES,
         default=0)
     units = models.ForeignKey(
         DoseUnits,
