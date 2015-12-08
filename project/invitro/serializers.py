@@ -87,6 +87,8 @@ class IVEndpointSerializer(serializers.ModelSerializer):
         ret['overall_pattern'] = instance.get_overall_pattern_display()
         ret['trend_test'] = instance.get_trend_test_display()
         ret['additional_fields'] = json.loads(instance.additional_fields)
+        models.IVEndpointGroup.getStdevs(instance.variance_type, ret['groups'])
+        models.IVEndpointGroup.percentControl(instance.data_type, ret['groups'])
         return ret
 
     class Meta:

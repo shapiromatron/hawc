@@ -197,9 +197,9 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'cell type',
             'cell tissue',
 
-            'Dose units',
-            'Metabolic activation',
-            'Transfection',
+            'dose units',
+            'metabolic activation',
+            'transfection',
 
             'IVEndpoint id',
             'IVEndpoint name',
@@ -222,7 +222,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'dose',
             'N',
             'response',
-            'variance',
+            'stdev',
             'percent control mean',
             'percent control low',
             'percent control high',
@@ -284,10 +284,10 @@ class DataPivotEndpointGroup(FlatFileExporter):
                     eg['dose'],
                     eg['n'],
                     eg['response'],
-                    eg['variance'],
-                    eg.get('percentControlMean', None),
-                    eg.get('percentControlLow', None),
-                    eg.get('percentControlHigh', None),
+                    eg['stdev'],
+                    eg['percentControlMean'],
+                    eg['percentControlLow'],
+                    eg['percentControlHigh'],
                 ])
                 rows.append(row_copy)
 
