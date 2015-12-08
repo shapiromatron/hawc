@@ -91,6 +91,7 @@ INSTALLED_APPS = (
     'markdown_deux',
     'crispy_forms',
     'compressor',
+    'rest_framework_extensions',
 
     # Custom apps
     'utils',
