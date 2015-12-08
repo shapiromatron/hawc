@@ -44,6 +44,7 @@ class IVEndpointGroupSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(IVEndpointGroupSerializer, self).to_representation(instance)
         ret['difference_control'] = instance.get_difference_control_display()
+        ret['difference_control_symbol'] = instance.difference_control_symbol
         ret['significant_control'] = instance.get_significant_control_display()
         ret['cytotoxicity_observed'] = instance.get_cytotoxicity_observed_display()
         ret['precipitation_observed'] = instance.get_precipitation_observed_display()

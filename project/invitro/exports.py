@@ -226,6 +226,10 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'percent control mean',
             'percent control low',
             'percent control high',
+            'change from control',
+            'significant from control',
+            'cytotoxicity observed',
+            'precipitation observed',
         ]
         return header
 
@@ -288,6 +292,10 @@ class DataPivotEndpointGroup(FlatFileExporter):
                     eg['percentControlMean'],
                     eg['percentControlLow'],
                     eg['percentControlHigh'],
+                    eg['difference_control_symbol'],
+                    eg['significant_control'],
+                    eg['cytotoxicity_observed'],
+                    eg['precipitation_observed'],
                 ])
                 rows.append(row_copy)
 
