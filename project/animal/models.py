@@ -968,14 +968,14 @@ class ConfidenceIntervalsMixin(object):
 
     @staticmethod
     def percentControl(data_type, egs):
-        #
-        # Expects a dictionary of endpoint groups and the endpoint data-type.
-        # Appends results to the dictionary for each endpoint-group.
-        #
-        # Calculates a 95% confidence interval for the percent-difference from
-        # control, taking into account variance from both groups using a
-        # Fisher Information Matrix, assuming independent normal distributions.
-        #
+        """
+        Expects a dictionary of endpoint groups and the endpoint data-type.
+        Appends results to the dictionary for each endpoint-group.
+
+        Calculates a 95% confidence interval for the percent-difference from
+        control, taking into account variance from both groups using a
+        Fisher Information Matrix, assuming independent normal distributions.
+        """
         for i, eg in enumerate(egs):
             mean = low = high = None
             if data_type == "C":
@@ -998,14 +998,14 @@ class ConfidenceIntervalsMixin(object):
                                 (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
                             )
                         )
-                        ci   = (1.96 * sd) * 100
-                        rng  = sorted([ mean - ci, mean + ci ])
-                        low  = rng[0]
+                        ci = (1.96 * sd) * 100
+                        rng = sorted([mean - ci, mean + ci])
+                        low = rng[0]
                         high = rng[1]
 
             elif data_type == "P":
                 mean = eg['response']
-                low  = eg['lower_ci']
+                low = eg['lower_ci']
                 high = eg['upper_ci']
 
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
