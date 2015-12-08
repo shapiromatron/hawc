@@ -58,3 +58,12 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+class AssessmentEditViewset(viewsets.ModelViewSet):
+    assessment_filter_args = ""
+    permission_classes = (AssessmentLevelPermissions, )
+    filter_backends = (InAssessmentFilter, )
+    parent_model = Assessment
+
+    def get_queryset(self):
+        return self.model.objects.all()

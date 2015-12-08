@@ -7,27 +7,21 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework_extensions import ListUpdateModelMixin
+from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api import views as assessment_views
-from assessment import models as assessment_models
+from assessment.api.views import AssessmentEditViewset
 from . import views
 
 class DisabledPagination(PageNumberPagination):
     page_size = None
 
-class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, viewsets.ModelViewSet):
-    parent_model = assessment_models.Assessment
+class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     assessment_filter_args = "assessment"
-    permission_classes = (assessment_views.AssessmentLevelPermissions, )
-    filter_backends = (assessment_views.InAssessmentFilter, )
     template_name = 'assessment/endpointcleanup_list.html'
+    pagination_class = DisabledPagination
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=request.GET.get('assessment_id'))
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
     @list_route(methods=['get'])
     def fields(self, request, format=None):
@@ -46,12 +40,13 @@ class DynamicFieldsMixin(object):
     """
     def __init__(self, *args, **kwargs):
         super(DynamicFieldsMixin, self).__init__(*args, **kwargs)
-        fields = self.context['request'].query_params.get('fields')
-        if fields:
-            fields = fields.split(',')
-            # Drop any fields that are not specified in the `fields` argument.
-            fields.extend(['id' ,'name'])
-            allowed = set(fields)
-            existing = set(self.fields.keys())
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
+        if self.context.get('request'):
+            fields = self.context.get('request').query_params.get('fields')
+            if fields:
+                fields = fields.split(',')
+                # Drop any fields that are not specified in the `fields` argument.
+                fields.extend(['id' ,'name'])
+                allowed = set(fields)
+                existing = set(self.fields.keys())
+                for field_name in existing - allowed:
+                    self.fields.pop(field_name)
