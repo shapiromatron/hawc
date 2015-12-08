@@ -7,6 +7,7 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework_extensions import ListUpdateModelMixin
 
 from assessment.api import views as assessment_views
 from assessment import models as assessment_models
@@ -15,7 +16,7 @@ from . import views
 class DisabledPagination(PageNumberPagination):
     page_size = None
 
-class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, viewsets.ModelViewSet):
+class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, viewsets.ModelViewSet):
     parent_model = assessment_models.Assessment
     assessment_filter_args = "assessment"
     permission_classes = (assessment_views.AssessmentLevelPermissions, )

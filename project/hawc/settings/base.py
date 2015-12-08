@@ -289,3 +289,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Compressor settings
 COMPRESS_ENABLED = True
+
+# DRF-Extensions header requirement
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_BULK_OPERATION_HEADER_NAME': 'X-CUSTOM-BULK-OPERATION'
+}
