@@ -507,7 +507,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
     class Meta:
         model = models.DataPivotQuery
-        fields = ('evidence_type', 'units', 'title',
+        fields = ('evidence_type', 'units', 'export_style', 'title',
                   'slug', 'settings', 'caption',
                   'published_only', 'prefilters')
 
@@ -519,6 +519,13 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
         self.helper = self.setHelper()
+
+    def clean_export_style(self):
+        evidence_type = self.cleaned_data['evidence_type']
+        export_style = self.cleaned_data['export_style']
+        if evidence_type != 2 and export_style != 0:
+            raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
+        return export_style
 
 
 class DataPivotSettingsForm(forms.ModelForm):
