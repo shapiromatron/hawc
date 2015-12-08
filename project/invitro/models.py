@@ -377,6 +377,13 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         ('nt', 'not-tested'),
     )
 
+    DIFFERENCE_CONTROL_SYMBOLS = {
+        'nc': u'↔',
+        '-':  u'↓',
+        '+':  u'↑',
+        'nt': u'NT',
+    }
+
     SIGNIFICANCE_CHOICES = (
         ("nr", u"not reported"),
         ("si", u"p ≤ 0.05"),
@@ -421,6 +428,10 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     precipitation_observed = models.NullBooleanField(
         default=None,
         choices=OBSERVATION_CHOICES)
+
+    @property
+    def difference_control_symbol(self):
+        return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
