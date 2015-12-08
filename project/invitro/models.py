@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 import reversion
 
 from assessment.models import BaseEndpoint
+from animal.models import ConfidenceIntervalsMixin
 from utils.helper import SerializerHelper
 from utils.models import AssessmentRootedTagTree
 
@@ -367,7 +368,7 @@ class IVEndpoint(BaseEndpoint):
         }
 
 
-class IVEndpointGroup(models.Model):
+class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
 
     DIFFERENCE_CONTROL_CHOICES = (
         ('nc', 'no-change'),
