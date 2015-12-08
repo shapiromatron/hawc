@@ -17,7 +17,7 @@ from comments.models import Comment
 from animal.exports import EndpointFlatDataPivot
 from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
-from invitro.exports import IVEndpointFlatDataPivot
+import invitro.exports as ivexports
 
 import reversion
 from treebeard.mp_tree import MP_Node
@@ -541,7 +541,15 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == 2:  # In Vitro
-            exporter = IVEndpointFlatDataPivot(
+
+            # select export class
+            if self.export_style == 0:
+                Exporter = ivexports.DataPivotEndpointGroup
+            elif self.export_style == 1:
+                Exporter = ivexports.DataPivotEndpoint
+
+            # generate export
+            exporter = Exporter(
                 qs,
                 export_format=format_,
                 filename='{}-invitro'.format(self.assessment)
