@@ -68,3 +68,5 @@ target/
 
 # React/Webpack
 node_modules
+bundles/
+webpack-stats.json
