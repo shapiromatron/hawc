@@ -1,6 +1,5 @@
 import json
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.loading import get_model

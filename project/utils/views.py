@@ -17,7 +17,6 @@ from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
-from rest_framework import permissions
 from assessment.models import Assessment
 
 

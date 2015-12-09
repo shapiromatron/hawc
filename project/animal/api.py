@@ -36,6 +36,7 @@ class Endpoint(AssessmentViewset):
                 'animal_group__dosed_animals__doses',
             )
 
+
 class CleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.CleanupFieldsSerializer
     model = models.Endpoint

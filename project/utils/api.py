@@ -3,14 +3,13 @@ from __future__ import absolute_import
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import list_route
-from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework import viewsets
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from assessment.api.views import AssessmentEditViewset, InAssessmentFilter
 from . import views
+
 
 class DisabledPagination(PageNumberPagination):
     page_size = None
@@ -28,7 +27,6 @@ class CleanupFieldsFilter(InAssessmentFilter):
             ids = request.query_params.getlist('id')
             filters = {'id__in': ids}
             queryset = queryset.filter(**filters)
-        import pdb; pdb.set_trace()
 
         return queryset
 
@@ -69,8 +67,8 @@ class DynamicFieldsMixin(object):
             fields = self.context.get('request').query_params.get('fields')
             if fields:
                 fields = fields.split(',')
-                # Drop any fields that are not specified in the `fields` argument.
-                fields.extend(['id' ,'name'])
+                # Drop fields that are not specified in the `fields` argument.
+                fields.extend(['id', 'name'])
                 allowed = set(fields)
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
