@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 import reversion
 
 from assessment.models import BaseEndpoint
+from animal.models import ConfidenceIntervalsMixin
 from utils.helper import SerializerHelper
 from utils.models import AssessmentRootedTagTree
 
@@ -367,7 +368,7 @@ class IVEndpoint(BaseEndpoint):
         }
 
 
-class IVEndpointGroup(models.Model):
+class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
 
     DIFFERENCE_CONTROL_CHOICES = (
         ('nc', 'no-change'),
@@ -375,6 +376,13 @@ class IVEndpointGroup(models.Model):
         ('+',  'increase'),
         ('nt', 'not-tested'),
     )
+
+    DIFFERENCE_CONTROL_SYMBOLS = {
+        'nc': u'↔',
+        '-':  u'↓',
+        '+':  u'↑',
+        'nt': u'NT',
+    }
 
     SIGNIFICANCE_CHOICES = (
         ("nr", u"not reported"),
@@ -420,6 +428,10 @@ class IVEndpointGroup(models.Model):
     precipitation_observed = models.NullBooleanField(
         default=None,
         choices=OBSERVATION_CHOICES)
+
+    @property
+    def difference_control_symbol(self):
+        return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
