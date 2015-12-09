@@ -1,13 +1,12 @@
 from __future__ import absolute_import
 
 from django.shortcuts import get_object_or_404
-
 from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset, InAssessmentFilter
+from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID
 from . import views
 
 
@@ -44,7 +43,11 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateMode
     filter_backends = (CleanupFieldsFilter, )
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=request.GET.get('assessment_id'))
+        assessment_id = request.GET.get('assessment_id', None)
+        if assessment_id is None:
+            raise RequiresAssessmentID
+
+        return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @list_route(methods=['get'])
     def fields(self, request, format=None):
