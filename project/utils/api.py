@@ -9,16 +9,41 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset
+from assessment.api.views import AssessmentEditViewset, InAssessmentFilter
 from . import views
 
 class DisabledPagination(PageNumberPagination):
     page_size = None
 
+
+class CleanupFieldsFilter(InAssessmentFilter):
+    """
+    Filters objects in Assessment on GET using InAssessmentFilter.
+    Filters objects on ID on PATCH. If ID is not supplied in query_params,
+    returns an empty queryset, as entire queryset is updated using Bulk Update.
+    """
+    def filter_queryset(self, request, queryset, view):
+        queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
+        if view.action != 'list':
+            ids = request.query_params.getlist('id')
+            filters = {'id__in': ids}
+            queryset = queryset.filter(**filters)
+        import pdb; pdb.set_trace()
+
+        return queryset
+
+
 class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
+    """
+    Base Viewset for bulk updating text fields. Model should have a
+    text_cleanup_fields() class method that returns the fields to be cleaned up.
+
+    Serializer should implement DynamicFieldsMixin.
+    """
     assessment_filter_args = "assessment"
     template_name = 'assessment/endpointcleanup_list.html'
     pagination_class = DisabledPagination
+    filter_backends = (CleanupFieldsFilter, )
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=request.GET.get('assessment_id'))
