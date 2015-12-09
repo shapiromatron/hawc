@@ -459,7 +459,7 @@ ResultGroup.prototype = {
         return ci;
     },
     _build_group_anchor: function(fn){
-        var txt = this.group.data.name;
+        var txt = _.escape(this.group.data.name);
 
         if(this.data.is_main_finding){
             txt += fn.add_footnote([
