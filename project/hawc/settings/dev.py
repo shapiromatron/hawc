@@ -9,7 +9,7 @@ SERVER_ROLE = "dev"
 
 INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')
 
-STATICFILES_DIRS = (
+STATICFILES_DIRS += (
     os.path.join(PROJECT_ROOT, 'project', 'static'),
 )
 

@@ -13,6 +13,7 @@ django-reversion==1.8.7
 django-selectable==0.9.0
 django-taggit==0.15.0
 django-treebeard==3.0
+django-webpack-loader==0.2.3
 djangorestframework==3.2.3
 git+https://github.com/chibisov/drf-extensions@5d7bdbb1e29a8ed6681366d3d243771a350ed412
 docutils==0.12
