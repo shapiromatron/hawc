@@ -177,15 +177,8 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'src'),
+    os.path.join(PROJECT_PATH, 'dist'),
 )
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(PROJECT_PATH, 'webpack-stats.json'),
-    }
-}
 
 # Media files
 MEDIA_URL = '/media/'
@@ -304,4 +297,13 @@ COMPRESS_ENABLED = True
 # DRF-Extensions header requirement
 REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_BULK_OPERATION_HEADER_NAME': 'X-CUSTOM-BULK-OPERATION'
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',
+        'STATS_FILE': os.path.join(PROJECT_PATH, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': ['.+/.map']
+    }
 }
