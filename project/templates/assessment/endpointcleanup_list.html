@@ -1,4 +1,6 @@
 {% extends 'portal.html' %}
+{% load render_bundle from webpack_loader %}
+
 
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
 
@@ -8,9 +10,8 @@
 {% endblock %}
 
 {% block content %}
-    <div id="cleanup">
-
-    </div>
+    <div id="react-cleanup"></div>
+      {% render_bundle 'main' %}
     <h1>Assessment Results for cleanup</h1>
     <ul>
 
