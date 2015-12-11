@@ -9,7 +9,7 @@ import reversion
 from assessment.models import BaseEndpoint
 from animal.models import ConfidenceIntervalsMixin
 from utils.helper import SerializerHelper
-from utils.models import AssessmentRootedTagTree
+from utils.models import get_crumbs, AssessmentRootedTagTree
 
 
 class IVChemical(models.Model):
@@ -178,6 +178,12 @@ class IVExperiment(models.Model):
 
     def get_absolute_url(self):
         return reverse('invitro:experiment_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:experiment_update', args=[str(self.id)])
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
 
 
 class IVEndpointCategory(AssessmentRootedTagTree):

@@ -69,7 +69,12 @@ IVExperiment.prototype = {
         }
     },
     build_title: function(){
-        return $("<h1>").text(this.data.name);
+        var el = $("<h1>").text(this.data.name);
+        if (window.canEdit){
+            var urls = [{url: this.data.url_update, text: 'Update'}];
+            el.append(HAWCUtils.pageActionsButton(urls));
+        }
+        return el;
     },
     build_details_table: function(){
         var getControlText = function(bool, str) {

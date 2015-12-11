@@ -1,11 +1,17 @@
 from assessment.models import Assessment
-from utils.views import GenerateReport, BaseList, BaseDetail
+from utils.views import GenerateReport, BaseList, BaseDetail, BaseUpdate
 
-from . import models, exports
+from . import models, forms, exports
 
 
 class ExperimentDetail(BaseDetail):
     model = models.IVExperiment
+
+
+class ExperimentUpdate(BaseUpdate):
+    success_message = "Experiment updated."
+    model = models.IVExperiment
+    form_class = forms.IVExperimentForm
 
 
 class EndpointDetail(BaseDetail):

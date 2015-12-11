@@ -113,6 +113,7 @@ class MiniIVEndpointSerializer(serializers.ModelSerializer):
 
 
 class IVExperimentSerializerFull(IVExperimentSerializer):
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
     endpoints = MiniIVEndpointSerializer(many=True)
 
 

@@ -16,6 +16,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
+      window.canEdit = {{obj_perms.edit|lower}};
       IVExperiment.displayAsPage({{object.id}}, $(".ivExperiment"));
     });
   </script>

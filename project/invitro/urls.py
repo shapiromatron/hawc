@@ -16,6 +16,10 @@ urlpatterns = [
         views.ExperimentDetail.as_view(),
         name='experiment_detail'),
 
+    url(r'^experiment/(?P<pk>\d+)/update/$',
+        views.ExperimentUpdate.as_view(),
+        name='experiment_update'),
+
     # endpoint
     url(r'^endpoints/(?P<pk>\d+)/$',
         views.EndpointsList.as_view(),
