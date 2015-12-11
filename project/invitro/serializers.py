@@ -96,8 +96,9 @@ class IVEndpointSerializer(serializers.ModelSerializer):
         model = models.IVEndpoint
 
 
-class MiniIVEndpointSerializer(IVEndpointSerializer):
+class MiniIVEndpointSerializer(serializers.ModelSerializer):
     experiment = serializers.PrimaryKeyRelatedField(read_only=True)
+    chemical = _IVChemicalSerializer()
     groups = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     benchmarks = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     category = serializers.PrimaryKeyRelatedField(read_only=True)
