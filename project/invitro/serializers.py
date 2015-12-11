@@ -71,6 +71,8 @@ class IVEndpointCategory(serializers.ModelSerializer):
 
 class IVEndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
     chemical = _IVChemicalSerializer()
     experiment = IVExperimentSerializer()
     groups = IVEndpointGroupSerializer(many=True)
@@ -80,7 +82,6 @@ class IVEndpointSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(IVEndpointSerializer, self).to_representation(instance)
-        ret['url'] = instance.get_absolute_url()
         ret['data_type'] = instance.get_data_type_display()
         ret['variance_type'] = instance.get_variance_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()

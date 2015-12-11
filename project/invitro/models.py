@@ -141,7 +141,7 @@ class IVExperiment(models.Model):
         help_text="Was metabolic-activation used in system (ex: S9)?")
     serum = models.CharField(
         max_length=128,
-        verbose_name="Percent serum, serum-type, and/or description")
+        help_text="Percent serum, serum-type, and/or description")
     has_naive_control = models.BooleanField(
         default=False)
     has_positive_control = models.BooleanField(
@@ -344,6 +344,12 @@ class IVEndpoint(BaseEndpoint):
 
     def get_absolute_url(self):
         return reverse('invitro:endpoint_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:endpoint_update', args=[str(self.id)])
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.experiment)
 
     @classmethod
     def max_dose_count(cls, queryset):

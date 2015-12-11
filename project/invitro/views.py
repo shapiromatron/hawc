@@ -18,6 +18,12 @@ class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
 
+class EndpointUpdate(BaseUpdate):
+    success_message = "Endpoint updated."
+    model = models.IVEndpoint
+    form_class = forms.IVEndpointForm
+
+
 class EndpointsList(BaseList):
     parent_model = Assessment
     model = models.IVEndpoint

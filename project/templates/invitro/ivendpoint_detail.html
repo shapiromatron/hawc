@@ -17,6 +17,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
+      window.canEdit = {{obj_perms.edit|lower}};
       IVEndpoint.displayAsPage({{object.id}}, $(".ivEndpoint"));
     });
   </script>

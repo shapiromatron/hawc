@@ -181,7 +181,12 @@ IVEndpoint.prototype = {
         return "{0} ({1})".printf(this.data.name, this.chemical.data.name);
     },
     build_title: function(){
-        return $("<h1>").text(this._title_text());
+        var el = $("<h1>").text(this._title_text());
+        if (window.canEdit){
+            var urls = [{url: this.data.url_update, text: 'Update'}];
+            el.append(HAWCUtils.pageActionsButton(urls));
+        }
+        return el;
     },
     build_details_table: function(){
 

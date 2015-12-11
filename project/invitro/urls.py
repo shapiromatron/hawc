@@ -29,6 +29,10 @@ urlpatterns = [
         views.EndpointDetail.as_view(),
         name='endpoint_detail'),
 
+    url(r'^endpoint/(?P<pk>\d+)/update/$',
+        views.EndpointUpdate.as_view(),
+        name='endpoint_update'),
+
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
         views.EndpointsFullExport.as_view(),
         name='endpoints_export'),
