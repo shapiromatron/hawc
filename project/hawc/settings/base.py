@@ -114,7 +114,7 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DJANGO_DB_NAME'),
+        'NAME': os.getenv('DJANGO_DB_NAME', 'hawc'),
         'USER': os.getenv('DJANGO_DB_USER'),
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
         'HOST': '',
@@ -261,7 +261,7 @@ COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMM
 
 
 # BMD modeling settings
-BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH')
+BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH', '')
 BMD_PLOT = r'gnuplot'
 BMD_EXTENSION = ''
 BMD_SHELL = 'x11'
