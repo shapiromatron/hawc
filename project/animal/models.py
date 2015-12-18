@@ -344,6 +344,7 @@ class AnimalGroup(models.Model):
 class DosingRegime(models.Model):
 
     ROUTE_EXPOSURE_CHOICES = (
+        ("OR", u"Oral"),
         ("OC", u"Oral capsule"),
         ("OD", u"Oral diet"),
         ("OG", u"Oral gavage"),

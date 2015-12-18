@@ -301,7 +301,7 @@ class IVEndpoint(BaseEndpoint):
         help_text="Response values were estimated using a digital ruler or other methods")
     observation_time = models.CharField(
         blank=True,
-        max_length=16)
+        max_length=32)
     observation_time_units = models.PositiveSmallIntegerField(
         default=0,
         choices=OBSERVATION_TIME_UNITS)
