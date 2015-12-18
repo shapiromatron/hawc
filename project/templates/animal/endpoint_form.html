@@ -28,7 +28,7 @@
       {{animal_group}}</a><span class="divider">/</span></li>
     <li class="active"> Create Endpoint <span class="divider">/</span></li>
   {% elif crud == "Update" %}
-    <li><a href="{{ object.animal_group.experiment.study.get_absolute_url }} %}">
+    <li><a href="{{ object.animal_group.experiment.study.get_absolute_url }}">
       {{object.animal_group.experiment.study}}</a><span class="divider">/</span></li>
     <li><a href="{{ object.animal_group.experiment.get_absolute_url }}">
       {{object.animal_group.experiment}}</a><span class="divider">/</span></li>
