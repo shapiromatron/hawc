@@ -398,18 +398,21 @@ IVEndpointGroup.prototype = {
                 if(opts.isLOEL)
                     txt += tbl.footnotes.add_footnote('LOEL (Lowest Observed Effect Level)');
                 return txt;
+            },
+            getNumeric = function(val){
+                return ($.isNumeric(val)) ? val.toLocaleString() : "-";
             };
 
-        tr.append('<td>{0}</td>'.printf(getDose(this.data.dose)))
+        tr.append('<td>{0}</td>'.printf(getDose(this.data.dose)));
 
         if (opts.hasN)
-            tr.append('<td>{0}</td>'.printf(this.data.n));
+            tr.append('<td>{0}</td>'.printf(getNumeric(this.data.n)));
 
         if (opts.hasResponse)
-            tr.append('<td>{0}</td>'.printf(this.data.response));
+            tr.append('<td>{0}</td>'.printf(getNumeric(this.data.response)));
 
         if (opts.hasVariance)
-            tr.append('<td>{0}</td>'.printf(this.data.variance));
+            tr.append('<td>{0}</td>'.printf(getNumeric(this.data.variance)));
 
         if (opts.hasDiffControl)
             tr.append('<td>{0}</td>'.printf(this.data.difference_control));
