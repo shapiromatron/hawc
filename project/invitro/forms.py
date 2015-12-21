@@ -1,5 +1,6 @@
 from django import forms
 from django.core.urlresolvers import reverse
+from django.forms.models import BaseModelFormSet, modelformset_factory
 from selectable import forms as selectable
 
 from assessment.lookups import EffectTagLookup
@@ -230,3 +231,22 @@ class IVEndpointForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[2], 1, url, 'Add new effect tag', 'span6')
 
         return helper
+
+
+class IVEndpointGroupForm(forms.ModelForm):
+
+    class Meta:
+        model = models.IVEndpointGroup
+        exclude = ('endpoint', 'dose_group_id')
+
+
+class BaseIVEndpointGroupFormset(BaseModelFormSet):
+    pass
+
+
+IVEndpointGroupFormset = modelformset_factory(
+    models.IVEndpointGroup,
+    form=IVEndpointGroupForm,
+    formset=BaseIVEndpointGroupFormset,
+    can_delete=False,
+    extra=0)

@@ -1,5 +1,8 @@
 from assessment.models import Assessment
-from utils.views import GenerateReport, BaseList, BaseDetail, BaseUpdate
+from utils.views import (
+    GenerateReport, BaseList, BaseDetail,
+    BaseUpdate, BaseUpdateWithFormset
+)
 
 from . import models, forms, exports
 
@@ -38,10 +41,25 @@ class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
 
-class EndpointUpdate(BaseUpdate):
+class EndpointUpdate(BaseUpdateWithFormset):
     success_message = "Endpoint updated."
     model = models.IVEndpoint
     form_class = forms.IVEndpointForm
+    formset_factory = forms.IVEndpointGroupFormset
+
+    def build_initial_formset_factory(self):
+        return forms.IVEndpointGroupFormset(
+            queryset=self.object.groups.all().order_by('dose_group_id'))
+
+    def post_object_save(self, form, formset):
+        dose_group_id = 0
+        for form in formset.forms:
+            form.instance.endpoint = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.dose_group_id = dose_group_id
+                if form.has_changed() is False:
+                    form.instance.save()  # ensure new dose_group_id saved to db
+                dose_group_id += 1
 
 
 class EndpointsList(BaseList):

@@ -5,21 +5,34 @@
 
 
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+    {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block extrastyle %}
-  {% include_ui_theme %}
+    {% include_ui_theme %}
 {% endblock %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
+    {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-  {% crispy form %}
+    <div id="eForm">
+        {% crispy form %}
+    </div>
+
+    <div id="egFormset">
+        <legend>Endpoint groups</legend>
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+    </div>
 {% endblock %}
 
 {% block extrajs %}
   {{ form.media }}
+    <script type="text/javascript">
+        $(document).on('ready', function(){
+            new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
+            $('#egFormset').insertBefore($('#eForm .form-actions'));
+        });
+    </script>
 {% endblock extrajs %}
