@@ -84,7 +84,11 @@
     {% elif study.study_type == 2 %}
       <h2>Available experiments</h2>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-    {% elif study.study_type == 4 %}
+      <h2>Available chemicals used in experiments</h2>
+      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
+      <h2>Available cell types</h2>
+      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+      {% elif study.study_type == 4 %}
       <h2>Available epidemiological meta-analyses</h2>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}

@@ -9,9 +9,20 @@ _.extend(IVChemical, {
     },
     displayAsModal: function(id){
         IVChemical.get_object(id, function(d){d.displayAsModal();});
+    },
+    displayAsPage: function(id, div){
+        IVChemical.get_object(id, function(d){d.displayAsPage(div);});
     }
 });
 IVChemical.prototype = {
+    build_title: function(){
+        var el = $("<h1>").text(this.data.name);
+        if (window.canEdit){
+            var urls = [{url: this.data.url_update, text: 'Update'}];
+            el.append(HAWCUtils.pageActionsButton(urls));
+        }
+        return el;
+    },
     build_details_table: function(){
         return new DescriptiveTable()
             .add_tbody_tr("Chemical name", this.data.name)
@@ -37,6 +48,68 @@ IVChemical.prototype = {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 900});
+    },
+    displayAsPage: function($div){
+        $div
+            .append(this.build_title())
+            .append(this.build_details_table());
+    }
+};
+
+
+var IVCellType = function(data){
+    this.data = data;
+};
+_.extend(IVCellType, {
+    get_object: function(id, cb){
+        $.get('/in-vitro/api/celltype/{0}/'.printf(id), function(d){
+            cb(new IVCellType(d));
+        });
+    },
+    displayAsModal: function(id){
+        IVCellType.get_object(id, function(d){d.displayAsModal();});
+    },
+    displayAsPage: function(id, div){
+        IVCellType.get_object(id, function(d){d.displayAsPage(div);});
+    }
+});
+IVCellType.prototype = {
+    build_title: function(){
+        var el = $("<h1>").text(this.data.title);
+        if (window.canEdit){
+            var urls = [{url: this.data.url_update, text: 'Update'}];
+            el.append(HAWCUtils.pageActionsButton(urls));
+        }
+        return el;
+    },
+    build_details_table: function(){
+        return new DescriptiveTable()
+            .add_tbody_tr("Cell type", this.data.cell_type)
+            .add_tbody_tr("Tissue", this.data.tissue)
+            .add_tbody_tr("Species", this.data.species)
+            .add_tbody_tr("Strain", this.data.strain)
+            .add_tbody_tr("Sex", this.data.sex_symbol)
+            .add_tbody_tr("Cell source", this.data.source)
+            .add_tbody_tr("Culture type", this.data.culture_type)
+            .get_tbl();
+    },
+    displayAsModal: function(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.data.name),
+            $details = $('<div class="span12">'),
+            $content = $('<div class="container-fluid">')
+                .append($('<div class="row-fluid">').append($details));
+
+        $details.append(this.build_details_table());
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter("")
+            .show({maxWidth: 900});
+    },
+    displayAsPage: function($div){
+        $div
+            .append(this.build_title())
+            .append(this.build_details_table());
     }
 };
 

@@ -11,6 +11,9 @@ from . import models
 
 
 class IVCellTypeSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='__unicode__', read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
     sex_symbol = serializers.CharField(source='get_sex_symbol', read_only=True)
     culture_type = serializers.CharField(source='get_culture_type_display', read_only=True)
     sex = serializers.CharField(source='get_sex_display', read_only=True)
@@ -31,6 +34,9 @@ class IVExperimentSerializer(serializers.ModelSerializer):
 
 
 class _IVChemicalSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
+
     class Meta:
         model = models.IVChemical
 

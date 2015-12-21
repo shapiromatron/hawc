@@ -47,6 +47,15 @@ class IVChemical(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
+    def get_absolute_url(self):
+        return reverse('invitro:chemical_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:chemical_update', args=[str(self.id)])
+
     def get_assessment(self):
         return self.study.assessment
 
@@ -102,8 +111,20 @@ class IVCellType(models.Model):
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
+    def get_absolute_url(self):
+        return reverse('invitro:celltype_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:celltype_update', args=[str(self.id)])
+
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
+
+    def get_assessment(self):
+        return self.study.assessment
 
 
 class IVExperiment(models.Model):

@@ -10,14 +10,14 @@
 {% endblock %}
 
 {% block content_type %}
-  ivExperiment
+    ivCellType
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
       window.canEdit = {{obj_perms.edit|lower}};
-      IVExperiment.displayAsPage({{object.id}}, $(".ivExperiment"));
+      IVCellType.displayAsPage({{object.id}}, $(".ivCellType"));
     });
   </script>
 {% endblock %}

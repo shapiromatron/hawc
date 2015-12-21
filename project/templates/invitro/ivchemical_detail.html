@@ -10,14 +10,14 @@
 {% endblock %}
 
 {% block content_type %}
-  ivExperiment
+    ivChemical
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
       window.canEdit = {{obj_perms.edit|lower}};
-      IVExperiment.displayAsPage({{object.id}}, $(".ivExperiment"));
+      IVChemical.displayAsPage({{object.id}}, $(".ivChemical"));
     });
   </script>
 {% endblock %}

@@ -14,6 +14,26 @@ class ExperimentUpdate(BaseUpdate):
     form_class = forms.IVExperimentForm
 
 
+class ChemicalDetail(BaseDetail):
+    model = models.IVChemical
+
+
+class ChemicalUpdate(BaseUpdate):
+    success_message = "Chemical updated."
+    model = models.IVChemical
+    form_class = forms.IVChemicalForm
+
+
+class CellTypeDetail(BaseDetail):
+    model = models.IVCellType
+
+
+class CellTypeUpdate(BaseUpdate):
+    success_message = "Cell-type updated."
+    model = models.IVCellType
+    form_class = forms.IVCellTypeForm
+
+
 class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 

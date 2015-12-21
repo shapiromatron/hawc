@@ -8,6 +8,96 @@ from utils.forms import BaseFormHelper
 from . import models
 
 
+class IVChemicalForm(forms.ModelForm):
+    HELP_TEXT_CREATE = "Describes the chemical used in the current experiment."
+    HELP_TEXT_UPDATE = "Update an existing chemical."
+
+    class Meta:
+        model = models.IVChemical
+        exclude = ('study', )
+
+    def __init__(self, *args, **kwargs):
+        study = kwargs.pop('parent', None)
+        super(IVChemicalForm, self).__init__(*args, **kwargs)
+        if study:
+            self.instance.study = study
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        if self.instance.id:
+            inputs = {
+                'legend_text': u'Update {}'.format(self.instance),
+                'help_text': self.HELP_TEXT_UPDATE,
+                'cancel_url': self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                'legend_text': u'Create new experimental chemical',
+                'help_text': self.HELP_TEXT_CREATE,
+                'cancel_url': self.instance.study.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('name', 3, 'span4')
+        helper.add_fluid_row('source', 3, 'span4')
+        helper.add_fluid_row('purity_confirmed_notes', 2, 'span6')
+
+        return helper
+
+
+class IVCellTypeForm(forms.ModelForm):
+    HELP_TEXT_CREATE = "Describes the cell type used in the current experiment."
+    HELP_TEXT_UPDATE = "Update an existing cell type."
+
+    class Meta:
+        model = models.IVCellType
+        exclude = ('study', )
+
+    def __init__(self, *args, **kwargs):
+        study = kwargs.pop('parent', None)
+        super(IVCellTypeForm, self).__init__(*args, **kwargs)
+        if study:
+            self.instance.study = study
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs['class'] = 'span12'
+            if type(widget) == forms.Textarea:
+                widget.attrs['rows'] = 3
+
+        if self.instance.id:
+            inputs = {
+                'legend_text': u'Update {}'.format(self.instance),
+                'help_text': self.HELP_TEXT_UPDATE,
+                'cancel_url': self.instance.get_absolute_url()
+            }
+        else:
+            inputs = {
+                'legend_text': u'Create new cell type',
+                'help_text': self.HELP_TEXT_CREATE,
+                'cancel_url': self.instance.study.get_absolute_url()
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        helper.add_fluid_row('species', 3, 'span4')
+        helper.add_fluid_row('cell_type', 2, 'span6')
+        helper.add_fluid_row('tissue', 2, 'span6')
+
+        return helper
+
+
 class IVExperimentForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = ""
