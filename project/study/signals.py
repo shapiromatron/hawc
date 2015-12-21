@@ -19,6 +19,9 @@ def invalidate_caches_study(sender, instance, **kwargs):
     elif instance.study_type == 1:
         Model = get_model('epi', 'Outcome')
         filters["study_population__study"] = instance.id
+    elif instance.study_type == 2:
+        Model = get_model('invitro', 'ivendpoint')
+        filters["experiment__study_id"] = instance.id
     elif instance.study_type == 4:
         Model = get_model('epimeta', 'MetaResult')
         filters["protocol__study"] = instance.id

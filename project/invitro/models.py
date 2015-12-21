@@ -352,6 +352,10 @@ class IVEndpoint(BaseEndpoint):
         return get_crumbs(self, self.experiment)
 
     @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
+
+    @classmethod
     def max_dose_count(cls, queryset):
         max_val = 0
         qs = queryset\

@@ -178,7 +178,7 @@ IVEndpoint.prototype = {
         return '<a href="{0}">{1}</a>'.printf(this.data.url, this._title_text());
     },
     _title_text: function(){
-        return "{0} ({1})".printf(this.data.name, this.chemical.data.name);
+        return this.data.name;
     },
     build_title: function(){
         var el = $("<h1>").text(this._title_text());
