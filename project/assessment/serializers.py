@@ -29,3 +29,11 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DoseUnits
+
+
+class AssessmentEndpointSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    id = serializers.IntegerField()
+    endpoint_count = serializers.IntegerField()
+    outcome_count = serializers.IntegerField()
+    ivendpoint_count = serializers.IntegerField()

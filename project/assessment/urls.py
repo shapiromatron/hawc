@@ -110,6 +110,11 @@ urlpatterns = [
     url(r'^close-window/$',
         views.CloseWindow.as_view(),
         name='close_window'),
+
+    # api views
+    url(r'^api/endpoints/$',
+        views.AssessmentEndpointList.as_view({ 'get': 'list'}),
+        name='endpoint_type_list'),
 ]
 
 admin.autodiscover()

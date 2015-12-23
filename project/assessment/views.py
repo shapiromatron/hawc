@@ -1,7 +1,7 @@
 import json
 
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -16,10 +16,11 @@ from django.shortcuts import HttpResponse, get_object_or_404
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
-
+from utils.api import DisabledPagination
 from celery import chain
 
-from . import forms, models, tasks
+from . import forms, models, tasks, serializers
+from .api import views
 
 
 # General views
@@ -452,3 +453,18 @@ def download_plot(request):
         return response
     else:
         raise Http404
+
+
+class AssessmentEndpointList(views.AssessmentViewset):
+    serializer_class = serializers.AssessmentEndpointSerializer
+    assessment_filter_args = "id"
+    model = models.Assessment
+    pagination_class = DisabledPagination
+
+    def get_queryset(self):
+        queryset = self.model.objects\
+            .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
+            .annotate(outcome_count=Count('baseendpoint__outcome'))\
+            .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
+
+        return queryset
