@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
-import { NICE, SUPER_NICE } from './colors';
+import React, { Component, PropTypes } from 'react';
+import { Provider } from 'react-redux';
+import { ReduxRouter } from 'redux-router';
+import DevTools from './DevTools';
 
 class Counter extends Component {
     constructor(props) {
@@ -27,13 +29,22 @@ class Counter extends Component {
     }
 }
 
-export class App extends Component {
+export default class App extends Component {
     render() {
+        const { store } = this.props
         return (
-            <div>
-                <Counter increment={2} color={NICE} />
-                <Counter increment={3} color={SUPER_NICE} />
-            </div>
+            <Provider store={store}>
+                <div>
+                    <ReduxRouter/>
+                    <DevTools/>
+                    <Counter increment={1} color={NICE} />
+                    <Counter increment={3} color={SUPER_NICE} />
+                </div>
+            </Provider>
         );
     }
+}
+
+App.propTypes = {
+    store: PropTypes.object.isRequired
 }

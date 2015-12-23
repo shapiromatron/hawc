@@ -12,37 +12,4 @@
 {% block content %}
     <div id="root"></div>
       {% render_bundle 'main' %}
-    <h1>Assessment Results for cleanup</h1>
-    <ul>
-
-        {% if total_endpoints == 0 %}
-            <li><i>No endpoints are available for this assessment.</i></li>
-        {% endif %}
-
-        {% if endpoints > 0 %}
-        <li><a href="{% url 'animal:endpoint_list' assessment.id %}">
-            {{endpoints}} animal bioassay endpoints
-            </a></li>
-        {% endif %}
-
-        {% if outcomes > 0 %}
-        <li><a href="{% url 'epi:outcome_list' assessment.id %}">
-            {{outcomes}} epidemiological outcomes assessed
-            </a></li>
-        {% endif %}
-
-        {% if meta_results > 0 %}
-        <li><a href="{% url 'meta:result_list' assessment.id %}">
-            {{meta_results}} epidemiological meta-analyses results
-            </a></li>
-        {% endif %}
-
-        {% if ivendpoints > 0 %}
-        <li><a href="{% url 'invitro:endpoint_list' assessment.id %}">
-            {{ivendpoints}} <i>in vitro</i> endpoints
-            </a></li>
-        {% endif %}
-
-    </ul>
-
 {% endblock %}
