@@ -38,6 +38,8 @@ git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0a
 git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
 
 # for import scripts
+jupyter==1.0.0
+runipy==0.1.5
 numpy==1.9.2
 python-dateutil==2.4.2
 fuzzywuzzy==0.7.0

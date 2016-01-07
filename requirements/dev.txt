@@ -13,16 +13,3 @@ pyparsing==2.0.3
 pydot==1.0.2
 curtsies==0.2.3
 greenlet==0.4.7
-
-# for interactive-import scripts via ipython[notebook]
-backports.ssl-match-hostname==3.4.0.2
-certifi==2015.4.28
-ipython==3.2.0
-jinja2==2.7.3
-jsonschema==2.5.1
-markupsafe==0.23
-mistune==0.6
-ptyprocess==0.5
-pyzmq==14.7.0
-terminado==0.5
-tornado==4.2
