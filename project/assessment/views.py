@@ -13,6 +13,8 @@ from django.views.generic import View, ListView, DetailView, TemplateView, FormV
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse, get_object_or_404
 
+from rest_framework.response import Response
+
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
@@ -461,10 +463,26 @@ class AssessmentEndpointList(views.AssessmentViewset):
     model = models.Assessment
     pagination_class = DisabledPagination
 
+    def list(self, request, *args, **kwargs):
+        instance = self.filter_queryset(self.get_queryset())[0]
+        instance.endpoint = {
+            'count': instance.endpoint_count,
+            'type': "animal bioassay endpoints",
+        }
+        instance.outcome = {
+            "count": instance.outcome_count,
+            "type": "epidemiological outcomes assessed",
+        }
+        instance.ivendpoint = {
+            "count": instance.ivendpoint_count,
+            "type": "in vitro endpoints",
+        }
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def get_queryset(self):
         queryset = self.model.objects\
             .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
-
         return queryset
