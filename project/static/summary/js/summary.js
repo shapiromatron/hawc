@@ -337,9 +337,15 @@ VisualCollection.prototype = {
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
         };
-
-        return $el.html(tbl.getTbl());
-    }
+        $el.html(tbl.getTbl());
+        this.setTableSorting($el.find('table'));
+        return $el;
+    },
+    setTableSorting($el){
+        var name = $el.find('thead tr th')[0];
+        name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
+        new Tablesort($el[0]);
+    },
 }
 
 
