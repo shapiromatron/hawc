@@ -640,6 +640,10 @@ class TagsUpdate(BaseUpdate):
                 tag = get_object_or_404(models.ReferenceFilterTag, pk=self.request.POST.get('pk', -1))
                 offset = int(self.request.POST.get('offset'))
                 tag.move_within_parent(self.assessment.pk, offset)
+            elif status == 'rename':
+                tag = get_object_or_404(models.ReferenceFilterTag, pk=self.request.POST.get('pk', -1))
+                assert tag.id in models.ReferenceFilterTag.get_descendants_pks(self.object.id)
+                tag.rename(self.request.POST.get('name'))
             else:
                 raise Exception()
         except:
