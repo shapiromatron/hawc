@@ -341,7 +341,7 @@ VisualCollection.prototype = {
         this.setTableSorting($el.find('table'));
         return $el;
     },
-    setTableSorting($el){
+    setTableSorting: function($el){
         var name = $el.find('thead tr th')[0];
         name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
         new Tablesort($el[0]);
