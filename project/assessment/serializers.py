@@ -31,14 +31,19 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
         model = models.DoseUnits
 
 
-class EndpointCountSerializer(serializers.Serializer):
+class EndpointItemSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     type = serializers.CharField()
+    url = serializers.CharField()
+
+
+class EndpointCountSerializer(serializers.Serializer):
+    endpoint = EndpointItemSerializer()
+    outcome = EndpointItemSerializer()
+    ivendpoint = EndpointItemSerializer()
 
 
 class AssessmentEndpointSerializer(serializers.Serializer):
     name = serializers.CharField()
     id = serializers.IntegerField()
-    endpoint = EndpointCountSerializer()
-    outcome = EndpointCountSerializer()
-    ivendpoint = EndpointCountSerializer()
+    items = EndpointCountSerializer()
