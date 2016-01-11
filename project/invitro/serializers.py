@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 from study.serializers import StudySerializer
+from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
@@ -111,5 +112,11 @@ class MiniIVEndpointSerializer(IVEndpointSerializer):
 class IVExperimentSerializerFull(IVExperimentSerializer):
     endpoints = MiniIVEndpointSerializer(many=True)
 
+
+class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IVEndpoint
+        fields = ('id', 'name', 'assay_type', 'short_description', 'effect')
 
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

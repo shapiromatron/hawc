@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register(r'chemical', api.IVChemical, base_name="chemical")
 router.register(r'experiment', api.IVExperiment, base_name="experiment")
 router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
+router.register(r'cleanup', api.Cleanup, base_name='cleanup')
 
 urlpatterns = [
 
