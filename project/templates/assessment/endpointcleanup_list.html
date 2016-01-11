@@ -11,5 +11,16 @@
 
 {% block content %}
     <div id="root"></div>
-      {% render_bundle 'main' %}
+    {% render_bundle 'main' %}
 {% endblock %}
+
+{% block extra_js %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "epi_cleanup": "{% url 'epi:api:cleanup' %}",
+        "animal_cleanup": "{% url 'animal:api:cleanup' %}",
+        "iv_cleanup": "{% url 'in-vitro:api:cleanup' %}",
+        "csrf": "{% csrf_token %}"
+    }
+</script>
+{% endblock extra_js %}
