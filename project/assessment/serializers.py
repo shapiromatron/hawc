@@ -37,13 +37,7 @@ class EndpointItemSerializer(serializers.Serializer):
     url = serializers.CharField()
 
 
-class EndpointCountSerializer(serializers.Serializer):
-    endpoint = EndpointItemSerializer()
-    outcome = EndpointItemSerializer()
-    ivendpoint = EndpointItemSerializer()
-
-
 class AssessmentEndpointSerializer(serializers.Serializer):
     name = serializers.CharField()
     id = serializers.IntegerField()
-    items = EndpointCountSerializer()
+    items = serializers.ListField(child=EndpointItemSerializer())

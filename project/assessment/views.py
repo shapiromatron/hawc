@@ -467,23 +467,23 @@ class AssessmentEndpointList(views.AssessmentViewset):
         instance = self.filter_queryset(self.get_queryset())[0]
         base_url = "{}://{}{}".format(request.scheme, request.get_host(), request.path)
         query_string = request.META.get('QUERY_STRING')
-        instance.items = {}
+        instance.items = []
 
-        instance.items['endpoint'] = {
+        instance.items.append({
             'count': instance.endpoint_count,
             'type': "animal bioassay endpoints",
             'url': "{}{}{}".format(base_url, 'ani/', query_string),
-        }
-        instance.items['outcome'] = {
+        })
+        instance.items.append({
             "count": instance.outcome_count,
             "type": "epidemiological outcomes assessed",
             'url': "{}{}{}".format(base_url, 'epi/', query_string)
-        }
-        instance.items['ivendpoint'] = {
+        })
+        instance.items.append({
             "count": instance.ivendpoint_count,
             "type": "in vitro endpoints",
             'url': "{}{}{}".format(base_url, 'invitro/', query_string),
-        }
+        })
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
