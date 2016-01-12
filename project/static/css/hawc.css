@@ -522,3 +522,14 @@ table th.sort-up:after {
   border-bottom:none;
   border-width:4px 4px 0;
   }
+
+
+/*
+Print styling
+*/
+@media print {
+  .no-print {
+    display: none !important;
+    height: 0;
+  }
+}
