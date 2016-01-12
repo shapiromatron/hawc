@@ -34,5 +34,5 @@ urlpatterns = [
         views.EndpointsReport.as_view(),
         name='endpoints_report'),
 
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(router.urls, namespace='api')),
 ]

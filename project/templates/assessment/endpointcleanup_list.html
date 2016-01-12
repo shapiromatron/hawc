@@ -14,13 +14,13 @@
     {% render_bundle 'main' %}
 {% endblock %}
 
-{% block extra_js %}
+{% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "epi_cleanup": "{% url 'epi:api:cleanup' %}",
-        "animal_cleanup": "{% url 'animal:api:cleanup' %}",
-        "iv_cleanup": "{% url 'in-vitro:api:cleanup' %}",
+        "epi_cleanup": "{% url 'epi:api:cleanup-list' %}",
+        "animal_cleanup": "{% url 'animal:api:cleanup-list' %}",
+        "iv_cleanup": "{% url 'invitro:api:cleanup-list' %}",
         "csrf": "{% csrf_token %}"
     }
 </script>
-{% endblock extra_js %}
+{% endblock extrajs %}
