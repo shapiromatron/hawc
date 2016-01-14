@@ -209,7 +209,7 @@ class IVEndpointForm(forms.ModelForm):
             inputs = {
                 'legend_text': u'Create new endpoint',
                 'help_text': self.HELP_TEXT_CREATE,
-                'cancel_url': self.instance.study.get_absolute_url()
+                'cancel_url': self.instance.experiment.get_absolute_url()
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -249,4 +249,11 @@ IVEndpointGroupFormset = modelformset_factory(
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
     can_delete=False,
-    extra=0)
+    extra=1)
+
+BlankIVEndpointGroupFormset = modelformset_factory(
+    models.IVEndpointGroup,
+    form=IVEndpointGroupForm,
+    formset=BaseIVEndpointGroupFormset,
+    can_delete=False,
+    extra=1)

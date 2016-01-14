@@ -1,7 +1,7 @@
 from assessment.models import Assessment
 from utils.views import (
     GenerateReport, BaseList, BaseDetail, BaseCreate,
-    BaseUpdate, BaseUpdateWithFormset, BaseDelete,
+    BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
 )
 
 from study.models import Study
@@ -90,6 +90,36 @@ class CellTypeDelete(BaseDelete):
 
 
 # Endpoint
+class EndpointCreate(BaseCreateWithFormset):
+    success_message = 'Endpoint created.'
+    parent_model = models.IVExperiment
+    parent_template_name = 'experiment'
+    model = models.IVEndpoint
+    form_class = forms.IVEndpointForm
+    formset_factory = forms.IVEndpointGroupFormset
+
+    def get_form_kwargs(self):
+        kwargs = super(EndpointCreate, self).get_form_kwargs()
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def post_object_save(self, form, formset):
+        dose_group_id = 0
+        for form in formset.forms:
+            if form in formset.extra_forms and not form.has_changed():
+                continue  # skip unused extra forms in formset
+            form.instance.endpoint = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.dose_group_id = dose_group_id
+                if form.has_changed() is False:
+                    form.instance.save()  # ensure new dose_group_id saved to db
+                dose_group_id += 1
+
+    def build_initial_formset_factory(self):
+        return forms.BlankIVEndpointGroupFormset(
+            queryset=models.IVEndpointGroup.objects.none())
+
+
 class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
@@ -107,6 +137,8 @@ class EndpointUpdate(BaseUpdateWithFormset):
     def post_object_save(self, form, formset):
         dose_group_id = 0
         for form in formset.forms:
+            if form in formset.extra_forms and not form.has_changed():
+                continue  # skip unused extra forms in formset
             form.instance.endpoint = self.object
             if form.is_valid() and form not in formset.deleted_forms:
                 form.instance.dose_group_id = dose_group_id

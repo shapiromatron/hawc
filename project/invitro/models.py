@@ -212,6 +212,9 @@ class IVExperiment(models.Model):
     def get_delete_url(self):
         return reverse('invitro:experiment_delete', args=[str(self.id)])
 
+    def get_endpoint_create_url(self):
+        return reverse('invitro:endpoint_create', args=[str(self.id)])
+
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 

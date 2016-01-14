@@ -22,13 +22,18 @@
     </div>
 
     <div id="egFormset">
-        <legend>Endpoint groups</legend>
-        {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+        <legend>Endpoint groups
+            <button class="pull-right btn btn-primary"
+                    title="Add new group"
+                    type="button"
+                    id="addFormToFormset">+</button>
+        </legend>
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
     </div>
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}
+    {{ form.media }}
     <script type="text/javascript">
         $(document).on('ready', function(){
             new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});

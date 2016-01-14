@@ -68,6 +68,10 @@ urlpatterns = [
         views.EndpointsList.as_view(),
         name='endpoint_list'),
 
+    url(r'^experiment/(?P<pk>\d+)/create-endpoint/$',
+        views.EndpointCreate.as_view(),
+        name='endpoint_create'),
+
     url(r'^endpoint/(?P<pk>\d+)/$',
         views.EndpointDetail.as_view(),
         name='endpoint_detail'),
