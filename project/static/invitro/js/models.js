@@ -19,8 +19,9 @@ IVChemical.prototype = {
         var el = $("<h1>").text(this.data.name);
         if (window.canEdit){
             var urls = [
+                'Chemical editing',
                 {url: this.data.url_update, text: 'Update'},
-                {url: this.data.url_delete, text: 'Delete'}
+                {url: this.data.url_delete, text: 'Delete'},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
@@ -81,8 +82,9 @@ IVCellType.prototype = {
         var el = $("<h1>").text(this.data.title);
         if (window.canEdit){
             var urls = [
+                'Cell type editing',
                 {url: this.data.url_update, text: 'Update'},
-                {url: this.data.url_delete, text: 'Delete'}
+                {url: this.data.url_delete, text: 'Delete'},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
@@ -151,8 +153,11 @@ IVExperiment.prototype = {
         var el = $("<h1>").text(this.data.name);
         if (window.canEdit){
             var urls = [
+                'Experiment editing',
                 {url: this.data.url_update, text: 'Update'},
-                {url: this.data.url_delete, text: 'Delete'}
+                {url: this.data.url_delete, text: 'Delete'},
+                'Endpoint editing',
+                {url: this.data.url_create_endpoint, text: 'Create endpoint'},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
@@ -265,7 +270,10 @@ IVEndpoint.prototype = {
     build_title: function(){
         var el = $("<h1>").text(this._title_text());
         if (window.canEdit){
-            var urls = [{url: this.data.url_update, text: 'Update'}];
+            var urls = [
+                'Endpoint editing',
+                {url: this.data.url_update, text: 'Update'},
+            ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;

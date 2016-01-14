@@ -393,7 +393,7 @@ Visual.prototype = {
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),
             this.data.last_updated.toString()
-        ]
+        ];
     },
     displayAsPage: function($el, options){
         throw "Abstract method; requires implementation";
@@ -403,8 +403,9 @@ Visual.prototype = {
     },
     addActionsMenu: function(){
         return HAWCUtils.pageActionsButton([
-           {url: this.data.url_update, text: "Update visualization"},
-           {url: this.data.url_delete, text: "Delete visualization"}
+            'Visualization editing',
+            {url: this.data.url_update, text: "Update"},
+            {url: this.data.url_delete, text: "Delete"},
         ]);
     },
     object_hyperlink: function(){

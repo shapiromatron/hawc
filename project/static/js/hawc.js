@@ -368,7 +368,13 @@ var HAWCUtils = {
     pageActionsButton: function(items){
         var $menu = $('<ul class="dropdown-menu">');
         items.forEach(function(d){
-            $menu.append('<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls||"", d.text));
+            if(d instanceof Object){
+                $menu.append('<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls||"", d.text));
+            } else if (typeof d === "string"){
+                $menu.append('<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d));
+            } else {
+                console.error('unknown input type');
+            }
         });
         return $('<div class="btn-group pull-right">')
             .append("<a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>Actions <span class='caret'></span></a>")
