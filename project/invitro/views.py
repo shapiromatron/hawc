@@ -8,6 +8,7 @@ from study.models import Study
 from . import models, forms, exports
 
 
+# Experiment
 class ExperimentCreate(BaseCreate):
     success_message = "Experiment created."
     parent_model = Study
@@ -34,6 +35,7 @@ class ExperimentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
+# Chemical
 class ChemicalCreate(BaseCreate):
     success_message = "Chemical created."
     parent_model = Study
@@ -60,6 +62,7 @@ class ChemicalDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
+# Cell type
 class CellTypeCreate(BaseCreate):
     success_message = "Cell-type created."
     parent_model = Study
@@ -86,6 +89,7 @@ class CellTypeDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
+# Endpoint
 class EndpointDetail(BaseDetail):
     model = models.IVEndpoint
 
