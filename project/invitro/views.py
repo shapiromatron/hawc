@@ -1,10 +1,19 @@
 from assessment.models import Assessment
 from utils.views import (
-    GenerateReport, BaseList, BaseDetail,
     BaseUpdate, BaseUpdateWithFormset
+    GenerateReport, BaseList, BaseDetail, BaseCreate,
 )
 
+from study.models import Study
 from . import models, forms, exports
+
+
+class ExperimentCreate(BaseCreate):
+    success_message = "Experiment created."
+    parent_model = Study
+    parent_template_name = 'study'
+    model = models.IVExperiment
+    form_class = forms.IVExperimentForm
 
 
 class ExperimentDetail(BaseDetail):
@@ -17,6 +26,14 @@ class ExperimentUpdate(BaseUpdate):
     form_class = forms.IVExperimentForm
 
 
+class ChemicalCreate(BaseCreate):
+    success_message = "Chemical created."
+    parent_model = Study
+    parent_template_name = 'study'
+    model = models.IVChemical
+    form_class = forms.IVChemicalForm
+
+
 class ChemicalDetail(BaseDetail):
     model = models.IVChemical
 
@@ -25,6 +42,14 @@ class ChemicalUpdate(BaseUpdate):
     success_message = "Chemical updated."
     model = models.IVChemical
     form_class = forms.IVChemicalForm
+
+
+class CellTypeCreate(BaseCreate):
+    success_message = "Cell-type created."
+    parent_model = Study
+    parent_template_name = 'study'
+    model = models.IVCellType
+    form_class = forms.IVCellTypeForm
 
 
 class CellTypeDetail(BaseDetail):

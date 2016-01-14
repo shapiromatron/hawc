@@ -47,6 +47,11 @@
               <li class="disabled"><a tabindex="-1" href="#">Study Population</a></li>
               <li><a href="{% url 'epi:sp_create' object.pk %}">Create new</a></li>
               <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
+            {% elif object.study_type == 2 %}
+              <li class="disabled"><a tabindex="-1" href="#">In-vitro analysis</a></li>
+              <li><a href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a></li>
+              <li><a href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a></li>
+              <li><a href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a></li>
             {% elif object.study_type == 4 %}
               <li class="disabled"><a tabindex="-1" href="#">Meta-analysis</a></li>
               <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new</a></li>

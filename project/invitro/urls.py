@@ -13,6 +13,10 @@ router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
 urlpatterns = [
 
     # experiment
+    url(r'^study/(?P<pk>\d+)/create-experiment/$',
+        views.ExperimentCreate.as_view(),
+        name='experiment_create'),
+
     url(r'^experiment/(?P<pk>\d+)/$',
         views.ExperimentDetail.as_view(),
         name='experiment_detail'),
@@ -22,6 +26,10 @@ urlpatterns = [
         name='experiment_update'),
 
     # chemical
+    url(r'^study/(?P<pk>\d+)/create-chemical/$',
+        views.ChemicalCreate.as_view(),
+        name='chemical_create'),
+
     url(r'^chemical/(?P<pk>\d+)/$',
         views.ChemicalDetail.as_view(),
         name='chemical_detail'),
@@ -31,6 +39,10 @@ urlpatterns = [
         name='chemical_update'),
 
     # cell types
+    url(r'^study/(?P<pk>\d+)/create-cell-type/$',
+        views.CellTypeCreate.as_view(),
+        name='celltype_create'),
+
     url(r'^cell-type/(?P<pk>\d+)/$',
         views.CellTypeDetail.as_view(),
         name='celltype_detail'),
