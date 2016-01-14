@@ -18,7 +18,10 @@ IVChemical.prototype = {
     build_title: function(){
         var el = $("<h1>").text(this.data.name);
         if (window.canEdit){
-            var urls = [{url: this.data.url_update, text: 'Update'}];
+            var urls = [
+                {url: this.data.url_update, text: 'Update'},
+                {url: this.data.url_delete, text: 'Delete'}
+            ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;
@@ -77,7 +80,10 @@ IVCellType.prototype = {
     build_title: function(){
         var el = $("<h1>").text(this.data.title);
         if (window.canEdit){
-            var urls = [{url: this.data.url_update, text: 'Update'}];
+            var urls = [
+                {url: this.data.url_update, text: 'Update'},
+                {url: this.data.url_delete, text: 'Delete'}
+            ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;
@@ -144,7 +150,10 @@ IVExperiment.prototype = {
     build_title: function(){
         var el = $("<h1>").text(this.data.name);
         if (window.canEdit){
-            var urls = [{url: this.data.url_update, text: 'Update'}];
+            var urls = [
+                {url: this.data.url_update, text: 'Update'},
+                {url: this.data.url_delete, text: 'Delete'}
+            ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;

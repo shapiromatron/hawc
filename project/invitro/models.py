@@ -56,6 +56,9 @@ class IVChemical(models.Model):
     def get_update_url(self):
         return reverse('invitro:chemical_update', args=[str(self.id)])
 
+    def get_delete_url(self):
+        return reverse('invitro:chemical_delete', args=[str(self.id)])
+
     def get_assessment(self):
         return self.study.assessment
 
@@ -119,6 +122,9 @@ class IVCellType(models.Model):
 
     def get_update_url(self):
         return reverse('invitro:celltype_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:celltype_delete', args=[str(self.id)])
 
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
@@ -202,6 +208,9 @@ class IVExperiment(models.Model):
 
     def get_update_url(self):
         return reverse('invitro:experiment_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:experiment_delete', args=[str(self.id)])
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)

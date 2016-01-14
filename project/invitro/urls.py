@@ -25,6 +25,10 @@ urlpatterns = [
         views.ExperimentUpdate.as_view(),
         name='experiment_update'),
 
+    url(r'^experiment/(?P<pk>\d+)/delete/$',
+        views.ExperimentDelete.as_view(),
+        name='experiment_delete'),
+
     # chemical
     url(r'^study/(?P<pk>\d+)/create-chemical/$',
         views.ChemicalCreate.as_view(),
@@ -38,6 +42,10 @@ urlpatterns = [
         views.ChemicalUpdate.as_view(),
         name='chemical_update'),
 
+    url(r'^chemical/(?P<pk>\d+)/delete/$',
+        views.ChemicalDelete.as_view(),
+        name='chemical_delete'),
+
     # cell types
     url(r'^study/(?P<pk>\d+)/create-cell-type/$',
         views.CellTypeCreate.as_view(),
@@ -50,6 +58,10 @@ urlpatterns = [
     url(r'^cell-type/(?P<pk>\d+)/update/$',
         views.CellTypeUpdate.as_view(),
         name='celltype_update'),
+
+    url(r'^cell-type/(?P<pk>\d+)/delete/$',
+        views.CellTypeDelete.as_view(),
+        name='celltype_delete'),
 
     # endpoint
     url(r'^endpoints/(?P<pk>\d+)/$',

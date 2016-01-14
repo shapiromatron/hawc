@@ -1,7 +1,7 @@
 from assessment.models import Assessment
 from utils.views import (
-    BaseUpdate, BaseUpdateWithFormset
     GenerateReport, BaseList, BaseDetail, BaseCreate,
+    BaseUpdate, BaseUpdateWithFormset, BaseDelete,
 )
 
 from study.models import Study
@@ -26,6 +26,14 @@ class ExperimentUpdate(BaseUpdate):
     form_class = forms.IVExperimentForm
 
 
+class ExperimentDelete(BaseDelete):
+    success_message = "Experiment deleted."
+    model = models.IVExperiment
+
+    def get_success_url(self):
+        return self.object.study.get_absolute_url()
+
+
 class ChemicalCreate(BaseCreate):
     success_message = "Chemical created."
     parent_model = Study
@@ -44,6 +52,14 @@ class ChemicalUpdate(BaseUpdate):
     form_class = forms.IVChemicalForm
 
 
+class ChemicalDelete(BaseDelete):
+    success_message = "Chemical deleted."
+    model = models.IVChemical
+
+    def get_success_url(self):
+        return self.object.study.get_absolute_url()
+
+
 class CellTypeCreate(BaseCreate):
     success_message = "Cell-type created."
     parent_model = Study
@@ -60,6 +76,14 @@ class CellTypeUpdate(BaseUpdate):
     success_message = "Cell-type updated."
     model = models.IVCellType
     form_class = forms.IVCellTypeForm
+
+
+class CellTypeDelete(BaseDelete):
+    success_message = "Cell-type deleted."
+    model = models.IVCellType
+
+    def get_success_url(self):
+        return self.object.study.get_absolute_url()
 
 
 class EndpointDetail(BaseDetail):
