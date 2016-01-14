@@ -328,6 +328,7 @@ class IVEndpoint(BaseEndpoint):
         choices=VARIANCE_TYPE_CHOICES)
     response_units = models.CharField(
         max_length=64,
+        blank=True,
         verbose_name="Response units")
     values_estimated = models.BooleanField(
         default=False,
