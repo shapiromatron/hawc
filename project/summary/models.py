@@ -400,6 +400,12 @@ class DataPivot(models.Model):
             .select_related('assessment')\
             .order_by('assessment__name', 'title')
 
+    @classmethod
+    def reset_row_overrides(cls, settings):
+        settings_as_json = json.loads(settings)
+        settings_as_json['row_overrides'] = []
+        return json.dumps(settings_as_json)
+
 
 class DataPivotUpload(DataPivot):
     file = models.FileField(

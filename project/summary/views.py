@@ -224,6 +224,13 @@ class DataPivotNew(BaseCreate):
             kwargs={'pk': self.assessment.pk, 'slug': self.object.slug}
         )
 
+    def get_form_kwargs(self):
+        kwargs = super(DataPivotNew, self).get_form_kwargs()
+        if self.request.GET.get('reset_row_overrides'):
+            kwargs['initial']['settings'] = \
+                models.DataPivot.reset_row_overrides(kwargs['initial']['settings'])
+        return kwargs
+
 
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
@@ -269,6 +276,9 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
             url = reverse_lazy('summary:dp_new-query', kwargs={"pk": self.assessment.id})
 
         url += "?initial={0}".format(dp.pk)
+
+        if form.cleaned_data['reset_row_overrides']:
+            url += '&reset_row_overrides=1'
 
         return HttpResponseRedirect(url)
 
