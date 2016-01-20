@@ -3,11 +3,11 @@ import json
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from assessment.models import Assessment
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.views import (BaseList, BaseCreate, BaseDetail, BaseUpdate, BaseDelete)
+from utils.views import (BaseList, BaseCreate, BaseDetail, BaseUpdate, BaseDelete, TeamMemberOrHigherMixin)
 
 from . import forms, models
 
@@ -247,25 +247,29 @@ class DataPivotFileNew(DataPivotNew):
         return context
 
 
-class DataPivotCopyAsNewSelector(BaseDetail):
+class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
-    model = Assessment
     template_name = 'summary/datapivot_copy_selector.html'
+    form_class = forms.DataPivotSelectorForm
 
-    def get_context_data(self, **kwargs):
-        context = super(DataPivotCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.DataPivotSelectorForm(user=self.request.user)
-        return context
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
 
-    def post(self, request, *args, **kwargs):
-        self.object = super(DataPivotCopyAsNewSelector, self).get_object()
-        dp = get_object_or_404(models.DataPivot, pk=self.request.POST.get('dp'))
+    def get_form_kwargs(self):
+        kwargs = super(DataPivotCopyAsNewSelector, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        dp = form.cleaned_data['dp']
+
         if hasattr(dp, 'datapivotupload'):
-            url = reverse_lazy('summary:dp_new-file', kwargs={"pk": self.assessment.pk})
+            url = reverse_lazy('summary:dp_new-file', kwargs={"pk": self.assessment.id})
         else:
-            url = reverse_lazy('summary:dp_new-query', kwargs={"pk": self.assessment.pk})
+            url = reverse_lazy('summary:dp_new-query', kwargs={"pk": self.assessment.id})
 
         url += "?initial={0}".format(dp.pk)
+
         return HttpResponseRedirect(url)
 
 
