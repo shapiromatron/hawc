@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import fetch from 'isomorphic-fetch';
 import * as types from '../constants/ActionTypes';
 import h from '../utils/helpers';
 
@@ -66,7 +67,7 @@ export function fetchObjectIfNeeded(id){
         let state = getState();
         if (state.assessment.isFetching) return;
         dispatch(requestAssessment());
-        return fetch(`${state.config.assessment}/?assessment_id=${id}/`, h.fetchGet)
+        return fetch(`${state.apiUrl}/${state.config.assessment}?assessment_id=${id}`, h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObject(json)))
             .catch((ex) => console.error('Assessment parsing failed', ex));

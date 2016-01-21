@@ -2,30 +2,30 @@ import * as types from '../constants/ActionTypes';
 import _ from 'underscore';
 
 let defaultState = {
-    isFetching: false,
     itemsLoaded: false,
+    isFetching: false,
     items: [],
     editObject: null,
     editObjectErrors: null,
-};
+}
 
 export default function (state=defaultState, action){
     let index, items;
     switch (action.type){
 
-    case types.AS_REQUEST:
+    case types.EP_REQUEST:
         return Object.assign({}, state, {
             isFetching: true,
         });
 
-    case types.AS_RECEIVE_OBJECTS:
+    case types.EP_RECEIVE_OBJECTS:
         return Object.assign({}, state, {
             items: action.items,
             isFetching: false,
             itemsLoaded: true,
         });
 
-    case types.AS_RECEIVE_OBJECT:
+    case types.EP_RECEIVE_OBJECT:
         index = state.items.indexOf(
             _.findWhere(state.items, {id: action.item.id})
         );
@@ -46,7 +46,7 @@ export default function (state=defaultState, action){
             items,
         });
 
-    case types.AS_DELETE_OBJECT:
+    case types.EP_DELETE_OBJECT:
         index = state.items.indexOf(
             _.findWhere(state.items, {id: action.id})
         );
@@ -62,19 +62,19 @@ export default function (state=defaultState, action){
             items,
         });
 
-    case types.AS_RESET_EDIT_OBJECT:
+    case types.EP_RESET_EDIT_OBJECT:
         return Object.assign({}, state, {
             editObject: null,
             editObjectErrors: {},
         });
 
-    case types.AS_CREATE_EDIT_OBJECT:
+    case types.EP_CREATE_EDIT_OBJECT:
         return Object.assign({}, state, {
             editObject: action.object,
             editObjectErrors: {},
         });
 
-    case types.AS_RECEIVE_EDIT_ERRORS:
+    case types.EP_RECEIVE_EDIT_ERRORS:
         return Object.assign({}, state, {
             editObjectErrors: action.errors,
         });
