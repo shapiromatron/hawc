@@ -465,8 +465,8 @@ class AssessmentEndpointList(views.AssessmentViewset):
 
     def list(self, request, *args, **kwargs):
         instance = self.filter_queryset(self.get_queryset())[0]
-        base_url = "{}://{}{}".format(request.scheme, request.get_host(), request.path)
-        query_string = request.META.get('QUERY_STRING')
+        base_url = "{}://{}/".format(request.scheme, request.get_host())
+        query_string = "api/cleanup/?{}".format(request.META.get('QUERY_STRING'))
         instance.items = []
 
         instance.items.append({

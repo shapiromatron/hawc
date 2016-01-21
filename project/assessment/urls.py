@@ -113,7 +113,7 @@ urlpatterns = [
 
     # api views
     url(r'^api/endpoints/$',
-        views.AssessmentEndpointList.as_view({ 'get': 'list'}),
+        views.AssessmentEndpointList.as_view({'get': 'list'}),
         name='endpoint_type_list'),
 ]
 
