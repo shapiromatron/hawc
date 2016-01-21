@@ -51,6 +51,7 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateMode
 
     @list_route(methods=['get'])
     def fields(self, request, format=None):
+        """ /$model/api/cleanup/fields/?assessment_id=$id """
         cleanup_fields = self.model.text_cleanup_fields()
         return Response({'text_cleanup_fields': cleanup_fields})
 
