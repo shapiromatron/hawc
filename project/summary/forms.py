@@ -507,7 +507,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
     class Meta:
         model = models.DataPivotQuery
-        fields = ('evidence_type', 'export_style', 'title',
+        fields = ('evidence_type', 'export_style', 'title', 'preferred_units',
                   'slug', 'settings', 'caption',
                   'published_only', 'prefilters')
 

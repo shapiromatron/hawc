@@ -43,5 +43,5 @@ urlpatterns = [
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
 
-    url(r'^api/', include(router.urls))
+    url(r'^api/', include(router.urls, namespace='api'))
 ]
