@@ -27,21 +27,11 @@ describe('async actions', () => {
         nock('http://127.0.0.1:9000')
             .get('/assessment/api/endpoints/?assessment_id=57')
             .reply(200, {
-                "name": "PFOA/PFOS Exposure and Immunotoxicity",
-                "id": 57,
+                "name": "test assessment",
+                "id": 0,
                 "items": [
                     {
-                        "count": 2915,
-                        "type": "animal bioassay endpoints",
-                        "url": "http://127.0.0.1:9000/ani/api/cleanup/?assessment_id=57"
-                    },
-                    {
-                        "count": 334,
-                        "type": "epidemiological outcomes assessed",
-                        "url": "http://127.0.0.1:9000/epi/api/cleanup/?assessment_id=57"
-                    },
-                    {
-                        "count": 0,
+                        "count": 1,
                         "type": "in vitro endpoints",
                         "url": "http://127.0.0.1:9000/invitro/api/cleanup/?assessment_id=57"
                     },
@@ -51,21 +41,11 @@ describe('async actions', () => {
         const expectedActions = [
             { type: types.AS_REQUEST },
             { type: types.AS_SUCCESS, item: {
-                "name": "PFOA/PFOS Exposure and Immunotoxicity",
-                "id": 57,
+                "name": "test assessment",
+                "id": 0,
                 "items": [
                     {
-                        "count": 2915,
-                        "type": "animal bioassay endpoints",
-                        "url": "http://127.0.0.1:9000/ani/api/cleanup/?assessment_id=57"
-                    },
-                    {
-                        "count": 334,
-                        "type": "epidemiological outcomes assessed",
-                        "url": "http://127.0.0.1:9000/epi/api/cleanup/?assessment_id=57"
-                    },
-                    {
-                        "count": 0,
+                        "count": 1,
                         "type": "in vitro endpoints",
                         "url": "http://127.0.0.1:9000/invitro/api/cleanup/?assessment_id=57"
                     },

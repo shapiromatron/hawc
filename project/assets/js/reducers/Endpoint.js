@@ -7,7 +7,7 @@ let defaultState = {
     items: [],
     editObject: null,
     editObjectErrors: null,
-}
+};
 
 export default function (state=defaultState, action){
     let index, items;
@@ -39,10 +39,11 @@ export default function (state=defaultState, action){
             items = [
                 ...state.items,
                 action.item,
-            ]
+            ];
         }
         return Object.assign({}, state, {
             isFetching: false,
+            itemsLoaded: true,
             items,
         });
 

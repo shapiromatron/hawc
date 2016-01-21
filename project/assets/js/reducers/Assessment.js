@@ -39,10 +39,11 @@ export default function (state=defaultState, action){
             items = [
                 ...state.items,
                 action.item,
-            ]
+            ];
         }
         return Object.assign({}, state, {
             isFetching: false,
+            itemsLoaded: true,
             items,
         });
 
@@ -56,7 +57,6 @@ export default function (state=defaultState, action){
                 ...state.items.slice(index + 1),
             ];
         }
-
         return Object.assign({}, state, {
             isFetching: false,
             items,
