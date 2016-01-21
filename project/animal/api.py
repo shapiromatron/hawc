@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from assessment.api.views import AssessmentViewset
+from assessment.api.views import AssessmentViewset, DoseUnitsViewset
 
 from . import models, serializers
 
@@ -34,3 +34,7 @@ class Endpoint(AssessmentViewset):
                 'effects',
                 'animal_group__dosed_animals__doses',
             )
+
+
+class DoseUnits(DoseUnitsViewset):
+    pass
