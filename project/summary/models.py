@@ -491,8 +491,8 @@ class DataPivotQuery(DataPivot):
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["animal_group__experiment__study__published"] = True
-            if self.units_id:
-                filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
+            if self.preferred_units:
+                filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == 1:  # Epidemiology
 
@@ -536,7 +536,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 export_format=format_,
                 filename='{}-animal-bioassay'.format(self.assessment),
-                dose=self.units
+                preferred_units=self.preferred_units
             )
 
         elif self.evidence_type == 1:  # Epidemiology
