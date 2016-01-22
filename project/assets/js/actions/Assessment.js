@@ -15,13 +15,6 @@ function receiveObject(item){
     };
 }
 
-function removeObject(id) {
-    return {
-        type: types.AS_DELETE_OBJECT,
-        id,
-    };
-}
-
 function releaseContent(){
     return {
         type: types.AS_RELEASE,
@@ -37,25 +30,6 @@ export function fetchObjectIfNeeded(id){
             .then((response) => response.json())
             .then((json) => dispatch(receiveObject(json)))
             .catch((ex) => console.error('Assessment parsing failed', ex));
-    };
-}
-
-export function deleteObject(id, cb){
-    cb = cb || h.noop;
-    return (dispatch, getState) => {
-        let state = getState(),
-            opts = h.fetchDelete(state.config.csrf);
-        return fetch(`${state.config.assessment}/?assessment_id=${id}/`, opts)
-            .then(function(response){
-                if (response.status === 204){
-                    dispatch(removeObject(id));
-                    cb(null);
-                } else {
-                    response.json()
-                        .then((json) => cb(json));
-                }
-            })
-            .catch((ex) => console.error('Analysis parsing failed', ex));
     };
 }
 

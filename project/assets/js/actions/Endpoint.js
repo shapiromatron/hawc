@@ -71,7 +71,7 @@ export function fetchModelIfNeeded(assessment_id){
     };
 }
 
-export function fetchObjectsIfNeeded() {
+export function fetchObjectsIfNeeded(assessment_id) {
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
@@ -108,8 +108,8 @@ export function patchObjects(ids, patch, cb){
     };
 }
 
-export function deleteObject(id, cb){
-    cb = cb || h.noop;
+export function deleteObject(assessment_id, id){
+    // cb = cb || h.noop;
     return (dispatch, getState) => {
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
@@ -119,10 +119,9 @@ export function deleteObject(id, cb){
             .then(function(response){
                 if (response.status === 204){
                     dispatch(removeObject(id));
-                    cb(null);
                 } else {
                     response.json()
-                        .then((json) => cb(json));
+                        .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
             .catch((ex) => console.error('Endpoint parsing failed', ex));
