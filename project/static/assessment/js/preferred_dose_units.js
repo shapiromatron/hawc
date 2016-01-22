@@ -1,48 +1,75 @@
-var DoseUnitsWidget = function(opts){
-    this.$el = $(opts.el);
-    this.$selected = null;
-    this.api = opts.api;
-    this.init();
+var DoseUnitsWidget = function(form, opts){
+    form.on('submit', this.handleFormSubmit.bind(this));
+    this.init(opts);
 };
 DoseUnitsWidget.prototype = {
-    init: function(){
-        var self = this;
-        this.$el.hide();
-        $.get(this.api, function(objects){
-            self.renderSelectors(objects);
-        });
+    init: function(opts){
+        this.$input = $(opts.el).hide();
+        this.$widgetDiv = $('#pduDiv');
+        this.$available = $('#pduAvailable');
+        this.$selected = $('#pduSelected');
+        $('#pduAdd').on('click', this.handleAdd.bind(this));
+        $('#pduRemove').on('click', this.handleRemove.bind(this));
+        $('#pduUp').on('click', this.handleUp.bind(this));
+        $('#pduDown').on('click', this.handleDown.bind(this));
+        $.get(opts.api, this.render.bind(this));
     },
-    renderSelectors(objects){
-        var $available = $('<select multiple="true" size="10" >'),
-            $selected = $('<select multiple="true" size="10" >');
-
-        // set available
-        objects.forEach(function(d){
-            $available.append('<option value="{0}">{1}</option>'.printf(d.id, d.name));
+    handleAdd(){
+        // add new units, after de-duping those already available.
+        var optsMap = {};
+        this.$available.find('option:selected').each(function(i, el){
+            optsMap[el.value] = el;
         });
-
-        //set selected
-        var objectsKeymap = _.indexBy(objects, 'id'),
-            ids = this.$el.val().split(',')
-            .filter(function(d){return d.length>0;})
-            .map(function(d){return parseInt(d);});
-
-        ids.forEach(function(d){
-            var dose = objectsKeymap[d];
-            $selected.append('<option value="{0}">{1}</option>'.printf(dose.id, dose.name));
+        this.$selected.find('option').each(function(i, el){
+            delete optsMap[el.value];
         });
-
-        //render on DOM
-        this.$el.parent().prepend($available, $selected);
-        this.$selected = $selected;
+        this.$selected.append($(_.values(optsMap)).clone());
+    },
+    handleRemove(){
+        this.$selected.find('option:selected').remove();
+    },
+    handleUp(){
+        this.$selected.find('option:selected')
+            .each(function(i, el){
+                var $el = $(el);
+                $el.insertBefore($el.prev());
+            });
+    },
+    handleDown(){
+        this.$selected.find('option:selected')
+            .get().reverse().forEach(function(el){
+                var $el = $(el);
+                $el.insertAfter($el.next());
+            });
     },
     handleFormSubmit(){
         var selected_ids = this.$selected.children()
                 .map(function(i, el){return parseInt(el.value);})
                 .get();
-        this.$el.val(selected_ids.join(','));
+        this.$input.val(selected_ids.join(','));
+        return true;
+    },
+    render(objects){
+        var self = this;
+
+        // set available
+        objects.forEach(function(d){
+            self.$available.append('<option value="{0}">{1}</option>'.printf(d.id, d.name));
+        });
+
+        //set selected
+        var objectsKeymap = _.indexBy(objects, 'id'),
+            ids = this.$input.val().split(',')
+                .filter(function(d){return d.length>0;})
+                .map(function(d){return parseInt(d);});
+
+        ids.forEach(function(d){
+            var dose = objectsKeymap[d];
+            self.$selected.append('<option value="{0}">{1}</option>'.printf(dose.id, dose.name));
+        });
+
+        //render on DOM
+        this.$input.parent().prepend(this.$widgetDiv);
+        this.$widgetDiv.show();
     }
 };
-
-// TODO - use a Django-template to render the template for this thingy. init should
-// bind to all the components here, don't waste time in jQuery building this stuff.

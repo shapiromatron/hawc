@@ -22,10 +22,9 @@
 {% endblock %}
 
 {% block content %}
-
+  {% include "assessment/preferred_dose_units_widget.html" %}
   {% crispy form %}
   {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
-
 {% endblock %}
 
 {% block extrajs %}
@@ -44,7 +43,7 @@
         });
       {% endif %}
 
-      var doseWidget = new DoseUnitsWidget({
+      var doseWidget = new DoseUnitsWidget($('form'), {
         api: "{% url 'animal:api:dose_units-list' %}",
         el: '#id_preferred_units',
       });
@@ -91,11 +90,6 @@
       }).trigger('change');
 
       togglePrefilterSelectorVisibility();
-
-      $('form').submit(function(e){
-        doseWidget.handleFormSubmit();
-        return true;
-      });
 
     });
   </script>
