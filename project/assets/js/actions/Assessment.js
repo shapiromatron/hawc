@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 import * as types from '../constants/ActionTypes';
 import h from '../utils/helpers';
 
-function requestAssessment(){
+function requestContent(){
     return {
         type: types.AS_REQUEST,
     };
@@ -26,7 +26,7 @@ export function fetchObjectIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
         if (state.assessment.isFetching) return;
-        dispatch(requestAssessment());
+        dispatch(requestContent());
         return fetch(`${state.apiUrl}/${state.config.assessment}?assessment_id=${id}`, h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObject(json)))

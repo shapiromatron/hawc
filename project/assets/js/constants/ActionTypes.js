@@ -4,20 +4,18 @@ export const RESET_ERROR_MESSAGE =      'RESET_ERROR_MESSAGE';
 
 // assessments
 export const AS_REQUEST =               'AS_REQUEST';
-export const AS_RECEIVE_OBJECTS =       'AS_RECEIVE_OBJECTS';
 export const AS_RECEIVE_OBJECT =        'AS_RECEIVE_OBJECT';
 export const AS_DELETE_OBJECT =         'AS_DELETE_OBJECT';
-export const AS_RESET_EDIT_OBJECT =     'AS_RESET_EDIT_OBJECT';
-export const AS_CREATE_EDIT_OBJECT =    'AS_CREATE_EDIT_OBJECT';
-export const AS_RECEIVE_EDIT_ERRORS =   'AS_RECEIVE_EDIT_ERRORS';
 
 // endpoints
 export const EP_REQUEST =               'EP_REQUEST';
 export const EP_RECEIVE_OBJECTS =       'EP_RECEIVE_OBJECTS';
 export const EP_RECEIVE_OBJECT =        'EP_RECEIVE_OBJECT';
+export const EP_RECEIVE_MODEL =         'EP_RECEIVE_MODEL';
 export const EP_DELETE_OBJECT =         'EP_DELETE_OBJECT';
 export const EP_RESET_EDIT_OBJECT =     'EP_RESET_EDIT_OBJECT';
 export const EP_CREATE_EDIT_OBJECT =    'EP_CREATE_EDIT_OBJECT';
+export const EP_PATCH_OBJECTS =         'EP_PATCH_OBJECTS';
 export const EP_RECEIVE_EDIT_ERRORS =   'EP_RECEIVE_EDIT_ERRORS';
 
 // endpoint type
