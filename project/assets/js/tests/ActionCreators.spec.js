@@ -52,7 +52,16 @@ describe('async actions', () => {
                 ]
             } },
         ];
-        const store = mockStore({ apiUrl: 'http://127.0.0.1:9000', config: { assessment: 'assessment/api/endpoints/'}, assessment: {} }, expectedActions, done);
+        const store = mockStore({
+            apiUrl: 'http://127.0.0.1:9000',
+            config: {
+                assessment: "assessment/api/endpoints/",
+                epi_cleanup: "epi/api/cleanup/",
+                animal_cleanup: "ani/api/cleanup/",
+                iv_cleanup: "in-vitro/api/cleanup/",
+                csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+            },
+            assessment: {} }, expectedActions, done);
         store.dispatch(actions.fetchObjectIfNeeded(57));
     });
 })

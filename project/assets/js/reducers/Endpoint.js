@@ -84,7 +84,7 @@ export default function (state=defaultState, action){
         });
 
     case types.EP_PATCH_OBJECTS:
-        let indexes, items;
+        let indexes;
         items = state.items;
         indexes = action.ids.map((id) => {
             return state.items.indexOf(
@@ -107,12 +107,15 @@ export default function (state=defaultState, action){
         }
         return Object.assign({}, state, {
             items,
-        })
+        });
 
     case types.EP_RECEIVE_EDIT_ERRORS:
         return Object.assign({}, state, {
             editObjectErrors: action.errors,
         });
+
+    case types.EP_RELEASE:
+        return Object.assign({}, defaultState);
 
     default:
         return state;

@@ -53,6 +53,9 @@ export default function (state=defaultState, action){
             items,
         });
 
+    case types.AS_RELEASE:
+        return Object.assign({}, defaultState);
+
     default:
         return state;
     }

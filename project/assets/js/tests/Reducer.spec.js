@@ -276,4 +276,42 @@ describe('endpointReducer', () => {
             editObjectErrors: {},
         });
     });
+
+    it('should revert to default state upon release', () => {
+        expect(endpointReducer({
+            itemsLoaded: true,
+            isFetching: false,
+            model: [
+                "system",
+                "organ",
+                "effect",
+                "effect_subtype",
+            ],
+            type: "system",
+            items: [
+                {
+                    "id": 10210,
+                    "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                    "system": "digestive system",
+                },
+                {
+                    "id": 10212,
+                    "name": "gross body weight (start of experiment)",
+                    "system": "systemic",
+                },
+            ],
+            editObject: {"system": "Digestive Systems"},
+            editObjectErrors: {},
+        }, {
+            type: types.EP_RELEASE,
+        })).to.deep.equal({
+            itemsLoaded: false,
+            isFetching: false,
+            model: null,
+            type: null,
+            items: [],
+            editObject: null,
+            editObjectErrors: {},
+        });
+    });
 });

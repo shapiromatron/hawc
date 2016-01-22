@@ -54,6 +54,9 @@ var helpers = {
         });
         return patch;
     },
+    getApiURL(host, base, id){
+        return `${host}/${base}?assessment_id=${id}`;
+    },
     getObjectURL(base, id){
         return `${base}${id}/`;
     },

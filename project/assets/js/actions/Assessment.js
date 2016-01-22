@@ -22,6 +22,12 @@ function removeObject(id) {
     };
 }
 
+function releaseContent(){
+    return {
+        type: types.AS_RELEASE,
+    };
+}
+
 export function fetchObjectIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
@@ -50,5 +56,11 @@ export function deleteObject(id, cb){
                 }
             })
             .catch((ex) => console.error('Analysis parsing failed', ex));
+    };
+}
+
+export function releaseAssessment(id){
+    return (dispatch) => {
+        dispatch(releaseContent());
     };
 }
