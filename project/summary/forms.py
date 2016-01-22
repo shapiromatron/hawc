@@ -518,7 +518,12 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (1, 'Epidemiology'),
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
+        self.fields['preferred_units'].required = False
         self.helper = self.setHelper()
+
+    def save(self, commit=True):
+        self.instance.preferred_units = self.cleaned_data.get('preferred_units', [])
+        return super(DataPivotQueryForm, self).save(commit=commit)
 
     def clean_export_style(self):
         evidence_type = self.cleaned_data['evidence_type']
