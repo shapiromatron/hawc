@@ -19,11 +19,19 @@ class CleanupFieldsFilter(InAssessmentFilter):
     Filters objects in Assessment on GET using InAssessmentFilter.
     Filters objects on ID on PATCH. If ID is not supplied in query_params,
     returns an empty queryset, as entire queryset is updated using Bulk Update.
+
+    IDs must be supplied in the form ?ids=10209,10210.
+
+    Catches AttributeError when `ids` is not supplied.
     """
     def filter_queryset(self, request, queryset, view):
         queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
         if view.action != 'list':
-            ids = request.query_params.getlist('id')
+            ids = request.query_params.get('ids')
+            try:
+                ids = ids.split(',')
+            except AttributeError as e:
+                ids = []
             filters = {'id__in': ids}
             queryset = queryset.filter(**filters)
 
