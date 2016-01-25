@@ -151,15 +151,26 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
     def _get_data_rows(self):
 
-        units = self.kwargs.get('dose', None)
+        preferred_units = self.kwargs.get('preferred_units', None)
 
         def get_doses_list(ser):
             # compact the dose-list to only one set of dose-units; using the
-            # selected dose-units if specified, else others
-            if units:
-                units_id = units.id
-            else:
+            # preferred units if available, else randomly get first available
+            units_id = None
+
+            if preferred_units:
+                available_units = set([
+                    d['dose_units']['id'] for
+                    d in ser['animal_group']['dosing_regime']['doses']
+                ])
+                for units in preferred_units:
+                    if units in available_units:
+                        units_id = units
+                        break
+
+            if units_id is None:
                 units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
+
             return [
                 d for d in ser['animal_group']['dosing_regime']['doses']
                 if units_id == d['dose_units']['id']
@@ -248,8 +259,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 row.extend([None]*5)
 
             # BMD information
-            if ser['BMD'] and units and ser['BMD'].get('outputs')\
-                    and ser['BMD']['dose_units_id'] == units.id:
+            if ser['BMD'] and preferred_units and ser['BMD'].get('outputs')\
+                    and ser['BMD']['dose_units_id'] in preferred_units:
                 row.extend([
                     ser['BMD']['outputs']['model_name'],
                     ser['BMD']['outputs']['BMDL'],
@@ -312,7 +323,7 @@ class EndpointSummary(FlatFileExporter):
 
         def getDoseUnits(doses):
             return set(sorted([
-               d['dose_units']['name'] for d in doses
+                d['dose_units']['name'] for d in doses
             ]))
 
         def getDoses(doses, unit):

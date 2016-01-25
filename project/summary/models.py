@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
@@ -442,13 +443,19 @@ class DataPivotQuery(DataPivot):
         help_text="The export style changes the level at which the "
                   "data are aggregated, and therefore which columns and types "
                   "of data are presented in the export, for use in the visual.")
-    units = models.ForeignKey(
-        DoseUnits,
-        blank=True,
-        null=True,
-        help_text="If kept-blank, dose-units will be random for each "
-                  "endpoint presented. This setting may used for comparing "
-                  "percent-response, where dose-units are not needed.")
+    # Implementation-note: use ArrayField to save DoseUnits ManyToMany because
+    # order is important and it would be a much larger implementation to allow
+    # copying and saving dose-units- dose-units are rarely deleted and this
+    # implementation shouldn't cause issues with deletions because should be
+    # used primarily with id__in style queries.
+    preferred_units = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        help_text="List of preferred dose-values, in order of preference. "
+                  "If empty, dose-units will be random for each endpoint "
+                  "presented. This setting may used for comparing "
+                  "percent-response, where dose-units are not needed, or for "
+                  "creating one plot similar, but not identical, dose-units.")
     prefilters = models.TextField(
         default="{}")
     published_only = models.BooleanField(
@@ -484,8 +491,8 @@ class DataPivotQuery(DataPivot):
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["animal_group__experiment__study__published"] = True
-            if self.units_id:
-                filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
+            if self.preferred_units:
+                filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == 1:  # Epidemiology
 
@@ -529,7 +536,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 export_format=format_,
                 filename='{}-animal-bioassay'.format(self.assessment),
-                dose=self.units
+                preferred_units=self.preferred_units
             )
 
         elif self.evidence_type == 1:  # Epidemiology

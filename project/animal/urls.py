@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register(r'endpoint', api.Endpoint, base_name="endpoint")
 router.register(r'experiment', api.Experiment, base_name="experiment")
 router.register(r'animal-group', api.AnimalGroup, base_name="animal_group")
+router.register(r'dose-units', api.DoseUnits, base_name="dose_units")
 
 
 urlpatterns = [
@@ -42,5 +43,5 @@ urlpatterns = [
     url(r'^endpoint/(?P<pk>\d+)/edit/$', views.EndpointUpdate.as_view(), name='endpoint_update'),
     url(r'^endpoint/(?P<pk>\d+)/delete/$', views.EndpointDelete.as_view(), name='endpoint_delete'),
 
-    url(r'^api/', include(router.urls))
+    url(r'^api/', include(router.urls, namespace='api'))
 ]
