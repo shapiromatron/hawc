@@ -471,18 +471,21 @@ class AssessmentEndpointList(views.AssessmentViewset):
 
         instance.items.append({
             'count': instance.endpoint_count,
-            'type': "animal bioassay endpoints",
+            'title': "animal bioassay endpoints",
+            'type': 'ani',
             'url': "{}{}{}".format(base_url, 'ani/', query_string),
         })
         instance.items.append({
             "count": instance.outcome_count,
-            "type": "epidemiological outcomes assessed",
+            "title": "epidemiological outcomes assessed",
+            'type': 'epi',
             'url': "{}{}{}".format(base_url, 'epi/', query_string)
         })
         instance.items.append({
             "count": instance.ivendpoint_count,
-            "type": "in vitro endpoints",
-            'url': "{}{}{}".format(base_url, 'invitro/', query_string),
+            "title": "in vitro endpoints",
+            'type': 'in-vitro',
+            'url': "{}{}{}".format(base_url, 'in-vitro/', query_string),
         })
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

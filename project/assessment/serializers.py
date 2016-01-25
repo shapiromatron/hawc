@@ -34,6 +34,7 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
 class EndpointItemSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     type = serializers.CharField()
+    title = serializers.CharField()
     url = serializers.CharField()
 
 
