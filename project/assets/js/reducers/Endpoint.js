@@ -49,6 +49,13 @@ export default function (state=defaultState, action){
             items,
         });
 
+    case types.EP_RECEIVE_TYPE:
+        return Object.assign({}, state, {
+            isFetching: false,
+            items: [],
+            type: action.endpoint_type,
+        });
+
     case types.EP_RECEIVE_MODEL:
         return Object.assign({}, state, {
             isFetching: false,

@@ -10,7 +10,7 @@ function requestContent(){
 
 function receiveObject(item){
     return {
-        type: types.AS_RECIEVE_OBJECT,
+        type: types.AS_RECEIVE_OBJECT,
         item,
     };
 }

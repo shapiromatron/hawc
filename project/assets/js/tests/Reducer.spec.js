@@ -89,7 +89,7 @@ describe( 'assessmentReducer', () => {
                     {
                         "count": 1,
                         "type": "in vitro endpoints",
-                        "url": "http://127.0.0.1:9000/invitro/api/cleanup/?assessment_id=57",
+                        "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
                     },
                 ],
             },
@@ -103,39 +103,12 @@ describe( 'assessmentReducer', () => {
                     {
                         "count": 1,
                         "type": "in vitro endpoints",
-                        "url": "http://127.0.0.1:9000/invitro/api/cleanup/?assessment_id=57",
+                        "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
                     },
                 ],
             }],
         });
     });
-
-    it('should handle deleting an object', () => {
-
-        expect(assessmentReducer({
-            itemsLoaded: true,
-            isFetching: false,
-            items: [{
-                "name": "test assessment",
-                "id": 0,
-                "items": [
-                    {
-                        "count": 1,
-                        "type": "in vitro endpoints",
-                        "url": "http://127.0.0.1:9000/invitro/api/cleanup/?assessment_id=57",
-                    },
-                ],
-            }],
-        }, {
-            type: types.AS_DELETE_OBJECT,
-            id: 0,
-        })).to.deep.equal({
-            itemsLoaded: true,
-            isFetching: false,
-            items: [],
-        });
-    });
-
 });
 
 describe('endpointReducer', () => {
@@ -175,6 +148,30 @@ describe('endpointReducer', () => {
         });
     });
 
+    it('should handle receiving the Endpoint type', () => {
+        expect(endpointReducer({
+            itemsLoaded: false,
+            isFetching: true,
+            model: null,
+            type: null,
+            items: [],
+            editObject: null,
+            editObjectErrors: {},
+        }, {
+            type: types.EP_RECEIVE_TYPE,
+            endpoint_type: 'ani',
+
+        })).to.deep.equal({
+            itemsLoaded: false,
+            isFetching: false,
+            model: null,
+            type: 'ani',
+            items: [],
+            editObject: null,
+            editObjectErrors: {},
+        });
+    });
+
     it('should create an edit object', () => {
         expect(endpointReducer({
             itemsLoaded: true,
@@ -185,7 +182,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            type: "system",
+            type: "ani",
             items: [
                 {
                     "id": 10210,
@@ -209,7 +206,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            type: "system",
+            type: "ani",
             items: [
                 {
                     "id": 10210,
@@ -232,7 +229,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            type: "system",
+            type: "ani",
             items: [
                 {
                     "id": 10210,
@@ -259,7 +256,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            type: "system",
+            type: "ani",
             items: [
                 {
                     "id": 10210,
@@ -277,6 +274,57 @@ describe('endpointReducer', () => {
         });
     });
 
+    it('should handle deleting an object', () => {
+
+        expect(endpointReducer({
+            itemsLoaded: true,
+            isFetching: false,
+            model: [
+                "system",
+                "organ",
+                "effect",
+                "effect_subtype",
+            ],
+            type: "ani",
+            items: [
+                {
+                    "id": 10210,
+                    "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                    "system": "digestive system",
+                },
+                {
+                    "id": 10212,
+                    "name": "gross body weight (start of experiment)",
+                    "system": "systemic",
+                },
+            ],
+            editObject: {"system": "Digestive Systems"},
+            editObjectErrors: {},
+        }, {
+            type: types.EP_DELETE_OBJECT,
+            id: 10210,
+        })).to.deep.equal({
+            itemsLoaded: true,
+            isFetching: false,
+            model: [
+                "system",
+                "organ",
+                "effect",
+                "effect_subtype",
+            ],
+            type: "ani",
+            items: [
+                {
+                    "id": 10212,
+                    "name": "gross body weight (start of experiment)",
+                    "system": "systemic",
+                },
+            ],
+            editObject: {"system": "Digestive Systems"},
+            editObjectErrors: {},
+        });
+    });
+
     it('should revert to default state upon release', () => {
         expect(endpointReducer({
             itemsLoaded: true,
@@ -287,7 +335,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            type: "system",
+            type: "ani",
             items: [
                 {
                     "id": 10210,

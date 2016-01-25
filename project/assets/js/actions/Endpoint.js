@@ -11,7 +11,7 @@ function requestContent() {
 
 function receiveModel(json){
     return {
-        type: types.EP_RECIEVE_MODEL,
+        type: types.EP_RECEIVE_MODEL,
         model: json,
     };
 }
@@ -62,8 +62,7 @@ export function fetchModelIfNeeded(assessment_id){
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getApiURL(state.apiUrl, `${state.config.endpoint}fields/`, assessment_id),
-                // `${state.apiUrl}/${state.config.endpoint}fields/?assessment_id=${assessment_id}`,
+                h.getApiURL(state.apiUrl, `${state.config[state.endpoint.type]}fields/`, assessment_id),
                 h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveModel(json)))
@@ -77,7 +76,7 @@ export function fetchObjectsIfNeeded(assessment_id) {
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getApiURL(state.apiUrl, state.config.endpoint, assessment_id),
+                h.getApiURL(state.apiUrl, state.config[state.endpoint.type], assessment_id),
                 h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObjects(json)))
@@ -91,12 +90,12 @@ export function patchObjects(ids, patch, cb){
         let state = getState(),
             opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
         return fetch(
-                `${h.getApiURL(state.apiUrl, state.config.endpoint, assessment_id)}&ids=${ids}`,
+                `${h.getApiURL(state.apiUrl, state.config[state.endpoint.type], state.assessment.id)}&ids=${ids}`,
                 opts)
             .then(function(response){
                 if (response.status === 200){
                     response.json()
-                        .then((json) => dispatch(fetchObjectIfNeeded(json.id)))
+                        .then((json) => dispatch(fetchObjectsIfNeeded(state.assessment.id)))
                         .then(cb())
                         .then(() => dispatch(resetEditObject()));
                 } else {
@@ -108,13 +107,39 @@ export function patchObjects(ids, patch, cb){
     };
 }
 
+export function patchObjectList(object_list, cb){
+    cb = cb || h.noop;
+    return (dispatch, getState) => {
+        let state = getState();
+        object_list.map((patchObject) => {
+            let { ids, patch } = patchObject,
+                opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
+            return fetch(
+                `${h.getApiURL(state.apiUrl, state.config[state.endpoint.type], state.assessment.id)}&ids=${ids}`,
+                opts)
+                .then((response) => {
+                    if (response.status === 200){
+                        response.json()
+                            .then((json) => dispatch(fetchObjectsIfNeeded(state.assessment.id)))
+                            .then(() => dispatch(resetEditObject()));
+                    } else {
+                        response.json()
+                        .then((json) => dispatch(receiveEditErrors(json)));
+                    }
+                })
+                .catch(ex => console.error('Endpoint parsing failed', ex));
+
+        });
+        cb();
+    };
+}
+
 export function deleteObject(assessment_id, id){
-    // cb = cb || h.noop;
     return (dispatch, getState) => {
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
         return fetch(
-                h.getApiURL(state.apiUrl, state.config.endpoint, assessment_id),
+                h.getApiURL(state.apiUrl, state.config[state.endpoint.type], assessment_id),
                 opts)
             .then(function(response){
                 if (response.status === 204){

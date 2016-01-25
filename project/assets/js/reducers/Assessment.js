@@ -38,23 +38,8 @@ export default function (state=defaultState, action){
             items,
         });
 
-    case types.AS_DELETE_OBJECT:
-        index = state.items.indexOf(
-            _.findWhere(state.items, {id: action.id})
-        );
-        if (index >= 0){
-            items = [
-                ...state.items.slice(0, index),
-                ...state.items.slice(index + 1),
-            ];
-        }
-        return Object.assign({}, state, {
-            isFetching: false,
-            items,
-        });
-
     case types.AS_RELEASE:
-        return Object.assign({}, defaultState);
+        return defaultState;
 
     default:
         return state;
