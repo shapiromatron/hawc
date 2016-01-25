@@ -548,6 +548,11 @@ class DataPivotSelectorForm(forms.Form):
         queryset=models.DataPivot.objects.all(),
         empty_label=None)
 
+    reset_row_overrides = forms.BooleanField(
+        help_text='Reset all row-level customization in the data-pivot copy',
+        required=False,
+        initial=True)
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
