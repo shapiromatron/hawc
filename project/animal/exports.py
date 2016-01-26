@@ -143,7 +143,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'N',
             'incidence',
             'response',
-            'variance',
+            'stdev',
             'percent control mean',
             'percent control low',
             'percent control high'
