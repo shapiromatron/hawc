@@ -2250,7 +2250,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
     rows = DataPivot_visualization.sorter(rows, settings.sorts);
 
-    // row-overrides: style, order
+    // row-overrides: order
     this.dp_settings.row_overrides.forEach(function(v){
       // apply offsets
       if(v.offset !== 0){
@@ -2263,29 +2263,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
             break;
           }
         }
-      }
-
-      // apply style overrides
-      if((v.text_style !== DataPivot.NULL_CASE) ||
-         (v.line_style !== DataPivot.NULL_CASE) ||
-         (v.symbol_style !== DataPivot.NULL_CASE)){
-        rows.forEach(function(v2,i){
-          if(v2._dp_pk === v.pk){
-            for(var key in v2._styles){
-              if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
-                v2._styles[key] = get_associated_style("texts", v.text_style);
-              }
-
-              if((v.line_style !== DataPivot.NULL_CASE) && (key === "bars")){
-                v2._styles[key] = get_associated_style("lines", v.line_style);
-              }
-
-              if((v.symbol_style !== DataPivot.NULL_CASE) && (key.substr(0,6) === "points")){
-                v2._styles[key] = get_associated_style("symbols", v.symbol_style);
-              }
-            }
-          }
-        });
       }
     });
 
@@ -2352,6 +2329,31 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         }
 
       });
+    });
+
+    // row-overrides: apply styles
+    this.dp_settings.row_overrides.forEach(function(v){
+      if((v.text_style !== DataPivot.NULL_CASE) ||
+         (v.line_style !== DataPivot.NULL_CASE) ||
+         (v.symbol_style !== DataPivot.NULL_CASE)){
+        rows.forEach(function(v2){
+          if(v2._dp_pk === v.pk){
+            for(var key in v2._styles){
+              if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
+                v2._styles[key] = get_associated_style("texts", v.text_style);
+              }
+
+              if((v.line_style !== DataPivot.NULL_CASE) && (key === "bars")){
+                v2._styles[key] = get_associated_style("lines", v.line_style);
+              }
+
+              if((v.symbol_style !== DataPivot.NULL_CASE) && (key.substr(0,6) === "points")){
+                v2._styles[key] = get_associated_style("symbols", v.symbol_style);
+              }
+            }
+          }
+        });
+      }
     });
 
     // with final datarows subset, add index for rendered order
