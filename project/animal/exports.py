@@ -144,6 +144,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'incidence',
             'response',
             'stdev',
+            'pairwise significant',
             'percent control mean',
             'percent control low',
             'percent control high'
@@ -271,6 +272,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                     eg['incidence'],
                     eg['response'],
                     eg['stdev'],
+                    eg['significant'],
                     eg['percentControlMean'],
                     eg['percentControlLow'],
                     eg['percentControlHigh']
