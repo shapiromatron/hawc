@@ -133,38 +133,39 @@ describe('async actions', () => {
 
         it('should patch multiple objects', (done) => {
             nock('http://127.0.0.1:9000')
+                .patch('/ani/api/cleanup/?assessment_id=57&ids=10210')
+                .reply(200, {})
+                .patch('/ani/api/cleanup/?assessment_id=57&ids=10212')
+                .reply(200, {})
                 .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
                     {
                         "id": 10210,
                         "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                        "system": "digestive system",
+                        "system": "Digestive Systems",
                     },
                     {
                         "id": 10212,
                         "name": "gross body weight (start of experiment)",
-                        "system": "systemic",
+                        "system": "Digestive System",
                     },
-                ])
-                .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
-                .reply(200, {});
+                ]);
 
-            const patchList = [{ ids: [10210, 10212], patch: {'system': "Digestive Systems"}}];
+            const patchList = [{ ids: [10210], patch: {'system': "Digestive Systems"}}, { ids: [10212], patch: {'system': "Digestive System"}}];
             const expectedActions = [
-                { type: types.EP_CREATE_EDIT_OBJECT, object: { ids: [10210, 10212], patch: {"system": "Digestive Systems"}}},
-                { type: types.EP_REQUEST },
-                { type: types.EP_RECEIVE_OBJECTS, items: [
-                    {
-                        "id": 10210,
-                        "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                { type: types.EP_CREATE_EDIT_OBJECT,
+                    object:  {
                         "system": "Digestive Systems",
                     },
-                    {
-                        "id": 10212,
-                        "name": "gross body weight (start of experiment)",
-                        "system": "Digestive Systems",
+                },
+                { type: types.EP_CREATE_EDIT_OBJECT,
+                    object: {
+                        "system": "Digestive System",
                     },
-                ]},
+                },
+                { type: types.EP_PATCH_OBJECTS, ids: [10210] },
+                { type: types.EP_PATCH_OBJECTS, ids: [10212] },
+                { type: types.EP_RESET_EDIT_OBJECT },
                 { type: types.EP_RESET_EDIT_OBJECT },
             ];
 
@@ -189,6 +190,7 @@ describe('async actions', () => {
                         },
                     ],
                     type: 'ani',
+                    fields: ['system'],
                 }}, expectedActions, done);
             store.dispatch(endpointActions.patchObjectList(patchList));
         });

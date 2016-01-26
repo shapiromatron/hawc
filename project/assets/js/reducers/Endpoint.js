@@ -6,6 +6,7 @@ let defaultState = {
     isFetching: false,
     model: null,
     type: null,
+    fields: [],
     items: [],
     editObject: null,
     editObjectErrors: {},

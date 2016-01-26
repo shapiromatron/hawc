@@ -17,6 +17,7 @@ describe('rootReducer', () => {
                 isFetching: false,
                 model: null,
                 type: null,
+                fields: [],
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -40,6 +41,7 @@ describe('rootReducer', () => {
                 isFetching: false,
                 model: null,
                 type: null,
+                fields: [],
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -63,6 +65,7 @@ describe('rootReducer', () => {
                 isFetching: true,
                 model: null,
                 type: null,
+                fields: [],
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -119,6 +122,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: null,
+            fields: [],
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -142,6 +146,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: null,
+            fields: [],
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -154,6 +159,7 @@ describe('endpointReducer', () => {
             isFetching: true,
             model: null,
             type: null,
+            fields: [],
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -166,6 +172,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: 'ani',
+            fields: [],
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -183,6 +190,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10210,
@@ -207,6 +215,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10210,
@@ -230,6 +239,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10210,
@@ -256,6 +266,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
+            fields: [],
             type: "ani",
             items: [
                 {
@@ -286,6 +297,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10210,
@@ -313,6 +325,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10212,
@@ -336,6 +349,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
+            fields: [],
             items: [
                 {
                     "id": 10210,
@@ -357,6 +371,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: null,
+            fields: [],
             items: [],
             editObject: null,
             editObjectErrors: {},
