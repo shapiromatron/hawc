@@ -26,7 +26,7 @@ class CleanupFieldsFilter(InAssessmentFilter):
     """
     def filter_queryset(self, request, queryset, view):
         queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
-        if view.action != 'list':
+        if view.action not in ('list', 'retrieve'):
             ids = request.query_params.get('ids')
             try:
                 ids = ids.split(',')
