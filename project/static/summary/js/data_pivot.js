@@ -1719,7 +1719,7 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
 
       vals.unique.forEach(function(v){
         var style = dp.style_manager
-                      .add_select("symbols", hash.get(v))
+                      .add_select("symbols", hash.get(v), true)
                       .data('key', v);
         self.discrete_styles.push(style);
         add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
@@ -2320,7 +2320,9 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
             var hash = d3.map();
             cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
             rows.forEach(function(d){
-              d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]))
+              if(hash.get(d[cf.field_name]) !== DataPivot.NULL_CASE){
+                d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]));
+              }
             });
 
             break;
