@@ -268,9 +268,9 @@ DataPivot.prototype = {
   },
   build_data_table: function(){
 
-    var tbl = $('<table class="data_pivot_table"></table>'),
-        thead = $('<thead></thead>'),
-        tbody = $('<tbody></tbody>');
+    var tbl = $('<table class="data_pivot_table">'),
+        thead = $('<thead>'),
+        tbody = $('<tbody>');
 
     // get headers
     var data_headers = [];
@@ -281,7 +281,7 @@ DataPivot.prototype = {
     }
 
     // print header
-    var tr = $('<tr></tr>');
+    var tr = $('<tr>');
     data_headers.forEach(function(v){
       tr.append('<th>{0}</th>'.printf(v));
     });
@@ -289,7 +289,7 @@ DataPivot.prototype = {
 
     // print body
     this.data.forEach(function(d){
-      var tr = $('<tr></tr>');
+      var tr = $('<tr>');
       data_headers.forEach(function(field){
         tr.append('<td>{0}</td>'.printf(d[field]));
       });
@@ -2342,7 +2342,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
             var hash = d3.map();
             cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
-
             rows.forEach(function(d){
               d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]))
             });
