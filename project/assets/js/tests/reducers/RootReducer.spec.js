@@ -8,6 +8,7 @@ describe('Root reducer', () => {
             assessment: {
                 itemsLoaded: false,
                 isFetching: false,
+                active: null,
                 items: [],
             },
             endpoint: {
@@ -32,6 +33,7 @@ describe('Root reducer', () => {
             assessment: {
                 itemsLoaded: false,
                 isFetching: true,
+                active: null,
                 items: [],
             },
             endpoint: {
@@ -56,6 +58,7 @@ describe('Root reducer', () => {
             assessment: {
                 itemsLoaded: false,
                 isFetching: false,
+                active: null,
                 items: [],
             },
             endpoint: {

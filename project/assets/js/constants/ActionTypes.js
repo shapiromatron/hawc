@@ -5,6 +5,7 @@ export const RESET_ERROR_MESSAGE =      'RESET_ERROR_MESSAGE';
 // assessments
 export const AS_REQUEST =               'AS_REQUEST';
 export const AS_RECEIVE_OBJECT =        'AS_RECEIVE_OBJECT';
+export const AS_SELECT =                'AS_SELECT';
 export const AS_RELEASE =               'AS_RELEASE';
 
 // endpoints

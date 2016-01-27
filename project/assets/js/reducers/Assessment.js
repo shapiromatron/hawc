@@ -4,6 +4,7 @@ import _ from 'underscore';
 let defaultState = {
     isFetching: false,
     itemsLoaded: false,
+    active: null,
     items: [],
 };
 
@@ -39,7 +40,19 @@ export default function (state=defaultState, action){
         });
 
     case types.AS_RELEASE:
-        return defaultState;
+        return Object.assign({}, state, {
+            active: null,
+        });
+
+    case types.AS_SELECT:
+        let item = _.findWhere(state.items, {id: action.id});
+        if (item){
+            return Object.assign({}, state, {
+                active: item,
+            });
+        }
+        return state;
+
 
     default:
         return state;

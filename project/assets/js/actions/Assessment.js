@@ -15,7 +15,7 @@ function receiveObject(item){
     };
 }
 
-function releaseContent(){
+function releaseSelected(){
     return {
         type: types.AS_RELEASE,
     };
@@ -35,6 +35,13 @@ export function fetchObjectIfNeeded(id){
 
 export function releaseAssessment(id){
     return (dispatch) => {
-        dispatch(releaseContent());
+        dispatch(releaseSelected());
+    };
+}
+
+export function selectObject(id){
+    return {
+        type: types.AS_SELECT,
+        id,
     };
 }

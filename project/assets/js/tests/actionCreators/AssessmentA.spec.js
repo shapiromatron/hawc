@@ -12,6 +12,18 @@ describe('Assessment actions', () => {
         nock.cleanAll();
     });
 
+    describe('actions', () => {
+
+        it('should be able to select an assessment', () => {
+            let action = assessmentActions.selectObject(0);
+
+            expect(action).to.deep.equal({
+                type: types.AS_SELECT,
+                id: 0,
+            });
+        })
+    })
+
     describe('async actions', () => {
 
         it('should create an action to load an assessment', (done) => {

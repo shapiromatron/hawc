@@ -7,6 +7,7 @@ describe( 'Assessment reducer', () => {
         expect(assessmentReducer({
             itemsLoaded: false,
             isFetching: false,
+            active: null,
             items: [],
         }, {
             type: types.AS_RECEIVE_OBJECT,
@@ -16,7 +17,8 @@ describe( 'Assessment reducer', () => {
                 "items": [
                     {
                         "count": 1,
-                        "type": "in vitro endpoints",
+                        "title": "in vitro endpoints",
+                        "type": "iv",
                         "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
                     },
                 ],
@@ -24,13 +26,65 @@ describe( 'Assessment reducer', () => {
         })).to.deep.equal({
             itemsLoaded: true,
             isFetching: false,
+            active: null,
             items: [{
                 "name": "test assessment",
                 "id": 0,
                 "items": [
                     {
                         "count": 1,
-                        "type": "in vitro endpoints",
+                        "title": "in vitro endpoints",
+                        "type": "iv",
+                        "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
+                    },
+                ],
+            }],
+        });
+    });
+
+    it('should handle an assessment selection', () => {
+        expect(assessmentReducer({
+            itemsLoaded: false,
+            isFetching: false,
+            active: null,
+            items: [{
+                "name": "test assessment",
+                "id": 0,
+                "items": [
+                    {
+                        "count": 1,
+                        "title": "in vitro endpoints",
+                        "type": "iv",
+                        "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
+                    },
+                ],
+            }],
+        }, {
+            type: types.AS_SELECT,
+            id: 0,
+        })).to.deep.equal({
+            itemsLoaded: false,
+            isFetching: false,
+            active: {
+                "name": "test assessment",
+                "id": 0,
+                "items": [
+                    {
+                        "count": 1,
+                        "title": "in vitro endpoints",
+                        "type": "iv",
+                        "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
+                    },
+                ]
+            },
+            items: [{
+                "name": "test assessment",
+                "id": 0,
+                "items": [
+                    {
+                        "count": 1,
+                        "title": "in vitro endpoints",
+                        "type": "iv",
                         "url": "http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57",
                     },
                 ],
