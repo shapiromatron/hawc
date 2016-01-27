@@ -31,6 +31,13 @@ function receiveObjects(json) {
     };
 }
 
+export function setField(field){
+    return {
+        type: types.EP_SET_FIELD,
+        field,
+    };
+}
+
 function removeObject(id){
     return {
         type: types.EP_DELETE_OBJECT,
@@ -41,11 +48,9 @@ function removeObject(id){
 function fetchObjects(ids){
     return (dispatch, getState) => {
         let state = getState();
-        if (state.analysis.isFetching) return;
+        if (state.endpoint.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getApiURL(
-                state.apiUrl, `${state.config[state.endpoint.type]}/${id}/`, assessment_id),
-                h.fetchGet)
+        return fetch(h.getApiURL(state), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObject(json)))
             .catch((ex) => console.error('Analysis parsing failed', ex));
@@ -53,7 +58,6 @@ function fetchObjects(ids){
 }
 
 function setEdititableObject(object){
-    console.log(object)
     return {
         type: types.EP_CREATE_EDIT_OBJECT,
         object,
@@ -61,7 +65,6 @@ function setEdititableObject(object){
 }
 
 function patchItems(ids){
-    console.log(ids)
     return {
         type: types.EP_PATCH_OBJECTS,
         ids,
@@ -76,7 +79,6 @@ function receiveEditErrors(errors){
 }
 
 function resetEditObject(){
-    console.log("reset")
     return {
         type: types.EP_RESET_EDIT_OBJECT,
     };
@@ -94,7 +96,7 @@ export function fetchModelIfNeeded(assessment_id){
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getApiURL(state.apiUrl, `${state.config[state.endpoint.type]}fields/`, assessment_id),
+                h.getApiURL(state, true, true),
                 h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveModel(json)))
@@ -107,9 +109,7 @@ export function fetchObjectsIfNeeded(assessment_id) {
         let state = getState();
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
-        return fetch(
-                h.getApiURL(state.apiUrl, state.config[state.endpoint.type], assessment_id),
-                h.fetchGet)
+        return fetch(h.getApiURL(state, true), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObjects(json)))
             .catch((ex) => console.error('Endpoint parsing failed', ex));
@@ -125,11 +125,10 @@ export function patchObjectList(objectList, cb){
             let { ids, patch } = patchObject,
                 opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
             return fetch(
-                `${h.getApiURL(state.apiUrl, state.config[state.endpoint.type], state.assessment.id)}&ids=${ids}`,
+                `${h.getApiURL(state)}&ids=${ids}`,
                 opts)
                 .then((response) => {
                     dispatch(setEdititableObject(_.omit(patch, 'csrfmiddlewaretoken')));
-                    console.log(state)
                     if (response.status === 200){
                         response.json()
                             .then(() => dispatch(patchItems(ids)))
@@ -149,7 +148,7 @@ export function deleteObject(assessment_id, id){
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
         return fetch(
-                h.getApiURL(state.apiUrl, state.config[state.endpoint.type], assessment_id),
+                h.getApiURL(state),
                 opts)
             .then(function(response){
                 if (response.status === 204){

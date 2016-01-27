@@ -19,6 +19,19 @@ describe('config action', () => {
     });
 });
 
+describe('actions', () =>{
+
+    it('should set the endpoint type', () => {
+        let action = endpointActions.setField;
+
+        expect(action('system')).to.deep.equal({
+            type: types.EP_SET_FIELD,
+            field: 'system',
+        });
+    });
+
+});
+
 describe('async actions', () => {
     afterEach(() => {
         nock.cleanAll();
@@ -91,10 +104,60 @@ describe('async actions', () => {
                     ani: "ani/api/cleanup/",
                     csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
                 },
-                assessment: {},
+                assessment: { id: 57 },
                 endpoint: { isFetching: false,
                             type: 'ani'}}, expectedActions, done);
             store.dispatch(endpointActions.fetchModelIfNeeded(57));
+        });
+
+        it('should load endpoint items', (done) => {
+            nock('http://127.0.0.1:9000')
+                .get('/ani/api/cleanup/?assessment_id=57&fields=system')
+                .reply(200, [
+                    {
+                        "id": 10210,
+                        "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                        "system": "digestive system",
+                    },
+                    {
+                        "id": 10212,
+                        "name": "gross body weight (start of experiment)",
+                        "system": "systemic",
+                    },
+                ]);
+
+            const expectedActions = [
+                { type: types.EP_REQUEST },
+                { type: types.EP_RECEIVE_OBJECTS,
+                  items: [
+                      {
+                          "id": 10210,
+                          "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                          "system": "digestive system",
+                      },
+                      {
+                          "id": 10212,
+                          "name": "gross body weight (start of experiment)",
+                          "system": "systemic",
+                      },
+                  ],
+                },
+            ];
+
+            const store = mockStore({
+                apiUrl: 'http://127.0.0.1:9000',
+                config: {
+                    ani: "ani/api/cleanup/",
+                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                },
+                assessment: { id: 57 },
+                endpoint: {
+                    isFetching: false,
+                    field: 'system',
+                    type: 'ani',
+                },
+            }, expectedActions, done);
+            store.dispatch(endpointActions.fetchObjectsIfNeeded(57));
         });
 
         it('should delete an object', (done) => {
@@ -112,7 +175,7 @@ describe('async actions', () => {
                     ani: "ani/api/cleanup/",
                     csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
                 },
-                assessment: {},
+                assessment: { id: 57 },
                 endpoint: {
                     items: [
                         {
@@ -127,6 +190,7 @@ describe('async actions', () => {
                         },
                     ],
                     type: 'ani',
+                    field: "system",
                 }}, expectedActions, done);
             store.dispatch(endpointActions.deleteObject(57, 10210));
         });
@@ -190,7 +254,7 @@ describe('async actions', () => {
                         },
                     ],
                     type: 'ani',
-                    fields: ['system'],
+                    field: 'system',
                 }}, expectedActions, done);
             store.dispatch(endpointActions.patchObjectList(patchList));
         });

@@ -54,8 +54,10 @@ var helpers = {
         });
         return patch;
     },
-    getApiURL(host, base, id){
-        return `${host}/${base}?assessment_id=${id}`;
+    getApiURL(state, filterFields=false, fetchModel=false){
+        let getFields = fetchModel ? "fields/" : "";
+        let fields = (filterFields && state.endpoint.field) ? `&fields=${state.endpoint.field}` : "";
+        return `${state.apiUrl}/${state.config[state.endpoint.type]}${getFields}?assessment_id=${state.assessment.id}${fields}`;
     },
     getObjectURL(base, id){
         return `${base}${id}/`;

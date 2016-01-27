@@ -6,7 +6,7 @@ let defaultState = {
     isFetching: false,
     model: null,
     type: null,
-    fields: [],
+    field: null,
     items: [],
     editObject: null,
     editObjectErrors: {},
@@ -50,7 +50,7 @@ export default function (state=defaultState, action){
             items,
         });
 
-    case types.EP_RECEIVE_TYPE:
+    case types.EP_SET_TYPE:
         return Object.assign({}, state, {
             isFetching: false,
             items: [],
@@ -61,6 +61,11 @@ export default function (state=defaultState, action){
         return Object.assign({}, state, {
             isFetching: false,
             model: action.model.text_cleanup_fields,
+        });
+
+    case types.EP_SET_FIELD:
+        return Object.assign({}, state, {
+            field: action.field,
         });
 
     case types.EP_DELETE_OBJECT:

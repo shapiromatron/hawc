@@ -17,7 +17,7 @@ describe('rootReducer', () => {
                 isFetching: false,
                 model: null,
                 type: null,
-                fields: [],
+                field: null,
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -41,7 +41,7 @@ describe('rootReducer', () => {
                 isFetching: false,
                 model: null,
                 type: null,
-                fields: [],
+                field: null,
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -65,7 +65,7 @@ describe('rootReducer', () => {
                 isFetching: true,
                 model: null,
                 type: null,
-                fields: [],
+                field: null,
                 items: [],
                 editObject: null,
                 editObjectErrors: {},
@@ -122,7 +122,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: null,
-            fields: [],
+            field: null,
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -146,25 +146,60 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: null,
-            fields: [],
+            field: null,
             items: [],
             editObject: null,
             editObjectErrors: {},
         });
     });
 
-    it('should handle receiving the Endpoint type', () => {
+    it('should handle setting the Endpoint field', () => {
+        expect(endpointReducer({
+            itemsLoaded: false,
+            isFetching: false,
+            model: [
+                "system",
+                "organ",
+                "effect",
+                "effect_subtype",
+            ],
+            type: null,
+            field: null,
+            items: [],
+            editObject: null,
+            editObjectErrors: {},
+        }, {
+            type: types.EP_SET_FIELD,
+            field: 'system',
+        })).to.deep.equal({
+            itemsLoaded: false,
+            isFetching: false,
+            model: [
+                "system",
+                "organ",
+                "effect",
+                "effect_subtype",
+            ],
+            type: null,
+            field: 'system',
+            items: [],
+            editObject: null,
+            editObjectErrors: {},
+        })
+    })
+
+    it('should handle setting the Endpoint type', () => {
         expect(endpointReducer({
             itemsLoaded: false,
             isFetching: true,
             model: null,
             type: null,
-            fields: [],
+            field: null,
             items: [],
             editObject: null,
             editObjectErrors: {},
         }, {
-            type: types.EP_RECEIVE_TYPE,
+            type: types.EP_SET_TYPE,
             endpoint_type: 'ani',
 
         })).to.deep.equal({
@@ -172,7 +207,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: 'ani',
-            fields: [],
+            field: null,
             items: [],
             editObject: null,
             editObjectErrors: {},
@@ -190,7 +225,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10210,
@@ -215,7 +250,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10210,
@@ -239,7 +274,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10210,
@@ -266,7 +301,7 @@ describe('endpointReducer', () => {
                 "effect",
                 "effect_subtype",
             ],
-            fields: [],
+            field: "system",
             type: "ani",
             items: [
                 {
@@ -297,7 +332,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10210,
@@ -325,7 +360,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10212,
@@ -349,7 +384,7 @@ describe('endpointReducer', () => {
                 "effect_subtype",
             ],
             type: "ani",
-            fields: [],
+            field: "system",
             items: [
                 {
                     "id": 10210,
@@ -371,7 +406,7 @@ describe('endpointReducer', () => {
             isFetching: false,
             model: null,
             type: null,
-            fields: [],
+            field: null,
             items: [],
             editObject: null,
             editObjectErrors: {},
