@@ -1,29 +1,29 @@
 import React, { Component, PropTypes } from 'react';
 
-export default class EndpointTypeList extends Component{
+export default class Assessment extends Component{
     renderEndpointType(item){
         if(item.count == 0){
             return null;
         } else {
             return (
                 <li key={item.type}>
-                    <a href={item.url}>{item.count} {item.type}</a>
+                    <a className="endpoint_type" href={item.url}>{item.count} {item.type}</a>
                 </li>
             );
         }
     }
 
     render() {
-        const { isFetching, items, model } = this.props;
+        const { isFetching, items, name } = this.props;
 
         const isEmpty = (items.reduce( (prev, curr) => prev + curr.count) === 0);
         if(isEmpty){
-            return <li><i>No endpoints are available for this {model}.</i></li>;
+            return <li><i>No endpoints are available for {name}.</i></li>;
 
         }
         return (
-            <div>
-                <h2>{model} Results for Cleanup</h2>
+            <div className='assessment'>
+                <h2 classname='assessment_title'>{name} Results for Cleanup</h2>
                 <ul>
                     {items.map(this.renderEndpointType)}
                 </ul>
@@ -33,8 +33,8 @@ export default class EndpointTypeList extends Component{
 
 }
 
-EndpointTypeList.propTypes = {
-    model: PropTypes.string.isRequired,
+Assessment.propTypes = {
+    name: PropTypes.string.isRequired,
     items: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
