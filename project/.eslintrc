@@ -1,13 +1,13 @@
 {
     "rules": {
-        "indent": [1, 4],
-        "quotes": [0, "single"],
+        "indent": [2, 4],
+        "quotes": [2, "single"],
         "linebreak-style": [2, "unix"],
-        "semi": [1, "always"],
+        "semi": [2, "always"],
         "no-undef": 0,
         "comma-dangle": [1, "always-multiline"],
         "no-console": 1,
-        "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+        "no-unused-vars": [2, { "args": "none" }],
         "no-sparse-arrays": 2,
         "babel/generator-star-spacing": 1,
         "babel/new-cap": 1,

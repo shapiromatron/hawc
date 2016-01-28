@@ -9,6 +9,6 @@ function loadData(props){
 class ModelPage extends Component {
     constructor(props){
         super(props);
-        this.render
+        this.render;
     }
 }

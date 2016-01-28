@@ -31,28 +31,28 @@ describe('Endpoint actions', () => {
             nock('http://127.0.0.1:9000')
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
                 .reply(200, {
-                    "text_cleanup_fields": [
-                        "system",
-                        "organ",
-                        "effect",
-                        "effect_subtype",
+                    'text_cleanup_fields': [
+                        'system',
+                        'organ',
+                        'effect',
+                        'effect_subtype',
                     ],
                 });
 
             const expectedActions = [
                 { type: types.EP_REQUEST },
                 { type: types.EP_RECEIVE_MODEL, model: { text_cleanup_fields: [
-                    "system",
-                    "organ",
-                    "effect",
-                    "effect_subtype",
+                    'system',
+                    'organ',
+                    'effect',
+                    'effect_subtype',
                 ]}},
             ];
             const store = mockStore({
-                apiUrl: 'http://127.0.0.1:9000',
                 config: {
-                    ani: "ani/api/cleanup/",
-                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                    apiUrl: 'http://127.0.0.1:9000',
+                    ani: 'ani/api/cleanup/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { id: 57 },
                 endpoint: { isFetching: false,
@@ -65,14 +65,14 @@ describe('Endpoint actions', () => {
                 .get('/ani/api/cleanup/?assessment_id=57&fields=system')
                 .reply(200, [
                     {
-                        "id": 10210,
-                        "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                        "system": "digestive system",
+                        'id': 10210,
+                        'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        'system': 'digestive system',
                     },
                     {
-                        "id": 10212,
-                        "name": "gross body weight (start of experiment)",
-                        "system": "systemic",
+                        'id': 10212,
+                        'name': 'gross body weight (start of experiment)',
+                        'system': 'systemic',
                     },
                 ]);
 
@@ -81,24 +81,24 @@ describe('Endpoint actions', () => {
                 { type: types.EP_RECEIVE_OBJECTS,
                   items: [
                       {
-                          "id": 10210,
-                          "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                          "system": "digestive system",
+                          'id': 10210,
+                          'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                          'system': 'digestive system',
                       },
                       {
-                          "id": 10212,
-                          "name": "gross body weight (start of experiment)",
-                          "system": "systemic",
+                          'id': 10212,
+                          'name': 'gross body weight (start of experiment)',
+                          'system': 'systemic',
                       },
                   ],
                 },
             ];
 
             const store = mockStore({
-                apiUrl: 'http://127.0.0.1:9000',
                 config: {
-                    ani: "ani/api/cleanup/",
-                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                    apiUrl: 'http://127.0.0.1:9000',
+                    ani: 'ani/api/cleanup/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { id: 57 },
                 endpoint: {
@@ -120,27 +120,27 @@ describe('Endpoint actions', () => {
             ];
 
             const store = mockStore({
-                apiUrl: 'http://127.0.0.1:9000',
                 config: {
-                    ani: "ani/api/cleanup/",
-                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                    apiUrl: 'http://127.0.0.1:9000',
+                    ani: 'ani/api/cleanup/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { id: 57 },
                 endpoint: {
                     items: [
                         {
-                            "id": 10210,
-                            "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                            "system": "digestive system",
+                            'id': 10210,
+                            'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            'system': 'digestive system',
                         },
                         {
-                            "id": 10212,
-                            "name": "gross body weight (start of experiment)",
-                            "system": "systemic",
+                            'id': 10212,
+                            'name': 'gross body weight (start of experiment)',
+                            'system': 'systemic',
                         },
                     ],
                     type: 'ani',
-                    field: "system",
+                    field: 'system',
                 }}, expectedActions, done);
             store.dispatch(endpointActions.deleteObject(57, 10210));
         });
@@ -154,27 +154,27 @@ describe('Endpoint actions', () => {
                 .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
                     {
-                        "id": 10210,
-                        "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                        "system": "Digestive Systems",
+                        'id': 10210,
+                        'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        'system': 'Digestive Systems',
                     },
                     {
-                        "id": 10212,
-                        "name": "gross body weight (start of experiment)",
-                        "system": "Digestive System",
+                        'id': 10212,
+                        'name': 'gross body weight (start of experiment)',
+                        'system': 'Digestive System',
                     },
                 ]);
 
-            const patchList = [{ ids: [10210], patch: {'system': "Digestive Systems"}}, { ids: [10212], patch: {'system': "Digestive System"}}];
+            const patchList = [{ ids: [10210], patch: {'system': 'Digestive Systems'}}, { ids: [10212], patch: {'system': 'Digestive System'}}];
             const expectedActions = [
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object:  {
-                        "system": "Digestive Systems",
+                        'system': 'Digestive Systems',
                     },
                 },
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object: {
-                        "system": "Digestive System",
+                        'system': 'Digestive System',
                     },
                 },
                 { type: types.EP_PATCH_OBJECTS, ids: [10210] },
@@ -184,23 +184,23 @@ describe('Endpoint actions', () => {
             ];
 
             const store = mockStore({
-                apiUrl: 'http://127.0.0.1:9000',
                 config: {
-                    ani: "ani/api/cleanup/",
-                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                    apiUrl: 'http://127.0.0.1:9000',
+                    ani: 'ani/api/cleanup/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { id: 57 },
                 endpoint: {
                     items: [
                         {
-                            "id": 10210,
-                            "name": "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
-                            "system": "digestive system",
+                            'id': 10210,
+                            'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            'system': 'digestive system',
                         },
                         {
-                            "id": 10212,
-                            "name": "gross body weight (start of experiment)",
-                            "system": "systemic",
+                            'id': 10212,
+                            'name': 'gross body weight (start of experiment)',
+                            'system': 'systemic',
                         },
                     ],
                     type: 'ani',

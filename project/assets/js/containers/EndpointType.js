@@ -65,18 +65,18 @@ export default class EndpointType extends Component {
                     <EndpointTypeList items={[
                         {
                             count: 2915,
-                            type: "animal bioassay endpoints",
-                            url: "http://127.0.0.1:8000/assessment/api/endpoints/ani/assessment_id=57",
+                            type: 'animal bioassay endpoints',
+                            url: 'http://127.0.0.1:8000/assessment/api/endpoints/ani/assessment_id=57',
                         },
                         {
                             count: 334,
-                            type: "epidemiological outcomes assessed",
-                            url: "http://127.0.0.1:8000/assessment/api/endpoints/epi/assessment_id=57",
+                            type: 'epidemiological outcomes assessed',
+                            url: 'http://127.0.0.1:8000/assessment/api/endpoints/epi/assessment_id=57',
                         },
                         {
                             count: 0,
-                            type: "in vitro endpoints",
-                            url: "http://127.0.0.1:8000/assessment/api/endpoints/invitro/assessment_id=57",
+                            type: 'in vitro endpoints',
+                            url: 'http://127.0.0.1:8000/assessment/api/endpoints/invitro/assessment_id=57',
                         },
                     ]} model={"PFOA/PFOS Exposure and Immunotoxicity"} />
                     {children}

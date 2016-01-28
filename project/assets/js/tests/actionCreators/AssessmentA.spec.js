@@ -21,8 +21,8 @@ describe('Assessment actions', () => {
                 type: types.AS_SELECT,
                 id: 0,
             });
-        })
-    })
+        });
+    });
 
     describe('async actions', () => {
 
@@ -30,11 +30,11 @@ describe('Assessment actions', () => {
             nock('http://127.0.0.1:9000')
                 .get('/assessment/api/endpoints/?assessment_id=57')
                 .reply(200, {
-                    "name": "test assessment",
-                    "id": 57,
-                    "items": [
+                    'name': 'test assessment',
+                    'id': 57,
+                    'items': [
                         {
-                            "count": 1,
+                            'count': 1,
                         },
                     ],
                 });
@@ -42,20 +42,21 @@ describe('Assessment actions', () => {
             const expectedActions = [
                 { type: types.AS_REQUEST },
                 { type: types.AS_RECEIVE_OBJECT, item: {
-                    "name": "test assessment",
-                    "id": 57,
-                    "items": [
+                    'name': 'test assessment',
+                    'id': 57,
+                    'items': [
                         {
-                            "count": 1,
+                            'count': 1,
                         },
                     ],
                 } },
             ];
             const store = mockStore({
-                apiUrl: 'http://127.0.0.1:9000',
                 config: {
-                    assessment: "assessment/api/endpoints/",
-                    csrf: "<input type='hidden' name='csrfmiddlewaretoken' value='SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn' />",
+                    apiUrl: 'http://127.0.0.1:9000/',
+                    assessment_id: '57',
+                    assessment: 'assessment/api/endpoints/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: {} }, expectedActions, done);
             store.dispatch(assessmentActions.fetchObjectIfNeeded(57));

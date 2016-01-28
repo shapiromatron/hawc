@@ -24,7 +24,6 @@ function releaseSelected(){
 export function fetchObjectIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
-        console.log(state)
         if (state.assessment.isFetching) return;
         dispatch(requestContent());
         return fetch(h.getAssessmentApiUrl(state.config), h.fetchGet)
