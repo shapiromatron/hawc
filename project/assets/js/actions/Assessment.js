@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import _ from 'underscore';
 import * as types from '../constants/ActionTypes';
 import h from '../utils/helpers';
 
@@ -39,9 +40,26 @@ export function releaseAssessment(id){
     };
 }
 
-export function selectObject(id){
+function selectObject(object){
     return {
         type: types.AS_SELECT,
-        id,
+        object,
     };
+}
+
+export function makeAssessmentActive(id){
+    return (dispatch, getState) => {
+        let state = getState();
+        if (state.assessment.isFetching) return;
+        let item = _.findWhere(state.assessment.items, {id});
+        if (item){
+            dispatch(selectObject(item));
+        } else {
+            dispatch(requestContent());
+            return fetch(h.getAssessmentApiUrl(state.config), h.fetchGet)
+                .then((response) => response.json())
+                .then((json) => dispatch(receiveObject(json)))
+                .then((json) => dispatch(selectObject(json.item)))
+                .catch((ex) => console.error('Assessment parsing failed', ex));
+        }};
 }

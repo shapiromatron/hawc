@@ -45,13 +45,9 @@ export default function (state=defaultState, action){
         });
 
     case types.AS_SELECT:
-        let item = _.findWhere(state.items, {id: action.id});
-        if (item){
-            return Object.assign({}, state, {
-                active: item,
-            });
-        }
-        return state;
+        return Object.assign({}, state, {
+            active: action.object,
+        });
 
 
     default:

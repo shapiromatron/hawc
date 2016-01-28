@@ -61,7 +61,18 @@ describe( 'Assessment reducer', () => {
             }],
         }, {
             type: types.AS_SELECT,
-            id: 0,
+            object: {
+                'name': 'test assessment',
+                'id': 0,
+                'items': [
+                    {
+                        'count': 1,
+                        'title': 'in vitro endpoints',
+                        'type': 'iv',
+                        'url': 'http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57',
+                    },
+                ],
+            },
         })).to.deep.equal({
             itemsLoaded: false,
             isFetching: false,

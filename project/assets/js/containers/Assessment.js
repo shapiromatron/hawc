@@ -1,16 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import '../../css/Assessment.css';
 
 import Assessment from '../components/Assessment';
 import Loading from '../components/Loading';
 
-import { fetchObjectIfNeeded } from '../actions/Assessment';
+import { makeAssessmentActive } from '../actions/Assessment';
 
 class App extends Component {
 
     componentWillMount() {
-        const { id } = this.props;
-        this.props.dispatch(fetchObjectIfNeeded(id));
+        const { id, dispatch } = this.props;
+        dispatch(makeAssessmentActive(id));
     }
 
     render() {
