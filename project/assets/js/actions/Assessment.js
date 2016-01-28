@@ -24,9 +24,10 @@ function releaseSelected(){
 export function fetchObjectIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
+        console.log(state)
         if (state.assessment.isFetching) return;
         dispatch(requestContent());
-        return fetch(`${state.apiUrl}/${state.config.assessment}?assessment_id=${id}`, h.fetchGet)
+        return fetch(h.getAssessmentApiUrl(state.config), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObject(json)))
             .catch((ex) => console.error('Assessment parsing failed', ex));
