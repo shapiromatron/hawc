@@ -14,7 +14,6 @@ export default class Assessment extends Component{
     }
 
     render() {
-        console.log(this.props)
         const { items, name } = this.props.object;
 
         const isEmpty = (items.reduce( (prev, curr) => prev + curr.count) === 0);

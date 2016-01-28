@@ -7,27 +7,29 @@ import unexpectedReact from 'unexpected-react';
 const expect = unexpected.clone().use(unexpectedReact);
 
 describe('Assessment component', () => {
-    let items, name, renderer, output;
+    let object, renderer, output;
 
     beforeEach(() => {
-        items = [
-            {
-                'count': 334,
-                'type': 'epi',
-                'title': 'epidemiological outcomes assessed',
-                'url': 'http://127.0.0.1:8000/epi/api/cleanup/?assessment_id=57',
-            },
-            {
-                'count': 1,
-                'title': 'in vitro endpoints',
-                'type': 'iv',
-                'url': 'http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57',
-            },
-        ];
-        name = 'test assessment';
+        object = {
+            items: [
+                {
+                    'count': 334,
+                    'type': 'epi',
+                    'title': 'epidemiological outcomes assessed',
+                    'url': 'http://127.0.0.1:8000/epi/api/cleanup/?assessment_id=57',
+                },
+                {
+                    'count': 1,
+                    'title': 'in vitro endpoints',
+                    'type': 'iv',
+                    'url': 'http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57',
+                },
+            ],
+            name: 'test assessment',
+        };
 
         renderer = TestUtils.createRenderer();
-        renderer.render(<Assessment items={items} name={name} />);
+        renderer.render(<Assessment object={object} />);
         output = renderer.getRenderOutput();
     });
 
