@@ -11,17 +11,19 @@
 
 {% block content %}
     <div id="root"></div>
-    {% render_bundle 'main' %}
 {% endblock %}
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "assessment": "{% url 'assessment:endpoint_type_list' %}"
-        "epi_cleanup": "{% url 'epi:api:cleanup-list' %}",
-        "animal_cleanup": "{% url 'animal:api:cleanup-list' %}",
-        "iv_cleanup": "{% url 'invitro:api:cleanup-list' %}",
+        "assessment_id": "{{ assessment.id }}",
+        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "epi": "{% url 'epi:api:cleanup-list' %}",
+        "ani": "{% url 'animal:api:cleanup-list' %}",
+        "iv": "{% url 'invitro:api:cleanup-list' %}",
         "csrf": "{% csrf_token %}"
     }
 </script>
+{% render_bundle 'main' %}
+
 {% endblock extrajs %}
