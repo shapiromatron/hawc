@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import _ from 'underscore';
 import '../../css/Assessment.css';
 
 import Assessment from '../components/Assessment';
@@ -7,7 +8,14 @@ import Loading from '../components/Loading';
 
 import { makeAssessmentActive } from '../actions/Assessment';
 
-class App extends Component {
+class App extends Component{
+
+    getObject(){
+        return _.findWhere(
+            this.props.objects,
+            {id: parseInt(this.props.params.id)}
+        );
+    }
 
     componentWillMount() {
         const { id, dispatch } = this.props;
@@ -15,13 +23,19 @@ class App extends Component {
     }
 
     render() {
-        return <div>{this.props.children}</div>;
+        console.log(this.props);
+        let object = this.getObject();
+        if (_.isUndefined(object)) return <Loading />;
+        return (
+            <Assessment object={object}/>
+        );
     }
 }
 
 function mapStateToProps(state){
     return {
         id: state.config.assessment_id,
+        objects: state.assessment.items,
     };
 }
 

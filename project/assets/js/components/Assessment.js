@@ -7,14 +7,15 @@ export default class Assessment extends Component{
         } else {
             return (
                 <li key={item.type}>
-                    <a className="endpoint_type" href={item.url}>{item.count} {item.type}</a>
+                    <a className="endpoint_type" href={item.url}>{item.count} {item.title}</a>
                 </li>
             );
         }
     }
 
     render() {
-        const { isFetching, items, name } = this.props;
+        console.log(this.props)
+        const { items, name } = this.props.object;
 
         const isEmpty = (items.reduce( (prev, curr) => prev + curr.count) === 0);
         if(isEmpty){
@@ -23,7 +24,7 @@ export default class Assessment extends Component{
         }
         return (
             <div className='assessment'>
-                <h2 classname='assessment_title'>{name} Results for Cleanup</h2>
+                <h2 className='assessment_title'>{name} Results for Cleanup</h2>
                 <ul>
                     {items.map(this.renderEndpointType)}
                 </ul>
@@ -34,10 +35,12 @@ export default class Assessment extends Component{
 }
 
 Assessment.propTypes = {
-    name: PropTypes.string.isRequired,
-    items: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        type: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired,
-    })).isRequired,
+    object: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        items: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            type: PropTypes.string.isRequired,
+            url: PropTypes.string.isRequired,
+        })).isRequired,
+    }).isRequired,
 };
