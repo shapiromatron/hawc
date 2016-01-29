@@ -1,0 +1,28 @@
+{% extends 'portal.html' %}
+{% load render_bundle from webpack_loader %}
+
+
+{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
+  <li class="active">ROB filter link<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+    <div id="root"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "csrf": "{% csrf_token %}"
+    }
+</script>
+{% render_bundle 'main' %}
+
+{% endblock extrajs %}
+

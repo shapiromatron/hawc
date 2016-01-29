@@ -55,6 +55,11 @@ urlpatterns = [
         views.VisualizationDelete.as_view(),
         name='visualization_delete'),
 
+    # prototype-mockup
+    url(r'^robFilter/assessment/(?P<pk>\d+)/$',
+        views.RobFilter.as_view(),
+        name='robFilter'),
+
     # DATA-PIVOT
     url(r'^data-pivot/excel-unicode-saving/$',
         views.ExcelUnicode.as_view(),
