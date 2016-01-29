@@ -30,7 +30,7 @@ describe('Endpoint actions', () => {
         it('should load the endpoint model', (done) => {
             nock('http://127.0.0.1:9000')
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
-                .reply(200, {
+                .reply(200,  {
                     'text_cleanup_fields': [
                         'system',
                         'organ',
@@ -50,14 +50,14 @@ describe('Endpoint actions', () => {
             ];
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: { isFetching: false,
                             type: 'ani'}}, expectedActions, done);
-            store.dispatch(endpointActions.fetchModelIfNeeded(57));
+            store.dispatch(endpointActions.fetchModelIfNeeded());
         });
 
         it('should load endpoint items', (done) => {
@@ -96,11 +96,11 @@ describe('Endpoint actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     isFetching: false,
                     field: 'system',
@@ -121,11 +121,11 @@ describe('Endpoint actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     items: [
                         {
@@ -142,7 +142,7 @@ describe('Endpoint actions', () => {
                     type: 'ani',
                     field: 'system',
                 }}, expectedActions, done);
-            store.dispatch(endpointActions.deleteObject(57, 10210));
+            store.dispatch(endpointActions.deleteObject(10210));
         });
 
         it('should patch multiple objects', (done) => {
@@ -185,11 +185,11 @@ describe('Endpoint actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     items: [
                         {

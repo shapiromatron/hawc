@@ -24,12 +24,20 @@ function receiveObjects(json) {
     };
 }
 
+export function setType(endpoint_type){
+    return {
+        type: types.EP_SET_TYPE,
+        endpoint_type,
+    };
+}
+
 export function setField(field){
     return {
         type: types.EP_SET_FIELD,
         field,
     };
 }
+
 
 function removeObject(id){
     return {
@@ -71,7 +79,7 @@ function releaseContent(){
     };
 }
 
-export function fetchModelIfNeeded(assessment_id){
+export function fetchModelIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
@@ -85,7 +93,7 @@ export function fetchModelIfNeeded(assessment_id){
     };
 }
 
-export function fetchObjectsIfNeeded(assessment_id) {
+export function fetchObjectsIfNeeded() {
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
@@ -124,7 +132,7 @@ export function patchObjectList(objectList, cb){
     };
 }
 
-export function deleteObject(assessment_id, id){
+export function deleteObject(id){
     return (dispatch, getState) => {
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
