@@ -9,7 +9,7 @@ router = DefaultRouter()
 router.register(r'study', api.Study, base_name="study")
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(router.urls, namespace='api')),
 
     # assessment risk-of-bias
     url(r'^assessment/(?P<pk>\d+)/risk-of-bias/$',

@@ -1,9 +1,14 @@
 from __future__ import absolute_import
 
+from django.db.models import Q
 from assessment.api.views import AssessmentViewset
 
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
+
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
+from rest_framework.exceptions import NotAcceptable
 
 
 class Experiment(AssessmentViewset):
@@ -35,6 +40,37 @@ class Endpoint(AssessmentViewset):
                 'effects',
                 'animal_group__dosed_animals__doses',
             )
+
+    @list_route()
+    def effects(self, request):
+        # todo: check permissions
+        assessment_id = int(self.request.query_params.get('assessment_id', -1))
+        effects = models.Endpoint.get_effects(assessment_id)
+        return Response(effects)
+
+    @list_route()
+    def rob_filter(self, request):
+        # todo: check permissions
+        params = self.request.query_params
+
+        assessment_id = int(params.get('assessment_id', -1))
+        query = Q(assessment_id=assessment_id)
+
+        effects = params.getlist('effect[]')
+        if effects:
+            query &= Q(effect__in=effects)
+
+        study_ids = params.getlist('study_id[]')
+        if study_ids:
+            query &= Q(animal_group__experiment__study__in=study_ids)
+
+        qs = models.Endpoint.objects.filter(query)
+
+        if qs.count() > 100:
+            raise NotAcceptable("Must contain < 100 endpoints")
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class CleanupFieldsView(CleanupFieldsBaseViewSet):

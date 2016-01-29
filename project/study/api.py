@@ -3,6 +3,8 @@ from __future__ import absolute_import
 import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
 
 from utils.api import DisabledPagination
 from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter
@@ -50,3 +52,10 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
         return self.model.objects.filter(**filters)\
                    .prefetch_related(*prefetch)
+
+    @list_route()
+    def rob_scores(self, request):
+        # todo: check permissions
+        assessment_id = int(self.request.query_params.get('assessment_id', -1))
+        scores = models.Study.rob_scores(assessment_id)
+        return Response(scores)

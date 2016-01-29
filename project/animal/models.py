@@ -929,11 +929,15 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_effect_choices(cls, assessment_id):
-        objs = cls.objects\
+        return [(obj, obj) for obj in cls.get_effects(assessment_id)]
+
+    @classmethod
+    def get_effects(cls, assessment_id):
+        return cls.objects\
                   .filter(assessment_id=assessment_id)\
                   .distinct('effect')\
+                  .order_by('effect')\
                   .values_list('effect', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
 
     @classmethod
     def text_cleanup_fields(cls):

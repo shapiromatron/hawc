@@ -17,8 +17,10 @@
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "assessment_id": "{{ assessment.id }}",
-        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "assessment_id": "{{assessment.id}}",
+        "study_score_url": "{% url 'study:api:study-rob-scores' %}?assessment_id={{assessment.id}}",
+        "endpoint_effect_url": "{% url 'animal:api:endpoint-effects' %}?assessment_id={{assessment.id}}",
+        "endpoint_filter_url": "{% url 'animal:api:endpoint-rob-filter' %}?assessment_id={{assessment.id}}",
         "csrf": "{% csrf_token %}"
     }
 </script>
