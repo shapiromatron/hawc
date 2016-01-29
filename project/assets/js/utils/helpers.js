@@ -60,7 +60,7 @@ var helpers = {
     getEndpointApiURL(state, filterFields=false, fetchModel=false){
         let getFields = fetchModel ? 'fields/' : '';
         let fields = (filterFields && state.endpoint.field) ? `&fields=${state.endpoint.field}` : '';
-        return `${state.config.apiUrl}/${state.config[state.endpoint.type]}${getFields}?assessment_id=${state.assessment.id}${fields}`;
+        return `${state.config.apiUrl}${state.config[state.endpoint.type]}${getFields}?assessment_id=${state.assessment.active.id}${fields}`;
     },
     getObjectURL(base, id){
         return `${base}${id}/`;
@@ -87,6 +87,17 @@ var helpers = {
     deepCopy(object){
         return JSON.parse(JSON.stringify(object));
     },
+    caseToWords(string){
+        return string
+            // replace underscores and dashes with spaces
+            .replace(/[_-]/g, ' ')
+            // insert a space between lower followed by upper
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            // insert a space between last upper in sequence followed by lower
+            .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+            // uppercase the first character
+            .replace(/^./, function(str){ return str.toUpperCase(); });
+    }
 };
 
 export default helpers;
