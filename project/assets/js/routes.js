@@ -2,12 +2,13 @@ import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import urls from './constants/urls';
 import AssessmentApp from './containers/AssessmentApp';
-import Fields from './containers/Fields'
+import FieldSelection from './containers/FieldSelection';
+import Endpoint from './containers/Endpoint';
 
 export default (
   <Route path={urls.assessment.url} >
       <IndexRoute component={AssessmentApp} />
-      <Route path={urls.fields.url} component={Fields} />
-      {/*<Route path={urls.endpoints.url} component={}*/}
+      <Route path={urls.fields.url} component={FieldSelection} />
+        <Route path={urls.endpoints.url} component={Endpoint} />
   </Route>
 );
