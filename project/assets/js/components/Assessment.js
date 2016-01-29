@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 
 export default class Assessment extends Component{
     renderEndpointType(item){
@@ -7,7 +8,7 @@ export default class Assessment extends Component{
         } else {
             return (
                 <li key={item.type}>
-                    <a className="endpoint_type" href={item.url}>{item.count} {item.title}</a>
+                    <Link to={item.url}>{item.count} {item.title}</Link>
                 </li>
             );
         }

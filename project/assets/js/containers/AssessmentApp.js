@@ -23,7 +23,6 @@ class App extends Component{
     }
 
     render() {
-        console.log(this.props);
         let object = this.getObject();
         if (_.isUndefined(object)) return <Loading />;
         return (
