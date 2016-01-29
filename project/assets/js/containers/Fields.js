@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 
 import FieldList from '../components/FieldList';
 import Loading from '../components/Loading';
@@ -8,6 +7,7 @@ import Loading from '../components/Loading';
 import { setType, fetchModelIfNeeded } from '../actions/Endpoint';
 
 class Fields extends Component {
+
     componentWillMount() {
         const { dispatch, params } = this.props;
         dispatch(setType(params.type))
@@ -15,7 +15,7 @@ class Fields extends Component {
     }
 
     render() {
-        if(_.isUndefined(this.props.objects)) return <Loading />;
+        if(this.props.objects == undefined) return <Loading />;
         return <FieldList fields={this.props.objects} />;
     }
 }
