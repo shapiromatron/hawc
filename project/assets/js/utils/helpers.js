@@ -100,6 +100,16 @@ var helpers = {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
     },
+    extendBreadcrumbs(url_list){
+        const breadcrumbs = $('.breadcrumb');
+        _.map(document.getElementsByClassName('active crumb'), (e) => {
+            e.parentNode.removeChild(e);
+        });
+        _.map(url_list, (url) => {
+            breadcrumbs.children().last().contents().eq(-2).wrap(`<a href=${url.url}></a>`);
+            breadcrumbs.append($(`<li class="active crumb">${url.title} <span class='divider'>/</span></li>`));
+        });
+    },
 };
 
 export default helpers;
