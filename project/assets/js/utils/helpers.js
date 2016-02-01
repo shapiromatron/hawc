@@ -101,10 +101,11 @@ var helpers = {
             });
     },
     extendBreadcrumbs(url_list){
-        const breadcrumbs = $('.breadcrumb');
-        _.map(document.getElementsByClassName('active crumb'), (e) => {
-            e.parentNode.removeChild(e);
-        });
+        const breadcrumbs = $('.breadcrumb'),
+            reactCrumbs = document.getElementsByClassName('active crumb');
+        while (reactCrumbs.length > 0) {
+            reactCrumbs[0].parentNode.removeChild(reactCrumbs[0]);
+        }
         _.map(url_list, (url) => {
             breadcrumbs.children().last().contents().eq(-2).wrap(`<a href=${url.url}></a>`);
             breadcrumbs.append($(`<li class="active crumb">${url.title} <span class='divider'>/</span></li>`));
