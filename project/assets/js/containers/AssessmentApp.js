@@ -25,7 +25,7 @@ class App extends Component{
 
     render() {
         let object = this.getObject();
-        h.extendBreadcrumbs([]);
+        h.extendBreadcrumbs();
         if (_.isUndefined(object)) return <Loading />;
         return (
             <Assessment object={object}/>
