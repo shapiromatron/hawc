@@ -11,7 +11,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         }, {
             type: types.EP_RECEIVE_MODEL,
@@ -35,7 +35,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         });
     });
@@ -53,7 +53,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         }, {
             type: types.EP_SET_FIELD,
@@ -70,7 +70,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: 'system',
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         });
     });
@@ -83,7 +83,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         }, {
             type: types.EP_SET_TYPE,
@@ -96,7 +96,7 @@ describe('Endpoint reducer', () => {
             type: 'ani',
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         });
     });
@@ -125,7 +125,9 @@ describe('Endpoint reducer', () => {
         }, {
             type: types.EP_CREATE_EDIT_OBJECT,
             object: {
+                'field': 'system',
                 'system': 'digestive system',
+                'ids': [10210, 10212],
             },
         })).to.deep.equal({
             itemsLoaded: true,
@@ -145,7 +147,13 @@ describe('Endpoint reducer', () => {
                     'system': 'digestive system',
                 },
             ],
-            editObject: {'system': 'digestive system'},
+            editObject: {
+                'digestive system': {
+                    'field': 'system',
+                    'system': 'digestive system',
+                    'ids': [10210, 10212],
+                }
+            },
             editObjectErrors: {},
         });
     });
@@ -295,7 +303,7 @@ describe('Endpoint reducer', () => {
             type: null,
             field: null,
             items: [],
-            editObject: null,
+            editObject: {},
             editObjectErrors: {},
         });
     });
