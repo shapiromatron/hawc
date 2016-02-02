@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import h from 'utils/helpers';
+import FormFieldError from 'components/FormFieldError';
 
 
 export default class BulkForm extends Component {
@@ -14,6 +15,7 @@ export default class BulkForm extends Component {
 
     render() {
         let { object, errors, field, params } = this.props;
+        console.log(params)
         return (
             <div  className="stripe row" onSubmit={this.handleSubmit.bind(this)}>
                 <span className='bulk-element field span4'>{field || `N/A`}</span>

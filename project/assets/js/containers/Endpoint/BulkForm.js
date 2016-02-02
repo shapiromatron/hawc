@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import h from 'utils/helpers';
 import Loading from 'components/Loading';
-import FormFieldError from 'components/FormFieldError';
 import FormComponent from 'components/Endpoint/BulkForm';
 import 'containers/Endpoint/EndpointBulkForm.css';
 
@@ -42,7 +41,7 @@ export default class BulkForm extends Component {
     }
 
     render() {
-        let { items, model, field } = this.props,
+        let { items, model, field, params } = this.props,
             thisField = items[0][field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
         return (
@@ -51,6 +50,7 @@ export default class BulkForm extends Component {
                 errors={model.editObjectErrors}
                 field={thisField}
                 handleSubmit={this.handleSubmit.bind(this)}
+                params={params}
             />
 
         );
@@ -60,6 +60,7 @@ export default class BulkForm extends Component {
 
 function mapStateToProps(state){
     return {
+        params: state.router.params,
         model: state.endpoint,
         itemsLoaded: state.endpoint.itemsLoaded,
     };
