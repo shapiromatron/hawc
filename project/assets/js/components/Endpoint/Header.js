@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import h from '../../utils/helpers';
+import h from 'utils/helpers';
 
-export default class EndpointHeader extends Component {
+export default class Header extends Component {
 
     render() {
         let { params } = this.props;

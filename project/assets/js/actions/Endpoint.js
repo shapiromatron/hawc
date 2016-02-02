@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import 'babel-polyfill';
-import * as types from '../constants/ActionTypes';
-import h from '../utils/helpers';
+import * as types from 'constants/ActionTypes';
+import h from 'utils/helpers';
 
 
 function requestContent() {

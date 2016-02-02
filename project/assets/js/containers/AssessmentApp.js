@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
-import '../../css/Assessment.css';
+import 'containers/Assessment.css';
 
-import Assessment from '../components/Assessment';
-import Loading from '../components/Loading';
-import h from '../utils/helpers';
+import Assessment from 'components/Assessment';
+import Loading from 'components/Loading';
+import h from 'utils/helpers';
 
-import { makeAssessmentActive } from '../actions/Assessment';
+import { makeAssessmentActive } from 'actions/Assessment';
 
 class App extends Component{
 

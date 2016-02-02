@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { ReduxRouter } from 'redux-router';
 import DevTools from './DevTools';
 
-import { loadConfig } from '../actions/Config';
+import { loadConfig } from 'actions/Config';
 
 export default class Root extends Component {
     componentWillMount() {

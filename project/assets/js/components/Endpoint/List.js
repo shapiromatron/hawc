@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import urls from '../../constants/urls';
-import EndpointBulkList from './EndpointBulkList';
-import EndpointHeader from './EndpointHeader';
+import urls from 'constants/urls';
+import BulkList from 'components/Endpoint/BulkList';
+import Header from 'components/Endpoint/Header';
 
 export default class EndpointList extends Component {
 
@@ -10,8 +10,8 @@ export default class EndpointList extends Component {
         const { endpoint, params } = this.props;
         return (
             <div className='endpoint_list'>
-                <EndpointHeader params={params} />
-                <EndpointBulkList endpoint={endpoint} />
+                <Header params={params} />
+                <BulkList endpoint={endpoint} />
             </div>
         );
     }

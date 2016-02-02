@@ -8,6 +8,11 @@ module.exports = {
 
     context: __dirname,
 
+    resolve: {
+        root: path.resolve(__dirname, 'assets/js'),
+        extensions: ['', '.js', '.css'],
+    },
+
     entry: [
         './assets/js/index',
     ],

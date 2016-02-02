@@ -1,6 +1,6 @@
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import Assessment from '../../components/Assessment';
+import Assessment from 'components/Assessment';
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
 

@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 
-import h from '../../utils/helpers';
-// import EndpointDetailEdit from './EndpointDetailEdit';
-import EndpointBulkForm from '../../containers/EndpointBulkForm';
+import h from 'utils/helpers';
+// import EndpointDetailEdit from 'EndpointDetailEdit';
+import BulkForm from 'containers/Endpoint/BulkForm';
 
-export default class EndpointBulkList extends Component {
+export default class BulkList extends Component {
 
     constructor(props) {
         super(props);
@@ -35,13 +35,7 @@ export default class EndpointBulkList extends Component {
     render() {
         let { endpoint } = this.props,
             field = endpoint.field,
-            groupedEndpoints = this.groupEndpoints(endpoint),
-            rows = _.map(groupedEndpoints, (endpoints) => {
-                return <EndpointBulkForm
-                    key={endpoints[0][field] || 'Empty'}
-                    items={endpoints}
-                    field={field}/>;
-            });
+            groupedEndpoints = this.groupEndpoints(endpoint);
         return (
             <div className='container-fluid'>
                 <div className='row'>
@@ -50,13 +44,18 @@ export default class EndpointBulkList extends Component {
                     <span className='bulk-header span2'>Submit Edit</span>
                 </div>
 
-                    {rows}
+                    {_.map(groupedEndpoints, (endpoints) => {
+                        return <BulkForm
+                            key={endpoints[0][field] || 'Empty'}
+                            items={endpoints}
+                            field={field}/>;
+                    })}
             </div>
         );
     }
 }
 
-EndpointBulkList.propTypes = {
+BulkList.propTypes = {
     endpoint: PropTypes.shape({
         type: PropTypes.string,
         field: PropTypes.string.required,

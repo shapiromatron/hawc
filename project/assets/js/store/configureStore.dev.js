@@ -1,11 +1,11 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reduxReactRouter } from 'redux-router';
-import DevTools from '../containers/DevTools';
+import DevTools from 'containers/DevTools';
 import createHistory from 'history/lib/createBrowserHistory';
-import routes from '../routes';
+import routes from 'routes';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
-import rootReducer from '../reducers';
+import rootReducer from 'reducers';
 
 const logger = createLogger({
     level: 'info',
@@ -25,8 +25,8 @@ export default function configureStore(initialState) {
 
     if (module.hot) {
         // Enable Webpack hot module replacement for reducers
-        module.hot.accept('../reducers', () => {
-            const nextRootReducer = require('../reducers');
+        module.hot.accept('reducers', () => {
+            const nextRootReducer = require('reducers');
             store.replaceReducer(nextRootReducer);
         });
     }

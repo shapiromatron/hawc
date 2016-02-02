@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import EndpointList from '../components/Endpoint/EndpointList';
-import Loading from '../components/Loading';
-import h from '../utils/helpers';
+import List from 'components/Endpoint/List';
+import Loading from 'components/Loading';
+import h from 'utils/helpers';
 
-import { fetchObjectsIfNeeded, setField } from '../actions/Endpoint';
+import { fetchObjectsIfNeeded, setField } from 'actions/Endpoint';
 
 class Endpoint extends Component {
 
@@ -28,7 +28,7 @@ class Endpoint extends Component {
                 title: h.caseToWords(endpoint.field),
             }];
         h.extendBreadcrumbs(url_list);
-        return <EndpointList endpoint={endpoint} params={this.props.params}/>;
+        return <List endpoint={endpoint} params={this.props.params}/>;
     }
 }
 
