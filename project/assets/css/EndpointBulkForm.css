@@ -1,0 +1,28 @@
+.bulk-header {
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 4px 5px;
+  margin: 5px;
+}
+
+.stripe {
+  padding: 4px 5px;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.stripe:nth-child(even){
+  background: #f9f9f9;
+}
+
+.bulk-element.field {
+  font-size: 1.1em;
+  padding: 8px 5px;
+  margin: 5px;
+}
+
+.bulk-element.form-group input{
+  width: 85%;
+  padding: 5px;
+  margin: 5px;
+}

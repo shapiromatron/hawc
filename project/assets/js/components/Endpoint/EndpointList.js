@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import urls from '../../constants/urls';
-import EndpointBulkEdit from './EndpointBulkEdit';
+import EndpointBulkList from './EndpointBulkList';
 import EndpointHeader from './EndpointHeader';
 
 export default class EndpointList extends Component {
@@ -11,7 +11,7 @@ export default class EndpointList extends Component {
         return (
             <div className='endpoint_list'>
                 <EndpointHeader params={params} />
-                <EndpointBulkEdit endpoint={endpoint} />
+                <EndpointBulkList endpoint={endpoint} />
             </div>
         );
     }
