@@ -157,23 +157,18 @@ export function releaseEndpoint(){
     };
 }
 
-export function initializeEditForm(id=null){
-
+export function initializeBulkEditForm(ids=[], field='system'){
     return (dispatch, getState) => {
         let state = getState(),
             object;
-        if (id){
-            object = _.findWhere(state.endpoint.items, {id});
-            object = h.deepCopy(object);
+        if (ids){
+            object = _.findWhere(state.endpoint.items, {id: ids[0]});
+            object = Object.assign({}, _.omit(object, ['id', 'name']), {ids: ids, field: [field]} );
         } else {
             object = {
-                id: null,
-                name: '',
-                description: '',
-                public: false,
-                genome_assembly: 1,
-                stranded: true,
-                text: '',
+                ids: [],
+                [field]: '',
+                field: [field],
             };
         }
         dispatch(setEdititableObject(object));

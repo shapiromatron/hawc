@@ -8,7 +8,7 @@ let defaultState = {
     type: null,
     field: null,
     items: [],
-    editObject: null,
+    editObject: {},
     editObjectErrors: {},
 };
 
@@ -91,8 +91,11 @@ export default function (state=defaultState, action){
         });
 
     case types.EP_CREATE_EDIT_OBJECT:
+        let obj = action.object,
+            field = obj.field,
+            thisField = obj[field];
         return Object.assign({}, state, {
-            editObject: action.object,
+            editObject: { ...state.editObject, [thisField]: obj},
             editObjectErrors: {},
         });
 
