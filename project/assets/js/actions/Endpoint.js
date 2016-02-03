@@ -109,10 +109,9 @@ export function patchObjectList(objectList, cb){
     cb = cb || h.noop;
     return (dispatch, getState) => {
         let state = getState();
-
         _.map(objectList, (patchObject) => {
             let { ids, patch } = patchObject,
-                opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
             return fetch(
                 `${h.getEndpointApiURL(state)}&ids=${ids}`,
                 opts)
