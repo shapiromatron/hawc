@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import * as types from '../../constants/ActionTypes';
-import rootReducer from '../../reducers';
+import * as types from 'constants/ActionTypes';
+import rootReducer from 'reducers';
 
 describe('Root reducer', () => {
     it('should return initial state', () => {

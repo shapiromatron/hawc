@@ -1,7 +1,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as endpointActions from '../../actions/Endpoint';
-import * as types from '../../constants/ActionTypes';
+import * as endpointActions from 'actions/Endpoint';
+import * as types from 'constants/ActionTypes';
 import nock from 'nock';
 
 const middlewares = [thunk];

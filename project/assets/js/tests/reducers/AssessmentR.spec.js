@@ -1,5 +1,5 @@
-import * as types from '../../constants/ActionTypes';
-import assessmentReducer from '../../reducers/Assessment';
+import * as types from 'constants/ActionTypes';
+import assessmentReducer from 'reducers/Assessment';
 
 describe( 'Assessment reducer', () => {
 
