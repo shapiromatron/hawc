@@ -21,6 +21,19 @@ var helpers = {
             body: JSON.stringify(obj),
         };
     },
+    fetchBulk(csrf, obj, verb='PATCH'){
+        obj['csrfmiddlewaretoken'] = csrf;
+        return {
+            credentials: 'same-origin',
+            method: verb,
+            headers: new Headers({
+                'X-CSRFToken': csrf,
+                'content-type': 'application/json',
+                'X-CUSTOM-BULK-OPERATION': true,
+            }),
+            body: JSON.stringify(obj),
+        };
+    },
     fetchDelete(csrf){
         return {
             credentials: 'same-origin',
