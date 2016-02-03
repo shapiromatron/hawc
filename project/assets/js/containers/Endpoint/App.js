@@ -16,7 +16,6 @@ class Endpoint extends Component {
     }
 
     render() {
-        console.log(this.props)
         if (_.isEmpty(this.props.endpoint.items)) return <Loading />;
         let { endpoint, endpoint_types, params } = this.props,
             type = _.findWhere(endpoint_types, {type: params.type}),

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import h from 'utils/helpers';
@@ -8,6 +8,7 @@ import 'containers/Endpoint/EndpointBulkForm.css';
 
 import {
     initializeBulkEditForm,
+    patchObjectList,
 } from 'actions/Endpoint';
 
 export default class BulkForm extends Component {
@@ -21,11 +22,8 @@ export default class BulkForm extends Component {
         return _.pluck(this.props.items, 'id');
     }
 
-    handleSubmit() {
-        ids = _.map(groupedEndpoints, (group) => {
-            return _.pluck(group, 'id');
-        });
-
+    handleSubmit(obj) {
+        this.props.dispatch(patchObjectList([obj]));
     }
 
     isReadyToRender(thisField){
@@ -44,9 +42,10 @@ export default class BulkForm extends Component {
         let { items, model, field, params } = this.props,
             thisField = items[0][field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
+        this.isRendered = true;
         return (
             <FormComponent
-                object={model.editObject}
+                object={model.editObject[thisField]}
                 errors={model.editObjectErrors}
                 field={thisField}
                 handleSubmit={this.handleSubmit.bind(this)}

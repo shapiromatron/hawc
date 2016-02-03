@@ -53,10 +53,11 @@ function setEdititableObject(object){
     };
 }
 
-function patchItems(ids){
+function patchItems(ids, patch){
     return {
         type: types.EP_PATCH_OBJECTS,
         ids,
+        patch,
     };
 }
 
@@ -67,9 +68,10 @@ function receiveEditErrors(errors){
     };
 }
 
-function resetEditObject(){
+function resetEditObject(patch){
     return {
         type: types.EP_RESET_EDIT_OBJECT,
+        patch,
     };
 }
 
@@ -110,17 +112,19 @@ export function patchObjectList(objectList, cb){
     return (dispatch, getState) => {
         let state = getState();
         _.map(objectList, (patchObject) => {
-            let { ids, patch } = patchObject,
-                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
+            let { ids, field } = patchObject,
+                patch = {[field]: patchObject[field]},
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH'),
+                oldObject = _.findWhere(state.endpoint.items, {id: ids[0]})[state.endpoint.field];
             return fetch(
                 `${h.getEndpointApiURL(state)}&ids=${ids}`,
                 opts)
                 .then((response) => {
-                    dispatch(setEdititableObject(_.omit(patch, 'csrfmiddlewaretoken')));
-                    if (response.status === 200){
-                        response.json()
-                            .then(() => dispatch(patchItems(ids)))
-                            .then(() => dispatch(resetEditObject()));
+                    dispatch(setEdititableObject(patchObject));
+                    if (response.ok){
+                        response.text()
+                            .then(() => dispatch(patchItems(ids, patchObject)))
+                            .then(() => dispatch(resetEditObject(oldObject)));
                     } else {
                         response.json()
                         .then((json) => dispatch(receiveEditErrors(json)));
