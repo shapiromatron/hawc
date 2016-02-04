@@ -26,22 +26,26 @@ class CleanupFieldsFilter(InAssessmentFilter):
     """
     def filter_queryset(self, request, queryset, view):
         queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
-        if view.action not in ('list', 'retrieve'):
-            ids = request.query_params.get('ids')
-            try:
-                ids = ids.split(',')
-            except AttributeError as e:
-                ids = []
+        ids = request.query_params.get('ids')
+        try:
+            ids = ids.split(',')
             filters = {'id__in': ids}
-            queryset = queryset.filter(**filters)
+        except AttributeError:
+            ids = []
+            filters = {}
 
-        return queryset
+        if view.action not in ('list', 'retrieve'):
+            filters = {'id__in': ids}
+
+        return queryset.filter(**filters)
 
 
 class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     """
     Base Viewset for bulk updating text fields. Model should have a
     text_cleanup_fields() class method that returns the fields to be cleaned up.
+
+    For bulk update, 'X-CUSTOM-BULK-OPERATION' header must be provided.
 
     Serializer should implement DynamicFieldsMixin.
     """
