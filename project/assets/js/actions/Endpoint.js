@@ -24,6 +24,13 @@ function receiveObjects(json) {
     };
 }
 
+function receiveObject(json) {
+    return {
+        type: types.EP_RECEIVE_OBJECT,
+        item: json,
+    };
+}
+
 export function setType(endpoint_type){
     return {
         type: types.EP_SET_TYPE,
@@ -95,27 +102,34 @@ export function fetchModelIfNeeded(){
     };
 }
 
-export function fetchObjectsIfNeeded() {
+export function fetchObjectsIfNeeded(ids=null) {
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getEndpointApiURL(state), h.fetchGet)
+        return fetch(h.getEndpointApiURL(state, false, false, ids), h.fetchGet)
             .then((response) => response.json())
-            .then((json) => dispatch(receiveObjects(json)))
+            .then((json) => {
+                if (ids === null){
+                    dispatch(receiveObjects(json));
+                } else {
+                    _.map(json, (item) => {
+                        dispatch(receiveObject(item));
+                    });
+                }
+            })
             .catch((ex) => console.error('Endpoint parsing failed', ex));
     };
 }
 
-export function patchObjectList(objectList, cb){
+export function patchBulkList(objectList, cb){
     cb = cb || h.noop;
     return (dispatch, getState) => {
         let state = getState();
         _.map(objectList, (patchObject) => {
             let { ids, field } = patchObject,
                 patch = {[field]: patchObject[field]},
-                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH'),
-                oldObject = _.findWhere(state.endpoint.items, {id: ids[0]})[state.endpoint.field];
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
             return fetch(
                 `${h.getEndpointApiURL(state)}&ids=${ids}`,
                 opts)
@@ -123,8 +137,47 @@ export function patchObjectList(objectList, cb){
                     dispatch(setEdititableObject(patchObject));
                     if (response.ok){
                         response.text()
-                            .then(() => dispatch(patchItems(ids, patchObject)))
-                            .then(() => dispatch(resetEditObject(oldObject)));
+                            .then(() => dispatch(patchItems(ids, patchObject)));
+                    } else {
+                        response.json()
+                        .then((json) => dispatch(receiveEditErrors(json)));
+                    }
+                })
+                .catch((ex) => console.error('Endpoint parsing failed', ex));
+        });
+    };
+}
+
+function fetchObjectList(ids){
+    return (dispatch, getState) => {
+        let state = getState();
+        if (state.endpoint.isFetching) return;
+        dispatch(requestContent());
+        return fetch(`${h.getEndpointApiURL(state)}&ids=${ids}`, h.fetchGet)
+            .then((response) => response.json())
+            .then((json) => _.map(json, (item) => {
+                dispatch(receiveObject(item));
+            })
+            )
+            .catch((ex) => console.error('Endpoint parsing failed', ex));
+    };
+}
+
+export function patchDetailList(objectList, cb){
+    cb = cb || h.noop;
+    return (dispatch, getState) => {
+        let state = getState();
+        _.map(objectList, (patchObject) => {
+            let { ids, field } = patchObject,
+                patch = {[field]: patchObject[field]},
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
+            return fetch(
+                `${h.getEndpointApiURL(state)}&ids=${ids}`,
+                opts)
+                .then((response) => {
+                    dispatch(setEdititableObject(patchObject));
+                    if (response.ok){
+                        dispatch(fetchObjectsIfNeeded(ids));
                     } else {
                         response.json()
                         .then((json) => dispatch(receiveEditErrors(json)));
