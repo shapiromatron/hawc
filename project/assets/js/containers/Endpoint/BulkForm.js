@@ -8,7 +8,8 @@ import 'containers/Endpoint/EndpointBulkForm.css';
 
 import {
     initializeBulkEditForm,
-    patchObjectList,
+    patchBulkList,
+    patchDetailList,
 } from 'actions/Endpoint';
 
 export default class BulkForm extends Component {
@@ -22,8 +23,12 @@ export default class BulkForm extends Component {
         return _.pluck(this.props.items, 'id');
     }
 
-    handleSubmit(obj) {
-        this.props.dispatch(patchObjectList([obj]));
+    handleBulkSubmit(obj) {
+        this.props.dispatch(patchBulkList([obj]));
+    }
+
+    handleDetailSubmit(obj){
+        this.props.dispatch(patchDetailList([obj]));
     }
 
     isReadyToRender(thisField){
@@ -49,7 +54,8 @@ export default class BulkForm extends Component {
                 object={model.editObject[thisField]}
                 errors={model.editObjectErrors}
                 field={thisField}
-                handleSubmit={this.handleSubmit.bind(this)}
+                handleBulkSubmit={this.handleBulkSubmit.bind(this)}
+                handleDetailSubmit={this.handleDetailSubmit.bind(this)}
                 params={params}
             />
 

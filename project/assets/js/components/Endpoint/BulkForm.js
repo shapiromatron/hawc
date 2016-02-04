@@ -14,7 +14,11 @@ export default class BulkForm extends Component {
 
     handleSubmit(e){
         e.preventDefault();
-        this.props.handleSubmit(this.state);
+        if (this.state.showDetails){
+            this.props.handleDetailSubmit(Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {ids: this.state.detailIDs}));
+        } else {
+            this.props.handleBulkSubmit(this.state);
+        }
     }
 
     handleChange(e){
@@ -27,7 +31,8 @@ export default class BulkForm extends Component {
         this.setState({ showDetails: this.state.showDetails ? false : true });
     }
 
-    checkDetails(e){
+    onDetailChange(e){
+        this.setState({ detailIDs: this.state.detailIDs ? this.state.detailIDs.concat(e.target.id) : [e.target.id]});
     }
 
 
@@ -38,7 +43,8 @@ export default class BulkForm extends Component {
                 <form onSubmit={this.handleSubmit.bind(this)}>
                 <span className='bulk-element field span4'>
                     <i className='fa fa-plus-square' onClick={this._toggleDetails.bind(this)}></i>
-                    {field || `N/A`}</span>
+                    {field || `N/A`}
+                </span>
                 <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
                     <input name={field} className='form-control' type="text"
                         defaultValue={object[params.field]}
@@ -48,7 +54,7 @@ export default class BulkForm extends Component {
                 </span>
                 <span className='bulk-element span2'><button type='submit' className='btn btn-primary'>Submit Bulk Edit</button></span>
                 </form>
-                <div>{this.state.showDetails ? <DetailList items={items} field={field} checkDetails={this.checkDetails.bind(this)}/> : null}</div>
+                <div>{this.state.showDetails ? <DetailList items={items} field={field} onDetailChange={this.onDetailChange.bind(this)}/> : null}</div>
             </div>
         );
     }
@@ -58,7 +64,8 @@ BulkForm.propTypes = {
     object: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     field: PropTypes.string.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
+    handleBulkSubmit: PropTypes.func.isRequired,
+    handleDetailSubmit: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
 };
