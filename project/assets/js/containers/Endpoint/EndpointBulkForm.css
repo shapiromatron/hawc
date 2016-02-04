@@ -27,11 +27,15 @@
 .detail-header {
   display: table-row;
   height: 40px;
-  background: #e0e0e0;
+  background: #EDF3FE;
   border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
 }
+
 .header-field {
   display: table-cell;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
 }
 
 .detail-stripe {
@@ -39,18 +43,24 @@
   padding: 2px;
   vertical-align: top;
   border-top: 1px solid #ddd;
-}
+  border-left: 1px solid #ddd;}
 
 .detail-stripe:nth-child(even) {
   background: #fff;
 }
 
 .detail-stripe:nth-child(odd) {
-  background: #e0e0e0;
+  background: #EDF3FE;
 }
 
 .detail-item {
   display: table-cell;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+.detail-item input{
+  margin: 0 0 2px 3px ;
 }
 
 .bulk-element.field {
