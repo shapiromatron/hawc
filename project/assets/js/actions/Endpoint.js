@@ -148,21 +148,6 @@ export function patchBulkList(objectList, cb){
     };
 }
 
-function fetchObjectList(ids){
-    return (dispatch, getState) => {
-        let state = getState();
-        if (state.endpoint.isFetching) return;
-        dispatch(requestContent());
-        return fetch(`${h.getEndpointApiURL(state)}&ids=${ids}`, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => _.map(json, (item) => {
-                dispatch(receiveObject(item));
-            })
-            )
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
-    };
-}
-
 export function patchDetailList(objectList, cb){
     cb = cb || h.noop;
     return (dispatch, getState) => {
@@ -228,28 +213,5 @@ export function initializeBulkEditForm(ids=[], field='system'){
             };
         }
         dispatch(setEdititableObject(object));
-    };
-}
-
-export function patchObjects(ids, patch, cb){
-    cb = cb || h.noop;
-    return (dispatch, getState) => {
-        let state = getState(),
-            opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
-        return fetch(
-            `${h.getEndpointApiURL(state.apiUrl, state.config[state.endpoint.type], state.assessment.id)}&ids=${ids}`,
-            opts)
-            .then(function(response){
-                if (response.status === 200){
-                    response.json()
-                    .then((json) => dispatch(fetchObjectsIfNeeded(state.assessment.id)))
-                    .then(cb())
-                    .then(() => dispatch(resetEditObject()));
-                } else {
-                    response.json()
-                    .then((json) => dispatch(receiveEditErrors(json)));
-                }
-            })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
     };
 }
