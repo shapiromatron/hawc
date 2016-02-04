@@ -136,8 +136,7 @@ export function patchBulkList(objectList, cb){
                 .then((response) => {
                     dispatch(setEdititableObject(patchObject));
                     if (response.ok){
-                        response.text()
-                            .then(() => dispatch(patchItems(ids, patchObject)));
+                        dispatch(patchItems(ids, patchObject));
                     } else {
                         response.json()
                         .then((json) => dispatch(receiveEditErrors(json)));
