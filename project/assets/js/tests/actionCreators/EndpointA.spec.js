@@ -62,7 +62,7 @@ describe('Endpoint actions', () => {
 
         it('should load endpoint items', (done) => {
             nock('http://127.0.0.1:9000')
-                .get('/ani/api/cleanup/?assessment_id=57&fields=system')
+                .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
                     {
                         'id': 10210,
@@ -165,22 +165,26 @@ describe('Endpoint actions', () => {
                     },
                 ]);
 
-            const patchList = [{ ids: [10210], patch: {'system': 'Digestive Systems'}}, { ids: [10212], patch: {'system': 'Digestive System'}}];
+            const patchList = [{ ids: [10210], field: 'system', system: 'Digestive Systems'}, { ids: [10212], field: 'system', system: 'Digestive System'}];
             const expectedActions = [
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object:  {
+                        'ids': [10210],
+                        field: 'system',
                         'system': 'Digestive Systems',
                     },
                 },
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object: {
+                        'ids': [10212],
+                        field: 'system',
                         'system': 'Digestive System',
                     },
                 },
-                { type: types.EP_PATCH_OBJECTS, ids: [10210] },
-                { type: types.EP_PATCH_OBJECTS, ids: [10212] },
-                { type: types.EP_RESET_EDIT_OBJECT },
-                { type: types.EP_RESET_EDIT_OBJECT },
+                { type: types.EP_PATCH_OBJECTS, ids: [10210], patch: {field: 'system', ids: [10210], system: 'Digestive Systems'} },
+                { type: types.EP_PATCH_OBJECTS, ids: [10212], patch: {field: 'system', ids: [10212], system: 'Digestive System'} },
+                { type: types.EP_RESET_EDIT_OBJECT, patch: 'digestive systems' },
+                { type: types.EP_RESET_EDIT_OBJECT, patch: 'systemic' },
             ];
 
             const store = mockStore({

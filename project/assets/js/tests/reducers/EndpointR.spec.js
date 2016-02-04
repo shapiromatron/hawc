@@ -187,6 +187,7 @@ describe('Endpoint reducer', () => {
         }, {
             type: types.EP_PATCH_OBJECTS,
             ids: [10210, 10212],
+            patch: {'system': 'Digestive Systems'},
         })).to.deep.equal({
             itemsLoaded: true,
             isFetching: false,

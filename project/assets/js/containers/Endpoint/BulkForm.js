@@ -45,6 +45,7 @@ export default class BulkForm extends Component {
         this.isRendered = true;
         return (
             <FormComponent
+                items={this.props.items}
                 object={model.editObject[thisField]}
                 errors={model.editObjectErrors}
                 field={thisField}

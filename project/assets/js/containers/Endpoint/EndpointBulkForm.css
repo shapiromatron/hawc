@@ -15,6 +15,44 @@
   background: #f9f9f9;
 }
 
+.stripe form {
+  min-height: 30px;
+}
+
+.detail-list {
+  width: 100%;
+  display: table;
+}
+
+.detail-header {
+  display: table-row;
+  height: 40px;
+  background: #e0e0e0;
+  border-top: 1px solid #ddd;
+}
+.header-field {
+  display: table-cell;
+}
+
+.detail-stripe {
+  display: table-row;
+  padding: 2px;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.detail-stripe:nth-child(even) {
+  background: #fff;
+}
+
+.detail-stripe:nth-child(odd) {
+  background: #e0e0e0;
+}
+
+.detail-item {
+  display: table-cell;
+}
+
 .bulk-element.field {
   font-size: 1.1em;
   padding: 8px 5px;
@@ -25,4 +63,9 @@
   width: 85%;
   padding: 5px;
   margin: 5px;
+}
+
+.fa {
+  padding: 0 10px;
+  cursor: pointer;
 }

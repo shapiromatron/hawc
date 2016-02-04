@@ -100,7 +100,7 @@ export function fetchObjectsIfNeeded() {
         let state = getState();
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getEndpointApiURL(state, true), h.fetchGet)
+        return fetch(h.getEndpointApiURL(state), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveObjects(json)))
             .catch((ex) => console.error('Endpoint parsing failed', ex));
