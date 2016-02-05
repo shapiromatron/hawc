@@ -67,6 +67,7 @@
   font-size: 1.1em;
   padding: 8px 5px;
   margin: 5px;
+  cursor: pointer;
 }
 
 .bulk-element.form-group input{
@@ -75,7 +76,10 @@
   margin: 5px;
 }
 
+.bulk-element.button {
+  width: 20%;
+}
+
 .fa {
   padding: 0 10px;
-  cursor: pointer;
 }
