@@ -17,24 +17,13 @@ class Endpoint extends Component {
 
     render() {
         if (_.isEmpty(this.props.endpoint.items)) return <Loading />;
-        let { endpoint, endpoint_types, params } = this.props,
-            type = _.findWhere(endpoint_types, {type: params.type}),
-            title = h.caseToWords(type.title),
-            url_list = [{
-                url: type.url.substr(0, endpoint_types.lastIndexOf(params.type)),
-                title: title.substr(0, title.lastIndexOf(' ')),
-            }, {
-                url: type.url,
-                title: h.caseToWords(endpoint.field),
-            }];
-        h.extendBreadcrumbs(url_list);
-        return <List endpoint={endpoint} params={this.props.params}/>;
+        let { endpoint, params } = this.props;
+        return <List endpoint={endpoint} params={params}/>;
     }
 }
 
 function mapStateToProps(state) {
     return {
-        endpoint_types: state.assessment.active.items,
         endpoint: state.endpoint,
     };
 }

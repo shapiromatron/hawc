@@ -21,10 +21,8 @@ class FieldSelection extends Component {
         let { objects, location, types, params } = this.props,
             type = _.findWhere(types, {type: params.type}),
             title = h.caseToWords(type.title),
-            url_list = [{
-                url: type.url.substr(0, type.url.lastIndexOf(params.type)),
-                title: title.substr(0, title.lastIndexOf(' '))}];
-        h.extendBreadcrumbs(url_list);
+            url = type.url.substr(0, type.url.lastIndexOf(params.type));
+        h.extendBreadcrumbs(url);
 
         return (
             <div>

@@ -1,11 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 import 'containers/Assessment.css';
 
 import Assessment from 'components/Assessment';
 import Loading from 'components/Loading';
-import h from 'utils/helpers';
 
 import { makeAssessmentActive } from 'actions/Assessment';
 
@@ -25,7 +24,6 @@ class App extends Component{
 
     render() {
         let object = this.getObject();
-        h.extendBreadcrumbs();
         if (_.isUndefined(object)) return <Loading />;
         return (
             <Assessment object={object}/>
