@@ -12,7 +12,7 @@ export default class BulkForm extends Component {
         this.state = props.object;
     }
 
-    handleSubmit(e){
+    handleSubmit(e) {
         e.preventDefault();
         if (this.state.showDetails){
             this.props.handleDetailSubmit(Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {ids: this.state.detailIDs}));
@@ -21,7 +21,7 @@ export default class BulkForm extends Component {
         }
     }
 
-    handleChange(e){
+    handleChange(e) {
         let obj = {};
         obj[this.props.params.field] = h.getValue(e.target);
         this.setState(obj);
@@ -31,15 +31,34 @@ export default class BulkForm extends Component {
         this.setState({ showDetails: this.state.showDetails ? false : true });
     }
 
+    handleCheckAll(e) {
+        if (e.target.checked) {
+            this.setState({ detailIDs: this.state.ids});
+        } else {
+            this.setState({ detailIDs: []});
+        }
+    }
+
+    handleCheck(target){
+        let detailIDs = this.state.detailIDs,
+            id = parseInt(target.id);
+        if (target.checked){
+            this.setState({ detailIDs: detailIDs ? detailIDs.concat(id) : [id]});
+        } else {
+            this.setState({ detailIDs: _.without(detailIDs, id)});
+        }
+    }
+
     onDetailChange(e){
-        this.setState({ detailIDs: this.state.detailIDs ? this.state.detailIDs.concat(e.target.id) : [e.target.id]});
+        (e.target.id === 'all') ? this.handleCheckAll(e) : this.handleCheck(e.target);
     }
 
 
     render() {
         let { object, errors, field, params, items } = this.props,
             detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
-            editButtonText = this.state.showDetails? 'Submit Selected Endpoints' : 'Submit Bulk Edit';
+            editButtonText = this.state.showDetails ? 'Submit Selected Endpoints' : 'Submit Bulk Edit';
+            console.log(this.state);
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
@@ -56,7 +75,7 @@ export default class BulkForm extends Component {
                 </span>
                 <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
-                <div>{this.state.showDetails ? <DetailList items={items} field={field} onDetailChange={this.onDetailChange.bind(this)}/> : null}</div>
+                <div>{this.state.showDetails ? <DetailList checkedRows={this.state.detailIDs} items={items} field={field} onDetailChange={this.onDetailChange.bind(this)}/> : null}</div>
             </div>
         );
     }
