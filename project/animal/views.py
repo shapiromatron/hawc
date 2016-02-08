@@ -10,9 +10,9 @@ from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from utils.views import (MessageMixin, CanCreateMixin,
-                         AssessmentPermissionsMixin, CloseIfSuccessMixin,
+                         AssessmentPermissionsMixin,
                          BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         BaseVersion, GenerateReport, GenerateFixedReport,
+                         GenerateReport, GenerateFixedReport,
                          BaseCreateWithFormset, BaseUpdateWithFormset)
 
 from . import forms, models, exports, reports
@@ -405,8 +405,8 @@ class EndpointTags(EndpointList):
                          .select_related('animal_group', 'animal_group__dosing_regime')\
                          .prefetch_related('animal_group__dosing_regime__doses')\
                          .filter(animal_group__in=models.AnimalGroup.objects.filter(
-                                    experiment__in=models.Experiment.objects.filter(
-                                        study__in=Study.objects.filter(assessment=self.assessment.pk))))
+                             experiment__in=models.Experiment.objects.filter(
+                                 study__in=Study.objects.filter(assessment=self.assessment.pk))))
 
 
 class EndpointRead(BaseDetail):
@@ -486,11 +486,11 @@ class FullExport(BaseList):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.EndpointFlatComplete(
-                self.object_list,
-                export_format="excel",
-                filename='{}-animal-bioassay'.format(self.assessment),
-                sheet_name='bioassay-analysis',
-                assessment=self.assessment)
+            self.object_list,
+            export_format="excel",
+            filename='{}-animal-bioassay'.format(self.assessment),
+            sheet_name='bioassay-analysis',
+            assessment=self.assessment)
         return exporter.build_response()
 
 
@@ -501,9 +501,9 @@ class EndpointExport(FullExport):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.EndpointSummary(
-                self.object_list,
-                export_format="excel",
-                filename='{}-animal-bioassay'.format(self.assessment),
-                sheet_name='endpoint-summary',
-                assessment=self.assessment)
+            self.object_list,
+            export_format="excel",
+            filename='{}-animal-bioassay'.format(self.assessment),
+            sheet_name='endpoint-summary',
+            assessment=self.assessment)
         return exporter.build_response()

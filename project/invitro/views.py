@@ -40,9 +40,9 @@ class EndpointsFullExport(EndpointsList):
         self.object_list = self.get_queryset()
         export_format = request.GET.get("output", "excel")
         exporter = exports.IVEndpointFlatDataPivot(
-                self.object_list,
-                export_format=export_format,
-                filename='{}-invitro'.format(self.assessment))
+            self.object_list,
+            export_format=export_format,
+            filename='{}-invitro'.format(self.assessment))
         return exporter.build_response()
 
 
