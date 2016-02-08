@@ -93,7 +93,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/endpoints/$',
         views.BaseEndpointList.as_view(),
         name='endpoint_list'),
-    url(r'^(?P<pk>\d+)/endpoint_cleanup/$',
+    url(r'^(?P<pk>\d+)/endpoint_cleanup/',
         views.EndpointCleanupList.as_view(),
         name='endpoint_cleanup_list'),
     url(r'^assessment/(?P<pk>\d+)/effect-tags/create/$',
