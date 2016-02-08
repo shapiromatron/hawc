@@ -25,4 +25,3 @@ class StudyQualityFlatComplete(FlatFileExporter):
                 row_copy.extend(models.StudyQuality.flat_complete_data_row(sq))
                 rows.append(row_copy)
         return rows
-
