@@ -11,7 +11,11 @@ export default class DetailList extends Component {
         return (
             <div key={item.id} className='detail-stripe'>
                 {_.map(fields, (field) => {
-                    return <span key={field} className='detail-item'>{item[field] || 'N/A'}</span>;
+                    return(
+                        <span key={field} id={item.id} className='detail-item' onClick={this.props.showModal}>
+                            {item[field] || 'N/A'}
+                        </span>
+                    );
                 })}
                 <span className='detail-item'><input type="checkbox" checked={checked} id={item.id} onClick={this.props.onDetailChange}/></span>
             </div>
@@ -39,5 +43,6 @@ export default class DetailList extends Component {
 DetailList.propTypes = {
     items: PropTypes.array.isRequired,
     onDetailChange: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
     checkedRows: PropTypes.array,
 };

@@ -3,6 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import DetailList from 'components/Endpoint/DetailList';
 import h from 'utils/helpers';
 import FormFieldError from 'components/FormFieldError';
+import Endpoint from 'Endpoint';
+import Outcome from 'Outcome';
 
 
 export default class BulkForm extends Component {
@@ -10,6 +12,10 @@ export default class BulkForm extends Component {
     constructor(props) {
         super(props);
         this.state = props.object;
+    }
+
+    _toggleDetails() {
+        this.setState({ showDetails: this.state.showDetails ? false : true });
     }
 
     handleSubmit(e) {
@@ -25,10 +31,6 @@ export default class BulkForm extends Component {
         let obj = {};
         obj[this.props.params.field] = h.getValue(e.target);
         this.setState(obj);
-    }
-
-    _toggleDetails() {
-        this.setState({ showDetails: this.state.showDetails ? false : true });
     }
 
     handleCheckAll(e) {
@@ -53,12 +55,14 @@ export default class BulkForm extends Component {
         (e.target.id === 'all') ? this.handleCheckAll(e) : this.handleCheck(e.target);
     }
 
+    showModal(e){
+        eval(this.props.modelEndpoint + '.displayAsModal(e.target.id)');
+    }
 
     render() {
         let { object, errors, field, params, items } = this.props,
             detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
             editButtonText = this.state.showDetails ? 'Submit Selected Endpoints' : 'Submit Bulk Edit';
-            console.log(this.state);
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
@@ -75,7 +79,15 @@ export default class BulkForm extends Component {
                 </span>
                 <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
-                <div>{this.state.showDetails ? <DetailList checkedRows={this.state.detailIDs} items={items} field={field} onDetailChange={this.onDetailChange.bind(this)}/> : null}</div>
+                <div>{this.state.showDetails ?
+                        <DetailList
+                            checkedRows={this.state.detailIDs}
+                            items={items}
+                            field={field}
+                            onDetailChange={this.onDetailChange.bind(this)}
+                            showModal={this.showModal.bind(this)}
+                        /> : null}
+                </div>
             </div>
         );
     }

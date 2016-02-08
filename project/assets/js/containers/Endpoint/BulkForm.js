@@ -44,19 +44,21 @@ export default class BulkForm extends Component {
     }
 
     render() {
-        let { items, model, field, params } = this.props,
+        let { items, model, field, params, config } = this.props,
+            modelEndpoint = config[params.type].endpoint,
             thisField = items[0][field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
         this.isRendered = true;
         return (
             <FormComponent
-                items={this.props.items}
+                items={items}
                 object={model.editObject[thisField]}
                 errors={model.editObjectErrors}
                 field={thisField}
                 handleBulkSubmit={this.handleBulkSubmit.bind(this)}
                 handleDetailSubmit={this.handleDetailSubmit.bind(this)}
                 params={params}
+                modelEndpoint={modelEndpoint}
             />
 
         );
@@ -66,6 +68,7 @@ export default class BulkForm extends Component {
 
 function mapStateToProps(state){
     return {
+        config: state.config,
         params: state.router.params,
         model: state.endpoint,
         itemsLoaded: state.endpoint.itemsLoaded,

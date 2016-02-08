@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
 import h from 'utils/helpers';
-// import EndpointDetailEdit from 'EndpointDetailEdit';
 import BulkForm from 'containers/Endpoint/BulkForm';
 
 export default class BulkList extends Component {

@@ -57,6 +57,7 @@
   display: table-cell;
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .detail-item input{

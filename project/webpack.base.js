@@ -22,6 +22,11 @@ module.exports = {
         filename: 'bundle.js',
     },
 
+    externals: {
+        Outcome: 'Outcome',
+        Endpoint: 'Endpoint',
+    },
+
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
