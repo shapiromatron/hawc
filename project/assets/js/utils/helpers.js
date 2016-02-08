@@ -74,7 +74,7 @@ var helpers = {
         let getFields = fetchModel ? 'fields/' : '';
         let fields = (filterFields && state.endpoint.field) ? `&fields=${state.endpoint.field}` : '';
         let idList = ids ? `&ids=${ids}` : '';
-        return `${state.config.apiUrl}${state.config[state.endpoint.type]}${getFields}?assessment_id=${state.assessment.active.id}${fields}${idList}`;
+        return `${state.config.apiUrl}${state.config[state.endpoint.type].url}${getFields}?assessment_id=${state.assessment.active.id}${fields}${idList}`;
     },
     getObjectURL(base, id){
         return `${base}${id}/`;
