@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
-from utils.api import DisabledPagination
+from assessment.api.views import DisabledPagination
 from celery import chain
 
 from . import forms, models, tasks, serializers

@@ -1,16 +1,20 @@
 from rest_framework import permissions
 from rest_framework import status
-from rest_framework.exceptions import APIException
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework.exceptions import APIException
+from rest_framework.pagination import PageNumberPagination
 
 from assessment import models, serializers
-from utils.api import DisabledPagination
 
 
 class RequiresAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'Please provide an `assessment_id` argument to your GET request.'
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):

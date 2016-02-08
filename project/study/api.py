@@ -4,8 +4,7 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from utils.api import DisabledPagination
-from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter
+from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination
 
 from . import models, serializers
 

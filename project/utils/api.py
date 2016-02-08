@@ -2,16 +2,11 @@ from __future__ import absolute_import
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import list_route
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID
+from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID, DisabledPagination
 from . import views
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
 
 
 class CleanupFieldsFilter(InAssessmentFilter):
