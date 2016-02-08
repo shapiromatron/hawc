@@ -18,9 +18,18 @@
     {
         "assessment_id": "{{ assessment.id }}",
         "assessment": "{% url 'assessment:endpoint_type_list' %}",
-        "epi": "{% url 'epi:api:cleanup-list' %}",
-        "ani": "{% url 'animal:api:cleanup-list' %}",
-        "iv": "{% url 'invitro:api:cleanup-list' %}",
+        "epi": {
+          "url": "{% url 'epi:api:cleanup-list' %}",
+          "endpoint": "Outcome"
+        },
+        "ani": {
+          "url": "{% url 'animal:api:cleanup-list' %}",
+          "endpoint": "Endpoint"
+        },
+        "in-vitro": {
+          "url": "{% url 'invitro:api:cleanup-list' %}",
+          "endpoint": "IVEndpoint"
+        },
         "csrf": "{% csrf_token %}"
     }
 </script>
