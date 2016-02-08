@@ -29,12 +29,12 @@
 
   <div class="row-fluid">
     <div id='sidebar'
-         class="well span3"
+         class="well span3 no-print"
          style="max-width: 300px; {% if request.session.hideSidebar %}display:none;{% endif %}">
       {% include "assessment/sidebar.html" %}
     </div>
 
-    <div id="sidebar_mini"
+    <div id="sidebar_mini no-print"
          style="margin-left: 0%; max-width: 10px; {% if not request.session.hideSidebar %}display:none;{% endif %}">
       <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
     </div>

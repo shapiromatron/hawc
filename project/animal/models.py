@@ -344,6 +344,7 @@ class AnimalGroup(models.Model):
 class DosingRegime(models.Model):
 
     ROUTE_EXPOSURE_CHOICES = (
+        ("OR", u"Oral"),
         ("OC", u"Oral capsule"),
         ("OD", u"Oral diet"),
         ("OG", u"Oral gavage"),
@@ -613,6 +614,7 @@ class Endpoint(BaseEndpoint):
                   "(ex: Figure 1, Table 2, etc.)")
     response_units = models.CharField(
         max_length=32,
+        blank=True,
         verbose_name="Response units",
         help_text=u"Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)")
     data_type = models.CharField(
@@ -942,7 +944,89 @@ class Endpoint(BaseEndpoint):
         return cls.TEXT_CLEANUP_FIELDS
 
 
-class EndpointGroup(models.Model):
+class ConfidenceIntervalsMixin(object):
+    """
+    Mixin class which calculates standard deviation and confidence intervals
+    for django models.
+    """
+
+    @property
+    def hasVariance(self):
+        return self.variance is not None
+
+    @staticmethod
+    def stdev(variance_type, variance, n):
+        # calculate stdev given re
+        if variance_type == 1:
+            return variance
+        elif variance_type == 2 and variance is not None and n is not None:
+            return variance * math.sqrt(n)
+        else:
+            return None
+
+    def getStdev(self, variance_type=None):
+        """ Return the stdev of an endpoint-group, given the variance type. """
+        if not hasattr(self, "_stdev"):
+
+            # don't hit DB unless we need to
+            if variance_type is None:
+                variance_type = self.endpoint.variance_type
+
+            self._stdev = self.stdev(variance_type, self.variance, self.n)
+
+        return self._stdev
+
+    @classmethod
+    def getStdevs(cls, variance_type, egs):
+        for eg in egs:
+            eg['stdev'] = cls.stdev(variance_type, eg['variance'], eg['n'])
+
+    @staticmethod
+    def percentControl(data_type, egs):
+        """
+        Expects a dictionary of endpoint groups and the endpoint data-type.
+        Appends results to the dictionary for each endpoint-group.
+
+        Calculates a 95% confidence interval for the percent-difference from
+        control, taking into account variance from both groups using a
+        Fisher Information Matrix, assuming independent normal distributions.
+        """
+        for i, eg in enumerate(egs):
+            mean = low = high = None
+            if data_type == "C":
+
+                if i == 0:
+                    n_1 = eg['n']
+                    mu_1 = eg['response']
+                    sd_1 = eg.get('stdev')
+
+                n_2 = eg['n']
+                mu_2 = eg['response']
+                sd_2 = eg.get('stdev')
+
+                if mu_1 and mu_2 and mu_1 != 0:
+                    mean = (mu_2-mu_1) / mu_1 * 100.
+                    if sd_1 and sd_2 and n_1 and n_2:
+                        sd = math.sqrt(
+                            pow(mu_1, -2) * (
+                                (pow(sd_2, 2)/n_2) +
+                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
+                            )
+                        )
+                        ci = (1.96 * sd) * 100
+                        rng = sorted([mean - ci, mean + ci])
+                        low = rng[0]
+                        high = rng[1]
+
+            elif data_type == "P":
+                mean = eg['response']
+                low = eg['lower_ci']
+                high = eg['upper_ci']
+
+            eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
+
+
+class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
     endpoint = models.ForeignKey(
         Endpoint,
         related_name='groups')
@@ -991,81 +1075,6 @@ class EndpointGroup(models.Model):
     @property
     def isReported(self):
         return self.incidence is not None or self.response is not None
-
-    @property
-    def hasVariance(self):
-        return self.variance is not None
-
-    @staticmethod
-    def stdev(variance_type, variance, n):
-        # calculate stdev given re
-        if variance_type == 1:
-            return variance
-        elif variance_type == 2 and variance is not None and n is not None:
-            return variance * math.sqrt(n)
-        else:
-            return None
-
-    def getStdev(self, variance_type=None):
-        """ Return the stdev of an endpoint-group, given the variance type. """
-        if not hasattr(self, "_stdev"):
-
-            # don't hit DB unless we need to
-            if variance_type is None:
-                variance_type = self.endpoint.variance_type
-
-            self._stdev = EndpointGroup.stdev(variance_type, self.variance, self.n)
-
-        return self._stdev
-
-    @staticmethod
-    def getStdevs(variance_type, egs):
-        for eg in egs:
-            eg['stdev'] = EndpointGroup.stdev(variance_type, eg['variance'], eg['n'])
-
-    @staticmethod
-    def percentControl(data_type, egs):
-        #
-        # Expects a dictionary of endpoint groups and the endpoint data-type.
-        # Appends results to the dictionary for each endpoint-group.
-        #
-        # Calculates a 95% confidence interval for the percent-difference from
-        # control, taking into account variance from both groups using a
-        # Fisher Information Matrix, assuming independent normal distributions.
-        #
-        for i, eg in enumerate(egs):
-            mean = low = high = None
-            if data_type == "C":
-
-                if i == 0:
-                    n_1 = eg['n']
-                    mu_1 = eg['response']
-                    sd_1 = eg.get('stdev')
-
-                n_2 = eg['n']
-                mu_2 = eg['response']
-                sd_2 = eg.get('stdev')
-
-                if mu_1 and mu_2 and mu_1 != 0:
-                    mean = (mu_2-mu_1) / mu_1 * 100.
-                    if sd_1 and sd_2 and n_1 and n_2:
-                        sd = math.sqrt(
-                            pow(mu_1, -2) * (
-                                (pow(sd_2, 2)/n_2) +
-                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
-                            )
-                        )
-                        ci   = (1.96 * sd) * 100
-                        rng  = sorted([ mean - ci, mean + ci ])
-                        low  = rng[0]
-                        high = rng[1]
-
-            elif data_type == "P":
-                mean = eg['response']
-                low  = eg['lower_ci']
-                high = eg['upper_ci']
-
-            eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
     def getNRangeText(ns):

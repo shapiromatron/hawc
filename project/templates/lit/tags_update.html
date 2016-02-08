@@ -17,18 +17,18 @@
     assessment. If extracting data, all references marked with a tag in the
     "Inclusion" category will be labeled as ready for data-extraction on the
     assessment literature review page (<a href="{% url 'lit:overview' assessment.pk %}">here</a>).
-    New tags can be created, deleted, or sorted. To sort, click and hold a tag and
-    drag to the desired location.
+    <br><br>
+    New tags can be created, and existing tags can be renamed, deleted, and reordered.
+    To reorder, drag a tag to the desired location.
   </p>
   <div id="tags"></div>
   <div class="well">
-    <button class="btn btn-primary" data-toggle="modal" data-target="#new_tag_form">Add new tag</button>
-    <button class="btn btn-danger" data-toggle="modal" data-target="#delete_tag_form">Delete tag</button>
+    <button id='newTagBtn' class="btn btn-primary" >Add new tag</button>
     <a class='btn btn-primary pull-right' href="{% url 'lit:tags_copy' assessment.pk %}">Copy tags from existing assessment</a>
   </div>
 
-  <!-- Modal to add tags -->
-  <div id="new_tag_form" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <!-- Modal to add/edit tags -->
+  <div id="editTagModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
       <h3>Add a new tag</h3>
@@ -37,12 +37,12 @@
       <form class="form-horizontal" action="." method="post">
         <fieldset>
           <div class="control-group form-row">
-            <label for="tag_name" class="control-label">New tag name</label>
+            <label for="tag_name" class="control-label">Tag name</label>
             <div class="controls">
               <input id="tag_name" type="text" maxlength="128">
             </div>
           </div>
-          <div class="control-group form-row">
+          <div class="control-group form-row newOnly">
             <label for="tag_parent" class="control-label">Nest under</label>
             <div class="controls">
               <select id="tag_parent"></select>
@@ -52,31 +52,9 @@
       </form>
     </div>
     <div class="modal-footer">
-        <button type='button' id="submit_new_tag" class='btn btn-primary'>Submit</button>
-        <button type='button' data-dismiss="modal" class='btn'>Cancel</button>
-    </div>
-  </div>
-
-  <!-- Modal to remove tag -->
-  <div id="delete_tag_form" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3>Delete existing tag</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form-horizontal" action="." method="post">
-        <fieldset>
-          <div class="control-group form-row">
-            <label for="delete_tag" class="control-label">Tag to remove</label>
-            <div class="controls">
-              <select id="delete_tag"></select>
-            </div>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="modal-footer">
-        <button type='button' id="submit_delete_tag" class='btn btn-primary'>Submit</button>
+        <button type='button' data-dismiss="modal" id="submit_new_tag" class='btn btn-primary newOnly'>Save new</button>
+        <button type='button' data-dismiss="modal" id="update" class='btn btn-primary updateOnly'>Update</button>
+        <button type='button' data-dismiss="modal" id="delete" class='btn btn-danger pull-left updateOnly'>Delete</button>
         <button type='button' data-dismiss="modal" class='btn'>Cancel</button>
     </div>
   </div>
@@ -87,19 +65,53 @@
   <script type="text/javascript">
     $(document).ready(function(){
       window.tagtree = new TagTree({{tags|safe}});
-      window.editor = new EditTagTreeContainer(window.tagtree, $('#tags'));
+      window.editor = new EditTagTreeContainer(tagtree, $('#tags'));
+      window.modal = $('#editTagModal');
 
-      $(document).on('hawc-tagMoved', '#tags', function(e, item, offset){
-        var tag = $(item).find('>.nestedTag').data('d');
-        tag.move_self(offset);
-      }).on('show', '#delete_tag_form', function(){
-        var options = window.tagtree.get_options();
-        $('#delete_tag').html(options);
-      }).on('show', '#new_tag_form', function(){
-        var options = window.tagtree.get_options();
+      var resetNewForm = function(e){
+        e.preventDefault();
+        modal.find('.newOnly').show();
+        modal.find('.updateOnly').hide();
+        modal.find('h3').text('Create new tag');
+        modal.find('#tag_name').val('');
+        var options = tagtree.get_options();
         options.unshift($('<option>---</option>'));
         $('#tag_parent').html(options);
-      });
+         modal.modal('show');
+      }, resetExistingForm = function(e){
+        modal.find('.newOnly').hide();
+        modal.find('.updateOnly').show();
+        modal.find('h3').text('Update existing tag');
+        modal.modal('show');
+        var id_ = $(e.target).parent().data('id');
+        var tag = tagtree.get_tag(id_)
+        modal.find('#tag_name').val(tag.data.name);
+        modal.data('tag', tag).data('el', e.target);
+      }, updateTag = function(e){
+        var newName = modal.find('#tag_name').val();
+        modal.data('tag').rename_self(newName);
+      }, deleteTag = function(e){
+        editor.deleteTag(modal.data('tag'));
+      }, reorderTag = function(e, item, offset){
+        var tag = $(item).find('>.nestedTag').data('d');
+        tag.move_self(offset);
+      }, createTag = function(){
+        var parent = modal.find('#tag_parent option:selected').data('d'),
+            name = modal.find('#tag_name').val();
+        if (parent){
+          parent.add_child(name);
+        } else {
+          tagtree.add_root_tag(name);
+        }
+      };
+
+      $(document)
+        .on('hawc-tagMoved', '#tags', reorderTag)
+        .on('click', '.nestedTag', resetExistingForm)
+        .on('click', '#update', updateTag)
+        .on('click', '#delete', deleteTag)
+        .on('click', '#newTagBtn', resetNewForm)
+        .on('click', '#submit_new_tag', createTag);
 
     });
   </script>

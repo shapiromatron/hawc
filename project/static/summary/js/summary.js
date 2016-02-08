@@ -337,9 +337,15 @@ VisualCollection.prototype = {
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
         };
-
-        return $el.html(tbl.getTbl());
-    }
+        $el.html(tbl.getTbl());
+        this.setTableSorting($el.find('table'));
+        return $el;
+    },
+    setTableSorting: function($el){
+        var name = $el.find('thead tr th')[0];
+        name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
+        new Tablesort($el[0]);
+    },
 }
 
 
@@ -387,7 +393,7 @@ Visual.prototype = {
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),
             this.data.last_updated.toString()
-        ]
+        ];
     },
     displayAsPage: function($el, options){
         throw "Abstract method; requires implementation";
@@ -397,8 +403,9 @@ Visual.prototype = {
     },
     addActionsMenu: function(){
         return HAWCUtils.pageActionsButton([
-           {url: this.data.url_update, text: "Update visualization"},
-           {url: this.data.url_delete, text: "Delete visualization"}
+            'Visualization editing',
+            {url: this.data.url_update, text: "Update"},
+            {url: this.data.url_delete, text: "Delete"},
         ]);
     },
     object_hyperlink: function(){

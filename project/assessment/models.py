@@ -232,14 +232,17 @@ class Assessment(models.Model):
                     (user in self.reviewers.all()))
 
     @classmethod
-    def get_viewable_assessments(cls, user, exclusion_id=None):
+    def get_viewable_assessments(cls, user, exclusion_id=None, public=False):
         """
         Return queryset of all assessments which that user is able to view,
         optionally excluding assessment exclusion_id,
         not including public assessments
         """
+        filters = (Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))
+        if public:
+            filters |= (Q(public=True) & Q(hide_from_public_page=False))
         return Assessment.objects\
-            .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))\
+            .filter(filters)\
             .exclude(id=exclusion_id)\
             .distinct()
 

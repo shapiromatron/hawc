@@ -23,8 +23,9 @@
         <ul class="dropdown-menu">
 
             <li class="disabled"><a tabindex="-1" href="#">Study Editing</a></li>
-            <li><a href="{% url 'study:update' object.pk %}">Update</a></li>
-            <li><a href="{% url 'study:delete' object.pk %}">Delete</a></li>
+            <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
+            <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
+            <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
             <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
             <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
@@ -46,6 +47,11 @@
               <li class="disabled"><a tabindex="-1" href="#">Study Population</a></li>
               <li><a href="{% url 'epi:sp_create' object.pk %}">Create new</a></li>
               <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
+            {% elif object.study_type == 2 %}
+              <li class="disabled"><a tabindex="-1" href="#">In-vitro analysis</a></li>
+              <li><a href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a></li>
+              <li><a href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a></li>
+              <li><a href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a></li>
             {% elif object.study_type == 4 %}
               <li class="disabled"><a tabindex="-1" href="#">Meta-analysis</a></li>
               <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new</a></li>
@@ -83,7 +89,11 @@
     {% elif study.study_type == 2 %}
       <h2>Available experiments</h2>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-    {% elif study.study_type == 4 %}
+      <h2>Available chemicals used in experiments</h2>
+      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
+      <h2>Available cell types</h2>
+      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+      {% elif study.study_type == 4 %}
       <h2>Available epidemiological meta-analyses</h2>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}

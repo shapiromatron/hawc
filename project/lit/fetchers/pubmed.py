@@ -1,3 +1,4 @@
+from itertools import chain
 import logging
 import xml.etree.ElementTree as ET
 import re
@@ -106,6 +107,15 @@ class PubMedFetch(object):
         "email": THIS_EMAIL,
     }
 
+    ARTICLE = 0
+    BOOK = 1
+
+    DOI_ARTICLE_SEARCH_STRING = 'MedlineCitation/Article/ELocationID[@EIdType="doi"]'
+    ABSTRACT_ARTICLE_SEARCH_STRING = "MedlineCitation/Article/Abstract/AbstractText"
+
+    DOI_BOOK_SEARCH_STRING = 'BookDocument/ArticleIdList/ArticleId[@IdType="doi"]'
+    ABSTRACT_BOOK_SEARCH_STRING = 'BookDocument/Abstract/AbstractText'
+
     def __init__(self, id_list, **kwargs):
         if id_list is None:
             raise Exception('List of IDs are required for a PubMed search')
@@ -126,6 +136,9 @@ class PubMedFetch(object):
                 articles = ET.fromstring(r.text.encode('utf-8')).findall("PubmedArticle")
                 for article in articles:
                     self.content.append(self._parse_article(article))
+                books = ET.fromstring(r.text.encode('utf-8')).findall("PubmedBookArticle")
+                for book in books:
+                    self.content.append(self._parse_book(book))
             else:
                 raise Exception("Fetch query failed; please reformat query or try again later")
         return self.content
@@ -137,17 +150,46 @@ class PubMedFetch(object):
             "xml": ET.tostring(article, encoding='utf-8'),
             "PMID": pmid,
             "title": PubMedFetch._try_single_find(article, "MedlineCitation/Article/ArticleTitle"),
-            "abstract": self._get_abstract(article),
+            "abstract": self._get_abstract(article, self.ABSTRACT_ARTICLE_SEARCH_STRING),
             "citation": self._journal_info(article),
-            "year": self._get_year(article),
-            "doi": self._get_doi(article),
+            "year": self._get_year(article, dtype=self.ARTICLE),
+            "doi": self._get_doi(article, self.DOI_ARTICLE_SEARCH_STRING),
         }
-        d.update(self._authors_info(article))
+        d.update(self._authors_info(article, self.ARTICLE))
         return d
 
-    def _get_abstract(self, article):
+    def _parse_book(self, book):
+        pmid = str(PubMedFetch._try_single_find(book, 'BookDocument/PMID'))
+        logging.debug('Parsing results for PMID: {pmid}'.format(pmid=pmid))
+        xml = ET.tostring(book, encoding='utf-8')
+        book_title = PubMedFetch._try_single_find(book, 'BookDocument/Book/BookTitle')
+        article_title = self._try_single_find(book, 'BookDocument/ArticleTitle')
+        abstract = self._get_abstract(book, self.ABSTRACT_BOOK_SEARCH_STRING)
+        year = self._get_year(book, dtype=self.BOOK)
+        doi = self._get_doi(book, self.DOI_BOOK_SEARCH_STRING)
+
+        d = {
+            "xml": xml,
+            "PMID": pmid,
+            "abstract": abstract,
+            "year": year,
+            "doi": doi,
+        }
+        d.update(self._authors_info(book, self.BOOK))
+
+        if article_title:
+            d['title'] = article_title
+            d['citation'] = self._get_book_citation(book, title=book_title)
+        else:
+            d['title'] = book_title
+            d['citation'] = self._get_book_citation(book)
+
+        return d
+
+    def _get_abstract(self, article, search_string):
         txt = ""
-        abstracts = article.findall("MedlineCitation/Article/Abstract/AbstractText")
+
+        abstracts = article.findall(search_string)
 
         # standard abstract
         if len(abstracts) == 1:
@@ -172,9 +214,17 @@ class PubMedFetch(object):
         except:
             return ''
 
-    def _authors_info(self, article):
+    def _authors_info(self, et, dtype):
         names = []
-        auths = article.findall('MedlineCitation/Article/AuthorList/Author')
+
+        if dtype == self.ARTICLE:
+            auths = et.findall('MedlineCitation/Article/AuthorList/Author')
+        elif dtype == self.BOOK:
+            auths = chain(
+                et.findall('BookDocument/Book/AuthorList[@Type="authors"]/Author'),
+                et.findall('BookDocument/AuthorList[@Type="authors"]/Author'),
+            )
+
         for auth in auths:
             try:
                 names.append(u'{0} {1}'.format(
@@ -212,18 +262,42 @@ class PubMedFetch(object):
                 'MedlineCitation/Article/Pagination/MedlinePgn')
         )
 
-    def _get_year(self, et):
-        year = et.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")
-        if year is not None:
-            return int(year.text)
+    def _get_book_citation(self, et, title=None):
+        if title:
+            title += " "
+        else:
+            title = ""
 
-        medline_date = et.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate")
-        if medline_date is not None:
-            year = re.search(r'(\d+){4}', medline_date.text)
+        return u'{title}({year}). {location}: {publisher}.'.format(
+            title=title,
+            year=PubMedFetch._try_single_find(
+                et,
+                'BookDocument/Book/PubDate/Year'),
+            location=PubMedFetch._try_single_find(
+                et,
+                'BookDocument/Book/Publisher/PublisherLocation'),
+            publisher=PubMedFetch._try_single_find(
+                et,
+                'BookDocument/Book/Publisher/PublisherName'),
+        )
+
+    def _get_year(self, et, dtype):
+        if dtype == self.ARTICLE:
+            year = et.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")
             if year is not None:
-                return int(year.group(0))
+                return int(year.text)
 
-    def _get_doi(self, et):
-        doi = et.find('MedlineCitation/Article/ELocationID[@EIdType="doi"]')
+            medline_date = et.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate")
+            if medline_date is not None:
+                year = re.search(r'(\d+){4}', medline_date.text)
+                if year is not None:
+                    return int(year.group(0))
+        elif dtype == self.BOOK:
+            year = et.find("BookDocument/Book/PubDate/Year")
+            if year is not None:
+                return int(year.text)
+
+    def _get_doi(self, et, search_string):
+        doi = et.find(search_string)
         if doi is not None:
             return doi.text

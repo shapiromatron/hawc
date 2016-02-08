@@ -12,6 +12,10 @@ from . import models
 
 
 class IVCellTypeSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='__unicode__', read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
+    url_delete = serializers.CharField(source='get_delete_url', read_only=True)
     sex_symbol = serializers.CharField(source='get_sex_symbol', read_only=True)
     culture_type = serializers.CharField(source='get_culture_type_display', read_only=True)
     sex = serializers.CharField(source='get_sex_display', read_only=True)
@@ -32,6 +36,10 @@ class IVExperimentSerializer(serializers.ModelSerializer):
 
 
 class _IVChemicalSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
+    url_delete = serializers.CharField(source='get_delete_url', read_only=True)
+
     class Meta:
         model = models.IVChemical
 
@@ -45,6 +53,7 @@ class IVEndpointGroupSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(IVEndpointGroupSerializer, self).to_representation(instance)
         ret['difference_control'] = instance.get_difference_control_display()
+        ret['difference_control_symbol'] = instance.difference_control_symbol
         ret['significant_control'] = instance.get_significant_control_display()
         ret['cytotoxicity_observed'] = instance.get_cytotoxicity_observed_display()
         ret['precipitation_observed'] = instance.get_precipitation_observed_display()
@@ -71,6 +80,8 @@ class IVEndpointCategory(serializers.ModelSerializer):
 
 class IVEndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
     chemical = _IVChemicalSerializer()
     experiment = IVExperimentSerializer()
     groups = IVEndpointGroupSerializer(many=True)
@@ -80,7 +91,6 @@ class IVEndpointSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(IVEndpointSerializer, self).to_representation(instance)
-        ret['url'] = instance.get_absolute_url()
         ret['data_type'] = instance.get_data_type_display()
         ret['variance_type'] = instance.get_variance_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()
@@ -88,14 +98,17 @@ class IVEndpointSerializer(serializers.ModelSerializer):
         ret['overall_pattern'] = instance.get_overall_pattern_display()
         ret['trend_test'] = instance.get_trend_test_display()
         ret['additional_fields'] = json.loads(instance.additional_fields)
+        models.IVEndpointGroup.getStdevs(instance.variance_type, ret['groups'])
+        models.IVEndpointGroup.percentControl(instance.data_type, ret['groups'])
         return ret
 
     class Meta:
         model = models.IVEndpoint
 
 
-class MiniIVEndpointSerializer(IVEndpointSerializer):
+class MiniIVEndpointSerializer(serializers.ModelSerializer):
     experiment = serializers.PrimaryKeyRelatedField(read_only=True)
+    chemical = _IVChemicalSerializer()
     groups = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     benchmarks = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     category = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -110,6 +123,9 @@ class MiniIVEndpointSerializer(IVEndpointSerializer):
 
 
 class IVExperimentSerializerFull(IVExperimentSerializer):
+    url_update = serializers.CharField(source='get_update_url', read_only=True)
+    url_delete = serializers.CharField(source='get_delete_url', read_only=True)
+    url_create_endpoint = serializers.CharField(source='get_endpoint_create_url', read_only=True)
     endpoints = MiniIVEndpointSerializer(many=True)
 
 

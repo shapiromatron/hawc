@@ -1,0 +1,43 @@
+{% extends 'portal.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block extrastyle %}
+    {% include_ui_theme %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+    <div id="eForm">
+        {% crispy form %}
+    </div>
+
+    <div id="egFormset">
+        <legend>Endpoint groups
+            <button class="pull-right btn btn-primary"
+                    title="Add new group"
+                    type="button"
+                    id="addFormToFormset">+</button>
+        </legend>
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    {{ form.media }}
+    <script type="text/javascript">
+        $(document).on('ready', function(){
+            new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
+            $('#egFormset').insertBefore($('#eForm .form-actions'));
+        });
+    </script>
+{% endblock extrajs %}

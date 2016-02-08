@@ -4,7 +4,8 @@ from rest_framework.exceptions import APIException
 from rest_framework import viewsets
 from rest_framework import filters
 
-from assessment.models import Assessment
+from assessment import models, serializers
+from utils.api import DisabledPagination
 
 
 class RequiresAssessmentID(APIException):
@@ -29,7 +30,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             if assessment_id is None:
                 raise RequiresAssessmentID
 
-            view.assessment = Assessment.objects.filter(id=assessment_id).first()
+            view.assessment = models.Assessment.objects.filter(id=assessment_id).first()
             if (view.assessment is None) or \
                (view.assessment and not view.assessment.user_can_view_object(request.user)):
                 return False
@@ -63,7 +64,16 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 class AssessmentEditViewset(viewsets.ModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions, )
-    parent_model = Assessment
+    parent_model = models.Assessment
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+
+class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
+    model = models.DoseUnits
+    serializer_class = serializers.DoseUnitsSerializer
+    pagination_class = DisabledPagination
 
     def get_queryset(self):
         return self.model.objects.all()

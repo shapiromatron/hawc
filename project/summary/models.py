@@ -2,10 +2,12 @@ from datetime import datetime
 import json
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from assessment.models import Assessment, DoseUnits, BaseEndpoint
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import Outcome
@@ -16,7 +18,7 @@ from comments.models import Comment
 from animal.exports import EndpointFlatDataPivot
 from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
-from invitro.exports import IVEndpointFlatDataPivot
+import invitro.exports as ivexports
 
 import reversion
 from treebeard.mp_tree import MP_Node
@@ -25,7 +27,7 @@ from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelp
 
 
 class SummaryText(MP_Node):
-    assessment = models.ForeignKey('assessment.Assessment')
+    assessment = models.ForeignKey(Assessment)
     title = models.CharField(max_length=128)
     slug = models.SlugField(verbose_name="URL Name",
                             help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
@@ -170,18 +172,18 @@ class Visual(models.Model):
         help_text="The URL (web address) used to describe this object "
                   "(no spaces or special-characters).")
     assessment = models.ForeignKey(
-        'assessment.Assessment',
+        Assessment,
         related_name='visuals')
     visual_type = models.PositiveSmallIntegerField(
         choices=VISUAL_CHOICES)
     dose_units = models.ForeignKey(
-        'assessment.DoseUnits',
+        DoseUnits,
         blank=True,
         null=True)
     prefilters = models.TextField(
         default="{}")
     endpoints = models.ManyToManyField(
-        'assessment.BaseEndpoint',
+        BaseEndpoint,
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
         blank=True)
@@ -323,7 +325,7 @@ class Visual(models.Model):
 
 class DataPivot(models.Model):
     assessment = models.ForeignKey(
-        'assessment.assessment')
+        Assessment)
     title = models.CharField(
         max_length=128,
         help_text="Enter the title of the visualization (spaces and special-characters allowed).")
@@ -387,6 +389,24 @@ class DataPivot(models.Model):
         except ValueError:
             return None
 
+    @classmethod
+    def clonable_queryset(cls, user):
+        """
+        Return data-pivots which can cloned by a specific user
+        """
+        assessment_ids = Assessment\
+            .get_viewable_assessments(user, public=True)\
+            .values_list('id', flat=True)
+        return cls.objects.filter(assessment__in=assessment_ids)\
+            .select_related('assessment')\
+            .order_by('assessment__name', 'title')
+
+    @classmethod
+    def reset_row_overrides(cls, settings):
+        settings_as_json = json.loads(settings)
+        settings_as_json['row_overrides'] = []
+        return json.dumps(settings_as_json)
+
 
 class DataPivotUpload(DataPivot):
     file = models.FileField(
@@ -409,16 +429,33 @@ class DataPivotQuery(DataPivot):
 
     MAXIMUM_QUERYSET_COUNT = 500
 
+    EXPORT_STYLE_CHOICES = (
+        (0, "One row per Endpoint-group/Result-group"),
+        (1, "One row per Endpoint/Result"),
+    )
+
     evidence_type = models.PositiveSmallIntegerField(
         choices=Study.STUDY_TYPE_CHOICES,
         default=0)
-    units = models.ForeignKey(
-        'assessment.doseunits',
-        blank=True,
-        null=True,
-        help_text="If kept-blank, dose-units will be random for each "
-                  "endpoint presented. This setting may used for comparing "
-                  "percent-response, where dose-units are not needed.")
+    export_style = models.PositiveSmallIntegerField(
+        choices=EXPORT_STYLE_CHOICES,
+        default=0,
+        help_text="The export style changes the level at which the "
+                  "data are aggregated, and therefore which columns and types "
+                  "of data are presented in the export, for use in the visual.")
+    # Implementation-note: use ArrayField to save DoseUnits ManyToMany because
+    # order is important and it would be a much larger implementation to allow
+    # copying and saving dose-units- dose-units are rarely deleted and this
+    # implementation shouldn't cause issues with deletions because should be
+    # used primarily with id__in style queries.
+    preferred_units = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        help_text="List of preferred dose-values, in order of preference. "
+                  "If empty, dose-units will be random for each endpoint "
+                  "presented. This setting may used for comparing "
+                  "percent-response, where dose-units are not needed, or for "
+                  "creating one plot similar, but not identical, dose-units.")
     prefilters = models.TextField(
         default="{}")
     published_only = models.BooleanField(
@@ -454,8 +491,8 @@ class DataPivotQuery(DataPivot):
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["animal_group__experiment__study__published"] = True
-            if self.units_id:
-                filters["animal_group__dosing_regime__doses__dose_units"] = self.units_id
+            if self.preferred_units:
+                filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == 1:  # Epidemiology
 
@@ -499,7 +536,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 export_format=format_,
                 filename='{}-animal-bioassay'.format(self.assessment),
-                dose=self.units
+                preferred_units=self.preferred_units
             )
 
         elif self.evidence_type == 1:  # Epidemiology
@@ -517,7 +554,15 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == 2:  # In Vitro
-            exporter = IVEndpointFlatDataPivot(
+
+            # select export class
+            if self.export_style == 0:
+                Exporter = ivexports.DataPivotEndpointGroup
+            elif self.export_style == 1:
+                Exporter = ivexports.DataPivotEndpoint
+
+            # generate export
+            exporter = Exporter(
                 qs,
                 export_format=format_,
                 filename='{}-invitro'.format(self.assessment)

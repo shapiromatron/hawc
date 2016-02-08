@@ -7,8 +7,9 @@ from django.core.urlresolvers import reverse
 import reversion
 
 from assessment.models import BaseEndpoint
+from animal.models import ConfidenceIntervalsMixin
 from utils.helper import SerializerHelper
-from utils.models import AssessmentRootedTagTree
+from utils.models import get_crumbs, AssessmentRootedTagTree
 
 
 class IVChemical(models.Model):
@@ -45,6 +46,18 @@ class IVChemical(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
+    def get_absolute_url(self):
+        return reverse('invitro:chemical_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:chemical_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:chemical_delete', args=[str(self.id)])
 
     def get_assessment(self):
         return self.study.assessment
@@ -101,8 +114,23 @@ class IVCellType(models.Model):
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
+
+    def get_absolute_url(self):
+        return reverse('invitro:celltype_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:celltype_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:celltype_delete', args=[str(self.id)])
+
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
+
+    def get_assessment(self):
+        return self.study.assessment
 
 
 class IVExperiment(models.Model):
@@ -140,7 +168,7 @@ class IVExperiment(models.Model):
         help_text="Was metabolic-activation used in system (ex: S9)?")
     serum = models.CharField(
         max_length=128,
-        verbose_name="Percent serum, serum-type, and/or description")
+        help_text="Percent serum, serum-type, and/or description")
     has_naive_control = models.BooleanField(
         default=False)
     has_positive_control = models.BooleanField(
@@ -177,6 +205,18 @@ class IVExperiment(models.Model):
 
     def get_absolute_url(self):
         return reverse('invitro:experiment_detail', args=[str(self.id)])
+
+    def get_update_url(self):
+        return reverse('invitro:experiment_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:experiment_delete', args=[str(self.id)])
+
+    def get_endpoint_create_url(self):
+        return reverse('invitro:endpoint_create', args=[str(self.id)])
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
 
 
 class IVEndpointCategory(AssessmentRootedTagTree):
@@ -294,13 +334,14 @@ class IVEndpoint(BaseEndpoint):
         choices=VARIANCE_TYPE_CHOICES)
     response_units = models.CharField(
         max_length=64,
+        blank=True,
         verbose_name="Response units")
     values_estimated = models.BooleanField(
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods")
     observation_time = models.CharField(
         blank=True,
-        max_length=16)
+        max_length=32)
     observation_time_units = models.PositiveSmallIntegerField(
         default=0,
         choices=OBSERVATION_TIME_UNITS)
@@ -344,6 +385,16 @@ class IVEndpoint(BaseEndpoint):
     def get_absolute_url(self):
         return reverse('invitro:endpoint_detail', args=[str(self.id)])
 
+    def get_update_url(self):
+        return reverse('invitro:endpoint_update', args=[str(self.id)])
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.experiment)
+
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
+
     @classmethod
     def max_dose_count(cls, queryset):
         max_val = 0
@@ -377,7 +428,7 @@ class IVEndpoint(BaseEndpoint):
         return cls.TEXT_CLEANUP_FIELDS
 
 
-class IVEndpointGroup(models.Model):
+class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
 
     DIFFERENCE_CONTROL_CHOICES = (
         ('nc', 'no-change'),
@@ -385,6 +436,13 @@ class IVEndpointGroup(models.Model):
         ('+',  'increase'),
         ('nt', 'not-tested'),
     )
+
+    DIFFERENCE_CONTROL_SYMBOLS = {
+        'nc': u'↔',
+        '-':  u'↓',
+        '+':  u'↑',
+        'nt': u'NT',
+    }
 
     SIGNIFICANCE_CHOICES = (
         ("nr", u"not reported"),
@@ -430,6 +488,10 @@ class IVEndpointGroup(models.Model):
     precipitation_observed = models.NullBooleanField(
         default=None,
         choices=OBSERVATION_CHOICES)
+
+    @property
+    def difference_control_symbol(self):
+        return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')

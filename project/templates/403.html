@@ -1,14 +1,30 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    403 | {{block.super}}
+{% endblock title %}
+
 {% block main_content %}
-  <div class="hero-unit">
-    <h1>Error 403. Forbidden.</h1>
-    <p>I'm sorry Dave, I'm afraid I can't do that.</p>
-  </div>
+<div class="hero-unit" style="max-width: 750px;">
+    <div class='row-fluid'>
+        {% if user.is_authenticated %}
+            <img
+                class='pull-right'
+                src="{{STATIC_URL}}/img/hal.png"
+                style="max-height:250px; margin-left: 20px;">
+            <h1>403. Forbidden.</h1>
+            <p>I'm sorry Dave, I'm afraid I can't do that. </p>
+            <p><strong>It appears that you, {{request.user}}, have not been given permission to view this page.</strong></p>
+            <p>Think you should have access? Talk to the project manager for the assessment you're trying to view and request permission.</p>
 
-  {% if not user.is_authenticated %}
-      <p>Have access to this site? </p>
-      <a class="btn btn-info" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
-  {% endif %}
+        {% else %}
+            <h1>403. Forbidden.</h1>
+            <p>It looks like you're not logged-in to the website, and this page requires authentication.</p>
+            <strong><a
+                class='btn btn-primary'
+                href="{% url 'user:login' %}?next={{request.path}}">Login to HAWC</a></strong>
 
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
