@@ -1,6 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
-import urls from 'constants/urls';
 import BulkList from 'components/Endpoint/BulkList';
 import Header from 'components/Endpoint/Header';
 

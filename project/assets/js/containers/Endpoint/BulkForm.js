@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import h from 'utils/helpers';
 import Loading from 'components/Loading';
 import FormComponent from 'components/Endpoint/BulkForm';
 import 'containers/Endpoint/EndpointBulkForm.css';

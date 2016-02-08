@@ -55,6 +55,7 @@ export default class BulkForm extends Component {
         (e.target.id === 'all') ? this.handleCheckAll(e) : this.handleCheck(e.target);
     }
 
+    // Uses eval() as the object supplying displayAsModal is dynamic.
     showModal(e){
         eval(this.props.modelEndpoint + '.displayAsModal(e.target.id)');
     }
@@ -66,18 +67,18 @@ export default class BulkForm extends Component {
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
-                <span className='bulk-element field span4' onClick={this._toggleDetails.bind(this)}>
-                    <i className={`fa ${detailShow}`}></i>
-                    {field || `N/A`}
-                </span>
-                <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
-                    <input name={field} className='form-control' type="text"
-                        defaultValue={object[params.field]}
-                        onChange={this.handleChange.bind(this)}/>
-                    <FormFieldError errors={errors.name} />
+                    <span className='bulk-element field span4' onClick={this._toggleDetails.bind(this)}>
+                        <i className={`fa ${detailShow}`}></i>
+                        {field || `N/A`} ({items.length})
+                    </span>
+                    <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
+                        <input name={field} className='form-control' type="text"
+                            defaultValue={object[params.field]}
+                            onChange={this.handleChange.bind(this)}/>
+                        <FormFieldError errors={errors.name} />
 
-                </span>
-                <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
+                    </span>
+                    <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
                 <div>{this.state.showDetails ?
                         <DetailList

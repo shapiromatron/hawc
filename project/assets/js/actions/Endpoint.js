@@ -75,13 +75,6 @@ function receiveEditErrors(errors){
     };
 }
 
-function resetEditObject(patch){
-    return {
-        type: types.EP_RESET_EDIT_OBJECT,
-        patch,
-    };
-}
-
 function releaseContent(){
     return {
         type: types.EP_RELEASE,
@@ -203,7 +196,7 @@ export function initializeBulkEditForm(ids=[], field='system'){
             object;
         if (ids){
             object = _.findWhere(state.endpoint.items, {id: ids[0]});
-            object = Object.assign({}, _.omit(object, ['id', 'name']), {ids: ids, field: [field]} );
+            object = Object.assign({}, _.omit(object, ['id', 'name']), {ids, field: [field]} );
         } else {
             object = {
                 ids: [],

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import List from 'components/Endpoint/List';
 import Loading from 'components/Loading';
-import h from 'utils/helpers';
 
 import { fetchObjectsIfNeeded, setField } from 'actions/Endpoint';
 

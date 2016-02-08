@@ -1,7 +1,7 @@
 {
   "name": "react-HAWC-endpoint-cleanup",
   "version": "1.0.0",
-  "description": "A new Webpack boilerplate with hot reloading React components, and error handling on module and component level.",
+  "description": "React app for modifying model fields in bulk.",
   "scripts": {
     "clean": "rimraf dist",
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaearon/react-transform-boilerplate.git"
+    "url": "https://github.com/shapiromatron/hawc.git"
   },
   "keywords": [
     "react",
@@ -23,9 +23,6 @@
     "babel",
     "react-transform"
   ],
-  "author": "Dan Abramov <dan.abramov@me.com> (http://github.com/gaearon)",
-  "license": "CC0-1.0",
-  "homepage": "https://github.com/gaearon/react-transform-boilerplate",
   "devDependencies": {
     "babel-cli": "^6.4.0",
     "babel-core": "^6.3.15",
@@ -50,11 +47,9 @@
     "history": "^1.13.1",
     "immutable": "^3.7.6",
     "imports-loader": "^0.6.5",
-    "lodash": "^3.10.1",
     "mocha": "^2.3.4",
     "moment": "^2.11.1",
     "nock": "^5.2.1",
-    "normalizr": "^1.4.0",
     "react-addons-test-utils": "^0.14.6",
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",

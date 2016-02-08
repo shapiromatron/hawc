@@ -152,7 +152,7 @@ describe('Endpoint reducer', () => {
                     'field': 'system',
                     'system': 'digestive system',
                     'ids': [10210, 10212],
-                }
+                },
             },
             editObjectErrors: {},
         });

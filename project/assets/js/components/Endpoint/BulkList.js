@@ -26,8 +26,10 @@ export default class BulkList extends Component {
     // Groups endpoints by the field to be edited.
     groupEndpoints(endpoint){
         let field = endpoint.field;
-        return _.groupBy(endpoint.items, (endpoint) => {
+        return _.sortBy(_.groupBy(endpoint.items, (endpoint) => {
             return endpoint[field];
+        }), (endpoint) => {
+            return endpoint[0][field];
         });
     }
 
