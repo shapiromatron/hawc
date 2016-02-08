@@ -522,6 +522,8 @@ class Endpoint(BaseEndpoint):
         'organ',
         'effect',
         'effect_subtype',
+        'observation_time_text',
+        'response_units',
     )
 
     DATA_TYPE_CHOICES = (
