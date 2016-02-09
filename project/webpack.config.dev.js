@@ -18,6 +18,8 @@ config.module = {
         include: path.join(__dirname, 'assets/js'),
         query: {
             plugins: [
+                ['transform-object-rest-spread'],
+                ['syntax-object-rest-spread'],
                 ['react-transform', {
                     transforms: [{
                         transform: 'react-transform-hmr',

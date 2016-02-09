@@ -1,4 +1,4 @@
-import * as types from '../constants/ActionTypes';
+import * as types from 'constants/ActionTypes';
 import _ from 'underscore';
 
 let defaultState = {
@@ -8,7 +8,7 @@ let defaultState = {
     type: null,
     field: null,
     items: [],
-    editObject: null,
+    editObject: {},
     editObjectErrors: {},
 };
 
@@ -86,18 +86,21 @@ export default function (state=defaultState, action){
 
     case types.EP_RESET_EDIT_OBJECT:
         return Object.assign({}, state, {
-            editObject: null,
+            editObject: _.omit(state.editObject, action.patch),
             editObjectErrors: {},
         });
 
     case types.EP_CREATE_EDIT_OBJECT:
+        let obj = action.object,
+            field = obj.field,
+            thisField = obj[field];
         return Object.assign({}, state, {
-            editObject: action.object,
+            editObject: { ...state.editObject, [thisField]: obj},
             editObjectErrors: {},
         });
 
     case types.EP_PATCH_OBJECTS:
-        let indexes;
+        let indexes, patch = action.patch;
         items = state.items;
         indexes = action.ids.map((id) => {
             return state.items.indexOf(
@@ -108,13 +111,13 @@ export default function (state=defaultState, action){
             if (index >= 0){
                 items = [
                     ...items.slice(0, index),
-                    Object.assign({}, items[index], state.editObject),
+                    Object.assign({}, items[index], patch),
                     ...items.slice(index + 1),
                 ];
             } else {
                 items = [
                     ...items,
-                    Object.assign({}, items[index], state.editObject),
+                    Object.assign({}, items[index], patch),
                 ];
             }
         }

@@ -2,16 +2,11 @@ from __future__ import absolute_import
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import list_route
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID
+from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID, DisabledPagination
 from . import views
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
 
 
 class CleanupFieldsFilter(InAssessmentFilter):
@@ -26,22 +21,26 @@ class CleanupFieldsFilter(InAssessmentFilter):
     """
     def filter_queryset(self, request, queryset, view):
         queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
-        if view.action not in ('list', 'retrieve'):
-            ids = request.query_params.get('ids')
-            try:
-                ids = ids.split(',')
-            except AttributeError as e:
-                ids = []
+        ids = request.query_params.get('ids')
+        try:
+            ids = ids.split(',')
             filters = {'id__in': ids}
-            queryset = queryset.filter(**filters)
+        except AttributeError:
+            ids = []
+            filters = {}
 
-        return queryset
+        if view.action not in ('list', 'retrieve'):
+            filters = {'id__in': ids}
+
+        return queryset.filter(**filters)
 
 
 class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     """
     Base Viewset for bulk updating text fields. Model should have a
     text_cleanup_fields() class method that returns the fields to be cleaned up.
+
+    For bulk update, 'X-CUSTOM-BULK-OPERATION' header must be provided.
 
     Serializer should implement DynamicFieldsMixin.
     """

@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
-from assessment.api.views import AssessmentViewset
-from utils.api import DisabledPagination
+from assessment.api.views import AssessmentViewset, DisabledPagination
 
 from . import models, serializers
 

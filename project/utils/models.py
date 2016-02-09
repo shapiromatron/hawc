@@ -200,4 +200,3 @@ class CustomURLField(URLField):
         }
         defaults.update(kwargs)
         return super(CustomURLField, self).formfield(**defaults)
-

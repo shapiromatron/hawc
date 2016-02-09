@@ -130,7 +130,7 @@ class StudyPopulationForm(forms.ModelForm):
 
         for fld in self.CRITERION_FIELDS:
             self.fields[fld].widget.update_query_parameters(
-                    {'related': self.instance.study.assessment_id})
+                {'related': self.instance.study.assessment_id})
             if self.instance.id:
                 self.fields[fld].initial = getattr(self.instance, fld)
 

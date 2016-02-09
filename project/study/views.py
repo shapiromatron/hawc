@@ -24,6 +24,9 @@ class StudyList(BaseList):
     parent_model = Assessment
     model = models.Study
 
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)
+
 
 class StudyReport(GenerateReport):
     parent_model = Assessment
@@ -51,10 +54,11 @@ class StudyBiasExport(StudyList):
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyBiasExport, self).get_queryset()
         exporter = exports.StudyQualityFlatComplete(
-                self.object_list,
-                export_format="excel",
-                filename='{}-risk-of-bias'.format(self.assessment),
-                sheet_name='risk-of-bias')
+            self.object_list,
+            export_format="excel",
+            filename='{}-risk-of-bias'.format(self.assessment),
+            sheet_name='risk-of-bias'
+        )
         return exporter.build_response()
 
 

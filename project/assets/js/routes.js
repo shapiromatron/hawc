@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import AssessmentApp from './containers/AssessmentApp';
-import Assessment from './components/Assessment';
-// import ModelPage from './containers/ModelPage'
-// import SystemPage from './containers/FieldPage'
+import urls from 'constants/urls';
+import AssessmentApp from 'containers/AssessmentApp';
+import FieldSelection from 'containers/FieldSelection';
+import Endpoint from 'containers/Endpoint/App';
 
 export default (
-  <Route path="/assessment/:id/endpoint_cleanup/" >
+  <Route path={urls.assessment.url} >
       <IndexRoute component={AssessmentApp} />
-
-      {/*<Route path="/assessment/:id/endpoint_cleanup/:type/" component={ModelPage} />*/}
+      <Route path={urls.fields.url} component={FieldSelection} />
+        <Route path={urls.endpoints.url} component={Endpoint} />
   </Route>
 );

@@ -507,7 +507,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
     class Meta:
         model = models.DataPivotQuery
-        fields = ('evidence_type', 'units', 'title',
+        fields = ('evidence_type', 'export_style', 'title', 'preferred_units',
                   'slug', 'settings', 'caption',
                   'published_only', 'prefilters')
 
@@ -518,7 +518,19 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (1, 'Epidemiology'),
             (4, 'Epidemiology meta-analysis/pooled analysis'),
             (2, 'In vitro'))
+        self.fields['preferred_units'].required = False
         self.helper = self.setHelper()
+
+    def save(self, commit=True):
+        self.instance.preferred_units = self.cleaned_data.get('preferred_units', [])
+        return super(DataPivotQueryForm, self).save(commit=commit)
+
+    def clean_export_style(self):
+        evidence_type = self.cleaned_data['evidence_type']
+        export_style = self.cleaned_data['export_style']
+        if evidence_type != 2 and export_style != 0:
+            raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
+        return export_style
 
 
 class DataPivotSettingsForm(forms.ModelForm):
@@ -528,20 +540,33 @@ class DataPivotSettingsForm(forms.ModelForm):
         fields = ('settings', )
 
 
+class DataPivotModelChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        return "{}: {}".format(obj.assessment, obj)
+
+
 class DataPivotSelectorForm(forms.Form):
 
-    dp = forms.ModelChoiceField(label="Data Pivot",
-                                queryset=models.DataPivot.objects.all(),
-                                empty_label=None)
+    dp = DataPivotModelChoiceField(
+        label="Data Pivot",
+        queryset=models.DataPivot.objects.all(),
+        empty_label=None)
+
+    reset_row_overrides = forms.BooleanField(
+        help_text='Reset all row-level customization in the data-pivot copy',
+        required=False,
+        initial=True)
 
     def __init__(self, *args, **kwargs):
-        assessment_id = kwargs.pop('assessment_id', -1)
+        user = kwargs.pop('user')
         super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
 
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
 
-        self.fields['dp'].queryset = self.fields['dp'].queryset.filter(assessment_id=assessment_id)
+        self.fields['dp'].queryset = models.DataPivot\
+            .clonable_queryset(user)
 
 
 class SmartTagForm(forms.Form):

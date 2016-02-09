@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
-from utils.api import DisabledPagination
+from assessment.api.views import DisabledPagination
 from celery import chain
 
 from . import forms, models, tasks, serializers
@@ -465,27 +465,26 @@ class AssessmentEndpointList(views.AssessmentViewset):
 
     def list(self, request, *args, **kwargs):
         instance = self.filter_queryset(self.get_queryset())[0]
-        base_url = "{}://{}/".format(request.scheme, request.get_host())
-        query_string = "api/cleanup/?{}".format(request.META.get('QUERY_STRING'))
+        app_url = reverse('assessment:endpoint_cleanup_list', kwargs={'pk': instance.id})
         instance.items = []
 
         instance.items.append({
             'count': instance.endpoint_count,
             'title': "animal bioassay endpoints",
             'type': 'ani',
-            'url': "{}{}{}".format(base_url, 'ani/', query_string),
+            'url': "{}{}".format(app_url, 'ani/'),
         })
         instance.items.append({
             "count": instance.outcome_count,
             "title": "epidemiological outcomes assessed",
             'type': 'epi',
-            'url': "{}{}{}".format(base_url, 'epi/', query_string)
+            'url': "{}{}".format(app_url, 'epi/')
         })
         instance.items.append({
             "count": instance.ivendpoint_count,
             "title": "in vitro endpoints",
             'type': 'in-vitro',
-            'url': "{}{}{}".format(base_url, 'in-vitro/', query_string),
+            'url': "{}{}".format(app_url, 'in-vitro/'),
         })
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

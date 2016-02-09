@@ -5,7 +5,7 @@ var config = require('./webpack.base.js'),
 
 config.devtool = 'source-map';
 
-config.entry =  ['./src/index'];
+config.entry =  ['./assets/js/index'];
 
 config.output.publicPath = '/static/';
 config.plugins.unshift([
@@ -24,7 +24,9 @@ config.module = {
     loaders: [{
         test: /\.js$/,
         loader: 'babel',
-        include: path.join(__dirname, 'src'),
+        include: path.join(__dirname, 'assets/js'),
+    }, {
+        test: /\.css$/, loader: 'style!css',
     }],
 };
 

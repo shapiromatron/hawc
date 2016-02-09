@@ -6,8 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from utils.api import DisabledPagination
-from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter
+from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination
 
 from . import models, serializers
 

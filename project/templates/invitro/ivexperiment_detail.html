@@ -1,12 +1,12 @@
 {% extends 'portal.html' %}
 
 
-{% block title %}{{assessment}} | {{object.study}} | {{object}} {% endblock title %}
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
-  <li class="active">{{object}}<span class="divider">/</span></li>
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content_type %}
@@ -16,6 +16,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
+      window.canEdit = {{obj_perms.edit|lower}};
       IVExperiment.displayAsPage({{object.id}}, $(".ivExperiment"));
     });
   </script>

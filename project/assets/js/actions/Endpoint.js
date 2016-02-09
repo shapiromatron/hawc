@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import 'babel-polyfill';
-import * as types from '../constants/ActionTypes';
-import h from '../utils/helpers';
+import * as types from 'constants/ActionTypes';
+import h from 'utils/helpers';
 
 
 function requestContent() {
@@ -24,12 +24,27 @@ function receiveObjects(json) {
     };
 }
 
+function receiveObject(json) {
+    return {
+        type: types.EP_RECEIVE_OBJECT,
+        item: json,
+    };
+}
+
+export function setType(endpoint_type){
+    return {
+        type: types.EP_SET_TYPE,
+        endpoint_type,
+    };
+}
+
 export function setField(field){
     return {
         type: types.EP_SET_FIELD,
         field,
     };
 }
+
 
 function removeObject(id){
     return {
@@ -45,10 +60,11 @@ function setEdititableObject(object){
     };
 }
 
-function patchItems(ids){
+function patchItems(ids, patch){
     return {
         type: types.EP_PATCH_OBJECTS,
         ids,
+        patch,
     };
 }
 
@@ -59,19 +75,13 @@ function receiveEditErrors(errors){
     };
 }
 
-function resetEditObject(){
-    return {
-        type: types.EP_RESET_EDIT_OBJECT,
-    };
-}
-
 function releaseContent(){
     return {
         type: types.EP_RELEASE,
     };
 }
 
-export function fetchModelIfNeeded(assessment_id){
+export function fetchModelIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
@@ -85,35 +95,41 @@ export function fetchModelIfNeeded(assessment_id){
     };
 }
 
-export function fetchObjectsIfNeeded(assessment_id) {
+export function fetchObjectsIfNeeded(ids=null) {
     return (dispatch, getState) => {
         let state = getState();
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getEndpointApiURL(state, true), h.fetchGet)
+        return fetch(h.getEndpointApiURL(state, false, false, ids), h.fetchGet)
             .then((response) => response.json())
-            .then((json) => dispatch(receiveObjects(json)))
+            .then((json) => {
+                if (ids === null){
+                    dispatch(receiveObjects(json));
+                } else {
+                    _.map(json, (item) => {
+                        dispatch(receiveObject(item));
+                    });
+                }
+            })
             .catch((ex) => console.error('Endpoint parsing failed', ex));
     };
 }
 
-export function patchObjectList(objectList, cb){
+export function patchBulkList(objectList, cb){
     cb = cb || h.noop;
     return (dispatch, getState) => {
         let state = getState();
-
         _.map(objectList, (patchObject) => {
-            let { ids, patch } = patchObject,
-                opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
+            let { ids, field } = patchObject,
+                patch = {[field]: patchObject[field]},
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
             return fetch(
                 `${h.getEndpointApiURL(state)}&ids=${ids}`,
                 opts)
                 .then((response) => {
-                    dispatch(setEdititableObject(_.omit(patch, 'csrfmiddlewaretoken')));
-                    if (response.status === 200){
-                        response.json()
-                            .then(() => dispatch(patchItems(ids)))
-                            .then(() => dispatch(resetEditObject()));
+                    dispatch(setEdititableObject(patchObject));
+                    if (response.ok){
+                        dispatch(patchItems(ids, patchObject));
                     } else {
                         response.json()
                         .then((json) => dispatch(receiveEditErrors(json)));
@@ -124,7 +140,32 @@ export function patchObjectList(objectList, cb){
     };
 }
 
-export function deleteObject(assessment_id, id){
+export function patchDetailList(objectList, cb){
+    cb = cb || h.noop;
+    return (dispatch, getState) => {
+        let state = getState();
+        _.map(objectList, (patchObject) => {
+            let { ids, field } = patchObject,
+                patch = {[field]: patchObject[field]},
+                opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
+            return fetch(
+                `${h.getEndpointApiURL(state)}&ids=${ids}`,
+                opts)
+                .then((response) => {
+                    dispatch(setEdititableObject(patchObject));
+                    if (response.ok){
+                        dispatch(fetchObjectsIfNeeded(ids));
+                    } else {
+                        response.json()
+                        .then((json) => dispatch(receiveEditErrors(json)));
+                    }
+                })
+                .catch((ex) => console.error('Endpoint parsing failed', ex));
+        });
+    };
+}
+
+export function deleteObject(id){
     return (dispatch, getState) => {
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
@@ -149,48 +190,20 @@ export function releaseEndpoint(){
     };
 }
 
-export function initializeEditForm(id=null){
-
+export function initializeBulkEditForm(ids=[], field='system'){
     return (dispatch, getState) => {
         let state = getState(),
             object;
-        if (id){
-            object = _.findWhere(state.endpoint.items, {id});
-            object = h.deepCopy(object);
+        if (ids){
+            object = _.findWhere(state.endpoint.items, {id: ids[0]});
+            object = Object.assign({}, _.omit(object, ['id', 'name']), {ids, field: [field]} );
         } else {
             object = {
-                id: null,
-                name: '',
-                description: '',
-                public: false,
-                genome_assembly: 1,
-                stranded: true,
-                text: '',
+                ids: [],
+                [field]: '',
+                field: [field],
             };
         }
         dispatch(setEdititableObject(object));
-    };
-}
-
-export function patchObjects(ids, patch, cb){
-    cb = cb || h.noop;
-    return (dispatch, getState) => {
-        let state = getState(),
-            opts = h.fetchPost(state.config.csrf, patch, 'PATCH');
-        return fetch(
-            `${h.getEndpointApiURL(state.apiUrl, state.config[state.endpoint.type], state.assessment.id)}&ids=${ids}`,
-            opts)
-            .then(function(response){
-                if (response.status === 200){
-                    response.json()
-                    .then((json) => dispatch(fetchObjectsIfNeeded(state.assessment.id)))
-                    .then(cb())
-                    .then(() => dispatch(resetEditObject()));
-                } else {
-                    response.json()
-                    .then((json) => dispatch(receiveEditErrors(json)));
-                }
-            })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
     };
 }

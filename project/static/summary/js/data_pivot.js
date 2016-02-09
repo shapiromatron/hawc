@@ -263,13 +263,14 @@ DataPivot.prototype = {
   build_data_pivot_vis: function(div, editable){
     delete this.plot;
     editable = editable || false;
-    this.plot = new DataPivot_visualization(this.data, this.settings, div, editable);
+    var data = JSON.parse(JSON.stringify(this.data));  // deep-copy
+    this.plot = new DataPivot_visualization(data, this.settings, div, editable);
   },
   build_data_table: function(){
 
-    var tbl = $('<table class="data_pivot_table"></table>'),
-        thead = $('<thead></thead>'),
-        tbody = $('<tbody></tbody>');
+    var tbl = $('<table class="data_pivot_table">'),
+        thead = $('<thead>'),
+        tbody = $('<tbody>');
 
     // get headers
     var data_headers = [];
@@ -280,7 +281,7 @@ DataPivot.prototype = {
     }
 
     // print header
-    var tr = $('<tr></tr>');
+    var tr = $('<tr>');
     data_headers.forEach(function(v){
       tr.append('<th>{0}</th>'.printf(v));
     });
@@ -288,7 +289,7 @@ DataPivot.prototype = {
 
     // print body
     this.data.forEach(function(d){
-      var tr = $('<tr></tr>');
+      var tr = $('<tr>');
       data_headers.forEach(function(field){
         tr.append('<td>{0}</td>'.printf(d[field]));
       });
@@ -1718,7 +1719,7 @@ _DataPivot_settings_conditional = function(parent_div, parent, values){
 
       vals.unique.forEach(function(v){
         var style = dp.style_manager
-                      .add_select("symbols", hash.get(v))
+                      .add_select("symbols", hash.get(v), true)
                       .data('key', v);
         self.discrete_styles.push(style);
         add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
@@ -2249,7 +2250,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
     rows = DataPivot_visualization.sorter(rows, settings.sorts);
 
-    // row-overrides: style, order
+    // row-overrides: order
     this.dp_settings.row_overrides.forEach(function(v){
       // apply offsets
       if(v.offset !== 0){
@@ -2262,29 +2263,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
             break;
           }
         }
-      }
-
-      // apply style overrides
-      if((v.text_style !== DataPivot.NULL_CASE) ||
-         (v.line_style !== DataPivot.NULL_CASE) ||
-         (v.symbol_style !== DataPivot.NULL_CASE)){
-        rows.forEach(function(v2,i){
-          if(v2._dp_pk === v.pk){
-            for(var key in v2._styles){
-              if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
-                v2._styles[key] = get_associated_style("texts", v.text_style);
-              }
-
-              if((v.line_style !== DataPivot.NULL_CASE) && (key === "bars")){
-                v2._styles[key] = get_associated_style("lines", v.line_style);
-              }
-
-              if((v.symbol_style !== DataPivot.NULL_CASE) && (key.substr(0,6) === "points")){
-                v2._styles[key] = get_associated_style("symbols", v.symbol_style);
-              }
-            }
-          }
-        });
       }
     });
 
@@ -2341,9 +2319,10 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
             var hash = d3.map();
             cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
-
             rows.forEach(function(d){
-              d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]))
+              if(hash.get(d[cf.field_name]) !== DataPivot.NULL_CASE){
+                d._styles[styles] = get_associated_style("symbols", hash.get(d[cf.field_name]));
+              }
             });
 
             break;
@@ -2354,8 +2333,33 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       });
     });
 
+    // row-overrides: apply styles
+    this.dp_settings.row_overrides.forEach(function(v){
+      if((v.text_style !== DataPivot.NULL_CASE) ||
+         (v.line_style !== DataPivot.NULL_CASE) ||
+         (v.symbol_style !== DataPivot.NULL_CASE)){
+        rows.forEach(function(v2){
+          if(v2._dp_pk === v.pk){
+            for(var key in v2._styles){
+              if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === "text")){
+                v2._styles[key] = get_associated_style("texts", v.text_style);
+              }
+
+              if((v.line_style !== DataPivot.NULL_CASE) && (key === "bars")){
+                v2._styles[key] = get_associated_style("lines", v.line_style);
+              }
+
+              if((v.symbol_style !== DataPivot.NULL_CASE) && (key.substr(0,6) === "points")){
+                v2._styles[key] = get_associated_style("symbols", v.symbol_style);
+              }
+            }
+          }
+        });
+      }
+    });
+
     // with final datarows subset, add index for rendered order
-    rows.forEach(function(v, i){v._dp_index = i;})
+    rows.forEach(function(v, i){v._dp_index = i;});
 
     // unpack extra spacers
     this.dp_settings.spacers.forEach(function(v){
@@ -2653,6 +2657,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
           .attr('y', function(d){return d.y;})
           .text(function(d){return d.text;})
           .attr("cursor", cursor)
+          .attr("class", "with_whitespace")
           .each(function(d){apply_text_styles(this, d._style);})
           .call(label_drag);
 
@@ -2736,6 +2741,7 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       .enter().append("text")
           .attr("x", 0)
           .attr("y", 0)
+          .attr("class", "with_whitespace")
           .text(function(d){return d.text;})
           .style("cursor", function(d){return d.cursor;})
           .on("click", function(d){return d.onclick();})

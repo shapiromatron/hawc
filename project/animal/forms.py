@@ -464,6 +464,13 @@ class EndpointForm(ModelForm):
                 "(standard-deviation) or SE (standard error)")
         return variance_type
 
+    def clean_response_units(self):
+        response_units = self.cleaned_data.get("response_units")
+        data_extracted = self.cleaned_data.get("data_extracted")
+        if data_extracted and response_units == "":
+            raise forms.ValidationError("If data is extracted (see checkbox), response-units are required")
+        return response_units
+
 
 class EndpointGroupForm(forms.ModelForm):
 

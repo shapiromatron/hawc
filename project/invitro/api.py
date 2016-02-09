@@ -12,6 +12,12 @@ class IVChemical(AssessmentViewset):
     serializer_class = serializers.IVChemicalSerializer
 
 
+class IVCellType(AssessmentViewset):
+    assessment_filter_args = "assessment"
+    model = models.IVCellType
+    serializer_class = serializers.IVCellTypeSerializer
+
+
 class IVExperiment(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.IVExperiment

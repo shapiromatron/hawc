@@ -20,6 +20,11 @@ unrecognized HTML expressions.
 .dr_title {
   font-size: 12px;
   font-weight: bold;
+  white-space: pre;
+}
+
+.with_whitespace {
+  white-space: pre;
 }
 
 .dr_axis_labels{
@@ -30,6 +35,7 @@ unrecognized HTML expressions.
   font-size: 12px;
   fill: black;
   stroke-width: 0px;
+  white-space: pre;
 }
 
 .dr_tick_text {

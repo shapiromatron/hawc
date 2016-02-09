@@ -8,6 +8,11 @@ module.exports = {
 
     context: __dirname,
 
+    resolve: {
+        root: path.resolve(__dirname, 'assets/js'),
+        extensions: ['', '.js', '.css'],
+    },
+
     entry: [
         './assets/js/index',
     ],
@@ -15,6 +20,11 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',
+    },
+
+    externals: {
+        Outcome: 'Outcome',
+        Endpoint: 'Endpoint',
     },
 
     plugins: [

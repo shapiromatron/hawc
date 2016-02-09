@@ -1,5 +1,5 @@
-import { loadConfig } from '../../actions/Config';
-import * as types from '../../constants/ActionTypes';
+import { loadConfig } from 'actions/Config';
+import * as types from 'constants/ActionTypes';
 
 describe('Config action', () => {
     it('should return a config action object', () => {

@@ -1,7 +1,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as endpointActions from '../../actions/Endpoint';
-import * as types from '../../constants/ActionTypes';
+import * as endpointActions from 'actions/Endpoint';
+import * as types from 'constants/ActionTypes';
 import nock from 'nock';
 
 const middlewares = [thunk];
@@ -30,7 +30,7 @@ describe('Endpoint actions', () => {
         it('should load the endpoint model', (done) => {
             nock('http://127.0.0.1:9000')
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
-                .reply(200, {
+                .reply(200,  {
                     'text_cleanup_fields': [
                         'system',
                         'organ',
@@ -50,19 +50,19 @@ describe('Endpoint actions', () => {
             ];
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: { isFetching: false,
                             type: 'ani'}}, expectedActions, done);
-            store.dispatch(endpointActions.fetchModelIfNeeded(57));
+            store.dispatch(endpointActions.fetchModelIfNeeded());
         });
 
         it('should load endpoint items', (done) => {
             nock('http://127.0.0.1:9000')
-                .get('/ani/api/cleanup/?assessment_id=57&fields=system')
+                .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
                     {
                         'id': 10210,
@@ -96,18 +96,18 @@ describe('Endpoint actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     isFetching: false,
                     field: 'system',
                     type: 'ani',
                 },
             }, expectedActions, done);
-            store.dispatch(endpointActions.fetchObjectsIfNeeded(57));
+            store.dispatch(endpointActions.fetchObjectsIfNeeded());
         });
 
         it('should delete an object', (done) => {
@@ -121,11 +121,11 @@ describe('Endpoint actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     items: [
                         {
@@ -142,10 +142,10 @@ describe('Endpoint actions', () => {
                     type: 'ani',
                     field: 'system',
                 }}, expectedActions, done);
-            store.dispatch(endpointActions.deleteObject(57, 10210));
+            store.dispatch(endpointActions.deleteObject(10210));
         });
 
-        it('should patch multiple objects', (done) => {
+        it('should bulk patch multiple objects', (done) => {
             nock('http://127.0.0.1:9000')
                 .patch('/ani/api/cleanup/?assessment_id=57&ids=10210')
                 .reply(200, {})
@@ -165,31 +165,33 @@ describe('Endpoint actions', () => {
                     },
                 ]);
 
-            const patchList = [{ ids: [10210], patch: {'system': 'Digestive Systems'}}, { ids: [10212], patch: {'system': 'Digestive System'}}];
+            const patchList = [{ ids: [10210], field: 'system', system: 'Digestive Systems'}, { ids: [10212], field: 'system', system: 'Digestive System'}];
             const expectedActions = [
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object:  {
+                        'ids': [10210],
+                        field: 'system',
                         'system': 'Digestive Systems',
                     },
                 },
+                { type: types.EP_PATCH_OBJECTS, ids: [10210], patch: {field: 'system', ids: [10210], system: 'Digestive Systems'} },
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object: {
+                        'ids': [10212],
+                        field: 'system',
                         'system': 'Digestive System',
                     },
                 },
-                { type: types.EP_PATCH_OBJECTS, ids: [10210] },
-                { type: types.EP_PATCH_OBJECTS, ids: [10212] },
-                { type: types.EP_RESET_EDIT_OBJECT },
-                { type: types.EP_RESET_EDIT_OBJECT },
+                { type: types.EP_PATCH_OBJECTS, ids: [10212], patch: {field: 'system', ids: [10212], system: 'Digestive System'} },
             ];
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    apiUrl: 'http://127.0.0.1:9000/',
                     ani: 'ani/api/cleanup/',
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
-                assessment: { id: 57 },
+                assessment: { active: { id: 57 } },
                 endpoint: {
                     items: [
                         {
@@ -206,7 +208,72 @@ describe('Endpoint actions', () => {
                     type: 'ani',
                     field: 'system',
                 }}, expectedActions, done);
-            store.dispatch(endpointActions.patchObjectList(patchList));
+            store.dispatch(endpointActions.patchBulkList(patchList));
+        });
+
+        it('should detail patch multiple objects', (done) => {
+            nock('http://127.0.0.1:9000')
+                .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
+                .reply(204, {})
+                .get('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
+                .reply(200, [
+                    {
+                        'id': 10210,
+                        'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        'system': 'Digestive Systems',
+                    },
+                    {
+                        'id': 10212,
+                        'name': 'gross body weight (start of experiment)',
+                        'system': 'Digestive Systems',
+                    },
+                ]);
+
+            const patchList = [{ ids: [10210, 10212], field: 'system', system: 'Digestive Systems'}];
+            const expectedActions = [
+                { type: types.EP_CREATE_EDIT_OBJECT,
+                    object:  {
+                        'ids': [10210, 10212],
+                        field: 'system',
+                        'system': 'Digestive Systems',
+                    },
+                },
+                { type: types.EP_REQUEST },
+                { type: types.EP_RECEIVE_OBJECT, item: {
+                    'id': 10210,
+                    name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                    system: 'Digestive Systems'},
+                },
+                { type: types.EP_RECEIVE_OBJECT, item: {
+                    'id': 10212,
+                    'name': 'gross body weight (start of experiment)',
+                    'system': 'Digestive Systems'},
+                },
+            ];
+            const store = mockStore({
+                config: {
+                    apiUrl: 'http://127.0.0.1:9000/',
+                    ani: 'ani/api/cleanup/',
+                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
+                },
+                assessment: { active: { id: 57 } },
+                endpoint: {
+                    items: [
+                        {
+                            'id': 10210,
+                            'name': 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            'system': 'digestive system',
+                        },
+                        {
+                            'id': 10212,
+                            'name': 'gross body weight (start of experiment)',
+                            'system': 'digestive system',
+                        },
+                    ],
+                    type: 'ani',
+                    field: 'system',
+                }}, expectedActions, done);
+            store.dispatch(endpointActions.patchDetailList(patchList));
         });
 
     });

@@ -22,10 +22,9 @@
 {% endblock %}
 
 {% block content %}
-
+  {% include "assessment/preferred_dose_units_widget.html" %}
   {% crispy form %}
   {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
-
 {% endblock %}
 
 {% block extrajs %}
@@ -34,6 +33,7 @@
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/smart_tags_edit.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}assessment/js/preferred_dose_units.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
 
@@ -42,6 +42,11 @@
           $('#id_slug').val(URLify($(this).val(), 50));
         });
       {% endif %}
+
+      var doseWidget = new DoseUnitsWidget($('form'), {
+        api: "{% url 'animal:api:dose_units-list' %}",
+        el: '#id_preferred_units',
+      });
 
       new SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
 
@@ -65,7 +70,7 @@
       // determine which fields to display depending on data-type
       $('#id_evidence_type').on('change', function(){
         var aniOnlyDivs = $([
-              "#div_id_units",
+              "#div_id_preferred_units",
               "#div_id_prefilter_system",
               "#div_id_systems",
               "#div_id_prefilter_organ",
@@ -76,6 +81,7 @@
           ivOnlyDivs = $([
               "#div_id_prefilter_iv_category",
               "#div_id_iv_categories",
+              "#div_id_export_style",
           ].join(","));
 
         ($('#id_evidence_type').val() === "0") ? aniOnlyDivs.show() : aniOnlyDivs.hide();

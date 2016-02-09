@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from django.db.models import Q
-from assessment.api.views import AssessmentViewset
+from assessment.api.views import AssessmentViewset, DoseUnitsViewset
 
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
@@ -76,3 +76,7 @@ class Endpoint(AssessmentViewset):
 class CleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.CleanupFieldsSerializer
     model = models.Endpoint
+
+
+class DoseUnits(DoseUnitsViewset):
+    pass

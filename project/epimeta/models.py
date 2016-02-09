@@ -379,6 +379,9 @@ class SingleResult(models.Model):
     notes = models.TextField(
         blank=True)
 
+    class Meta:
+        ordering = ('exposure_name', )
+
     def __unicode__(self):
         return self.exposure_name
 

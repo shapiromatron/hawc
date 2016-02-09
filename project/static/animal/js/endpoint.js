@@ -308,7 +308,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{
-            return this.data.groups[this.data[name]].dose;
+            return this.data.groups[this.data[name]].dose.toLocaleString();
         }catch(err){
             return '-';
         }
@@ -604,8 +604,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 this.data.url,
                 this.data.name),
             this.dose_units,
-            this.get_special_dose_text("NOEL").toLocaleString(),
-            this.get_special_dose_text("LOEL").toLocaleString()
+            this.get_special_dose_text("NOEL"),
+            this.get_special_dose_text("LOEL")
         ];
     },
     _percent_change_control: function(index){
@@ -1482,6 +1482,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         }
     },
     add_dose_response: function(update) {
+
         // update or create dose-response dots and labels
         var x = this.x_scale,
             y = this.y_scale;

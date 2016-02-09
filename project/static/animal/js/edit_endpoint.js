@@ -43,7 +43,7 @@ EditEndpoint.prototype = {
                 var name = d.name.split("-").pop();
                 row[name] = parseFloat(d.value, 10);
             });
-            row['isReported'] = $.isNumeric(row['response'] || row['incidence']);
+            row['isReported'] = $.isNumeric(row['response']) || $.isNumeric(row['incidence']);
             row['hasVariance'] = $.isNumeric(row['variance']);
             vals.groups.push(row);
         });

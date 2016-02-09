@@ -1,12 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
-import '../../css/Assessment.css';
+import 'containers/Assessment.css';
 
-import Assessment from '../components/Assessment';
-import Loading from '../components/Loading';
+import Assessment from 'components/Assessment';
+import Loading from 'components/Loading';
 
-import { makeAssessmentActive } from '../actions/Assessment';
+import { makeAssessmentActive } from 'actions/Assessment';
 
 class App extends Component{
 
@@ -23,7 +23,6 @@ class App extends Component{
     }
 
     render() {
-        console.log(this.props);
         let object = this.getObject();
         if (_.isUndefined(object)) return <Loading />;
         return (

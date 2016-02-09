@@ -483,25 +483,10 @@ EditReferenceContainer.prototype = {
 
 
 var EditTagTreeContainer = function(tagtree, div){
-    var self = this;
     this.$div = $(div);
     this.tagtree = tagtree;
     tagtree.addObserver(this);
     this._build_tree();
-
-    $('#submit_new_tag').on('click', function(){
-        if($('#tag_parent option:selected').data('d')){
-            $('#tag_parent option:selected').data('d').add_child($('#tag_name').val());
-        } else {
-            tagtree.add_root_tag($('#tag_name').val());
-        }
-        $('#new_tag_form').modal('hide');
-    });
-
-    $('#submit_delete_tag').on('click', function(){
-        $('#delete_tag option:selected').data('d').remove_self();
-        $('#delete_tag_form').modal('hide');
-    });
 };
 EditTagTreeContainer.prototype = {
     update: function(){
@@ -509,7 +494,10 @@ EditTagTreeContainer.prototype = {
     },
     _build_tree: function(){
         this.$div.html(this.tagtree.get_nested_list({"show_refs_count": false, "sortable": true}));
-    }
+    },
+    deleteTag: function(tag){
+        tag.remove_self();
+    },
 };
 
 
@@ -535,7 +523,7 @@ _.extend(TagTree.prototype, Observee.prototype, {
     },
     get_nested_list: function(options){
         // builds a nested list
-        var div = $('<div></div>');
+        var div = $('<div>');
         this.tags.forEach(function(v){v.get_nested_list_item(div, "", options);});
         return div;
     },
@@ -611,6 +599,9 @@ _.extend(TagTree.prototype, Observee.prototype, {
             }
         });
     },
+    get_tag: function(pk){
+        return this.dict[pk] || null;
+    },
 });
 
 
@@ -634,7 +625,7 @@ var NestedTag = function(item, level, tree, parent){
 };
 _.extend(NestedTag.prototype, Observee.prototype, {
     get_nested_list_item: function(parent, padding, options){
-        var div = $('<div></div>'),
+        var div = $('<div data-id="{0}">'.printf(this.data.pk)),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
             txtspan = $('<p class="nestedTag"></p>'),
             text = '{0}{1}'.printf(padding, this.data.name);
@@ -738,9 +729,12 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     },
     add_child: function(name){
         var self = this,
-            data = {"status": "add",
-                    "parent_pk": this.data.pk,
-                    "name": name};
+            data = {
+                "status": "add",
+                "parent_pk": this.data.pk,
+                "name": name
+            };
+
         $.post('.', data, function(v){
             if (v.status === "success"){
                 self.children.push(new NestedTag(v.node[0], self.level+1, self.tree, self));
@@ -751,10 +745,12 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     remove_self: function(){
         this.children.forEach(function(v){v.remove_self();});
         var self = this,
-            data = {"status": "remove",
-                    "pk": this.data.pk};
+            data = {
+                "status": "remove",
+                "pk": this.data.pk
+            };
+
         $.post('.', data, function(v){
-            console.log(v);
             if (v.status === "success"){
                 self.notifyObservers({"event": "tag removed", "object": self});
                 if(self.parent){
@@ -769,18 +765,33 @@ _.extend(NestedTag.prototype, Observee.prototype, {
     move_self: function(offset){
         var self = this,
             lst = this.parent.children,
-            index = lst.indexOf(this);
+            index = lst.indexOf(this),
+            data = {
+                "status": "move",
+                "pk": this.data.pk,
+                "offset": offset
+            };
 
         // update locally
         lst.splice(index+offset, 0, lst.splice(index, 1)[0]);
 
-        // push changes to server
-        data = {"status": "move",
-                "pk": this.data.pk,
-                "offset": offset};
-
         $.post('.', data, function(v){
             if (v.status === "success") self.tree.tree_changed();
+        });
+    },
+    rename_self: function(name){
+        var self = this,
+            data = {
+                "status": "rename",
+                "pk": this.data.pk,
+                "name": name
+            };
+
+        $.post('.', data, function(v){
+            if (v.status === "success"){
+                self.data.name = name;
+                self.tree.tree_changed();
+            }
         });
     },
     remove_child: function(tag){

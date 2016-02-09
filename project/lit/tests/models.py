@@ -128,6 +128,52 @@ class PubMedFetchTests(TestCase):
         doi = u"10.1016/j.medcli.2011.05.017"
         self.assertEqual(self.fetch.content[0]['doi'], doi)
 
+    def test_book(self):
+        self.ids = (26468569, )
+        self.fetch = PubMedFetch(id_list=self.ids)
+        self.fetch.get_content()
+        obj = self.fetch.content[0]
+        obj.pop('xml')
+        obj.pop('abstract')
+        expected = {
+            'authors_short': u'Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures et al.',
+            'doi': '10.17226/21775',
+            'year': 2015,
+            'PMID': '26468569',
+            'title': 'Application of Modern Toxicology Approaches for Predicting Acute Toxicity for Chemical Defense',
+            'citation': u'(2015). Washington (DC): National Academies Press (US).',
+            'authors_list': [
+                'Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures',
+                'Committee on Toxicology',
+                'Board on Environmental Studies and Toxicology',
+                'Board on Life Sciences',
+                'Division on Earth and Life Studies',
+                'The National Academies of Sciences, Engineering, and Medicine'
+            ]
+        }
+        self.assertEqual(obj, expected)
+
+    def test_book_chapter(self):
+        self.ids = (20301382, )
+        self.fetch = PubMedFetch(id_list=self.ids)
+        self.fetch.get_content()
+        obj = self.fetch.content[0]
+        obj.pop('xml')
+        obj.pop('abstract')
+        expected = {
+            'PMID': '20301382',
+            'authors_list': [
+                u'DiMauro S',
+                u'Hirano M'
+            ],
+            'authors_short': u'DiMauro S and Hirano M',
+            'citation': u'GeneReviews(®) (1993). Seattle (WA): University of Washington, Seattle.',
+            'doi': None,
+            'title': 'Mitochondrial DNA Deletion Syndromes',
+            'year': 1993
+        }
+        self.assertEqual(obj, expected)
+
     def _results_check(self):
         self.assertEqual(len(self.fetch.content), 6)
         self.assertListEqual(

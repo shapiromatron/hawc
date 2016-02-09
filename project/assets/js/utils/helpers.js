@@ -21,6 +21,19 @@ var helpers = {
             body: JSON.stringify(obj),
         };
     },
+    fetchBulk(csrf, obj, verb='PATCH'){
+        obj['csrfmiddlewaretoken'] = csrf;
+        return {
+            credentials: 'same-origin',
+            method: verb,
+            headers: new Headers({
+                'X-CSRFToken': csrf,
+                'content-type': 'application/json',
+                'X-CUSTOM-BULK-OPERATION': true,
+            }),
+            body: JSON.stringify(obj),
+        };
+    },
     fetchDelete(csrf){
         return {
             credentials: 'same-origin',
@@ -57,10 +70,11 @@ var helpers = {
     getAssessmentApiUrl(config){
         return `${config.apiUrl}${config.assessment}?assessment_id=${config.assessment_id}`;
     },
-    getEndpointApiURL(state, filterFields=false, fetchModel=false){
+    getEndpointApiURL(state, filterFields=false, fetchModel=false, ids=null){
         let getFields = fetchModel ? 'fields/' : '';
         let fields = (filterFields && state.endpoint.field) ? `&fields=${state.endpoint.field}` : '';
-        return `${state.config.apiUrl}/${state.config[state.endpoint.type]}${getFields}?assessment_id=${state.assessment.id}${fields}`;
+        let idList = ids ? `&ids=${ids}` : '';
+        return `${state.config.apiUrl}${state.config[state.endpoint.type].url}${getFields}?assessment_id=${state.assessment.active.id}${fields}${idList}`;
     },
     getObjectURL(base, id){
         return `${base}${id}/`;
@@ -86,6 +100,22 @@ var helpers = {
     },
     deepCopy(object){
         return JSON.parse(JSON.stringify(object));
+    },
+    caseToWords(string){
+        return string
+            // replace underscores and dashes with spaces
+            .replace(/[_-]/g, ' ')
+            // insert a space between lower followed by upper
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            // insert a space between last upper in sequence followed by lower
+            .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+            // uppercase the first character of every word
+            .replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+    },
+    extendBreadcrumbs(url){
+        $('.breadcrumb').children().last().contents().eq(-2).wrap(`<a href=${url}></a>`);
     },
 };
 

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import * as types from '../../constants/ActionTypes';
-import rootReducer from '../../reducers';
+import * as types from 'constants/ActionTypes';
+import rootReducer from 'reducers';
 
 describe('Root reducer', () => {
     it('should return initial state', () => {
@@ -18,7 +18,7 @@ describe('Root reducer', () => {
                 type: null,
                 field: null,
                 items: [],
-                editObject: null,
+                editObject: {},
                 editObjectErrors: {},
             },
             config: {},
@@ -43,7 +43,7 @@ describe('Root reducer', () => {
                 type: null,
                 field: null,
                 items: [],
-                editObject: null,
+                editObject: {},
                 editObjectErrors: {},
             },
             config: {},
@@ -68,7 +68,7 @@ describe('Root reducer', () => {
                 type: null,
                 field: null,
                 items: [],
-                editObject: null,
+                editObject: {},
                 editObjectErrors: {},
             },
             config: {},

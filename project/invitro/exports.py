@@ -1,9 +1,28 @@
+from copy import copy
 from django.db.models.loading import get_model
 
 from utils.helper import FlatFileExporter
 
 
-class IVEndpointFlatDataPivot(FlatFileExporter):
+def getDose(ser, tag):
+    if ser[tag] != -999:
+        return ser['groups'][ser[tag]]['dose']
+    else:
+        return None
+
+
+def getDoseRange(ser):
+    # get non-zero dose range
+    doses = [
+        eg['dose'] for eg in ser['groups'] if eg['dose'] > 0
+    ]
+    if doses:
+        return min(doses), max(doses)
+    else:
+        return None, None
+
+
+class DataPivotEndpoint(FlatFileExporter):
 
     def _get_header_row(self):
         header = [
@@ -76,20 +95,12 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
     def _get_data_rows(self):
         rows = []
 
-        def getDose(ser, tag):
-            if ser[tag] != -999:
-                return ser['groups'][ser[tag]]['dose']
-            else:
-                return None
-
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
 
-            cats = ser['category']['names'] if ser["category"] else []
+            doseRange = getDoseRange(ser)
 
-            # get min and max doses or None
-            min_dose = None
-            max_dose = None
+            cats = ser['category']['names'] if ser["category"] else []
 
             doses = [eg['dose'] for eg in ser['groups']]
             diffs = [eg['difference_control'] for eg in ser['groups']]
@@ -101,9 +112,6 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 sigs.pop(0)
 
             number_doses = len(doses)
-            if number_doses > 0:
-                min_dose = min(doses)
-                max_dose = max(doses)
 
             bm_types = [bm["benchmark"] for bm in ser["benchmarks"]]
             bm_values = [bm["value"] for bm in ser["benchmarks"]]
@@ -143,8 +151,8 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
                 ser['monotonicity'],
                 ser['overall_pattern'],
                 ser['trend_test'],
-                min_dose,
-                max_dose,
+                doseRange[0],
+                doseRange[1],
                 number_doses
             ]
 
@@ -165,5 +173,130 @@ class IVEndpointFlatDataPivot(FlatFileExporter):
             row.extend(bm_values)
 
             rows.append(row)
+
+        return rows
+
+
+class DataPivotEndpointGroup(FlatFileExporter):
+
+    def _get_header_row(self):
+        header = [
+            'study id',
+            'study name',
+            'study identifier',
+            'study published',
+
+            'chemical id',
+            'chemical name',
+            'chemical CAS',
+            'chemical purity',
+
+            'IVExperiment id',
+            'cell species',
+            'cell sex',
+            'cell type',
+            'cell tissue',
+
+            'dose units',
+            'metabolic activation',
+            'transfection',
+
+            'IVEndpoint id',
+            'IVEndpoint name',
+            'IVEndpoint description tags',
+            'assay type',
+            'endpoint description',
+            'endpoint response units',
+            'observation time',
+            'observation time units',
+            'low_dose',
+            'NOEL',
+            'LOEL',
+            'high_dose',
+            'monotonicity',
+            'overall pattern',
+            'trend test result',
+
+            'key',
+            'dose index',
+            'dose',
+            'N',
+            'response',
+            'stdev',
+            'percent control mean',
+            'percent control low',
+            'percent control high',
+            'change from control',
+            'significant from control',
+            'cytotoxicity observed',
+            'precipitation observed',
+        ]
+        return header
+
+    def _get_data_rows(self):
+        rows = []
+
+        for obj in self.queryset:
+            ser = obj.get_json(json_encode=False)
+
+            doseRange = getDoseRange(ser)
+
+            row = [
+                ser['experiment']['study']['id'],
+                ser['experiment']['study']['short_citation'],
+                ser['experiment']['study']['study_identifier'],
+                ser['experiment']['study']['published'],
+
+                ser['chemical']['id'],
+                ser['chemical']['name'],
+                ser['chemical']['cas'],
+                ser['chemical']['purity'],
+
+                ser['experiment']['id'],
+                ser['experiment']['cell_type']['species'],
+                ser['experiment']['cell_type']['sex'],
+                ser['experiment']['cell_type']['cell_type'],
+                ser['experiment']['cell_type']['tissue'],
+
+                ser['experiment']['dose_units']['name'],
+                ser['experiment']['metabolic_activation'],
+                ser['experiment']['transfection'],
+
+                ser['id'],
+                ser['name'],
+                '|'.join([d['name'] for d in ser['effects']]),
+                ser['assay_type'],
+                ser['short_description'],
+                ser['response_units'],
+                ser['observation_time'],
+                ser['observation_time_units'],
+                doseRange[0],
+                getDose(ser, 'NOEL'),
+                getDose(ser, 'LOEL'),
+                doseRange[1],
+                ser['monotonicity'],
+                ser['overall_pattern'],
+                ser['trend_test'],
+            ]
+
+            # endpoint-group information
+            for i, eg in enumerate(ser['groups']):
+                row_copy = copy(row)
+                row_copy.extend([
+                    eg['id'],
+                    eg['dose_group_id'],
+                    eg['dose'],
+                    eg['n'],
+                    eg['response'],
+                    eg['stdev'],
+                    eg['percentControlMean'],
+                    eg['percentControlLow'],
+                    eg['percentControlHigh'],
+                    eg['difference_control_symbol'],
+                    eg['significant_control'],
+                    eg['cytotoxicity_observed'],
+                    eg['precipitation_observed'],
+                ])
+                rows.append(row_copy)
 
         return rows

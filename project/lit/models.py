@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.utils.html import strip_tags
+from django.utils.text import slugify
 
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
@@ -639,6 +640,12 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         name = self.get_root().name
         Assessment = get_model('assessment', 'Assessment')
         return Assessment.objects.get(pk=int(name[name.find('-')+1:]))
+
+    def rename(self, newName):
+        self.name = newName
+        self.slug = slugify(newName)
+        self.save()
+        self.clear_cache(self.get_assessment().id)
 
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
