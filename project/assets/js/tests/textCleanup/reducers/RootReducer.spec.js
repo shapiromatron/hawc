@@ -1,8 +1,7 @@
-import { expect } from 'chai';
 import * as types from 'constants/ActionTypes';
 import rootReducer from 'reducers';
 
-describe('Root reducer', () => {
+describe('textCleanup Root reducer', () => {
     it('should return initial state', () => {
         expect(rootReducer(undefined, {})).to.deep.equal({
             assessment: {
@@ -27,7 +26,7 @@ describe('Root reducer', () => {
     });
 
     it('should handle an Assessment action', () => {
-        expect(rootReducer({}, {
+        expect(rootReducer(undefined, {
             type: types.AS_REQUEST,
         })).to.deep.equal({
             assessment: {

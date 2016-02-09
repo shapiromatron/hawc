@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 
-import filters from './filters';
+import Filter from './Filter';
+import config from './Config';
 
 const rootReducer = combineReducers({
-    filters,
+    Filter,
+    config,
 });
 
 export default rootReducer;

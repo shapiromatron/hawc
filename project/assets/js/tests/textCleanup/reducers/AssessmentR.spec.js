@@ -1,13 +1,12 @@
 import * as types from 'constants/ActionTypes';
 import assessmentReducer from 'reducers/Assessment';
 
-describe( 'Assessment reducer', () => {
+describe('textCleanup Assessment reducer', () => {
 
     it('should handle receiving an object', () => {
         expect(assessmentReducer({
             itemsLoaded: false,
-            isFetching: false,
-            active: null,
+            isFetching: true,
             items: [],
         }, {
             type: types.AS_RECEIVE_OBJECT,
@@ -26,7 +25,6 @@ describe( 'Assessment reducer', () => {
         })).to.deep.equal({
             itemsLoaded: true,
             isFetching: false,
-            active: null,
             items: [{
                 'name': 'test assessment',
                 'id': 0,
@@ -44,8 +42,6 @@ describe( 'Assessment reducer', () => {
 
     it('should handle an assessment selection', () => {
         expect(assessmentReducer({
-            itemsLoaded: false,
-            isFetching: false,
             active: null,
             items: [{
                 'name': 'test assessment',
@@ -74,8 +70,6 @@ describe( 'Assessment reducer', () => {
                 ],
             },
         })).to.deep.equal({
-            itemsLoaded: false,
-            isFetching: false,
             active: {
                 'name': 'test assessment',
                 'id': 0,

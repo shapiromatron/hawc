@@ -1,18 +1,12 @@
 import * as types from 'constants/ActionTypes';
 import endpointReducer from 'reducers/Endpoint';
 
-describe('Endpoint reducer', () => {
+describe('textCleanup Endpoint reducer', () => {
 
     it('should handle receiving the Endpoint model', () => {
         expect(endpointReducer({
-            itemsLoaded: false,
-            isFetching: false,
+            isFetching: true,
             model: null,
-            type: null,
-            field: null,
-            items: [],
-            editObject: {},
-            editObjectErrors: {},
         }, {
             type: types.EP_RECEIVE_MODEL,
             model: {
@@ -24,7 +18,6 @@ describe('Endpoint reducer', () => {
                 ],
             },
         })).to.deep.equal({
-            itemsLoaded: false,
             isFetching: false,
             model: [
                 'system',
@@ -32,79 +25,49 @@ describe('Endpoint reducer', () => {
                 'effect',
                 'effect_subtype',
             ],
-            type: null,
-            field: null,
-            items: [],
-            editObject: {},
-            editObjectErrors: {},
         });
     });
 
     it('should handle setting the Endpoint field', () => {
         expect(endpointReducer({
-            itemsLoaded: false,
-            isFetching: false,
             model: [
                 'system',
                 'organ',
                 'effect',
                 'effect_subtype',
             ],
-            type: null,
             field: null,
-            items: [],
-            editObject: {},
-            editObjectErrors: {},
         }, {
             type: types.EP_SET_FIELD,
             field: 'system',
         })).to.deep.equal({
-            itemsLoaded: false,
-            isFetching: false,
             model: [
                 'system',
                 'organ',
                 'effect',
                 'effect_subtype',
             ],
-            type: null,
             field: 'system',
-            items: [],
-            editObject: {},
-            editObjectErrors: {},
         });
     });
 
     it('should handle setting the Endpoint type', () => {
         expect(endpointReducer({
-            itemsLoaded: false,
             isFetching: true,
-            model: null,
             type: null,
-            field: null,
-            items: [],
-            editObject: {},
-            editObjectErrors: {},
         }, {
             type: types.EP_SET_TYPE,
             endpoint_type: 'ani',
 
         })).to.deep.equal({
-            itemsLoaded: false,
             isFetching: false,
-            model: null,
             type: 'ani',
-            field: null,
             items: [],
-            editObject: {},
-            editObjectErrors: {},
         });
     });
 
     it('should create an edit object', () => {
         expect(endpointReducer({
-            itemsLoaded: true,
-            isFetching: false,
             model: [
                 'system',
                 'organ',
@@ -121,7 +84,6 @@ describe('Endpoint reducer', () => {
                 },
             ],
             editObject: null,
-            editObjectErrors: {},
         }, {
             type: types.EP_CREATE_EDIT_OBJECT,
             object: {
@@ -130,8 +92,6 @@ describe('Endpoint reducer', () => {
                 'ids': [10210, 10212],
             },
         })).to.deep.equal({
-            itemsLoaded: true,
-            isFetching: false,
             model: [
                 'system',
                 'organ',
@@ -160,16 +120,6 @@ describe('Endpoint reducer', () => {
 
     it('should be able to patch multiple objects', () => {
         expect(endpointReducer({
-            itemsLoaded: true,
-            isFetching: false,
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10210,
@@ -189,16 +139,6 @@ describe('Endpoint reducer', () => {
             ids: [10210, 10212],
             patch: {'system': 'Digestive Systems'},
         })).to.deep.equal({
-            itemsLoaded: true,
-            isFetching: false,
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
-            field: 'system',
-            type: 'ani',
             items: [
                 {
                     'id': 10210,
@@ -219,14 +159,6 @@ describe('Endpoint reducer', () => {
     it('should handle deleting an object', () => {
 
         expect(endpointReducer({
-            itemsLoaded: true,
-            isFetching: false,
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
             type: 'ani',
             field: 'system',
             items: [
@@ -247,14 +179,7 @@ describe('Endpoint reducer', () => {
             type: types.EP_DELETE_OBJECT,
             id: 10210,
         })).to.deep.equal({
-            itemsLoaded: true,
             isFetching: false,
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
             type: 'ani',
             field: 'system',
             items: [

@@ -6,7 +6,7 @@ import unexpectedReact from 'unexpected-react';
 
 const expect = unexpected.clone().use(unexpectedReact);
 
-describe('Assessment component', () => {
+describe('textCleanup Assessment component', () => {
     let object, renderer, output;
 
     beforeEach(() => {

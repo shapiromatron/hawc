@@ -7,7 +7,7 @@ import nock from 'nock';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-describe('Assessment actions', () => {
+describe('textCleanup Assessment actions', () => {
     afterEach(() => {
         nock.cleanAll();
     });
