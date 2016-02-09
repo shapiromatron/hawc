@@ -17,7 +17,11 @@ export default class DetailList extends Component {
                         </span>
                     );
                 })}
-                <span className='detail-item'><input type="checkbox" checked={checked} id={item.id} onClick={this.props.onDetailChange}/></span>
+                <span className='detail-item'>
+                <input type="checkbox"
+                       checked={checked}
+                       id={item.id}
+                       onClick={this.props.onDetailChange}/></span>
             </div>
         );
     }
@@ -32,7 +36,8 @@ export default class DetailList extends Component {
                     {_.map(fields, (field) => {
                         return <h5 key={field} className='header-field'>{h.caseToWords(field)}</h5>;
                     })}
-                    <h5 className="header-field"><input type="checkbox" id='all' checked={allChecked} onClick={this.props.onDetailChange}/></h5>
+                    <h5 className="header-field">
+                    <input type="checkbox" id='all' checked={allChecked} onClick={this.props.onDetailChange}/></h5>
                 </div>
                 {_.map(_.sortBy(items, 'name'), this.renderItem.bind(this))}
             </div>

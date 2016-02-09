@@ -41,8 +41,8 @@ export default class BulkList extends Component {
             <div className='container-fluid'>
                 <div className='row'>
                     <span className='bulk-header span4'>{h.caseToWords(endpoint.field)}</span>
-                    <span className='bulk-header span5'>{h.caseToWords(endpoint.field)} Edit</span>
-                    <span className='bulk-header span2'>Submit Edit</span>
+                    <span className='bulk-header span5'>{h.caseToWords(endpoint.field)} edit</span>
+                    <span className='bulk-header span2'>Submit</span>
                 </div>
 
                     {_.map(groupedEndpoints, (endpoints) => {

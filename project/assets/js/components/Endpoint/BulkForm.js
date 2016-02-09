@@ -62,8 +62,12 @@ export default class BulkForm extends Component {
 
     render() {
         let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
-            editButtonText = this.state.showDetails ? 'Submit Selected Endpoints' : 'Submit Bulk Edit';
+            detailShow = this.state.showDetails?
+                'fa-minus-square':
+                'fa-plus-square',
+            editButtonText = this.state.showDetails?
+                'Submit selected endpoints':
+                'Submit bulk edit';
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
@@ -78,7 +82,8 @@ export default class BulkForm extends Component {
                         <FormFieldError errors={errors.name} />
 
                     </span>
-                    <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
+                    <span className='bulk-element button span'>
+                        <button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
                 <div>{this.state.showDetails ?
                         <DetailList
