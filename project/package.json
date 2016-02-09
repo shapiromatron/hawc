@@ -65,6 +65,7 @@
     "unexpected": "^10.8.0",
     "unexpected-react": "^0.5.1",
     "webpack": "^1.12.9",
+    "webpack-bundle-tracker": "0.0.93",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-hot-middleware": "^2.6.0"
   },
