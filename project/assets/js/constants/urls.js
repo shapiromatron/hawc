@@ -1,14 +1,14 @@
 export default {
     assessment: {
         name: 'Assessment Cleanup',
-        url: '/assessment/:id/endpoint_cleanup/',
+        url: '/assessment/:id/clean-extracted-data/',
     },
     fields: {
         name: 'Cleanup Field Selection',
-        url: '/assessment/:id/endpoint_cleanup/:type/',
+        url: '/assessment/:id/clean-extracted-data/:type/',
     },
     endpoints: {
         name: 'Endpoint Cleanup',
-        url: '/assessment/:id/endpoint_cleanup/:type/:field/',
+        url: '/assessment/:id/clean-extracted-data/:type/:field/',
     },
 };

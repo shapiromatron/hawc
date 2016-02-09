@@ -355,8 +355,8 @@ class BaseEndpointList(BaseList):
         return context
 
 
-class EndpointCleanupList(ProjectManagerOrHigherMixin, BaseEndpointList):
-    template_name = 'assessment/endpointcleanup_list.html'
+class CleanExtractedData(ProjectManagerOrHigherMixin, BaseEndpointList):
+    template_name = 'assessment/clean_extracted_data.html'
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs['pk'])
@@ -465,7 +465,7 @@ class AssessmentEndpointList(views.AssessmentViewset):
 
     def list(self, request, *args, **kwargs):
         instance = self.filter_queryset(self.get_queryset())[0]
-        app_url = reverse('assessment:endpoint_cleanup_list', kwargs={'pk': instance.id})
+        app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
         instance.items = []
 
         instance.items.append({
