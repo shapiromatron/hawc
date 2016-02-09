@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
-import 'containers/Assessment.css';
 
 import Assessment from 'components/Assessment';
 import Loading from 'components/Loading';
