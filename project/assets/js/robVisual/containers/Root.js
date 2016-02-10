@@ -8,30 +8,20 @@ import EndpointCardContainer from './EndpointCardContainer';
 import { loadConfig } from 'robVisual/actions/config';
 
 export default class Root extends Component {
+
     componentWillMount(){
         this.props.store.dispatch(loadConfig());
     }
 
-    handleEffectSelect(){
-
-    }
-
-    handleScoreChange(){
-
-    }
-
-    handleSubmit(){
-
-    }
-
     render() {
+        let store = this.props.store;
         return (
-            <Provider store={this.props.store}>
+            <Provider store={store}>
                 <div>
                     <h1>Risk of bias filtering</h1>
-                    <EffectSelector handleSelect={this.handleEffectSelect.bind(this)} />
-                    <ScoreSlider handleChange={this.handleScoreChange.bind(this)} />
-                    <ApplyFilters handleSubmit={this.handleSubmit.bind(this)} />
+                    <EffectSelector />
+                    <ScoreSlider />
+                    <ApplyFilters />
                     <EndpointCardContainer/>
                 </div>
             </Provider>

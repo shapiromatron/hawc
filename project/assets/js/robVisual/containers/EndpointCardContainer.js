@@ -5,10 +5,6 @@ import EndpointCard from 'robVisual/components/EndpointCard';
 
 class EndpointCardContainer extends Component {
 
-    renderEndpointCard(d,i){
-        return <EndpointCard key={i}/>;
-    }
-
     render(){
         let eps = [1,2,3,1,2,3,1,2,3];
         return (
@@ -21,7 +17,7 @@ class EndpointCardContainer extends Component {
 
 function mapStateToProps(state){
     return {
-        endpoints: state.filters.endpoints,
+        endpoints: state.filter.endpoints,
     };
 }
 

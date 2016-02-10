@@ -1,39 +1,34 @@
 import React, { Component } from 'react';
 import _ from 'underscore';
 import { connect } from 'react-redux';
-import { fetchEffects } from 'robVisual/actions/Filter';
 
+import Selector from 'robVisual/components/EffectSelector';
+import { fetchEffects, selectEffects } from 'robVisual/actions/Filter';
+import 'robVisual/containers/EffectSelector.css';
 
 class EffectSelector extends Component {
     componentWillMount(){
         this.props.dispatch(fetchEffects());
     }
 
-    handleSelect(){
-
+    handleChange(e){
+        let selectedOptions = _.map(e.target.selectedOptions, (option) => {
+            return option.value;
+        });
+        this.props.dispatch(selectEffects(selectedOptions));
     }
 
     render(){
-        let effects = this.props.effects;
         return (
-            <div>
-                <select multiple="true">
-                    {_.map(effects, (effect) => {
-                        return <option key={effect} value={effect}>{effect}</option>;
-                    })}
-                </select>
-                <p className='help-block'>
-                    After effects have loaded, render options here.
-                </p>
-            </div>
+            <Selector effects={this.props.effects} handleChange={this.handleChange.bind(this)}/>
         );
     }
 }
 
 function mapStateToProps(state) {
     return {
-        effects: state.filters.effects,
+        effects: state.filter.effects,
     };
 }
 
-export default connect(mapStateToProps)(EffectSelector)
+export default connect(mapStateToProps)(EffectSelector);

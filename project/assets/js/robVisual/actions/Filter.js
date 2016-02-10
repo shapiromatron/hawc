@@ -27,3 +27,67 @@ export function fetchEffects(){
             .catch((ex) => console.error('Effect parsing failed', ex));
     };
 }
+
+export function selectEffects(effects){
+    return {
+        type: types.SELECT_EFFECTS,
+        effects,
+    };
+}
+
+function requestRobScores(){
+    return {
+        type: types.REQUEST_ROB_SCORES,
+    };
+}
+
+function receiveRobScores(robScores){
+    return {
+        type: types.RECEIVE_ROB_SCORES,
+        robScores,
+    };
+}
+
+export function fetchRobScores(){
+    return (dispatch, getState) => {
+        let state = getState();
+        if (state.isFetchingRobScores) return;
+        dispatch(requestRobScores());
+        return fetch(h.getTestUrl(state.config.apiUrl, state.config.study_score_url), h.fetchGet)
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveRobScores(json)))
+            .catch((ex) => console.error('Effect parsing failed', ex));
+    };
+}
+
+export function setScoreThreshold(threshold){
+    return {
+        type: types.SET_ROB_THRESHOLD,
+        threshold,
+    };
+}
+
+function requestEndpoints(){
+    return {
+        type: types.REQUEST_ENDPOINTS,
+    };
+}
+
+function receiveEndpoints(endpoints){
+    return {
+        type: types.RECEIVE_ENDPOINTS,
+        endpoints,
+    };
+}
+
+export function fetchEndpoints(){
+    return (dispatch, getState) => {
+        let state = getState();
+        if (state.isFetchingEndpoints) return;
+        dispatch(requestEndpoints());
+        return fetch(h.getTestUrl(state.config.apiUrl, state.config.endpoint_filter_url), h.fetchGet)
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveEndpoints(json)))
+            .catch((ex) => console.error('Effect parsing failed', ex));
+    };
+}

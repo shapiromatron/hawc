@@ -47,5 +47,101 @@ describe('robVisual Filter actions', () => {
 
             store.dispatch(filterActions.fetchEffects());
         });
+
+        it('should load RoB scores', (done) => {
+            nock('http://127.0.0.1:9000')
+                .get('/study/api/study/rob_scores/?assessment_id=126')
+                .reply(200, [
+                    {
+                        short_citation: 'Reddy and Karnati, 2015',
+                        id: 97857,
+                        qualities__score__sum: null,
+                    },
+                    {
+                        short_citation: 'Rumiantsev et al. 1988',
+                        id: 52541,
+                        qualities__score__sum: 19,
+                    },
+                    {
+                        short_citation: 'Shen et al., 2004',
+                        id: 57040,
+                        qualities__score__sum: 25,
+                    },
+                ]);
+
+            const expectedActions = [
+                { type: types.REQUEST_ROB_SCORES },
+                { type: types.RECEIVE_ROB_SCORES, robScores: [
+                    {
+                        short_citation: 'Reddy and Karnati, 2015',
+                        id: 97857,
+                        qualities__score__sum: null,
+                    },
+                    {
+                        short_citation: 'Rumiantsev et al. 1988',
+                        id: 52541,
+                        qualities__score__sum: 19,
+                    },
+                    {
+                        short_citation: 'Shen et al., 2004',
+                        id: 57040,
+                        qualities__score__sum: 25,
+                    },
+                ]},
+            ];
+
+            const store = mockStore({
+                config: {
+                    apiUrl: 'http://127.0.0.1:9000',
+                    study_score_url: '/study/api/study/rob_scores/?assessment_id=126',
+                },
+            }, expectedActions, done);
+
+            store.dispatch(filterActions.fetchRobScores());
+        });
+
+        it('should load endpoints', (done) => {
+            nock('http://127.0.0.1:9000')
+                .get('/ani/api/endpoint/rob_filter/?assessment_id=126')
+                .reply(200, [
+                    {
+                        id: 8199,
+                        assessment: 126,
+                        effects: [
+                            {
+                                slug: 'general-behavior',
+                                name: 'general behavior',
+                            },
+                        ],
+                    },
+                ]);
+
+            const expectedActions = [
+                { type: types.REQUEST_ENDPOINTS },
+                { type: types.RECEIVE_ENDPOINTS, endpoints: [
+                    {
+                        id: 8199,
+                        assessment: 126,
+                        effects: [
+                            {
+                                slug: 'general-behavior',
+                                name: 'general behavior',
+                            },
+                        ],
+                    },
+                ]},
+            ];
+
+            const store = mockStore({
+                config: {
+                    apiUrl: 'http://127.0.0.1:9000',
+                    endpoint_filter_url: '/ani/api/endpoint/rob_filter/?assessment_id=126',
+                },
+            }, expectedActions, done);
+
+            store.dispatch(filterActions.fetchEndpoints());
+        });
     });
+
+
 });
