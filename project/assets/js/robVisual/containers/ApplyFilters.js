@@ -5,16 +5,20 @@ import { connect } from 'react-redux';
 class ApplyFilters extends Component {
     handleSubmit(e){
         e.preventDefault();
-        this.props.handleSubmit(e);
+        let { threshold, studies } = this.props,
+            studyIds = _.chain(studies)
+                        .filter((study) => { return study.qualities__score__sum >= threshold; })
+                        .pluck('id')
+                        .value();
     }
-    
+
     render(){
         return (
             <div>
                 <button type='button' className='btn btn-primary' onClick={this.handleSubmit.bind(this)}>Apply filters</button>
                 <p className='help-block'>
                     Can't really be live, but if they press this button it refilters.
-                    It should select all the endpoint values as an array in the state,
+                    It should select all the effect values as an array in the state,
                     and then pass them using the `effect` parameter in the ajax call.
                     Then, based on the study-quality value on the slider, get a list
                     of study_ids and put in the `study_id`. Should then return a list
@@ -31,7 +35,11 @@ class ApplyFilters extends Component {
 }
 
 function mapStateToProps(state){
-    return {};
+    return {
+        effects: state.filter.selectedEffects,
+        threshold: state.filter.robScoreThreshold,
+        studies: state.filter.robScores,
+    };
 }
 
 export default connect(mapStateToProps)(ApplyFilters);
