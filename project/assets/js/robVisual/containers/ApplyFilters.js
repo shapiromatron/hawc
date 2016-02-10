@@ -2,19 +2,33 @@ import React, { Component } from 'react';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
+import FormFieldError from 'robVisual/components/FormFieldError';
+import { fetchEndpoints } from 'robVisual/actions/Filter';
+
 class ApplyFilters extends Component {
+
+    componentWillMount(){
+        this.setState({errors: []});
+    }
+
     handleSubmit(e){
         e.preventDefault();
-        let { threshold, studies } = this.props,
-            studyIds = _.chain(studies)
-                        .filter((study) => { return study.qualities__score__sum >= threshold; })
-                        .pluck('id')
-                        .value();
+        if (this.props.effects) {
+            let { threshold, studies, dispatch } = this.props,
+                studyIds = _.chain(studies)
+                    .filter((study) => { return study.qualities__score__sum >= threshold; })
+                    .pluck('id')
+                    .value();
+            dispatch(fetchEndpoints(studyIds));
+        } else {
+            this.setState({errors: [...this.state.errors, 'At least one effect must be chosen.']});
+        }
     }
 
     render(){
         return (
             <div>
+                <FormFieldError errors={this.state.errors} />
                 <button type='button' className='btn btn-primary' onClick={this.handleSubmit.bind(this)}>Apply filters</button>
                 <p className='help-block'>
                     Can't really be live, but if they press this button it refilters.
@@ -24,11 +38,7 @@ class ApplyFilters extends Component {
                     of study_ids and put in the `study_id`. Should then return a list
                     of enpdoints, or throw an error if the values are too large.
                 </p>
-                <strong>Example possible valid call:</strong>
-                <ul>
-                    <li><a href='/ani/api/endpoint/rob_filter/?assessment_id=126&effect[]=other'>By effect</a></li>
-                    <li><a href='/ani/api/endpoint/rob_filter/?assessment_id=126&study_id[]=52469&study_id[]=52471'>By study ids</a></li>
-                </ul>
+
             </div>
         );
     }

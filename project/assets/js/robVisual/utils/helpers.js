@@ -86,6 +86,11 @@ var helpers = {
     getTestUrl(apiUrl, route){
         return `${apiUrl}${route}`;
     },
+    getEndpointsUrl(config, study_id=[], effect=[]){
+        let effects = _.map(effect, (e) => { return `&effect[]=${e}`; }).join('').replace(' ', '+'),
+            study_ids = _.map(study_id, (id) => { return `&study_id[]=${id}`; }).join('');
+        return `${config.apiUrl}${config.endpoint_filter_url}${study_ids}${effects}`;
+    },
     deepCopy(object){
         return JSON.parse(JSON.stringify(object));
     },

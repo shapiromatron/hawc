@@ -80,12 +80,13 @@ function receiveEndpoints(endpoints){
     };
 }
 
-export function fetchEndpoints(){
+export function fetchEndpoints(ids){
     return (dispatch, getState) => {
-        let state = getState();
+        let state = getState(),
+            effects = state.filter.selectedEffects;
         if (state.isFetchingEndpoints) return;
         dispatch(requestEndpoints());
-        return fetch(h.getTestUrl(state.config.apiUrl, state.config.endpoint_filter_url), h.fetchGet)
+        return fetch(h.getEndpointsUrl(state.config, ids, effects), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveEndpoints(json)))
             .catch((ex) => console.error('Effect parsing failed', ex));

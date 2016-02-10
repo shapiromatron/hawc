@@ -137,6 +137,7 @@ describe('robVisual Filter actions', () => {
                     apiUrl: 'http://127.0.0.1:9000',
                     endpoint_filter_url: '/ani/api/endpoint/rob_filter/?assessment_id=126',
                 },
+                filter: { selectedEffects: null },
             }, expectedActions, done);
 
             store.dispatch(filterActions.fetchEndpoints());
