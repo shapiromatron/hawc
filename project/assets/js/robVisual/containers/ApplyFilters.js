@@ -2,34 +2,40 @@ import React, { Component } from 'react';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
+import Filtering from 'robVisual/components/Filtering';
 import FormFieldError from 'robVisual/components/FormFieldError';
-import { fetchEndpoints } from 'robVisual/actions/Filter';
+import { fetchEndpoints, formatError, clearErrors } from 'robVisual/actions/Filter';
 
 class ApplyFilters extends Component {
 
-    componentWillMount(){
-        this.setState({errors: []});
+    hasNoErrors(){
+        let { effects, dispatch } = this.props;
+        if (effects === null) {
+            dispatch(formatError('effects'));
+            return false;
+        }
+        return true;
     }
 
     handleSubmit(e){
         e.preventDefault();
-        if (this.props.effects) {
-            let { threshold, studies, dispatch } = this.props,
-                studyIds = _.chain(studies)
+        let { threshold, studies, dispatch } = this.props;
+        dispatch(clearErrors());
+        if (this.hasNoErrors()) {
+            let studyIds = _.chain(studies)
                     .filter((study) => { return study.qualities__score__sum >= threshold; })
                     .pluck('id')
                     .value();
             dispatch(fetchEndpoints(studyIds));
-        } else {
-            this.setState({errors: [...this.state.errors, 'At least one effect must be chosen.']});
         }
     }
 
     render(){
         return (
             <div>
-                <FormFieldError errors={this.state.errors} />
+                <FormFieldError errors={this.props.errors} />
                 <button type='button' className='btn btn-primary' onClick={this.handleSubmit.bind(this)}>Apply filters</button>
+                {this.props.isFetching ? <Filtering /> : null}
                 <p className='help-block'>
                     Can't really be live, but if they press this button it refilters.
                     It should select all the effect values as an array in the state,
@@ -46,6 +52,8 @@ class ApplyFilters extends Component {
 
 function mapStateToProps(state){
     return {
+        isFetching: state.filter.isFetchingEndpoints,
+        errors: state.filter.errors,
         effects: state.filter.selectedEffects,
         threshold: state.filter.robScoreThreshold,
         studies: state.filter.robScores,

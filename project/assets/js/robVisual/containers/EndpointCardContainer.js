@@ -6,10 +6,10 @@ import EndpointCard from 'robVisual/components/EndpointCard';
 class EndpointCardContainer extends Component {
 
     render(){
-        let eps = [1,2,3,1,2,3,1,2,3];
+        let { endpoints } = this.props;
         return (
             <div className='row-fluid'>
-                {_.map(eps, (ep, i) => { return <EndpointCard key={i} />; })}
+                {_.map(endpoints, (ep, i) => { return <EndpointCard key={i} endpoint={ep}/>; })}
             </div>
         );
     }

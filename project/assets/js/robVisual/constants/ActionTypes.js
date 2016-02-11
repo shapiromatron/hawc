@@ -9,3 +9,6 @@ export const RECEIVE_ROB_SCORES =       'RECEIVE_ROB_SCORES';
 
 export const SELECT_EFFECTS =           'SELECT_EFFECTS';
 export const SET_ROB_THRESHOLD =        'SET_ROB_THRESHOLD';
+
+export const RECEIVE_ERROR =            'RECEIVE_ERROR';
+export const CLEAR_ERRORS =             'CLEAR_ERRORS';

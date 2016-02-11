@@ -10,6 +10,7 @@ let defaultState = {
     isFetchingRobScores: false,
     effects: [],
     isFetchingEffects: false,
+    errors: [],
 };
 
 export default function (state=defaultState, action){
@@ -58,6 +59,19 @@ export default function (state=defaultState, action){
             robScoreThreshold: action.threshold,
         });
 
+
+    case types.RECEIVE_ERROR:
+        return Object.assign({}, state, {
+            errors: [ ...state.errors, action.error],
+            isFetchingEffects: false,
+            isFetchingRobScores: false,
+            isFetchingEndpoints: false,
+        });
+
+    case types.CLEAR_ERRORS:
+        return Object.assign({}, state, {
+            errors: [],
+        });
 
     default:
         return state;

@@ -91,6 +91,14 @@ var helpers = {
             study_ids = _.map(study_id, (id) => { return `&study_id[]=${id}`; }).join('');
         return `${config.apiUrl}${config.endpoint_filter_url}${study_ids}${effects}`;
     },
+    errorDict: {
+        endpoints: 'Filtering results contain more than 100 endpoints. Increase the quality threshold or include fewer effects.',
+        effects: 'At least one effect must be chosen.',
+    },
+    formatErrors(error){
+        error  = error.substr(-9);
+        return helpers.errorDict[error];
+    },
     deepCopy(object){
         return JSON.parse(JSON.stringify(object));
     },

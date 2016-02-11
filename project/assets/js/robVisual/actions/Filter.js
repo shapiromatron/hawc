@@ -1,7 +1,27 @@
 import fetch from 'isomorphic-fetch';
-import _ from 'underscore';
 import * as types from 'robVisual/constants/ActionTypes';
 import h from 'robVisual/utils/helpers';
+
+function receiveError(error){
+    return {
+        type: types.RECEIVE_ERROR,
+        error,
+    };
+}
+
+export function formatError(error){
+    return (dispatch) => {
+        error = h.formatErrors(error);
+        dispatch(receiveError(error));
+    };
+
+}
+
+export function clearErrors(){
+    return {
+        type: types.CLEAR_ERRORS,
+    };
+}
 
 function requestEffects(){
     return {
@@ -87,8 +107,17 @@ export function fetchEndpoints(ids){
         if (state.isFetchingEndpoints) return;
         dispatch(requestEndpoints());
         return fetch(h.getEndpointsUrl(state.config, ids, effects), h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveEndpoints(json)))
-            .catch((ex) => console.error('Effect parsing failed', ex));
+            .then((response) => {
+                if (response.ok){
+                    response.json()
+                        .then((json) => dispatch(receiveEndpoints(json)))
+                } else {
+                    response.json()
+                        .then((json) => dispatch(receiveError(h.formatErrors(json.detail))));
+                }
+            })
+            .catch((ex) => {
+                console.error('Effect parsing failed', ex);
+            });
     };
 }
