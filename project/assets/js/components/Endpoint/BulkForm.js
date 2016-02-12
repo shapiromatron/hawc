@@ -25,6 +25,7 @@ export default class BulkForm extends Component {
         } else {
             this.props.handleBulkSubmit(this.state);
         }
+        this.setState({ detailIDs: []});
     }
 
     handleChange(e) {

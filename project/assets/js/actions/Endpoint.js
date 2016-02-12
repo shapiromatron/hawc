@@ -191,6 +191,7 @@ export function releaseEndpoint(){
 }
 
 export function initializeBulkEditForm(ids=[], field='system'){
+  console.log(ids);
     return (dispatch, getState) => {
         let state = getState(),
             object;
