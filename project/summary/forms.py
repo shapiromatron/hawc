@@ -212,7 +212,11 @@ class PrefilterMixin(object):
 
         if data.get('prefilter_study') is True:
             studies = data.get("studies", [])
+
             evidence_type = data.get('evidence_type', None)
+            if self.__class__.__name__ == "CrossviewForm":
+                evidence_type = 0
+
             if evidence_type == 0:  # Bioassay
                 prefilters["animal_group__experiment__study__in"] = studies
             elif evidence_type == 1:  # Epi
