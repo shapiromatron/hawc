@@ -5,11 +5,11 @@ import Header from 'components/Endpoint/Header';
 export default class EndpointList extends Component {
 
     render() {
-        const { endpoint, params } = this.props;
+        const { params } = this.props;
         return (
             <div className='endpoint_list'>
                 <Header params={params} />
-                <BulkList endpoint={endpoint} />
+                <BulkList {...this.props} />
             </div>
         );
     }
@@ -17,8 +17,6 @@ export default class EndpointList extends Component {
 
 EndpointList.propTypes = {
     endpoint: PropTypes.shape({
-        type: PropTypes.string,
-        field: PropTypes.string.required,
         items: PropTypes.arrayOf(
             PropTypes.shape({
                 id: PropTypes.number.isRequired,

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PureComponent from 'react-pure-render/component';
 
 import Loading from 'components/Loading';
 import FormComponent from 'components/Endpoint/BulkForm';
@@ -12,7 +11,7 @@ import {
     patchDetailList,
 } from 'actions/Endpoint';
 
-export default class BulkForm extends PureComponent {
+export default class BulkForm extends Component {
 
     componentWillMount() {
         this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
@@ -24,14 +23,14 @@ export default class BulkForm extends PureComponent {
             { field, model, items } = this.props,
             thisField = items[0][field];
         return (
-            !_.isEqual(IDs, nextIDs) ||
+            (IDs.length !== nextIDs.length) ||
             model.editObject == null ||
             model.editObject[thisField] == null
         );
     }
 
     componentWillUpdate(nextProps) {
-      this.props.dispatch(initializeBulkEditForm(this.getIDs(nextProps), this.props.field));
+        this.props.dispatch(initializeBulkEditForm(this.getIDs(nextProps), this.props.field));
     }
 
     getIDs(props) {

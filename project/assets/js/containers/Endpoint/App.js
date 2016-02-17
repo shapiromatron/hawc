@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import List from 'components/Endpoint/List';
+import EndpointList from 'components/Endpoint/EndpointList';
 import Loading from 'components/Loading';
 
-import { fetchObjectsIfNeeded, setField } from 'actions/Endpoint';
+import { fetchObjectsIfNeeded } from 'actions/Endpoint';
 
 class Endpoint extends Component {
 
     componentWillMount() {
-        const { dispatch, params } = this.props;
-        dispatch(setField(params.field));
-        dispatch(fetchObjectsIfNeeded());
+        this.props.dispatch(fetchObjectsIfNeeded());
     }
 
     render() {
         if (_.isEmpty(this.props.endpoint.items)) return <Loading />;
-        let { endpoint, params } = this.props;
-        return <List endpoint={endpoint} params={params}/>;
+        return <EndpointList {...this.props}/>;
     }
 }
 

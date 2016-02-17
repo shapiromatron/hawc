@@ -71,10 +71,10 @@ var helpers = {
         return `${config.apiUrl}${config.assessment}?assessment_id=${config.assessment_id}`;
     },
     getEndpointApiURL(state, filterFields=false, fetchModel=false, ids=null){
-        let getFields = fetchModel ? 'fields/' : '';
-        let fields = (filterFields && state.endpoint.field) ? `&fields=${state.endpoint.field}` : '';
-        let idList = ids ? `&ids=${ids}` : '';
-        return `${state.config.apiUrl}${state.config[state.endpoint.type].url}${getFields}?assessment_id=${state.assessment.active.id}${fields}${idList}`;
+        let getFields = fetchModel ? 'fields/' : '',
+            fields = (filterFields && state.router.params.field) ? `&fields=${state.router.params.field}` : '',
+            idList = ids ? `&ids=${ids}` : '';
+        return `${state.config.apiUrl}${state.config[state.router.params.type].url}${getFields}?assessment_id=${state.router.params.id}${fields}${idList}`;
     },
     getObjectURL(base, id){
         return `${base}${id}/`;

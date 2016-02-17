@@ -31,21 +31,6 @@ function receiveObject(json) {
     };
 }
 
-export function setType(endpoint_type){
-    return {
-        type: types.EP_SET_TYPE,
-        endpoint_type,
-    };
-}
-
-export function setField(field){
-    return {
-        type: types.EP_SET_FIELD,
-        field,
-    };
-}
-
-
 function removeObject(id){
     return {
         type: types.EP_DELETE_OBJECT,
@@ -87,7 +72,7 @@ export function fetchModelIfNeeded(){
         if (state.endpoint.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getEndpointApiURL(state, true, true),
+                h.getEndpointApiURL(state, false, true),
                 h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveModel(json)))
@@ -191,13 +176,16 @@ export function releaseEndpoint(){
 }
 
 export function initializeBulkEditForm(ids=[], field='system'){
-  console.log(ids);
     return (dispatch, getState) => {
         let state = getState(),
-            object;
+            thisField, object;
         if (ids){
-            object = _.findWhere(state.endpoint.items, {id: ids[0]});
-            object = Object.assign({}, _.omit(object, ['id', 'name']), {ids, field: [field]} );
+            thisField = _.findWhere(state.endpoint.items, {id: ids[0]})[field];
+            object = {
+                ids,
+                [field]: thisField,
+                field: [field],
+            };
         } else {
             object = {
                 ids: [],
