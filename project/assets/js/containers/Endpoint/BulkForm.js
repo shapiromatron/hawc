@@ -17,32 +17,16 @@ export default class BulkForm extends Component {
         this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        let IDs = this.getIDs(this.props),
-            nextIDs = _.pluck(nextProps.items, 'id'),
-            { field, model, items } = this.props,
-            thisField = items[0][field];
-        return (
-            (IDs.length !== nextIDs.length) ||
-            model.editObject == null ||
-            model.editObject[thisField] == null
-        );
-    }
-
-    componentWillUpdate(nextProps) {
-        this.props.dispatch(initializeBulkEditForm(this.getIDs(nextProps), this.props.field));
-    }
-
     getIDs(props) {
         return _.pluck(props.items, 'id');
     }
 
     handleBulkSubmit(obj) {
-        this.props.dispatch(patchBulkList([obj]));
+        this.props.dispatch(patchBulkList(obj));
     }
 
     handleDetailSubmit(obj) {
-        this.props.dispatch(patchDetailList([obj]));
+        this.props.dispatch(patchDetailList(obj));
     }
 
     isReadyToRender(thisField){

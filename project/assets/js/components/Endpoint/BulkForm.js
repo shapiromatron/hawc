@@ -20,10 +20,19 @@ export default class BulkForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        if (this.state.showDetails){
-            this.props.handleDetailSubmit(Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {ids: this.state.detailIDs}));
+        let stale = this.props.items[0][this.state.field],
+            { ids, detailIDs, showDetails } = this.state;
+        // if detail edit and all checkboxes are not checked
+        if (showDetails && detailIDs && detailIDs.length !== ids.length){
+            this.props.handleDetailSubmit(Object.assign(
+                {},
+                _.omit(this.state, ['detailIDs', 'showDetails']),
+                { ids: detailIDs, stale }));
         } else {
-            this.props.handleBulkSubmit(this.state);
+            this.props.handleBulkSubmit(Object.assign(
+                {},
+                _.omit(this.state, 'detailIDs'),
+                { stale }));
         }
         this.setState({ detailIDs: []});
     }
@@ -36,7 +45,7 @@ export default class BulkForm extends Component {
 
     handleCheckAll(e) {
         if (e.target.checked) {
-            this.setState({ detailIDs: this.state.ids});
+            this.setState({ detailIDs: this.props.object.ids});
         } else {
             this.setState({ detailIDs: []});
         }

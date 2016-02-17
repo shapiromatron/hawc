@@ -38,11 +38,11 @@ describe('Assessment component', () => {
     });
 
     it('should have a list title', () => {
-        expect(output.props.children[0].props.children.join(''), 'to equal', 'test assessment Results for Cleanup');
+        expect(output.props.children[0].props.children.join(''), 'to equal', 'Cleanup test assessment');
     });
 
     it('should render two endpoint types', () => {
-        expect(output.props.children[1].props.children.length, 'to equal', 2);
+        expect(output.props.children[0].props.children.length, 'to equal', 2);
     });
 
 });

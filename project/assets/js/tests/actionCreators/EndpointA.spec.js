@@ -9,19 +9,6 @@ const mockStore = configureMockStore(middlewares);
 
 describe('Endpoint actions', () => {
 
-    describe('actions', () =>{
-
-        it('should set the endpoint type', () => {
-            let action = endpointActions.setField;
-
-            expect(action('system')).to.deep.equal({
-                type: types.EP_SET_FIELD,
-                field: 'system',
-            });
-        });
-
-    });
-
     describe('async actions', () => {
         afterEach(() => {
             nock.cleanAll();
@@ -49,9 +36,10 @@ describe('Endpoint actions', () => {
                 ]}},
             ];
             const store = mockStore({
+                router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
                     apiUrl: 'http://127.0.0.1:9000/',
-                    ani: 'ani/api/cleanup/',
+                    ani: { url: 'ani/api/cleanup/' },
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
@@ -95,9 +83,10 @@ describe('Endpoint actions', () => {
             ];
 
             const store = mockStore({
+                router: { params: { type: 'ani', id: '57' }},
                 config: {
                     apiUrl: 'http://127.0.0.1:9000/',
-                    ani: 'ani/api/cleanup/',
+                    ani: { url: 'ani/api/cleanup/' },
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
@@ -120,9 +109,10 @@ describe('Endpoint actions', () => {
             ];
 
             const store = mockStore({
+                router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
                     apiUrl: 'http://127.0.0.1:9000/',
-                    ani: 'ani/api/cleanup/',
+                    ani: { url: 'ani/api/cleanup/' },
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
@@ -147,9 +137,7 @@ describe('Endpoint actions', () => {
 
         it('should bulk patch multiple objects', (done) => {
             nock('http://127.0.0.1:9000')
-                .patch('/ani/api/cleanup/?assessment_id=57&ids=10210')
-                .reply(200, {})
-                .patch('/ani/api/cleanup/?assessment_id=57&ids=10212')
+                .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
                 .reply(200, {})
                 .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
@@ -161,34 +149,28 @@ describe('Endpoint actions', () => {
                     {
                         'id': 10212,
                         'name': 'gross body weight (start of experiment)',
-                        'system': 'Digestive System',
+                        'system': 'Digestive Systems',
                     },
                 ]);
 
-            const patchList = [{ ids: [10210], field: 'system', system: 'Digestive Systems'}, { ids: [10212], field: 'system', system: 'Digestive System'}];
+            const patchList = { ids: [10210, 10212], field: 'system', system: 'Digestive Systems', stale: 'digestive system'};
             const expectedActions = [
+                { type: types.EP_RESET_EDIT_OBJECT, field: 'digestive system' },
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object:  {
-                        'ids': [10210],
+                        'ids': [10210, 10212],
                         field: 'system',
                         'system': 'Digestive Systems',
                     },
                 },
-                { type: types.EP_PATCH_OBJECTS, ids: [10210], patch: {field: 'system', ids: [10210], system: 'Digestive Systems'} },
-                { type: types.EP_CREATE_EDIT_OBJECT,
-                    object: {
-                        'ids': [10212],
-                        field: 'system',
-                        'system': 'Digestive System',
-                    },
-                },
-                { type: types.EP_PATCH_OBJECTS, ids: [10212], patch: {field: 'system', ids: [10212], system: 'Digestive System'} },
+                { type: types.EP_PATCH_OBJECTS, patch: {field: 'system', ids: [10210, 10212], system: 'Digestive Systems'} },
             ];
 
             const store = mockStore({
+                router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
                     apiUrl: 'http://127.0.0.1:9000/',
-                    ani: 'ani/api/cleanup/',
+                    ani: { url: 'ani/api/cleanup/' },
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
@@ -202,7 +184,7 @@ describe('Endpoint actions', () => {
                         {
                             'id': 10212,
                             'name': 'gross body weight (start of experiment)',
-                            'system': 'systemic',
+                            'system': 'digestive system',
                         },
                     ],
                     type: 'ani',
@@ -229,8 +211,9 @@ describe('Endpoint actions', () => {
                     },
                 ]);
 
-            const patchList = [{ ids: [10210, 10212], field: 'system', system: 'Digestive Systems'}];
+            const patchList = { ids: [10210, 10212], field: 'system', system: 'Digestive Systems', stale: 'digestive system'};
             const expectedActions = [
+                { type: types.EP_REMOVE_EDIT_OBJECT_IDS, field: 'digestive system', ids: [10210, 10212] },
                 { type: types.EP_CREATE_EDIT_OBJECT,
                     object:  {
                         'ids': [10210, 10212],
@@ -251,9 +234,10 @@ describe('Endpoint actions', () => {
                 },
             ];
             const store = mockStore({
+                router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
                     apiUrl: 'http://127.0.0.1:9000/',
-                    ani: 'ani/api/cleanup/',
+                    ani: { url: 'ani/api/cleanup/' },
                     csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },

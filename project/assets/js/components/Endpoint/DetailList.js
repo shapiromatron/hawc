@@ -21,7 +21,7 @@ export default class DetailList extends Component {
                 <input type="checkbox"
                        checked={checked}
                        id={item.id}
-                       onClick={this.props.onDetailChange}/></span>
+                       onChange={this.props.onDetailChange}/></span>
             </div>
         );
     }
@@ -37,7 +37,7 @@ export default class DetailList extends Component {
                         return <h5 key={field} className='header-field'>{h.caseToWords(field)}</h5>;
                     })}
                     <h5 className="header-field">
-                    <input type="checkbox" id='all' checked={allChecked} onClick={this.props.onDetailChange}/></h5>
+                    <input type="checkbox" id='all' checked={allChecked} onChange={this.props.onDetailChange}/></h5>
                 </div>
                 {_.map(_.sortBy(items, 'name'), this.renderItem.bind(this))}
             </div>
