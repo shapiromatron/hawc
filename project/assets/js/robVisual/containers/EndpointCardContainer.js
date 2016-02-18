@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import _ from 'underscore';
 import { connect } from 'react-redux';
+
 import EndpointCard from 'robVisual/components/EndpointCard';
+import './EndpointCardContainer.css';
 
 class EndpointCardContainer extends Component {
 

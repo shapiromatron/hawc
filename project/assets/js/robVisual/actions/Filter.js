@@ -73,6 +73,7 @@ export function fetchRobScores(){
         let state = getState();
         if (state.isFetchingRobScores) return;
         dispatch(requestRobScores());
+        console.log(h.getTestUrl(state.config.apiUrl, state.config.study_score_url));
         return fetch(h.getTestUrl(state.config.apiUrl, state.config.study_score_url), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveRobScores(json)))
@@ -106,6 +107,7 @@ export function fetchEndpoints(ids){
             effects = state.filter.selectedEffects;
         if (state.isFetchingEndpoints) return;
         dispatch(requestEndpoints());
+        console.log(h.getEndpointsUrl(state.config, ids, effects));
         return fetch(h.getEndpointsUrl(state.config, ids, effects), h.fetchGet)
             .then((response) => {
                 if (response.ok){

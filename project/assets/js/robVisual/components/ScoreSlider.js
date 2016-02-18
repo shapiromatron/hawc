@@ -10,19 +10,18 @@ class ScoreSlider extends Component {
         let { threshold, max }= this.props;
         return (
             <div>
+            <form name='scoreSliderForm'>
                 <p className='help-block'>
-                    Select the minimum quality threshold
+                    Select the minimum confidence rating: <output><strong>{threshold}</strong></output>
                 </p>
-                <form name='scoreSliderForm'>
-                    <input
-                        type='range'
-                        id='scoreSlider'
-                        name='scoreSlider'
-                        min='0' max={max}
-                        defaultValue='0'
-                        onChange={this.handleChange.bind(this)} />
-                    <output>{threshold}</output>
-                </form>
+                <input
+                    type='range'
+                    id='scoreSlider'
+                    name='scoreSlider'
+                    min='0' max={max}
+                    defaultValue='0'
+                    onChange={this.handleChange.bind(this)} />
+            </form>
             </div>
         );
     }

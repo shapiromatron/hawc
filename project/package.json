@@ -51,6 +51,7 @@
     "moment": "^2.11.1",
     "nock": "^5.2.1",
     "react-addons-test-utils": "^0.14.6",
+    "react-faux-dom": "^2.2.0",
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.0.1",
