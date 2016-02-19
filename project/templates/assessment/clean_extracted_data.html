@@ -6,7 +6,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Clean extracted data<span class="divider">/</span></li>
+  <li><a href="{% url 'assessment:clean_extracted_data' assessment.id %}">Clean extracted data</a><span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
