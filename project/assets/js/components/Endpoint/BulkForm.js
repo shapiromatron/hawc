@@ -81,9 +81,14 @@ export default class BulkForm extends Component {
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
-                    <span className='bulk-element field span4' onClick={this._toggleDetails.bind(this)}>
-                        <i className={`fa ${detailShow}`}></i>
-                        {field || `N/A`} ({items.length})
+                    <span className='bulk-element field span4'>
+                        <button type='button'
+                            title='Show/hide all endpoints'
+                            className='btn btn-inverse btn-mini'
+                            onClick={this._toggleDetails.bind(this)}>
+                            <i className={`fa ${detailShow}`}></i>
+                        </button>
+                        &nbsp;{field || `N/A`} ({items.length})
                     </span>
                     <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
                         <input name={field} className='form-control' type="text"
