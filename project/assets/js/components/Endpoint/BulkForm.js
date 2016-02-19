@@ -3,8 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import DetailList from 'components/Endpoint/DetailList';
 import h from 'utils/helpers';
 import FormFieldError from 'components/FormFieldError';
-import Endpoint from 'Endpoint';
-import Outcome from 'Outcome';
+
+import './BulkForm.css';
 
 
 export default class BulkForm extends Component {

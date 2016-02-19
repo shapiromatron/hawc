@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import Loading from 'components/Loading';
 import FormComponent from 'components/Endpoint/BulkForm';
-import 'containers/Endpoint/EndpointBulkForm.css';
 
 import {
     initializeBulkEditForm,

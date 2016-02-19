@@ -3,6 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import h from 'utils/helpers';
 import BulkForm from 'containers/Endpoint/BulkForm';
 
+import './BulkList.css';
+
 export default class BulkList extends Component {
 
     constructor(props) {
