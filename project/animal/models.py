@@ -1056,15 +1056,15 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
     def getNRangeText(ns):
         """
         Given a list of N values, return textual range of N values in the list.
-        For example, may return "10-12", "7", or "N not-reported".
+        For example, may return "10-12", "7", or "NR".
         """
         if len(ns) == 0:
-            return u"N not-reported"
+            return u"NR"
         nmin = min(ns)
         nmax = max(ns)
         if nmin == nmax:
             if nmin is None:
-                return u"N not-reported"
+                return u"NR"
             else:
                 return unicode(nmin)
         else:
