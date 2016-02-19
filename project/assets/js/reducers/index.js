@@ -5,10 +5,7 @@ import config from './Config';
 import assessment from './Assessment';
 import endpoint from './Endpoint';
 
-const apiUrl = 'http://127.0.0.1:8000';
-
 const rootReducer = combineReducers({
-    apiUrl,
     router,
     config,
     assessment,
