@@ -200,3 +200,15 @@ class CustomURLField(URLField):
         }
         defaults.update(kwargs)
         return super(CustomURLField, self).formfield(**defaults)
+
+
+def get_distinct_charfield(Cls, assessment_id, field):
+    return Cls.objects\
+              .filter(assessment_id=assessment_id)\
+              .distinct(field)\
+              .values_list(field, flat=True)
+
+
+def get_distinct_charfield_opts(Cls, assessment_id, field):
+    objs = get_distinct_charfield(Cls, assessment_id, field)
+    return [(obj, obj) for obj in sorted(objs)]

@@ -241,7 +241,7 @@ class Visual(models.Model):
                     dose_id = int(request.POST.get('dose_units', -1))
                 except ValueError:
                     dose_id = -1
-                Prefilter.setFiltersFromForm(filters, request.POST)
+                Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
 
             else:
                 dose_id = self.dose_units_id
@@ -264,7 +264,7 @@ class Visual(models.Model):
         if self.visual_type in [2, 3]:
             if request:
                 efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setFiltersFromForm(efilters, request.POST)
+                Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
                 if len(efilters) > 1:
                     filters["id__in"] = set(
                         Endpoint.objects
@@ -604,8 +604,12 @@ class Prefilter(object):
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """
     @classmethod
-    def setFiltersFromForm(cls, filters, d):
+    def setFiltersFromForm(cls, filters, d, visual_type):
         evidence_type = d.get('evidence_type')
+
+        if visual_type == 1:
+            evidence_type = 0
+
         if d.get('prefilter_system'):
             filters["system__in"] = d.getlist('systems')
 
@@ -618,11 +622,17 @@ class Prefilter(object):
         if d.get('prefilter_effect_tag'):
             filters["effects__in"] = d.getlist('effect_tags')
 
+        if d.get('prefilter_episystem'):
+            filters["system__in"] = d.getlist('episystems')
+
+        if d.get('prefilter_epieffect'):
+            filters["effect__in"] = d.getlist('epieffects')
+
         if d.get('prefilter_study'):
             studies = d.get("studies", [])
             if evidence_type == 0:  # Bioassay
                 filters["animal_group__experiment__study__in"] = studies
-            if evidence_type == 1:  # Epi
+            elif evidence_type == 1:  # Epi
                 filters["study_population__study__in"] = studies
             elif evidence_type == 2:  # in-vitro
                 filters["experiment__study__in"] = studies
@@ -634,7 +644,7 @@ class Prefilter(object):
         if d.get("published_only"):
             if evidence_type == 0:  # Bioassay
                 filters["animal_group__experiment__study__published"] = True
-            if evidence_type == 1:  # Epi
+            elif evidence_type == 1:  # Epi
                 filters["study_population__study__published"] = True
             elif evidence_type == 2:  # in-vitro
                 filters["experiment__study__published"] = True

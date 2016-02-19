@@ -20,10 +20,15 @@
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          {% if obj_perms.edit and object.search_type == 's' %}
-            <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update search</a></li>
-            <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete search</a></li>
+          {% if obj_perms.edit %}
+            {% if object.search_type == 's' %}
+              <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update search</a></li>
+              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete search</a></li>
+            {% elif not object.is_manual_import  %}
+              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete import</a></li>
+            {% endif %}
           {% endif %}
+
           <li><a href="{% url 'lit:search_download_excel' object.assessment.pk object.slug %}">Download to Excel</a></li>
         </ul>
       </div>

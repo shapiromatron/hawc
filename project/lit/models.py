@@ -60,6 +60,8 @@ class TooManyPubMedResults(Exception):
 
 class Search(models.Model):
 
+    MANUAL_IMPORT_SLUG = 'manual-import'
+
     SEARCH_TYPES = (
         ('s', 'Search'),
         ('i', 'Import'),)
@@ -104,6 +106,12 @@ class Search(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @property
+    def is_manual_import(self):
+        # special case- created when assessment is created
+        return self.search_type == 'i' and \
+            self.slug == self.MANUAL_IMPORT_SLUG
 
     def clean(self):
         # unique_together constraint checked above;
@@ -281,7 +289,7 @@ class Search(models.Model):
             source=EXTERNAL_LINK,
             search_type='i',
             title="Manual import",
-            slug="manual-import",
+            slug=cls.MANUAL_IMPORT_SLUG,
             description="Default search instance used for manually "
                         "importing literature into HAWC instead of "
                         "using a search.",
