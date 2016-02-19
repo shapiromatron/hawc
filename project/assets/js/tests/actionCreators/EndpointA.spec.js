@@ -4,6 +4,9 @@ import * as endpointActions from 'actions/Endpoint';
 import * as types from 'constants/ActionTypes';
 import nock from 'nock';
 
+import { HOST } from 'tests/constants';
+
+
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
@@ -15,7 +18,7 @@ describe('Endpoint actions', () => {
         });
 
         it('should load the endpoint model', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
                 .reply(200,  {
                     'text_cleanup_fields': [
@@ -38,9 +41,8 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000/',
+                    host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
-                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
                 endpoint: { isFetching: false,
@@ -49,7 +51,7 @@ describe('Endpoint actions', () => {
         });
 
         it('should load endpoint items', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
                     {
@@ -85,9 +87,8 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { type: 'ani', id: '57' }},
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000/',
+                    host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
-                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
                 endpoint: {
@@ -100,7 +101,7 @@ describe('Endpoint actions', () => {
         });
 
         it('should delete an object', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .delete('/ani/api/cleanup/?assessment_id=57')
                 .reply(204, {});
 
@@ -111,9 +112,8 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000/',
+                    host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
-                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
                 endpoint: {
@@ -136,7 +136,7 @@ describe('Endpoint actions', () => {
         });
 
         it('should bulk patch multiple objects', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
                 .reply(200, {})
                 .get('/ani/api/cleanup/?assessment_id=57')
@@ -169,9 +169,8 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000/',
+                    host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
-                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
                 endpoint: {
@@ -194,7 +193,7 @@ describe('Endpoint actions', () => {
         });
 
         it('should detail patch multiple objects', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
                 .reply(204, {})
                 .get('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
@@ -236,9 +235,8 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000/',
+                    host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
-                    csrf: '<input type="hidden" name="csrfmiddlewaretoken" value="SMrZbPkbRwKxWOhwrIGsmRDMFqgULnWn" />',
                 },
                 assessment: { active: { id: 57 } },
                 endpoint: {
