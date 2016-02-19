@@ -622,6 +622,12 @@ class Prefilter(object):
         if d.get('prefilter_effect_tag'):
             filters["effects__in"] = d.getlist('effect_tags')
 
+        if d.get('prefilter_episystem'):
+            filters["system__in"] = d.getlist('episystems')
+
+        if d.get('prefilter_epieffect'):
+            filters["effect__in"] = d.getlist('epieffects')
+
         if d.get('prefilter_study'):
             studies = d.get("studies", [])
             if evidence_type == 0:  # Bioassay

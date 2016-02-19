@@ -56,6 +56,8 @@
             ["system", "systems"],
             ["organ", "organs"],
             ["effect", "effects"],
+            ["episystem", "episystems"],
+            ["epieffect", "epieffects"],
             ["iv_category", "iv_categories"],
             ["effect_tag", "effect_tags"],
         ];
@@ -78,6 +80,12 @@
               "#div_id_prefilter_effect",
               "#div_id_effects"
           ].join(",")),
+          epiOnlyDivs = $([
+              "#div_id_prefilter_episystem",
+              "#div_id_episystems",
+              "#div_id_prefilter_epieffect",
+              "#div_id_epieffects"
+          ].join(",")),
           ivOnlyDivs = $([
               "#div_id_prefilter_iv_category",
               "#div_id_iv_categories",
@@ -85,6 +93,7 @@
           ].join(","));
 
         ($('#id_evidence_type').val() === "0") ? aniOnlyDivs.show() : aniOnlyDivs.hide();
+        ($('#id_evidence_type').val() === "1") ? epiOnlyDivs.show() : epiOnlyDivs.hide();
         ($('#id_evidence_type').val() === "2") ? ivOnlyDivs.show() : ivOnlyDivs.hide();
         togglePrefilterSelectorVisibility();
       }).trigger('change');
