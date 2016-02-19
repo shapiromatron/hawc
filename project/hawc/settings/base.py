@@ -114,7 +114,7 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DJANGO_DB_NAME', 'hawc'),
+        'NAME': os.getenv('DJANGO_DB_NAME'),
         'USER': os.getenv('DJANGO_DB_USER'),
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
         'HOST': '',
@@ -176,9 +176,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'dist'),
-)
+STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 
 # Media files
 MEDIA_URL = '/media/'

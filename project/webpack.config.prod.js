@@ -5,9 +5,8 @@ var config = require('./webpack.base.js'),
 
 config.devtool = 'source-map';
 
-config.entry =  ['./assets/js/index'];
+config.output.path = path.resolve('./static/bundles');
 
-config.output.publicPath = '/static/';
 config.plugins.unshift([
     new webpack.DefinePlugin({
         'process.env': {
