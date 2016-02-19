@@ -9,6 +9,7 @@ router.register(r'chemical', api.IVChemical, base_name="chemical")
 router.register(r'celltype', api.IVCellType, base_name="celltype")
 router.register(r'experiment', api.IVExperiment, base_name="experiment")
 router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
+router.register(r'cleanup', api.Cleanup, base_name='cleanup')
 
 urlpatterns = [
 
@@ -88,5 +89,5 @@ urlpatterns = [
         views.EndpointsReport.as_view(),
         name='endpoints_report'),
 
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(router.urls, namespace='api')),
 ]

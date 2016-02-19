@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from assessment.api.views import AssessmentViewset, DoseUnitsViewset
 
 from . import models, serializers
+from utils.api import CleanupFieldsBaseViewSet
 
 
 class Experiment(AssessmentViewset):
@@ -34,6 +35,11 @@ class Endpoint(AssessmentViewset):
                 'effects',
                 'animal_group__dosed_animals__doses',
             )
+
+
+class CleanupFieldsView(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.CleanupFieldsSerializer
+    model = models.Endpoint
 
 
 class DoseUnits(DoseUnitsViewset):

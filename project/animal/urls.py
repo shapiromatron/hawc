@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register(r'endpoint', api.Endpoint, base_name="endpoint")
 router.register(r'experiment', api.Experiment, base_name="experiment")
 router.register(r'animal-group', api.AnimalGroup, base_name="animal_group")
+router.register(r'cleanup', api.CleanupFieldsView, base_name="cleanup")
 router.register(r'dose-units', api.DoseUnits, base_name="dose_units")
 
 

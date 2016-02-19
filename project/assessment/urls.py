@@ -93,6 +93,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/endpoints/$',
         views.BaseEndpointList.as_view(),
         name='endpoint_list'),
+    url(r'^(?P<pk>\d+)/clean-extracted-data/',
+        views.CleanExtractedData.as_view(),
+        name='clean_extracted_data'),
     url(r'^assessment/(?P<pk>\d+)/effect-tags/create/$',
         views.EffectTagCreate.as_view(),
         name='effect_tag_create'),
@@ -107,6 +110,11 @@ urlpatterns = [
     url(r'^close-window/$',
         views.CloseWindow.as_view(),
         name='close_window'),
+
+    # api views
+    url(r'^api/endpoints/$',
+        views.AssessmentEndpointList.as_view({'get': 'list'}),
+        name='endpoint_type_list'),
 ]
 
 admin.autodiscover()

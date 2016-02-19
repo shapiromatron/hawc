@@ -519,6 +519,15 @@ class DoseGroup(models.Model):
 
 class Endpoint(BaseEndpoint):
 
+    TEXT_CLEANUP_FIELDS = (
+        'system',
+        'organ',
+        'effect',
+        'effect_subtype',
+        'observation_time_text',
+        'response_units',
+    )
+
     DATA_TYPE_CHOICES = (
         ('C', 'Continuous'),
         ('D', 'Dichotomous'),
@@ -918,6 +927,10 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def get_effect_choices(cls, assessment_id):
         return get_distinct_charfield_opts(cls, assessment_id, 'effect')
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
 
 
 class ConfidenceIntervalsMixin(object):

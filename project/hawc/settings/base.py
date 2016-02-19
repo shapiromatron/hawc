@@ -91,6 +91,8 @@ INSTALLED_APPS = (
     'markdown_deux',
     'crispy_forms',
     'compressor',
+    'rest_framework_extensions',
+    'webpack_loader',
 
     # Custom apps
     'utils',
@@ -174,7 +176,6 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
@@ -257,7 +258,7 @@ COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMM
 
 
 # BMD modeling settings
-BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH')
+BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH', '')
 BMD_PLOT = r'gnuplot'
 BMD_EXTENSION = ''
 BMD_SHELL = 'x11'
@@ -289,3 +290,17 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Compressor settings
 COMPRESS_ENABLED = True
+
+# DRF-Extensions header requirement
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_BULK_OPERATION_HEADER_NAME': 'X-CUSTOM-BULK-OPERATION'
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',
+        'STATS_FILE': os.path.join(PROJECT_PATH, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': ['.+/.map']
+    }
+}

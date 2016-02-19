@@ -294,6 +294,12 @@ class StudyPopulation(models.Model):
 
 class Outcome(BaseEndpoint):
 
+    TEXT_CLEANUP_FIELDS = (
+        'system',
+        'effect',
+        'effect_subtype',
+    )
+
     DIAGNOSTIC_CHOICES = (
         (0, 'not reported'),
         (1, 'medical professional or test'),
@@ -431,6 +437,10 @@ class Outcome(BaseEndpoint):
         # copy other children
         for child in children:
             child.copy_across_assessments(cw)
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
 
     @classmethod
     def get_system_choices(cls, assessment_id):

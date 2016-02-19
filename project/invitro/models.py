@@ -294,6 +294,12 @@ class IVEndpoint(BaseEndpoint):
         (5, "weeks"),
         (6, "months"))
 
+    TEXT_CLEANUP_FIELDS = (
+        "assay_type",
+        "effect",
+        "observation_time",
+    )
+
     experiment = models.ForeignKey(
         IVExperiment,
         related_name="endpoints")
@@ -416,6 +422,10 @@ class IVEndpoint(BaseEndpoint):
             "field2": "b",
             "field3": "c",
         }
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
 
 
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):

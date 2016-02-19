@@ -1,8 +1,7 @@
 import json
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.loading import get_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -14,13 +13,16 @@ from django.views.generic import View, ListView, DetailView, TemplateView, FormV
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse, get_object_or_404
 
+from rest_framework.response import Response
+
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList)
-
+                         BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
+from assessment.api.views import DisabledPagination
 from celery import chain
 
-from . import forms, models, tasks
+from . import forms, models, tasks, serializers
+from .api import views
 
 
 # General views
@@ -353,6 +355,13 @@ class BaseEndpointList(BaseList):
         return context
 
 
+class CleanExtractedData(ProjectManagerOrHigherMixin, BaseEndpointList):
+    template_name = 'assessment/clean_extracted_data.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
+
+
 # Changelog views
 class ChangeLogList(ListView):
     model = models.ChangeLog
@@ -446,3 +455,43 @@ def download_plot(request):
         return response
     else:
         raise Http404
+
+
+class AssessmentEndpointList(views.AssessmentViewset):
+    serializer_class = serializers.AssessmentEndpointSerializer
+    assessment_filter_args = "id"
+    model = models.Assessment
+    pagination_class = DisabledPagination
+
+    def list(self, request, *args, **kwargs):
+        instance = self.filter_queryset(self.get_queryset())[0]
+        app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
+        instance.items = []
+
+        instance.items.append({
+            'count': instance.endpoint_count,
+            'title': "animal bioassay endpoints",
+            'type': 'ani',
+            'url': "{}{}".format(app_url, 'ani/'),
+        })
+        instance.items.append({
+            "count": instance.outcome_count,
+            "title": "epidemiological outcomes assessed",
+            'type': 'epi',
+            'url': "{}{}".format(app_url, 'epi/')
+        })
+        instance.items.append({
+            "count": instance.ivendpoint_count,
+            "title": "in vitro endpoints",
+            'type': 'in-vitro',
+            'url': "{}{}".format(app_url, 'in-vitro/'),
+        })
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        queryset = self.model.objects\
+            .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
+            .annotate(outcome_count=Count('baseendpoint__outcome'))\
+            .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
+        return queryset

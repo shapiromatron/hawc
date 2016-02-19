@@ -1,7 +1,7 @@
 from utils.views import (BaseDetail, BaseDelete,
-                         BaseVersion, BaseUpdate, BaseCreate,
+                         BaseUpdate, BaseCreate,
                          BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList, GenerateReport)
+                         CloseIfSuccessMixin, BaseList)
 
 from assessment.models import Assessment
 from study.models import Study
@@ -128,10 +128,10 @@ class OutcomeExport(OutcomeList):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.OutcomeComplete(
-                self.object_list,
-                export_format="excel",
-                filename='{}-epi'.format(self.assessment),
-                sheet_name='epi')
+            self.object_list,
+            export_format="excel",
+            filename='{}-epi'.format(self.assessment),
+            sheet_name='epi')
         return exporter.build_response()
 
 
@@ -306,7 +306,7 @@ class ComparisonSetUpdate(BaseUpdateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.GroupFormset(queryset=self.object.groups.all()
-                                            .order_by('group_id'))
+                                  .order_by('group_id'))
 
     def post_object_save(self, form, formset):
         group_id = 0

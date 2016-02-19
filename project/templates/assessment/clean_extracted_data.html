@@ -1,0 +1,39 @@
+{% extends 'portal.html' %}
+{% load render_bundle from webpack_loader %}
+
+
+{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'assessment:clean_extracted_data' assessment.id %}">Clean extracted data</a><span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+    <div id="root"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "epi": {
+          "url": "{% url 'epi:api:cleanup-list' %}",
+          "endpoint": "Outcome"
+        },
+        "ani": {
+          "url": "{% url 'animal:api:cleanup-list' %}",
+          "endpoint": "Endpoint"
+        },
+        "in-vitro": {
+          "url": "{% url 'invitro:api:cleanup-list' %}",
+          "endpoint": "IVEndpoint"
+        },
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}"
+    }
+</script>
+{% render_bundle 'main' %}
+
+{% endblock extrajs %}

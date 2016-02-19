@@ -42,8 +42,8 @@ def change_num_dg(sender, instance, **kwargs):
 
     # get endpoints associated with this dosing-regime
     eps = models.Endpoint.objects.filter(
-            animal_group_id__in=models.AnimalGroup.objects.filter(
-                dosing_regime=instance))
+        animal_group_id__in=models.AnimalGroup.objects.filter(
+            dosing_regime=instance))
 
     if eps.count() == 0:
         return
@@ -55,8 +55,8 @@ def change_num_dg(sender, instance, **kwargs):
     egs = []
     for dose_id in dose_ids:
         egs.extend([
-           models.EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id) for
-           ep in eps.exclude(groups__dose_group_id=dose_id)
+            models.EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id) for
+            ep in eps.exclude(groups__dose_group_id=dose_id)
         ])
     models.EndpointGroup.objects.bulk_create(egs)
 

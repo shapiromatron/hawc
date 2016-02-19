@@ -14,7 +14,6 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404, Http404
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
@@ -151,7 +150,6 @@ class ProjectManagerOrHigherMixin(object):
     Mixin for project-manager access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
     """
-    model = Assessment
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):

@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 
 from assessment.api.views import AssessmentViewset
-
 from . import models, serializers
+from utils.api import CleanupFieldsBaseViewSet
 
 
 class StudyPopulation(AssessmentViewset):
@@ -39,3 +39,8 @@ class Group(AssessmentViewset):
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer
+
+
+class Cleanup(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.CleanupFieldsSerializer
+    model = models.Outcome

@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 from study.serializers import StudySerializer
+from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
@@ -127,5 +128,12 @@ class IVExperimentSerializerFull(IVExperimentSerializer):
     url_create_endpoint = serializers.CharField(source='get_endpoint_create_url', read_only=True)
     endpoints = MiniIVEndpointSerializer(many=True)
 
+
+class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IVEndpoint
+        cleanup_fields = model.text_cleanup_fields()
+        fields = cleanup_fields + ('id', 'name')
 
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

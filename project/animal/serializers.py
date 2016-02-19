@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 
+from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 from study.serializers import StudySerializer, StudyQualitySerializer
 from bmd.serializers import BMDModelRunSerializer
@@ -130,5 +131,12 @@ class EndpointSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Endpoint
 
+
+class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Endpoint
+        cleanup_fields = model.text_cleanup_fields()
+        fields = cleanup_fields + ('id', 'name')
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
