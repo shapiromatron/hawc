@@ -30,7 +30,7 @@
           "url": "{% url 'invitro:api:cleanup-list' %}",
           "endpoint": "IVEndpoint"
         },
-        "csrf": "{% csrf_token %}"
+        "csrf": "{{ csrf_token }}"
     }
 </script>
 {% render_bundle 'main' %}
