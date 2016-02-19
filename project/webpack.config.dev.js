@@ -1,13 +1,15 @@
 var config = require('./webpack.base.js'),
     path = require('path'),
-    webpack = require('webpack');
+    webpack = require('webpack'),
+    devPort = 3000;
 
+config.devPort = devPort;
 config.devtool = 'cheap-module-eval-source-map';
 config.entry = [
-    'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+    'webpack-hot-middleware/client?path=http://localhost:' + devPort + '/__webpack_hmr',
     './assets/js/index',
 ];
-config.output.publicPath = 'http://localhost:3000/dist/';
+config.output.publicPath = 'http://localhost:' + devPort + '/dist/';
 
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
