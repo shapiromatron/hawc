@@ -11,7 +11,7 @@ import reversion
 
 from assessment.models import Assessment, BaseEndpoint
 from study.models import Study
-from utils.models import get_crumbs
+from utils.models import get_crumbs, get_distinct_charfield_opts
 from utils.helper import SerializerHelper
 
 
@@ -431,6 +431,14 @@ class Outcome(BaseEndpoint):
         # copy other children
         for child in children:
             child.copy_across_assessments(cw)
+
+    @classmethod
+    def get_system_choices(cls, assessment_id):
+        return get_distinct_charfield_opts(cls, assessment_id, 'system')
+
+    @classmethod
+    def get_effect_choices(cls, assessment_id):
+        return get_distinct_charfield_opts(cls, assessment_id, 'effect')
 
 
 class ComparisonSet(models.Model):

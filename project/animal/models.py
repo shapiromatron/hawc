@@ -16,6 +16,7 @@ from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from utils.models import get_distinct_charfield_opts
 
 
 class Experiment(models.Model):
@@ -908,27 +909,15 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_system_choices(cls, assessment_id):
-        objs = cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('system')\
-                  .values_list('system', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'system')
 
     @classmethod
     def get_organ_choices(cls, assessment_id):
-        objs = cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('organ')\
-                  .values_list('organ', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'organ')
 
     @classmethod
     def get_effect_choices(cls, assessment_id):
-        objs = cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('effect')\
-                  .values_list('effect', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'effect')
 
 
 class ConfidenceIntervalsMixin(object):
