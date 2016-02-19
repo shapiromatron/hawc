@@ -1,40 +1,48 @@
 import React, { Component } from 'react';
 import _ from 'underscore';
 
-import DoseAxis from './DoseAxis';
+import DoseAxis from './xAxis';
+import ResponseAxis from './yAxis';
 import LineChart from './LineChart';
-import ResponseAxis from './ResponseAxis';
 
 export default class DoseResponseChart extends Component {
     componentWillMount() {
         let { endpoint, doses } = this.props,
             responses =  _.map(endpoint.groups, (group) => { return {dose_id: group.dose_group_id, response: group.response}; }),
             doseData = this.getDoseAxisData(endpoint.animal_group.dosing_regime.doses),
-            responseData = this.getResponseData(responses),
+            responseData = this.getResponseAxisData(responses),
             chartData = {...doses, ...responseData};
 
         this.setState({doseData, responseData, chartData});
     }
 
-    getDoseAxisData(doses) {
+    getDoseAxisData(dose_group) {
+        let { chartData, doses } = this.props;
+        console.log("doses", doses);
         return {
-            minDose: _.min(_.pluck(doses, 'dose')),
-            maxDose: _.max(_.pluck(doses, 'dose')),
-            height: this.props.height,
+            ...chartData,
+            transform: chartData.xTransform,
+            label: `Dose of ${doses[0].unit}`,
+            min: _.min(_.pluck(dose_group, 'dose')),
+            max: _.max(_.pluck(dose_group, 'dose')),
         };
     }
 
-    getResponseData(responses){
+    getResponseAxisData(responses){
+        let { chartData } = this.props;
         return {
-            minResponse: _.min((response) => { return response.response; }),
-            maxResponse: _.max((response) => { return response.response; }),
-            width: this.props.width,
+            ...chartData,
+            transform: chartData.yTransform,
+            label: 'Response',
+            min: _.min(_.pluck(responses, 'response')),
+            max: _.max(_.pluck(responses, 'response')),
         };
     }
 
     render() {
+        let { chartData } = this.props;
         return (
-            <svg>
+            <svg width={chartData.width} height={chartData.height}>
             <DoseAxis {...this.state.doseData} />
             {/*<LineChart data={this.state.chartData} />*/}
             <ResponseAxis {...this.state.responseData} />

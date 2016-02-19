@@ -1,5 +1,4 @@
 import * as types from '../constants/ActionTypes';
-import _ from 'underscore';
 
 let defaultState = {
     robScoreThreshold: null,

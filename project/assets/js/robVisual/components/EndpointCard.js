@@ -14,19 +14,22 @@ export default class EndpointCard extends Component {
 
     render(){
         let { endpoint } = this.props,
-            height = 200,
+            doses = this.groupByDoseUnit(),
+            height = 150,
             width = 300,
-            doses = this.groupByDoseUnit();
+            padding = [20, 5, 40, 60],
+            yTransform = [padding[3], 0],
+            xTransform = [0, height - padding[2]],
+            chartData = {height, width, padding, yTransform, xTransform};
         return (
             <div className='span3'>
                 <h4><a href={endpoint.url}>{endpoint.name}</a></h4>
-                {_.map(doses, (dose) => {
+                {_.map(doses, (dose, i) => {
                     return (
-                        <DoseResponseChart className="doseResponseChart"
+                        <DoseResponseChart key={i} className="doseResponseChart"
                             endpoint={endpoint}
                             doses={dose}
-                            width={width}
-                            height={height}
+                            chartData={chartData}
                         />
                     );
                 })}
