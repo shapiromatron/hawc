@@ -298,7 +298,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
+        'BUNDLE_DIR_NAME': 'bundles/',
         'STATS_FILE': os.path.join(PROJECT_PATH, 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'IGNORE': ['.+/.map']
