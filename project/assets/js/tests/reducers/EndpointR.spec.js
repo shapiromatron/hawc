@@ -1,6 +1,7 @@
 import * as types from 'constants/ActionTypes';
 import endpointReducer from 'reducers/Endpoint';
 
+
 describe('Endpoint reducer', () => {
 
     it('should handle receiving the Endpoint model', () => {

@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 
-import DetailList from 'components/Endpoint/DetailList';
-import h from 'utils/helpers';
 import FormFieldError from 'components/FormFieldError';
+import h from 'utils/helpers';
 
+import DetailList from './DetailList';
 import './BulkForm.css';
 
 

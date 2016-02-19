@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { fetchModelIfNeeded } from 'actions/Endpoint';
 import FieldList from 'components/FieldList';
 import Loading from 'components/Loading';
 import urls from 'constants/urls';
 import h from 'utils/helpers';
 
-import { fetchModelIfNeeded } from 'actions/Endpoint';
 
 class FieldSelection extends Component {
 

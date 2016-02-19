@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import BulkList from 'components/Endpoint/BulkList';
-import Header from 'components/Endpoint/Header';
+
+import BulkList from './BulkList';
+import Header from './Header';
+
 
 export default class EndpointList extends Component {
 

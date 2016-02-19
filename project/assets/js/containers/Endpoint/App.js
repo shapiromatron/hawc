@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { fetchObjectsIfNeeded } from 'actions/Endpoint';
 import EndpointList from 'components/Endpoint/EndpointList';
 import Loading from 'components/Loading';
 
-import { fetchObjectsIfNeeded } from 'actions/Endpoint';
 
 class Endpoint extends Component {
 

@@ -3,6 +3,7 @@ import _ from 'underscore';
 
 import h from 'utils/helpers';
 
+
 export default class DetailList extends Component {
 
     renderItem(item){

@@ -1,6 +1,7 @@
 import * as types from 'constants/ActionTypes';
 import assessmentReducer from 'reducers/Assessment';
 
+
 describe( 'Assessment reducer', () => {
 
     it('should handle receiving an object', () => {

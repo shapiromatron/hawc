@@ -1,9 +1,9 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as endpointActions from 'actions/Endpoint';
-import * as types from 'constants/ActionTypes';
 import nock from 'nock';
 
+import * as endpointActions from 'actions/Endpoint';
+import * as types from 'constants/ActionTypes';
 import { HOST } from 'tests/constants';
 
 

@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 
+import { makeAssessmentActive } from 'actions/Assessment';
 import Assessment from 'components/Assessment';
 import Loading from 'components/Loading';
 
-import { makeAssessmentActive } from 'actions/Assessment';
 
 class App extends Component{
 

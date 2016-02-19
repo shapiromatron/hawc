@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Loading from 'components/Loading';
-import FormComponent from 'components/Endpoint/BulkForm';
-
 import {
     initializeBulkEditForm,
     patchBulkList,
     patchDetailList,
 } from 'actions/Endpoint';
+import Loading from 'components/Loading';
+import FormComponent from 'components/Endpoint/BulkForm';
+
 
 export default class BulkForm extends Component {
 

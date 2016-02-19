@@ -5,6 +5,7 @@ import config from './Config';
 import assessment from './Assessment';
 import endpoint from './Endpoint';
 
+
 const rootReducer = combineReducers({
     router,
     config,

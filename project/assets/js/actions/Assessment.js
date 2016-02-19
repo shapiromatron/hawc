@@ -1,7 +1,9 @@
 import fetch from 'isomorphic-fetch';
 import _ from 'underscore';
+
 import * as types from 'constants/ActionTypes';
 import h from 'utils/helpers';
+
 
 function requestContent(){
     return {

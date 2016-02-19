@@ -4,7 +4,9 @@ import createHistory from 'history/lib/createBrowserHistory';
 import routes from 'routes';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
+
 import rootReducer from 'reducers';
+
 
 const logger = createLogger({
     level: 'info',
