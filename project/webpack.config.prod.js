@@ -7,7 +7,7 @@ config.devtool = 'source-map';
 
 config.output.path = path.resolve('./static/bundles');
 
-config.plugins.unshift([
+config.plugins.unshift.apply(config.plugins, [
     new webpack.DefinePlugin({
         'process.env': {
             'NODE_ENV': JSON.stringify('production'),
@@ -19,6 +19,7 @@ config.plugins.unshift([
         },
     }),
 ]);
+
 config.module = {
     loaders: [{
         test: /\.js$/,
