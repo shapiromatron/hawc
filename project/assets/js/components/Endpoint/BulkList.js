@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
+import BulkForm from 'containers/Endpoint/BulkForm';
 import h from 'utils/helpers';
 
-import BulkForm from './BulkForm';
 import './BulkList.css';
 
 
