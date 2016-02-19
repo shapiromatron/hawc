@@ -4,7 +4,7 @@ import _ from 'underscore';
 import h from 'utils/helpers';
 
 
-export default class DetailList extends Component {
+class DetailList extends Component {
 
     renderItem(item){
         let fields = _.keys(_.omit(item, ['id', 'ids', 'field', 'showDetails'])),
@@ -57,3 +57,5 @@ DetailList.propTypes = {
     showModal: PropTypes.func.isRequired,
     checkedRows: PropTypes.array,
 };
+
+export default DetailList;

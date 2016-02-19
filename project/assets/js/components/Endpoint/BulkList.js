@@ -6,7 +6,7 @@ import BulkForm from './BulkForm';
 import './BulkList.css';
 
 
-export default class BulkList extends Component {
+class BulkList extends Component {
 
     constructor(props) {
         super(props);
@@ -73,3 +73,5 @@ BulkList.propTypes = {
         id: PropTypes.string,
     }),
 };
+
+export default BulkList;

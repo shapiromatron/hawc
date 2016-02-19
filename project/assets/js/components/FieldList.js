@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import h from 'utils/helpers';
 
 
-export default class FieldList extends Component {
+class FieldList extends Component {
     renderField(field) {
         return (
             <li key={field}>
@@ -31,3 +31,5 @@ FieldList.propTypes = {
     ).isRequired,
     location: PropTypes.string.isRequired,
 };
+
+export default FieldList;

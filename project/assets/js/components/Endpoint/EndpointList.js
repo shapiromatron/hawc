@@ -4,7 +4,7 @@ import BulkList from './BulkList';
 import Header from './Header';
 
 
-export default class EndpointList extends Component {
+class EndpointList extends Component {
 
     render() {
         const { params } = this.props;
@@ -27,3 +27,5 @@ EndpointList.propTypes = {
         ),
     }),
 };
+
+export default EndpointList;

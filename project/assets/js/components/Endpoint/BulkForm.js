@@ -7,7 +7,7 @@ import DetailList from './DetailList';
 import './BulkForm.css';
 
 
-export default class BulkForm extends Component {
+class BulkForm extends Component {
 
     constructor(props) {
         super(props);
@@ -123,3 +123,5 @@ BulkForm.propTypes = {
     params: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
 };
+
+export default BulkForm;

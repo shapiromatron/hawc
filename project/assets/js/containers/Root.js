@@ -5,7 +5,7 @@ import { ReduxRouter } from 'redux-router';
 import { loadConfig } from 'actions/Config';
 
 
-export default class Root extends Component {
+class Root extends Component {
     componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
@@ -23,3 +23,5 @@ export default class Root extends Component {
 Root.propTypes = {
     store: PropTypes.object.isRequired,
 };
+
+export default Root;

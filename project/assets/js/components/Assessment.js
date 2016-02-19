@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
 
-export default class Assessment extends Component{
+class Assessment extends Component{
     renderEndpointType(item){
         if(item.count == 0){
             return null;
@@ -51,3 +51,5 @@ Assessment.propTypes = {
         })).isRequired,
     }).isRequired,
 };
+
+export default Assessment;

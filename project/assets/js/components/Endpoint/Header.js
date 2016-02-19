@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import h from 'utils/helpers';
 
 
-export default class Header extends Component {
+class Header extends Component {
 
     render() {
         let { params } = this.props;
@@ -14,3 +14,5 @@ export default class Header extends Component {
         );
     }
 }
+
+export default Header;

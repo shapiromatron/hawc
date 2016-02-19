@@ -10,7 +10,7 @@ import Loading from 'components/Loading';
 import FormComponent from 'components/Endpoint/BulkForm';
 
 
-export default class BulkForm extends Component {
+class BulkForm extends Component {
 
     componentWillMount() {
         this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
