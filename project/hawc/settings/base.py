@@ -169,18 +169,17 @@ LOGIN_REDIRECT_URL = reverse_lazy('portal')
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT')
-
+STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
-
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
+
 
 # Filesystem settings
 TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
