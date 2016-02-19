@@ -109,8 +109,8 @@ var helpers = {
             .replace(/([a-z])([A-Z])/g, '$1 $2')
             // insert a space between last upper in sequence followed by lower
             .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-            // uppercase the first character of every word
-            .replace(/\w\S*/g, function(txt) {
+            // uppercase the first character of first word
+            .replace(/\w\S*/, function(txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
     },
