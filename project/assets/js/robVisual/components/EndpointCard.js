@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
 import DoseResponseChart from './DoseResponseChart';
+import './EndpointCard.css';
 
 
 class EndpointCard extends Component {
@@ -28,8 +29,8 @@ class EndpointCard extends Component {
             xTransform = [0, height - padding[2]],
             chartData = {height, width, padding, yTransform, xTransform, radius};
         return (
-            <div className='span3'>
-                <h4><a href={endpoint.url}>{endpoint.name}</a></h4>
+            <div className='endpointCard'>
+                <h4 className='cardTitle'><a href={endpoint.url}>{endpoint.name}</a></h4>
                 <DoseResponseChart className="doseResponseChart"
                     endpoint={endpoint}
                     doses={doses[0]}

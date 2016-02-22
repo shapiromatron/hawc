@@ -10,7 +10,7 @@ class EndpointCardContainer extends Component {
     render(){
         let { endpoints } = this.props;
         return (
-            <div className='row-fluid'>
+            <div className='endpointCardContainer'>
                 {_.map(endpoints, (ep, i) => { return <EndpointCard key={i} endpoint={ep}/>; })}
             </div>
         );

@@ -1,25 +1,9 @@
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+.endpointCardContainer {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-circle,
-.line {
-  fill: none;
-  stroke: black;
-  stroke-width: 1.5px;
-}
-
-circle {
-  fill: black;
-  fill-opacity: .2;
-  cursor: move;
+    -webkit-flex-flow: row wrap;
 }
