@@ -36,15 +36,6 @@ class ApplyFilters extends Component {
                 <FormFieldError errors={this.props.errors} />
                 <button type='button' className='btn btn-primary' onClick={this.handleSubmit.bind(this)}>Apply filters</button>
                 {this.props.isFetching ? <Filtering /> : null}
-                <p className='help-block'>
-                    Can't really be live, but if they press this button it refilters.
-                    It should select all the effect values as an array in the state,
-                    and then pass them using the `effect` parameter in the ajax call.
-                    Then, based on the study-quality value on the slider, get a list
-                    of study_ids and put in the `study_id`. Should then return a list
-                    of enpdoints, or throw an error if the values are too large.
-                </p>
-
             </div>
         );
     }

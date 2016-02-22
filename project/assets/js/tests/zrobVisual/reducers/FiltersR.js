@@ -72,6 +72,7 @@ describe('robVisual Filter reducer', () => {
                 'development:ear opening',
             ],
             isFetchingEndpoints: false,
+            endpointsLoaded: true,
         });
     });
 

@@ -94,6 +94,7 @@ var helpers = {
     errorDict: {
         endpoints: 'Filtering results contain more than 100 endpoints. Increase the quality threshold or include fewer effects.',
         effects: 'At least one effect must be chosen.',
+        empty: 'No endpoints were returned. Decrease the quality threshold or include more effects.'
     },
     formatErrors(error){
         error  = error.substr(-9);

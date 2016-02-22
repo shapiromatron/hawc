@@ -5,6 +5,7 @@ let defaultState = {
     selectedEffects: null,
     endpoints: [],
     isFetchingEndpoints: false,
+    endpointsLoaded: false,
     robScores: [],
     isFetchingRobScores: false,
     effects: [],
@@ -34,6 +35,7 @@ export default function (state=defaultState, action){
     case types.RECEIVE_ENDPOINTS:
         return Object.assign({}, state, {
             isFetchingEndpoints: false,
+            endpointsLoaded: true,
             endpoints: action.endpoints,
         });
 
