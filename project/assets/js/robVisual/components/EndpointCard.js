@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
 import DoseResponseChart from './DoseResponseChart';
+import Endpoint from 'Endpoint';
 import './EndpointCard.css';
 
 
@@ -15,6 +16,10 @@ class EndpointCard extends Component {
             .value();
     }
 
+    showModal(e){
+        Endpoint.displayAsModal(e.target.id);
+    }
+
     render(){
         let { endpoint } = this.props,
             doses = this.groupByDoseUnit(),
@@ -23,8 +28,8 @@ class EndpointCard extends Component {
             }),
             height = 150,
             width = 300,
-            radius = 80,
-            padding = [20, 5, 50, 60],
+            radius = 130,
+            padding = [20, 0, 30, 55],
             yTransform = [padding[3], 0],
             xTransform = [0, height - padding[2]],
             chartData = {height, width, padding, yTransform, xTransform, radius};
@@ -38,7 +43,7 @@ class EndpointCard extends Component {
                     chartData={chartData}
                 />
                 <p>Extra content text here...</p>
-                <button type='button' className='btn btn-default'>Show detail modal</button>
+                <button type='button' className='btn btn-default' id={endpoint.id} onClick={this.showModal}>Show endpoint details</button>
             </div>
         );
     }

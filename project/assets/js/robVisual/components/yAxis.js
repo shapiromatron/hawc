@@ -51,7 +51,7 @@ yAxis.propTypes = {
         PropTypes.number.isRequired
     ).isRequired,
     label: PropTypes.string.isRequired,
-    renderScale: PropTypes.bool.isRequired,
+    renderScale: PropTypes.bool,
     yScale: PropTypes.func.isRequired,
 };
 
