@@ -10,3 +10,16 @@
   stroke: steelblue;
   stroke-width: 1.5px;
 }
+
+circle,
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+circle {
+  fill: black;
+  fill-opacity: .2;
+  cursor: move;
+}

@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+
 
 class ScoreSlider extends Component {
 
@@ -27,5 +28,11 @@ class ScoreSlider extends Component {
     }
 
 }
+
+ScoreSlider.propTypes = {
+    max: PropTypes.number.isRequired,
+    threshold: PropTypes.number.isRequired,
+    handleChange: PropTypes.func.isRequired,
+};
 
 export default ScoreSlider;

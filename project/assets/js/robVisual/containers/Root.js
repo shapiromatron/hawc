@@ -7,7 +7,7 @@ import ApplyFilters from './ApplyFilters';
 import EndpointCardContainer from './EndpointCardContainer';
 import { loadConfig } from 'robVisual/actions/config';
 
-export default class Root extends Component {
+class Root extends Component {
 
     componentWillMount(){
         this.props.store.dispatch(loadConfig());
@@ -32,3 +32,5 @@ export default class Root extends Component {
 Root.propTypes = {
     store: PropTypes.object.isRequired,
 };
+
+export default Root;

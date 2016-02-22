@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
 class EffectSelector extends Component {
@@ -27,5 +27,12 @@ class EffectSelector extends Component {
         );
     }
 }
+
+EffectSelector.propTypes = {
+    handleChange: PropTypes.func.isRequired,
+    effects: PropTypes.arrayOf(
+        PropTypes.string.isRequired
+    ).isRequired,
+};
 
 export default EffectSelector;

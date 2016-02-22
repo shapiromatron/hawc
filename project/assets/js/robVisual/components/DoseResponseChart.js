@@ -1,52 +1,90 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
 import DoseAxis from './xAxis';
 import ResponseAxis from './yAxis';
-import LineChart from './LineChart';
+import SplineChart from './SplineChart';
 
-export default class DoseResponseChart extends Component {
+
+class DoseResponseChart extends Component {
     componentWillMount() {
-        let { endpoint, doses } = this.props,
-            responses =  _.map(endpoint.groups, (group) => { return {dose_id: group.dose_group_id, response: group.response}; }),
-            doseData = this.getDoseAxisData(endpoint.animal_group.dosing_regime.doses),
-            responseData = this.getResponseAxisData(responses),
-            chartData = {...doses, ...responseData};
+        let { doses, responses } = this.props,
+            doseData = this.getDoseAxisData(),
+            responseData = this.getResponseAxisData(),
+            chartData = _.map(responses, (r, i) => { return {x: doses[i].dose, y: r.response, significant: r.significant}; }),
+            xScale = this.makeXScale(doseData),
+            yScale = this.makeYScale(responseData);
 
-        this.setState({doseData, responseData, chartData});
+        this.setState({
+            doseData: { ...doseData, xScale},
+            responseData: { ...responseData, yScale},
+            chartData: {data: chartData, yScale, xScale},
+        });
     }
 
-    getDoseAxisData(dose_group) {
+    makeXScale(data){
+        let { min, max, width, padding } = data;
+        return d3.scale.linear()
+            .domain([min, max])
+            .range([padding[3], width - padding[1] - padding[3]]);
+    }
+
+    makeYScale(data){
+        let { min, max, height, padding } = data;
+        return d3.scale.linear()
+            .domain([max, min])
+            .range([padding[0], height - padding[2]]);
+    }
+
+    getDoseAxisData() {
         let { chartData, doses } = this.props;
-        console.log("doses", doses);
         return {
             ...chartData,
             transform: chartData.xTransform,
             label: `Dose of ${doses[0].unit}`,
-            min: _.min(_.pluck(dose_group, 'dose')),
-            max: _.max(_.pluck(dose_group, 'dose')),
+            min: _.min(_.pluck(doses, 'dose')),
+            max: _.max(_.pluck(doses, 'dose')),
         };
     }
 
-    getResponseAxisData(responses){
-        let { chartData } = this.props;
+    getResponseAxisData(){
+        let { chartData, responses } = this.props;
         return {
             ...chartData,
             transform: chartData.yTransform,
-            label: 'Response',
+            label: `Response ${responses[0].unit}`,
             min: _.min(_.pluck(responses, 'response')),
             max: _.max(_.pluck(responses, 'response')),
         };
     }
 
     render() {
-        let { chartData } = this.props;
+        let { width, height, radius } = this.props.chartData;
         return (
-            <svg width={chartData.width} height={chartData.height}>
-            <DoseAxis {...this.state.doseData} />
-            {/*<LineChart data={this.state.chartData} />*/}
-            <ResponseAxis {...this.state.responseData} />
+            <svg width={width} height={height}>
+                <DoseAxis {...this.state.doseData} renderScale={false} />
+                <SplineChart { ...this.state.chartData} radius={radius} />
+                <ResponseAxis {...this.state.responseData} renderScale={false} />
             </svg>
         );
     }
 }
+
+DoseResponseChart.propTypes = {
+    chartData: PropTypes.shape({
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+        radius: PropTypes.number.isRequired,
+        padding: PropTypes.arrayOf(
+            PropTypes.number.isRequired
+        ).isRequired,
+        xTransform: PropTypes.arrayOf(
+            PropTypes.number.isRequired
+        ).isRequired,
+        yTransform: PropTypes.arrayOf(
+            PropTypes.number.isRequired
+        ).isRequired,
+    }),
+};
+
+export default DoseResponseChart;

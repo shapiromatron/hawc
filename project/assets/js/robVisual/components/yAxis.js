@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
-export default class yAxis extends Component {
+
+class yAxis extends Component {
     componentWillMount() {
-        this.yScale = d3.scale.linear();
+        let { yScale } = this.props;
         this.yAxis = d3.svg.axis()
-            .scale(this.yScale)
+            .scale(yScale)
             .orient('left')
             .ticks(5);
     }
@@ -18,8 +19,9 @@ export default class yAxis extends Component {
     }
 
     render() {
-        let { transform, label } = this.props,
-            labelElement = <text className='yAxis label' textAnchor='end' y='15'>{label}</text>;
+        let { transform, label, padding, renderScale } = this.props,
+            labelOffset = renderScale ? padding[3] - 20 : 20,
+            labelElement = <text className='yAxis label' textAnchor='end' y={`-${labelOffset}`} x={0} transform={`rotate(-90)`}>{label}</text>;
         return (
             <g ref='yAxis' className='y axis'
             transform={`translate(${transform[0]}, ${transform[1]})`}>
@@ -29,11 +31,28 @@ export default class yAxis extends Component {
     }
 
     renderAxis() {
-        let { min, max, height, padding } = this.props;
-        this.yScale
+        let { min, max, height, padding, yScale, renderScale } = this.props;
+        yScale
             .domain([max, min])
             .range([padding[0], height - padding[2]]);
 
-        d3.select(this.refs.yAxis).call(this.yAxis);
+        renderScale ? d3.select(this.refs.yAxis).call(this.yAxis) : null;
     }
 }
+
+yAxis.propTypes = {
+    min: PropTypes.number.isRequired,
+    max: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    padding: PropTypes.arrayOf(
+        PropTypes.number.isRequired
+    ).isRequired,
+    transform: PropTypes.arrayOf(
+        PropTypes.number.isRequired
+    ).isRequired,
+    label: PropTypes.string.isRequired,
+    renderScale: PropTypes.bool.isRequired,
+    yScale: PropTypes.func.isRequired,
+};
+
+export default yAxis;

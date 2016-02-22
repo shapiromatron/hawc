@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
-export default class xAxis extends Component {
+
+class xAxis extends Component {
     componentWillMount() {
-        this.xScale = d3.scale.linear();
+        let { xScale } = this.props;
         this.xAxis = d3.svg.axis()
-            .scale(this.xScale)
+            .scale(xScale)
             .orient('bottom')
             .ticks(5);
     }
@@ -18,8 +19,9 @@ export default class xAxis extends Component {
     }
 
     render() {
-        let { transform, label, width } = this.props,
-            labelElement = <text className='xAxis label' textAnchor='middle' x={width/2} y='30'>{label}</text>;
+        let { transform, label, width, padding, renderScale } = this.props,
+            labelOffset = renderScale ? padding[2] - 20 : 20,
+            labelElement = <text className='xAxis label' textAnchor='middle' x={width/2} y={labelOffset} >{label}</text>;
         return (
             <g ref='xAxis' className="x axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
@@ -29,11 +31,28 @@ export default class xAxis extends Component {
     }
 
     renderAxis() {
-        let { min, max, width, padding } = this.props;
-        this.xScale
+        let { min, max, width, padding, xScale, renderScale } = this.props;
+        xScale
             .domain([min, max])
             .range([padding[3], width - padding[1] - padding[3]]);
 
-        d3.select(this.refs.xAxis).call(this.xAxis);
+        renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
     }
 }
+
+xAxis.propTypes = {
+    min: PropTypes.number.isRequired,
+    max: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    padding: PropTypes.arrayOf(
+        PropTypes.number.isRequired
+    ).isRequired,
+    transform: PropTypes.arrayOf(
+        PropTypes.number.isRequired
+    ).isRequired,
+    label: PropTypes.string.isRequired,
+    renderScale: PropTypes.bool.isRequired,
+    xScale: PropTypes.func.isRequired,
+};
+
+export default xAxis;

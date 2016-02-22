@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
 
-class FormFieldError extends React.Component {
+class FormFieldError extends Component {
 
     render() {
         if(_.isUndefined(this.props.errors)) return null;
@@ -15,5 +15,11 @@ class FormFieldError extends React.Component {
         );
     }
 }
+
+FormFieldError.propTypes = {
+    errors: PropTypes.arrayOf(
+        PropTypes.string
+    ),
+};
 
 export default FormFieldError;
