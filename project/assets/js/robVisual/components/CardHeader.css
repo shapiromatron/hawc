@@ -1,3 +1,7 @@
+.cardTitle {
+    width: 300px;
+}
+
 .cardTitle span {
     color: #0088cc;
     cursor: pointer;

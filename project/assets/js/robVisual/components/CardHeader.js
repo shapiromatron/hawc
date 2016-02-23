@@ -28,7 +28,7 @@ class CardHeader extends Component {
                     </span>
                 </h4>
                 <span className={`score ${quality}`}><b>
-                    {score || '0'}
+                    {score || 'N/A'}
                 </b></span>
             </div>
         );

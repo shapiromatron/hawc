@@ -26,7 +26,7 @@ class EndpointCard extends Component {
         let height = 150,
             width = 300,
             radius = 130,
-            padding = [20, 0, 45, 55],
+            padding = [20, 0, 50, 55],
             yTransform = [padding[3], 0],
             xTransform = [0, height - padding[2]];
         return {height, width, padding, yTransform, xTransform, radius};

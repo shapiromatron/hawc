@@ -2,6 +2,6 @@
     padding: 10px;
 }
 
-.cardTitle {
-    width: 300px;
+.endpointCard:hover {
+    background-color: #e3e3e3;
 }
