@@ -18,10 +18,22 @@ class xAxis extends Component {
         this.renderAxis();
     }
 
+    getLabelElement(axisLabel) {
+        let { padding } = this.props;
+        return <text
+                className='xAxis label'
+                textAnchor='beginning'
+                x={padding[3] + 10}
+                y={axisLabel.offset} >
+                    {axisLabel.label}
+            </text>;
+
+    }
+
     render() {
-        let { transform, label, width, padding, renderScale } = this.props,
-            labelOffset = renderScale ? padding[2] - 20 : 20,
-            labelElement = <text className='xAxis label' textAnchor='middle' x={width/2} y={labelOffset} >{label}</text>;
+        let { transform, label, padding, renderScale } = this.props,
+            axisLabel = renderScale ? {offset: padding[2] - 10, label} : {offset: 15, label: label.substr(0, label.indexOf(' '))},
+            labelElement = this.getLabelElement(axisLabel);
         return (
             <g ref='xAxis' className="x axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
