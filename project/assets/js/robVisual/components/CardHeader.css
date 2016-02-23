@@ -1,0 +1,28 @@
+.cardTitle span {
+    color: #0088cc;
+    cursor: pointer;
+}
+
+.cardTitle span:hover {
+    text-decoration: underline;
+}
+
+.cardCitation {
+    margin-bottom: 12px;
+}
+
+.score {
+    padding: 10px;
+    border: 2px rgb(128, 128, 128) solid;
+}
+.score.high {
+    background-color: rgb(0, 204, 0);
+}
+
+.score.medium {
+    background-color: rgb(111, 255, 0);
+}
+
+.score.low {
+    background-color: rgb(255, 204, 0);
+}

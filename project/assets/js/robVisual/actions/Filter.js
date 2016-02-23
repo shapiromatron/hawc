@@ -110,7 +110,7 @@ export function fetchEndpoints(ids){
             .then((response) => {
                 if (response.ok){
                     response.json()
-                        .then((json) => dispatch(receiveEndpoints(json)))
+                        .then((json) => dispatch(receiveEndpoints(json)));
                 } else {
                     response.json()
                         .then((json) => dispatch(receiveError(h.formatErrors(json.detail))));

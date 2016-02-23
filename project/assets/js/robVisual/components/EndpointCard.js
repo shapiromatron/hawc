@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
+import CardHeader from './CardHeader';
 import DoseResponseChart from './Graph/DoseResponseChart';
 import Content from './Content';
 import Endpoint from 'Endpoint';
@@ -25,14 +26,14 @@ class EndpointCard extends Component {
         let height = 150,
             width = 300,
             radius = 130,
-            padding = [20, 0, 30, 55],
+            padding = [20, 0, 45, 55],
             yTransform = [padding[3], 0],
             xTransform = [0, height - padding[2]];
         return {height, width, padding, yTransform, xTransform, radius};
     }
 
     render(){
-        let { endpoint } = this.props,
+        let { endpoint, study } = this.props,
             doses = this.groupByDoseUnit(),
             responses =  _.map(endpoint.groups, (group) => {
                 return {response: group.response, significant: group.significant, unit: endpoint.response_units};
@@ -40,7 +41,7 @@ class EndpointCard extends Component {
             chartData = this.getChartData();
         return (
             <div className='endpointCard'>
-                <h4 className='cardTitle'><a href={endpoint.url}>{endpoint.name}</a></h4>
+                <CardHeader endpoint={endpoint} study={study} showModal={this.showModal.bind(this)} />
                 <DoseResponseChart className="doseResponseChart"
                     endpoint={endpoint}
                     doses={doses[0]}
@@ -48,7 +49,6 @@ class EndpointCard extends Component {
                     chartData={chartData}
                 />
                 <Content endpoint={endpoint} />
-                <button type='button' className='btn btn-default' id={endpoint.id} onClick={this.showModal}>Show endpoint details</button>
             </div>
         );
     }

@@ -17,10 +17,10 @@ class EndpointCardContainer extends Component {
     }
 
     render(){
-        let { endpoints } = this.props;
+        let { endpoints, studies } = this.props;
         return (
             <div className='endpointCardContainer'>
-                {_.map(endpoints, (ep, i) => { return <EndpointCard key={i} endpoint={ep}/>; })}
+                {_.map(endpoints, (ep, i) => { return <EndpointCard key={i} study={_.findWhere(studies, {id: ep.animal_group.experiment.study.id})} endpoint={ep}/>; })}
             </div>
         );
     }
@@ -30,6 +30,7 @@ function mapStateToProps(state){
     return {
         endpoints: state.filter.endpoints,
         endpointsLoaded: state.filter.endpointsLoaded,
+        studies: state.filter.robScores,
     };
 }
 
