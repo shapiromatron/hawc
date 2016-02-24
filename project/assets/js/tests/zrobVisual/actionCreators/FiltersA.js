@@ -102,10 +102,20 @@ describe('robVisual Filter actions', () => {
 
         it('should load endpoints', (done) => {
             nock('http://127.0.0.1:9000')
-                .get('/ani/api/endpoint/rob_filter/?assessment_id=126')
+                .get('/ani/api/endpoint/rob_filter/?assessment_id=126&study_id[]=8199,8200&effect[]=general%20behavior')
                 .reply(200, [
                     {
                         id: 8199,
+                        assessment: 126,
+                        effects: [
+                            {
+                                slug: 'general-behavior',
+                                name: 'general behavior',
+                            },
+                        ],
+                    },
+                    {
+                        id: 8200,
                         assessment: 126,
                         effects: [
                             {
@@ -129,6 +139,16 @@ describe('robVisual Filter actions', () => {
                             },
                         ],
                     },
+                    {
+                        id: 8200,
+                        assessment: 126,
+                        effects: [
+                            {
+                                slug: 'general-behavior',
+                                name: 'general behavior',
+                            },
+                        ],
+                    },
                 ]},
             ];
 
@@ -137,10 +157,10 @@ describe('robVisual Filter actions', () => {
                     apiUrl: 'http://127.0.0.1:9000',
                     endpoint_filter_url: '/ani/api/endpoint/rob_filter/?assessment_id=126',
                 },
-                filter: { selectedEffects: null },
+                filter: { selectedEffects: ['general behavior'] },
             }, expectedActions, done);
 
-            store.dispatch(filterActions.fetchEndpoints());
+            store.dispatch(filterActions.fetchEndpoints([8199, 8200]));
         });
     });
 

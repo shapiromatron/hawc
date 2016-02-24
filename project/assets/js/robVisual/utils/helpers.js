@@ -87,9 +87,9 @@ var helpers = {
         return `${apiUrl}${route}`;
     },
     getEndpointsUrl(config, study_id=[], effect=[]){
-        let effects = _.map(effect, (e) => { return `&effect[]=${e}`; }).join('').replace(' ', '+'),
-            study_ids = _.map(study_id, (id) => { return `&study_id[]=${id}`; }).join('');
-        return `${config.apiUrl}${config.endpoint_filter_url}${study_ids}${effects}`;
+        let effects = effect.join(','),
+            study_ids = study_id.join(',');
+        return `${config.apiUrl}${config.endpoint_filter_url}&study_id[]=${study_ids}&effect[]=${effects}`;
     },
     errorDict: {
         endpoints: 'Filtering results contain more than 100 endpoints. Increase the quality threshold or include fewer effects.',

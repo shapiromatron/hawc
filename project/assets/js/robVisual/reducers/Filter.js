@@ -2,7 +2,7 @@ import * as types from '../constants/ActionTypes';
 
 let defaultState = {
     robScoreThreshold: null,
-    selectedEffects: null,
+    selectedEffects: [],
     endpoints: [],
     isFetchingEndpoints: false,
     endpointsLoaded: false,

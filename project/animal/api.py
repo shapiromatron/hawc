@@ -56,13 +56,13 @@ class Endpoint(AssessmentViewset):
         assessment_id = int(params.get('assessment_id', -1))
         query = Q(assessment_id=assessment_id)
 
-        effects = params.getlist('effect[]')
+        effects = params.get('effect[]')
         if effects:
-            query &= Q(effect__in=effects)
+            query &= Q(effect__in=effects.split(','))
 
-        study_ids = params.getlist('study_id[]')
+        study_ids = params.get('study_id[]')
         if study_ids:
-            query &= Q(animal_group__experiment__study__in=study_ids)
+            query &= Q(animal_group__experiment__study__in=study_ids.split(','))
 
         qs = models.Endpoint.objects.filter(query)
 
