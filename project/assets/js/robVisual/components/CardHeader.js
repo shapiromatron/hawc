@@ -14,7 +14,7 @@ class CardHeader extends Component {
         }
     }
     render() {
-        let { endpoint, showModal, study } = this.props,
+        let { endpoint, showModal, study, citation } = this.props,
             score = study.qualities__score__sum,
             quality = this.getScoreQuality(score);
         return (
@@ -24,7 +24,7 @@ class CardHeader extends Component {
                         {endpoint.name}
                     </span>
                     <span id={endpoint.id} onClick={showModal} className='cardCitation pull-right'>
-                        {`[${endpoint.animal_group.experiment.study.short_citation}]`}
+                        {`[${citation}]`}
                     </span>
                 </h4>
                 <span className={`score ${quality}`}><b>

@@ -68,12 +68,23 @@ class EndpointCard extends Component {
     render() {
         let { endpoint, study } = this.props,
             { doses, responses } = this.filterNullData(),
-            dataNull = (_.isEmpty(doses) || _.isEmpty(responses));
+            dataNull = (_.isEmpty(doses) || _.isEmpty(responses)),
+            content_types = [
+                'results_notes',
+                'system',
+                'organ',
+                'effect',
+                'effect_subtype',
+            ];
         return (
             <div className='endpointCard'>
-                <CardHeader endpoint={endpoint} study={study} showModal={this.showModal.bind(this)} />
+                <CardHeader
+                    endpoint={endpoint}
+                    study={study}
+                    citation={endpoint.animal_group.experiment.study.short_citation}
+                    showModal={this.showModal.bind(this)} />
                 {dataNull ? this.renderNullData() : this.renderChart(doses, responses)}
-                <Content endpoint={endpoint} />
+                <Content data={endpoint} content_types={content_types}/>
             </div>
         );
     }

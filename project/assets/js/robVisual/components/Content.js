@@ -9,20 +9,15 @@ import './Content.css';
 class Content extends Component {
 
     componentWillMount() {
-        this.setState({ content_types: [
-            'results_notes',
-            'system',
-            'organ',
-            'effect',
-            'effect_subtype',
-        ]});
+        let { content_types } = this.props;
+        this.setState({content_types});
     }
 
 
     render() {
-        let { endpoint } = this.props,
+        let { data } = this.props,
             content = _.map(this.state.content_types, (type) => {
-                return endpoint[type] ? <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {endpoint[type]}</p> : null;
+                return data[type] ? <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {data[type]}</p> : null;
             });
         return (
             <div className='extraContent'>
@@ -33,7 +28,7 @@ class Content extends Component {
 }
 
 Content.propTypes = {
-    endpoint: PropTypes.shape({
+    data: PropTypes.shape({
         results_notes: PropTypes.string,
         system: PropTypes.string,
         organ: PropTypes.string,
