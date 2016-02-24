@@ -20,12 +20,13 @@ class Content extends Component {
 
 
     render() {
-        let { endpoint } = this.props;
+        let { endpoint } = this.props,
+            content = _.map(this.state.content_types, (type) => {
+                return endpoint[type] ? <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {endpoint[type]}</p> : null;
+            });
         return (
             <div className='extraContent'>
-                {_.map(this.state.content_types, (type) => {
-                    return endpoint[type] ? <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {endpoint[type]}</p> : null;
-                })}
+                {content}
             </div>
         );
     }
