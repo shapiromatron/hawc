@@ -5,3 +5,8 @@
 .endpointCard:hover {
     background-color: #e3e3e3;
 }
+
+.nullNotification {
+    margin: 40px 0;
+    color: #990000;
+}

@@ -12,17 +12,31 @@ class EndpointCard extends Component {
     groupByDoseUnit() {
         let doses = this.props.endpoint.animal_group.dosing_regime.doses;
         return _.chain(doses)
-            .map((dose) => { return {unit: dose.dose_units.name, dose:dose.dose}; })
+            .map((dose) => { return {unit: dose.dose_units.name, dose:dose.dose, id: dose.dose_group_id}; })
             .groupBy('unit')
             .toArray()
             .value();
     }
 
-    showModal(e){
+    filterNullData() {
+        let { endpoint } = this.props,
+            responses =  _.filter(_.map(endpoint.groups, (group) => {
+                return {response: group.response, significant: group.significant, unit: endpoint.response_units, id: group.dose_group_id};
+            }), (response) => { return response.response !== null; }),
+            ids = _.pluck(responses, 'id'),
+            doses = _.map(this.groupByDoseUnit(), (doseGroup) => {
+                return _.filter(doseGroup, (dose) => {
+                    return _.contains(ids, dose.id);
+                });
+            });
+        return { doses, responses };
+    }
+
+    showModal(e) {
         Endpoint.displayAsModal(e.target.id);
     }
 
-    getChartData(){
+    getChartData() {
         let height = 150,
             width = 300,
             radius = 130,
@@ -32,22 +46,33 @@ class EndpointCard extends Component {
         return {height, width, padding, yTransform, xTransform, radius};
     }
 
-    render(){
-        let { endpoint, study } = this.props,
-            doses = this.groupByDoseUnit(),
-            responses =  _.map(endpoint.groups, (group) => {
-                return {response: group.response, significant: group.significant, unit: endpoint.response_units};
-            }),
+    renderNullData() {
+        return (
+            <h4 className='nullNotification'>Endpoint contains empty data.</h4>
+        );
+    }
+
+    renderChart(doses, responses){
+        let { endpoint } = this.props,
             chartData = this.getChartData();
+        return (
+            <DoseResponseChart className="doseResponseChart"
+                endpoint={endpoint}
+                doses={doses[0]}
+                responses={responses}
+                chartData={chartData}
+            />
+        );
+    }
+
+    render() {
+        let { endpoint, study } = this.props,
+            { doses, responses } = this.filterNullData(),
+            dataNull = (_.isEmpty(doses) || _.isEmpty(responses));
         return (
             <div className='endpointCard'>
                 <CardHeader endpoint={endpoint} study={study} showModal={this.showModal.bind(this)} />
-                <DoseResponseChart className="doseResponseChart"
-                    endpoint={endpoint}
-                    doses={doses[0]}
-                    responses={responses}
-                    chartData={chartData}
-                />
+                {dataNull ? this.renderNullData() : this.renderChart(doses, responses)}
                 <Content endpoint={endpoint} />
             </div>
         );
