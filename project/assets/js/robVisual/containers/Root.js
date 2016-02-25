@@ -18,7 +18,7 @@ class Root extends Component {
         return (
             <Provider store={store}>
                 <div>
-                    <h1>Risk of bias filtering</h1>
+                    <h1>Bias filtering on effect curves</h1>
                     <EffectSelector />
                     <ScoreSlider />
                     <ApplyFilters />

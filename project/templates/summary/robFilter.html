@@ -7,7 +7,7 @@
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
     <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
-  <li class="active">ROB filter link<span class="divider">/</span></li>
+  <li class="active">Bias filtering<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
@@ -27,4 +27,3 @@
 {% render_bundle 'main' %}
 
 {% endblock extrajs %}
-
