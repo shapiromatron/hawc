@@ -3,7 +3,6 @@ var path = require('path'),
     BundleTracker = require('webpack-bundle-tracker');
 
 
-
 module.exports = {
 
     context: __dirname,

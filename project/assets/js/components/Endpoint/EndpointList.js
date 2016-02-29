@@ -1,15 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import BulkList from 'components/Endpoint/BulkList';
-import Header from 'components/Endpoint/Header';
 
-export default class EndpointList extends Component {
+import BulkList from './BulkList';
+import Header from './Header';
+
+
+class EndpointList extends Component {
 
     render() {
-        const { endpoint, params } = this.props;
+        const { params } = this.props;
         return (
             <div className='endpoint_list'>
                 <Header params={params} />
-                <BulkList endpoint={endpoint} />
+                <BulkList {...this.props} />
             </div>
         );
     }
@@ -17,8 +19,6 @@ export default class EndpointList extends Component {
 
 EndpointList.propTypes = {
     endpoint: PropTypes.shape({
-        type: PropTypes.string,
-        field: PropTypes.string.required,
         items: PropTypes.arrayOf(
             PropTypes.shape({
                 id: PropTypes.number.isRequired,
@@ -27,3 +27,5 @@ EndpointList.propTypes = {
         ),
     }),
 };
+
+export default EndpointList;

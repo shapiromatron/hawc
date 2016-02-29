@@ -16,6 +16,7 @@ from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from utils.models import get_distinct_charfield_opts
 
 
 class Experiment(models.Model):
@@ -917,23 +918,15 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_system_choices(cls, assessment_id):
-        objs = cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('system')\
-                  .values_list('system', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'system')
 
     @classmethod
     def get_organ_choices(cls, assessment_id):
-        objs = cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('organ')\
-                  .values_list('organ', flat=True)
-        return [(obj, obj) for obj in sorted(objs)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'organ')
 
     @classmethod
     def get_effect_choices(cls, assessment_id):
-        return [(obj, obj) for obj in cls.get_effects(assessment_id)]
+        return get_distinct_charfield_opts(cls, assessment_id, 'effect')
 
     @classmethod
     def get_effects(cls, assessment_id):
@@ -1084,15 +1077,15 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
     def getNRangeText(ns):
         """
         Given a list of N values, return textual range of N values in the list.
-        For example, may return "10-12", "7", or "N not-reported".
+        For example, may return "10-12", "7", or "NR".
         """
         if len(ns) == 0:
-            return u"N not-reported"
+            return u"NR"
         nmin = min(ns)
         nmax = max(ns)
         if nmin == nmax:
             if nmin is None:
-                return u"N not-reported"
+                return u"NR"
             else:
                 return unicode(nmin)
         else:

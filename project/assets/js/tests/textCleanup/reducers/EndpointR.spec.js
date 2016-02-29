@@ -28,44 +28,6 @@ describe('textCleanup Endpoint reducer', () => {
         });
     });
 
-    it('should handle setting the Endpoint field', () => {
-        expect(endpointReducer({
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
-            field: null,
-        }, {
-            type: types.EP_SET_FIELD,
-            field: 'system',
-        })).to.deep.equal({
-            model: [
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ],
-            field: 'system',
-        });
-    });
-
-    it('should handle setting the Endpoint type', () => {
-        expect(endpointReducer({
-            isFetching: true,
-            type: null,
-        }, {
-            type: types.EP_SET_TYPE,
-            endpoint_type: 'ani',
-
-        })).to.deep.equal({
-            isFetching: false,
-            type: 'ani',
-            items: [],
-        });
-    });
-
     it('should create an edit object', () => {
         expect(endpointReducer({
             model: [
@@ -74,8 +36,6 @@ describe('textCleanup Endpoint reducer', () => {
                 'effect',
                 'effect_subtype',
             ],
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10210,
@@ -83,7 +43,8 @@ describe('textCleanup Endpoint reducer', () => {
                     'system': 'digestive system',
                 },
             ],
-            editObject: null,
+            editObject: {},
+            editObjectErrors: {},
         }, {
             type: types.EP_CREATE_EDIT_OBJECT,
             object: {
@@ -98,8 +59,6 @@ describe('textCleanup Endpoint reducer', () => {
                 'effect',
                 'effect_subtype',
             ],
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10210,
@@ -120,6 +79,14 @@ describe('textCleanup Endpoint reducer', () => {
 
     it('should be able to patch multiple objects', () => {
         expect(endpointReducer({
+            itemsLoaded: true,
+            isFetching: false,
+            model: [
+                'system',
+                'organ',
+                'effect',
+                'effect_subtype',
+            ],
             items: [
                 {
                     'id': 10210,
@@ -129,16 +96,24 @@ describe('textCleanup Endpoint reducer', () => {
                 {
                     'id': 10212,
                     'name': 'gross body weight (start of experiment)',
-                    'system': 'systemic',
+                    'system': 'digestive system',
                 },
             ],
             editObject: {'system': 'Digestive Systems'},
             editObjectErrors: {},
         }, {
             type: types.EP_PATCH_OBJECTS,
-            ids: [10210, 10212],
-            patch: {'system': 'Digestive Systems'},
+            patch: {'system': 'Digestive Systems', ids: [10210, 10212]},
         })).to.deep.equal({
+
+            itemsLoaded: true,
+            isFetching: false,
+            model: [
+                'system',
+                'organ',
+                'effect',
+                'effect_subtype',
+            ],
             items: [
                 {
                     'id': 10210,
@@ -159,8 +134,6 @@ describe('textCleanup Endpoint reducer', () => {
     it('should handle deleting an object', () => {
 
         expect(endpointReducer({
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10210,
@@ -180,8 +153,6 @@ describe('textCleanup Endpoint reducer', () => {
             id: 10210,
         })).to.deep.equal({
             isFetching: false,
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10212,
@@ -204,8 +175,6 @@ describe('textCleanup Endpoint reducer', () => {
                 'effect',
                 'effect_subtype',
             ],
-            type: 'ani',
-            field: 'system',
             items: [
                 {
                     'id': 10210,
@@ -226,8 +195,6 @@ describe('textCleanup Endpoint reducer', () => {
             itemsLoaded: false,
             isFetching: false,
             model: null,
-            type: null,
-            field: null,
             items: [],
             editObject: {},
             editObjectErrors: {},

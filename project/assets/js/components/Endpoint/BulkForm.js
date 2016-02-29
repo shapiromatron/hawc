@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 
-import DetailList from 'components/Endpoint/DetailList';
-import h from 'utils/helpers';
 import FormFieldError from 'components/FormFieldError';
-import Endpoint from 'Endpoint';
-import Outcome from 'Outcome';
+import h from 'utils/helpers';
+
+import DetailList from './DetailList';
+import './BulkForm.css';
 
 
-export default class BulkForm extends Component {
+class BulkForm extends Component {
 
     constructor(props) {
         super(props);
@@ -20,11 +20,21 @@ export default class BulkForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        if (this.state.showDetails){
-            this.props.handleDetailSubmit(Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {ids: this.state.detailIDs}));
+        let stale = this.props.items[0][this.state.field],
+            { ids, detailIDs, showDetails } = this.state;
+        // if detail edit and all checkboxes are not checked
+        if (showDetails && detailIDs && detailIDs.length !== ids.length){
+            this.props.handleDetailSubmit(Object.assign(
+                {},
+                _.omit(this.state, ['detailIDs', 'showDetails']),
+                { ids: detailIDs, stale }));
         } else {
-            this.props.handleBulkSubmit(this.state);
+            this.props.handleBulkSubmit(Object.assign(
+                {},
+                _.omit(this.state, 'detailIDs'),
+                { stale }));
         }
+        this.setState({ detailIDs: []});
     }
 
     handleChange(e) {
@@ -35,7 +45,7 @@ export default class BulkForm extends Component {
 
     handleCheckAll(e) {
         if (e.target.checked) {
-            this.setState({ detailIDs: this.state.ids});
+            this.setState({ detailIDs: this.props.object.ids});
         } else {
             this.setState({ detailIDs: []});
         }
@@ -62,14 +72,23 @@ export default class BulkForm extends Component {
 
     render() {
         let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
-            editButtonText = this.state.showDetails ? 'Submit Selected Endpoints' : 'Submit Bulk Edit';
+            detailShow = this.state.showDetails?
+                'fa-minus-square':
+                'fa-plus-square',
+            editButtonText = this.state.showDetails?
+                'Submit selected endpoints':
+                'Submit bulk edit';
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
-                    <span className='bulk-element field span4' onClick={this._toggleDetails.bind(this)}>
-                        <i className={`fa ${detailShow}`}></i>
-                        {field || `N/A`} ({items.length})
+                    <span className='bulk-element field span4'>
+                        <button type='button'
+                            title='Show/hide all endpoints'
+                            className='btn btn-inverse btn-mini'
+                            onClick={this._toggleDetails.bind(this)}>
+                            <i className={`fa ${detailShow}`}></i>
+                        </button>
+                        &nbsp;{field || `N/A`} ({items.length})
                     </span>
                     <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
                         <input name={field} className='form-control' type="text"
@@ -78,7 +97,8 @@ export default class BulkForm extends Component {
                         <FormFieldError errors={errors.name} />
 
                     </span>
-                    <span className='bulk-element button span'><button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
+                    <span className='bulk-element button span'>
+                        <button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
                 <div>{this.state.showDetails ?
                         <DetailList
@@ -103,3 +123,5 @@ BulkForm.propTypes = {
     params: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
 };
+
+export default BulkForm;

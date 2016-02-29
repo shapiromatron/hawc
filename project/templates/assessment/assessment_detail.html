@@ -19,7 +19,7 @@
           <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
           <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
           <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
-          <li><a href="{% url 'assessment:endpoint_cleanup_list' object.pk %}">Clean Endpoint Fields</a></li>
+          <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
           <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
           <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
           <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>

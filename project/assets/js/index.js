@@ -4,8 +4,8 @@ import { render } from 'react-dom';
 import Root from 'containers/Root';
 import configureStore from 'store/configureStore';
 
-import RobRoot from './robVisual/containers/Root';
-import configureRobStore from './robVisual/store/configureStore';
+import RobRoot from 'robVisual/containers/Root';
+import configureRobStore from 'robVisual/store/configureStore';
 
 
 if (document.getElementById('root')){

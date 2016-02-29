@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { fetchModelIfNeeded } from 'actions/Endpoint';
 import FieldList from 'components/FieldList';
 import Loading from 'components/Loading';
 import urls from 'constants/urls';
 import h from 'utils/helpers';
 
-import { setType, fetchModelIfNeeded } from 'actions/Endpoint';
 
 class FieldSelection extends Component {
 
     componentWillMount() {
-        const { dispatch, params } = this.props;
-        dispatch(setType(params.type));
-        dispatch(fetchModelIfNeeded());
+        this.props.dispatch(fetchModelIfNeeded());
     }
 
     render() {

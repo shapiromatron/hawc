@@ -17,6 +17,7 @@ export const EP_RECEIVE_MODEL =         'EP_RECEIVE_MODEL';
 export const EP_SET_FIELD =             'EP_SET_FIELD';
 export const EP_DELETE_OBJECT =         'EP_DELETE_OBJECT';
 export const EP_RESET_EDIT_OBJECT =     'EP_RESET_EDIT_OBJECT';
+export const EP_REMOVE_EDIT_OBJECT_IDS = 'EP_REMOVE_EDIT_OBJECT_IDS';
 export const EP_CREATE_EDIT_OBJECT =    'EP_CREATE_EDIT_OBJECT';
 export const EP_PATCH_OBJECTS =         'EP_PATCH_OBJECTS';
 export const EP_RECEIVE_EDIT_ERRORS =   'EP_RECEIVE_EDIT_ERRORS';

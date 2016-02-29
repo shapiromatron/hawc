@@ -114,7 +114,7 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DJANGO_DB_NAME', 'hawc'),
+        'NAME': os.getenv('DJANGO_DB_NAME'),
         'USER': os.getenv('DJANGO_DB_USER'),
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
         'HOST': '',
@@ -169,20 +169,17 @@ LOGIN_REDIRECT_URL = reverse_lazy('portal')
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT')
-
+STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'dist'),
-)
-
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
+
 
 # Filesystem settings
 TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
@@ -301,7 +298,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
+        'BUNDLE_DIR_NAME': 'bundles/',
         'STATS_FILE': os.path.join(PROJECT_PATH, 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'IGNORE': ['.+/.map']

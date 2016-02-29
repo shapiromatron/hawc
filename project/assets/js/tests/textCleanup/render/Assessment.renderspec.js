@@ -1,8 +1,11 @@
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import Assessment from 'components/Assessment';
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
+
+import Assessment from 'components/Assessment';
+import { HOST } from 'tests/constants';
+
 
 const expect = unexpected.clone().use(unexpectedReact);
 
@@ -16,13 +19,13 @@ describe('textCleanup Assessment component', () => {
                     'count': 334,
                     'type': 'epi',
                     'title': 'epidemiological outcomes assessed',
-                    'url': 'http://127.0.0.1:8000/epi/api/cleanup/?assessment_id=57',
+                    'url': `${HOST}/epi/api/cleanup/?assessment_id=57`,
                 },
                 {
                     'count': 1,
                     'title': 'in vitro endpoints',
                     'type': 'iv',
-                    'url': 'http://127.0.0.1:9000/in-vitro/api/cleanup/?assessment_id=57',
+                    'url': `${HOST}/in-vitro/api/cleanup/?assessment_id=57`,
                 },
             ],
             name: 'test assessment',
@@ -38,11 +41,11 @@ describe('textCleanup Assessment component', () => {
     });
 
     it('should have a list title', () => {
-        expect(output.props.children[0].props.children.join(''), 'to equal', 'test assessment Results for Cleanup');
+        expect(output.props.children[0].props.children.join(''), 'to equal', 'Cleanup test assessment');
     });
 
     it('should render two endpoint types', () => {
-        expect(output.props.children[1].props.children.length, 'to equal', 2);
+        expect(output.props.children[0].props.children.length, 'to equal', 2);
     });
 
 });

@@ -5,10 +5,9 @@ var config = require('./webpack.base.js'),
 
 config.devtool = 'source-map';
 
-config.entry =  ['./assets/js/index'];
+config.output.path = path.resolve('./static/bundles');
 
-config.output.publicPath = '/static/';
-config.plugins.unshift([
+config.plugins.unshift.apply(config.plugins, [
     new webpack.DefinePlugin({
         'process.env': {
             'NODE_ENV': JSON.stringify('production'),
@@ -20,6 +19,7 @@ config.plugins.unshift([
         },
     }),
 ]);
+
 config.module = {
     loaders: [{
         test: /\.js$/,

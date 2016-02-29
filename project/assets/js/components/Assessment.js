@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
-export default class Assessment extends Component{
+
+class Assessment extends Component{
     renderEndpointType(item){
         if(item.count == 0){
             return null;
@@ -24,7 +25,13 @@ export default class Assessment extends Component{
         }
         return (
             <div className='assessment'>
-                <h2 className='assessment_title'>{name} Results for Cleanup</h2>
+                <h2 className='assessment_title'>Cleanup {name}</h2>
+                <p className='help-block'>
+                    After data has been initially extracted, this module can be
+                    used to update and standardize text which was used during
+                    data extraction.
+                </p>
+                <b>To begin, select a data-type to cleanup</b>
                 <ul>
                     {items.map(this.renderEndpointType)}
                 </ul>
@@ -44,3 +51,5 @@ Assessment.propTypes = {
         })).isRequired,
     }).isRequired,
 };
+
+export default Assessment;

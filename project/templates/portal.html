@@ -34,9 +34,9 @@
       {% include "assessment/sidebar.html" %}
     </div>
 
-    <div id="sidebar_mini no-print"
+    <div id="sidebar_mini"
          style="margin-left: 0%; max-width: 10px; {% if not request.session.hideSidebar %}display:none;{% endif %}">
-      <a href="#" class="toggle_sidebar" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
+      <a href="#" class="toggle_sidebar no-print" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
     </div>
 
     <div id="content"

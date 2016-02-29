@@ -1,37 +1,35 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Loading from 'components/Loading';
-import FormComponent from 'components/Endpoint/BulkForm';
-import 'containers/Endpoint/EndpointBulkForm.css';
-
 import {
     initializeBulkEditForm,
     patchBulkList,
     patchDetailList,
 } from 'actions/Endpoint';
+import Loading from 'components/Loading';
+import FormComponent from 'components/Endpoint/BulkForm';
 
-export default class BulkForm extends Component {
+
+class BulkForm extends Component {
 
     componentWillMount() {
-        let ids = this.getIDs();
-        this.props.dispatch(initializeBulkEditForm(ids, this.props.field));
+        this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
     }
 
-    getIDs(){
-        return _.pluck(this.props.items, 'id');
+    getIDs(props) {
+        return _.pluck(props.items, 'id');
     }
 
     handleBulkSubmit(obj) {
-        this.props.dispatch(patchBulkList([obj]));
+        this.props.dispatch(patchBulkList(obj));
     }
 
-    handleDetailSubmit(obj){
-        this.props.dispatch(patchDetailList([obj]));
+    handleDetailSubmit(obj) {
+        this.props.dispatch(patchDetailList(obj));
     }
 
     isReadyToRender(thisField){
-        let ids = this.getIDs(),
+        let ids = this.getIDs(this.props),
             { field, model } = this.props;
 
         if (ids && model.editObject == null ||

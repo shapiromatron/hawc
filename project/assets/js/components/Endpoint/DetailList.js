@@ -3,7 +3,8 @@ import _ from 'underscore';
 
 import h from 'utils/helpers';
 
-export default class DetailList extends Component {
+
+class DetailList extends Component {
 
     renderItem(item){
         let fields = _.keys(_.omit(item, ['id', 'ids', 'field', 'showDetails'])),
@@ -17,7 +18,12 @@ export default class DetailList extends Component {
                         </span>
                     );
                 })}
-                <span className='detail-item'><input type="checkbox" checked={checked} id={item.id} onClick={this.props.onDetailChange}/></span>
+                <span className='detail-item'>
+                <input type="checkbox"
+                       title="Include/exclude selected object in change"
+                       checked={checked}
+                       id={item.id}
+                       onChange={this.props.onDetailChange}/></span>
             </div>
         );
     }
@@ -32,7 +38,12 @@ export default class DetailList extends Component {
                     {_.map(fields, (field) => {
                         return <h5 key={field} className='header-field'>{h.caseToWords(field)}</h5>;
                     })}
-                    <h5 className="header-field"><input type="checkbox" id='all' checked={allChecked} onClick={this.props.onDetailChange}/></h5>
+                    <h5 className="header-field" style={{width: '90px'}}>Select all
+                        <br/>
+                        <input type="checkbox" id='all'
+                            checked={allChecked}
+                            onChange={this.props.onDetailChange}/>
+                    </h5>
                 </div>
                 {_.map(_.sortBy(items, 'name'), this.renderItem.bind(this))}
             </div>
@@ -46,3 +57,5 @@ DetailList.propTypes = {
     showModal: PropTypes.func.isRequired,
     checkedRows: PropTypes.array,
 };
+
+export default DetailList;

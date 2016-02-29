@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
 import { ReduxRouter } from 'redux-router';
+
 import { loadConfig } from 'actions/Config';
 
-export default class Root extends Component {
+
+class Root extends Component {
     componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
@@ -12,7 +14,7 @@ export default class Root extends Component {
         const { store } = this.props;
         return (
             <Provider store={store}>
-                    <ReduxRouter />
+                <ReduxRouter />
             </Provider>
         );
     }
@@ -21,3 +23,5 @@ export default class Root extends Component {
 Root.propTypes = {
     store: PropTypes.object.isRequired,
 };
+
+export default Root;

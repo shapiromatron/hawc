@@ -1,9 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 
-import h from 'utils/helpers';
 import BulkForm from 'containers/Endpoint/BulkForm';
+import h from 'utils/helpers';
 
-export default class BulkList extends Component {
+import './BulkList.css';
+
+
+class BulkList extends Component {
 
     constructor(props) {
         super(props);
@@ -24,8 +27,7 @@ export default class BulkList extends Component {
 
 
     // Groups endpoints by the field to be edited.
-    groupEndpoints(endpoint){
-        let field = endpoint.field;
+    groupEndpoints(endpoint, field){
         return _.sortBy(_.groupBy(endpoint.items, (endpoint) => {
             return endpoint[field];
         }), (endpoint) => {
@@ -34,15 +36,15 @@ export default class BulkList extends Component {
     }
 
     render() {
-        let { endpoint } = this.props,
-            field = endpoint.field,
-            groupedEndpoints = this.groupEndpoints(endpoint);
+        let { endpoint, params } = this.props,
+            field = params.field,
+            groupedEndpoints = this.groupEndpoints(endpoint, field);
         return (
             <div className='container-fluid'>
                 <div className='row'>
-                    <span className='bulk-header span4'>{h.caseToWords(endpoint.field)}</span>
-                    <span className='bulk-header span5'>{h.caseToWords(endpoint.field)} Edit</span>
-                    <span className='bulk-header span2'>Submit Edit</span>
+                    <span className='bulk-header span4'>{h.caseToWords(field)}</span>
+                    <span className='bulk-header span5'>{h.caseToWords(field)} edit</span>
+                    <span className='bulk-header span2'>Submit</span>
                 </div>
 
                     {_.map(groupedEndpoints, (endpoints) => {
@@ -58,8 +60,6 @@ export default class BulkList extends Component {
 
 BulkList.propTypes = {
     endpoint: PropTypes.shape({
-        type: PropTypes.string,
-        field: PropTypes.string.required,
         items: PropTypes.arrayOf(
             PropTypes.shape({
                 id: PropTypes.number.isRequired,
@@ -67,4 +67,11 @@ BulkList.propTypes = {
             }).isRequired
         ),
     }),
+    params: PropTypes.shape({
+        type: PropTypes.string,
+        field: PropTypes.string,
+        id: PropTypes.string,
+    }),
 };
+
+export default BulkList;
