@@ -41,7 +41,7 @@ export function fetchEffects(){
         let state = getState();
         if (state.isFetchingEffects) return;
         dispatch(requestEffects());
-        return fetch(h.getTestUrl(state.config.apiUrl, state.config.endpoint_effect_url), h.fetchGet)
+        return fetch(h.getTestUrl(state.config.host, state.config.endpoint_effect_url), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveEffects(json)))
             .catch((ex) => console.error('Effect parsing failed', ex));
@@ -73,7 +73,7 @@ export function fetchRobScores(){
         let state = getState();
         if (state.isFetchingRobScores) return;
         dispatch(requestRobScores());
-        return fetch(h.getTestUrl(state.config.apiUrl, state.config.study_score_url), h.fetchGet)
+        return fetch(h.getTestUrl(state.config.host, state.config.study_score_url), h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveRobScores(json)))
             .catch((ex) => console.error('Effect parsing failed', ex));

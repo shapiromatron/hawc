@@ -83,13 +83,13 @@ var helpers = {
         if (errors && errors[name]) extra.push('has-error');
         return extra.join(' ');
     },
-    getTestUrl(apiUrl, route){
-        return `${apiUrl}${route}`;
+    getTestUrl(host, route){
+        return `${host}${route}`;
     },
     getEndpointsUrl(config, study_id=[], effect=[]){
         let effects = effect.join(','),
             study_ids = study_id.join(',');
-        return `${config.apiUrl}${config.endpoint_filter_url}&study_id[]=${study_ids}&effect[]=${effects}`;
+        return `${config.host}${config.endpoint_filter_url}&study_id[]=${study_ids}&effect[]=${effects}`;
     },
     errorDict: {
         endpoints: 'Filtering results contain more than 100 endpoints. Increase the quality threshold or include fewer effects.',
