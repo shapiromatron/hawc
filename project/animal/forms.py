@@ -717,7 +717,7 @@ class EndpointFilterForm(forms.Form):
         if tags:
             query &= Q(effects__name__icontains=tags)
         if dose_units:
-            query &= Q(animal_group__dosed_animals__doses__dose_units=dose_units)
+            query &= Q(animal_group__dosing_regime__doses__dose_units=dose_units)
         return query
 
     def get_dose_units_id(self):
