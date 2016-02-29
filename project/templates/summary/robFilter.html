@@ -21,7 +21,7 @@
         "study_score_url": "{% url 'study:api:study-rob-scores' %}?assessment_id={{assessment.id}}",
         "endpoint_effect_url": "{% url 'animal:api:endpoint-effects' %}?assessment_id={{assessment.id}}",
         "endpoint_filter_url": "{% url 'animal:api:endpoint-rob-filter' %}?assessment_id={{assessment.id}}",
-        "csrf": "{% csrf_token %}"
+        "csrf": "{{ csrf_token }}"
     }
 </script>
 {% render_bundle 'main' %}
