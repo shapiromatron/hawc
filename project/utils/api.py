@@ -62,6 +62,10 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateMode
         cleanup_fields = self.model.text_cleanup_fields()
         return Response({'text_cleanup_fields': cleanup_fields})
 
+    def post_save_bulk(self, queryset, update_bulk_dict):
+        ids = list(queryset.values_list('id', flat=True))
+        queryset.model.delete_caches(ids)
+
 
 class DynamicFieldsMixin(object):
     """
