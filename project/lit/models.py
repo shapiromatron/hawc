@@ -564,8 +564,10 @@ class Identifiers(models.Model):
         refs = []
         for ref in references:
             ids = []
-            db = ref['accession_db'].lower()
-            id_ = ref['accession_number']
+
+            db = ref.get('accession_db')
+            if db:
+                db = db.lower()
 
             # Create Endnote identifier
             # create id based on search_id and id from RIS file.
@@ -601,7 +603,7 @@ class Identifiers(models.Model):
                 ids.append(ident)
 
             # create other accession identifiers
-            if ref['accession_db'] is not None and ref['accession_number'] is not None:
+            if db is not None and ref['accession_number'] is not None:
                 db_id = None
                 if db == "wos":
                     db_id = WOS
