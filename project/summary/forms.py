@@ -162,12 +162,17 @@ class PrefilterMixin(object):
         except ValueError:
             prefilters = {}
 
+        if type(self.instance) is models.Visual:
+            evidence_type = 0
+        else:
+            evidence_type = self.instance.evidence_type
+
         for k, v in prefilters.iteritems():
             if k == "system__in":
-                if self.instance.evidence_type == 0:
+                if evidence_type == 0:
                     self.fields["prefilter_system"].initial = True
                     self.fields["systems"].initial = v
-                elif self.instance.evidence_type == 1:
+                elif evidence_type == 1:
                     self.fields["prefilter_episystem"].initial = True
                     self.fields["episystems"].initial = v
 
@@ -176,10 +181,10 @@ class PrefilterMixin(object):
                 self.fields["organs"].initial = v
 
             if k == "effect__in":
-                if self.instance.evidence_type == 0:
+                if evidence_type == 0:
                     self.fields["prefilter_effect"].initial = True
                     self.fields["effects"].initial = v
-                elif self.instance.evidence_type == 1:
+                elif evidence_type == 1:
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
