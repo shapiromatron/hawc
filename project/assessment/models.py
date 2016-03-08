@@ -4,18 +4,18 @@ import os
 from StringIO import StringIO
 
 from django.db import models
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
 from mailmerge import MailMerge
-import reversion
+from reversion import revisions as reversion
 
 from utils.models import get_crumbs
 from utils.helper import HAWCDjangoJSONEncoder
@@ -265,7 +265,7 @@ class Assessment(models.Model):
 class Attachment(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = fields.GenericForeignKey('content_type', 'object_id')
     title = models.CharField(max_length=128)
     attachment = models.FileField(upload_to="attachment")
     publicly_available = models.BooleanField(default=True)
@@ -344,11 +344,11 @@ class DoseUnits(models.Model):
         Returns a list of the dose-units which are used in the selected
         assessment for animal bioassay data.
         """
-        Study = get_model('study', 'Study')
-        Experiment = get_model('animal', 'Experiment')
-        AnimalGroup = get_model('animal', 'AnimalGroup')
-        DosingRegime = get_model('animal', 'DosingRegime')
-        DoseGroup = get_model('animal', 'DoseGroup')
+        Study = apps.get_model('study', 'Study')
+        Experiment = apps.get_model('animal', 'Experiment')
+        AnimalGroup = apps.get_model('animal', 'AnimalGroup')
+        DosingRegime = apps.get_model('animal', 'DosingRegime')
+        DoseGroup = apps.get_model('animal', 'DoseGroup')
         return cls.objects.filter(
             dosegroup__in=DoseGroup.objects.filter(
                 dose_regime__in=DosingRegime.objects.filter(

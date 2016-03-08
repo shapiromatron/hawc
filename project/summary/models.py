@@ -20,7 +20,7 @@ from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
 import invitro.exports as ivexports
 
-import reversion
+from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper

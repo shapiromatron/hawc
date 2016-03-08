@@ -1,4 +1,4 @@
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
@@ -14,16 +14,16 @@ def invalidate_caches_study(sender, instance, **kwargs):
     filters = {}
 
     if instance.study_type == 0:
-        Model = get_model('animal', 'Endpoint')
+        Model = apps.get_model('animal', 'Endpoint')
         filters["animal_group__experiment__study"] = instance.id
     elif instance.study_type == 1:
-        Model = get_model('epi', 'Outcome')
+        Model = apps.get_model('epi', 'Outcome')
         filters["study_population__study"] = instance.id
     elif instance.study_type == 2:
-        Model = get_model('invitro', 'ivendpoint')
+        Model = apps.get_model('invitro', 'ivendpoint')
         filters["experiment__study_id"] = instance.id
     elif instance.study_type == 4:
-        Model = get_model('epimeta', 'MetaResult')
+        Model = apps.get_model('epimeta', 'MetaResult')
         filters["protocol__study"] = instance.id
 
     models.Study.delete_caches([instance.id])
