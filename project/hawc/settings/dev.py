@@ -2,8 +2,6 @@ from .base import *
 
 
 DEBUG = True
-for tmp in TEMPLATES:
-    tmp['OPTIONS']['debug'] = True
 
 SERVER_ROLE = "dev"
 
