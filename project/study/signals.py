@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 from utils.helper import SerializerHelper
 
-from . import models
+import models
 
 
 @receiver(post_save, sender=models.Study)

@@ -1210,3 +1210,5 @@ class Reference(models.Model):
         df.apply(fn, axis=1)
 
         return errors
+
+import signals

@@ -583,3 +583,5 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)
 reversion.register(ReportTemplate)
+
+import signals
