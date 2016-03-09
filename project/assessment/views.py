@@ -2,7 +2,7 @@ import json
 
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Count
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
@@ -332,7 +332,7 @@ class BaseEndpointList(BaseList):
             .filter(assessment_id=self.assessment.id)\
             .count()
 
-        mrs = get_model('epimeta', 'metaresult')\
+        mrs = apps.get_model('epimeta', 'metaresult')\
             .objects\
             .filter(protocol__study__assessment_id=self.assessment.id)\
             .count()

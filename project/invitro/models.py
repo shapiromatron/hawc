@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.core.urlresolvers import reverse
 
-import reversion
+from reversion import revisions as reversion
 
 from assessment.models import BaseEndpoint
 from animal.models import ConfidenceIntervalsMixin
