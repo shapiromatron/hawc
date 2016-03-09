@@ -1294,5 +1294,3 @@ reversion.register(Outcome, follow=('effects',))
 reversion.register(Group, follow=('ethnicities',))
 reversion.register(Result, follow=('adjustment_factors', 'resfactors', 'results'))
 reversion.register(GroupResult)
-
-import signals

@@ -443,5 +443,3 @@ reversion.register(
 reversion.register(
     SingleResult
 )
-
-import signals

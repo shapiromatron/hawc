@@ -478,5 +478,3 @@ reversion.register(Study)
 reversion.register(StudyQualityDomain)
 reversion.register(StudyQualityMetric)
 reversion.register(StudyQuality)
-
-import signals

@@ -512,5 +512,3 @@ reversion.register(IVExperiment)
 reversion.register(IVEndpoint)
 reversion.register(IVEndpointGroup)
 reversion.register(IVBenchmark)
-
-import signals

@@ -1126,5 +1126,3 @@ reversion.register(DosingRegime)
 reversion.register(DoseGroup)
 reversion.register(Endpoint, follow=('groups', ))
 reversion.register(EndpointGroup, follow=('endpoint', ))
-
-import signals
