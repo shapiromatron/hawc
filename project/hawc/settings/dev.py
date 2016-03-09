@@ -11,6 +11,9 @@ STATICFILES_DIRS += (
     os.path.join(PROJECT_ROOT, 'project', 'static'),
 )
 
+# use console for email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # execute celery-tasks locally instead of sending to queue
 CELERY_ALWAYS_EAGER = True
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = True

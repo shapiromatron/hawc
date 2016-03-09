@@ -13,13 +13,6 @@ DATABASES = {
     }
 }
 
-# EMAIL SETTINGS
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'hiking.fan@gmail.com'
-EMAIL_HOST_PASSWORD = 'password'
-EMAIL_USE_TLS = True
-
 # BMD MODELING SETTINGS
 BMD_ROOT_PATH = r'/path/to/bmds'
 BMD_PLOT = r'gnuplot'

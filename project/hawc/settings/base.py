@@ -142,9 +142,6 @@ CACHES = {
 
 
 # Email settings
-EMAIL_HOST = os.getenv('DJANGO_EMAIL_HOST')
-EMAIL_HOST_USER = os.getenv('DJANGO_EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_SUBJECT_PREFIX = '[HAWC] '
 DEFAULT_FROM_EMAIL = 'webmaster@hawcproject.org'
 SERVER_EMAIL = 'webmaster@hawcproject.org'
