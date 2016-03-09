@@ -1,1 +1,1 @@
-from . import signals
+default_app_config = 'invitro.apps.InvitroConfig'

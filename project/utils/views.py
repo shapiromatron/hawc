@@ -5,7 +5,7 @@ import celery
 
 from django.conf import settings
 from django.shortcuts import HttpResponse
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -498,7 +498,7 @@ class GenerateReport(BaseList):
         raise NotImplementedError("Requires dictionary return for mail-merge")
 
     def get_template(self, request):
-        ReportTemplate = get_model("assessment", "ReportTemplate")
+        ReportTemplate = apps.get_model("assessment", "ReportTemplate")
         try:
             template_id = request.GET.get('template_id', -1)
             return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)

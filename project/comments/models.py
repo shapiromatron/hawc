@@ -1,12 +1,12 @@
 import json
 
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 
-import reversion
+from reversion import revisions as reversion
 
 from myuser.models import HAWCUser
 from utils.helper import HAWCDjangoJSONEncoder
@@ -48,7 +48,7 @@ class Comment(models.Model):
     assessment = models.ForeignKey('assessment.Assessment')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = fields.GenericForeignKey('content_type', 'object_id')
     commenter = models.ForeignKey(HAWCUser, related_name='commenters')
     title = models.CharField(max_length=256)
     text = models.TextField()

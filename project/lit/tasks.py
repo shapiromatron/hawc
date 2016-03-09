@@ -4,7 +4,7 @@ import json
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from django.db.models.loading import get_model
+from django.apps import apps
 
 from .fetchers import pubmed
 
@@ -18,7 +18,7 @@ def update_pubmed_content(ids):
     the parsed data for each identifier. Next, update existing records in the
     database with the revised content.
     """
-    Identifiers = get_model('lit', 'identifiers')
+    Identifiers = apps.get_model('lit', 'identifiers')
     fetcher = pubmed.PubMedFetch(ids)
     contents = fetcher.get_content()
     for d in contents:

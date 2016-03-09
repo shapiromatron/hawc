@@ -2,7 +2,7 @@ import json
 
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -131,7 +131,7 @@ class ReferenceStudyCreate(BaseCreate):
 
     def form_valid(self, form):
         self.object = form.save()
-        search=get_model('lit', 'Search').objects.get(assessment=self.assessment,
+        search=apps.get_model('lit', 'Search').objects.get(assessment=self.assessment,
                                                       source=0, #manual import
                                                       title="Manual import")
         self.object.searches.add(search)
@@ -490,7 +490,7 @@ class SQCreate(BaseCreate):
     @property
     def parent_model(self):
         if self.kwargs['slug'] == "endpoint":
-            return get_model("animal", "Endpoint")
+            return apps.get_model("animal", "Endpoint")
         else:
             raise Http404()
 
@@ -509,7 +509,7 @@ class SQEdit(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super(SQEdit, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
             context["endpoint"] = self.object.content_object
         return context
 
@@ -520,7 +520,7 @@ class SQDelete(BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super(SQDelete, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
             context["endpoint"] = self.object.content_object
         return context
 
