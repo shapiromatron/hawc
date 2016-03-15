@@ -49,7 +49,7 @@
           <td colspan="2">
             {{form.metric.errors.as_ul}}
             <h4>{{form.metric}}</h4>
-            {{metric|get_at_index:forloop.counter0}}
+            {{metric|get_at_index:forloop.counter0|safe}}
             {# Include the hidden fields in the form #}
             {% for hidden in form.hidden_fields %}
               {{ hidden }}
