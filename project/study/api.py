@@ -49,3 +49,15 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
         return self.model.objects.filter(**filters)\
                    .prefetch_related(*prefetch)
+
+
+class StudyQualityDomain(viewsets.ReadOnlyModelViewSet):
+    assessment_filter_args = 'assessment'
+    model = models.StudyQualityDomain
+    pagination_class = DisabledPagination
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
+    serializer_class = serializers.AssessmentDomainSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all()
