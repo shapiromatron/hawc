@@ -248,6 +248,24 @@ class BaseSQFormSet(BaseModelFormSet):
             metrics.append(metric)
 
 
+class StudyQualityCopyForm(forms.Form):
+    assessment = forms.ModelChoiceField(
+        queryset=Assessment.objects.all(), empty_label=None)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        self.assessment = kwargs.pop('assessment', None)
+        super(StudyQualityCopyForm, self).__init__(*args, **kwargs)
+        self.fields['assessment'].widget.attrs['class'] = 'span12'
+        self.fields['assessment'].queryset = Assessment.get_viewable_assessments(
+            user, exclusion_id=self.assessment.id)
+
+    def copy_study_quality(self):
+        models.StudyQuality.copy_study_quality(
+            self.assessment,
+            self.cleaned_data['assessment'])
+
+
 class StudiesCopy(forms.Form):
     # TODO: remove study-type restriction
 

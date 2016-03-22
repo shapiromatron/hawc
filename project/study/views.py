@@ -248,6 +248,36 @@ class ASQEdit(ASQDetail):
     crud = 'Update'
 
 
+class ASQCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
+    model = models.StudyQualityDomain
+    template_name = "study/asq_copy.html"
+    form_class = forms.StudyQualityCopyForm
+    success_message = 'Study Quality metrics and domains have been updated.'
+
+    def dispatch(self, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        self.permission_check_user_can_edit()
+        return super(ASQCopy, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ASQCopy, self).get_context_data(**kwargs)
+        context['assessment'] = self.assessment
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(ASQCopy, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        form.copy_study_quality()
+        return super(ASQCopy, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
+
+
 # Risk-of-bias domain views
 class SQDomainCreate(BaseCreate):
     parent_model = Assessment
@@ -430,7 +460,7 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             return self.form_valid()
         else:
             self.object = self.study
-            return self.form_invalid(formset=self.formset)
+            return self.form_invalid(self.formset)
 
     def form_valid(self):
         self.formset.save()

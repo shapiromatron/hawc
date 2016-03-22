@@ -473,6 +473,26 @@ class StudyQuality(models.Model):
             ser['score']
         )
 
+    @classmethod
+    def copy_study_quality(cls, copy_to_assessment, copy_from_assessment):
+        # delete existing study quality metrics and domains
+        old_domains = copy_to_assessment.sq_domains.all()
+        old_domains.delete()
+
+        # copy domains and metrics to assessment
+        copy_from_domains = copy_from_assessment.sq_domains.all()
+        for domain in copy_from_domains:
+            # copy domain.metrics queryset, because metric.domain still
+            # points to copy_from_assessment.domain on save
+            metrics = domain.metrics.all()
+            domain.id = None
+            domain.assessment = copy_to_assessment
+            domain.save()
+            for metric in metrics:
+                metric.id = None
+                metric.domain = domain
+                metric.save()
+
 
 reversion.register(Study)
 reversion.register(StudyQualityDomain)

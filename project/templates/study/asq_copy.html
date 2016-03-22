@@ -1,0 +1,91 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | Copy Risk of Bias Approach | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:asq_detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
+  <li class="active"> Copy risk-of-bias approach <span class="divider">/</span></li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="row-fluid">
+    <form class="span8 offset2 form-horizontal" action="." method="post">
+
+      {% csrf_token %}
+
+      <fieldset>
+        <legend>Copy risk of bias approach from existing assessments</legend>
+        <p class="help-block">Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.</p><br>
+
+        {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+        {% for field in form %}
+          <div class="control-group form-row">
+            <!-- {{field.label_tag|add_class:"control-label"}} -->
+              <div class="controls">
+                {{field}}
+                <span class='help-inline'>{{field.help_text}}</span>
+            </div>
+            {{field.errors|add_class:"alert alert-error"}}
+          </div>
+        {% endfor %}
+      </fieldset>
+
+      <div class="alert alert-block">
+        <a class="close" href="#" data-dismiss="alert">×</a>
+        <h4>Warning!</h4>
+        <p>Copying the Risk of Bias domains and metrics from another assessment will the existing
+        assessment domains and metrics.</p>
+      </div>
+
+      <b>Risk of Bias approach for selected assessment:</b>
+      <div id="approach"></div>
+
+      <div class="row-fluid">
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Copy risk of bias approach from existing assessment</button>
+          <a class="btn" href="{% url 'study:asq_update' assessment.pk %}">Cancel</a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var displayMetric = function(metric){
+
+            }
+            var displayDomain = function(domain){
+                _.map(domain.metrics, function(metric){
+                    displayMetric(metric);
+                })
+            }
+            var displayApproach = function(domains){
+                _.map(domains, function(domain){
+                    displayDomain(domain);
+                })
+            }
+
+            var loadApproach = function(){
+                $.get("/study/api/domain/?assessment_id=" + $('#id_assessment').val(), function(d){
+                    displayApproach(d);
+                })
+            };
+            $('#id_assessment').on('change', loadApproach);
+            loadApproach();
+        });
+    </script>
+{% endblock extrajs %}
