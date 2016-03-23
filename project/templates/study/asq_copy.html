@@ -65,25 +65,74 @@
 {% block extrajs %}
     <script type="text/javascript">
         $(document).ready(function(){
-            var displayMetric = function(metric){
+            var DomainTable = function(){
+                this.tbl = $('<table class="table table-condensed table-striped">');
+                this.thead = $('<thead>');
+                this.colgroup = $('<colgroup>');
+                this.tbody = $('<tbody>');
+                this.tfoot = $('<tfoot>');
+                this.footnotes  = new TableFootnotes();
+                this.tbl.append(this.colgroup, this.thead, this.tfoot, this.tbody);
+            };
+            _.extend(DomainTable.prototype, BaseTable.prototype, {
+                addMetricRow: function(data, i){
+                    var tr = document.createElement('tr'),
+                        th = document.createElement('th'),
+                        tdMetric = document.createElement('td'),
+                        tdDescr = document.createElement('td');
+                    th.innerHTML = i + 1;
+                    tr.appendChild(th);
+                    tdMetric.innerHTML = data.metric +
+                        '<br><br><strong>Required for animal bioassay: </strong>'
+                        + HAWCUtils.booleanCheckbox(data.required_animal)
+                        + '<br><strong>Required for epidemiological: </strong>'
+                        + HAWCUtils.booleanCheckbox(data.required_epi);
 
-            }
+                    tdDescr.innerHTML = data.description;
+                    tr.appendChild(tdMetric);
+                    tr.appendChild(tdDescr);
+                    this.tbody.append(tr)
+                }
+            });
+
             var displayDomain = function(domain){
-                _.map(domain.metrics, function(metric){
-                    displayMetric(metric);
+                var div  = document.createElement('div'),
+                    header = document.createElement('h3'),
+                    table = new DomainTable(domain),
+                    colgroups = [5, 35, 60],
+                    thead = ['ID', 'Metric', 'Description'];
+
+                header.innerHTML = domain.name + ' Domain';
+                table.addHeaderRow(thead);
+                table.setColGroup(colgroups);
+                _.map(domain.metrics, function(metric, i){
+                    table.addMetricRow(metric, i)
                 })
-            }
+                div.appendChild(header);
+                div.appendChild(table.getTbl()[0])
+                return div;
+            };
+
             var displayApproach = function(domains){
+                displayDiv = document.getElementById('approach');
+                displayDiv.innerHTML = '';
+                if (domains.length === 0){
+                    var warn = '<div class="alert"><strong>' +
+                        $('#id_assessment option:selected').text()
+                        + ' does not have a default approach.</strong></div>'
+                    displayDiv.innerHTML = warn;
+                }
                 _.map(domains, function(domain){
-                    displayDomain(domain);
+                    displayDiv.appendChild(displayDomain(domain));
                 })
-            }
+            };
 
             var loadApproach = function(){
                 $.get("/study/api/domain/?assessment_id=" + $('#id_assessment').val(), function(d){
                     displayApproach(d);
                 })
             };
+
             $('#id_assessment').on('change', loadApproach);
             loadApproach();
         });
