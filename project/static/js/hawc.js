@@ -325,7 +325,7 @@ $.ajaxSetup({
 // Utility functions in custom namespace
 var HAWCUtils = {
     booleanCheckbox: function(value){
-        return (value) ? "☑" : "☒";
+        return (value) ? "<i class='fa fa-check'></i>": "<i class='fa fa-minus'></i>";
     },
     newWindowPopupLink: function(triggeringLink) {
         // Force new window to be a popup window

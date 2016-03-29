@@ -83,9 +83,9 @@
           <td>
             {{metric}}<br><br>
             <strong>Required for animal bioassay: </strong>
-              {%if metric.required_animal %}☑{% else %}☒{% endif %}<br>
+              {%if metric.required_animal %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}<br>
             <strong>Required for epidemiological: </strong>
-              {%if metric.required_epi %}☑{% else %}☒{% endif %}
+              {%if metric.required_epi %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}
           </td>
           <td>
             {{metric.description|safe}}<br>
