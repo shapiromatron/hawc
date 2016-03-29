@@ -447,6 +447,7 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context['crud'] = self.crud
         context['assessment'] = self.assessment
         context['study'] = self.study
+        context['metric'] = [quality.metric.description for quality in self.object.qualities.all()]
         return context
 
 
