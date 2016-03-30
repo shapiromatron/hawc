@@ -378,9 +378,6 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
             self.formset = NewSQFormSet(queryset=models.StudyQuality.objects.none(),
                                         initial=sqs)
 
-        domain_metrics = [domain.metrics.all() for domain in self.assessment.sq_domains.all()]
-        metrics = list(itertools.chain.from_iterable(domain_metrics))
-
         context['formset'] = self.formset
         context['crud'] = self.crud
         context['assessment'] = self.assessment
