@@ -1,4 +1,5 @@
 import json
+import itertools
 
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
@@ -377,10 +378,14 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
             self.formset = NewSQFormSet(queryset=models.StudyQuality.objects.none(),
                                         initial=sqs)
 
+        domain_metrics = [domain.metrics.all() for domain in self.assessment.sq_domains.all()]
+        metrics = list(itertools.chain.from_iterable(domain_metrics))
+
         context['formset'] = self.formset
         context['crud'] = self.crud
         context['assessment'] = self.assessment
         context['study'] = self.study
+        context['metric'] = [metric.description for metric in metrics]
         return context
 
 
