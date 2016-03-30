@@ -184,7 +184,7 @@ class SQForm(forms.ModelForm):
 
     class Meta:
         model = models.StudyQuality
-        exclude = ('content_type', 'object_id')
+        fields = ('metric', 'notes', 'score')
 
     def __init__(self, *args, **kwargs):
         content_object = kwargs.pop('parent', None)
@@ -196,6 +196,13 @@ class SQForm(forms.ModelForm):
         self.fields['notes'].widget.attrs['rows'] = 4
         if content_object:
             self.instance.content_object = content_object
+
+class SQAuthorForm(forms.Form):
+    author = forms.BooleanField(
+        label='Authorship',
+        help_text='This Risk of Bias assessment has no author. Select to take authorship.',
+        required=False
+    )
 
 
 class SQEndpointForm(SQForm):

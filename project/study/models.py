@@ -17,10 +17,10 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from assessment.serializers import AssessmentSerializer
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from lit.models import Reference
+from myuser.models import HAWCUser
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from utils.models import get_crumbs
-from utils.helper import cleanHTML
 
 
 class Study(Reference):
@@ -411,6 +411,10 @@ class StudyQuality(models.Model):
     notes = models.TextField(blank=True, default="")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(HAWCUser,
+        related_name='qualities',
+        blank=True,
+        null=True)
 
     class Meta:
         ordering = ("content_type", "object_id", "metric")

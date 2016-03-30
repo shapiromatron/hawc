@@ -359,6 +359,7 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
         for form in self.formset:
             sq = form.save(commit=False)
             sq.content_object = self.study
+            sq.author = self.request.user
             sq.save()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
@@ -386,13 +387,12 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
         return context
 
 
-class SQsDetail(AssessmentPermissionsMixin, DetailView):
+class SQsDetail(BaseDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     """
     model = models.Study
     template_name = "study/sq_detail.html"
-    crud = 'Read'
 
     def dispatch(self, *args, **kwargs):
         self.study = get_object_or_404(self.model, pk=kwargs['pk'])
@@ -400,11 +400,8 @@ class SQsDetail(AssessmentPermissionsMixin, DetailView):
         return super(SQsDetail, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DetailView, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
+        context = super(SQsDetail, self).get_context_data(**kwargs)
         context['sqs'] = self.object.qualities.all().select_related('metric')
-        context['obj_perms'] = self.get_obj_perms()
-        context['crud'] = self.crud
         return context
 
 
@@ -414,8 +411,10 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
     model = models.Study
     template_name = "study/sq_edit.html"
-    form_class = forms.SQForm
     success_message = 'Risk-of-bias updated.'
+    author_form = forms.SQAuthorForm
+    form_class = forms.SQForm
+    formset_factory = forms.SQFormSet
     crud = 'Update'
 
     def get_success_url(self):
@@ -427,29 +426,42 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         return super(SQsEdit, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.formset = forms.SQFormSet(self.request.POST)
+        author_form = self.author_form(self.request.POST)
+        self.formset = self.formset_factory(self.request.POST)
         if self.formset.is_valid():
-            return self.form_valid()
+            return self.form_valid(author_form)
         else:
-            self.object = self.study
-            return self.form_invalid(formset=self.formset)
+            return self.form_invalid(self.formset)
 
-    def form_valid(self):
-        self.formset.save()
+    def form_valid(self, author_form):
+        """
+            author_form is only shown if SQs have no author, so can only be
+            changed if SQs have no author and authorship is taken.
+        """
+        if author_form.has_changed():
+            for form in self.formset:
+                sq = form.save(commit=False)
+                sq.content_object = self.study
+                sq.author = self.request.user
+                sq.save()
+        else:
+            self.formset.save()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateView, self).get_context_data(**kwargs)
+        context = super(SQsEdit, self).get_context_data(**kwargs)
 
         if self.request.method == 'GET':
-            self.formset = forms.SQFormSet(queryset=models.StudyQuality.objects.filter(studies=self.study))
+            self.formset = self.formset_factory(queryset=models.StudyQuality.objects.filter(studies=self.study))
 
+        if self.study.qualities.filter(author__isnull=True).exists():
+            context['author_form'] = self.author_form
         context['formset'] = self.formset
         context['crud'] = self.crud
         context['assessment'] = self.assessment
         context['study'] = self.study
-        context['metric'] = [quality.metric.description for quality in self.object.qualities.all()]
+        context['metric'] = [quality.metric.description for quality in self.study.qualities.all()]
         return context
 
 
