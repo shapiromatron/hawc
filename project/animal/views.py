@@ -386,7 +386,9 @@ class EndpointList(BaseList):
         if self.form.is_valid():
             query &= self.form.get_query()
 
-        return self.model.objects.filter(query).distinct('id')
+        return self.model.objects.filter(query)\
+            .distinct('id')\
+            .order_by('id', 'name')
 
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
