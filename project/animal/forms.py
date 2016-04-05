@@ -603,6 +603,12 @@ class EndpointFilterForm(forms.Form):
         initial=None,
         required=False)
 
+    name = forms.CharField(
+        label='Endpoint name',
+        widget=selectable.AutoCompleteWidget(lookups.EndpointByAssessmentTextLookup),
+        help_text="ex: heart weight",
+        required=False)
+
     system = forms.CharField(
         label='System',
         widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
@@ -644,6 +650,8 @@ class EndpointFilterForm(forms.Form):
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
         self.fields['studies'].widget.update_query_parameters(
             {'related': assessment_id})
+        self.fields['name'].widget.update_query_parameters(
+            {'related': assessment_id})
 
         # disabled; dramatically slows-down page rendering;
         # involuntary context_switches
@@ -664,8 +672,8 @@ class EndpointFilterForm(forms.Form):
 
         helper.add_fluid_row('studies', 4, "span3")
         helper.add_fluid_row('species', 4, "span3")
-        helper.add_fluid_row('system', 4, "span3")
-        helper.add_fluid_row('paginate_by', 4, "span3")
+        helper.add_fluid_row('name', 4, "span3")
+        helper.add_fluid_row('tags', 4, "span3")
 
         helper.layout.append(
             cfb.FormActions(
@@ -685,6 +693,7 @@ class EndpointFilterForm(forms.Form):
         strain = self.cleaned_data.get('strain')
         sex = self.cleaned_data.get('sex')
         data_extracted = self.cleaned_data.get('data_extracted')
+        name = self.cleaned_data.get('name')
         system = self.cleaned_data.get('system')
         organ = self.cleaned_data.get('organ')
         effect = self.cleaned_data.get('effect')
@@ -708,6 +717,8 @@ class EndpointFilterForm(forms.Form):
             query &= Q(animal_group__sex__in=sex)
         if data_extracted:
             query &= Q(data_extracted=data_extracted == 'True')
+        if name:
+            query &= Q(name__icontains=name)
         if system:
             query &= Q(system__icontains=system)
         if organ:
