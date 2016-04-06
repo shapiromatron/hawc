@@ -416,30 +416,32 @@ _.extend(VisualForm, {
     create: function(visual_type, $el){
         var Cls
         switch (visual_type){
-            case 0:
-                Cls = EndpointAggregationForm;
-                break;
-            case 1:
-                Cls = CrossviewForm;
-                break;
-            case 2:
-                Cls = RoBHeatmapForm;
-                break;
-            case 3:
-                Cls = RoBBarchartForm;
-                break;
-            default:
-                throw "Error - unknown visualization-type: {0}".printf(visual_type);
+        case 0:
+            Cls = EndpointAggregationForm;
+            break;
+        case 1:
+            Cls = CrossviewForm;
+            break;
+        case 2:
+            Cls = RoBHeatmapForm;
+            break;
+        case 3:
+            Cls = RoBBarchartForm;
+            break;
+        default:
+            throw "Error - unknown visualization-type: {0}".printf(visual_type);
         }
-        return new Cls($el)
-    }
+        return new Cls($el);
+    },
 });
 VisualForm.prototype = {
     setupEvents: function(){
         var self = this,
-            setDataChanged = function(){self.dataSynced=false;},
+            setDataChanged = function(){
+                self.dataSynced = false;
+            },
             $data = this.$el.find("#data"),
-            $settings = this.$el.find("#settings")
+            $settings = this.$el.find("#settings"),
             $preview = this.$el.find("#preview");
 
         // check if any data have changed
@@ -456,36 +458,32 @@ VisualForm.prototype = {
                 shown = $(e.relatedTarget).attr('href');
 
             switch(shown){
-                case "#data":
-                    if(self.dataSynced){
-                        self.unpackSettings();
-                    } else {
-                        self.getData();
-                    }
-                    break;
-                case "#settings":
-                    self.packSettings();
-                    break;
-                case "#preview":
-                    self.removePreview();
-                    break;
+            case "#data":
+                (self.dataSynced) ? self.unpackSettings(): self.getData();
+                break;
+            case "#settings":
+                self.packSettings();
+                break;
+            case "#preview":
+                self.removePreview();
+                break;
             }
 
             switch(toShow){
-                case "#settings":
-                    if(!self.dataSynced) {
-                        self.addSettingsLoader();
-                        self.getData();
-                    }
-                    break;
-                case "#preview":
-                    self.setPreviewLoading();
-                    if(self.dataSynced){
-                        $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
-                    } else {
-                        self.getData();
-                    }
-                    break;
+            case "#settings":
+                if(!self.dataSynced) {
+                    self.addSettingsLoader();
+                    self.getData();
+                }
+                break;
+            case "#preview":
+                self.setPreviewLoading();
+                if(self.dataSynced){
+                    $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
+                } else {
+                    self.getData();
+                }
+                break;
             }
         });
 
@@ -599,14 +597,13 @@ VisualForm.prototype = {
             .appendTo($parent);
     },
     setPreviewLoading: function(){
-        var $settings = (this.$el.find("#settings")),
+        var $preview = this.$el.find("#preview"),
             loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         $preview.html(loading);
     },
     addSettingsLoader: function(){
         var div = $('#settings'),
-            self = this, loader;
-        loader = div.find('p.loader');
+            loader = div.find('p.loader');
         if(loader.length === 0) loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         div.children().hide(0, function(){div.append(loader).show();});
     },
@@ -1107,12 +1104,11 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
         this.unpackSettings();
     },
     afterGetDataHook: function(data){
-        var endpoints = data.endpoints.map(function(d){
+        this.endpoints = data.endpoints.map(function(d){
             var e = new Endpoint(d);
             e.switch_dose_units(data.dose_units);
             return e;
         });
-        this.endpoints = endpoints;
     },
     initDataForm: function(){
         var fields = [
