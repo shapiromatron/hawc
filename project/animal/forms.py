@@ -556,6 +556,16 @@ class UploadFileForm(forms.Form):
 
 class EndpointFilterForm(forms.Form):
 
+    ORDER_BY_CHOICES = (
+        ('animal_group__experiment__study__short_citation', 'study'),
+        ('name', 'endpoint name'),
+        ('system', 'system'),
+        ('organ', 'organ'),
+        ('effect', 'effect'),
+        ('effect_subtype', 'effect subtype'),
+        ('animal_group__experiment__chemical', 'chemical'),
+    )
+
     studies = selectable.AutoCompleteSelectMultipleField(
         label='Study reference',
         lookup_class=AnimalStudyLookup,
@@ -636,6 +646,10 @@ class EndpointFilterForm(forms.Form):
     dose_units = forms.ModelChoiceField(
        queryset=DoseUnits.objects.all(),
        required=False
+    )
+
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
     )
 
     paginate_by = forms.IntegerField(
@@ -730,6 +744,9 @@ class EndpointFilterForm(forms.Form):
         if dose_units:
             query &= Q(animal_group__dosing_regime__doses__dose_units=dose_units)
         return query
+
+    def get_order_by(self):
+        return self.cleaned_data.get('order_by', self.ORDER_BY_CHOICES[0][0])
 
     def get_dose_units_id(self):
         if hasattr(self, "cleaned_data") and self.cleaned_data.get('dose_units'):

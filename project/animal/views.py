@@ -381,14 +381,25 @@ class EndpointList(BaseList):
         perms = super(EndpointList, self).get_obj_perms()
 
         query = Q(assessment=self.assessment)
+        order_by = None
+
         if not perms['edit']:
             query &= Q(animal_group__experiment__study__published=True)
         if self.form.is_valid():
             query &= self.form.get_query()
+            order_by = self.form.get_order_by()
 
-        return self.model.objects.filter(query)\
+        ids = self.model.objects.filter(query)\
             .distinct('id')\
-            .order_by('id', 'name')
+            .values_list('id', flat=True)
+
+        qs = self.model.objects.filter(id__in=ids)
+
+        if order_by:
+            qs = qs.order_by(order_by)
+            print order_by
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
