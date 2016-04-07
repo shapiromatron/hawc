@@ -590,6 +590,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return footnote_object.add_footnote(footnotes);
     },
     build_endpoint_list_row: function(){
+        var self = this,
+            link = '<a href="{0}" target="_blank">{1}</a>'.printf(this.data.url, this.data.name),
+            detail = $('<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">').click(function(){
+                self.displayAsModal({complete: true});
+            }),
+            ep = $('<span>')
+                    .append(link, detail)
+                    .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+
         return [
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.animal_group.experiment.study.url,
@@ -600,9 +609,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.animal_group.url,
                 this.data.animal_group.name),
-            '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.url,
-                this.data.name),
+            ep,
             this.dose_units,
             this.get_special_dose_text("NOEL"),
             this.get_special_dose_text("LOEL")
