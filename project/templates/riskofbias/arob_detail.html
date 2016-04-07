@@ -9,7 +9,7 @@
   {% if crud == "Read" %}
     <li class="active">Risk-of-bias requirements<span class="divider">/</span></li>
   {% else %}
-    <li><a href="{% url 'study:asq_detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
+    <li><a href="{% url 'study:detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
   {% endif %}
 {% endblock breadcrumbs %}
@@ -23,16 +23,16 @@
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li><a href="{% url 'study:asq_update' assessment.pk %}">Update requirements</a></li>
+          <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
         </ul>
-      </div>
+    </div>
     {% endif %}
   </h1>
 
   <p>When a study is entered into the HAWC database for use in an assessment, risk-of-bias metrics can be entered for a metric of bias for each study. Risk-of-bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
 
   {% if crud == "Update" %}
-    <a class="btn btn-info" href="{% url 'study:sqd_create' assessment.pk %}">Create a new domain</a>
+    <a class="btn btn-info" href="{% url 'riskofbias:robd_create' assessment.pk %}">Create a new domain</a>
   {% endif %}
 
   {% for object in object_list %}
@@ -44,11 +44,11 @@
           </a>
           <ul class="dropdown-menu">
             <li class="disabled"><a tabindex="-1" href="#">Domain Changes</a></li>
-            <li><a href="{% url 'study:sqd_update' object.pk %}">Update domain</a></li>
-            <li><a href="{% url 'study:sqd_delete' object.pk %}">Delete domain</a></li>
+            <li><a href="{% url 'riskofbias:robd_update' object.pk %}">Update domain</a></li>
+            <li><a href="{% url 'riskofbias:robd_delete' object.pk %}">Delete domain</a></li>
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Metric Changes</a></li>
-            <li><a href="{% url 'study:sqm_create' object.pk %}">New metric</a></li>
+            <li><a href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a></li>
           </ul>
         </div>
       {% endif %}
@@ -91,8 +91,8 @@
             {{metric.description|safe}}<br>
           </td>
           {% if crud == "Update" %}
-            <td><a class="btn btn-info" href="{% url 'study:sqm_update' metric.pk %}">Edit</a>
-                <a class="btn btn-danger" href="{% url 'study:sqm_delete' metric.pk %}">Delete</a></td>
+            <td><a class="btn btn-info" href="{% url 'riskofbias:robm_update' metric.pk %}">Edit</a>
+                <a class="btn btn-danger" href="{% url 'riskofbias:robm_delete' metric.pk %}">Delete</a></td>
           {% endif %}
         </tr>
       {% endfor %}

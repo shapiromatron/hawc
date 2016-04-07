@@ -20,7 +20,7 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model('lit', 'Search').build_default(instance)
 
         logging.info("Creating default settings for study-quality criteria")
-        apps.get_model('study', 'StudyQualityDomain').build_default(instance)
+        apps.get_model('risk-of-bias', 'RiskOfBiasDomain').build_default(instance)
 
         logging.info("Creating new BMD settings assessment creation")
         apps.get_model('bmd', 'LogicField').build_defaults(instance)

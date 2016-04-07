@@ -4,10 +4,10 @@ from docxUtils.tables import TableMaker
 
 from utils.helper import HAWCDOCXReport
 
-from . import models
+from models import RiskOfBias
 
 
-class SQDOCXReport(HAWCDOCXReport):
+class RoBDOCXReport(HAWCDOCXReport):
 
     def create_content(self):
         d = self.context
@@ -61,14 +61,14 @@ class SQDOCXReport(HAWCDOCXReport):
         cells = [
            {"runs": [TableMaker.new_run("Risk of bias key:", b=True, newline=False)]},
            {"text": "Definitely Low"},
-           {"text": "++", "shade": models.StudyQuality.SCORE_SHADES[4]},
+           {"text": "++", "shade": RiskOfBias.SCORE_SHADES[4]},
            {"text": "Probably Low"},
-           {"text": "+", "shade": models.StudyQuality.SCORE_SHADES[3]},
+           {"text": "+", "shade": RiskOfBias.SCORE_SHADES[3]},
            {"text": "Probably High"},
-           {"text": "-", "shade": models.StudyQuality.SCORE_SHADES[2]},
-           {"text": "NR", "shade": models.StudyQuality.SCORE_SHADES[0]},
+           {"text": "-", "shade": RiskOfBias.SCORE_SHADES[2]},
+           {"text": "NR", "shade": RiskOfBias.SCORE_SHADES[0]},
            {"text": "Definitely High"},
-           {"text": "--", "shade": models.StudyQuality.SCORE_SHADES[1]},
+           {"text": "--", "shade": RiskOfBias.SCORE_SHADES[1]},
         ]
         for i, cell in enumerate(cells):
             if "runs" in cell:

@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | Risk-of-bias | Metric | Edit | HAWC
+  {{assessment}} | Risk-of-bias | {{object}} Domain | Edit | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -12,11 +12,11 @@
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:asq_update' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
-    <li class="active"> Edit metric<span class="divider">/</span></li>
+    <li class="active"> Edit {{object}} domain<span class="divider">/</span></li>
   {% elif crud == "Create" %}
-    <li class="active"> Create metric <span class="divider">/</span></li>
+    <li class="active"> Create domain <span class="divider">/</span></li>
   {% endif %}
 {% endblock %}
 

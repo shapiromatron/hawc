@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'myuser',
     'assessment',
     'lit',
+    'riskofbias',
     'study',
     'animal',
     'epi',

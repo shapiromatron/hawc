@@ -33,9 +33,9 @@
               <li class="divider"></li>
               <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
               {% if object.qualities.count == 0 %}
-                <li><a href="{% url 'study:sqs_new' object.pk %}">Create</a></li>
+                <li><a href="{% url 'riskofbias:robs_new' object.pk %}">Create</a></li>
               {% else %}
-                <li><a href="{% url 'study:sqs_update' object.pk %}">Update</a></li>
+                <li><a href="{% url 'riskofbias:robs_update' object.pk %}">Update</a></li>
               {% endif %}
             {% endif %}
 
@@ -68,7 +68,7 @@
     {% if assessment.enable_study_quality and object.qualities.count > 0 %}
       <div class="row-fluid">
           <h3>Risk-of-bias visualization
-            <a class="btn btn-primary pull-right" href="{% url 'study:sqs_detail' object.pk %}">View details</a>
+            <a class="btn btn-primary pull-right" href="{% url 'riskofbias:robs_detail' object.pk %}">View details</a>
           </h3>
           <div class="span12">
             <div id='sq_plot' class="d3_container"></div>

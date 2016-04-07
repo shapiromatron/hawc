@@ -43,6 +43,8 @@ urlpatterns = [
         include('summary.urls', namespace='summary')),
     url(r'^comments/',
         include('comments.urls', namespace='comments')),
+    url(r'^rob/',
+        include('riskofbias.urls', namespace='riskofbias')),
 
     # Error-pages
     url(r'^403/$',

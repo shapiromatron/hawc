@@ -1,0 +1,26 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Study List | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">Risk of Bias Studies<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>Available studies</h2>
+
+  <div id="riskTbl"></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript" src="{{STATIC_URL}}riskofbias/js/models.js"></script>
+<script type="text/javascript">
+  RiskOfBiasCollection.render({{assessment.id}}, $('#riskTbl'));
+</script>
+{% endblock extrajs %}

@@ -682,7 +682,7 @@ class Endpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
     qualities = fields.GenericRelation(
-        'study.StudyQuality',
+        'riskofbias.RiskOfBias',
         related_query_name='endpoints')
 
     def get_update_url(self):
