@@ -1422,6 +1422,7 @@ _.extend(CrossviewPlot, {
         "effect": "Effect",
         "effect_subtype": "Effect subtype",
         "monotonicity": "Monotonicity",
+        "chemical": "Chemical",
     },
     _cw_filter_process: {
         "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
@@ -1437,6 +1438,7 @@ _.extend(CrossviewPlot, {
         "effect": function(d){return d.data.effect; },
         "effect_subtype": function(d){return d.data.effect_subtype; },
         "monotonicity": function(d){return d.data.monotonicity; },
+        "chemical": function(d){return d.data.animal_group.experiment.chemical;},
     }
 })
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
