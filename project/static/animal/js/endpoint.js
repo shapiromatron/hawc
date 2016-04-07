@@ -940,7 +940,7 @@ EndpointTable.prototype = {
 
 var EndpointListTable = function(endpoints, dose_id){
     if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
-    this.endpoints = _.sortBy(endpoints, function(e){return e.data.name});
+    this.endpoints = endpoints;
     this.tbl = new BaseTable();
 };
 EndpointListTable.prototype = {
@@ -961,7 +961,7 @@ EndpointListTable.prototype = {
             ];
         this.tbl.setColGroup([12, 16, 17, 31, 10, 7, 7])
         this.tbl.addHeaderRow(headers);
-        this.endpoints.map(function(v){
+        this.endpoints.forEach(function(v){
             self.tbl.addRow(v.build_endpoint_list_row());
         });
         return this.tbl.getTbl();

@@ -88,6 +88,17 @@ class EndpointByAssessmentLookup(RelatedLookup):
         return self.get_item_label(obj)
 
 
+class EndpointByAssessmentTextLookup(RelatedLookup):
+    model = models.Endpoint
+    search_fields = ('name__icontains', )
+    related_filter = 'assessment_id'
+
+    def get_query(self, request, term):
+        return super(EndpointByAssessmentTextLookup, self)\
+            .get_query(request, term)\
+            .distinct('name')
+
+
 class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
 
     def get_item_value(self, obj):
@@ -107,4 +118,5 @@ registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
+registry.register(EndpointByAssessmentTextLookup)
 registry.register(EndpointByAssessmentLookupHtml)

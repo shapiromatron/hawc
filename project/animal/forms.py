@@ -556,6 +556,16 @@ class UploadFileForm(forms.Form):
 
 class EndpointFilterForm(forms.Form):
 
+    ORDER_BY_CHOICES = (
+        ('animal_group__experiment__study__short_citation', 'study'),
+        ('name', 'endpoint name'),
+        ('system', 'system'),
+        ('organ', 'organ'),
+        ('effect', 'effect'),
+        ('effect_subtype', 'effect subtype'),
+        ('animal_group__experiment__chemical', 'chemical'),
+    )
+
     studies = selectable.AutoCompleteSelectMultipleField(
         label='Study reference',
         lookup_class=AnimalStudyLookup,
@@ -603,6 +613,12 @@ class EndpointFilterForm(forms.Form):
         initial=None,
         required=False)
 
+    name = forms.CharField(
+        label='Endpoint name',
+        widget=selectable.AutoCompleteWidget(lookups.EndpointByAssessmentTextLookup),
+        help_text="ex: heart weight",
+        required=False)
+
     system = forms.CharField(
         label='System',
         widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
@@ -632,6 +648,10 @@ class EndpointFilterForm(forms.Form):
        required=False
     )
 
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
+
     paginate_by = forms.IntegerField(
         label='Items per page',
         min_value=1,
@@ -643,6 +663,8 @@ class EndpointFilterForm(forms.Form):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
         self.fields['studies'].widget.update_query_parameters(
+            {'related': assessment_id})
+        self.fields['name'].widget.update_query_parameters(
             {'related': assessment_id})
 
         # disabled; dramatically slows-down page rendering;
@@ -664,8 +686,8 @@ class EndpointFilterForm(forms.Form):
 
         helper.add_fluid_row('studies', 4, "span3")
         helper.add_fluid_row('species', 4, "span3")
-        helper.add_fluid_row('system', 4, "span3")
-        helper.add_fluid_row('paginate_by', 4, "span3")
+        helper.add_fluid_row('name', 4, "span3")
+        helper.add_fluid_row('tags', 4, "span3")
 
         helper.layout.append(
             cfb.FormActions(
@@ -685,6 +707,7 @@ class EndpointFilterForm(forms.Form):
         strain = self.cleaned_data.get('strain')
         sex = self.cleaned_data.get('sex')
         data_extracted = self.cleaned_data.get('data_extracted')
+        name = self.cleaned_data.get('name')
         system = self.cleaned_data.get('system')
         organ = self.cleaned_data.get('organ')
         effect = self.cleaned_data.get('effect')
@@ -708,6 +731,8 @@ class EndpointFilterForm(forms.Form):
             query &= Q(animal_group__sex__in=sex)
         if data_extracted:
             query &= Q(data_extracted=data_extracted == 'True')
+        if name:
+            query &= Q(name__icontains=name)
         if system:
             query &= Q(system__icontains=system)
         if organ:
@@ -719,6 +744,9 @@ class EndpointFilterForm(forms.Form):
         if dose_units:
             query &= Q(animal_group__dosing_regime__doses__dose_units=dose_units)
         return query
+
+    def get_order_by(self):
+        return self.cleaned_data.get('order_by', self.ORDER_BY_CHOICES[0][0])
 
     def get_dose_units_id(self):
         if hasattr(self, "cleaned_data") and self.cleaned_data.get('dose_units'):
