@@ -415,7 +415,7 @@ var HAWCUtils = {
         var getXY = function(txt){
             // expects an attribute like "translate(277", "1.1920928955078125e-7)"
             if (_.isNull(txt) || txt.indexOf('translate') !== 0) return;
-            let cmps = txt.split(',');
+            var cmps = txt.split(',');
             return [
                 parseFloat(cmps[0].split('(')[1], 10),
                 parseFloat(cmps[1].split(')')[0], 10),
