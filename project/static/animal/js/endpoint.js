@@ -947,25 +947,25 @@ EndpointListTable.prototype = {
     build_table: function(){
 
         if(this.endpoints.length === 0)
-            return "<p>No endpoints available.</p>";
+            return '<p>No endpoints available.</p>';
 
-        var self = this,
+        var tbl = this.tbl,
             headers = [
-                "Study",
-                "Experiment",
-                "Animal Group",
-                "Endpoint",
-                "Units",
-                "NOEL",
-                "LOEL"
+                'Study',
+                'Experiment',
+                'Animal Group',
+                'Endpoint',
+                'Units',
+                'NOEL',
+                'LOEL',
             ];
-        this.tbl.setColGroup([12, 16, 17, 31, 10, 7, 7])
-        this.tbl.addHeaderRow(headers);
+        tbl.setColGroup([12, 16, 17, 31, 10, 7, 7]);
+        tbl.addHeaderRow(headers);
         this.endpoints.forEach(function(v){
-            self.tbl.addRow(v.build_endpoint_list_row());
+            tbl.addRow(v.build_endpoint_list_row());
         });
-        return this.tbl.getTbl();
-    }
+        return tbl.getTbl();
+    },
 };
 
 
