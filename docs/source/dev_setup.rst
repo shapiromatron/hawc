@@ -64,3 +64,13 @@ You should now be able to run the development server::
 If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
 .. _`localhost`: http://127.0.0.1:8000/
+
+
+Compiling dependencies on Windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some dependencies in the ``requirements.txt`` file require compilation of
+python extension modules on the development computer, often using C or C++.
+For details on how to resolve these dependencies, see this `Microsoft post`_.
+
+.. _`Microsoft post`: https://blogs.msdn.microsoft.com/pythonengineering/2016/04/11/unable-to-find-vcvarsall-bat/
