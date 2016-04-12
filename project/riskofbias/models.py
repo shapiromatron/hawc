@@ -12,12 +12,13 @@ from django.core.urlresolvers import reverse
 from reversion import revisions as reversion
 
 from myuser.models import HAWCUser
+from study.models import Study
 from utils.helper import cleanHTML
 
 
 class RiskOfBiasDomain(models.Model):
     assessment = models.ForeignKey('assessment.Assessment',
-    related_name="sq_domains")
+        related_name="sq_domains")
     name = models.CharField(max_length=128)
     description = models.TextField(default="")
     created = models.DateTimeField(auto_now_add=True)
@@ -140,23 +141,20 @@ class RiskOfBias(models.Model):
         related_name='qualities',
         blank=True,
         null=True)
+    conflict_resolution = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ("content_type", "object_id", "metric")
+        ordering = ("metric",)
         verbose_name_plural = "Risk of Biases"
-        unique_together = (("content_type", "object_id", "metric"), )
 
     def __unicode__(self):
         return '{}: {}'.format(self.metric, self.score)
 
     def get_assessment(self):
-        return self.content_object.get_assessment()
+        return self.study.get_assessment()
 
     def get_absolute_url(self):
-        if type(self.content_object) is Study:
-            return reverse('riskofbias:robs_detail', args=[str(self.study.pk)])
-        else:
-            return self.content_object.get_absolute_url()
+        return reverse('riskofbias:robs_detail', args=[str(self.study.pk)])
 
     def get_edit_url(self):
         return reverse('riskofbias:rob_update', args=[self.pk])

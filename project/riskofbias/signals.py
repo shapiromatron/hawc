@@ -25,4 +25,4 @@ def invalidate_caches_sq_metrics(sender, instance, **kwargs):
 @receiver(post_save, sender=models.RiskOfBias)
 @receiver(pre_delete, sender=models.RiskOfBias)
 def invalidate_caches_study_quality(sender, instance, **kwargs):
-    instance.content_object.delete_caches([instance.object_id])
+    instance.study.delete_caches([instance.study_id])

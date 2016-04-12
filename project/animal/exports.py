@@ -210,7 +210,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             doses = get_doses_list(ser)
-
             # build endpoint-group independent data
             row = [
                 ser['animal_group']['experiment']['study']['id'],

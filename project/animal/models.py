@@ -681,9 +681,6 @@ class Endpoint(BaseEndpoint):
         help_text="Any additional notes related to this endpoint/methodology, not including results")
     additional_fields = models.TextField(
         default="{}")
-    qualities = fields.GenericRelation(
-        'riskofbias.RiskOfBias',
-        related_query_name='endpoints')
 
     def get_update_url(self):
         return reverse('animal:endpoint_update', args=[self.pk])

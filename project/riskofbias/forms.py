@@ -78,15 +78,15 @@ class RoBForm(forms.ModelForm):
         fields = ('metric', 'notes', 'score')
 
     def __init__(self, *args, **kwargs):
-        content_object = kwargs.pop('parent', None)
+        study = kwargs.pop('parent', None)
         super(RoBForm, self).__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
         self.fields['notes'].widget.attrs['class'] = 'html5text'
         self.fields['notes'].widget.attrs['style'] = 'width: 100%;'
         self.fields['notes'].widget.attrs['rows'] = 4
-        if content_object:
-            self.instance.content_object = content_object
+        if study:
+            self.instance.study = study
 
 
 class RoBAuthorForm(forms.Form):
@@ -102,7 +102,7 @@ class RoBEndpointForm(RoBForm):
     def __init__(self, *args, **kwargs):
         super(RoBEndpointForm, self).__init__(*args, **kwargs)
         self.fields['metric'].queryset = self.fields['metric'].queryset.filter(
-            domain__assessment=self.instance.content_object.assessment)
+            domain__assessment=self.instance.study.assessment)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -120,14 +120,14 @@ class RoBEndpointForm(RoBForm):
                     """,
             }
 
-        inputs["cancel_url"] = self.instance.content_object.get_absolute_url()
+        inputs["cancel_url"] = self.instance.study.get_absolute_url()
 
         helper = BaseFormHelper(self, **inputs)
         return helper
 
     def clean_metric(self):
         metric = self.cleaned_data['metric']
-        qualities = self.instance.content_object.qualities.all()
+        qualities = self.instance.study.qualities.all()
         for quality in qualities:
             if metric == quality.metric and quality.id != self.instance.id:
                 raise forms.ValidationError("Risk-of-bias metrics must be unique for a given endpoint.")

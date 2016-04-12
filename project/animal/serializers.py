@@ -5,7 +5,6 @@ from rest_framework import serializers
 from assessment.serializers import EffectTagsSerializer
 
 from bmd.serializers import BMDModelRunSerializer
-from riskofbias.serializers import RiskOfBiasSerializer
 from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
@@ -103,7 +102,6 @@ class EndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
     animal_group = AnimalGroupSerializer()
     groups = EndpointGroupSerializer(many=True)
-    qualities = RiskOfBiasSerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
         ret = super(EndpointSerializer, self).to_representation(instance)

@@ -1,25 +1,19 @@
-import json
-import itertools
-
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.apps import apps
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, FormView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from assessment.models import Assessment
-from lit.models import Reference
 from riskofbias import exports, reports
 from study.models import Study
 from study.views import StudyList
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
-                         BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList, GenerateReport, GenerateFixedReport,
-                         TeamMemberOrHigherMixin)
+                         BaseUpdate, BaseCreate, BaseList,
+                         GenerateFixedReport, TeamMemberOrHigherMixin)
 
 from . import models, forms
 
@@ -28,6 +22,7 @@ from . import models, forms
 
 class ARobList(StudyList):
     template_name = "riskofbias/study_list.html"
+
 
 class ARoBDetail(BaseList):
     parent_model = Assessment
@@ -167,7 +162,7 @@ class RoBsCreate(CanCreateMixin, MessageMixin, CreateView):
     def form_valid(self):
         for form in self.formset:
             sq = form.save(commit=False)
-            sq.content_object = self.study
+            sq.study = self.study
             sq.author = self.request.user
             sq.save()
         self.send_message()  # replicate MessageMixin
@@ -180,7 +175,7 @@ class RoBsCreate(CanCreateMixin, MessageMixin, CreateView):
             # build formset with initial data
             metrics = models.RiskOfBiasMetric \
                                      .get_required_metrics(self.assessment, self.study)
-            robs = [{"content_object": self.study, "metric": metric}  for metric in metrics]
+            robs = [{"study": self.study, "metric": metric}  for metric in metrics]
             NewRoBFormSet = modelformset_factory(models.RiskOfBias,
                                                 form=forms.RoBForm,
                                                 formset=forms.BaseRoBFormSet,
@@ -255,7 +250,7 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         if author_form.has_changed():
             for form in self.formset:
                 rob = form.save(commit=False)
-                rob.content_object = self.study
+                rob.study = self.study
                 rob.author = self.request.user
                 rob.save()
         else:
@@ -267,7 +262,7 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(RoBsEdit, self).get_context_data(**kwargs)
 
         if self.request.method == 'GET':
-            self.formset = self.formset_factory(queryset=models.RiskOfBias.objects.filter(studies=self.study))
+            self.formset = self.formset_factory(queryset=models.RiskOfBias.objects.filter(study=self.study))
 
         if self.study.qualities.filter(author__isnull=True).exists():
             context['author_form'] = self.author_form
@@ -291,7 +286,7 @@ class RoBsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        models.RiskOfBias.objects.filter(studies=self.object.pk).delete()
+        models.RiskOfBias.objects.filter(study=self.object.pk).delete()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(reverse_lazy('study:detail',
                                     kwargs={'pk': self.object.pk}))
@@ -336,22 +331,9 @@ class RoBEdit(BaseUpdate):
     form_class = forms.RoBEndpointForm
     success_message = 'Risk-of-bias metric updated.'
 
-    def get_context_data(self, **kwargs):
-        context = super(RoBEdit, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
-            context["endpoint"] = self.object.content_object
-        return context
-
-
 class RoBDelete(BaseDelete):
     model = models.RiskOfBias
     success_message = 'Risk-of-bias metric deleted.'
 
-    def get_context_data(self, **kwargs):
-        context = super(RoBDelete, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
-            context["endpoint"] = self.object.content_object
-        return context
-
     def get_success_url(self):
-        return self.object.content_object.get_absolute_url()
+        return self.object.study.get_absolute_url()
