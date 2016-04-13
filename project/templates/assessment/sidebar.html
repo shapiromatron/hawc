@@ -12,6 +12,9 @@
 
     {% if assessment.enable_data_extraction %}
         <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
+        {% if assessment.enable_study_quality %}
+        <li class=""><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of Bias</a></li>
+        {% endif %}
         <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint List</a></li>
         <li class=""><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
     {% endif %}
@@ -33,4 +36,3 @@
     <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an Assessment</a>{% endblock %}</li>
   {% endif %}
 </ul>
-

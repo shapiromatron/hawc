@@ -29,16 +29,6 @@
             <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
             <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
-            {% if assessment.enable_study_quality %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
-              {% if object.qualities.count == 0 %}
-                <li><a href="{% url 'riskofbias:robs_new' object.pk %}">Create</a></li>
-              {% else %}
-                <li><a href="{% url 'riskofbias:robs_update' object.pk %}">Update</a></li>
-              {% endif %}
-            {% endif %}
-
             <li class="divider"></li>
             {% if object.study_type == 0 %}
               <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
