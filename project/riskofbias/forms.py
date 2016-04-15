@@ -71,10 +71,10 @@ class RoBMetricForm(forms.ModelForm):
         return helper
 
 
-class RoBForm(forms.ModelForm):
+class RoBScoreForm(forms.ModelForm):
 
     class Meta:
-        model = models.RiskOfBias
+        model = models.RiskOfBiasScore
         fields = ('metric', 'notes', 'score')
 
     def __init__(self, *args, **kwargs):
@@ -97,7 +97,7 @@ class RoBAuthorForm(forms.Form):
     )
 
 
-class RoBEndpointForm(RoBForm):
+class RoBEndpointForm(RoBScoreForm):
 
     def __init__(self, *args, **kwargs):
         super(RoBEndpointForm, self).__init__(*args, **kwargs)
@@ -148,7 +148,7 @@ class BaseRoBFormSet(BaseModelFormSet):
 
 
 RoBFormSet = modelformset_factory(
-    models.RiskOfBias,
-    form=RoBForm,
+    models.RiskOfBiasScore,
+    form=RoBScoreForm,
     formset=BaseRoBFormSet,
     extra=0)

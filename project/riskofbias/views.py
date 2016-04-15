@@ -31,7 +31,7 @@ class ARoBDetail(BaseList):
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)\
-                                 .prefetch_related('metrics')
+                                 .prefetch_related('scores')
 
 
 class ARoBEdit(ARoBDetail):
@@ -134,7 +134,7 @@ class StudyRoBExport(StudyList):
 class RoBsCreate(CanCreateMixin, MessageMixin, CreateView):
     model = Study
     template_name = "riskofbias/rob_edit.html"
-    form_class = forms.RoBForm
+    form_class = forms.RoBScoreForm
     success_message = 'Risk-of-bias information created.'
     crud = 'Create'
 
@@ -177,7 +177,7 @@ class RoBsCreate(CanCreateMixin, MessageMixin, CreateView):
                                      .get_required_metrics(self.assessment, self.study)
             robs = [{"study": self.study, "metric": metric}  for metric in metrics]
             NewRoBFormSet = modelformset_factory(models.RiskOfBias,
-                                                form=forms.RoBForm,
+                                                form=forms.RoBScoreForm,
                                                 formset=forms.BaseRoBFormSet,
                                                 extra=len(robs))
             self.formset = NewRoBFormSet(queryset=models.RiskOfBias.objects.none(),
@@ -205,7 +205,7 @@ class RoBsDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(RoBsDetail, self).get_context_data(**kwargs)
-        context['robs'] = self.object.qualities.all().select_related('metric')
+        context['robs'] = self.object.qualities.all().select_related('scores')
         return context
 
 
@@ -222,7 +222,7 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     template_name = "riskofbias/rob_edit.html"
     success_message = 'Risk-of-bias updated.'
     author_form = forms.RoBAuthorForm
-    form_class = forms.RoBForm
+    form_class = forms.RoBScoreForm
     formset_factory = forms.RoBFormSet
     crud = 'Update'
 
@@ -280,7 +280,7 @@ class RoBsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     """
     model = Study
     template_name = "riskofbias/rob_delete.html"
-    form_class = forms.RoBForm
+    form_class = forms.RoBScoreForm
     success_message = 'Risk-of-bias information deleted.'
     crud = 'Delete'
 

@@ -106,6 +106,39 @@ class RiskOfBiasMetric(models.Model):
 
 class RiskOfBias(models.Model):
 
+    study = models.ForeignKey(Study, related_name='qualities', null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(HAWCUser,
+        related_name='qualities',
+        blank=True,
+        null=True)
+    conflict_resolution = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Risk of Biases"
+
+    def __unicode__(self):
+        if self.conflict_resolution:
+            riskofbias = 'Risk of Bias, Conflict Resolution'
+        else:
+            riskofbias = 'Risk of Bias'
+        return '{} {}: {}'.format(self.study, riskofbias, self.author)
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse('riskofbias:robs_detail', args=[str(self.study.pk)])
+
+    def get_edit_url(self):
+        return reverse('riskofbias:rob_update', args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse('riskofbias:rob_delete', args=[self.pk])
+
+
+class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
         (1, 'Definitely high risk of bias'),
         (2, 'Probably high risk of bias'),
@@ -129,58 +162,23 @@ class RiskOfBias(models.Model):
         0: "#FFCC00",
     }
 
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = fields.GenericForeignKey('content_type', 'object_id')
-    metric = models.ForeignKey(RiskOfBiasMetric, related_name='qualities')
+    riskofbias = models.ForeignKey(RiskOfBias, related_name='scores')
+    metric = models.ForeignKey(RiskOfBiasMetric, related_name='scores')
     score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(HAWCUser,
-        related_name='qualities',
-        blank=True,
-        null=True)
-    conflict_resolution = models.BooleanField(default=False)
-
-    class Meta:
-        ordering = ("metric",)
-        verbose_name_plural = "Risk of Biases"
-
-    def __unicode__(self):
-        return '{}: {}'.format(self.metric, self.score)
-
-    def get_assessment(self):
-        return self.study.get_assessment()
-
-    def get_absolute_url(self):
-        return reverse('riskofbias:robs_detail', args=[str(self.study.pk)])
-
-    def get_edit_url(self):
-        return reverse('riskofbias:rob_update', args=[self.pk])
-
-    def get_delete_url(self):
-        return reverse('riskofbias:rob_delete', args=[self.pk])
-
-    @property
-    def score_symbol(self):
-        return self.SCORE_SYMBOLS[self.score]
-
-    @property
-    def score_shade(self):
-        return self.SCORE_SHADES[self.score]
 
     @staticmethod
     def flat_complete_header_row():
         return (
+            'sq-id',
             'sq-domain_id',
             'sq-domain_name',
             'sq-domain_description',
             'sq-metric_id',
             'sq-metric_metric',
             'sq-metric_description',
-            'sq-id',
-            'sq-notes',
+            'sq-score-id',
+            'sq-score-notes',
             'sq-score_description',
             'sq-score'
         )
@@ -188,6 +186,7 @@ class RiskOfBias(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         return (
+            ser['riskofbias']['id'],
             ser['metric']['domain']['id'],
             ser['metric']['domain']['name'],
             ser['metric']['domain']['description'],
@@ -199,3 +198,19 @@ class RiskOfBias(models.Model):
             ser['score_description'],
             ser['score']
         )
+
+    @property
+    def score_symbol(self):
+        return self.SCORE_SYMBOLS[self.score]
+
+    @property
+    def score_shade(self):
+        return self.SCORE_SHADES[self.score]
+
+    def get_score_display(self):
+        return self.RISK_OF_BIAS_SCORE_CHOICES[self.score]
+
+reversion.register(RiskOfBiasDomain)
+reversion.register(RiskOfBiasMetric)
+reversion.register(RiskOfBias)
+reversion.register(RiskOfBiasScore)
