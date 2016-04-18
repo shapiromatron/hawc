@@ -31,7 +31,7 @@ class ARoBDetail(BaseList):
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)\
-                                 .prefetch_related('scores')
+                                 .prefetch_related('metrics')
 
 
 class ARoBEdit(ARoBDetail):
@@ -203,11 +203,6 @@ class RoBsDetail(BaseDetail):
         self.assessment = self.study.get_assessment()
         return super(RoBsDetail, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(RoBsDetail, self).get_context_data(**kwargs)
-        context['robs'] = self.object.qualities.all().select_related('scores')
-        return context
-
 
 class RoBsList(BaseList):
     model = Study
@@ -299,7 +294,6 @@ class RoBsDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super(DeleteView, self).get_context_data(**kwargs)
         context['assessment'] = self.assessment
-        context['robs'] = self.object.qualities.all().select_related('metric')
         context['obj_perms'] = self.get_obj_perms()
         context['crud'] = self.crud
         return context

@@ -30,4 +30,14 @@ class Migration(migrations.Migration):
             name='riskofbias',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='riskofbias.RiskOfBias'),
         ),
+        migrations.AlterField(
+            model_name='riskofbias',
+            name='study',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='riskofbiases', to='study.Study'),
+        ),
+        migrations.AlterField(
+            model_name='riskofbiasdomain',
+            name='assessment',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rob_domains', to='assessment.Assessment'),
+        ),
     ]

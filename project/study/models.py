@@ -262,6 +262,18 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
+    @property
+    def qualities(self):
+        if self.riskofbiases.count() is 1:
+            queryset = self.riskofbiases.first()
+        else:
+            queryset = self.get_conflict_resolution()
+        return queryset.scores.all().prefetch_related('metric', 'metric__domain')
+
+    def get_conflict_resolution(self):
+        return self.riskofbiases.get(conflict_resolution=True)
+
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

@@ -41,10 +41,10 @@ class Study(viewsets.ReadOnlyModelViewSet):
                 filters["published"] = True
         else:
             prefetch = (
-                'qualities',
+                'riskofbiases__scores',
                 'identifiers',
-                'qualities__metric',
-                'qualities__metric__domain'
+                'riskofbiases__scores__metric',
+                'riskofbiases__scores__metric__domain',
             )
 
         return self.model.objects.filter(**filters)\

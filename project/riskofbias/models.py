@@ -18,7 +18,7 @@ from utils.helper import cleanHTML
 
 class RiskOfBiasDomain(models.Model):
     assessment = models.ForeignKey('assessment.Assessment',
-        related_name="sq_domains")
+        related_name="rob_domains")
     name = models.CharField(max_length=128)
     description = models.TextField(default="")
     created = models.DateTimeField(auto_now_add=True)
@@ -105,8 +105,7 @@ class RiskOfBiasMetric(models.Model):
 
 
 class RiskOfBias(models.Model):
-
-    study = models.ForeignKey(Study, related_name='qualities', null=True)
+    study = models.ForeignKey(Study, related_name='riskofbiases', null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(HAWCUser,

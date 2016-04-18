@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from riskofbias.serializers import RiskOfBiasSerializer
+from riskofbias.serializers import RiskOfBiasSerializer, RiskOfBiasScoreSerializer
 from utils.helper import SerializerHelper
 
 from . import models
@@ -30,7 +30,8 @@ class SimpleStudySerializer(StudySerializer):
 class VerboseStudySerializer(StudySerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    qualities = RiskOfBiasSerializer(many=True, read_only=True)
+    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+    qualities = RiskOfBiasScoreSerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
