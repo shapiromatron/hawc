@@ -18,8 +18,18 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasMetric
 
+
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(RiskOfBiasScoreSerializer, self).to_representation(instance)
+        ret['score_description'] = instance.get_score_display()
+        ret['score_symbol'] = instance.score_symbol
+        ret['score_shade'] = instance.score_shade
+        ret['url_edit'] = instance.riskofbias.get_edit_url()
+        ret['url_delete'] = instance.riskofbias.get_delete_url()
+        return ret
 
     class Meta:
         model = models.RiskOfBiasScore

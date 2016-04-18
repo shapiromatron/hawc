@@ -200,7 +200,7 @@ _.extend(InlineRendering.prototype, {
 
         this.setTitle(title);
         this.setMainContent(content);
-        new StudyQuality_TblCompressed(obj, content, {'show_all_details_startup': false});
+        new RiskOfBias_TblCompressed(obj, content, {'show_all_details_startup': false});
     },
     display_visual: function(obj){
         var title = $('<h4>').html(obj.object_hyperlink()),

@@ -93,8 +93,8 @@
       $('.score').parent().append('<br><br><div class="sq_score"></div>');
       var change_gradient = function(){
         $(this).parent().find('.sq_score')
-          .css('background-color', StudyQuality.score_shades[this.value])
-          .text(StudyQuality.score_text[this.value]);
+          .css('background-color', RiskOfBias.score_shades[this.value])
+          .text(RiskOfBias.score_text[this.value]);
       };
       $('.score').each(change_gradient);
       $('.score').on('change', change_gradient);

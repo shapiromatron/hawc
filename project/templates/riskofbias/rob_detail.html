@@ -34,13 +34,13 @@
     {% endif %}
   </h2>
 
-  <div id="sq_tbl"></div>
+  <div id="rob_tbl"></div>
 
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     window.study = new Study({{study.get_json|safe}})
-    window.sq_tbl = new StudyQuality_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
+    window.sq_tbl = new RiskOfBias_TblCompressed(study, $('#rob_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}

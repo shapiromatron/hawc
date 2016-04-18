@@ -21,8 +21,8 @@ class RiskOfBiasFlatComplete(FlatFileExporter):
             ser = obj.get_json(json_encode=False)
             row = []
             row.extend(Study.flat_complete_data_row(ser))
-            for sq in ser['qualities']:
+            for rob in ser['qualities']:
                 row_copy = list(row)  # clone
-                row_copy.extend(models.RiskOfBias.flat_complete_data_row(sq))
+                row_copy.extend(models.RiskOfBias.flat_complete_data_row(rob))
                 rows.append(row_copy)
         return rows

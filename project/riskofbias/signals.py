@@ -9,7 +9,7 @@ import models
 @receiver(pre_delete, sender=models.RiskOfBiasDomain)
 @receiver(post_save, sender=models.RiskOfBiasMetric)
 @receiver(pre_delete, sender=models.RiskOfBiasMetric)
-def invalidate_caches_sq_metrics(sender, instance, **kwargs):
+def invalidate_caches_rob_metrics(sender, instance, **kwargs):
     if sender is models.RiskOfBiasDomain:
         assessment_id = instance.assessment_id
     elif sender is models.RiskOfBiasMetric:
@@ -24,5 +24,7 @@ def invalidate_caches_sq_metrics(sender, instance, **kwargs):
 
 @receiver(post_save, sender=models.RiskOfBias)
 @receiver(pre_delete, sender=models.RiskOfBias)
-def invalidate_caches_study_quality(sender, instance, **kwargs):
+@receiver(post_save, sender=models.RiskOfBiasScore)
+@receiver(pre_delete, sender=models.RiskOfBiasScore)
+def invalidate_caches_risk_of_bias(sender, instance, **kwargs):
     instance.study.delete_caches([instance.study_id])

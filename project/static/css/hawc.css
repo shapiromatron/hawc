@@ -165,7 +165,7 @@ ul.sponsors {
 
 
 /* Risk of Bias */
-.sq_score{
+.rob_score{
   border-radius: 25px;
   height: 50px;
   width: 50px;
@@ -176,7 +176,7 @@ ul.sponsors {
   font-size: larger;
   color: white;
 }
-.sq_score_bar {
+.rob_score_bar {
   height:20px;
   font-weight: bold;
   margin-bottom: 5px;

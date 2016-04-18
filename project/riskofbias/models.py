@@ -206,8 +206,6 @@ class RiskOfBiasScore(models.Model):
     def score_shade(self):
         return self.SCORE_SHADES[self.score]
 
-    def get_score_display(self):
-        return self.RISK_OF_BIAS_SCORE_CHOICES[self.score]
 
 reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)

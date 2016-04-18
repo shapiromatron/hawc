@@ -61,7 +61,7 @@
             <a class="btn btn-primary pull-right" href="{% url 'riskofbias:robs_detail' object.pk %}">View details</a>
           </h3>
           <div class="span12">
-            <div id='sq_plot' class="d3_container"></div>
+            <div id='rob_plot' class="d3_container"></div>
           </div>
       </div>
     {% endif %}
@@ -104,7 +104,7 @@
       study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    window.plot = new StudyQuality_Donut(study, '#sq_plot', {'build_plot_startup': true});
+    window.plot = new RiskOfBias_Donut(study, '#rob_plot', {'build_plot_startup': true});
   </script>
   {% if crud == "Read" %}
     {% include "comments/_comments_extrajs.html" %}
