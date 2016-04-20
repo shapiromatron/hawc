@@ -1,6 +1,7 @@
-import textwrap
 from datetime import datetime
+import io
 import subprocess
+import textwrap
 
 from django.db import connection
 from django.apps import apps
@@ -118,7 +119,7 @@ class Command(UnicodeCommand):
         models = apps.get_models()
         for model in models:
             db_table = model._meta.db_table
-            self.stdout.write("\n# TABLE {}\n".format(db_table))
+            self.stdout.write("\n--- TABLE {}\n".format(db_table))
             qs = None
             if hasattr(model, 'assessment_qs'):
                 qs = model.assessment_qs(assessment_id)
@@ -127,13 +128,12 @@ class Command(UnicodeCommand):
 
             if qs is not None:
                 querystr = qs.query.__str__()
-                qry = "COPY ({}) TO STDOUT WITH CSV HEADER;".format(querystr)
-                self.cursor.copy_expert(qry, self.stdout)
+                self.convert_copy(db_table, querystr)
                 for m2m in model._meta.many_to_many:
                     self.write_m2m_data(m2m, qs)
 
             else:
-                self.stdout.write('# no content added\n')
+                self.stdout.write('--- no content added\n')
 
     def write_m2m_data(self, field, qs):
         db_table = field.m2m_db_table()
@@ -147,15 +147,34 @@ class Command(UnicodeCommand):
         else:
             ids = '-1'
 
-        field = field.m2m_column_name()
-        self.stdout.write("\n# TABLE {}\n".format(db_table))
-        qry = 'COPY (SELECT * FROM "{}" WHERE "{}"."{}" IN ({})) TO STDOUT WITH CSV HEADER;'.format(  # noqa
+        matchfield = field.m2m_column_name()
+        self.stdout.write("\n--- TABLE {}\n".format(db_table))
+        through_model = getattr(field.model, field.name).through
+        fields = [
+            '"{}"."{}"'.format(db_table, x.get_attname_column()[1])
+            for x in through_model._meta.concrete_fields
+        ]
+        qry = 'SELECT {} FROM "{}" WHERE "{}"."{}" IN ({})'.format(
+            ", ".join(fields),
             db_table,
             db_table,
-            field,
+            matchfield,
             ids,
         )
-        self.cursor.copy_expert(qry, self.stdout)
+        self.convert_copy(db_table, qry)
+
+    def convert_copy(self, db_table, qry):
+        selects = qry[7:qry.find(' FROM')]
+        selects = selects.split(',')
+        selects = [v.strip() for v in selects]
+        selects = [v.split('.')[1] for v in selects]
+        selects = [v[1:-1] for v in selects]
+        selects = ', '.join(selects)
+        header = 'COPY {} ({}) FROM stdin;\n'.format(db_table, selects)
+        copy = 'COPY ({}) TO STDOUT;'.format(qry)
+        self.stdout.write(header)
+        self.cursor.copy_expert(copy, self.stdout)
+        self.stdout.write('\\.\n')
 
     def handle(self, *args, **options):
         assessment_id = options.get('assessment_id', -1)
