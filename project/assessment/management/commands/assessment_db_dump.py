@@ -88,6 +88,8 @@ class Command(UnicodeCommand):
 
     """
 
+    handled_m2m = []
+
     def add_arguments(self, parser):
         parser.add_argument('assessment_id', type=int)
 
@@ -112,7 +114,7 @@ class Command(UnicodeCommand):
         external_exports = ExternalLibraryExports()
         self.stdout.write('--- HAWC ASSESSMENT DATA\n')
         self.stdout.write('------------------------\n')
-        cursor = connection.cursor()
+        self.cursor = connection.cursor()
         models = apps.get_models()
         for model in models:
             db_table = model._meta.db_table
@@ -125,12 +127,35 @@ class Command(UnicodeCommand):
 
             if qs is not None:
                 querystr = qs.query.__str__()
-                cursor.copy_expert(
-                    "COPY ({}) TO STDOUT WITH CSV HEADER;".format(querystr),
-                    self.stdout
-                )
+                qry = "COPY ({}) TO STDOUT WITH CSV HEADER;".format(querystr)
+                self.cursor.copy_expert(qry, self.stdout)
+                for m2m in model._meta.many_to_many:
+                    self.write_m2m_data(m2m, qs)
+
             else:
                 self.stdout.write('# no content added\n')
+
+    def write_m2m_data(self, field, qs):
+        db_table = field.m2m_db_table()
+        if db_table in self.handled_m2m:
+            return
+        self.handled_m2m.append(db_table)
+
+        ids = tuple(qs.values_list('id', flat=True))
+        if len(ids) > 0:
+            ids = ', '.join([str(id_) for id_ in ids])
+        else:
+            ids = '-1'
+
+        field = field.m2m_column_name()
+        self.stdout.write("\n# TABLE {}\n".format(db_table))
+        qry = 'COPY (SELECT * FROM "{}" WHERE "{}"."{}" IN ({})) TO STDOUT WITH CSV HEADER;'.format(  # noqa
+            db_table,
+            db_table,
+            field,
+            ids,
+        )
+        self.cursor.copy_expert(qry, self.stdout)
 
     def handle(self, *args, **options):
         assessment_id = options.get('assessment_id', -1)
@@ -139,5 +164,5 @@ class Command(UnicodeCommand):
             raise CommandError('Assessment {} not found.'.format(assessment_id))
 
         self.write_header(assessment)
-        # self.write_schema()
+        self.write_schema()
         self.write_data(assessment.id)
