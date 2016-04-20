@@ -178,6 +178,10 @@ class Experiment(models.Model):
             cleanHTML(ser['description'])
         )
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
 
 class AnimalGroup(models.Model):
 
@@ -341,6 +345,10 @@ class AnimalGroup(models.Model):
             ser['strain']
         )
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(experiment__study__assessment=assessment_id)
+
 
 class DosingRegime(models.Model):
 
@@ -480,6 +488,11 @@ class DosingRegime(models.Model):
         else:
             return doses
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(dosed_animals__experiment__study__assessment=assessment_id)
+
 
 class DoseGroup(models.Model):
     dose_regime = models.ForeignKey(
@@ -515,6 +528,11 @@ class DoseGroup(models.Model):
             cols.append(v)
 
         return cols
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(dose_regime__dosed_animals__experiment__study__assessment=assessment_id)  # noqa
 
 
 class Endpoint(BaseEndpoint):
@@ -1118,6 +1136,10 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser['dose_group_id'] == endpoint['LOEL'],
             ser['dose_group_id'] == endpoint['FEL'],
         )
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(Experiment)

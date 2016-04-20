@@ -350,6 +350,10 @@ class Search(models.Model):
         d['search_type'] = self.get_search_type_display()
         return d
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class PubMedQuery(models.Model):
 
@@ -435,6 +439,10 @@ class PubMedQuery(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(search__assessment=assessment_id)
 
 
 class Identifiers(models.Model):
@@ -633,6 +641,10 @@ class Identifiers(models.Model):
         return cls.objects.filter(database=EXTERNAL_LINK)\
             .aggregate(models.Max('unique_id'))["unique_id__max"]
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(references__assessment=assessment_id)
+
 
 class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
     cache_template_taglist = 'reference-taglist-assessment-{0}'
@@ -826,6 +838,10 @@ class ReferenceTags(ItemBase):
         return cls.tag_model().objects.filter(**{
             '%s__content_object__isnull' % cls.tag_relname(): False
         }).distinct()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(content_object__assessment=assessment_id)
 
 
 class Reference(models.Model):
@@ -1210,3 +1226,7 @@ class Reference(models.Model):
         df.apply(fn, axis=1)
 
         return errors
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)

@@ -263,6 +263,10 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")
@@ -288,6 +292,10 @@ class Attachment(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
 
 
 class StudyQualityDomain(models.Model):
@@ -325,6 +333,10 @@ class StudyQualityDomain(models.Model):
                                    description=domain["description"])
             d.save()
             StudyQualityMetric.build_metrics_for_one_domain(d, domain["metrics"])
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
 
 class StudyQualityMetric(models.Model):
@@ -376,6 +388,10 @@ class StudyQualityMetric(models.Model):
             obj.domain = domain
             objs.append(obj)
         StudyQualityMetric.objects.bulk_create(objs)
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(domain__assessment=assessment_id)
 
 
 class StudyQuality(models.Model):
