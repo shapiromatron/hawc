@@ -36,7 +36,7 @@ class LitOverview(BaseList):
         if context['obj_perms']['edit']: # expensive, only calculate if needed
             qryset = models.Reference.get_references_ready_for_import(self.assessment)
             context['need_import_count'] = qryset.count()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -101,7 +101,7 @@ class RefDownloadExcel(BaseList):
             self.fn = "{}-refs".format(self.assessment)
             self.sheet_name = unicode(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
-                assessment=self.assessment, json_encode=False)
+                assessment=self.assessment.id, json_encode=False)
 
     def get_queryset(self):
         if self.tag:
@@ -232,7 +232,7 @@ class SearchDownloadExcel(BaseDetail):
             filename=self.object.slug,
             sheet_name=self.object.slug,
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(assessment=self.assessment.id, json_encode=False),
             include_parent_tag=False)
         return exporter.build_response()
 
@@ -317,7 +317,7 @@ class TagBySearch(TagReferences):
         context['references'] = models.Reference.objects\
             .filter(searches=self.object)\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -338,7 +338,7 @@ class TagByReference(TagReferences):
         context['references'] = self.model.objects\
             .filter(pk=self.object.pk)\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -360,7 +360,7 @@ class TagByTag(TagReferences):
             .filter(tags=self.object.pk)\
             .distinct()\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -377,7 +377,7 @@ class TagByUntagged(TagReferences):
     def get_context_data(self, **kwargs):
         context = super(TagByUntagged, self).get_context_data(**kwargs)
         context['references'] = models.Reference.get_untagged_references(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -395,7 +395,7 @@ class SearchRefList(BaseDetail):
         context = super(SearchRefList, self).get_context_data(**kwargs)
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['object_type'] = 'search'
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['untagged'] = self.object.references_untagged
         return context
 
@@ -414,7 +414,7 @@ class SearchTagsVisualization(BaseDetail):
         context = super(SearchTagsVisualization, self).get_context_data(**kwargs)
         context['object_type'] = 'search'
         context['ref_objs'] = self.object.get_all_reference_tags()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['objectType'] = self.model.__name__
         return context
 
@@ -427,7 +427,7 @@ class RefList(BaseList):
         context = super(RefList, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['untagged'] = models.Reference.get_untagged_references(self.assessment)
         return context
 
@@ -496,7 +496,7 @@ class RefDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(RefDetail, self).get_context_data(**kwargs)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['object_json'] = self.object.get_json()
         return context
 
@@ -530,7 +530,7 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
         context = super(FormView, self).get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['obj_perms'] = super(RefSearch, self).get_obj_perms()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -581,7 +581,7 @@ class RefVisualization(BaseDetail):
         context = super(RefVisualization, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['objectType'] = self.model.__name__
         return context
 
@@ -599,7 +599,7 @@ class TagsJSON(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(self.object)
+        tags = models.ReferenceFilterTag.get_all_tags(self.object.id)
         return HttpResponse(json.dumps(tags), content_type="application/json")
 
 
@@ -615,7 +615,7 @@ class TagsUpdate(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super(TagsUpdate, self).get_context_data(**kwargs)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
     def post(self, request, *args, **kwargs):

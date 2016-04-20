@@ -664,17 +664,17 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         return tag
 
     @classmethod
-    def get_all_tags(cls, assessment, json_encode=True):
+    def get_all_tags(cls, assessment_id, json_encode=True):
         """
         Get all tags for the selected assessment.
         """
-        key = cls.cache_template_tagtree.format(assessment.pk)
+        key = cls.cache_template_tagtree.format(assessment_id)
         tags = cache.get(key)
         if tags:
             logging.info('cache used: {0}'.format(key))
         else:
 
-            root = cls.get_assessment_root(assessment.pk)
+            root = cls.get_assessment_root(assessment_id)
             try:
                 tags = cls.dump_bulk(root)
             except KeyError as e:
