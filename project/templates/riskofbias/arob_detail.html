@@ -9,7 +9,7 @@
   {% if crud == "Read" %}
     <li class="active">Risk-of-bias requirements<span class="divider">/</span></li>
   {% else %}
-    <li><a href="{% url 'study:detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
   {% endif %}
 {% endblock breadcrumbs %}
@@ -23,12 +23,17 @@
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Requirement settings</a></li>
+          <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a></li>
           <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
+
+          <li class="divider"></li>
+          <li class="disabled"><a tabindex="-1" href="#">Reviewers</a></li>
+          <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Assign reviewers</a></li>
         </ul>
     </div>
     {% endif %}
   </h1>
-
   <p>When a study is entered into the HAWC database for use in an assessment, risk-of-bias metrics can be entered for a metric of bias for each study. Risk-of-bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
 
   {% if crud == "Update" %}

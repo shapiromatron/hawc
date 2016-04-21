@@ -10,8 +10,23 @@
 {% endblock %}
 
 {% block content %}
+    {% if crud == "Read" and obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Requirement settings</a></li>
+          <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a></li>
+          <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
 
-  <h2>Available studies</h2>
+          <li class="divider"></li>
+          <li class="disabled"><a tabindex="-1" href="#">Reviewers</a></li>
+          <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Assign reviewers</a></li>
+        </ul>
+    </div>
+    {% endif %}
+    <h2>Available studies</h2>
 
   <div id="riskTbl"></div>
 

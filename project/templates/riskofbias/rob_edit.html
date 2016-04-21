@@ -33,9 +33,6 @@
     {{ formset.non_form_errors.as_ul|add_class:"alert alert-error" }}
     <table id="formset" class="table table-striped table-condensed">
     {% for form in formset.forms %}
-        {% if forloop.first and author_form %}
-                {{ author_form|crispy }}
-        {% endif %}
 
       {% comment %}
         {% if forloop.first %}
