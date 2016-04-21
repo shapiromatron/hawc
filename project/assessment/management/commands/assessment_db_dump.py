@@ -101,12 +101,22 @@ class Command(UnicodeCommand):
             datetime.now().isoformat())
         self.stdout.write(textwrap.dedent(header))
 
-    def write_schema(self):
+    def write_schema_pre_data(self):
         dbname = settings.DATABASES['default']['NAME']
-        self.stdout.write('--- HAWC DATABASE SCHEMA\n')
-        self.stdout.write('------------------------\n')
+        self.stdout.write('--- HAWC PRE-DATABASE SCHEMA\n')
+        self.stdout.write('----------------------------\n')
         proc = subprocess.Popen(
-            ['pg_dump', '-s', dbname],
+            ['pg_dump', '-d', dbname, '--section=pre-data'],
+            stdout=subprocess.PIPE, shell=False)
+        (out, err) = proc.communicate()
+        self.stdout.write(out)
+
+    def write_schema_post_data(self):
+        dbname = settings.DATABASES['default']['NAME']
+        self.stdout.write('--- HAWC POST-DATABASE SCHEMA\n')
+        self.stdout.write('-----------------------------\n')
+        proc = subprocess.Popen(
+            ['pg_dump', '-d', dbname, '--section=post-data'],
             stdout=subprocess.PIPE, shell=False)
         (out, err) = proc.communicate()
         self.stdout.write(out)
@@ -183,5 +193,6 @@ class Command(UnicodeCommand):
             raise CommandError('Assessment {} not found.'.format(assessment_id))
 
         self.write_header(assessment)
-        self.write_schema()
+        self.write_schema_pre_data()
         self.write_data(assessment.id)
+        self.write_schema_post_data()
