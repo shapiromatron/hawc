@@ -1,0 +1,55 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+  {{assessment}} | Risk-of-bias reviewers | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'study:detail' assessment.pk %}">Risk-of-bias reviewers</a><span class="divider">/</span></li>
+    <li class="active">Edit<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block extrastyle %}
+    {% include_ui_theme %}
+    {% include_jquery_libs %}
+{% endblock %}
+
+{% block content %}
+
+  <h2>{{ assessment }} Risk-of-bias reviewers</h2>
+  <p>
+      Assign Risk of Bias reviewers as needed to each study. Any study with more than one reviewer requires a Conflict Resolution reviewer.
+  </p>
+
+  <form action="." method="post">
+      {% crispy form %}
+      {{ formset.management_form }}
+      {{ formset.non_form_errors.as_ul|add_class:"alert alert-error" }}
+      {% crispy formset helper %}
+
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Update Risk of Bias reviewers</button>
+          <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'riskofbias:arob_detail' assessment.pk %}{% endif %}" class="btn">Cancel</a>
+      </div>
+      {% csrf_token %}
+  </form>
+{% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.study').each(function(i,v){
+      $(this.parentElement).text(this.value)
+      $(this).hide(true);
+    });
+  });
+</script>
+{% endblock extrajs %}

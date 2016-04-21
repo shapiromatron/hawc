@@ -207,7 +207,25 @@ class RiskOfBiasScore(models.Model):
         return self.SCORE_SHADES[self.score]
 
 
+class RiskOfBiasReviewers(models.Model):
+    # Use content_type to set parent as Assessment or Study
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    parent = fields.GenericForeignKey('content_type', 'object_id')
+    number = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name='Number of Reviewers',
+        help_text='Number of risk of bias reviewers to be required - not'
+        ' counting the conflict resolution reviewer. <br> If more than one'
+        ' reviewer is set, then a conflict resolution reviewer will be required.',
+    )
+
+    def __unicode__(self):
+        return str(self.number)
+
+
 reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
+reversion.register(RiskOfBiasReviewers)

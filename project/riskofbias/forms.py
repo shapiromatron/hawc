@@ -4,12 +4,15 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.fields import TextInput
 
 from crispy_forms import layout as cfl
+from crispy_forms.helper import FormHelper
+from selectable import forms as selectable
 
 from assessment.models import Assessment
 from lit.models import Reference
-from utils.forms import BaseFormHelper
+from study.models import Study
 from . import models
 
+from myuser.lookups import HAWCUserLookup
 
 class RoBDomainForm(forms.ModelForm):
 
@@ -79,7 +82,7 @@ class RoBScoreForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(RoBForm, self).__init__(*args, **kwargs)
+        super(RoBScoreForm, self).__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
         self.fields['notes'].widget.attrs['class'] = 'html5text'
@@ -87,14 +90,6 @@ class RoBScoreForm(forms.ModelForm):
         self.fields['notes'].widget.attrs['rows'] = 4
         if study:
             self.instance.study = study
-
-
-class RoBAuthorForm(forms.Form):
-    author = forms.BooleanField(
-        label='Authorship',
-        help_text='This Risk of Bias assessment has no author. Select to take authorship.',
-        required=False
-    )
 
 
 class RoBEndpointForm(RoBScoreForm):
@@ -147,8 +142,56 @@ class BaseRoBFormSet(BaseModelFormSet):
             metrics.append(metric)
 
 
+class NumberOfReviewersForm(forms.ModelForm):
+    class Meta:
+        model = models.RiskOfBiasReviewers
+        fields = ('number',)
+
+
+class RoBReviewerFormsetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(RoBReviewerFormsetHelper, self).__init__(*args, **kwargs)
+        self.template = 'forms/table_inline_formset.html'
+
+
+class RoBReviewersForm(forms.ModelForm):
+    conflict_author = selectable.AutoCompleteSelectField(
+        lookup_class=HAWCUserLookup,
+        required=False,
+        label="Conflict Resolution author"
+    )
+
+    class Meta:
+        model = Study
+        fields = ('short_citation',)
+
+    def __init__(self, *args, **kwargs):
+        super(RoBReviewersForm, self).__init__(*args, **kwargs)
+        self.fields['short_citation'].widget.attrs['class'] = 'study'
+        self.fields['short_citation'].label = 'Study'
+        reviewers = self.instance.rob_reviewers.first() if self.instance.rob_reviewers.exists() else self.instance.assessment.rob_reviewers.first()
+        for i in range(reviewers.number):
+            author_field = "author-{}".format(i)
+            self.fields[author_field] = selectable.AutoCompleteSelectField(
+                lookup_class=HAWCUserLookup,
+                label='Reviewer',
+                widget=selectable.AutoCompleteSelectWidget)
+            self.fields[author_field].widget.update_query_parameters(
+                {'related': self.instance.assessment_id})
+        # set conflict_author as the last field
+        self.fields['conflict_author'] = self.fields.pop('conflict_author')
+
+
 RoBFormSet = modelformset_factory(
     models.RiskOfBiasScore,
     form=RoBScoreForm,
     formset=BaseRoBFormSet,
+    fields=('riskofbias', 'metric', 'score', 'notes'),
     extra=0)
+
+RoBReviewerFormset = modelformset_factory(
+    model=Study,
+    form=RoBReviewersForm,
+    fields=('short_citation',),
+    extra=0,
+)

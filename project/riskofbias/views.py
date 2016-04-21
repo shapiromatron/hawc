@@ -38,6 +38,43 @@ class ARoBEdit(ARoBDetail):
     crud = 'Update'
 
 
+class ARoBReviewers(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+    model = Assessment
+    child_model = Study
+    form_class = forms.NumberOfReviewersForm
+    formset_factory = forms.RoBReviewerFormset
+    crud = 'Update'
+    template_name = "riskofbias/arob_reviewers.html"
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
+
+    def post(self, request, *args, **kwargs):
+        self.formset = self.formset_factory(request.POST)
+        self.form = self.get_form(self.form_class)
+        if self.form.is_valid() and self.formset.is_valid():
+            return self.form_valid()
+        else:
+            return self.form_invalid(self.form, self.formset)
+
+    def form_valid(self):
+        self.form.save()
+        self.formset.save()
+        self.send_message()  # replicate MessageMixin
+        return HttpResponseRedirect(self.get_success_url())
+    #
+    def get_context_data(self, **kwargs):
+        context = super(ARoBReviewers, self).get_context_data(**kwargs)
+        if self.request.method == 'GET':
+            self.formset = self.formset_factory(
+                queryset=Study.objects.filter(assessment=self.assessment))
+
+        context['helper'] = forms.RoBReviewerFormsetHelper()
+        context['formset'] = self.formset
+        context['crud'] = self.crud
+        context['assessment'] = self.assessment
+        return context
+    #
 # Risk-of-bias domain views
 class RoBDomainCreate(BaseCreate):
     parent_model = Assessment
@@ -216,7 +253,6 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     model = Study
     template_name = "riskofbias/rob_edit.html"
     success_message = 'Risk-of-bias updated.'
-    author_form = forms.RoBAuthorForm
     form_class = forms.RoBScoreForm
     formset_factory = forms.RoBFormSet
     crud = 'Update'
@@ -230,7 +266,6 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         return super(RoBsEdit, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        author_form = self.author_form(self.request.POST)
         self.formset = self.formset_factory(self.request.POST)
         if self.formset.is_valid():
             return self.form_valid(author_form)
@@ -238,18 +273,7 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             return self.form_invalid(self.formset)
 
     def form_valid(self, author_form):
-        """
-            author_form is only shown if RoBs have no author, so can only be
-            changed if RoBs have no author and authorship is taken.
-        """
-        if author_form.has_changed():
-            for form in self.formset:
-                rob = form.save(commit=False)
-                rob.study = self.study
-                rob.author = self.request.user
-                rob.save()
-        else:
-            self.formset.save()
+        self.formset.save()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
 
@@ -257,10 +281,9 @@ class RoBsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(RoBsEdit, self).get_context_data(**kwargs)
 
         if self.request.method == 'GET':
-            self.formset = self.formset_factory(queryset=models.RiskOfBias.objects.filter(study=self.study))
+            self.formset = self.formset_factory(
+                queryset=models.RiskOfBias.objects.filter(study=self.study))
 
-        if self.study.qualities.filter(author__isnull=True).exists():
-            context['author_form'] = self.author_form
         context['formset'] = self.formset
         context['crud'] = self.crud
         context['assessment'] = self.assessment

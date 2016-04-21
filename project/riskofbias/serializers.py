@@ -1,8 +1,5 @@
 from rest_framework import serializers
 
-from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from utils.helper import SerializerHelper
-
 from . import models
 
 
@@ -34,6 +31,7 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
         fields = ('id', 'score', 'notes', 'metric')
+
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(read_only=True, many=True)
