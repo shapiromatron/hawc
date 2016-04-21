@@ -450,7 +450,6 @@ class EffectTag(models.Model):
             .filter(baseendpoint__assessment_id=assessment_id)\
             .distinct()
 
-
     @classmethod
     def get_choices(cls, assessment_id):
         return cls.objects\

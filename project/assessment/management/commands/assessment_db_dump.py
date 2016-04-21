@@ -1,5 +1,4 @@
 from datetime import datetime
-import io
 import subprocess
 import textwrap
 
@@ -46,7 +45,7 @@ class ExternalLibraryExports(object):
         return self.empty_qs(cls)
 
     def auth_group(self, cls, assessment_id):
-        return self.empty_qs(cls)
+        return self.complete_qs(cls)
 
     def django_content_type(self, cls, assessment_id):
         return self.complete_qs(cls)
@@ -137,8 +136,14 @@ class Command(UnicodeCommand):
                 qs = external_exports.lookup(db_table)(model, assessment_id)
 
             if qs is not None:
-                querystr = qs.query.__str__()
-                self.convert_copy(db_table, querystr)
+                qry = qs.query.__str__()
+                fields = self.get_select_fields(qs.model)
+                select_include = self.generate_select(fields, db_table)
+                qry_start = 'SELECT DISTINCT' if 'DISTINCT' in qry else 'SELECT'
+                qry = "{} {} {}".format(
+                    qry_start, select_include, qry[qry.find(' FROM'):])
+                self.convert_copy(db_table, fields, qry)
+
                 for m2m in model._meta.many_to_many:
                     self.write_m2m_data(m2m, qs)
 
@@ -159,32 +164,39 @@ class Command(UnicodeCommand):
 
         matchfield = field.m2m_column_name()
         self.stdout.write("\n--- TABLE {}\n".format(db_table))
-        through_model = getattr(field.model, field.name).through
-        fields = [
-            '"{}"."{}"'.format(db_table, x.get_attname_column()[1])
-            for x in through_model._meta.concrete_fields
-        ]
+        model = getattr(field.model, field.name).through
+        fields = self.get_select_fields(model)
+        select_include = (self.generate_select(fields, db_table))
         qry = 'SELECT {} FROM "{}" WHERE "{}"."{}" IN ({})'.format(
-            ", ".join(fields),
+            select_include,
             db_table,
             db_table,
             matchfield,
             ids,
         )
-        self.convert_copy(db_table, qry)
+        self.convert_copy(db_table, fields, qry)
 
-    def convert_copy(self, db_table, qry):
-        selects = qry[7:qry.find(' FROM')]
-        selects = selects.split(',')
-        selects = [v.strip() for v in selects]
-        selects = [v.split('.')[1] for v in selects]
-        selects = [v[1:-1] for v in selects]
-        selects = ', '.join(selects)
+    def convert_copy(self, db_table, fields, qry):
+        fields = ['"{}"'.format(fld) for fld in fields]
+        selects = ', '.join(fields)
         header = 'COPY {} ({}) FROM stdin;\n'.format(db_table, selects)
         copy = 'COPY ({}) TO STDOUT;'.format(qry)
         self.stdout.write(header)
         self.cursor.copy_expert(copy, self.stdout)
         self.stdout.write('\\.\n')
+
+    def get_select_fields(self, model):
+        meta = model._meta
+        fields = set(meta.concrete_fields)
+        for inherited in meta.get_parent_list():
+            fields = fields - set(inherited._meta.concrete_fields)
+
+        db_cols = [fld.get_attname_column()[1] for fld in fields]
+        return db_cols
+
+    def generate_select(self, cols, db_table):
+        select = ['"{}"."{}"'.format(db_table, col) for col in cols]
+        return ", ".join(select)
 
     def handle(self, *args, **options):
         assessment_id = options.get('assessment_id', -1)
