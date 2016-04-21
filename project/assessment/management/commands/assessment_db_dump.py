@@ -88,7 +88,7 @@ class Command(UnicodeCommand):
 
     """
 
-    handled_m2m = []
+    table_handled = []
 
     def add_arguments(self, parser):
         parser.add_argument('assessment_id', type=int)
@@ -128,6 +128,10 @@ class Command(UnicodeCommand):
         models = apps.get_models()
         for model in models:
             db_table = model._meta.db_table
+            if db_table in self.table_handled:
+                continue
+            self.table_handled.append(db_table)
+
             self.stdout.write("\n--- TABLE {}\n".format(db_table))
             qs = None
             if hasattr(model, 'assessment_qs'):
@@ -152,9 +156,9 @@ class Command(UnicodeCommand):
 
     def write_m2m_data(self, field, qs):
         db_table = field.m2m_db_table()
-        if db_table in self.handled_m2m:
+        if db_table in self.table_handled:
             return
-        self.handled_m2m.append(db_table)
+        self.table_handled.append(db_table)
 
         ids = tuple(qs.values_list('id', flat=True))
         if len(ids) > 0:
