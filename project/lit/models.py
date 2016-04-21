@@ -821,6 +821,11 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
                 cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
             cursor.close()
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        ids = list(cls.get_descendants_pks(assessment_id))  # force evaluation
+        return cls.objects.filter(id__in=ids)
+
 
 class ReferenceTags(ItemBase):
     # required to be copied when overridden tag object. See GitHub bug report:
