@@ -7,12 +7,10 @@ from crispy_forms import layout as cfl
 from crispy_forms.helper import FormHelper
 from selectable import forms as selectable
 
-from assessment.models import Assessment
-from lit.models import Reference
 from study.models import Study
 from . import models
 
-from myuser.lookups import HAWCUserLookup
+from myuser.lookups import AssessmentTeamMemberOrHigherLookup
 
 class RoBDomainForm(forms.ModelForm):
 
@@ -156,7 +154,7 @@ class RoBReviewerFormsetHelper(FormHelper):
 
 class RoBReviewersForm(forms.ModelForm):
     conflict_author = selectable.AutoCompleteSelectField(
-        lookup_class=HAWCUserLookup,
+        lookup_class=AssessmentTeamMemberOrHigherLookup,
         required=False,
         label="Conflict Resolution author"
     )
@@ -169,11 +167,11 @@ class RoBReviewersForm(forms.ModelForm):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.fields['short_citation'].widget.attrs['class'] = 'study'
         self.fields['short_citation'].label = 'Study'
-        reviewers = self.instance.rob_reviewers.first() if self.instance.rob_reviewers.exists() else self.instance.assessment.rob_reviewers.first()
-        for i in range(reviewers.number):
+        # reviewers = self.instance.rob_reviewers.first() if self.instance.rob_reviewers.exists() else self.instance.assessment.rob_reviewers.first()
+        for i in range(1):
             author_field = "author-{}".format(i)
             self.fields[author_field] = selectable.AutoCompleteSelectField(
-                lookup_class=HAWCUserLookup,
+                lookup_class=AssessmentTeamMemberOrHigherLookup,
                 label='Reviewer',
                 widget=selectable.AutoCompleteSelectWidget)
             self.fields[author_field].widget.update_query_parameters(
