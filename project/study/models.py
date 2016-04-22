@@ -81,6 +81,7 @@ class Study(Reference):
         blank=True,
         verbose_name="Summary and/or extraction comments",
         help_text="Study summary or details on data-extraction needs.")
+    rob_reviewers = fields.GenericRelation('riskofbias.RiskOfBiasReviewers', related_query_name='study')
 
     COPY_NAME = "studies"
 
@@ -264,15 +265,19 @@ class Study(Reference):
 
     @property
     def qualities(self):
-        if self.riskofbiases.count() is 1:
-            queryset = self.riskofbiases.first()
+        if self.riskofbiases.count() < 2:
+            return self.riskofbiases.first().scores.all().prefetch_related('metric', 'metric__domain')
         else:
-            queryset = self.get_conflict_resolution()
-        return queryset.scores.all().prefetch_related('metric', 'metric__domain')
+            return self.get_conflict_resolution()
 
     def get_conflict_resolution(self):
-        return self.riskofbiases.get(conflict_resolution=True)
-
+        conflict = self.riskofbiases.filter(conflict_resolution=True)
+        if conflict is None:
+            return conflict
+        elif conflict.count() is not 1:
+            return conflict.count()
+        else:
+            return conflict.scores.all().prefetch_related('metric', 'metric__domain')
 
 
 class Attachment(models.Model):
