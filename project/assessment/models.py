@@ -118,7 +118,7 @@ class Assessment(models.Model):
         help_text="Describe the funding-source(s) for this assessment.")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    rob_reviewers = fields.GenericRelation('riskofbias.RiskOfBiasReviewers', related_query_name='assessment')
+    number_of_reviewers = fields.GenericRelation('riskofbias.RiskOfBiasReviewers', related_query_name='assessment')
 
     COPY_NAME = 'assessments'
 

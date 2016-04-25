@@ -4,13 +4,13 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.fields import TextInput
 
 from crispy_forms import layout as cfl
-from crispy_forms.helper import FormHelper
 from selectable import forms as selectable
 
+from myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from study.models import Study
+from utils.forms import BaseFormHelper
 from . import models
 
-from myuser.lookups import AssessmentTeamMemberOrHigherLookup
 
 class RoBDomainForm(forms.ModelForm):
 
@@ -145,39 +145,49 @@ class NumberOfReviewersForm(forms.ModelForm):
         model = models.RiskOfBiasReviewers
         fields = ('number',)
 
-
-class RoBReviewerFormsetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
-        super(RoBReviewerFormsetHelper, self).__init__(*args, **kwargs)
-        self.template = 'forms/table_inline_formset.html'
+        super(NumberOfReviewersForm, self).__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = {
+            "cancel_url": self.instance.get_absolute_url()
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
 
 
 class RoBReviewersForm(forms.ModelForm):
-    conflict_author = selectable.AutoCompleteSelectField(
-        lookup_class=AssessmentTeamMemberOrHigherLookup,
-        required=False,
-        label="Conflict Resolution author"
-    )
-
     class Meta:
         model = Study
         fields = ('short_citation',)
 
     def __init__(self, *args, **kwargs):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
+        assessment_id = self.instance.assessment_id
         self.fields['short_citation'].widget.attrs['class'] = 'study'
         self.fields['short_citation'].label = 'Study'
-        # reviewers = self.instance.rob_reviewers.first() if self.instance.rob_reviewers.exists() else self.instance.assessment.rob_reviewers.first()
-        for i in range(1):
+        reviewers = self.instance.get_number_of_reviewers()
+        for i in range(reviewers):
             author_field = "author-{}".format(i)
             self.fields[author_field] = selectable.AutoCompleteSelectField(
                 lookup_class=AssessmentTeamMemberOrHigherLookup,
                 label='Reviewer',
                 widget=selectable.AutoCompleteSelectWidget)
             self.fields[author_field].widget.update_query_parameters(
-                {'related': self.instance.assessment_id})
-        # set conflict_author as the last field
-        self.fields['conflict_author'] = self.fields.pop('conflict_author')
+                {'related': assessment_id})
+
+        self.fields['conflict_author'] = selectable.AutoCompleteSelectField(
+            lookup_class=AssessmentTeamMemberOrHigherLookup,
+            label='Conflict Resolution Reviewer',
+            required=False,
+            widget=selectable.AutoCompleteSelectWidget)
+        self.fields['conflict_author'].widget.update_query_parameters(
+            {'related': assessment_id})
+        if reviewers > 1:
+            self.fields['conflict_author'].required = True
 
 
 RoBFormSet = modelformset_factory(

@@ -9,7 +9,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
@@ -81,7 +81,6 @@ class Study(Reference):
         blank=True,
         verbose_name="Summary and/or extraction comments",
         help_text="Study summary or details on data-extraction needs.")
-    rob_reviewers = fields.GenericRelation('riskofbias.RiskOfBiasReviewers', related_query_name='study')
 
     COPY_NAME = "studies"
 
