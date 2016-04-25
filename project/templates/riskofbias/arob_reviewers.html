@@ -1,6 +1,5 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
 
@@ -17,39 +16,29 @@
 
 {% block extrastyle %}
     {% include_ui_theme %}
-    {% include_jquery_libs %}
 {% endblock %}
 
 {% block content %}
+        <div id='numberForm'>
+            {% crispy form %}
+        </div>
 
-  <h2>{{ assessment }} Risk-of-bias reviewers</h2>
-  <p>
-      Assign Risk of Bias reviewers as needed to each study. Any study with more than one reviewer requires a Conflict Resolution reviewer.
-  </p>
-
-  <form action="." method="post">
-      {% crispy form %}
-      {{ formset.management_form }}
-      {{ formset.non_form_errors.as_ul|add_class:"alert alert-error" }}
-      {% crispy formset helper %}
-
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Update Risk of Bias reviewers</button>
-          <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'riskofbias:arob_detail' assessment.pk %}{% endif %}" class="btn">Cancel</a>
-      </div>
-      {% csrf_token %}
-  </form>
+        <div id='reviewersFormset'>
+            {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+        </div>
 {% endblock %}
 
 
 {% block extrajs %}
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('.study').each(function(i,v){
-      $(this.parentElement).text(this.value)
-      $(this).hide(true);
-    });
-  });
-</script>
+    {{formset.form.media}}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.study').each(function(i,v){
+          $(this.parentElement).text(this.value)
+          $(this).hide(true);
+        });
+        new DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
+        $('#reviewersFormset').insertBefore($('#numberForm .form-actions'));
+      });
+    </script>
 {% endblock extrajs %}
