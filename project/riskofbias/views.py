@@ -12,7 +12,7 @@ from study.models import Study
 from study.views import StudyList
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
-                         BaseUpdate, BaseCreate, BaseList,
+                         BaseUpdate, BaseCreate, BaseList, BaseUpdateWithFormset,
                          GenerateFixedReport, TeamMemberOrHigherMixin)
 
 from . import models, forms
@@ -38,43 +38,21 @@ class ARoBEdit(ARoBDetail):
     crud = 'Update'
 
 
-class ARoBReviewers(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class ARoBReviewers(BaseUpdateWithFormset):
     model = Assessment
     child_model = Study
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
-    crud = 'Update'
     template_name = "riskofbias/arob_reviewers.html"
+
+    def build_initial_formset_factory(self):
+        return self.formset_factory(
+            queryset=Study.objects.filter(assessment=self.assessment))
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
 
-    def post(self, request, *args, **kwargs):
-        self.formset = self.formset_factory(request.POST)
-        self.form = self.get_form(self.form_class)
-        if self.form.is_valid() and self.formset.is_valid():
-            return self.form_valid()
-        else:
-            return self.form_invalid(self.form, self.formset)
 
-    def form_valid(self):
-        self.form.save()
-        self.formset.save()
-        self.send_message()  # replicate MessageMixin
-        return HttpResponseRedirect(self.get_success_url())
-    #
-    def get_context_data(self, **kwargs):
-        context = super(ARoBReviewers, self).get_context_data(**kwargs)
-        if self.request.method == 'GET':
-            self.formset = self.formset_factory(
-                queryset=Study.objects.filter(assessment=self.assessment))
-
-        context['helper'] = forms.RoBReviewerFormsetHelper()
-        context['formset'] = self.formset
-        context['crud'] = self.crud
-        context['assessment'] = self.assessment
-        return context
-    #
 # Risk-of-bias domain views
 class RoBDomainCreate(BaseCreate):
     parent_model = Assessment
