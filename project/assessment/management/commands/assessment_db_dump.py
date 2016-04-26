@@ -42,7 +42,7 @@ class ExternalLibraryExports(object):
         return cls.objects.all()
 
     def auth_permission(self, cls, assessment_id):
-        return self.empty_qs(cls)
+        return self.complete_qs(cls)
 
     def auth_group(self, cls, assessment_id):
         return self.complete_qs(cls)
