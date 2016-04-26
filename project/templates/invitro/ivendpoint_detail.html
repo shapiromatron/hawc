@@ -2,22 +2,22 @@
 
 
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
-{% block content_type %}
-  ivEndpoint
+{% block content %}
+    <div id="ivEndpoint"></div>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      window.canEdit = {{obj_perms.edit|lower}};
-      IVEndpoint.displayAsPage({{object.id}}, $(".ivEndpoint"));
-    });
-  </script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.canEdit = {{obj_perms.edit|lower}};
+    IVEndpoint.displayAsPage({{object.id}}, $("#ivEndpoint"));
+});
+</script>
 {% endblock %}

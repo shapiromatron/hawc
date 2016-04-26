@@ -1,14 +1,15 @@
 {% extends 'invitro/ivchemical_detail.html' %}
 
+
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-  {{ block.super }}
-{% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
+    {{ block.super }}
+    {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
 {% endblock content %}
