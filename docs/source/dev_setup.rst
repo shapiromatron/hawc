@@ -75,6 +75,25 @@ For details on how to resolve these dependencies, see this `Microsoft post`_.
 
 .. _`Microsoft post`: https://blogs.msdn.microsoft.com/pythonengineering/2016/04/11/unable-to-find-vcvarsall-bat/
 
+
+Loading a database export:
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To load a database export from the `assessment_db_dump` management command,
+use the following arguments, if Postgres is available from the command-line::
+
+    dropdb hawc         # if database already exists
+    createdb hawc       # create new database
+    psql –d hawc –f /path/to/export.sql
+
+If Postgres tools are not available from the command-line, from a pqsl session::
+
+    DROP DATABASE hawc;     --- drop database if exists
+    CREATE DATABASE hawc;   --- create new database
+    \c hawc                 --- open database
+    \i /path/to/export.sql  --- load data into database
+
+
 Database ER diagrams
 ~~~~~~~~~~~~~~~~~~~~
 
