@@ -232,9 +232,13 @@ class IVEndpointCategory(AssessmentRootedTagTree):
         lst.append(self.name)
         return lst
 
-    def get_choice_representation(self):
+    @property
+    def get_choice_label(self):
         # em-dash space
-        return (self.id, u"\u2003"*(self.depth-2) + self.name)
+        return u"\u2003"*(self.depth-2) + self.name
+
+    def get_choice_representation(self):
+        return (self.id, self.choice_label)
 
     @classmethod
     def get_choices(cls, assessment_id):

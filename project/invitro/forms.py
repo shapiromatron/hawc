@@ -152,10 +152,19 @@ class IVExperimentForm(forms.ModelForm):
         return helper
 
 
+class CategoryModelChoice(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        return obj.get_choice_label
+
+
 class IVEndpointForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing endpoint."
+
+    category = CategoryModelChoice(
+        queryset=models.IVEndpointCategory.objects.none())
 
     class Meta:
         model = models.IVEndpoint
@@ -183,7 +192,7 @@ class IVEndpointForm(forms.ModelForm):
 
         self.fields['category'].queryset = \
             self.fields['category'].queryset.model\
-                .get_root(self.instance.assessment_id).get_descendants()
+                .get_assessment_qs(self.instance.assessment.id)
 
         self.helper = self.setHelper()
 
