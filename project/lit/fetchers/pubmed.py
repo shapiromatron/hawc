@@ -140,6 +140,8 @@ class PubMedFetch(object):
                 for book in books:
                     self.content.append(self._parse_book(book))
             else:
+                logging.error(u"Pubmed failure: {}, content: {}".format(r.status_code, r.text))
+                logging.error(u"Pubmed failure data submission: {}".format(data))
                 raise Exception("Fetch query failed; please reformat query or try again later")
         return self.content
 
