@@ -74,3 +74,31 @@ python extension modules on the development computer, often using C or C++.
 For details on how to resolve these dependencies, see this `Microsoft post`_.
 
 .. _`Microsoft post`: https://blogs.msdn.microsoft.com/pythonengineering/2016/04/11/unable-to-find-vcvarsall-bat/
+
+Database ER diagrams
+~~~~~~~~~~~~~~~~~~~~
+
+To view the HAWC database schema, make sure the `django_extensions`_ package
+is required, as well as `pydot`_ and `graphviz`_. Then, run the following
+django management commands::
+
+    # create for all apps
+    python manage.py graph_models -a -g --pydot -o hawc.png
+
+    # create ER for single apps
+    python manage.py graph_models -g --pydot -o utils.png utils
+    python manage.py graph_models -g --pydot -o myuser.png myuser
+    python manage.py graph_models -g --pydot -o assessment.png assessment
+    python manage.py graph_models -g --pydot -o lit.png lit
+    python manage.py graph_models -g --pydot -o study.png study
+    python manage.py graph_models -g --pydot -o animal.png animal
+    python manage.py graph_models -g --pydot -o epi.png epi
+    python manage.py graph_models -g --pydot -o epimeta.png epimeta
+    python manage.py graph_models -g --pydot -o invitro.png invitro
+    python manage.py graph_models -g --pydot -o bmd.png bmd
+    python manage.py graph_models -g --pydot -o summary.png summary
+    python manage.py graph_models -g --pydot -o comments.png comments
+
+.. _`django_extensions`: https://github.com/django-extensions/django-extensions
+.. _`pydot`: https://github.com/erocarrera/pydot
+.. _`graphviz`: http://www.graphviz.org/
