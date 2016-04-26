@@ -81,6 +81,10 @@ urlpatterns = [
         views.EndpointUpdate.as_view(),
         name='endpoint_update'),
 
+    url(r'^endpoint/(?P<pk>\d+)/delete/$',
+        views.EndpointDelete.as_view(),
+        name='endpoint_delete'),
+
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
         views.EndpointsFullExport.as_view(),
         name='endpoints_export'),

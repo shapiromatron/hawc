@@ -392,6 +392,9 @@ class IVEndpoint(BaseEndpoint):
     def get_update_url(self):
         return reverse('invitro:endpoint_update', args=[str(self.id)])
 
+    def get_delete_url(self):
+        return reverse('invitro:endpoint_delete', args=[str(self.id)])
+
     def get_crumbs(self):
         return get_crumbs(self, self.experiment)
 
