@@ -257,12 +257,12 @@ IVEndpointGroupFormset = modelformset_factory(
     models.IVEndpointGroup,
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
-    can_delete=False,
-    extra=1)
+    can_delete=True,
+    extra=0)
 
 BlankIVEndpointGroupFormset = modelformset_factory(
     models.IVEndpointGroup,
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
-    can_delete=False,
+    can_delete=True,
     extra=1)
