@@ -1,16 +1,15 @@
 from __future__ import unicode_literals
 import json
 import os
-from collections import OrderedDict
+import collections
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes import fields
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 
 from reversion import revisions as reversion
 
+from assessment.models import Assessment
 from myuser.models import HAWCUser
 from study.models import Study
 from utils.helper import cleanHTML
@@ -108,21 +107,15 @@ class RiskOfBias(models.Model):
     study = models.ForeignKey(Study, related_name='riskofbiases', null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(HAWCUser,
-        related_name='qualities',
-        blank=True,
-        null=True)
     conflict_resolution = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
+        # Ensures that the conflict resolution review is the last in list of reviews for study.
+        ordering = ('conflict_resolution',)
 
     def __unicode__(self):
-        if self.conflict_resolution:
-            riskofbias = 'Risk of Bias, Conflict Resolution'
-        else:
-            riskofbias = 'Risk of Bias'
-        return '{} {}: {}'.format(self.study, riskofbias, self.author)
+        return self.study.short_citation
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -166,6 +159,9 @@ class RiskOfBiasScore(models.Model):
     score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
 
+    def __unicode__(self):
+        return "{} {}".format(self.riskofbias, self.metric)
+
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -207,25 +203,34 @@ class RiskOfBiasScore(models.Model):
         return self.SCORE_SHADES[self.score]
 
 
-class RiskOfBiasReviewers(models.Model):
-    # Use content_type to set parent as Assessment or Study
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    parent = fields.GenericForeignKey('content_type', 'object_id')
-    number = models.PositiveSmallIntegerField(
-        default=1,
-        verbose_name='Number of Reviewers',
-        help_text='Number of risk of bias reviewers to be required - not'
-        ' counting the conflict resolution reviewer. <br> If more than one'
-        ' reviewer is set, then a conflict resolution reviewer will be required.',
-    )
+class RiskOfBiasReviewer(models.Model):
+    study = models.ForeignKey(Study, related_name='rob_reviewers')
+    author = models.ForeignKey(HAWCUser,
+        related_name='qualities')
+    riskofbias = models.OneToOneField(RiskOfBias, related_name='rob_reviewer')
 
     def __unicode__(self):
-        return str(self.number)
+        return self.author.get_full_name()
+
+    def get_absolute_url(self):
+        return reverse('riskofbias:arob_detail', args=self.study.assessment.pk)
+
+
+class RiskOfBiasAssessment(models.Model):
+    assessment = models.OneToOneField(Assessment, related_name='rob_settings')
+    number_of_reviewers = models.PositiveSmallIntegerField(default=1)
+
+    def get_absolute_url(self):
+        return reverse('riskofbias:arob_detail', args=self.assessment.pk)
+
+    @classmethod
+    def build_default(cls, assessment):
+        RiskOfBiasAssessment.objects.create(assessment=assessment)
+
 
 
 reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
-reversion.register(RiskOfBiasReviewers)
+reversion.register(RiskOfBiasReviewer)

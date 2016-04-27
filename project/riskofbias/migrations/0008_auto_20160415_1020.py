@@ -40,4 +40,8 @@ class Migration(migrations.Migration):
             name='assessment',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rob_domains', to='assessment.Assessment'),
         ),
+        migrations.AlterModelOptions(
+            name='riskofbias',
+            options={'ordering': ('conflict_resolution',), 'verbose_name_plural': 'Risk of Biases'},
+        ),
     ]
