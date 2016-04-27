@@ -63,6 +63,7 @@ class ARoBReviewersCreate(BaseCreateWithFormset):
     model = models.RiskOfBias
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
+    success_message = 'Risk of Bias reviewers created.'
     template_name = "riskofbias/arob_reviewers_form.html"
 
     def build_initial_formset_factory(self):
@@ -78,13 +79,12 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
     child_model = Study
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
+    success_message = 'Risk of Bias reviewers updated.'
     template_name = "riskofbias/arob_reviewers_form.html"
 
     def build_initial_formset_factory(self):
         return self.formset_factory(
-            queryset=Study.objects.filter(assessment=self.assessment).annotate(
-                num_reviewers=Count('number_of_reviewers'))\
-                .order_by('-num_reviewers'))
+            queryset=Study.objects.filter(assessment=self.assessment))
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})

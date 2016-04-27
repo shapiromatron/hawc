@@ -9,7 +9,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError, ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
@@ -269,15 +269,19 @@ class Study(Reference):
         else:
             return self.get_conflict_resolution()
 
-    def get_conflict_resolution(self):
-        conflict = self.riskofbiases.filter(conflict_resolution=True)
-        if conflict is None:
-            return conflict
-        elif conflict.count() is not 1:
-            return conflict.count()
-        else:
-            return conflict.scores.all().prefetch_related('metric', 'metric__domain')
+    def get_conflict_resolution_qualities(self):
+        conflict = self.get_conflict_resolution
+        return conflict.scores.all().prefetch_related('metric', 'metric__domain')
 
+    def get_conflict_resolution(self):
+        try:
+            return self.riskofbiases.get(conflict_resolution=True)
+        except ObjectDoesNotExist:
+            return None
+        except MultipleObjectsReturned:
+            raise ValidationError('Study {} has multiple risk of bias reviews '
+                'marked as the conflict resolution. there should not be more '
+                'than one conflict resolution per study.'.format(self.short_citation))
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

@@ -111,8 +111,6 @@ class RiskOfBias(models.Model):
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
-        # Ensures that the conflict resolution review is the last in list of reviews for study.
-        ordering = ('conflict_resolution',)
 
     def __unicode__(self):
         return self.study.short_citation
@@ -213,7 +211,7 @@ class RiskOfBiasReviewer(models.Model):
         return self.author.get_full_name()
 
     def get_absolute_url(self):
-        return reverse('riskofbias:arob_detail', args=self.study.assessment.pk)
+        return reverse('riskofbias:arob_detail', args=[self.study.assessment.pk])
 
 
 class RiskOfBiasAssessment(models.Model):
@@ -221,7 +219,7 @@ class RiskOfBiasAssessment(models.Model):
     number_of_reviewers = models.PositiveSmallIntegerField(default=1)
 
     def get_absolute_url(self):
-        return reverse('riskofbias:arob_detail', args=self.assessment.pk)
+        return reverse('riskofbias:arob_reviewers', args=[self.assessment.pk])
 
     @classmethod
     def build_default(cls, assessment):
