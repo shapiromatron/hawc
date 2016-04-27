@@ -1,22 +1,22 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Risk-of-bias requirements | HAWC
+  {{assessment}} | Risk of Bias Requirements | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
   {% if crud == "Read" %}
-    <li class="active">Risk-of-bias requirements<span class="divider">/</span></li>
+    <li class="active">Risk of Bias Requirements<span class="divider">/</span></li>
   {% else %}
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of Bias Requirements</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
   {% endif %}
 {% endblock breadcrumbs %}
 
 {% block content %}
 
-  <h1>Risk-of-bias requirements
+  <h1>Risk of Bias Requirements
     {% if crud == "Read" and obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
@@ -34,7 +34,7 @@
     </div>
     {% endif %}
   </h1>
-  <p>When a study is entered into the HAWC database for use in an assessment, risk-of-bias metrics can be entered for a metric of bias for each study. Risk-of-bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
+  <p>When a study is entered into the HAWC database for use in an assessment, risk-of-bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
 
   {% if crud == "Update" %}
     <a class="btn btn-info" href="{% url 'riskofbias:robd_create' assessment.pk %}">Create a new domain</a>

@@ -5,12 +5,12 @@
 
 
 {% block title %}
-  {{assessment}} | Risk-of-bias reviewers | HAWC
+  {{assessment}} | Risk of Bias Reviewers | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'study:detail' assessment.pk %}">Risk-of-bias reviewers</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of Bias Reviewers</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 
@@ -24,7 +24,7 @@
         </div>
 
         <div id='reviewersFormset'>
-            {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+            {% include "hawc/table_inline_formset.html" with form_show_errors=True %}
         </div>
 {% endblock %}
 

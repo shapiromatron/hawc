@@ -1,0 +1,61 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Risk of Bias Reviewers | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of Bias Requirements</a><span class="divider">/</span></li>
+    <li class="active">Risk of Bias Reviewers<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    {% if crud == 'Create' %}
+        <a class="btn btn-primary pull-right" href="{% url 'riskofbias:arob_reviewers_create' assessment.pk %}">Assign reviewers</a>
+    {% else %}
+        <a class="btn btn-primary pull-right" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update reviewers</a>
+    {% endif %}
+    <h2>
+        {{assessment}} Risk of Bias Reviewers
+    </h2>
+    <p>
+        <i class="fa fa-check"></i> is a completed review.
+    <br>
+        <i class="fa fa-star"></i> denotes the conflict resolution review.
+    </p>
+    <table class="table table-condensed table-striped">
+        {% for study in object_list %}
+        {% if forloop.first %}
+        <thead>
+            <th>
+                Study
+            </th>
+            <th class="span10">
+                Reviewers
+            </th>
+
+        </thead>
+        {% endif %}
+        <tr>
+            <td>
+                {{study}}
+            </td>
+            {% for rob in study.riskofbiases.all %}
+            <td>
+                {% if rob.rob_reviewer.author %}
+                    {{rob.rob_reviewer.author}}
+                    {% if rob.conflict_resolution %}
+                        <i class="fa fa-star"></i>
+                    {% endif %}
+                {% else %}
+                    No Reviewer
+                {% endif %}
+            </td>
+
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}
