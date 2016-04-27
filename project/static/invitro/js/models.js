@@ -111,7 +111,7 @@ IVCellType.prototype = {
 
         $details.append(this.build_details_table());
         modal
-            .addTitleLinkHeader(this.data.name, this.data.url)
+            .addTitleLinkHeader(this.data.title, this.data.url)
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 900});
