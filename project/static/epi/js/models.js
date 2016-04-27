@@ -434,7 +434,7 @@ GroupDescription.prototype = {
 var ResultGroup = function(data){
     this.data = data;
     this.group = new Group(data.group);
-}
+};
 ResultGroup.prototype = {
     show_group_tooltip: function(e){
         this.group.show_tooltip(e);
@@ -702,19 +702,26 @@ Result.prototype = {
         this.build_content(div, {tabbed: true});
         return div;
     },
+    hasResultGroups: function(){
+        return this.resultGroups.length>0;
+    },
     build_content: function($el, opts){
         var $plotDiv = $("<div style='padding:1em'>");
 
         $el
-            .append(this.build_details_table(opts.tabbed))
-            .append("<h3>Results by group</h3>")
-            .append(this.build_result_group_table());
+            .append(this.build_details_table(opts.tabbed));
 
-        if (this.data.metric.showForestPlot === true){
+        if (this.hasResultGroups()){
             $el
-                .append("<h3>Forest plot</h3>")
-                .append($plotDiv)
-                .on('plotDivShown', this.build_forest_plot.bind(this, $plotDiv));
+                .append("<h3>Results by group</h3>")
+                .append(this.build_result_group_table());
+
+            if (this.data.metric.showForestPlot === true){
+                $el
+                    .append("<h3>Forest plot</h3>")
+                    .append($plotDiv)
+                    .on('plotDivShown', this.build_forest_plot.bind(this, $plotDiv));
+            }
         }
 
         return $el;
@@ -972,7 +979,7 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
 var ResultGroupTable = function(res){
     this.tbl = new BaseTable();
     this.res = res;
-}
+};
 ResultGroupTable.prototype = {
     setVisibleCols: function(){
         var hasData = function(rgs, fld){
