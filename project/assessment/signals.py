@@ -19,8 +19,9 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model('lit', 'ReferenceFilterTag').build_default(instance)
         apps.get_model('lit', 'Search').build_default(instance)
 
-        logging.info("Creating default settings for study-quality criteria")
-        apps.get_model('risk-of-bias', 'RiskOfBiasDomain').build_default(instance)
+        logging.info("Creating default settings for risk of bias criteria")
+        apps.get_model('riskofbias', 'RiskOfBiasDomain').build_default(instance)
+        apps.get_model('riskofbias', 'RiskOfBiasAssessment').build_default(instance)
 
         logging.info("Creating new BMD settings assessment creation")
         apps.get_model('bmd', 'LogicField').build_defaults(instance)

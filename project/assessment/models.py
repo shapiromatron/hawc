@@ -93,7 +93,7 @@ class Assessment(models.Model):
         help_text="Define criteria for a systematic review of literature, and apply "
                   "these criteria to references in your literature-review. "
                   "View details on findings and identify areas with a potential "
-                  "risk-of-bias.")
+                  "risk of bias.")
     enable_bmd = models.BooleanField(
         default=True,
         verbose_name="Enable BMD modeling",
@@ -118,7 +118,6 @@ class Assessment(models.Model):
         help_text="Describe the funding-source(s) for this assessment.")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    number_of_reviewers = fields.GenericRelation('riskofbias.RiskOfBiasReviewers', related_query_name='assessment')
 
     COPY_NAME = 'assessments'
 
