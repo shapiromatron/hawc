@@ -1,6 +1,7 @@
 from django import forms
 from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
+from django.forms.widgets import Select
 from selectable import forms as selectable
 
 from assessment.lookups import EffectTagLookup
@@ -152,17 +153,44 @@ class IVExperimentForm(forms.ModelForm):
         return helper
 
 
+class CategoryModelChoice(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        return obj.get_choice_label
+
+
+class OELWidget(Select):
+
+    def set_default_choices(self, instance):
+        choices = [
+            (-999, '---'),
+        ]
+
+        if instance.id:
+            for eg in instance.groups.all():
+                choices.append((eg.dose_group_id, eg.dose))
+
+        self.choices = choices
+
+
 class IVEndpointForm(forms.ModelForm):
 
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing endpoint."
 
+    category = CategoryModelChoice(
+        required=False,
+        queryset=models.IVEndpointCategory.objects.none())
+
     class Meta:
         model = models.IVEndpoint
         exclude = (
             'assessment', 'experiment', 'additional_fields',
-            'LOEL', 'NOEL',  # todo: temporary; adds back in
         )
+        widgets = {
+            'NOEL': OELWidget(),
+            'LOEL': OELWidget(),
+        }
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop('parent', None)
@@ -172,6 +200,9 @@ class IVEndpointForm(forms.ModelForm):
             self.instance.experiment = experiment
         if assessment:
             self.instance.assessment = assessment
+
+        self.fields['NOEL'].widget.set_default_choices(self.instance)
+        self.fields['LOEL'].widget.set_default_choices(self.instance)
 
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
@@ -183,7 +214,7 @@ class IVEndpointForm(forms.ModelForm):
 
         self.fields['category'].queryset = \
             self.fields['category'].queryset.model\
-                .get_root(self.instance.assessment_id).get_descendants()
+                .get_assessment_qs(self.instance.assessment.id)
 
         self.helper = self.setHelper()
 
@@ -219,7 +250,7 @@ class IVEndpointForm(forms.ModelForm):
         helper.add_fluid_row('assay_type', 2, 'span6')
         helper.add_fluid_row('effect', 2, 'span6')
         helper.add_fluid_row('data_type', 4, 'span3')
-        helper.add_fluid_row('observation_time', 2, 'span6')
+        helper.add_fluid_row('observation_time', 4, 'span3')
         helper.add_fluid_row('monotonicity', 3, 'span4')
         helper.add_fluid_row('trend_test', 2, 'span6')
         helper.add_fluid_row('endpoint_notes', 2, 'span6')
@@ -239,6 +270,10 @@ class IVEndpointGroupForm(forms.ModelForm):
         model = models.IVEndpointGroup
         exclude = ('endpoint', 'dose_group_id')
 
+    def __init__(self, *args, **kwargs):
+        super(IVEndpointGroupForm, self).__init__(*args, **kwargs)
+        self.fields['dose'].widget.attrs['class'] = 'doses'
+
 
 class BaseIVEndpointGroupFormset(BaseModelFormSet):
     pass
@@ -248,12 +283,12 @@ IVEndpointGroupFormset = modelformset_factory(
     models.IVEndpointGroup,
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
-    can_delete=False,
-    extra=1)
+    can_delete=True,
+    extra=0)
 
 BlankIVEndpointGroupFormset = modelformset_factory(
     models.IVEndpointGroup,
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
-    can_delete=False,
+    can_delete=True,
     extra=1)

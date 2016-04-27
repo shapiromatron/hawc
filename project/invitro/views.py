@@ -147,6 +147,14 @@ class EndpointUpdate(BaseUpdateWithFormset):
                 dose_group_id += 1
 
 
+class EndpointDelete(BaseDelete):
+    success_message = "Endpoint deleted."
+    model = models.IVEndpoint
+
+    def get_success_url(self):
+        return self.object.experiment.get_absolute_url()
+
+
 class EndpointsList(BaseList):
     parent_model = Assessment
     model = models.IVEndpoint

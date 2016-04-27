@@ -33,11 +33,36 @@
 {% endblock %}
 
 {% block extrajs %}
-    {{ form.media }}
-    <script type="text/javascript">
-        $(document).on('ready', function(){
-            new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
-            $('#egFormset').insertBefore($('#eForm .form-actions'));
-        });
-    </script>
+{{ form.media }}
+<script type="text/javascript">
+
+    var OELwidget = function($el){
+        this.$el = $el;
+        this.startup();
+    };
+    OELwidget.prototype = {
+        startup: function(){
+            $(document).on('change', '.doses', this.update.bind(this));
+            $('.doses').first().trigger('change');
+        },
+        update: function(){
+            var init = this.$el.val(),
+                opts = [
+                    '<option value="-999">---</option>',
+                ];
+            $('.doses').each(function(i, el){
+                opts.push($('<option>').text(el.value).attr('value', i));
+            });
+            this.$el.html(opts).val(init);
+        },
+    };
+
+    $(document).on('ready', function(){
+        new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
+        $('#egFormset').insertBefore($('#eForm .form-actions'));
+        new OELwidget($('#id_NOEL'));
+        new OELwidget($('#id_LOEL'));
+    });
+
+</script>
 {% endblock extrajs %}

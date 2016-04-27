@@ -232,9 +232,13 @@ class IVEndpointCategory(AssessmentRootedTagTree):
         lst.append(self.name)
         return lst
 
-    def get_choice_representation(self):
+    @property
+    def get_choice_label(self):
         # em-dash space
-        return (self.id, u"\u2003"*(self.depth-2) + self.name)
+        return u"\u2003"*(self.depth-2) + self.name
+
+    def get_choice_representation(self):
+        return (self.id, self.choice_label)
 
     @classmethod
     def get_choices(cls, assessment_id):
@@ -387,6 +391,9 @@ class IVEndpoint(BaseEndpoint):
 
     def get_update_url(self):
         return reverse('invitro:endpoint_update', args=[str(self.id)])
+
+    def get_delete_url(self):
+        return reverse('invitro:endpoint_delete', args=[str(self.id)])
 
     def get_crumbs(self):
         return get_crumbs(self, self.experiment)

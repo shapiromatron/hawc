@@ -2,22 +2,22 @@
 
 
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+    {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
-{% block content_type %}
-    ivChemical
+{% block content %}
+    <div id="ivChemical"></div>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      window.canEdit = {{obj_perms.edit|lower}};
-      IVChemical.displayAsPage({{object.id}}, $(".ivChemical"));
-    });
-  </script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.canEdit = {{obj_perms.edit|lower}};
+    IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
+});
+</script>
 {% endblock %}

@@ -82,6 +82,7 @@ class IVEndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     url_update = serializers.CharField(source='get_update_url', read_only=True)
+    url_delete = serializers.CharField(source='get_delete_url', read_only=True)
     chemical = _IVChemicalSerializer()
     experiment = IVExperimentSerializer()
     groups = IVEndpointGroupSerializer(many=True)
