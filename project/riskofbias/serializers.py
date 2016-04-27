@@ -38,4 +38,4 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'author', 'conflict_resolution', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'rob_reviewer', 'conflict_resolution', 'study', 'created', 'last_updated', 'scores')
