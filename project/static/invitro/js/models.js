@@ -44,13 +44,13 @@ IVChemical.prototype = {
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.data.name),
             $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
         $details.append(this.build_details_table());
-        modal.addHeader(title)
+        modal
+            .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 900});
@@ -105,13 +105,13 @@ IVCellType.prototype = {
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.data.name),
             $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
         $details.append(this.build_details_table());
-        modal.addHeader(title)
+        modal
+            .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 900});
@@ -212,13 +212,12 @@ IVExperiment.prototype = {
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf('Experimental details'),
             $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details));
 
         $details.append(this.build_details_table());
-        modal.addHeader(title)
+        modal.addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 900});
@@ -379,7 +378,6 @@ IVEndpoint.prototype = {
     },
     displayAsModal: function(){
         var modal = new HAWCModal(),
-            title = '<h4><a href="{0}">{1}</a></h4>'.printf(this.data.url, this.data.name),
             $details = $('<div class="span12">'),
             $eg_tbl = $('<div class="span12">'),
             $content = $('<div class="container-fluid">')
@@ -389,7 +387,8 @@ IVEndpoint.prototype = {
         $details.append(this.build_details_table());
         $eg_tbl.append(this.build_eg_table());
 
-        modal.addHeader(title)
+        modal
+            .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 900});
