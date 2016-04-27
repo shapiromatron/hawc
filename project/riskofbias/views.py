@@ -1,6 +1,7 @@
+from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.apps import apps
+from django.db.models import Count
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
@@ -12,8 +13,9 @@ from study.models import Study
 from study.views import StudyList
 from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
-                         BaseUpdate, BaseCreate, BaseList, BaseUpdateWithFormset,
-                         GenerateFixedReport, TeamMemberOrHigherMixin)
+                         BaseUpdate, BaseCreate, BaseList,
+                         BaseUpdateWithFormset, BaseCreateWithFormset,
+                         GenerateFixedReport)
 
 from . import models, forms
 
@@ -38,16 +40,51 @@ class ARoBEdit(ARoBDetail):
     crud = 'Update'
 
 
-class ARoBReviewers(BaseUpdateWithFormset):
-    model = Assessment
-    child_model = Study
+class ARoBReviewersList(BaseList):
+    parent_model = Assessment
+    model = Study
+    template_name = 'riskofbias/arob_reviewers_list.html'
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=self.assessment)\
+            .prefetch_related('riskofbiases')
+
+    def get_context_data(self, **kwargs):
+        context = super(ARoBReviewersList, self).get_context_data(**kwargs)
+        robs_exist = sum([study.riskofbiases.count() for study in self.object_list])
+        if robs_exist:
+            context['form_crud'] = 'Update'
+        else:
+            context['form_crud'] = 'Create'
+        return context
+
+class ARoBReviewersCreate(BaseCreateWithFormset):
+    parent_model = Assessment
+    model = models.RiskOfBias
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
-    template_name = "riskofbias/arob_reviewers.html"
+    template_name = "riskofbias/arob_reviewers_form.html"
 
     def build_initial_formset_factory(self):
         return self.formset_factory(
             queryset=Study.objects.filter(assessment=self.assessment))
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
+
+
+class ARoBReviewersUpdate(BaseUpdateWithFormset):
+    model = Assessment
+    child_model = Study
+    form_class = forms.NumberOfReviewersForm
+    formset_factory = forms.RoBReviewerFormset
+    template_name = "riskofbias/arob_reviewers_form.html"
+
+    def build_initial_formset_factory(self):
+        return self.formset_factory(
+            queryset=Study.objects.filter(assessment=self.assessment).annotate(
+                num_reviewers=Count('number_of_reviewers'))\
+                .order_by('-num_reviewers'))
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
@@ -218,6 +255,9 @@ class RoBsDetail(BaseDetail):
         self.assessment = self.study.get_assessment()
         return super(RoBsDetail, self).dispatch(*args, **kwargs)
 
+
+class RoBsDetailAll(RoBsDetail):
+    template_name = 'riskofbias/rob_detail_all.html'
 
 class RoBsList(BaseList):
     model = Study

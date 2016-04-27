@@ -11,7 +11,7 @@
 {% endblock breadcrumbs %}
 
 {% block content %}
-    {% if crud == 'Create' %}
+    {% if form_crud == 'Create' %}
         <a class="btn btn-primary pull-right" href="{% url 'riskofbias:arob_reviewers_create' assessment.pk %}">Assign reviewers</a>
     {% else %}
         <a class="btn btn-primary pull-right" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update reviewers</a>
@@ -41,19 +41,24 @@
             <td>
                 {{study}}
             </td>
-            {% for rob in study.riskofbiases.all %}
+            {% if form_crud = 'Create' %}
             <td>
-                {% if rob.rob_reviewer.author %}
-                    {{rob.rob_reviewer.author}}
-                    {% if rob.conflict_resolution %}
-                        <i class="fa fa-star"></i>
-                    {% endif %}
-                {% else %}
-                    No Reviewer
-                {% endif %}
+                No Risk of Bias
             </td>
-
-            {% endfor %}
+            {% else %}
+                {% for rob in study.riskofbiases.all %}
+                <td>
+                    {% if rob.rob_reviewer.author %}
+                        {{rob.rob_reviewer.author}}
+                        {% if rob.conflict_resolution %}
+                            <i class="fa fa-star"></i>
+                        {% endif %}
+                    {% else %}
+                        No Reviewer
+                    {% endif %}
+                </td>
+                {% endfor %}
+            {% endif %}
         </tr>
         {% endfor %}
 

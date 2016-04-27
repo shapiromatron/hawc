@@ -1,0 +1,46 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{study}} | All Risk-of-bias | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active"> All Risk-of-bias <span class="divider">/</span></li>
+  {% endblock %}
+{% endblock %}
+
+{% block content %}
+
+  <h2>{{object}}: risk-of-bias details
+    {% if obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
+            <li><a href="{% url 'riskofbias:robs_update' object.pk %}">Update</a></li>
+            <li><a href="{% url 'riskofbias:robs_delete' object.pk %}">Delete</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h2>
+
+  <div id="rob_tbl"></div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    window.study = new Study({{study.get_json|safe}})
+    window.sq_tbl = new RiskOfBiasAll_TblCompressed(study, $('#rob_tbl'), {'show_all_details_startup': true});
+  </script>
+{% endblock extrajs %}
