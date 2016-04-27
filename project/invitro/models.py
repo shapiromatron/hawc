@@ -233,7 +233,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
         return lst
 
     @property
-    def get_choice_label(self):
+    def choice_label(self):
         # em-dash space
         return u"\u2003"*(self.depth-2) + self.name
 
@@ -244,7 +244,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     def get_choices(cls, assessment_id):
         return [
             cat.get_choice_representation()
-            for cat in cls.get_root(assessment_id).get_descendants()
+            for cat in cls.get_assessment_qs(assessment_id)
         ]
 
 
