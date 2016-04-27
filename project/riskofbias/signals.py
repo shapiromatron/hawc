@@ -27,4 +27,7 @@ def invalidate_caches_rob_metrics(sender, instance, **kwargs):
 @receiver(post_save, sender=models.RiskOfBiasScore)
 @receiver(pre_delete, sender=models.RiskOfBiasScore)
 def invalidate_caches_risk_of_bias(sender, instance, **kwargs):
-    instance.study.delete_caches([instance.study_id])
+    if sender is models.RiskOfBias:
+        instance.study.delete_caches([instance.study_id])
+    elif sender is models.RiskOfBiasScore:
+        instance.riskofbias.study.delete_caches([instance.riskofbias.study_id])

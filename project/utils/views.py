@@ -369,7 +369,7 @@ class BaseCreateWithFormset(BaseCreate):
     Create view with both a single form and formset. Adds three new options:
 
     - formset_factory: required to load POST data into factory. Formset factory method.
-    - post_objet_save: method for modifying formset after form is saved but before formset. No return.
+    - post_object_save: method for modifying formset after form is saved but before formset. No return.
     - build_initial_formset_factory: method for returning initial formset factory. Returns formset_factory
     """
     formset_factory = None   # required
