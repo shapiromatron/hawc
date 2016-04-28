@@ -47,6 +47,10 @@ class IVChemical(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
@@ -113,6 +117,10 @@ class IVCellType(models.Model):
 
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)
@@ -200,6 +208,10 @@ class IVExperiment(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
     def get_assessment(self):
         return self.study.assessment
 
@@ -225,6 +237,12 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        ids = cls.get_assessment_qs(assessment_id).values_list('id', flat=True)
+        ids = list(ids)  # force evaluation
+        return cls.objects.filter(id__in=ids)
 
     def get_list_representation(self):
         lst = list(self.get_ancestors().values_list('name', flat=True))
@@ -383,6 +401,10 @@ class IVEndpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -500,6 +522,10 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     def difference_control_symbol(self):
         return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(endpoint__assessment=assessment_id)
+
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
 
@@ -511,6 +537,10 @@ class IVBenchmark(models.Model):
     benchmark = models.CharField(
         max_length=32)
     value = models.FloatField()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(IVChemical)
