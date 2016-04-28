@@ -6,6 +6,7 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from crispy_forms import layout as cfl
 from selectable import forms as selectable
 
+from assessment.models import Assessment
 from myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from study.models import Study
 from utils.forms import BaseFormHelper
@@ -13,7 +14,6 @@ from . import models
 
 
 class RoBDomainForm(forms.ModelForm):
-
     class Meta:
         model = models.RiskOfBiasDomain
         exclude = ('assessment', )
@@ -31,10 +31,10 @@ class RoBDomainForm(forms.ModelForm):
         }
         if self.instance.id:
             inputs["legend_text"] = u"Update risk of bias domain"
-            inputs["help_text"]   = u"Update an existing domain."
+            inputs["help_text"] = u"Update an existing domain."
         else:
             inputs["legend_text"] = u"Create new risk of bias domain"
-            inputs["help_text"]   = u"Create a new risk of bias domain."
+            inputs["help_text"] = u"Create a new risk of bias domain."
 
         helper = BaseFormHelper(self, **inputs)
         helper['name'].wrap(cfl.Field, css_class="span6")
@@ -43,7 +43,6 @@ class RoBDomainForm(forms.ModelForm):
 
 
 class RoBMetricForm(forms.ModelForm):
-
     class Meta:
         model = models.RiskOfBiasMetric
         exclude = ('domain', )
@@ -61,10 +60,10 @@ class RoBMetricForm(forms.ModelForm):
         }
         if self.instance.id:
             inputs["legend_text"] = u"Update risk of bias metric"
-            inputs["help_text"]   = u"Update an existing metric."
+            inputs["help_text"] = u"Update an existing metric."
         else:
             inputs["legend_text"] = u"Create new risk of bias metric"
-            inputs["help_text"]   = u"Create a new risk of bias metric."
+            inputs["help_text"] = u"Create a new risk of bias metric."
 
         helper = BaseFormHelper(self, **inputs)
         helper['metric'].wrap(cfl.Field, css_class="span12")
@@ -73,7 +72,6 @@ class RoBMetricForm(forms.ModelForm):
 
 
 class RoBScoreForm(forms.ModelForm):
-
     class Meta:
         model = models.RiskOfBiasScore
         fields = ('metric', 'notes', 'score')
@@ -91,7 +89,6 @@ class RoBScoreForm(forms.ModelForm):
 
 
 class RoBEndpointForm(RoBScoreForm):
-
     def __init__(self, *args, **kwargs):
         super(RoBEndpointForm, self).__init__(*args, **kwargs)
         self.fields['metric'].queryset = self.fields['metric'].queryset.filter(
@@ -101,18 +98,13 @@ class RoBEndpointForm(RoBScoreForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-<<<<<<< HEAD
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update a risk-of-bias override.",
-=======
                 "legend_text": u"Update `{}`".format(self.instance.metric.metric),
-                "help_text":   u"Update a risk of bias override.",
->>>>>>> 716cb36... add initial to reviewer author fields, and exception handling
+                "help_text": u"Update a risk of bias override.",
             }
         else:
             inputs = {
                 "legend_text": u"Create risk of bias override",
-                "help_text":   u"""
+                "help_text": u"""
                     Create a risk of bias metric which is overridden for this
                     particular endpoint.
                     """,
@@ -152,6 +144,7 @@ class NumberOfReviewersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NumberOfReviewersForm, self).__init__(*args, **kwargs)
+        self.fields['number_of_reviewers'].initial = self.instance.rob_settings.number_of_reviewers
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -163,12 +156,19 @@ class NumberOfReviewersForm(forms.ModelForm):
         helper.form_class = None
         return helper
 
+    def save(self, commit=True):
+        instance = super(NumberOfReviewersForm, self).save(commit)
+        if type(instance) is Assessment:
+            instance.rob_settings.number_of_reviewers = self.cleaned_data[
+                'number_of_reviewers']
+            instance.rob_settings.save()
+        return instance
+
 
 class RoBReviewersForm(forms.ModelForm):
     class Meta:
         model = Study
         fields = ('short_citation',)
-
 
     def __init__(self, *args, **kwargs):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
@@ -182,7 +182,6 @@ class RoBReviewersForm(forms.ModelForm):
             reviewers = range(self.instance.assessment.rob_settings.number_of_reviewers)
         except ObjectDoesNotExist:
             reviewers = range(0)
-
         for i in reviewers:
             author_field = "author-{}".format(i)
             self.fields[author_field] = selectable.AutoCompleteSelectField(
@@ -192,7 +191,7 @@ class RoBReviewersForm(forms.ModelForm):
             self.fields[author_field].widget.update_query_parameters(
                 {'related': assessment_id})
             try:
-                self.fields[author_field].initial = robs[i].rob_reviewer.author.id
+                self.fields[author_field].initial = robs[i].author.id
             except IndexError:
                 pass
 
@@ -205,12 +204,35 @@ class RoBReviewersForm(forms.ModelForm):
             {'related': assessment_id})
         try:
             self.fields['conflict_author'].initial = \
-                self.instance.get_conflict_resolution().rob_reviewer.author.id
+                self.instance.get_conflict_resolution().author.id
         except AttributeError:
             pass
         if len(reviewers) > 1:
             self.fields['conflict_author'].required = True
 
+    def save(self, commit=True):
+        study = super(RoBReviewersForm, self).save(commit)
+        changed_reviewer_fields = (
+            field
+            for field in self.changed_data
+            if field not in ('reference_ptr', 'short_citation'))
+
+        for field in changed_reviewer_fields:
+            new_author = self.cleaned_data[field]
+
+            if self.fields[field].initial:
+                deactivate_rob = models.RiskOfBias.objects.get(
+                    author_id=self.fields[field].initial,
+                    study=study,
+                    conflict_resolution=bool(field is 'conflict_author'))
+                deactivate_rob.deactivate()
+
+            if new_author:
+                activate_rob, created = models.RiskOfBias.objects.get_or_create(
+                    study=study,
+                    author=new_author,
+                    conflict_resolution=bool(field is 'conflict_author'))
+                activate_rob.activate()
 
 RoBFormSet = modelformset_factory(
     models.RiskOfBiasScore,
