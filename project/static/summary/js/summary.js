@@ -1,5 +1,4 @@
 var SummaryTextTree = function(options){
-    var self = this;
     this.options = options;
     this.root = undefined;
     this.get_summaries();
@@ -13,9 +12,9 @@ SummaryTextTree.prototype = {
             if((self.root.data.comments) && (self.root.data.comments.length>0)){
                 self._unpack_comments();
             }
-            if(self.options.mode=="read"){
+            if(self.options.mode=='read'){
                 self._update_read();
-            } else if (self.options.mode==="modify"){
+            } else if (self.options.mode==='modify'){
                 self._update_modified();
             }
         });
@@ -89,13 +88,13 @@ SummaryTextTree.prototype = {
                     self.options.text_editor.setContent(obj.data.text);
                     self.options.update_textdiv.find('#id_text').val(obj.data.text);
                 } else {
-                    self.options.update_textdiv.find('#id_title').val("");
-                    self.options.update_textdiv.find('#id_slug').val("");
-                    self.options.text_editor.setContent("");
+                    self.options.update_textdiv.find('#id_title').val('');
+                    self.options.update_textdiv.find('#id_slug').val('');
+                    self.options.text_editor.setContent('');
                 }
             },
             toggleEditOptions = function(isNew){
-                var sel = self.options.update_textdiv.find("#deleteSTBtn");
+                var sel = self.options.update_textdiv.find('#deleteSTBtn');
                 (isNew) ? sel.hide() : sel.show();
             };
 
@@ -167,8 +166,8 @@ SummaryTextTree.prototype = {
         return false;
     },
     _redraw: function(res){
-        this.options.update_textdiv.find(".alert").remove();
-        if (res.status=="ok"){
+        this.options.update_textdiv.find('.alert').remove();
+        if (res.status=='ok'){
             this.root = new SummaryText(res.content[0], 1, this);
             this._update_modified();
         } else {
@@ -177,19 +176,19 @@ SummaryTextTree.prototype = {
     },
     enable_affix: function(){
         $('.affix-sidenav a').click(function(e){
-            var href = $(this).attr("href"),
-                offsetTop = href === "#" ? 0 : $(href).offset().top-65;
+            var href = $(this).attr('href'),
+                offsetTop = href === '#' ? 0 : $(href).offset().top-65;
         $('html, body').stop().animate({scrollTop: offsetTop}, 300);
             e.preventDefault();
         });
 
         $('[data-spy="scroll"]').each(function () {
-            var $spy = $(this).scrollspy('refresh');
+            $(this).scrollspy('refresh');
         });
     },
     _setSmartTags: function(){
         new SmartTagContainer(this.options.read_text_div, {showOnStartup: true});
-    }
+    },
 };
 
 
@@ -201,16 +200,16 @@ var SummaryText = function(obj, depth, tree, sibling_id, parent){
     this.data = obj.data;
     if ((window.comment_module_enabled) && (tree.options.commenting_public || tree.options.commenting_enabled)){
         this.comment_manager = new CommentManager(null, {
-            "displayAsTable": false,
-            "object_type": "summary_text",
-            "object_id": this.id,
-            "commenting_public": this.tree.options.commenting_public,
-            "commenting_enabled": this.tree.options.commenting_enabled,
-            "user": this.tree.options.user,
+            'displayAsTable': false,
+            'object_type': 'summary_text',
+            'object_id': this.id,
+            'commenting_public': this.tree.options.commenting_public,
+            'commenting_enabled': this.tree.options.commenting_enabled,
+            'user': this.tree.options.user,
         }, this);
     }
     this.section_label = (parent) ? (this.parent.section_label +
-                                     (sibling_id+1).toString() + ".") : ("");
+                                     (sibling_id+1).toString() + '.') : ('');
 
     var self = this,
         children = [];
@@ -223,18 +222,18 @@ var SummaryText = function(obj, depth, tree, sibling_id, parent){
 };
 _.extend(SummaryText, {
     update_url: function(id){
-        return "/summary/{0}/update/".printf(id);
+        return '/summary/{0}/update/'.printf(id);
     },
     delete_url: function(id){
-        return "/summary/{0}/delete/".printf(id);
+        return '/summary/{0}/delete/'.printf(id);
     },
     assessment_list_url: function(assessment_id){
         return '/summary/assessment/{0}/summaries/json/'.printf(assessment_id);
-    }
+    },
 });
 SummaryText.prototype = {
     get_option_item: function(lst){
-        var title = (this.depth===1) ? "(document root)" : this.data.title;
+        var title = (this.depth===1) ? '(document root)' : this.data.title;
         lst.push($('<option value="{0}">{1}{2}</option>'
                     .printf(this.id, Array(this.depth).join('&nbsp;&nbsp;'), title))
                     .data('d', this));
@@ -296,7 +295,7 @@ SummaryText.prototype = {
                 v._add_comment(comment_data);
             });
         }
-    }
+    },
 };
 
 
@@ -306,7 +305,7 @@ var VisualCollection = function(data){
     for(var i=0; i<data.length; i++){
         this.visuals.push(new Visual(data[i]));
     }
-}
+};
 _.extend(VisualCollection, {
     buildTable: function(url1, url2, $el){
         var visuals, obj;
@@ -318,25 +317,25 @@ _.extend(VisualCollection, {
             d1[0].push.apply(d1[0], d2[0]);
             visuals = _.sortBy(d1[0], function(d){return d.title;});
         }).fail(function(){
-            HAWCUtils.addAlert("Error- unable to fetch visualizations; please contact a HAWC administrator.");
+            HAWCUtils.addAlert('Error- unable to fetch visualizations; please contact a HAWC administrator.');
             visuals = [];
         }).always(function(){
             obj = new VisualCollection( visuals );
             return obj.build_table($el);
         });
-    }
+    },
 });
 VisualCollection.prototype = {
     build_table: function($el){
         if(this.visuals.length === 0)
-            return $el.html("<p><i>No custom-visuals are available for this assessment.</i></p>");
+            return $el.html('<p><i>No custom-visuals are available for this assessment.</i></p>');
 
         var tbl = new BaseTable();
         tbl.addHeaderRow(['Title', 'Visual type', 'Description', 'Created', 'Modified']);
         tbl.setColGroup([20, 20, 38, 11, 11]);
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
-        };
+        }
         $el.html(tbl.getTbl());
         this.setTableSorting($el.find('table'));
         return $el;
@@ -346,7 +345,7 @@ VisualCollection.prototype = {
         name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
         new Tablesort($el[0]);
     },
-}
+};
 
 
 var Visual = function(data){
@@ -357,33 +356,33 @@ var Visual = function(data){
 _.extend(Visual, {
     get_object: function(id, cb){
         $.get('/summary/api/visual/{0}/'.printf(id), function(d){
-            var Cls
+            var Cls;
             switch (d.visual_type){
-                case "animal bioassay endpoint aggregation":
-                    Cls = EndpointAggregation;
-                    break;
-                case "animal bioassay endpoint crossview":
-                    Cls = Crossview;
-                    break;
-                case "risk of bias heatmap":
-                    Cls = RoBHeatmap;
-                    break;
-                case "risk of bias barchart":
-                    Cls = RoBBarchart;
-                    break;
-                default:
-                    throw "Error - unknown visualization-type: {0}".printf(d.visual_type);
+            case 'animal bioassay endpoint aggregation':
+                Cls = EndpointAggregation;
+                break;
+            case 'animal bioassay endpoint crossview':
+                Cls = Crossview;
+                break;
+            case 'risk of bias heatmap':
+                Cls = RoBHeatmap;
+                break;
+            case 'risk of bias barchart':
+                Cls = RoBBarchart;
+                break;
+            default:
+                throw 'Error - unknown visualization-type: {0}'.printf(d.visual_type);
             }
             cb(new Cls(d));
         });
     },
     displayAsPage: function(id, $el){
-        $el.html("<p>Loading... <img src='/static/img/loading.gif'></p>");
+        $el.html('<p>Loading... <img src="/static/img/loading.gif"></p>');
         Visual.get_object(id, function(d){d.displayAsPage($el);});
     },
     displayAsModal: function(id, options){
         Visual.get_object(id, function(d){d.displayAsModal(options);});
-    }
+    },
 });
 Visual.prototype = {
     build_row: function(){
@@ -392,28 +391,28 @@ Visual.prototype = {
             this.data.visual_type,
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),
-            this.data.last_updated.toString()
+            this.data.last_updated.toString(),
         ];
     },
     displayAsPage: function($el, options){
-        throw "Abstract method; requires implementation";
+        throw 'Abstract method; requires implementation';
     },
     displayAsModal: function($el, options){
-        throw "Abstract method; requires implementation";
+        throw 'Abstract method; requires implementation';
     },
     addActionsMenu: function(){
         return HAWCUtils.pageActionsButton([
             'Visualization editing',
-            {url: this.data.url_update, text: "Update"},
-            {url: this.data.url_delete, text: "Delete"},
+            {url: this.data.url_update, text: 'Update'},
+            {url: this.data.url_delete, text: 'Delete'},
         ]);
     },
     object_hyperlink: function(){
         return $('<a>')
-            .attr("href", this.data.url)
-            .attr("target", "_blank")
+            .attr('href', this.data.url)
+            .attr('target', '_blank')
             .text(this.data.title);
-    }
+    },
 };
 
 
@@ -426,82 +425,82 @@ D3Visualization = function(parent, data, options){
 };
 _.extend(D3Visualization, {
     styles: {
-        "lines": [
-            {"name": "base",                    "stroke": "#708090", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 3},
-            {"name": "reference line",          "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0.8, "stroke-width": 2},
-            {"name": "transparent",             "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0,   "stroke-width": 0},
-            {"name": "solid | black",           "stroke": "#000000", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | red",             "stroke": "#e32727", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | green",           "stroke": "#006a1e", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | blue",            "stroke": "#006dbe", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | orange",          "stroke": "#dc8f00", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | purple",          "stroke": "#b82cff", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "solid | fuschia",         "stroke": "#ab006c", "stroke-dasharray": "none",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | black",          "stroke": "#000000", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | red",            "stroke": "#e32727", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | green",          "stroke": "#006a1e", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | blue",           "stroke": "#006dbe", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | orange",         "stroke": "#dc8f00", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | purple",         "stroke": "#b82cff", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dashed | fuschia",        "stroke": "#ab006c", "stroke-dasharray": "10, 10",       "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | black",          "stroke": "#000000", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | red",            "stroke": "#e32727", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | green",          "stroke": "#006a1e", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | blue",           "stroke": "#006dbe", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | orange",         "stroke": "#dc8f00", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | purple",         "stroke": "#b82cff", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dotted | fuschia",        "stroke": "#ab006c", "stroke-dasharray": "2, 3",         "stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | black",     "stroke": "#000000", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | red",       "stroke": "#e32727", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | green",     "stroke": "#006a1e", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | blue",      "stroke": "#006dbe", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | orange",    "stroke": "#dc8f00", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | purple",    "stroke": "#b82cff", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2},
-            {"name": "dash-dotted | fuschia",   "stroke": "#ab006c", "stroke-dasharray": "15, 10, 5, 10","stroke-opacity": 0.9, "stroke-width": 2}
+        'lines': [
+            {'name': 'base',                    'stroke': '#708090', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 3},
+            {'name': 'reference line',          'stroke': '#000000', 'stroke-dasharray': 'none',         'stroke-opacity': 0.8, 'stroke-width': 2},
+            {'name': 'transparent',             'stroke': '#000000', 'stroke-dasharray': 'none',         'stroke-opacity': 0,   'stroke-width': 0},
+            {'name': 'solid | black',           'stroke': '#000000', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | red',             'stroke': '#e32727', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | green',           'stroke': '#006a1e', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | blue',            'stroke': '#006dbe', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | orange',          'stroke': '#dc8f00', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | purple',          'stroke': '#b82cff', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'solid | fuschia',         'stroke': '#ab006c', 'stroke-dasharray': 'none',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | black',          'stroke': '#000000', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | red',            'stroke': '#e32727', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | green',          'stroke': '#006a1e', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | blue',           'stroke': '#006dbe', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | orange',         'stroke': '#dc8f00', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | purple',         'stroke': '#b82cff', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dashed | fuschia',        'stroke': '#ab006c', 'stroke-dasharray': '10, 10',       'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | black',          'stroke': '#000000', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | red',            'stroke': '#e32727', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | green',          'stroke': '#006a1e', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | blue',           'stroke': '#006dbe', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | orange',         'stroke': '#dc8f00', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | purple',         'stroke': '#b82cff', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dotted | fuschia',        'stroke': '#ab006c', 'stroke-dasharray': '2, 3',         'stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | black',     'stroke': '#000000', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | red',       'stroke': '#e32727', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | green',     'stroke': '#006a1e', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | blue',      'stroke': '#006dbe', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | orange',    'stroke': '#dc8f00', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | purple',    'stroke': '#b82cff', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
+            {'name': 'dash-dotted | fuschia',   'stroke': '#ab006c', 'stroke-dasharray': '15, 10, 5, 10','stroke-opacity': 0.9, 'stroke-width': 2},
         ],
-        "rectangles": [
-            {"name": "base",    "fill": "#be6a62", "fill-opacity": 0.3, "stroke": "#be6a62", "stroke-width": 1.5},
-            {"name": "black",   "fill": "#000000", "fill-opacity": 0.2, "stroke": "#000000", "stroke-width": 0},
-            {"name": "red",     "fill": "#e32727", "fill-opacity": 0.2, "stroke": "#6f0000", "stroke-width": 0},
-            {"name": "green",   "fill": "#22ba53", "fill-opacity": 0.2, "stroke": "#006a1e", "stroke-width": 0},
-            {"name": "blue",    "fill": "#3aa4e5", "fill-opacity": 0.2, "stroke": "#006dbe", "stroke-width": 0},
-            {"name": "orange",  "fill": "#ffb100", "fill-opacity": 0.2, "stroke": "#dc8f00", "stroke-width": 0},
-            {"name": "purple",  "fill": "#b82cff", "fill-opacity": 0.2, "stroke": "#5e5e5e", "stroke-width": 0},
-            {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.2, "stroke": "#ab006c", "stroke-width": 0}
+        'rectangles': [
+            {'name': 'base',    'fill': '#be6a62', 'fill-opacity': 0.3, 'stroke': '#be6a62', 'stroke-width': 1.5},
+            {'name': 'black',   'fill': '#000000', 'fill-opacity': 0.2, 'stroke': '#000000', 'stroke-width': 0},
+            {'name': 'red',     'fill': '#e32727', 'fill-opacity': 0.2, 'stroke': '#6f0000', 'stroke-width': 0},
+            {'name': 'green',   'fill': '#22ba53', 'fill-opacity': 0.2, 'stroke': '#006a1e', 'stroke-width': 0},
+            {'name': 'blue',    'fill': '#3aa4e5', 'fill-opacity': 0.2, 'stroke': '#006dbe', 'stroke-width': 0},
+            {'name': 'orange',  'fill': '#ffb100', 'fill-opacity': 0.2, 'stroke': '#dc8f00', 'stroke-width': 0},
+            {'name': 'purple',  'fill': '#b82cff', 'fill-opacity': 0.2, 'stroke': '#5e5e5e', 'stroke-width': 0},
+            {'name': 'fuschia', 'fill': '#d4266e', 'fill-opacity': 0.2, 'stroke': '#ab006c', 'stroke-width': 0},
         ],
-        "texts": [
-            {"name": "base",            "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000",    "fill-opacity": 1},
-            {"name": "header",          "font-size": "12px", "rotate": 0, "font-weight": "bold",   "text-anchor": "middle", "fill": "#000",    "fill-opacity": 1},
-            {"name": "title",           "font-size": "12px", "rotate": 0, "font-weight": "bold",   "text-anchor": "middle", "fill": "#000",    "fill-opacity": 1},
-            {"name": "transparent",     "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000000", "fill-opacity": 0},
-            {"name": "normal | black",  "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#000000", "fill-opacity": 1},
-            {"name": "normal | red",    "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#6f0000", "fill-opacity": 1},
-            {"name": "normal | green",  "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#006a1e", "fill-opacity": 1},
-            {"name": "normal | blue",   "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#006dbe", "fill-opacity": 1},
-            {"name": "normal | orange", "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#dc8f00", "fill-opacity": 1},
-            {"name": "normal | purple", "font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#b82cff", "fill-opacity": 1},
-            {"name": "normal | fuschia","font-size": "12px", "rotate": 0, "font-weight": "normal", "text-anchor": "start",  "fill": "#ab006c", "fill-opacity": 1}
-        ]
-    }
-})
+        'texts': [
+            {'name': 'base',            'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#000',    'fill-opacity': 1},
+            {'name': 'header',          'font-size': '12px', 'rotate': 0, 'font-weight': 'bold',   'text-anchor': 'middle', 'fill': '#000',    'fill-opacity': 1},
+            {'name': 'title',           'font-size': '12px', 'rotate': 0, 'font-weight': 'bold',   'text-anchor': 'middle', 'fill': '#000',    'fill-opacity': 1},
+            {'name': 'transparent',     'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#000000', 'fill-opacity': 0},
+            {'name': 'normal | black',  'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#000000', 'fill-opacity': 1},
+            {'name': 'normal | red',    'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#6f0000', 'fill-opacity': 1},
+            {'name': 'normal | green',  'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#006a1e', 'fill-opacity': 1},
+            {'name': 'normal | blue',   'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#006dbe', 'fill-opacity': 1},
+            {'name': 'normal | orange', 'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#dc8f00', 'fill-opacity': 1},
+            {'name': 'normal | purple', 'font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#b82cff', 'fill-opacity': 1},
+            {'name': 'normal | fuschia','font-size': '12px', 'rotate': 0, 'font-weight': 'normal', 'text-anchor': 'start',  'fill': '#ab006c', 'fill-opacity': 1},
+        ],
+    },
+});
 _.extend(D3Visualization.prototype, D3Plot.prototype, {
     setDefaults: function(){
-        throw "Abstract method; requires implementation";
+        throw 'Abstract method; requires implementation';
     },
     render: function($div){
-        throw "Abstract method; requires implementation";
+        throw 'Abstract method; requires implementation';
     },
     processData: function(){
-        throw "Abstract method; requires implementation";
+        throw 'Abstract method; requires implementation';
     },
     apply_text_styles: function(obj, styles){
         obj = d3.select(obj);
         _.each(styles, function(v, k){ obj.style(k, v); })
         if(styles.rotate>0){
-            obj.attr("transform", "rotate({0} {1},{2})".printf(
-            styles.rotate, obj.attr("x"), obj.attr("y")));
+            obj.attr('transform', 'rotate({0} {1},{2})'.printf(
+            styles.rotate, obj.attr('x'), obj.attr('y')));
         }
-    }
+    },
 });
 
 
@@ -516,7 +515,7 @@ EndpointAggregation = function(data){
 };
 _.extend(EndpointAggregation.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
-        var title = $("<h1>").text(this.data.title),
+        var title = $('<h1>').text(this.data.title),
             caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             self = this;
 
@@ -527,7 +526,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
-        var btn = $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
+        $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
             .append('<i class="icon-chevron-right"></i>')
             .click(function(){self.buildTbl();});
 
@@ -537,7 +536,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
 
         if (!options.visualOnly){
             $el.prepend(title)
-                .append("<h2>Caption</h2>")
+                .append('<h2>Caption</h2>')
                 .append(caption.getEl());
         }
 
@@ -551,7 +550,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
         options = options || {};
 
         var self = this,
-            modal = new HAWCModal()
+            modal = new HAWCModal(),
             caption = new SmartTagContainer($('<div>').html(this.data.caption));
 
         this.$tblDiv = $('<div>');
@@ -570,7 +569,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
                 this.$tblDiv,
                 caption.getEl()
             ))
-            .addFooter("")
+            .addFooter('')
             .show({maxWidth: 1200});
     },
     buildTbl: function(){
@@ -591,7 +590,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
                     tr.data('detail_row').toggle_view(!tr.data('detail_row').object_visible);
                 } else {
                     var ep = tr.data('endpoint'),
-                        div_id = String.random_string()
+                        div_id = String.random_string(),
                         colspan = tr.children().length;
 
                     tr.after('<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(colspan, div_id))
@@ -618,7 +617,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
                 e.get_special_dose_text('NOEL'),
                 e.get_special_dose_text('LOEL'),
                 e.get_bmd_special_values('BMD'),
-                e.get_bmd_special_values('BMDL')
+                e.get_bmd_special_values('BMDL'),
             ]).data('endpoint', e);
         });
 
@@ -645,7 +644,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
                 '<a href="{0}">{1}</a>'.printf(
                     e.data.animal_group.url,
                     e.data.animal_group.name),
-                ep_tbl
+                ep_tbl,
             ]);
         });
 
@@ -658,7 +657,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             // todo: get default from options, if one exists
             this.plot = [
                 new EndpointAggregationExposureResponsePlot(this, this.plotData),
-                new EndpointAggregationForestPlot(this, this.plotData)
+                new EndpointAggregationForestPlot(this, this.plotData),
             ];
         }
         this.$tblDiv.html(this.plot[0].render(this.$plotDiv));
@@ -667,7 +666,7 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
         return {
             title: this.data.title,
             endpoints: this.endpoints,
-        }
+        };
     },
     addPlotToggleButton: function(){
         return {
@@ -676,9 +675,9 @@ _.extend(EndpointAggregation.prototype, Visual.prototype, {
             title: 'View alternate visualizations',
             text: '',
             icon: 'icon-circle-arrow-right',
-            on_click: this.buildPlot.bind(this)
+            on_click: this.buildPlot.bind(this),
         };
-    }
+    },
 });
 
 
@@ -688,9 +687,9 @@ EndpointAggregationForestPlot = function(parent, data, options){
 };
 _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
-        this.padding = {top:40, right:20, bottom:40, left:30};
+        this.padding = {top: 40, right: 20, bottom: 40, left: 30};
         this.padding.left_original = this.padding.left;
-        this.buff = 0.05; // addition numerical-spacing around dose/reponse units
+        this.buff = 0.05; // addition numerical-spacing around dose/response units
     },
     render: function($div){
         this.plot_div = $div;
@@ -720,26 +719,26 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             endpoint_labels = [],
             y = 0, val, control, lower_ci, upper_ci, egs,
             getCoordClass = function(e, i){
-                if (e.data.LOEL == i) return "LOEL"
-                if (e.data.NOEL == i) return "NOEL"
-                return ""
+                if (e.data.LOEL == i) return 'LOEL';
+                if (e.data.NOEL == i) return 'NOEL';
+                return '';
             },
             dose_units = this.data.endpoints[0].dose_units;
 
         _.chain(this.data.endpoints)
-         .filter(function(e){return e.hasEGdata();})
-         .each(function(e){
+        .filter(function(e){return e.hasEGdata();})
+        .each(function(e){
 
             egs = _.filter(e.data.groups, function(d){ return d.isReported; });
 
             endpoint_labels.push({
                 endpoint: e,
                 y: (y + (egs.length*0.5)),
-                label:  "{0}- {1}- {2}: {3}".printf(
+                label:  '{0}- {1}- {2}: {3}'.printf(
                     e.data.animal_group.experiment.study.short_citation,
                     e.data.animal_group.experiment.name,
                     e.data.animal_group.name,
-                    e.data.name)
+                    e.data.name),
             });
 
             egs.forEach(function(eg, i){
@@ -747,10 +746,10 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                     e.data.animal_group.experiment.study.short_citation,
                     e.data.name,
                     'Dose: ' + eg.dose,
-                    'N: ' + eg.n
+                    'N: ' + eg.n,
                 ];
 
-               if (i === 0){
+                if (i === 0){
                     // get control value
                     if (e.data.data_type == 'C'){
                         control = parseFloat(eg.response, 10);
@@ -774,17 +773,17 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                     upper_ci = eg.upper_limit;
                 }
                 points.push({
-                    'x':val,
-                    'y':y,
+                    'x': val,
+                    'y': y,
                     'class': getCoordClass(e, i),
                     'text': txt.join('\n'),
                     'dose': eg.dose,
                     'lower_ci': lower_ci,
                     'upper_ci': upper_ci,
-                    'endpoint': e
+                    'endpoint': e,
                 });
             });
-            y+=1;
+            y += 1;
             lines.push({'y': y, 'endpoint': e.data.name});
         });
 
@@ -809,8 +808,8 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text: "% change from control (continuous), % incidence (dichotomous)",
-            y_label_text: "Doses ({0})".printf(dose_units)
+            x_label_text: '% change from control (continuous), % incidence (dichotomous)',
+            y_label_text: 'Doses ({0})'.printf(dose_units),
         });
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
     },
@@ -820,7 +819,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             'scale_type': 'linear',
             'domain': [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)],
             'rangeRound': [0, this.w],
-            'text_orient': "bottom",
+            'text_orient': 'bottom',
             'x_translate': 0,
             'y_translate': this.h,
             'axis_class': 'axis x_axis',
@@ -828,14 +827,14 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             'gridline_class': 'primary_gridlines x_gridlines',
             'number_ticks': 10,
             'axis_labels':true,
-            'label_format':d3.format(".0%")
+            'label_format':d3.format('.0%'),
         };
 
         this.y_axis_settings = {
             'scale_type': 'linear',
             'domain': [this.max_y, this.min_y],  // invert axis
             'rangeRound': [this.h, 0],
-            'text_orient': "left",
+            'text_orient': 'left',
             'x_translate': 0,
             'y_translate': 0,
             'axis_class': 'axis y_axis',
@@ -843,7 +842,7 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             'gridline_class': 'primary_gridlines y_gridlines',
             'number_ticks': 10,
             'axis_labels':false,
-            'label_format':undefined //default
+            'label_format':undefined,  // default
         };
         this.build_x_axis();
         this.build_y_axis();
@@ -862,33 +861,30 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
     add_endpoint_lines: function(){
         // horizontal line separators between endpoints
         var x = this.x_scale,
-            y = this.y_scale,
-            lower = [],
-            upper = [];
+            y = this.y_scale;
 
         //horizontal lines
-        this.vis.selectAll("svg.endpoint_lines")
+        this.vis.selectAll('svg.endpoint_lines')
             .data(this.lines)
-          .enter().append("line")
-            .attr("x1", function(d) { return x(x.domain()[0]); })
-            .attr("y1", function(d) { return y(d.y); })
-            .attr("x2", function(d) { return x(x.domain()[1]); })
-            .attr("y2", function(d) { return y(d.y); })
+          .enter().append('line')
+            .attr('x1', function(d) { return x(x.domain()[0]); })
+            .attr('y1', function(d) { return y(d.y); })
+            .attr('x2', function(d) { return x(x.domain()[1]); })
+            .attr('y2', function(d) { return y(d.y); })
             .attr('class','primary_gridlines');
 
         // add vertical line at zero
-        this.vis.append("line")
-            .attr("x1", this.x_scale(0))
-            .attr("y1", this.y_scale(this.min_y))
-            .attr("x2", this.x_scale(0))
-            .attr("y2", this.y_scale(this.max_y))
+        this.vis.append('line')
+            .attr('x1', this.x_scale(0))
+            .attr('y1', this.y_scale(this.min_y))
+            .attr('x2', this.x_scale(0))
+            .attr('y2', this.y_scale(this.max_y))
             .attr('class','reference_line');
     },
     add_dose_points: function(){
 
         var x = this.x_scale,
             y = this.y_scale,
-            self = this,
             lines = this.points.filter(function(v){
                 return ($.isNumeric(v.lower_ci)) && ($.isNumeric(v.upper_ci));
             }),
@@ -897,85 +893,88 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             });
 
         // horizontal confidence interval line
-        this.vis.selectAll("svg.error_bars")
+        this.vis.selectAll('svg.error_bars')
             .data(lines)
-          .enter().append("line")
-            .attr("x1", function(d) { return x(d.lower_ci); })
-            .attr("y1", function(d) { return y(d.y); })
-            .attr("x2", function(d) { return x(d.upper_ci); })
-            .attr("y2", function(d) { return y(d.y); })
+          .enter().append('line')
+            .attr('x1', function(d) { return x(d.lower_ci); })
+            .attr('y1', function(d) { return y(d.y); })
+            .attr('x2', function(d) { return x(d.upper_ci); })
+            .attr('y2', function(d) { return y(d.y); })
             .attr('class','dr_err_bars');
 
         // lower vertical vertical confidence intervals line
-        this.vis.selectAll("svg.error_bars")
+        this.vis.selectAll('svg.error_bars')
             .data(lines)
-          .enter().append("line")
-            .attr("x1", function(d) { return x(d.lower_ci); })
-            .attr("y1", function(d) { return y(d.y)-5; })
-            .attr("x2", function(d) { return x(d.lower_ci); })
-            .attr("y2", function(d) {return y(d.y)+5; })
+          .enter().append('line')
+            .attr('x1', function(d) { return x(d.lower_ci); })
+            .attr('y1', function(d) { return y(d.y)-5; })
+            .attr('x2', function(d) { return x(d.lower_ci); })
+            .attr('y2', function(d) {return y(d.y)+5; })
             .attr('class','dr_err_bars');
 
         // upper vertical confidence intervals line
-        this.vis.selectAll("svg.error_bars")
+        this.vis.selectAll('svg.error_bars')
             .data(lines)
-          .enter().append("line")
-            .attr("x1", function(d) { return x(d.upper_ci); })
-            .attr("y1", function(d) { return y(d.y)-5; })
-            .attr("x2", function(d) { return x(d.upper_ci); })
-            .attr("y2", function(d) {return y(d.y)+5; })
+          .enter().append('line')
+            .attr('x1', function(d) { return x(d.upper_ci); })
+            .attr('y1', function(d) { return y(d.y)-5; })
+            .attr('x2', function(d) { return x(d.upper_ci); })
+            .attr('y2', function(d) {return y(d.y)+5; })
             .attr('class','dr_err_bars');
 
         // central tendency of percent-change
-        this.dots = this.vis.selectAll("path.dot")
+        this.dots = this.vis.selectAll('path.dot')
             .data(points)
-          .enter().append("circle")
-            .attr("r","7")
-            .attr("class", function(d){ return "dose_points " + d.class;})
-            .style("cursor", "pointer")
-            .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+          .enter().append('circle')
+            .attr('r','7')
+            .attr('class', function(d){ return 'dose_points ' + d.class;})
+            .style('cursor', 'pointer')
+            .attr('transform', function(d) { return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; })
             .on('click', function(v){v.endpoint.displayAsModal();});
 
         // add the outer element last
-        this.dots.append("svg:title").text(function(d) { return d.text; });
+        this.dots.append('svg:title').text(function(d) { return d.text; });
     },
     add_axis_text: function(){
         // Next set labels on axis
-        var y_scale = this.y_scale, x_scale = this.x_scale;
-        this.y_dose_text = this.vis.selectAll("y_axis.text")
+        var y_scale = this.y_scale;
+        this.y_dose_text = this.vis.selectAll('y_axis.text')
             .data(this.points)
-        .enter().append("text")
-            .attr("x", -5)
-            .attr("y", function(v,i){return y_scale(v.y);})
-            .attr("dy", "0.5em")
+        .enter().append('text')
+            .attr('x', -5)
+            .attr('y', function(v,i){return y_scale(v.y);})
+            .attr('dy', '0.5em')
             .attr('class','dr_tick_text')
-            .attr("text-anchor", "end")
+            .attr('text-anchor', 'end')
             .text(function(d,i) { return d.dose;});
 
-        this.labels = this.vis.selectAll("y_axis.text")
+        this.labels = this.vis.selectAll('y_axis.text')
             .data(this.endpoint_labels)
-        .enter().append("text")
-            .attr("x", -this.padding.left+25)
-            .attr("y", function(v,i){return y_scale(v.y);})
+        .enter().append('text')
+            .attr('x', -this.padding.left+25)
+            .attr('y', function(v,i){return y_scale(v.y);})
             .attr('class','dr_title forest_plot_labels')
-            .attr("text-anchor", "start")
-            .style("cursor", "pointer")
+            .attr('text-anchor', 'start')
+            .style('cursor', 'pointer')
             .text(function(d,i) { return d.label;})
             .on('click', function(v){v.endpoint.displayAsModal();});
     },
     add_legend: function(){
         var addItem = function(txt, cls, color){
-                return {"text": txt, "classes": cls, "color": color}
+                return {'text': txt, 'classes': cls, 'color': color};
             },
             item_height = 20,
             box_w = 110,
             items = [
-                addItem("Doses in Study", "dose_points")
+                addItem('Doses in Study', 'dose_points'),
             ];
 
-        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "dose_points LOEL"))
-        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "dose_points NOEL"))
-        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "dose_points BMDL"))
+        if (this.plot_div.find('.LOEL').length > 0)
+            items.push(addItem('LOEL', 'dose_points LOEL'));
+        if (this.plot_div.find('.NOEL').length > 0)
+            items.push(addItem('NOEL', 'dose_points NOEL'));
+        if (this.plot_div.find('.BMDL').length > 0)
+            items.push(addItem('BMDL',  'dose_points BMDL'));
 
         this.build_legend({
             items: items,
@@ -985,9 +984,9 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
             box_l: this.w + this.padding.right - box_w - 10,
             dot_r: 5,
             box_t: 10-this.padding.top,
-            box_padding: 5
+            box_padding: 5,
         });
-    }
+    },
 });
 
 
@@ -998,27 +997,27 @@ EndpointAggregationExposureResponsePlot = function(parent, data, options){
 _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
         var left = 25,
-            formatNumber = d3.format(",.f");
+            formatNumber = d3.format(',.f');
 
         _.extend(this, {
-            default_x_scale: "log",
+            default_x_scale: 'log',
             padding: {
                 top:40,
                 right:20,
                 bottom:40,
                 left:left,
-                left_original: left
+                left_original: left,
             },
             buff: 0.05,
             x_axis_settings: {
                 scale_type: this.options.default_x_axis || 'log',
-                text_orient: "bottom",
+                text_orient: 'bottom',
                 axis_class: 'axis x_axis',
                 gridlines: true,
                 gridline_class: 'primary_gridlines x_gridlines',
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: formatNumber
+                label_format: formatNumber,
             },
             y_axis_settings: {
                 scale_type: 'ordinal',
@@ -1027,12 +1026,11 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                 gridlines: true,
                 gridline_class: 'primary_gridlines y_gridlines',
                 axis_labels: true,
-                label_format: undefined //default
-            }
+                label_format: undefined, //default
+            },
         });
     },
     render: function($div){
-        var self = this;
         this.plot_div = $div;
         this.processData();
         this.build_plot_skeleton(true);
@@ -1069,7 +1067,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             egs = e.data.groups;
 
             // get min/max information
-            min = (default_x_scale == "log") ? Math.min(min, egs[1].dose) : Math.min(min, egs[0].dose);
+            min = (default_x_scale == 'log') ? Math.min(min, egs[1].dose) : Math.min(min, egs[0].dose);
             max = Math.max(max, egs[egs.length-1].dose);
             if (isFinite(e.get_bmd_special_values('BMDL'))) {
                 min = Math.min(min, e.get_bmd_special_values('BMDL'));
@@ -1079,13 +1077,13 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             //setup lines information for dose-response line (excluding control)
             lines_data.push({
                 y: e.data.id,
-                name: "{0}- {1}- {2}: {3}".printf(
+                name: '{0}- {1}- {2}: {3}'.printf(
                     e.data.animal_group.experiment.study.short_citation,
                     e.data.animal_group.experiment.name,
                     e.data.animal_group.name,
                     e.data.name),
                 x_lower: egs[1].dose,
-                x_upper: egs[egs.length-1].dose
+                x_upper: egs[egs.length-1].dose,
             });
 
             // setup points information
@@ -1119,7 +1117,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                     e.data.name,
                     'BMD Model: ' + e.data.BMD.outputs.model_name,
                     'BMD: ' + e.data.BMD.outputs.BMD + ' (' + e.data.dose_units + ')',
-                    'BMDL: ' + e.data.BMD.outputs.BMDL + ' (' + e.data.dose_units + ')'
+                    'BMDL: ' + e.data.BMD.outputs.BMDL + ' (' + e.data.dose_units + ')',
                 ];
 
                 points_data.push({
@@ -1127,7 +1125,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
                     x: e.get_bmd_special_values('BMDL'),
                     y: e.data.id,
                     classes: 'BMDL',
-                    text : txt.join('\n')
+                    text : txt.join('\n'),
                 });
             }
         });
@@ -1147,7 +1145,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text: "Dose ({0})".printf(dose_units),
+            x_label_text: 'Dose ({0})'.printf(dose_units),
             y_label_text: 'Endpoints',
         });
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
@@ -1157,7 +1155,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
         if (this.x_axis_settings.scale_type == 'linear'){
             this.x_axis_settings.scale_type = 'log';
             this.x_axis_settings.number_ticks = 1;
-            var formatNumber = d3.format(",.f");
+            var formatNumber = d3.format(',.f');
             this.x_axis_settings.label_format = formatNumber;
         } else {
             this.x_axis_settings.scale_type = 'linear';
@@ -1177,11 +1175,11 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
         this.rebuild_x_gridlines({animate: true});
 
         //rebuild dosing lines
-        this.dosing_lines.selectAll("line")
+        this.dosing_lines.selectAll('line')
             .transition()
             .duration(1000)
-            .attr("x1", function(d) { return x(d.x_lower);})
-            .attr("x2", function(d) { return x(d.x_upper); });
+            .attr('x1', function(d) { return x(d.x_lower);})
+            .attr('x2', function(d) { return x(d.x_upper); });
 
         this.dots
             .transition()
@@ -1202,7 +1200,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
         $.extend(this.x_axis_settings, {
             rangeRound: [0, this.w],
             x_translate: 0,
-            y_translate: this.h
+            y_translate: this.h,
         });
 
         $.extend(this.y_axis_settings, {
@@ -1210,7 +1208,7 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             rangeRound: [0, this.h],
             number_ticks: this.lines_data.length,
             x_translate: 0,
-            y_translate: 0
+            y_translate: 0,
         });
         this.build_x_axis();
         this.build_y_axis();
@@ -1242,48 +1240,47 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             y = this.y_scale,
             halfway = y.rangeBand()/2;
 
-        this.dosing_lines = this.vis.append("g");
-        this.dosing_lines.selectAll("line")
+        this.dosing_lines = this.vis.append('g');
+        this.dosing_lines.selectAll('line')
             .data(this.lines_data)
-          .enter().append("line")
-            .attr("x1", function(d) { return x(d.x_lower); })
-            .attr("y1", function(d) {return y(d.y)+halfway;})
-            .attr("x2", function(d) { return x(d.x_upper); })
-            .attr("y2", function(d) {return y(d.y)+halfway;})
-            .attr('class','dr_err_bars'); // todo: rename class to more general name
+          .enter().append('line')
+            .attr('x1', function(d) { return x(d.x_lower); })
+            .attr('y1', function(d) {return y(d.y)+halfway;})
+            .attr('x2', function(d) { return x(d.x_upper); })
+            .attr('y2', function(d) {return y(d.y)+halfway;})
+            .attr('class', 'dr_err_bars'); // todo: rename class to more general name
     },
     add_dose_points: function(){
 
         var x = this.x_scale,
             y = this.y_scale,
-            self = this,
             tt_width = 400,
             halfway = y.rangeBand()/2;
 
-        var tooltip = d3.select("body")
-            .append("div")
+        var tooltip = d3.select('body')
+            .append('div')
             .attr('class', 'd3modal')
             .attr('width', tt_width + 'px')
-            .style("position", "absolute")
-            .style("z-index", "1000")
-            .style("visibility", "hidden")
+            .style('position', 'absolute')
+            .style('z-index', '1000')
+            .style('visibility', 'hidden')
             .on('click', function(){$(this).css('visibility','hidden');});
         this.tooltip = $(tooltip[0]);
 
-        this.dots_group = this.vis.append("g");
-        this.dots = this.dots_group.selectAll("circle")
+        this.dots_group = this.vis.append('g');
+        this.dots = this.dots_group.selectAll('circle')
             .data(this.points_data)
-          .enter().append("circle")
-            .attr("r","7")
-            .attr("class", function(d){ return "dose_points " + d.classes;})
-            .attr("cursor", "pointer")
-            .attr("cx", function(d){return x(d.x);})
-            .attr("cy", function(d){return y(d.y)+halfway;})
-            .style("cursor", "pointer")
+          .enter().append('circle')
+            .attr('r','7')
+            .attr('class', function(d){ return 'dose_points ' + d.classes;})
+            .attr('cursor', 'pointer')
+            .attr('cx', function(d){return x(d.x);})
+            .attr('cy', function(d){return y(d.y)+halfway;})
+            .style('cursor', 'pointer')
             .on('click', function(v){v.endpoint.displayAsModal();});
 
         // add the outer element last
-        this.dots.append("svg:title").text(function(d) { return d.text; });
+        this.dots.append('svg:title').text(function(d) { return d.text; });
     },
     customize_menu: function(){
         this.add_menu();
@@ -1294,22 +1291,25 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             title: 'Change x-axis scale (shortcut: click the x-axis label)',
             text: '',
             icon: 'icon-resize-horizontal',
-            on_click: this.toggle_x_axis.bind(this)
+            on_click: this.toggle_x_axis.bind(this),
         });
     },
     add_legend: function(){
         var addItem = function(txt, cls, color){
-                return {"text": txt, "classes": cls, "color": color}
+                return {'text': txt, 'classes': cls, 'color': color};
             },
             item_height = 20,
             box_w = 110,
             items = [
-                addItem("Doses in Study", "dose_points")
+                addItem('Doses in Study', 'dose_points'),
             ];
 
-        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem("LOEL", "dose_points LOEL"))
-        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem("NOEL", "dose_points NOEL"))
-        if (this.plot_div.find('.BMDL').length > 0)  items.push(addItem("BMDL",  "dose_points BMDL"))
+        if (this.plot_div.find('.LOEL').length > 0)
+            items.push(addItem('LOEL', 'dose_points LOEL'));
+        if (this.plot_div.find('.NOEL').length > 0)
+            items.push(addItem('NOEL', 'dose_points NOEL'));
+        if (this.plot_div.find('.BMDL').length > 0)
+            items.push(addItem('BMDL',  'dose_points BMDL'));
 
         this.build_legend({
             items: items,
@@ -1319,9 +1319,9 @@ _.extend(EndpointAggregationExposureResponsePlot.prototype, D3Visualization.prot
             box_l: this.w + this.padding.right - box_w - 10,
             dot_r: 5,
             box_t: 10-this.padding.top,
-            box_padding: 5
+            box_padding: 5,
         });
-    }
+    },
 });
 
 
@@ -1330,14 +1330,14 @@ Crossview = function(data){
 
     // D3.js monkey-patch
     d3.selection.prototype.moveToFront = function(){
-      return this.each(function(){
-        this.parentNode.appendChild(this);
-      });
+        return this.each(function(){
+            this.parentNode.appendChild(this);
+        });
     };
 };
 _.extend(Crossview.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
-        var title = $("<h1>").text(this.data.title),
+        var title = $('<h1>').text(this.data.title),
             caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
@@ -1370,7 +1370,7 @@ _.extend(Crossview.prototype, Visual.prototype, {
 
         modal.addHeader($('<h4>').text(this.data.title))
             .addBody([$plotDiv, caption.getEl()])
-            .addFooter("")
+            .addFooter('')
             .show({maxWidth: 1200});
     },
     getPlotData: function(){
@@ -1378,9 +1378,9 @@ _.extend(Crossview.prototype, Visual.prototype, {
             title: this.data.title,
             endpoints: this.endpoints,
             dose_units: this.data.dose_units,
-            settings: this.data.settings
-        }
-    }
+            settings: this.data.settings,
+        };
+    },
 });
 
 
@@ -1409,72 +1409,72 @@ _.extend(CrossviewPlot, {
         return d3.sum(_.pluck(e.data.groups, 'isReported'))>=numDG;
     },
     _filters: {
-        "study": "Study",
-        "experiment_type": "Experiment type",
-        "route_of_exposure": "Route of exposure",
-        "lifestage_exposed": "Lifestage exposed",
-        "species": "Species",
-        "sex": "Sex",
-        "generation": "Generation",
-        "effects": "Effect tags",
-        "system": "System",
-        "organ": "Organ",
-        "effect": "Effect",
-        "effect_subtype": "Effect subtype",
-        "monotonicity": "Monotonicity",
-        "chemical": "Chemical",
+        'study': 'Study',
+        'experiment_type': 'Experiment type',
+        'route_of_exposure': 'Route of exposure',
+        'lifestage_exposed': 'Lifestage exposed',
+        'species': 'Species',
+        'sex': 'Sex',
+        'generation': 'Generation',
+        'effects': 'Effect tags',
+        'system': 'System',
+        'organ': 'Organ',
+        'effect': 'Effect',
+        'effect_subtype': 'Effect subtype',
+        'monotonicity': 'Monotonicity',
+        'chemical': 'Chemical',
     },
     _cw_filter_process: {
-        "study": function(d){return d.data.animal_group.experiment.study.short_citation; },
-        "experiment_type": function(d){return d.data.animal_group.experiment.type; },
-        "route_of_exposure": function(d){return d.data.animal_group.dosing_regime.route_of_exposure; },
-        "lifestage_exposed": function(d){return d.data.animal_group.lifestage_exposed; },
-        "species": function(d){return d.data.animal_group.species; },
-        "sex": function(d){return d.data.animal_group.sex; },
-        "generation": function(d){return d.data.animal_group.generation; },
-        "effects": function(d){return d.data.effects.map(function(v){return v.name; })},
-        "system": function(d){return d.data.system; },
-        "organ": function(d){return d.data.organ; },
-        "effect": function(d){return d.data.effect; },
-        "effect_subtype": function(d){return d.data.effect_subtype; },
-        "monotonicity": function(d){return d.data.monotonicity; },
-        "chemical": function(d){return d.data.animal_group.experiment.chemical;},
-    }
-})
+        study: function(d){return d.data.animal_group.experiment.study.short_citation; },
+        experiment_type: function(d){return d.data.animal_group.experiment.type; },
+        route_of_exposure: function(d){return d.data.animal_group.dosing_regime.route_of_exposure; },
+        lifestage_exposed: function(d){return d.data.animal_group.lifestage_exposed; },
+        species: function(d){return d.data.animal_group.species; },
+        sex: function(d){return d.data.animal_group.sex; },
+        generation: function(d){return d.data.animal_group.generation; },
+        effects: function(d){return d.data.effects.map(function(v){return v.name; });},
+        system: function(d){return d.data.system; },
+        organ: function(d){return d.data.organ; },
+        effect: function(d){return d.data.effect; },
+        effect_subtype: function(d){return d.data.effect_subtype; },
+        monotonicity: function(d){return d.data.monotonicity; },
+        chemical: function(d){return d.data.animal_group.experiment.chemical;},
+    },
+});
 _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
     setDefaults: function(){
         _.extend(this, {
             x_axis_settings: {
-                "text_orient": "bottom",
-                "axis_class": 'axis x_axis',
-                "gridlines": false,
-                "gridline_class": 'primary_gridlines x_gridlines',
-                "number_ticks": 10,
-                "axis_labels": true,
-                "label_format": d3.format(",.f")
-            },
-            y_axis_settings: {
-                'scale_type': "linear",
-                'text_orient': "left",
-                'axis_class': "axis y_axis",
+                'text_orient': 'bottom',
+                'axis_class': 'axis x_axis',
                 'gridlines': false,
-                'gridline_class': "primary_gridlines y_gridlines",
+                'gridline_class': 'primary_gridlines x_gridlines',
                 'number_ticks': 10,
                 'axis_labels': true,
-                'label_format': d3.format("%")
+                'label_format': d3.format(',.f'),
+            },
+            y_axis_settings: {
+                'scale_type': 'linear',
+                'text_orient': 'left',
+                'axis_class': 'axis y_axis',
+                'gridlines': false,
+                'gridline_class': 'primary_gridlines y_gridlines',
+                'number_ticks': 10,
+                'axis_labels': true,
+                'label_format': d3.format('%'),
             },
             settings: {
-                "tag_height": 17,
-                "column_padding": 5,
-                "filter_padding": 10
-            }
+                'tag_height': 17,
+                'column_padding': 5,
+                'filter_padding': 10,
+            },
         });
     },
     render: function($div){
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>");
+            return this.plot_div.html('<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>');
         }
         this.build_plot_skeleton(false);
         this.add_axes();
@@ -1489,34 +1489,34 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         var midX = d3.mean(this.x_scale.range()),
             midY = d3.mean(this.y_scale.range());
 
-        this.vis.append("svg:text")
-            .attr("x", midX)
-            .attr("y", -10)
+        this.vis.append('svg:text')
+            .attr('x', midX)
+            .attr('y', -10)
             .text(this.data.settings.title)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_title");
+            .attr('text-anchor', 'middle')
+            .attr('class', 'dr_title');
 
-        this.vis.append("svg:text")
-            .attr("x", midX)
-            .attr("y", d3.max(this.y_scale.range())+30)
+        this.vis.append('svg:text')
+            .attr('x', midX)
+            .attr('y', d3.max(this.y_scale.range())+30)
             .text(this.data.settings.xAxisLabel)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_axis_labels x_axis_label");
+            .attr('text-anchor', 'middle')
+            .attr('class', 'dr_axis_labels x_axis_label');
 
-        this.vis.append("svg:text")
-            .attr("x", -50)
-            .attr("y", midY)
-            .attr("transform",'rotate(270, -50,  {0})'.printf(midY))
+        this.vis.append('svg:text')
+            .attr('x', -50)
+            .attr('y', midY)
+            .attr('transform','rotate(270, -50,  {0})'.printf(midY))
             .text(this.data.settings.yAxisLabel)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_axis_labels y_axis_label");
+            .attr('text-anchor', 'middle')
+            .attr('class', 'dr_axis_labels y_axis_label');
     },
     processData: function(){
 
         // create new class for each colorFilter
         if (this.data.settings.colorFilters){
             this.data.settings.colorFilters.forEach(function(d,i){
-                d.className = "_cv_colorFilter"+i;
+                d.className = '_cv_colorFilter' + i;
             });
         }
 
@@ -1527,13 +1527,15 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             gt: function(val, tgt){return val>tgt;},
             gte: function(val, tgt){return val>=tgt;},
             contains: function(val, tgt){
-                if (val instanceof Array) val = val.join("|")
+                if (val instanceof Array)
+                    val = val.join('|');
                 val = val.toString().toLowerCase();
                 tgt = tgt.toString().toLowerCase();
                 return val.indexOf(tgt.toLowerCase())>-1;
             },
             not_contains: function(val, tgt){
-                if (val instanceof Array) val = val.join("|").toLowerCase();
+                if (val instanceof Array)
+                    val = val.join('|').toLowerCase();
                 val = val.toString().toLowerCase();
                 tgt = tgt.toString().toLowerCase();
                 return val.indexOf(tgt.toLowerCase())===1;
@@ -1560,7 +1562,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         var self = this,
             settings = this.data.settings,
             getFilters = function(d){
-                var obj = {}, fld;
+                var obj = {};
                 settings.filters.forEach(function(fld){
                     obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d);
                 });
@@ -1568,15 +1570,17 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             },
             processEndpoint = function(e){
                 var filters = getFilters(e),
-                    egFilter = (settings.dose_isLog) ? function(eg, i){return i>0;} : function(eg, i){return true;},
+                    egFilter = (settings.dose_isLog) ?
+                        function(eg, i){return i>0;} :
+                        function(eg, i){return true;},
                     classes = [],
                     stroke = settings.colorBase,
-                    egs, i, filt, vals;
+                    egs, i, vals;
 
                 // apply color filters (reverse order)
                 for (i = settings.colorFilters.length-1; i>=0; i--){
                     colorFilt = settings.colorFilters[i];
-                    vals = CrossviewPlot._cw_filter_process[colorFilt.field](e)
+                    vals = CrossviewPlot._cw_filter_process[colorFilt.field](e);
                     if(self.isMatch(vals, colorFilt.value)){
                         stroke = colorFilt.color;
                         classes.push(colorFilt.className);
@@ -1595,26 +1599,25 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                                 'baseStroke': stroke,
                                 'currentStroke': stroke,
                                 'classes': classes,
-                            }
+                            };
                         });
 
                 return {
                     'filters': filters,
                     'plotting': egs,
-                    'dose_extent': d3.extent(egs, function(d){return d.dose}),
-                    'resp_extent': d3.extent(egs, function(d){return d.resp})
+                    'dose_extent': d3.extent(egs, function(d){return d.dose;}),
+                    'resp_extent': d3.extent(egs, function(d){return d.resp;}),
                 };
             },
             applyEndpointFilters = function(e){
                 if (settings.endpointFilterLogic.length === 0) return true;
                 var val,
                     res = _.map(settings.endpointFilters, function(filter){
-                        val = CrossviewPlot._cw_filter_process[filter.field](this)
+                        val = CrossviewPlot._cw_filter_process[filter.field](this);
                         return filter.fn(val);
                     }, e);
-                return (settings.endpointFilterLogic==="and") ? _.all(res) : _.any(res);
+                return (settings.endpointFilterLogic === 'and') ? _.all(res) : _.any(res);
             },
-            dose_units = (this.data.endpoints.length>0) ? this.data.endpoints[0].dose_units : "N/A",
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
@@ -1622,24 +1625,31 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .map(processEndpoint)
                 .value(),
             container_height = settings.height + 50,  // menu-spacing
-            dose_scale = (settings.dose_isLog) ? "log" : "linear";
+            dose_scale = (settings.dose_isLog) ? 'log' : 'linear';
 
         // build filters
         var filters = _.chain(settings.filters)
-               .map(function(f){
-                    var vals = _.chain(f.values);
-                    if(f.allValues){
-                        vals = _.chain(dataset)
-                                .map(function(d){return d.filters[f.name];})
-                                .flatten()
-                                .sort()
-                                .uniq(true)
-                                .filter(function(d){return d != "";});
-                    }
-                    return vals.map(function(d){return {'field': f.name, 'status': false, 'text': d, 'headerName': f.headerName};}).value();
-               })
-               .filter(function(d){return d.length>0;})
-               .value();
+            .map(function(f){
+                var vals = _.chain(f.values);
+                if(f.allValues){
+                    vals = _.chain(dataset)
+                            .map(function(d){return d.filters[f.name];})
+                            .flatten()
+                            .sort()
+                            .uniq(true)
+                            .filter(function(d){return d != '';});
+                }
+                return vals.map(function(d){
+                    return {
+                        'field': f.name,
+                        'status': false,
+                        'text': d,
+                        'headerName': f.headerName,
+                    };
+                }).value();
+            })
+            .filter(function(d){return d.length>0;})
+            .value();
 
         _.extend(this, {
             dataset: dataset,
@@ -1650,60 +1660,60 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             h: settings.inner_height,
             dose_scale: dose_scale,
             padding: {
-                "top": settings.padding_top,
-                "right": settings.width-settings.padding_left-settings.inner_width,
-                "bottom": settings.height-settings.padding_top-settings.inner_height,
-                "left": settings.padding_left,
-                "left_original": settings.padding_left
-            }
+                'top': settings.padding_top,
+                'right': settings.width-settings.padding_left-settings.inner_width,
+                'bottom': settings.height-settings.padding_top-settings.inner_height,
+                'left': settings.padding_left,
+                'left_original': settings.padding_left,
+            },
         });
         this._set_ranges();
         this.plot_div.css({'height': '{0}px'.printf(container_height)});
     },
     _set_ranges: function(){
         var parseRange = function(txt){
-                var arr = txt.split(",");
+                var arr = txt.split(',');
                 if(arr.length !== 2) return false;
-                _.each(arr, parseFloat)
+                arr = _.map(arr, parseFloat);
                 return (_.all( _.map(arr, isFinite))) ? arr : false;
             },
-            dose_range = parseRange(this.data.settings.dose_range || ""),
-            resp_range = parseRange(this.data.settings.response_range || "");
+            dose_range = parseRange(this.data.settings.dose_range || ''),
+            resp_range = parseRange(this.data.settings.response_range || '');
 
         if (!dose_range){
             dose_range = [
                 d3.min(this.dataset, function(v){return v.dose_extent[0];}),
-                d3.max(this.dataset, function(v){return v.dose_extent[1];})
+                d3.max(this.dataset, function(v){return v.dose_extent[1];}),
             ];
         }
 
         if (!resp_range){
             resp_range = [
                 d3.min(this.dataset, function(d){return d.resp_extent[0];}),
-                d3.max(this.dataset, function(d){return d.resp_extent[1];})
+                d3.max(this.dataset, function(d){return d.resp_extent[1];}),
             ];
         }
 
         _.extend(this, {
             dose_range: dose_range,
-            response_range: resp_range
+            response_range: resp_range,
         });
     },
     add_axes: function(){
         _.extend(this.x_axis_settings, {
-            "scale_type": this.dose_scale,
-            "domain": this.dose_range,
-            "rangeRound": [0, this.plot_settings.inner_width],
-            "x_translate": 0,
-            "y_translate": this.plot_settings.inner_height
+            'scale_type': this.dose_scale,
+            'domain': this.dose_range,
+            'rangeRound': [0, this.plot_settings.inner_width],
+            'x_translate': 0,
+            'y_translate': this.plot_settings.inner_height,
         });
 
         _.extend(this.y_axis_settings, {
-            "domain": this.response_range,
-            "number_ticks": 10,
-            "rangeRound": [this.plot_settings.inner_height, 0],
-            "x_translate": 0,
-            "y_translate": 0
+            'domain': this.response_range,
+            'number_ticks': 10,
+            'rangeRound': [this.plot_settings.inner_height, 0],
+            'x_translate': 0,
+            'y_translate': 0,
         });
 
         this.build_x_axis();
@@ -1719,16 +1729,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     x: x.range()[0], width:  Math.abs(x.range()[1] - x.range()[0]),
                     y: y(d.upper),   height: Math.abs(y(d.upper) - y(d.lower)),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style})
-                }
+                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style}),
+                };
             },
             make_vrng = function(d){
                 return {
                     x: x(d.lower),   width:  Math.abs(x(d.upper) - x(d.lower)),
                     y: y.range()[1], height: Math.abs(y.range()[1] - y.range()[0]),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style})
-                }
+                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style}),
+                };
             };
 
         hrng = _.chain(this.plot_settings.refranges_response)
@@ -1744,18 +1754,18 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         hrng.push.apply(hrng, vrng);
         if (hrng.length===0) return;
 
-        this.g_reference_ranges = this.vis.append("g");
-        this.g_reference_ranges.selectAll("rect")
+        this.g_reference_ranges = this.vis.append('g');
+        this.g_reference_ranges.selectAll('rect')
                 .data(hrng)
-            .enter().append("svg:rect")
-                .attr("x",      function(d){ return d.x; })
-                .attr("y",      function(d){ return d.y; })
-                .attr("width",  function(d){ return d.width; })
-                .attr("height", function(d){ return d.height; })
+            .enter().append('svg:rect')
+                .attr('x',      function(d){ return d.x; })
+                .attr('y',      function(d){ return d.y; })
+                .attr('width',  function(d){ return d.width; })
+                .attr('height', function(d){ return d.height; })
                 .each(function(d){ d3.select(this).attr(d.styles); });
 
-        this.g_reference_ranges.selectAll("rect")
-            .append("svg:title").text(function(d) { return d.title; });
+        this.g_reference_ranges.selectAll('rect')
+            .append('svg:title').text(function(d) { return d.title; });
     },
     _draw_ref_lines: function(){
         var x = this.x_scale,
@@ -1767,17 +1777,17 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                     x1: x.range()[0], x2: x.range()[1],
                     y1: y(d.value),   y2: y(d.value),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style})
-                }
-              },
-              make_vref = function(d){
+                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style}),
+                };
+            },
+            make_vref = function(d){
                 return {
                     x1: x(d.value),   x2: x(d.value),
                     y1: y.range()[0], y2: y.range()[1],
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style})
-                }
-              };
+                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style}),
+                };
+            };
 
         hrefs = _.chain(this.plot_settings.reflines_response)
           .filter(filter_ref)
@@ -1792,23 +1802,23 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         hrefs.push.apply(hrefs, vrefs);
         if (hrefs.length===0) return;
 
-        this.g_reference_lines = this.vis.append("g");
-        this.g_reference_lines.selectAll("line")
+        this.g_reference_lines = this.vis.append('g');
+        this.g_reference_lines.selectAll('line')
                 .data(hrefs)
-            .enter().append("svg:line")
-                .attr("x1", function(d){ return d.x1; })
-                .attr("x2", function(d){ return d.x2; })
-                .attr("y1", function(d){ return d.y1; })
-                .attr("y2", function(d){ return d.y2; })
+            .enter().append('svg:line')
+                .attr('x1', function(d){ return d.x1; })
+                .attr('x2', function(d){ return d.x2; })
+                .attr('y1', function(d){ return d.y1; })
+                .attr('y2', function(d){ return d.y2; })
                 .each(function(d){ d3.select(this).attr(d.styles); });
 
-        this.g_reference_lines.selectAll("line")
-            .append("svg:title").text(function(d) { return d.title; });
+        this.g_reference_lines.selectAll('line')
+            .append('svg:title').text(function(d) { return d.title; });
     },
     _draw_labels: function(){
 
         var self = this,
-            drag, dlabels, labels
+            drag, dlabels, labels;
 
         dlabels = _.map(this.plot_settings.labels, function(d){
             d._style = _.findWhere(D3Visualization.styles.texts, {name: d.style});
@@ -1819,22 +1829,22 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if (this.options.dev){
             drag = d3.behavior.drag()
                 .origin(Object)
-                .on("drag", function(d,i){
+                .on('drag', function(d,i){
                     var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                         p = d3.select(this),
-                        m = regexp.exec(p.attr("transform"));
-                        if (m !== null && m.length===3){
-                            var x = parseFloat(m[1]) + d3.event.dx,
-                                y = parseFloat(m[2]) + d3.event.dy;
-                            p.attr("transform", "translate(" + x + "," + y + ")");
-                            self.setLabelLocation(i, x, y);
-                        }
+                        m = regexp.exec(p.attr('transform'));
+                    if (m !== null && m.length===3){
+                        var x = parseFloat(m[1]) + d3.event.dx,
+                            y = parseFloat(m[2]) + d3.event.dy;
+                        p.attr('transform', 'translate(' + x + ',' + y + ')');
+                        self.setLabelLocation(i, x, y);
+                    }
                 });
         } else {
             drag = function(){};
         }
 
-        labels = this.vis.append("g")
+        labels = this.vis.append('g')
             .attr('class', 'label_holder')
             .selectAll('g.labels')
                 .data(dlabels)
@@ -1843,35 +1853,37 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             .attr('transform', function(d,i){
                 return 'translate({0},{1})'.printf(d.x, d.y);
             })
-            .attr("cursor", (this.options.dev) ? "pointer" : "auto")
+            .attr('cursor', (this.options.dev) ? 'pointer' : 'auto')
             .call(drag)
             .each(function(d){
                 d3.select(this)
-                  .append("text")
+                  .append('text')
                       .attr('x', 0)
                       .attr('y', 0)
                       .text(function(d){return d.caption;})
                       .each(function(d){self.apply_text_styles(this, d._style);})
-                      .each(function(d){HAWCUtils.wrapText(this, d.max_width)});
-            })
+                      .each(function(d){HAWCUtils.wrapText(this, d.max_width);});
+            });
 
         if (this.options.dev){
             labels.each(function(d){
                 var bb = this.getBBox();
                 d3.select(this)
-                    .insert("rect", ":first-child")
-                    .attr("fill", "orange")
-                    .attr("opacity", "0.1")
-                    .attr("x", bb.x)
-                    .attr("y", bb.y)
-                    .attr("width", bb.width)
-                    .attr("height", bb.height)
-                    .append("svg:title").text(function(d) { return "drag to reposition"; });
+                    .insert('rect', ':first-child')
+                    .attr('fill', 'orange')
+                    .attr('opacity', '0.1')
+                    .attr('x', bb.x)
+                    .attr('y', bb.y)
+                    .attr('width', bb.width)
+                    .attr('height', bb.height)
+                    .append('svg:title').text(function(d) {
+                        return 'drag to reposition';
+                    });
             });
         }
     },
     _bringColorFilterToFront: function(d){
-        this.vis.selectAll("." + d.className).moveToFront();
+        this.vis.selectAll('.' + d.className).moveToFront();
     },
     _draw_colorFilterLabels: function(){
         if (!this.plot_settings.colorFilterLegend || this.plot_settings.colorFilters.length === 0) return;
@@ -1883,21 +1895,21 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             height = 0,
             drag = (!this.options.dev) ? function(){} :
                 HAWCUtils.updateDragLocationTransform(function(x, y){
-                  self.plot_settings.colorFilterLegendX = x;
-                  self.plot_settings.colorFilterLegendY = y;
+                    self.plot_settings.colorFilterLegendX = x;
+                    self.plot_settings.colorFilterLegendY = y;
                 }),
             labels, bb;
 
-        labels = this.vis.append("g")
+        labels = this.vis.append('g')
             .attr('class', 'colorFilterLabels')
             .attr('transform', translate)
             .call(drag);
 
         labels
             .append('text')
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("text-anchor", "start")
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('text-anchor', 'start')
             .attr('class', 'crossview_title')
             .text(this.plot_settings.colorFilterLegendLabel);
 
@@ -1914,29 +1926,29 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .style('fill', function(d){ return d.color; })
                 .on('mouseover', function(d){
                     d3.select(this)
-                        .style("fill", self.plot_settings.colorHover);
-                    self.vis.selectAll("." + d.className)
-                        .style("stroke", self.plot_settings.colorHover);
+                        .style('fill', self.plot_settings.colorHover);
+                    self.vis.selectAll('.' + d.className)
+                        .style('stroke', self.plot_settings.colorHover);
                     self._bringColorFilterToFront(d);
                 }).on('mouseout', function(d){
                     d3.select(this)
-                        .style("fill", d.color);
-                    self.vis.selectAll("." + d.className)
-                        .style("stroke", d.color);
+                        .style('fill', d.color);
+                    self.vis.selectAll('.' + d.className)
+                        .style('stroke', d.color);
                 });
 
         if (this.options.dev){
             bb = labels.node().getBBox();
             d3.select(labels.node())
-                .insert("rect", ":first-child")
-                .attr("cursor", "pointer")
-                .attr("fill", "orange")
-                .attr("opacity", "0.1")
-                .attr("x", bb.x)
-                .attr("y", bb.y)
-                .attr("width", bb.width)
-                .attr("height", bb.height)
-                .append("svg:title").text(function(d) { return "drag to reposition"; });
+                .insert('rect', ':first-child')
+                .attr('cursor', 'pointer')
+                .attr('fill', 'orange')
+                .attr('opacity', '0.1')
+                .attr('x', bb.x)
+                .attr('y', bb.y)
+                .attr('width', bb.width)
+                .attr('height', bb.height)
+                .append('svg:title').text(function(d) { return 'drag to reposition'; });
         }
     },
     draw_visualization: function(){
@@ -1948,19 +1960,19 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         this._draw_ref_lines();
 
         // response-lines
-        var response_centerlines = this.vis.append("g"),
+        var response_centerlines = this.vis.append('g'),
             line = d3.svg.line()
-                .interpolate("basis")
+                .interpolate('basis')
                 .x(function(d){return x(d.dose);})
                 .y(function(d){return y(d.resp);}),
             plotData = this.dataset.map(function(d){return d.plotting;});
 
-        response_centerlines.selectAll(".crossview_paths")
+        response_centerlines.selectAll('.crossview_paths')
             .data(plotData)
-          .enter().append("path")
-            .attr("class", function(d){return "crossview_paths " + d[0].classes.join(" ");})
-            .attr("d", line)
-            .style("stroke", function(d){return d[0].currentStroke;})
+          .enter().append('path')
+            .attr('class', function(d){return 'crossview_paths ' + d[0].classes.join(' ');})
+            .attr('d', line)
+            .style('stroke', function(d){return d[0].currentStroke;})
             .on('click', function(d){d[0].endpoint.displayAsModal();})
             .on('mouseover', function(d){
                 if ((self.active_filters.length===0) ||
@@ -1973,20 +1985,20 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 d3.select(this).style('stroke', d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
-            .append("svg:title").text(function(d){return d[0].title;});
+            .append('svg:title').text(function(d){return d[0].title;});
 
         this._draw_labels();
         this._draw_colorFilterLabels();
 
         for (i = this.plot_settings.colorFilters.length-1; i>=0; i--){
             this._bringColorFilterToFront(this.plot_settings.colorFilters[i]);
-        };
+        }
     },
     setFilterLocation: function(i, x, y){
-        _.extend(this.data.settings.filters[i], {"x": x, "y": y});
+        _.extend(this.data.settings.filters[i], {'x': x, 'y': y});
     },
     setLabelLocation: function(i, x, y){
-        _.extend(this.data.settings.labels[i], {"x": x, "y": y});
+        _.extend(this.data.settings.labels[i], {'x': x, 'y': y});
     },
     layout_filter: function(g, filters, i){
         var self = this,
@@ -2003,26 +2015,26 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         // print header
         title = d3.select(g)
             .append('text')
-            .attr("x", xOffset)
-            .attr("y", -this.settings.tag_height)
-            .attr("text-anchor", "start")
+            .attr('x', xOffset)
+            .attr('y', -this.settings.tag_height)
+            .attr('text-anchor', 'start')
             .attr('class', 'crossview_title')
             .text(filters[0].headerName);
 
         //build column-groups
-        colg = d3.select(g).selectAll("g.crossview_cols")
+        colg = d3.select(g).selectAll('g.crossview_cols')
             .data(cols)
-                .enter().append("g")
+                .enter().append('g')
                 .attr('transform', 'translate({0},0)'.printf(xOffset))
-                .attr('class', 'crossview_cols')
+                .attr('class', 'crossview_cols');
 
         //layout text
         colg.selectAll('.crossview_fields')
             .data(function(d){return d;})
-            .enter().append("text")
-            .attr("x", 0)
-            .attr("y", function(d,i){return i*self.settings.tag_height;})
-            .attr("text-anchor", "start")
+            .enter().append('text')
+            .attr('x', 0)
+            .attr('y', function(d,i){return i*self.settings.tag_height;})
+            .attr('text-anchor', 'start')
             .attr('class', 'crossview_fields')
             .text(function(v) {return v.text;})
             .on('click', function(v){self.change_active_filters(v, this);})
@@ -2036,7 +2048,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         // offset filter-column groups to prevent overlap
         colg.each(function(d){
-            d3.select(this).attr('transform', 'translate({0},0)'.printf(xOffset))
+            d3.select(this).attr('transform', 'translate({0},0)'.printf(xOffset));
             xOffset += this.getBBox().width + self.settings.column_padding;
         });
 
@@ -2046,22 +2058,22 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         // center title-text
         if(settings.columns>1){
-            title.attr("x", (bb.x+bb.width/2))
-                 .attr("text-anchor", "middle");
+            title.attr('x', (bb.x+bb.width/2))
+                 .attr('text-anchor', 'middle');
         }
 
         // show helper to indicate draggable
         if(self.options.dev){
             d3.select(g)
-                .insert("rect", ":first-child")
-                .attr("fill", "orange")
-                .attr("opacity", "0.1")
-                .attr("x", bb.x)
-                .attr("y", bb.y)
-                .attr("width", bb.width)
-                .attr("height", bb.height)
-                .attr("cursor", "pointer")
-                .append("svg:title").text(function(d) { return "drag to reposition"; });
+                .insert('rect', ':first-child')
+                .attr('fill', 'orange')
+                .attr('opacity', '0.1')
+                .attr('x', bb.x)
+                .attr('y', bb.y)
+                .attr('width', bb.width)
+                .attr('height', bb.height)
+                .attr('cursor', 'pointer')
+                .append('svg:title').text(function(d) { return 'drag to reposition'; });
         }
     },
     draw_text: function(){
@@ -2071,7 +2083,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                         self.setFilterLocation($(this).index(), x, y);
                     }) : function(){};
 
-        this.vis.append("g")
+        this.vis.append('g')
             .attr('class', 'filter_holder')
             .selectAll('g.filter')
                 .data(this.filters)
@@ -2110,7 +2122,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
         if(hover_on){
             d3.select(this.svg).selectAll('.crossview_fields')
                 .filter(filterMatches)
-                .attr("fill", this.plot_settings.colorHover)
+                .attr('fill', this.plot_settings.colorHover)
                 .classed('crossview_path_hover', true);
         }
     },
@@ -2130,7 +2142,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         d3.select(text)
             .classed('crossview_selected', isNew)
-            .style("fill", color)
+            .style('fill', color)
             .classed('crossview_hover', false);
 
         this._update_selected_filters();
@@ -2142,7 +2154,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
         d3.select(this.svg).selectAll('.crossview_paths')
             .each(function(d){d[0].currentStroke = d[0].baseStroke;})
-            .style("stroke", null)
+            .style('stroke', null)
             .classed('crossview_selected', false);
         this.path_subset = undefined;
 
@@ -2167,16 +2179,16 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
             };
 
         d3.select(this.svg).selectAll('.crossview_paths')
-            .style("stroke", function(d){return d[0].currentStroke;})
+            .style('stroke', function(d){return d[0].currentStroke;})
             .classed('crossview_hover', false);
 
         if(hover_filter){
             paths.filter(isMatching)
-                .style("stroke", this.plot_settings.colorHover)
+                .style('stroke', this.plot_settings.colorHover)
                 .classed('crossview_hover', true)
                 .moveToFront();
         }
-    }
+    },
 });
 
 
@@ -2188,7 +2200,7 @@ RoBHeatmap = function(data){
 };
 _.extend(RoBHeatmap.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
-        var title = $("<h1>").text(this.data.title),
+        var title = $('<h1>').text(this.data.title),
             caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
@@ -2220,15 +2232,15 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
 
         modal.addHeader($('<h4>').text(this.data.title))
             .addBody([$plotDiv, caption.getEl()])
-            .addFooter("")
+            .addFooter('')
             .show({maxWidth: 1200});
     },
     getPlotData: function(){
         return {
             aggregation: this.sqa,
-            settings: this.data.settings
-        }
-    }
+            settings: this.data.settings,
+        };
+    },
 });
 
 
@@ -2244,7 +2256,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>");
+            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
@@ -2269,12 +2281,12 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             padding: {},
             x_axis_settings: {
                 scale_type: 'ordinal',
-                text_orient: "top",
+                text_orient: 'top',
                 axis_class: 'axis x_axis',
                 gridlines: true,
                 gridline_class: 'primary_gridlines x_gridlines',
                 axis_labels: true,
-                label_format: undefined //default
+                label_format: undefined, //default
             },
             y_axis_settings: {
                 scale_type: 'ordinal',
@@ -2283,8 +2295,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 gridlines: true,
                 gridline_class: 'primary_gridlines x_gridlines',
                 axis_labels: true,
-                label_format: undefined //default
-            }
+                label_format: undefined, //default
+            },
         });
     },
     processData: function(){
@@ -2302,9 +2314,9 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                     score:              sq.data.score,
                     score_text:         sq.data.score_text,
                     score_color:        sq.data.score_color,
-                    score_text_color:   sq.data.score_text_color
+                    score_text_color:   sq.data.score_text_color,
                 });
-            })
+            });
         });
 
         studies = _.chain(dataset)
@@ -2330,7 +2342,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             this.firstPass = false;
         }
 
-        xIsStudy = (this.data.settings.x_field!=="metric");
+        xIsStudy = (this.data.settings.x_field!=='metric');
 
         _.extend(this,{
             cell_size: this.data.settings.cell_size,
@@ -2343,8 +2355,8 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             xIsStudy: xIsStudy,
             xVals: (xIsStudy)  ? studies : metrics,
             yVals: (!xIsStudy) ? studies : metrics,
-            xField: (xIsStudy)  ? "study_label" : "metric_label",
-            yField: (!xIsStudy) ? "study_label" : "metric_label"
+            xField: (xIsStudy)  ? 'study_label' : 'metric_label',
+            yField: (!xIsStudy) ? 'study_label' : 'metric_label',
         });
     },
     add_axes: function() {
@@ -2353,7 +2365,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             rangeRound: [0, this.w],
             number_ticks: this.xVals.length,
             x_translate: 0,
-            y_translate: 0
+            y_translate: 0,
         });
 
         _.extend(this.y_axis_settings, {
@@ -2361,17 +2373,17 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             rangeRound: [0, this.h],
             number_ticks: this.yVals.length,
             x_translate: 0,
-            y_translate: 0
+            y_translate: 0,
         });
 
         this.build_y_axis();
         this.build_x_axis();
 
         d3.select(this.svg).selectAll('.x_axis text')
-            .style("text-anchor", "start")
-            .attr("dx", "5px")
-            .attr("dy", "0px")
-            .attr("transform", "rotate(-25)");
+            .style('text-anchor', 'start')
+            .attr('dx', '5px')
+            .attr('dy', '0px')
+            .attr('transform', 'rotate(-25)');
     },
     draw_visualization: function(){
         var self = this,
@@ -2380,10 +2392,10 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             width = this.cell_size,
             half_width = width/2,
             showSQs = function(v){
-                self.print_details(self.modal.getBody(), $(this).data('sqs'))
+                self.print_details(self.modal.getBody(), $(this).data('sqs'));
                 self.modal
                     .addHeader('<h4>Risk-of-bias details: {0}</h4>'.printf(this.textContent))
-                    .addFooter("")
+                    .addFooter('')
                     .show({maxWidth: 900});
             }, getMetricSQs = function(i, v){
                 var vals = self.dataset.filter(function(e,i,a){return e.metric_label===v.textContent;});
@@ -2393,37 +2405,37 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 var vals = self.dataset.filter(function(e,i,a){return e.study_label===v.textContent;});
                 vals = vals.map(function(v){return v.study_quality;});
                 $(this).data('sqs', {type: 'study', sqs: vals});
-            }, hideHovers = function(v){self.draw_hovers(this, {draw: false});}
+            }, hideHovers = function(v){self.draw_hovers(this, {draw: false});};
 
-        this.cells_group = this.vis.append("g");
+        this.cells_group = this.vis.append('g');
 
-        this.cells = this.cells_group.selectAll("svg.rect")
+        this.cells = this.cells_group.selectAll('svg.rect')
             .data(this.dataset)
-          .enter().append("rect")
-            .attr("x", function(d){return x(d[self.xField]);})
-            .attr("y", function(d){return y(d[self.yField]);})
-            .attr("height", width)
-            .attr("width", width)
-            .attr("class", "heatmap_selectable")
+          .enter().append('rect')
+            .attr('x', function(d){return x(d[self.xField]);})
+            .attr('y', function(d){return y(d[self.yField]);})
+            .attr('height', width)
+            .attr('width', width)
+            .attr('class', 'heatmap_selectable')
             .style('fill', function(d){return d.score_color;})
         .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
         .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
         .on('click', function(v){
-            self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]})
+            self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]});
             self.modal
                 .addHeader('<h4>Risk-of-bias details</h4>')
-                .addFooter("")
+                .addFooter('')
                 .show({maxWidth: 900});
         });
-        this.score = this.cells_group.selectAll("svg.text")
+        this.score = this.cells_group.selectAll('svg.text')
             .data(this.dataset)
-            .enter().append("text")
-                .attr("x", function(d){return (x(d[self.xField]) + half_width);})
-                .attr("y", function(d){return (y(d[self.yField]) + half_width);})
-                .attr("text-anchor", "middle")
-                .attr("dy", "3.5px")
-                .attr("class", "centeredLabel")
-                .style("fill",  function(d){return d.score_text_color;})
+            .enter().append('text')
+                .attr('x', function(d){return (x(d[self.xField]) + half_width);})
+                .attr('y', function(d){return (y(d[self.yField]) + half_width);})
+                .attr('text-anchor', 'middle')
+                .attr('dy', '3.5px')
+                .attr('class', 'centeredLabel')
+                .style('fill',  function(d){return d.score_text_color;})
                 .text(function(d){return d.score_text;});
 
         $('.x_axis text').each( (this.xIsStudy) ? getStudySQs : getMetricSQs )
@@ -2438,7 +2450,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             .on('mouseout', hideHovers)
             .on('click', showSQs);
 
-        this.hover_group = this.vis.append("g");
+        this.hover_group = this.vis.append('g');
     },
     resize_plot_dimensions: function(){
         // Resize plot based on the dimensions of the labels.
@@ -2462,36 +2474,36 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
 
         var draw_type;
         switch (options.type){
-            case 'cell':
-                draw_type = {
-                    x: this.x_scale(v[this.xField]),
-                    y: this.y_scale(v[this.yField]),
-                    height: this.cell_size,
-                    width: this.cell_size};
-                break;
-            case 'row':
-                draw_type = {
-                    x: 0,
-                    y: this.y_scale(v.textContent),
-                    height: this.cell_size,
-                    width: this.w};
-                break;
-            case 'column':
-                draw_type = {
-                    x: this.x_scale(v.textContent),
-                    y: 0,
-                    height: this.h,
-                    width: this.cell_size};
-                break;
+        case 'cell':
+            draw_type = {
+                x: this.x_scale(v[this.xField]),
+                y: this.y_scale(v[this.yField]),
+                height: this.cell_size,
+                width: this.cell_size};
+            break;
+        case 'row':
+            draw_type = {
+                x: 0,
+                y: this.y_scale(v.textContent),
+                height: this.cell_size,
+                width: this.w};
+            break;
+        case 'column':
+            draw_type = {
+                x: this.x_scale(v.textContent),
+                y: 0,
+                height: this.h,
+                width: this.cell_size};
+            break;
         }
 
-        this.hover_study_bar = this.hover_group.selectAll("svg.rect")
+        this.hover_study_bar = this.hover_group.selectAll('svg.rect')
             .data([draw_type])
-            .enter().append("rect")
-                .attr("x", function(d){return d.x;})
-                .attr("y", function(d){return d.y;})
-                .attr("height", function(d){return d.height;})
-                .attr("width", function(d){return d.width;})
+            .enter().append('rect')
+                .attr('x', function(d){return d.x;})
+                .attr('y', function(d){return d.y;})
+                .attr('height', function(d){return d.height;})
+                .attr('width', function(d){return d.width;})
                 .attr('class', 'heatmap_hovered');
     },
     build_labels: function(){
@@ -2499,35 +2511,35 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         var svg = d3.select(this.svg),
             visMidX = parseInt(this.svg.getBoundingClientRect().width/2, 10),
             visMidY = parseInt(this.svg.getBoundingClientRect().height/2, 10),
-            midX = d3.mean(this.x_scale.range());
+            midX = d3.mean(this.x_scale.range()),
             midY = d3.mean(this.y_scale.range());
 
-        svg.append("svg:text")
-            .attr("x", visMidX)
-            .attr("y", 25)
+        svg.append('svg:text')
+            .attr('x', visMidX)
+            .attr('y', 25)
             .text(this.title_str)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_title");
+            .attr('text-anchor', 'middle')
+            .attr('class','dr_title');
 
         var xLoc = this.padding.left + midX+20,
             yLoc = visMidY*2-5;
 
-        svg.append("svg:text")
-            .attr("x", xLoc)
-            .attr("y", yLoc)
+        svg.append('svg:text')
+            .attr('x', xLoc)
+            .attr('y', yLoc)
             .text(this.x_label_text)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_axis_labels x_axis_label");
+            .attr('text-anchor', 'middle')
+            .attr('class','dr_axis_labels x_axis_label');
 
-        var yLoc = this.padding.top + midY;
+        yLoc = this.padding.top + midY;
 
-        svg.append("svg:text")
-            .attr("x", 15)
-            .attr("y", yLoc)
-            .attr("transform",'rotate(270, {0}, {1})'.printf(15, yLoc))
+        svg.append('svg:text')
+            .attr('x', 15)
+            .attr('y', yLoc)
+            .attr('transform','rotate(270, {0}, {1})'.printf(15, yLoc))
             .text(this.y_label_text)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_axis_labels y_axis_label");
+            .attr('text-anchor', 'middle')
+            .attr('class','dr_axis_labels y_axis_label');
     },
     build_legend: function(){
         // and move to StudyQuality or some other object
@@ -2541,81 +2553,81 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             y = this.data.settings.legend_y,
             fields = _.map(StudyQuality.score_values, function(v){
                 return {
-                        value:          v,
-                        color:          StudyQuality.score_shades[v],
-                        text_color:     String.contrasting_color(StudyQuality.score_shades[v]),
-                        text:           StudyQuality.score_text[v],
-                        description:    StudyQuality.score_text_description[v],
-                }
+                    value:          v,
+                    color:          StudyQuality.score_shades[v],
+                    text_color:     String.contrasting_color(StudyQuality.score_shades[v]),
+                    text:           StudyQuality.score_text[v],
+                    description:    StudyQuality.score_text_description[v],
+                };
             }),
             width = 22,
             half_width = width/2,
             buff = 5,
             title_offset = 8,
             dim = this.svg.getBBox(),
-            cursor = (this.options.dev) ? "pointer" : "auto",
+            cursor = (this.options.dev) ? 'pointer' : 'auto',
             drag = (this.options.dev) ? HAWCUtils.updateDragLocationTransform(function(x, y){
-                      self.data.settings.legend_x = parseInt(x, 10);
-                      self.data.settings.legend_y = parseInt(y, 10);
-                    }) : function(){},
+                self.data.settings.legend_x = parseInt(x, 10);
+                self.data.settings.legend_y = parseInt(y, 10);
+            }) : function(){},
             title;
 
         // create a new g.legend_group object on the main svg graphic
-        this.legend_group = svg.append("g")
-                .attr("transform", "translate({0}, {1})".printf(x, y)
-                ).attr("cursor", cursor)
+        this.legend_group = svg.append('g')
+                .attr('transform', 'translate({0}, {1})'.printf(x, y)
+                ).attr('cursor', cursor)
                 .call(drag);
 
-        // add the text "Legend"; we set the x to a temporarily small value,
+        // add the text 'Legend'; we set the x to a temporarily small value,
         // which we change below after we know the size of the legend
-        title = this.legend_group.append("text")
-             .attr("x", 10)
-             .attr("y", 8)
-             .attr("text-anchor", "middle")
-             .attr("class", "dr_title")
-             .text(function(d){return "Legend"});
+        title = this.legend_group.append('text')
+             .attr('x', 10)
+             .attr('y', 8)
+             .attr('text-anchor', 'middle')
+             .attr('class', 'dr_title')
+             .text(function(d){return 'Legend'});
 
         // Add the color rectangles
-        this.legend_group.selectAll("svg.rect")
+        this.legend_group.selectAll('svg.rect')
             .data(fields)
-          .enter().append("rect")
-            .attr("x", function(d, i){return 0;})
-            .attr("y", function(d, i){return i*width + title_offset;})
-            .attr("height", width)
-            .attr("width", width)
-            .attr("class", "heatmap_selectable")
-            .style('fill', function(d){return d.color;})
+          .enter().append('rect')
+            .attr('x', function(d, i){return 0;})
+            .attr('y', function(d, i){return i*width + title_offset;})
+            .attr('height', width)
+            .attr('width', width)
+            .attr('class', 'heatmap_selectable')
+            .style('fill', function(d){return d.color;});
 
         // Add text label (++, --, etc.)
-        this.legend_group.selectAll("svg.text.labels")
+        this.legend_group.selectAll('svg.text.labels')
             .data(fields)
-          .enter().append("text")
-             .attr("x", function(d, i){return half_width;})
-             .attr("y", function(d, i){return i*width + half_width + title_offset;})
-             .attr("text-anchor", "middle")
-             .attr("dy", "3.5px")
-             .attr("class", "centeredLabel")
-             .style("fill",  function(d){return d.text_color;})
+          .enter().append('text')
+             .attr('x', function(d, i){return half_width;})
+             .attr('y', function(d, i){return i*width + half_width + title_offset;})
+             .attr('text-anchor', 'middle')
+             .attr('dy', '3.5px')
+             .attr('class', 'centeredLabel')
+             .style('fill',  function(d){return d.text_color;})
              .text(function(d){return d.text;});
 
-         // Add text description
-         this.legend_group.selectAll("svg.text.desc")
+        // Add text description
+        this.legend_group.selectAll('svg.text.desc')
             .data(fields)
-          .enter().append("text")
-             .attr("x", function(d, i){return width+5;})
-             .attr("y", function(d, i){return i*width + half_width + title_offset;})
-             .attr("dy", "3.5px")
-             .attr("class", "dr_axis_labels")
+          .enter().append('text')
+             .attr('x', function(d, i){return width+5;})
+             .attr('y', function(d, i){return i*width + half_width + title_offset;})
+             .attr('dy', '3.5px')
+             .attr('class', 'dr_axis_labels')
              .text(function(d){return d.description;});
 
         // add bounding-rectangle around legend
         dim = this.legend_group.node().getBBox();
-        this.legend_group.insert("svg:rect", ":first-child")
-            .attr("class","legend")
-            .attr("x", -buff)
-            .attr("y", -buff)
-            .attr("height", dim.height+2*buff)
-            .attr("width", dim.width);
+        this.legend_group.insert('svg:rect', ':first-child')
+            .attr('class','legend')
+            .attr('x', -buff)
+            .attr('y', -buff)
+            .attr('height', dim.height+2*buff)
+            .attr('width', dim.width);
 
         // center the legend-text
         title.attr('x', dim.width/2);
@@ -2625,25 +2637,25 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         if (x < 0) x = 2 * buff;
         if (y+dim.height > svgH) y = svgH - dim.height - 2 * buff;
         if (y < 0) y = 2 * buff;
-        this.legend_group.attr("transform", "translate({0}, {1})".printf(x, y));
+        this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
     },
     print_details: function($div, d){
         var content = [];
 
         switch (d.type){
-            case 'cell':
-                content.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
-                break;
-            case 'study':
-                content.push(StudyQuality.build_metric_comparison_div(d.sqs));
-                break;
-            case 'metric':
-                content.push(StudyQuality.build_study_comparison_div(d.sqs));
-                break;
+        case 'cell':
+            content.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
+            break;
+        case 'study':
+            content.push(StudyQuality.build_metric_comparison_div(d.sqs));
+            break;
+        case 'metric':
+            content.push(StudyQuality.build_study_comparison_div(d.sqs));
+            break;
         }
 
         StudyQuality.display_details_divs($div, content);
-    }
+    },
 });
 
 
@@ -2652,7 +2664,7 @@ RoBBarchart = function(data){
 };
 _.extend(RoBBarchart.prototype, Visual.prototype, {
     displayAsPage: function($el, options){
-        var title = $("<h1>").text(this.data.title),
+        var title = $('<h1>').text(this.data.title),
             caption = new SmartTagContainer($('<div>').html(this.data.caption)),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
@@ -2684,15 +2696,15 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
 
         modal.addHeader($('<h4>').text(this.data.title))
             .addBody([$plotDiv, caption.getEl()])
-            .addFooter("")
+            .addFooter('')
             .show({maxWidth: 1200});
     },
     getPlotData: function(){
         return {
             aggregation: this.sqa,
-            settings: this.data.settings
-        }
-    }
+            settings: this.data.settings,
+        };
+    },
 });
 
 
@@ -2707,7 +2719,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html("<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>");
+            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
@@ -2739,13 +2751,13 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
             padding: {},
             x_axis_settings: {
                 domain: [0, 1],
-                scale_type: "linear",
-                text_orient: "bottom",
-                axis_class: "axis x_axis",
+                scale_type: 'linear',
+                text_orient: 'bottom',
+                axis_class: 'axis x_axis',
                 gridlines: true,
                 gridline_class: 'primary_gridlines x_gridlines',
                 axis_labels: true,
-                label_format: d3.format(".0%")
+                label_format: d3.format('.0%'),
             },
             y_axis_settings: {
                 scale_type: 'ordinal',
@@ -2754,21 +2766,27 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
                 gridlines: true,
                 gridline_class: 'primary_gridlines x_gridlines',
                 axis_labels: true,
-                label_format: undefined //default
+                label_format: undefined,
             },
-            color_scale: d3.scale.ordinal().range(_.values(StudyQuality.score_shades))
+            color_scale: d3.scale.ordinal().range(_.values(StudyQuality.score_shades)),
         });
     },
     processData: function(){
 
         var dataset = [],
-            stack_order = ["N/A", "--", "-", "+", "++"],
+            stack_order = ['N/A', '--', '-', '+', '++'],
             metrics, stack;
 
         _.each(this.data.aggregation.metrics_dataset, function(metric){
 
-            var vals = {"metric_label": metric.study_qualities[0].data.metric.metric,
-                        "N/A":0, "--":0, "-":0, "+":0, "++":0},
+            var vals = {
+                    'metric_label': metric.study_qualities[0].data.metric.metric,
+                    'N/A': 0,
+                    '--': 0,
+                    '-': 0,
+                    '+': 0,
+                    '++': 0,
+                },
                 weight = 1/metric.study_qualities.length;
             metric.study_qualities.forEach(function(sq){
                 vals[sq.data.score_text] += weight;
@@ -2818,7 +2836,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
             rangeRound: [0, this.w],
             number_ticks: 5,
             x_translate: 0,
-            y_translate: this.h
+            y_translate: this.h,
         });
 
         _.extend(this.y_axis_settings, {
@@ -2826,48 +2844,47 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
             number_ticks: this.metrics.length,
             rangeRound: [0, this.h],
             x_translate: 0,
-            y_translate: 0
+            y_translate: 0,
         });
 
         this.build_y_axis();
         this.build_x_axis();
     },
     draw_visualizations: function(){
-        var self = this,
-            x = this.x_scale,
+        var x = this.x_scale,
             y = this.y_scale,
             colors = this.color_scale,
             fmt = d3.format('%'),
-            groups, rects, labels;
+            groups;
 
-        this.bar_group = this.vis.append("g");
+        this.bar_group = this.vis.append('g');
 
         // Add a group for each score.
-        groups = this.vis.selectAll("g.score")
+        groups = this.vis.selectAll('g.score')
             .data(this.stack)
-            .enter().append("svg:g")
-            .attr("class", "score")
-            .style("fill", function(d, i){return colors(i);})
-            .style("stroke", function(d, i){return d3.rgb(colors(i)).darker();});
+            .enter().append('svg:g')
+            .attr('class', 'score')
+            .style('fill', function(d, i){return colors(i);})
+            .style('stroke', function(d, i){return d3.rgb(colors(i)).darker();});
 
         // Add a rect for each score.
-        rects = groups.selectAll("rect")
+        rects = groups.selectAll('rect')
             .data(Object)
-            .enter().append("svg:rect")
-            .attr("x", function(d) { return x(d.y0); })
-            .attr("y", function(d) { return y(d.x)+5; })
-            .attr("width", function(d) { return x(d.y); })
-            .attr("height", 20);
+            .enter().append('svg:rect')
+            .attr('x', function(d) { return x(d.y0); })
+            .attr('y', function(d) { return y(d.x)+5; })
+            .attr('width', function(d) { return x(d.y); })
+            .attr('height', 20);
 
         if(this.data.settings.show_values){
-            labels = groups.selectAll("text")
+            labels = groups.selectAll('text')
                 .data(Object)
-                .enter().append("text")
-                .attr("class", "centeredLabel")
-                .style("fill", "#555")
-                .attr("x", function(d){return (x(d.y0) + x(d.y)/2);})
-                .attr("y", function(d){return (y(d.x)+20);})
-                .text(function(d){return (d.y>0) ? fmt(d.y) : "";});
+                .enter().append('text')
+                .attr('class', 'centeredLabel')
+                .style('fill', '#555')
+                .attr('x', function(d){return (x(d.y0) + x(d.y)/2);})
+                .attr('y', function(d){return (y(d.x)+20);})
+                .text(function(d){return (d.y>0) ? fmt(d.y) : '';});
         }
     },
     build_labels: function(){
@@ -2877,30 +2894,30 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
 
         x = parseInt(this.svg.getBoundingClientRect().width / 2, 10);
         y = 25;
-        svg.append("svg:text")
-            .attr("x", x)
-            .attr("y", y)
+        svg.append('svg:text')
+            .attr('x', x)
+            .attr('y', y)
             .text(this.title_str)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_title");
+            .attr('text-anchor', 'middle')
+            .attr('class','dr_title');
 
         x = this.w / 2;
         y = this.h + 30;
-        this.vis.append("svg:text")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("text-anchor", "middle")
-            .attr("class","dr_axis_labels x_axis_label")
+        this.vis.append('svg:text')
+            .attr('x', x)
+            .attr('y', y)
+            .attr('text-anchor', 'middle')
+            .attr('class','dr_axis_labels x_axis_label')
             .text(this.x_label_text);
 
         x = -this.padding.left + 15;
         y = this.h / 2;
-        this.vis.append("svg:text")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("text-anchor", "middle")
-            .attr("transform",'rotate(270, {0}, {1})'.printf(x, y))
-            .attr("class","dr_axis_labels x_axis_label")
+        this.vis.append('svg:text')
+            .attr('x', x)
+            .attr('y', y)
+            .attr('text-anchor', 'middle')
+            .attr('transform','rotate(270, {0}, {1})'.printf(x, y))
+            .attr('class', 'dr_axis_labels x_axis_label')
             .text(this.y_label_text);
-    }
+    },
 });
