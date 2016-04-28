@@ -26,6 +26,7 @@ Contents:
 
    dev_setup
    server_setup
+   management_commands
    contributing
 
 Indices and tables
