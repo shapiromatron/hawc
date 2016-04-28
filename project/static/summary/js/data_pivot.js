@@ -2993,6 +2993,12 @@ _.extend(DataPivotExtension, {
       _dpe_option_txt:  "Show experiment",
     },
     {
+      _dpe_name:        "iv_celltype",
+      _dpe_key:         "IVCellType id",
+      _dpe_cls:         IVCellType,
+      _dpe_option_txt:  "Show cell type",
+    },
+    {
       _dpe_name:        "iv_endpoint",
       _dpe_key:         "IVEndpoint id",
       _dpe_cls:         IVEndpoint,

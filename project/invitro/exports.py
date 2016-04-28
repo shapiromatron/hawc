@@ -37,6 +37,7 @@ class DataPivotEndpoint(FlatFileExporter):
             'chemical purity',
 
             'IVExperiment id',
+            'IVCellType id',
             'cell species',
             'cell sex',
             'cell type',
@@ -128,6 +129,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 ser['chemical']['purity'],
 
                 ser['experiment']['id'],
+                ser['experiment']['cell_type']['id'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],
@@ -192,6 +194,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'chemical purity',
 
             'IVExperiment id',
+            'IVCellType id',
             'cell species',
             'cell sex',
             'cell type',
@@ -253,6 +256,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 ser['chemical']['purity'],
 
                 ser['experiment']['id'],
+                ser['experiment']['cell_type']['id'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],
