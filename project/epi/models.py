@@ -366,7 +366,7 @@ class Outcome(BaseEndpoint):
         return get_crumbs(self, self.study_population)
 
     def can_create_sets(self):
-            return not self.study_population.can_create_sets()
+        return not self.study_population.can_create_sets()
 
     @staticmethod
     def flat_complete_header_row():
