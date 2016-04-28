@@ -140,6 +140,10 @@ class Command(UnicodeCommand):
                 qs = external_exports.lookup(db_table)(model, assessment_id)
 
             if qs is not None:
+
+                if qs.count() == 0:
+                    continue
+
                 qry = qs.query.__str__()
                 fields = self.get_select_fields(qs.model)
                 select_include = self.generate_select(fields, db_table)
