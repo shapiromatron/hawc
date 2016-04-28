@@ -71,7 +71,7 @@ class ARoBReviewersCreate(BaseCreateWithFormset):
             queryset=Study.objects.filter(assessment=self.assessment))
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_reviewers', kwargs={'pk': self.assessment.pk})
 
 
 class ARoBReviewersUpdate(BaseUpdateWithFormset):
@@ -88,7 +88,7 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
             queryset=Study.objects.filter(assessment=self.assessment))
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_detail', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_reviewers', kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias domain views
