@@ -1589,6 +1589,9 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 
                 egs = e.data.groups
                         .filter(egFilter)
+                        .filter(function(eg){
+                            return isFinite(e._percent_change_control(eg.dose_group_id));
+                        })
                         .map(function(eg){
                             return {
                                 'dose': eg.dose,
