@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0007_split_rob_robscore_20160414_1440'),
+        ('riskofbias', '0005_split_rob_robscore_20160414_1440'),
     ]
 
     operations = [
@@ -42,6 +42,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='riskofbias',
-            options={'ordering': ('conflict_resolution',), 'verbose_name_plural': 'Risk of Biases'},
+            options={'verbose_name_plural': 'Risk of Biases'},
         ),
     ]

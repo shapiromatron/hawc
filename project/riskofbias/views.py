@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Count
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
@@ -51,16 +50,17 @@ class ARoBReviewersList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super(ARoBReviewersList, self).get_context_data(**kwargs)
-        robs_exist = sum([study.riskofbiases.count() for study in self.object_list])
+        robs_exist = sum([study.get_active_riskofbiases().count() for study in self.object_list])
         if robs_exist:
             context['form_crud'] = 'Update'
         else:
             context['form_crud'] = 'Create'
+        context['rob_count'] = study.assessment.rob_settings.number_of_reviewers + 1
         return context
 
 class ARoBReviewersCreate(BaseCreateWithFormset):
-    parent_model = Assessment
-    model = models.RiskOfBias
+    model = Assessment
+    child_model = models.RiskOfBias
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
     success_message = 'Risk of Bias reviewers created.'
@@ -76,11 +76,12 @@ class ARoBReviewersCreate(BaseCreateWithFormset):
 
 class ARoBReviewersUpdate(BaseUpdateWithFormset):
     model = Assessment
-    child_model = Study
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
+    queryset = Assessment.objects.all()
     success_message = 'Risk of Bias reviewers updated.'
     template_name = "riskofbias/arob_reviewers_form.html"
+
 
     def build_initial_formset_factory(self):
         return self.formset_factory(

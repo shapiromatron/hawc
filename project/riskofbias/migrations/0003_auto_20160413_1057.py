@@ -38,7 +38,7 @@ def revertToStudyContenttype(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0003_riskofbias_study'),
+        ('riskofbias', '0002_auto_20160411_0905'),
     ]
 
     operations = [

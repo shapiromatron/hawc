@@ -26,7 +26,9 @@
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Risk of Bias</a></li>
+            <li><a href="{% url 'riskofbias:robs_detail_all' object.pk %}">View All</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Editing</a></li>
             <li><a href="{% url 'riskofbias:robs_update' object.pk %}">Update</a></li>
             <li><a href="{% url 'riskofbias:robs_delete' object.pk %}">Delete</a></li>
         </ul>

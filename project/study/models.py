@@ -6,10 +6,8 @@ import itertools
 
 from django.db import models, transaction
 from django.apps import apps
-from django.conf import settings
-from django.contrib.contenttypes import fields
-from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError, ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import (ValidationError, ObjectDoesNotExist,
+                                    MultipleObjectsReturned)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
@@ -18,7 +16,6 @@ from reversion import revisions as reversion
 from assessment.models import Assessment
 from assessment.serializers import AssessmentSerializer
 from lit.models import Reference
-from myuser.models import HAWCUser
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from utils.models import get_crumbs
 
@@ -264,24 +261,24 @@ class Study(Reference):
 
     @property
     def qualities(self):
-        if self.riskofbiases.count() < 2:
-            return self.riskofbiases.first().scores.all().prefetch_related('metric', 'metric__domain')
+        if self.get_active_riskofbiases().count() is 1:
+            return self.get_active_riskofbiases().first().scores.all().prefetch_related('metric', 'metric__domain')
         else:
-            return self.get_conflict_resolution()
-
-    def get_conflict_resolution_qualities(self):
-        conflict = self.get_conflict_resolution
-        return conflict.scores.all().prefetch_related('metric', 'metric__domain')
+            return self.riskofbiases.filter(conflict_resolution=True, active=True).scores.all().prefetch_related('metric', 'metric__domain')
 
     def get_conflict_resolution(self):
         try:
-            return self.riskofbiases.get(conflict_resolution=True)
+            return self.riskofbiases.get(conflict_resolution=True, active=True)
         except ObjectDoesNotExist:
             return None
         except MultipleObjectsReturned:
-            raise ValidationError('Study {} has multiple risk of bias reviews '
+            raise ValidationError('Study {} has multiple active risk of bias reviews '
                 'marked as the conflict resolution. there should not be more '
                 'than one conflict resolution per study.'.format(self.short_citation))
+
+    def get_active_riskofbiases(self):
+        return self.riskofbiases.filter(active=True)
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

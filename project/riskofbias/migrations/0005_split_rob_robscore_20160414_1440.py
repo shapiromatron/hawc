@@ -43,7 +43,7 @@ def revertRobScoreSplit(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0006_add_robscore_20160414_1440'),
+        ('riskofbias', '0004_auto_20160413_1353'),
     ]
 
     operations = [

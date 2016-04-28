@@ -15,19 +15,16 @@ def createRoBAssessment(apps, schema_editor):
 
 
 def setDefaultRoBAuthor(apps, schema_editor):
-    RoBReviewer = apps.get_model('riskofbias', 'RiskOfBiasReviewer')
     RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
     for rob in RiskOfBias.objects.all():
-        RoBReviewer.objects.create(
-            author=rob.study.assessment.project_manager.first(),
-            study=rob.study,
-            riskofbias=rob
-        )
+        rob.author = rob.study.assessment.project_manager.first()
+        rob.save()
 
 
 def runMigration(apps, schema_editor):
     createRoBAssessment(apps, schema_editor)
     setDefaultRoBAuthor(apps, schema_editor)
+
 
 class Migration(migrations.Migration):
 
@@ -35,7 +32,7 @@ class Migration(migrations.Migration):
         ('assessment', '0007_auto_20160426_1124'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('study', '0004_auto_20160407_1010'),
-        ('riskofbias', '0008_auto_20160415_1020'),
+        ('riskofbias', '0006_auto_20160415_1020'),
     ]
 
     operations = [
@@ -47,29 +44,8 @@ class Migration(migrations.Migration):
                 ('assessment', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='rob_settings', to='assessment.Assessment')),
             ],
         ),
-        migrations.CreateModel(
-            name='RiskOfBiasReviewer',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='qualities', to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.RemoveField(
-            model_name='riskofbias',
-            name='author',
-        ),
-        migrations.AddField(
-            model_name='riskofbiasreviewer',
-            name='riskofbias',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='rob_reviewer', to='riskofbias.RiskOfBias'),
-        ),
-        migrations.AddField(
-            model_name='riskofbiasreviewer',
-            name='study',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rob_reviewers', to='study.Study'),
-        ),
         migrations.RunPython(
             runMigration,
             reverse_code=migrations.RunPython.noop,
-        )
+        ),
     ]

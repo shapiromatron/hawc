@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(blank=True, default='')),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='qualities', to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='riskofbiases', to=settings.AUTH_USER_MODEL)),
                 ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
             ],
             options={

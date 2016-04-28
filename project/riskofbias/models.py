@@ -108,9 +108,12 @@ class RiskOfBias(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     conflict_resolution = models.BooleanField(default=False)
+    author = models.ForeignKey(HAWCUser, related_name='riskofbiases')
+    active = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
+        ordering = ('conflict_resolution',)
 
     def __unicode__(self):
         return self.study.short_citation
@@ -126,6 +129,14 @@ class RiskOfBias(models.Model):
 
     def get_delete_url(self):
         return reverse('riskofbias:rob_delete', args=[self.pk])
+
+    def activate(self):
+        self.active = True
+        self.save()
+
+    def deactivate(self):
+        self.active = False
+        self.save()
 
 
 class RiskOfBiasScore(models.Model):
@@ -201,19 +212,6 @@ class RiskOfBiasScore(models.Model):
         return self.SCORE_SHADES[self.score]
 
 
-class RiskOfBiasReviewer(models.Model):
-    study = models.ForeignKey(Study, related_name='rob_reviewers')
-    author = models.ForeignKey(HAWCUser,
-        related_name='qualities')
-    riskofbias = models.OneToOneField(RiskOfBias, related_name='rob_reviewer')
-
-    def __unicode__(self):
-        return self.author.get_full_name()
-
-    def get_absolute_url(self):
-        return reverse('riskofbias:arob_detail', args=[self.study.assessment.pk])
-
-
 class RiskOfBiasAssessment(models.Model):
     assessment = models.OneToOneField(Assessment, related_name='rob_settings')
     number_of_reviewers = models.PositiveSmallIntegerField(default=1)
@@ -231,4 +229,3 @@ reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
-reversion.register(RiskOfBiasReviewer)
