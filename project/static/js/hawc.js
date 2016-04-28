@@ -1349,6 +1349,9 @@ HAWCModal.prototype = {
         $el.html(html);
         if (!noClose) $el.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
         return this;
+    }, addTitleLinkHeader: function(name, url, options){
+        var txt = '<h4><a href="{0}" target="_blank">{1}</a></h4>'.printf(url, name);
+        return this.addHeader(txt, options);
     }, addFooter: function(html, options){
         var noClose = (options && options.noClose) || false,
             $el = this.$modalDiv.find(".modal-footer");
