@@ -12,7 +12,7 @@ from reversion import revisions as reversion
 from assessment.models import Assessment
 from myuser.models import HAWCUser
 from study.models import Study
-from utils.helper import cleanHTML
+from utils.helper import cleanHTML, SerializerHelper
 
 
 class RiskOfBiasDomain(models.Model):
@@ -223,6 +223,9 @@ class RiskOfBiasAssessment(models.Model):
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(assessment=assessment)
 
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
 
 reversion.register(RiskOfBiasDomain)
