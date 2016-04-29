@@ -88,42 +88,6 @@ class RoBScoreForm(forms.ModelForm):
             self.instance.study = study
 
 
-class RoBEndpointForm(RoBScoreForm):
-    def __init__(self, *args, **kwargs):
-        super(RoBEndpointForm, self).__init__(*args, **kwargs)
-        self.fields['metric'].queryset = self.fields['metric'].queryset.filter(
-            domain__assessment=self.instance.study.assessment)
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        if self.instance.id:
-            inputs = {
-                "legend_text": u"Update `{}`".format(self.instance.metric.metric),
-                "help_text": u"Update a risk of bias override.",
-            }
-        else:
-            inputs = {
-                "legend_text": u"Create risk of bias override",
-                "help_text": u"""
-                    Create a risk of bias metric which is overridden for this
-                    particular endpoint.
-                    """,
-            }
-
-        inputs["cancel_url"] = self.instance.study.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-        return helper
-
-    def clean_metric(self):
-        metric = self.cleaned_data['metric']
-        qualities = self.instance.study.qualities.all()
-        for quality in qualities:
-            if metric == quality.metric and quality.id != self.instance.id:
-                raise forms.ValidationError("Risk-of-bias metrics must be unique for a given endpoint.")
-        return metric
-
-
 class BaseRoBFormSet(BaseModelFormSet):
     def clean(self):
         """Checks that all metrics are unique."""
@@ -168,14 +132,12 @@ class NumberOfReviewersForm(forms.ModelForm):
 class RoBReviewersForm(forms.ModelForm):
     class Meta:
         model = Study
-        fields = ('short_citation',)
+        fields = ()
 
     def __init__(self, *args, **kwargs):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
+        self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
-        self.fields['short_citation'].widget.attrs['class'] = 'study'
-        self.fields['short_citation'].label = 'Study'
-        self.fields['short_citation'].required = False
         robs = self.instance.riskofbiases.all()
 
         try:
@@ -215,7 +177,7 @@ class RoBReviewersForm(forms.ModelForm):
         changed_reviewer_fields = (
             field
             for field in self.changed_data
-            if field not in ('reference_ptr', 'short_citation'))
+            if field not in ('reference_ptr',))
 
         for field in changed_reviewer_fields:
             new_author = self.cleaned_data[field]
@@ -238,12 +200,12 @@ RoBFormSet = modelformset_factory(
     models.RiskOfBiasScore,
     form=RoBScoreForm,
     formset=BaseRoBFormSet,
-    fields=('riskofbias', 'metric', 'score', 'notes'),
+    fields=('metric', 'score', 'notes'),
     extra=0)
 
 RoBReviewerFormset = modelformset_factory(
     model=Study,
     form=RoBReviewersForm,
-    fields=('short_citation',),
+    fields=(),
     extra=0,
 )
