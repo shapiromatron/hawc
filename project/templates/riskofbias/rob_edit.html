@@ -5,7 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | {{study}} | Edit risk-of-bias | HAWC
+  {{assessment}} | {{object.study}} | Edit risk-of-bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -14,7 +14,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
     <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk-of-bias</a><span class="divider">/</span></li>
     <li class="active"> Edit <span class="divider">/</span></li>
@@ -26,7 +26,7 @@
 {% block content %}
   <form method="post" action=".">
 
-    <legend>{{study}}: risk-of-bias details</legend>
+    <legend>{{object.study}}: risk-of-bias details</legend>
     <span class="help-block">Justification for risk-of-bias assessment of selected. Each row contains has the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.</span><br>
 
     {{ formset.management_form }}
@@ -68,12 +68,13 @@
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">{{ crud }} risk-of-bias</button>
-        <a href="{% if crud == "Create" %}{% url 'study:detail' study.pk %}{% elif crud = "Update" %}{% url 'riskofbias:rob_detail' object.pk %}{% endif %}" class="btn">Cancel</a>
+        <a href="{% if crud == "Create" %}{% url 'study:detail' object.study.pk %}{% elif crud = "Update" %}{% url 'riskofbias:rob_detail' object.pk %}{% endif %}" class="btn">Cancel</a>
     </div>
 
     {% csrf_token %}
 
   </form>
+
 
 {% endblock %}
 
@@ -87,9 +88,9 @@
         $(this.parentElement).hide(true);
       });
       $('.html5text').wysihtml5({"stylesheets": false});
-      $('.score').parent().append('<br><br><div class="sq_score"></div>');
+      $('.score').parent().append('<br><br><div class="rob_score"></div>');
       var change_gradient = function(){
-        $(this).parent().find('.sq_score')
+        $(this).parent().find('.rob_score')
           .css('background-color', RiskOfBias.score_shades[this.value])
           .text(RiskOfBias.score_text[this.value]);
       };

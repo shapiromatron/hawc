@@ -1,19 +1,21 @@
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.views.generic.edit import UpdateView, DeleteView
 
 from assessment.models import Assessment
 from riskofbias import exports, reports
 from study.models import Study
 from study.views import StudyList
-from utils.views import (MessageMixin, AssessmentPermissionsMixin, BaseDetail,
-                         BaseDelete, BaseUpdate, BaseCreate, BaseList,
-                         BaseUpdateWithFormset, BaseCreateWithFormset,
+from utils.views import (BaseDetail, BaseDelete, BaseUpdate, BaseCreate,
+                         BaseList, BaseUpdateWithFormset, BaseCreateWithFormset,
                          GenerateFixedReport)
 
 from . import models, forms
 
+
+"""
+Needs to have an RoB permissions mixin for providing action menu links to an
+author's RoB review and view/edit permissions.
+"""
 
 # Assessment risk-of-bias requirements
 
@@ -180,20 +182,7 @@ class StudyRoBExport(StudyList):
         return exporter.build_response()
 
 
-class RoBDetail(BaseDetail):
-    """
-    Detailed view of risk-of-bias metrics for reporting.
-    """
-    model = models.RiskOfBias
-    template_name = "riskofbias/rob_detail.html"
-
-    def dispatch(self, *args, **kwargs):
-        self.study = get_object_or_404(self.model, pk=kwargs['pk'])
-        self.assessment = self.study.get_assessment()
-        return super(RoBDetail, self).dispatch(*args, **kwargs)
-
-
-class RoBEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class RoBEdit(BaseUpdate):
     """
     Edit settings for risk-of-bias metrics associated with study.
     """
@@ -202,15 +191,9 @@ class RoBEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     success_message = 'Risk-of-bias updated.'
     form_class = forms.RoBScoreForm
     formset_factory = forms.RoBFormSet
-    crud = 'Update'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:rob_detail', kwargs={'pk': self.pk})
-
-    def dispatch(self, *args, **kwargs):
-        self.study = get_object_or_404(Study, pk=self.object.study.pk)
-        self.assessment = self.study.get_assessment()
-        return super(RoBsEdit, self).dispatch(*args, **kwargs)
+        return reverse_lazy('riskofbias:rob_detail', kwargs=self.kwargs)
 
     def post(self, request, *args, **kwargs):
         self.formset = self.formset_factory(self.request.POST)
@@ -219,7 +202,7 @@ class RoBEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         else:
             return self.form_invalid(self.formset)
 
-    def form_valid(self, author_form):
+    def form_valid(self):
         self.formset.save()
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
@@ -229,17 +212,14 @@ class RoBEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
         if self.request.method == 'GET':
             self.formset = self.formset_factory(
-            queryset=models.RiskOfBias.objects.filter(study=self.study))
+            queryset=models.RiskOfBiasScore.objects.filter(riskofbias=self.object))
 
-            context['formset'] = self.formset
-            context['crud'] = self.crud
-            context['assessment'] = self.assessment
-            context['study'] = self.study
-            context['metric'] = [quality.metric.description for quality in self.object.scores.all()]
-            return context
+        context['formset'] = self.formset
+        context['metric'] = [quality.metric.description for quality in self.object.scores.all()]
+        return context
 
 
-class RoBDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
+class RoBDelete(BaseDelete):
     """
     Delete all risk-of-bias metrics associated with study.
     """
@@ -247,42 +227,40 @@ class RoBDelete(MessageMixin, AssessmentPermissionsMixin, DeleteView):
     template_name = "riskofbias/rob_delete.html"
     form_class = forms.RoBScoreForm
     success_message = 'Risk-of-bias information deleted.'
-    crud = 'Delete'
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        models.RiskOfBias.objects.filter(study=self.object.study.pk, user=request.user).delete()
-        self.send_message()  # replicate MessageMixin
-        return HttpResponseRedirect(reverse_lazy('study:detail',
-        kwargs={'pk': self.object.study.pk}))
-
-    def dispatch(self, *args, **kwargs):
-        self.study = get_object_or_404(self.model, pk=kwargs['pk'])
-        self.assessment = self.study.get_assessment()
-        return super(RoBDelete, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(DeleteView, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['obj_perms'] = self.get_obj_perms()
-        context['crud'] = self.crud
-        return context
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:robs_detail', kwargs={'pk': self.object.study.pk})
 
 
-class RoBsDetail(BaseDetail):
+class RoBDetail(BaseDetail):
+    """
+    Detailed view of risk-of-bias metrics for reporting.
+    Displays RoB based on pk passed in url.
+
+    For use in users updating owned reviews
+    """
+    model = models.RiskOfBias
+    template_name = "riskofbias/rob_detail.html"
+
+
+class RoBsDetail(RoBDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     Displays RoB used as Study.qualities
+
+    Action -> RoB Update should use the user's RoB pk and only show if the user
+    is an author of a Risk of Bias for the study.
     """
     model = Study
-    template_name = "riskofbias/rob_detail.html"
 
-    def dispatch(self, *args, **kwargs):
-        self.study = get_object_or_404(self.model, pk=kwargs['pk'])
-        self.assessment = self.study.get_assessment()
-        return super(RoBsDetail, self).dispatch(*args, **kwargs)
 
-class RoBsDetailAll(RoBDetail):
+class RoBsDetailAll(BaseDetail):
+    """
+    Detailed view of risk-of-bias metrics for reporting.
+    Displays all active RoB in Study.
+    
+    Needs to have an updated JS RiskOfBias TblCompressed.
+    """
     model = Study
     template_name = 'riskofbias/rob_detail_all.html'
 

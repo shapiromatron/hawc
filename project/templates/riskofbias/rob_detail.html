@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
     <li class="active"> Risk-of-bias <span class="divider">/</span></li>
   {% endblock %}
@@ -42,7 +42,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new Study({{study.get_json|safe}})
+    window.study = new Study({{object.study.get_json|safe}})
     window.sq_tbl = new RiskOfBias_TblCompressed(study, $('#rob_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}

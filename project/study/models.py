@@ -274,7 +274,7 @@ class Study(Reference):
         except MultipleObjectsReturned:
             raise ValidationError('Study {} has multiple active risk of bias reviews '
                 'marked as the conflict resolution. there should not be more '
-                'than one conflict resolution per study.'.format(self.short_citation))
+                'than one active conflict resolution per study.'.format(self.short_citation))
 
     def get_active_riskofbiases(self):
         return self.riskofbiases.filter(active=True)
