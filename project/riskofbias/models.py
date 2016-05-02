@@ -122,7 +122,7 @@ class RiskOfBias(models.Model):
         return self.study.get_assessment()
 
     def get_absolute_url(self):
-        return reverse('riskofbias:robs_detail', args=[str(self.study.pk)])
+        return reverse('riskofbias:rob_detail', args=[self.pk])
 
     def get_edit_url(self):
         return reverse('riskofbias:rob_update', args=[self.pk])
@@ -174,17 +174,17 @@ class RiskOfBiasScore(models.Model):
     @staticmethod
     def flat_complete_header_row():
         return (
-            'sq-id',
-            'sq-domain_id',
-            'sq-domain_name',
-            'sq-domain_description',
-            'sq-metric_id',
-            'sq-metric_metric',
-            'sq-metric_description',
-            'sq-score-id',
-            'sq-score-notes',
-            'sq-score_description',
-            'sq-score'
+            'rob-id',
+            'rob-domain_id',
+            'rob-domain_name',
+            'rob-domain_description',
+            'rob-metric_id',
+            'rob-metric_metric',
+            'rob-metric_description',
+            'rob-score-id',
+            'rob-score-notes',
+            'rob-score_description',
+            'rob-score'
         )
 
     @staticmethod
