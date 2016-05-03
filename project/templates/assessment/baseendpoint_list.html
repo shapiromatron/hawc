@@ -20,9 +20,6 @@
         <li><a href="{% url 'animal:endpoint_list' assessment.id %}">
             {{endpoints}} animal bioassay endpoints
             </a>
-            <ul>
-                <li><a href="{% url 'summary:rob_endpoint_filter' assessment.id %}">View endpoints by risk of bias</a></li>
-            </ul>
         </li>
         {% endif %}
 

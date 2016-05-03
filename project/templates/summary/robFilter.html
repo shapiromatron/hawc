@@ -6,7 +6,8 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
+    <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a><span class="divider">/</span></li>
+    <li><a href="{% url 'animal:endpoint_list' assessment.pk %}">Animal bioassay</a><span class="divider">/</span></li>
   <li class="active">Bias filtering<span class="divider">/</span></li>
 {% endblock %}
 
