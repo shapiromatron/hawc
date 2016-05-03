@@ -260,6 +260,7 @@ class StudyQualityCopyForm(forms.Form):
             "cancel_url": reverse('study:asq_detail', args=[self.assessment.id])
         }
         helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
         helper.form_class = None
         return helper
 
