@@ -130,6 +130,9 @@ class RiskOfBias(models.Model):
     def get_delete_url(self):
         return reverse('riskofbias:rob_delete', args=[self.pk])
 
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     def activate(self):
         self.active = True
         self.save()

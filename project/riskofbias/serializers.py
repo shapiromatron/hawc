@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from utils.helper import SerializerHelper
+
 from . import models
 
 
@@ -39,3 +41,5 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBias
         fields = ('id', 'author', 'conflict_resolution', 'study', 'created', 'last_updated', 'scores')
+
+SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
