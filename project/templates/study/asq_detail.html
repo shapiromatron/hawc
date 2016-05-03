@@ -24,6 +24,7 @@
         </a>
         <ul class="dropdown-menu">
           <li><a href="{% url 'study:asq_update' assessment.pk %}">Update requirements</a></li>
+          <li><a href="{% url 'study:asq_copy' assessment.pk %}">Copy from existing</a></li>
         </ul>
       </div>
     {% endif %}

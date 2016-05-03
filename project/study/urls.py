@@ -7,6 +7,7 @@ from . import views, api
 
 router = DefaultRouter()
 router.register(r'study', api.Study, base_name="study")
+router.register(r'domain', api.StudyQualityDomain, base_name='domain')
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
@@ -18,6 +19,9 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/risk-of-bias/edit/$',
         views.ASQEdit.as_view(),
         name='asq_update'),
+    url(r'^assessment/(?P<pk>\d+)/risk-of-bias/copy/$',
+        views.ASQCopy.as_view(),
+        name='asq_copy'),
     url(r'^assessment/(?P<pk>\d+)/risk-of-bias/report/$',
         views.StudyBiasExport.as_view(),
         name='bias_export'),

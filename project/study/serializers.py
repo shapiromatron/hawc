@@ -6,6 +6,19 @@ from utils.helper import SerializerHelper
 from . import models
 
 
+class AssessmentMetricSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.StudyQualityMetric
+
+
+class AssessmentDomainSerializer(serializers.ModelSerializer):
+    metrics = AssessmentMetricSerializer(many=True)
+
+    class Meta:
+        model = models.StudyQualityDomain
+
+
 class StudyQualityDomainSerializer(serializers.ModelSerializer):
 
     class Meta:
