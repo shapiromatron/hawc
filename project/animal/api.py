@@ -27,6 +27,7 @@ class Endpoint(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
+    list_actions = ['list', 'effects', 'rob_filter', ]
 
     def get_queryset(self):
         return self.model.objects.all()\
@@ -43,14 +44,12 @@ class Endpoint(AssessmentViewset):
 
     @list_route()
     def effects(self, request):
-        # todo: check permissions
         assessment_id = int(self.request.query_params.get('assessment_id', -1))
         effects = models.Endpoint.get_effects(assessment_id)
         return Response(effects)
 
     @list_route()
     def rob_filter(self, request):
-        # todo: check permissions
         params = self.request.query_params
 
         assessment_id = int(params.get('assessment_id', -1))
