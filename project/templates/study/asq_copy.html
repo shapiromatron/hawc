@@ -65,76 +65,64 @@
 {% block extrajs %}
     <script type="text/javascript">
         $(document).ready(function(){
-            var DomainTable = function(){
-                this.tbl = $('<table class="table table-condensed table-striped">');
-                this.thead = $('<thead>');
-                this.colgroup = $('<colgroup>');
-                this.tbody = $('<tbody>');
-                this.tfoot = $('<tfoot>');
-                this.footnotes  = new TableFootnotes();
-                this.tbl.append(this.colgroup, this.thead, this.tfoot, this.tbody);
-            };
-            _.extend(DomainTable.prototype, BaseTable.prototype, {
-                addMetricRow: function(data, i){
-                    var tr = document.createElement('tr'),
-                        th = document.createElement('th'),
-                        tdMetric = document.createElement('td'),
-                        tdDescr = document.createElement('td');
-                    th.innerHTML = i + 1;
-                    tr.appendChild(th);
-                    tdMetric.innerHTML = data.metric +
-                        '<br><br><strong>Required for animal bioassay: </strong>'
-                        + HAWCUtils.booleanCheckbox(data.required_animal)
-                        + '<br><strong>Required for epidemiological: </strong>'
-                        + HAWCUtils.booleanCheckbox(data.required_epi);
 
-                    tdDescr.innerHTML = data.description;
-                    tr.appendChild(tdMetric);
-                    tr.appendChild(tdDescr);
-                    this.tbody.append(tr)
-                }
-            });
+            var addMetricRow = function(data, i){
+                var tr = document.createElement('tr'),
+                    th = document.createElement('th'),
+                    tdMetric = document.createElement('td'),
+                    tdDescr = document.createElement('td');
+                th.innerHTML = i + 1;
+                tr.appendChild(th);
+                tdMetric.innerHTML = data.metric +
+                    '<br><br><strong>Required for animal bioassay: </strong>'
+                    + HAWCUtils.booleanCheckbox(data.required_animal)
+                    + '<br><strong>Required for epidemiological: </strong>'
+                    + HAWCUtils.booleanCheckbox(data.required_epi);
+
+                tdDescr.innerHTML = data.description;
+                tr.appendChild(tdMetric);
+                tr.appendChild(tdDescr);
+                return $(tr);
+            };
 
             var displayDomain = function(domain){
                 var div  = document.createElement('div'),
                     header = document.createElement('h3'),
-                    table = new DomainTable(domain),
+                    table = new BaseTable(),
                     colgroups = [5, 35, 60],
                     thead = ['ID', 'Metric', 'Description'];
 
                 header.innerHTML = domain.name + ' Domain';
                 table.addHeaderRow(thead);
                 table.setColGroup(colgroups);
-                _.map(domain.metrics, function(metric, i){
-                    table.addMetricRow(metric, i)
-                })
+                domain.metrics.forEach(function(metric, i){
+                    table.addRow(addMetricRow(metric, i));
+                });
                 div.appendChild(header);
-                div.appendChild(table.getTbl()[0])
+                div.appendChild(table.getTbl()[0]);
                 return div;
             };
 
             var displayApproach = function(domains){
-                displayDiv = document.getElementById('approach');
+                var displayDiv = document.getElementById('approach');
                 displayDiv.innerHTML = '';
                 if (domains.length === 0){
-                    var warn = '<div class="alert"><strong>' +
-                        $('#id_assessment option:selected').text()
-                        + ' does not have a default approach.</strong></div>'
+                    var assessment = $('#id_assessment option:selected').text(),
+                        warn = '<div class="alert alert-danger">{0} does not have a default approach.</div>'.printf(assessment);
                     displayDiv.innerHTML = warn;
                 }
-                _.map(domains, function(domain){
+                domains.forEach(function(domain){
                     displayDiv.appendChild(displayDomain(domain));
-                })
+                });
             };
 
-            var loadApproach = function(){
-                $.get("/study/api/domain/?assessment_id=" + $('#id_assessment').val(), function(d){
-                    displayApproach(d);
+            // load approach on assessment change
+            $('#id_assessment')
+                .on('change', function(){
+                    var url = '/study/api/domain/?assessment_id=' + $('#id_assessment').val();
+                    $.get(url, displayApproach);
                 })
-            };
-
-            $('#id_assessment').on('change', loadApproach);
-            loadApproach();
+                .trigger('change');
         });
     </script>
 {% endblock extrajs %}
