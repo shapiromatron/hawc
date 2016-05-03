@@ -142,7 +142,7 @@ class RoBReviewersForm(forms.ModelForm):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
-        robs = self.instance.riskofbiases.all()
+        robs = self.instance.get_active_riskofbiases()
 
         try:
             reviewers = range(self.instance.assessment.rob_settings.number_of_reviewers)
@@ -198,6 +198,12 @@ class RoBReviewersForm(forms.ModelForm):
                     study=study,
                     author=new_author,
                     conflict_resolution=bool(field is 'conflict_author'))
+                if created:
+                    for metric in models.RiskOfBiasMetric.\
+                    get_required_metrics(study.assessment, study):
+                        models.RiskOfBiasScore.objects.create(
+                            riskofbias=activate_rob,
+                            metric=metric)
                 activate_rob.activate()
 
 RoBFormSet = modelformset_factory(
