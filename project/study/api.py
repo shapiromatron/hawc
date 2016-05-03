@@ -28,6 +28,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
     filter_class = StudyFilters
+    list_actions = ['list', 'rob_scores', ]
 
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
@@ -55,7 +56,6 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
     @list_route()
     def rob_scores(self, request):
-        # todo: check permissions
         assessment_id = int(self.request.query_params.get('assessment_id', -1))
         scores = models.Study.rob_scores(assessment_id)
         return Response(scores)
