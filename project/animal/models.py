@@ -16,7 +16,7 @@ from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from utils.models import get_distinct_charfield_opts
+from utils.models import get_distinct_charfield_opts, get_distinct_charfield
 
 
 class Experiment(models.Model):
@@ -930,11 +930,7 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_effects(cls, assessment_id):
-        return cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .distinct('effect')\
-                  .order_by('effect')\
-                  .values_list('effect', flat=True)
+        return get_distinct_charfield(cls, assessment_id, 'effect')
 
     @classmethod
     def text_cleanup_fields(cls):
