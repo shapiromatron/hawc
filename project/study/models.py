@@ -279,6 +279,7 @@ class Study(Reference):
     def get_active_riskofbiases(self):
         return self.riskofbiases.filter(active=True)
 
+    # TODO: return risk of bias with user as author or None
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

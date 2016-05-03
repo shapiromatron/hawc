@@ -12,13 +12,7 @@ from utils.views import (BaseDetail, BaseDelete, BaseUpdate, BaseCreate,
 from . import models, forms
 
 
-"""
-Needs to have an RoB permissions mixin for providing action menu links to an
-author's RoB review and view/edit permissions.
-"""
-
 # Assessment risk-of-bias requirements
-
 class ARobList(StudyList):
     template_name = "riskofbias/study_list.html"
 
@@ -248,8 +242,8 @@ class RoBsDetail(RoBDetail):
     Detailed view of risk-of-bias metrics for reporting.
     Displays RoB used as Study.qualities
 
-    Action -> RoB Update should use the user's RoB pk and only show if the user
-    is an author of a Risk of Bias for the study.
+    TODO: Action -> RoB Update should use the user's RoB pk and only show
+    if the user is an author of a Risk of Bias for the study.
     """
     model = Study
 
@@ -258,8 +252,8 @@ class RoBsDetailAll(BaseDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     Displays all active RoB in Study.
-    
-    Needs to have an updated JS RiskOfBias TblCompressed.
+
+    TODO: Needs to have an updated JS RiskOfBias TblCompressed.
     """
     model = Study
     template_name = 'riskofbias/rob_detail_all.html'

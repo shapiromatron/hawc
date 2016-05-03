@@ -127,12 +127,13 @@ class NumberOfReviewersForm(forms.ModelForm):
                 'number_of_reviewers']
             instance.rob_settings.save()
         return instance
-
-# Need to compare number of active non-conflict resolution reviews to
-# instance.assessment.rob_settings.number_of_reviewers. in order to activate or
-# deactivate reviews as number of reviewers changes. RoBReviewersForm.save is
-# not triggered if only NumberOfReviewersForm is changed.
 class RoBReviewersForm(forms.ModelForm):
+    """
+    TODO: Need to compare number of active non-conflict resolution reviews to
+    instance.assessment.rob_settings.number_of_reviewers. in order to activate or
+    deactivate reviews as number of reviewers changes. RoBReviewersForm.save is
+    not triggered if only NumberOfReviewersForm is changed.
+    """
     class Meta:
         model = Study
         fields = ()
