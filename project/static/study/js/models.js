@@ -109,12 +109,12 @@ Study.prototype = {
             riskofbias = [],
             gradient_colors = d3.scale.linear()
                 .domain([0, 1, 2, 3, 4])
-                .range(_.values(RiskOfBias.score_shades));
+                .range(_.values(RiskOfBiasScore.score_shades));
         this.data.qualities.forEach(function(v, i){
             v.score_color = gradient_colors(v.score);
             v.score_text_color = String.contrasting_color(v.score_color);
-            v.score_text = RiskOfBias.score_text[v.score];
-            riskofbias.push(new RiskOfBias(self, v));
+            v.score_text = RiskOfBiasScore.score_text[v.score];
+            riskofbias.push(new RiskOfBiasScore(self, v));
         });
 
         //construct dataset in structure for a donut plot
