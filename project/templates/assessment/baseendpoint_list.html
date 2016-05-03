@@ -19,8 +19,7 @@
         {% if endpoints > 0 %}
         <li><a href="{% url 'animal:endpoint_list' assessment.id %}">
             {{endpoints}} animal bioassay endpoints
-            </a>
-        </li>
+            </a></li>
         {% endif %}
 
         {% if outcomes > 0 %}
