@@ -279,7 +279,11 @@ class Study(Reference):
     def get_active_riskofbiases(self):
         return self.riskofbiases.filter(active=True)
 
-    # TODO: return risk of bias with user as author or None
+    def get_user_rob(self, user, conflict=False):
+        return self.riskofbiases.filter(
+            author=user,
+            conflict_resolution=conflict)
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

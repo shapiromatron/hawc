@@ -237,15 +237,19 @@ class RoBDetail(BaseDetail):
     template_name = "riskofbias/rob_detail.html"
 
 
-class RoBsDetail(RoBDetail):
+class RoBsDetail(BaseDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     Displays RoB used as Study.qualities
-
-    TODO: Action -> RoB Update should use the user's RoB pk and only show
-    if the user is an author of a Risk of Bias for the study.
     """
     model = Study
+    template_name = 'riskofbias/robs_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RoBsDetail, self).get_context_data(**kwargs)
+        context['reviews'] = self.object.get_user_rob(self.request.user)
+        context['conflicts'] = self.object.get_user_rob(self.request.user, conflict=True)
+        return context
 
 
 class RoBsDetailAll(BaseDetail):
