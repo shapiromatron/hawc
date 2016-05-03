@@ -15,7 +15,7 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseList, GenerateReport, GenerateFixedReport,
-                         TeamMemberOrHigherMixin)
+                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 
 from . import models, forms, exports, reports
 
@@ -248,21 +248,18 @@ class ASQEdit(ASQDetail):
     crud = 'Update'
 
 
-class ASQCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
+class ASQCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     model = models.StudyQualityDomain
     template_name = "study/asq_copy.html"
     form_class = forms.StudyQualityCopyForm
-    success_message = 'Study Quality metrics and domains have been updated.'
+    success_message = 'Risk of bias settings have been updated.'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.assessment
 
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        self.permission_check_user_can_edit()
         return super(ASQCopy, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(ASQCopy, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        return context
 
     def get_form_kwargs(self):
         kwargs = super(ASQCopy, self).get_form_kwargs()
@@ -275,7 +272,7 @@ class ASQCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
         return super(ASQCopy, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('study:asq_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('study:asq_detail', kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias domain views
