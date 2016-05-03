@@ -36,10 +36,14 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             if assessment_id is None:
                 raise RequiresAssessmentID
 
-            view.assessment = models.Assessment.objects.filter(id=assessment_id).first()
-            if (view.assessment is None) or \
-               (view.assessment and not view.assessment.user_can_view_object(request.user)):
+            view.assessment = models.Assessment.objects\
+                .filter(id=assessment_id)\
+                .first()
+
+            if view.assessment is None:
                 return False
+
+            return view.assessment.user_can_view_object(request.user)
 
         return True
 
