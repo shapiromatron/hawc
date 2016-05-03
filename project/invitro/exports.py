@@ -1,5 +1,5 @@
 from copy import copy
-from django.db.models.loading import get_model
+from django.apps import apps
 
 from utils.helper import FlatFileExporter
 
@@ -37,6 +37,7 @@ class DataPivotEndpoint(FlatFileExporter):
             'chemical purity',
 
             'IVExperiment id',
+            'IVCellType id',
             'cell species',
             'cell sex',
             'cell type',
@@ -67,7 +68,7 @@ class DataPivotEndpoint(FlatFileExporter):
 
         num_cats = 0
         if self.queryset.count() > 0:
-            IVEndpointCategory = get_model("invitro", "IVEndpointCategory")
+            IVEndpointCategory = apps.get_model("invitro", "IVEndpointCategory")
             num_cats = IVEndpointCategory.get_maximum_depth(
                 self.queryset[0].assessment_id)
         header.extend([
@@ -128,6 +129,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 ser['chemical']['purity'],
 
                 ser['experiment']['id'],
+                ser['experiment']['cell_type']['id'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],
@@ -192,6 +194,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'chemical purity',
 
             'IVExperiment id',
+            'IVCellType id',
             'cell species',
             'cell sex',
             'cell type',
@@ -253,6 +256,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 ser['chemical']['purity'],
 
                 ser['experiment']['id'],
+                ser['experiment']['cell_type']['id'],
                 ser['experiment']['cell_type']['species'],
                 ser['experiment']['cell_type']['sex'],
                 ser['experiment']['cell_type']['cell_type'],

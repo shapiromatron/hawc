@@ -1,7 +1,12 @@
 from .base import *
 
-
 SERVER_ROLE = "staging"
+
+EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+MAILGUN_ACCESS_KEY = os.environ.get('MAILGUN_ACCESS_KEY')
+MAILGUN_SERVER_NAME = os.environ.get('MAILGUN_SERVER_NAME')
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 LOGGING['handlers']['file']['filename'] = \
     os.path.join(os.getenv('LOGS_PATH'), 'hawc.log')

@@ -1,0 +1,8 @@
+from django.apps import AppConfig
+
+class AssessmentConfig(AppConfig):
+    name = 'assessment'
+    verbose_name = 'Assessment'
+
+    def ready(self):
+        import signals

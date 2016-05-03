@@ -5,15 +5,15 @@ import collections
 import itertools
 
 from django.db import models, transaction
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
-import reversion
+from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from assessment.serializers import AssessmentSerializer
@@ -81,7 +81,7 @@ class Study(Reference):
         blank=True,
         verbose_name="Summary and/or extraction comments",
         help_text="Study summary or details on data-extraction needs.")
-    qualities = generic.GenericRelation('StudyQuality', related_query_name='studies')
+    qualities = fields.GenericRelation('StudyQuality', related_query_name='studies')
 
     COPY_NAME = "studies"
 
@@ -195,9 +195,9 @@ class Study(Reference):
         """
         Return a queryset of related bioassay endpoints for selected study
         """
-        Endpoint = get_model('animal', 'Endpoint')
-        Experiment = get_model('animal', 'Experiment')
-        AnimalGroup = get_model('animal', 'AnimalGroup')
+        Endpoint = apps.get_model('animal', 'Endpoint')
+        Experiment = apps.get_model('animal', 'Experiment')
+        AnimalGroup = apps.get_model('animal', 'AnimalGroup')
 
         if self.study_type != 0:  # not a bioassay study
             return Endpoint.objects.none()
@@ -412,7 +412,7 @@ class StudyQuality(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = fields.GenericForeignKey('content_type', 'object_id')
     metric = models.ForeignKey(StudyQualityMetric, related_name='qualities')
     score = models.PositiveSmallIntegerField(choices=STUDY_QUALITY_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
@@ -479,6 +479,24 @@ class StudyQuality(models.Model):
             ser['score_description'],
             ser['score']
         )
+
+    @classmethod
+    def copy_study_quality(cls, copy_to_assessment, copy_from_assessment):
+        # delete existing study quality metrics and domains
+        copy_to_assessment\
+            .sq_domains.all()\
+            .delete()
+
+        # copy domains and metrics to assessment
+        for domain in copy_from_assessment.sq_domains.all():
+            metrics = list(domain.metrics.all())  # force evaluation
+            domain.id = None
+            domain.assessment = copy_to_assessment
+            domain.save()
+            for metric in metrics:
+                metric.id = None
+                metric.domain = domain
+                metric.save()
 
 
 reversion.register(Study)

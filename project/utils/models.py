@@ -104,6 +104,11 @@ class AssessmentRootedTagTree(MP_Node):
             return cls.create_root(assessment_id)
 
     @classmethod
+    def get_assessment_qs(cls, assessment_id):
+        # return queryset, excluding root
+        return cls.get_root(assessment_id).get_descendants()
+
+    @classmethod
     def get_all_tags(cls, assessment_id, json_encode=True):
         """
         Get all tags for the selected assessment.

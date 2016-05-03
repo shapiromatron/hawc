@@ -1,8 +1,9 @@
 import json
+import itertools
 
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -15,7 +16,7 @@ from utils.views import (MessageMixin, CanCreateMixin,
                          AssessmentPermissionsMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
                          BaseList, GenerateReport, GenerateFixedReport,
-                         TeamMemberOrHigherMixin)
+                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 
 from . import models, forms, exports, reports
 
@@ -131,7 +132,7 @@ class ReferenceStudyCreate(BaseCreate):
 
     def form_valid(self, form):
         self.object = form.save()
-        search=get_model('lit', 'Search').objects.get(assessment=self.assessment,
+        search=apps.get_model('lit', 'Search').objects.get(assessment=self.assessment,
                                                       source=0, #manual import
                                                       title="Manual import")
         self.object.searches.add(search)
@@ -246,6 +247,33 @@ class ASQDetail(BaseList):
 
 class ASQEdit(ASQDetail):
     crud = 'Update'
+
+
+class ASQCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+    model = models.StudyQualityDomain
+    template_name = "study/asq_copy.html"
+    form_class = forms.StudyQualityCopyForm
+    success_message = 'Risk of bias settings have been updated.'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.assessment
+
+    def dispatch(self, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        return super(ASQCopy, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(ASQCopy, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        form.copy_study_quality()
+        return super(ASQCopy, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('study:asq_detail', kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias domain views
@@ -381,6 +409,7 @@ class SQsCreate(CanCreateMixin, MessageMixin, CreateView):
         context['crud'] = self.crud
         context['assessment'] = self.assessment
         context['study'] = self.study
+        context['metric'] = [metric.description for metric in metrics]
         return context
 
 
@@ -430,7 +459,7 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             return self.form_valid()
         else:
             self.object = self.study
-            return self.form_invalid(formset=self.formset)
+            return self.form_invalid(self.formset)
 
     def form_valid(self):
         self.formset.save()
@@ -447,6 +476,7 @@ class SQsEdit(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context['crud'] = self.crud
         context['assessment'] = self.assessment
         context['study'] = self.study
+        context['metric'] = [quality.metric.description for quality in self.object.qualities.all()]
         return context
 
 
@@ -490,7 +520,7 @@ class SQCreate(BaseCreate):
     @property
     def parent_model(self):
         if self.kwargs['slug'] == "endpoint":
-            return get_model("animal", "Endpoint")
+            return apps.get_model("animal", "Endpoint")
         else:
             raise Http404()
 
@@ -509,7 +539,7 @@ class SQEdit(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super(SQEdit, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
             context["endpoint"] = self.object.content_object
         return context
 
@@ -520,7 +550,7 @@ class SQDelete(BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super(SQDelete, self).get_context_data(**kwargs)
-        if type(self.object.content_object) == get_model("animal", "Endpoint"):
+        if type(self.object.content_object) == apps.get_model("animal", "Endpoint"):
             context["endpoint"] = self.object.content_object
         return context
 

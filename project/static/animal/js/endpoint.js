@@ -590,6 +590,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return footnote_object.add_footnote(footnotes);
     },
     build_endpoint_list_row: function(){
+        var self = this,
+            link = '<a href="{0}" target="_blank">{1}</a>'.printf(this.data.url, this.data.name),
+            detail = $('<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">').click(function(){
+                self.displayAsModal({complete: true});
+            }),
+            ep = $('<span>')
+                    .append(link, detail)
+                    .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+
         return [
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.animal_group.experiment.study.url,
@@ -600,9 +609,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             '<a href="{0}" target="_blank">{1}</a>'.printf(
                 this.data.animal_group.url,
                 this.data.animal_group.name),
-            '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.url,
-                this.data.name),
+            ep,
             this.dose_units,
             this.get_special_dose_text("NOEL"),
             this.get_special_dose_text("LOEL")
@@ -940,32 +947,32 @@ EndpointTable.prototype = {
 
 var EndpointListTable = function(endpoints, dose_id){
     if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
-    this.endpoints = _.sortBy(endpoints, function(e){return e.data.name});
+    this.endpoints = endpoints;
     this.tbl = new BaseTable();
 };
 EndpointListTable.prototype = {
     build_table: function(){
 
         if(this.endpoints.length === 0)
-            return "<p>No endpoints available.</p>";
+            return '<p>No endpoints available.</p>';
 
-        var self = this,
+        var tbl = this.tbl,
             headers = [
-                "Study",
-                "Experiment",
-                "Animal Group",
-                "Endpoint",
-                "Units",
-                "NOEL",
-                "LOEL"
+                'Study',
+                'Experiment',
+                'Animal Group',
+                'Endpoint',
+                'Units',
+                'NOEL',
+                'LOEL',
             ];
-        this.tbl.setColGroup([12, 16, 17, 31, 10, 7, 7])
-        this.tbl.addHeaderRow(headers);
-        this.endpoints.map(function(v){
-            self.tbl.addRow(v.build_endpoint_list_row());
+        tbl.setColGroup([12, 16, 17, 31, 10, 7, 7]);
+        tbl.addHeaderRow(headers);
+        this.endpoints.forEach(function(v){
+            tbl.addRow(v.build_endpoint_list_row());
         });
-        return this.tbl.getTbl();
-    }
+        return tbl.getTbl();
+    },
 };
 
 

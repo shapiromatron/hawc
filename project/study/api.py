@@ -6,7 +6,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination
+from assessment.api.views import (
+    AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination)
 
 from . import models, serializers
 
@@ -58,3 +59,15 @@ class Study(viewsets.ReadOnlyModelViewSet):
         assessment_id = int(self.request.query_params.get('assessment_id', -1))
         scores = models.Study.rob_scores(assessment_id)
         return Response(scores)
+
+
+class StudyQualityDomain(viewsets.ReadOnlyModelViewSet):
+    assessment_filter_args = 'assessment'
+    model = models.StudyQualityDomain
+    pagination_class = DisabledPagination
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
+    serializer_class = serializers.AssessmentDomainSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all()

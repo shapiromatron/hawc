@@ -20,7 +20,7 @@ from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
 import invitro.exports as ivexports
 
-import reversion
+from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper
@@ -629,7 +629,7 @@ class Prefilter(object):
             filters["effect__in"] = d.getlist('epieffects')
 
         if d.get('prefilter_study'):
-            studies = d.get("studies", [])
+            studies = d.getlist("studies", [])
             if evidence_type == 0:  # Bioassay
                 filters["animal_group__experiment__study__in"] = studies
             elif evidence_type == 1:  # Epi

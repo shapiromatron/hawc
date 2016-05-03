@@ -8,8 +8,6 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
-
 
 # Basic setup
 WSGI_APPLICATION = 'hawc.wsgi.application'
@@ -144,9 +142,6 @@ CACHES = {
 
 
 # Email settings
-EMAIL_HOST = os.getenv('DJANGO_EMAIL_HOST')
-EMAIL_HOST_USER = os.getenv('DJANGO_EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_SUBJECT_PREFIX = '[HAWC] '
 DEFAULT_FROM_EMAIL = 'webmaster@hawcproject.org'
 SERVER_EMAIL = 'webmaster@hawcproject.org'
@@ -206,12 +201,12 @@ LOGGING = {
     'handlers': {
         'null': {
             'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
+            'class': 'logging.NullHandler',
         },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -231,7 +226,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['null'],
-            'level': 'DEBUG'
+            'level': 'DEBUG',
         },
         'django': {
             'handlers': ['null'],

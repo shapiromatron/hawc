@@ -5,7 +5,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-import reversion
+from reversion import revisions as reversion
 
 from assessment.serializers import AssessmentSerializer
 from epi.models import Criteria, ResultMetric, AdjustmentFactor

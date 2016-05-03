@@ -7,7 +7,7 @@ import re
 import HTMLParser
 
 from django.db import connection, models, transaction
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -564,8 +564,10 @@ class Identifiers(models.Model):
         refs = []
         for ref in references:
             ids = []
-            db = ref['accession_db'].lower()
-            id_ = ref['accession_number']
+
+            db = ref.get('accession_db')
+            if db:
+                db = db.lower()
 
             # Create Endnote identifier
             # create id based on search_id and id from RIS file.
@@ -601,7 +603,7 @@ class Identifiers(models.Model):
                 ids.append(ident)
 
             # create other accession identifiers
-            if ref['accession_db'] is not None and ref['accession_number'] is not None:
+            if db is not None and ref['accession_number'] is not None:
                 db_id = None
                 if db == "wos":
                     db_id = WOS
@@ -646,7 +648,7 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
 
     def get_assessment(self):
         name = self.get_root().name
-        Assessment = get_model('assessment', 'Assessment')
+        Assessment = apps.get_model('assessment', 'Assessment')
         return Assessment.objects.get(pk=int(name[name.find('-')+1:]))
 
     def rename(self, newName):
@@ -1013,7 +1015,7 @@ class Reference(models.Model):
             inclusion_tags.append(root_inclusion.pk)
         except:
             inclusion_tags = []
-        Study = get_model('study', 'Study')
+        Study = apps.get_model('study', 'Study')
 
         return Reference.objects\
             .filter(assessment=assessment, referencetags__tag_id__in=inclusion_tags)\

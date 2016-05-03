@@ -1,4 +1,4 @@
-{% extends 'invitro/ivchemical_detail.html' %}
+{% extends 'invitro/ivendpoint_detail.html' %}
 
 
 {% block title %}
@@ -11,5 +11,5 @@
 
 {% block content %}
     {{ block.super }}
-    {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
+    {% include "hawc/_delete_block.html" with name="endpoint" notes="This will remove all content associated with this endpoint." %}
 {% endblock content %}

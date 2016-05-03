@@ -325,7 +325,7 @@ $.ajaxSetup({
 // Utility functions in custom namespace
 var HAWCUtils = {
     booleanCheckbox: function(value){
-        return (value) ? "☑" : "☒";
+        return (value) ? "<i class='fa fa-check'></i>": "<i class='fa fa-minus'></i>";
     },
     newWindowPopupLink: function(triggeringLink) {
         // Force new window to be a popup window
@@ -412,17 +412,26 @@ var HAWCUtils = {
     updateDragLocationTransform: function(setDragCB){
         // a new drag location, requires binding to d3.behavior.drag,
         // and requires a _.partial injection of th settings module.
+        var getXY = function(txt){
+            // expects an attribute like "translate(277", "1.1920928955078125e-7)"
+            if (_.isNull(txt) || txt.indexOf('translate') !== 0) return;
+            var cmps = txt.split(',');
+            return [
+                parseFloat(cmps[0].split('(')[1], 10),
+                parseFloat(cmps[1].split(')')[0], 10),
+            ]
+        };
+
         return d3.behavior.drag()
                  .origin(Object)
                  .on("drag", function(){
                     var x, y,
-                        regexp = /\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/,
                         p = d3.select(this),
-                        m = regexp.exec(p.attr("transform"));
+                        coords = getXY(p.attr("transform"));
 
-                    if (m !== null && m.length===3){
-                        x = parseInt(m[1], 10) + d3.event.dx;
-                        y = parseInt(m[2], 10) + d3.event.dy;
+                    if (coords){
+                        x = parseInt(coords[0] + d3.event.dx, 10);
+                        y = parseInt(coords[1] + d3.event.dy, 10);
                         p.attr("transform", "translate({0},{1})".printf(x, y));
                         if(setDragCB) setDragCB.bind(this)(x, y);
                     };
@@ -435,8 +444,8 @@ var HAWCUtils = {
                  .origin(Object)
                  .on("drag", function(){
                     var p = d3.select(this),
-                        x = parseInt(p.attr('x'), 10) + d3.event.dx,
-                        y = parseInt(p.attr('y'), 10) + d3.event.dy;
+                        x = parseInt(parseInt(p.attr('x'), 10) + d3.event.dx, 10),
+                        y = parseInt(parseInt(p.attr('y'), 10) + d3.event.dy, 10);
 
                     p.attr('x', x);
                     p.attr('y', y);
@@ -1340,6 +1349,9 @@ HAWCModal.prototype = {
         $el.html(html);
         if (!noClose) $el.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
         return this;
+    }, addTitleLinkHeader: function(name, url, options){
+        var txt = '<h4><a href="{0}" target="_blank">{1}</a></h4>'.printf(url, name);
+        return this.addHeader(txt, options);
     }, addFooter: function(html, options){
         var noClose = (options && options.noClose) || false,
             $el = this.$modalDiv.find(".modal-footer");

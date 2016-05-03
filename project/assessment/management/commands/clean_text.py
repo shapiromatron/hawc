@@ -7,7 +7,7 @@ import xlsxwriter
 import unicodedata
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models.loading import get_app, get_model
+from django.apps import apps
 from django.conf import settings
 
 
@@ -32,8 +32,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # check inputs are valid
         if len(options) >= 3:
-            app = get_app(options['appname'])
-            model = get_model(options['appname'], options['modelname'])
+            app = apps.get_app_config(options['appname']).models_module
+            model = apps.get_model(options['appname'], options['modelname'])
             field = model._meta.get_field(options['fieldname'])
             # get all objects
             qs = model.objects.all()

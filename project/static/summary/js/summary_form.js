@@ -13,7 +13,7 @@ _.extend(InputField.prototype, {
 
 var TableField = function () {
     return InputField.apply(this, arguments);
-}
+};
 _.extend(TableField.prototype, InputField.prototype, {
     renderHeader: HAWCUtils.abstractMethod,
     addRow: HAWCUtils.abstractMethod,
@@ -122,7 +122,7 @@ _.extend(TableField.prototype, InputField.prototype, {
 
 var ReferenceLineField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(ReferenceLineField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -161,7 +161,7 @@ _.extend(ReferenceLineField.prototype, TableField.prototype, {
 
 var ReferenceRangeField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(ReferenceRangeField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -204,7 +204,7 @@ _.extend(ReferenceRangeField.prototype, TableField.prototype, {
 
 var ReferenceLabelField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(ReferenceLabelField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -251,7 +251,7 @@ _.extend(ReferenceLabelField.prototype, TableField.prototype, {
 
 var TextField = function () {
     return InputField.apply(this, arguments);
-}
+};
 _.extend(TextField.prototype, InputField.prototype, {
     toSerialized: function () {
         this.parent.settings[this.schema.name] = this.$inp.val();
@@ -280,7 +280,7 @@ _.extend(TextField.prototype, InputField.prototype, {
 
 var IntegerField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(IntegerField.prototype, TextField.prototype, {
     toSerialized: function () {
         this.parent.settings[this.schema.name] = parseInt(this.$inp.val(), 10);
@@ -293,7 +293,7 @@ _.extend(IntegerField.prototype, TextField.prototype, {
 
 var FloatField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(FloatField.prototype, TextField.prototype, {
     toSerialized: function () {
         this.parent.settings[this.schema.name] = parseFloat(this.$inp.val(), 10);
@@ -306,7 +306,7 @@ _.extend(FloatField.prototype, TextField.prototype, {
 
 var ColorField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(ColorField.prototype, TextField.prototype, {
     _setInput: function(){
         this.$inp = $('<input type="color" name="{0}" class="span12" required>'.printf(this.schema.name));
@@ -316,7 +316,7 @@ _.extend(ColorField.prototype, TextField.prototype, {
 
 var CheckboxField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(CheckboxField.prototype, TextField.prototype, {
     toSerialized: function () {
         this.parent.settings[this.schema.name] = this.$inp.prop('checked');
@@ -332,7 +332,7 @@ _.extend(CheckboxField.prototype, TextField.prototype, {
 
 var RadioField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(RadioField.prototype, TextField.prototype, {
     toSerialized: function () {
         var sel = 'input[name="{0}"]:checked'.printf(this.schema.name);
@@ -354,7 +354,7 @@ _.extend(RadioField.prototype, TextField.prototype, {
 
 var SelectField = function () {
     return TextField.apply(this, arguments);
-}
+};
 _.extend(SelectField.prototype, TextField.prototype, {
     _setInput: function(){
         var makeOpt = function(d){return '<option value="{0}">{1}</option>'.printf(d[0], d[1]); };
@@ -366,7 +366,7 @@ _.extend(SelectField.prototype, TextField.prototype, {
 
 var NullField = function () {
     return InputField.apply(this, arguments);
-}
+};
 _.extend(NullField.prototype, InputField.prototype, {
     toSerialized: function () {},
     fromSerialized: function () {},
@@ -376,7 +376,7 @@ _.extend(NullField.prototype, InputField.prototype, {
 
 var SpacerNullField = function () {
     return NullField.apply(this, arguments);
-}
+};
 _.extend(SpacerNullField.prototype, NullField.prototype, {
     render: function () { this.$parent.append("<hr>"); }
 });
@@ -384,7 +384,7 @@ _.extend(SpacerNullField.prototype, NullField.prototype, {
 
 var HeaderNullField = function () {
     return NullField.apply(this, arguments);
-}
+};
 _.extend(HeaderNullField.prototype, NullField.prototype, {
     render: function () {
         this.$parent.append( $("<h4>").text(this.schema.label) );
@@ -394,7 +394,7 @@ _.extend(HeaderNullField.prototype, NullField.prototype, {
 
 var HelpTextNullField = function () {
     return NullField.apply(this, arguments);
-}
+};
 _.extend(HelpTextNullField.prototype, NullField.prototype, {
     render: function () {
         this.$parent.append('<p class="helpTextForTable help-inline">{0}</p>'.printf(this.schema.helpText));
@@ -416,30 +416,32 @@ _.extend(VisualForm, {
     create: function(visual_type, $el){
         var Cls
         switch (visual_type){
-            case 0:
-                Cls = EndpointAggregationForm;
-                break;
-            case 1:
-                Cls = CrossviewForm;
-                break;
-            case 2:
-                Cls = RoBHeatmapForm;
-                break;
-            case 3:
-                Cls = RoBBarchartForm;
-                break;
-            default:
-                throw "Error - unknown visualization-type: {0}".printf(visual_type);
+        case 0:
+            Cls = EndpointAggregationForm;
+            break;
+        case 1:
+            Cls = CrossviewForm;
+            break;
+        case 2:
+            Cls = RoBHeatmapForm;
+            break;
+        case 3:
+            Cls = RoBBarchartForm;
+            break;
+        default:
+            throw "Error - unknown visualization-type: {0}".printf(visual_type);
         }
-        return new Cls($el)
-    }
+        return new Cls($el);
+    },
 });
 VisualForm.prototype = {
     setupEvents: function(){
         var self = this,
-            setDataChanged = function(){self.dataSynced=false;},
+            setDataChanged = function(){
+                self.dataSynced = false;
+            },
             $data = this.$el.find("#data"),
-            $settings = this.$el.find("#settings")
+            $settings = this.$el.find("#settings"),
             $preview = this.$el.find("#preview");
 
         // check if any data have changed
@@ -456,36 +458,32 @@ VisualForm.prototype = {
                 shown = $(e.relatedTarget).attr('href');
 
             switch(shown){
-                case "#data":
-                    if(self.dataSynced){
-                        self.unpackSettings();
-                    } else {
-                        self.getData();
-                    }
-                    break;
-                case "#settings":
-                    self.packSettings();
-                    break;
-                case "#preview":
-                    self.removePreview();
-                    break;
+            case "#data":
+                (self.dataSynced) ? self.unpackSettings(): self.getData();
+                break;
+            case "#settings":
+                self.packSettings();
+                break;
+            case "#preview":
+                self.removePreview();
+                break;
             }
 
             switch(toShow){
-                case "#settings":
-                    if(!self.dataSynced) {
-                        self.addSettingsLoader();
-                        self.getData();
-                    }
-                    break;
-                case "#preview":
-                    self.setPreviewLoading();
-                    if(self.dataSynced){
-                        $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
-                    } else {
-                        self.getData();
-                    }
-                    break;
+            case "#settings":
+                if(!self.dataSynced) {
+                    self.addSettingsLoader();
+                    self.getData();
+                }
+                break;
+            case "#preview":
+                self.setPreviewLoading();
+                if(self.dataSynced){
+                    $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
+                } else {
+                    self.getData();
+                }
+                break;
             }
         });
 
@@ -599,14 +597,13 @@ VisualForm.prototype = {
             .appendTo($parent);
     },
     setPreviewLoading: function(){
-        var $settings = (this.$el.find("#settings")),
+        var $preview = this.$el.find("#preview"),
             loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         $preview.html(loading);
     },
     addSettingsLoader: function(){
         var div = $('#settings'),
-            self = this, loader;
-        loader = div.find('p.loader');
+            loader = div.find('p.loader');
         if(loader.length === 0) loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         div.children().hide(0, function(){div.append(loader).show();});
     },
@@ -650,7 +647,7 @@ _.extend(EndpointAggregationForm.prototype, VisualForm.prototype, {
 
 var CrossviewSelectorField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -740,7 +737,7 @@ _.extend(CrossviewSelectorField.prototype, TableField.prototype, {
 
 var CrossviewColorFilterField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(CrossviewColorFilterField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -805,7 +802,7 @@ _.extend(CrossviewColorFilterField.prototype, TableField.prototype, {
 
 var CrossviewEndpointFilterField = function () {
     return TableField.apply(this, arguments);
-}
+};
 _.extend(CrossviewEndpointFilterField.prototype, TableField.prototype, {
     renderHeader: function () {
         return $('<tr>')
@@ -1107,12 +1104,11 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
         this.unpackSettings();
     },
     afterGetDataHook: function(data){
-        var endpoints = data.endpoints.map(function(d){
+        this.endpoints = data.endpoints.map(function(d){
             var e = new Endpoint(d);
             e.switch_dose_units(data.dose_units);
             return e;
         });
-        this.endpoints = endpoints;
     },
     initDataForm: function(){
         var fields = [

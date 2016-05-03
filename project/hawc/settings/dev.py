@@ -2,8 +2,6 @@ from .base import *
 
 
 DEBUG = True
-for tmp in TEMPLATES:
-    tmp['OPTIONS']['debug'] = True
 
 SERVER_ROLE = "dev"
 
@@ -12,6 +10,9 @@ INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')
 STATICFILES_DIRS += (
     os.path.join(PROJECT_ROOT, 'project', 'static'),
 )
+
+# use console for email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # execute celery-tasks locally instead of sending to queue
 CELERY_ALWAYS_EAGER = True

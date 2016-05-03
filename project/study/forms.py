@@ -248,6 +248,38 @@ class BaseSQFormSet(BaseModelFormSet):
             metrics.append(metric)
 
 
+class StudyQualityCopyForm(forms.Form):
+    assessment = forms.ModelChoiceField(
+        label="Existing assessment",
+        queryset=Assessment.objects.all(), empty_label=None)
+
+    def setHelper(self):
+        inputs = {
+            "legend_text": u"Copy risk of bias approach from existing assessments",
+            "help_text": u"Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.",
+            "cancel_url": reverse('study:asq_detail', args=[self.assessment.id])
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        helper.form_class = None
+        return helper
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        self.assessment = kwargs.pop('assessment', None)
+        super(StudyQualityCopyForm, self).__init__(*args, **kwargs)
+        self.fields['assessment'].widget.attrs['class'] = 'span12'
+        self.fields['assessment'].queryset = Assessment\
+            .get_viewable_assessments(user, exclusion_id=self.assessment.id)
+        self.helper = self.setHelper()
+
+    def copy_study_quality(self):
+        models.StudyQuality\
+            .copy_study_quality(
+                self.assessment,
+                self.cleaned_data['assessment'])
+
+
 class StudiesCopy(forms.Form):
     # TODO: remove study-type restriction
 

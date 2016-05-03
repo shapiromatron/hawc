@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.contrib.sites.models import Site
@@ -114,7 +115,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email])
 
     def get_assessments(self):
-        Assessment = models.loading.get_model('assessment', 'Assessment')
+        Assessment = apps.get_model('assessment', 'Assessment')
         return Assessment.get_viewable_assessments(self)
 
     def send_welcome_email(self):

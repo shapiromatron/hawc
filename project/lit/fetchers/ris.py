@@ -219,10 +219,10 @@ class ReferenceParser(object):
             if len(pages) > 0:
                 pages = u":{0}".format(pages)
 
+            sec_title = unicode(self.content.get("secondary_title", "").decode('utf-8'))  # journal
+            year = self.content.get("year", "")  # year
             citation = u'{0} {1}{2}{3}{4}'.format(*(
-                self.content.get("secondary_title", ""),  # journal
-                self.content.get("year", ""),             # year
-                volume, issue, pages
+                sec_title, year, volume, issue, pages
             ))
         elif refType in ("BOOK", "CHAP"):
             vals = []

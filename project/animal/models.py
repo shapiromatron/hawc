@@ -5,11 +5,11 @@ import json
 import math
 
 from django.db import models
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-import reversion
+from reversion import revisions as reversion
 
 from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
@@ -681,7 +681,7 @@ class Endpoint(BaseEndpoint):
         help_text="Any additional notes related to this endpoint/methodology, not including results")
     additional_fields = models.TextField(
         default="{}")
-    qualities = generic.GenericRelation(
+    qualities = fields.GenericRelation(
         'study.StudyQuality',
         related_query_name='endpoints')
 

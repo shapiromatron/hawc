@@ -838,6 +838,18 @@ DataPivot.prototype = {
                           self.settings.legend.columns = parseInt($(this).val(), 10) || 1;
                           self.legend._draw_legend();
                         }),
+                    left = $('<input>')
+                        .val(self.settings.legend.left)
+                        .on('change', function(){
+                          self.settings.legend.left = parseInt($(this).val(), 10) || 1;
+                          self.legend._draw_legend();
+                        }),
+                    top = $('<input>')
+                        .val(self.settings.legend.top)
+                        .on('change', function(){
+                          self.settings.legend.top = parseInt($(this).val(), 10) || 1;
+                          self.legend._draw_legend();
+                        }),
                     border_width = $('<input type="range" min="0" max="10" value="{0}">'
                             .printf(self.settings.legend.style.border_width))
                         .on('change', function(){
@@ -957,7 +969,10 @@ DataPivot.prototype = {
                     build_tr("Number of columns", number_columns),
                     build_tr("Border width", DataPivot.rangeInputDiv(border_width)),
                     build_tr("Border color", border_color),
-                    build_tr("Legend item", legend_item)]);
+                    build_tr("X-location on figure", left),
+                    build_tr("Y-location on figure", top),
+                    build_tr("Legend item", legend_item),
+                ]);
 
                 tbl.html([colgroup, tbody]);
                 button_well.append(
@@ -2978,6 +2993,12 @@ _.extend(DataPivotExtension, {
       _dpe_option_txt:  "Show experiment",
     },
     {
+      _dpe_name:        "iv_celltype",
+      _dpe_key:         "IVCellType id",
+      _dpe_cls:         IVCellType,
+      _dpe_option_txt:  "Show cell type",
+    },
+    {
       _dpe_name:        "iv_endpoint",
       _dpe_key:         "IVEndpoint id",
       _dpe_cls:         IVEndpoint,
@@ -3295,8 +3316,8 @@ DataPivotLegend.prototype = {
         },
         drag = (!this.options.editable) ? function(){} :
         HAWCUtils.updateDragLocationTransform(function(x, y){
-          self.settings.left = x;
-          self.settings.top = y;
+          self.settings.left = parseInt(x, 10);
+          self.settings.top = parseInt(y, 10);
         });
 
     this.legend = this.vis.append("g");

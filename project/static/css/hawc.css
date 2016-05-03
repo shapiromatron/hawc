@@ -113,9 +113,9 @@ ul.sponsors {
   transition: 0.5s ease-in-out;
 }
 .sponsors img:hover {
-    opacity: 0.8;
-    border: 2px solid black;
-    transition: 0.5s ease-in-out;
+  opacity: 0.8;
+  border: 2px solid black;
+  transition: 0.5s ease-in-out;
 }
 /* File format icons */
 .ff {
@@ -303,6 +303,11 @@ span.smart-tag.active:hover{
   background-color: #0044cc;
 }
 
+/* animal endpoint list */
+.eyeEndpointModal{
+  padding-left: 1em;
+  cursor: pointer;
+}
 
 /* BMD APPLICATION STYLES */
 #bmd_settings_form{
