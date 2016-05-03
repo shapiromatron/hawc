@@ -188,17 +188,9 @@ class VisualizationDelete(BaseDelete):
         return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
 
 
-class RobFilter(BaseCreate):
-    success_message = "Visualization created."
-    parent_model = Assessment
-    parent_template_name = 'assessment'
-    model = models.Visual
-    form_class = forms.VisualForm  # temp
+class RobFilter(BaseDetail):
+    model = Assessment
     template_name = 'summary/robFilter.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(RobFilter, self).get_context_data(**kwargs)
-        return context
 
 
 # DATA-PIVOT
