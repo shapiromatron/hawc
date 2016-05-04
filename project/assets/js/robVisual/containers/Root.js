@@ -5,7 +5,7 @@ import EffectSelector from './EffectSelector';
 import ScoreSlider from './ScoreSlider';
 import ApplyFilters from './ApplyFilters';
 import EndpointCardContainer from './EndpointCardContainer';
-import { loadConfig } from 'robVisual/actions/config';
+import { loadConfig } from 'robVisual/actions/Config';
 
 
 class Root extends Component {
