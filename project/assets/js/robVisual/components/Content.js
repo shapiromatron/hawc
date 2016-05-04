@@ -17,7 +17,9 @@ class Content extends Component {
     render() {
         let { data } = this.props,
             content = _.map(this.state.content_types, (type) => {
-                return data[type] ? <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {data[type]}</p> : null;
+                return data[type] ?
+                    <p key={type}><b><u>{h.caseToWords(type)}</u></b>: {data[type]}</p> :
+                    null;
             });
         return (
             <div className='extraContent'>

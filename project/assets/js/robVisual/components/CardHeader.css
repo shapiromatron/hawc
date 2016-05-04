@@ -22,11 +22,9 @@
 .score.high {
     background-color: rgb(0, 204, 0);
 }
-
 .score.medium {
     background-color: rgb(111, 255, 0);
 }
-
 .score.low {
     background-color: rgb(255, 204, 0);
 }

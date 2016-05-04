@@ -35,7 +35,8 @@ class ApplyFilters extends Component {
         return (
             <div>
                 <FormFieldError errors={this.props.errors} />
-                <button type='button' className='btn btn-primary' onClick={this.handleSubmit.bind(this)}>Apply filters</button>
+                <button type='button' className='btn btn-primary'
+                        onClick={this.handleSubmit.bind(this)}>Apply filters</button>
                 {this.props.isFetching ? <Filtering /> : null}
             </div>
         );

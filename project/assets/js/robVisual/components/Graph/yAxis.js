@@ -32,7 +32,9 @@ class yAxis extends Component {
 
     render() {
         let { transform, label, padding, renderScale } = this.props,
-            axisLabel = renderScale ? { offset: padding[3] - 20, label} : { offset: 20, label: label.substr(0, label.indexOf(' '))},
+            axisLabel = renderScale ?
+                { offset: padding[3] - 20, label} :
+                { offset: 20, label: label.substr(0, label.indexOf(' '))},
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g ref='yAxis' className='y axis'

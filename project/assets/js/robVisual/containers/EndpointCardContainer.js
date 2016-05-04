@@ -20,7 +20,11 @@ class EndpointCardContainer extends Component {
         let { endpoints, studies } = this.props;
         return (
             <div className='endpointCardContainer'>
-                {_.map(endpoints, (ep, i) => { return <EndpointCard key={i} study={_.findWhere(studies, {id: ep.animal_group.experiment.study.id})} endpoint={ep}/>; })}
+                {_.map(endpoints, (ep, i) => {
+                    return <EndpointCard key={i}
+                        study={_.findWhere(studies, {id: ep.animal_group.experiment.study.id})}
+                        endpoint={ep}/>;
+                })}
             </div>
         );
     }

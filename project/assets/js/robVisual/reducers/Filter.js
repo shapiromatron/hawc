@@ -4,13 +4,13 @@ import * as types from '../constants/ActionTypes';
 let defaultState = {
     robScoreThreshold: null,
     selectedEffects: [],
-    endpoints: [],
     isFetchingEndpoints: false,
     endpointsLoaded: false,
-    robScores: [],
+    endpoints: [],
     isFetchingRobScores: false,
-    effects: [],
+    robScores: [],
     isFetchingEffects: false,
+    effects: [],
     errors: [],
 };
 

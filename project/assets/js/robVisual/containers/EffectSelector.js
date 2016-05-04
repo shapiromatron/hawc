@@ -20,7 +20,9 @@ class EffectSelector extends Component {
 
     render(){
         return (
-            <Selector effects={this.props.effects} handleChange={this.handleChange.bind(this)}/>
+            <Selector
+                effects={this.props.effects}
+                handleChange={this.handleChange.bind(this)}/>
         );
     }
 }

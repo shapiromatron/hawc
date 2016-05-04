@@ -11,7 +11,13 @@ class DoseResponseChart extends Component {
         let { doses, responses } = this.props,
             doseData = this.getDoseAxisData(),
             responseData = this.getResponseAxisData(),
-            chartData = _.map(responses, (r, i) => { return {x: doses[i].dose, y: r.response, significant: r.significant}; }),
+            chartData = _.map(responses, (d, i) => {
+                return {
+                    x: doses[i].dose,
+                    y: d.response,
+                    significant: d.significant,
+                };
+            }),
             xScale = this.makeXScale(doseData),
             yScale = this.makeYScale(responseData);
 

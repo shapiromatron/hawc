@@ -12,7 +12,11 @@ class EndpointCard extends Component {
     groupByDoseUnit() {
         let doses = this.props.endpoint.animal_group.dosing_regime.doses;
         return _.chain(doses)
-            .map((dose) => { return {unit: dose.dose_units.name, dose:dose.dose, id: dose.dose_group_id}; })
+            .map((dose) => { return {
+                unit: dose.dose_units.name,
+                dose:dose.dose, id:
+                dose.dose_group_id};
+            })
             .groupBy('unit')
             .toArray()
             .value();
@@ -21,7 +25,12 @@ class EndpointCard extends Component {
     filterNullData() {
         let { endpoint } = this.props,
             responses =  _.filter(_.map(endpoint.groups, (group) => {
-                return {response: group.response, significant: group.significant, unit: endpoint.response_units, id: group.dose_group_id};
+                return {
+                    response: group.response,
+                    significant: group.significant,
+                    unit: endpoint.response_units,
+                    id: group.dose_group_id,
+                };
             }), (response) => { return response.response !== null; }),
             ids = _.pluck(responses, 'id'),
             doses = _.map(this.groupByDoseUnit(), (doseGroup) => {
@@ -83,7 +92,9 @@ class EndpointCard extends Component {
                     study={study}
                     citation={endpoint.animal_group.experiment.study.short_citation}
                     showModal={this.showModal.bind(this)} />
-                {dataNull ? this.renderNullData() : this.renderChart(doses, responses)}
+                {dataNull ?
+                    this.renderNullData() :
+                    this.renderChart(doses, responses)}
                 <Content data={endpoint} content_types={content_types}/>
             </div>
         );

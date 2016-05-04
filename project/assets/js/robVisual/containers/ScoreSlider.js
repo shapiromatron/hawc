@@ -27,7 +27,9 @@ class ScoreSlider extends Component {
         return (
             _.isEmpty(this.props.effects) ?
                 null :
-                <Slider max={max} threshold={threshold} handleChange={this.handleChange.bind(this)}/>
+                <Slider
+                    max={max} threshold={threshold}
+                    handleChange={this.handleChange.bind(this)}/>
         );
     }
 }

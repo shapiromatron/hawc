@@ -32,7 +32,9 @@ class xAxis extends Component {
 
     render() {
         let { transform, label, padding, renderScale } = this.props,
-            axisLabel = renderScale ? {offset: padding[2] - 15, label} : {offset: 20, label: label.substr(0, label.indexOf(' '))},
+            axisLabel = renderScale ?
+                {offset: padding[2] - 15, label} :
+                {offset: 20, label: label.substr(0, label.indexOf(' '))},
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g ref='xAxis' className="x axis"
