@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
+import './EffectSelector.css';
+
 
 class EffectSelector extends Component {
 

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import Selector from 'robVisual/components/EffectSelector';
 import { fetchEffects, selectEffects } from 'robVisual/actions/Filter';
-import 'robVisual/containers/EffectSelector.css';
 
 
 class EffectSelector extends Component {
