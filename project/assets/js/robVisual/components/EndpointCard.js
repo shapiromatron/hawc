@@ -41,7 +41,11 @@ class EndpointCard extends Component {
         return { doses, responses };
     }
 
-    showModal(e) {
+    showStudyModal(e){
+        Study.displayAsModal(e.target.id);
+    }
+
+    showEndpointModal(e) {
         Endpoint.displayAsModal(e.target.id);
     }
 
@@ -91,7 +95,8 @@ class EndpointCard extends Component {
                     endpoint={endpoint}
                     study={study}
                     citation={endpoint.animal_group.experiment.study.short_citation}
-                    showModal={this.showModal.bind(this)} />
+                    showEndpointModal={this.showEndpointModal.bind(this)}
+                    showStudyModal={this.showStudyModal.bind(this)}/>
                 {dataNull ?
                     this.renderNullData() :
                     this.renderChart(doses, responses)}

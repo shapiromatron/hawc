@@ -19,29 +19,37 @@ class CardHeader extends Component {
         }
     }
     render() {
-        let { endpoint, showModal, study, citation } = this.props,
+        let { endpoint, showEndpointModal, showStudyModal, study, citation } = this.props,
             score = study.qualities__score__sum,
             quality = this.getScoreQuality(score);
         return (
             <div className='cardHeader'>
                 <h4 className='cardTitle'>
-                    <span id={endpoint.id} onClick={showModal}>
+                    <span className={`pull-right score ${quality}`}><b>
+                        {score || 'N/A'}
+                    </b></span>
+                    <span
+                        className='modalAnchor'
+                        id={endpoint.id}
+                        onClick={showEndpointModal}>
                         {endpoint.name}
                     </span>
-                    <span id={endpoint.id} onClick={showModal} className='cardCitation pull-right'>
-                        {`[${citation}]`}
+                    <br />
+                    <span id={endpoint.animal_group.experiment.study.id}
+                          onClick={showStudyModal}
+                          className='modalAnchor cardCitation'>
+                        {`(${citation})`}
                     </span>
                 </h4>
-                <span className={`score ${quality}`}><b>
-                    {score || 'N/A'}
-                </b></span>
+
             </div>
         );
     }
 }
 
 CardHeader.propTypes = {
-    showModal: PropTypes.func.isRequired,
+    showEndpointModal: PropTypes.func.isRequired,
+    showStudyModal: PropTypes.func.isRequired,
     endpoint: PropTypes.object.isRequired,
     study: PropTypes.object.isRequired,
 };

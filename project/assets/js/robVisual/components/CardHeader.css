@@ -2,22 +2,22 @@
     width: 300px;
 }
 
-.cardTitle span {
-    color: #0088cc;
+.modalAnchor {
     cursor: pointer;
 }
-
-.cardTitle span:hover {
+.modalAnchor:hover {
     text-decoration: underline;
 }
 
 .cardCitation {
-    margin-bottom: 12px;
+    color: grey;
+    font-size: 80%;
 }
 
 .score {
     padding: 10px;
     border: 2px rgb(128, 128, 128) solid;
+    border-radius: 4px;
 }
 .score.high {
     background-color: rgb(0, 204, 0);
