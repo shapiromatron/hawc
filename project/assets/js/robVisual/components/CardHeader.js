@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import _ from 'underscore';
 
 import './CardHeader.css';
 
@@ -6,6 +7,9 @@ import './CardHeader.css';
 class CardHeader extends Component {
 
     getScoreQuality(score) {
+        if (_.isNull(score))
+            return 'not-applicable';
+
         if (score >= 24){
             return 'high';
         } else if (score >= 18) {

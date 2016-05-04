@@ -30,3 +30,6 @@
 .score.low {
     background-color: rgb(255, 204, 0);
 }
+.score.not-applicable {
+    background-color: #ddd;
+}
