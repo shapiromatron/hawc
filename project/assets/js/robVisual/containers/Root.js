@@ -19,7 +19,13 @@ class Root extends Component {
         return (
             <Provider store={store}>
                 <div>
-                    <h1>View endpoints by risk of bias</h1>
+                    <h1>Endpoints by study risk of bias score</h1>
+                    <p className='help-text'>
+                        This <b>prototype</b> is an exmaple of showing different
+                        effects in the database filtered by risk of bias score.
+                        A higher risk of bias score indicates a greater number
+                        of low risk-of bias responses.
+                    </p>
                     <EffectSelector />
                     <ScoreSlider />
                     <ApplyFilters />

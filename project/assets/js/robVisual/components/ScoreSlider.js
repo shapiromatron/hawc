@@ -12,9 +12,9 @@ class ScoreSlider extends Component {
         return (
             <div>
             <form name='scoreSliderForm'>
-                <p className='help-block'>
-                    Select the minimum confidence rating: <output><strong>{threshold}</strong></output>
-                </p>
+                <label className="control-label">
+                    Minimum risk of bias rating: <span>{threshold}</span>
+                </label>
                 <input
                     type='range'
                     id='scoreSlider'

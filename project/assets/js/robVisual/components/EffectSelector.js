@@ -14,10 +14,12 @@ class EffectSelector extends Component {
         let { effects } = this.props;
         return (
             <div className='robEffectSelect'>
-                <p className='help-block'>
-                    Select effects to include
-                </p>
-                <select multiple='true' size='8' onChange={this.handleChange.bind(this)}>
+                <label className="control-label">
+                    Effects to include
+                </label>
+                <select multiple='true'
+                        size='8'
+                        onChange={this.handleChange.bind(this)}>
                     {_.map(effects, (effect) => {
                         return (
                             <option key={effect} value={effect}>
