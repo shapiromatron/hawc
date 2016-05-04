@@ -263,6 +263,13 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
+    @classmethod
+    def rob_scores(cls, assessment_id):
+        return Study.objects\
+            .filter(assessment_id=assessment_id)\
+            .annotate(models.Sum('qualities__score'))\
+            .values('id', 'short_citation', 'qualities__score__sum')
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")

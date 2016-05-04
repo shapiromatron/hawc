@@ -10,7 +10,7 @@ import { HOST } from 'tests/constants';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-describe('Endpoint actions', () => {
+describe('textCleanup Endpoint actions', () => {
 
     describe('async actions', () => {
         afterEach(() => {
@@ -41,6 +41,7 @@ describe('Endpoint actions', () => {
             const store = mockStore({
                 router: { params: { field: 'system', type: 'ani', id: '57' }},
                 config: {
+
                     host: HOST,
                     ani: { url: 'ani/api/cleanup/' },
                 },

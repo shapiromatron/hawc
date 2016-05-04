@@ -10,7 +10,7 @@ import Endpoint from 'containers/Endpoint/App';
 export default (
   <Route path={urls.assessment.url} >
       <IndexRoute component={AssessmentApp} />
-      <Route path={urls.fields.url} component={FieldSelection} />
-        <Route path={urls.endpoints.url} component={Endpoint} />
+        <Route path={urls.fields.url} component={FieldSelection} />
+            <Route path={urls.endpoints.url} component={Endpoint} />
   </Route>
 );

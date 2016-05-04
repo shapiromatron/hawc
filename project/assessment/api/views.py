@@ -19,6 +19,8 @@ class DisabledPagination(PageNumberPagination):
 
 class AssessmentLevelPermissions(permissions.BasePermission):
 
+    list_actions = ['list', ]
+
     def has_object_permission(self, request, view, obj):
         view.assessment = obj.get_assessment()
         if request.method in permissions.SAFE_METHODS:
@@ -29,15 +31,19 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             return view.assessment.user_can_edit_object(request.user)
 
     def has_permission(self, request, view):
-        if view.action == 'list':
+        if view.action in self.list_actions:
             assessment_id = request.GET.get('assessment_id', None)
             if assessment_id is None:
                 raise RequiresAssessmentID
 
-            view.assessment = models.Assessment.objects.filter(id=assessment_id).first()
-            if (view.assessment is None) or \
-               (view.assessment and not view.assessment.user_can_view_object(request.user)):
+            view.assessment = models.Assessment.objects\
+                .filter(id=assessment_id)\
+                .first()
+
+            if view.assessment is None:
                 return False
+
+            return view.assessment.user_can_view_object(request.user)
 
         return True
 

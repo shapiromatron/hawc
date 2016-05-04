@@ -9,7 +9,7 @@ import { HOST } from 'tests/constants';
 
 const expect = unexpected.clone().use(unexpectedReact);
 
-describe('Assessment component', () => {
+describe('textCleanup Assessment component', () => {
     let object, renderer, output;
 
     beforeEach(() => {

@@ -13,7 +13,16 @@
 
 {% block content %}
 
-    <h1>Assessment endpoints ({{page_obj.paginator.count}} found)</h1>
+    <h1>Assessment endpoints ({{page_obj.paginator.count}} found)
+        {% if assessment.enable_study_quality %}
+        <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'summary:rob_endpoint_filter' assessment.id %}">View endpoints by risk of bias</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </h1>
 
     <div class="accordion" id="filterForm">
       <div class="accordion-group">
