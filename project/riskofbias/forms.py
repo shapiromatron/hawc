@@ -185,25 +185,22 @@ class RoBReviewersForm(forms.ModelForm):
 
         for field in changed_reviewer_fields:
             new_author = self.cleaned_data[field]
+            options = {
+                'study': study,
+                'conflict_resolution': bool(field is 'conflict_author')}
 
             if self.fields[field].initial:
                 deactivate_rob = models.RiskOfBias.objects.get(
                     author_id=self.fields[field].initial,
-                    study=study,
-                    conflict_resolution=bool(field is 'conflict_author'))
+                    **options)
                 deactivate_rob.deactivate()
 
             if new_author:
                 activate_rob, created = models.RiskOfBias.objects.get_or_create(
-                    study=study,
-                    author=new_author,
-                    conflict_resolution=bool(field is 'conflict_author'))
+                    author_id=new_author.id,
+                    **options)
                 if created:
-                    for metric in models.RiskOfBiasMetric.\
-                    get_required_metrics(study.assessment, study):
-                        models.RiskOfBiasScore.objects.create(
-                            riskofbias=activate_rob,
-                            metric=metric)
+                    activate_rob.build_scores(study.assessment, study)
                 activate_rob.activate()
 
 RoBFormSet = modelformset_factory(
