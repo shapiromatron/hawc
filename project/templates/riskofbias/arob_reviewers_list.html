@@ -38,7 +38,7 @@
         {% endif %}
         <tr>
             <td>
-                {{study}}
+                <a href="{% url 'riskofbias:robs_detail' study.pk %}">{{study}}</a>
             </td>
             {% if form_crud = 'Create' %}
             <td>
