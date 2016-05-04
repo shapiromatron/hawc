@@ -7,6 +7,7 @@ import ApplyFilters from './ApplyFilters';
 import EndpointCardContainer from './EndpointCardContainer';
 import { loadConfig } from 'robVisual/actions/config';
 
+
 class Root extends Component {
 
     componentWillMount(){

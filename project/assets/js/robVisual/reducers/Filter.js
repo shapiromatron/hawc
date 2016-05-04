@@ -1,5 +1,6 @@
 import * as types from '../constants/ActionTypes';
 
+
 let defaultState = {
     robScoreThreshold: null,
     selectedEffects: [],

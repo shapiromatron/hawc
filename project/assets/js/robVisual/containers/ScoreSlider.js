@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Slider from 'robVisual/components/ScoreSlider';
 import { fetchRobScores, setScoreThreshold } from 'robVisual/actions/Filter';
 
+
 class ScoreSlider extends Component {
 
     componentWillMount(){

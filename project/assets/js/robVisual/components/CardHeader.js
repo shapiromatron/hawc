@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 
 import './CardHeader.css';
 
+
 class CardHeader extends Component {
 
     getScoreQuality(score) {

@@ -6,6 +6,7 @@ import Filtering from 'robVisual/components/Filtering';
 import FormFieldError from 'robVisual/components/FormFieldError';
 import { fetchEndpoints, formatError, clearErrors } from 'robVisual/actions/Filter';
 
+
 class ApplyFilters extends Component {
 
     hasNoErrors(){

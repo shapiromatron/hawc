@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch';
 import * as types from 'robVisual/constants/ActionTypes';
 import h from 'robVisual/utils/helpers';
 
+
 function receiveError(error){
     return {
         type: types.RECEIVE_ERROR,
