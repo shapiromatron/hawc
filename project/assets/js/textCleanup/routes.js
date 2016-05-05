@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
-import urls from 'constants/urls';
-import AssessmentApp from 'containers/AssessmentApp';
-import FieldSelection from 'containers/FieldSelection';
-import Endpoint from 'containers/Endpoint/App';
+import urls from 'textCleanup/constants/urls';
+import AssessmentApp from 'textCleanup/containers/AssessmentApp';
+import FieldSelection from 'textCleanup/containers/FieldSelection';
+import Endpoint from 'textCleanup/containers/Endpoint/App';
 
 
 export default (

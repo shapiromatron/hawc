@@ -2,8 +2,9 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
 
-import * as assessmentActions from 'actions/Assessment';
-import * as types from 'constants/ActionTypes';
+import * as assessmentActions from 'textCleanup/actions/Assessment';
+import * as types from 'textCleanup/constants/ActionTypes';
+
 import { HOST } from 'tests/constants';
 
 

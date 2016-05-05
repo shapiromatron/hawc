@@ -1,5 +1,6 @@
-import * as types from 'constants/ActionTypes';
-import rootReducer from 'reducers';
+import * as types from 'textCleanup/constants/ActionTypes';
+import rootReducer from 'textCleanup/reducers';
+
 
 describe('textCleanup Root reducer', () => {
     it('should return initial state', () => {

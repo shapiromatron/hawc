@@ -1,5 +1,6 @@
-import * as types from 'constants/ActionTypes';
-import assessmentReducer from 'reducers/Assessment';
+import * as types from 'textCleanup/constants/ActionTypes';
+import assessmentReducer from 'textCleanup/reducers/Assessment';
+
 
 describe('textCleanup Assessment reducer', () => {
 

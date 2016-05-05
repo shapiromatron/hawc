@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchObjectsIfNeeded } from 'actions/Endpoint';
-import EndpointList from 'components/Endpoint/EndpointList';
-import Loading from 'components/Loading';
+import { fetchObjectsIfNeeded } from 'textCleanup/actions/Endpoint';
+import EndpointList from 'textCleanup/components/Endpoint/EndpointList';
+import Loading from 'textCleanup/components/Loading';
 
 
 class Endpoint extends Component {

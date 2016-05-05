@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
-import FormFieldError from 'components/FormFieldError';
-import h from 'utils/helpers';
+import FormFieldError from 'textCleanup/components/FormFieldError';
+import h from 'textCleanup/utils/helpers';
 
 import DetailList from './DetailList';
 import './BulkForm.css';

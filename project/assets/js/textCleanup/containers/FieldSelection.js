@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchModelIfNeeded } from 'actions/Endpoint';
-import FieldList from 'components/FieldList';
-import Loading from 'components/Loading';
-import urls from 'constants/urls';
-import h from 'utils/helpers';
+import { fetchModelIfNeeded } from 'textCleanup/actions/Endpoint';
+import FieldList from 'textCleanup/components/FieldList';
+import Loading from 'textCleanup/components/Loading';
+import urls from 'textCleanup/constants/urls';
+import h from 'textCleanup/utils/helpers';
 
 
 class FieldSelection extends Component {

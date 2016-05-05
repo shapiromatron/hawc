@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
 import { ReduxRouter } from 'redux-router';
 
-import { loadConfig } from 'actions/Config';
+import { loadConfig } from 'textCleanup/actions/Config';
 
 
 class Root extends Component {

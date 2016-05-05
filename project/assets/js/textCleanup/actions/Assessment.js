@@ -1,8 +1,8 @@
 import fetch from 'isomorphic-fetch';
 import _ from 'underscore';
 
-import * as types from 'constants/ActionTypes';
-import h from 'utils/helpers';
+import * as types from 'textCleanup/constants/ActionTypes';
+import h from 'textCleanup/utils/helpers';
 
 
 function requestContent(){

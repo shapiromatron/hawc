@@ -5,9 +5,9 @@ import {
     initializeBulkEditForm,
     patchBulkList,
     patchDetailList,
-} from 'actions/Endpoint';
-import Loading from 'components/Loading';
-import FormComponent from 'components/Endpoint/BulkForm';
+} from 'textCleanup/actions/Endpoint';
+import Loading from 'textCleanup/components/Loading';
+import FormComponent from 'textCleanup/components/Endpoint/BulkForm';
 
 
 class BulkForm extends Component {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import h from 'utils/helpers';
+import h from 'textCleanup/utils/helpers';
 
 
 class Header extends Component {

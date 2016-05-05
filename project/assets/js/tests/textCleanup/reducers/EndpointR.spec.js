@@ -1,5 +1,6 @@
-import * as types from 'constants/ActionTypes';
-import endpointReducer from 'reducers/Endpoint';
+import * as types from 'textCleanup/constants/ActionTypes';
+import endpointReducer from 'textCleanup/reducers/Endpoint';
+
 
 describe('textCleanup Endpoint reducer', () => {
 

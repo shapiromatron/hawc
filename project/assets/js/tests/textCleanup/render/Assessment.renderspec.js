@@ -3,7 +3,8 @@ import TestUtils from 'react-addons-test-utils';
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
 
-import Assessment from 'components/Assessment';
+import Assessment from 'textCleanup/components/Assessment';
+
 import { HOST } from 'tests/constants';
 
 

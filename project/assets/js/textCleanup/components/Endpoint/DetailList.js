@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'underscore';
 
-import h from 'utils/helpers';
+import h from 'textCleanup/utils/helpers';
 
 
 class DetailList extends Component {
