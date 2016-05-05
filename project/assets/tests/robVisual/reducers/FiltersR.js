@@ -1,6 +1,7 @@
 import * as types from 'robVisual/constants/ActionTypes';
 import filterReducer from 'robVisual/reducers/Filter';
 
+
 describe('robVisual Filter reducer', () => {
 
     it('should handle requesting effects', () => {

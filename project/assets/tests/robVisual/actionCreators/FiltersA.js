@@ -1,16 +1,17 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import nock from 'nock';
+
+import { HOST } from 'tests/constants';
+
 import * as filterActions from 'robVisual/actions/Filter';
 import * as types from 'robVisual/constants/ActionTypes';
-import nock from 'nock';
+
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 describe('robVisual Filter actions', () => {
-    // describe('actions', () => {
-    //
-    // });
 
     describe('async actions', () => {
         afterEach(() => {
@@ -18,7 +19,7 @@ describe('robVisual Filter actions', () => {
         });
 
         it('should load endpoint effects', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .get('/ani/api/endpoint/effects/?assessment_id=126')
                 .reply(200, [
                     'anxiety/motor activity',
@@ -39,9 +40,9 @@ describe('robVisual Filter actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
+                    host: HOST,
                     assessment_id: '126',
-                    endpoint_effect_url: '/ani/api/endpoint/effects/?assessment_id=126',
+                    endpoint_effect_url: 'ani/api/endpoint/effects/?assessment_id=126',
                 },
             }, expectedActions, done);
 
@@ -49,7 +50,7 @@ describe('robVisual Filter actions', () => {
         });
 
         it('should load RoB scores', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .get('/study/api/study/rob_scores/?assessment_id=126')
                 .reply(200, [
                     {
@@ -92,8 +93,8 @@ describe('robVisual Filter actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
-                    study_score_url: '/study/api/study/rob_scores/?assessment_id=126',
+                    host: HOST,
+                    study_score_url: 'study/api/study/rob_scores/?assessment_id=126',
                 },
             }, expectedActions, done);
 
@@ -101,7 +102,7 @@ describe('robVisual Filter actions', () => {
         });
 
         it('should load endpoints', (done) => {
-            nock('http://127.0.0.1:9000')
+            nock(HOST)
                 .get('/ani/api/endpoint/rob_filter/?assessment_id=126&study_id[]=8199,8200&effect[]=general%20behavior')
                 .reply(200, [
                     {
@@ -154,8 +155,8 @@ describe('robVisual Filter actions', () => {
 
             const store = mockStore({
                 config: {
-                    apiUrl: 'http://127.0.0.1:9000',
-                    endpoint_filter_url: '/ani/api/endpoint/rob_filter/?assessment_id=126',
+                    host: HOST,
+                    endpoint_filter_url: 'ani/api/endpoint/rob_filter/?assessment_id=126',
                 },
                 filter: { selectedEffects: ['general behavior'] },
             }, expectedActions, done);
