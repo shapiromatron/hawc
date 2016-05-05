@@ -8,7 +8,7 @@
     "build:dev": "webpack --config webpack.config.dev.js",
     "build": "npm run clean && npm run build:webpack",
     "start": "npm run build:dev && node devServer.js",
-    "test": "env NODE_PATH=$NODE_PATH:$PWD/assets/js mocha ./assets/js/tests/ --compilers js:babel-core/register --require ./assets/js/tests/test_helper.js --recursive",
+    "test": "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint assets"
   },
