@@ -127,6 +127,8 @@ class NumberOfReviewersForm(forms.ModelForm):
                 'number_of_reviewers']
             instance.rob_settings.save()
         return instance
+
+
 class RoBReviewersForm(forms.ModelForm):
     """
     TODO: Need to compare number of active non-conflict resolution reviews to
@@ -142,7 +144,7 @@ class RoBReviewersForm(forms.ModelForm):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
-        robs = self.instance.get_active_riskofbiases()
+        robs = self.instance.get_active_riskofbiases(with_conflict=False)
 
         try:
             reviewers = range(self.instance.assessment.rob_settings.number_of_reviewers)

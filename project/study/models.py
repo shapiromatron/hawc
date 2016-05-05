@@ -276,8 +276,15 @@ class Study(Reference):
                 'marked as the conflict resolution. there should not be more '
                 'than one active conflict resolution per study.'.format(self.short_citation))
 
-    def get_active_riskofbiases(self):
-        return self.riskofbiases.filter(active=True)
+    def get_active_riskofbiases(self, with_conflict=True):
+        if with_conflict:
+            return self.riskofbiases\
+                       .filter(active=True)\
+                       .order_by('conflict_resolution', 'last_updated')
+        else:
+            return self.riskofbiases\
+                       .filter(active=True, conflict_resolution=False)\
+                       .order_by('last_updated')
 
     def get_user_rob(self, user, conflict=False):
         return self.riskofbiases.filter(
