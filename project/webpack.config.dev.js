@@ -7,7 +7,7 @@ config.devPort = devPort;
 config.devtool = 'cheap-module-eval-source-map';
 config.entry = [
     'webpack-hot-middleware/client?path=http://localhost:' + devPort + '/__webpack_hmr',
-    './assets/js/index',
+    './assets/index',
 ];
 config.output.publicPath = 'http://localhost:' + devPort + '/dist/';
 
@@ -17,7 +17,7 @@ config.module = {
     loaders: [{
         test: /\.js$/,
         loader: 'babel',
-        include: path.join(__dirname, 'assets/js'),
+        include: path.join(__dirname, 'assets'),
         query: {
             plugins: [
                 ['transform-object-rest-spread'],

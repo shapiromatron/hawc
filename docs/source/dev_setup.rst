@@ -6,6 +6,8 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - Python 2.7
+- `Node.js >= 4.0 <https://nodejs.org/>`_
+- `Npm.js >= 3.0 <https://npmjs.org/>`_
 - `pip >= 1.5 <http://www.pip-installer.org/>`_
 - `virtualenv >= 1.9 <http://www.virtualenv.org/>`_
 - `virtualenvwrapper >= 3.5 <http://pypi.python.org/pypi/virtualenvwrapper>`_
@@ -57,9 +59,20 @@ Next, we'll run a few management command and apply migrations::
     python manage.py migrate
     python manage.py createcachetable
 
-You should now be able to run the development server::
+You should now be able to run the python backend development server::
 
     python manage.py runserver
+
+Next, you'll need to setup the front-end web bundler. Make sure the ``npm``
+command is accessible from your virtual environment. In the ``/project`` path,
+run the following command, which will install all javascript packages for our
+development environment::
+
+    npm install --save-dev
+
+After installing dependencies, run the javascript bundler in a second terminal::
+
+    npm run start
 
 If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
