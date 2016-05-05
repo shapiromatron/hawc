@@ -35,5 +35,9 @@
     }
 </script>
 {% render_bundle 'main' %}
-
+<script type="text/javascript">
+$(document).ready(function(){
+  window.app.textCleanupStartup();
+});
+</script>
 {% endblock extrajs %}

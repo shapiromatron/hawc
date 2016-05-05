@@ -1,7 +1,6 @@
 {% extends 'portal.html' %}
 {% load render_bundle from webpack_loader %}
 
-
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
@@ -27,5 +26,9 @@
     }
 </script>
 {% render_bundle 'main' %}
-
+<script type="text/javascript">
+$(document).ready(function(){
+    window.app.robVisualStartup();
+});
+</script>
 {% endblock extrajs %}
