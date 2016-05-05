@@ -1,5 +1,4 @@
 {% extends 'portal.html' %}
-{% load render_bundle from webpack_loader %}
 
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
 
@@ -25,7 +24,6 @@
         "host": "//{{request.get_host}}"
     }
 </script>
-{% render_bundle 'main' %}
 <script type="text/javascript">
 $(document).ready(function(){
     window.app.robVisualStartup();
