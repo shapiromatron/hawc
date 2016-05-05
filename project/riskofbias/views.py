@@ -63,7 +63,8 @@ class ARoBReviewersCreate(BaseCreateWithFormset):
             queryset=Study.objects.filter(assessment=self.assessment))
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_reviewers', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_reviewers',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class ARoBReviewersUpdate(BaseUpdateWithFormset):
@@ -79,8 +80,33 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
         return self.formset_factory(
             queryset=Study.objects.filter(assessment=self.assessment))
 
+    def pre_validate(self, form, formset):
+        # if number_of_reviewers changes, change required on fields
+        if 'number_of_reviewers' in form.changed_data:
+            n = int(form.data['number_of_reviewers'])
+            required_fields = ['reference_ptr']
+            if n > 1:
+                required_fields.append('conflict_author')
+            [required_fields.append('author-{}'.format(i)) for i in range(n)]
+            for rob_form in formset.forms:
+                for field in rob_form.fields:
+                    if field not in required_fields:
+                        rob_form.fields[field].required = False
+
+    def post_object_save(self, form, formset):
+        # deactivate robs if number_of_reviewers is lowered.
+        if 'number_of_reviewers' in form.changed_data:
+            n = form.cleaned_data['number_of_reviewers']
+            for rob_form in formset.forms:
+                deactivate_robs = rob_form.instance\
+                                          .get_active_riskofbiases()\
+                                          .filter(conflict_resolution=False)[n:]
+                for rob in deactivate_robs:
+                    rob.deactivate()
+
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_reviewers', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_reviewers',
+                            kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias domain views
@@ -92,7 +118,8 @@ class RoBDomainCreate(BaseCreate):
     success_message = 'Risk-of-bias domain created.'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class RoBDomainUpdate(BaseUpdate):
@@ -101,7 +128,8 @@ class RoBDomainUpdate(BaseUpdate):
     success_message = 'Risk-of-bias domain updated.'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class RoBDomainDelete(BaseDelete):
@@ -109,7 +137,8 @@ class RoBDomainDelete(BaseDelete):
     model = models.RiskOfBiasDomain
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias metric views
@@ -121,7 +150,8 @@ class RoBMetricCreate(BaseCreate):
     success_message = 'Risk-of-bias metric created.'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class RoBMetricUpdate(BaseUpdate):
@@ -130,7 +160,8 @@ class RoBMetricUpdate(BaseUpdate):
     success_message = 'Risk-of-bias metric updated.'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class RoBMetricDelete(BaseDelete):
@@ -138,7 +169,8 @@ class RoBMetricDelete(BaseDelete):
     model = models.RiskOfBiasMetric
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_update', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
 
 
 # Risk-of-bias views for study
@@ -187,7 +219,8 @@ class RoBEdit(BaseUpdate):
     formset_factory = forms.RoBFormSet
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:rob_detail', kwargs=self.kwargs)
+        return reverse_lazy('riskofbias:rob_detail',
+                            kwargs=self.kwargs)
 
     def post(self, request, *args, **kwargs):
         self.formset = self.formset_factory(self.request.POST)
@@ -223,7 +256,8 @@ class RoBDelete(BaseDelete):
     success_message = 'Risk-of-bias information deleted.'
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:robs_detail', kwargs={'pk': self.object.study.pk})
+        return reverse_lazy('riskofbias:robs_detail',
+                            kwargs={'pk': self.object.study.pk})
 
 
 class RoBDetail(BaseDetail):
