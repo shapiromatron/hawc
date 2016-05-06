@@ -11,14 +11,13 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of Bias Studies</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
-    <li class="active"> Risk-of-bias <span class="divider">/</span></li>
+    <li class="active">{{object.study}} Risk of Bias <span class="divider">/</span></li>
   {% endblock %}
 {% endblock %}
 
 {% block content %}
-
   <h2>{{object}}: risk-of-bias aggregate details
       <br>
       <small>
@@ -58,6 +57,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     window.study = new Study({{object.study.get_json|safe}})
+    study.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
     window.sq_tbl = new StudyQualities_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}

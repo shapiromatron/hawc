@@ -76,26 +76,6 @@ RiskOfBiasStudy.prototype = {
     },
 };
 
-var StudyQualities_TblCompressed = function(study, div, options){
-    this.study = study;
-    this.$div = $(div);
-    this.build_table();
-
-    if (options && options.show_all_details_startup){
-        this.show_details_div();
-    }
-};
-
-var RiskOfBias_TblCompressed = function(riskofbias, div, options){
-    this.riskofbias = riskofbias;
-    this.$div = $(div);
-    this.build_table();
-
-    if (options && options.show_all_details_startup){
-        this.show_details_div();
-    }
-};
-
 var RiskOfBias = function(data){
     this.data = data;
     this.unpack_scores();
@@ -245,6 +225,16 @@ RiskOfBiasScore.prototype = {
     }
 };
 
+var RiskOfBias_TblCompressed = function(riskofbias, div, options){
+    this.riskofbias = riskofbias;
+    this.$div = $(div);
+    this.build_table();
+
+    if (options && options.show_all_details_startup){
+        this.show_details_div();
+    }
+};
+
 RiskOfBias_TblCompressed.prototype = {
     build_table: function(){
         var self = this;
@@ -313,8 +303,19 @@ RiskOfBias_TblCompressed.prototype = {
         tfoot.append($('<tr>').append(
             $('<td>').text(txt).attr({'colspan': this.num_cols, 'class': 'muted'})));
         this.tbl.prepend(tfoot);
+    },
+};
+
+var StudyQualities_TblCompressed = function(study, div, options){
+    this.study = study;
+    this.empty_rob = _.isEmpty(this.study.riskofbias);
+    this.$div = $(div);
+    this.build_table();
+    if (options && options.show_all_details_startup){
+        this.show_details_div();
     }
-}
+};
+
 StudyQualities_TblCompressed.prototype = {
     build_table: function(){
         var self = this;
@@ -334,28 +335,31 @@ StudyQualities_TblCompressed.prototype = {
             show_all_text = 'Show all details';
 
         this.selected_div.fadeOut();
+        if (this.empty_rob){
 
-        if ($sel.data('robs')){
-            divs.push(RiskOfBiasScore.build_metric_comparison_div($sel.data('robs').criteria));
-        } else if ($sel.data('rob')) {
-            divs.push($sel.data('rob').build_details_div());
         } else {
-            // show all details
-            selected = this.study;
-            this.study.riskofbias.forEach(function(v1, i1){
-                divs.push(RiskOfBiasScore.build_metric_comparison_div(v1.criteria));
-            });
-            show_all_text = 'Hide all details';
-        }
-        divs.push(
-            $('<hr><a href="#" class="btn btn-small"><i class="icon-plus"></i> {0}</a>'.printf(show_all_text)).click(
-                function(e){e.preventDefault(); self.show_details_div();}));
+            if ($sel.data('robs')){
+                divs.push(RiskOfBiasScore.build_metric_comparison_div($sel.data('robs').criteria));
+            } else if ($sel.data('rob')) {
+                divs.push($sel.data('rob').build_details_div());
+            } else {
+                // show all details
+                selected = this.study;
+                this.study.riskofbias.forEach(function(v1, i1){
+                    divs.push(RiskOfBiasScore.build_metric_comparison_div(v1.criteria));
+                });
+                show_all_text = 'Hide all details';
+            }
+            divs.push(
+                $('<hr><a href="#" class="btn btn-small"><i class="icon-plus"></i> {0}</a>'.printf(show_all_text)).click(
+                    function(e){e.preventDefault(); self.show_details_div();}));
 
-        if (this.selected === selected){
-            this.selected = undefined;
-        } else {
-            this.selected = selected;
-            RiskOfBiasScore.display_details_divs(self.selected_div, divs);
+                    if (this.selected === selected){
+                        this.selected = undefined;
+                    } else {
+                        this.selected = selected;
+                        RiskOfBiasScore.display_details_divs(self.selected_div, divs);
+                    }
         }
     },
     build_tbody: function(){
@@ -380,12 +384,18 @@ StudyQualities_TblCompressed.prototype = {
     },
     build_footer: function(){
         var tfoot = $('<tfoot>'),
-            txt = 'Click on any cell above to view details.';
+            txt = 'Click on any cell above to view details.',
+            noDataText = '';
+        if (this.empty_rob && study.userIsTeamMember){
+            txt = '';
+            noDataText = 'Active Risk of Bias review or Conflict Resolution is not complete.';
+        }
         tfoot.append($('<tr>').append(
-            $('<td>').text(txt).attr({'colspan': this.num_cols, 'class': 'muted'})));
+            $('<td>').text(txt).attr({'colspan': this.num_cols, 'class': 'muted'}),
+            $('<td>').html('<h3>' + noDataText + '</h3>')));
         this.tbl.prepend(tfoot);
-    }
-}
+    },
+};
 
 
 
