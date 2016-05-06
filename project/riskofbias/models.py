@@ -148,6 +148,11 @@ class RiskOfBias(models.Model):
         self.active = False
         self.save()
 
+    @property
+    def is_complete(self):
+        return sum([(score.notes is not u'') for score in self.scores.all()])\
+            is self.scores.all().count()
+
 
 class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
