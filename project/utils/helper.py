@@ -41,6 +41,13 @@ def listToUl(list_):
         u"".join([u"<li>{0}</li>".format(d) for d in list_]))
 
 
+def tryParseInt(val, default=None):
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.

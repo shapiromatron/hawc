@@ -10,6 +10,7 @@ from assessment.api.views import (
     AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination)
 
 from . import models, serializers
+from utils.helper import tryParseInt
 
 
 class StudyFilters(django_filters.FilterSet):
@@ -56,7 +57,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
     @list_route()
     def rob_scores(self, request):
-        assessment_id = int(self.request.query_params.get('assessment_id', -1))
+        assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
         scores = models.Study.rob_scores(assessment_id)
         return Response(scores)
 

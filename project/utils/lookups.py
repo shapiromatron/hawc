@@ -4,6 +4,8 @@ from django.db.models import Q
 
 from selectable.base import ModelLookup
 
+from .helper import tryParseInt
+
 
 class DistinctStringLookup(ModelLookup):
     """
@@ -35,10 +37,7 @@ class RelatedLookup(ModelLookup):
     related_filter = None  # filter-string
 
     def get_query(self, request, term):
-        try:
-            id_ = int(request.GET.get('related', -1))
-        except ValueError:
-            id_ = -1
+        id_ = tryParseInt(request.GET.get('related'), -1)
         search_fields = [
             Q(**{field: term})
             for field in self.search_fields

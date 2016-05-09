@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import math
 from operator import xor
 import itertools
 
@@ -787,29 +788,32 @@ class Exposure(models.Model):
 
     @staticmethod
     def flat_complete_data_row(ser):
+        if ser is None:
+            ser = {}
+        units = ser.get("metric_units", {})
         return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["inhalation"],
-            ser["dermal"],
-            ser["oral"],
-            ser["in_utero"],
-            ser["iv"],
-            ser["unknown_route"],
-            ser["measured"],
-            ser["metric"],
-            ser["metric_units"]["id"],
-            ser["metric_units"]["name"],
-            ser["metric_description"],
-            ser["analytical_method"],
-            ser["sampling_period"],
-            ser["age_of_exposure"],
-            ser["duration"],
-            ser["exposure_distribution"],
-            ser["description"],
-            ser["created"],
-            ser["last_updated"],
+            ser.get("id"),
+            ser.get("url"),
+            ser.get("name"),
+            ser.get("inhalation"),
+            ser.get("dermal"),
+            ser.get("oral"),
+            ser.get("in_utero"),
+            ser.get("iv"),
+            ser.get("unknown_route"),
+            ser.get("measured"),
+            ser.get("metric"),
+            units.get("id"),
+            units.get("name"),
+            ser.get("metric_description"),
+            ser.get("analytical_method"),
+            ser.get("sampling_period"),
+            ser.get("age_of_exposure"),
+            ser.get("duration"),
+            ser.get("exposure_distribution"),
+            ser.get("description"),
+            ser.get("created"),
+            ser.get("last_updated"),
         )
 
     def copy_across_assessments(self, cw):
@@ -1254,6 +1258,27 @@ class GroupResult(models.Model):
             "result_group-created",
             "result_group-last_updated",
         )
+
+    @staticmethod
+    def get_ci(gr, variance_type):
+        # Attempt to get a upper and lower-confidence interval for estimate. If
+        #  they provided in model, use those. If not, then calculate 95% CI
+        #  from upper and lower confidence intervals.
+        #
+        # Note that this is a static method applied to serialized data.
+        if gr['lower_ci'] is not None and gr['upper_ci'] is not None:
+            return gr['lower_ci'], gr['upper_ci']
+
+        if gr['estimate'] is not None and gr['variance'] is not None:
+            est = gr['estimate']
+            if variance_type == 'SD':
+                change = 1.96 * gr['variance']
+                return est - change, est + change
+            elif variance_type in ('SE', 'SEM') and gr['n'] is not None:
+                change = 1.96 * gr['variance'] * math.sqrt(gr['n'])
+                return est - change, est + change
+
+        return None, None
 
     @staticmethod
     def flat_complete_data_row(ser):

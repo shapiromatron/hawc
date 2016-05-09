@@ -305,8 +305,13 @@ class ComparisonSetUpdate(BaseUpdateWithFormset):
     formset_factory = forms.GroupFormset
 
     def build_initial_formset_factory(self):
-        return forms.GroupFormset(queryset=self.object.groups.all()
-                                  .order_by('group_id'))
+        # make sure at least one group exists; we check because it's possible
+        # to delete as well as create objects in this view.
+        qs = self.object.groups.all().order_by('group_id')
+        fs = forms.GroupFormset(queryset=qs)
+        if qs.count() == 0:
+            fs.extra = 1
+        return fs
 
     def post_object_save(self, form, formset):
         group_id = 0

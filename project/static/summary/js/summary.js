@@ -1626,6 +1626,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .filter(applyEndpointFilters)
                 .map(processEndpoint)
+                .filter(function(d){return d.plotting.length>0;})
                 .value(),
             container_height = settings.height + 50,  // menu-spacing
             dose_scale = (settings.dose_isLog) ? 'log' : 'linear';

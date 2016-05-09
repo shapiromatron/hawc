@@ -1,6 +1,7 @@
 from selectable.registry import registry
 
 from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.helper import tryParseInt
 from . import models
 
 
@@ -16,10 +17,7 @@ class MetaResultHealthOutcomeLookup(DistinctStringLookup):
     search_fields = ('health_outcome__icontains', )
 
     def get_query(self, request, term):
-        try:
-            id_ = int(request.GET.get('related', -1))
-        except Exception:
-            id_ = -1
+        id_ = tryParseInt(request.GET.get('related'), -1)
         return self.model.objects.filter(
             protocol__study__assessment_id=id_,
             health_outcome__icontains=term)
@@ -31,10 +29,7 @@ class MetaResultExposureNameLookup(DistinctStringLookup):
     search_fields = ('exposure_name__icontains', )
 
     def get_query(self, request, term):
-        try:
-            id_ = int(request.GET.get('related', -1))
-        except Exception:
-            id_ = -1
+        id_ = tryParseInt(request.GET.get('related'), -1)
         return self.model.objects.filter(
             protocol__study__assessment_id=id_,
             exposure_name__icontains=term)
