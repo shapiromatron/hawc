@@ -159,7 +159,9 @@ _.extend(Math, {
         // Calculates the inverse t-distribution using a piecewise linear form for
         // the degrees of freedom specified. Assumes a two-tailed distribution with
         // an alpha of 0.05. Based on curve-fitting using Excel's T.INV.2T function
-        // with a maximum absolute error of 0.00924 and perent error of 0.33%.
+        // with a maximum absolute error of 0.00924 and percent error of 0.33%.
+        //
+        // Roughly equivalent to scipy.stats.t.ppf(0.975, df)
 
         if (df < 1){
             return NaN;

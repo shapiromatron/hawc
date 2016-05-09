@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from reversion import revisions as reversion
+from scipy.stats import t
 
 from assessment.models import Assessment, BaseEndpoint
 from study.models import Study
@@ -1269,13 +1270,20 @@ class GroupResult(models.Model):
         if gr['lower_ci'] is not None and gr['upper_ci'] is not None:
             return gr['lower_ci'], gr['upper_ci']
 
-        if gr['estimate'] is not None and gr['variance'] is not None:
+        if (
+            gr['estimate'] is not None and
+            gr['variance'] is not None and
+            gr['n'] is not None
+        ):
             est = gr['estimate']
+            var = gr['variance']
+            n = gr['n']
+            z = t.ppf(0.975, n)
             if variance_type == 'SD':
-                change = 1.96 * gr['variance']
+                change = z * var
                 return est - change, est + change
-            elif variance_type in ('SE', 'SEM') and gr['n'] is not None:
-                change = 1.96 * gr['variance'] * math.sqrt(gr['n'])
+            elif variance_type in ('SE', 'SEM'):
+                change = z * var * math.sqrt(n)
                 return est - change, est + change
 
         return None, None
