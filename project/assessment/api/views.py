@@ -7,6 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from assessment import models, serializers
 
+from utils.helper import tryParseInt
+
 
 class RequiresAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
@@ -32,7 +34,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if view.action in self.list_actions:
-            assessment_id = request.GET.get('assessment_id', None)
+            assessment_id = tryParseInt(request.GET.get('assessment_id'))
             if assessment_id is None:
                 raise RequiresAssessmentID
 
