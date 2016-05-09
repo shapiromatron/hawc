@@ -18,7 +18,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 from assessment.models import Assessment
-from .utils import tryParseInt
+from .helper import tryParseInt
 
 
 class MessageMixin(object):
