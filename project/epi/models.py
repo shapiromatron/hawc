@@ -787,29 +787,32 @@ class Exposure(models.Model):
 
     @staticmethod
     def flat_complete_data_row(ser):
+        if ser is None:
+            ser = {}
+        units = ser.get("metric_units", {})
         return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["inhalation"],
-            ser["dermal"],
-            ser["oral"],
-            ser["in_utero"],
-            ser["iv"],
-            ser["unknown_route"],
-            ser["measured"],
-            ser["metric"],
-            ser["metric_units"]["id"],
-            ser["metric_units"]["name"],
-            ser["metric_description"],
-            ser["analytical_method"],
-            ser["sampling_period"],
-            ser["age_of_exposure"],
-            ser["duration"],
-            ser["exposure_distribution"],
-            ser["description"],
-            ser["created"],
-            ser["last_updated"],
+            ser.get("id"),
+            ser.get("url"),
+            ser.get("name"),
+            ser.get("inhalation"),
+            ser.get("dermal"),
+            ser.get("oral"),
+            ser.get("in_utero"),
+            ser.get("iv"),
+            ser.get("unknown_route"),
+            ser.get("measured"),
+            ser.get("metric"),
+            units.get("id"),
+            units.get("name"),
+            ser.get("metric_description"),
+            ser.get("analytical_method"),
+            ser.get("sampling_period"),
+            ser.get("age_of_exposure"),
+            ser.get("duration"),
+            ser.get("exposure_distribution"),
+            ser.get("description"),
+            ser.get("created"),
+            ser.get("last_updated"),
         )
 
     def copy_across_assessments(self, cw):
