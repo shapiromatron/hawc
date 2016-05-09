@@ -9,6 +9,7 @@ from django import forms
 
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper, addPopupLink
+from .fetchers.ris import RisImporter
 
 from . import models, fetchers
 
@@ -163,12 +164,19 @@ class RISForm(SearchForm):
         fields = ('source', 'title', 'slug', 'description', 'import_file')
 
     def clean_import_file(self):
-        file_ = self.cleaned_data['import_file']
-        if file_.size > 1024*1024*10:
-            raise forms.ValidationError("Input file must be < 10 MB")
-        if file_.name[-4:] not in (".txt", ".ris", ):
-            raise forms.ValidationError('File must have an ".ris" or ".txt" file-extension')
-        return file_
+        fileObj = self.cleaned_data['import_file']
+        if fileObj.size > 1024*1024*10:
+            raise forms.ValidationError(
+                'Input file must be <10 MB')
+        if fileObj.name[-4:] not in (".txt", ".ris", ):
+            raise forms.ValidationError(
+                'File must have an ".ris" or ".txt" file-extension')
+        if not RisImporter.file_readable(fileObj):
+            raise forms.ValidationError(
+                'File cannot be successfully loaded. Are you sure this is a '
+                'valid RIS file? If you are, please contact us and we will '
+                'attempt to fix our import to ensure it works as expected.')
+        return fileObj
 
     def clean(self):
         """
