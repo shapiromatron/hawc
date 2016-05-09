@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import math
 from operator import xor
 import itertools
 
@@ -1257,6 +1258,27 @@ class GroupResult(models.Model):
             "result_group-created",
             "result_group-last_updated",
         )
+
+    @staticmethod
+    def get_ci(gr, variance_type):
+        # Attempt to get a upper and lower-confidence interval for estimate. If
+        #  they provided in model, use those. If not, then calculate 95% CI
+        #  from upper and lower confidence intervals.
+        #
+        # Note that this is a static method applied to serialized data.
+        if gr['lower_ci'] is not None and gr['upper_ci'] is not None:
+            return gr['lower_ci'], gr['upper_ci']
+
+        if gr['estimate'] is not None and gr['variance'] is not None:
+            est = gr['estimate']
+            if variance_type == 'SD':
+                change = 1.96 * gr['variance']
+                return est - change, est + change
+            elif variance_type in ('SE', 'SEM') and gr['n'] is not None:
+                change = 1.96 * gr['variance'] * math.sqrt(gr['n'])
+                return est - change, est + change
+
+        return None, None
 
     @staticmethod
     def flat_complete_data_row(ser):
