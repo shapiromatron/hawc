@@ -2,7 +2,7 @@
 
 
 {% block title %}
-  {{assessment}} | {{study}} | All Risk-of-bias | HAWC
+  {{assessment}} | {{object.study}} | All Risk-of-bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
     <li class="active"> All Risk-of-bias <span class="divider">/</span></li>
   {% endblock %}
@@ -34,13 +34,21 @@
     {% endif %}
   </h2>
 
-  <div id="rob_tbl"></div>
+  <div id="robAllTable"></div>
 
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    window.study = new Study({{study.get_json|safe}})
-    window.sq_tbl = new RiskOfBiasAll_TblCompressed(study, $('#rob_tbl'), {'show_all_details_startup': true});
-  </script>
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}"
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.app.robAllTableStartup();
+    });
+</script>
 {% endblock extrajs %}
