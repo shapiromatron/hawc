@@ -5,7 +5,7 @@ import EffectSelector from './EffectSelector';
 import ScoreSlider from './ScoreSlider';
 import ApplyFilters from './ApplyFilters';
 import EndpointCardContainer from './EndpointCardContainer';
-import { loadConfig } from 'robVisual/actions/Config';
+import { loadConfig } from 'shared/actions/Config';
 
 
 class Root extends Component {
@@ -21,7 +21,7 @@ class Root extends Component {
                 <div>
                     <h1>Endpoints by study risk of bias score</h1>
                     <p className='help-text'>
-                        This <b>prototype</b> is an exmaple of showing different
+                        This <b>prototype</b> is an example of showing different
                         effects in the database filtered by risk of bias score.
                         A higher risk of bias score indicates a greater number
                         of low risk-of bias responses.
@@ -29,7 +29,7 @@ class Root extends Component {
                     <EffectSelector />
                     <ScoreSlider />
                     <ApplyFilters />
-                    <EndpointCardContainer/>
+                    <EndpointCardContainer />
                 </div>
             </Provider>
         );

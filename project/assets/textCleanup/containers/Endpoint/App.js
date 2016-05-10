@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { fetchObjectsIfNeeded } from 'textCleanup/actions/Endpoint';
 import EndpointList from 'textCleanup/components/Endpoint/EndpointList';
-import Loading from 'textCleanup/components/Loading';
+import Loading from 'shared/components/Loading';
 
 
 class Endpoint extends Component {

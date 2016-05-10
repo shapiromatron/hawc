@@ -1,5 +1,4 @@
-import * as types from 'textCleanup/constants/ActionTypes';
-
+import * as types from 'shared/constants/ActionTypes';
 
 export function loadConfig(){
     return { type: types.CF_LOAD };

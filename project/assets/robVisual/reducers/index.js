@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import filter from './Filter';
-import config from './Config';
+import config from 'shared/reducers/Config';
 
 
 const rootReducer = combineReducers({
