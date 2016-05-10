@@ -2554,13 +2554,13 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             svgH = parseInt(svg.attr('height'), 10),
             x = this.data.settings.legend_x,
             y = this.data.settings.legend_y,
-            fields = _.map(RiskOfBias.score_values, function(v){
+            fields = _.map(RiskOfBiasScore.score_values, function(v){
                 return {
                     value:          v,
-                    color:          RiskOfBias.score_shades[v],
-                    text_color:     String.contrasting_color(RiskOfBias.score_shades[v]),
-                    text:           RiskOfBias.score_text[v],
-                    description:    RiskOfBias.score_text_description[v],
+                    color:          RiskOfBiasScore.score_shades[v],
+                    text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
+                    text:           RiskOfBiasScore.score_text[v],
+                    description:    RiskOfBiasScore.score_text_description[v],
                 }
             }),
             width = 22,
@@ -2771,7 +2771,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale.ordinal().range(_.values(RiskOfBias.score_shades))
+            color_scale: d3.scale.ordinal().range(_.values(RiskOfBiasScore.score_shades))
         });
     },
     processData: function(){

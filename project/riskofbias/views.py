@@ -148,7 +148,7 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
                 for rob_form in formset.forms:
                     activate_robs = rob_form.instance.riskofbiases\
                                         .filter(active=False, final=False)\
-                                        .order_by('last_updated')[:2]
+                                        .order_by('last_updated')[:n]
                     for rob in activate_robs:
                         rob.activate()
 

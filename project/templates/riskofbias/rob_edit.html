@@ -91,8 +91,8 @@
       $('.score').parent().append('<br><br><div class="rob_score"></div>');
       var change_gradient = function(){
         $(this).parent().find('.rob_score')
-          .css('background-color', RiskOfBias.score_shades[this.value])
-          .text(RiskOfBias.score_text[this.value]);
+          .css('background-color', RiskOfBiasScore.score_shades[this.value])
+          .text(RiskOfBiasScore.score_text[this.value]);
       };
       $('.score').each(change_gradient);
       $('.score').on('change', change_gradient);
