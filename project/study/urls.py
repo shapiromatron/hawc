@@ -9,7 +9,7 @@ router = DefaultRouter()
 router.register(r'study', api.Study, base_name="study")
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(router.urls, namespace='api')),
 
     # study
     url(r'^assessment/(?P<pk>\d+)/$',

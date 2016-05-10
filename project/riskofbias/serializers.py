@@ -5,6 +5,19 @@ from utils.helper import SerializerHelper
 from . import models
 
 
+class AssessmentMetricSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+
+
+class AssessmentDomainSerializer(serializers.ModelSerializer):
+    metrics = AssessmentMetricSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBiasDomain
+
+
 class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -40,6 +53,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'author', 'conflict_resolution', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'author', 'final', 'study', 'created', 'last_updated', 'scores')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

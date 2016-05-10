@@ -188,6 +188,11 @@ class VisualizationDelete(BaseDelete):
         return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
 
 
+class RobFilter(BaseDetail):
+    model = Assessment
+    template_name = 'summary/robFilter.html'
+
+
 # DATA-PIVOT
 class ExcelUnicode(TemplateView):
     template_name = "summary/datapivot_save_as_unicode_modal.html"

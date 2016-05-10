@@ -1,11 +1,15 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+router = DefaultRouter()
+router.register(r'domain', api.RiskOfBiasDomain, base_name='domain')
 
 urlpatterns = [
-    url(r'^assessment/(?P<pk>\d+)/studies/$',
-        views.ARobList.as_view(),
-        name='list'),
+    url(r'^api/', include(router.urls, namespace='api')),
+
     # assessment risk-of-bias
     url(r'^assessment/(?P<pk>\d+)/$',
         views.ARoBDetail.as_view(),
@@ -13,12 +17,18 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/edit/$',
         views.ARoBEdit.as_view(),
         name='arob_update'),
+    url(r'^assessment/(?P<pk>\d+)/copy/$',
+        views.ARoBCopy.as_view(),
+        name='arob_copy'),
     url(r'^assessment/(?P<pk>\d+)/report/$',
         views.StudyRoBExport.as_view(),
         name='bias_export'),
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
         views.RoBFixedReport.as_view(),
         name='rob_fixedreport'),
+    url(r'^assessment/(?P<pk>\d+)/studies/$',
+        views.ARobList.as_view(),
+        name='list'),
 
     url(r'^assessment/(?P<pk>\d+)/reviewers/$',
         views.ARoBReviewersList.as_view(),

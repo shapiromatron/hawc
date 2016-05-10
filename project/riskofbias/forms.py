@@ -138,39 +138,40 @@ class RoBReviewersForm(forms.ModelForm):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
-        robs = self.instance.get_active_riskofbiases(with_conflict=False)
+        robs = self.instance.get_active_riskofbiases(with_final=False)
 
         try:
             reviewers = range(self.instance.assessment.rob_settings.number_of_reviewers)
         except ObjectDoesNotExist:
             reviewers = range(0)
-        for i in reviewers:
-            author_field = "author-{}".format(i)
-            self.fields[author_field] = selectable.AutoCompleteSelectField(
-                lookup_class=AssessmentTeamMemberOrHigherLookup,
-                label='Reviewer',
-                widget=selectable.AutoCompleteSelectWidget)
-            self.fields[author_field].widget.update_query_parameters(
-                {'related': assessment_id})
-            try:
-                self.fields[author_field].initial = robs[i].author.id
-            except IndexError:
-                pass
 
-        self.fields['conflict_author'] = selectable.AutoCompleteSelectField(
+        if len(reviewers) > 1:
+            for i in reviewers:
+                author_field = "author-{}".format(i)
+                self.fields[author_field] = selectable.AutoCompleteSelectField(
+                    lookup_class=AssessmentTeamMemberOrHigherLookup,
+                    label='Reviewer',
+                    widget=selectable.AutoCompleteSelectWidget)
+                self.fields[author_field].widget.update_query_parameters(
+                    {'related': assessment_id})
+                try:
+                    self.fields[author_field].initial = robs[i].author.id
+                except IndexError:
+                    pass
+
+        self.fields['final_author'] = selectable.AutoCompleteSelectField(
             lookup_class=AssessmentTeamMemberOrHigherLookup,
-            label='Conflict Resolution Reviewer',
+            label='Final Reviewer',
             required=False,
             widget=selectable.AutoCompleteSelectWidget)
-        self.fields['conflict_author'].widget.update_query_parameters(
+        self.fields['final_author'].widget.update_query_parameters(
             {'related': assessment_id})
         try:
-            self.fields['conflict_author'].initial = \
-                self.instance.get_conflict_resolution().author.id
+            self.fields['final_author'].initial = \
+                self.instance.get_final().author.id
         except AttributeError:
             pass
-        if len(reviewers) > 1:
-            self.fields['conflict_author'].required = True
+        self.fields['final_author'].required = True
 
     def save(self, commit=True):
         study = super(RoBReviewersForm, self).save(commit)
@@ -183,7 +184,7 @@ class RoBReviewersForm(forms.ModelForm):
             new_author = self.cleaned_data[field]
             options = {
                 'study': study,
-                'conflict_resolution': bool(field is 'conflict_author')}
+                'final': bool(field is 'final_author')}
 
             if self.fields[field].initial:
                 deactivate_rob = models.RiskOfBias.objects.get(
@@ -198,6 +199,38 @@ class RoBReviewersForm(forms.ModelForm):
                 if created:
                     activate_rob.build_scores(study.assessment, study)
                 activate_rob.activate()
+
+
+class RiskOfBiasCopyForm(forms.Form):
+    assessment = forms.ModelChoiceField(
+        label="Existing assessment",
+        queryset=Assessment.objects.all(), empty_label=None)
+
+    def setHelper(self):
+        inputs = {
+            "legend_text": u"Copy risk of bias approach from existing assessments",
+            "help_text": u"Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.",
+            "cancel_url": reverse('riskofbias:arob_detail', args=[self.assessment.id])
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        helper.form_class = None
+        return helper
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        self.assessment = kwargs.pop('assessment', None)
+        super(RiskOfBiasCopyForm, self).__init__(*args, **kwargs)
+        self.fields['assessment'].widget.attrs['class'] = 'span12'
+        self.fields['assessment'].queryset = Assessment\
+            .get_viewable_assessments(user, exclusion_id=self.assessment.id)
+        self.helper = self.setHelper()
+
+    def copy_riskofbias(self):
+        models.RiskOfBias\
+            .copy_riskofbias(
+                self.assessment,
+                self.cleaned_data['assessment'])
 
 RoBFormSet = modelformset_factory(
     models.RiskOfBiasScore,

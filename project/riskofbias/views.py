@@ -1,13 +1,16 @@
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.views.generic.edit import FormView
 
 from assessment.models import Assessment
 from riskofbias import exports, reports
 from study.models import Study
 from study.views import StudyList
-from utils.views import (BaseDetail, BaseDelete, BaseUpdate, BaseCreate,
-                         BaseList, BaseUpdateWithFormset, BaseCreateWithFormset,
-                         GenerateFixedReport)
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
+                         BaseDelete, BaseList, BaseUpdate, BaseUpdateWithFormset,
+                         GenerateFixedReport, MessageMixin,
+                         ProjectManagerOrHigherMixin)
 
 from . import models, forms
 
@@ -29,6 +32,34 @@ class ARoBDetail(BaseList):
 
 class ARoBEdit(ARoBDetail):
     crud = 'Update'
+
+
+class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+    model = models.RiskOfBiasDomain
+    template_name = "riskofbias/arob_copy.html"
+    form_class = forms.RiskOfBiasCopyForm
+    success_message = 'Risk of bias settings have been updated.'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.assessment
+
+    def dispatch(self, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        return super(ARoBCopy, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(ARoBCopy, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['assessment'] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        form.copy_riskofbias()
+        return super(ARoBCopy, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_detail',
+                            kwargs={'pk': self.assessment.pk})
 
 
 class ARoBReviewersList(BaseList):
@@ -68,13 +99,18 @@ class ARoBReviewersCreate(BaseCreateWithFormset):
 
 
 class ARoBReviewersUpdate(BaseUpdateWithFormset):
+    """
+    Creates the specified number of RiskOfBiases, one for each reviewer in the
+    form. If the `number of reviewers` field is 1, then the only review is also
+    the final review. If the `number of reviewers` field is more than one, then
+    a final review is created in addition to the `number of reviewers`
+    """
     model = Assessment
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
     queryset = Assessment.objects.all()
     success_message = 'Risk of Bias reviewers updated.'
     template_name = "riskofbias/arob_reviewers_form.html"
-
 
     def build_initial_formset_factory(self):
         return self.formset_factory(
@@ -84,9 +120,9 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
         # if number_of_reviewers changes, change required on fields
         if 'number_of_reviewers' in form.changed_data:
             n = int(form.data['number_of_reviewers'])
-            required_fields = ['reference_ptr']
-            if n > 1:
-                required_fields.append('conflict_author')
+            required_fields = ['reference_ptr', 'final_author']
+            if n is 1:
+                n = 0
             [required_fields.append('author-{}'.format(i)) for i in range(n)]
             for rob_form in formset.forms:
                 for field in rob_form.fields:
@@ -94,15 +130,29 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
                         rob_form.fields[field].required = False
 
     def post_object_save(self, form, formset):
-        # deactivate robs if number_of_reviewers is lowered.
         if 'number_of_reviewers' in form.changed_data:
             n = form.cleaned_data['number_of_reviewers']
-            for rob_form in formset.forms:
-                deactivate_robs = rob_form.instance\
-                                          .get_active_riskofbiases()\
-                                          .filter(conflict_resolution=False)[n:]
-                for rob in deactivate_robs:
-                    rob.deactivate()
+            old_n = form.fields['number_of_reviewers'].initial
+            n_diff = n - old_n
+            # deactivate robs if number_of_reviewers is lowered.
+            if n_diff < 0:
+                if n is 1:
+                    n = 0
+                for rob_form in formset.forms:
+                    deactivate_robs = rob_form.instance\
+                                      .get_active_riskofbiases(with_final=False)[n:]
+                    for rob in deactivate_robs:
+                        rob.deactivate()
+            # if n_of_r is increased, activate inactive robs with most recent last_updated
+            else:
+                for rob_form in formset.forms:
+                    activate_robs = rob_form.instance.riskofbiases\
+                                        .filter(active=False, final=False)\
+                                        .order_by('last_updated')[:2]
+                    for rob in activate_robs:
+                        rob.activate()
+
+
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_reviewers',
@@ -282,7 +332,7 @@ class RoBsDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super(RoBsDetail, self).get_context_data(**kwargs)
         context['reviews'] = self.object.get_user_rob(self.request.user)
-        context['conflicts'] = self.object.get_user_rob(self.request.user, conflict=True)
+        context['finals'] = self.object.get_user_rob(self.request.user, final=True)
         return context
 
 

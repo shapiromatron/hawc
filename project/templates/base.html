@@ -1,5 +1,6 @@
 {% load compress %}
 {% load server_role %}
+{% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en-us">
@@ -143,6 +144,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}summary/js/smart_tags.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}comments/js/comments.js"></script>
     {% endcompress %}
+    {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}
   </body>

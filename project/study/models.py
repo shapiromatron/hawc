@@ -259,37 +259,45 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
-    @property
-    def qualities(self):
-        if self.get_active_riskofbiases().count() is 1:
-            return self.get_active_riskofbiases().first().scores.all().prefetch_related('metric', 'metric__domain')
-        else:
-            return self.riskofbiases.filter(conflict_resolution=True, active=True).scores.all().prefetch_related('metric', 'metric__domain')
-
-    def get_conflict_resolution(self):
+    def get_final(self):
         try:
-            return self.riskofbiases.get(conflict_resolution=True, active=True)
+            return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist:
             return None
         except MultipleObjectsReturned:
             raise ValidationError('Study {} has multiple active risk of bias reviews '
-                'marked as the conflict resolution. there should not be more '
-                'than one active conflict resolution per study.'.format(self.short_citation))
+                'marked as the final review. there should not be more '
+                'than one active final review per study.'.format(self.short_citation))
 
-    def get_active_riskofbiases(self, with_conflict=True):
-        if with_conflict:
+    def get_active_riskofbiases(self, with_final=True):
+        if with_final:
             return self.riskofbiases\
                        .filter(active=True)\
-                       .order_by('conflict_resolution', 'last_updated')
+                       .order_by('final', 'last_updated')
         else:
             return self.riskofbiases\
-                       .filter(active=True, conflict_resolution=False)\
+                       .filter(active=True, final=False)\
                        .order_by('last_updated')
 
-    def get_user_rob(self, user, conflict=False):
+    def get_user_rob(self, user, final=False):
         return self.riskofbiases.filter(
             author=user,
-            conflict_resolution=conflict)
+            final=final)
+
+    @property
+    def qualities(self):
+        return self.riskofbiases.filter(final=True, active=True).first().scores.all().prefetch_related('metric', 'metric__domain')
+
+    @classmethod
+    def rob_scores(cls, assessment_id):
+        return Study.objects.filter(assessment_id=assessment_id)\
+            .annotate(final_score=models.Sum(
+                models.Case(
+                    models.When(riskofbiases__active=True,
+                                riskofbiases__final=True,
+                                then='riskofbiases__scores__score'),
+                    default=0)))\
+            .values('id', 'short_citation', 'final_score')
 
 
 class Attachment(models.Model):

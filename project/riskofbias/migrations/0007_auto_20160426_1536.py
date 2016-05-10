@@ -17,6 +17,7 @@ def createRoBAssessment(apps, schema_editor):
 def setDefaultRoBAuthor(apps, schema_editor):
     RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
     for rob in RiskOfBias.objects.all():
+        rob.conflict_resolution = True
         rob.author = rob.study.assessment.project_manager.first()
         rob.save()
 

@@ -39,11 +39,11 @@
             <li><a href="{% url 'riskofbias:rob_delete' review.pk %}">Delete Review {{forloop.counter}}</a></li>
             {% endfor %}
             {% endif %}
-            {% if conflicts %}
-            {% for conflict in conflicts %}
+            {% if finals %}
+            {% for final in finals %}
             <li class="disabled"><a tabindex="-1" href="#">Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_update' conflict.pk %}">Update Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_delete' conflict.pk %}">Delete Conflict Resolution</a></li>
+            <li><a href="{% url 'riskofbias:rob_update' final.pk %}">Update Conflict Resolution</a></li>
+            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Conflict Resolution</a></li>
             {% endfor %}
             {% endif %}
       </div>

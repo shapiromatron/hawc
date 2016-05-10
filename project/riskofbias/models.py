@@ -11,7 +11,6 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from myuser.models import HAWCUser
-from study.models import Study
 from utils.helper import cleanHTML, SerializerHelper
 
 
@@ -104,16 +103,16 @@ class RiskOfBiasMetric(models.Model):
 
 
 class RiskOfBias(models.Model):
-    study = models.ForeignKey(Study, related_name='riskofbiases', null=True)
+    study = models.ForeignKey('study.Study', related_name='riskofbiases', null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    conflict_resolution = models.BooleanField(default=False)
+    final = models.BooleanField(default=False, db_index=True)
     author = models.ForeignKey(HAWCUser, related_name='riskofbiases')
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
-        ordering = ('conflict_resolution',)
+        ordering = ('final',)
 
     def __unicode__(self):
         return self.study.short_citation
@@ -152,6 +151,24 @@ class RiskOfBias(models.Model):
     def is_complete(self):
         return sum([(score.notes is not u'') for score in self.scores.all()])\
             is self.scores.all().count()
+
+    @classmethod
+    def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
+        # delete existing study quality metrics and domains
+        copy_to_assessment\
+            .rob_domains.all()\
+            .delete()
+
+        # copy domains and metrics to assessment
+        for domain in copy_from_assessment.rob_domains.all():
+            metrics = list(domain.metrics.all())  # force evaluation
+            domain.id = None
+            domain.assessment = copy_to_assessment
+            domain.save()
+            for metric in metrics:
+                metric.id = None
+                metric.domain = domain
+                metric.save()
 
 
 class RiskOfBiasScore(models.Model):

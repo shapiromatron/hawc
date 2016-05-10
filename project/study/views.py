@@ -1,23 +1,15 @@
-import json
-import itertools
-
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.apps import apps
-from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, FormView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import FormView
 
 from assessment.models import Assessment
 from lit.models import Reference
-from riskofbias import exports, reports
-from utils.views import (MessageMixin, CanCreateMixin,
-                         AssessmentPermissionsMixin, BaseDetail, BaseDelete,
+from utils.views import (MessageMixin, BaseDetail, BaseDelete,
                          BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList, GenerateReport, GenerateFixedReport,
-                         TeamMemberOrHigherMixin)
+                         BaseList, GenerateReport, TeamMemberOrHigherMixin)
 
 from . import models, forms
 
