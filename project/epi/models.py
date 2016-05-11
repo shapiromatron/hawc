@@ -1261,32 +1261,44 @@ class GroupResult(models.Model):
         )
 
     @staticmethod
-    def get_ci(gr, variance_type):
-        # Attempt to get a upper and lower-confidence interval for estimate. If
-        #  they provided in model, use those. If not, then calculate 95% CI
-        #  from upper and lower confidence intervals.
-        #
-        # Note that this is a static method applied to serialized data.
-        if gr['lower_ci'] is not None and gr['upper_ci'] is not None:
-            return gr['lower_ci'], gr['upper_ci']
+    def getConfidenceIntervals(variance_type, groups):
+        """
+        Expects a dictionary of endpoint groups and the endpoint variance-type.
+        Appends results to the dictionary for each endpoint-group.
 
-        if (
-            gr['estimate'] is not None and
-            gr['variance'] is not None and
-            gr['n'] is not None
-        ):
-            est = gr['estimate']
-            var = gr['variance']
-            n = gr['n']
-            z = t.ppf(0.975, n)
-            if variance_type == 'SD':
-                change = z * var
-                return est - change, est + change
-            elif variance_type in ('SE', 'SEM'):
-                change = z * var * math.sqrt(n)
-                return est - change, est + change
+        Calculates a 95% confidence interval for the percent-difference from
+        control, taking into account variance from both groups using a
+        Fisher Information Matrix, assuming independent normal distributions.
+        """
 
-        return None, None
+        for grp in groups:
+            lower_ci = grp.get('lower_ci')
+            upper_ci = grp.get('upper_ci')
+
+            if (
+                    lower_ci is None and
+                    lower_ci is None and
+                    grp['estimate'] is not None and
+                    grp['variance'] is not None and
+                    grp['n'] is not None and
+                    grp['n'] > 0
+               ):
+                    est = grp['estimate']
+                    var = grp['variance']
+                    n = grp['n']
+                    z = t.ppf(0.975, max(n-1, 1))
+                    change = None
+
+                    if variance_type == 'SD':
+                        change = z * var
+                    elif variance_type in ('SE', 'SEM'):
+                        change = z * var * math.sqrt(n)
+
+                    if change is not None:
+                        lower_ci = round(est - change, 2)
+                        upper_ci = round(est + change, 2)
+
+                    grp.update(lower_ci=lower_ci, upper_ci=upper_ci)
 
     @staticmethod
     def flat_complete_data_row(ser):

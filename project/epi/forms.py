@@ -9,6 +9,7 @@ from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
+from utils.helper import tryParseInt
 
 from . import models, lookups
 
@@ -782,13 +783,14 @@ class BaseGroupResultFormset(BaseModelFormSet):
         if mfs > 1:
             raise forms.ValidationError("Only one-group can be the main-finding.")
 
-        # Ensure all groups in group collection are accounted for, and no other
-        # groups exist
-        group_ids = [form.cleaned_data['group'].id for form in self.forms]
         if self.result:
             comparison_set_id = self.result.comparison_set_id
         else:
-            comparison_set_id = int(self.data['comparison_set'])
+            comparison_set_id = tryParseInt(self.data['comparison_set'], -1)
+
+        # Ensure all groups in group collection are accounted for,
+        # and no other groups exist
+        group_ids = [form.cleaned_data['group'].id for form in self.forms]
         selectedGroups = models.Group.objects\
             .filter(id__in=group_ids, comparison_set_id=comparison_set_id)
         allGroups = models.Group.objects\

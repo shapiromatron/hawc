@@ -476,13 +476,13 @@ ResultGroup.prototype = {
             methods = {
                 name: this._build_group_anchor.bind(this, fn),
                 n: function(){
-                    return d.n || "-";
+                    return (_.isFinite(d.n)) ? d.n : "-";
                 },
                 estimate: function(){
-                    return d.estimate || "-";
+                    return (_.isFinite(d.estimate)) ? d.estimate : "-";
                 },
                 variance: function(){
-                    return d.variance || "-";
+                    return (_.isFinite(d.variance)) ? d.variance : "-";
                 },
                 ci: function(){
                     return (d.lower_ci && d.upper_ci) ?

@@ -154,8 +154,6 @@ class OutcomeDataPivot(FlatFileExporter):
                 ])
 
                 for rg in res['results']:
-                    lower_ci, upper_ci = models.GroupResult\
-                        .get_ci(rg, res['variance_type'])
                     row_copy2 = list(row_copy)
                     row_copy2.extend([
                         rg['group']['group_id'],
@@ -167,8 +165,8 @@ class OutcomeDataPivot(FlatFileExporter):
                         rg['id'],  # repeat for data-pivot key
                         rg['n'],
                         rg['estimate'],
-                        lower_ci,
-                        upper_ci,
+                        rg['lower_ci'],
+                        rg['upper_ci'],
                         rg['variance'],
                         rg['p_value_text'],
                         rg['p_value'],

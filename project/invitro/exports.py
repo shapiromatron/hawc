@@ -107,7 +107,7 @@ class DataPivotEndpoint(FlatFileExporter):
             diffs = [eg['difference_control'] for eg in ser['groups']]
             sigs = [eg['significant_control'] for eg in ser['groups']]
 
-            if doses[0] == 0:
+            if doses and doses[0] == 0:
                 doses.pop(0)
                 diffs.pop(0)
                 sigs.pop(0)
