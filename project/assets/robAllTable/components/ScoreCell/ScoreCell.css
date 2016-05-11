@@ -1,0 +1,11 @@
+.score-cell {
+    flex: 1;
+    padding: 4px 5px;
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+    border: 1px solid white;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}

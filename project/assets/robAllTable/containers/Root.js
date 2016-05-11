@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
+import AggregateGraph from './AggregateGraph';
 
 
 class Root extends Component {
@@ -16,6 +17,7 @@ class Root extends Component {
             <Provider store={store}>
                 <div>
                     <h1>Show all reviews</h1>
+                <AggregateGraph />
                 </div>
             </Provider>
         );

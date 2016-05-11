@@ -42,6 +42,10 @@
 <script id="config" type="text/json" charset="utf-8">
     {
         "assessment_id": "{{ assessment.id }}",
+        "study": {
+            "id": "{{ object.study.pk }}",
+            "url": "{% url 'study:api:study-list' %}"
+        },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }
