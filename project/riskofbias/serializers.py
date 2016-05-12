@@ -58,6 +58,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'final', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
