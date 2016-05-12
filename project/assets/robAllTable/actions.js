@@ -17,10 +17,10 @@ function receiveStudy(study){
     };
 }
 
-export function fetchStudy(id){
+export function fetchStudyIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
-        if (state.isFetching) return;
+        if (state.isFetching || state.itemsLoaded) return;
         dispatch(requestStudy());
         return fetch(
                 h.getObjectURL(
