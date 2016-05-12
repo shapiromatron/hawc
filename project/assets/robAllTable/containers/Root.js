@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
 import AggregateGraph from './AggregateGraph';
+import RiskOfBiasDisplay from './RiskOfBiasDisplay';
 
 
 class Root extends Component {
@@ -18,6 +19,7 @@ class Root extends Component {
                 <div>
                     <h1>Show all reviews</h1>
                 <AggregateGraph />
+                <RiskOfBiasDisplay />
                 </div>
             </Provider>
         );
