@@ -1,4 +1,5 @@
-.aggregate-graph {
+.aggregate-flex {
     display: flex;
     flex-flow: row;
+    margin-bottom: 20px;
 }

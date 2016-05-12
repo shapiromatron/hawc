@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudy } from 'robAllTable/actions';
+import { fetchStudyIfNeeded } from 'robAllTable/actions';
 import Loading from 'shared/components/Loading';
 import DomainCell from 'robAllTable/components/DomainCell';
 import './AggregateGraph.css';
@@ -11,7 +11,7 @@ class AggregateGraph extends Component {
 
     componentWillMount(){
         let { dispatch, study_id } = this.props;
-        dispatch(fetchStudy(study_id));
+        dispatch(fetchStudyIfNeeded(study_id));
     }
 
     format_qualities(){
@@ -31,14 +31,16 @@ class AggregateGraph extends Component {
         let { itemsLoaded, qualities } = this.props;
         if (!itemsLoaded) return <Loading />;
         let domains = this.format_qualities();
-        console.log("domains", domains);
         return (
             <div className='aggregate-graph'>
+                <div className='aggregate-flex'>
+
                     {_.map(domains, (domain) => {
                         return <DomainCell key={domain.key}
-                                           domain={domain}
-                                           domain_n={qualities.length} />;
+                                           domain={domain} />;
                     })}
+                </div>
+                <div className='footer muted'>Click on any cell above to view details.</div>
             </div>
         );
     }

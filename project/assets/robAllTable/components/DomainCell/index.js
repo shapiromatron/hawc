@@ -7,10 +7,9 @@ import './DomainCell.css';
 class DomainCell extends Component {
 
     render(){
-        let { domain, domain_n } = this.props,
-            cellLength = domain.values.length / domain_n;
+        let { domain } = this.props;
         return (
-            <div className='domain-cell' style={{flex: cellLength}}>
+            <div className='domain-cell' style={{flex: domain.values.length}}>
                 <div className='header-box'>
                     <span className='domain-header'>{domain.key}</span>
                 </div>
