@@ -51,8 +51,13 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(read_only=True, many=True)
 
+    def to_representation(self, instance):
+        ret = super(RiskOfBiasSerializer, self).to_representation(instance)
+        ret['author'] = instance.author.get_full_name()
+        return ret
+
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'author', 'final', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'final', 'study', 'created', 'last_updated', 'scores')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
