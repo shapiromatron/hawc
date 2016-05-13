@@ -17,6 +17,29 @@ function receiveStudy(study){
     };
 }
 
+function formatRiskofBiases(study){
+    let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;});
+    let domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
+        let author = riskofbias.author;
+        return _.map(riskofbias.scores, (score) => {
+            return Object.assign({}, score, {
+                author,
+                domain_name: score.metric.domain.name,
+                domain_id: score.metric.domain.id,
+            });
+        });
+    }));
+
+    let riskofbiases = d3.nest()
+        .key((d) => { return d.metric.domain.name;})
+        .key((d) => {return d.metric.metric;})
+        .entries(domains).reverse();
+
+    return Object.assign({}, study, {
+        riskofbiases,
+    });
+}
+
 export function fetchStudyIfNeeded(id){
     return (dispatch, getState) => {
         let state = getState();
@@ -29,6 +52,7 @@ export function fetchStudyIfNeeded(id){
                     id,
                     state.config.assessment_id), h.fetchGet)
             .then((response) => response.json())
+            .then((json) => formatRiskofBiases(json))
             .then((json) => dispatch(receiveStudy(json)))
             .catch((ex) => console.error('Study parsing failed', ex));
     };

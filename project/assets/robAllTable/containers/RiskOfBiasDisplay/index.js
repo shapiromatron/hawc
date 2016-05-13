@@ -26,32 +26,13 @@ class RiskOfBiasDisplay extends Component {
         }
     }
 
-    format_riskofbiases(){
-        let riskofbiases = _.filter(this.props.active, (rob) => {return rob.active === true;});
-        let domains = _.flatten(_.map(riskofbiases, (riskofbias) => {
-            let author = riskofbias.author;
-            return _.map(riskofbias.scores, (score) => {
-                return Object.assign({}, score, {
-                    author,
-                    domain_name: score.metric.domain.name,
-                    domain_id: score.metric.domain.id,
-                });
-            });
-        }));
-        return d3.nest()
-            .key((d) => { return d.metric.domain.name;})
-            .key((d) => {return d.metric.metric;})
-            .entries(domains).reverse();
-    }
-
     render(){
         let { itemsLoaded, active } = this.props;
         if (!itemsLoaded) return <Loading />;
-        let domains = this.format_riskofbiases();
-        console.log("domains", domains);
+
         return (
             <div className='riskofbias-display'>
-                {_.map(domains, (domain) => {
+                {_.map(active, (domain) => {
                     return <DomainDisplay key={domain.key}
                                        domain={domain}
                                        domain_n={active.length} />;
