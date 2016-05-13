@@ -29,6 +29,10 @@
           "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",
           "endpoint": "IVEndpoint"
         },
+        "in-vitro-chemical": {
+          "url": "{% url 'invitro:api:ivchemical-cleanup-list' %}",
+          "endpoint": "IVChemical"
+        },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }

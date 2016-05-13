@@ -10,6 +10,7 @@ router.register(r'celltype', api.IVCellType, base_name="celltype")
 router.register(r'experiment', api.IVExperiment, base_name="experiment")
 router.register(r'endpoint', api.IVEndpoint, base_name="endpoint")
 router.register(r'ivendpoint-cleanup', api.IVEndpointCleanup, base_name='ivendpoint-cleanup')
+router.register(r'ivchemical-cleanup', api.IVChemicalCleanup, base_name='ivchemical-cleanup')
 
 urlpatterns = [
 

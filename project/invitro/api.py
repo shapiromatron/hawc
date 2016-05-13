@@ -33,3 +33,10 @@ class IVEndpoint(AssessmentViewset):
 class IVEndpointCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.IVEndpointCleanupFieldsSerializer
     model = models.IVEndpoint
+
+
+class IVChemicalCleanup(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.IVChemicalCleanupFieldsSerializer
+    model = models.IVChemical
+    assessment_filter_args = "study__assessment"
+

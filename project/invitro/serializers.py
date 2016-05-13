@@ -138,4 +138,12 @@ class IVEndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
         fields = cleanup_fields + ('id', )
 
 
+class IVChemicalCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IVChemical
+        cleanup_fields = model.text_cleanup_fields()
+        fields = cleanup_fields + ('id', )
+
+
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

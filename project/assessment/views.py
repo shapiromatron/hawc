@@ -487,6 +487,18 @@ class AssessmentEndpointList(views.AssessmentViewset):
             'type': 'in-vitro',
             'url': "{}{}".format(app_url, 'in-vitro/'),
         })
+        # We implement "count" here instead of in get_queryset, otherwise it
+        # it requires a "distinct" which makes it execute ~50x slower
+        instance.ivchemical_count = apps.get_model('invitro', 'ivchemical')\
+            .objects\
+            .filter(study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": instance.ivchemical_count,
+            "title": "in vitro chemicals",
+            'type': 'in-vitro-chemical',
+            'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
+        })
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
