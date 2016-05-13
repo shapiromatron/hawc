@@ -9,6 +9,7 @@ const defaultState = {
     name: '',
     qualities: [],
     riskofbiases: [],
+    active: [],
 };
 
 function study(state=defaultState, action){
@@ -24,8 +25,14 @@ function study(state=defaultState, action){
             name: action.study.short_citation,
             qualities: action.study.qualities,
             riskofbiases: action.study.riskofbiases,
+            active: action.study.riskofbiases,
             isFetching: false,
             itemsLoaded: true,
+        });
+
+    case types.SELECT_DOMAINS:
+        return Object.assign({}, state, {
+            active: action.domains,
         });
 
     default:

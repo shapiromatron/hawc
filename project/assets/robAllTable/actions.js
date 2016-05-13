@@ -33,3 +33,10 @@ export function fetchStudyIfNeeded(id){
             .catch((ex) => console.error('Study parsing failed', ex));
     };
 }
+
+export function selectActive(domains){
+    return {
+        type: types.SELECT_DOMAINS,
+        domains,
+    };
+}
