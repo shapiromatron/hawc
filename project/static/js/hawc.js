@@ -155,7 +155,7 @@ _.extend(Math, {
         }
         return GI;
     },
-    Inv_tdist_05: function(df){
+    inv_tdist_05: function(df){
         // Calculates the inverse t-distribution using a piecewise linear form for
         // the degrees of freedom specified. Assumes a two-tailed distribution with
         // an alpha of 0.05. Based on curve-fitting using Excel's T.INV.2T function

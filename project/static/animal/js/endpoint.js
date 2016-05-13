@@ -233,7 +233,6 @@ var Endpoint = function(data, options){
     this.doses = [];
     this.data = data;
     this.unpack_doses();
-    this.add_confidence_intervals();
 };
 _.extend(Endpoint, {
     get_object: function(id, cb){
@@ -333,86 +332,6 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             { url: this.data.url, name: this.data.name }
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    },
-    add_confidence_intervals: function(){
-        // Add confidence interval data to dataset.
-        if ((this.data !== undefined) &&
-            (this.data.data_type !== undefined) &&
-            (this.hasEGdata())) {
-            if (this.data.data_type === 'C'){
-                this.add_continuous_confidence_intervals();
-            } else if (this.data.data_type === 'P'){
-                this.add_pd_confidence_intervals();
-            } else {
-                this.add_dichotomous_confidence_intervals();
-            }
-        }
-    },
-    add_dichotomous_confidence_intervals: function(){
-        /*
-        Procedure adds confidence intervals to dichotomous datasets.
-        Taken from bmds231_manual.pdf, pg 124-5
-
-        LL = {(2np + z2 - 1) - z*sqrt[z2 - (2+1/n) + 4p(nq+1)]}/[2*(n+z2)]
-        UL = {(2np + z2 + 1) + z*sqrt[z2 + (2-1/n) + 4p(nq-1)]}/[2*(n+z2)]
-
-        - p = the observed proportion
-        - n = the total number in the group in question
-        - z = Z(1-alpha/2) is the inverse standard normal cumulative distribution
-              function evaluated at 1-alpha/2
-        - q = 1-p.
-
-        The error bars shown in BMDS plots use alpha = 0.05 and so represent
-        the 95% confidence intervals on the observed proportions (independent of
-        model).
-        */
-        _.chain(this.data.groups)
-         .filter(function(d){ return d.isReported; })
-         .each(function(v){
-            var p = v.incidence/v.n,
-                q = 1-p,
-                z = 1.959963986120195;  // same as Math.ltqnorm(0.975);
-            v.lower_limit = (((2*v.n*p + 2*z - 1) -
-                             z * Math.sqrt(2*z - (2+1/v.n) + 4*p*(v.n*q+1))) / (2*(v.n+2*z)));
-            v.upper_limit = (((2*v.n*p + 2*z + 1) +
-                             z * Math.sqrt(2*z + (2+1/v.n) + 4*p*(v.n*q-1))) / (2*(v.n+2*z)));
-        });
-    },
-    add_pd_confidence_intervals: function(){
-        _.each(this.data.groups, function(v){
-           v.lower_limit = v.lower_ci;
-           v.upper_limit = v.upper_ci;
-        });
-    },
-    add_continuous_confidence_intervals: function(){
-        /*
-        Procedure adds confidence intervals to continuous datasets.
-        Taken from bmds231_manual.pdf, pg 124
-
-        BMDS uses a single error bar plotting routine for all continuous models.
-
-        1. The plotting routine calculates the standard error of the mean (SEM) for
-           each group. The routine divides the group-specific observed variance
-           (obs standard deviation squared) by the group-specific sample size.
-
-        2. The routine then multiplies the SEM by the Student-T percentiles (2.5th
-           percentile or 97.5th percentile for the lower and upper bound,
-           respectively) appropriate for the group-specific sample size
-           (i.e., having degrees of freedom one less than that sample size).
-           The routine adds the products to the observed means to define the lower
-           and upper ends of the error bar.
-        */
-        var self = this;
-        _.chain(this.data.groups)
-         .filter(function(d){ return d.isReported; })
-         .each(function(v){
-            if(!(v.variance) || !(v.n)) return;
-            if (v.stdev === undefined) self._calculate_stdev(v);
-            var se = v.stdev/Math.sqrt(v.n),
-                z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
-            v.lower_limit = v.response - se * z;
-            v.upper_limit = v.response + se * z;
-        });
     },
     get_pd_string: function(eg){
         var txt = "{0}%".printf(eg.response);
@@ -1357,8 +1276,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                 y:          y,
                 cls:        cls,
                 isReported: v.isReported,
-                y_lower:    v.lower_limit,
-                y_upper:    v.upper_limit,
+                y_lower:    v.lower_ci,
+                y_upper:    v.upper_ci,
                 txt:        txts.join('\n'),
                 significance_level: v.significance_level
             }
@@ -1915,15 +1834,15 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
                 if(e.data.NOEL == i) cls += ' NOEL';
                 if(e.data.LOEL == i) cls += ' LOEL';
 
-                min = Math.min(min, v.lower_limit || val);
-                max = Math.max(max, v.upper_limit || val);
+                min = Math.min(min, v.lower_ci || val);
+                max = Math.max(max, v.upper_ci || val);
 
                 return {
                     isReported: v.isReported,
                     dose:       v.dose,
                     value:      val,
-                    high:       v.upper_limit,
-                    low:        v.lower_limit,
+                    high:       v.upper_ci,
+                    low:        v.lower_ci,
                     txt:        txt,
                     classes:    cls,
                     significance_level:     v.significance_level,
