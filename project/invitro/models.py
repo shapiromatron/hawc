@@ -44,6 +44,13 @@ class IVChemical(models.Model):
     dilution_storage_notes = models.TextField(
         help_text="Dilution, storage, and observations such as precipitation should be noted here.")
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "cas",
+        "source",
+        "purity",
+    )
+
     def __unicode__(self):
         return self.name
 
@@ -61,6 +68,18 @@ class IVChemical(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
+
+    @classmethod
+    def delete_caches(cls, ids):
+        IVEndpoint.delete_caches(
+            IVEndpoint.objects
+            .filter(chemical__in=ids)
+            .values_list('id', flat=True)
+        )
 
 
 class IVCellType(models.Model):
@@ -299,6 +318,7 @@ class IVEndpoint(BaseEndpoint):
         (6, "months"))
 
     TEXT_CLEANUP_FIELDS = (
+        "name",
         "assay_type",
         "effect",
         "observation_time",
