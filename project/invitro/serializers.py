@@ -135,6 +135,7 @@ class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = models.IVEndpoint
         cleanup_fields = model.text_cleanup_fields()
-        fields = cleanup_fields + ('id', 'name')
+        fields = cleanup_fields + ('id', )
+
 
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

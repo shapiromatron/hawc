@@ -299,6 +299,7 @@ class IVEndpoint(BaseEndpoint):
         (6, "months"))
 
     TEXT_CLEANUP_FIELDS = (
+        "name",
         "assay_type",
         "effect",
         "observation_time",
