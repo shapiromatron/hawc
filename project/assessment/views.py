@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
+from utils.helper import tryParseInt
 from assessment.api.views import DisabledPagination
 from celery import chain
 
@@ -490,7 +491,9 @@ class AssessmentEndpointList(views.AssessmentViewset):
         return Response(serializer.data)
 
     def get_queryset(self):
+        id_ = tryParseInt(self.request.GET.get('assessment_id'))
         queryset = self.model.objects\
+            .filter(id=id_)\
             .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
