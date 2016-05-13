@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from reversion import revisions as reversion
+from scipy import stats
 
 from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
@@ -1017,6 +1018,63 @@ class ConfidenceIntervalsMixin(object):
                 high = eg['upper_ci']
 
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
+
+    @staticmethod
+    def getConfidenceIntervals(data_type, egs):
+        """
+        Expects a dictionary of endpoint groups and the endpoint data-type.
+        Appends results to the dictionary for each endpoint-group.
+        """
+        for eg in egs:
+            lower_ci = eg.get('lower_ci')
+            upper_ci = eg.get('upper_ci')
+            n = eg.get('n')
+            update = False
+
+            if lower_ci is not None or upper_ci is not None or n is None:
+                continue
+
+            if (data_type == "C" and eg['response'] is not None and eg['stdev'] is not None):
+                """
+                Two-tailed t-test, assuming 95% confidence interval.
+                """
+                se = eg['stdev'] / math.sqrt(n)
+                change = stats.t.ppf(0.975, max(n-1, 1)) * se
+                lower_ci = round(eg['response'] - change, 2)
+                upper_ci = round(eg['response'] + change, 2)
+                update = True
+            elif (data_type in ["D", "DC"] and eg['incidence'] is not None):
+                """
+                Procedure adds confidence intervals to dichotomous datasets.
+                Taken from bmds231_manual.pdf, pg 124-5
+
+                LL = {(2np + z2 - 1) - z*sqrt[z2 - (2+1/n) + 4p(nq+1)]}/[2*(n+z2)]
+                UL = {(2np + z2 + 1) + z*sqrt[z2 + (2-1/n) + 4p(nq-1)]}/[2*(n+z2)]
+
+                - p = the observed proportion
+                - n = the total number in the group in question
+                - z = Z(1-alpha/2) is the inverse standard normal cumulative
+                      distribution function evaluated at 1-alpha/2
+                - q = 1-p.
+
+                The error bars shown in BMDS plots use alpha = 0.05 and so
+                represent the 95% confidence intervals on the observed
+                proportions (independent of model).
+                """
+                p = eg['incidence']/float(n)
+                z = stats.norm.ppf(0.975)
+                q = 1. - p
+
+                lower_limit = round(
+                    ((2*n*p + 2*z - 1) - z * math.sqrt(
+                        2*z - (2+1/n) + 4*p*(n*q+1))) / (2*(n+2*z)), 2)
+                upper_limit = round(
+                    ((2*n*p + 2*z + 1) + z * math.sqrt(
+                        2*z + (2+1/n) + 4*p*(n*q-1))) / (2*(n+2*z)), 2)
+                update = True
+
+            if update:
+                eg.update(lower_ci=lower_ci, upper_ci=upper_ci)
 
 
 class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
