@@ -130,7 +130,7 @@ class IVExperimentSerializerFull(IVExperimentSerializer):
     endpoints = MiniIVEndpointSerializer(many=True)
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class IVEndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpoint
