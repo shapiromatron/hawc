@@ -200,6 +200,9 @@ class RiskOfBiasScore(models.Model):
     score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=4)
     notes = models.TextField(blank=True, default="")
 
+    class Meta:
+        ordering = ('metric', 'id')
+
     def __unicode__(self):
         return "{} {}".format(self.riskofbias, self.metric)
 

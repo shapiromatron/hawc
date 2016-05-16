@@ -33,7 +33,7 @@ function formatRiskofBiases(study){
     let riskofbiases = d3.nest()
         .key((d) => { return d.metric.domain.name;})
         .key((d) => {return d.metric.metric;})
-        .entries(domains).reverse();
+        .entries(domains);
 
     return Object.assign({}, study, {
         riskofbiases,
