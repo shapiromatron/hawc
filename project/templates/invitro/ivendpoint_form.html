@@ -30,6 +30,11 @@
         </legend>
         {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
     </div>
+
+    <div id="egBenchmarkFormset">
+        <legend>Benchmark values</legend>
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=False formset=benchmark_formset %}
+    </div>
 {% endblock %}
 
 {% block extrajs %}
@@ -60,6 +65,7 @@
     $(document).on('ready', function(){
         new DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
         $('#egFormset').insertBefore($('#eForm .form-actions'));
+        $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));
         new OELwidget($('#id_NOEL'));
         new OELwidget($('#id_LOEL'));
     });

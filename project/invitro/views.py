@@ -151,6 +151,15 @@ class EndpointUpdate(BaseUpdateWithFormset):
                     form.instance.save()  # ensure new dose_group_id saved to db
                 dose_group_id += 1
 
+        benchmark_formset = forms.IVBenchmarkFormset(self.request.POST, instance=self.object)
+        if benchmark_formset.is_valid():
+            benchmark_formset.save()
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointUpdate, self).get_context_data(**kwargs)
+        context['benchmark_formset'] = forms.IVBenchmarkFormset(instance=self.object)
+        return context
+
 
 class EndpointDelete(BaseDelete):
     success_message = "Endpoint deleted."

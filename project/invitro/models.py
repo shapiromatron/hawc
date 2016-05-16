@@ -253,8 +253,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 
     @property
     def choice_label(self):
-        # em-dash space
-        return u"\u2003"*(self.depth-2) + self.name
+        return u". "*(self.depth-2) + self.name
 
     def get_choice_representation(self):
         return (self.id, self.choice_label)
@@ -319,6 +318,7 @@ class IVEndpoint(BaseEndpoint):
 
     TEXT_CLEANUP_FIELDS = (
         "name",
+        "short_description",
         "assay_type",
         "effect",
         "observation_time",
