@@ -318,6 +318,7 @@ class IVEndpoint(BaseEndpoint):
 
     TEXT_CLEANUP_FIELDS = (
         "name",
+        "short_description",
         "assay_type",
         "effect",
         "observation_time",
