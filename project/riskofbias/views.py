@@ -331,8 +331,9 @@ class RoBsDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(RoBsDetail, self).get_context_data(**kwargs)
-        context['reviews'] = self.object.get_user_rob(self.request.user)
-        context['finals'] = self.object.get_user_rob(self.request.user, final=True)
+        if context['obj_perms']['edit']:
+            context['reviews'] = self.object.get_user_rob(self.request.user)
+            context['finals'] = self.object.get_user_rob(self.request.user, final=True)
         return context
 
 
