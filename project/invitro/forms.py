@@ -1,6 +1,7 @@
 from django import forms
 from django.core.urlresolvers import reverse
-from django.forms.models import BaseModelFormSet, modelformset_factory
+from django.forms.models import \
+    BaseModelFormSet, modelformset_factory, inlineformset_factory
 from django.forms.widgets import Select
 from selectable import forms as selectable
 
@@ -291,4 +292,18 @@ BlankIVEndpointGroupFormset = modelformset_factory(
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
     can_delete=True,
+    extra=1)
+
+
+class BaseIVBenchmarkForm(forms.ModelForm):
+
+    class Meta:
+        model = models.IVBenchmark
+        fields = '__all__'
+
+
+IVBenchmarkFormset = inlineformset_factory(
+    models.IVEndpoint,
+    models.IVBenchmark,
+    form=BaseIVBenchmarkForm,
     extra=1)
