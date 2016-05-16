@@ -1,3 +1,4 @@
+import json
 from django import forms
 from django.core.urlresolvers import reverse
 from django.forms.models import \
@@ -186,7 +187,7 @@ class IVEndpointForm(forms.ModelForm):
     class Meta:
         model = models.IVEndpoint
         exclude = (
-            'assessment', 'experiment', 'additional_fields',
+            'assessment', 'experiment',
         )
         widgets = {
             'NOEL': OELWidget(),
@@ -218,6 +219,14 @@ class IVEndpointForm(forms.ModelForm):
                 .get_assessment_qs(self.instance.assessment.id)
 
         self.helper = self.setHelper()
+
+    def clean_additional_fields(self):
+        data = self.cleaned_data['additional_fields']
+        try:
+            json.loads(data)
+        except ValueError:
+            raise forms.ValidationError("Must be valid JSON.")
+        return data
 
     def setHelper(self):
         for fld in self.fields.keys():
