@@ -58,6 +58,7 @@
           <li class="divider"></li>
           <li class="disabled"><a tabindex="-1" href="#">Data cleanup views</a></li>
           <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
+          <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV Endpoint Categories</a></li>
           {% endif %}
 
         </ul>

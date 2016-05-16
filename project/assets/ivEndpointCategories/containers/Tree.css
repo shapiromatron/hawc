@@ -1,0 +1,11 @@
+.nbsp {
+    padding-left: 1em;
+}
+
+.node {
+    margin: 0 0 3px;
+}
+.node:hover{
+    background-color: #efefef;
+    cursor: pointer;
+}

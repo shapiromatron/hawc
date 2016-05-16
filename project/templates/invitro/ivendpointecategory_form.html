@@ -1,0 +1,24 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Update IV endpoint categories
+{% endblock title %}
+
+{% block breadcrumbs %}
+    <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li class="active">Update IV endpoint categories<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+<div id='root'></div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function(){
+    let categories = JSON.parse('{{categories|safe}}');
+    window.app.ivEndpointCategoryStartup(categories);
+});
+</script>
+{% endblock extrajs %}

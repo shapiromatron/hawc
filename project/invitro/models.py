@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import json
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -286,6 +287,11 @@ class IVEndpointCategory(AssessmentRootedTagTree):
             cat.get_choice_representation()
             for cat in cls.get_assessment_qs(assessment_id)
         ]
+
+    @classmethod
+    def get_edit_payload(cls, assessment_id):
+        qs = cls.dump_bulk(parent=cls.get_root(assessment_id))
+        return json.dumps(qs[0]['children'])
 
 
 class IVEndpoint(BaseEndpoint):

@@ -1,11 +1,16 @@
-from assessment.models import Assessment
+import json
+
+from django.core.exceptions import PermissionDenied
+from django.views.generic import DetailView
 from utils.views import (
     GenerateReport, BaseList, BaseDetail, BaseCreate,
     BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
 )
 
+from assessment.models import Assessment
 from study.models import Study
 from . import models, forms, exports
+from utils.views import ProjectManagerOrHigherMixin
 
 
 # Experiment
@@ -87,6 +92,26 @@ class CellTypeDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
+
+
+# Endpoint categories
+class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
+    model = Assessment
+    template_name = 'invitro/ivendpointecategory_form.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object()
+
+    def post(self, request, *args, **kwargs):
+        if not self.request.is_ajax():
+            raise PermissionDenied()
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointCategoryUpdate, self).get_context_data(**kwargs)
+        context['assessment'] = self.assessment
+        context['categories'] = \
+            models.IVEndpointCategory.get_edit_payload(self.assessment.id)
+        return context
 
 
 # Endpoint
