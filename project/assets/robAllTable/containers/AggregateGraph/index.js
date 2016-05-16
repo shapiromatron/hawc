@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded } from 'robAllTable/actions';
+import { fetchStudyIfNeeded, selectActive } from 'robAllTable/actions';
 import Loading from 'shared/components/Loading';
 import DomainCell from 'robAllTable/components/DomainCell';
 import './AggregateGraph.css';
@@ -12,6 +12,11 @@ class AggregateGraph extends Component {
     componentWillMount(){
         let { dispatch, study_id } = this.props;
         dispatch(fetchStudyIfNeeded(study_id));
+    }
+
+    selectActiveWithName(domainName){
+        // domainName is either {domain: xxx} or {domain: xxx, metric: xxx}
+        this.props.dispatch(selectActive({...domainName}));
     }
 
     format_qualities(){
@@ -28,7 +33,7 @@ class AggregateGraph extends Component {
     }
 
     render(){
-        let { itemsLoaded, qualities } = this.props;
+        let { itemsLoaded } = this.props;
         if (!itemsLoaded) return <Loading />;
         let domains = this.format_qualities();
         return (
@@ -37,10 +42,14 @@ class AggregateGraph extends Component {
 
                     {_.map(domains, (domain) => {
                         return <DomainCell key={domain.key}
-                                           domain={domain} />;
+                                   domain={domain}
+                                   handleClick={this.selectActiveWithName.bind(this)}
+                                   />;
                     })}
                 </div>
-                <div className='footer muted'>Click on any cell above to view details.</div>
+                <div className='footer muted'>
+                    Click on any cell above to view details.
+                </div>
             </div>
         );
     }
@@ -51,6 +60,7 @@ function mapStateToProps(state){
         study_id: state.config.study.id,
         itemsLoaded: state.study.itemsLoaded,
         qualities: state.study.qualities,
+        riskofbiases: state.study.riskofbiases,
     };
 }
 

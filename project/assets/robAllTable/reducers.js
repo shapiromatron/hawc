@@ -30,9 +30,32 @@ function study(state=defaultState, action){
             itemsLoaded: true,
         });
 
-    case types.SELECT_DOMAINS:
+    case types.SELECT_ACTIVE:
+        if(_.isEmpty(action.domain)){
+            return Object.assign({}, state, {
+                active: domains,
+            });
+        }
+        if(action.domain === 'all'){
+            return Object.assign({}, state, {
+                active: state.riskofbiases,
+            });
+        }
+        let domains = _.findWhere(state.riskofbiases, {key: action.domain});
+        if(action.metric){
+            let values = _.findWhere(domains.values, {key: action.metric});
+            return Object.assign(
+                {},
+                state,
+                { active: [Object.assign(
+                    {},
+                    domains,
+                    {values: [values]})],
+                }
+            );
+        }
         return Object.assign({}, state, {
-            active: action.domains,
+            active: [domains],
         });
 
     default:

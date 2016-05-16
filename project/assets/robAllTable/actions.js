@@ -58,9 +58,10 @@ export function fetchStudyIfNeeded(id){
     };
 }
 
-export function selectActive(domains){
+export function selectActive({domain, metric}){
     return {
-        type: types.SELECT_DOMAINS,
-        domains,
+        type: types.SELECT_ACTIVE,
+        domain,
+        metric,
     };
 }

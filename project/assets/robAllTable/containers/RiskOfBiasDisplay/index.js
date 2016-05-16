@@ -18,10 +18,10 @@ class RiskOfBiasDisplay extends Component {
     toggleShowHideAll(){
         let { dispatch, riskofbiases } = this.props;
         if (this.state.showHide == 'Hide'){
-            dispatch(selectActive([]));
+            dispatch(selectActive({domain: []}));
             this.setState({showHide: 'Show'});
         } else {
-            dispatch(selectActive(riskofbiases));
+            dispatch(selectActive({domain: 'all'}));
             this.setState({showHide: 'Hide'});
         }
     }
@@ -34,8 +34,7 @@ class RiskOfBiasDisplay extends Component {
             <div className='riskofbias-display'>
                 {_.map(active, (domain) => {
                     return <DomainDisplay key={domain.key}
-                                       domain={domain}
-                                       domain_n={active.length} />;
+                                       domain={domain} />;
                 })}
                 <ShowHideAll actionText={this.state.showHide}
                              handleClick={this.toggleShowHideAll.bind(this)} />
