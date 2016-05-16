@@ -81,6 +81,7 @@ class DataPivotEndpoint(FlatFileExporter):
         header.extend(["Dose {0}".format(i) for i in rng])
         header.extend(["Change Control {0}".format(i) for i in rng])
         header.extend(["Significant {0}".format(i) for i in rng])
+        header.extend(["Cytotoxicity {0}".format(i) for i in rng])
 
         num_bms = self.queryset.model.max_benchmark_count(self.queryset)
         rng = xrange(1, num_bms + 1)
@@ -106,6 +107,7 @@ class DataPivotEndpoint(FlatFileExporter):
             doses = [eg['dose'] for eg in ser['groups']]
             diffs = [eg['difference_control'] for eg in ser['groups']]
             sigs = [eg['significant_control'] for eg in ser['groups']]
+            cytotoxes = [eg['cytotoxicity_observed'] for eg in ser['groups']]
 
             if doses and doses[0] == 0:
                 doses.pop(0)
@@ -163,6 +165,7 @@ class DataPivotEndpoint(FlatFileExporter):
             doses.extend([None] * (self.num_doses-len(doses)))
             diffs.extend([None] * (self.num_doses-len(diffs)))
             sigs.extend([None] * (self.num_doses-len(sigs)))
+            cytotoxes.extend([None] * (self.num_doses-len(cytotoxes)))
 
             bm_types.extend([None] * (self.num_bms-len(bm_types)))
             bm_values.extend([None] * (self.num_bms-len(bm_values)))
@@ -171,6 +174,7 @@ class DataPivotEndpoint(FlatFileExporter):
             row.extend(doses)
             row.extend(diffs)
             row.extend(sigs)
+            row.extend(cytotoxes)
             row.extend(bm_types)
             row.extend(bm_values)
 
