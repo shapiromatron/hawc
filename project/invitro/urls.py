@@ -65,6 +65,11 @@ urlpatterns = [
         views.CellTypeDelete.as_view(),
         name='celltype_delete'),
 
+    # endpoint categories
+    url(r'^assessment/(?P<pk>\d+)/endpoint-categories/update/$',
+        views.EndpointCategoryUpdate.as_view(),
+        name='endpointcategory_update'),
+
     # endpoint
     url(r'^endpoints/(?P<pk>\d+)/$',
         views.EndpointsList.as_view(),
