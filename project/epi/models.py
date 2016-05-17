@@ -1266,33 +1266,30 @@ class GroupResult(models.Model):
         Expects a dictionary of endpoint groups and the endpoint variance-type.
         Appends results to the dictionary for each endpoint-group.
 
-        Calculates a 95% confidence interval for the percent-difference from
-        control, taking into account variance from both groups using a
-        Fisher Information Matrix, assuming independent normal distributions.
+        Confidence interval calculated using a two-tailed t-test,
+        assuming 95% confidence interval.
         """
 
         for grp in groups:
             lower_ci = grp.get('lower_ci')
             upper_ci = grp.get('upper_ci')
-
+            n = grp.get('n')
             if (
                     lower_ci is None and
-                    lower_ci is None and
+                    upper_ci is None and
+                    n is not None and
                     grp['estimate'] is not None and
-                    grp['variance'] is not None and
-                    grp['n'] is not None and
-                    grp['n'] > 0
+                    grp['variance'] is not None
                ):
                     est = grp['estimate']
                     var = grp['variance']
-                    n = grp['n']
                     z = t.ppf(0.975, max(n-1, 1))
                     change = None
 
                     if variance_type == 'SD':
-                        change = z * var
+                        change = z * var / math.sqrt(n)
                     elif variance_type in ('SE', 'SEM'):
-                        change = z * var * math.sqrt(n)
+                        change = z * var
 
                     if change is not None:
                         lower_ci = round(est - change, 2)
