@@ -6,23 +6,26 @@ import './ScoreBar.css';
 class ScoreBar extends Component {
 
     render_score_bar(){
-        let { shade, symbol, score } = this.props,
-            bar_width = d3.max([d3.round(score / 4 * 100, 2), 15]);
+        let { shade, symbol } = this.props;
         return (
             <div className='rob_score_bar'
-                style={{backgroundColor: shade, width: bar_width+'%'}}>
+                style={{backgroundColor: shade}}>
                 <span className='score-symbol'>{symbol}</span>
             </div>
         );
     }
 
     render() {
-        let { description } = this.props;
+        let { description, score } = this.props,
+            bar_class = d3.max([d3.round(score / 4 * 100, 2), 15]);
         return (
             <div className='score-bar'>
                 <ReactCSSTransitionGroup
-                    transitionName='bar'
-                    transitionEnterTimeout={500}>
+                    transitionName={`${bar_class}`}
+                    transitionEnterTimeout={1000}
+                    transitionLeaveTimeout={1000}
+                    transitionAppear={true}
+                    transitionAppearTimeout={2000}>
                     {this.render_score_bar()}
                 </ReactCSSTransitionGroup>
                 {description}

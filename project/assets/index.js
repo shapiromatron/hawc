@@ -1,9 +1,9 @@
 import textCleanupStartup from 'textCleanup';
 import robVisualStartup from 'robVisual';
-import robAllTableStartup from 'robAllTable';
+import robTableStartup from 'robTable';
 
 window.app = {
     textCleanupStartup,
     robVisualStartup,
-    robAllTableStartup,
+    robTableStartup,
 };

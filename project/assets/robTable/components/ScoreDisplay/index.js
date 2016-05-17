@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import ScoreBar from 'robAllTable/components/ScoreBar';
+import ScoreBar from 'robTable/components/ScoreBar';
 import './ScoreDisplay.css';
 
 

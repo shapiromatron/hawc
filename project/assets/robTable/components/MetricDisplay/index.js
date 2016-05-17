@@ -1,13 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 
-import ScoreDisplay from 'robAllTable/components/ScoreDisplay';
+import ScoreDisplay from 'robTable/components/ScoreDisplay';
+import ScoreForm from 'robTable/components/ScoreForm';
 import './MetricDisplay.css';
 
 
 class MetricDisplay extends Component {
 
     render(){
-        let { metric } = this.props;
+        let { metric, isForm } = this.props;
         return (
             <div className='metric-display'>
                 <h4>{metric.key}</h4>
@@ -16,7 +17,11 @@ class MetricDisplay extends Component {
                 }} />
                 <div className='score-row'>
                     {_.map(metric.values, (score) => {
-                        return <ScoreDisplay key={score.id} score={score} />;
+                        if(score.final && isForm){
+                            return <ScoreForm key={score.id} score={score}/>;
+                        } else {
+                            return <ScoreDisplay key={score.id} score={score} />;
+                        }
                     })}
                 </div>
             </div>
@@ -42,6 +47,7 @@ MetricDisplay.propTypes = {
             }).isRequired
         ).isRequired,
     }).isRequired,
+    isForm: PropTypes.bool,
 };
 
 export default MetricDisplay;

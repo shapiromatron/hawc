@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import ScoreCell from 'robAllTable/components/ScoreCell';
+import ScoreCell from 'robTable/components/ScoreCell';
 import './DomainCell.css';
 
 

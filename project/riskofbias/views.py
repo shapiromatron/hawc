@@ -337,16 +337,19 @@ class RoBsDetail(BaseDetail):
         return context
 
 
-class RoBsDetailAll(BaseDetail):
+class RoBsDetailAll(RoBsDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     Displays all active RoB in Study.
 
     TODO: Needs to have an updated JS RiskOfBias TblCompressed.
     """
-    model = Study
     template_name = 'riskofbias/rob_detail_all.html'
 
+
+class RoBEditFinal(BaseDetail):
+    model = models.RiskOfBias
+    template_name = 'riskofbias/rob_edit_final.html'
 
 class RoBsList(BaseList):
     model = Study

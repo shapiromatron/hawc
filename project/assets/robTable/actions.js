@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch';
 
-import * as types from 'robAllTable/constants';
-import h from 'robAllTable/utils/helpers';
+import * as types from 'robTable/constants';
+import h from 'robTable/utils/helpers';
 
 
 function requestStudy(){
@@ -20,10 +20,10 @@ function receiveStudy(study){
 function formatRiskofBiases(study){
     let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;});
     let domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
-        let author = riskofbias.author;
         return _.map(riskofbias.scores, (score) => {
             return Object.assign({}, score, {
-                author,
+                author: riskofbias.author,
+                final: riskofbias.final,
                 domain_name: score.metric.domain.name,
                 domain_id: score.metric.domain.id,
             });

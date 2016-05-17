@@ -83,23 +83,19 @@
   <script type="text/javascript" src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-        if ({{object.final|lower}}){
-
-        } else {
-            $('.metrics option:selected').each(function(i,v){
-                $(this.parentElement.parentElement).append(this.text)
-                $(this.parentElement).hide(true);
-            });
-            $('.html5text').wysihtml5({"stylesheets": false});
-            $('.score').parent().append('<br><br><div class="rob_score"></div>');
-            var change_gradient = function(){
-                $(this).parent().find('.rob_score')
-                .css('background-color', RiskOfBiasScore.score_shades[this.value])
-                .text(RiskOfBiasScore.score_text[this.value]);
-            };
-            $('.score').each(change_gradient);
-            $('.score').on('change', change_gradient);
-        }
+        $('.metrics option:selected').each(function(i,v){
+            $(this.parentElement.parentElement).append(this.text)
+            $(this.parentElement).hide(true);
+        });
+        $('.html5text').wysihtml5({"stylesheets": false});
+        $('.score').parent().append('<br><br><div class="rob_score"></div>');
+        var change_gradient = function(){
+            $(this).parent().find('.rob_score')
+            .css('background-color', RiskOfBiasScore.score_shades[this.value])
+            .text(RiskOfBiasScore.score_text[this.value]);
+        };
+        $('.score').each(change_gradient);
+        $('.score').on('change', change_gradient);
     });
   </script>
 {% endblock extrajs %}

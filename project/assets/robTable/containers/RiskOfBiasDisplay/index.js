@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded, selectActive } from 'robAllTable/actions';
-import DomainDisplay from 'robAllTable/components/DomainDisplay';
-import ShowHideAll from 'robAllTable/components/ShowHideAll';
+import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
+import DomainDisplay from 'robTable/components/DomainDisplay';
+import ShowHideAll from 'robTable/components/ShowHideAll';
 import Loading from 'shared/components/Loading';
 
 

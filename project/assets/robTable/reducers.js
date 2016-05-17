@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import config from 'shared/reducers/Config';
-import * as types from 'robAllTable/constants';
+import * as types from 'robTable/constants';
 
 const defaultState = {
     isFetching: false,

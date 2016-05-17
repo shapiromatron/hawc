@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
     <li class="active"> Risk-of-bias <span class="divider">/</span></li>
   {% endblock %}

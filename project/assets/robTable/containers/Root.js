@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
-import AggregateGraph from './AggregateGraph';
-import RiskOfBiasDisplay from './RiskOfBiasDisplay';
+import Header from './Header';
+import RiskOfBias from './RiskOfBias';
 
 
 class Root extends Component {
@@ -17,9 +17,8 @@ class Root extends Component {
         return (
             <Provider store={store}>
                 <div>
-                    <h1>Show all reviews</h1>
-                <AggregateGraph />
-                <RiskOfBiasDisplay />
+                    <Header />
+                    <RiskOfBias />
                 </div>
             </Provider>
         );

@@ -1,0 +1,46 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load get_at_index %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {{assessment}} | {{object.study}} | Edit risk-of-bias | HAWC
+{% endblock %}
+
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  {% if crud == "Update" %}
+    <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk-of-bias</a><span class="divider">/</span></li>
+    <li class="active"> Edit <span class="divider">/</span></li>
+  {% elif crud == "Create" %}
+    <li class="active"> Edit risk-of-bias <span class="divider">/</span></li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2>{{object}}: Risk of Bias</h2>
+    <div id='robTable'></div>
+{% endblock %}
+
+{% block extrajs %}
+  <script id="config" type="text/json" charset="utf-8">
+      {
+          "assessment_id": "{{ assessment.id }}",
+          "study": {
+              "id": "{{ object.study.pk }}",
+              "url": "{% url 'study:api:study-list' %}"
+          },
+          "csrf": "{{ csrf_token }}",
+          "host": "//{{request.get_host}}",
+          "isForm": true
+      }
+  </script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        window.app.robTableStartup();
+    });
+  </script>
+{% endblock extrajs %}

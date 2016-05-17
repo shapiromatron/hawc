@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded, selectActive } from 'robAllTable/actions';
+import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
 import Loading from 'shared/components/Loading';
-import DomainCell from 'robAllTable/components/DomainCell';
+import DomainCell from 'robTable/components/DomainCell';
 import './AggregateGraph.css';
 
 
