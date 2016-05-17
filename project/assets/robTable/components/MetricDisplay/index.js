@@ -7,8 +7,17 @@ import './MetricDisplay.css';
 
 class MetricDisplay extends Component {
 
+    renderScoreForm(){
+        let formScore = _.findWhere(this.props.metric.values, {final: true});
+        return <ScoreForm score={formScore} />;
+    }
+
     render(){
-        let { metric, isForm } = this.props;
+        let { metric, isForm } = this.props,
+            displayScores = isForm ?
+                _.filter(metric.values, (score) => {return !score.final;}) :
+                metric.values;
+
         return (
             <div className='metric-display'>
                 <h4>{metric.key}</h4>
@@ -16,14 +25,11 @@ class MetricDisplay extends Component {
                     __html: metric.values[0].metric.description,
                 }} />
                 <div className='score-row'>
-                    {_.map(metric.values, (score) => {
-                        if(score.final && isForm){
-                            return <ScoreForm key={score.id} score={score}/>;
-                        } else {
-                            return <ScoreDisplay key={score.id} score={score} />;
-                        }
+                    {_.map(displayScores, (score) => {
+                        return <ScoreDisplay key={score.id} score={score} />;
                     })}
                 </div>
+                {isForm ? this.renderScoreForm() : null}
             </div>
         );
     }

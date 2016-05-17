@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import MyEditor from 'robTable/components/MyEditor';
 import './ScoreForm.css';
 
 
@@ -27,16 +26,32 @@ class ScoreForm extends Component {
         };
     }
 
-    getScoreIcon(score){
-
+    selectScore(e){
+        let score = e.target.value;
+        this.scoreSymbol = this.state.scoreShades[score];
+        this.scoreColor = this.state.scoreText[score];
     }
 
     render() {
-        const { editorState } = this.state;
+        let { score } = this.props;
+        this.scoreColor = score.score_shade;
+        this.scoreSymbol = score.score_symbol;
+
         return (
           <div className='score-form'>
-              <span>Editor</span>
-              <MyEditor />
+              <div>
+                  <select name="score-select"
+                          id={score.metric.metric}
+                          defaultValue={score.score}
+                          onChange={this.selectScore}>
+                      {_.map(this.state.scoreChoices, (score, key) => {
+                          return <option value={key}>{score}</option>;
+                      })}
+                  </select>
+                  <br/><br/>
+                  <div className='score-icon' style={{backgroundColor: this.scoreColor}}>{this.scoreSymbol}</div>
+              </div>
+              <textarea name={`${score.metric.metric}-text`} id={score.metric.metric} cols='40' rows="8"></textarea>
           </div>
         );
     }

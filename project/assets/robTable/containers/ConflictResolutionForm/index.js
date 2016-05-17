@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { fetchStudyIfNeeded } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
+import './ConflictResolutionForm.css';
 
 
 class ConflictResolutionForm extends Component {
@@ -19,11 +20,16 @@ class ConflictResolutionForm extends Component {
 
         return (
             <div className='riskofbias-display'>
-                {_.map(riskofbiases, (domain) => {
-                    return <DomainDisplay key={domain.key}
-                                       domain={domain}
-                                       isForm={isForm} />;
-                })}
+                <form action="">
+
+                    {_.map(riskofbiases, (domain) => {
+                        return <DomainDisplay key={domain.key}
+                                           domain={domain}
+                                           isForm={isForm} />;
+                    })}
+                    <button className='btn btn-primary'>Update risk of bias</button>
+                    <button className='btn'>Cancel</button>
+                </form>
             </div>
         );
     }
