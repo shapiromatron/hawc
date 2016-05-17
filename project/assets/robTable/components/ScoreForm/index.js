@@ -8,7 +8,7 @@ class ScoreForm extends Component {
     constructor(props){
         super(props);
         this.state = {
-            scoreText: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++'},
+            scoreSymbols: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++'},
             scoreShades: {
                 0: '#E8E8E8',
                 1: '#CC3333',
@@ -26,16 +26,24 @@ class ScoreForm extends Component {
         };
     }
 
+    componentWillMount(){
+        let { score } = this.props;
+        this.setState({
+            selectedShade: this.state.scoreShades[score.score],
+            selectedSymbol: this.state.scoreSymbols[score.score],
+        });
+    }
+
     selectScore(e){
-        let score = e.target.value;
-        this.scoreSymbol = this.state.scoreShades[score];
-        this.scoreColor = this.state.scoreText[score];
+        let selectedScore = e.target.value;
+        this.setState({
+            selectedShade: this.state.scoreShades[selectedScore],
+            selectedSymbol: this.state.scoreSymbols[selectedScore],
+        });
     }
 
     render() {
         let { score } = this.props;
-        this.scoreColor = score.score_shade;
-        this.scoreSymbol = score.score_symbol;
 
         return (
           <div className='score-form'>
@@ -43,13 +51,16 @@ class ScoreForm extends Component {
                   <select name="score-select"
                           id={score.metric.metric}
                           defaultValue={score.score}
-                          onChange={this.selectScore}>
+                          onChange={this.selectScore.bind(this)}>
                       {_.map(this.state.scoreChoices, (score, key) => {
-                          return <option value={key}>{score}</option>;
+                          return <option key={key} value={key}>{score}</option>;
                       })}
                   </select>
                   <br/><br/>
-                  <div className='score-icon' style={{backgroundColor: this.scoreColor}}>{this.scoreSymbol}</div>
+                  <div className='score-icon'
+                      style={{backgroundColor: this.state.selectedShade}}>
+                          {this.state.selectedSymbol}
+                  </div>
               </div>
               <textarea name={`${score.metric.metric}-text`} id={score.metric.metric} cols='40' rows="8"></textarea>
           </div>
