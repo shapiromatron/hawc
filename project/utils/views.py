@@ -18,6 +18,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 from assessment.models import Assessment
+from .helper import tryParseInt
 
 
 class MessageMixin(object):
@@ -309,10 +310,7 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         kwargs['parent'] = self.parent
 
         # check if we have an object-template to be used
-        try:
-            pk = int(self.request.GET.get('initial', -1))
-        except ValueError:
-            pk = -1
+        pk = tryParseInt(self.request.GET.get('initial'), -1)
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
@@ -500,7 +498,7 @@ class GenerateReport(BaseList):
     def get_template(self, request):
         ReportTemplate = apps.get_model("assessment", "ReportTemplate")
         try:
-            template_id = request.GET.get('template_id', -1)
+            template_id = tryParseInt(self.request.GET.get('template_id'), -1)
             return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)
         except ObjectDoesNotExist:
             raise Http404

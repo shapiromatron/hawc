@@ -5,6 +5,7 @@ from assessment.api.views import AssessmentViewset, DoseUnitsViewset
 
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
+from utils.helper import tryParseInt
 
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -44,7 +45,7 @@ class Endpoint(AssessmentViewset):
 
     @list_route()
     def effects(self, request):
-        assessment_id = int(self.request.query_params.get('assessment_id', -1))
+        assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
         effects = models.Endpoint.get_effects(assessment_id)
         return Response(effects)
 
@@ -52,7 +53,7 @@ class Endpoint(AssessmentViewset):
     def rob_filter(self, request):
         params = self.request.query_params
 
-        assessment_id = int(params.get('assessment_id', -1))
+        assessment_id = tryParseInt(params.get('assessment_id'), -1)
         query = Q(assessment_id=assessment_id)
 
         effects = params.get('effect[]')

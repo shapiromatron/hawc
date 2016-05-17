@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
+from utils.helper import tryParseInt
 from assessment.api.views import DisabledPagination
 from celery import chain
 
@@ -486,11 +487,25 @@ class AssessmentEndpointList(views.AssessmentViewset):
             'type': 'in-vitro',
             'url': "{}{}".format(app_url, 'in-vitro/'),
         })
+        # We implement "count" here instead of in get_queryset, otherwise it
+        # it requires a "distinct" which makes it execute ~50x slower
+        instance.ivchemical_count = apps.get_model('invitro', 'ivchemical')\
+            .objects\
+            .filter(study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": instance.ivchemical_count,
+            "title": "in vitro chemicals",
+            'type': 'in-vitro-chemical',
+            'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
+        })
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def get_queryset(self):
+        id_ = tryParseInt(self.request.GET.get('assessment_id'))
         queryset = self.model.objects\
+            .filter(id=id_)\
             .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))

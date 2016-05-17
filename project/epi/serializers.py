@@ -155,6 +155,12 @@ class ResultSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='__unicode__', read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
 
+    def to_representation(self, instance):
+        ret = super(ResultSerializer, self).to_representation(instance)
+        models.GroupResult.getConfidenceIntervals(
+            ret['variance_type'], ret['results'])
+        return ret
+
     class Meta:
         model = models.Result
         exclude = ('adjustment_factors', )

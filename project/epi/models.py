@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import math
 from operator import xor
 import itertools
 
@@ -8,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from reversion import revisions as reversion
+from scipy.stats import t
 
 from assessment.models import Assessment, BaseEndpoint
 from study.models import Study
@@ -787,29 +789,32 @@ class Exposure(models.Model):
 
     @staticmethod
     def flat_complete_data_row(ser):
+        if ser is None:
+            ser = {}
+        units = ser.get("metric_units", {})
         return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["inhalation"],
-            ser["dermal"],
-            ser["oral"],
-            ser["in_utero"],
-            ser["iv"],
-            ser["unknown_route"],
-            ser["measured"],
-            ser["metric"],
-            ser["metric_units"]["id"],
-            ser["metric_units"]["name"],
-            ser["metric_description"],
-            ser["analytical_method"],
-            ser["sampling_period"],
-            ser["age_of_exposure"],
-            ser["duration"],
-            ser["exposure_distribution"],
-            ser["description"],
-            ser["created"],
-            ser["last_updated"],
+            ser.get("id"),
+            ser.get("url"),
+            ser.get("name"),
+            ser.get("inhalation"),
+            ser.get("dermal"),
+            ser.get("oral"),
+            ser.get("in_utero"),
+            ser.get("iv"),
+            ser.get("unknown_route"),
+            ser.get("measured"),
+            ser.get("metric"),
+            units.get("id"),
+            units.get("name"),
+            ser.get("metric_description"),
+            ser.get("analytical_method"),
+            ser.get("sampling_period"),
+            ser.get("age_of_exposure"),
+            ser.get("duration"),
+            ser.get("exposure_distribution"),
+            ser.get("description"),
+            ser.get("created"),
+            ser.get("last_updated"),
         )
 
     def copy_across_assessments(self, cw):
@@ -1254,6 +1259,43 @@ class GroupResult(models.Model):
             "result_group-created",
             "result_group-last_updated",
         )
+
+    @staticmethod
+    def getConfidenceIntervals(variance_type, groups):
+        """
+        Expects a dictionary of endpoint groups and the endpoint variance-type.
+        Appends results to the dictionary for each endpoint-group.
+
+        Confidence interval calculated using a two-tailed t-test,
+        assuming 95% confidence interval.
+        """
+
+        for grp in groups:
+            lower_ci = grp.get('lower_ci')
+            upper_ci = grp.get('upper_ci')
+            n = grp.get('n')
+            if (
+                    lower_ci is None and
+                    upper_ci is None and
+                    n is not None and
+                    grp['estimate'] is not None and
+                    grp['variance'] is not None
+               ):
+                    est = grp['estimate']
+                    var = grp['variance']
+                    z = t.ppf(0.975, max(n-1, 1))
+                    change = None
+
+                    if variance_type == 'SD':
+                        change = z * var / math.sqrt(n)
+                    elif variance_type in ('SE', 'SEM'):
+                        change = z * var
+
+                    if change is not None:
+                        lower_ci = round(est - change, 2)
+                        upper_ci = round(est + change, 2)
+
+                    grp.update(lower_ci=lower_ci, upper_ci=upper_ci)
 
     @staticmethod
     def flat_complete_data_row(ser):

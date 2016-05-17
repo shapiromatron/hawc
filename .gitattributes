@@ -1,0 +1,3 @@
+# ignore paths from language statistics:
+# https://github.com/github/linguist#using-gitattributes
+project/static/debug/* linguist-vendored

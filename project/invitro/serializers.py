@@ -130,11 +130,20 @@ class IVExperimentSerializerFull(IVExperimentSerializer):
     endpoints = MiniIVEndpointSerializer(many=True)
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class IVEndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpoint
         cleanup_fields = model.text_cleanup_fields()
-        fields = cleanup_fields + ('id', 'name')
+        fields = cleanup_fields + ('id', )
+
+
+class IVChemicalCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IVChemical
+        cleanup_fields = model.text_cleanup_fields()
+        fields = cleanup_fields + ('id', )
+
 
 SerializerHelper.add_serializer(models.IVEndpoint, IVEndpointSerializer)

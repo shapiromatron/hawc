@@ -14,7 +14,7 @@ from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
                          BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
                          GenerateReport, ProjectManagerOrHigherMixin,
                          TeamMemberOrHigherMixin)
-from utils.helper import listToUl
+from utils.helper import listToUl, tryParseInt
 from assessment.models import Assessment
 
 from . import forms, exports, models
@@ -138,10 +138,7 @@ class SearchNew(BaseCreate):
         kwargs = super(SearchNew, self).get_form_kwargs()
 
         # check if we have a template to use
-        try:
-            pk = int(self.request.GET.get('initial', -1))
-        except ValueError:
-            pk = -1
+        pk = tryParseInt(self.request.GET.get('initial'), -1)
 
         if pk > 0:
             obj = self.model.objects.filter(pk=pk).first()
@@ -281,7 +278,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         # find reference, check that the assessment is the same as the one we
         # have permissions-checked for, and if so, update reference-tags
         response = {"status": "fail"}
-        pk = self.request.POST.get('pk', -1)
+        pk = tryParseInt(self.request.POST.get('pk'), -1)
         ref = models.Reference.objects\
             .filter(pk=pk, assessment=self.assessment).first()
         if ref:
@@ -590,10 +587,7 @@ class TagsJSON(BaseDetail):
     model = Assessment
 
     def get_object(self, **kwargs):
-        try:
-            pk = int(self.request.GET.get('pk', -1))
-        except ValueError:
-            pk = -1
+        pk = tryParseInt(self.request.GET.get('pk'), -1)
         obj = get_object_or_404(self.model, pk=pk)
         return super(TagsJSON, self).get_object(object=obj)
 
@@ -627,6 +621,7 @@ class TagsUpdate(BaseUpdate):
             raise Http404
 
     def post_update_ReferenceFilterTag(self, response):
+        pk = tryParseInt(self.request.POST.get('pk'), -1)
         try:
             status = self.request.POST.get('status')
             if status == "add":
@@ -634,14 +629,13 @@ class TagsUpdate(BaseUpdate):
                 name = self.request.POST.get('name')
                 response["node"] = models.ReferenceFilterTag.add_tag(self.assessment.pk, name, parent_pk)
             elif status == "remove":
-                pk = self.request.POST.get('pk', None)
                 models.ReferenceFilterTag.remove_tag(self.assessment.pk, pk)
             elif status == "move":
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=self.request.POST.get('pk', -1))
+                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
                 offset = int(self.request.POST.get('offset'))
                 tag.move_within_parent(self.assessment.pk, offset)
             elif status == 'rename':
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=self.request.POST.get('pk', -1))
+                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
                 assert tag.id in models.ReferenceFilterTag.get_descendants_pks(self.object.id)
                 tag.rename(self.request.POST.get('name'))
             else:

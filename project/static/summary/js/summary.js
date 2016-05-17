@@ -764,13 +764,13 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                 if (e.data.data_type == 'C'){
                     txt.push('Mean: ' + eg.response, 'Stdev: ' + eg.stdev);
                     val = (eg.response - control) / control;
-                    lower_ci = (eg.lower_limit - control) / control;
-                    upper_ci = (eg.upper_limit - control) / control;
+                    lower_ci = (eg.lower_ci - control) / control;
+                    upper_ci = (eg.upper_ci - control) / control;
                 } else {
                     txt.push('Incidence: ' + eg.incidence);
                     val = eg.incidence / eg.n;
-                    lower_ci = eg.lower_limit;
-                    upper_ci = eg.upper_limit;
+                    lower_ci = eg.lower_ci;
+                    upper_ci = eg.upper_ci;
                 }
                 points.push({
                     'x': val,
@@ -1626,6 +1626,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .filter(applyEndpointFilters)
                 .map(processEndpoint)
+                .filter(function(d){return d.plotting.length>0;})
                 .value(),
             container_height = settings.height + 50,  // menu-spacing
             dose_scale = (settings.dose_isLog) ? 'log' : 'linear';

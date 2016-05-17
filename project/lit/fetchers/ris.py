@@ -12,7 +12,8 @@ from .utils import get_author_short_text
 
 class RisImporter(object):
 
-    def custom_mapping(self):
+    @classmethod
+    def get_mapping(cls):
         mapping = copy(TAG_KEY_MAPPING)
         mapping.update({
             "AT": "accession_type",
@@ -22,12 +23,23 @@ class RisImporter(object):
         })
         return mapping
 
+    @classmethod
+    def file_readable(cls, fileObj):
+        # ensure that file can be successfully parsed
+        try:
+            reader = readris(fileObj, mapping=cls.get_mapping())
+            [content for content in reader]
+            fileObj.seek(0)
+            return True
+        except IOError:
+            return False
+
     def __init__(self, fileObj):
         if isinstance(fileObj, basestring):
             f = open(fileObj, 'r')
         else:
             f = fileObj
-        reader = readris(f, mapping=self.custom_mapping())
+        reader = readris(f, mapping=self.get_mapping())
         contents = [content for content in reader]
         f.close()
         self.raw_references = contents
