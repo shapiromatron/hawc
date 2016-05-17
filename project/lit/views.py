@@ -587,7 +587,7 @@ class TagsJSON(BaseDetail):
     model = Assessment
 
     def get_object(self, **kwargs):
-        pk = tryParseInt(self.reqeuest.GET.get('pk'), -1)
+        pk = tryParseInt(self.request.GET.get('pk'), -1)
         obj = get_object_or_404(self.model, pk=pk)
         return super(TagsJSON, self).get_object(object=obj)
 
