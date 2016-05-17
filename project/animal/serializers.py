@@ -117,6 +117,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['groups'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
         models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
+        models.Endpoint.setMaximumPercentControlChange(ret)
 
         # get BMD
         ret['BMD'] = None

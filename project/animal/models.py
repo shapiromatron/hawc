@@ -16,7 +16,7 @@ from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
 from bmd.models import BMD_session
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from utils.models import get_distinct_charfield_opts, get_distinct_charfield
 
 
@@ -936,6 +936,26 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def text_cleanup_fields(cls):
         return cls.TEXT_CLEANUP_FIELDS
+
+    @classmethod
+    def setMaximumPercentControlChange(cls, ep):
+        """
+        For each endpoint, return the maximum absolute-change percent control
+        for that endpoint, or 0 if it cannot be calculated. Useful for
+        ordering data-pivot results.
+        """
+        val = 0
+        changes = [
+            g['percentControlMean']
+            for g in ep['groups']
+            if tryParseInt(g['percentControlMean'], default=False)
+        ]
+        if len(changes) > 0:
+            min_ = min(changes)
+            max_ = max(changes)
+            val = min_ if abs(min_) > abs(max_) else max_
+
+        ep['percentControlMaxChange'] = val
 
 
 class ConfidenceIntervalsMixin(object):

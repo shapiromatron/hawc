@@ -128,6 +128,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'doses',
             'dose units',
             'response units',
+            'maximum endpoint change',
 
             'low_dose',
             'NOEL',
@@ -251,6 +252,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 get_doses_str(doses),
                 get_dose_units(doses),
                 ser['response_units'],
+                ser['percentControlMaxChange'],
             ]
 
             # dose-group specific information
