@@ -17,4 +17,9 @@ class Migration(migrations.Migration):
             name='enable_study_quality',
             field=models.BooleanField(default=True, help_text=b'Define criteria for a systematic review of literature, and apply these criteria to references in your literature-review. View details on findings and identify areas with a potential risk of bias.'),
         ),
+        migrations.RenameField(
+            model_name='assessment',
+            old_name='enable_study_quality',
+            new_name='enable_risk_of_bias',
+        ),
     ]

@@ -55,7 +55,7 @@
 
   {% if crud == "Read" %}
 
-    {% if assessment.enable_study_quality and object.qualities.count > 0 %}
+    {% if assessment.enable_risk_of_bias and object.qualities.count > 0 %}
       <div class="row-fluid">
           <h3>Risk-of-bias visualization
             <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>

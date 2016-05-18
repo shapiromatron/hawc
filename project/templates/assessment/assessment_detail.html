@@ -32,7 +32,7 @@
 
           <li class="divider"></li>
           <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
-          {% if assessment.enable_study_quality %}
+          {% if assessment.enable_risk_of_bias %}
           <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">Risk-of-bias settings</a></li>
           {% endif %}
 

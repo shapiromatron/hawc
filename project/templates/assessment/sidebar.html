@@ -12,7 +12,7 @@
 
     {% if assessment.enable_data_extraction %}
         <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
-        {% if assessment.enable_study_quality %}
+        {% if assessment.enable_risk_of_bias %}
         <li class=""><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of Bias</a></li>
         {% endif %}
         <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint List</a></li>

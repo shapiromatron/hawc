@@ -88,7 +88,7 @@ class Assessment(models.Model):
         help_text="Extract animal bioassay, epidemiological, or in-vitro data from "
                   "key references and create customizable, dynamic visualizations "
                   "or summary data and associated metadata for display.")
-    enable_study_quality = models.BooleanField(
+    enable_risk_of_bias = models.BooleanField(
         default=True,
         help_text="Define criteria for a systematic review of literature, and apply "
                   "these criteria to references in your literature-review. "
