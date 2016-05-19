@@ -40,30 +40,26 @@
             <td>
                 <a href="{% url 'riskofbias:robs_detail' study.pk %}">{{study}}</a>
             </td>
-            {% if form_crud = 'Create' %}
-            <td>
-                No Risk of Bias
-            </td>
-            {% else %}
-                {% for rob in study.get_active_riskofbiases %}
+            {% if study.active_riskofbiases %}
+                {% for rob in study.active_riskofbiases %}
                     {% if forloop.last and forloop.counter < rob_count %}
                         <td colspan="2">
                     {% else %}
                         <td>
                     {% endif %}
-                        {% if rob.author %}
-                            {{rob.author}}
-                            {% if rob.final %}
-                                <i class="fa fa-star"></i>
-                            {% endif %}
-                            {% if rob.is_complete %}
-                                <i class="fa fa-check"></i>
-                            {% endif %}
-                        {% else %}
-                            No Reviewer
-                        {% endif %}
+                    {{rob.author}}
+                    {% if rob.final %}
+                        <i class="fa fa-star"></i>
+                    {% endif %}
+                    {% if rob.is_complete %}
+                        <i class="fa fa-check"></i>
+                    {% endif %}
                     </td>
                 {% endfor %}
+            {% else %}
+            <td>
+                No Risk of Bias Assigned
+            </td>
             {% endif %}
         </tr>
         {% endfor %}

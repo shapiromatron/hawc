@@ -46,9 +46,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
                 filters["published"] = True
         else:
             prefetch = (
-                'riskofbiases__scores',
                 'identifiers',
-                'riskofbiases__scores__metric',
                 'riskofbiases__scores__metric__domain',
             )
 

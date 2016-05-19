@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
@@ -69,16 +70,16 @@ class ARoBReviewersList(BaseList):
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)\
-            .prefetch_related('riskofbiases')
+            .prefetch_related(
+                Prefetch(
+                    'riskofbiases',
+                    queryset=models.RiskOfBias.objects.filter(active=True).prefetch_related('author'),
+                    to_attr='active_riskofbiases'))
+
 
     def get_context_data(self, **kwargs):
         context = super(ARoBReviewersList, self).get_context_data(**kwargs)
-        robs_exist = sum([study.get_active_riskofbiases().count() for study in self.object_list])
-        if robs_exist:
-            context['form_crud'] = 'Update'
-        else:
-            context['form_crud'] = 'Create'
-        context['rob_count'] = study.assessment.rob_settings.number_of_reviewers + 1
+        context['rob_count'] = self.assessment.rob_settings.number_of_reviewers + 1
         return context
 
 class ARoBReviewersCreate(BaseCreateWithFormset):

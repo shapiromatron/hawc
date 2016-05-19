@@ -273,11 +273,13 @@ class Study(Reference):
         if with_final:
             return self.riskofbiases\
                        .filter(active=True)\
-                       .order_by('final', 'last_updated')
+                       .order_by('final', 'last_updated')\
+                       .prefetch_related('author')
         else:
             return self.riskofbiases\
                        .filter(active=True, final=False)\
-                       .order_by('last_updated')
+                       .order_by('last_updated')\
+                       .prefetch_related('author')
 
     def get_user_rob(self, user, final=False):
         return self.riskofbiases.filter(

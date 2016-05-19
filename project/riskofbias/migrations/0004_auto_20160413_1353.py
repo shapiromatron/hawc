@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('score', models.PositiveSmallIntegerField(choices=[(1, 'Definitely high risk of bias'), (2, 'Probably high risk of bias'), (3, 'Probably low risk of bias'), (4, 'Definitely low risk of bias'), (0, 'Not applicable')], default=4)),
-                ('notes', models.TextField(blank=True, default='')),
+                ('notes', models.TextField(blank=True, null=True)),
                 ('metric', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='riskofbias.RiskOfBiasMetric')),
             ],
         ),
