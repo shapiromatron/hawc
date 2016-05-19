@@ -2651,14 +2651,14 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 content.push(d.robs[0].riskofbias.build_details_div({show_study: true}));
                 break;
             case 'study':
-                content.push(RiskOfBias.build_metric_comparison_div(d.robs));
+                content.push(RiskOfBiasScore.build_metric_comparison_div(d.robs));
                 break;
             case 'metric':
-                content.push(RiskOfBias.build_study_comparison_div(d.robs));
+                content.push(RiskOfBiasScore.build_study_comparison_div(d.robs));
                 break;
         }
 
-        RiskOfBias.display_details_divs($div, content);
+        RiskOfBiasScore.display_details_divs($div, content);
     }
 });
 
