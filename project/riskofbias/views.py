@@ -106,16 +106,10 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
                 Prefetch(
                     'riskofbiases',
                     queryset=models.RiskOfBias.objects.filter(active=True, final=False),
-                    to_attr='active_riskofbiases'),
-                Prefetch(
-                    'riskofbiases',
-                    queryset=models.RiskOfBias.objects.filter(active=True, final=True)
-                        .prefetch_related('author'),
-                    to_attr='final_riskofbias')
+                    to_attr='active_riskofbiases')
                 )
-        return self.formset_factory(
-            queryset=queryset
-            )
+
+        return self.formset_factory(queryset=queryset)
 
     def pre_validate(self, form, formset):
         # if number_of_reviewers changes, change required on fields

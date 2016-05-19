@@ -170,9 +170,8 @@ class RoBReviewersForm(forms.ModelForm):
         self.fields['final_author'].widget.update_query_parameters(
             {'related': assessment_id})
         try:
-            if len(self.instance.final_riskofbias) is not 0:
-                self.fields['final_author'].initial = \
-                    self.instance.final_riskofbias[0].author.id
+            self.fields['final_author'].initial = \
+                self.instance.get_final().author.id
         except (AttributeError):
             pass
         self.fields['final_author'].required = True
