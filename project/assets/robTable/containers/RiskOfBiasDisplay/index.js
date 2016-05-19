@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
-import ShowHideAll from 'robTable/components/ShowHideAll';
+import ShowAll from 'robTable/components/ShowAll';
 import Loading from 'shared/components/Loading';
 
 
@@ -12,18 +12,12 @@ class RiskOfBiasDisplay extends Component {
     componentWillMount(){
         let { dispatch, study_id } = this.props;
         dispatch(fetchStudyIfNeeded(study_id));
-        this.setState({showHide: 'Hide'});
+
     }
 
-    toggleShowHideAll(){
-        let { dispatch, riskofbiases } = this.props;
-        if (this.state.showHide == 'Hide'){
-            dispatch(selectActive({domain: []}));
-            this.setState({showHide: 'Show'});
-        } else {
-            dispatch(selectActive({domain: 'all'}));
-            this.setState({showHide: 'Hide'});
-        }
+    handleShowAllClick(){
+        let { dispatch } = this.props;
+        dispatch(selectActive({domain: 'all'}));
     }
 
     render(){
@@ -36,8 +30,7 @@ class RiskOfBiasDisplay extends Component {
                     return <DomainDisplay key={domain.key}
                                        domain={domain} />;
                 })}
-                <ShowHideAll actionText={this.state.showHide}
-                             handleClick={this.toggleShowHideAll.bind(this)} />
+                <ShowAll handleClick={this.handleShowAllClick.bind(this)} />
             </div>
         );
     }

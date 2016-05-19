@@ -1,23 +1,22 @@
 import React, { Component, PropTypes } from 'react';
 
-import './ShowHideAll.css';
+import './ShowAll.css';
 
 
-class ShowHideAll extends Component {
+class ShowAll extends Component {
     render() {
-        let { actionText, handleClick } = this.props;
+        let { handleClick } = this.props;
         return (
             <button className='btn btn-small' onClick={handleClick}>
                 <i className='fa fa-plus'></i>
-                {actionText} all details
+                Show all details
             </button>
         );
     }
 }
 
-ShowHideAll.propTypes = {
-    actionText: PropTypes.string.isRequired,
+ShowAll.propTypes = {
     handleClick: PropTypes.func.isRequired,
 };
 
-export default ShowHideAll;
+export default ShowAll;
