@@ -33,10 +33,6 @@
     {{formset.form.media}}
     <script type="text/javascript">
       $(document).ready(function() {
-        $('.study').each(function(i,v){
-          $(this.parentElement).text(this.value)
-          $(this).hide(true);
-        });
         new DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
         $('#reviewersFormset').insertBefore($('#numberForm .form-actions'));
       });

@@ -138,15 +138,18 @@ class RoBReviewersForm(forms.ModelForm):
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
-        robs = self.instance.get_active_riskofbiases(with_final=False)
+        if hasattr(self.instance_name, 'active_riskofbiases'):
+            robs = self.instance.active_riskofbiases
+        else:
+            robs = self.instance.get_active_riskofbiases(with_final=False)
 
         try:
-            reviewers = range(self.instance.assessment.rob_settings.number_of_reviewers)
+            reviewers = self.instance.assessment.rob_settings.number_of_reviewers
         except ObjectDoesNotExist:
-            reviewers = range(0)
+            reviewers = 0
 
-        if len(reviewers) > 1:
-            for i in reviewers:
+        if reviewers > 1:
+            for i in range(reviewers):
                 author_field = "author-{}".format(i)
                 self.fields[author_field] = selectable.AutoCompleteSelectField(
                     lookup_class=AssessmentTeamMemberOrHigherLookup,
@@ -167,9 +170,10 @@ class RoBReviewersForm(forms.ModelForm):
         self.fields['final_author'].widget.update_query_parameters(
             {'related': assessment_id})
         try:
-            self.fields['final_author'].initial = \
-                self.instance.get_final().author.id
-        except AttributeError:
+            if len(self.instance.final_riskofbias) is not 0:
+                self.fields['final_author'].initial = \
+                    self.instance.final_riskofbias[0].author.id
+        except (AttributeError):
             pass
         self.fields['final_author'].required = True
 

@@ -8,8 +8,8 @@ from assessment.models import Assessment
 from riskofbias import exports, reports
 from study.models import Study
 from study.views import StudyList
-from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
-                         BaseDelete, BaseList, BaseUpdate, BaseUpdateWithFormset,
+from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
+                         BaseUpdate, BaseUpdateWithFormset,
                          GenerateFixedReport, MessageMixin,
                          ProjectManagerOrHigherMixin)
 
@@ -73,30 +73,14 @@ class ARoBReviewersList(BaseList):
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
-                    queryset=models.RiskOfBias.objects.filter(active=True).prefetch_related('author'),
+                    queryset=models.RiskOfBias.objects.filter(active=True)
+                        .prefetch_related('author'),
                     to_attr='active_riskofbiases'))
-
 
     def get_context_data(self, **kwargs):
         context = super(ARoBReviewersList, self).get_context_data(**kwargs)
         context['rob_count'] = self.assessment.rob_settings.number_of_reviewers + 1
         return context
-
-class ARoBReviewersCreate(BaseCreateWithFormset):
-    model = Assessment
-    child_model = models.RiskOfBias
-    form_class = forms.NumberOfReviewersForm
-    formset_factory = forms.RoBReviewerFormset
-    success_message = 'Risk of Bias reviewers created.'
-    template_name = "riskofbias/arob_reviewers_form.html"
-
-    def build_initial_formset_factory(self):
-        return self.formset_factory(
-            queryset=Study.objects.filter(assessment=self.assessment))
-
-    def get_success_url(self):
-        return reverse_lazy('riskofbias:arob_reviewers',
-                            kwargs={'pk': self.assessment.pk})
 
 
 class ARoBReviewersUpdate(BaseUpdateWithFormset):
@@ -114,8 +98,24 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
     template_name = "riskofbias/arob_reviewers_form.html"
 
     def build_initial_formset_factory(self):
+        queryset = Study.objects.filter(assessment=self.assessment)\
+            .prefetch_related('identifiers')\
+            .prefetch_related('searches')\
+            .prefetch_related('assessment__rob_settings')\
+            .prefetch_related(
+                Prefetch(
+                    'riskofbiases',
+                    queryset=models.RiskOfBias.objects.filter(active=True, final=False),
+                    to_attr='active_riskofbiases'),
+                Prefetch(
+                    'riskofbiases',
+                    queryset=models.RiskOfBias.objects.filter(active=True, final=True)
+                        .prefetch_related('author'),
+                    to_attr='final_riskofbias')
+                )
         return self.formset_factory(
-            queryset=Study.objects.filter(assessment=self.assessment))
+            queryset=queryset
+            )
 
     def pre_validate(self, form, formset):
         # if number_of_reviewers changes, change required on fields
