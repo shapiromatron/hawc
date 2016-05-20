@@ -149,7 +149,7 @@ class RiskOfBias(models.Model):
 
     @property
     def is_complete(self):
-        return all([(score.notes is not None) for score in self.scores.all()])
+        return all([(score.notes is not u'') for score in self.scores.all()])
 
     @classmethod
     def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
@@ -197,7 +197,7 @@ class RiskOfBiasScore(models.Model):
     riskofbias = models.ForeignKey(RiskOfBias, related_name='scores')
     metric = models.ForeignKey(RiskOfBiasMetric, related_name='scores')
     score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=4)
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ('metric', 'id')

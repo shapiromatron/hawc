@@ -17,4 +17,16 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.AssessmentDomainSerializer
 
     def get_queryset(self):
-        return self.model.objects.all()
+        return self.model.objects.all().prefetch_related('metrics')
+
+
+class RiskOfBias(viewsets.ModelViewSet):
+    assessment_filter_args = 'study__assessment'
+    model = models.RiskOfBias
+    pagination_class = DisabledPagination
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
+    serializer_class = serializers.RiskOfBiasSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all().prefetch_related('scores__metric__domain', 'study', 'author')

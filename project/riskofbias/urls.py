@@ -6,6 +6,7 @@ from . import views, api
 
 router = DefaultRouter()
 router.register(r'domain', api.RiskOfBiasDomain, base_name='domain')
+router.register(r'review', api.RiskOfBias, base_name='review')
 
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
@@ -33,9 +34,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/reviewers/$',
         views.ARoBReviewersList.as_view(),
         name='arob_reviewers'),
-    url(r'^assessment/(?P<pk>\d+)/reviewers/create/$',
-        views.ARoBReviewersCreate.as_view(),
-        name='arob_reviewers_create'),
     url(r'^assessment/(?P<pk>\d+)/reviewers/edit/$',
         views.ARoBReviewersUpdate.as_view(),
         name='arob_reviewers_update'),
