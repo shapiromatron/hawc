@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from utils.helper import SerializerHelper
 
+from myuser.serializers import HAWCUserSerializer
 from . import models
 
 
@@ -50,14 +51,10 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(read_only=True, many=True)
-
-    def to_representation(self, instance):
-        ret = super(RiskOfBiasSerializer, self).to_representation(instance)
-        ret['author'] = instance.author.get_full_name()
-        return ret
+    author = HAWCUserSerializer(read_only=True)
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'author', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

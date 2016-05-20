@@ -10,7 +10,7 @@ class ScoreDisplay extends Component {
         let { score } = this.props;
         return (
             <div className='score-display'>
-                <h5>{score.author}</h5>
+                <h5>{score.author.full_name}</h5>
                 <ScoreBar score={score.score}
                           shade={score.score_shade}
                           symbol={score.score_symbol}
@@ -26,14 +26,14 @@ class ScoreDisplay extends Component {
 
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
-        author: PropTypes.string.isRequired,
+        author: PropTypes.object.isRequired,
         domain_id: PropTypes.number,
         domain_text: PropTypes.string,
         metric: PropTypes.shape({
             description: PropTypes.string.isRequired,
             metric: PropTypes.string.isRequired,
         }).isRequired,
-        notes: PropTypes.string.isRequired,
+        notes: PropTypes.string,
         score_description: PropTypes.string.isRequired,
         score_symbol: PropTypes.string.isRequired,
         score_shade: PropTypes.string.isRequired,
