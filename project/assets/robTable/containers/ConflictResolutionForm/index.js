@@ -14,6 +14,15 @@ class ConflictResolutionForm extends Component {
         dispatch(fetchStudyIfNeeded(study_id));
     }
 
+    submitForm(){
+        let submittion = _.map(this.refs, (domain) => {
+            return _.map(domain.refs, (metric) => {
+                let { notes, score } = metric.refs.form.refs;
+                return { notes: notes.value, score: score.refs.select.value };
+            });
+        });
+    }
+
     render(){
         let { itemsLoaded, riskofbiases, isForm } = this.props;
         if (!itemsLoaded) return <Loading />;
@@ -24,10 +33,14 @@ class ConflictResolutionForm extends Component {
 
                     {_.map(riskofbiases, (domain) => {
                         return <DomainDisplay key={domain.key}
+                                           ref={domain.key}
                                            domain={domain}
                                            isForm={isForm} />;
                     })}
-                    <button className='btn btn-primary'>Update risk of bias</button>
+                    <button className='btn btn-primary'
+                            onClick={this.submitForm.bind(this)}>
+                        Update risk of bias
+                    </button>
                     <button className='btn'>Cancel</button>
                 </form>
             </div>

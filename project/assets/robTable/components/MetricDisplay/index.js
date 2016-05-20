@@ -9,7 +9,7 @@ class MetricDisplay extends Component {
 
     renderScoreForm(){
         let formScore = _.findWhere(this.props.metric.values, {final: true});
-        return <ScoreForm score={formScore} />;
+        return <ScoreForm ref='form' score={formScore} />;
     }
 
     render(){
@@ -30,6 +30,7 @@ class MetricDisplay extends Component {
                     })}
                 </div>
                 {isForm ? this.renderScoreForm() : null}
+                <hr/>
             </div>
         );
     }

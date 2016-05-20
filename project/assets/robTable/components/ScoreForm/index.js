@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
+import ScoreIcon from 'robTable/components/ScoreIcon';
+import Select from 'robTable/components/Select';
 import './ScoreForm.css';
 
 
@@ -24,6 +27,7 @@ class ScoreForm extends Component {
                 4: 'Definitely low risk-of-bias',
             },
         };
+
     }
 
     componentWillMount(){
@@ -34,11 +38,10 @@ class ScoreForm extends Component {
         });
     }
 
-    selectScore(e){
-        let selectedScore = e.target.value;
+    selectScore(score){
         this.setState({
-            selectedShade: this.state.scoreShades[selectedScore],
-            selectedSymbol: this.state.scoreSymbols[selectedScore],
+            selectedShade: this.state.scoreShades[score],
+            selectedSymbol: this.state.scoreSymbols[score],
         });
     }
 
@@ -48,21 +51,22 @@ class ScoreForm extends Component {
         return (
           <div className='score-form'>
               <div>
-                  <select name="score-select"
+                  <Select choices={this.state.scoreChoices}
                           id={score.metric.metric}
-                          defaultValue={score.score}
-                          onChange={this.selectScore.bind(this)}>
-                      {_.map(this.state.scoreChoices, (score, key) => {
-                          return <option key={key} value={key}>{score}</option>;
-                      })}
-                  </select>
+                          defVal={score.score}
+                          ref='score'
+                          handleSelect={this.selectScore.bind(this)}/>
                   <br/><br/>
-                  <div className='score-icon'
-                      style={{backgroundColor: this.state.selectedShade}}>
-                          {this.state.selectedSymbol}
-                  </div>
+                  <ScoreIcon shade={this.state.selectedShade}
+                             symbol={this.state.selectedSymbol}/>
               </div>
-              <textarea name={`${score.metric.metric}-text`} id={score.metric.metric} cols='40' rows="8"></textarea>
+              <textarea ref='notes'
+                  name={`${score.metric.metric}-text`}
+                  id={score.metric.metric}
+                  cols='40'
+                  rows="8"
+                  defaultValue={score.notes}>
+              </textarea>
           </div>
         );
     }
