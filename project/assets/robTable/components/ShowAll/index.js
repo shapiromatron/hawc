@@ -8,7 +8,7 @@ class ShowAll extends Component {
         let { handleClick } = this.props;
         return (
             <button className='btn btn-small' onClick={handleClick}>
-                <i className='fa fa-plus'></i>
+                <i className='fa fa-plus show-plus'></i>
                 Show all details
             </button>
         );

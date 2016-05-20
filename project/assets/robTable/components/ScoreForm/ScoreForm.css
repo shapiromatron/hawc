@@ -1,6 +1,7 @@
 .score-form {
     display: flex;
     flex-flow: row;
+    margin: 10px
 }
 
 .score-icon {
@@ -17,10 +18,10 @@
     color: white;
 }
 
-select {
+.score-form select {
     flex: 1;
 }
 
-textarea {
+.score-form textarea {
     flex: 4;
 }
