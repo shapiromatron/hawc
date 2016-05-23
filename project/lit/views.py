@@ -261,6 +261,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
     """
     Abstract base-class to tag references, using various methods to get instance.
     """
+    model = Assessment
     form_class = forms.TagReferenceForm
     template_name = "lit/search_tags_edit.html"
 

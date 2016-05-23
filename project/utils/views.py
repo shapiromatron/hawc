@@ -176,7 +176,6 @@ class TeamMemberOrHigherMixin(object):
     Mixin for team-member access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
     """
-    model = Assessment
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):

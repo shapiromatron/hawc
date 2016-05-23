@@ -261,6 +261,7 @@ class DataPivotFileNew(DataPivotNew):
 
 class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
+    model = Assessment
     template_name = 'summary/datapivot_copy_selector.html'
     form_class = forms.DataPivotSelectorForm
 
