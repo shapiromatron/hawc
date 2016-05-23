@@ -297,6 +297,7 @@ class StudyPopulation(models.Model):
 class Outcome(BaseEndpoint):
 
     TEXT_CLEANUP_FIELDS = (
+        'name',
         'system',
         'effect',
         'effect_subtype',

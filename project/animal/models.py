@@ -521,6 +521,7 @@ class DoseGroup(models.Model):
 class Endpoint(BaseEndpoint):
 
     TEXT_CLEANUP_FIELDS = (
+        'name',
         'system',
         'organ',
         'effect',
