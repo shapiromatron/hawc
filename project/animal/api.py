@@ -74,7 +74,7 @@ class Endpoint(AssessmentViewset):
 
 
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
-    serializer_class = serializers.EndpointFieldsSerializer
+    serializer_class = serializers.EndpointCleanupFieldsSerializer
     model = models.Endpoint
 
 

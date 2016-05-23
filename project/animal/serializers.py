@@ -134,7 +134,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
-class EndpointFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Endpoint
