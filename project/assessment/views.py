@@ -465,40 +465,70 @@ class AssessmentEndpointList(views.AssessmentViewset):
     pagination_class = DisabledPagination
 
     def list(self, request, *args, **kwargs):
+        """
+        List has been optimized for queryset speed; some counts in get_queryset
+        and others in the list here; depends on if a "select distinct" is
+        required which significantly decreases query speed.
+        """
+
         instance = self.filter_queryset(self.get_queryset())[0]
         app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
         instance.items = []
 
+        # animal
         instance.items.append({
             'count': instance.endpoint_count,
             'title': "animal bioassay endpoints",
             'type': 'ani',
             'url': "{}{}".format(app_url, 'ani/'),
         })
+        count = apps.get_model('animal', 'Experiment')\
+            .objects\
+            .filter(study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "animal bioassay experiments",
+            'type': 'experiment',
+            'url': "{}{}".format(app_url, 'experiment/'),
+        })
+        count = apps.get_model('animal', 'AnimalGroup')\
+            .objects\
+            .filter(experiment__study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "animal bioassay animal groups",
+            'type': 'animal-groups',
+            'url': "{}{}".format(app_url, 'animal-groups/'),
+        })
+
+        # epi
         instance.items.append({
             "count": instance.outcome_count,
             "title": "epidemiological outcomes assessed",
             'type': 'epi',
             'url': "{}{}".format(app_url, 'epi/')
         })
+
+        # in vitro
         instance.items.append({
             "count": instance.ivendpoint_count,
             "title": "in vitro endpoints",
             'type': 'in-vitro',
             'url': "{}{}".format(app_url, 'in-vitro/'),
         })
-        # We implement "count" here instead of in get_queryset, otherwise it
-        # it requires a "distinct" which makes it execute ~50x slower
-        instance.ivchemical_count = apps.get_model('invitro', 'ivchemical')\
+        count = apps.get_model('invitro', 'ivchemical')\
             .objects\
             .filter(study__assessment=instance.id)\
             .count()
         instance.items.append({
-            "count": instance.ivchemical_count,
+            "count": count,
             "title": "in vitro chemicals",
             'type': 'in-vitro-chemical',
             'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
         })
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 

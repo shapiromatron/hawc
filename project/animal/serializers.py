@@ -134,6 +134,22 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
+class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Experiment
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+
+class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.AnimalGroup
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+
 class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:

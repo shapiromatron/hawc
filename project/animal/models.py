@@ -48,6 +48,14 @@ class Experiment(models.Model):
         (u'=', u'='),
         (u'',  u''))
 
+    TEXT_CLEANUP_FIELDS = (
+        'name',
+        'chemical',
+        'cas',
+        'chemical_source',
+        'vehicle',
+    )
+
     study = models.ForeignKey(
         'study.Study',
         related_name='experiments')
@@ -179,6 +187,18 @@ class Experiment(models.Model):
             cleanHTML(ser['description'])
         )
 
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
+
+    @classmethod
+    def delete_caches(cls, ids):
+        Endpoint.delete_caches(
+            Endpoint.objects
+                .filter(animal_group__experiment__in=ids)
+                .values_list('id', flat=True)
+        )
+
 
 class AnimalGroup(models.Model):
 
@@ -203,6 +223,13 @@ class AnimalGroup(models.Model):
         ("F3", "Third-generation (F3)"),
         ("F4", "Fourth-generation (F4)"),
         ("Ot", "Other"))
+
+    TEXT_CLEANUP_FIELDS = (
+        'name',
+        'animal_source',
+        'lifestage_exposed',
+        'lifestage_assessed',
+    )
 
     experiment = models.ForeignKey(
         Experiment,
@@ -340,6 +367,18 @@ class AnimalGroup(models.Model):
             cleanHTML(ser['comments']),
             ser['species'],
             ser['strain']
+        )
+
+    @classmethod
+    def text_cleanup_fields(cls):
+        return cls.TEXT_CLEANUP_FIELDS
+
+    @classmethod
+    def delete_caches(cls, ids):
+        Endpoint.delete_caches(
+            Endpoint.objects
+                .filter(animal_group__in=ids)
+                .values_list('id', flat=True)
         )
 
 
@@ -527,7 +566,9 @@ class Endpoint(BaseEndpoint):
         'effect',
         'effect_subtype',
         'observation_time_text',
+        'data_location',
         'response_units',
+        'statistical_test',
     )
 
     DATA_TYPE_CHOICES = (

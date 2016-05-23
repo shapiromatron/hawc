@@ -73,6 +73,18 @@ class Endpoint(AssessmentViewset):
         return Response(serializer.data)
 
 
+class ExperimentCleanupFieldsView(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ExperimentCleanupFieldsSerializer
+    model = models.Experiment
+    assessment_filter_args = "study__assessment"
+
+
+class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.AnimalGroupCleanupFieldsSerializer
+    model = models.AnimalGroup
+    assessment_filter_args = "experiment__study__assessment"
+
+
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.EndpointCleanupFieldsSerializer
     model = models.Endpoint
