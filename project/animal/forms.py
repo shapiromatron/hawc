@@ -341,7 +341,7 @@ class EndpointForm(ModelForm):
                   'observation_time', 'observation_time_units', 'observation_time_text',
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'confidence_interval',
-                  'response_units', 'data_location',
+                  'response_units', 'data_location', 'expected_adversity_direction',
                   'NOEL', 'LOEL', 'FEL',
                   'monotonicity', 'statistical_test', 'trend_value',
                   'power_notes', 'results_notes', 'endpoint_notes')
@@ -425,7 +425,7 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('observation_time', 3, "span4")
         helper.add_fluid_row('data_reported', 3, "span4")
         helper.add_fluid_row('data_type', 3, "span4")
-        helper.add_fluid_row('response_units', 2, "span6")
+        helper.add_fluid_row('response_units', 3, "span4")
         helper.add_fluid_row('NOEL', 3, "span4")
         helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
 

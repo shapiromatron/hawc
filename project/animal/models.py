@@ -611,6 +611,13 @@ class Endpoint(BaseEndpoint):
         (2, "significant"),
         (3, "not reported"))
 
+    ADVERSE_DIRECTION_CHOICES = (
+        (3, 'increase from reference/control group'),
+        (2, 'decrease from reference/control group'),
+        (1, 'any change from reference/control group'),
+        (0, 'not reported'),
+    )
+
     animal_group = models.ForeignKey(
         AnimalGroup,
         related_name="endpoints")
@@ -648,6 +655,11 @@ class Endpoint(BaseEndpoint):
         blank=True,
         help_text="Details on where the data are found in the literature "
                   "(ex: Figure 1, Table 2, etc.)")
+    expected_adversity_direction = models.PositiveSmallIntegerField(
+        choices=ADVERSE_DIRECTION_CHOICES,
+        default=0,
+        verbose_name='Expected response adversity direction',
+        help_text='Response direction which would be considered adverse')
     response_units = models.CharField(
         max_length=32,
         blank=True,
@@ -841,6 +853,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-data_reported",
             "endpoint-data_extracted",
             "endpoint-values_estimated",
+            "endpoint-expected_adversity_direction",
             "endpoint-monotonicity",
             "endpoint-statistical_test",
             "endpoint-trend_value",
@@ -874,6 +887,7 @@ class Endpoint(BaseEndpoint):
             ser['data_reported'],
             ser['data_extracted'],
             ser['values_estimated'],
+            ser['expected_adversity_direction_text'],
             ser['monotonicity'],
             ser['statistical_test'],
             ser['trend_value'],
