@@ -17,7 +17,7 @@ from rest_framework.response import Response
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
+                         BaseDelete, BaseVersion, BaseList, TeamMemberOrHigherMixin)
 from utils.helper import tryParseInt
 from assessment.api.views import DisabledPagination
 from celery import chain
@@ -356,7 +356,7 @@ class BaseEndpointList(BaseList):
         return context
 
 
-class CleanExtractedData(ProjectManagerOrHigherMixin, BaseEndpointList):
+class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     template_name = 'assessment/clean_extracted_data.html'
 
     def get_assessment(self, request, *args, **kwargs):
