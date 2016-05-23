@@ -190,7 +190,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
         model = models.ComparisonSet
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Outcome
