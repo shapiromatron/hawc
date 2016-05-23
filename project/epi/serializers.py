@@ -194,7 +194,7 @@ class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerial
 
     class Meta:
         model = models.Outcome
-        cleanup_fields = model.text_cleanup_fields()
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

@@ -38,7 +38,7 @@ class CleanupFieldsFilter(InAssessmentFilter):
 class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     """
     Base Viewset for bulk updating text fields. Model should have a
-    text_cleanup_fields() class method that returns the fields to be cleaned up.
+    TEXT_CLEANUP_FIELDS class attribute which is list of fields.
 
     For bulk update, 'X-CUSTOM-BULK-OPERATION' header must be provided.
 
@@ -59,7 +59,7 @@ class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateMode
     @list_route(methods=['get'])
     def fields(self, request, format=None):
         """ /$model/api/cleanup/fields/?assessment_id=$id """
-        cleanup_fields = self.model.text_cleanup_fields()
+        cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
         return Response({'text_cleanup_fields': cleanup_fields})
 
     def post_save_bulk(self, queryset, update_bulk_dict):

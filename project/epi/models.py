@@ -442,10 +442,6 @@ class Outcome(BaseEndpoint):
             child.copy_across_assessments(cw)
 
     @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
-
-    @classmethod
     def get_system_choices(cls, assessment_id):
         return get_distinct_charfield_opts(cls, assessment_id, 'system')
 

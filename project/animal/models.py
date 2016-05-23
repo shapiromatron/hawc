@@ -188,10 +188,6 @@ class Experiment(models.Model):
         )
 
     @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
-
-    @classmethod
     def delete_caches(cls, ids):
         Endpoint.delete_caches(
             Endpoint.objects
@@ -368,10 +364,6 @@ class AnimalGroup(models.Model):
             ser['species'],
             ser['strain']
         )
-
-    @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
 
     @classmethod
     def delete_caches(cls, ids):
@@ -974,10 +966,6 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def get_effects(cls, assessment_id):
         return get_distinct_charfield(cls, assessment_id, 'effect')
-
-    @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
 
     @classmethod
     def setMaximumPercentControlChange(cls, ep):
