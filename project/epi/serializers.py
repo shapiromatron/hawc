@@ -190,11 +190,11 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
         model = models.ComparisonSet
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Outcome
-        cleanup_fields = model.text_cleanup_fields()
-        fields = cleanup_fields + ('id', 'name')
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
 
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

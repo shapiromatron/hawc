@@ -174,6 +174,7 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
     Copy one or more studies from one assessment to another. This will copy
     all nested data as well.
     """
+    model = Assessment
     template_name = "study/studies_copy.html"
     form_class = forms.StudiesCopy
 

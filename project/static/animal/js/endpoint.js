@@ -464,8 +464,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))
            .add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted))
            .add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated))
-           .add_tbody_tr("Location in literature", this.data.data_location)
-           .add_tbody_tr("NOEL", critical_dose("NOEL"))
+           .add_tbody_tr("Location in literature", this.data.data_location);
+
+        if (this.data.expected_adversity_direction>0){
+            tbl.add_tbody_tr(
+                'Expected response<br>adversity direction',
+                this.data.expected_adversity_direction_text);
+        }
+
+        tbl.add_tbody_tr("NOEL", critical_dose("NOEL"))
            .add_tbody_tr("LOEL", critical_dose("LOEL"))
            .add_tbody_tr("FEL",  critical_dose("FEL"))
            .add_tbody_tr("Monotonicity", this.data.monotonicity)

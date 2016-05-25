@@ -134,7 +134,7 @@ class IVEndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.IVEndpoint
-        cleanup_fields = model.text_cleanup_fields()
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
 
@@ -142,7 +142,7 @@ class IVChemicalCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.IVChemical
-        cleanup_fields = model.text_cleanup_fields()
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
 

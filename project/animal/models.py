@@ -48,6 +48,14 @@ class Experiment(models.Model):
         (u'=', u'='),
         (u'',  u''))
 
+    TEXT_CLEANUP_FIELDS = (
+        'name',
+        'chemical',
+        'cas',
+        'chemical_source',
+        'vehicle',
+    )
+
     study = models.ForeignKey(
         'study.Study',
         related_name='experiments')
@@ -179,6 +187,14 @@ class Experiment(models.Model):
             cleanHTML(ser['description'])
         )
 
+    @classmethod
+    def delete_caches(cls, ids):
+        Endpoint.delete_caches(
+            Endpoint.objects
+                .filter(animal_group__experiment__in=ids)
+                .values_list('id', flat=True)
+        )
+
 
 class AnimalGroup(models.Model):
 
@@ -203,6 +219,13 @@ class AnimalGroup(models.Model):
         ("F3", "Third-generation (F3)"),
         ("F4", "Fourth-generation (F4)"),
         ("Ot", "Other"))
+
+    TEXT_CLEANUP_FIELDS = (
+        'name',
+        'animal_source',
+        'lifestage_exposed',
+        'lifestage_assessed',
+    )
 
     experiment = models.ForeignKey(
         Experiment,
@@ -340,6 +363,14 @@ class AnimalGroup(models.Model):
             cleanHTML(ser['comments']),
             ser['species'],
             ser['strain']
+        )
+
+    @classmethod
+    def delete_caches(cls, ids):
+        Endpoint.delete_caches(
+            Endpoint.objects
+                .filter(animal_group__in=ids)
+                .values_list('id', flat=True)
         )
 
 
@@ -521,12 +552,15 @@ class DoseGroup(models.Model):
 class Endpoint(BaseEndpoint):
 
     TEXT_CLEANUP_FIELDS = (
+        'name',
         'system',
         'organ',
         'effect',
         'effect_subtype',
         'observation_time_text',
+        'data_location',
         'response_units',
+        'statistical_test',
     )
 
     DATA_TYPE_CHOICES = (
@@ -577,6 +611,13 @@ class Endpoint(BaseEndpoint):
         (2, "significant"),
         (3, "not reported"))
 
+    ADVERSE_DIRECTION_CHOICES = (
+        (3, 'increase from reference/control group'),
+        (2, 'decrease from reference/control group'),
+        (1, 'any change from reference/control group'),
+        (0, 'not reported'),
+    )
+
     animal_group = models.ForeignKey(
         AnimalGroup,
         related_name="endpoints")
@@ -614,6 +655,11 @@ class Endpoint(BaseEndpoint):
         blank=True,
         help_text="Details on where the data are found in the literature "
                   "(ex: Figure 1, Table 2, etc.)")
+    expected_adversity_direction = models.PositiveSmallIntegerField(
+        choices=ADVERSE_DIRECTION_CHOICES,
+        default=0,
+        verbose_name='Expected response adversity direction',
+        help_text='Response direction which would be considered adverse')
     response_units = models.CharField(
         max_length=32,
         blank=True,
@@ -807,6 +853,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-data_reported",
             "endpoint-data_extracted",
             "endpoint-values_estimated",
+            "endpoint-expected_adversity_direction",
             "endpoint-monotonicity",
             "endpoint-statistical_test",
             "endpoint-trend_value",
@@ -840,6 +887,7 @@ class Endpoint(BaseEndpoint):
             ser['data_reported'],
             ser['data_extracted'],
             ser['values_estimated'],
+            ser['expected_adversity_direction_text'],
             ser['monotonicity'],
             ser['statistical_test'],
             ser['trend_value'],
@@ -932,10 +980,6 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def get_effects(cls, assessment_id):
         return get_distinct_charfield(cls, assessment_id, 'effect')
-
-    @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
 
     @classmethod
     def setMaximumPercentControlChange(cls, ep):
