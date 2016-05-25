@@ -29,4 +29,4 @@ class RiskOfBias(viewsets.ModelViewSet):
     serializer_class = serializers.RiskOfBiasSerializer
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related('scores__metric__domain', 'study', 'author')
+        return self.model.objects.all().prefetch_related('study', 'author')
