@@ -35,7 +35,7 @@ class CleanupFieldsFilter(InAssessmentFilter):
         return queryset.filter(**filters)
 
 
-class CleanupFieldsBaseViewSet(views.ProjectManagerOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
+class CleanupFieldsBaseViewSet(views.TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     """
     Base Viewset for bulk updating text fields. Model should have a
     TEXT_CLEANUP_FIELDS class attribute which is list of fields.
