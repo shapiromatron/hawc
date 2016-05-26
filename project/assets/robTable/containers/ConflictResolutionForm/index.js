@@ -20,7 +20,7 @@ class ConflictResolutionForm extends Component {
                 let { form } = metric.refs;
                 return {
                     id: form.props.score.id,
-                    notes: form.refs.notes.value,
+                    notes: form.refs.notes.state.value,
                     score: form.refs.score.refs.select.value };
             });
         }));

@@ -6,7 +6,7 @@
 .score-symbol {
     padding: 5px;
 }
-
+/*
 [class$='-appear'],
 [class*='-appear'],
 [class$='-enter'],
@@ -27,4 +27,4 @@
     opacity: 1;
     width: 75%;
     transition: width 1s, opacity 1s ease-in-out;
-}
+}*/

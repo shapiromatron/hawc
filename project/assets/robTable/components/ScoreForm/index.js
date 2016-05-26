@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import ReactQuill from 'react-quill';
+import '../../../../node_modules/quill/dist/quill.base.css';
+import '../../../../node_modules/quill/dist/quill.snow.css';
 
 import ScoreIcon from 'robTable/components/ScoreIcon';
 import Select from 'robTable/components/Select';
@@ -60,13 +62,11 @@ class ScoreForm extends Component {
                   <ScoreIcon shade={this.state.selectedShade}
                              symbol={this.state.selectedSymbol}/>
               </div>
-              <textarea ref='notes'
-                  name={`${score.metric.metric}-text`}
-                  id={score.metric.metric}
-                  cols='40'
-                  rows="8"
-                  defaultValue={score.notes}>
-              </textarea>
+              <ReactQuill ref='notes'
+                          id={score.metric.metric}
+                          value={score.notes}
+                          theme='snow'
+                          className='score-editor' />
           </div>
         );
     }
