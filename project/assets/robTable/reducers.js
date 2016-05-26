@@ -30,6 +30,11 @@ function study(state=defaultState, action){
             itemsLoaded: true,
         });
 
+    case types.UPDATE_QUALITIES:
+        return Object.assign({}, state, {
+            qualities: action.qualities,
+        });
+
     case types.SELECT_ACTIVE:
         if(_.isEmpty(action.domain)){
             return Object.assign({}, state, {

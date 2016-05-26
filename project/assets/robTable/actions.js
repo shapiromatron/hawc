@@ -17,8 +17,14 @@ function receiveStudy(study){
     };
 }
 
+function updateQualities(qualities){
+    return {
+        type: types.UPDATE_QUALITIES,
+        qualities,
+    };
+}
+
 function formatOutgoingRiskOfBias(state, riskofbias){
-    console.log("riskofbias", riskofbias);
     let riskofbias_id = state.config.riskofbias.id,
         author,
         final,
@@ -49,7 +55,6 @@ function formatOutgoingRiskOfBias(state, riskofbias){
 function formatIncomingStudy(study){
     let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;});
     let domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
-        console.log("riskofbias", riskofbias);
         return _.map(riskofbias.scores, (score) => {
             return Object.assign({}, score, {
                 riskofbias_id: riskofbias.id,
@@ -99,13 +104,10 @@ export function submitFinalRiskOfBiasScores(scores){
                 state.config.riskofbias.url,
                 state.config.riskofbias.id,
                 state.config.assessment_id)}`, opts)
-            .then((response) => {
-                response.json().then(json => {
-                    console.log("json", json);
-                })
-            })
-    }
-
+            .then((response) => response.json())
+            .then((json) => dispatch(updateQualities(json.scores)))
+            .catch((ex) => console.error('Score submission failed', ex));
+    };
 }
 export function selectActive({domain, metric}){
     return {
