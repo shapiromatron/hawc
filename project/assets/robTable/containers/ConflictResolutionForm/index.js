@@ -10,8 +10,7 @@ import './ConflictResolutionForm.css';
 class ConflictResolutionForm extends Component {
 
     componentWillMount(){
-        let { dispatch, study_id } = this.props;
-        dispatch(fetchStudyIfNeeded(study_id));
+        this.props.dispatch(fetchStudyIfNeeded());
     }
 
     submitForm(e){
@@ -20,12 +19,12 @@ class ConflictResolutionForm extends Component {
             return _.map(domain.refs, (metric) => {
                 let { form } = metric.refs;
                 return {
-                    score_id: form.props.score.id,
+                    id: form.props.score.id,
                     notes: form.refs.notes.value,
                     score: form.refs.score.refs.select.value };
             });
         }));
-        this.props.dispatch(submitFinalRiskOfBiasScores(scores));
+        this.props.dispatch(submitFinalRiskOfBiasScores({scores,}));
     }
 
     render(){
@@ -55,7 +54,6 @@ class ConflictResolutionForm extends Component {
 
 function mapStateToProps(state){
     return {
-        study_id: state.config.study.id,
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,
         isForm: state.config.isForm,

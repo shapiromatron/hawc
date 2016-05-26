@@ -8,7 +8,7 @@ const helpers = {
     fetchGet: {
         credentials: 'same-origin',
     },
-    fetchPatch(csrf, obj, verb='PATCH'){
+    fetchPost(csrf, obj, verb='PATCH'){
         obj['csrfmiddlewaretoken'] = csrf;
         return {
             credentials: 'same-origin',

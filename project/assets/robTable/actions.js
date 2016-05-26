@@ -17,7 +17,36 @@ function receiveStudy(study){
     };
 }
 
-function formatRiskofBiasesForDisplay(study){
+function formatOutgoingRiskOfBias(state, riskofbias){
+    console.log("riskofbias", riskofbias);
+    let riskofbias_id = state.config.riskofbias.id,
+        author,
+        final,
+        scores = _.flatten(_.map(state.study.riskofbiases, (domain) =>{
+            return _.map(domain.values, (metric) => {
+                return _.omit(
+                    _.find(metric.values, (score) => {
+                        if (score.riskofbias_id == riskofbias_id){
+                            author = author || score.author;
+                            final = final || score.final;
+                        }
+                        return score.riskofbias_id == riskofbias_id;
+                    }),
+                    ['riskofbias_id', 'author','final', 'domain_id', 'domain_name']
+                );
+            });
+        }));
+    return Object.assign({}, {
+        author,
+        final,
+        scores,
+        active: true,
+        pk: parseInt(riskofbias_id),
+        study: parseInt(state.config.study.id),
+    }, riskofbias);
+}
+
+function formatIncomingStudy(study){
     let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;});
     let domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
         console.log("riskofbias", riskofbias);
@@ -42,7 +71,7 @@ function formatRiskofBiasesForDisplay(study){
     });
 }
 
-export function fetchStudyIfNeeded(id){
+export function fetchStudyIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.isFetching || state.itemsLoaded) return;
@@ -51,10 +80,10 @@ export function fetchStudyIfNeeded(id){
                 h.getObjectURL(
                     state.config.host,
                     state.config.study.url,
-                    id,
+                    state.config.study.id,
                     state.config.assessment_id), h.fetchGet)
             .then((response) => response.json())
-            .then((json) => formatRiskofBiasesForDisplay(json))
+            .then((json) => formatIncomingStudy(json))
             .then((json) => dispatch(receiveStudy(json)))
             .catch((ex) => console.error('Study parsing failed', ex));
     };
@@ -63,9 +92,8 @@ export function fetchStudyIfNeeded(id){
 export function submitFinalRiskOfBiasScores(scores){
     return (dispatch, getState) => {
         let state = getState(),
-            patch = {scores,},
-            opts = h.fetchPatch(state.config.csrf, patch, 'PATCH');
-        console.log("patch", patch);
+            patch = formatOutgoingRiskOfBias(state, scores),
+            opts = h.fetchPost(state.config.csrf, patch, 'PUT');
         return fetch(
             `${h.getObjectURL(state.config.host,
                 state.config.riskofbias.url,

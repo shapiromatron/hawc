@@ -10,9 +10,7 @@ import Loading from 'shared/components/Loading';
 class RiskOfBiasDisplay extends Component {
 
     componentWillMount(){
-        let { dispatch, study_id } = this.props;
-        dispatch(fetchStudyIfNeeded(study_id));
-
+        this.props.dispatch(fetchStudyIfNeeded());
     }
 
     handleShowAllClick(){
@@ -38,9 +36,7 @@ class RiskOfBiasDisplay extends Component {
 
 function mapStateToProps(state){
     return {
-        study_id: state.config.study.id,
         itemsLoaded: state.study.itemsLoaded,
-        riskofbiases: state.study.riskofbiases,
         active: state.study.active,
     };
 }
