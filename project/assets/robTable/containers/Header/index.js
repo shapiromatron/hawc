@@ -5,17 +5,29 @@ import { connect } from 'react-redux';
 class Header extends Component {
 
     render() {
+        let headerText, smallText;
+        if(this.props.isForm){
+            headerText = 'Final review edit';
+            smallText = 'Justification for risk of bias assessment of selected study. Each row contains the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.';
+        } else {
+            headerText = 'Show all active reviews';
+            smallText = null;
+        }
         return (
-            <h2>
-                {this.props.form ? 'Final review edit' : 'Show all active reviews'}
-            </h2>
+            <div>
+                <h2>
+                    {headerText}
+                </h2>
+                <span>{smallText}</span>
+                <hr/>
+            </div>
         );
     }
 }
 
 function mapStateToProps(state){
     return {
-        form: state.config.form,
+        isForm: state.config.isForm,
     };
 }
 
