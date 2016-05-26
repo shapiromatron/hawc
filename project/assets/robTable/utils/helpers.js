@@ -8,6 +8,18 @@ const helpers = {
     fetchGet: {
         credentials: 'same-origin',
     },
+    fetchPatch(csrf, obj, verb='PATCH'){
+        obj['csrfmiddlewaretoken'] = csrf;
+        return {
+            credentials: 'same-origin',
+            method: verb,
+            headers: new Headers({
+                'X-CSRFToken': csrf,
+                'content-type': 'application/json',
+            }),
+            body: JSON.stringify(obj),
+        };
+    },
     getValue(target){
         switch(target.type){
         case 'checkbox':

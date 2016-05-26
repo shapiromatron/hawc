@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded } from 'robTable/actions';
+import { fetchStudyIfNeeded, submitFinalRiskOfBiasScores } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
 import './ConflictResolutionForm.css';
@@ -14,13 +14,18 @@ class ConflictResolutionForm extends Component {
         dispatch(fetchStudyIfNeeded(study_id));
     }
 
-    submitForm(){
-        let submittion = _.map(this.refs, (domain) => {
+    submitForm(e){
+        e.preventDefault();
+        let scores = _.flatten(_.map(this.refs, (domain) => {
             return _.map(domain.refs, (metric) => {
-                let { notes, score } = metric.refs.form.refs;
-                return { notes: notes.value, score: score.refs.select.value };
+                let { form } = metric.refs;
+                return {
+                    score_id: form.props.score.id,
+                    notes: form.refs.notes.value,
+                    score: form.refs.score.refs.select.value };
             });
-        });
+        }));
+        this.props.dispatch(submitFinalRiskOfBiasScores(scores));
     }
 
     render(){
