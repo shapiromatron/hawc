@@ -57,19 +57,12 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         model = models.RiskOfBias
         fields = ('id', 'author', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
 
-    def partial_update_scores(self, instance, score_data):
-        scores = instance.scores.all()
-        for form_data, score in zip(score_data, scores):
+    def update(self, instance, validated_data):
+        score_data = validated_data.pop('scores')
+        for score, form_data in zip(instance.scores.all(), score_data):
             for field, value in form_data.items():
                 setattr(score, field, value)
             score.save()
-
-    def update(self, instance, validated_data):
-        score_data = validated_data.pop('scores')
-        if score_data:
-            self.partial_update_scores(instance, score_data)
-        for field, value in validated_data.items():
-            setattr(instance, field, value)
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
