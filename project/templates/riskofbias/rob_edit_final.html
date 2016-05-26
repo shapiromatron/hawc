@@ -33,6 +33,10 @@
               "id": "{{ object.study.pk }}",
               "url": "{% url 'study:api:study-list' %}"
           },
+          "riskofbias": {
+              "id": "{{ object.pk }}"  ,
+              "url": "{% url 'riskofbias:api:review-list' %}"
+          },
           "csrf": "{{ csrf_token }}",
           "host": "//{{request.get_host}}",
           "isForm": true
