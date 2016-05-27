@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { VelocityComponent } from 'velocity-react';
 
 import './ScoreBar.css';
 
@@ -9,7 +9,7 @@ class ScoreBar extends Component {
         let { shade, symbol } = this.props;
         return (
             <div className='rob_score_bar'
-                style={{backgroundColor: shade}}>
+                style={{backgroundColor: shade, opacity: 0}}>
                 <span className='score-symbol'>{symbol}</span>
             </div>
         );
@@ -17,17 +17,15 @@ class ScoreBar extends Component {
 
     render() {
         let { description, score } = this.props,
-            bar_class = d3.max([d3.round(score / 4 * 100, 2), 15]);
+            barWidth = d3.max([d3.round(score / 4 * 100, 2), 15]);
+
         return (
             <div className='score-bar'>
-                <ReactCSSTransitionGroup
-                    transitionName={`${bar_class}`}
-                    transitionEnterTimeout={1000}
-                    transitionLeaveTimeout={1000}
-                    transitionAppear={true}
-                    transitionAppearTimeout={2000}>
+                <VelocityComponent animation={{opacity: 1, width: `${barWidth}%`}}
+                                   runOnMount={true}
+                                   duration={1000}>
                     {this.render_score_bar()}
-                </ReactCSSTransitionGroup>
+                </VelocityComponent>
                 {description}
             </div>
         );

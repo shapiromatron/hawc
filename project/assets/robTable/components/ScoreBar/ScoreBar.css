@@ -6,25 +6,3 @@
 .score-symbol {
     padding: 5px;
 }
-/*
-[class$='-appear'],
-[class*='-appear'],
-[class$='-enter'],
-[class*='-enter'] {
-    opacity: 0;
-    width: 0;
-}
-
-.100-appear.100-appear-active,
-.100-enter.100-enter-active {
-    opacity: 1;
-    width: 100%;
-    transition: width 1s, opacity 1s ease-in-out;
-}
-
-.75-appear.75-appear-active,
-.75-enter.75-enter-active {
-    opacity: 1;
-    width: 75%;
-    transition: width 1s, opacity 1s ease-in-out;
-}*/
