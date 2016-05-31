@@ -18,12 +18,20 @@
         "assessment_id": "{{ assessment.id }}",
         "assessment": "{% url 'assessment:endpoint_type_list' %}",
         "epi": {
-          "url": "{% url 'epi:api:cleanup-list' %}",
+          "url": "{% url 'epi:api:outcome-cleanup-list' %}",
           "endpoint": "Outcome"
         },
         "ani": {
-          "url": "{% url 'animal:api:cleanup-list' %}",
+          "url": "{% url 'animal:api:endpoint-cleanup-list' %}",
           "endpoint": "Endpoint"
+        },
+        "experiment": {
+          "url": "{% url 'animal:api:experiment-cleanup-list' %}",
+          "endpoint": "Experiment"
+        },
+        "animal-groups": {
+          "url": "{% url 'animal:api:animal_group-cleanup-list' %}",
+          "endpoint": "AnimalGroup"
         },
         "in-vitro": {
           "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",

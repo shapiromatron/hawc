@@ -70,10 +70,6 @@ class IVChemical(models.Model):
         return self.study.assessment
 
     @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
-
-    @classmethod
     def delete_caches(cls, ids):
         IVEndpoint.delete_caches(
             IVEndpoint.objects
@@ -449,10 +445,6 @@ class IVEndpoint(BaseEndpoint):
             "field2": "b",
             "field3": "c",
         }
-
-    @classmethod
-    def text_cleanup_fields(cls):
-        return cls.TEXT_CLEANUP_FIELDS
 
 
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):

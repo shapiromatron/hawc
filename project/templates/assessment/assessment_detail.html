@@ -10,27 +10,32 @@
 
 {% block content %}
   <h1>{{object}}
-    {% if crud == "Read" and obj_perms.edit_assessment %}
+    {% if crud == "Read" %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
-          <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
-          <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
-          <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
-          <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
-          <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
-          <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
 
-          {% if user.is_staff %}
+          <!-- assessment editing -->
+          {% if obj_perms.edit_assessment %}
+            <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
+            <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
+            <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
+            <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
+            <li><a href="{% url 'assessment:versions' object.pk %}">View prior versions</a></li>
+            <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
             <li class="divider"></li>
-            <li class="disabled"><a tabindex="-1" href="#">Staff settings</a></li>
-            <li><a href="{% url 'assessment:email_managers' object.pk %}">Email managers</a></li>
           {% endif %}
 
-          <li class="divider"></li>
+          <!-- staff -->
+          {% if user.is_staff %}
+            <li class="disabled"><a tabindex="-1" href="#">Staff settings</a></li>
+            <li><a href="{% url 'assessment:email_managers' object.pk %}">Email managers</a></li>
+            <li class="divider"></li>
+          {% endif %}
+
+          <!-- application settings -->
           <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
           {% if assessment.enable_risk_of_bias %}
           <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">Risk-of-bias settings</a></li>
@@ -46,6 +51,13 @@
 
           {% if debug %}
           <li><a href="{% url 'assessment:template_list' object.pk %}">Word report templates</a></li>
+          {% endif %}
+
+          <!-- data cleanup -->
+          {% if assessment.enable_data_extraction and obj_perms.edit %}
+          <li class="divider"></li>
+          <li class="disabled"><a tabindex="-1" href="#">Data cleanup views</a></li>
+          <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
           {% endif %}
 
         </ul>
