@@ -64,6 +64,9 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
 
 
 class ARoBReviewersList(BaseList):
+    """
+    List an assessment's studies with their active risk of bias reviewers.
+    """
     parent_model = Assessment
     model = Study
     template_name = 'riskofbias/arob_reviewers_list.html'
@@ -336,13 +339,15 @@ class RoBsDetailAll(RoBsDetail):
     """
     Detailed view of risk-of-bias metrics for reporting.
     Displays all active RoB in Study.
-
-    TODO: Needs to have an updated JS RiskOfBias TblCompressed.
     """
     template_name = 'riskofbias/rob_detail_all.html'
 
 
 class RoBEditFinal(BaseDetail):
+    """
+    Displays a form for editing the risk of bias metrics for the final review.
+    Also displays the metrics for the other active risk of bias reviews.
+    """
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit_final.html'
 

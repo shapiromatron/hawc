@@ -135,6 +135,15 @@ class RoBReviewersForm(forms.ModelForm):
         fields = ()
 
     def __init__(self, *args, **kwargs):
+        """
+        Adds author fields to form and fills field with assigned reviewer if
+        one exists.
+
+         - If the number_of_reviewers on study's assessment is 1, then no
+            author fields are generated, only the final_author.
+         - If the number_of_reviewers is 2 or more, then int(number_of_reviewers)
+            author fields are generated in addition to the final_author field.
+        """
         super(RoBReviewersForm, self).__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
@@ -177,6 +186,17 @@ class RoBReviewersForm(forms.ModelForm):
         self.fields['final_author'].required = True
 
     def save(self, commit=True):
+        """
+        We don't delete any riskofbias reviewers, so when changing assigned
+        reviewers this will:
+
+         - deactivate the review belonging to the reviewer in the
+            initial form.
+         - get or create the review for the reviewer submitted in the form.
+           - if the review was created, also create and attach
+             RiskOfBiasScore instances for each RiskOfBiasMetric.
+         - activate the selected review.
+        """
         study = super(RoBReviewersForm, self).save(commit)
         changed_reviewer_fields = (
             field

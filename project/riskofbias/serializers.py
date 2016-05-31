@@ -58,6 +58,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
 
     def update(self, instance, validated_data):
+        """
+        Updates the nested RiskOfBiasScores with submitted data before updating
+        the RiskOfBias instance.
+        """
         score_data = validated_data.pop('scores')
         for score, form_data in zip(instance.scores.all(), score_data):
             for field, value in form_data.items():

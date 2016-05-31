@@ -976,8 +976,7 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_effects(cls, assessment_id):
-        effects = get_distinct_charfield(cls, assessment_id, 'effect')
-        return effects
+        return get_distinct_charfield(cls, assessment_id, 'effect')
 
     @classmethod
     def setMaximumPercentControlChange(cls, ep):
