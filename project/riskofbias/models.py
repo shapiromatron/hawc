@@ -156,6 +156,12 @@ class RiskOfBias(models.Model):
         """
         return all([(strip_tags(score.notes) is not u'') for score in self.scores.all()])
 
+    @property
+    def study_reviews_complete(self):
+        return all([rob.is_complete
+                    for rob
+                    in self.study.get_active_riskofbiases(with_final=False)])
+
     @classmethod
     def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
         # delete existing study quality metrics and domains
