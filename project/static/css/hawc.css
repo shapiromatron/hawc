@@ -538,3 +538,19 @@ Print styling
     height: 0;
   }
 }
+
+/*
+Risk of Bias
+*/
+.review-item {
+    font-size: 14px;
+}
+
+.review-item td {
+    padding-right: 20px;
+}
+
+.is-complete {
+    font-weight: bold;
+    color: darkgreen;
+}

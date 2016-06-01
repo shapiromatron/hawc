@@ -13,7 +13,7 @@
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of Bias Studies</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
-    <li class="active">{{object.study}} Risk of Bias <span class="divider">/</span></li>
+    <li class="active">{{study}} Risk of Bias <span class="divider">/</span></li>
   {% endblock %}
 {% endblock %}
 
@@ -42,6 +42,23 @@
       </div>
     {% endif %}
   </h2>
+  
+  <table>
+      {% for review in study.get_active_riskofbiases %}
+      <tr class="review-item">
+          <td>
+              <b>{% if review.final %}Final{% endif %} Reviewer:</b>
+              {{review.author}}
+          </td>
+          <td>
+              <b>Review Complete:</b>
+              {% if review.is_complete %}<span class="is-complete">Yes</span>
+              {% else %} No
+              {% endif %}
+          </td>
+      </tr>
+      {% endfor%}
+</table>
 
   <div id="sq_tbl"></div>
 
@@ -49,7 +66,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new Study({{object.study.get_json|safe}})
+    window.study = new Study({{study.get_json|safe}})
     study.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
     window.sq_tbl = new StudyQualities_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
   </script>

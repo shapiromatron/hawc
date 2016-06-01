@@ -6,6 +6,7 @@ import collections
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.html import strip_tags
 
 from reversion import revisions as reversion
 
@@ -149,7 +150,11 @@ class RiskOfBias(models.Model):
 
     @property
     def is_complete(self):
-        return all([(score.notes is not u'') for score in self.scores.all()])
+        """
+        The rich text editor used for notes input adds HTML tags even if input
+        is empty, so HTML needs to be stripped out.
+        """
+        return all([(strip_tags(score.notes) is not u'') for score in self.scores.all()])
 
     @classmethod
     def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
