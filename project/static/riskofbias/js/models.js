@@ -308,7 +308,13 @@ RiskOfBias_TblCompressed.prototype = {
 
 var StudyQualities_TblCompressed = function(study, div, options){
     this.study = study;
-    this.empty_rob = _.isEmpty(this.study.riskofbias);
+    this.complete_rob = _.flatten(_.map(this.study.riskofbias, function(rob){
+        return _.map(rob.criteria, function(score){
+            var notes = score.data.notes,
+                scoreText = HAWCUtils.isHTML(notes) ? $('<p>'+notes+'</p>').text() : notes;
+            return scoreText == '';
+        });
+    })).every(function(el){ return el === false; });
     this.$div = $(div);
     this.build_table();
     if (options && options.show_all_details_startup){
@@ -318,8 +324,15 @@ var StudyQualities_TblCompressed = function(study, div, options){
 
 StudyQualities_TblCompressed.prototype = {
     build_table: function(){
-        var self = this;
         this.tbl = $('<table class="table table-condensed"></table>');
+        if (this.complete_rob){
+            this.show_review_data();
+        } else {
+            this.show_no_data();
+        }
+    },
+    show_review_data: function(){
+        var self = this;
         this.build_tbody();
         this.build_footer();
         this.selected_div = $('<div style="display:none"></div>');
@@ -328,6 +341,11 @@ StudyQualities_TblCompressed.prototype = {
         $('.rob_criteria').on('click', 'td', function(){self.show_details_div(this);});
         $('.rob_domains').on('click', 'td', function(){self.show_details_div(this);});
     },
+    show_no_data: function(){
+        this.build_footer();
+        this.selected_div = $('<div style="display:none"></div>');
+        this.$div.html([this.tbl, this.selected_div]);
+    },
     show_details_div: function(selected){
         var $sel = $(selected),
             divs = [],
@@ -335,9 +353,7 @@ StudyQualities_TblCompressed.prototype = {
             show_all_text = 'Show all details';
 
         this.selected_div.fadeOut();
-        if (this.empty_rob){
-
-        } else {
+        if (this.complete_rob){
             if ($sel.data('robs')){
                 divs.push(RiskOfBiasScore.build_metric_comparison_div($sel.data('robs').criteria));
             } else if ($sel.data('rob')) {
@@ -354,12 +370,12 @@ StudyQualities_TblCompressed.prototype = {
                 $('<hr><a href="#" class="btn btn-small"><i class="icon-plus"></i> {0}</a>'.printf(show_all_text)).click(
                     function(e){e.preventDefault(); self.show_details_div();}));
 
-                    if (this.selected === selected){
-                        this.selected = undefined;
-                    } else {
-                        this.selected = selected;
-                        RiskOfBiasScore.display_details_divs(self.selected_div, divs);
-                    }
+            if (this.selected === selected){
+                this.selected = undefined;
+            } else {
+                this.selected = selected;
+                RiskOfBiasScore.display_details_divs(self.selected_div, divs);
+            }
         }
     },
     build_tbody: function(){
@@ -384,15 +400,18 @@ StudyQualities_TblCompressed.prototype = {
     },
     build_footer: function(){
         var tfoot = $('<tfoot>'),
-            txt = 'Click on any cell above to view details.',
-            noDataText = '';
-        if (this.empty_rob && study.userIsTeamMember){
-            txt = '';
-            noDataText = 'Active Risk of Bias review or Conflict Resolution is not complete.';
+            txt = 'Click on any cell above to view details.';
+
+        if (!this.complete_rob){
+            if (study.userIsTeamMember){
+                txt = '<h3>Final Risk of Bias review is not complete.</h3>';
+            } else {
+                txt = '<h3>Data not available</h3>'
+            }
         }
         tfoot.append($('<tr>').append(
-            $('<td>').text(txt).attr({'colspan': this.num_cols, 'class': 'muted'}),
-            $('<td>').html('<h3>' + noDataText + '</h3>')));
+            $('<td>').html(txt).attr({'colspan': this.num_cols, 'class': 'muted'})));
+
         this.tbl.prepend(tfoot);
     },
 };

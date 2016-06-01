@@ -318,6 +318,13 @@ class RoBDetail(BaseDetail):
     model = models.RiskOfBias
     template_name = "riskofbias/rob_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(RoBDetail, self).get_context_data(**kwargs)
+        if context['obj_perms']['edit']:
+            context['obj_perms']['own'] = self.object.author is self.request.user
+            context['final'] = self.object.study.get_user_rob(self.request.user, final=True)[0]
+        return context
+
 
 class RoBsDetail(BaseDetail):
     """
@@ -331,7 +338,9 @@ class RoBsDetail(BaseDetail):
         context = super(RoBsDetail, self).get_context_data(**kwargs)
         if context['obj_perms']['edit']:
             context['reviews'] = self.object.get_user_rob(self.request.user)
-            context['finals'] = self.object.get_user_rob(self.request.user, final=True)
+            final = self.object.get_user_rob(self.request.user, final=True)
+            if final:
+                context['final'] = final[0]
         return context
 
 

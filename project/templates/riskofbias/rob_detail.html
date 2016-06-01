@@ -29,7 +29,11 @@
             <li class="disabled"><a tabindex="-1" href="#">Risk of Bias</a></li>
             <li><a href="{% url 'riskofbias:robs_detail_all' object.study.pk %}">View All</a></li>
             <li class="disabled"><a tabindex="-1" href="#">Editing</a></li>
+            {% if final and obj.perms.own %}
+            <li><a href="{% url 'riskofbias:rob_update_final' object.pk %}">Update</a></li>
+            {% else %}
             <li><a href="{% url 'riskofbias:rob_update' object.pk %}">Update</a></li>
+            {% endif %}
             <li><a href="{% url 'riskofbias:rob_delete' object.pk %}">Delete</a></li>
         </ul>
       </div>

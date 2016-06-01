@@ -34,13 +34,12 @@
             <li><a href="{% url 'riskofbias:rob_delete' review.pk %}">Delete Review</a></li>
             {% endfor %}
             {% endif %}
-            {% if finals %}
-            {% for final in finals %}
+            {% if final %}
             <li class="disabled"><a tabindex="-1" href="#">Conflict Resolution</a></li>
             <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Conflict Resolution</a></li>
             <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Conflict Resolution</a></li>
-            {% endfor %}
-            {% endif %}        </ul>
+            {% endif %}
+        </ul>
       </div>
     {% endif %}
   </h2>
