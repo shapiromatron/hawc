@@ -180,6 +180,10 @@ class RiskOfBias(models.Model):
                 metric.domain = domain
                 metric.save()
 
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
+
 
 class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
@@ -255,6 +259,10 @@ class RiskOfBiasScore(models.Model):
     @property
     def score_shade(self):
         return self.SCORE_SHADES[self.score]
+
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
 
 class RiskOfBiasAssessment(models.Model):
