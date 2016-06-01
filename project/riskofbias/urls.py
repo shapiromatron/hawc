@@ -65,9 +65,6 @@ urlpatterns = [
     url(r'^study/(?P<pk>\d+)/all/$',
         views.RoBsDetailAll.as_view(),
         name='robs_detail_all'),
-    url(r'^study/(?P<pk>\d+)/list/$',
-        views.RoBsList.as_view(),
-        name='robs_list'),
 
     url(r'^(?P<pk>\d+)/$',
         views.RoBDetail.as_view(),

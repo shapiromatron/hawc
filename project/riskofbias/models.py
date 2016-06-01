@@ -46,8 +46,8 @@ class RiskOfBiasDomain(models.Model):
 
             for domain in objects["domains"]:
                 d = RiskOfBiasDomain(assessment=assessment,
-                name=domain["name"],
-                description=domain["description"])
+                    name=domain["name"],
+                    description=domain["description"])
                 d.save()
                 RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
 
@@ -85,7 +85,7 @@ class RiskOfBiasMetric(models.Model):
         }
         if study.study_type == 0:
             filters["required_animal"] = True
-        elif study.study_type in [1,4]:
+        elif study.study_type in [1, 4]:
             filters["required_epi"] = True
         return RiskOfBiasMetric.objects.filter(**filters)
 

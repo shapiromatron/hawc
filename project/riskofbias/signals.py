@@ -33,6 +33,7 @@ def invalidate_caches_risk_of_bias(sender, instance, **kwargs):
     elif sender is models.RiskOfBiasScore:
         instance.riskofbias.delete_caches([instance.riskofbias.id])
 
+
 @receiver(post_save, sender=models.RiskOfBiasAssessment)
 @receiver(pre_delete, sender=models.RiskOfBiasAssessment)
 def invalidate_caches_rob_settings(sender, instance, **kwargs):

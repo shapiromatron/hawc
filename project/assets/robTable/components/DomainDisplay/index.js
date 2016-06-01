@@ -9,6 +9,7 @@ class DomainDisplay extends Component {
         let { domain, isForm } = this.props;
         return (
             <div>
+                <hr/>
                 <h3>{domain.key}</h3>
                 {_.map(domain.values, (metric) => {
                     return <MetricDisplay key={metric.key}

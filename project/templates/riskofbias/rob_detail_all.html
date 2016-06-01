@@ -11,15 +11,15 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}} Risk of Bias</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
-    <li class="active"> All Risk-of-bias <span class="divider">/</span></li>
+    <li class="active"> All Reviews <span class="divider">/</span></li>
   {% endblock %}
 {% endblock %}
 
 {% block content %}
 
-  <h2>{{object}}: risk-of-bias details
+  <h2>{{object}}: Risk of Bias details
     {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
@@ -35,9 +35,9 @@
             {% endfor %}
             {% endif %}
             {% if final %}
-            <li class="disabled"><a tabindex="-1" href="#">Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Conflict Resolution</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Final Review</a></li>
+            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Final Review</a></li>
+            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Final Review</a></li>
             {% endif %}
         </ul>
       </div>

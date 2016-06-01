@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-  <h2>{{object}}: Final Risk of Bias review details
+  <h2>{{object}}: Risk of Bias review details
     {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
@@ -35,14 +35,14 @@
             {% endfor %}
             {% endif %}
             {% if final %}
-            <li class="disabled"><a tabindex="-1" href="#">Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Conflict Resolution</a></li>
-            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Conflict Resolution</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Final Review</a></li>
+            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Final Review</a></li>
+            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Final Review</a></li>
             {% endif %}
       </div>
     {% endif %}
   </h2>
-  
+
   <table>
       {% for review in study.get_active_riskofbiases %}
       <tr class="review-item">
@@ -59,7 +59,7 @@
       </tr>
       {% endfor%}
 </table>
-
+<hr>
   <div id="sq_tbl"></div>
 
 {% endblock %}

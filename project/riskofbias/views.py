@@ -77,7 +77,7 @@ class ARoBReviewersList(BaseList):
                 Prefetch(
                     'riskofbiases',
                     queryset=models.RiskOfBias.objects.filter(active=True)
-                        .prefetch_related('author'),
+                                   .prefetch_related('author'),
                     to_attr='active_riskofbiases'))
 
     def get_context_data(self, **kwargs):
@@ -86,7 +86,7 @@ class ARoBReviewersList(BaseList):
         return context
 
 
-class ARoBReviewersUpdate(BaseUpdateWithFormset):
+class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
     """
     Creates the specified number of RiskOfBiases, one for each reviewer in the
     form. If the `number of reviewers` field is 1, then the only review is also
@@ -149,8 +149,6 @@ class ARoBReviewersUpdate(BaseUpdateWithFormset):
                                         .order_by('last_updated')[:n]
                     for rob in activate_robs:
                         rob.activate()
-
-
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_reviewers',
@@ -246,7 +244,7 @@ class StudyRoBExport(StudyList):
     Full XLS data export for the risk-of-bias.
     """
     def get(self, request, *args, **kwargs):
-        self.object_list = super(StudyBiasExport, self).get_queryset()
+        self.object_list = super(StudyRoBExport, self).get_queryset()
         exporter = exports.RiskOfBiasFlatComplete(
             self.object_list,
             export_format="excel",
@@ -287,7 +285,7 @@ class RoBEdit(BaseUpdate):
 
         if self.request.method == 'GET':
             self.formset = self.formset_factory(
-            queryset=models.RiskOfBiasScore.objects.filter(riskofbias=self.object))
+                queryset=models.RiskOfBiasScore.objects.filter(riskofbias=self.object))
 
         context['formset'] = self.formset
         context['metric'] = [quality.metric.description for quality in self.object.scores.all()]
@@ -321,8 +319,7 @@ class RoBDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super(RoBDetail, self).get_context_data(**kwargs)
         if context['obj_perms']['edit']:
-            context['obj_perms']['own'] = self.object.author is self.request.user
-            context['final'] = self.object.study.get_user_rob(self.request.user, final=True)[0]
+            context['obj_perms']['own'] = self.object.author == self.request.user
         return context
 
 
@@ -341,6 +338,7 @@ class RoBsDetail(BaseDetail):
             final = self.object.get_user_rob(self.request.user, final=True)
             if final:
                 context['final'] = final[0]
+
         return context
 
 
@@ -359,7 +357,3 @@ class RoBEditFinal(BaseDetail):
     """
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit_final.html'
-
-class RoBsList(BaseList):
-    model = Study
-    template_name = 'riskofbias/rob_list.html'

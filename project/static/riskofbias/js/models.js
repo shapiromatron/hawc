@@ -410,7 +410,7 @@ StudyQualities_TblCompressed.prototype = {
             }
         }
         tfoot.append($('<tr>').append(
-            $('<td>').html(txt).attr({'colspan': this.num_cols, 'class': 'muted'})));
+            $('<td>').html(txt).attr({'colspan': this.num_cols, 'class': 'muted rob_footer'})));
 
         this.tbl.prepend(tfoot);
     },

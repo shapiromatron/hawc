@@ -30,7 +30,6 @@ class MetricDisplay extends Component {
                     })}
                 </div>
                 {isForm ? this.renderScoreForm() : null}
-                <hr/>
             </div>
         );
     }

@@ -9,7 +9,7 @@ class ScoreBar extends Component {
         let { shade, symbol } = this.props;
         return (
             <div className='rob_score_bar'
-                style={{backgroundColor: shade, opacity: 0}}>
+                style={{backgroundColor: shade, opacity: 0, width: 0}}>
                 <span className='score-symbol'>{symbol}</span>
             </div>
         );

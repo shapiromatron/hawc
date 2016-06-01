@@ -542,6 +542,10 @@ Print styling
 /*
 Risk of Bias
 */
+.rob_footer {
+    border-top: none !important;
+}
+
 .review-item {
     font-size: 14px;
 }
