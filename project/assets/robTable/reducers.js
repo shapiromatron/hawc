@@ -6,6 +6,8 @@ import * as types from 'robTable/constants';
 const defaultState = {
     isFetching: false,
     itemsLoaded: false,
+    error: null,
+    message: null,
     name: '',
     qualities: [],
     riskofbiases: [],
@@ -28,6 +30,26 @@ function study(state=defaultState, action){
             active: action.study.riskofbiases,
             isFetching: false,
             itemsLoaded: true,
+        });
+
+    case types.SET_MESSAGE:
+        return Object.assign({}, state, {
+            message: action.message,
+        });
+
+    case types.RESET_MESSAGE:
+        return Object.assign({}, state, {
+            message: null,
+        });
+
+    case types.SET_ERROR:
+        return Object.assign({}, state, {
+            error: action.error,
+        });
+
+    case types.RESET_ERROR:
+        return Object.assign({}, state, {
+            error: null,
         });
 
     case types.UPDATE_QUALITIES:

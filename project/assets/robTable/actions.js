@@ -17,6 +17,32 @@ function receiveStudy(study){
     };
 }
 
+function setMessage(message){
+    return {
+        type: types.SET_MESSAGE,
+        message,
+    };
+}
+
+function resetMessage(){
+    return {
+        type: types.RESET_MESSAGE,
+    };
+}
+
+function setError(error){
+    return {
+        type: types.SET_ERROR,
+        error,
+    };
+}
+
+function resetError(){
+    return {
+        type: types.RESET_ERROR,
+    };
+}
+
 function updateQualities(qualities){
     return {
         type: types.UPDATE_QUALITIES,
@@ -81,6 +107,8 @@ export function fetchStudyIfNeeded(){
         let state = getState();
         if (state.isFetching || state.itemsLoaded) return;
         dispatch(requestStudy());
+        dispatch(resetMessage());
+        dispatch(resetError());
         return fetch(
                 h.getObjectURL(
                     state.config.host,
@@ -88,9 +116,9 @@ export function fetchStudyIfNeeded(){
                     state.config.study.id,
                     state.config.assessment_id), h.fetchGet)
             .then((response) => response.json())
-            .then((json) => formatIncomingStudy(json))
-            .then((json) => dispatch(receiveStudy(json)))
-            .catch((ex) => console.error('Study parsing failed', ex));
+            .then((json)     => formatIncomingStudy(json))
+            .then((json)     => dispatch(receiveStudy(json)))
+            .catch((ex)      => dispatch(setError(ex)));
     };
 }
 
@@ -99,14 +127,17 @@ export function submitFinalRiskOfBiasScores(scores){
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),
             opts = h.fetchPost(state.config.csrf, patch, 'PUT');
+        dispatch(resetMessage());
+        dispatch(resetError());
         return fetch(
             `${h.getObjectURL(state.config.host,
                 state.config.riskofbias.url,
                 state.config.riskofbias.id,
                 state.config.assessment_id)}`, opts)
             .then((response) => response.json())
-            .then((json) => dispatch(updateQualities(json.scores)))
-            .catch((ex) => console.error('Score submission failed', ex));
+            .then((json)     => dispatch(updateQualities(json.scores)))
+            .then(()         => dispatch(setMessage('Review updated.')))
+            .catch((ex)      => dispatch(setError(ex)));
     };
 }
 export function selectActive({domain, metric}){

@@ -15,11 +15,10 @@ class Header extends Component {
         }
         return (
             <div>
-                <h2>
+                <h3>
                     {headerText}
-                </h2>
-                <span>{smallText}</span>
-                <hr/>
+                </h3>
+                <span className='help-text'>{smallText}</span>
             </div>
         );
     }
