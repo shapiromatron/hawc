@@ -5,7 +5,15 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db import migrations
 
+
 def validateCTCount(model):
+    """
+     If this fails, investigate database and remove non-study fields
+     (if appropriate):
+     
+        SELECT * FROM riskofbias_riskofbias WHERE content_type_id!=29
+        DELETE FROM riskofbias_riskofbias WHERE content_type_id!=29
+    """
     model_ct = model.objects.distinct('content_type_id')
     if model_ct.count() > 1:
         model_ct_models = [
@@ -13,6 +21,7 @@ def validateCTCount(model):
             for model in model_ct]
         raise ValidationError('{} ContentTypes contain relations to '
             'more than one model: {}'.format(model._meta.label,', '.join(model_ct_models)))
+
 
 def setRiskofbiasStudy(apps, schema_editor):
     RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
