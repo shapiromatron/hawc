@@ -5,10 +5,14 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-# for each study, get all old_robs, create new_rob,
-# create rob_score from each old_rob, setting metric on score,
-# then set rob_score->rob to new_rob.
 def splitRobScore(apps, schema_editor):
+    """
+    For each study,
+        get all old_robs,
+        create new_rob,
+        create rob_score from each old_rob, setting metric on score,
+        then set rob_score->rob to new_rob.
+    """
     RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
     RiskOfBiasScore = apps.get_model('riskofbias', 'RiskOfBiasScore')
     Study = apps.get_model('study', 'Study')
