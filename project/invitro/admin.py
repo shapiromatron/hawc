@@ -8,6 +8,7 @@ from .models import IVEndpointCategory
 
 class IVEndpointCategoryAdmin(TreeAdmin):
     form = movenodeform_factory(IVEndpointCategory)
+    list_per_page = 1000
 
 
 admin.site.register(IVEndpointCategory, IVEndpointCategoryAdmin)
