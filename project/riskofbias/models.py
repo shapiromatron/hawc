@@ -223,7 +223,6 @@ class RiskOfBiasScore(models.Model):
     @staticmethod
     def flat_complete_header_row():
         return (
-            'rob-id',
             'rob-domain_id',
             'rob-domain_name',
             'rob-domain_description',
@@ -239,7 +238,6 @@ class RiskOfBiasScore(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser['riskofbias']['id'],
             ser['metric']['domain']['id'],
             ser['metric']['domain']['name'],
             ser['metric']['domain']['description'],

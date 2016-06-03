@@ -11,7 +11,7 @@ from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
                          GenerateFixedReport, MessageMixin,
-                         ProjectManagerOrHigherMixin)
+                         ProjectManagerOrHigherMixin, TeamMemberOrHigherMixin)
 
 from . import models, forms
 
@@ -239,16 +239,16 @@ class RoBFixedReport(GenerateFixedReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class StudyRoBExport(StudyList):
+class StudyRoBPublicExport(StudyList):
     """
     Full XLS data export for the risk-of-bias.
     """
     def get(self, request, *args, **kwargs):
-        self.object_list = super(StudyRoBExport, self).get_queryset()
-        exporter = exports.RiskOfBiasFlatComplete(
+        self.object_list = super(StudyRoBPublicExport, self).get_queryset()
+        exporter = exports.RiskOfBiasFlatPublic(
             self.object_list,
             export_format="excel",
-            filename='{}-risk-of-bias'.format(self.assessment),
+            filename='{}-risk-of-bias-public'.format(self.assessment),
             sheet_name='risk-of-bias'
         )
         return exporter.build_response()
