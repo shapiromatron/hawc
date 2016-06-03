@@ -254,6 +254,25 @@ class StudyRoBPublicExport(StudyList):
         return exporter.build_response()
 
 
+class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
+    """
+    Full XLS data export for the risk-of-bias.
+    """
+    def get_assessment(self, request, *args, **kwargs):
+        self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
+        return self.parent.get_assessment()
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = super(StudyRoBCompleteExport, self).get_queryset()
+        exporter = exports.RiskOfBiasFlatComplete(
+            self.object_list,
+            export_format="excel",
+            filename='{}-risk-of-bias-complete'.format(self.assessment),
+            sheet_name='risk-of-bias'
+        )
+        return exporter.build_response()
+
+
 class RoBEdit(BaseUpdate):
     """
     Edit settings for risk-of-bias metrics associated with study.

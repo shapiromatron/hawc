@@ -184,6 +184,26 @@ class RiskOfBias(models.Model):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'rob-id',
+            'rob-active',
+            'rob-final',
+            'rob-author_id',
+            'rob-author_name'
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['active'],
+            ser['final'],
+            ser['author']['id'],
+            ser['author']['full_name']
+        )
+
 
 class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
