@@ -55,7 +55,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'author', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'author', 'active',
+                  'final', 'study', 'created',
+                  'last_updated', 'scores')
 
     def update(self, instance, validated_data):
         """

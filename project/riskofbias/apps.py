@@ -8,4 +8,4 @@ class RiskOfBiasConfig(AppConfig):
     verbose_name = 'Risk of Bias'
 
     def ready(self):
-        import signals
+        import signals  # noqa

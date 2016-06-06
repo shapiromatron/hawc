@@ -16,12 +16,16 @@ from utils.helper import cleanHTML, SerializerHelper
 
 
 class RiskOfBiasDomain(models.Model):
-    assessment = models.ForeignKey('assessment.Assessment',
-        related_name="rob_domains")
-    name = models.CharField(max_length=128)
-    description = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='rob_domains')
+    name = models.CharField(
+        max_length=128)
+    description = models.TextField()
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         unique_together = ('assessment', 'name')
@@ -47,30 +51,35 @@ class RiskOfBiasDomain(models.Model):
         with open(fn, 'r') as f:
             objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
-            for domain in objects["domains"]:
-                d = RiskOfBiasDomain(assessment=assessment,
-                    name=domain["name"],
-                    description=domain["description"])
-                d.save()
-                RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
+            for domain in objects['domains']:
+                d = RiskOfBiasDomain.objects.create(
+                    assessment=assessment,
+                    name=domain['name'],
+                    description=domain['description'])
+                RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
 
 class RiskOfBiasMetric(models.Model):
-    domain = models.ForeignKey(RiskOfBiasDomain,
-                               related_name="metrics")
-    metric = models.CharField(max_length=256)
-    description = models.TextField(blank=True,
-                                   help_text='HTML text describing scoring of this field.')
+    domain = models.ForeignKey(
+        RiskOfBiasDomain,
+        related_name='metrics')
+    metric = models.CharField(
+        max_length=256)
+    description = models.TextField(
+        blank=True,
+        help_text='HTML text describing scoring of this field.')
     required_animal = models.BooleanField(
         default=True,
-        verbose_name="Required for bioassay?",
-        help_text="Is this metric required for animal bioassay studies?")
+        verbose_name='Required for bioassay?',
+        help_text='Is this metric required for animal bioassay studies?')
     required_epi = models.BooleanField(
         default=True,
-        verbose_name="Required for epidemiology?",
-        help_text="Is this metric required for human epidemiological studies?")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+        verbose_name='Required for epidemiology?',
+        help_text='Is this metric required for human epidemiological studies?')
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         ordering = ('domain', 'id')
@@ -84,12 +93,12 @@ class RiskOfBiasMetric(models.Model):
     @classmethod
     def get_required_metrics(self, assessment, study):
         filters = {
-            "domain__in": RiskOfBiasDomain.objects.filter(assessment=assessment),
+            'domain__in': RiskOfBiasDomain.objects.filter(assessment=assessment),
         }
         if study.study_type == 0:
-            filters["required_animal"] = True
+            filters['required_animal'] = True
         elif study.study_type in [1, 4]:
-            filters["required_epi"] = True
+            filters['required_epi'] = True
         return RiskOfBiasMetric.objects.filter(**filters)
 
     @classmethod
@@ -107,15 +116,26 @@ class RiskOfBiasMetric(models.Model):
 
 
 class RiskOfBias(models.Model):
-    study = models.ForeignKey('study.Study', related_name='riskofbiases', null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    final = models.BooleanField(default=False, db_index=True)
-    author = models.ForeignKey(HAWCUser, related_name='riskofbiases')
-    active = models.BooleanField(default=False, db_index=True)
+    study = models.ForeignKey(
+        'study.Study',
+        related_name='riskofbiases',
+        null=True)
+    final = models.BooleanField(
+        default=False,
+        db_index=True)
+    author = models.ForeignKey(
+        HAWCUser,
+        related_name='riskofbiases')
+    active = models.BooleanField(
+        default=False,
+        db_index=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Risk of Biases"
+        verbose_name_plural = 'Risk of Biases'
         ordering = ('final',)
 
     def __unicode__(self):
@@ -157,13 +177,16 @@ class RiskOfBias(models.Model):
         The rich text editor used for notes input adds HTML tags even if input
         is empty, so HTML needs to be stripped out.
         """
-        return all([(strip_tags(score.notes) is not u'') for score in self.scores.all()])
+        return all([
+            len(strip_tags(score.notes)) > 0 for score in self.scores.all()
+        ])
 
     @property
     def study_reviews_complete(self):
-        return all([rob.is_complete
-                    for rob
-                    in self.study.get_active_riskofbiases(with_final=False)])
+        return all([
+            rob.is_complete
+            for rob in self.study.get_active_riskofbiases(with_final=False)
+        ])
 
     @classmethod
     def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
@@ -197,31 +220,38 @@ class RiskOfBiasScore(models.Model):
         (0, 'Not applicable'))
 
     SCORE_SYMBOLS = {
-        1: "--",
-        2: "-",
-        3: "+",
-        4: "++",
-        0: "-",
+        1: '--',
+        2: '-',
+        3: '+',
+        4: '++',
+        0: '-',
     }
 
     SCORE_SHADES = {
-        1: "#CC3333",
-        2: "#FFCC00",
-        3: "#6FFF00",
-        4: "#00CC00",
-        0: "#FFCC00",
+        1: '#CC3333',
+        2: '#FFCC00',
+        3: '#6FFF00',
+        4: '#00CC00',
+        0: '#FFCC00',
     }
 
-    riskofbias = models.ForeignKey(RiskOfBias, related_name='scores')
-    metric = models.ForeignKey(RiskOfBiasMetric, related_name='scores')
-    score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=4)
-    notes = models.TextField(blank=True, default='')
+    riskofbias = models.ForeignKey(
+        RiskOfBias,
+        related_name='scores')
+    metric = models.ForeignKey(
+        RiskOfBiasMetric,
+        related_name='scores')
+    score = models.PositiveSmallIntegerField(
+        choices=RISK_OF_BIAS_SCORE_CHOICES,
+        default=4)
+    notes = models.TextField(
+        blank=True)
 
     class Meta:
         ordering = ('metric', 'id')
 
     def __unicode__(self):
-        return "{} {}".format(self.riskofbias, self.metric)
+        return u'{} {}'.format(self.riskofbias, self.metric)
 
     @staticmethod
     def flat_complete_header_row():
@@ -269,8 +299,11 @@ class RiskOfBiasScore(models.Model):
 
 
 class RiskOfBiasAssessment(models.Model):
-    assessment = models.OneToOneField(Assessment, related_name='rob_settings')
-    number_of_reviewers = models.PositiveSmallIntegerField(default=1)
+    assessment = models.OneToOneField(
+        Assessment,
+        related_name='rob_settings')
+    number_of_reviewers = models.PositiveSmallIntegerField(
+        default=1)
 
     def get_absolute_url(self):
         return reverse('riskofbias:arob_reviewers', args=[self.assessment.pk])
