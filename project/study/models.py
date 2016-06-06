@@ -305,6 +305,15 @@ class Study(Reference):
                     default=0)))\
             .values('id', 'short_citation', 'final_score')
 
+    def optimized_for_serialization(self):
+        return self.__class__.objects\
+            .filter(id=self.id)\
+            .prefetch_related(
+                'identifiers',
+                'searches',
+                'riskofbiases__scores__metric__domain',
+            ).first()
+
 
 class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")
