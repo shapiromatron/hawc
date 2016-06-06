@@ -1,22 +1,22 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Risk of Bias Requirements | HAWC
+  {{assessment}} | Risk of bias requirements | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
   {% if crud == "Read" %}
-    <li class="active">Risk of Bias Requirements<span class="divider">/</span></li>
+    <li class="active">Risk of bias requirements<span class="divider">/</span></li>
   {% else %}
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of Bias Requirements</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
   {% endif %}
 {% endblock breadcrumbs %}
 
 {% block content %}
 
-  <h1>Risk of Bias Requirements
+  <h1>Risk of bias requirements
     {% if crud == "Read" and obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions

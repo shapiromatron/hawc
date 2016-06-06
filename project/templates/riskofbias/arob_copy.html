@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | Copy Risk of Bias Approach | HAWC
+  {{assessment}} | Copy risk of bias approach | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -13,8 +13,8 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk-of-bias requirements</a><span class="divider">/</span></li>
-  <li class="active"> Copy risk-of-bias approach <span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
+  <li class="active"> Copy risk of bias approach <span class="divider">/</span></li>
 {% endblock %}
 
 

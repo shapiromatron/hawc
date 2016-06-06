@@ -1,13 +1,13 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Risk of Bias Reviewers | HAWC
+  {{assessment}} | Risk of bias reviewers | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of Bias Requirements</a><span class="divider">/</span></li>
-    <li class="active">Risk of Bias Reviewers<span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
+    <li class="active">Reviewers<span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 
 {% block content %}
@@ -17,7 +17,7 @@
         <a class="btn btn-primary pull-right" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update reviewers</a>
     {% endif %}
     <h2>
-        {{assessment}} Risk of Bias Reviewers
+        {{assessment}}: Risk of bias reviewers
     </h2>
     <p>
         <i class="fa fa-check"></i> is a completed review.
@@ -58,7 +58,7 @@
                 {% endfor %}
             {% else %}
             <td>
-                No Risk of Bias Assigned
+                No risk of bias assigned
             </td>
             {% endif %}
         </tr>
