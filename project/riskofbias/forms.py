@@ -154,7 +154,7 @@ class RoBReviewersForm(forms.ModelForm):
         if hasattr(self.instance_name, 'active_riskofbiases'):
             robs = self.instance.active_riskofbiases
         else:
-            robs = self.instance.get_active_riskofbiases(with_final=False)
+            robs = self.instance.get_active_robs(with_final=False)
 
         try:
             reviewers = self.instance.assessment.rob_settings.number_of_reviewers
@@ -184,7 +184,7 @@ class RoBReviewersForm(forms.ModelForm):
             {'related': assessment_id})
         try:
             self.fields['final_author'].initial = \
-                self.instance.get_final().author.id
+                self.instance.get_final_robs().author.id
         except (AttributeError):
             pass
         self.fields['final_author'].required = True

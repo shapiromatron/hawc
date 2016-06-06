@@ -185,7 +185,7 @@ class RiskOfBias(models.Model):
     def study_reviews_complete(self):
         return all([
             rob.is_complete
-            for rob in self.study.get_active_riskofbiases(with_final=False)
+            for rob in self.study.get_active_robs(with_final=False)
         ])
 
     @classmethod

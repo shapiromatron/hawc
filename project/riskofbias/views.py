@@ -141,7 +141,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
                     n = 0
                 for rob_form in formset.forms:
                     deactivate_robs = rob_form.instance\
-                                      .get_active_riskofbiases(with_final=False)[n:]
+                                      .get_active_robs(with_final=False)[n:]
                     for rob in deactivate_robs:
                         rob.deactivate()
             # if n_of_r is increased, activate inactive robs with most recent last_updated
@@ -342,8 +342,8 @@ class RoBsDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super(RoBsDetail, self).get_context_data(**kwargs)
         if context['obj_perms']['edit']:
-            context['reviews'] = self.object.get_user_rob(self.request.user)
-            final = self.object.get_user_rob(self.request.user, final=True)
+            context['reviews'] = self.object.get_user_robs(self.request.user)
+            final = self.object.get_user_robs(self.request.user, final=True)
             if final:
                 context['final'] = final[0]
 
