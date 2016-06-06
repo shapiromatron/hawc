@@ -143,10 +143,10 @@ _.extend(RiskOfBiasScore, {
     score_shades: {0: '#E8E8E8', 1: '#CC3333', 2: '#FFCC00', 3: '#6FFF00', 4: '#00CC00'},
     score_text_description: {
         0: 'Not applicable',
-        1: 'Definitely high risk-of-bias',
-        2: 'Probably high risk-of-bias',
-        3: 'Probably low risk-of-bias',
-        4: 'Definitely low risk-of-bias',
+        1: 'Definitely high risk of bias',
+        2: 'Probably high risk of bias',
+        3: 'Probably low risk of bias',
+        4: 'Definitely low risk of bias',
     },
     display_details_divs: function($div, content){
         // insert content into selected div and then draw all animations
@@ -607,7 +607,7 @@ _.extend(RiskOfBias_Donut.prototype, D3Plot.prototype, {
             .attr("y", this.h)
             .attr("text-anchor", "end")
             .attr("class","dr_title")
-            .text('{0} risk-of-bias summary'.printf(this.study.data.short_citation));
+            .text('{0} risk of bias summary'.printf(this.study.data.short_citation));
 
         setTimeout(function(){self.toggle_domain_width();}, 2.0);
     },
@@ -678,10 +678,10 @@ RiskOfBiasAggregation.prototype = {
 
         var score_binning = function(d){
             var score_bins = {'0': {rob_scores:[], score:0, score_text:'N/A', score_description: 'Not applicable'},
-                              '1': {rob_scores:[], score:1, score_text:'--', score_description: 'Definitely high risk-of-bias'},
-                              '2': {rob_scores:[], score:2, score_text:'-', score_description: 'Probably high risk-of-bias'},
-                              '3': {rob_scores:[], score:3, score_text:'+', score_description: 'Probably low risk-of-bias'},
-                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk-of-bias'}};
+                              '1': {rob_scores:[], score:1, score_text:'--', score_description: 'Definitely high risk of bias'},
+                              '2': {rob_scores:[], score:2, score_text:'-', score_description: 'Probably high risk of bias'},
+                              '3': {rob_scores:[], score:3, score_text:'+', score_description: 'Probably low risk of bias'},
+                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk of bias'}};
             d.rob_scores.forEach(function(rob){
                 score_bins[rob.data.score].rob_scores.push(rob);
             });

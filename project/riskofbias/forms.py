@@ -100,7 +100,7 @@ class BaseRoBFormSet(BaseModelFormSet):
             metric = form.cleaned_data['metric']
             if metric in metrics:
                 raise forms.ValidationError(
-                    'Risk-of-bias metrics must be unique for each study.')
+                    'Risk of bias metrics must be unique for each study.')
             metrics.append(metric)
 
 

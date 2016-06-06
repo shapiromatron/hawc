@@ -14,7 +14,7 @@ class RoBDOCXReport(HAWCDOCXReport):
 
         self.setMargins(left=0.5, right=0.5)
 
-        txt = 'Risk-of-bias report: {0}'.format(d['assessment']['name'])
+        txt = 'Risk of bias report: {0}'.format(d['assessment']['name'])
         self.doc.add_heading(txt, 1)
 
         for study in d['studies']:
@@ -25,7 +25,7 @@ class RoBDOCXReport(HAWCDOCXReport):
                 self.build_ROB_legend()
                 self.doc.add_page_break()
             else:
-                self.doc.add_paragraph('No risk-of-bias details available for this study.')
+                self.doc.add_paragraph('No risk of bias details available for this study.')
 
     def getTableCaptionRuns(self, study):
         return [

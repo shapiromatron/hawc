@@ -104,7 +104,7 @@ Study.prototype = {
         return this.riskofbias.length>0;
     },
     unpack_riskofbias: function(){
-        // unpack risk-of-bias information and nest by domain
+        // unpack risk of bias information and nest by domain
         var self = this,
             riskofbias = [],
             gradient_colors = d3.scale.linear()

@@ -16,7 +16,7 @@ from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
 from . import models, forms
 
 
-# Assessment risk-of-bias requirements
+# Assessment risk of bias requirements
 class ARobList(StudyList):
     template_name = 'riskofbias/study_list.html'
 
@@ -158,13 +158,13 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias domain views
+# Risk of bias domain views
 class RoBDomainCreate(BaseCreate):
     parent_model = Assessment
     parent_template_name = 'assessment'
     model = models.RiskOfBiasDomain
     form_class = forms.RoBDomainForm
-    success_message = 'Risk-of-bias domain created.'
+    success_message = 'Risk of bias domain created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -174,7 +174,7 @@ class RoBDomainCreate(BaseCreate):
 class RoBDomainUpdate(BaseUpdate):
     model = models.RiskOfBiasDomain
     form_class = forms.RoBDomainForm
-    success_message = 'Risk-of-bias domain updated.'
+    success_message = 'Risk of bias domain updated.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -182,7 +182,7 @@ class RoBDomainUpdate(BaseUpdate):
 
 
 class RoBDomainDelete(BaseDelete):
-    success_message = 'Risk-of-bias domain deleted.'
+    success_message = 'Risk of bias domain deleted.'
     model = models.RiskOfBiasDomain
 
     def get_success_url(self):
@@ -190,13 +190,13 @@ class RoBDomainDelete(BaseDelete):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias metric views
+# Risk of bias metric views
 class RoBMetricCreate(BaseCreate):
     parent_model = models.RiskOfBiasDomain
     parent_template_name = 'domain'
     model = models.RiskOfBiasMetric
     form_class = forms.RoBMetricForm
-    success_message = 'Risk-of-bias metric created.'
+    success_message = 'Risk of bias metric created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -206,7 +206,7 @@ class RoBMetricCreate(BaseCreate):
 class RoBMetricUpdate(BaseUpdate):
     model = models.RiskOfBiasMetric
     form_class = forms.RoBMetricForm
-    success_message = 'Risk-of-bias metric updated.'
+    success_message = 'Risk of bias metric updated.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -214,7 +214,7 @@ class RoBMetricUpdate(BaseUpdate):
 
 
 class RoBMetricDelete(BaseDelete):
-    success_message = 'Risk-of-bias metric deleted.'
+    success_message = 'Risk of bias metric deleted.'
     model = models.RiskOfBiasMetric
 
     def get_success_url(self):
@@ -222,7 +222,7 @@ class RoBMetricDelete(BaseDelete):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias views for study
+# Risk of bias views for study
 class RoBFixedReport(GenerateFixedReport):
     parent_model = Assessment
     model = Study
@@ -244,7 +244,7 @@ class RoBFixedReport(GenerateFixedReport):
 
 class StudyRoBExport(StudyList):
     """
-    Full XLS data export for the risk-of-bias.
+    Full XLS data export for the risk of bias.
     """
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyRoBExport, self).get_queryset()
@@ -252,18 +252,18 @@ class StudyRoBExport(StudyList):
             self.object_list,
             export_format='excel',
             filename='{}-risk-of-bias'.format(self.assessment),
-            sheet_name='risk-of-bias'
+            sheet_name='risk of bias'
         )
         return exporter.build_response()
 
 
 class RoBEdit(BaseUpdate):
     """
-    Edit settings for risk-of-bias metrics associated with study.
+    Edit settings for risk of bias metrics associated with study.
     """
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit.html'
-    success_message = 'Risk-of-bias updated.'
+    success_message = 'Risk of bias updated.'
     form_class = forms.RoBScoreForm
     formset_factory = forms.RoBFormSet
 
@@ -301,12 +301,12 @@ class RoBEdit(BaseUpdate):
 
 class RoBDelete(BaseDelete):
     """
-    Delete all risk-of-bias metrics associated with study.
+    Delete all risk of bias metrics associated with study.
     """
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_delete.html'
     form_class = forms.RoBScoreForm
-    success_message = 'Risk-of-bias information deleted.'
+    success_message = 'Risk of bias information deleted.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:robs_detail',
@@ -315,7 +315,7 @@ class RoBDelete(BaseDelete):
 
 class RoBDetail(BaseDetail):
     """
-    Detailed view of risk-of-bias metrics for reporting.
+    Detailed view of risk of bias metrics for reporting.
     Displays RoB based on pk passed in url.
 
     For use in users updating owned reviews
@@ -333,7 +333,7 @@ class RoBDetail(BaseDetail):
 
 class RoBsDetail(BaseDetail):
     """
-    Detailed view of risk-of-bias metrics for reporting.
+    Detailed view of risk of bias metrics for reporting.
     Displays RoB used as Study.qualities
     """
     model = Study
@@ -352,7 +352,7 @@ class RoBsDetail(BaseDetail):
 
 class RoBsDetailAll(RoBsDetail):
     """
-    Detailed view of risk-of-bias metrics for reporting.
+    Detailed view of risk of bias metrics for reporting.
     Displays all active RoB in Study.
     """
     template_name = 'riskofbias/rob_detail_all.html'

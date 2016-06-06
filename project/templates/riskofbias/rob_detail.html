@@ -2,7 +2,7 @@
 
 
 {% block title %}
-  {{assessment}} | {{study}} | Risk-of-bias | HAWC
+  {{assessment}} | {{study}} | Risk of bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -13,21 +13,21 @@
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
-    <li class="active"> Risk of Bias <span class="divider">/</span></li>
+    <li class="active"> Risk of bias <span class="divider">/</span></li>
   {% endblock %}
 {% endblock %}
 
 {% block content %}
 
-  <h2>{{object}}: {% if object.final %}Final{% endif %} Risk of Bias details
+  <h2>{{object}}: {% if object.final %}Final{% endif %} Risk of bias details
     {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Risk of Bias</a></li>
-            <li><a href="{% url 'riskofbias:robs_detail_all' object.study.pk %}">View All</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
+            <li><a href="{% url 'riskofbias:robs_detail_all' object.study.pk %}">View all</a></li>
             {% if obj_perms.own %}
                 <li class="disabled"><a tabindex="-1" href="#">Editing</a></li>
                 {% if object.final %}

@@ -5,11 +5,11 @@
 {% endblock title %}
 
 {% block breadcrumbs_self %}
-  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk-of-bias</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk of bias</a><span class="divider">/</span></li>
   <li class="active"> Delete <span class="divider">/</span></li>
 {% endblock breadcrumbs_self %}
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="risk-of-bias" notes="Note that the study itself will not be removed from HAWC." %}
+  {% include "hawc/_delete_block.html" with name="risk of bias" notes="Note that the study itself will not be removed from HAWC." %}
 {% endblock content %}

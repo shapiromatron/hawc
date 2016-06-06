@@ -2249,7 +2249,7 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
 
 
 RoBHeatmapPlot = function(parent, data, options){
-    // heatmap of risk-of-bias information. Criteria are on the y-axis,
+    // heatmap of risk of bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();
@@ -2260,7 +2260,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
+            return this.plot_div.html('<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
@@ -2398,7 +2398,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             showSQs = function(v){
                 self.print_details(self.modal.getBody(), $(this).data('robs'))
                 self.modal
-                    .addHeader('<h4>Risk-of-bias details: {0}</h4>'.printf(this.textContent))
+                    .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
                     .addFooter('')
                     .show({maxWidth: 900});
             }, getMetricSQs = function(i, v){
@@ -2427,7 +2427,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         .on('click', function(v){
             self.print_details(self.modal.getBody(), {type: 'cell', robs: [v]})
             self.modal
-                .addHeader('<h4>Risk-of-bias details</h4>')
+                .addHeader('<h4>Risk of bias details</h4>')
                 .addFooter('')
                 .show({maxWidth: 900});
         });
@@ -2713,7 +2713,7 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
 
 
 RoBBarchartPlot = function(parent, data, options){
-    // stacked-bars of risk-of-bias information. Criteria are on the y-axis,
+    // stacked-bars of risk of bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();
@@ -2723,7 +2723,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
+            return this.plot_div.html('<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);

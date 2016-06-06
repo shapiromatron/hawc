@@ -11,7 +11,7 @@ router.register(r'review', api.RiskOfBias, base_name='review')
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
 
-    # assessment risk-of-bias
+    # assessment risk of bias
     url(r'^assessment/(?P<pk>\d+)/$',
         views.ARoBDetail.as_view(),
         name='arob_detail'),
@@ -58,7 +58,7 @@ urlpatterns = [
         views.RoBMetricDelete.as_view(),
         name='robm_delete'),
 
-    # risk-of-bias at study-level
+    # risk of bias at study-level
     url(r'^study/(?P<pk>\d+)/$',
         views.RoBsDetail.as_view(),
         name='robs_detail'),

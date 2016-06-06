@@ -71,4 +71,5 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score.save()
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)
 
+
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
