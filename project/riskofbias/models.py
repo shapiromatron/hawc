@@ -40,7 +40,10 @@ class RiskOfBiasDomain(models.Model):
         The risk-of-bias domains and metrics are those defined by NTP/OHAT
         protocols for risk-of-bias
         """
-        fn = os.path.join(settings.PROJECT_PATH, 'study/fixtures/ohat_study_quality_defaults.json')
+        fn = os.path.join(
+            settings.PROJECT_PATH,
+            'riskofbias/fixtures/ohat_study_quality_defaults.json'
+        )
         with open(fn, 'r') as f:
             objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
