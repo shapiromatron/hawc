@@ -293,10 +293,6 @@ class RiskOfBiasScore(models.Model):
     def score_shade(self):
         return self.SCORE_SHADES[self.score]
 
-    @classmethod
-    def delete_caches(cls, ids):
-        SerializerHelper.delete_caches(cls, ids)
-
 
 class RiskOfBiasAssessment(models.Model):
     assessment = models.OneToOneField(
@@ -311,10 +307,6 @@ class RiskOfBiasAssessment(models.Model):
     @classmethod
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(assessment=assessment)
-
-    @classmethod
-    def delete_caches(cls, ids):
-        SerializerHelper.delete_caches(cls, ids)
 
 
 reversion.register(RiskOfBiasDomain)
