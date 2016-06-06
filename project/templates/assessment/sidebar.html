@@ -7,24 +7,24 @@
     <li class="nav-header">Available modules</li>
 
     {% if assessment.enable_literature_review %}
-        <li class=""><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+        <li class=""><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a></li>
     {% endif %}
 
     {% if assessment.enable_data_extraction %}
-        <li class=""><a href="{% url 'study:list' assessment.pk %}">Study List</a></li>
+        <li class=""><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
         {% if assessment.enable_risk_of_bias %}
-        <li class=""><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of Bias</a></li>
+        <li class=""><a href="{% url 'riskofbias:list' assessment.pk %}">Risk of bias</a></li>
         {% endif %}
-        <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint List</a></li>
+        <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>
         <li class=""><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
     {% endif %}
 
     {% if assessment.enable_summary_text %}
-        <li class=""><a href="{% url 'summary:list' assessment.pk %}">Executive Summary</a></li>
+        <li class=""><a href="{% url 'summary:list' assessment.pk %}">Executive summary</a></li>
     {% endif %}
 
     {% if assessment.enable_comments %}
-        <li class=""><a href="{% url 'comments:comment_list_assessment' assessment.pk %}">Comment Summary</a></li>
+        <li class=""><a href="{% url 'comments:comment_list_assessment' assessment.pk %}">Comment summary</a></li>
     {% endif %}
 
     <li class="nav-header">Downloads</li>
@@ -33,6 +33,6 @@
         <li class=""><a href="{% url 'assessment:reports' assessment.pk %}">Download reports</a></li>
     {% endif %}
   {% else %}
-    <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an Assessment</a>{% endblock %}</li>
+    <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an assessment</a>{% endblock %}</li>
   {% endif %}
 </ul>
