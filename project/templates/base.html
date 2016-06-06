@@ -5,15 +5,15 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-256.png" rel="shortcut icon" sizes="256x256">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32">
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-256.png" rel="shortcut icon" sizes="256x256" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/font-awesome/css/font-awesome.css" />
@@ -24,11 +24,11 @@
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
-      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css">
+      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
     {% endif %}
     {% compress css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css">
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
     {% endcompress %}
     {% block extrastyle %}{% endblock %}
   </head>
