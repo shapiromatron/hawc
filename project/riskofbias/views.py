@@ -43,11 +43,7 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     success_message = 'Risk of bias settings have been updated.'
 
     def get_assessment(self, request, *args, **kwargs):
-        return self.assessment
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        return super(ARoBCopy, self).dispatch(*args, **kwargs)
+        return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
         kwargs = super(ARoBCopy, self).get_form_kwargs()
@@ -98,9 +94,11 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
     model = Assessment
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
-    queryset = Assessment.objects.all()
     success_message = 'Risk of Bias reviewers updated.'
     template_name = 'riskofbias/arob_reviewers_form.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def build_initial_formset_factory(self):
         queryset = Study.objects.filter(assessment=self.assessment)\

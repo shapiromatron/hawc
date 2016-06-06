@@ -439,7 +439,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     form_class = forms.ReferenceExcelUploadForm
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs['pk'])
+        return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
         kwargs = super(RefUploadExcel, self).get_form_kwargs()
