@@ -75,7 +75,4 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/edit-final/$',
         views.RoBEditFinal.as_view(),
         name='rob_update_final'),
-    url(r'^(?P<pk>\d+)/delete/$',
-        views.RoBDelete.as_view(),
-        name='rob_delete'),
 ]

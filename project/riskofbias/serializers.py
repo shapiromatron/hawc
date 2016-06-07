@@ -41,7 +41,6 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret['score_symbol'] = instance.score_symbol
         ret['score_shade'] = instance.score_shade
         ret['url_edit'] = instance.riskofbias.get_edit_url()
-        ret['url_delete'] = instance.riskofbias.get_delete_url()
         return ret
 
     class Meta:

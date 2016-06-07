@@ -31,7 +31,6 @@
             <li class="disabled"><a tabindex="-1" href="#">Editing</a></li>
             {% for review in reviews %}
             <li><a href="{% url 'riskofbias:rob_update' review.pk %}">Update Review</a></li>
-            <li><a href="{% url 'riskofbias:rob_delete' review.pk %}">Delete Review</a></li>
             {% endfor %}
             {% endif %}
             {% if final %}

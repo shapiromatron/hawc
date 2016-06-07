@@ -297,20 +297,6 @@ class RoBEdit(BaseUpdate):
         return context
 
 
-class RoBDelete(BaseDelete):
-    """
-    Delete all risk of bias metrics associated with study.
-    """
-    model = models.RiskOfBias
-    template_name = 'riskofbias/rob_delete.html'
-    form_class = forms.RoBScoreForm
-    success_message = 'Risk of bias information deleted.'
-
-    def get_success_url(self):
-        return reverse_lazy('riskofbias:robs_detail',
-                            kwargs={'pk': self.object.study.pk})
-
-
 class RoBDetail(BaseDetail):
     """
     Detailed view of risk of bias metrics for reporting.
