@@ -154,7 +154,7 @@ class ProjectManagerOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
@@ -179,7 +179,7 @@ class TeamMemberOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
