@@ -66,13 +66,14 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     """
     parent_model = Assessment
     model = Study
-    template_name = 'riskofbias/arob_reviewers_list.html'
+    template_name = 'riskofbias/reviewers_list.html'
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)\
+        return self.model.objects\
+            .filter(assessment=self.assessment)\
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
@@ -98,7 +99,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
     success_message = 'Risk of Bias reviewers updated.'
-    template_name = 'riskofbias/arob_reviewers_form.html'
+    template_name = 'riskofbias/reviewers_form.html'
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs['pk'])
@@ -258,6 +259,37 @@ class StudyRoBExport(StudyList):
         return exporter.build_response()
 
 
+# RoB views
+class RoBDetail(BaseDetail):
+    """
+    Detailed view of risk of bias metrics for reporting.
+    Displays RoB used as Study.qualities
+    """
+    model = Study
+    template_name = 'riskofbias/rob_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RoBDetail, self).get_context_data(**kwargs)
+        if context['obj_perms']['edit']:
+            context['reviews'] = self.object\
+                .get_user_robs(self.request.user)
+            context['final'] = self.object\
+                .get_user_robs(self.request.user, final=True).first()
+        return context
+
+
+class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
+    """
+    Detailed view of risk of bias metrics for reporting.
+    Displays all active RoB in Study.
+    """
+    template_name = 'riskofbias/rob_detail_all.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Study, pk=kwargs['pk'])
+        return self.object.get_assessment()
+
+
 class RoBEdit(IsAuthorMixin, BaseUpdate):
     """
     Edit settings for risk of bias metrics associated with study.
@@ -269,10 +301,10 @@ class RoBEdit(IsAuthorMixin, BaseUpdate):
     formset_factory = forms.RoBFormSet
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:rob_detail',
-                            kwargs=self.kwargs)
+        return self.object.get_absolute_url()
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         self.formset = self.formset_factory(self.request.POST)
         if self.formset.is_valid():
             return self.form_valid()
@@ -298,51 +330,6 @@ class RoBEdit(IsAuthorMixin, BaseUpdate):
             for quality in self.object.scores.all()
         ]
         return context
-
-
-class RoBDetail(BaseDetail):
-    """
-    Detailed view of risk of bias metrics for reporting.
-    Displays RoB based on pk passed in url.
-
-    For use in users updating owned reviews
-    """
-    model = models.RiskOfBias
-    template_name = 'riskofbias/rob_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(RoBDetail, self).get_context_data(**kwargs)
-        if context['obj_perms']['edit']:
-            context['obj_perms']['own'] = \
-                (self.object.author == self.request.user)
-        return context
-
-
-class RoBsDetail(BaseDetail):
-    """
-    Detailed view of risk of bias metrics for reporting.
-    Displays RoB used as Study.qualities
-    """
-    model = Study
-    template_name = 'riskofbias/robs_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(RoBsDetail, self).get_context_data(**kwargs)
-        if context['obj_perms']['edit']:
-            context['reviews'] = self.object.get_user_robs(self.request.user)
-            final = self.object.get_user_robs(self.request.user, final=True)
-            if final:
-                context['final'] = final[0]
-
-        return context
-
-
-class RoBsDetailAll(RoBsDetail):
-    """
-    Detailed view of risk of bias metrics for reporting.
-    Displays all active RoB in Study.
-    """
-    template_name = 'riskofbias/rob_detail_all.html'
 
 
 class RoBEditFinal(IsAuthorMixin, BaseDetail):

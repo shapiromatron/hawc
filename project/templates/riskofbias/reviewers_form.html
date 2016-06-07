@@ -10,7 +10,8 @@
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of Bias Reviewers</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Reviewer assignments</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 

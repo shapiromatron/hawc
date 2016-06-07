@@ -11,9 +11,8 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk of Bias</a><span class="divider">/</span></li>
-  <li class="active"> Edit <span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  <li class="active">Edit risk of bias <span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
@@ -46,8 +45,10 @@
       }
   </script>
   <script type="text/javascript">
+    {% if object.study_reviews_complete %}
     $(document).ready(function() {
         window.app.robTableStartup();
     });
+    {% endif %}
   </script>
 {% endblock extrajs %}

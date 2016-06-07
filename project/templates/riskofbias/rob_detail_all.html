@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:robs_detail' object.study.pk %}">{{object.study}} Risk of Bias</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}} Risk of Bias</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
     <li class="active"> All Reviews <span class="divider">/</span></li>
   {% endblock %}
@@ -26,17 +26,15 @@
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Risk of Bias</a></li>
             {% if reviews %}
-            <li class="disabled"><a tabindex="-1" href="#">Editing</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Risk of bias editing</a></li>
             {% for review in reviews %}
-            <li><a href="{% url 'riskofbias:rob_update' review.pk %}">Update Review</a></li>
+            <li><a href="{% url 'riskofbias:rob_update' review.pk %}">Update review</a></li>
             {% endfor %}
             {% endif %}
             {% if final %}
-            <li class="disabled"><a tabindex="-1" href="#">Final Review</a></li>
-            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update Final Review</a></li>
-            <li><a href="{% url 'riskofbias:rob_delete' final.pk %}">Delete Final Review</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Final review</a></li>
+            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update final review</a></li>
             {% endif %}
         </ul>
       </div>
