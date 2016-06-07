@@ -35,8 +35,8 @@ const helpers = {
             return target.value;
         }
     },
-    getObjectURL(host, base, id, assessment_id){
-        return `${host}${base}${id}/?assessment_id=${assessment_id}/`;
+    getObjectURL(host, base, id){
+        return `${host}${base}${id}/`;
     },
     datetimeFormat(dt){
         return moment(dt).format('MMMM Do YYYY, h:mm:ss a');

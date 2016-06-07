@@ -113,8 +113,7 @@ export function fetchStudyIfNeeded(){
                 h.getObjectURL(
                     state.config.host,
                     state.config.study.url,
-                    state.config.study.id,
-                    state.config.assessment_id), h.fetchGet)
+                    state.config.study.id), h.fetchGet)
             .then((response) => response.json())
             .then((json)     => formatIncomingStudy(json))
             .then((json)     => dispatch(receiveStudy(json)))
@@ -133,8 +132,7 @@ export function submitFinalRiskOfBiasScores(scores){
         return fetch(
             `${h.getObjectURL(state.config.host,
                 state.config.riskofbias.url,
-                state.config.riskofbias.id,
-                state.config.assessment_id)}`, opts)
+                state.config.riskofbias.id)}`, opts)
             .then((response) => response.json())
             .then((json)     => dispatch(updateQualities(json.scores)))
             .then(()         => window.location.href = state.config.cancelUrl)
