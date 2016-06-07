@@ -17,10 +17,6 @@ from . import models, forms
 
 
 # Assessment risk of bias requirements
-class ARobList(StudyList):
-    template_name = 'riskofbias/study_list.html'
-
-
 class ARoBDetail(BaseList):
     parent_model = Assessment
     model = models.RiskOfBiasDomain

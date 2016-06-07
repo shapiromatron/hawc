@@ -27,10 +27,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
         views.RoBFixedReport.as_view(),
         name='rob_fixedreport'),
-    url(r'^assessment/(?P<pk>\d+)/studies/$',
-        views.ARobList.as_view(),
-        name='list'),
-
     url(r'^assessment/(?P<pk>\d+)/reviewers/$',
         views.ARoBReviewersList.as_view(),
         name='arob_reviewers'),
