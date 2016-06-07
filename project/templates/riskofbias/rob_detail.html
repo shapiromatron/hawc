@@ -55,7 +55,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     window.study = new Study({{study.get_json|safe}})
-    study.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
+    window.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
     window.sq_tbl = new StudyQualities_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}

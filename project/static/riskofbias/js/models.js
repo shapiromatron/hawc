@@ -337,10 +337,10 @@ StudyQualities_TblCompressed.prototype = {
             txt = 'Click on any cell above to view details.';
 
         if (!this.complete_rob){
-            if (study.userIsTeamMember){
+            if (window.userIsTeamMember){
                 txt = '<h3>Final Risk of Bias review is not complete.</h3>';
             } else {
-                txt = '<h3>Data not available</h3>'
+                txt = '<h3>Data not available</h3>';
             }
         }
         tfoot.append($('<tr>').append(
