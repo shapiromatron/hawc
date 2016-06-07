@@ -215,7 +215,7 @@ RiskOfBias_TblCompressed.prototype = {
         var tbody = $('<tbody></tbody>'),
             tr1 = $('<tr class="rob_domains"></tr>'),
             tr2 = $('<tr class="rob_criteria"></tr>');
-        this.riskofbias.scores.forEach(function(v1, i1){
+        this.riskofbias.riskofbias.forEach(function(v1, i1){
             v1.criteria.forEach(function(v2, i2){
                 if(i2 === 0){
                     tr1.append($('<td class="scorecell domain_cell" colspan="{0}">{1}</td>'.printf(
