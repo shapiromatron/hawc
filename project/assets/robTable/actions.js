@@ -127,6 +127,7 @@ export function submitFinalRiskOfBiasScores(scores){
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),
             opts = h.fetchPost(state.config.csrf, patch, 'PUT');
+
         dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
@@ -136,7 +137,7 @@ export function submitFinalRiskOfBiasScores(scores){
                 state.config.assessment_id)}`, opts)
             .then((response) => response.json())
             .then((json)     => dispatch(updateQualities(json.scores)))
-            .then(()         => dispatch(setMessage('Review updated.')))
+            .then(()         => window.location.href = state.config.cancelUrl)
             .catch((ex)      => dispatch(setError(ex)));
     };
 }
