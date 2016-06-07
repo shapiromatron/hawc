@@ -8,7 +8,6 @@
   {{assessment}} | {{object.study}} | Edit risk of bias | HAWC
 {% endblock %}
 
-
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>

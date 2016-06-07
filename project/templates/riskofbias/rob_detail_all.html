@@ -1,46 +1,18 @@
-{% extends 'portal.html' %}
+{% extends 'riskofbias/rob_detail.html' %}
 
 
 {% block title %}
   {{assessment}} | {{object.study}} | All Risk of bias | HAWC
 {% endblock %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}} Risk of Bias</a><span class="divider">/</span></li>
-  {% block breadcrumbs_self %}
-    <li class="active"> All Reviews <span class="divider">/</span></li>
-  {% endblock %}
+{% block breadcrumbs_self %}
+  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk of bias</a><span class="divider">/</span></li>
+  <li class="active"> All Reviews <span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
 
-  <h2>{{object}}: Risk of Bias details
-    {% if obj_perms.edit %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            {% if reviews %}
-            <li class="disabled"><a tabindex="-1" href="#">Risk of bias editing</a></li>
-            {% for review in reviews %}
-            <li><a href="{% url 'riskofbias:rob_update' review.pk %}">Update review</a></li>
-            {% endfor %}
-            {% endif %}
-            {% if final %}
-            <li class="disabled"><a tabindex="-1" href="#">Final review</a></li>
-            <li><a href="{% url 'riskofbias:rob_update_final' final.pk %}">Update final review</a></li>
-            {% endif %}
-        </ul>
-      </div>
-    {% endif %}
-  </h2>
-
+  <h2>{{object}}: Risk of bias (all reviews)</h2>
   <div id="robTable"></div>
 
 {% endblock %}
