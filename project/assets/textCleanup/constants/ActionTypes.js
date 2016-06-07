@@ -1,7 +1,3 @@
-// configuration
-export const CF_LOAD =                  'CF_LOAD';
-export const RESET_ERROR_MESSAGE =      'RESET_ERROR_MESSAGE';
-
 // assessments
 export const AS_REQUEST =               'AS_REQUEST';
 export const AS_RECEIVE_OBJECT =        'AS_RECEIVE_OBJECT';

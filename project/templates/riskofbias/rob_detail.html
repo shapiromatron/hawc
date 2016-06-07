@@ -1,0 +1,61 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{study}} | Risk of bias | HAWC
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{study.get_absolute_url}}">{{study}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+    <li class="active">Risk of bias<span class="divider">/</span></li>
+  {% endblock %}
+{% endblock %}
+
+{% block content %}
+  <h2>{{object}}: Risk of bias
+    {% if obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
+          <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+      </div>
+    {% endif %}
+  </h2>
+
+  <table>
+      {% for review in study.get_active_riskofbiases %}
+      <tr class="review-item">
+          <td>
+              <b>{% if review.final %}Final{% endif %} reviewer:</b>
+              {{review.author}}
+          </td>
+          <td>
+              <b>Review complete:</b>
+              {% if review.is_complete %}<span class="is-complete">Yes</span>
+              {% else %} No
+              {% endif %}
+          </td>
+      </tr>
+      {% endfor%}
+</table>
+<hr>
+  <div id="sq_tbl"></div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    window.study = new Study({{study.get_json|safe}})
+    window.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
+    window.sq_tbl = new StudyQualities_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
+  </script>
+{% endblock extrajs %}

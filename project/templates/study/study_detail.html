@@ -29,16 +29,6 @@
             <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
             <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
-            {% if assessment.enable_study_quality %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Risk-of-bias Editing</a></li>
-              {% if object.qualities.count == 0 %}
-                <li><a href="{% url 'study:sqs_new' object.pk %}">Create</a></li>
-              {% else %}
-                <li><a href="{% url 'study:sqs_update' object.pk %}">Update</a></li>
-              {% endif %}
-            {% endif %}
-
             <li class="divider"></li>
             {% if object.study_type == 0 %}
               <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
@@ -65,13 +55,13 @@
 
   {% if crud == "Read" %}
 
-    {% if assessment.enable_study_quality and object.qualities.count > 0 %}
+    {% if assessment.enable_risk_of_bias and object.qualities.count > 0 %}
       <div class="row-fluid">
-          <h3>Risk-of-bias visualization
-            <a class="btn btn-primary pull-right" href="{% url 'study:sqs_detail' object.pk %}">View details</a>
+          <h3>Risk of bias visualization
+            <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
           </h3>
           <div class="span12">
-            <div id='sq_plot' class="d3_container"></div>
+            <div id='rob_plot' class="d3_container"></div>
           </div>
       </div>
     {% endif %}
@@ -114,7 +104,7 @@
       study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    window.plot = new StudyQuality_Donut(study, '#sq_plot', {'build_plot_startup': true});
+    window.plot = new RiskOfBias_Donut(study, '#rob_plot', {'build_plot_startup': true});
   </script>
   {% if crud == "Read" %}
     {% include "comments/_comments_extrajs.html" %}

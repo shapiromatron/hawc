@@ -46,10 +46,8 @@ class Study(viewsets.ReadOnlyModelViewSet):
                 filters["published"] = True
         else:
             prefetch = (
-                'qualities',
                 'identifiers',
-                'qualities__metric',
-                'qualities__metric__domain'
+                'riskofbiases__scores__metric__domain',
             )
 
         return self.model.objects.filter(**filters)\
@@ -60,15 +58,3 @@ class Study(viewsets.ReadOnlyModelViewSet):
         assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
         scores = models.Study.rob_scores(assessment_id)
         return Response(scores)
-
-
-class StudyQualityDomain(viewsets.ReadOnlyModelViewSet):
-    assessment_filter_args = 'assessment'
-    model = models.StudyQualityDomain
-    pagination_class = DisabledPagination
-    permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
-    serializer_class = serializers.AssessmentDomainSerializer
-
-    def get_queryset(self):
-        return self.model.objects.all()

@@ -20,7 +20,7 @@ class CardHeader extends Component {
     }
     render() {
         let { endpoint, showEndpointModal, showStudyModal, study, citation } = this.props,
-            score = study.qualities__score__sum,
+            score = study.final_score,
             quality = this.getScoreQuality(score);
         return (
             <div className='cardHeader'>

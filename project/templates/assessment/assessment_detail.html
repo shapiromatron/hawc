@@ -37,8 +37,8 @@
 
           <!-- application settings -->
           <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
-          {% if assessment.enable_study_quality %}
-          <li><a href="{% url 'study:asq_detail' pk=object.pk %}">Risk-of-bias settings</a></li>
+          {% if assessment.enable_risk_of_bias %}
+          <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">Risk of bias settings</a></li>
           {% endif %}
 
           {% if assessment.enable_bmd %}

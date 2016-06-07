@@ -6,7 +6,7 @@ import {
     patchBulkList,
     patchDetailList,
 } from 'textCleanup/actions/Endpoint';
-import Loading from 'textCleanup/components/Loading';
+import Loading from 'shared/components/Loading';
 import FormComponent from 'textCleanup/components/Endpoint/BulkForm';
 
 

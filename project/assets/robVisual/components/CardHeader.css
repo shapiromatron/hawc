@@ -14,20 +14,20 @@
     font-size: 80%;
 }
 
-.score {
+.cardTitle .score {
     padding: 10px;
     border: 2px rgb(128, 128, 128) solid;
     border-radius: 4px;
 }
-.score.high {
+.cardTitle .score.high {
     background-color: rgb(0, 204, 0);
 }
-.score.medium {
+.cardTitle .score.medium {
     background-color: rgb(111, 255, 0);
 }
-.score.low {
+.cardTitle .score.low {
     background-color: rgb(255, 204, 0);
 }
-.score.not-applicable {
+.cardTitle .score.not-applicable {
     background-color: #ddd;
 }

@@ -24,7 +24,7 @@ class ApplyFilters extends Component {
         dispatch(clearErrors());
         if (this.hasNoErrors()) {
             let studyIds = _.chain(studies)
-                    .filter((study) => { return study.qualities__score__sum >= threshold; })
+                    .filter((study) => { return study.final_score >= threshold; })
                     .pluck('id')
                     .value();
             dispatch(fetchEndpoints(studyIds));

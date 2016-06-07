@@ -1,5 +1,5 @@
-import { loadConfig } from 'textCleanup/actions/Config';
-import * as types from 'textCleanup/constants/ActionTypes';
+import { loadConfig } from 'shared/actions/Config';
+import * as sharedTypes from 'shared/constants/ActionTypes';
 
 
 describe('textCleanup Config action', () => {
@@ -7,7 +7,7 @@ describe('textCleanup Config action', () => {
         let action = loadConfig();
 
         expect(action).to.deep.equal({
-            type: types.CF_LOAD,
+            type: sharedTypes.CF_LOAD,
         });
     });
 });

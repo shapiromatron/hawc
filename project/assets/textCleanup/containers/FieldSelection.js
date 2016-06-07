@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { fetchModelIfNeeded } from 'textCleanup/actions/Endpoint';
 import FieldList from 'textCleanup/components/FieldList';
-import Loading from 'textCleanup/components/Loading';
+import Loading from 'shared/components/Loading';
 import urls from 'textCleanup/constants/urls';
 import h from 'textCleanup/utils/helpers';
 

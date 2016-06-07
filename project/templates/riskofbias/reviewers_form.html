@@ -1,0 +1,41 @@
+{% extends 'portal.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+  {{assessment}} | Risk of Bias Reviewers | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Reviewer assignments</a><span class="divider">/</span></li>
+    <li class="active">Edit<span class="divider">/</span></li>
+{% endblock breadcrumbs %}
+
+{% block extrastyle %}
+    {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+        <div id='numberForm'>
+            {% crispy form %}
+        </div>
+
+        <div id='reviewersFormset'>
+            {% include "hawc/table_inline_formset.html" with form_show_errors=True %}
+        </div>
+{% endblock %}
+
+
+{% block extrajs %}
+    {{formset.form.media}}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        new DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
+        $('#reviewersFormset').insertBefore($('#numberForm .form-actions'));
+      });
+    </script>
+{% endblock extrajs %}

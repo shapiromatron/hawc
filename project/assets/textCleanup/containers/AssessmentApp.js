@@ -4,7 +4,7 @@ import _ from 'underscore';
 
 import { makeAssessmentActive } from 'textCleanup/actions/Assessment';
 import Assessment from 'textCleanup/components/Assessment';
-import Loading from 'textCleanup/components/Loading';
+import Loading from 'shared/components/Loading';
 
 
 class App extends Component{

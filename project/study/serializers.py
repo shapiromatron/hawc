@@ -1,52 +1,10 @@
 from rest_framework import serializers
 
 from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
+from riskofbias.serializers import RiskOfBiasSerializer, RiskOfBiasScoreSerializer
 from utils.helper import SerializerHelper
 
 from . import models
-
-
-class AssessmentMetricSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.StudyQualityMetric
-
-
-class AssessmentDomainSerializer(serializers.ModelSerializer):
-    metrics = AssessmentMetricSerializer(many=True)
-
-    class Meta:
-        model = models.StudyQualityDomain
-
-
-class StudyQualityDomainSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.StudyQualityDomain
-
-
-class StudyQualityMetricSerializer(serializers.ModelSerializer):
-    domain = StudyQualityDomainSerializer(read_only=True)
-
-    class Meta:
-        model = models.StudyQualityMetric
-
-
-class StudyQualitySerializer(serializers.ModelSerializer):
-    metric = StudyQualityMetricSerializer(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super(StudyQualitySerializer, self).to_representation(instance)
-        ret['score_description'] = instance.get_score_display()
-        ret['score_symbol'] = instance.score_symbol
-        ret['score_shade'] = instance.score_shade
-        ret['url_edit'] = instance.get_edit_url()
-        ret['url_delete'] = instance.get_delete_url()
-        return ret
-
-    class Meta:
-        model = models.StudyQuality
-        exclude = ('object_id', 'content_type')
 
 
 class StudySerializer(serializers.ModelSerializer):
@@ -72,7 +30,8 @@ class SimpleStudySerializer(StudySerializer):
 class VerboseStudySerializer(StudySerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    qualities = StudyQualitySerializer(many=True, read_only=True)
+    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+    qualities = RiskOfBiasScoreSerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 

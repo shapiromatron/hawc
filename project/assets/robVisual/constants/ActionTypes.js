@@ -1,5 +1,3 @@
-export const CF_LOAD =              'CF_LOAD';
-
 export const REQUEST_EFFECTS =      'REQUEST_EFFECTS';
 export const RECEIVE_EFFECTS =      'RECEIVE_EFFECTS';
 export const REQUEST_ENDPOINTS =    'REQUEST_ENDPOINTS';

@@ -25,9 +25,9 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_study_quality %}
+    {% if assessment.enable_risk_of_bias %}
     <li>
-        <b>Risk-of-bias report</b><br>
+        <b>Risk of bias report</b><br>
         <a class='btn btn-primary' href="{% url 'study:bias_export' assessment.pk %}">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>

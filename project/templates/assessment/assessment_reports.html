@@ -54,7 +54,7 @@
 
       {% if report_types.1|length > 0 %}
         <li>
-          <b>Studies and/or risk-of-bias</b><br>
+          <b>Studies and/or risk of bias</b><br>
           <p class="help-block">Select Microsoft Word template</p>
           <select>
             {% for object in report_types.1 %}
@@ -68,7 +68,7 @@
       {% endif %}
 
       <li>
-        <b>Risk-of-bias (fixed report)</b><br>
+        <b>Risk of bias (fixed report)</b><br>
         <p class="help-block">Select Microsoft Word template</p>
         <a class='btn btn-primary'
            href="{% url 'study:sq_fixedreport' assessment.pk %}">Download</a><br>
