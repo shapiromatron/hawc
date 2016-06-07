@@ -271,5 +271,4 @@ RoBReviewerFormset = modelformset_factory(
     model=Study,
     form=RoBReviewersForm,
     fields=(),
-    extra=0,
-)
+    extra=0)

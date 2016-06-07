@@ -265,10 +265,6 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/search_tags_edit.html"
 
-    @abc.abstractmethod
-    def get_assessment(self, request, *args, **kwargs):
-        pass
-
     def post(self, request, *args, **kwargs):
         if not self.request.is_ajax():
             raise Http404
