@@ -158,11 +158,12 @@ class RiskOfBias(models.Model):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     def build_scores(self, assessment, study):
-        for metric in RiskOfBiasMetric.get_required_metrics(assessment, study):
-            RiskOfBiasScore.objects.create(
-                riskofbias=self,
-                metric=metric
-            )
+        scores = [
+            RiskOfBiasScore(riskofbias=self, metric=metric)
+            for metric in
+            RiskOfBiasMetric.get_required_metrics(assessment, study)
+        ]
+        RiskOfBiasScore.objects.bulk_create(scores)
 
     def activate(self):
         self.active = True

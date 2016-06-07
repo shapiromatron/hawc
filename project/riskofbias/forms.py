@@ -127,8 +127,8 @@ class NumberOfReviewersForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(NumberOfReviewersForm, self).save(commit)
         if type(instance) is Assessment:
-            instance.rob_settings.number_of_reviewers = self.cleaned_data[
-                'number_of_reviewers']
+            instance.rob_settings.number_of_reviewers = \
+                self.cleaned_data['number_of_reviewers']
             instance.rob_settings.save()
         return instance
 
@@ -168,8 +168,8 @@ class RoBReviewersForm(forms.ModelForm):
                     lookup_class=AssessmentTeamMemberOrHigherLookup,
                     label='Reviewer',
                     widget=selectable.AutoCompleteSelectWidget)
-                self.fields[author_field].widget.update_query_parameters(
-                    {'related': assessment_id})
+                self.fields[author_field].widget\
+                    .update_query_parameters({'related': assessment_id})
                 try:
                     self.fields[author_field].initial = robs[i].author.id
                 except IndexError:
