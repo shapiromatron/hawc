@@ -11,6 +11,7 @@ from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
                          GenerateFixedReport, MessageMixin,
+                         TeamMemberOrHigherMixin, IsAuthorMixin,
                          ProjectManagerOrHigherMixin)
 
 from . import models, forms
@@ -28,8 +29,11 @@ class ARoBDetail(BaseList):
             .prefetch_related('metrics')
 
 
-class ARoBEdit(ARoBDetail):
+class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
     crud = 'Update'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
 
 class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
@@ -56,13 +60,16 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
                             kwargs={'pk': self.assessment.pk})
 
 
-class ARoBReviewersList(BaseList):
+class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     """
     List an assessment's studies with their active risk of bias reviewers.
     """
     parent_model = Assessment
     model = Study
     template_name = 'riskofbias/arob_reviewers_list.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment)\
@@ -251,7 +258,7 @@ class StudyRoBExport(StudyList):
         return exporter.build_response()
 
 
-class RoBEdit(BaseUpdate):
+class RoBEdit(IsAuthorMixin, BaseUpdate):
     """
     Edit settings for risk of bias metrics associated with study.
     """
@@ -338,7 +345,7 @@ class RoBsDetailAll(RoBsDetail):
     template_name = 'riskofbias/rob_detail_all.html'
 
 
-class RoBEditFinal(BaseDetail):
+class RoBEditFinal(IsAuthorMixin, BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.
