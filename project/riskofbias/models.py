@@ -284,10 +284,10 @@ class RiskOfBiasScore(models.Model):
             'rob-metric_id',
             'rob-metric_metric',
             'rob-metric_description',
-            'rob-score-id',
-            'rob-score-notes',
+            'rob-score_id',
+            'rob-score_score',
             'rob-score_description',
-            'rob-score'
+            'rob-score_notes',
         )
 
     @staticmethod
@@ -300,9 +300,9 @@ class RiskOfBiasScore(models.Model):
             ser['metric']['metric'],
             ser['metric']['description'],
             ser['id'],
-            cleanHTML(ser['notes']),
+            ser['score'],
             ser['score_description'],
-            ser['score']
+            cleanHTML(ser['notes']),
         )
 
     @property
