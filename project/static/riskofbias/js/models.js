@@ -10,6 +10,7 @@ RiskOfBiasStudy.prototype = {
     },
 };
 
+
 var RiskOfBias = function(data){
     this.data = data;
     this.unpack_scores();
@@ -19,7 +20,7 @@ RiskOfBias.prototype = {
         var self = this,
             scores = [],
             gradient_colors = d3.scale.linear()
-                .domain([0, 1, 2, 3, 4])
+                .domain(RiskOfBiasScore.score_values)
                 .range(_.values(RiskOfBiasScore.score_shades));
 
         this.data.scores.forEach(function(v, i){
@@ -64,23 +65,24 @@ RiskOfBias.prototype = {
     },
 };
 
+
 var RiskOfBiasScore = function(study, data){
     this.study = study;
     this.data = data;
     this.data.metric.created = new Date(this.data.metric.created);
     this.data.metric.last_updated = new Date(this.data.metric.last_updated);
 };
-
 _.extend(RiskOfBiasScore, {
-    score_values: [0, 1, 2, 3, 4],
-    score_text: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++'},
-    score_shades: {0: '#E8E8E8', 1: '#CC3333', 2: '#FFCC00', 3: '#6FFF00', 4: '#00CC00'},
+    score_values: [0, 1, 2, 3, 4, 10],
+    score_text: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++', 10: 'NR'},
+    score_shades: {0: '#E8E8E8', 1: '#CC3333', 2: '#FFCC00', 3: '#6FFF00', 4: '#00CC00', 10: '#E8E8E8'},
     score_text_description: {
         0: 'Not applicable',
         1: 'Definitely high risk of bias',
         2: 'Probably high risk of bias',
         3: 'Probably low risk of bias',
         4: 'Definitely low risk of bias',
+        10: 'Not reported',
     },
     display_details_divs: function($div, content){
         // insert content into selected div and then draw all animations
@@ -125,7 +127,6 @@ _.extend(RiskOfBiasScore, {
         return $('<div class="row-fluid"></div>').html(content);
     }
 });
-
 RiskOfBiasScore.prototype = {
     build_details_div: function(options){
         var content = [];
@@ -150,7 +151,7 @@ RiskOfBiasScore.prototype = {
             description_div = $('<div class="span9">{0}</div>'.printf(this.data.notes));
 
         $div.append($('<div class="row-fluid"></div>').html([score_div, description_div]));
-        var bar_width = d3.max([d3.round(this.data.score / 4 * 100, 2), 15]),
+        var bar_width = this.data.score === 10 ? 15: d3.max([d3.round(this.data.score / 4 * 100, 2), 15]),
             rob_score_bar = $('<div class="rob_score_bar" style="width:15%; background-color:{0};"><span style="padding-right:5px">{1}</span></div>'.printf(this.data.score_color, this.data.score_text))
                 .data('animate', function(){
                     $(rob_score_bar).animate({'width': bar_width + '%'}, 500);});
@@ -158,6 +159,7 @@ RiskOfBiasScore.prototype = {
         return $div;
     }
 };
+
 
 var RiskOfBias_TblCompressed = function(riskofbias, div, options){
     this.riskofbias = riskofbias;
@@ -168,7 +170,6 @@ var RiskOfBias_TblCompressed = function(riskofbias, div, options){
         this.show_details_div();
     }
 };
-
 RiskOfBias_TblCompressed.prototype = {
     build_table: function(){
         var self = this;
@@ -240,6 +241,7 @@ RiskOfBias_TblCompressed.prototype = {
     },
 };
 
+
 var StudyQualities_TblCompressed = function(study, div, options){
     this.study = study;
     this.complete_rob = _.flatten(_.map(this.study.riskofbias, function(rob){
@@ -255,7 +257,6 @@ var StudyQualities_TblCompressed = function(study, div, options){
         this.show_details_div();
     }
 };
-
 StudyQualities_TblCompressed.prototype = {
     build_table: function(){
         this.tbl = $('<table class="table table-condensed"></table>');
@@ -349,7 +350,6 @@ StudyQualities_TblCompressed.prototype = {
         this.tbl.prepend(tfoot);
     },
 };
-
 
 
 var RiskOfBias_Donut = function(study, plot_id, options){
@@ -590,11 +590,11 @@ _.extend(RiskOfBias_Donut.prototype, D3Plot.prototype, {
     }
 });
 
+
 var RiskOfBiasAggregation = function(studies){
     this.studies = studies;
     this.metrics_dataset = this.build_metrics_dataset();
 };
-
 RiskOfBiasAggregation.prototype = {
     build_metrics_dataset: function(){
         var arr = [];
@@ -615,7 +615,8 @@ RiskOfBiasAggregation.prototype = {
                               '1': {rob_scores:[], score:1, score_text:'--', score_description: 'Definitely high risk of bias'},
                               '2': {rob_scores:[], score:2, score_text:'-', score_description: 'Probably high risk of bias'},
                               '3': {rob_scores:[], score:3, score_text:'+', score_description: 'Probably low risk of bias'},
-                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk of bias'}};
+                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk of bias'},
+                              '10': {rob_scores:[], score:10, score_text:'NR', score_description: 'Not reported'},};
             d.rob_scores.forEach(function(rob){
                 score_bins[rob.data.score].rob_scores.push(rob);
             });
