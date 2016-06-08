@@ -114,6 +114,12 @@ class RiskOfBiasMetric(models.Model):
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
 
+    @classmethod
+    def get_metrics_for_visuals(cls, assessment_id):
+        return cls.objects\
+            .filter(domain__assessment_id=assessment_id)\
+            .values('id', 'metric')
+
 
 class RiskOfBias(models.Model):
     study = models.ForeignKey(

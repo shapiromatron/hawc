@@ -67,7 +67,7 @@
           $('#id_slug').val(URLify($(this).val(), 50));
         });
       {% endif %}
-
+      window.rob_metrics = {{rob_metrics|safe}};
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
       new VisualForm.create({{visual_type}}, $('.tabbable'));
       new SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
