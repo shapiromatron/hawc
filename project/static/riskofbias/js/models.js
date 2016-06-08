@@ -1,69 +1,3 @@
-var RiskOfBiasCollection = function(objs){
-    this.object_list = objs;
-};
-_.extend(RiskOfBiasCollection, {
-    get_list: function(id, cb){
-        $.get('/study/api/study/?assessment_id={0}'.printf(id), function(ds){
-            var objs = _.map(ds, function(d){ return new RiskOfBiasStudy(d); });
-            cb(new RiskOfBiasCollection(objs));
-        });
-    },
-    render: function(id, $div){
-        RiskOfBiasCollection.get_list(id, function(d){d.render($div);});
-    },
-});
-RiskOfBiasCollection.prototype = {
-    render: function($el){
-        $el.hide()
-            .append(this.build_filters())
-            .append(this.build_table())
-            .fadeIn();
-
-        this.registerEvents($el);
-    },
-    build_filters: function(){
-        var $el = $('<div class="row-fluid">'),
-            filters = _.chain(this.object_list)
-                       .map(function(d){return d.data.study_type;})
-                       .uniq()
-                       .value();
-
-        if (filters.length>1){
-            $el.html(
-                $('<select class="span12" size="6" multiple>').html(_.map(filters, function(d){
-                    return '<option value="{0}" selected>{0}</option>'.printf(d);
-                }))
-            );
-        }
-        return $el;
-    },
-    build_table: function(){
-        var self = this,
-            tbl = new BaseTable(),
-            colgroups = [25, 60, 15],
-            header = ['Short citation', 'Full citation', 'Study type'];
-
-        tbl.addHeaderRow(header);
-        tbl.setColGroup(colgroups);
-
-        _.each(this.object_list, function(d){
-            tbl.addRow(d.build_row()).data('obj', d);
-        });
-
-        return tbl.getTbl();
-    },
-    registerEvents: function($el){
-        var trs = _.map($el.find('table tbody tr'), $),
-            vals;
-        $el.find('select').on('change', function(e){
-            vals = $(this).val();
-            _.each(trs, function(tr){
-                tr.toggle(vals.indexOf(tr.data('obj').data.study_type)>=0);
-            });
-        });
-    },
-};
-
 var RiskOfBiasStudy = function(data){
     this.data = data;
 };
@@ -143,10 +77,10 @@ _.extend(RiskOfBiasScore, {
     score_shades: {0: '#E8E8E8', 1: '#CC3333', 2: '#FFCC00', 3: '#6FFF00', 4: '#00CC00'},
     score_text_description: {
         0: 'Not applicable',
-        1: 'Definitely high risk-of-bias',
-        2: 'Probably high risk-of-bias',
-        3: 'Probably low risk-of-bias',
-        4: 'Definitely low risk-of-bias',
+        1: 'Definitely high risk of bias',
+        2: 'Probably high risk of bias',
+        3: 'Probably low risk of bias',
+        4: 'Definitely low risk of bias',
     },
     display_details_divs: function($div, content){
         // insert content into selected div and then draw all animations
@@ -281,7 +215,7 @@ RiskOfBias_TblCompressed.prototype = {
         var tbody = $('<tbody></tbody>'),
             tr1 = $('<tr class="rob_domains"></tr>'),
             tr2 = $('<tr class="rob_criteria"></tr>');
-        this.riskofbias.scores.forEach(function(v1, i1){
+        this.riskofbias.riskofbias.forEach(function(v1, i1){
             v1.criteria.forEach(function(v2, i2){
                 if(i2 === 0){
                     tr1.append($('<td class="scorecell domain_cell" colspan="{0}">{1}</td>'.printf(
@@ -403,10 +337,10 @@ StudyQualities_TblCompressed.prototype = {
             txt = 'Click on any cell above to view details.';
 
         if (!this.complete_rob){
-            if (study.userIsTeamMember){
+            if (window.userIsTeamMember){
                 txt = '<h3>Final Risk of Bias review is not complete.</h3>';
             } else {
-                txt = '<h3>Data not available</h3>'
+                txt = '<h3>Data not available</h3>';
             }
         }
         tfoot.append($('<tr>').append(
@@ -607,7 +541,7 @@ _.extend(RiskOfBias_Donut.prototype, D3Plot.prototype, {
             .attr("y", this.h)
             .attr("text-anchor", "end")
             .attr("class","dr_title")
-            .text('{0} risk-of-bias summary'.printf(this.study.data.short_citation));
+            .text('{0} risk of bias summary'.printf(this.study.data.short_citation));
 
         setTimeout(function(){self.toggle_domain_width();}, 2.0);
     },
@@ -678,10 +612,10 @@ RiskOfBiasAggregation.prototype = {
 
         var score_binning = function(d){
             var score_bins = {'0': {rob_scores:[], score:0, score_text:'N/A', score_description: 'Not applicable'},
-                              '1': {rob_scores:[], score:1, score_text:'--', score_description: 'Definitely high risk-of-bias'},
-                              '2': {rob_scores:[], score:2, score_text:'-', score_description: 'Probably high risk-of-bias'},
-                              '3': {rob_scores:[], score:3, score_text:'+', score_description: 'Probably low risk-of-bias'},
-                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk-of-bias'}};
+                              '1': {rob_scores:[], score:1, score_text:'--', score_description: 'Definitely high risk of bias'},
+                              '2': {rob_scores:[], score:2, score_text:'-', score_description: 'Probably high risk of bias'},
+                              '3': {rob_scores:[], score:3, score_text:'+', score_description: 'Probably low risk of bias'},
+                              '4': {rob_scores:[], score:4, score_text:'++', score_description: 'Definitely low risk of bias'}};
             d.rob_scores.forEach(function(rob){
                 score_bins[rob.data.score].rob_scores.push(rob);
             });

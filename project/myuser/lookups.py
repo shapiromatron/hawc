@@ -29,8 +29,7 @@ class AssessmentTeamMemberOrHigherLookup(HAWCUserLookup):
             for field in self.search_fields
         ]
         return self.model.objects.filter(
-            Q(**{'assessment_pms__id': id_}) |
-            Q(**{'assessment_teams__id': id_}) &
+            (Q(assessment_pms__id=id_) | Q(assessment_teams__id=id_)) &
             reduce(operator.or_, search_fields)
         ).distinct()
 

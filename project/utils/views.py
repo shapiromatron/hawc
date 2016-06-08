@@ -154,7 +154,7 @@ class ProjectManagerOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
@@ -179,7 +179,7 @@ class TeamMemberOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
@@ -194,6 +194,18 @@ class TeamMemberOrHigherMixin(object):
             .get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
+
+
+class IsAuthorMixin(object):
+    # Throw error if user is not author
+
+    owner_field = 'author'
+
+    def get_object(self):
+        obj = super(IsAuthorMixin, self).get_object()
+        if getattr(obj, self.owner_field) != self.request.user:
+            raise PermissionDenied
+        return obj
 
 
 class CanCreateMixin(object):

@@ -29,6 +29,11 @@ class ConflictResolutionForm extends Component {
         this.props.dispatch(submitFinalRiskOfBiasScores({scores}));
     }
 
+    handleCancel(e){
+        e.preventDefault();
+        window.location.href = this.props.cancelUrl;
+    }
+
     render(){
         let { itemsLoaded, riskofbiases, isForm, error, message } = this.props;
         if (!itemsLoaded) return <Loading />;
@@ -49,7 +54,8 @@ class ConflictResolutionForm extends Component {
                             onClick={this.submitForm.bind(this)}>
                         Update risk of bias
                     </button>
-                    <button className='btn'>Cancel</button>
+                    <button className='btn'
+                            onClick={this.handleCancel.bind(this)}>Cancel</button>
                 </form>
             </div>
         );
@@ -61,6 +67,7 @@ function mapStateToProps(state){
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,
         isForm: state.config.isForm,
+        cancelUrl: state.config.cancelUrl,
         error: state.study.error,
         message: state.study.message,
     };

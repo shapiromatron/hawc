@@ -11,42 +11,39 @@ from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
                          GenerateFixedReport, MessageMixin,
-                         ProjectManagerOrHigherMixin, TeamMemberOrHigherMixin)
+                         TeamMemberOrHigherMixin, IsAuthorMixin,
+                         ProjectManagerOrHigherMixin)
 
 from . import models, forms
 
 
-# Assessment risk-of-bias requirements
-class ARobList(StudyList):
-    template_name = "riskofbias/study_list.html"
-
-
+# Assessment risk of bias requirements
 class ARoBDetail(BaseList):
     parent_model = Assessment
     model = models.RiskOfBiasDomain
-    template_name = "riskofbias/arob_detail.html"
+    template_name = 'riskofbias/arob_detail.html'
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)\
-                                 .prefetch_related('metrics')
+        return self.model.objects\
+            .filter(assessment=self.assessment)\
+            .prefetch_related('metrics')
 
 
-class ARoBEdit(ARoBDetail):
+class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
     crud = 'Update'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
 
 class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     model = models.RiskOfBiasDomain
-    template_name = "riskofbias/arob_copy.html"
+    template_name = 'riskofbias/arob_copy.html'
     form_class = forms.RiskOfBiasCopyForm
     success_message = 'Risk of bias settings have been updated.'
 
     def get_assessment(self, request, *args, **kwargs):
-        return self.assessment
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        return super(ARoBCopy, self).dispatch(*args, **kwargs)
+        return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
         kwargs = super(ARoBCopy, self).get_form_kwargs()
@@ -63,20 +60,25 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
                             kwargs={'pk': self.assessment.pk})
 
 
-class ARoBReviewersList(BaseList):
+class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     """
     List an assessment's studies with their active risk of bias reviewers.
     """
     parent_model = Assessment
     model = Study
-    template_name = 'riskofbias/arob_reviewers_list.html'
+    template_name = 'riskofbias/reviewers_list.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)\
+        return self.model.objects\
+            .filter(assessment=self.assessment)\
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
-                    queryset=models.RiskOfBias.objects.filter(active=True)
+                    queryset=models.RiskOfBias.objects
+                                   .filter(active=True)
                                    .prefetch_related('author'),
                     to_attr='active_riskofbiases'))
 
@@ -96,9 +98,11 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
     model = Assessment
     form_class = forms.NumberOfReviewersForm
     formset_factory = forms.RoBReviewerFormset
-    queryset = Assessment.objects.all()
     success_message = 'Risk of Bias reviewers updated.'
-    template_name = "riskofbias/arob_reviewers_form.html"
+    template_name = 'riskofbias/reviewers_form.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def build_initial_formset_factory(self):
         queryset = Study.objects.filter(assessment=self.assessment)\
@@ -108,7 +112,8 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
-                    queryset=models.RiskOfBias.objects.filter(active=True, final=False),
+                    queryset=models.RiskOfBias.objects
+                                   .filter(active=True, final=False),
                     to_attr='active_riskofbiases')
                 )
 
@@ -119,7 +124,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
         if 'number_of_reviewers' in form.changed_data:
             n = int(form.data['number_of_reviewers'])
             required_fields = ['reference_ptr', 'final_author']
-            if n is 1:
+            if n == 1:
                 n = 0
             [required_fields.append('author-{}'.format(i)) for i in range(n)]
             for rob_form in formset.forms:
@@ -134,11 +139,11 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
             n_diff = n - old_n
             # deactivate robs if number_of_reviewers is lowered.
             if n_diff < 0:
-                if n is 1:
+                if n == 1:
                     n = 0
                 for rob_form in formset.forms:
                     deactivate_robs = rob_form.instance\
-                                      .get_active_riskofbiases(with_final=False)[n:]
+                                      .get_active_robs(with_final=False)[n:]
                     for rob in deactivate_robs:
                         rob.deactivate()
             # if n_of_r is increased, activate inactive robs with most recent last_updated
@@ -155,13 +160,13 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias domain views
+# Risk of bias domain views
 class RoBDomainCreate(BaseCreate):
     parent_model = Assessment
     parent_template_name = 'assessment'
     model = models.RiskOfBiasDomain
     form_class = forms.RoBDomainForm
-    success_message = 'Risk-of-bias domain created.'
+    success_message = 'Risk of bias domain created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -171,7 +176,7 @@ class RoBDomainCreate(BaseCreate):
 class RoBDomainUpdate(BaseUpdate):
     model = models.RiskOfBiasDomain
     form_class = forms.RoBDomainForm
-    success_message = 'Risk-of-bias domain updated.'
+    success_message = 'Risk of bias domain updated.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -179,7 +184,7 @@ class RoBDomainUpdate(BaseUpdate):
 
 
 class RoBDomainDelete(BaseDelete):
-    success_message = 'Risk-of-bias domain deleted.'
+    success_message = 'Risk of bias domain deleted.'
     model = models.RiskOfBiasDomain
 
     def get_success_url(self):
@@ -187,13 +192,13 @@ class RoBDomainDelete(BaseDelete):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias metric views
+# Risk of bias metric views
 class RoBMetricCreate(BaseCreate):
     parent_model = models.RiskOfBiasDomain
     parent_template_name = 'domain'
     model = models.RiskOfBiasMetric
     form_class = forms.RoBMetricForm
-    success_message = 'Risk-of-bias metric created.'
+    success_message = 'Risk of bias metric created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -203,7 +208,7 @@ class RoBMetricCreate(BaseCreate):
 class RoBMetricUpdate(BaseUpdate):
     model = models.RiskOfBiasMetric
     form_class = forms.RoBMetricForm
-    success_message = 'Risk-of-bias metric updated.'
+    success_message = 'Risk of bias metric updated.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -211,7 +216,7 @@ class RoBMetricUpdate(BaseUpdate):
 
 
 class RoBMetricDelete(BaseDelete):
-    success_message = 'Risk-of-bias metric deleted.'
+    success_message = 'Risk of bias metric deleted.'
     model = models.RiskOfBiasMetric
 
     def get_success_url(self):
@@ -219,21 +224,21 @@ class RoBMetricDelete(BaseDelete):
                             kwargs={'pk': self.assessment.pk})
 
 
-# Risk-of-bias views for study
+# Risk of bias views for study
 class RoBFixedReport(GenerateFixedReport):
     parent_model = Assessment
     model = Study
     ReportClass = reports.RoBDOCXReport
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
+        filters = {'assessment': self.assessment}
         perms = super(RoBFixedReport, self).get_obj_perms()
         if not perms['edit']:
-            filters["published"] = True
+            filters['published'] = True
         return self.model.objects.filter(**filters)
 
     def get_filename(self):
-        return "riskofbias.docx"
+        return 'riskofbias.docx'
 
     def get_context(self, queryset):
         return self.model.get_docx_template_context(self.assessment, queryset)
@@ -241,7 +246,7 @@ class RoBFixedReport(GenerateFixedReport):
 
 class StudyRoBPublicExport(StudyList):
     """
-    Full XLS data export for the risk-of-bias.
+    Full XLS data export for the risk of bias.
     """
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyRoBPublicExport, self).get_queryset()
@@ -249,7 +254,7 @@ class StudyRoBPublicExport(StudyList):
             self.object_list,
             export_format="excel",
             filename='{}-risk-of-bias-public'.format(self.assessment),
-            sheet_name='risk-of-bias'
+            sheet_name='risk of bias'
         )
         return exporter.build_response()
 
@@ -268,26 +273,57 @@ class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
             self.object_list,
             export_format="excel",
             filename='{}-risk-of-bias-complete'.format(self.assessment),
-            sheet_name='risk-of-bias'
+            sheet_name='risk of bias'
         )
         return exporter.build_response()
 
 
-class RoBEdit(BaseUpdate):
+# RoB views
+class RoBDetail(BaseDetail):
     """
-    Edit settings for risk-of-bias metrics associated with study.
+    Detailed view of risk of bias metrics for reporting.
+    Displays RoB used as Study.qualities
+    """
+    model = Study
+    template_name = 'riskofbias/rob_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RoBDetail, self).get_context_data(**kwargs)
+        if context['obj_perms']['edit']:
+            context['reviews'] = self.object\
+                .get_user_robs(self.request.user)
+            context['final'] = self.object\
+                .get_user_robs(self.request.user, final=True).first()
+        return context
+
+
+class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
+    """
+    Detailed view of risk of bias metrics for reporting.
+    Displays all active RoB in Study.
+    """
+    template_name = 'riskofbias/rob_detail_all.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Study, pk=kwargs['pk'])
+        return self.object.get_assessment()
+
+
+class RoBEdit(IsAuthorMixin, BaseUpdate):
+    """
+    Edit settings for risk of bias metrics associated with study.
     """
     model = models.RiskOfBias
-    template_name = "riskofbias/rob_edit.html"
-    success_message = 'Risk-of-bias updated.'
+    template_name = 'riskofbias/rob_edit.html'
+    success_message = 'Risk of bias updated.'
     form_class = forms.RoBScoreForm
     formset_factory = forms.RoBFormSet
 
     def get_success_url(self):
-        return reverse_lazy('riskofbias:rob_detail',
-                            kwargs=self.kwargs)
+        return self.object.get_absolute_url()
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         self.formset = self.formset_factory(self.request.POST)
         if self.formset.is_valid():
             return self.form_valid()
@@ -304,72 +340,18 @@ class RoBEdit(BaseUpdate):
 
         if self.request.method == 'GET':
             self.formset = self.formset_factory(
-                queryset=models.RiskOfBiasScore.objects.filter(riskofbias=self.object))
+                queryset=models.RiskOfBiasScore.objects
+                               .filter(riskofbias=self.object))
 
         context['formset'] = self.formset
-        context['metric'] = [quality.metric.description for quality in self.object.scores.all()]
+        context['metric'] = [
+            quality.metric.description
+            for quality in self.object.scores.all()
+        ]
         return context
 
 
-class RoBDelete(BaseDelete):
-    """
-    Delete all risk-of-bias metrics associated with study.
-    """
-    model = models.RiskOfBias
-    template_name = "riskofbias/rob_delete.html"
-    form_class = forms.RoBScoreForm
-    success_message = 'Risk-of-bias information deleted.'
-
-    def get_success_url(self):
-        return reverse_lazy('riskofbias:robs_detail',
-                            kwargs={'pk': self.object.study.pk})
-
-
-class RoBDetail(BaseDetail):
-    """
-    Detailed view of risk-of-bias metrics for reporting.
-    Displays RoB based on pk passed in url.
-
-    For use in users updating owned reviews
-    """
-    model = models.RiskOfBias
-    template_name = "riskofbias/rob_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(RoBDetail, self).get_context_data(**kwargs)
-        if context['obj_perms']['edit']:
-            context['obj_perms']['own'] = self.object.author == self.request.user
-        return context
-
-
-class RoBsDetail(BaseDetail):
-    """
-    Detailed view of risk-of-bias metrics for reporting.
-    Displays RoB used as Study.qualities
-    """
-    model = Study
-    template_name = 'riskofbias/robs_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(RoBsDetail, self).get_context_data(**kwargs)
-        if context['obj_perms']['edit']:
-            context['reviews'] = self.object.get_user_rob(self.request.user)
-            final = self.object.get_user_rob(self.request.user, final=True)
-            if final:
-                context['final'] = final[0]
-
-        return context
-
-
-class RoBsDetailAll(RoBsDetail):
-    """
-    Detailed view of risk-of-bias metrics for reporting.
-    Displays all active RoB in Study.
-    """
-    template_name = 'riskofbias/rob_detail_all.html'
-
-
-class RoBEditFinal(BaseDetail):
+class RoBEditFinal(IsAuthorMixin, BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.

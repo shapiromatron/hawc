@@ -1,9 +1,6 @@
 from django import forms
 from django.core.urlresolvers import reverse
-from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.forms.fields import TextInput
-
-from crispy_forms import layout as cfl
 
 from assessment.models import Assessment
 from lit.models import Reference

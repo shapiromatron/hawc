@@ -41,7 +41,6 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret['score_symbol'] = instance.score_symbol
         ret['score_shade'] = instance.score_shade
         ret['url_edit'] = instance.riskofbias.get_edit_url()
-        ret['url_delete'] = instance.riskofbias.get_delete_url()
         return ret
 
     class Meta:
@@ -55,7 +54,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBias
-        fields = ('id', 'author', 'active', 'final', 'study', 'created', 'last_updated', 'scores')
+        fields = ('id', 'author', 'active',
+                  'final', 'study', 'created',
+                  'last_updated', 'scores')
 
     def update(self, instance, validated_data):
         """
@@ -68,5 +69,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 setattr(score, field, value)
             score.save()
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)
+
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

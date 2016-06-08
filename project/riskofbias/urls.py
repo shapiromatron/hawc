@@ -11,16 +11,18 @@ router.register(r'review', api.RiskOfBias, base_name='review')
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
 
-    # assessment risk-of-bias
+    # modify assessment risk of bias settings
     url(r'^assessment/(?P<pk>\d+)/$',
         views.ARoBDetail.as_view(),
         name='arob_detail'),
-    url(r'^assessment/(?P<pk>\d+)/edit/$',
-        views.ARoBEdit.as_view(),
-        name='arob_update'),
     url(r'^assessment/(?P<pk>\d+)/copy/$',
         views.ARoBCopy.as_view(),
         name='arob_copy'),
+    url(r'^assessment/(?P<pk>\d+)/edit/$',
+        views.ARoBEdit.as_view(),
+        name='arob_update'),
+
+    # reporting
     url(r'^assessment/(?P<pk>\d+)/public_report/$',
         views.StudyRoBPublicExport.as_view(),
         name='public_bias_export'),
@@ -30,17 +32,8 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
         views.RoBFixedReport.as_view(),
         name='rob_fixedreport'),
-    url(r'^assessment/(?P<pk>\d+)/studies/$',
-        views.ARobList.as_view(),
-        name='list'),
 
-    url(r'^assessment/(?P<pk>\d+)/reviewers/$',
-        views.ARoBReviewersList.as_view(),
-        name='arob_reviewers'),
-    url(r'^assessment/(?P<pk>\d+)/reviewers/edit/$',
-        views.ARoBReviewersUpdate.as_view(),
-        name='arob_reviewers_update'),
-
+    # modify domains
     url(r'^assessment/(?P<pk>\d+)/domain/create/$',
         views.RoBDomainCreate.as_view(),
         name='robd_create'),
@@ -51,6 +44,7 @@ urlpatterns = [
         views.RoBDomainDelete.as_view(),
         name='robd_delete'),
 
+    # modify metrics
     url(r'^domain/(?P<pk>\d+)/metric/create/$',
         views.RoBMetricCreate.as_view(),
         name='robm_create'),
@@ -61,24 +55,27 @@ urlpatterns = [
         views.RoBMetricDelete.as_view(),
         name='robm_delete'),
 
-    # risk-of-bias at study-level
-    url(r'^study/(?P<pk>\d+)/$',
-        views.RoBsDetail.as_view(),
-        name='robs_detail'),
-    url(r'^study/(?P<pk>\d+)/all/$',
-        views.RoBsDetailAll.as_view(),
-        name='robs_detail_all'),
+    # risk of bias reviewers
+    url(r'^assessment/(?P<pk>\d+)/study-assignments/$',
+        views.ARoBReviewersList.as_view(),
+        name='arob_reviewers'),
+    url(r'^assessment/(?P<pk>\d+)/study-assignments/edit/$',
+        views.ARoBReviewersUpdate.as_view(),
+        name='arob_reviewers_update'),
 
-    url(r'^(?P<pk>\d+)/$',
+    # risk of bias at study-level
+    url(r'^study/(?P<pk>\d+)/$',
         views.RoBDetail.as_view(),
         name='rob_detail'),
+    url(r'^study/(?P<pk>\d+)/all/$',
+        views.RoBsDetailAll.as_view(),
+        name='rob_detail_all'),
+
+    # risk of bias editing views
     url(r'^(?P<pk>\d+)/edit/$',
         views.RoBEdit.as_view(),
         name='rob_update'),
     url(r'^(?P<pk>\d+)/edit-final/$',
         views.RoBEditFinal.as_view(),
         name='rob_update_final'),
-    url(r'^(?P<pk>\d+)/delete/$',
-        views.RoBDelete.as_view(),
-        name='rob_delete'),
 ]

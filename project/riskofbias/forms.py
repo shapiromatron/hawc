@@ -27,18 +27,19 @@ class RoBDomainForm(forms.ModelForm):
 
     def setHelper(self):
         inputs = {
-            "cancel_url": reverse('riskofbias:arob_update', args=[self.instance.assessment.pk])
+            'cancel_url': reverse('riskofbias:arob_update',
+                                  args=[self.instance.assessment.pk])
         }
         if self.instance.id:
-            inputs["legend_text"] = u"Update risk of bias domain"
-            inputs["help_text"] = u"Update an existing domain."
+            inputs['legend_text'] = u'Update risk of bias domain'
+            inputs['help_text'] = u'Update an existing domain.'
         else:
-            inputs["legend_text"] = u"Create new risk of bias domain"
-            inputs["help_text"] = u"Create a new risk of bias domain."
+            inputs['legend_text'] = u'Create new risk of bias domain'
+            inputs['help_text'] = u'Create a new risk of bias domain.'
 
         helper = BaseFormHelper(self, **inputs)
-        helper['name'].wrap(cfl.Field, css_class="span6")
-        helper['description'].wrap(cfl.Field, css_class="html5text span12")
+        helper['name'].wrap(cfl.Field, css_class='span6')
+        helper['description'].wrap(cfl.Field, css_class='html5text span12')
         return helper
 
 
@@ -56,18 +57,19 @@ class RoBMetricForm(forms.ModelForm):
 
     def setHelper(self):
         inputs = {
-            "cancel_url": reverse('riskofbias:arob_update', args=[self.instance.domain.assessment.pk])
+            'cancel_url': reverse('riskofbias:arob_update',
+                                  args=[self.instance.domain.assessment.pk])
         }
         if self.instance.id:
-            inputs["legend_text"] = u"Update risk of bias metric"
-            inputs["help_text"] = u"Update an existing metric."
+            inputs['legend_text'] = u'Update risk of bias metric'
+            inputs['help_text'] = u'Update an existing metric.'
         else:
-            inputs["legend_text"] = u"Create new risk of bias metric"
-            inputs["help_text"] = u"Create a new risk of bias metric."
+            inputs['legend_text'] = u'Create new risk of bias metric'
+            inputs['help_text'] = u'Create a new risk of bias metric.'
 
         helper = BaseFormHelper(self, **inputs)
-        helper['metric'].wrap(cfl.Field, css_class="span12")
-        helper['description'].wrap(cfl.Field, css_class="html5text span12")
+        helper['metric'].wrap(cfl.Field, css_class='span12')
+        helper['description'].wrap(cfl.Field, css_class='html5text span12')
         return helper
 
 
@@ -97,7 +99,8 @@ class BaseRoBFormSet(BaseModelFormSet):
         for form in self.forms:
             metric = form.cleaned_data['metric']
             if metric in metrics:
-                raise forms.ValidationError("Risk-of-bias metrics must be unique for a given study.")
+                raise forms.ValidationError(
+                    'Risk of bias metrics must be unique for each study.')
             metrics.append(metric)
 
 
@@ -108,12 +111,13 @@ class NumberOfReviewersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NumberOfReviewersForm, self).__init__(*args, **kwargs)
-        self.fields['number_of_reviewers'].initial = self.instance.rob_settings.number_of_reviewers
+        self.fields['number_of_reviewers'].initial = \
+            self.instance.rob_settings.number_of_reviewers
         self.helper = self.setHelper()
 
     def setHelper(self):
         inputs = {
-            "cancel_url": self.instance.rob_settings.get_absolute_url()
+            'cancel_url': self.instance.rob_settings.get_absolute_url()
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -123,8 +127,8 @@ class NumberOfReviewersForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(NumberOfReviewersForm, self).save(commit)
         if type(instance) is Assessment:
-            instance.rob_settings.number_of_reviewers = self.cleaned_data[
-                'number_of_reviewers']
+            instance.rob_settings.number_of_reviewers = \
+                self.cleaned_data['number_of_reviewers']
             instance.rob_settings.save()
         return instance
 
@@ -150,7 +154,7 @@ class RoBReviewersForm(forms.ModelForm):
         if hasattr(self.instance_name, 'active_riskofbiases'):
             robs = self.instance.active_riskofbiases
         else:
-            robs = self.instance.get_active_riskofbiases(with_final=False)
+            robs = self.instance.get_active_robs(with_final=False)
 
         try:
             reviewers = self.instance.assessment.rob_settings.number_of_reviewers
@@ -159,13 +163,13 @@ class RoBReviewersForm(forms.ModelForm):
 
         if reviewers > 1:
             for i in range(reviewers):
-                author_field = "author-{}".format(i)
+                author_field = 'author-{}'.format(i)
                 self.fields[author_field] = selectable.AutoCompleteSelectField(
                     lookup_class=AssessmentTeamMemberOrHigherLookup,
                     label='Reviewer',
                     widget=selectable.AutoCompleteSelectWidget)
-                self.fields[author_field].widget.update_query_parameters(
-                    {'related': assessment_id})
+                self.fields[author_field].widget\
+                    .update_query_parameters({'related': assessment_id})
                 try:
                     self.fields[author_field].initial = robs[i].author.id
                 except IndexError:
@@ -180,7 +184,7 @@ class RoBReviewersForm(forms.ModelForm):
             {'related': assessment_id})
         try:
             self.fields['final_author'].initial = \
-                self.instance.get_final().author.id
+                self.instance.get_final_robs().author.id
         except (AttributeError):
             pass
         self.fields['final_author'].required = True
@@ -201,7 +205,7 @@ class RoBReviewersForm(forms.ModelForm):
         changed_reviewer_fields = (
             field
             for field in self.changed_data
-            if field not in ('reference_ptr',))
+            if field != 'reference_ptr')
 
         for field in changed_reviewer_fields:
             new_author = self.cleaned_data[field]
@@ -210,15 +214,13 @@ class RoBReviewersForm(forms.ModelForm):
                 'final': bool(field is 'final_author')}
 
             if self.fields[field].initial:
-                deactivate_rob = models.RiskOfBias.objects.get(
-                    author_id=self.fields[field].initial,
-                    **options)
+                deactivate_rob = models.RiskOfBias.objects\
+                    .get(author_id=self.fields[field].initial, **options)
                 deactivate_rob.deactivate()
 
             if new_author:
-                activate_rob, created = models.RiskOfBias.objects.get_or_create(
-                    author_id=new_author.id,
-                    **options)
+                activate_rob, created = models.RiskOfBias.objects\
+                    .get_or_create(author_id=new_author.id, **options)
                 if created:
                     activate_rob.build_scores(study.assessment, study)
                 activate_rob.activate()
@@ -226,17 +228,18 @@ class RoBReviewersForm(forms.ModelForm):
 
 class RiskOfBiasCopyForm(forms.Form):
     assessment = forms.ModelChoiceField(
-        label="Existing assessment",
+        label='Existing assessment',
         queryset=Assessment.objects.all(), empty_label=None)
 
     def setHelper(self):
         inputs = {
-            "legend_text": u"Copy risk of bias approach from existing assessments",
-            "help_text": u"Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.",
-            "cancel_url": reverse('riskofbias:arob_detail', args=[self.assessment.id])
+            'legend_text': u'Copy risk of bias approach from existing assessments',  # noqa
+            'help_text': u'Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.',  # noqa
+            'cancel_url': reverse(
+                'riskofbias:arob_detail', args=[self.assessment.id])
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        helper.layout.insert(3, cfl.Div(css_id='extra_content_insertion'))
         helper.form_class = None
         return helper
 
@@ -255,6 +258,7 @@ class RiskOfBiasCopyForm(forms.Form):
                 self.assessment,
                 self.cleaned_data['assessment'])
 
+
 RoBFormSet = modelformset_factory(
     models.RiskOfBiasScore,
     form=RoBScoreForm,
@@ -262,9 +266,9 @@ RoBFormSet = modelformset_factory(
     fields=('metric', 'score', 'notes'),
     extra=0)
 
+
 RoBReviewerFormset = modelformset_factory(
     model=Study,
     form=RoBReviewersForm,
     fields=(),
-    extra=0,
-)
+    extra=0)

@@ -69,7 +69,7 @@ class Study(Reference):
         help_text="Details on correspondence between data-extractor and author, if needed.")
     published = models.BooleanField(
         default=False,
-        help_text="If True, this study, risk-of-bias, and extraction details "
+        help_text="If True, this study, risk of bias, and extraction details "
                   "may be visible to reviewers and/or the general public "
                   "(if assessment-permissions allow this level of visibility). "
                   "Team-members and project-management can view both "
@@ -259,40 +259,44 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
-    def get_final(self):
+    def get_final_robs(self):
         try:
             return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist:
             return None
         except MultipleObjectsReturned:
-            raise ValidationError('Study {} has multiple active risk of bias reviews '
-                'marked as the final review. there should not be more '
-                'than one active final review per study.'.format(self.short_citation))
+            raise ValidationError(
+                u'Multiple active final risk of bias reviews for "{}", '
+                'there should only be one per study.'.format(self))
 
-    def get_active_riskofbiases(self, with_final=True):
+    def get_active_robs(self, with_final=True):
         if with_final:
             return self.riskofbiases\
-                       .filter(active=True)\
-                       .order_by('final', 'last_updated')\
-                       .prefetch_related('author')
+               .filter(active=True)\
+               .order_by('final', 'last_updated')\
+               .prefetch_related('author')
         else:
             return self.riskofbiases\
-                       .filter(active=True, final=False)\
-                       .order_by('last_updated')\
-                       .prefetch_related('author')
+               .filter(active=True, final=False)\
+               .order_by('last_updated')\
+               .prefetch_related('author')
 
-    def get_user_rob(self, user, final=False):
-        return self.riskofbiases.filter(
-            author=user,
-            final=final)
+    def get_user_robs(self, user, final=False):
+        return self.riskofbiases\
+            .filter(author=user, final=final)
 
     @property
     def qualities(self):
-        return self.riskofbiases.filter(final=True, active=True).first().scores.all().prefetch_related('metric', 'metric__domain')
+        return self.riskofbiases\
+            .filter(final=True, active=True)\
+            .first()\
+            .scores.all()\
+            .prefetch_related('metric', 'metric__domain')
 
     @classmethod
     def rob_scores(cls, assessment_id):
-        return Study.objects.filter(assessment_id=assessment_id)\
+        return Study.objects\
+            .filter(assessment_id=assessment_id)\
             .annotate(final_score=models.Sum(
                 models.Case(
                     models.When(riskofbiases__active=True,
@@ -300,6 +304,15 @@ class Study(Reference):
                                 then='riskofbiases__scores__score'),
                     default=0)))\
             .values('id', 'short_citation', 'final_score')
+
+    def optimized_for_serialization(self):
+        return self.__class__.objects\
+            .filter(id=self.id)\
+            .prefetch_related(
+                'identifiers',
+                'searches',
+                'riskofbiases__scores__metric__domain',
+            ).first()
 
 
 class Attachment(models.Model):

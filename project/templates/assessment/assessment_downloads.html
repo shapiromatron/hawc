@@ -27,7 +27,7 @@
 
     {% if assessment.enable_risk_of_bias %}
     <li>
-        <b>Risk of Bias report</b><br>
+        <b>Risk of bias report</b><br>
         {% if obj_perms.edit %}
             <a class='btn btn-primary' href="{% url 'riskofbias:complete_bias_export' assessment.pk %}">Download Complete Report</a><br>
         {% else %}

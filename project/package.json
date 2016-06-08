@@ -50,6 +50,7 @@
     "mocha": "^2.3.4",
     "moment": "^2.11.1",
     "nock": "^5.2.1",
+    "quill": "^0.20.1",
     "react-addons-test-utils": "^15.0.2",
     "react-faux-dom": "^2.2.0",
     "react-transform-catch-errors": "^1.0.0",

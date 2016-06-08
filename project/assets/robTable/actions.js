@@ -113,8 +113,7 @@ export function fetchStudyIfNeeded(){
                 h.getObjectURL(
                     state.config.host,
                     state.config.study.url,
-                    state.config.study.id,
-                    state.config.assessment_id), h.fetchGet)
+                    state.config.study.id), h.fetchGet)
             .then((response) => response.json())
             .then((json)     => formatIncomingStudy(json))
             .then((json)     => dispatch(receiveStudy(json)))
@@ -127,16 +126,16 @@ export function submitFinalRiskOfBiasScores(scores){
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),
             opts = h.fetchPost(state.config.csrf, patch, 'PUT');
+
         dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
             `${h.getObjectURL(state.config.host,
                 state.config.riskofbias.url,
-                state.config.riskofbias.id,
-                state.config.assessment_id)}`, opts)
+                state.config.riskofbias.id)}`, opts)
             .then((response) => response.json())
             .then((json)     => dispatch(updateQualities(json.scores)))
-            .then(()         => dispatch(setMessage('Review updated.')))
+            .then(()         => window.location.href = state.config.cancelUrl)
             .catch((ex)      => dispatch(setError(ex)));
     };
 }

@@ -103,6 +103,8 @@ class SerializerHelper(object):
         json_name = cls._get_cache_name(obj.__class__, obj.id, json=True)
 
         # serialize data and get json-representation
+        if hasattr(obj, 'optimized_for_serialization'):
+            obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized)
         serialized = OrderedDict(serialized)  # for pickling

@@ -10,17 +10,17 @@ import models
 @receiver(post_save, sender=models.RiskOfBiasMetric)
 @receiver(pre_delete, sender=models.RiskOfBiasMetric)
 def invalidate_caches_rob_metrics(sender, instance, **kwargs):
-    study = apps.get_model('study', 'Study')
+    Study = apps.get_model('study', 'Study')
     if sender is models.RiskOfBiasDomain:
         assessment_id = instance.assessment_id
     elif sender is models.RiskOfBiasMetric:
         assessment_id = instance.domain.assessment_id
 
-    ids = study.objects\
+    ids = Study.objects\
         .filter(assessment_id=assessment_id)\
         .values_list('id', flat=True)
 
-    study.delete_caches(ids)
+    Study.delete_caches(ids)
 
 
 @receiver(post_save, sender=models.RiskOfBias)
@@ -28,15 +28,13 @@ def invalidate_caches_rob_metrics(sender, instance, **kwargs):
 @receiver(post_save, sender=models.RiskOfBiasScore)
 @receiver(pre_delete, sender=models.RiskOfBiasScore)
 def invalidate_caches_risk_of_bias(sender, instance, **kwargs):
+    Study = apps.get_model('study', 'Study')
     if sender is models.RiskOfBias:
-        instance.delete_caches([instance.id])
+        rob_ids = [instance.id]
+        study_ids = [instance.study_id]
     elif sender is models.RiskOfBiasScore:
-        instance.riskofbias.delete_caches([instance.riskofbias.id])
+        rob_ids = [instance.riskofbias.id]
+        study_ids = [instance.riskofbias.study_id]
 
-
-@receiver(post_save, sender=models.RiskOfBiasAssessment)
-@receiver(pre_delete, sender=models.RiskOfBiasAssessment)
-def invalidate_caches_rob_settings(sender, instance, **kwargs):
-    ids = [instance.id]
-
-    models.RiskOfBiasAssessment.delete_caches(ids)
+    models.RiskOfBias.delete_caches(rob_ids)
+    Study.delete_caches(study_ids)
