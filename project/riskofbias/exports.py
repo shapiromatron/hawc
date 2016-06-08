@@ -3,7 +3,7 @@ from study.models import Study
 from utils.helper import FlatFileExporter
 
 
-class RiskOfBiasFlatPublic(FlatFileExporter):
+class RiskOfBiasFlat(FlatFileExporter):
     """
     Returns a complete export of active Final Risk of Bias reviews, without
     reviewer information.
@@ -27,14 +27,15 @@ class RiskOfBiasFlatPublic(FlatFileExporter):
                 rows.append(row_copy)
         return rows
 
-class RiskOfBiasFlatComplete(RiskOfBiasFlatPublic):
+
+class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     """
     Returns a complete export of all Risk of Bias reviews including reviewer
     information.
     """
 
     def _get_header_row(self):
-        header = super(RiskOfBiasFlatComplete, self)._get_header_row()
+        header = super(RiskOfBiasCompleteFlat, self)._get_header_row()
         header.extend(models.RiskOfBias.flat_complete_header_row())
         return header
 

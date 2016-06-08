@@ -244,16 +244,16 @@ class RoBFixedReport(GenerateFixedReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class StudyRoBPublicExport(StudyList):
+class StudyRoBExport(StudyList):
     """
     Full XLS data export for the risk of bias.
     """
     def get(self, request, *args, **kwargs):
-        self.object_list = super(StudyRoBPublicExport, self).get_queryset()
-        exporter = exports.RiskOfBiasFlatPublic(
+        self.object_list = super(StudyRoBExport, self).get_queryset()
+        exporter = exports.RiskOfBiasFlat(
             self.object_list,
             export_format="excel",
-            filename='{}-risk-of-bias-public'.format(self.assessment),
+            filename='{}-risk-of-bias'.format(self.assessment),
             sheet_name='risk of bias'
         )
         return exporter.build_response()
@@ -265,11 +265,11 @@ class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
     """
     def get_assessment(self, request, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
-        return self.parent.get_assessment()
+        return self.parent
 
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyRoBCompleteExport, self).get_queryset()
-        exporter = exports.RiskOfBiasFlatComplete(
+        exporter = exports.RiskOfBiasCompleteFlat(
             self.object_list,
             export_format="excel",
             filename='{}-risk-of-bias-complete'.format(self.assessment),

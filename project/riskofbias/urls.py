@@ -23,10 +23,10 @@ urlpatterns = [
         name='arob_update'),
 
     # reporting
-    url(r'^assessment/(?P<pk>\d+)/public_report/$',
-        views.StudyRoBPublicExport.as_view(),
-        name='public_export'),
-    url(r'^assessment/(?P<pk>\d+)/complete_report/$',
+    url(r'^assessment/(?P<pk>\d+)/export/$',
+        views.StudyRoBExport.as_view(),
+        name='export'),
+    url(r'^assessment/(?P<pk>\d+)/complete-export/$',
         views.StudyRoBCompleteExport.as_view(),
         name='complete_export'),
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
