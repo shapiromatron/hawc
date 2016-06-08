@@ -332,10 +332,14 @@ class RoBEdit(IsAuthorMixin, BaseUpdate):
         return context
 
 
-class RoBEditFinal(IsAuthorMixin, BaseDetail):
+class RoBEditFinal(ProjectManagerOrHigherMixin, BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.
     """
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit_final.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(self.model, pk=kwargs['pk'])
+        return self.object.get_assessment()
