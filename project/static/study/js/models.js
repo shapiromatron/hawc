@@ -108,7 +108,7 @@ Study.prototype = {
         var self = this,
             riskofbias = [],
             gradient_colors = d3.scale.linear()
-                .domain([0, 1, 2, 3, 4])
+                .domain(RiskOfBiasScore.score_values)
                 .range(_.values(RiskOfBiasScore.score_shades));
         this.data.qualities.forEach(function(v, i){
             v.score_color = gradient_colors(v.score);
