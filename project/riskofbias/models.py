@@ -215,6 +215,7 @@ class RiskOfBias(models.Model):
 
 class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
+        (10, 'Not reported'),
         (1, 'Definitely high risk of bias'),
         (2, 'Probably high risk of bias'),
         (3, 'Probably low risk of bias'),
@@ -227,6 +228,7 @@ class RiskOfBiasScore(models.Model):
         3: '+',
         4: '++',
         0: '-',
+        10: 'NR',
     }
 
     SCORE_SHADES = {
@@ -235,6 +237,7 @@ class RiskOfBiasScore(models.Model):
         3: '#6FFF00',
         4: '#00CC00',
         0: '#FFCC00',
+        10: '#E8E8E8',
     }
 
     riskofbias = models.ForeignKey(
@@ -245,7 +248,7 @@ class RiskOfBiasScore(models.Model):
         related_name='scores')
     score = models.PositiveSmallIntegerField(
         choices=RISK_OF_BIAS_SCORE_CHOICES,
-        default=4)
+        default=10)
     notes = models.TextField(
         blank=True)
 
