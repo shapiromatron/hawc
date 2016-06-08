@@ -2282,6 +2282,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     setDefaults: function(){
         _.extend(this, {
             firstPass: true,
+            included_metrics: [],
             padding: {},
             x_axis_settings: {
                 scale_type: 'ordinal',
@@ -2305,22 +2306,27 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     },
     processData: function(){
 
-        var dataset = [], studies, metrics, xIsStudy;
+        var dataset = [],
+            included_metrics = this.data.settings.included_metrics,
+            studies, metrics, xIsStudy;
 
         _.each(this.data.aggregation.metrics_dataset, function(metric){
-            _.each(metric.rob_scores, function(rob){
-                dataset.push({
-                    riskofbias:      rob,
-                    study:              rob.study,
-                    study_label:        rob.study.data.short_citation,
-                    metric:             rob.data.metric,
-                    metric_label:       rob.data.metric.metric,
-                    score:              rob.data.score,
-                    score_text:         rob.data.score_text,
-                    score_color:        rob.data.score_color,
-                    score_text_color:   rob.data.score_text_color
-                });
-            });
+            _.chain(metric.rob_scores)
+             .filter(function(rob){
+                 return _.contains(included_metrics, rob.data.metric.id);
+             }).each(function(rob){
+                 dataset.push({
+                     riskofbias:         rob,
+                     study:              rob.study,
+                     study_label:        rob.study.data.short_citation,
+                     metric:             rob.data.metric,
+                     metric_label:       rob.data.metric.metric,
+                     score:              rob.data.score,
+                     score_text:         rob.data.score_text,
+                     score_color:        rob.data.score_color,
+                     score_text_color:   rob.data.score_text_color,
+                 });
+             });
         });
 
         studies = _.chain(dataset)
@@ -2752,6 +2758,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
     setDefaults: function(){
         _.extend(this, {
             firstPass: true,
+            included_metrics: [],
             padding: {},
             x_axis_settings: {
                 domain: [0, 1],
@@ -2777,31 +2784,36 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
     },
     processData: function(){
 
-        var dataset = [],
+        var included_metrics = this.data.settings.included_metrics,
             stack_order = ['N/A', '--', '-', '+', '++'],
-            metrics, stack;
+            metrics, stack, dataset;
 
-        _.each(this.data.aggregation.metrics_dataset, function(metric){
-
-            var vals = {'metric_label': metric.rob_scores[0].data.metric.metric,
-                        'N/A':0, '--':0, '-':0, '+':0, '++':0},
-                weight = 1/metric.rob_scores.length;
-            metric.rob_scores.forEach(function(rob){
-                vals[rob.data.score_text] += weight;
-            });
-            dataset.push(vals);
-
-        });
+        dataset = _.chain(this.data.aggregation.metrics_dataset)
+            .filter(function(d){
+                var metric_id = d.rob_scores[0].data.metric.id;
+                return _.contains(included_metrics, metric_id);
+            }).map(function(d){
+                var vals = {
+                        'label': d.rob_scores[0].data.metric.metric,
+                        'N/A':0, '--':0, '-':0, '+':0, '++':0,
+                    },
+                    weight = 1/d.rob_scores.length;
+                d.rob_scores.forEach(function(rob){
+                    vals[rob.data.score_text] += weight;
+                });
+                return vals;
+            })
+            .value();
 
         metrics = _.chain(dataset)
-                   .map(function(d){return d.metric_label;})
+                   .map(function(d){return d.label;})
                    .uniq()
                    .value();
 
         stack = d3.layout.stack()(
             _.map(stack_order, function(score){
                 return _.map(dataset, function(d){
-                    return {x: d.metric_label, y: d[score]};
+                    return {x: d.label, y: d[score]};
                 });
             })
         );

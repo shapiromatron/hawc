@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, FormView
 
 from assessment.models import Assessment
+from riskofbias.models import RiskOfBiasMetric
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (BaseList, BaseCreate, BaseDetail, BaseUpdate, BaseDelete, TeamMemberOrHigherMixin)
 
@@ -148,6 +149,8 @@ class VisualizationCreate(BaseCreate):
         context = super(VisualizationCreate, self).get_context_data(**kwargs)
         context['visual_type'] = int(self.kwargs.get('visual_type'))
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context['rob_metrics'] = json.dumps(list(
+            RiskOfBiasMetric.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 
@@ -177,6 +180,8 @@ class VisualizationUpdate(BaseUpdate):
         context = super(VisualizationUpdate, self).get_context_data(**kwargs)
         context['visual_type'] = self.object.visual_type
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context['rob_metrics'] = json.dumps(list(
+            RiskOfBiasMetric.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 
