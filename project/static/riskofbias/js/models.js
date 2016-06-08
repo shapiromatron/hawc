@@ -10,6 +10,7 @@ RiskOfBiasStudy.prototype = {
     },
 };
 
+
 var RiskOfBias = function(data){
     this.data = data;
     this.unpack_scores();
@@ -64,13 +65,13 @@ RiskOfBias.prototype = {
     },
 };
 
+
 var RiskOfBiasScore = function(study, data){
     this.study = study;
     this.data = data;
     this.data.metric.created = new Date(this.data.metric.created);
     this.data.metric.last_updated = new Date(this.data.metric.last_updated);
 };
-
 _.extend(RiskOfBiasScore, {
     score_values: [0, 1, 2, 3, 4, 10],
     score_text: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++', 10: 'NR'},
@@ -126,7 +127,6 @@ _.extend(RiskOfBiasScore, {
         return $('<div class="row-fluid"></div>').html(content);
     }
 });
-
 RiskOfBiasScore.prototype = {
     build_details_div: function(options){
         var content = [];
@@ -160,6 +160,7 @@ RiskOfBiasScore.prototype = {
     }
 };
 
+
 var RiskOfBias_TblCompressed = function(riskofbias, div, options){
     this.riskofbias = riskofbias;
     this.$div = $(div);
@@ -169,7 +170,6 @@ var RiskOfBias_TblCompressed = function(riskofbias, div, options){
         this.show_details_div();
     }
 };
-
 RiskOfBias_TblCompressed.prototype = {
     build_table: function(){
         var self = this;
@@ -241,6 +241,7 @@ RiskOfBias_TblCompressed.prototype = {
     },
 };
 
+
 var StudyQualities_TblCompressed = function(study, div, options){
     this.study = study;
     this.complete_rob = _.flatten(_.map(this.study.riskofbias, function(rob){
@@ -256,7 +257,6 @@ var StudyQualities_TblCompressed = function(study, div, options){
         this.show_details_div();
     }
 };
-
 StudyQualities_TblCompressed.prototype = {
     build_table: function(){
         this.tbl = $('<table class="table table-condensed"></table>');
@@ -350,7 +350,6 @@ StudyQualities_TblCompressed.prototype = {
         this.tbl.prepend(tfoot);
     },
 };
-
 
 
 var RiskOfBias_Donut = function(study, plot_id, options){
@@ -591,11 +590,11 @@ _.extend(RiskOfBias_Donut.prototype, D3Plot.prototype, {
     }
 });
 
+
 var RiskOfBiasAggregation = function(studies){
     this.studies = studies;
     this.metrics_dataset = this.build_metrics_dataset();
 };
-
 RiskOfBiasAggregation.prototype = {
     build_metrics_dataset: function(){
         var arr = [];
