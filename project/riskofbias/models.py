@@ -91,7 +91,7 @@ class RiskOfBiasMetric(models.Model):
         return self.domain.get_assessment()
 
     @classmethod
-    def get_required_metrics(self, assessment, study):
+    def get_required_metrics(cls, assessment, study):
         filters = {
             'domain__in': RiskOfBiasDomain.objects.filter(assessment=assessment),
         }
