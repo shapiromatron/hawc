@@ -99,7 +99,7 @@ _.extend(TableField.prototype, InputField.prototype, {
     addTdColor: function(name, val){
         val = val || "#000000";
         return $('<td>')
-           .append($('<input type="color" <input name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
+           .append($('<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
     },
     addTdSelect: function(name, values){
         var sel = $('<select name="{0}" class="span12">'.printf(name))
