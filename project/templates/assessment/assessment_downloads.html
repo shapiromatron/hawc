@@ -28,10 +28,14 @@
     {% if assessment.enable_risk_of_bias %}
     <li>
         <b>Risk of bias report</b><br>
+        <a class='btn btn-primary'
+           href="{% url 'riskofbias:public_export' assessment.pk %}">Download</a><br>
+
         {% if obj_perms.edit %}
-            <a class='btn btn-primary' href="{% url 'riskofbias:complete_bias_export' assessment.pk %}">Download Complete Report</a><br>
-        {% else %}
-            <a class='btn btn-primary' href="{% url 'riskofbias:public_bias_export' assessment.pk %}">Download Public Report</a><br>
+        <p class='help-block'>(no individual reviews)</p>
+        <a class='btn btn-primary'
+           href="{% url 'riskofbias:complete_export' assessment.pk %}">Download complete</a>
+           <p class='help-block'>(includes individual reviews - team-members and higher only)</p>
         {% endif %}
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
