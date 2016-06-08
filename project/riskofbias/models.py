@@ -212,6 +212,26 @@ class RiskOfBias(models.Model):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            'rob-id',
+            'rob-active',
+            'rob-final',
+            'rob-author_id',
+            'rob-author_name'
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser['id'],
+            ser['active'],
+            ser['final'],
+            ser['author']['id'],
+            ser['author']['full_name']
+        )
+
 
 class RiskOfBiasScore(models.Model):
     RISK_OF_BIAS_SCORE_CHOICES = (
@@ -258,23 +278,21 @@ class RiskOfBiasScore(models.Model):
     @staticmethod
     def flat_complete_header_row():
         return (
-            'rob-id',
             'rob-domain_id',
             'rob-domain_name',
             'rob-domain_description',
             'rob-metric_id',
             'rob-metric_metric',
             'rob-metric_description',
-            'rob-score-id',
-            'rob-score-notes',
+            'rob-score_id',
+            'rob-score_score',
             'rob-score_description',
-            'rob-score'
+            'rob-score_notes',
         )
 
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser['riskofbias']['id'],
             ser['metric']['domain']['id'],
             ser['metric']['domain']['name'],
             ser['metric']['domain']['description'],
@@ -282,9 +300,9 @@ class RiskOfBiasScore(models.Model):
             ser['metric']['metric'],
             ser['metric']['description'],
             ser['id'],
-            cleanHTML(ser['notes']),
+            ser['score'],
             ser['score_description'],
-            ser['score']
+            cleanHTML(ser['notes']),
         )
 
     @property

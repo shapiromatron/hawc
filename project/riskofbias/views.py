@@ -250,10 +250,29 @@ class StudyRoBExport(StudyList):
     """
     def get(self, request, *args, **kwargs):
         self.object_list = super(StudyRoBExport, self).get_queryset()
-        exporter = exports.RiskOfBiasFlatComplete(
+        exporter = exports.RiskOfBiasFlat(
             self.object_list,
-            export_format='excel',
+            export_format="excel",
             filename='{}-risk-of-bias'.format(self.assessment),
+            sheet_name='risk of bias'
+        )
+        return exporter.build_response()
+
+
+class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
+    """
+    Full XLS data export for the risk-of-bias.
+    """
+    def get_assessment(self, request, *args, **kwargs):
+        self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
+        return self.parent
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = super(StudyRoBCompleteExport, self).get_queryset()
+        exporter = exports.RiskOfBiasCompleteFlat(
+            self.object_list,
+            export_format="excel",
+            filename='{}-risk-of-bias-complete'.format(self.assessment),
             sheet_name='risk of bias'
         )
         return exporter.build_response()

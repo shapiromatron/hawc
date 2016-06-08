@@ -23,9 +23,12 @@ urlpatterns = [
         name='arob_update'),
 
     # reporting
-    url(r'^assessment/(?P<pk>\d+)/report/$',
+    url(r'^assessment/(?P<pk>\d+)/export/$',
         views.StudyRoBExport.as_view(),
-        name='bias_export'),
+        name='export'),
+    url(r'^assessment/(?P<pk>\d+)/complete-export/$',
+        views.StudyRoBCompleteExport.as_view(),
+        name='complete_export'),
     url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
         views.RoBFixedReport.as_view(),
         name='rob_fixedreport'),
