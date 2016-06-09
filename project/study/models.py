@@ -259,7 +259,7 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
-    def get_final_robs(self):
+    def get_final_rob(self):
         try:
             return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist:
@@ -280,10 +280,6 @@ class Study(Reference):
                .filter(active=True, final=False)\
                .order_by('last_updated')\
                .prefetch_related('author')
-
-    def get_user_robs(self, user, final=False):
-        return self.riskofbiases\
-            .filter(author=user, final=final)
 
     @property
     def qualities(self):

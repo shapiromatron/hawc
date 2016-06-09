@@ -2,7 +2,7 @@
 
 
 {% block title %}
-  {{assessment}} | {{study}} | Risk of bias | HAWC
+  {{assessment}} | {{object}} | Risk of bias | HAWC
 {% endblock %}
 
 {% block extrastyle %}
@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{study.get_absolute_url}}">{{study}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
   {% block breadcrumbs_self %}
     <li class="active">Risk of bias<span class="divider">/</span></li>
   {% endblock %}
@@ -27,9 +27,9 @@
         <ul class="dropdown-menu">
           <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
           <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
-          {% if final and obj_perms.edit_assessment %}
+          {% if object.get_final_rob and obj_perms.edit_assessment %}
             <li class="disabled"><a tabindex="-1" href="#">Edit risk of bias</a></li>
-            <li><a href="{{final.get_edit_url}}">Edit final review</a></li>
+            <li><a href="{{object.get_final_rob.get_edit_url}}">Edit final review</a></li>
           {% endif %}
       </div>
     {% endif %}
@@ -39,9 +39,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new Study({{study.get_json|safe}})
+    window.object = new Study({{object.get_json|safe}})
     window.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
     window.sq_tbl = new StudyQualities_TblCompressed(
-      study, $('#sq_tbl'), {'show_all_details_startup': true});
+      object, $('#sq_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}

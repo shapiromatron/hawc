@@ -281,26 +281,15 @@ class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
 # RoB views
 class RoBDetail(BaseDetail):
     """
-    Detailed view of risk of bias metrics for reporting.
-    Displays RoB used as Study.qualities
+    Detailed view of final risk of bias metric.
     """
     model = Study
     template_name = 'riskofbias/rob_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(RoBDetail, self).get_context_data(**kwargs)
-        if context['obj_perms']['edit']:
-            context['reviews'] = self.object\
-                .get_user_robs(self.request.user)
-            context['final'] = self.object\
-                .get_user_robs(self.request.user, final=True).first()
-        return context
-
 
 class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
     """
-    Detailed view of risk of bias metrics for reporting.
-    Displays all active RoB in Study.
+    Detailed view of all active risk of bias metric, including final.
     """
     template_name = 'riskofbias/rob_detail_all.html'
 

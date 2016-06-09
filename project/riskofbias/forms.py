@@ -184,7 +184,7 @@ class RoBReviewersForm(forms.ModelForm):
             {'related': assessment_id})
         try:
             self.fields['final_author'].initial = \
-                self.instance.get_final_robs().author.id
+                self.instance.get_final_rob().author.id
         except (AttributeError):
             pass
         self.fields['final_author'].required = True
