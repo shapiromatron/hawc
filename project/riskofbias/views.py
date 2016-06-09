@@ -359,6 +359,13 @@ class RoBEditFinal(ProjectManagerOrHigherMixin, BaseDetail):
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit_final.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(RoBEditFinal, self).get_context_data(**kwargs)
+        context['back_url'] = self.request.META['HTTP_REFERER'] \
+            if 'HTTP_REFERER' in self.request.META \
+            else self.object.get_absolute_url()
+        return context
+
     def get_assessment(self, request, *args, **kwargs):
         self.object = get_object_or_404(self.model, pk=kwargs['pk'])
         return self.object.get_assessment()
