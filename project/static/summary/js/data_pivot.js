@@ -2728,11 +2728,16 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       row = [];
       self.settings.descriptions.forEach(function(desc, j){
         var txt = v[desc.field_name];
-        if($.isNumeric(txt) && (txt % 1 === 0)) txt = parseInt(txt, 10);
+        if($.isNumeric(txt)){
+          if (txt % 1 === 0) txt = parseInt(txt, 10);
+          txt = txt.toHawcString();
+        } else {
+          txt = txt.toLocaleString();
+        }
         row.push({
           "row": i+1,
           "col": j,
-          "text": txt.toLocaleString(),
+          "text": txt,
           "style": v._styles['text_' + j],
           "cursor": (desc._dpe_key)?'pointer':'auto',
           "onclick": function(){

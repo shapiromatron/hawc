@@ -207,6 +207,13 @@ _.extend(Math, {
         }
     },
 });
+_.extend(Number.prototype, {
+    toHawcString: function(){
+        return (this > 0.001)?
+            this.toLocaleString():
+            this.toString();
+    }
+});
 
 
 // Django AJAX with CSRF protection.
@@ -1379,7 +1386,7 @@ DescriptiveTable.prototype = {
     add_tbody_tr: function(description, value, opts){
         opts = opts || {};
         if(value){
-            if (parseFloat(value, 10) === value) value = value.toLocaleString();
+            if (parseFloat(value, 10) === value) value = value.toHawcString();
             if(opts.calculated){value="[{0}]".printf(value);}  // [] = estimated
             var td = $("<td>").html(value);
             if(opts.annotate){

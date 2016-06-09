@@ -27,6 +27,21 @@ class StudyPopulationCreate(BaseCreate):
     model = models.StudyPopulation
     form_class = forms.StudyPopulationForm
 
+    def get_form_kwargs(self):
+        kwargs = super(StudyPopulationCreate, self).get_form_kwargs()
+
+        if 'id' in kwargs['initial']:
+            # add additional M2M through relationships
+            initial = self.model.objects.get(id=kwargs['initial']['id'])
+            kwargs['initial']['inclusion_criteria'] = \
+                initial.inclusion_criteria.values_list('id', flat=True)
+            kwargs['initial']['exclusion_criteria'] = \
+                initial.exclusion_criteria.values_list('id', flat=True)
+            kwargs['initial']['confounding_criteria'] = \
+                initial.confounding_criteria.values_list('id', flat=True)
+
+        return kwargs
+
 
 class StudyPopulationCopyAsNewSelector(StudyRead):
     template_name = 'epi/studypopulation_copy_selector.html'
@@ -183,6 +198,19 @@ class ResultCreate(BaseCreateWithFormset):
     model = models.Result
     form_class = forms.ResultForm
     formset_factory = forms.GroupResultFormset
+
+    def get_form_kwargs(self):
+        kwargs = super(ResultCreate, self).get_form_kwargs()
+
+        if 'id' in kwargs['initial']:
+            # add additional M2M through relationships
+            initial = self.model.objects.get(id=kwargs['initial']['id'])
+            kwargs['initial']['factors_applied'] = \
+                initial.factors_applied.values_list('id', flat=True)
+            kwargs['initial']['factors_considered'] = \
+                initial.factors_considered.values_list('id', flat=True)
+
+        return kwargs
 
     def post_object_save(self, form, formset):
         for form in formset.forms:

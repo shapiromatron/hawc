@@ -10,7 +10,7 @@ from assessment.models import EffectTag
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import Outcome
-from invitro.models import IVEndpointCategory
+from invitro.models import IVEndpointCategory, IVChemical
 
 from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
@@ -36,7 +36,7 @@ class PrefilterMixin(object):
         'studies',
         'systems', 'organs', 'effects',
         'episystems', 'epieffects',
-        'iv_categories',
+        'iv_categories', 'iv_chemicals',
         'effect_tags',
     ]
 
@@ -133,6 +133,16 @@ class PrefilterMixin(object):
                     label="Categories to include",
                     help_text="""Select one or more categories to include in the plot.
                                  If no study is selected, no endpoints will be available.""")),
+                ("prefilter_iv_chemical", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by chemical",
+                    help_text="Prefilter endpoints to include only selected chemicals.")),
+                ("iv_chemicals", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Chemicals to include",
+                    help_text="""Select one or more chemicals to include in the plot.
+                                 If no study is selected, no endpoints will be available.""")),
             ])
 
         if "effect_tags" in self.prefilter_include:
@@ -196,6 +206,10 @@ class PrefilterMixin(object):
                 self.fields["prefilter_iv_category"].initial = True
                 self.fields["iv_categories"].initial = v
 
+            if k == "chemical__name__in":
+                self.fields["prefilter_iv_chemical"].initial = True
+                self.fields["iv_chemicals"].initial = v
+
             if k in [
                     "animal_group__experiment__study__in",
                     "study_population__study__in",
@@ -228,6 +242,8 @@ class PrefilterMixin(object):
             choices = Endpoint.get_effect_choices(assessment_id)
         elif field_name == "iv_categories":
             choices = IVEndpointCategory.get_choices(assessment_id)
+        elif field_name == "iv_chemicals":
+            choices = IVChemical.get_choices(assessment_id)
         elif field_name == "effect_tags":
             choices = EffectTag.get_choices(assessment_id)
         elif field_name == "studies":
@@ -288,6 +304,9 @@ class PrefilterMixin(object):
 
         if data.get('prefilter_iv_category') is True:
             prefilters["category__in"] = data.get("iv_categories", [])
+
+        if data.get('prefilter_iv_chemical') is True:
+            prefilters["chemical__name__in"] = data.get("iv_chemicals", [])
 
         if data.get('prefilter_effect_tag') is True:
             prefilters["effects__in"] = data.get("effect_tags", [])
