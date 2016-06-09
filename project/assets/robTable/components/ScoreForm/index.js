@@ -66,7 +66,7 @@ class ScoreForm extends Component {
               </div>
               <ReactQuill ref='notes'
                           id={score.metric.metric}
-                          value={score.notes}
+                          defaultValue={score.notes}
                           theme='snow'
                           className='score-editor' />
           </div>
