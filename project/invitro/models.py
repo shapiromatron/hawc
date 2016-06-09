@@ -77,6 +77,14 @@ class IVChemical(models.Model):
             .values_list('id', flat=True)
         )
 
+    @classmethod
+    def get_choices(cls, assessment_id):
+        return cls.objects\
+            .filter(study__assessment_id=assessment_id)\
+            .order_by('name')\
+            .distinct('name')\
+            .values_list('name', 'name')
+
 
 class IVCellType(models.Model):
 

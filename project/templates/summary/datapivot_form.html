@@ -59,6 +59,7 @@
             ["episystem", "episystems"],
             ["epieffect", "epieffects"],
             ["iv_category", "iv_categories"],
+            ["iv_chemical", "iv_chemicals"],
             ["effect_tag", "effect_tags"],
         ];
         _.each(fields, function(d){
@@ -89,6 +90,8 @@
           ivOnlyDivs = $([
               "#div_id_prefilter_iv_category",
               "#div_id_iv_categories",
+              "#div_id_prefilter_iv_chemical",
+              "#div_id_iv_chemicals",
               "#div_id_export_style",
           ].join(","));
 
