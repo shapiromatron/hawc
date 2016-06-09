@@ -37,7 +37,7 @@
               "id": "{{ object.pk }}"  ,
               "url": "{% url 'riskofbias:api:review-list' %}"
           },
-          "cancelUrl": "{% url 'riskofbias:arob_reviewers' assessment.pk %}",
+          "cancelUrl": "{{back_url}}",
           "csrf": "{{ csrf_token }}",
           "host": "//{{request.get_host}}",
           "isForm": true

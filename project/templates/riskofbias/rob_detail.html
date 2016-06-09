@@ -27,35 +27,21 @@
         <ul class="dropdown-menu">
           <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
           <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+          {% if final and obj_perms.edit_assessment %}
+            <li class="disabled"><a tabindex="-1" href="#">Edit risk of bias</a></li>
+            <li><a href="{{final.get_edit_url}}">Edit final review</a></li>
+          {% endif %}
       </div>
     {% endif %}
   </h2>
-
-  <table>
-      {% for review in study.get_active_riskofbiases %}
-      <tr class="review-item">
-          <td>
-              <b>{% if review.final %}Final{% endif %} reviewer:</b>
-              {{review.author}}
-          </td>
-          <td>
-              <b>Review complete:</b>
-              {% if review.is_complete %}<span class="is-complete">Yes</span>
-              {% else %} No
-              {% endif %}
-          </td>
-      </tr>
-      {% endfor%}
-</table>
-<hr>
   <div id="sq_tbl"></div>
-
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     window.study = new Study({{study.get_json|safe}})
     window.userIsTeamMember = {{ perms.riskofbias.change_riskofbias|lower }}
-    window.sq_tbl = new StudyQualities_TblCompressed(study, $('#sq_tbl'), {'show_all_details_startup': true});
+    window.sq_tbl = new StudyQualities_TblCompressed(
+      study, $('#sq_tbl'), {'show_all_details_startup': true});
   </script>
 {% endblock extrajs %}
