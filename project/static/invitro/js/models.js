@@ -430,7 +430,7 @@ IVEndpointGroup.prototype = {
                 return txt;
             },
             getNumeric = function(val){
-                return ($.isNumeric(val)) ? val.toLocaleString() : '-';
+                return ($.isNumeric(val)) ? val.toHawcString() : '-';
             };
 
         tr.append('<td>{0}</td>'.printf(getDose(this.data.dose)));

@@ -307,7 +307,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{
-            return this.data.groups[this.data[name]].dose.toLocaleString();
+            return this.data.groups[this.data[name]].dose.toHawcString();
         }catch(err){
             return '-';
         }
@@ -372,7 +372,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
 
         // now build header row showing available doses
         for(var i=0; i<nGroups; i++){
-            var doses = this.doses.map(function(v){ return v.values[i].dose.toLocaleString(); });
+            var doses = this.doses.map(function(v){ return v.values[i].dose.toHawcString(); });
             txt = doses[0];
             if (doses.length>1)
                 txt += " ({0})".printf(doses.slice(1, doses.length).join(", "))
@@ -405,8 +405,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             } else {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if (data_type === "C"){
-                    response = v.response.toLocaleString();
-                    if(v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    response = v.response.toHawcString();
+                    if(v.stdev) response += " ± {0}".printf(v.stdev.toHawcString());
                     txt = "";
                     if(i > 0){
                         txt = self._continuous_percent_difference_from_control(v, dr_control);
@@ -649,7 +649,7 @@ EndpointCriticalDose.prototype = {
             doses = this.endpoint.doses.filter(function(v){
                 return v.name === self.endpoint.dose_units;});
         try {
-            txt = doses[0].values[this.critical_effect_idx].dose.toLocaleString();
+            txt = doses[0].values[this.critical_effect_idx].dose.toHawcString();
             if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);
         } catch(err){}
         this.span.html(txt);
@@ -786,7 +786,7 @@ EndpointTable.prototype = {
             if (!v.isReported) return;
 
             var tr = $('<tr>'),
-                dose = v.dose.toLocaleString();
+                dose = v.dose.toHawcString();
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
