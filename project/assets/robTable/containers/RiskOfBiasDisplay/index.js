@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
-import DomainDisplay from 'robTable/components/DomainDisplay';
+import DisplayComponent from 'robTable/components/RiskOfBiasDisplay';
 import ShowAll from 'robTable/components/ShowAll';
 import Loading from 'shared/components/Loading';
 
@@ -19,15 +19,13 @@ class RiskOfBiasDisplay extends Component {
     }
 
     render(){
-        let { itemsLoaded, active } = this.props;
+
+        let { itemsLoaded, active, config } = this.props;
         if (!itemsLoaded) return <Loading />;
 
         return (
-            <div className='riskofbias-display'>
-                {_.map(active, (domain) => {
-                    return <DomainDisplay key={domain.key}
-                                       domain={domain} />;
-                })}
+            <div className='riskofbias-container'>
+                <DisplayComponent active={active} config={config} />
                 <ShowAll handleClick={this.handleShowAllClick.bind(this)} />
             </div>
         );
@@ -38,6 +36,7 @@ function mapStateToProps(state){
     return {
         itemsLoaded: state.study.itemsLoaded,
         active: state.study.active,
+        config: state.config,
     };
 }
 

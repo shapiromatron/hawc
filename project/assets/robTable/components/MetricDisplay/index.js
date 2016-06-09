@@ -7,16 +7,35 @@ import './MetricDisplay.css';
 
 class MetricDisplay extends Component {
 
+    renderScoreRow(){
+
+        let { metric, config } = this.props,
+            displayScores;
+
+        if (config.isForm){
+            displayScores = _.filter(metric.values, (score) => {return !score.final;});
+        } else if (config.display === 'all') {
+            displayScores = metric.values;
+        } else if (config.display === 'final') {
+            displayScores = _.filter(metric.values, (score) => {return score.final;});
+        }
+
+        return (
+            <div className='score-row'>
+            {_.map(displayScores, (score) => {
+                return <ScoreDisplay key={score.id} score={score} />;
+            })}
+            </div>
+        );
+    }
+
     renderScoreForm(){
-        let formScore = _.findWhere(this.props.metric.values, {final: true});
+        let formScore = _.findWhere(this.props.metric.values, {riskofbias_id: parseInt(this.props.config.riskofbias.id)});
         return <ScoreForm ref='form' score={formScore} />;
     }
 
     render(){
-        let { metric, isForm } = this.props,
-            displayScores = isForm ?
-                _.filter(metric.values, (score) => {return !score.final;}) :
-                metric.values;
+        let { metric, config } = this.props;
 
         return (
             <div className='metric-display'>
@@ -24,12 +43,8 @@ class MetricDisplay extends Component {
                 <span dangerouslySetInnerHTML={{
                     __html: metric.values[0].metric.description,
                 }} />
-                <div className='score-row'>
-                    {_.map(displayScores, (score) => {
-                        return <ScoreDisplay key={score.id} score={score} />;
-                    })}
-                </div>
-                {isForm ? this.renderScoreForm() : null}
+            {(config.isForm && !config.isForm.final) ? null : this.renderScoreRow()}
+                {config.isForm ? this.renderScoreForm() : null}
             </div>
         );
     }
@@ -53,7 +68,7 @@ MetricDisplay.propTypes = {
             }).isRequired
         ).isRequired,
     }).isRequired,
-    isForm: PropTypes.bool,
+    config: PropTypes.object,
 };
 
 export default MetricDisplay;

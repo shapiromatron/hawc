@@ -27,6 +27,7 @@
         <ul class="dropdown-menu">
           <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
           <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+          <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
           {% if object.get_final_rob and obj_perms.edit_assessment %}
             <li class="disabled"><a tabindex="-1" href="#">Edit risk of bias</a></li>
             <li><a href="{{object.get_final_rob.get_edit_url}}">Edit final review</a></li>

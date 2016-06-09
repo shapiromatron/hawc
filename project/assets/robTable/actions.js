@@ -121,7 +121,7 @@ export function fetchStudyIfNeeded(){
     };
 }
 
-export function submitFinalRiskOfBiasScores(scores){
+export function submitRiskOfBiasScores(scores){
     return (dispatch, getState) => {
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),

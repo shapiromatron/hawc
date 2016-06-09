@@ -74,7 +74,4 @@ class ScoreForm extends Component {
     }
 }
 
-ScoreForm.propTypes = {
-};
-
 export default ScoreForm;

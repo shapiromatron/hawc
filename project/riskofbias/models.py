@@ -155,10 +155,7 @@ class RiskOfBias(models.Model):
             args=[self.get_assessment().pk])
 
     def get_edit_url(self):
-        view = 'riskofbias:rob_update_final' \
-                if self.final \
-                else 'riskofbias:rob_update'
-        return reverse(view, args=[self.pk])
+        return reverse('riskofbias:rob_update', args=[self.pk])
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
