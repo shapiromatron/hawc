@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
@@ -340,7 +341,7 @@ class RoBEdit(IsAuthorMixin, BaseUpdate):
         return context
 
 
-class RoBEditFinal(ProjectManagerOrHigherMixin, BaseDetail):
+class RoBEditFinal(BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.
@@ -348,13 +349,17 @@ class RoBEditFinal(ProjectManagerOrHigherMixin, BaseDetail):
     model = models.RiskOfBias
     template_name = 'riskofbias/rob_edit_final.html'
 
+    def get_object(self, **kwargs):
+        # either project managers OR the author can edit/view.
+        obj = super(RoBEditFinal, self).get_object(**kwargs)
+        if obj.author != self.request.user and \
+            not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied
+        return obj
+
     def get_context_data(self, **kwargs):
         context = super(RoBEditFinal, self).get_context_data(**kwargs)
         context['back_url'] = self.request.META['HTTP_REFERER'] \
             if 'HTTP_REFERER' in self.request.META \
             else self.object.get_absolute_url()
         return context
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(self.model, pk=kwargs['pk'])
-        return self.object.get_assessment()
