@@ -326,6 +326,7 @@ _.extend(VisualCollection, {
     },
 });
 VisualCollection.prototype = {
+    null_filter: '---',
     build_table: function($el){
         if(this.visuals.length === 0)
             return $el.html('<p><i>No custom-visuals are available for this assessment.</i></p>');
@@ -336,14 +337,45 @@ VisualCollection.prototype = {
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
         }
-        $el.html(tbl.getTbl());
-        this.setTableSorting($el.find('table'));
+        $el
+            .append(this.setTableFilter())
+            .append(tbl.getTbl());
+        this.$tbl = $($el.find('table'));
+        this.setTableSorting(this.$tbl);
         return $el;
     },
-    setTableSorting: function($el){
-        var name = $el.find('thead tr th')[0];
+    setTableSorting: function(){
+        var name = this.$tbl.find('thead tr th')[0];
         name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
-        new Tablesort($el[0]);
+        new Tablesort(this.$tbl[0]);
+    },
+    setTableFilter: function(){
+        var types = _.chain(this.visuals)
+                .pluck('data')
+                .pluck('visual_type')
+                .sort()
+                .uniq(true)
+                .unshift(this.null_filter)
+                .map(function(d){
+                    return '<option value="{0}">{1}</option>'.printf(d, d);
+                }).value();
+
+        return $('<div>').append(
+            '<label class="control-label">Filter by visualization type:</label>',
+            $('<select>').append(types).change(this.filterRows.bind(this))
+        );
+    },
+    filterRows: function(e){
+        var filter = (e)? e.target.value: this.null_filter,
+            isNullFilter = (filter === this.null_filter);
+
+        this.$tbl.find('tbody tr').each(function(){
+            if (isNullFilter || this.innerHTML.indexOf(filter)>=0){
+                this.style.display = null;
+            } else {
+                this.style.display = 'none';
+            }
+        });
     },
 };
 
