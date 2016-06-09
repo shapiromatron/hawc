@@ -1,3 +1,4 @@
+import logging
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
@@ -41,3 +42,37 @@ def invalidate_outcome_cache(sender, instance, **kwargs):
         ids = models.Outcome.objects.filter(**filters).values_list('id', flat=True)
 
     models.Outcome.delete_caches(ids)
+
+
+@receiver(post_save, sender=models.Group)
+def modify_group_result(sender, instance, created, **kwargs):
+    # create GroupResults when a new Group is created.
+
+    if not created:
+        return
+
+    all_res_ids = models.Result.objects\
+        .filter(comparison_set=instance.comparison_set)\
+        .values_list('id', flat=True)
+
+    res_with_grp = models.Result.objects\
+        .filter(comparison_set=instance.comparison_set,
+                results__group=instance)\
+        .values_list('id', flat=True)
+
+    res_without_grp = set(all_res_ids) - set(res_with_grp)
+
+    grs = [
+        models.GroupResult(
+            result_id=res_id,
+            group_id=instance.id,
+            is_main_finding=False
+        ) for res_id in res_without_grp
+    ]
+
+    if len(grs) > 0:
+        assessment_id = instance.get_assessment().id
+        logging.info('Assessment %s -> Group %s (post_save creation signal) '
+                     '-> %s GroupResult(s) created.' %
+                     (assessment_id, instance.id, len(grs)))
+        models.GroupResult.objects.bulk_create(grs)
