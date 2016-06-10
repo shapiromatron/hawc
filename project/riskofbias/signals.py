@@ -1,8 +1,10 @@
+import logging
+
 from django.apps import apps
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
-import models
+from . import models
 
 
 @receiver(post_save, sender=models.RiskOfBiasDomain)
@@ -21,6 +23,40 @@ def invalidate_caches_rob_metrics(sender, instance, **kwargs):
         .values_list('id', flat=True)
 
     Study.delete_caches(ids)
+
+
+@receiver(post_save, sender=models.RiskOfBiasMetric)
+def create_rob_scores(sender, instance, created, **kwargs):
+    # create RiskOfBiasScore when a new RiskOfBiasMetric is created.
+
+    if not created:
+        return
+
+    assessment_id = instance.get_assessment().id
+
+    all_robs = models.RiskOfBias.objects\
+        .filter(study__assessment_id=assessment_id)\
+        .values_list('id', flat=True)
+
+    robs_with_met = models.RiskOfBias.objects\
+        .filter(study__assessment_id=assessment_id,
+                scores__metric=instance)\
+        .values_list('id', flat=True)
+
+    robs_without_met = set(all_robs) - set(robs_with_met)
+
+    objs = [
+        models.RiskOfBiasScore(
+            riskofbias_id=rob_id,
+            metric_id=instance.id,
+        ) for rob_id in robs_without_met
+    ]
+
+    if len(objs) > 0:
+        logging.info('Assessment %s -> RiskOfBiasMetric %s (post_save creation signal) '
+                     '-> %s RiskOfBiasScore(s) created.' %
+                     (assessment_id, instance.id, len(objs)))
+        models.RiskOfBiasScore.objects.bulk_create(objs)
 
 
 @receiver(post_save, sender=models.RiskOfBias)

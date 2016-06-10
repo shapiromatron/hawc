@@ -13,7 +13,7 @@
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
-  <li class="active">Delete Metric<span class="divider">/</span></li>
+  <li class="active">Delete metric<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
@@ -28,7 +28,7 @@
     </div>
     <form action="." method="post">
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} domain</button>
+        <button type="submit" class="btn btn-primary">{{ crud }} metric</button>
         <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn">Cancel</a>
       </div>
       {% csrf_token %}
