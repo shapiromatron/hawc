@@ -39,12 +39,13 @@ class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
 
 class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     model = models.RiskOfBiasDomain
+    parent_model = Assessment
     template_name = 'riskofbias/arob_copy.html'
     form_class = forms.RiskOfBiasCopyForm
     success_message = 'Risk of bias settings have been updated.'
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs['pk'])
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
         kwargs = super(ARoBCopy, self).get_form_kwargs()
