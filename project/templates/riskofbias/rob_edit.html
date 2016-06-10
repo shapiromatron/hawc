@@ -40,7 +40,8 @@
           "cancelUrl": "{{back_url}}",
           "csrf": "{{ csrf_token }}",
           "host": "//{{request.get_host}}",
-          "isForm": {"final" : {% if object.final %} true {% else %} false {% endif %} }
+          "isForm": true,
+          "display": {% if object.final %} "final" {% else %} "all" {% endif %} }
       }
   </script>
   <script type="text/javascript">

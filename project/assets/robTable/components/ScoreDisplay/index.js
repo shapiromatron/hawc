@@ -6,6 +6,33 @@ import './ScoreDisplay.css';
 
 class ScoreDisplay extends Component {
 
+    constructor(props) {
+        super(props);
+        // values of state.flex correspond to css classes in flex.css
+        this.state = {flex: 'flexRow'};
+        this.toggleWidth = 600;
+        this.checkFlex = this.checkFlex.bind(this);
+    }
+
+
+    // sets state.flex based on the width of the component.
+    checkFlex() {
+        if (this.state.flex === 'flexRow' && this.refs.display.offsetWidth <= this.toggleWidth){
+            this.setState({flex: 'flexColumn'});
+        } else if (this.state.flex === 'flexColumn' && this.refs.display.offsetWidth > this.toggleWidth){
+            this.setState({flex: 'flexRow'});
+        }
+    }
+
+    componentDidMount() {
+        this.checkFlex();
+        window.addEventListener('resize', this.checkFlex);
+    }
+
+    componentWillUnmount(nextProps, nextState) {
+        window.removeEventListener('resize', this.checkFlex);
+    }
+
     render(){
         let { score } = this.props;
         return (
