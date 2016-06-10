@@ -224,12 +224,12 @@ class ReferenceParser(object):
             # issue is sometimes blank; only add parens if non-blank
             issue = str(self.content.get("note", ""))
             if len(issue) > 0:
-                issue = u" ({0})".format(issue)
+                issue = u" ({0})".format(issue.decode('utf-8'))
 
             # pages is sometimes blank; only add colon if non-blank
             pages = str(self.content.get("start_page", ""))
             if len(pages) > 0:
-                pages = u":{0}".format(pages)
+                pages = u":{0}".format(pages.decode('utf-8'))
 
             sec_title = unicode(self.content.get("secondary_title", "").decode('utf-8'))  # journal
             year = self.content.get("year", "")  # year
@@ -239,7 +239,7 @@ class ReferenceParser(object):
         elif refType in ("BOOK", "CHAP"):
             vals = []
             if "secondary_title" in self.content:
-                vals.append(u"{0}.".format(self.content["secondary_title"]))
+                vals.append(u"{0}.".format(self.content["secondary_title"].decode('utf-8')))
             if "year" in self.content:
                 vals.append(u"{0}.".format(self.content["year"]))
             if "start_page" in self.content:
