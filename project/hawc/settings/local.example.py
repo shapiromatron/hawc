@@ -22,8 +22,8 @@ BMD_SHELL = 'x11'
 # MODELING TEMP PATH
 TEMP_PATH = r'/path/to/temp'
 
-# INKSCAPE SETTINGS
-INKSCAPE = r'/path/to/inkscape'
+# PHANTOMJS SETTINGS
+PHANTOMJS_PATH = r'/path/to/phantomjs'
 
 # API keys
 CHEMSPIDER_TOKEN = r'get-chemspider-token-online'

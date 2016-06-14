@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block extrastyle %}
+<style type="text/css">
+body {
+    padding-top: 0;  /* remove extra padding */
+}
+{{css|safe}}
+</style>
+{% endblock %}
+
+{% block navbar_outer %}
+{% endblock %}
+
+{% block content_outer %}
+{{svg|safe}}
+{% endblock %}
