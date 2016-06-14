@@ -422,7 +422,7 @@ def download_plot(request):
         converter = tasks.SVGConverter(svg, url, width, height)
 
         if output_type == 'svg':
-            svg = converter.get_svg()
+            svg = converter.get_svg_with_embedded_styles()
             response = HttpResponse(svg, content_type="image/svg+xml")
             response['Content-Disposition'] = 'attachment; filename="download.svg"'
 
@@ -433,22 +433,23 @@ def download_plot(request):
                 response = HttpResponse(output, content_type="image/png")
                 response['Content-Disposition'] = 'attachment; filename="download.png"'
 
-        elif output_type == 'pptx':
-            task = chain(
-                converter.convert_to_png.s(converter, delete_and_return_object=False),
-                converter.convert_to_pptx.s()
-            )()
-            output = task.get(timeout=90)
-            if output:
-                response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
-                response['Content-Disposition'] = 'attachment; filename="download.pptx"'
-
         elif output_type == 'pdf':
             task = converter.convert_to_pdf.delay(converter)
             output = task.get(timeout=60)
             if output:
                 response = HttpResponse(output, content_type="application/pdf")
                 response['Content-Disposition'] = 'attachment; filename="download.pdf"'
+
+        elif output_type == 'pptx':
+            task = chain(
+                converter.convert_to_png.s(converter, delete_and_return_object=False),
+                converter.convert_to_pptx.s(converter)
+            )()
+            output = task.get(timeout=90)
+            if output:
+                response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
+                response['Content-Disposition'] = 'attachment; filename="download.pptx"'
+
 
         else:
             response = HttpResponse("<p>An error in processing occurred - unknown output type.</p>")

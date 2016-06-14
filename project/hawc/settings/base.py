@@ -179,8 +179,7 @@ MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
 
 # Filesystem settings
 TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
-INKSCAPE = os.getenv('DJANGO_INKSCAPE')
-
+PHANTOMJS_PATH = os.getenv('PHANTOMJS_PATH')
 
 # Logging configuration
 LOGGING = {

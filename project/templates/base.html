@@ -33,9 +33,11 @@
     {% block extrastyle %}{% endblock %}
   </head>
 
+
   <body {% block bodyattrs %}class="fill"{% endblock %}>
 
     <!-- Navigation bar -->
+    {% block navbar_outer %}
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner  {% server_role %}">
         <div class="container-fluid">
@@ -84,8 +86,10 @@
         </div>
       </div>
     </div>
+    {% endblock navbar_outer %}
 
     <!-- Main Container -->
+    {% block content_outer %}
     <div id="container" class="container-fluid ">
 
       {% block messages_base %}
@@ -96,8 +100,8 @@
 
       <div id="footer">{% block footer %}{% endblock %}</div>
       <div id='hidden' style="display:none">{% block hidden_content %}{% endblock %}</div>
-
     </div>
+    {% endblock content_outer %}
     <!-- END Container -->
 
     <!-- JS at bottom for quicker pageloads -->
