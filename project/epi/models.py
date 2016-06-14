@@ -137,7 +137,8 @@ class StudyPopulation(models.Model):
         ('NC', 'Nested case-control'),
         ('CR', 'Case report'),
         ('SE', 'Case series'),
-        ('CT', 'Controlled trial'),
+        ('RT', 'Randomized controlled trial'),
+        ('NT', 'Non-randomized controlled trial'),
         ('CS', 'Cross-sectional'),
     )
 
