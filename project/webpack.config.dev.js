@@ -14,6 +14,7 @@ config.output.publicPath = 'http://localhost:' + devPort + '/dist/';
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
 config.module = {
+    noParse: /node_modules\/quill\/dist\/quill\.js/,
     loaders: [{
         test: /\.js$/,
         loader: 'babel',
