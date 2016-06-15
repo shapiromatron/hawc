@@ -13,6 +13,8 @@ import xml.etree.ElementTree as ET
 
 from django.conf import settings
 from django.core.cache import cache
+from django.http.request import HttpRequest
+from django.template import RequestContext
 from django.template.loader import render_to_string
 
 from celery import shared_task
@@ -72,10 +74,12 @@ class SVGConverter():
             os.remove(fn)
 
     def convert_to_html(self):
-        html = render_to_string('rasterize.html', dict(
+        request = HttpRequest()
+        context = RequestContext(request, dict(
             svg=self.svg,
             css=D3_CSS_STYLES
-        )).encode('UTF-8')
+        ))
+        html = render_to_string('rasterize.html', context).encode('UTF-8')
         fn = self.get_tempfile(suffix='.html')
         with open(fn, 'wb') as f:
             f.write(html)
