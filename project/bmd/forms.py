@@ -11,7 +11,8 @@ class AssessmentSettingsForm(ModelForm):
 
 
 class LogicFieldForm(ModelForm):
-    # TODO: if default threshold is blank, don't display field, otherwise make required
+    # TODO: if default threshold is blank, don't display field,
+    # otherwise make required
 
     class Meta:
         model = models.LogicField

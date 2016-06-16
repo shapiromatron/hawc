@@ -19,7 +19,7 @@ class BMDModelRunSerializer(serializers.ModelSerializer):
         ret['dose_units_id'] = instance.BMD_session.dose_units.id
         ret['option_defaults'] = json.loads(instance.option_defaults),
         ret['option_override'] = json.loads(instance.option_override),
-        ret['option_override_text'] = json.loads(instance.option_override_text),
+        ret['option_override_text'] = json.loads(instance.option_override_text)
 
         ret['plotting'] = 'error'
         ret['outputs'] = 'error'

@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 
 from assessment.models import Assessment, DoseUnits
 from animal.models import Endpoint
-from utils.views import (BaseCreate, BaseUpdate, BaseDetail)
+from utils.views import BaseCreate, BaseUpdate, BaseDetail
 
 from bmds.bmds import BMDS
 from . import forms
@@ -22,18 +22,23 @@ class BMDRead(BaseDetail):
     def get_object(self, **kwargs):
         # return latest version of a BMD session; else throw 404
         try:
-            obj = self.model.objects.filter(endpoint=self.kwargs.get('pk')).latest()
+            obj = self.model.objects\
+                .filter(endpoint=self.kwargs.get('pk'))\
+                .latest()
         except:
             raise Http404
         return super(BMDRead, self).get_object(object=obj)
 
     def get_context_data(self, **kwargs):
         context = super(BMDRead, self).get_context_data(**kwargs)
-        context['dose_units'] = self.object.dose_units.pk # todo: fix JS to ensure correct dose-units are used
-        context['endpoint_json'] = self.object.endpoint.d_response(json_encode=True)
+        # todo: fix JS to ensure correct dose-units are used
+        context['dose_units'] = self.object.dose_units.pk
+        context['endpoint_json'] = self.object.endpoint\
+            .d_response(json_encode=True)
         context['session'] = self.object.webpage_return(json=True)
         logics = models.LogicField.objects.filter(assessment=self.assessment)
-        context['logics'] = models.LogicField.website_list_return(logics, self.object.endpoint.data_type, True)
+        context['logics'] = models.LogicField\
+            .website_list_return(logics, self.object.endpoint.data_type, True)
         context['bmds_version'] = self.assessment.BMD_Settings.BMDS_version
         return context
 
@@ -53,14 +58,15 @@ class BMDCreate(BaseCreate):
 
     def post(self, request, *args, **kwargs):
         model_settings = loads(request.body)  # json
-        units = get_object_or_404(DoseUnits, pk=model_settings.get('dose_units_id'))
+        units = get_object_or_404(
+            DoseUnits,
+            pk=model_settings.get('dose_units_id'))
         logging.debug('saving new session')
-        session = models.BMD_session(endpoint=self.parent,
-                                     BMDS_version=self.assessment.BMD_Settings.BMDS_version,
-                                     bmrs=dumps(model_settings.get('bmrs')),
-                                     dose_units=units)
-
-        session.save()  # initial save so foreign keys can link
+        session = models.BMD_session.objects.create(
+            endpoint=self.parent,
+            BMDS_version=self.assessment.BMD_Settings.BMDS_version,
+            bmrs=dumps(model_settings.get('bmrs')),
+            dose_units=units)
         logging.debug('running session')
         try:
             session.run_session(self.parent, model_settings)
@@ -74,17 +80,21 @@ class BMDCreate(BaseCreate):
         context = super(BMDCreate, self).get_context_data(**kwargs)
         # add existing BMD_session if present
         try:
-            existing = self.model.objects.filter(endpoint=self.parent).latest()
+            existing = self.model.objects\
+                .filter(endpoint=self.parent).latest()
             context['crud'] = "Edit"  # todo: change to "Update", require JS updates
             context['session'] = existing.webpage_return(json=True)
         except:
             existing = None
-            context['template'] = models.BMD_session.get_template(self.assessment,
-                                                                  self.parent.data_type,
-                                                                  json=True)
+            context['template'] = models.BMD_session.get_template(
+                self.assessment,
+                self.parent.data_type,
+                json=True)
+
         context['object'] = existing
         logics = self.assessment.BMD_Logic_Fields.all()
-        context['logics'] = models.LogicField.website_list_return(logics, self.parent.data_type, True)
+        context['logics'] = models.LogicField\
+            .website_list_return(logics, self.parent.data_type, True)
         context['bmds_version'] = self.assessment.BMD_Settings.BMDS_version
         return context
 
@@ -96,7 +106,9 @@ class BMDVersions(BMDRead):
     def get_context_data(self, **kwargs):
         context = super(BMDVersions, self).get_context_data(**kwargs)
         context['endpoint'] = self.object.endpoint
-        context['object_list'] = self.model.objects.filter(endpoint=self.kwargs.get('pk')).order_by('last_updated')
+        context['object_list'] = self.model.objects\
+            .filter(endpoint=self.kwargs.get('pk'))\
+            .order_by('last_updated')
         return context
 
 
@@ -115,14 +127,16 @@ class BMDSelectionUpdate(BaseUpdate):
 
     def process_data(self):
         data = loads(self.request.body)
-        model_run = models.BMD_model_run.objects.filter(pk=data.get('model')).first()
+        model_run = models.BMD_model_run.objects\
+            .filter(pk=data.get('model')).first()
         self.object.notes = data.get('notes')
         self.object.selected_model = model_run
         self.object.save()
         for run_data in data.get('overrides'):
-            models.BMD_model_run.objects.filter(pk=run_data.get('id'))\
-                                .update(override=run_data.get('override'),
-                                        override_text=run_data.get('override_text'))
+            models.BMD_model_run.objects\
+                .filter(pk=run_data.get('id'))\
+                .update(override=run_data.get('override'),
+                        override_text=run_data.get('override_text'))
 
 
 class getEndpointTemplate(BaseDetail):
@@ -134,9 +148,8 @@ class getEndpointTemplate(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        data = models.BMD_session.get_template(self.assessment,
-                                               self.object.data_type,
-                                               json=True)
+        data = models.BMD_session\
+            .get_template(self.assessment, self.object.data_type, json=True)
         return HttpResponse(data, content_type="application/json")
 
 
@@ -165,8 +178,10 @@ class getSingleModelOption(TemplateView):
     def get(self, request, *args, **kwargs):
         try:
             version = BMDS.versions[str(self.kwargs['vbmds'])]
-            run_instance = version.models[self.kwargs['datatype']][self.kwargs['model_name']]()
-            model_data = models.BMD_model_run.get_model_template(self.kwargs['model_name'], run_instance)
+            run_instance = version.models[
+                self.kwargs['datatype']][self.kwargs['model_name']]()
+            model_data = models.BMD_model_run.get_model_template(
+                self.kwargs['model_name'], run_instance)
         except:
             model_data = {'error': 'No BMDS models meet this description.'}
         return HttpResponse(dumps(model_data), content_type="application/json")
@@ -176,7 +191,8 @@ class AssessSettingsRead(BaseDetail):
     model = models.BMD_Assessment_Settings
 
     def get_object(self, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
+        self.assessment = get_object_or_404(Assessment,
+                                            pk=self.kwargs.get('pk'))
         obj = self.assessment.BMD_Settings
         return super(AssessSettingsRead, self).get_object(object=obj)
 
@@ -200,4 +216,5 @@ class AssessLogicUpdate(BaseUpdate):
     form_class = forms.LogicFieldForm
 
     def get_success_url(self):
-        return reverse_lazy('bmd:assess_settings_detail', kwargs={'pk': self.object.assessment.pk})
+        return reverse_lazy('bmd:assess_settings_detail',
+                            kwargs={'pk': self.object.assessment.pk})

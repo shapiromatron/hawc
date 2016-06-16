@@ -29,14 +29,26 @@ LOGIC_BIN_CHOICES = (
 
 
 class BMD_session(models.Model):
-    endpoint = models.ForeignKey('animal.Endpoint',
-                                 related_name='BMD_session', null=True)
-    dose_units = models.ForeignKey('assessment.DoseUnits')
-    BMDS_version = models.CharField(max_length=10, choices=BMDS_CHOICES)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    bmrs = models.TextField(blank=True)  # list of bmrs, json encoded
-    selected_model = models.OneToOneField('BMD_model_run', blank=True, null=True, related_name='selected')
+    endpoint = models.ForeignKey(
+        'animal.Endpoint',
+        related_name='BMD_session',
+        null=True)
+    dose_units = models.ForeignKey(
+        'assessment.DoseUnits')
+    BMDS_version = models.CharField(
+        max_length=10,
+        choices=BMDS_CHOICES)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+    bmrs = models.TextField(
+        blank=True)  # list of bmrs, json encoded
+    selected_model = models.OneToOneField(
+        'BMD_model_run',
+        blank=True,
+        null=True,
+        related_name='selected')
     notes = models.TextField()
 
     class Meta:
@@ -80,16 +92,20 @@ class BMD_session(models.Model):
         except:
             session = -1
         data = {
-            'session': {'BMDS_version': self.BMDS_version,
-                        'pk': self.pk,
-                        'selected_model': session,
-                        'notes': self.notes,
-                        'created': self.created,
-                        'last_updated': self.last_updated,
-                        'bmrs': loads(self.bmrs)},
+            'session': {
+                'BMDS_version': self.BMDS_version,
+                'pk': self.pk,
+                'selected_model': session,
+                'notes': self.notes,
+                'created': self.created,
+                'last_updated': self.last_updated,
+                'bmrs': loads(self.bmrs)
+            },
             'models': [],
         }
-        runs = BMD_model_run.objects.filter(BMD_session=self.pk).order_by('option_id', 'bmr_id')
+        runs = BMD_model_run.objects\
+            .filter(BMD_session=self.pk)\
+            .order_by('option_id', 'bmr_id')
         for run in runs:
             data['models'].append(run.webpage_return())
         return dumps(data, cls=DjangoJSONEncoder) if json else data
@@ -101,7 +117,9 @@ class BMD_session(models.Model):
         """
 
         try:
-            dataset = endpoint.d_response(json_encode=False, dose_pk=model_settings['dose_units_id'])
+            dataset = endpoint.d_response(
+                json_encode=False,
+                dose_pk=model_settings['dose_units_id'])
             if 'warnings' in dataset:
                 raise Exception('Dose units could not be resolved')
         except Exception:
@@ -111,32 +129,36 @@ class BMD_session(models.Model):
         bmds = BMDS.versions[BMDS_version]()
         for option_id, option in enumerate(model_settings['options']):
             logging.debug('Creating ' + option['model_name'])
-            #cycle through BMR to check if BMRs are valid
+            # cycle through BMR to check if BMRs are valid
             for bmr_id, bmr in enumerate(model_settings['bmrs']):
-                logging.debug('Testing ' + endpoint.data_type + ' ' + option['model_name'])
-                run_instance = bmds.models[endpoint.data_type][option['model_name']]()
+                logging.debug('Testing {} {}'.format(
+                    endpoint.data_type, option['model_name']))
+                run_instance = bmds.models[
+                    endpoint.data_type][option['model_name']]()
                 # run instance in model/BMR type relationship is valid
                 if run_instance.valid_bmr(bmr):
-                    #create default model and override with user-settings
+                    # create default model and override with user-settings
                     logging.debug('Updating options')
                     run_instance.update_model(option['override'],
                                               option['override_text'], bmr)
 
                     logging.debug('Creating new model instance')
-                    run = BMD_model_run(model_name=option['model_name'],
-                                        BMD_session=self,
-                                        option_defaults=run_instance.build_defaults(json=True),
-                                        option_override=dumps(option['override']),
-                                        option_override_text=dumps(option['override_text']),
-                                        option_id=option_id,
-                                        bmr_id=bmr_id)
+                    run = BMD_model_run(
+                        model_name=option['model_name'],
+                        BMD_session=self,
+                        option_defaults=run_instance.build_defaults(json=True),
+                        option_override=dumps(option['override']),
+                        option_override_text=dumps(option['override_text']),
+                        option_id=option_id,
+                        bmr_id=bmr_id)
                     try:
                         logging.debug('Running ' + option['model_name'])
                         run.run_model(bmds, run_instance, dataset)
                     except:
-                        logging.debug('Runtime error occurred for ' + option['model_name'])
+                        logging.debug('Runtime error occurred for %s' %
+                                      option['model_name'])
                         run.runtime_error = True
-                        run.output_text = 'An error occurred when running this model.'
+                        run.output_text = 'An error occurred.'
 
                     logging.debug('Adding outputs ' + option['model_name'])
                     run.save()
@@ -146,35 +168,50 @@ class BMD_session(models.Model):
         return self.endpoint.get_assessment()
 
 
-class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
-    model_name = models.CharField(max_length=25, blank=False)
-    BMD_session = models.ForeignKey('BMD_session')
+class BMD_model_run(models.Model):
+    model_name = models.CharField(
+        max_length=25,
+        blank=False)
+    BMD_session = models.ForeignKey(
+        'BMD_session')
     option_defaults = models.TextField()  # json text
-    option_override = models.TextField(blank=True)  # json text
-    option_override_text = models.TextField(blank=True)  # json text
-    output_text = models.TextField(blank=True)  # bmds raw output file
-    outputs = models.TextField(blank=True)  # json text
-    d3_plotting = models.TextField(blank=True)
-    runtime_error = models.BooleanField(default=False)
-    plot = models.ImageField(upload_to='bmds_plot', blank=True, null=True)
+    option_override = models.TextField(
+        blank=True)  # json text
+    option_override_text = models.TextField(
+        blank=True)  # json text
+    output_text = models.TextField(
+        blank=True)  # bmds raw output file
+    outputs = models.TextField(
+        blank=True)  # json text
+    d3_plotting = models.TextField(
+        blank=True)
+    runtime_error = models.BooleanField(
+        default=False)
+    plot = models.ImageField(
+        upload_to='bmds_plot',
+        blank=True,
+        null=True)
     option_id = models.PositiveSmallIntegerField()
     bmr_id = models.PositiveSmallIntegerField()
-    override = models.PositiveSmallIntegerField(default=99)
-    override_text = models.TextField(default="")
+    override = models.PositiveSmallIntegerField(
+        default=99)
+    override_text = models.TextField(
+        default="")
 
     @classmethod
     def get_model_template(cls, model_name, run_instance):
         """
         Return a model template for the selected BMD model.
         """
-        run = BMD_model_run(model_name=model_name,
-                            option_defaults=run_instance.build_defaults(json=True),
-                            option_override="{}",
-                            option_override_text="[]",
-                            runtime_error=True,
-                            id='',
-                            bmr_id='',
-                            option_id='')
+        run = BMD_model_run(
+            model_name=model_name,
+            option_defaults=run_instance.build_defaults(json=True),
+            option_override="{}",
+            option_override_text="[]",
+            runtime_error=True,
+            id='',
+            bmr_id='',
+            option_id='')
         return run.webpage_return()
 
     @staticmethod
@@ -199,9 +236,10 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
         """
         bmds = BMDS.versions[self.BMD_session.BMDS_version]()
         run_instance = bmds.models[endpoint.data_type][self.model_name]()
-        run_instance.update_model(loads(self.option_override),
-                                  loads(self.option_override_text),
-                                  self.get_bmr_dict())
+        run_instance.update_model(
+            loads(self.option_override),
+            loads(self.option_override_text),
+            self.get_bmr_dict())
         return run_instance.dfile_print(endpoint.d_response(json_encode=False))
 
     def get_bmr_dict(self):
@@ -239,17 +277,19 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
         except:
             bmds_plot_url = ''
 
-        outputs = {'model_name': self.model_name,
-                   'output_text': self.output_text,
-                   'option_defaults': loads(self.option_defaults),
-                   'option_override': loads(self.option_override),
-                   'option_override_text': loads(self.option_override_text),
-                   'id': self.id,
-                   'bmds_plot_url': bmds_plot_url,
-                   'option_id': self.option_id,
-                   'bmr_id': self.bmr_id,
-                   'override': self.override,
-                   'override_text': self.override_text}
+        outputs = {
+            'model_name': self.model_name,
+            'output_text': self.output_text,
+            'option_defaults': loads(self.option_defaults),
+            'option_override': loads(self.option_override),
+            'option_override_text': loads(self.option_override_text),
+            'id': self.id,
+            'bmds_plot_url': bmds_plot_url,
+            'option_id': self.option_id,
+            'bmr_id': self.bmr_id,
+            'override': self.override,
+            'override_text': self.override_text
+        }
         if hasattr(self, 'BMD_session'):
             outputs['dose_units_id'] = self.BMD_session.dose_units.pk
 
@@ -286,7 +326,7 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
         Run the model and import results.
         """
 
-        #Exit-early if number of dose-groups less than required minimum
+        # exit-early if number of dose-groups less than required minimum
         d_response['numDG'] = len(d_response['dr'])
         if d_response['numDG'] < model_class.minimum_DG:
             self.plot = None
@@ -316,7 +356,7 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
         # get random filename
         temp_fn = ''.join(random.choice(string.ascii_lowercase) for x in range(16))
         f_in = os.path.join(BMDS.temp_path, temp_fn) + '.(d)'
-        #exponential models
+        # exponential models
         prefix = getattr(model_class, 'output_prefix', "")
         temp_fn = prefix + temp_fn
         f_out = os.path.join(BMDS.temp_path, temp_fn) + '.out'
@@ -326,15 +366,17 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
 
         # run BMDS
         logging.debug('running BMDS model...')
-        exe = os.path.join(BMDS.model_path, model_class.exe + settings.BMD_EXTENSION)
+        exe = os.path.join(
+            BMDS.model_path, model_class.exe + settings.BMD_EXTENSION)
         run_process([exe, f_in], 10).Run()
 
         if create_image:
-            outputs['image'] = self.execute_bmds_figure(BMDS, model_class, temp_fn)
+            outputs['image'] = self.execute_bmds_figure(
+                BMDS, model_class, temp_fn)
 
         # import outputs
         logging.debug('importing BMDS results...')
-        output_text=""
+        output_text = ""
         if os.path.exists(f_out):
             with open(f_out, 'r') as f:
                 output_text = f.read()
@@ -365,8 +407,10 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
         # failure will not result in an overall error in the BMD modeling
         try:
             # Create a .plt file from a .002 file
-            exe_plt = os.path.join(BMDS.model_path,
-                                   model_class.exe_plot + settings.BMD_EXTENSION)
+            exe_plt = os.path.join(
+                BMDS.model_path,
+                model_class.exe_plot + settings.BMD_EXTENSION
+            )
             run_process([exe_plt, f_002], 10).Run()
 
             # Revise settings of .plt file to export as emf image instead
@@ -375,10 +419,12 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
             plotfile = open(f_plt, 'r')
             plot_text = plotfile.read()
             plotfile.close()
-            plot_text = plot_text.replace("set terminal %s \n" % (settings.BMD_SHELL),
-                                          "set terminal emf \nset output '%s'\n" % (f_emf))
-            plot_text = plot_text.replace("set terminal %s\n" % (settings.BMD_SHELL),
-                                          "set terminal emf \nset output '%s'\n" % (f_emf))
+            plot_text = plot_text.replace(
+                "set terminal %s \n" % (settings.BMD_SHELL),
+                "set terminal emf \nset output '%s'\n" % (f_emf))
+            plot_text = plot_text.replace(
+                "set terminal %s\n" % (settings.BMD_SHELL),
+                "set terminal emf \nset output '%s'\n" % (f_emf))
             plotfile = open(f_plt, 'w')
             plotfile.write(plot_text)
             plotfile.close()
@@ -403,7 +449,7 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
 
     def summary_data(self):
         """
-        Return a dictionary of key summary data useful for displaying in templates.
+        Return dict of summary data template display.
         Typically used for selected model in a BMDS session.
         """
         outputs = loads(self.outputs)
@@ -413,12 +459,17 @@ class BMD_model_run(models.Model):  # todo: get rid of these blank=True fields?
 
 
 class BMD_Assessment_Settings(models.Model):
-    assessment = models.OneToOneField('assessment.Assessment',
-                                      related_name='BMD_Settings')
-    BMDS_version = models.CharField(max_length=10, choices=BMDS_CHOICES,
-                                    default=max(BMDS_CHOICES)[0])
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    assessment = models.OneToOneField(
+        'assessment.Assessment',
+        related_name='BMD_Settings')
+    BMDS_version = models.CharField(
+        max_length=10,
+        choices=BMDS_CHOICES,
+        default=max(BMDS_CHOICES)[0])
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
     class Meta:
         verbose_name_plural = "BMD assessment settings"
@@ -437,22 +488,43 @@ class LogicField(models.Model):
     """
     BMD decision-logic selections. Specific to an entire BMD assessment
     """
-    assessment = models.ForeignKey('assessment.Assessment', related_name='BMD_Logic_Fields', editable=False)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    logic_id = models.PositiveSmallIntegerField(editable=False)
-    name = models.CharField(max_length=30, editable=False)
-    function_name = models.CharField(max_length=25, editable=False)
-    description = models.TextField(editable=False)
+    assessment = models.ForeignKey(
+        'assessment.Assessment',
+        related_name='BMD_Logic_Fields',
+        editable=False)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+    logic_id = models.PositiveSmallIntegerField(
+        editable=False)
+    name = models.CharField(
+        max_length=30,
+        editable=False)
+    function_name = models.CharField(
+        max_length=25,
+        editable=False)
+    description = models.TextField(
+        editable=False)
     failure_bin = models.PositiveSmallIntegerField(
-        choices=LOGIC_BIN_CHOICES, blank=False,
+        choices=LOGIC_BIN_CHOICES,
+        blank=False,
         help_text="If the test fails, select the model-bin should the model be placed into.")
     threshold = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True, blank=True,
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
         help_text="If a threshold is required for the test, threshold can be specified to non-default.")
-    continuous_on = models.BooleanField(default=True, verbose_name="Continuous Datasets")
-    dichotomous_on = models.BooleanField(default=True, verbose_name="Dichotomous Datasets")
-    cancer_dichotomous_on = models.BooleanField(default=True, verbose_name="Cancer Dichotomous Datasets")
+    continuous_on = models.BooleanField(
+        default=True,
+        verbose_name="Continuous Datasets")
+    dichotomous_on = models.BooleanField(
+        default=True,
+        verbose_name="Dichotomous Datasets")
+    cancer_dichotomous_on = models.BooleanField(
+        default=True,
+        verbose_name="Cancer Dichotomous Datasets")
 
     class Meta:
         ordering = ['logic_id']
@@ -461,20 +533,24 @@ class LogicField(models.Model):
         return self.description
 
     def webpage_return(self, endpoint_data_type, json=False):
-        outputs = {'last_updated': self.last_updated,
-                   'logic_id': self.logic_id,
-                   'name': self.name,
-                   'function_name': self.function_name,
-                   'description': self.description,
-                   'failure_bin': self.failure_bin,
-                   'threshold': self.threshold,
-                   'test_on': self.datatype_inclusion(endpoint_data_type)}
+        outputs = {
+            'last_updated': self.last_updated,
+            'logic_id': self.logic_id,
+            'name': self.name,
+            'function_name': self.function_name,
+            'description': self.description,
+            'failure_bin': self.failure_bin,
+            'threshold': self.threshold,
+            'test_on': self.datatype_inclusion(endpoint_data_type)
+        }
         return dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
 
     def datatype_inclusion(self, endpoint_data_type):
-        crosswalk = {'C': self.continuous_on,
-                     'D': self.dichotomous_on,
-                     'DC': self.cancer_dichotomous_on}
+        crosswalk = {
+            'C': self.continuous_on,
+            'D': self.dichotomous_on,
+            'DC': self.cancer_dichotomous_on
+        }
         try:
             return crosswalk[endpoint_data_type]
         except:
