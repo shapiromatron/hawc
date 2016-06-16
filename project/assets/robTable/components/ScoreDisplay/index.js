@@ -36,16 +36,19 @@ class ScoreDisplay extends Component {
     render(){
         let { score } = this.props;
         return (
-            <div className='score-display'>
-                <h5>{score.author.full_name}</h5>
-                <ScoreBar score={score.score}
-                          shade={score.score_shade}
-                          symbol={score.score_symbol}
-                          description={score.score_description}/>
+            <div className={`score-display ${this.state.flex}-container`} ref='display'>
+                <div className='flex-1'>
+                    <p><b>{score.author.full_name}</b></p>
+                    <ScoreBar score={score.score}
+                              shade={score.score_shade}
+                              symbol={score.score_symbol}
+                              description={score.score_description}
+                    />
+                </div>
                 <hr/>
-                <span dangerouslySetInnerHTML={{
+                <div className='flex-3' dangerouslySetInnerHTML={{
                     __html: score.notes,
-                }} />
+                }}></div>
             </div>
         );
     }

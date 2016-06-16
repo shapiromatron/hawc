@@ -1,6 +1,6 @@
 .score-display {
     flex: 1;
-    padding: 10px;
+    padding: .8rem;
     border: 1px solid #ddd;
     border-radius: 10px;
 }
