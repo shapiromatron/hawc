@@ -194,30 +194,12 @@ class BMD_model_run(models.Model):
         default="")
 
     BMR_VERBOSE = {
-        'Extra': {
-            'short': r'%',
-            'long': r'% Extra Risk',
-        },
-        'Added': {
-            'short': r'% AR',
-            'long': r'% Added Risk',
-        },
-        'Abs. Dev.': {
-            'short': ' AD',
-            'long': ' Absolute Deviation(s)',
-        },
-        'Std. Dev.': {
-            'short': ' SD',
-            'long': ' Standard Deviation(s)',
-        },
-        'Rel. Dev.': {
-            'short': r'% RD',
-            'long': r'% Relative Deviation(s)',
-        },
-        'Point': {
-            'short': ' Pt',
-            'long': ' Point',
-        },
+        'Extra':     (r'%',     r'% Extra Risk'),
+        'Added':     (r'% AR',  r'% Added Risk'),
+        'Abs. Dev.': (r' AD',   r' Absolute Deviation(s)'),
+        'Std. Dev.': (r' SD',   r' Standard Deviation(s)'),
+        'Rel. Dev.': (r'% RD',  r'% Relative Deviation(s)'),
+        'Point':     (r' Pt',   r' Point'),
     }
 
     def get_assessment(self):
@@ -239,7 +221,8 @@ class BMD_model_run(models.Model):
             runtime_error=True,
             id='',
             bmr_id='',
-            option_id='')
+            option_id=''
+        )
         return run.webpage_return()
 
     @staticmethod
@@ -270,13 +253,15 @@ class BMD_model_run(models.Model):
         short_texxt name (for tables), or a longer more descriptive name.
         """
         bmr = self.get_bmr_dict()
-        str_type = 'short' if short_text else 'long'
-        if bmr['type'] in ['Extra', 'Added', 'Rel. Dev.']:
-            return str(bmr['value'] * 100.) + self.BMR_VERBOSE[bmr['type']][str_type]
-        elif bmr['type'] in ['Abs. Dev.', 'Std. Dev.', 'Point']:
-            return str(bmr['value']) + self.BMR_VERBOSE[bmr['type']][str_type]
+        type_ = bmr['type']
+        value = bmr['value']
+        idx = 0 if short_text else 1
+        if type_ in ['Extra', 'Added', 'Rel. Dev.']:
+            return '{}{}'.format(value * 100., self.BMR_VERBOSE[type_][idx])
+        elif type_ in ['Abs. Dev.', 'Std. Dev.', 'Point']:
+            '{}{}'.format(value, self.BMR_VERBOSE[type_][idx])
         else:
-            return str(bmr['value']) + ' ' + bmr['type']
+            return '{} {}'.format(value, type_)
 
     def webpage_return(self, json=False):
         try:
@@ -306,22 +291,26 @@ class BMD_model_run(models.Model):
         else:
             outputs['plotting'] = json.loads(self.d3_plotting)
             outputs['outputs'] = json.loads(self.outputs)
+
         return json.dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
 
     def d3_plot_info(self, model_class, dataset):
         p = {}
         outs = json.loads(self.outputs)
+
         for parameter in model_class.js_parameters:
             try:
                 p[parameter] = outs['parameters'][parameter]['estimate']
             except:
                 p[parameter] = 0.
+
         if 'dataset_increasing' in dataset:  # required for exponential M2/M3
-            if dataset['dataset_increasing']:
-                p['sign'] = 1.
-            else:
-                p['sign'] = -1.
-        return {'formula': model_class.js_formula, 'parameters': p}
+            p['sign'] = 1. if dataset['dataset_increasing'] else -1.
+
+        return {
+            'formula': model_class.js_formula,
+            'parameters': p
+        }
 
     def run_model(self, BMDS, model_class, d_response):
         """
@@ -363,6 +352,7 @@ class BMD_model_run(models.Model):
         # get random filename
         temp_fn = ''.join(random.choice(string.ascii_lowercase) for x in range(16))
         f_in = os.path.join(BMDS.temp_path, temp_fn) + '.(d)'
+
         # exponential models
         prefix = getattr(model_class, 'output_prefix', "")
         temp_fn = prefix + temp_fn

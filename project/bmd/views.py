@@ -1,7 +1,6 @@
 from json import dumps, loads
 import logging
 
-from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.views.generic import TemplateView
