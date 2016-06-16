@@ -11,10 +11,6 @@ from django.core.files import File
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
-from bmds.bmds import BMDS
-from bmds.output_parser import BMD_output_parser
-from utils.executable_sheller import run_process
-
 
 BMDS_CHOICES = (
     ('2.30', 'Version 2.30'),

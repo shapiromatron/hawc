@@ -10,8 +10,8 @@ from animal.models import Endpoint
 from utils.views import BaseCreate, BaseUpdate, BaseDetail, \
     ProjectManagerOrHigherMixin
 
-from bmds.bmds import BMDS
 from . import forms, models
+from . import bmds_monkeypatch as bmds
 
 
 # Assessment settings

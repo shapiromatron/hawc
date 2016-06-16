@@ -40,6 +40,9 @@ xlwt==1.0.0
 git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
 git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
 
+# bmds
+git+https://github.com/shapiromatron/bmds@master  # TODO: update when stabilized
+
 # for import scripts
 jupyter==1.0.0
 ipython==4.1.1
