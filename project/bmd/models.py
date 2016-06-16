@@ -193,6 +193,33 @@ class BMD_model_run(models.Model):
     override_text = models.TextField(
         default="")
 
+    BMR_VERBOSE = {
+        'Extra': {
+            'short': r'%',
+            'long': r'% Extra Risk',
+        },
+        'Added': {
+            'short': r'% AR',
+            'long': r'% Added Risk',
+        },
+        'Abs. Dev.': {
+            'short': ' AD',
+            'long': ' Absolute Deviation(s)',
+        },
+        'Std. Dev.': {
+            'short': ' SD',
+            'long': ' Standard Deviation(s)',
+        },
+        'Rel. Dev.': {
+            'short': r'% RD',
+            'long': r'% Relative Deviation(s)',
+        },
+        'Point': {
+            'short': ' Pt',
+            'long': ' Point',
+        },
+    }
+
     def get_assessment(self):
         return self.BMD_session.endpoint.get_assessment()
 
@@ -243,19 +270,11 @@ class BMD_model_run(models.Model):
         short_texxt name (for tables), or a longer more descriptive name.
         """
         bmr = self.get_bmr_dict()
-        table_type_dict = {
-            'Extra': {'short': r'%', 'long': r'% Extra Risk'},
-            'Added': {'short': r'% AR', 'long': r'% Added Risk'},
-            'Abs. Dev.': {'short': r' AD', 'long': r' Absolute Deviation(s)'},
-            'Std. Dev.': {'short': r' SD', 'long': r' Standard Deviation(s)'},
-            'Rel. Dev.': {'short': r'% RD', 'long': r'% Relative Deviation(s)'},
-            'Point': {'short': r' Pt', 'long': r' Point'},
-        }
         str_type = 'short' if short_text else 'long'
         if bmr['type'] in ['Extra', 'Added', 'Rel. Dev.']:
-            return str(bmr['value'] * 100.) + table_type_dict[bmr['type']][str_type]
+            return str(bmr['value'] * 100.) + self.BMR_VERBOSE[bmr['type']][str_type]
         elif bmr['type'] in ['Abs. Dev.', 'Std. Dev.', 'Point']:
-            return str(bmr['value']) + table_type_dict[bmr['type']][str_type]
+            return str(bmr['value']) + self.BMR_VERBOSE[bmr['type']][str_type]
         else:
             return str(bmr['value']) + ' ' + bmr['type']
 
