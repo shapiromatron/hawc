@@ -483,6 +483,10 @@ class BMD_Assessment_Settings(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    @classmethod
+    def build_default(cls, assessment):
+        cls.objects.create(assessment=assessment)
+
 
 class LogicField(models.Model):
     """
