@@ -1,7 +1,6 @@
 from json import dumps, loads
 import logging
 
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import HttpResponse, get_object_or_404
@@ -9,7 +8,8 @@ from django.views.generic import TemplateView
 
 from assessment.models import Assessment, DoseUnits
 from animal.models import Endpoint
-from utils.views import BaseCreate, BaseUpdate, BaseDetail
+from utils.views import BaseCreate, BaseUpdate, BaseDetail, \
+    ProjectManagerOrHigherMixin
 
 from bmds.bmds import BMDS
 from . import forms
@@ -20,34 +20,28 @@ from . import models
 class AssessSettingsRead(BaseDetail):
     model = models.BMD_Assessment_Settings
 
-    def get_object(self, **kwargs):
-        self.assessment = get_object_or_404(Assessment,
-                                            pk=self.kwargs.get('pk'))
-        obj = self.assessment.BMD_Settings
-        return super(AssessSettingsRead, self).get_object(object=obj)
 
-
-class AssessSettingsUpdate(BaseUpdate):
-    # settings can only be changed by project-managers
+class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     success_message = 'BMD Settings updated.'
     model = models.BMD_Assessment_Settings
     form_class = forms.AssessmentSettingsForm
 
-    def get_object(self, **kwargs):
-        obj = super(AssessSettingsUpdate, self).get_object()
-        if not self.assessment.user_can_edit_assessment(self.request.user):
-            raise PermissionDenied
-        return obj
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=kwargs['pk'])
 
 
-class AssessLogicUpdate(BaseUpdate):
+class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     success_message = 'BMD Logic Settings updated.'
     model = models.LogicField
     form_class = forms.LogicFieldForm
 
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object().get_assessment()
+
     def get_success_url(self):
-        return reverse_lazy('bmd:assess_settings_detail',
-                            kwargs={'pk': self.object.assessment.pk})
+        return reverse_lazy(
+            'bmd:assess_settings_detail',
+            kwargs={'pk': self.object.assessment.pk})
 
 
 # BMD session
