@@ -534,6 +534,9 @@ class LogicField(models.Model):
     def __unicode__(self):
         return self.description
 
+    def get_absolute_url(self):
+        return reverse('bmd:assess_settings_detail', args=[self.assessment_id])
+
     def webpage_return(self, endpoint_data_type, json=False):
         outputs = {
             'last_updated': self.last_updated,

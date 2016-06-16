@@ -12,8 +12,7 @@ from utils.views import BaseCreate, BaseUpdate, BaseDetail, \
     ProjectManagerOrHigherMixin
 
 from bmds.bmds import BMDS
-from . import forms
-from . import models
+from . import forms, models
 
 
 # Assessment settings
@@ -37,11 +36,6 @@ class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object().get_assessment()
-
-    def get_success_url(self):
-        return reverse_lazy(
-            'bmd:assess_settings_detail',
-            kwargs={'pk': self.object.assessment.pk})
 
 
 # BMD session
