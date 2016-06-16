@@ -49,14 +49,16 @@ class RiskOfBiasDomain(models.Model):
             'riskofbias/fixtures/ohat_study_quality_defaults.json'
         )
         with open(fn, 'r') as f:
-            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            objects = json.loads(
+                f.read(),
+                object_pairs_hook=collections.OrderedDict)
 
-            for domain in objects['domains']:
-                d = RiskOfBiasDomain.objects.create(
-                    assessment=assessment,
-                    name=domain['name'],
-                    description=domain['description'])
-                RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
+        for domain in objects['domains']:
+            d = RiskOfBiasDomain.objects.create(
+                assessment=assessment,
+                name=domain['name'],
+                description=domain['description'])
+            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
     @classmethod
     def assessment_qs(cls, assessment_id):
