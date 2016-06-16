@@ -1,5 +1,5 @@
-from json import dumps, loads
 import collections
+import json
 import logging
 import os
 import random
@@ -71,36 +71,31 @@ class BMD_session(models.Model):
             run_instance = bmds.models[data_type][m]()
             model_data = BMD_model_run.get_model_template(m, run_instance)
             data['models'].append(model_data)
-        return dumps(data, cls=DjangoJSONEncoder) if json else data
+        return json.dumps(data, cls=DjangoJSONEncoder) if json else data
 
     def save(self, *args, **kwargs):
         super(BMD_session, self).save(*args, **kwargs)
         self.endpoint.delete_caches([self.endpoint.pk])
 
     def get_selected_model(self, json_encode=True):
-        if self.selected_model:
-            return self.selected_model.webpage_return(json=json_encode)
-        else:
-            return dumps(None)
+        return self.selected_model.webpage_return(json=json_encode) \
+            if self.selected_model else 'null'
 
     def webpage_return(self, json=False):
         """
         Return an object specifying all the settings, configurations, and
         outputs from a previously run BMDS session.
         """
-        try:
-            session = self.selected_model.pk
-        except:
-            session = -1
+        selected_id = self.selected_model.pk if self.selected_model else -1
         data = {
             'session': {
                 'BMDS_version': self.BMDS_version,
                 'pk': self.pk,
-                'selected_model': session,
+                'selected_model': selected_id,
                 'notes': self.notes,
                 'created': self.created,
                 'last_updated': self.last_updated,
-                'bmrs': loads(self.bmrs)
+                'bmrs': json.loads(self.bmrs)
             },
             'models': [],
         }
@@ -109,14 +104,13 @@ class BMD_session(models.Model):
             .order_by('option_id', 'bmr_id')
         for run in runs:
             data['models'].append(run.webpage_return())
-        return dumps(data, cls=DjangoJSONEncoder) if json else data
+        return json.dumps(data, cls=DjangoJSONEncoder) if json else data
 
     def run_session(self, endpoint, model_settings):
         """
         Run a BMD session, given an endpoint ID and a session. Returns
         a the results from a bmd session if successful.
         """
-
         try:
             dataset = endpoint.d_response(
                 json_encode=False,
@@ -148,8 +142,8 @@ class BMD_session(models.Model):
                         model_name=option['model_name'],
                         BMD_session=self,
                         option_defaults=run_instance.build_defaults(json=True),
-                        option_override=dumps(option['override']),
-                        option_override_text=dumps(option['override_text']),
+                        option_override=json.dumps(option['override']),
+                        option_override_text=json.dumps(option['override_text']),
                         option_id=option_id,
                         bmr_id=bmr_id)
                     try:
@@ -199,6 +193,12 @@ class BMD_model_run(models.Model):
     override_text = models.TextField(
         default="")
 
+    def get_assessment(self):
+        return self.BMD_session.endpoint.get_assessment()
+
+    def __unicode__(self):
+        return self.model_name
+
     @classmethod
     def get_model_template(cls, model_name, run_instance):
         """
@@ -217,18 +217,9 @@ class BMD_model_run(models.Model):
 
     @staticmethod
     def delete_files(filelist):
-        """attempt to kill each file in filelst"""
         for f in filelist:
-            try:
+            if os.path.exists(f):
                 os.remove(f)
-            except:
-                pass
-
-    def get_assessment(self):
-        return self.BMD_session.endpoint.get_assessment()
-
-    def __unicode__(self):
-        return self.model_name
 
     def build_d_file(self, endpoint):
         """
@@ -238,17 +229,13 @@ class BMD_model_run(models.Model):
         bmds = BMDS.versions[self.BMD_session.BMDS_version]()
         run_instance = bmds.models[endpoint.data_type][self.model_name]()
         run_instance.update_model(
-            loads(self.option_override),
-            loads(self.option_override_text),
+            json.loads(self.option_override),
+            json.loads(self.option_override_text),
             self.get_bmr_dict())
         return run_instance.dfile_print(endpoint.d_response(json_encode=False))
 
     def get_bmr_dict(self):
-        """
-        Return a BMR dictionary for this model's BMR.
-        """
-        bmrs = loads(self.BMD_session.bmrs)
-        return bmrs[self.bmr_id]
+        return json.loads(self.BMD_session.bmrs)[self.bmr_id]
 
     def get_bmr_text(self, short_text=False):
         """
@@ -281,9 +268,9 @@ class BMD_model_run(models.Model):
         outputs = {
             'model_name': self.model_name,
             'output_text': self.output_text,
-            'option_defaults': loads(self.option_defaults),
-            'option_override': loads(self.option_override),
-            'option_override_text': loads(self.option_override_text),
+            'option_defaults': json.loads(self.option_defaults),
+            'option_override': json.loads(self.option_override),
+            'option_override_text': json.loads(self.option_override_text),
             'id': self.id,
             'bmds_plot_url': bmds_plot_url,
             'option_id': self.option_id,
@@ -298,19 +285,19 @@ class BMD_model_run(models.Model):
             outputs['plotting'] = 'error'
             outputs['outputs'] = 'error'
         else:
-            outputs['plotting'] = loads(self.d3_plotting)
-            outputs['outputs'] = loads(self.outputs)
-        return dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
+            outputs['plotting'] = json.loads(self.d3_plotting)
+            outputs['outputs'] = json.loads(self.outputs)
+        return json.dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
 
     def d3_plot_info(self, model_class, dataset):
         p = {}
-        outs = loads(self.outputs)
+        outs = json.loads(self.outputs)
         for parameter in model_class.js_parameters:
             try:
                 p[parameter] = outs['parameters'][parameter]['estimate']
             except:
                 p[parameter] = 0.
-        if 'dataset_increasing' in dataset:  # this is required for exponential M2/M3
+        if 'dataset_increasing' in dataset:  # required for exponential M2/M3
             if dataset['dataset_increasing']:
                 p['sign'] = 1.
             else:
@@ -345,8 +332,8 @@ class BMD_model_run(models.Model):
             self.plot.save(outputs['image_fn'], outputs['image'])
 
         self.output_text = outputs.get('output_text')
-        self.outputs = dumps(outputs.get('outputs'))
-        self.d3_plotting = dumps(self.d3_plot_info(model_class, d_response))
+        self.outputs = json.dumps(outputs.get('outputs'))
+        self.d3_plotting = json.dumps(self.d3_plot_info(model_class, d_response))
 
     def execute_bmds(self, BMDS, model_class, d_file, create_image=True):
         """
@@ -453,7 +440,7 @@ class BMD_model_run(models.Model):
         Return dict of summary data template display.
         Typically used for selected model in a BMDS session.
         """
-        outputs = loads(self.outputs)
+        outputs = json.loads(self.outputs)
         summary_data = {'model_name': self.model_name}
         summary_data.update(outputs)
         return summary_data
@@ -548,7 +535,7 @@ class LogicField(models.Model):
             'threshold': self.threshold,
             'test_on': self.datatype_inclusion(endpoint_data_type)
         }
-        return dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
+        return json.dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
 
     def datatype_inclusion(self, endpoint_data_type):
         crosswalk = {
@@ -569,7 +556,7 @@ class LogicField(models.Model):
         logics = []
         for obj in objs:
             logics.append(obj.webpage_return(endpoint_data_type, False))
-        return dumps(logics, cls=DjangoJSONEncoder) if json else logics
+        return json.dumps(logics, cls=DjangoJSONEncoder) if json else logics
 
     @classmethod
     def build_defaults(cls, assessment):
@@ -581,7 +568,7 @@ class LogicField(models.Model):
             'bmd/fixtures/logic.json'
         )
         with open(fn, 'r') as f:
-            text = loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            text = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
         objects = [
             cls(assessment_id=assessment.id, logic_id=i, **obj)
