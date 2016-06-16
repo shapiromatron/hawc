@@ -16,6 +16,41 @@ from . import forms
 from . import models
 
 
+# Assessment settings
+class AssessSettingsRead(BaseDetail):
+    model = models.BMD_Assessment_Settings
+
+    def get_object(self, **kwargs):
+        self.assessment = get_object_or_404(Assessment,
+                                            pk=self.kwargs.get('pk'))
+        obj = self.assessment.BMD_Settings
+        return super(AssessSettingsRead, self).get_object(object=obj)
+
+
+class AssessSettingsUpdate(BaseUpdate):
+    # settings can only be changed by project-managers
+    success_message = 'BMD Settings updated.'
+    model = models.BMD_Assessment_Settings
+    form_class = forms.AssessmentSettingsForm
+
+    def get_object(self, **kwargs):
+        obj = super(AssessSettingsUpdate, self).get_object()
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied
+        return obj
+
+
+class AssessLogicUpdate(BaseUpdate):
+    success_message = 'BMD Logic Settings updated.'
+    model = models.LogicField
+    form_class = forms.LogicFieldForm
+
+    def get_success_url(self):
+        return reverse_lazy('bmd:assess_settings_detail',
+                            kwargs={'pk': self.object.assessment.pk})
+
+
+# BMD session
 class BMDRead(BaseDetail):
     model = models.BMD_session
 
@@ -139,6 +174,7 @@ class BMDSelectionUpdate(BaseUpdate):
                         override_text=run_data.get('override_text'))
 
 
+# BMD session utility views
 class getEndpointTemplate(BaseDetail):
     """
     Get a clean model-template to be used for model-configuration. This is not
@@ -185,36 +221,3 @@ class getSingleModelOption(TemplateView):
         except:
             model_data = {'error': 'No BMDS models meet this description.'}
         return HttpResponse(dumps(model_data), content_type="application/json")
-
-
-class AssessSettingsRead(BaseDetail):
-    model = models.BMD_Assessment_Settings
-
-    def get_object(self, **kwargs):
-        self.assessment = get_object_or_404(Assessment,
-                                            pk=self.kwargs.get('pk'))
-        obj = self.assessment.BMD_Settings
-        return super(AssessSettingsRead, self).get_object(object=obj)
-
-
-class AssessSettingsUpdate(BaseUpdate):
-    # settings can only be changed by project-managers
-    success_message = 'BMD Settings updated.'
-    model = models.BMD_Assessment_Settings
-    form_class = forms.AssessmentSettingsForm
-
-    def get_object(self, **kwargs):
-        obj = super(AssessSettingsUpdate, self).get_object()
-        if not self.assessment.user_can_edit_assessment(self.request.user):
-            raise PermissionDenied
-        return obj
-
-
-class AssessLogicUpdate(BaseUpdate):
-    success_message = 'BMD Logic Settings updated.'
-    model = models.LogicField
-    form_class = forms.LogicFieldForm
-
-    def get_success_url(self):
-        return reverse_lazy('bmd:assess_settings_detail',
-                            kwargs={'pk': self.object.assessment.pk})
