@@ -1,4 +1,5 @@
 from json import dumps, loads
+import collections
 import logging
 import os
 import random
@@ -489,9 +490,6 @@ class BMD_Assessment_Settings(models.Model):
 
 
 class LogicField(models.Model):
-    """
-    BMD decision-logic selections. Specific to an entire BMD assessment
-    """
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='BMD_Logic_Fields',
@@ -571,207 +569,19 @@ class LogicField(models.Model):
         return dumps(logics, cls=DjangoJSONEncoder) if json else logics
 
     @classmethod
-    def build_default(cls, id):
-        """
-        Constructor to build a single BMD decision logic setting.
-        """
-        if (int(id) < len(LogicField.default)):
-            return LogicField(**LogicField.default[id])
-        else:
-            return None
-
-    @classmethod
     def build_defaults(cls, assessment):
         """
-        Constructor to build all default BMD decision logic settings.
+        Build default BMD decision logic.
         """
-        fields = []
-        for i in xrange(len(LogicField.default)):
-            f = LogicField.build_default(i)
-            f.assessment = assessment
-            f.logic_id = i
-            fields.append(f)
-        LogicField.objects.bulk_create(fields)
+        fn = os.path.join(
+            settings.PROJECT_PATH,
+            'bmd/fixtures/logic.json'
+        )
+        with open(fn, 'r') as f:
+            text = loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
-
-LogicField.default = [
-    {'failure_bin': 2,
-     'description': 'A BMD value was successfully calculated.',
-     'function_name': 'exists_bmd',
-     'name': 'BMD',
-     'threshold': None,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 2,
-     'description': 'A BMDL value was successfully calculated.',
-     'function_name': 'exists_bmdl',
-     'name': 'BMDL',
-     'threshold': None,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'A BMDU value was successfully calculated.',
-     'function_name': 'exists_bmdu',
-     'name': 'BMDU',
-     'threshold': None,
-     'continuous_on': False,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 2,
-     'description': 'An AIC value was successfully calculated.',
-     'function_name': 'exists_aic',
-     'name': 'AIC',
-     'threshold': None,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The correct variance model was used (based on p-test #2).',
-     'function_name': 'variance_type',
-     'name': 'Variance Type',
-     'threshold': 0.1,
-     'continuous_on': True,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': False},
-    {'failure_bin': 1,
-     'description': 'The variance model appropriately captures the variance of '
-                    'the dataset being modeled (based on p-test #3).',
-     'function_name': 'variance_fit',
-     'name': 'Variance Fit',
-     'threshold': 0.1,
-     'continuous_on': True,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': False},
-    {'failure_bin': 1,
-     'description': 'The mean model is appropriately modeling the dataset, '
-                    'based on the global-goodness-of-fit (p-test #4).',
-     'function_name': 'ggof',
-     'name': 'GGOF',
-     'threshold': 0.1,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': False},
-    {'failure_bin': 1,
-     'description': 'The mean model is appropriately modeling the dataset, '
-                    'based on the global-goodness-of-fit (p-test #4).',
-     'function_name': 'ggof',
-     'name': 'GGOF (Cancer)',
-     'threshold': 0.05,
-     'continuous_on': False,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The ratio between the BMD and BMDL values is large, '
-                    'indicating a large spread of estimates in the range of '
-                    'interest (warning).',
-     'function_name': 'bmd_ratio',
-     'name': 'BMD/BMDL (serious)',
-     'threshold': 20,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'The ratio between the BMD and BMDL values is large, '
-                    'indicating a large spread of estimates in the range of '
-                    'interest (caution).',
-     'function_name': 'bmd_ratio',
-     'name': 'BMD/BMDL (warning)',
-     'threshold': 5,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The absolute value of the residual at the dose closest to '
-                    'the BMD is large, which means the model may not be '
-                    'estimating well in this range.',
-     'function_name': 'residual',
-     'name': 'Residual of Interest',
-     'threshold': 2,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'The model output file included additional warnings.',
-     'function_name': 'warnings',
-     'name': 'Warnings',
-     'threshold': None,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'The BMD estimate is higher than the maximum dose modeled, '
-                    'thus the model is extrapolating a result.',
-     'function_name': 'high_bmd',
-     'name': 'BMD higher',
-     'threshold': 1,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The BMDL estimate is higher than the maximum dose modeled, '
-                    'thus the model is extrapolating a result.',
-     'function_name': 'high_bmdl',
-     'name': 'BMDL higher',
-     'threshold': 1,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'The BMD estimate is lower than the lowest non-zero dose '
-                    ' (caution).',
-     'function_name': 'low_bmd',
-     'name': 'Low BMD (warning)',
-     'threshold': 3,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 0,
-     'description': 'The BMDL estimate is lower than the lowest non-zero dose '
-                    ' (caution).',
-     'function_name': 'low_bmdl',
-     'name': 'Low BMDL (warning)',
-     'threshold': 3,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The BMD estimate is lower than the lowest non-zero dose '
-                    ' (warning).',
-     'function_name': 'low_bmd',
-     'name': 'Low BMD (serious)',
-     'threshold': 10,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The BMDL estimate is lower than the lowest non-zero dose '
-                    ' (warning).',
-     'function_name': 'low_bmdl',
-     'name': 'Low BMDL (serious)',
-     'threshold': 10,
-     'continuous_on': True,
-     'dichotomous_on': True,
-     'cancer_dichotomous_on': True},
-    {'failure_bin': 1,
-     'description': 'The absolute value of the residual at the control is large, '
-                    'which is often used to estimate the BMR. Thus, the BMR '
-                    'estimate may be inaccurate.',
-     'function_name': 'control_residual',
-     'name': 'Control residual',
-     'threshold': 2,
-     'continuous_on': True,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': False},
-    {'failure_bin': 1,
-     'description': 'The standard deviation estimate at the control is '
-                    'different the the reported deviation, which is often used '
-                    'to estimate the BMR. Thus, the BMR estimate may be inaccurate.',
-     'function_name': 'control_stdev',
-     'name': 'Control stdev',
-     'threshold': 1.5,
-     'continuous_on': True,
-     'dichotomous_on': False,
-     'cancer_dichotomous_on': False}
-]
+        objects = [
+            cls(assessment_id=assessment.id, logic_id=i, **obj)
+            for i, obj in enumerate(text['objects'])
+        ]
+        cls.objects.bulk_create(objects)
