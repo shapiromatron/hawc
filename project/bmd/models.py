@@ -1,15 +1,14 @@
 import collections
 import json
-import logging
 import os
-import random
-import string
 
 from django.db import models
 from django.conf import settings
-from django.core.files import File
+from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
+
+from .bmds_monkeypatch import bmds
 
 
 BMDS_CHOICES = (
@@ -23,6 +22,148 @@ LOGIC_BIN_CHOICES = (
     (1, 'Questionable'),
     (2, 'Not Viable'),
 )
+
+
+class BMDSession(models.Model):
+    endpoint = models.ForeignKey(
+        'animal.Endpoint',
+        related_name='bmd_sessions')
+    dose_units = models.ForeignKey(
+        'assessment.DoseUnits',
+        related_name='bmd_sessions')
+    bmds_version = models.CharField(
+        max_length=10,
+        choices=BMDS_CHOICES)
+    bmrs = JSONField(
+        default=dict)
+    date_executed = models.DateTimeField(
+        null=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        get_latest_by = "last_updated"
+
+    def get_assessment(self):
+        return self.endpoint.get_assessment()
+
+    def get_absolute_url(self):
+        pass
+
+    def get_update_url(self):
+        pass
+
+    def get_delete_url(self):
+        pass
+
+    @classmethod
+    def create_new(cls, endpoint):
+        dose_units = endpoint.get_doses_json(json_encode=False)[0]['id']
+        version = endpoint.assessment.BMD_Settings.BMDS_version
+        return cls.objects.create(
+            endpoint_id=endpoint.id,
+            dose_units_id=dose_units,
+            bmds_version=version)
+
+    @property
+    def is_executed(self):
+        return self.execute is not None
+
+    def execute(self):
+        self._save_models()
+        self._execute_models()
+        self._import_results()
+
+    def _save_models(self, models):
+        pass
+
+    def _execute_models(self):
+        pass
+
+    def _import_results(self):
+        pass
+
+    def get_available_models(self):
+        data_type = self.endpoint.data_type
+        version = self.bmds_version
+        return bmds.get_models_for_version(version)[data_type]
+
+    def get_available_bmrs(self):
+        data_type = self.endpoint.data_type
+        version = self.bmds_version
+        return bmds.get_bmrs_for_version(version)[data_type]
+
+
+class BMDModel(models.Model):
+    session = models.ForeignKey(
+        BMDSession)
+    model_id = models.PositiveSmallIntegerField()
+    bmr_id = models.PositiveSmallIntegerField()
+    name = models.CharField(
+        max_length=25)
+    defaults = JSONField(
+        default=dict)
+    overrides = JSONField(
+        default=dict)
+    date_executed = models.DateTimeField(
+        null=True)
+    execution_error = models.BooleanField(
+        default=False)
+    dfile = models.TextField(
+        blank=True)  # bmds raw output file
+    plot = models.ImageField(
+        upload_to='bmds_plot',
+        blank=True)
+    outputs = JSONField(
+        default=dict)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        get_latest_by = "created"
+
+    def get_assessment(self):
+        return self.session.get_assessment()
+
+    def to_bmds_model(self):
+        pass
+
+    def from_bmds_model(self):
+        pass
+
+
+class SelectedModel(models.Model):
+    endpoint = models.OneToOneField(
+        'animal.Endpoint',
+        related_name='bmd_model')
+    model = models.ForeignKey(
+        BMDModel,
+        null=True)
+    notes = models.TextField(
+        blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
+
+    class Meta:
+        get_latest_by = "created"
+
+    @classmethod
+    def save_new(cls, endpoint):
+        cls.objects.create(endpoint=endpoint)
+
+    def change_selection(self, endpoint=None, notes=''):
+        self.endpoint = endpoint
+        self.notes = notes
+        self.save()
+
+    def get_assessment(self):
+        return self.endpoint.get_assessment()
 
 
 class BMD_Assessment_Settings(models.Model):
