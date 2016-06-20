@@ -485,7 +485,7 @@ ResultGroup.prototype = {
                     return (_.isFinite(d.variance)) ? d.variance : "-";
                 },
                 ci: function(){
-                    return (d.lower_ci && d.upper_ci) ?
+                    return (_.isNumber(d.lower_ci) && _.isNumber(d.upper_ci)) ?
                         "{0} - {1}".printf(d.lower_ci, d.upper_ci) :
                         "-";
                 },
@@ -808,11 +808,14 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
                     .flatten()
                     .filter(function(d){ return _.isNumber(d);})
                     .value(),
-            getXDomain = function(vals){
+            getXDomain = function(scale_type, vals){
+                if (scale_type === "log"){
+                    vals = _.filter(vals, function(d){return d>0;});
+                }
                 var domain = d3.extent(vals);
                 if(domain[0] === domain[1]){
                     // set reasonable defaults for domain if there is no domain.
-                    if (this.scale_type === "log"){
+                    if (scale_type === "log"){
                         domain[0] = domain[0] * 0.1;
                         domain[1] = domain[1] * 10;
                     } else {
@@ -839,7 +842,7 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
             "estimates": estimates,
             "lines": lines,
             "names": names,
-            "x_domain": getXDomain(vals),
+            "x_domain": getXDomain(this.scale_type, vals),
             "x_label_text": data.metric.metric,
         });
     },
