@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 
-from bmd.serializers import BMDModelRunSerializer
 from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper

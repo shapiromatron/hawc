@@ -15,7 +15,6 @@ from scipy import stats
 from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
-from bmd.models import BMD_session
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from utils.models import get_distinct_charfield_opts, get_distinct_charfield
 
@@ -833,21 +832,6 @@ class Endpoint(BaseEndpoint):
         for i in xrange(1, len(resps)):
             change += resps[i] - resps[0]
         return change >= 0
-
-    def bmds_session_exists(self):
-        """
-        Check if at least one BMDS session exists for the specified Endpoint ID
-        """
-        return BMD_session.objects.filter(endpoint=self.pk).count() > 0
-
-    def get_bmds_session(self):
-        """
-        Return BMDS session
-        """
-        try:
-            return BMD_session.objects.filter(endpoint=self.pk).latest('last_updated')
-        except:
-            return None
 
     @classmethod
     def flat_complete_header_row(cls):
