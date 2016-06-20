@@ -5,8 +5,7 @@ import os
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
-from django.core.serializers.json import DjangoJSONEncoder
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 
 from .bmds_monkeypatch import bmds
 
@@ -186,7 +185,8 @@ class BMD_Assessment_Settings(models.Model):
         return self.assessment.__unicode__() + ' BMD settings'
 
     def get_absolute_url(self):
-        return reverse('bmd:assess_settings_detail', args=[self.assessment.pk])
+        return reverse_lazy('bmd:assess_settings_detail',
+                            args=[self.assessment.pk])
 
     def get_assessment(self):
         return self.assessment
@@ -242,41 +242,11 @@ class LogicField(models.Model):
         return self.description
 
     def get_absolute_url(self):
-        return reverse('bmd:assess_settings_detail', args=[self.assessment_id])
-
-    def webpage_return(self, endpoint_data_type, json=False):
-        outputs = {
-            'last_updated': self.last_updated,
-            'logic_id': self.logic_id,
-            'name': self.name,
-            'function_name': self.function_name,
-            'description': self.description,
-            'failure_bin': self.failure_bin,
-            'threshold': self.threshold,
-            'test_on': self.datatype_inclusion(endpoint_data_type)
-        }
-        return json.dumps(outputs, cls=DjangoJSONEncoder) if json else outputs
-
-    def datatype_inclusion(self, endpoint_data_type):
-        crosswalk = {
-            'C': self.continuous_on,
-            'D': self.dichotomous_on,
-            'DC': self.cancer_dichotomous_on
-        }
-        try:
-            return crosswalk[endpoint_data_type]
-        except:
-            return False
+        return reverse_lazy('bmd:assess_settings_detail',
+                            args=[self.assessment_id])
 
     def get_assessment(self):
         return self.assessment
-
-    @classmethod
-    def website_list_return(cls, objs, endpoint_data_type, json=False):
-        logics = []
-        for obj in objs:
-            logics.append(obj.webpage_return(endpoint_data_type, False))
-        return json.dumps(logics, cls=DjangoJSONEncoder) if json else logics
 
     @classmethod
     def build_defaults(cls, assessment):
