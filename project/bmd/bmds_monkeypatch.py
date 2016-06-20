@@ -1,4 +1,4 @@
-from bmds import *   # noqa
+import bmds
 
 
 # monkey-patch execution in bmds package
@@ -6,4 +6,4 @@ def execute(self):
     print('hi!')
 
 
-BMDModel.execute = execute
+bmds.BMDModel.execute = execute
