@@ -117,16 +117,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
         models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
         models.Endpoint.setMaximumPercentControlChange(ret)
-
-        # get BMD
-        ret['BMD'] = None
-        try:
-            model = instance.BMD_session.latest().selected_model
-            if model is not None:
-                ret['BMD'] = BMDModelRunSerializer().to_representation(model)
-        except instance.BMD_session.model.DoesNotExist:
-            pass
-
         return ret
 
     class Meta:
