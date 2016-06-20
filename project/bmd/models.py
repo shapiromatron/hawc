@@ -77,13 +77,13 @@ class LogicField(models.Model):
     failure_bin = models.PositiveSmallIntegerField(
         choices=LOGIC_BIN_CHOICES,
         blank=False,
-        help_text="If the test fails, select the model-bin should the model be placed into.")
+        help_text="If the test fails, select the model-bin should the model be placed into.")  # noqa
     threshold = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         null=True,
         blank=True,
-        help_text="If a threshold is required for the test, threshold can be specified to non-default.")
+        help_text="If a threshold is required for the test, threshold can be specified to non-default.")  # noqa
     continuous_on = models.BooleanField(
         default=True,
         verbose_name="Continuous Datasets")
@@ -147,7 +147,9 @@ class LogicField(models.Model):
             'bmd/fixtures/logic.json'
         )
         with open(fn, 'r') as f:
-            text = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            text = json.loads(
+                f.read(),
+                object_pairs_hook=collections.OrderedDict)
 
         objects = [
             cls(assessment_id=assessment.id, logic_id=i, **obj)
