@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
+import DisplayComponent from 'robTable/components/AggregateGraph';
 import Loading from 'shared/components/Loading';
-import DomainCell from 'robTable/components/DomainCell';
-import './AggregateGraph.css';
 
 
 class AggregateGraph extends Component {
@@ -36,20 +35,8 @@ class AggregateGraph extends Component {
         if (!itemsLoaded) return <Loading />;
         let domains = this.format_qualities();
         return (
-            <div className='aggregate-graph'>
-                <div className='aggregate-flex'>
-
-                    {_.map(domains, (domain) => {
-                        return <DomainCell key={domain.key}
-                                   domain={domain}
-                                   handleClick={this.selectActiveWithName.bind(this)}
-                                   />;
-                    })}
-                </div>
-                <div className='footer muted'>
-                    Click on any cell above to view details.
-                </div>
-            </div>
+            <DisplayComponent domains={domains}
+                              handleClick={this.selectActiveWithName.bind(this)}/>
         );
     }
 }
