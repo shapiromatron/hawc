@@ -2385,7 +2385,6 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         }
 
         xIsStudy = (this.data.settings.x_field!=='metric');
-
         _.extend(this,{
             cell_size: this.data.settings.cell_size,
             dataset: dataset,
@@ -2682,6 +2681,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
     },
     print_details: function($div, d){
+        // TODO: render react tables
         var content = [];
 
         switch (d.type){
@@ -2689,14 +2689,16 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 content.push(d.robs[0].riskofbias.build_details_div({show_study: true}));
                 break;
             case 'study':
-                content.push(RiskOfBiasScore.build_metric_comparison_div(d.robs));
+                window.app.renderRiskOfBiasDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs),
+                    $div[0]);
                 break;
             case 'metric':
-                content.push(RiskOfBiasScore.build_study_comparison_div(d.robs));
+                window.app.renderCrossStudyDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs),
+                    $div[0]);
                 break;
         }
-
-        RiskOfBiasScore.display_details_divs($div, content);
     }
 });
 

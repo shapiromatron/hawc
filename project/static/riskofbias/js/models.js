@@ -96,18 +96,21 @@ _.extend(RiskOfBiasScore, {
             });
         });
     },
-    build_study_comparison_div: function(robs){
-        // construct a div which compares one metric across multiple studies.
-        // This expects an array of study-quality objects where each object is
-        // a different study but ALL objects are the same metric.
-        var content = ['<hr><h3>{0}</h3>'.printf(robs[0].data.metric.domain.name),
-                       '<h4>{0}</h4>'.printf(robs[0].data.metric.metric),
-                       '<div class="help-block">{0}</div>'.printf(robs[0].data.metric.description)];
-        robs.forEach(function(rob){
-            content.push('<h4><a target="_blank" href="{0}">{1}</a></h4>'.printf(rob.study.data.url, rob.study.data.short_citation),
-                         rob._build_details_div());
-        });
-        return $('<div class="row-fluid"></div>').html(content);
+    format_for_react: function(robs){
+        return {
+            domain: robs[0].data.metric.domain.name,
+            metric: robs[0].data.metric,
+            riskofbiases: _.map(robs, function(rob){
+                if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}})}
+                return _.extend(
+                    rob.data, {
+                        study: {
+                            name: rob.study.data.short_citation,
+                            url: rob.study.data.url,
+                        }
+                    })
+            })
+        };
     },
     build_metric_comparison_div: function(robs){
         // construct a div which compares one study across multiple metrics.
