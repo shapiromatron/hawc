@@ -1,6 +1,3 @@
-from .staging import *
+from .staging import *  # noqa
 
 SERVER_ROLE = "production"
-
-# only pass via HTTPS connection
-SESSION_COOKIE_SECURE = True

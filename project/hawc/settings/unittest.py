@@ -4,7 +4,7 @@ Update settings for rapid-unit-testing:
 python manage.py test --settings=hawc.settings.unittest
 
 """
-from .local import *
+from .local import *  # noqa
 
 import logging
 

@@ -1,6 +1,8 @@
-from .base import *
+from .base import *  # noqa
 
 SERVER_ROLE = "staging"
+
+SESSION_COOKIE_SECURE = True
 
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
 MAILGUN_ACCESS_KEY = os.environ.get('MAILGUN_ACCESS_KEY')
