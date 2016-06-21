@@ -2,6 +2,8 @@ from .base import *
 
 SERVER_ROLE = "staging"
 
+SESSION_COOKIE_SECURE = True
+
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
 MAILGUN_ACCESS_KEY = os.environ.get('MAILGUN_ACCESS_KEY')
 MAILGUN_SERVER_NAME = os.environ.get('MAILGUN_SERVER_NAME')
