@@ -425,6 +425,7 @@ class EndpointRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(EndpointRead, self).get_context_data(**kwargs)
+        context['bmd_session'] = self.object.get_latest_bmd_session()
         context['comment_object_type'] = "endpoint"
         context['comment_object_id'] = self.object.pk
         return context

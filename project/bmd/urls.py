@@ -25,6 +25,25 @@ urlpatterns = [
         name='assess_logic_update'),
 
     # BMD create/read/update views
+    url(r'^endpoint/(?P<pk>\d+)/create/$',
+        views.SessionCreate.as_view(),
+        name='session_create'),
+
+    url(r'^endpoint/(?P<pk>\d+)/$',
+        views.SessionList.as_view(),
+        name='session_list'),
+
+    url(r'^session/(?P<pk>\d+)/$',
+        views.SessionDetail.as_view(),
+        name='session_detail'),
+
+    url(r'^session/(?P<pk>\d+)/update/$',
+        views.SessionUpdate.as_view(),
+        name='session_update'),
+
+    url(r'^session/(?P<pk>\d+)/delete/$',
+        views.SessionDelete.as_view(),
+        name='session_delete'),
 
     # BMD template JSON helper-functions
 

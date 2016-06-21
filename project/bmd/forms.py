@@ -17,3 +17,9 @@ class LogicFieldForm(ModelForm):
     class Meta:
         model = models.LogicField
         fields = '__all__'
+
+
+class BMDSessionForm(ModelForm):
+    class Meta:
+        model = models.BMDSession
+        fields = '__all__'

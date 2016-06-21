@@ -1,10 +1,12 @@
-from json import dumps
-
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 from assessment.models import Assessment
-from utils.views import BaseUpdate, BaseDetail, \
-    ProjectManagerOrHigherMixin
+from animal.models import Endpoint
+
+from django.views.generic import RedirectView
+
+from utils.views import BaseUpdate, BaseDetail, BaseDelete, \
+    BaseList, ProjectManagerOrHigherMixin, TeamMemberOrHigherMixin
 
 from . import forms, models
 
@@ -31,17 +33,46 @@ class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object().get_assessment()
 
-    """
-    Return json object for the default model options for a given model_type and
-    BMDS version.
-    """
-    def get(self, request, *args, **kwargs):
-        try:
-            version = BMDS.versions[str(self.kwargs['vbmds'])]
-            run_instance = version.models[
-                self.kwargs['datatype']][self.kwargs['model_name']]()
-            model_data = models.BMD_model_run.get_model_template(
-                self.kwargs['model_name'], run_instance)
-        except:
-            model_data = {'error': 'No BMDS models meet this description.'}
-        return HttpResponse(dumps(model_data), content_type="application/json")
+
+# BMD sessions
+class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Endpoint, pk=kwargs['pk'])
+        return self.object.assessment
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = models.BMDSession.create_new(self.object)
+        return obj.get_update_url()
+
+
+class SessionList(BaseList):
+    parent_model = Endpoint
+    model = models.BMDSession
+    parent_template_name = 'object'
+
+    def get_queryset(self):
+        return self.model.objects.filter(endpoint=self.parent)
+
+
+class SessionDetail(BaseDetail):
+    model = models.BMDSession
+
+
+class SessionUpdate(BaseUpdate):
+
+    success_message = 'BMD session updated.'
+    model = models.BMDSession
+    form_class = forms.BMDSessionForm
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = models.BMDSession.create_new(self.object)
+        return obj.get_update_url()
+
+
+class SessionDelete(BaseDelete):
+    success_message = "BMD session deleted."
+    model = models.BMDSession
+
+    def get_success_url(self):
+        return self.object.endpoint.get_absolute_url()

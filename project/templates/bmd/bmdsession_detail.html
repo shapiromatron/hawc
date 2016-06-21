@@ -1,0 +1,30 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{object}}
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">BMD editing</a></li>
+                <li><a href="{{object.get_update_url}}">Update</a></li>
+                <li><a href="{{object.get_delete_url}}">Delete</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+{% endblock %}
+
+
+{% block extrajs %}
+{% endblock %}

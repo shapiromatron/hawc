@@ -7,6 +7,8 @@ from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse_lazy
 
+from utils.models import get_crumbs
+
 from .bmds_monkeypatch import bmds
 
 
@@ -44,18 +46,25 @@ class BMDSession(models.Model):
 
     class Meta:
         get_latest_by = "last_updated"
+        ordering = ('-last_updated', )
+
+    def __unicode__(self):
+        return 'BMD session'
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.endpoint)
+
     def get_absolute_url(self):
-        pass
+        return reverse_lazy('bmd:session_detail', args=[self.id])
 
     def get_update_url(self):
-        pass
+        return reverse_lazy('bmd:session_update', args=[self.id])
 
     def get_delete_url(self):
-        pass
+        return reverse_lazy('bmd:session_delete', args=[self.id])
 
     @classmethod
     def create_new(cls, endpoint):
@@ -124,6 +133,7 @@ class BMDModel(models.Model):
 
     class Meta:
         get_latest_by = "created"
+        ordering = ('created', )
 
     def get_assessment(self):
         return self.session.get_assessment()

@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.contenttypes import fields
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ObjectDoesNotExist
+from django.apps import apps
 
 from reversion import revisions as reversion
 from scipy import stats
@@ -15,8 +17,10 @@ from scipy import stats
 from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
-from utils.models import get_distinct_charfield_opts, get_distinct_charfield
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, \
+    cleanHTML, tryParseInt
+from utils.models import get_distinct_charfield_opts, \
+    get_distinct_charfield, get_crumbs
 
 
 class Experiment(models.Model):
@@ -139,6 +143,9 @@ class Experiment(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
 
     @property
     def cas_url(self):
@@ -301,6 +308,9 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.experiment)
 
     @property
     def is_generational(self):
@@ -779,6 +789,9 @@ class Endpoint(BaseEndpoint):
     def get_absolute_url(self):
         return reverse('animal:endpoint_detail', args=[str(self.pk)])
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.animal_group)
+
     @property
     def dose_response_available(self):
         return self.data_reported and self.data_extracted
@@ -1003,6 +1016,12 @@ class Endpoint(BaseEndpoint):
 
         ep['percentControlMaxChange'] = val
 
+    def get_latest_bmd_session(self):
+        BMDSession = apps.get_model('bmd', 'BMDSession')
+        try:
+            return self.bmd_sessions.latest()
+        except ObjectDoesNotExist:
+            return None
 
 class ConfidenceIntervalsMixin(object):
     """

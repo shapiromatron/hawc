@@ -18,13 +18,29 @@
 {% block content %}
 
   <h1>{{object}}
-    {% if crud == "Read" and obj_perms.edit %}
+    {% if crud == "Read" %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
+            {% if obj_perms.edit %}
             <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
             <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
             <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>
+            <li class="divider"></li>
+            {% endif %}
+
+            {% if assessment.enable_bmd and object.dose_response_available %}
+              {% if bmd_session %}
+                <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
+                <li><a href="{{bmd_session.get_absolute_url}}">View session</a></li>
+                <li><a href="{% url 'bmd:session_list' object.pk %}">Other options</a></li>
+              {% else %}
+                {% if obj_perms.edit %}
+                  <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
+                  <li><a href="{% url 'bmd:session_create' object.pk %}">Create</a></li>
+                {% endif %}
+              {% endif %}
+            {% endif %}
         </ul>
       </div>
     {% endif %}
