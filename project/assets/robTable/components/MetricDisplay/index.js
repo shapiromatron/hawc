@@ -43,7 +43,7 @@ class MetricDisplay extends Component {
                 <span dangerouslySetInnerHTML={{
                     __html: metric.values[0].metric.description,
                 }} />
-            {(config.isForm && !config.isForm.final) ? null : this.renderScoreRow()}
+            {(config.isForm && config.display != 'final') ? null : this.renderScoreRow()}
                 {config.isForm ? this.renderScoreForm() : null}
             </div>
         );

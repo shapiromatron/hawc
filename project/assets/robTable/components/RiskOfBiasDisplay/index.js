@@ -22,7 +22,7 @@ RiskOfBiasDisplay.propTypes = {
 };
 
 export function renderRiskOfBiasDisplay(data, element){
-    ReactDOM.render(<RiskOfBiasDisplay active={data.active} display='all' />, element);
+    ReactDOM.render(<RiskOfBiasDisplay active={data.scores} config={data.config} />, element);
 }
 
 export default RiskOfBiasDisplay;

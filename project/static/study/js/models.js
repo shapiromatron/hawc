@@ -126,9 +126,7 @@ Study.prototype = {
         this.riskofbias.forEach(function(v, i){
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
-            delete v.key;
             v.criteria = v.values;
-            delete v.values;
             // we only want to calculate score for cases where answer !== N/A, or >0
             var non_zeros = d3.sum(v.criteria.map(function(v){return (v.data.score>0)?1:0;}));
             if (non_zeros>0){
@@ -149,7 +147,6 @@ Study.prototype = {
                 break;
             }
         }
-
         delete this.data.qualities;
     },
     build_breadcrumbs: function(){
@@ -226,10 +223,8 @@ Study.prototype = {
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
             $shower.on('shown', function(){
-                new RiskOfBias_TblCompressed(self,
-                        $rob,
-                        {'show_all_details_startup': false}
-                );
+                var render_obj = {active: self.riskofbias, display: 'final'};
+                window.app.renderRiskOfBiasDisplay(render_obj, $rob[0]);
             });
         }
     },
