@@ -14,6 +14,7 @@ class RiskOfBias extends Component {
                 <RiskOfBiasForm /> :
                 <div>
                     <AggregateGraph />
+                    <hr/>
                     <RiskOfBiasDisplay />
                 </div>
         );

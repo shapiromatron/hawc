@@ -28,19 +28,7 @@ _.extend(RiskOfBiasScore, {
         4: 'Definitely low risk of bias',
         10: 'Not reported',
     },
-    display_details_divs: function($div, content){
-        // insert content into selected div and then draw all animations
-        // associated with this insertion.
-        $(':animated').promise().done(function() {
-            $div.html(content);
-            $div.fadeIn();
-        }, function(){
-            $('.rob_score_bar').each(function(){
-                $(this).data('animate')();
-            });
-        });
-    },
-    format_for_react: function(robs){
+    format_for_react: function(robs, config){
         var scores = _.map(robs, function(rob){
             if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}})}
             return _.extend(
@@ -62,62 +50,10 @@ _.extend(RiskOfBiasScore, {
                       .key(function(d){return d.metric.domain.name;})
                       .key(function(d){return d.metric.metric;})
                       .entries(scores),
-            config: {
-                display: 'final',
-                isForm: false,
-            },
+            config,
         };
     },
-    build_metric_comparison_div: function(robs){
-        // construct a div which compares one study across multiple metrics.
-        // This expects an array of study-quality objects where each object is
-        // a different metric but ALL objects are the same study.
-        var domain_text,
-            content = [];
-        robs.forEach(function(rob){
-            if(rob.data.metric.domain.name !== domain_text){
-                content.push('<hr><h3>{0}</h3>'.printf(rob.data.metric.domain.name));
-                domain_text = rob.data.metric.domain.name;
-            }
-            content.push('<h4>{0}</h4>'.printf(rob.data.metric.metric),
-                         '<div class="help-block">{0}</div>'.printf(rob.data.metric.description),
-                         rob._build_details_div());
-        });
-        return $('<div class="row-fluid"></div>').html(content);
-    }
 });
-RiskOfBiasScore.prototype = {
-    build_details_div: function(options){
-        var content = [];
-        options = options || {};
-        if (options.show_study){
-            content.push('<h3><a href="{0}">{1}</a>: {2}</h3>'.printf(this.study.data.url,
-                                                                      this.study.data.short_citation,
-                                                                      this.data.metric.domain.name));
-        } else {
-            content.push('<h3>{0}</h3>'.printf(this.data.metric.domain.name));
-        }
-        content.push('<h4>{0}</h4>'.printf(this.data.metric.metric),
-                     '<div class="help-block">{0}</div>'.printf(this.data.metric.description),
-                     this._build_details_div());
-        return $('<div class="row-fluid"></div>').html(content);
-    },
-    _build_details_div: function(){
-        // constructs and returns a div which presents an animated score-field and a
-        // description of the associated score.
-        var $div = $('<div class="row-fluid"></div>'),
-            score_div = $('<div class="span3"></div>'),
-            description_div = $('<div class="span9">{0}</div>'.printf(this.data.notes));
-
-        $div.append($('<div class="row-fluid"></div>').html([score_div, description_div]));
-        var bar_width = this.data.score === 10 ? 15: d3.max([d3.round(this.data.score / 4 * 100, 2), 15]),
-            rob_score_bar = $('<div class="rob_score_bar" style="width:15%; background-color:{0};"><span style="padding-right:5px">{1}</span></div>'.printf(this.data.score_color, this.data.score_text))
-                .data('animate', function(){
-                    $(rob_score_bar).animate({'width': bar_width + '%'}, 500);});
-        score_div.append([rob_score_bar, '<p>{0}</p>'.printf(this.data.score_description)]);
-        return $div;
-    }
-};
 
 var RiskOfBias_Donut = function(study, plot_id, options){
     var self = this;
