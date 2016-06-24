@@ -1166,10 +1166,15 @@ _.extend(RoBMetricTable.prototype, TableField.prototype, {
         // override this method to include all metrics,
         // even those not included in serialization.
         var metrics = window.rob_metrics,
-            selected = this.parent.settings[this.schema.name] || [];
-        _.each(metrics, function(d){
-            d.included = _.contains(selected, d.id);
-        });
+            selected = this.parent.settings[this.schema.name] || [],
+            func;
+
+        // by default select all metrics if none are selected
+        func = (selected.length === 0)?
+                function(d){d.included = true;}:
+                function(d){d.included = _.contains(selected, d.id);};
+
+        _.each(metrics, func);
         this.$tbody.empty();
         _.each(metrics, this.fromSerializedRow, this);
     },
