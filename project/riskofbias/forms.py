@@ -167,6 +167,7 @@ class RoBReviewersForm(forms.ModelForm):
                 self.fields[author_field] = selectable.AutoCompleteSelectField(
                     lookup_class=AssessmentTeamMemberOrHigherLookup,
                     label='Reviewer',
+                    required=False,
                     widget=selectable.AutoCompleteSelectWidget)
                 self.fields[author_field].widget\
                     .update_query_parameters({'related': assessment_id})
@@ -178,7 +179,7 @@ class RoBReviewersForm(forms.ModelForm):
         self.fields['final_author'] = selectable.AutoCompleteSelectField(
             lookup_class=AssessmentTeamMemberOrHigherLookup,
             label='Final Reviewer',
-            required=False,
+            required=True,
             widget=selectable.AutoCompleteSelectWidget)
         self.fields['final_author'].widget.update_query_parameters(
             {'related': assessment_id})
@@ -187,7 +188,6 @@ class RoBReviewersForm(forms.ModelForm):
                 self.instance.get_final_rob().author.id
         except (AttributeError):
             pass
-        self.fields['final_author'].required = True
 
     def save(self, commit=True):
         """
