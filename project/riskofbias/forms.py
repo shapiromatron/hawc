@@ -179,7 +179,7 @@ class RoBReviewersForm(forms.ModelForm):
         self.fields['final_author'] = selectable.AutoCompleteSelectField(
             lookup_class=AssessmentTeamMemberOrHigherLookup,
             label='Final Reviewer',
-            required=True,
+            required=False,
             widget=selectable.AutoCompleteSelectWidget)
         self.fields['final_author'].widget.update_query_parameters(
             {'related': assessment_id})
