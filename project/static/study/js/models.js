@@ -223,12 +223,19 @@ Study.prototype = {
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
             $shower.on('shown', function(){
-                var render_obj = {active: self.riskofbias, display: 'final'};
-                window.app.renderRiskOfBiasDisplay(render_obj, $rob[0]);
+                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
+                render_obj = self.format_for_react(self.riskofbias)
+                window.app.renderStudyDisplay(render_obj, $rob[0]);
             });
         }
     },
     build_row: function(){
         return [this.get_url(), this.data.full_citation, this.data.study_type];
+    },
+    format_for_react: function(riskofbias){
+        scores = _.flatten(_.map(riskofbias, function(rob){
+            return rob.values;
+        }));
+        return RiskOfBiasScore.format_for_react(scores)
     },
 };

@@ -29,18 +29,19 @@ _.extend(RiskOfBiasScore, {
         10: 'Not reported',
     },
     format_for_react: function(robs, config){
+        config = config || {display: 'final', isForm: false};
         var scores = _.map(robs, function(rob){
-            if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}})}
+            if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}});}
             return _.extend(
                 rob.data, {
                     domain: rob.data.metric.domain.id,
-                    domain_text: rob.data.metric.domain.name,
+                    domain_name: rob.data.metric.domain.name,
                     study: {
                         name: rob.study.data.short_citation,
                         url: rob.study.data.url,
                     },
                     final: true,
-                })
+                });
         });
 
         return {
