@@ -21,7 +21,7 @@ class Tabs extends React.Component {
 
     render(){
         let editMode = this.props.config.editMode,
-            version = '2.6.0.1';
+            version = this.props.config.bmds_version;
 
         return (
             <div>

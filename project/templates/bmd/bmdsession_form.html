@@ -32,6 +32,7 @@
     {
         "editMode": true,
         "assessment_id": {{ assessment.id }},
+        "bmds_version": "{{assessment.BMD_Settings.BMDS_version}}",
         "endpoint_id": {{ object.endpoint_id }},
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
