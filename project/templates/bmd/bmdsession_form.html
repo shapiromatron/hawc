@@ -17,5 +17,29 @@
 {% endblock %}
 
 {% block content %}
-  {% crispy form %}
+    <h1>{{object}}
+        <a class="btn btn-primary pull-right"
+           href="{{object.get_absolute_url}}">Cancel</a>
+    </h1>
+
+    <div id="bmd"></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "editMode": true,
+        "assessment_id": {{ assessment.id }},
+        "endpoint_id": {{ object.endpoint_id }},
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}"
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.app.bmdStartup();
+    });
+</script>
 {% endblock %}
