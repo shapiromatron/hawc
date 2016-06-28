@@ -28,6 +28,30 @@ const CrossStudyDisplay = (props) => {
     );
 };
 
+CrossStudyDisplay.propTypes = {
+    domain: PropTypes.string.isRequired,
+    metric: PropTypes.shape({
+        metric: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+    }).isRequired,
+    scores: PropTypes.arrayOf(PropTypes.shape({
+        values: PropTypes.arrayOf(PropTypes.shape({
+            values: PropTypes.arrayOf(PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                study: PropTypes.shape({
+                    url: PropTypes.string.isRequired,
+                    name: PropTypes.string.isRequired,
+                }).isRequired,
+                author: PropTypes.object.isRequired,
+                notes: PropTypes.string,
+                score_description: PropTypes.string.isRequired,
+                score_symbol: PropTypes.string.isRequired,
+                score_shade: PropTypes.string.isRequired,
+            })).isRequired,
+        })).isRequired,
+    })).isRequired,
+};
+
 export function renderCrossStudyDisplay(data, element){
     return ReactDOM.render(<CrossStudyDisplay {...data} />, element);
 }

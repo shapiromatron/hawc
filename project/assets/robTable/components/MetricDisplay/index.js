@@ -55,8 +55,6 @@ MetricDisplay.propTypes = {
         key: PropTypes.string.isRequired,
         values: PropTypes.arrayOf(
             PropTypes.shape({
-                domain_id: PropTypes.number,
-                domain_text: PropTypes.string,
                 metric: PropTypes.shape({
                     description: PropTypes.string.isRequired,
                     metric: PropTypes.string.isRequired,

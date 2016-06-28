@@ -57,12 +57,6 @@ class ScoreDisplay extends Component {
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
         author: PropTypes.object.isRequired,
-        domain_id: PropTypes.number,
-        domain_text: PropTypes.string,
-        metric: PropTypes.shape({
-            description: PropTypes.string.isRequired,
-            metric: PropTypes.string.isRequired,
-        }).isRequired,
         notes: PropTypes.string,
         score_description: PropTypes.string.isRequired,
         score_symbol: PropTypes.string.isRequired,

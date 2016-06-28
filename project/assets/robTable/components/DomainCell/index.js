@@ -25,8 +25,8 @@ class DomainCell extends Component {
                 <div className='score-row'>
                     {_.map(domain.values, (score) => {
                         return (
-                            <ScoreCell key={score.id}
-                                       score={score}
+                            <ScoreCell key={score.values[0].id}
+                                       score={score.values[0]}
                                        handleClick={handleClick} />
                         );
                     })}
@@ -40,7 +40,17 @@ class DomainCell extends Component {
 DomainCell.propTypes = {
     domain: PropTypes.shape({
         key: PropTypes.string.isRequired,
-        values: PropTypes.array.isRequired,
+        values: PropTypes.arrayOf(PropTypes.shape({
+            values: PropTypes.arrayOf(PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                score_symbol: PropTypes.string.isRequired,
+                score_shade: PropTypes.string.isRequired,
+                domain_name: PropTypes.string.isRequired,
+                metric: PropTypes.shape({
+                    metric: PropTypes.string.isRequired,
+                }).isRequired,
+            })).isRequired,
+        })).isRequired,
     }).isRequired,
     handleClick: PropTypes.func.isRequired,
 };

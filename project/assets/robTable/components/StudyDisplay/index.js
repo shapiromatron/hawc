@@ -39,6 +39,32 @@ class StudyDisplay extends Component {
 }
 
 StudyDisplay.propTypes = {
+    config: PropTypes.shape({
+        display: PropTypes.string.isRequired,
+        isForm: PropTypes.bool.isRequired,
+    }).isRequired,
+    riskofbias: PropTypes.shape({
+        scores: PropTypes.arrayOf(
+            PropTypes.shape({
+                key: PropTypes.string.isRequired,
+                values: PropTypes.arrayOf(PropTypes.shape({
+                    key: PropTypes.string.isRequired,
+                    values: PropTypes.arrayOf(PropTypes.shape({
+                        score_symbol: PropTypes.string.isRequired,
+                        score_shade: PropTypes.string.isRequired,
+                        domain_name: PropTypes.string.isRequired,
+                        metric: PropTypes.shape({
+                            metric: PropTypes.string.isRequired,
+                            description: PropTypes.string.isRequired,
+                        }).isRequired,
+                        notes: PropTypes.string.isRequired,
+                        score_description: PropTypes.string.isRequired,
+                    }).isRequired).isRequired,
+                }).isRequired).isRequired,
+            }).isRequired
+        ).isRequired,
+    }).isRequired,
+
 };
 
 export function renderStudyDisplay(data, element){

@@ -6,7 +6,7 @@ class ScoreCell extends Component {
 
     handleClick(){
         let { score, handleClick } = this.props;
-        handleClick({domain: score.domain_text, metric: score.metric.metric})
+        handleClick({domain: score.domain_name, metric: score.metric.metric});
     }
 
     render(){
@@ -28,8 +28,12 @@ class ScoreCell extends Component {
 
 ScoreCell.propTypes = {
     score: PropTypes.shape({
-        score_symbol: PropTypes.string,
-        score_shade: PropTypes.string,
+        score_symbol: PropTypes.string.isRequired,
+        score_shade: PropTypes.string.isRequired,
+        domain_name: PropTypes.string.isRequired,
+        metric: PropTypes.shape({
+            metric: PropTypes.string.isRequired,
+        }).isRequired,
     }).isRequired,
     handleClick: PropTypes.func.isRequired,
 };
