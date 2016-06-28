@@ -2681,11 +2681,11 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
     },
     print_details: function($div, d){
-        // delay rendering until modal is displayed, as component depends on accurate width.
         var config = {
             display: 'all',
             isForm: false,
         };
+        // delay rendering until modal is displayed, as component depends on accurate width.
         window.setTimeout(function(){
             switch (d.type){
             case 'cell':

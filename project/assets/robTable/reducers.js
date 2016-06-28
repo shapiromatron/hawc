@@ -60,7 +60,7 @@ function study(state=defaultState, action){
     case types.SELECT_ACTIVE:
         if(_.isEmpty(action.domain)){
             return Object.assign({}, state, {
-                active: domains,
+                active: [],
             });
         }
         if(action.domain === 'all'){

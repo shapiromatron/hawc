@@ -17,23 +17,23 @@ class AggregateGraph extends Component {
         this.props.dispatch(selectActive({...domainName}));
     }
 
-    format_qualities(){
-        let { qualities } = this.props;
-        let domains = _.map(qualities, (quality) => {
-            let score = quality;
-            score.domain = quality.metric.domain.id;
-            score.domain_text = quality.metric.domain.name;
-            return score;
-        });
+    formatRiskofbiasForDisplay(){
+        let domains = _.flatten(_.map(this.props.riskofbiases, (domain) => {
+            return _.map(domain.values, (metric) => {
+                return _.filter(metric.values, (score) => { return score.final; });
+            });
+        }));
+
         return d3.nest()
                  .key((d) => {return d.metric.domain.name;})
+                 .key((d) => {return d.metric.metric;})
                  .entries(domains);
     }
 
     render(){
         let { itemsLoaded } = this.props;
         if (!itemsLoaded) return <Loading />;
-        let domains = this.format_qualities();
+        let domains = this.formatRiskofbiasForDisplay();
         return (
             <DisplayComponent domains={domains}
                               handleClick={this.selectActiveWithName.bind(this)}/>
@@ -44,7 +44,6 @@ class AggregateGraph extends Component {
 function mapStateToProps(state){
     return {
         itemsLoaded: state.study.itemsLoaded,
-        qualities: state.study.qualities,
         riskofbiases: state.study.riskofbiases,
     };
 }
