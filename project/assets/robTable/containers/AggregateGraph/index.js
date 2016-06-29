@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
+import { fetchFullStudyIfNeeded, selectActive } from 'robTable/actions';
 import DisplayComponent from 'robTable/components/AggregateGraph';
 import Loading from 'shared/components/Loading';
 
@@ -9,7 +9,7 @@ import Loading from 'shared/components/Loading';
 class AggregateGraph extends Component {
 
     componentWillMount(){
-        this.props.dispatch(fetchStudyIfNeeded());
+        this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
     selectActiveWithName(domainName){

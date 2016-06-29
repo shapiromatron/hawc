@@ -7,6 +7,7 @@ from . import views, api
 
 router = DefaultRouter()
 router.register(r'study', api.Study, base_name="study")
+router.register(r'final', api.FinalRobStudy, base_name="final")
 
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),

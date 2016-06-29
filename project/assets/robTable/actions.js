@@ -43,10 +43,10 @@ function resetError(){
     };
 }
 
-function updateQualities(qualities){
+function updateFinalScores(scores){
     return {
-        type: types.UPDATE_QUALITIES,
-        qualities,
+        type: types.UPDATE_FINAL_SCORES,
+        scores,
     };
 }
 
@@ -99,10 +99,11 @@ function formatIncomingStudy(study){
 
     return Object.assign({}, study, {
         riskofbiases,
+        final: _.findWhere(dirtyRoBs, {final: true}).scores,
     });
 }
 
-export function fetchStudyIfNeeded(){
+export function fetchFullStudyIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.isFetching || state.itemsLoaded) return;
@@ -134,7 +135,7 @@ export function submitRiskOfBiasScores(scores){
                 state.config.riskofbias.url,
                 state.config.riskofbias.id)}`, opts)
             .then((response) => response.json())
-            .then((json)     => dispatch(updateQualities(json.scores)))
+            .then((json)     => dispatch(updateFinalScores(json.scores)))
             .then(()         => window.location.href = state.config.cancelUrl)
             .catch((ex)      => dispatch(setError(ex)));
     };
