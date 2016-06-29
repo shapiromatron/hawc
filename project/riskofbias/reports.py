@@ -19,7 +19,7 @@ class RoBDOCXReport(HAWCDOCXReport):
 
         for study in d['studies']:
             self.doc.add_heading(study['short_citation'], 2)
-            if len(study['qualities']) > 0:
+            if len(study['riskofbiases']) > 0:
                 self.build_ROB_table(study)
                 self.doc.add_paragraph()
                 self.build_ROB_legend()
@@ -47,11 +47,13 @@ class RoBDOCXReport(HAWCDOCXReport):
 
         # add body
         row = 2
-        for d in study['qualities']:
-            tbl.new_td_txt(row, 0, d['metric']['metric'])
-            tbl.new_td_txt(row, 1, d['score_symbol'], shade=d['score_shade'])
-            tbl.new_td_txt(row, 2, strip_tags(d['notes']))
-            row += 1
+        for rob in study['riskofbiases']:
+            if rob['final'] and rob['active']:
+                for score in rob['scores']:
+                    tbl.new_td_txt(row, 0, score['metric']['metric'])
+                    tbl.new_td_txt(row, 1, score['score_symbol'], shade=score['score_shade'])
+                    tbl.new_td_txt(row, 2, strip_tags(score['notes']))
+                    row += 1
 
         return tbl.render(self.doc)
 

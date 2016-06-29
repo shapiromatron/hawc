@@ -9,7 +9,7 @@ const defaultState = {
     error: null,
     message: null,
     name: '',
-    qualities: [],
+    final: [],
     riskofbiases: [],
     active: [],
 };
@@ -25,7 +25,7 @@ function study(state=defaultState, action){
     case types.RECEIVE:
         return Object.assign({}, state, {
             name: action.study.short_citation,
-            qualities: action.study.qualities,
+            final: action.study.final,
             riskofbiases: action.study.riskofbiases,
             active: action.study.riskofbiases,
             isFetching: false,
@@ -52,9 +52,9 @@ function study(state=defaultState, action){
             error: null,
         });
 
-    case types.UPDATE_QUALITIES:
+    case types.UPDATE_FINAL_SCORES:
         return Object.assign({}, state, {
-            qualities: action.qualities,
+            final: action.score,
         });
 
     case types.SELECT_ACTIVE:

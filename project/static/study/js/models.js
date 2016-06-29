@@ -84,7 +84,8 @@ StudyCollection.prototype = {
 var Study = function(data){
     this.data = data;
     this.riskofbias = [];
-    if(this.data.qualities) this.unpack_riskofbias();
+    this.final = _.findWhere(this.data.riskofbiases, {final: true, active: true});
+    if(this.final) this.unpack_riskofbias();
 };
 _.extend(Study, {
     get_object: function(id, cb){
@@ -110,7 +111,7 @@ Study.prototype = {
             gradient_colors = d3.scale.linear()
                 .domain(RiskOfBiasScore.score_values)
                 .range(_.values(RiskOfBiasScore.score_shades));
-        this.data.qualities.forEach(function(v, i){
+        this.final.scores.forEach(function(v, i){
             v.score_color = gradient_colors(v.score);
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = RiskOfBiasScore.score_text[v.score];
@@ -147,7 +148,6 @@ Study.prototype = {
                 break;
             }
         }
-        delete this.data.qualities;
     },
     build_breadcrumbs: function(){
         var urls = [{ url: this.data.url, name: this.data.short_citation }];

@@ -56,17 +56,17 @@ describe('robVisual Filter actions', () => {
                     {
                         short_citation: 'Reddy and Karnati, 2015',
                         id: 97857,
-                        qualities__score__sum: null,
+                        final_score: null,
                     },
                     {
                         short_citation: 'Rumiantsev et al. 1988',
                         id: 52541,
-                        qualities__score__sum: 19,
+                        final_score: 19,
                     },
                     {
                         short_citation: 'Shen et al., 2004',
                         id: 57040,
-                        qualities__score__sum: 25,
+                        final_score: 25,
                     },
                 ]);
 
@@ -76,17 +76,17 @@ describe('robVisual Filter actions', () => {
                     {
                         short_citation: 'Reddy and Karnati, 2015',
                         id: 97857,
-                        qualities__score__sum: null,
+                        final_score: null,
                     },
                     {
                         short_citation: 'Rumiantsev et al. 1988',
                         id: 52541,
-                        qualities__score__sum: 19,
+                        final_score: 19,
                     },
                     {
                         short_citation: 'Shen et al., 2004',
                         id: 57040,
-                        qualities__score__sum: 25,
+                        final_score: 25,
                     },
                 ]},
             ];

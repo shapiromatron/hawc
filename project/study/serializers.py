@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from riskofbias.serializers import RiskOfBiasSerializer, RiskOfBiasScoreSerializer
+from riskofbias.serializers import RiskOfBiasSerializer
 from utils.helper import SerializerHelper
 
 from . import models
@@ -31,12 +31,18 @@ class VerboseStudySerializer(StudySerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
-    qualities = RiskOfBiasScoreSerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
     class Meta:
         model = models.Study
 
+
+class FinalRobStudySerializer(VerboseStudySerializer):
+
+    def to_representation(self, instance):
+        instance.riskofbiases = instance.riskofbiases.filter(final=True)
+        ret = super(FinalRobStudySerializer, self).to_representation(instance)
+        return ret
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
