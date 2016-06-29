@@ -471,7 +471,10 @@ class Identifiers(models.Model):
 
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
-        content = json.loads(self.content, encoding='utf-8')
+        try:
+            content = json.loads(self.content, encoding='utf-8')
+        except ValueError:
+            raise AttributeError('Content invalid JSON: {}'.format(self.id))
         if self.database == PUBMED:
             ref = Reference(
                 assessment=assessment,
