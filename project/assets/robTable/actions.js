@@ -17,19 +17,6 @@ function receiveStudy(study){
     };
 }
 
-function setMessage(message){
-    return {
-        type: types.SET_MESSAGE,
-        message,
-    };
-}
-
-function resetMessage(){
-    return {
-        type: types.RESET_MESSAGE,
-    };
-}
-
 function setError(error){
     return {
         type: types.SET_ERROR,
@@ -108,7 +95,6 @@ export function fetchFullStudyIfNeeded(){
         let state = getState();
         if (state.isFetching || state.itemsLoaded) return;
         dispatch(requestStudy());
-        dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
                 h.getObjectURL(
@@ -128,7 +114,6 @@ export function submitRiskOfBiasScores(scores){
             patch = formatOutgoingRiskOfBias(state, scores),
             opts = h.fetchPost(state.config.csrf, patch, 'PUT');
 
-        dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
             `${h.getObjectURL(state.config.host,

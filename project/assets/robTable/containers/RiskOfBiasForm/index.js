@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
-import ScrollToMessageBox from 'robTable/components/ScrollToMessageBox';
 import ScrollToErrorBox from 'robTable/components/ScrollToErrorBox';
 import './RiskOfBiasForm.css';
 
@@ -35,12 +34,11 @@ class RiskOfBiasForm extends Component {
     }
 
     render(){
-        let { itemsLoaded, riskofbiases, error, message, config } = this.props;
+        let { itemsLoaded, riskofbiases, error, config } = this.props;
         if (!itemsLoaded) return <Loading />;
 
         return (
             <div className='riskofbias-display'>
-                { message ? <ScrollToMessageBox message={message} /> : null }
                 { error ? <ScrollToErrorBox error={error} /> : null}
                 <form action="">
 
@@ -68,7 +66,6 @@ function mapStateToProps(state){
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,
         error: state.study.error,
-        message: state.study.message,
     };
 }
 

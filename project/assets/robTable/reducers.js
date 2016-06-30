@@ -7,7 +7,6 @@ const defaultState = {
     isFetching: false,
     itemsLoaded: false,
     error: null,
-    message: null,
     name: '',
     final: [],
     riskofbiases: [],
@@ -30,16 +29,6 @@ function study(state=defaultState, action){
             active: action.study.riskofbiases,
             isFetching: false,
             itemsLoaded: true,
-        });
-
-    case types.SET_MESSAGE:
-        return Object.assign({}, state, {
-            message: action.message,
-        });
-
-    case types.RESET_MESSAGE:
-        return Object.assign({}, state, {
-            message: null,
         });
 
     case types.SET_ERROR:
