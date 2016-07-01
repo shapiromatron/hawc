@@ -13,9 +13,14 @@ class RiskOfBiasDisplay extends Component {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
+    isAllShown(){
+        return this.props.active.length ===  this.props.riskofbiases.length;
+    }
+
     handleShowAllClick(){
-        let { dispatch } = this.props;
-        dispatch(selectActive({domain: 'all'}));
+        let { dispatch } = this.props,
+            domains = (this.isAllShown()) ? 'none': 'all';
+        dispatch(selectActive({domain: domains}));
     }
 
     render(){
@@ -26,7 +31,9 @@ class RiskOfBiasDisplay extends Component {
         return (
             <div className='riskofbias-container'>
                 <DisplayComponent active={active} config={config} />
-                <ShowAll handleClick={this.handleShowAllClick.bind(this)} />
+                <ShowAll
+                    allShown={this.isAllShown()}
+                    handleClick={this.handleShowAllClick.bind(this)} />
             </div>
         );
     }
@@ -36,6 +43,7 @@ function mapStateToProps(state){
     return {
         itemsLoaded: state.study.itemsLoaded,
         active: state.study.active,
+        riskofbiases: state.study.riskofbiases,
         config: state.config,
     };
 }
