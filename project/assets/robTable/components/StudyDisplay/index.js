@@ -15,9 +15,14 @@ class StudyDisplay extends Component {
         };
     }
 
+    isAllShown(){
+        return this.state.scores.length == this.props.riskofbias.scores.length;
+    }
+
     selectActive(selection){
         if(selection.domain == 'all'){
-            this.setState({scores: this.props.riskofbias.scores});
+            let scores = (this.isAllShown())? []: this.props.riskofbias.scores;
+            this.setState({scores});
         } else {
             let domain = _.findWhere(this.props.riskofbias.scores, {key: selection.domain});
             if(selection.metric){
@@ -33,7 +38,9 @@ class StudyDisplay extends Component {
         return (<div>
             <AggregateGraph domains={this.props.riskofbias.scores} handleClick={this.selectActive.bind(this)}/>
             <RiskOfBiasDisplay active={this.state.scores} config={this.props.config} />
-            <ShowAll handleClick={this.selectActive.bind(this, {domain: 'all'})}/>
+            <ShowAll
+                allShown={this.isAllShown()}
+                handleClick={this.selectActive.bind(this, {domain: 'all'})}/>
         </div>);
     }
 }
