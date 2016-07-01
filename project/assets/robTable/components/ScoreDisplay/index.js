@@ -14,6 +14,14 @@ class ScoreDisplay extends Component {
         this.checkFlex = this.checkFlex.bind(this);
     }
 
+    componentDidMount() {
+        this.checkFlex();
+        window.addEventListener('resize', this.checkFlex);
+    }
+
+    componentWillUnmount(nextProps, nextState) {
+        window.removeEventListener('resize', this.checkFlex);
+    }
 
     // sets state.flex based on the width of the component.
     checkFlex() {
@@ -24,17 +32,14 @@ class ScoreDisplay extends Component {
         }
     }
 
-    componentDidMount() {
-        this.checkFlex();
-        window.addEventListener('resize', this.checkFlex);
-    }
-
-    componentWillUnmount(nextProps, nextState) {
-        window.removeEventListener('resize', this.checkFlex);
+    copyNotes(e) {
+        e.preventDefault();
+        this.props.copyNotes(this.props.score.notes);
     }
 
     render(){
-        let { score } = this.props;
+        let { score } = this.props,
+            copyTextButton = this.props.copyNotes ? <button className="btn btn-secondary copy-notes" onClick={this.copyNotes.bind(this)}>Copy Notes</button> : null;
         return (
             <div className={`score-display ${this.state.flex}-container`} ref='display'>
                 <div className='flex-1'>
@@ -46,9 +51,12 @@ class ScoreDisplay extends Component {
                     />
                 </div>
                 <hr/>
-                <div className='flex-3' dangerouslySetInnerHTML={{
-                    __html: score.notes,
-                }}></div>
+                <div className='flex-3 score-notes'>
+                    <div dangerouslySetInnerHTML={{
+                        __html: score.notes,
+                    }} />
+                    {copyTextButton}
+                </div>
             </div>
         );
     }
@@ -62,6 +70,7 @@ ScoreDisplay.propTypes = {
         score_symbol: PropTypes.string.isRequired,
         score_shade: PropTypes.string.isRequired,
     }).isRequired,
+    copyNotes: PropTypes.func,
 };
 
 export default ScoreDisplay;

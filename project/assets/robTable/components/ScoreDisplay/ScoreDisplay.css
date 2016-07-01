@@ -2,3 +2,14 @@
     flex: 1;
     padding-bottom: .8rem;
 }
+
+.score-notes {
+    display: flex;
+    flex-flow: column;
+}
+
+.copy-notes {
+    align-items: flex-end;
+    justify-content: flex-end;
+    max-width: 250px;
+}

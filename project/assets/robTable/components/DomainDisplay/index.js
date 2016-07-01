@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import MetricDisplay from 'robTable/components/MetricDisplay';
+import MetricForm from 'robTable/components/MetricForm';
 
 
 class DomainDisplay extends Component {
@@ -11,10 +12,14 @@ class DomainDisplay extends Component {
             <div>
                 <h3>{domain.key}</h3>
                 {_.map(domain.values, (metric) => {
-                    return <MetricDisplay key={metric.key}
-                                          ref={_.last(metric.values).id}
-                                          metric={metric}
-                                          config={config} />;
+                    let props = {
+                        key: metric.key,
+                        ref: _.last(metric.values).id,
+                        metric,
+                        config};
+                    return config.isForm ?
+                        <MetricForm {...props}/> :
+                        <MetricDisplay {...props} />;
                 })}
                 <hr/>
             </div>
