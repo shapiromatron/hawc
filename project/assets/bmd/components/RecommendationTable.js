@@ -59,17 +59,29 @@ class RecommendationTable extends React.Component {
         );
     }
 
+    renderWell(){
+        return (
+            <div className='well'>
+                <button type='button'
+                        className='btn btn-primary'
+                        onClick={this.props.handleSaveSelected}>Save selected model</button>
+            </div>
+        );
+    }
+
     render() {
         return (
             <div>
                 {this.renderTable()}
                 {this.renderForm()}
+                {this.renderWell()}
             </div>
         );
     }
 }
 
 RecommendationTable.propTypes = {
+    handleSaveSelected: React.PropTypes.func.isRequired,
 };
 
 export default RecommendationTable;

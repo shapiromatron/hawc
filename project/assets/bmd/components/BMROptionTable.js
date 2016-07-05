@@ -3,22 +3,17 @@ import React from 'react';
 
 class BMROptionTable extends React.Component {
 
-    handleCreate(){
-        console.log('handled');
-    }
-
     renderEditDiv(){
         if (!this.props.editMode) return;
 
         return (
-            <div className='row-fluid' style={{marginBottom: '1em'}}>
-                <label className="control-label">Add new BMR</label>
+            <div className='row-fluid' >
                 <div className="controls">
-                    <select style={{marginBottom: 0, marginRight: '1em'}}></select>
                     <button
-                        onClick={this.handleCreate.bind(this)}
+                        onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-small"><i className="icon-plus"></i></button>
+                        className="btn btn-small pull-right">
+                            <i className="icon-plus"></i> Create new BMR</button>
                 </div>
             </div>
         );
@@ -59,6 +54,7 @@ class BMROptionTable extends React.Component {
 
 BMROptionTable.propTypes = {
     editMode: React.PropTypes.bool.isRequired,
+    handleCreateBmr: React.PropTypes.func.isRequired,
 };
 
 export default BMROptionTable;

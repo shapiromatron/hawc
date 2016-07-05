@@ -4,11 +4,8 @@ import React from 'react';
 class ModelOptionTable extends React.Component {
 
     handleCreateModel(){
-        console.log('handled');
-    }
-
-    handleToggleVariance(){
-        console.log('handled');
+        let modelName = $(this.refs.modelName).val();
+        this.props.handleCreateModel(modelName);
     }
 
     renderOptionEdits(){
@@ -18,7 +15,9 @@ class ModelOptionTable extends React.Component {
             <div className='row-fluid' style={{marginBottom: '1em'}}>
                 <label className="control-label">Add new model</label>
                 <div className="controls">
-                    <select style={{marginBottom: 0, marginRight: '1em'}}></select>
+                    <select
+                        style={{marginBottom: 0, marginRight: '1em'}}
+                        ref='modelName'></select>
                     <button
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
@@ -37,7 +36,7 @@ class ModelOptionTable extends React.Component {
 
         return (
             <button
-                   onClick={this.handleToggleVariance.bind(this)}
+                   onClick={this.props.handleVarianceToggle}
                    type="button"
                    className='btn btn-small pull-right'
                    title='Change the variance model for all continuous models'
@@ -71,6 +70,8 @@ class ModelOptionTable extends React.Component {
 ModelOptionTable.propTypes = {
     editMode: React.PropTypes.bool.isRequired,
     dataType: React.PropTypes.string.isRequired,
+    handleVarianceToggle: React.PropTypes.func.isRequired,
+    handleCreateModel: React.PropTypes.func.isRequired,
 };
 
 export default ModelOptionTable;

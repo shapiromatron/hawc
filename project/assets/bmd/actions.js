@@ -39,3 +39,58 @@ export function showOutputModal(){
     showModal(types.OUTPUT_MODAL_ID);
 }
 
+export function execute(){
+    return {
+        type: 'execute',
+    };
+}
+
+export function toggleVariance(){
+    return {
+        type: 'toggleVariance',
+    };
+}
+
+export function createModel(modelName){
+    return {
+        type: 'createModel',
+        modelName,
+    };
+}
+
+export function updateModel(){
+    return {
+        type: 'updateModel',
+    };
+}
+
+export function deleteModel(){
+    return {
+        type: 'deleteModel',
+    };
+}
+
+
+export function createBmr(){
+    return {
+        type: 'createBmr',
+    };
+}
+
+export function updateBmr(){
+    return {
+        type: 'updateBmr',
+    };
+}
+
+export function deleteBmr(){
+    return {
+        type: 'deleteBmr',
+    };
+}
+
+export function saveSelected(){
+    return {
+        type: 'saveSelected',
+    };
+}

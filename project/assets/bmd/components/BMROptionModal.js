@@ -88,8 +88,8 @@ class BMROptionModal extends React.Component {
 
                 <EditableModalFooter
                     editMode={editMode}
-                    handleSave={this.handleSave.bind(this)}
-                    handleDelete={this.handleDelete.bind(this)} />
+                    handleSave={this.props.handleSave}
+                    handleDelete={this.props.handleDelete} />
             </div>
         );
     }
@@ -97,6 +97,8 @@ class BMROptionModal extends React.Component {
 
 BMROptionModal.propTypes = {
     editMode: React.PropTypes.bool.isRequired,
+    handleSave: React.PropTypes.func.isRequired,
+    handleDelete: React.PropTypes.func.isRequired,
 };
 
 export default BMROptionModal;

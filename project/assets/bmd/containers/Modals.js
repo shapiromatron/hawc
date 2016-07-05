@@ -9,6 +9,10 @@ import {
     showOptionModal,
     showBMRModal,
     showOutputModal,
+    updateModel,
+    deleteModel,
+    updateBmr,
+    deleteBmr,
 } from 'bmd/actions';
 
 
@@ -26,14 +30,34 @@ class Modals extends React.Component {
         this.props.dispatch(showOutputModal);
     }
 
+    handleModelUpdate(){
+        this.props.dispatch(updateModel());
+    }
+
+    handleModelDelete(){
+        this.props.dispatch(deleteModel());
+    }
+
+    handleBmrUpdate(){
+        this.props.dispatch(updateBmr());
+    }
+
+    handleBmrDelete(){
+        this.props.dispatch(deleteBmr());
+    }
 
     render() {
         let {editMode} = this.props.config;
         return (
             <div>
-
-                <ModelOptionModal editMode={editMode} />
-                <BMROptionModal editMode={editMode} />
+                <ModelOptionModal
+                    editMode={editMode}
+                    handleSave={this.handleModelUpdate.bind(this)}
+                    handleDelete={this.handleModelDelete.bind(this)}/>
+                <BMROptionModal
+                    editMode={editMode}
+                    handleSave={this.handleBmrUpdate.bind(this)}
+                    handleDelete={this.handleBmrDelete.bind(this)} />
                 <OutputModal />
 
                 <button type='button'

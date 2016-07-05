@@ -13,6 +13,11 @@ import OutputTable from 'bmd/components/OutputTable';
 
 import {
     fetchEndpoint,
+    execute,
+    toggleVariance,
+    createModel,
+    createBmr,
+    saveSelected,
 } from 'bmd/actions';
 
 
@@ -36,7 +41,23 @@ class Tabs extends React.Component {
     }
 
     handleExecute(){
-        console.log('handled');
+        this.props.dispatch(execute());
+    }
+
+    handleVarianceToggle(){
+        this.props.dispatch(toggleVariance());
+    }
+
+    handleCreateModel(modelName){
+        this.props.dispatch(createModel(modelName));
+    }
+
+    handleCreateBmr(){
+        this.props.dispatch(createBmr());
+    }
+
+    handleSaveSelected(){
+        this.props.dispatch(saveSelected());
     }
 
     isReady(){
@@ -75,9 +96,12 @@ class Tabs extends React.Component {
                         <div className="row-fluid">
                             <ModelOptionTable
                                 editMode={editMode}
-                                dataType={dataType}/>
+                                dataType={dataType}
+                                handleVarianceToggle={this.handleVarianceToggle.bind(this)}
+                                handleCreateModel={this.handleCreateModel.bind(this)}/>
                             <BMROptionTable
-                                editMode={editMode} />
+                                editMode={editMode}
+                                handleCreateBmr={this.handleCreateBmr.bind(this)}/>
                         </div>
                         <ExecuteWell
                             editMode={editMode}
@@ -87,7 +111,8 @@ class Tabs extends React.Component {
                         <OutputTable />
                     </div>
                     <div id="recommendations" className="tab-pane">
-                        <RecommendationTable />
+                        <RecommendationTable
+                            handleSaveSelected={this.handleSaveSelected.bind(this)}/>
                     </div>
                 </div>
 
