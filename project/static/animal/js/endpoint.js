@@ -235,8 +235,11 @@ var Endpoint = function(data, options){
     this.unpack_doses();
 };
 _.extend(Endpoint, {
+    get_endpoint_url: function(id){
+        return '/ani/api/endpoint/{0}/'.printf(id);
+    },
     get_object: function(id, cb){
-        $.get('/ani/api/endpoint/{0}/'.printf(id), function(d){
+        $.get(Endpoint.get_endpoint_url(id), function(d){
             cb(new Endpoint(d));
         });
     },
@@ -629,7 +632,10 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         doses = d3.extent(doses)
         if (doses.length !== 2) return "linear";
         return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? "log" : "linear";
-    }
+    },
+    renderPlot: function($div){
+        new EndpointPlotContainer(this, $div);
+    },
 });
 
 

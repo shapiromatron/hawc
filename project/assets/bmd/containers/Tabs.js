@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import $ from '$';
 
+import Loading from 'shared/components/Loading';
+
 import DoseResponse from 'bmd/components/DoseResponse';
 import ModelOptionTable from 'bmd/components/ModelOptionTable';
 import BMROptionTable from 'bmd/components/BMROptionTable';
@@ -9,11 +11,21 @@ import ExecuteWell from 'bmd/components/ExecuteWell';
 import RecommendationTable from 'bmd/components/RecommendationTable';
 import OutputTable from 'bmd/components/OutputTable';
 
+import {
+    fetchEndpoint,
+} from 'bmd/actions';
+
 
 class Tabs extends React.Component {
 
-    componentDidMount(){
-        $('#tabs a:first').tab('show');
+    componentWillMount(){
+        this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
+    }
+
+    componentDidUpdate(){
+        if ($('.tab-pane.active').length === 0){
+            $('#tabs a:first').tab('show');
+        }
     }
 
     handleTabClick(event){
@@ -27,10 +39,18 @@ class Tabs extends React.Component {
         console.log('handled');
     }
 
+    isReady(){
+        return (this.props.endpoint !== null);
+    }
+
     render(){
         let editMode = this.props.config.editMode,
             version = this.props.config.bmds_version,
             showResultsTabs = (editMode)?'':'disabled';  // todo - only show if results available
+
+        if (!this.isReady()){
+            return <Loading />;
+        }
 
         return (
             <div>
@@ -76,6 +96,7 @@ class Tabs extends React.Component {
 function mapStateToProps(state) {
     return {
         config: state.config,
+        endpoint: state.bmd.endpoint,
     };
 }
 
