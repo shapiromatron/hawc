@@ -15,12 +15,26 @@ var showModal = function(name){
             endpoint,
         };
     },
+    receiveSession = function(settings){
+        return {
+            type: types.RECEIVE_SESSION,
+            settings,
+        };
+    },
     fetchEndpoint = function(id){
         return (dispatch, getState) => {
             const url = Endpoint.get_endpoint_url(id);
             return fetch(url)
                 .then((response) => response.json())
                 .then((json) => dispatch(receiveEndpoint(new Endpoint(json))))
+                .catch((ex) => console.error('Endpoint parsing failed', ex));
+        };
+    },
+    fetchSessionSettings = function(session_url){
+        return (dispatch, getState) => {
+            return fetch(session_url)
+                .then((response) => response.json())
+                .then((json) => dispatch(receiveSession(json)))
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
@@ -81,6 +95,7 @@ var showModal = function(name){
     };
 
 export {fetchEndpoint};
+export {fetchSessionSettings};
 export {showOptionModal};
 export {showBMRModal};
 export {showOutputModal};

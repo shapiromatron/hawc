@@ -13,6 +13,7 @@ import OutputTable from 'bmd/components/OutputTable';
 
 import {
     fetchEndpoint,
+    fetchSessionSettings,
     execute,
     toggleVariance,
     createModel,
@@ -25,6 +26,7 @@ class Tabs extends React.Component {
 
     componentWillMount(){
         this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
+        this.props.dispatch(fetchSessionSettings(this.props.config.session_url));
     }
 
     componentDidUpdate(){

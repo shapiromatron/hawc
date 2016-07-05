@@ -66,6 +66,9 @@ class BMDSession(models.Model):
     def get_delete_url(self):
         return reverse_lazy('bmd:session_delete', args=[self.id])
 
+    def get_data_api(self):
+        return reverse_lazy('bmd:api:bmd_session-detail', args=[self.id])
+
     @classmethod
     def create_new(cls, endpoint):
         dose_units = endpoint.get_doses_json(json_encode=False)[0]['id']

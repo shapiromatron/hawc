@@ -6,6 +6,10 @@ import * as types from 'bmd/constants';
 const defaultState = {
     endpoint: null,
     dataType: null,
+    models: [],
+    bmrs: [],
+    allModelOptions: [],
+    allBmrOptions: [],
 };
 
 function bmd(state=defaultState, action){
@@ -15,6 +19,14 @@ function bmd(state=defaultState, action){
         return Object.assign({}, state, {
             endpoint: action.endpoint,
             dataType: action.endpoint.data.data_type,
+        });
+
+    case types.RECEIVE_SESSION:
+        return Object.assign({}, state, {
+            models: action.settings.models,
+            bmrs: action.settings.bmrs,
+            allModelOptions: action.settings.allModelOptions,
+            allBmrOptions: action.settings.allBmrOptions,
         });
 
     default:
