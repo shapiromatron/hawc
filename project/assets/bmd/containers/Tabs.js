@@ -5,6 +5,7 @@ import $ from '$';
 import DoseResponse from 'bmd/components/DoseResponse';
 import ModelOptionTable from 'bmd/components/ModelOptionTable';
 import BMROptionTable from 'bmd/components/BMROptionTable';
+import ExecuteWell from 'bmd/components/ExecuteWell';
 import RecommendationTable from 'bmd/components/RecommendationTable';
 import OutputTable from 'bmd/components/OutputTable';
 
@@ -17,6 +18,10 @@ class Tabs extends React.Component {
 
     handleTabClick(event){
         $(event.currentTarget).tab('show');
+    }
+
+    handleExecute(){
+        console.log('handled');
     }
 
     render(){
@@ -47,9 +52,9 @@ class Tabs extends React.Component {
                             <ModelOptionTable editMode={editMode} />
                             <BMROptionTable editMode={editMode} />
                         </div>
-                        <div className='well'>
-                            <a className='btn btn-primary'>Execute</a>
-                        </div>
+                        <ExecuteWell
+                            editMode={editMode}
+                            handleExecute={this.handleExecute.bind(this)} />
                     </div>
                     <div id="results" className="tab-pane">
                         <OutputTable />
