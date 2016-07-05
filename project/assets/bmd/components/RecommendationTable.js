@@ -3,7 +3,36 @@ import React from 'react';
 
 class RecommendationTable extends React.Component {
 
-    render() {
+    renderForm(){
+        return (
+            <form className="form-horizontal">
+
+                <div className="control-group form-row">
+                    <label for="selected_model"
+                           className="control-label">Selected model</label>
+                    <div className="controls">
+                        <select
+                            id="selected_model"
+                            name="selected_model"></select>
+                    </div>
+                </div>
+
+                <div className="control-group form-row">
+                    <label for="override_notes"
+                           className="control-label">Notes</label>
+                    <div className="controls">
+                        <textarea id="override_notes"
+                            name="override_notes"
+                            rows="5"
+                            cols="40"></textarea>
+                    </div>
+                </div>
+
+            </form>
+        );
+    }
+
+    renderTable(){
         return (
             <table className="table table-striped table-condensed">
                 <thead>
@@ -27,6 +56,15 @@ class RecommendationTable extends React.Component {
                     </tr>
                 </tbody>
             </table>
+        );
+    }
+
+    render() {
+        return (
+            <div>
+                {this.renderTable()}
+                {this.renderForm()}
+            </div>
         );
     }
 }
