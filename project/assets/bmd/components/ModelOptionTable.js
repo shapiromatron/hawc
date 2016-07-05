@@ -31,7 +31,10 @@ class ModelOptionTable extends React.Component {
     }
 
     renderToggleVarianceBtn(){
-        // todo: only render if dataType == 'C'
+        if (this.props.dataType !== 'C'){
+            return null;
+        }
+
         return (
             <button
                    onClick={this.handleToggleVariance.bind(this)}
@@ -67,6 +70,7 @@ class ModelOptionTable extends React.Component {
 
 ModelOptionTable.propTypes = {
     editMode: React.PropTypes.bool.isRequired,
+    dataType: React.PropTypes.string.isRequired,
 };
 
 export default ModelOptionTable;

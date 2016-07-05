@@ -5,6 +5,7 @@ import * as types from 'bmd/constants';
 
 const defaultState = {
     endpoint: null,
+    dataType: null,
 };
 
 function bmd(state=defaultState, action){
@@ -13,6 +14,7 @@ function bmd(state=defaultState, action){
     case types.RECEIVE_ENDPOINT:
         return Object.assign({}, state, {
             endpoint: action.endpoint,
+            dataType: action.endpoint.data.data_type,
         });
 
     default:

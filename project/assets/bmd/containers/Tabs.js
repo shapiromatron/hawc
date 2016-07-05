@@ -44,8 +44,8 @@ class Tabs extends React.Component {
     }
 
     render(){
-        let editMode = this.props.config.editMode,
-            version = this.props.config.bmds_version,
+        let {editMode, bmds_version} = this.props.config,
+            {endpoint, dataType} = this.props,
             showResultsTabs = (editMode)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
@@ -67,14 +67,17 @@ class Tabs extends React.Component {
 
                 <div className="tab-content">
                     <div id="setup" className="tab-pane">
-                        <DoseResponse endpoint={this.props.endpoint} />
+                        <DoseResponse endpoint={endpoint} />
                         <h3>Selected models and options</h3>
                         <p>
-                            <i>BMDS version: {version}</i>
+                            <i>BMDS version: {bmds_version}</i>
                         </p>
                         <div className="row-fluid">
-                            <ModelOptionTable editMode={editMode} />
-                            <BMROptionTable editMode={editMode} />
+                            <ModelOptionTable
+                                editMode={editMode}
+                                dataType={dataType}/>
+                            <BMROptionTable
+                                editMode={editMode} />
                         </div>
                         <ExecuteWell
                             editMode={editMode}
@@ -97,6 +100,7 @@ function mapStateToProps(state) {
     return {
         config: state.config,
         endpoint: state.bmd.endpoint,
+        dataType: state.bmd.dataType,
     };
 }
 
