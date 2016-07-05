@@ -7,14 +7,6 @@ import EditableModalFooter from 'bmd/components/EditableModalFooter';
 
 class BMROptionModal extends React.Component {
 
-    handleSave(){
-        console.log('handled');
-    }
-
-    handleDelete(){
-        console.log('handled');
-    }
-
     renderReadOnlyTable(){
         return (
             <table className="table table-condensed table-striped">
