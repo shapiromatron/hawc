@@ -58,7 +58,7 @@ class ModelOptionModal extends React.Component {
 
     render() {
         let {editMode} = this.props,
-            modelName = 'Multistage',
+            modelName = this.props.model,
             title = (editMode)?`Edit ${modelName} options`: `${modelName} options`,
             tableFunc = (editMode)? this.renderEditMode: this.renderReadOnly;
 
@@ -82,6 +82,7 @@ class ModelOptionModal extends React.Component {
 }
 
 ModelOptionModal.propTypes = {
+    model: React.PropTypes.string,
     editMode: React.PropTypes.bool.isRequired,
     handleSave: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,

@@ -8,8 +8,18 @@ class ModelOptionTable extends React.Component {
         this.props.handleCreateModel(modelName);
     }
 
+    handleRowClick(modelIndex){
+        this.props.handleModalDisplay(modelIndex);
+    }
+
+    renderOption(d, i){
+        return <option key={d} value={d}>{d}</option>;
+    }
+
     renderOptionEdits(){
         if (!this.props.editMode) return;
+
+        let {allOptions} = this.props;
 
         return (
             <div className='row-fluid' style={{marginBottom: '1em'}}>
@@ -17,7 +27,7 @@ class ModelOptionTable extends React.Component {
                 <div className="controls">
                     <select
                         style={{marginBottom: 0, marginRight: '1em'}}
-                        ref='modelName'></select>
+                        ref='modelName'>{allOptions.map(this.renderOption)}</select>
                     <button
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
@@ -44,6 +54,24 @@ class ModelOptionTable extends React.Component {
         );
     }
 
+    renderRow(d, i){
+        let header = (this.props.editMode)?
+             'View/edit': 'View';
+
+        return (
+            <tr key={i}>
+                <td>{d}</td>
+                <td></td>
+                <td>
+                    <button
+                        type="button"
+                        className='btn btn-link'
+                        onClick={this.handleRowClick.bind(this, i)}>{header}</button>
+                </td>
+            </tr>
+        );
+    }
+
     render() {
         let header = (this.props.editMode)?
              'View/edit': 'View';
@@ -59,6 +87,7 @@ class ModelOptionTable extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
+                        {this.props.models.map(this.renderRow.bind(this))}
                     </tbody>
                 </table>
                 {this.renderOptionEdits()}
@@ -72,6 +101,9 @@ ModelOptionTable.propTypes = {
     dataType: React.PropTypes.string.isRequired,
     handleVarianceToggle: React.PropTypes.func.isRequired,
     handleCreateModel: React.PropTypes.func.isRequired,
+    handleModalDisplay: React.PropTypes.func.isRequired,
+    models: React.PropTypes.array.isRequired,
+    allOptions: React.PropTypes.array.isRequired,
 };
 
 export default ModelOptionTable;

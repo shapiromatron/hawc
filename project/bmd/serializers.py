@@ -13,6 +13,6 @@ class BMDSessionSerializer(serializers.ModelSerializer):
         ret = super(BMDSessionSerializer, self).to_representation(instance)
         ret['models'] = []
         ret['bmrs'] = []
-        ret['allModelOptions'] = []
         ret['allBmrOptions'] = []
+        ret['allModelOptions'] = ['a', 'b', 'c']
         return ret

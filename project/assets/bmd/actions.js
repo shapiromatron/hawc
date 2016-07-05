@@ -38,8 +38,19 @@ var showModal = function(name){
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
-    showOptionModal = function(){
-        showModal(types.OPTION_MODAL_ID);
+    setModel = function(modelIndex){
+        return {
+            type: types.SELECT_MODEL,
+            modelIndex,
+        };
+    },
+    showOptionModal = function(modelIndex){
+        return (dispatch, getState) => {
+            // create a new noop Promise to chain events
+            return new Promise((res, rej)=>{res();})
+                .then(() => dispatch(setModel(modelIndex)))
+                .then(() => showModal(types.OPTION_MODAL_ID));
+        };
     },
     showBMRModal = function(){
         showModal(types.BMR_MODAL_ID);
@@ -59,18 +70,18 @@ var showModal = function(name){
     },
     createModel = function(modelName){
         return {
-            type: 'createModel',
+            type: types.CREATE_MODEL,
             modelName,
         };
     },
     updateModel = function(){
         return {
-            type: 'updateModel',
+            type: types.DELETE_MODEL,
         };
     },
     deleteModel = function(){
         return {
-            type: 'deleteModel',
+            type: types.DELETE_MODEL,
         };
     },
     createBmr = function(){

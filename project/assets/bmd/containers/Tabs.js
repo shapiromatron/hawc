@@ -14,6 +14,7 @@ import OutputTable from 'bmd/components/OutputTable';
 import {
     fetchEndpoint,
     fetchSessionSettings,
+    showOptionModal,
     execute,
     toggleVariance,
     createModel,
@@ -52,6 +53,10 @@ class Tabs extends React.Component {
 
     handleCreateModel(modelName){
         this.props.dispatch(createModel(modelName));
+    }
+
+    handleModalDisplay(modelIndex){
+        this.props.dispatch(showOptionModal(modelIndex));
     }
 
     handleCreateBmr(){
@@ -100,7 +105,10 @@ class Tabs extends React.Component {
                                 editMode={editMode}
                                 dataType={dataType}
                                 handleVarianceToggle={this.handleVarianceToggle.bind(this)}
-                                handleCreateModel={this.handleCreateModel.bind(this)}/>
+                                handleCreateModel={this.handleCreateModel.bind(this)}
+                                handleModalDisplay={this.handleModalDisplay.bind(this)}
+                                models={this.props.models}
+                                allOptions={this.props.allModelOptions}/>
                             <BMROptionTable
                                 editMode={editMode}
                                 handleCreateBmr={this.handleCreateBmr.bind(this)}/>
@@ -128,6 +136,8 @@ function mapStateToProps(state) {
         config: state.config,
         endpoint: state.bmd.endpoint,
         dataType: state.bmd.dataType,
+        models: state.bmd.models,
+        allModelOptions: state.bmd.allModelOptions,
     };
 }
 
