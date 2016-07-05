@@ -1,6 +1,7 @@
 .score-bar {
-    width: 80%;
-    padding: 0 10px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px 0;
 }
 
 .score-symbol {

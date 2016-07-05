@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactQuill from 'react-quill';
 import '../../../../node_modules/quill/dist/quill.base.css';
 import '../../../../node_modules/quill/dist/quill.snow.css';
@@ -75,6 +75,13 @@ class ScoreForm extends Component {
 }
 
 ScoreForm.propTypes = {
+    score: PropTypes.shape({
+        score: PropTypes.number.isRequired,
+        notes: PropTypes.string.isRequired,
+        metric: PropTypes.shape({
+            metric: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
 };
 
 export default ScoreForm;

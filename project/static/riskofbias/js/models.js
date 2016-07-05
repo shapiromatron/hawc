@@ -10,62 +10,6 @@ RiskOfBiasStudy.prototype = {
     },
 };
 
-
-var RiskOfBias = function(data){
-    this.data = data;
-    this.unpack_scores();
-};
-RiskOfBias.prototype = {
-    unpack_scores: function(){
-        var self = this,
-            scores = [],
-            gradient_colors = d3.scale.linear()
-                .domain(RiskOfBiasScore.score_values)
-                .range(_.values(RiskOfBiasScore.score_shades));
-
-        this.data.scores.forEach(function(v, i){
-            v.score_color = gradient_colors(v.score);
-            v.score_text_color = String.contrasting_color(v.score_color);
-            v.score_text = RiskOfBiasScore.score_text[v.score];
-            scores.push(new RiskOfBiasScore(self, v));
-        });
-
-        this.scores = d3.nest()
-                        .key(function(d){return d.data.metric.domain.name;})
-                        .entries(scores);
-
-        this.scores.forEach(function(v, i){
-            v.domain = v.values[0].data.metric.domain.id;
-            v.domain_text = v.values[0].data.metric.domain.name;
-            delete v.key;
-            v.criteria = v.values;
-            delete v.values;
-            // we only want to calculate score for cases where answer !== N/A, or >0
-            var non_zeros = d3.sum(v.criteria.map(function(v){return (v.data.score>0)?1:0;}));
-            if (non_zeros>0){
-                v.score = d3.round(d3.sum(v.criteria, function(v,i){return v.data.score;})/non_zeros,2);
-            } else {
-                v.score = 0;
-            }
-            v.score_text = (v.score>0) ? v.score : 'N/A';
-            v.score_color = gradient_colors(v.score);
-            v.score_text_color = String.contrasting_color(v.score_color);
-        });
-
-        // try to put the 'other' domain at the end
-        var l = this.scores.length;
-        for(var i=0; i<l; i++){
-            if (this.scores[i].domain_text.toLowerCase() === 'other'){
-                this.scores.push(this.scores.splice(i, 1)[0]);
-                break;
-            }
-        }
-
-        delete this.data.scores;
-    },
-};
-
-
 var RiskOfBiasScore = function(study, data){
     this.study = study;
     this.data = data;
@@ -84,273 +28,33 @@ _.extend(RiskOfBiasScore, {
         4: 'Definitely low risk of bias',
         10: 'Not reported',
     },
-    display_details_divs: function($div, content){
-        // insert content into selected div and then draw all animations
-        // associated with this insertion.
-        $(':animated').promise().done(function() {
-            $div.html(content);
-            $div.fadeIn();
-        }, function(){
-            $('.rob_score_bar').each(function(){
-                $(this).data('animate')();
-            });
-        });
-    },
-    build_study_comparison_div: function(robs){
-        // construct a div which compares one metric across multiple studies.
-        // This expects an array of study-quality objects where each object is
-        // a different study but ALL objects are the same metric.
-        var content = ['<hr><h3>{0}</h3>'.printf(robs[0].data.metric.domain.name),
-                       '<h4>{0}</h4>'.printf(robs[0].data.metric.metric),
-                       '<div class="help-block">{0}</div>'.printf(robs[0].data.metric.description)];
-        robs.forEach(function(rob){
-            content.push('<h4><a target="_blank" href="{0}">{1}</a></h4>'.printf(rob.study.data.url, rob.study.data.short_citation),
-                         rob._build_details_div());
-        });
-        return $('<div class="row-fluid"></div>').html(content);
-    },
-    build_metric_comparison_div: function(robs){
-        // construct a div which compares one study across multiple metrics.
-        // This expects an array of study-quality objects where each object is
-        // a different metric but ALL objects are the same study.
-        var domain_text,
-            content = [];
-        robs.forEach(function(rob){
-            if(rob.data.metric.domain.name !== domain_text){
-                content.push('<hr><h3>{0}</h3>'.printf(rob.data.metric.domain.name));
-                domain_text = rob.data.metric.domain.name;
-            }
-            content.push('<h4>{0}</h4>'.printf(rob.data.metric.metric),
-                         '<div class="help-block">{0}</div>'.printf(rob.data.metric.description),
-                         rob._build_details_div());
-        });
-        return $('<div class="row-fluid"></div>').html(content);
-    }
-});
-RiskOfBiasScore.prototype = {
-    build_details_div: function(options){
-        var content = [];
-        options = options || {};
-        if (options.show_study){
-            content.push('<h3><a href="{0}">{1}</a>: {2}</h3>'.printf(this.study.data.url,
-                                                                      this.study.data.short_citation,
-                                                                      this.data.metric.domain.name));
-        } else {
-            content.push('<h3>{0}</h3>'.printf(this.data.metric.domain.name));
-        }
-        content.push('<h4>{0}</h4>'.printf(this.data.metric.metric),
-                     '<div class="help-block">{0}</div>'.printf(this.data.metric.description),
-                     this._build_details_div());
-        return $('<div class="row-fluid"></div>').html(content);
-    },
-    _build_details_div: function(){
-        // constructs and returns a div which presents an animated score-field and a
-        // description of the associated score.
-        var $div = $('<div class="row-fluid"></div>'),
-            score_div = $('<div class="span3"></div>'),
-            description_div = $('<div class="span9">{0}</div>'.printf(this.data.notes));
-
-        $div.append($('<div class="row-fluid"></div>').html([score_div, description_div]));
-        var bar_width = this.data.score === 10 ? 15: d3.max([d3.round(this.data.score / 4 * 100, 2), 15]),
-            rob_score_bar = $('<div class="rob_score_bar" style="width:15%; background-color:{0};"><span style="padding-right:5px">{1}</span></div>'.printf(this.data.score_color, this.data.score_text))
-                .data('animate', function(){
-                    $(rob_score_bar).animate({'width': bar_width + '%'}, 500);});
-        score_div.append([rob_score_bar, '<p>{0}</p>'.printf(this.data.score_description)]);
-        return $div;
-    }
-};
-
-
-var RiskOfBias_TblCompressed = function(riskofbias, div, options){
-    this.riskofbias = riskofbias;
-    this.$div = $(div);
-    this.build_table();
-
-    if (options && options.show_all_details_startup){
-        this.show_details_div();
-    }
-};
-RiskOfBias_TblCompressed.prototype = {
-    build_table: function(){
-        var self = this;
-        this.tbl = $('<table class="table table-condensed"></table>');
-        this.build_tbody();
-        this.build_footer();
-        this.selected_div = $('<div style="display:none"></div>');
-        this.$div.html([this.tbl, this.selected_div]);
-        $(".tooltips").tooltip();
-        $('.rob_criteria').on('click', 'td', function(){self.show_details_div(this);});
-        $('.rob_domains').on('click', 'td', function(){self.show_details_div(this);});
-    },
-    show_details_div: function(selected){
-        var $sel = $(selected),
-            divs = [],
-            self = this,
-            show_all_text = 'Show all details';
-
-        this.selected_div.fadeOut();
-
-        if ($sel.data('robs')){
-            divs.push(RiskOfBiasScore.build_metric_comparison_div($sel.data('robs').criteria));
-        } else if ($sel.data('rob')) {
-            divs.push($sel.data('rob').build_details_div());
-        } else {
-            // show all details
-            selected = this.riskofbias;
-            this.riskofbias.scores.forEach(function(v1, i1){
-                divs.push(RiskOfBiasScore.build_metric_comparison_div(v1.criteria));
-            });
-            show_all_text = 'Hide all details';
-        }
-        divs.push(
-            $('<hr><a href="#" class="btn btn-small"><i class="icon-plus"></i> {0}</a>'.printf(show_all_text)).click(
-                function(e){e.preventDefault(); self.show_details_div();}));
-        if (this.selected === selected){
-            this.selected = undefined;
-        } else {
-            this.selected = selected;
-            RiskOfBiasScore.display_details_divs(self.selected_div, divs);
-        }
-    },
-    build_tbody: function(){
-        var tbody = $('<tbody></tbody>'),
-            tr1 = $('<tr class="rob_domains"></tr>'),
-            tr2 = $('<tr class="rob_criteria"></tr>');
-        this.riskofbias.riskofbias.forEach(function(v1, i1){
-            v1.criteria.forEach(function(v2, i2){
-                if(i2 === 0){
-                    tr1.append($('<td class="scorecell domain_cell" colspan="{0}">{1}</td>'.printf(
-                                 v1.criteria.length,
-                                 v1.domain_text)).data('robs', v1));
-                }
-                tr2.append($('<td class="scorecell" style="background-color: {0};"><span class="tooltips" data-toggle="tooltip" title="{1}">{2}</span></td>'.printf(
-                                v2.data.score_color,
-                                v2.data.metric.metric,
-                                v2.data.score_text)).data('rob', v2));
-            });
-        });
-        this.num_cols = tr2.children().length;
-        this.tbl.append(tbody.append(tr1, tr2));
-    },
-    build_footer: function(){
-        var tfoot = $('<tfoot>'),
-            txt = 'Click on any cell above to view details.';
-        tfoot.append($('<tr>').append(
-            $('<td>').text(txt).attr({'colspan': this.num_cols, 'class': 'muted'})));
-        this.tbl.prepend(tfoot);
-    },
-};
-
-
-var StudyQualities_TblCompressed = function(study, div, options){
-    this.study = study;
-    this.complete_rob = _.flatten(_.map(this.study.riskofbias, function(rob){
-        return _.map(rob.criteria, function(score){
-            var notes = score.data.notes,
-                scoreText = HAWCUtils.isHTML(notes) ? $('<p>'+notes+'</p>').text() : notes;
-            return scoreText == '';
-        });
-    })).every(function(el){ return el === false; });
-    this.$div = $(div);
-    this.build_table();
-    if (options && options.show_all_details_startup){
-        this.show_details_div();
-    }
-};
-StudyQualities_TblCompressed.prototype = {
-    build_table: function(){
-        this.tbl = $('<table class="table table-condensed"></table>');
-        if (this.complete_rob){
-            this.show_review_data();
-        } else {
-            this.show_no_data();
-        }
-    },
-    show_review_data: function(){
-        var self = this;
-        this.build_tbody();
-        this.build_footer();
-        this.selected_div = $('<div style="display:none"></div>');
-        this.$div.html([this.tbl, this.selected_div]);
-        $(".tooltips").tooltip();
-        $('.rob_criteria').on('click', 'td', function(){self.show_details_div(this);});
-        $('.rob_domains').on('click', 'td', function(){self.show_details_div(this);});
-    },
-    show_no_data: function(){
-        this.build_footer();
-        this.selected_div = $('<div style="display:none"></div>');
-        this.$div.html([this.tbl, this.selected_div]);
-    },
-    show_details_div: function(selected){
-        var $sel = $(selected),
-            divs = [],
-            self = this,
-            show_all_text = 'Show all details';
-
-        this.selected_div.fadeOut();
-        if (this.complete_rob){
-            if ($sel.data('robs')){
-                divs.push(RiskOfBiasScore.build_metric_comparison_div($sel.data('robs').criteria));
-            } else if ($sel.data('rob')) {
-                divs.push($sel.data('rob').build_details_div());
-            } else {
-                // show all details
-                selected = this.study;
-                this.study.riskofbias.forEach(function(v1, i1){
-                    divs.push(RiskOfBiasScore.build_metric_comparison_div(v1.criteria));
+    format_for_react: function(robs, config){
+        config = config || {display: 'final', isForm: false};
+        var scores = _.map(robs, function(rob){
+            if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}});}
+            return _.extend(
+                rob.data, {
+                    domain: rob.data.metric.domain.id,
+                    domain_name: rob.data.metric.domain.name,
+                    study: {
+                        name: rob.study.data.short_citation,
+                        url: rob.study.data.url,
+                    },
+                    final: true,
                 });
-                show_all_text = 'Hide all details';
-            }
-            divs.push(
-                $('<hr><a href="#" class="btn btn-small"><i class="icon-plus"></i> {0}</a>'.printf(show_all_text)).click(
-                    function(e){e.preventDefault(); self.show_details_div();}));
-
-            if (this.selected === selected){
-                this.selected = undefined;
-            } else {
-                this.selected = selected;
-                RiskOfBiasScore.display_details_divs(self.selected_div, divs);
-            }
-        }
-    },
-    build_tbody: function(){
-        var tbody = $('<tbody></tbody>'),
-            tr1 = $('<tr class="rob_domains"></tr>'),
-            tr2 = $('<tr class="rob_criteria"></tr>');
-        this.study.riskofbias.forEach(function(v1, i1){
-            v1.criteria.forEach(function(v2, i2){
-                if(i2 === 0){
-                    tr1.append($('<td class="scorecell domain_cell" colspan="{0}">{1}</td>'.printf(
-                                 v1.criteria.length,
-                                 v1.domain_text)).data('robs', v1));
-                }
-                tr2.append($('<td class="scorecell" style="background-color: {0};"><span class="tooltips" data-toggle="tooltip" title="{1}">{2}</span></td>'.printf(
-                                v2.data.score_color,
-                                v2.data.metric.metric,
-                                v2.data.score_text)).data('rob', v2));
-            });
         });
-        this.num_cols = tr2.children().length;
-        this.tbl.append(tbody.append(tr1, tr2));
+
+        return {
+            domain: robs[0].data.metric.domain.name,
+            metric: robs[0].data.metric,
+            scores: d3.nest()
+                      .key(function(d){return d.metric.domain.name;})
+                      .key(function(d){return d.metric.metric;})
+                      .entries(scores),
+            config,
+        };
     },
-    build_footer: function(){
-        var tfoot = $('<tfoot>'),
-            txt = 'Click on any cell above to view details.';
-
-        if (!this.complete_rob){
-            if (window.userIsTeamMember){
-                txt = '<h3>Final Risk of Bias review is not complete.</h3>';
-            } else {
-                txt = '<h3>Data not available</h3>';
-            }
-        }
-        tfoot.append($('<tr>').append(
-            $('<td>').html(txt).attr({'colspan': this.num_cols, 'class': 'muted rob_footer'})));
-
-        this.tbl.prepend(tfoot);
-    },
-};
-
+});
 
 var RiskOfBias_Donut = function(study, plot_id, options){
     var self = this;

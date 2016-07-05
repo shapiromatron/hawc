@@ -281,14 +281,6 @@ class Study(Reference):
                .order_by('last_updated')\
                .prefetch_related('author')
 
-    @property
-    def qualities(self):
-        return self.riskofbiases\
-            .filter(final=True, active=True)\
-            .first()\
-            .scores.all()\
-            .prefetch_related('metric', 'metric__domain')
-
     @classmethod
     def rob_scores(cls, assessment_id):
         return Study.objects\

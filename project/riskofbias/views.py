@@ -300,66 +300,24 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         return self.object.get_assessment()
 
 
-class RoBEdit(IsAuthorMixin, BaseUpdate):
-    """
-    Edit settings for risk of bias metrics associated with study.
-    """
-    model = models.RiskOfBias
-    template_name = 'riskofbias/rob_edit.html'
-    success_message = 'Risk of bias updated.'
-    form_class = forms.RoBScoreForm
-    formset_factory = forms.RoBFormSet
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.formset = self.formset_factory(self.request.POST)
-        if self.formset.is_valid():
-            return self.form_valid()
-        else:
-            return self.form_invalid(self.formset)
-
-    def form_valid(self):
-        self.formset.save()
-        self.send_message()  # replicate MessageMixin
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_context_data(self, **kwargs):
-        context = super(RoBEdit, self).get_context_data(**kwargs)
-
-        if self.request.method == 'GET':
-            self.formset = self.formset_factory(
-                queryset=models.RiskOfBiasScore.objects
-                               .filter(riskofbias=self.object))
-
-        context['formset'] = self.formset
-        context['metric'] = [
-            quality.metric.description
-            for quality in self.object.scores.all()
-        ]
-        return context
-
-
-class RoBEditFinal(BaseDetail):
+class RoBEdit(BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.
     """
     model = models.RiskOfBias
-    template_name = 'riskofbias/rob_edit_final.html'
+    template_name = 'riskofbias/rob_edit.html'
 
     def get_object(self, **kwargs):
         # either project managers OR the author can edit/view.
-        obj = super(RoBEditFinal, self).get_object(**kwargs)
+        obj = super(RoBEdit, self).get_object(**kwargs)
         if obj.author != self.request.user and \
             not self.assessment.user_can_edit_assessment(self.request.user):
             raise PermissionDenied
         return obj
 
     def get_context_data(self, **kwargs):
-        context = super(RoBEditFinal, self).get_context_data(**kwargs)
+        context = super(RoBEdit, self).get_context_data(**kwargs)
         context['back_url'] = self.request.META['HTTP_REFERER'] \
             if 'HTTP_REFERER' in self.request.META \
             else self.object.get_absolute_url()

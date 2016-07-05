@@ -84,7 +84,8 @@ StudyCollection.prototype = {
 var Study = function(data){
     this.data = data;
     this.riskofbias = [];
-    if(this.data.qualities) this.unpack_riskofbias();
+    this.final = _.findWhere(this.data.riskofbiases, {final: true, active: true});
+    if(this.final) this.unpack_riskofbias();
 };
 _.extend(Study, {
     get_object: function(id, cb){
@@ -110,7 +111,7 @@ Study.prototype = {
             gradient_colors = d3.scale.linear()
                 .domain(RiskOfBiasScore.score_values)
                 .range(_.values(RiskOfBiasScore.score_shades));
-        this.data.qualities.forEach(function(v, i){
+        this.final.scores.forEach(function(v, i){
             v.score_color = gradient_colors(v.score);
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = RiskOfBiasScore.score_text[v.score];
@@ -126,9 +127,7 @@ Study.prototype = {
         this.riskofbias.forEach(function(v, i){
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
-            delete v.key;
             v.criteria = v.values;
-            delete v.values;
             // we only want to calculate score for cases where answer !== N/A, or >0
             var non_zeros = d3.sum(v.criteria.map(function(v){return (v.data.score>0)?1:0;}));
             if (non_zeros>0){
@@ -149,8 +148,6 @@ Study.prototype = {
                 break;
             }
         }
-
-        delete this.data.qualities;
     },
     build_breadcrumbs: function(){
         var urls = [{ url: this.data.url, name: this.data.short_citation }];
@@ -226,14 +223,19 @@ Study.prototype = {
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
             $shower.on('shown', function(){
-                new RiskOfBias_TblCompressed(self,
-                        $rob,
-                        {'show_all_details_startup': false}
-                );
+                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
+                render_obj = self.format_for_react(self.riskofbias)
+                window.app.renderStudyDisplay(render_obj, $rob[0]);
             });
         }
     },
     build_row: function(){
         return [this.get_url(), this.data.full_citation, this.data.study_type];
+    },
+    format_for_react: function(riskofbias){
+        scores = _.flatten(_.map(riskofbias, function(rob){
+            return rob.values;
+        }));
+        return RiskOfBiasScore.format_for_react(scores)
     },
 };

@@ -8,91 +8,45 @@
   {{assessment}} | {{object.study}} | Edit risk of bias | HAWC
 {% endblock %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
-  {% if crud == "Update" %}
-    <li class="active">Edit risk of bias <span class="divider">/</span></li>
-  {% endif %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
+  <li class="active">Edit risk of bias <span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
-  <form method="post" action=".">
-
-    <legend>{{object.study}}: Risk of Bias review edit</legend>
-    <span class="help-block">Justification for risk of bias assessment of selected. Each row contains has the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.</span><br>
-
-    {{ formset.management_form }}
-    {{ formset.non_form_errors.as_ul|add_class:"alert alert-error" }}
-    <table id="formset" class="table table-striped table-condensed">
-    {% for form in formset.forms %}
-
-      {% comment %}
-        {% if forloop.first %}
-          <thead>
-            <tr>
-              <th>Score</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-        {% endif %}
-        {% endcomment %}
-
-      <table class='table table-condensed'>
-        <tr>
-          <td colspan="2">
-            {{form.metric.errors.as_ul}}
-            <h4>{{form.metric}}</h4>
-            {{metric|get_at_index:forloop.counter0|safe}}
-            {# Include the hidden fields in the form #}
-            {% for hidden in form.hidden_fields %}
-              {{ hidden }}
-            {% endfor %}
-          </td>
-        </tr>
-        <tr>
-          <td>{{form.score.errors.as_ul}}{{form.score}}</td>
-          <td>{{form.notes.errors.as_ul}}{{form.notes}}</td>
-        </tr>
-      </table>
-
-    {% endfor %}
-    </table>
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">{{ crud }} risk of bias</button>
-        <a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}" class="btn">Cancel</a>
-    </div>
-
-    {% csrf_token %}
-
-  </form>
-
-
+    <h2>{{object}}: Risk of Bias</h2>
+    {% if object.final and not object.study_reviews_complete %}
+        <h4 class="alert alert-danger">All other risk of bias reviews for
+            {{object.study}} must be complete in order to complete the final review.
+        </h4>
+    {% else %}
+        <div id='robTable'></div>
+    {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript" src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js"></script>
-  <script type="text/javascript" src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js"></script>
+  <script id="config" type="text/json" charset="utf-8">
+      {
+          "assessment_id": "{{ assessment.id }}",
+          "study": {
+              "id": "{{ object.study.pk }}",
+              "url": "{% url 'study:api:study-list' %}"
+          },
+          "riskofbias": {
+              "id": "{{ object.pk }}"  ,
+              "url": "{% url 'riskofbias:api:review-list' %}"
+          },
+          "cancelUrl": "{{back_url}}",
+          "csrf": "{{ csrf_token }}",
+          "host": "//{{request.get_host}}",
+          "isForm": true,
+          "display": {% if object.final %} "final" {% else %} "all" {% endif %}
+      }
+  </script>
   <script type="text/javascript">
     $(document).ready(function() {
-        $('.metrics option:selected').each(function(i,v){
-            $(this.parentElement.parentElement).append(this.text)
-            $(this.parentElement).hide(true);
-        });
-        $('.html5text').wysihtml5({"stylesheets": false});
-        $('.score').parent().append('<br><br><div class="rob_score"></div>');
-        var change_gradient = function(){
-            $(this).parent().find('.rob_score')
-            .css('background-color', RiskOfBiasScore.score_shades[this.value])
-            .text(RiskOfBiasScore.score_text[this.value]);
-        };
-        $('.score').each(change_gradient);
-        $('.score').on('change', change_gradient);
+        window.app.robTableStartup();
     });
   </script>
 {% endblock extrajs %}

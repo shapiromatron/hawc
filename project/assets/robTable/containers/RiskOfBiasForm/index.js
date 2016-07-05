@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded, submitFinalRiskOfBiasScores } from 'robTable/actions';
+import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
-import ScrollToMessageBox from 'robTable/components/ScrollToMessageBox';
 import ScrollToErrorBox from 'robTable/components/ScrollToErrorBox';
-import './ConflictResolutionForm.css';
+import './RiskOfBiasForm.css';
 
 
-class ConflictResolutionForm extends Component {
+class RiskOfBiasForm extends Component {
 
     componentWillMount(){
-        this.props.dispatch(fetchStudyIfNeeded());
+        this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
     submitForm(e){
@@ -26,21 +25,20 @@ class ConflictResolutionForm extends Component {
                     score: form.refs.score.refs.select.value };
             });
         }));
-        this.props.dispatch(submitFinalRiskOfBiasScores({scores}));
+        this.props.dispatch(submitRiskOfBiasScores({scores}));
     }
 
     handleCancel(e){
         e.preventDefault();
-        window.location.href = this.props.cancelUrl;
+        window.location.href = this.props.config.cancelUrl;
     }
 
     render(){
-        let { itemsLoaded, riskofbiases, isForm, error, message } = this.props;
+        let { itemsLoaded, riskofbiases, error, config } = this.props;
         if (!itemsLoaded) return <Loading />;
 
         return (
             <div className='riskofbias-display'>
-                { message ? <ScrollToMessageBox message={message} /> : null }
                 { error ? <ScrollToErrorBox error={error} /> : null}
                 <form action="">
 
@@ -48,7 +46,7 @@ class ConflictResolutionForm extends Component {
                         return <DomainDisplay key={domain.key}
                                            ref={domain.key}
                                            domain={domain}
-                                           isForm={isForm} />;
+                                           config={config} />;
                     })}
                     <button className='btn btn-primary'
                             onClick={this.submitForm.bind(this)}>
@@ -64,14 +62,12 @@ class ConflictResolutionForm extends Component {
 
 function mapStateToProps(state){
     return {
+        config: state.config,
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,
-        isForm: state.config.isForm,
-        cancelUrl: state.config.cancelUrl,
         error: state.study.error,
-        message: state.study.message,
     };
 }
 
 
-export default connect(mapStateToProps)(ConflictResolutionForm);
+export default connect(mapStateToProps)(RiskOfBiasForm);

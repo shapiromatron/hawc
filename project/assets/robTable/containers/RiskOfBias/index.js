@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import AggregateGraph from 'robTable/containers/AggregateGraph';
-import ConflictResolutionForm from 'robTable/containers/ConflictResolutionForm';
+import RiskOfBiasForm from 'robTable/containers/RiskOfBiasForm';
 import RiskOfBiasDisplay from 'robTable/containers/RiskOfBiasDisplay';
 
 
@@ -11,9 +11,10 @@ class RiskOfBias extends Component {
     render() {
         return (
             this.props.isForm ?
-                <ConflictResolutionForm /> :
+                <RiskOfBiasForm /> :
                 <div>
                     <AggregateGraph />
+                    <hr/>
                     <RiskOfBiasDisplay />
                 </div>
         );

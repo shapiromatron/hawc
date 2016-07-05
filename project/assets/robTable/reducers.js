@@ -7,9 +7,8 @@ const defaultState = {
     isFetching: false,
     itemsLoaded: false,
     error: null,
-    message: null,
     name: '',
-    qualities: [],
+    final: [],
     riskofbiases: [],
     active: [],
 };
@@ -25,21 +24,11 @@ function study(state=defaultState, action){
     case types.RECEIVE:
         return Object.assign({}, state, {
             name: action.study.short_citation,
-            qualities: action.study.qualities,
+            final: action.study.final,
             riskofbiases: action.study.riskofbiases,
             active: action.study.riskofbiases,
             isFetching: false,
             itemsLoaded: true,
-        });
-
-    case types.SET_MESSAGE:
-        return Object.assign({}, state, {
-            message: action.message,
-        });
-
-    case types.RESET_MESSAGE:
-        return Object.assign({}, state, {
-            message: null,
         });
 
     case types.SET_ERROR:
@@ -52,15 +41,15 @@ function study(state=defaultState, action){
             error: null,
         });
 
-    case types.UPDATE_QUALITIES:
+    case types.UPDATE_FINAL_SCORES:
         return Object.assign({}, state, {
-            qualities: action.qualities,
+            final: action.score,
         });
 
     case types.SELECT_ACTIVE:
-        if(_.isEmpty(action.domain)){
+        if(_.isEmpty(action.domain) | action.domain === 'none'){
             return Object.assign({}, state, {
-                active: domains,
+                active: [],
             });
         }
         if(action.domain === 'all'){

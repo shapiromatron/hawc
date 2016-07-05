@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStudyIfNeeded, selectActive } from 'robTable/actions';
+import { fetchFullStudyIfNeeded, selectActive } from 'robTable/actions';
+import DisplayComponent from 'robTable/components/AggregateGraph';
 import Loading from 'shared/components/Loading';
-import DomainCell from 'robTable/components/DomainCell';
-import './AggregateGraph.css';
 
 
 class AggregateGraph extends Component {
 
     componentWillMount(){
-        this.props.dispatch(fetchStudyIfNeeded());
+        this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
     selectActiveWithName(domainName){
@@ -18,38 +17,26 @@ class AggregateGraph extends Component {
         this.props.dispatch(selectActive({...domainName}));
     }
 
-    format_qualities(){
-        let { qualities } = this.props;
-        let domains = _.map(qualities, (quality) => {
-            let score = quality;
-            score.domain = quality.metric.domain.id;
-            score.domain_text = quality.metric.domain.name;
-            return score;
-        });
+    formatRiskofbiasForDisplay(){
+        let domains = _.flatten(_.map(this.props.riskofbiases, (domain) => {
+            return _.map(domain.values, (metric) => {
+                return _.filter(metric.values, (score) => { return score.final; });
+            });
+        }));
+
         return d3.nest()
                  .key((d) => {return d.metric.domain.name;})
+                 .key((d) => {return d.metric.metric;})
                  .entries(domains);
     }
 
     render(){
         let { itemsLoaded } = this.props;
         if (!itemsLoaded) return <Loading />;
-        let domains = this.format_qualities();
+        let domains = this.formatRiskofbiasForDisplay();
         return (
-            <div className='aggregate-graph'>
-                <div className='aggregate-flex'>
-
-                    {_.map(domains, (domain) => {
-                        return <DomainCell key={domain.key}
-                                   domain={domain}
-                                   handleClick={this.selectActiveWithName.bind(this)}
-                                   />;
-                    })}
-                </div>
-                <div className='footer muted'>
-                    Click on any cell above to view details.
-                </div>
-            </div>
+            <DisplayComponent domains={domains}
+                              handleClick={this.selectActiveWithName.bind(this)}/>
         );
     }
 }
@@ -57,7 +44,6 @@ class AggregateGraph extends Component {
 function mapStateToProps(state){
     return {
         itemsLoaded: state.study.itemsLoaded,
-        qualities: state.study.qualities,
         riskofbiases: state.study.riskofbiases,
     };
 }

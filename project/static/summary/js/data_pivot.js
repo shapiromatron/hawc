@@ -2666,8 +2666,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
     this.g_labels = this.vis.append("g");
     this.text_labels = this.g_labels.selectAll("text")
-        .data(this.settings.labels)
-      .enter().append("text")
+          .data(this.settings.labels)
+          .enter().append("text")
           .attr('x', function(d){return d.x;})
           .attr('y', function(d){return d.y;})
           .text(function(d){return d.text;})
@@ -2720,7 +2720,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         midpoint_height,
         heights = [],
         height_offset;
-
     // build n x m array-matrix of text-component-data (including header, where):
     // n = number of rows, m = number of columns
     matrix = [this.headers];
@@ -2757,8 +2756,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         .attr("class", "text_row");
 
     this.text_rows.selectAll("text")
-        .data(function(d) { return d; })
-      .enter().append("text")
+          .data(function(d) { return d; })
+          .enter().append("text")
           .attr("x", 0)
           .attr("y", 0)
           .attr("class", "with_whitespace")

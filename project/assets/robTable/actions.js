@@ -17,19 +17,6 @@ function receiveStudy(study){
     };
 }
 
-function setMessage(message){
-    return {
-        type: types.SET_MESSAGE,
-        message,
-    };
-}
-
-function resetMessage(){
-    return {
-        type: types.RESET_MESSAGE,
-    };
-}
-
 function setError(error){
     return {
         type: types.SET_ERROR,
@@ -43,10 +30,10 @@ function resetError(){
     };
 }
 
-function updateQualities(qualities){
+function updateFinalScores(scores){
     return {
-        type: types.UPDATE_QUALITIES,
-        qualities,
+        type: types.UPDATE_FINAL_SCORES,
+        scores,
     };
 }
 
@@ -99,15 +86,15 @@ function formatIncomingStudy(study){
 
     return Object.assign({}, study, {
         riskofbiases,
+        final: _.findWhere(dirtyRoBs, {final: true}).scores,
     });
 }
 
-export function fetchStudyIfNeeded(){
+export function fetchFullStudyIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.isFetching || state.itemsLoaded) return;
         dispatch(requestStudy());
-        dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
                 h.getObjectURL(
@@ -121,20 +108,19 @@ export function fetchStudyIfNeeded(){
     };
 }
 
-export function submitFinalRiskOfBiasScores(scores){
+export function submitRiskOfBiasScores(scores){
     return (dispatch, getState) => {
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),
             opts = h.fetchPost(state.config.csrf, patch, 'PUT');
 
-        dispatch(resetMessage());
         dispatch(resetError());
         return fetch(
             `${h.getObjectURL(state.config.host,
                 state.config.riskofbias.url,
                 state.config.riskofbias.id)}`, opts)
             .then((response) => response.json())
-            .then((json)     => dispatch(updateQualities(json.scores)))
+            .then((json)     => dispatch(updateFinalScores(json.scores)))
             .then(()         => window.location.href = state.config.cancelUrl)
             .catch((ex)      => dispatch(setError(ex)));
     };

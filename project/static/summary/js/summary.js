@@ -2385,7 +2385,6 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         }
 
         xIsStudy = (this.data.settings.x_field!=='metric');
-
         _.extend(this,{
             cell_size: this.data.settings.cell_size,
             dataset: dataset,
@@ -2434,7 +2433,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             width = this.cell_size,
             half_width = width/2,
             showSQs = function(v){
-                self.print_details(self.modal.getBody(), $(this).data('robs'))
+                self.print_details(self.modal.getBody(), $(this).data('robs'));
                 self.modal
                     .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
                     .addFooter('')
@@ -2463,7 +2462,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
         .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
         .on('click', function(v){
-            self.print_details(self.modal.getBody(), {type: 'cell', robs: [v]})
+            self.print_details(self.modal.getBody(), {type: 'cell', robs: [v]});
             self.modal
                 .addHeader('<h4>Risk of bias details</h4>')
                 .addFooter('')
@@ -2682,22 +2681,32 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
     },
     print_details: function($div, d){
-        var content = [];
-
-        switch (d.type){
+        var config = {
+            display: 'all',
+            isForm: false,
+        };
+        // delay rendering until modal is displayed, as component depends on accurate width.
+        window.setTimeout(function(){
+            switch (d.type){
             case 'cell':
-                content.push(d.robs[0].riskofbias.build_details_div({show_study: true}));
+                _.extend(config, {show_study: true, study: { name: d.robs[0].study_label, url:d.robs[0].study.data.url}})
+                window.app.renderRiskOfBiasDisplay(
+                    RiskOfBiasScore.format_for_react([d.robs[0].riskofbias], config),
+                    $div[0]);
                 break;
             case 'study':
-                content.push(RiskOfBiasScore.build_metric_comparison_div(d.robs));
+                window.app.renderRiskOfBiasDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs, config),
+                    $div[0]);
                 break;
             case 'metric':
-                content.push(RiskOfBiasScore.build_study_comparison_div(d.robs));
+                window.app.renderCrossStudyDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs, config),
+                    $div[0]);
                 break;
-        }
-
-        RiskOfBiasScore.display_details_divs($div, content);
-    }
+            }
+        }, 200);
+    },
 });
 
 
