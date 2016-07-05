@@ -66,7 +66,7 @@ class ModelOptionTable extends React.Component {
 }
 
 ModelOptionTable.propTypes = {
-    editMode: React.PropTypes.bool,
+    editMode: React.PropTypes.bool.isRequired,
 };
 
 export default ModelOptionTable;

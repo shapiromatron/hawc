@@ -7,7 +7,6 @@ class DoseResponse extends React.Component {
         let {endpoint} = this.props;
         endpoint.build_endpoint_table($(this.refs.epTable));
         endpoint.renderPlot($(this.refs.epFigure));
-        window.foo = $(this.refs.epFigure);
     }
 
     render() {

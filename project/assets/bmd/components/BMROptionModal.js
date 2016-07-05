@@ -96,7 +96,7 @@ class BMROptionModal extends React.Component {
 }
 
 BMROptionModal.propTypes = {
-    editMode: React.PropTypes.bool,
+    editMode: React.PropTypes.bool.isRequired,
 };
 
 export default BMROptionModal;

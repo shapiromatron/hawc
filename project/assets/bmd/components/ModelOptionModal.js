@@ -90,7 +90,7 @@ class ModelOptionModal extends React.Component {
 }
 
 ModelOptionModal.propTypes = {
-    editMode: React.PropTypes.bool,
+    editMode: React.PropTypes.bool.isRequired,
 };
 
 export default ModelOptionModal;

@@ -58,7 +58,7 @@ class BMROptionTable extends React.Component {
 }
 
 BMROptionTable.propTypes = {
-    editMode: React.PropTypes.bool,
+    editMode: React.PropTypes.bool.isRequired,
 };
 
 export default BMROptionTable;
