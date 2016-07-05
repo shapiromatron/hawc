@@ -28,11 +28,12 @@ class Modals extends React.Component {
 
 
     render() {
+        let {editMode} = this.props.config;
         return (
             <div>
 
-                <ModelOptionModal />
-                <BMROptionModal />
+                <ModelOptionModal editMode={editMode} />
+                <BMROptionModal editMode={editMode} />
                 <OutputModal />
 
                 <button type='button'
@@ -47,7 +48,9 @@ class Modals extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        config: state.config,
+    };
 }
 
 export default connect(mapStateToProps)(Modals);

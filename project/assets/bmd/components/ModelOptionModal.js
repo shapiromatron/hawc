@@ -2,17 +2,29 @@ import React from 'react';
 
 import * as types from 'bmd/constants';
 
+import EditableModalFooter from 'bmd/components/EditableModalFooter';
+
 
 class ModelOptionModal extends React.Component {
 
+    handleSave(){
+        console.log('handled');
+    }
+
+    handleDelete(){
+        console.log('handled');
+    }
+
     render() {
-        let modelName = 'Multistage';
+        let {editMode} = this.props,
+            modelName = 'Multistage',
+            titlePrefix = (editMode)?'Edit ': '';
         return (
             <div className="modal hide fade"  id={types.OPTION_MODAL_ID}>
 
                 <div className="modal-header">
                     <button className="close" type="button" data-dismiss="modal">×</button>
-                    <h3>{modelName} model options</h3>
+                    <h3>{titlePrefix}{modelName} model options</h3>
                 </div>
 
                 <div className="modal-body">
@@ -39,17 +51,17 @@ class ModelOptionModal extends React.Component {
 
                 </div>
 
-                <div className="modal-footer">
-                    <button type='button'
-                        className='btn btn-primary'
-                        data-dismiss='modal'>Close</button>
-                </div>
+                <EditableModalFooter
+                    editMode={editMode}
+                    handleSave={this.handleSave.bind(this)}
+                    handleDelete={this.handleDelete.bind(this)} />
             </div>
         );
     }
 }
 
 ModelOptionModal.propTypes = {
+    editMode: React.PropTypes.bool,
 };
 
 export default ModelOptionModal;

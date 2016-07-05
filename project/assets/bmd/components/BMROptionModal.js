@@ -2,10 +2,23 @@ import React from 'react';
 
 import * as types from 'bmd/constants';
 
+import EditableModalFooter from 'bmd/components/EditableModalFooter';
+
 
 class BMROptionModal extends React.Component {
 
+    handleSave(){
+        console.log('handled');
+    }
+
+    handleDelete(){
+        console.log('handled');
+    }
+
     render() {
+
+        let editMode = this.props.editMode,
+            titlePrefix = (this.props.editMode)?'Edit ': '';
 
         return (
             <div className="modal hide fade" role="dialog" id={types.BMR_MODAL_ID}>
@@ -13,7 +26,7 @@ class BMROptionModal extends React.Component {
                 <div className="modal-header">
                     <button className="close" type="button"
                         data-dismiss="modal">×</button>
-                    <h3>Benchmark response</h3>
+                    <h3>{titlePrefix} Benchmark response</h3>
                 </div>
 
                 <div className="modal-body">
@@ -35,16 +48,17 @@ class BMROptionModal extends React.Component {
                     </table>
                 </div>
 
-                <div className="modal-footer">
-                    <button className='btn btn-primary'
-                        data-dismiss="modal">Close</button>
-                </div>
+                <EditableModalFooter
+                    editMode={editMode}
+                    handleSave={this.handleSave.bind(this)}
+                    handleDelete={this.handleDelete.bind(this)} />
             </div>
         );
     }
 }
 
 BMROptionModal.propTypes = {
+    editMode: React.PropTypes.bool,
 };
 
 export default BMROptionModal;
