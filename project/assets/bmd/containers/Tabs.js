@@ -67,7 +67,7 @@ class Tabs extends React.Component {
 
                 <div className="tab-content">
                     <div id="setup" className="tab-pane">
-                        <DoseResponse />
+                        <DoseResponse endpoint={this.props.endpoint} />
                         <h3>Selected models and options</h3>
                         <p>
                             <i>BMDS version: {version}</i>
