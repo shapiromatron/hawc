@@ -17,7 +17,10 @@ class Tabs extends React.Component {
     }
 
     handleTabClick(event){
-        $(event.currentTarget).tab('show');
+        let tabDisabled = $(event.currentTarget.parentElement).hasClass('disabled');
+        if (!tabDisabled){
+            $(event.currentTarget).tab('show');
+        }
     }
 
     handleExecute(){
@@ -26,7 +29,8 @@ class Tabs extends React.Component {
 
     render(){
         let editMode = this.props.config.editMode,
-            version = this.props.config.bmds_version;
+            version = this.props.config.bmds_version,
+            showResultsTabs = (editMode)?'':'disabled';  // todo - only show if results available
 
         return (
             <div>
@@ -34,10 +38,10 @@ class Tabs extends React.Component {
                     <ul className="nav nav-tabs" id="tabs">
                         <li><a href="#setup"
                             onClick={this.handleTabClick}>BMD setup</a></li>
-                        <li><a href="#results"
-                            onClick={this.handleTabClick}>Modeling results</a></li>
-                        <li><a href="#recommendations"
-                            onClick={this.handleTabClick}>Recommendations</a></li>
+                        <li className={showResultsTabs}><a href="#results"
+                            onClick={this.handleTabClick}>Results</a></li>
+                        <li className={showResultsTabs}><a href="#recommendations"
+                            onClick={this.handleTabClick}>Recommendation and selection</a></li>
                     </ul>
                 </div>
 
