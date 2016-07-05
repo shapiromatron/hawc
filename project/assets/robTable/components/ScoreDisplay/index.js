@@ -34,11 +34,11 @@ class ScoreDisplay extends Component {
     }
 
     render(){
-        let { score } = this.props;
+        let { score, config } = this.props;
         return (
             <div className={`score-display ${this.state.flex}-container`} ref='display'>
                 <div className='flex-1'>
-                    <p><b>{score.author.full_name}</b></p>
+                    {config.display === 'final' && !config.isForm ? null : <p><b>{score.author.full_name}</b></p>}
                     <ScoreBar score={score.score}
                               shade={score.score_shade}
                               symbol={score.score_symbol}
