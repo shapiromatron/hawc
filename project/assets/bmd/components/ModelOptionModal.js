@@ -15,41 +15,70 @@ class ModelOptionModal extends React.Component {
         console.log('handled');
     }
 
+    renderReadOnly(){
+        return (
+            <div className="modal-body">
+                <div className='row-fluid'>
+                    <div className='span6'>
+                        <h4>Model settings</h4>
+                        <table className="table table-condensed table-striped">
+                        </table>
+                    </div>
+                    <div className='span6'>
+                        <h4>Optimization</h4>
+                        <table className="table table-condensed table-striped">
+                        </table>
+                    </div>
+                </div>
+                <div className='row-fluid'>
+                    <h4>Parameter assignment</h4>
+                    <table className="table table-condensed table-striped">
+                    </table>
+                </div>
+            </div>
+        );
+    }
+
+    renderEditMode(){
+        return (
+            <div className="modal-body">
+                <form className="form-horizontal">
+                    <div className='row-fluid'>
+                        <fieldset className='span6'>
+                            <legend>Model assignments</legend>
+                            <div></div>
+                        </fieldset>
+                        <fieldset className='span6'>
+                            <legend>Optimizer assignments</legend>
+                            <div></div>
+                        </fieldset>
+                    </div>
+                    <div className='row-fluid'>
+                        <fieldset>
+                            <legend>Parameter assignments</legend>
+                            <div></div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        );
+    }
+
     render() {
         let {editMode} = this.props,
             modelName = 'Multistage',
-            titlePrefix = (editMode)?'Edit ': '';
+            title = (editMode)?`Edit ${modelName} options`: `${modelName} options`,
+            tableFunc = (editMode)? this.renderEditMode: this.renderReadOnly;
+
         return (
             <div className="modal hide fade"  id={types.OPTION_MODAL_ID}>
 
                 <div className="modal-header">
                     <button className="close" type="button" data-dismiss="modal">×</button>
-                    <h3>{titlePrefix}{modelName} model options</h3>
+                    <h3>{title}</h3>
                 </div>
 
-                <div className="modal-body">
-
-                    <div className='row-fluid'>
-                        <div className='span6'>
-                            <h4>Model settings</h4>
-                            <table className="table table-condensed table-striped">
-                            </table>
-                        </div>
-
-                        <div className='span6'>
-                            <h4>Optimization</h4>
-                            <table className="table table-condensed table-striped">
-                            </table>
-                        </div>
-                    </div>
-
-                    <div className='row-fluid'>
-                        <h4>Parameter assignment</h4>
-                        <table className="table table-condensed table-striped">
-                        </table>
-                    </div>
-
-                </div>
+                {tableFunc()}
 
                 <EditableModalFooter
                     editMode={editMode}
