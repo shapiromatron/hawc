@@ -14,6 +14,9 @@ class EditableModalFooter extends React.Component {
                         onClick={this.props.handleSave}
                         className='btn btn-primary'
                         data-dismiss="modal">Save and close</button>
+                <button type='button'
+                        className='btn'
+                        data-dismiss="modal">Cancel</button>
             </div>
 
         );
