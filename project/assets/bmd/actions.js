@@ -1,4 +1,4 @@
-import $ from 'jQuery';
+import $ from '$';
 
 import * as types from 'bmd/constants';
 

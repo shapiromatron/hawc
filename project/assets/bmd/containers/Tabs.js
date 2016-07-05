@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import $ from 'jQuery';
+import $ from '$';
 
 import DoseResponse from 'bmd/components/DoseResponse';
 import ModelOptionTable from 'bmd/components/ModelOptionTable';

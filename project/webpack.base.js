@@ -22,7 +22,7 @@ module.exports = {
     },
 
     externals: {
-        $: 'jQuery',
+        $: '$',
         Outcome: 'Outcome',
         Endpoint: 'Endpoint',
     },
