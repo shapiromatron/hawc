@@ -10,7 +10,7 @@ class ScoreDisplay extends Component {
         super(props);
         // values of state.flex correspond to css classes in flex.css
         this.state = {flex: 'flexRow'};
-        this.toggleWidth = 600;
+        this.toggleWidth = 650;
         this.checkFlex = this.checkFlex.bind(this);
     }
 
@@ -45,7 +45,6 @@ class ScoreDisplay extends Component {
                               description={score.score_description}
                     />
                 </div>
-                <hr/>
                 <div className='flex-3' dangerouslySetInnerHTML={{
                     __html: score.notes,
                 }}></div>
