@@ -14,5 +14,5 @@ class BMDSessionSerializer(serializers.ModelSerializer):
         ret['models'] = []
         ret['bmrs'] = []
         ret['allBmrOptions'] = []
-        ret['allModelOptions'] = ['a', 'b', 'c']
+        ret['allModelOptions'] = [{'name': 'a'}, {'name': 'b'}, {'name': 'c'}]
         return ret

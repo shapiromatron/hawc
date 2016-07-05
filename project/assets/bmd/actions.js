@@ -68,15 +68,15 @@ var showModal = function(name){
             type: 'toggleVariance',
         };
     },
-    createModel = function(modelName){
+    createModel = function(modelIndex){
         return {
             type: types.CREATE_MODEL,
-            modelName,
+            modelIndex: parseInt(modelIndex),
         };
     },
     updateModel = function(){
         return {
-            type: types.DELETE_MODEL,
+            type: types.UPDATE_MODEL,
         };
     },
     deleteModel = function(){

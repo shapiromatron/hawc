@@ -13,7 +13,7 @@ class ModelOptionTable extends React.Component {
     }
 
     renderOption(d, i){
-        return <option key={d} value={d}>{d}</option>;
+        return <option key={i} value={i}>{d.name}</option>;
     }
 
     renderOptionEdits(){
@@ -60,7 +60,7 @@ class ModelOptionTable extends React.Component {
 
         return (
             <tr key={i}>
-                <td>{d}</td>
+                <td>{d.name}</td>
                 <td></td>
                 <td>
                     <button

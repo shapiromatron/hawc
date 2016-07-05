@@ -33,7 +33,7 @@ function bmd(state=defaultState, action){
 
     case types.CREATE_MODEL:
         return Object.assign({}, state, {
-            models: [...state.models, action.modelName],
+            models: [...state.models, state.allModelOptions[action.modelIndex]],
         });
 
     case types.SELECT_MODEL:

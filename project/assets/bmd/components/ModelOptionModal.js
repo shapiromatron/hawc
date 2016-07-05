@@ -57,9 +57,13 @@ class ModelOptionModal extends React.Component {
     }
 
     render() {
-        let {editMode} = this.props,
-            modelName = this.props.model,
-            title = (editMode)?`Edit ${modelName} options`: `${modelName} options`,
+        if (!this.props.model){
+            return null;
+        }
+
+        let {editMode, model} = this.props,
+            title = (editMode)?
+                `Edit ${model.name} options`: `${model.name} options`,
             tableFunc = (editMode)? this.renderEditMode: this.renderReadOnly;
 
         return (
@@ -82,7 +86,7 @@ class ModelOptionModal extends React.Component {
 }
 
 ModelOptionModal.propTypes = {
-    model: React.PropTypes.string,
+    model: React.PropTypes.object,
     editMode: React.PropTypes.bool.isRequired,
     handleSave: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,
