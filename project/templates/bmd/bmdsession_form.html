@@ -34,7 +34,10 @@
         "assessment_id": {{ assessment.id }},
         "bmds_version": "{{assessment.BMD_Settings.BMDS_version}}",
         "endpoint_id": {{ object.endpoint_id }},
-        "session_url": "{{ object.get_data_api }}",
+        "session_url": "{{ object.get_api_url }}",
+        "execute_url": "{{ object.get_execute_url }}",
+        "execute_status_url": "{{ object.get_execute_status_url }}",
+        "selected_model_url": "{{ object.get_selected_model_url }}",
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }

@@ -66,8 +66,17 @@ class BMDSession(models.Model):
     def get_delete_url(self):
         return reverse_lazy('bmd:session_delete', args=[self.id])
 
-    def get_data_api(self):
+    def get_api_url(self):
         return reverse_lazy('bmd:api:bmd_session-detail', args=[self.id])
+
+    def get_execute_url(self):
+        return reverse_lazy('bmd:api:bmd_session-execute', args=[self.id])
+
+    def get_execute_status_url(self):
+        return reverse_lazy('bmd:api:bmd_session-execute-status', args=[self.id])
+
+    def get_selected_model_url(self):
+        return reverse_lazy('bmd:api:bmd_session-selected-model', args=[self.id])
 
     @classmethod
     def create_new(cls, endpoint):
