@@ -184,6 +184,9 @@ ul.sponsors {
   text-align: end;
   color: white;
 }
+.rob-copy-reviewers {
+    vertical-align: top;
+}
 
 
 /* Data Pivot */
