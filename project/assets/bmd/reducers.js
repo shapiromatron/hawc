@@ -10,9 +10,13 @@ const defaultState = {
     selectedModelIndex: null,
     selectedModel: null,
     bmrs: [],
+    selectedBmrIndex: null,
+    selectedBmr: null,
     allModelOptions: [],
     allBmrOptions: [],
 };
+
+var tmp;
 
 function bmd(state=defaultState, action){
     switch (action.type){
@@ -43,13 +47,34 @@ function bmd(state=defaultState, action){
         });
 
     case types.DELETE_MODEL:
-        let tmp = state.models
+        tmp = state.models
             .slice(0, state.selectedModelIndex)
             .concat(state.models.slice(state.selectedModelIndex+1));
         return Object.assign({}, state, {
             models: tmp,
             selectedModelIndex: null,
             selectedModel: null,
+        });
+
+    case types.CREATE_BMR:
+        return Object.assign({}, state, {
+            bmrs: [...state.bmrs, state.allBmrOptions[0]],
+        });
+
+    case types.SELECT_BMR:
+        return Object.assign({}, state, {
+            selectedBmrIndex: action.bmrIndex,
+            selectedBmr: state.bmrs[action.bmrIndex],
+        });
+
+    case types.DELETE_BMR:
+        tmp = state.bmrs
+            .slice(0, state.selectedBmrIndex)
+            .concat(state.bmrs.slice(state.selectedBmrIndex+1));
+        return Object.assign({}, state, {
+            bmrs: tmp,
+            selectedBmrIndex: null,
+            selectedBmr: null,
         });
 
     default:

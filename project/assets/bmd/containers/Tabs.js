@@ -15,6 +15,7 @@ import {
     fetchEndpoint,
     fetchSessionSettings,
     showOptionModal,
+    showBmrModal,
     execute,
     toggleVariance,
     createModel,
@@ -55,8 +56,12 @@ class Tabs extends React.Component {
         this.props.dispatch(createModel(modelName));
     }
 
-    handleModalDisplay(modelIndex){
+    handleOptionModal(modelIndex){
         this.props.dispatch(showOptionModal(modelIndex));
+    }
+
+    handleBmrModal(bmrIndex){
+        this.props.dispatch(showBmrModal(bmrIndex));
     }
 
     handleCreateBmr(){
@@ -106,12 +111,15 @@ class Tabs extends React.Component {
                                 dataType={dataType}
                                 handleVarianceToggle={this.handleVarianceToggle.bind(this)}
                                 handleCreateModel={this.handleCreateModel.bind(this)}
-                                handleModalDisplay={this.handleModalDisplay.bind(this)}
+                                handleModalDisplay={this.handleOptionModal.bind(this)}
                                 models={this.props.models}
                                 allOptions={this.props.allModelOptions}/>
                             <BMROptionTable
                                 editMode={editMode}
-                                handleCreateBmr={this.handleCreateBmr.bind(this)}/>
+                                handleCreateBmr={this.handleCreateBmr.bind(this)}
+                                handleModalDisplay={this.handleBmrModal.bind(this)}
+                                bmrs={this.props.bmrs}
+                                allOptions={this.props.allBmrOptions}/>
                         </div>
                         <ExecuteWell
                             editMode={editMode}
@@ -137,7 +145,9 @@ function mapStateToProps(state) {
         endpoint: state.bmd.endpoint,
         dataType: state.bmd.dataType,
         models: state.bmd.models,
+        bmrs: state.bmd.bmrs,
         allModelOptions: state.bmd.allModelOptions,
+        allBmrOptions: state.bmd.allBmrOptions,
     };
 }
 

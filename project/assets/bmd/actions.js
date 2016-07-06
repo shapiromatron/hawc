@@ -38,7 +38,7 @@ var showModal = function(name){
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
-    setModel = function(modelIndex){
+    selectModel = function(modelIndex){
         return {
             type: types.SELECT_MODEL,
             modelIndex,
@@ -48,12 +48,23 @@ var showModal = function(name){
         return (dispatch, getState) => {
             // create a new noop Promise to chain events
             return new Promise((res, rej)=>{res();})
-                .then(() => dispatch(setModel(modelIndex)))
+                .then(() => dispatch(selectModel(modelIndex)))
                 .then(() => showModal(types.OPTION_MODAL_ID));
         };
     },
-    showBMRModal = function(){
-        showModal(types.BMR_MODAL_ID);
+    selectBmr = function(bmrIndex){
+        return {
+            type: types.SELECT_BMR,
+            bmrIndex,
+        };
+    },
+    showBmrModal = function(bmrIndex){
+        return (dispatch, getState) => {
+            // create a new noop Promise to chain events
+            return new Promise((res, rej)=>{res();})
+                .then(() => dispatch(selectBmr(bmrIndex)))
+                .then(() => showModal(types.BMR_MODAL_ID));
+        };
     },
     showOutputModal = function(){
         showModal(types.OUTPUT_MODAL_ID);
@@ -86,17 +97,17 @@ var showModal = function(name){
     },
     createBmr = function(){
         return {
-            type: 'createBmr',
+            type: types.CREATE_BMR,
         };
     },
     updateBmr = function(){
         return {
-            type: 'updateBmr',
+            type: types.UPDATE_BMR,
         };
     },
     deleteBmr = function(){
         return {
-            type: 'deleteBmr',
+            type: types.DELETE_BMR,
         };
     },
     saveSelected = function(){
@@ -108,7 +119,7 @@ var showModal = function(name){
 export {fetchEndpoint};
 export {fetchSessionSettings};
 export {showOptionModal};
-export {showBMRModal};
+export {showBmrModal};
 export {showOutputModal};
 export {execute};
 export {toggleVariance};

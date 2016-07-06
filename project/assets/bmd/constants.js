@@ -8,3 +8,8 @@ export const CREATE_MODEL = 'CREATE_MODEL';
 export const SELECT_MODEL = 'SELECT_MODEL';
 export const UPDATE_MODEL = 'UPDATE_MODEL';
 export const DELETE_MODEL = 'DELETE_MODEL';
+
+export const CREATE_BMR = 'CREATE_BMR';
+export const SELECT_BMR = 'SELECT_BMR';
+export const UPDATE_BMR = 'UPDATE_BMR';
+export const DELETE_BMR = 'DELETE_BMR';

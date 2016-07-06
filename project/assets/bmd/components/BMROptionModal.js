@@ -60,9 +60,14 @@ class BMROptionModal extends React.Component {
     }
 
     render() {
+        if (!this.props.bmr){
+            return null;
+        }
 
-        let editMode = this.props.editMode,
-            title = (this.props.editMode)?'Edit benchmark response': 'Benchmark response',
+        let {editMode, bmr} = this.props,
+            title = (this.props.editMode)?
+                `Edit benchmark response: ${bmr.name}`:
+                `Benchmark response: ${bmr.name}`,
             tableFunc = (editMode)? this.renderEditingForm: this.renderReadOnlyTable;
 
         return (
@@ -88,6 +93,7 @@ class BMROptionModal extends React.Component {
 }
 
 BMROptionModal.propTypes = {
+    bmr: React.PropTypes.object,
     editMode: React.PropTypes.bool.isRequired,
     handleSave: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,

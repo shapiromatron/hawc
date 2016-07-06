@@ -9,7 +9,7 @@ class ExecuteWell extends React.Component {
         }
 
         return (
-            <div className='well'>
+            <div className='well' style={{marginTop: '1em'}}>
                 <button type='button'
                         className='btn btn-primary'
                         onClick={this.props.handleExecute}>Execute</button>
