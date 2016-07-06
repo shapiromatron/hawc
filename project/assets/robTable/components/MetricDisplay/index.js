@@ -17,7 +17,7 @@ class MetricDisplay extends Component {
         return (
             <div className='score-row'>
             {_.map(displayScores, (score) => {
-                return <ScoreDisplay key={score.id} score={score} />;
+                return <ScoreDisplay key={score.id} score={score} config={config} />;
             })}
             </div>
         );

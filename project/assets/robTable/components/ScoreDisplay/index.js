@@ -10,8 +10,9 @@ class ScoreDisplay extends Component {
         super(props);
         // values of state.flex correspond to css classes in flex.css
         this.state = {flex: 'flexRow'};
-        this.toggleWidth = 600;
+        this.toggleWidth = 650;
         this.checkFlex = this.checkFlex.bind(this);
+        this.copyNotes = this.copyNotes.bind(this);
     }
 
     componentDidMount() {
@@ -38,19 +39,18 @@ class ScoreDisplay extends Component {
     }
 
     render(){
-        let { score } = this.props,
-            copyTextButton = this.props.copyNotes ? <button className="btn btn-secondary copy-notes" onClick={this.copyNotes.bind(this)}>Copy Notes</button> : null;
+        let { score, config } = this.props,
+            copyTextButton = this.props.copyNotes ? <button className="btn btn-secondary copy-notes" onClick={this.copyNotes}>Copy Notes</button> : null;
         return (
             <div className={`score-display ${this.state.flex}-container`} ref='display'>
                 <div className='flex-1'>
-                    <p><b>{score.author.full_name}</b></p>
+                    {config.display === 'final' && !config.isForm ? null : <p><b>{score.author.full_name}</b></p>}
                     <ScoreBar score={score.score}
                               shade={score.score_shade}
                               symbol={score.score_symbol}
                               description={score.score_description}
                     />
                 </div>
-                <hr/>
                 <div className='flex-3 score-notes'>
                     <div dangerouslySetInnerHTML={{
                         __html: score.notes,

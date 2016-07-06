@@ -17,8 +17,8 @@ class ScoreBar extends Component {
 
     render() {
         let { description, score } = this.props,
-        // Not Reported score is 10. If Not reported, set barWidth to 15 instead of 250.
-            barWidth = score === 10 ? 15 : d3.max([d3.round(score / 4 * 100, 2), 15]);
+        // Not Reported score is 10. If Not reported, set barWidth to 25 instead of 250.
+            barWidth = score === 10 ? 25 : d3.max([d3.round(score / 4 * 100, 2), 25]);
 
         return (
             <div className='score-bar'>
