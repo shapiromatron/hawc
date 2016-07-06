@@ -30,46 +30,56 @@ class ScoreForm extends Component {
                 4: 'Definitely low risk of bias',
                 10: 'Not reported',
             },
+            score: null,
+            notes: props.score.notes,
         };
 
     }
 
     componentWillMount(){
-        let { score } = this.props;
-        this.setState({
-            selectedShade: this.state.scoreShades[score.score],
-            selectedSymbol: this.state.scoreSymbols[score.score],
-        });
+        this.selectScore(this.props.score.score);
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if(nextProps.addText !== this.props.addText){
+            this.setState({
+                notes: this.state.notes + nextProps.addText,
+            });
+        }
     }
 
     selectScore(score){
         this.setState({
+            score,
             selectedShade: this.state.scoreShades[score],
             selectedSymbol: this.state.scoreSymbols[score],
         });
+    }
+
+    handleEditorInput(event){
+        this.setState({notes: event});
     }
 
     render() {
         let { score } = this.props;
 
         return (
-          <div className='score-form'>
-              <div>
-                  <Select choices={this.state.scoreChoices}
+            <div className='score-form'>
+                <div>
+                    <Select choices={this.state.scoreChoices}
                           id={score.metric.metric}
                           defVal={score.score}
-                          ref='score'
                           handleSelect={this.selectScore.bind(this)}/>
-                  <br/><br/>
-                  <ScoreIcon shade={this.state.selectedShade}
+                    <br/><br/>
+                    <ScoreIcon shade={this.state.selectedShade}
                              symbol={this.state.selectedSymbol}/>
-              </div>
-              <ReactQuill ref='notes'
-                          id={score.metric.metric}
-                          defaultValue={score.notes}
-                          theme='snow'
-                          className='score-editor' />
-          </div>
+                </div>
+                <ReactQuill id={score.metric.metric}
+                         value={this.state.notes}
+                         onChange={this.handleEditorInput.bind(this)}
+                         theme='snow'
+                         className='score-editor' />
+            </div>
         );
     }
 }

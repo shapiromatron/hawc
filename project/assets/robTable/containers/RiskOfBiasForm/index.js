@@ -21,8 +21,8 @@ class RiskOfBiasForm extends Component {
                 let { form } = metric.refs;
                 return {
                     id: form.props.score.id,
-                    notes: form.refs.notes.state.value,
-                    score: form.refs.score.refs.select.value };
+                    notes: form.state.notes,
+                    score: form.state.score };
             });
         }));
         this.props.dispatch(submitRiskOfBiasScores({scores}));
@@ -40,7 +40,7 @@ class RiskOfBiasForm extends Component {
         return (
             <div className='riskofbias-display'>
                 { error ? <ScrollToErrorBox error={error} /> : null}
-                <form action="">
+                <form onSubmit={this.submitForm.bind(this)}>
 
                     {_.map(riskofbiases, (domain) => {
                         return <DomainDisplay key={domain.key}
@@ -49,7 +49,7 @@ class RiskOfBiasForm extends Component {
                                            config={config} />;
                     })}
                     <button className='btn btn-primary'
-                            onClick={this.submitForm.bind(this)}>
+                            type='submit'>
                         Update risk of bias
                     </button>
                     <button className='btn'
