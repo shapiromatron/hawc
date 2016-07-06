@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import ScoreDisplay from 'robTable/components/ScoreDisplay';
 
 const CrossStudyDisplay = (props) => {
-    let { domain, metric, scores } = props;
+    let { domain, metric, scores, config } = props;
     scores = scores[0].values[0].values;
     return (
         <div className='cross-study-display'>
@@ -19,7 +19,7 @@ const CrossStudyDisplay = (props) => {
                         <h4><a target='_blank' href={rob.study.url}>
                             {rob.study.name}
                         </a></h4>
-                        <ScoreDisplay key={i} score={rob} />
+                        <ScoreDisplay key={i} score={rob} config={config} />
                     </div>
                 );
             })}

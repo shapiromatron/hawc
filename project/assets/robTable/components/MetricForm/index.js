@@ -25,6 +25,7 @@ class MetricForm extends Component {
             {_.map(displayScores, (score) => {
                 return <ScoreDisplay key={score.id}
                             score={score}
+                            config={config}
                             copyNotes={config.display ==='final' ? this.copyNotes.bind(this) : undefined} />;
             })}
             </div>
