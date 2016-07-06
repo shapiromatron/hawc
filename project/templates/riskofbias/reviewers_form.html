@@ -51,7 +51,7 @@
         var copyReviewerToInput = function(inputNode, id, value){
             inputNode.children().children('.autocompletewidget').val(value);
             inputNode.children().children('.hiddeninput').val(id);
-        }
+        };
 
         /**
          * Call copyReviewerToInput for all studies
@@ -63,23 +63,23 @@
         var copyReviewerToAllRows = function(index, id, value){
             _.map(formsetRows, function(row){
                 var input = $(row.getElementsByTagName('th')[index]);
-                copyReviewerToInput(input, id, value)
-            })
-        }
+                copyReviewerToInput(input, id, value);
+            });
+        };
 
         // Create copy reviewers button and add click listener
         _.map(reviewerFields, function(field){
             var copyReviewerButton = document.createElement('i');
             copyReviewerButton.className = 'btn fa fa-arrows-v rob-copy-reviewers';
-            copyReviewerButton.title = 'Copy reviewer to all studies in assessment';
+            copyReviewerButton.title = 'Use this reviewer for all studies in this reviewer-column';
             copyReviewerButton.addEventListener('click', function(){
-                var fieldId = this.parentNode.getElementsByClassName('hiddeninput')[0].value;
-                var fieldEntry = this.parentNode.getElementsByClassName('autocompletewidget')[0].value;
-                var index = this.parentNode.parentNode.cellIndex;
+                var fieldId = this.parentNode.getElementsByClassName('hiddeninput')[0].value,
+                    fieldEntry = this.parentNode.getElementsByClassName('autocompletewidget')[0].value,
+                    index = this.parentNode.parentNode.cellIndex;
                 copyReviewerToAllRows(index, fieldId, fieldEntry);
-            })
-            field.parentNode.appendChild(copyReviewerButton)
-        })
+            });
+            field.parentNode.appendChild(copyReviewerButton);
+        });
       });
     </script>
 {% endblock extrajs %}
