@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from . import models
 
+import bmds
+
 
 class BMDSessionSerializer(serializers.ModelSerializer):
 
@@ -14,5 +16,5 @@ class BMDSessionSerializer(serializers.ModelSerializer):
         ret['models'] = []
         ret['bmrs'] = []
         ret['allModelOptions'] = [{'name': 'a'}, {'name': 'b'}, {'name': 'c'}]
-        ret['allBmrOptions'] = [{'name': 'd'}, {'name': 'e'}, {'name': 'f'}]
+        ret['allBmrOptions'] = bmds.Session.bmrs[instance.endpoint.data_type]
         return ret

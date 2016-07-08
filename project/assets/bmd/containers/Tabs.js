@@ -118,8 +118,7 @@ class Tabs extends React.Component {
                                 editMode={editMode}
                                 handleCreateBmr={this.handleCreateBmr.bind(this)}
                                 handleModalDisplay={this.handleBmrModal.bind(this)}
-                                bmrs={this.props.bmrs}
-                                allOptions={this.props.allBmrOptions}/>
+                                bmrs={this.props.bmrs}/>
                         </div>
                         <ExecuteWell
                             editMode={editMode}

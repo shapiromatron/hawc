@@ -1,3 +1,6 @@
+import _ from 'underscore';
+import {deepCopy} from 'shared/utils';
+
 import { combineReducers } from 'redux';
 
 import config from 'shared/reducers/Config';
@@ -13,7 +16,7 @@ const defaultState = {
     selectedBmrIndex: null,
     selectedBmr: null,
     allModelOptions: [],
-    allBmrOptions: [],
+    allBmrOptions: null,
 };
 
 var tmp;
@@ -32,7 +35,7 @@ function bmd(state=defaultState, action){
             models: action.settings.models,
             bmrs: action.settings.bmrs,
             allModelOptions: action.settings.allModelOptions,
-            allBmrOptions: action.settings.allBmrOptions,
+            allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
         });
 
     case types.CREATE_MODEL:
@@ -58,13 +61,22 @@ function bmd(state=defaultState, action){
 
     case types.CREATE_BMR:
         return Object.assign({}, state, {
-            bmrs: [...state.bmrs, state.allBmrOptions[0]],
+            bmrs: [...state.bmrs, _.values(state.allBmrOptions)[0]],
         });
 
     case types.SELECT_BMR:
         return Object.assign({}, state, {
             selectedBmrIndex: action.bmrIndex,
             selectedBmr: state.bmrs[action.bmrIndex],
+        });
+
+    case types.UPDATE_BMR:
+        tmp = deepCopy(state.bmrs);
+        tmp[state.selectedBmrIndex] = action.values;
+        return Object.assign({}, state, {
+            bmrs: tmp,
+            selectedModelIndex: null,
+            selectedModel: null,
         });
 
     case types.DELETE_BMR:

@@ -23,15 +23,15 @@ class BMROptionTable extends React.Component {
         );
     }
 
-    renderRow(d, i){
+    renderRow(bmr, i){
         let header = (this.props.editMode)?
              'View/edit': 'View';
 
         return (
             <tr key={i}>
-                <td>{d.name}</td>
-                <td></td>
-                <td></td>
+                <td>{bmr.type}</td>
+                <td>{bmr.value}</td>
+                <td>{bmr.confidence_level}</td>
                 <td>
                     <button
                         type="button"
@@ -80,7 +80,6 @@ BMROptionTable.propTypes = {
     handleCreateBmr: React.PropTypes.func.isRequired,
     handleModalDisplay: React.PropTypes.func.isRequired,
     bmrs: React.PropTypes.array.isRequired,
-    allOptions: React.PropTypes.array.isRequired,
 };
 
 export default BMROptionTable;

@@ -28,15 +28,22 @@ class Modals extends React.Component {
         this.props.dispatch(deleteModel());
     }
 
-    handleBmrUpdate(){
-        this.props.dispatch(updateBmr());
+    handleBmrUpdate(values){
+        this.props.dispatch(updateBmr(values));
     }
 
     handleBmrDelete(){
         this.props.dispatch(deleteBmr());
     }
 
+    isReady(){
+        return (this.props.allBmrOptions !== null);
+    }
+
     render() {
+        if (!this.isReady()){
+            return null;
+        }
         let {editMode} = this.props.config;
         return (
             <div>
@@ -47,6 +54,7 @@ class Modals extends React.Component {
                     handleDelete={this.handleModelDelete.bind(this)}/>
                 <BMROptionModal
                     bmr={this.props.selectedBmr}
+                    allOptions={this.props.allBmrOptions}
                     editMode={editMode}
                     handleSave={this.handleBmrUpdate.bind(this)}
                     handleDelete={this.handleBmrDelete.bind(this)} />
@@ -64,6 +72,7 @@ function mapStateToProps(state) {
         config: state.config,
         selectedModel: state.bmd.selectedModel,
         selectedBmr: state.bmd.selectedBmr,
+        allBmrOptions: state.bmd.allBmrOptions,
     };
 }
 

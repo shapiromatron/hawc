@@ -100,9 +100,10 @@ var showModal = function(name){
             type: types.CREATE_BMR,
         };
     },
-    updateBmr = function(){
+    updateBmr = function(values){
         return {
             type: types.UPDATE_BMR,
+            values,
         };
     },
     deleteBmr = function(){
