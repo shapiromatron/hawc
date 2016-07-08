@@ -10,6 +10,7 @@ from django.core.exceptions import (ValidationError, ObjectDoesNotExist,
                                     MultipleObjectsReturned)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
+from django.http import Http404
 
 from reversion import revisions as reversion
 
@@ -160,6 +161,13 @@ class Study(Reference):
 
     def get_absolute_url(self):
         return reverse('study:detail', args=[str(self.pk)])
+
+    def get_final_rob_url(self):
+        final = self.get_final_rob()
+        try:
+            return final.get_final_url()
+        except AttributeError:
+            raise Http404('Final RoB does not exist')
 
     def get_assessment(self):
         return self.assessment

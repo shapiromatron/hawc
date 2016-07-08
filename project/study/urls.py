@@ -41,6 +41,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/versions/$',
         views.StudyVersions.as_view(),
         name='versions'),
+    url(r'^(?P<pk>\d+)/risk-of-bias/$',
+        views.StudyRoBRedirect.as_view(),
+        name='rob_redirect'),
 
     # attachment
     url(r'^attachment/(?P<pk>\d+)/$',

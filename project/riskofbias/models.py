@@ -150,6 +150,9 @@ class RiskOfBias(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
+    def get_final_url(self):
+        return reverse('riskofbias:rob_detail', args=[self.study_id])
+
     def get_absolute_url(self):
         return reverse('riskofbias:arob_reviewers',
             args=[self.get_assessment().pk])
