@@ -1,10 +1,10 @@
 import codecs
 from datetime import datetime
-from StringIO import StringIO
 import logging
 import os
 import re
 import subprocess
+from StringIO import StringIO
 import tempfile
 import urllib2
 
