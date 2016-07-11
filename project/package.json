@@ -74,16 +74,16 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "react": "^15.0.2",
-    "react-addons-css-transition-group": "^15.0.2",
-    "react-addons-transition-group": "^15.0.2",
-    "react-dom": "^15.0.2",
+    "react": "^15.2.1",
+    "react-addons-css-transition-group": "^15.2.1",
+    "react-addons-transition-group": "^15.2.1",
+    "react-dom": "^15.2.1",
     "react-quill": "^0.4.1",
     "react-redux": "^4.4.5",
-    "react-router": "^2.4.0",
+    "react-router": "^2.5.2",
     "redux": "^3.5.2",
-    "redux-router": "^1.0.0-beta7",
-    "velocity-react": "^1.1.5",
-    "redux-thunk": "^2.1.0"
+    "redux-router": "^2.0.0-beta1",
+    "redux-thunk": "^2.1.0",
+    "velocity-react": "^1.1.5"
   }
 }
