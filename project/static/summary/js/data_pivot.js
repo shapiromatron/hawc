@@ -3272,16 +3272,18 @@ DataPivotLegend = function(vis, settings, dp_settings, options){
   this.options = options || {"offset": false};
   if(this.settings.show) this._draw_legend();
 };
-DataPivotLegend.default_settings = function(){
-  return {
-    "show": true,
-    "left": 5,
-    "top": 5,
-    "columns": 1,
-    "style": {"border_color": "#666666", "border_width": "2px"},
-    "fields": []
-  };
-};
+_.extend(DataPivotLegend, {
+  default_settings: function(){
+    return {
+      "show": true,
+      "left": 5,
+      "top": 5,
+      "columns": 1,
+      "style": {"border_color": "#666666", "border_width": "2px"},
+      "fields": []
+    }
+  },
+});
 DataPivotLegend.prototype = {
   add_select: function(){
     var select = $('<select></select>').html(this._build_options());
@@ -3340,7 +3342,7 @@ DataPivotLegend.prototype = {
         .attr("width", 10);
 
     var vertical_spacing = 22,
-        text_x_offset = 24,
+        text_x_offset,
         columns = this.settings.columns,
         rows = Math.ceil(this.settings.fields.length/columns),
         style, colg, row_index;
@@ -3358,6 +3360,7 @@ DataPivotLegend.prototype = {
 
       // add line
       if(datum.line_style !== DataPivot.NULL_CASE){
+        text_x_offset = 25;
         style = self._get_line_style(datum);
         colg.selectAll()
             .data([{"x1":buffer,
@@ -3381,6 +3384,8 @@ DataPivotLegend.prototype = {
                 .attr("y1", function(v){return v.y1;})
                 .attr("y2", function(v){return v.y2;})
                 .each(apply_styles);
+      } else {
+        text_x_offset = 15;
       }
 
       // add symbol
@@ -3417,7 +3422,7 @@ DataPivotLegend.prototype = {
     for(var i=1; i<this.legend_columns.length; i++){
       offset += this.legend_columns[i-1].node().getBoundingClientRect().width + buffer;
       this.legend_columns[i].attr("transform",
-          function(){return "translate(" + (offset) + ",0)";});
+          function(){return "translate({0},0)".printf(offset);});
     }
 
     var resize_legend = function(){

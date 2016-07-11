@@ -95,6 +95,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
         return [
             'study id',
             'study name',
+            'study identifier',
             'study published',
 
             'experiment id',
@@ -219,6 +220,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             row = [
                 ser['animal_group']['experiment']['study']['id'],
                 ser['animal_group']['experiment']['study']['short_citation'],
+                ser['animal_group']['experiment']['study']['study_identifier'],
                 ser['animal_group']['experiment']['study']['published'],
 
                 ser['animal_group']['experiment']['id'],
