@@ -1,6 +1,6 @@
 import codecs
 from datetime import datetime
-from io import StringIO
+from StringIO import StringIO
 import logging
 import os
 import re
