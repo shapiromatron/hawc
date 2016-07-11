@@ -150,9 +150,9 @@ class SVGConverter(object):
             png_fn = self._rasterize_png()
 
             # create blank presentation slide layout
-            prs = Presentation()
-            blank_slidelayout = prs.slide_layouts[6]
-            slide = prs.slides.add_slide(blank_slidelayout)
+            pres = Presentation()
+            blank_slidelayout = pres.slide_layouts[6]
+            slide = pres.slides.add_slide(blank_slidelayout)
 
             self._pptx_add_title(slide)
             self._pptx_add_url(slide)
@@ -161,13 +161,14 @@ class SVGConverter(object):
 
             # save as object
             content = StringIO()
-            prs.save(content)
+            pres.save(content)
             content.seek(0)
 
         except Exception as e:
             logger.error(e.message, exc_info=True)
         finally:
             self.cleanup()
+
         return content
 
     def get_tempfile(self, prefix='hawc-', suffix='.txt'):
