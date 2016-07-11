@@ -25,10 +25,18 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_study_quality %}
+    {% if assessment.enable_risk_of_bias %}
     <li>
-        <b>Risk-of-bias report</b><br>
-        <a class='btn btn-primary' href="{% url 'study:bias_export' assessment.pk %}">Download</a><br>
+        <b>Risk of bias report</b><br>
+        <a class='btn btn-primary'
+           href="{% url 'riskofbias:export' assessment.pk %}">Download</a><br>
+
+        {% if obj_perms.edit %}
+        <p class='help-block'>(no individual reviews)</p>
+        <a class='btn btn-primary'
+           href="{% url 'riskofbias:complete_export' assessment.pk %}">Download complete</a>
+           <p class='help-block'>(includes individual reviews - team-members and higher only)</p>
+        {% endif %}
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
     {% endif %}

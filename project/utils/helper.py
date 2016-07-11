@@ -41,6 +41,13 @@ def listToUl(list_):
         u"".join([u"<li>{0}</li>".format(d) for d in list_]))
 
 
+def tryParseInt(val, default=None):
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.
@@ -96,6 +103,8 @@ class SerializerHelper(object):
         json_name = cls._get_cache_name(obj.__class__, obj.id, json=True)
 
         # serialize data and get json-representation
+        if hasattr(obj, 'optimized_for_serialization'):
+            obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized)
         serialized = OrderedDict(serialized)  # for pickling

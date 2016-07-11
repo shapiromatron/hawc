@@ -1960,7 +1960,7 @@ _.extend(DataPivot_visualization, {
     var chunkify = function(t){
       var tz = [], x = 0, y = -1, n = 0, i, j;
       while(i = (j = t.charAt(x++)).charCodeAt(0)){
-        var m = (i == 46 || (i >=48 && i <= 57));
+        var m = (i == 46 || i == 45 || (i >=48 && i <= 57));
         if (m !== n) {
           tz[++y] = "";
           n = m;
@@ -2666,8 +2666,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
 
     this.g_labels = this.vis.append("g");
     this.text_labels = this.g_labels.selectAll("text")
-        .data(this.settings.labels)
-      .enter().append("text")
+          .data(this.settings.labels)
+          .enter().append("text")
           .attr('x', function(d){return d.x;})
           .attr('y', function(d){return d.y;})
           .text(function(d){return d.text;})
@@ -2720,7 +2720,6 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         midpoint_height,
         heights = [],
         height_offset;
-
     // build n x m array-matrix of text-component-data (including header, where):
     // n = number of rows, m = number of columns
     matrix = [this.headers];
@@ -2728,11 +2727,16 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
       row = [];
       self.settings.descriptions.forEach(function(desc, j){
         var txt = v[desc.field_name];
-        if($.isNumeric(txt) && (txt % 1 === 0)) txt = parseInt(txt, 10);
+        if($.isNumeric(txt)){
+          if (txt % 1 === 0) txt = parseInt(txt, 10);
+          txt = txt.toHawcString();
+        } else {
+          txt = txt.toLocaleString();
+        }
         row.push({
           "row": i+1,
           "col": j,
-          "text": txt.toLocaleString(),
+          "text": txt,
           "style": v._styles['text_' + j],
           "cursor": (desc._dpe_key)?'pointer':'auto',
           "onclick": function(){
@@ -2752,8 +2756,8 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
         .attr("class", "text_row");
 
     this.text_rows.selectAll("text")
-        .data(function(d) { return d; })
-      .enter().append("text")
+          .data(function(d) { return d; })
+          .enter().append("text")
           .attr("x", 0)
           .attr("y", 0)
           .attr("class", "with_whitespace")

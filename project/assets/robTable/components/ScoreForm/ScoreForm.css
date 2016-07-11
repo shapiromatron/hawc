@@ -1,0 +1,15 @@
+.score-form {
+    display: flex;
+    flex-flow: row;
+    margin: 10px
+}
+
+.score-editor {
+    flex: 4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.ql-toolbar {
+    box-shadow: 0 5px 5px -5px black;
+}

@@ -1,5 +1,4 @@
 {% extends 'portal.html' %}
-{% load render_bundle from webpack_loader %}
 
 
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
@@ -19,21 +18,36 @@
         "assessment_id": "{{ assessment.id }}",
         "assessment": "{% url 'assessment:endpoint_type_list' %}",
         "epi": {
-          "url": "{% url 'epi:api:cleanup-list' %}",
+          "url": "{% url 'epi:api:outcome-cleanup-list' %}",
           "endpoint": "Outcome"
         },
         "ani": {
-          "url": "{% url 'animal:api:cleanup-list' %}",
+          "url": "{% url 'animal:api:endpoint-cleanup-list' %}",
           "endpoint": "Endpoint"
         },
+        "experiment": {
+          "url": "{% url 'animal:api:experiment-cleanup-list' %}",
+          "endpoint": "Experiment"
+        },
+        "animal-groups": {
+          "url": "{% url 'animal:api:animal_group-cleanup-list' %}",
+          "endpoint": "AnimalGroup"
+        },
         "in-vitro": {
-          "url": "{% url 'invitro:api:cleanup-list' %}",
+          "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",
           "endpoint": "IVEndpoint"
+        },
+        "in-vitro-chemical": {
+          "url": "{% url 'invitro:api:ivchemical-cleanup-list' %}",
+          "endpoint": "IVChemical"
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }
 </script>
-{% render_bundle 'main' %}
-
+<script type="text/javascript">
+$(document).ready(function(){
+  window.app.textCleanupStartup();
+});
+</script>
 {% endblock extrajs %}

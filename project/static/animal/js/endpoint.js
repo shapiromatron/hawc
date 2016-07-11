@@ -233,7 +233,6 @@ var Endpoint = function(data, options){
     this.doses = [];
     this.data = data;
     this.unpack_doses();
-    this.add_confidence_intervals();
 };
 _.extend(Endpoint, {
     get_object: function(id, cb){
@@ -308,7 +307,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{
-            return this.data.groups[this.data[name]].dose.toLocaleString();
+            return this.data.groups[this.data[name]].dose.toHawcString();
         }catch(err){
             return '-';
         }
@@ -333,86 +332,6 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             { url: this.data.url, name: this.data.name }
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    },
-    add_confidence_intervals: function(){
-        // Add confidence interval data to dataset.
-        if ((this.data !== undefined) &&
-            (this.data.data_type !== undefined) &&
-            (this.hasEGdata())) {
-            if (this.data.data_type === 'C'){
-                this.add_continuous_confidence_intervals();
-            } else if (this.data.data_type === 'P'){
-                this.add_pd_confidence_intervals();
-            } else {
-                this.add_dichotomous_confidence_intervals();
-            }
-        }
-    },
-    add_dichotomous_confidence_intervals: function(){
-        /*
-        Procedure adds confidence intervals to dichotomous datasets.
-        Taken from bmds231_manual.pdf, pg 124-5
-
-        LL = {(2np + z2 - 1) - z*sqrt[z2 - (2+1/n) + 4p(nq+1)]}/[2*(n+z2)]
-        UL = {(2np + z2 + 1) + z*sqrt[z2 + (2-1/n) + 4p(nq-1)]}/[2*(n+z2)]
-
-        - p = the observed proportion
-        - n = the total number in the group in question
-        - z = Z(1-alpha/2) is the inverse standard normal cumulative distribution
-              function evaluated at 1-alpha/2
-        - q = 1-p.
-
-        The error bars shown in BMDS plots use alpha = 0.05 and so represent
-        the 95% confidence intervals on the observed proportions (independent of
-        model).
-        */
-        _.chain(this.data.groups)
-         .filter(function(d){ return d.isReported; })
-         .each(function(v){
-            var p = v.incidence/v.n,
-                q = 1-p,
-                z = 1.959963986120195;  // same as Math.ltqnorm(0.975);
-            v.lower_limit = (((2*v.n*p + 2*z - 1) -
-                             z * Math.sqrt(2*z - (2+1/v.n) + 4*p*(v.n*q+1))) / (2*(v.n+2*z)));
-            v.upper_limit = (((2*v.n*p + 2*z + 1) +
-                             z * Math.sqrt(2*z + (2+1/v.n) + 4*p*(v.n*q-1))) / (2*(v.n+2*z)));
-        });
-    },
-    add_pd_confidence_intervals: function(){
-        _.each(this.data.groups, function(v){
-           v.lower_limit = v.lower_ci;
-           v.upper_limit = v.upper_ci;
-        });
-    },
-    add_continuous_confidence_intervals: function(){
-        /*
-        Procedure adds confidence intervals to continuous datasets.
-        Taken from bmds231_manual.pdf, pg 124
-
-        BMDS uses a single error bar plotting routine for all continuous models.
-
-        1. The plotting routine calculates the standard error of the mean (SEM) for
-           each group. The routine divides the group-specific observed variance
-           (obs standard deviation squared) by the group-specific sample size.
-
-        2. The routine then multiplies the SEM by the Student-T percentiles (2.5th
-           percentile or 97.5th percentile for the lower and upper bound,
-           respectively) appropriate for the group-specific sample size
-           (i.e., having degrees of freedom one less than that sample size).
-           The routine adds the products to the observed means to define the lower
-           and upper ends of the error bar.
-        */
-        var self = this;
-        _.chain(this.data.groups)
-         .filter(function(d){ return d.isReported; })
-         .each(function(v){
-            if(!(v.variance) || !(v.n)) return;
-            if (v.stdev === undefined) self._calculate_stdev(v);
-            var se = v.stdev/Math.sqrt(v.n),
-                z = Math.Inv_tdist_05(v.n-1) || 1;  // in the edge-case where N=1
-            v.lower_limit = v.response - se * z;
-            v.upper_limit = v.response + se * z;
-        });
     },
     get_pd_string: function(eg){
         var txt = "{0}%".printf(eg.response);
@@ -453,7 +372,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
 
         // now build header row showing available doses
         for(var i=0; i<nGroups; i++){
-            var doses = this.doses.map(function(v){ return v.values[i].dose.toLocaleString(); });
+            var doses = this.doses.map(function(v){ return v.values[i].dose.toHawcString(); });
             txt = doses[0];
             if (doses.length>1)
                 txt += " ({0})".printf(doses.slice(1, doses.length).join(", "))
@@ -486,8 +405,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             } else {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if (data_type === "C"){
-                    response = v.response.toLocaleString();
-                    if(v.stdev) response += " ± {0}".printf(v.stdev.toLocaleString());
+                    response = v.response.toHawcString();
+                    if(v.stdev) response += " ± {0}".printf(v.stdev.toHawcString());
                     txt = "";
                     if(i > 0){
                         txt = self._continuous_percent_difference_from_control(v, dr_control);
@@ -545,8 +464,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))
            .add_tbody_tr("Data extracted?", HAWCUtils.booleanCheckbox(this.data.data_extracted))
            .add_tbody_tr("Values estimated?", HAWCUtils.booleanCheckbox(this.data.values_estimated))
-           .add_tbody_tr("Location in literature", this.data.data_location)
-           .add_tbody_tr("NOEL", critical_dose("NOEL"))
+           .add_tbody_tr("Location in literature", this.data.data_location);
+
+        if (this.data.expected_adversity_direction>0){
+            tbl.add_tbody_tr(
+                'Expected response<br>adversity direction',
+                this.data.expected_adversity_direction_text);
+        }
+
+        tbl.add_tbody_tr("NOEL", critical_dose("NOEL"))
            .add_tbody_tr("LOEL", critical_dose("LOEL"))
            .add_tbody_tr("FEL",  critical_dose("FEL"))
            .add_tbody_tr("Monotonicity", this.data.monotonicity)
@@ -707,57 +633,6 @@ _.extend(Endpoint.prototype, Observee.prototype, {
 });
 
 
-var EndpointSQTable = function(endpoint){
-    this.endpoint = endpoint;
-    this.tbl = new BaseTable();
-};
-EndpointSQTable.prototype = {
-    hasQualities: function(){
-        return this.endpoint.data.qualities.length>0;
-    },
-    build_table: function(options){
-
-        if(!this.hasQualities()) return;
-
-        var self = this,
-            headers = [
-                "Domain",
-                "Metric",
-                "Score",
-                "Description"
-            ],
-            getNotes = function(v){
-                var notes = $("<div>").append(v.notes);
-                if (options.canEdit){
-
-                    var ul = $('<ul class="dropdown-menu">')
-                        .append('<li><a href="{0}">Edit</a></li>'.printf(v.url_edit))
-                        .append('<li><a href="{0}">Delete</a></li>'.printf(v.url_delete));
-
-                    var dd = $('<div class="dropdown pull-right optsCaret">')
-                        .append('<a class="dropdown-toggle btn btn-mini btn-primary" data-toggle="dropdown" href="#"><span class="caret"></span></a>')
-                        .append(ul)
-                        .appendTo(notes);
-                }
-                return notes;
-            }
-
-        this.tbl.addHeaderRow(headers);
-        this.tbl.setColGroup([20,30,15,35]);
-        this.endpoint.data.qualities.map(function(v){
-
-            self.tbl.addRow([
-                v.metric.domain.name,
-                v.metric.metric,
-                v.score_symbol,
-                getNotes(v)
-            ]).addClass('showOptsCaret');
-        });
-        return this.tbl.getTbl();
-    }
-};
-
-
 var EndpointCriticalDose = function(endpoint, span, type, show_units){
     // custom field to observe dose changes and respond based on selected dose
     endpoint.addObserver(this);
@@ -774,7 +649,7 @@ EndpointCriticalDose.prototype = {
             doses = this.endpoint.doses.filter(function(v){
                 return v.name === self.endpoint.dose_units;});
         try {
-            txt = doses[0].values[this.critical_effect_idx].dose.toLocaleString();
+            txt = doses[0].values[this.critical_effect_idx].dose.toHawcString();
             if (this.show_units) txt = "{0} {1}".printf(txt, this.endpoint.dose_units);
         } catch(err){}
         this.span.html(txt);
@@ -911,7 +786,7 @@ EndpointTable.prototype = {
             if (!v.isReported) return;
 
             var tr = $('<tr>'),
-                dose = v.dose.toLocaleString();
+                dose = v.dose.toHawcString();
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
@@ -1357,8 +1232,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                 y:          y,
                 cls:        cls,
                 isReported: v.isReported,
-                y_lower:    v.lower_limit,
-                y_upper:    v.upper_limit,
+                y_lower:    v.lower_ci,
+                y_upper:    v.upper_ci,
                 txt:        txts.join('\n'),
                 significance_level: v.significance_level
             }
@@ -1915,15 +1790,15 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
                 if(e.data.NOEL == i) cls += ' NOEL';
                 if(e.data.LOEL == i) cls += ' LOEL';
 
-                min = Math.min(min, v.lower_limit || val);
-                max = Math.max(max, v.upper_limit || val);
+                min = Math.min(min, v.lower_ci || val);
+                max = Math.max(max, v.upper_ci || val);
 
                 return {
                     isReported: v.isReported,
                     dose:       v.dose,
                     value:      val,
-                    high:       v.upper_limit,
-                    low:        v.lower_limit,
+                    high:       v.upper_ci,
+                    low:        v.lower_ci,
                     txt:        txt,
                     classes:    cls,
                     significance_level:     v.significance_level,

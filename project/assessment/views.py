@@ -17,7 +17,8 @@ from rest_framework.response import Response
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList, ProjectManagerOrHigherMixin)
+                         BaseDelete, BaseVersion, BaseList, TeamMemberOrHigherMixin)
+from utils.helper import tryParseInt
 from assessment.api.views import DisabledPagination
 from celery import chain
 
@@ -355,7 +356,7 @@ class BaseEndpointList(BaseList):
         return context
 
 
-class CleanExtractedData(ProjectManagerOrHigherMixin, BaseEndpointList):
+class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     template_name = 'assessment/clean_extracted_data.html'
 
     def get_assessment(self, request, *args, **kwargs):
@@ -421,7 +422,7 @@ def download_plot(request):
         converter = tasks.SVGConverter(svg, url, width, height)
 
         if output_type == 'svg':
-            svg = converter.get_svg()
+            svg = converter.get_svg_with_embedded_styles()
             response = HttpResponse(svg, content_type="image/svg+xml")
             response['Content-Disposition'] = 'attachment; filename="download.svg"'
 
@@ -432,22 +433,23 @@ def download_plot(request):
                 response = HttpResponse(output, content_type="image/png")
                 response['Content-Disposition'] = 'attachment; filename="download.png"'
 
-        elif output_type == 'pptx':
-            task = chain(
-                converter.convert_to_png.s(converter, delete_and_return_object=False),
-                converter.convert_to_pptx.s()
-            )()
-            output = task.get(timeout=90)
-            if output:
-                response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
-                response['Content-Disposition'] = 'attachment; filename="download.pptx"'
-
         elif output_type == 'pdf':
             task = converter.convert_to_pdf.delay(converter)
             output = task.get(timeout=60)
             if output:
                 response = HttpResponse(output, content_type="application/pdf")
                 response['Content-Disposition'] = 'attachment; filename="download.pdf"'
+
+        elif output_type == 'pptx':
+            task = chain(
+                converter.convert_to_png.s(converter, delete_and_return_object=False),
+                converter.convert_to_pptx.s(converter)
+            )()
+            output = task.get(timeout=90)
+            if output:
+                response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
+                response['Content-Disposition'] = 'attachment; filename="download.pptx"'
+
 
         else:
             response = HttpResponse("<p>An error in processing occurred - unknown output type.</p>")
@@ -464,33 +466,77 @@ class AssessmentEndpointList(views.AssessmentViewset):
     pagination_class = DisabledPagination
 
     def list(self, request, *args, **kwargs):
+        """
+        List has been optimized for queryset speed; some counts in get_queryset
+        and others in the list here; depends on if a "select distinct" is
+        required which significantly decreases query speed.
+        """
+
         instance = self.filter_queryset(self.get_queryset())[0]
         app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
         instance.items = []
 
+        # animal
         instance.items.append({
             'count': instance.endpoint_count,
             'title': "animal bioassay endpoints",
             'type': 'ani',
             'url': "{}{}".format(app_url, 'ani/'),
         })
+        count = apps.get_model('animal', 'Experiment')\
+            .objects\
+            .filter(study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "animal bioassay experiments",
+            'type': 'experiment',
+            'url': "{}{}".format(app_url, 'experiment/'),
+        })
+        count = apps.get_model('animal', 'AnimalGroup')\
+            .objects\
+            .filter(experiment__study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "animal bioassay animal groups",
+            'type': 'animal-groups',
+            'url': "{}{}".format(app_url, 'animal-groups/'),
+        })
+
+        # epi
         instance.items.append({
             "count": instance.outcome_count,
             "title": "epidemiological outcomes assessed",
             'type': 'epi',
             'url': "{}{}".format(app_url, 'epi/')
         })
+
+        # in vitro
         instance.items.append({
             "count": instance.ivendpoint_count,
             "title": "in vitro endpoints",
             'type': 'in-vitro',
             'url': "{}{}".format(app_url, 'in-vitro/'),
         })
+        count = apps.get_model('invitro', 'ivchemical')\
+            .objects\
+            .filter(study__assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "in vitro chemicals",
+            'type': 'in-vitro-chemical',
+            'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
+        })
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def get_queryset(self):
+        id_ = tryParseInt(self.request.GET.get('assessment_id'))
         queryset = self.model.objects\
+            .filter(id=id_)\
             .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))

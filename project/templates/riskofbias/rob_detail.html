@@ -1,0 +1,52 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+  {{assessment}} | {{object.study}} | Risk of bias review | HAWC
+{% endblock %}
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+  {% block breadcrumbs_self %}
+      <li class="active">Risk of bias<span class="divider">/</span></li>
+  {% endblock %}
+{% endblock %}
+
+{% block content %}
+
+  <h2>{{object}}: Risk of bias review
+  {% if obj_perms.edit %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
+          <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+      </div>
+  {% endif %}
+  </h2>
+
+  <div id="robTable"></div>
+
+{% endblock %}
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "study": {
+            "id": "{{ object.study.pk }}",
+            "url": "{% url 'study:api:study-list' %}"
+        },
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}",
+        "display": "final"
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.app.robTableStartup();
+    });
+</script>
+{% endblock extrajs %}

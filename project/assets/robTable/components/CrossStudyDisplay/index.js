@@ -1,0 +1,59 @@
+import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
+
+import ScoreDisplay from 'robTable/components/ScoreDisplay';
+
+const CrossStudyDisplay = (props) => {
+    let { domain, metric, scores, config } = props;
+    scores = scores[0].values[0].values;
+    return (
+        <div className='cross-study-display'>
+            <h3>{domain}</h3>
+            <h4>{metric.metric}</h4>
+            <div className='help-block'>
+                {metric.description}
+            </div>
+            {_.map(scores, (rob, i) => {
+                return (
+                    <div key={rob.id}>
+                        <h4><a target='_blank' href={rob.study.url}>
+                            {rob.study.name}
+                        </a></h4>
+                        <ScoreDisplay key={i} score={rob} config={config} />
+                    </div>
+                );
+            })}
+
+        </div>
+    );
+};
+
+CrossStudyDisplay.propTypes = {
+    domain: PropTypes.string.isRequired,
+    metric: PropTypes.shape({
+        metric: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+    }).isRequired,
+    scores: PropTypes.arrayOf(PropTypes.shape({
+        values: PropTypes.arrayOf(PropTypes.shape({
+            values: PropTypes.arrayOf(PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                study: PropTypes.shape({
+                    url: PropTypes.string.isRequired,
+                    name: PropTypes.string.isRequired,
+                }).isRequired,
+                author: PropTypes.object.isRequired,
+                notes: PropTypes.string,
+                score_description: PropTypes.string.isRequired,
+                score_symbol: PropTypes.string.isRequired,
+                score_shade: PropTypes.string.isRequired,
+            })).isRequired,
+        })).isRequired,
+    })).isRequired,
+};
+
+export function renderCrossStudyDisplay(data, element){
+    return ReactDOM.render(<CrossStudyDisplay {...data} />, element);
+}
+
+export default CrossStudyDisplay;

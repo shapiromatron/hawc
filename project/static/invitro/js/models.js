@@ -269,6 +269,9 @@ IVEndpoint.prototype = {
     _title_text: function(){
         return this.data.name;
     },
+    has_egs: function(){
+        return this.egs.length > 0;
+    },
     build_title: function(){
         var el = $('<h1>').text(this._title_text());
         if (window.canEdit){
@@ -385,7 +388,10 @@ IVEndpoint.prototype = {
                 .append($('<div class="row-fluid">').append($eg_tbl));
 
         $details.append(this.build_details_table());
-        $eg_tbl.append(this.build_eg_table());
+
+        if (this.has_egs()){
+            $eg_tbl.append(this.build_eg_table());
+        }
 
         modal
             .addTitleLinkHeader(this.data.name, this.data.url)
@@ -398,9 +404,13 @@ IVEndpoint.prototype = {
             .append(this.build_title())
             .append(this.build_details_table())
             .append('<h2>Chemical details</h2>')
-            .append(this.chemical.build_details_table())
-            .append('<h2>Endpoint-group</h2>')
-            .append(this.build_eg_table());
+            .append(this.chemical.build_details_table());
+
+        if (this.has_egs()){
+            $div
+                .append('<h2>Endpoint-group</h2>')
+                .append(this.build_eg_table());
+        }
     },
 };
 
@@ -420,7 +430,7 @@ IVEndpointGroup.prototype = {
                 return txt;
             },
             getNumeric = function(val){
-                return ($.isNumeric(val)) ? val.toLocaleString() : '-';
+                return ($.isNumeric(val)) ? val.toHawcString() : '-';
             };
 
         tr.append('<td>{0}</td>'.printf(getDose(this.data.dose)));

@@ -155,6 +155,12 @@ class ResultSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='__unicode__', read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
 
+    def to_representation(self, instance):
+        ret = super(ResultSerializer, self).to_representation(instance)
+        models.GroupResult.getConfidenceIntervals(
+            ret['variance_type'], ret['results'])
+        return ret
+
     class Meta:
         model = models.Result
         exclude = ('adjustment_factors', )
@@ -184,11 +190,11 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
         model = models.ComparisonSet
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Outcome
-        cleanup_fields = model.text_cleanup_fields()
-        fields = cleanup_fields + ('id', 'name')
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
 
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

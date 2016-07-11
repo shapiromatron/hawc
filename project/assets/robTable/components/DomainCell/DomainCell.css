@@ -1,0 +1,26 @@
+.domain-cell {
+    display: flex;
+    flex-direction: column;
+}
+.header-box {
+    display: flex;
+    align-items: center;
+    flex: 2;
+    background-color: #ddd;
+    padding: 4px 5px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid white;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #757575;
+}
+
+.domain-header {
+    flex: 1;
+}
+
+.score-row {
+    display: flex;
+    flex-flow: row;
+}

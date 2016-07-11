@@ -3,10 +3,14 @@ from __future__ import absolute_import
 import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
 
-from assessment.api.views import AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination
+from assessment.api.views import (
+    AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination)
 
 from . import models, serializers
+from utils.helper import tryParseInt
 
 
 class StudyFilters(django_filters.FilterSet):
@@ -25,6 +29,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions, )
     filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
     filter_class = StudyFilters
+    list_actions = ['list', 'rob_scores', ]
 
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
@@ -41,11 +46,25 @@ class Study(viewsets.ReadOnlyModelViewSet):
                 filters["published"] = True
         else:
             prefetch = (
-                'qualities',
                 'identifiers',
-                'qualities__metric',
-                'qualities__metric__domain'
+                'riskofbiases__scores__metric__domain',
             )
 
         return self.model.objects.filter(**filters)\
                    .prefetch_related(*prefetch)
+
+    @list_route()
+    def rob_scores(self, request):
+        assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
+        scores = self.model.rob_scores(assessment_id)
+        return Response(scores)
+
+
+class FinalRobStudy(Study):
+    list_actions = ['list']
+
+    def get_serializer_class(self):
+        cls = serializers.FinalRobStudySerializer
+        if self.action == "list":
+            cls = serializers.SimpleStudySerializer
+        return cls

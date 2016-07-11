@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.template import Context
 
+from utils.helper import SerializerHelper
+
 
 class HAWCMgr(BaseUserManager):
     # from https://docs.djangoproject.com/en/1.5/topics/auth/customizing/
@@ -116,6 +118,9 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     def get_assessments(self):
         Assessment = apps.get_model('assessment', 'Assessment')
         return Assessment.get_viewable_assessments(self)
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     def send_welcome_email(self):
         subject = "Welcome to HAWC!"

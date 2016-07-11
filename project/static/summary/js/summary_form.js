@@ -21,7 +21,10 @@ _.extend(TableField.prototype, InputField.prototype, {
     toSerializedRow: HAWCUtils.abstractMethod,
     toSerialized: function () {
         this.parent.settings[this.schema.name] =
-            _.map(this.$tbody.children(), this.toSerializedRow, this);
+            _.chain(this.$tbody.children())
+             .map(this.toSerializedRow, this)
+             .compact()
+             .value();
     },
     fromSerialized: function () {
         var arr = this.parent.settings[this.schema.name] || [];
@@ -84,6 +87,9 @@ _.extend(TableField.prototype, InputField.prototype, {
         );
         return td;
     },
+    addTdP: function(cls, txt){
+        return $('<td>').append($('<p>').attr('class', cls).text(txt));
+    },
     addTdText: function(name, val){
         val = val || "";
         return $('<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val));
@@ -99,7 +105,12 @@ _.extend(TableField.prototype, InputField.prototype, {
     addTdColor: function(name, val){
         val = val || "#000000";
         return $('<td>')
-           .append($('<input type="color" <input name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
+           .append($('<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
+    },
+    addTdCheckbox: function(name, checked){
+        let checkProp = (checked) ? "checked": "";
+        return $('<td>')
+           .append($('<input type="checkbox" name="{0}" {1} required>'.printf(name, checkProp)));
     },
     addTdSelect: function(name, values){
         var sel = $('<select name="{0}" class="span12">'.printf(name))
@@ -1129,12 +1140,67 @@ _.extend(CrossviewForm.prototype, VisualForm.prototype, {
 });
 
 
+
+var RoBMetricTable = function () {
+    return TableField.apply(this, arguments);
+};
+_.extend(RoBMetricTable.prototype, TableField.prototype, {
+    renderHeader: function () {
+        return $('<tr>')
+            .append(
+                '<th>Include in visual</th>',
+                '<th>Metric</th>'
+            ).appendTo(this.$thead);
+    },
+    addRow: function () {
+        var includeTd = this.addTdCheckbox('included', true),
+            metricTd = this.addTdP('metric', '');
+
+        return $('<tr>')
+            .append(
+                includeTd,
+                metricTd
+            ).appendTo(this.$tbody);
+    },
+    fromSerialized: function () {
+        // override this method to include all metrics,
+        // even those not included in serialization.
+        var metrics = window.rob_metrics,
+            selected = this.parent.settings[this.schema.name] || [],
+            func;
+
+        // by default select all metrics if none are selected
+        func = (selected.length === 0)?
+                function(d){d.included = true;}:
+                function(d){d.included = _.contains(selected, d.id);};
+
+        _.each(metrics, func);
+        this.$tbody.empty();
+        _.each(metrics, this.fromSerializedRow, this);
+    },
+    fromSerializedRow: function (d) {
+        var row = this.addRow();
+        row.find('.metric').text(d.metric);
+        row.find('input[name="included"]')
+            .prop('checked', d.included)
+            .data('id', d.id);
+    },
+    toSerializedRow: function (row) {
+        var inp = $(row).find('input[name="included"]');
+        return inp.prop('checked')?
+            inp.data('id'):
+            null;
+    },
+});
+
+
 var RoBHeatmapForm = function($el){
     VisualForm.apply(this, arguments);
 };
 _.extend(RoBHeatmapForm, {
     tabs: [
         {name: "overall", label: "General settings"},
+        {name: "metrics", label: "Included metrics"},
         {name: "legend",  label: "Legend settings"},
     ],
     schema: [
@@ -1206,6 +1272,15 @@ _.extend(RoBHeatmapForm, {
             tab: "overall"
         },
         {
+            type: RoBMetricTable,
+            prependSpacer: false,
+            label: "Included metrics",
+            name: "included_metrics",
+            colWidths: [10, 90],
+            addBlankRowIfNone: false,
+            tab: "metrics"
+        },
+        {
             type: CheckboxField,
             name: "show_legend",
             label: "Show legend",
@@ -1266,6 +1341,7 @@ var RoBBarchartForm = function($el){
 _.extend(RoBBarchartForm, {
     tabs: [
         {name: "overall", label: "General settings"},
+        {name: "metrics", label: "Included metrics"},
         {name: "legend",  label: "Legend settings"},
     ],
     schema: [
@@ -1338,6 +1414,15 @@ _.extend(RoBBarchartForm, {
             label: "Show values on plot",
             def: true,
             tab: "overall"
+        },
+        {
+            type: RoBMetricTable,
+            prependSpacer: false,
+            label: "Included metrics",
+            name: "included_metrics",
+            colWidths: [10, 90],
+            addBlankRowIfNone: false,
+            tab: "metrics"
         },
         {
             type: CheckboxField,

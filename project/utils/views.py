@@ -18,6 +18,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 from assessment.models import Assessment
+from .helper import tryParseInt
 
 
 class MessageMixin(object):
@@ -153,7 +154,7 @@ class ProjectManagerOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
@@ -175,11 +176,10 @@ class TeamMemberOrHigherMixin(object):
     Mixin for team-member access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
     """
-    model = Assessment
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        pass
+        raise NotImplementedError('get_assessment requires implementation')
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
@@ -194,6 +194,18 @@ class TeamMemberOrHigherMixin(object):
             .get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
+
+
+class IsAuthorMixin(object):
+    # Throw error if user is not author
+
+    owner_field = 'author'
+
+    def get_object(self):
+        obj = super(IsAuthorMixin, self).get_object()
+        if getattr(obj, self.owner_field) != self.request.user:
+            raise PermissionDenied
+        return obj
 
 
 class CanCreateMixin(object):
@@ -309,10 +321,7 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         kwargs['parent'] = self.parent
 
         # check if we have an object-template to be used
-        try:
-            pk = int(self.request.GET.get('initial', -1))
-        except ValueError:
-            pk = -1
+        pk = tryParseInt(self.request.GET.get('initial'), -1)
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
@@ -369,7 +378,7 @@ class BaseCreateWithFormset(BaseCreate):
     Create view with both a single form and formset. Adds three new options:
 
     - formset_factory: required to load POST data into factory. Formset factory method.
-    - post_objet_save: method for modifying formset after form is saved but before formset. No return.
+    - post_object_save: method for modifying formset after form is saved but before formset. No return.
     - build_initial_formset_factory: method for returning initial formset factory. Returns formset_factory
     """
     formset_factory = None   # required
@@ -500,7 +509,7 @@ class GenerateReport(BaseList):
     def get_template(self, request):
         ReportTemplate = apps.get_model("assessment", "ReportTemplate")
         try:
-            template_id = request.GET.get('template_id', -1)
+            template_id = tryParseInt(self.request.GET.get('template_id'), -1)
             return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)
         except ObjectDoesNotExist:
             raise Http404

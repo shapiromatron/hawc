@@ -12,7 +12,8 @@ from .utils import get_author_short_text
 
 class RisImporter(object):
 
-    def custom_mapping(self):
+    @classmethod
+    def get_mapping(cls):
         mapping = copy(TAG_KEY_MAPPING)
         mapping.update({
             "AT": "accession_type",
@@ -22,12 +23,23 @@ class RisImporter(object):
         })
         return mapping
 
+    @classmethod
+    def file_readable(cls, fileObj):
+        # ensure that file can be successfully parsed
+        try:
+            reader = readris(fileObj, mapping=cls.get_mapping())
+            [content for content in reader]
+            fileObj.seek(0)
+            return True
+        except IOError:
+            return False
+
     def __init__(self, fileObj):
         if isinstance(fileObj, basestring):
             f = open(fileObj, 'r')
         else:
             f = fileObj
-        reader = readris(f, mapping=self.custom_mapping())
+        reader = readris(f, mapping=self.get_mapping())
         contents = [content for content in reader]
         f.close()
         self.raw_references = contents
@@ -212,12 +224,12 @@ class ReferenceParser(object):
             # issue is sometimes blank; only add parens if non-blank
             issue = str(self.content.get("note", ""))
             if len(issue) > 0:
-                issue = u" ({0})".format(issue)
+                issue = u" ({0})".format(issue.decode('utf-8'))
 
             # pages is sometimes blank; only add colon if non-blank
             pages = str(self.content.get("start_page", ""))
             if len(pages) > 0:
-                pages = u":{0}".format(pages)
+                pages = u":{0}".format(pages.decode('utf-8'))
 
             sec_title = unicode(self.content.get("secondary_title", "").decode('utf-8'))  # journal
             year = self.content.get("year", "")  # year
@@ -227,7 +239,7 @@ class ReferenceParser(object):
         elif refType in ("BOOK", "CHAP"):
             vals = []
             if "secondary_title" in self.content:
-                vals.append(u"{0}.".format(self.content["secondary_title"]))
+                vals.append(u"{0}.".format(self.content["secondary_title"].decode('utf-8')))
             if "year" in self.content:
                 vals.append(u"{0}.".format(self.content["year"]))
             if "start_page" in self.content:

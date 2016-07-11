@@ -23,7 +23,8 @@ import invitro.exports as ivexports
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, SerializerHelper
+from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, \
+    SerializerHelper, tryParseInt
 
 
 class SummaryText(MP_Node):
@@ -244,11 +245,9 @@ class Visual(models.Model):
             qs = Endpoint.objects.filter(**filters)
 
         elif self.visual_type == 1:
+
             if request:
-                try:
-                    dose_id = int(request.POST.get('dose_units', -1))
-                except ValueError:
-                    dose_id = -1
+                dose_id = tryParseInt(request.POST.get('dose_units'), -1)
                 Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
 
             else:

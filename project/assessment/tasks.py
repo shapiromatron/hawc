@@ -6,12 +6,16 @@ import random
 import re
 import string
 import subprocess
+import tempfile
 from StringIO import StringIO
 import urllib2
 import xml.etree.ElementTree as ET
 
 from django.conf import settings
 from django.core.cache import cache
+from django.http.request import HttpRequest
+from django.template import RequestContext
+from django.template.loader import render_to_string
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -36,102 +40,93 @@ if os.path.exists(D3_CSS_PATH):
 class SVGConverter():
 
     def __init__(self, svg, url=None, width=None, height=None):
-        self.inkscape = settings.INKSCAPE
-        self.temp_path = settings.TEMP_PATH
         self.url = url
         self.width = width
         self.height = height
-        self.svg = self._process_svg(svg)
+        self.tempfns = []
 
-    def _process_svg(self, svg):
-        """
-        CSS styles must be manually added to the SVG object; after trying
-        numerous tools they couldn't reliably get the information from the
-        browser. Thus, we load a predefined set of styles created using the
-        stylesheets.
-        """
-        # decode from base64 and convert unicode characters
-        svg = svg.decode('base64').replace('%u', '\\u').decode('unicode_escape')
-        svg = urllib2.unquote(svg)
+        svg = svg.decode('base64')\
+            .replace('%u', '\\u')\
+            .decode('unicode_escape')
+        self.svg = urllib2.unquote(svg)
+
+    def get_svg_with_embedded_styles(self):
+        svg = self.svg
 
         # add CSS styles
-        matches = re.finditer(ur'<svg [^>]+>', svg)
-        for m in matches:
-            insertion_point = m.end()
+        match = re.search(ur'<svg [^>]+>', svg)
+        insertion_point = match.end()
 
-        #Manually add our CSS styles from a file. Because there are problems
+        # Manually add our CSS styles from a file. Because there are problems
         # inserting CDATA using a python etree, we use a regex instead
-        svg = (svg[:insertion_point] +
-               r'<defs style="hawc-styles"><style type="text/css"><![CDATA[{css}]]></style></defs>'.format(css=D3_CSS_STYLES) +
-               svg[insertion_point:])
+        styles = r'<defs style="hawc-styles"><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(D3_CSS_STYLES)
+        svg = (svg[:insertion_point] + styles + svg[insertion_point:])
 
         return svg
 
-    def get_svg(self):
-        return self.svg
+    def get_tempfile(self, prefix='hawc-', suffix='.txt'):
+        _, fn = tempfile.mkstemp(prefix=prefix, suffix=suffix)
+        self.tempfns.append(fn)
+        return fn
 
-    def _try_to_remove_files(self, files):
-        # try to remove files in list of files
-        for f in files:
-            try:
-                os.remove(f)
-            except:
-                pass
+    def cleanup(self):
+        for fn in self.tempfns:
+            os.remove(fn)
 
-    def _save_svg(self, output_extension=''):
-        # return input and output filename and save svg to disk
-        fn = ''.join(random.choice(string.ascii_lowercase) for x in range(16))
-        fn_in = os.path.join(self.temp_path, fn + '.svg')
-        fn_out = os.path.join(self.temp_path, fn + output_extension)
-
-        with open(fn_in, 'w') as f:
-            f.write(self.svg.encode('utf-8'))
-
-        return (fn_in, fn_out)
+    def convert_to_html(self):
+        request = HttpRequest()
+        context = RequestContext(request, dict(
+            svg=self.svg,
+            css=D3_CSS_STYLES
+        ))
+        html = render_to_string('rasterize.html', context).encode('UTF-8')
+        fn = self.get_tempfile(suffix='.html')
+        with open(fn, 'wb') as f:
+            f.write(html)
+        return fn
 
     @shared_task
     def convert_to_png(self, delete_and_return_object=True):
-        """
-        Given an svg data object, convert to a png object, and return the
-        status of if conversion was successful and the object if complete. Uses
-        Inkscape to convert, requires writing files to disk.
-        """
-        logger.info('Converting svg to png')
-        png = None
-
-        try:
-            (fn_in, fn_out) = self._save_svg(output_extension='.png')
-            export_tag = '--export-png={f}'.format(f=fn_out)
-            width_tag = '--export-width={f}'.format(f=self.width) if self.width else ''
-            height_tag = '--export-height={f}'.format(f=self.height) if self.height else ''
-            background = '--export-background=white'
-            commands = [self.inkscape, fn_in, export_tag, background, width_tag, height_tag]
-            subprocess.call(commands, cwd=self.temp_path)
-            logger.info('Conversion successful')
-
-        except Exception as e:
-            logger.error(e.message, exc_info=True)
-            return None
-
+        logger.info('Converting svg -> html -> png')
+        png = self.get_tempfile(suffix='.png')
+        self.rasterize(png)
+        content = None
         if delete_and_return_object:
-            if os.path.exists(fn_out):
-                png = open(fn_out, 'rb').read()
-            self._try_to_remove_files([fn_in, fn_out])
-            return png
+            with open(png, 'rb') as f:
+                content = f.read()
+            self.cleanup()
+            return content
         else:
-            self._try_to_remove_files([fn_in])
-            self.png_path = fn_out
-            return self
+            self.png_fn = png
 
     @shared_task
-    def convert_to_pptx(self):
+    def convert_to_pdf(self):
+        logger.info('Converting svg -> html -> pdf')
+        pdf = self.get_tempfile(suffix='.pdf')
+        self.rasterize(pdf)
+        content = None
+        with open(pdf, 'rb') as f:
+            content = f.read()
+        self.cleanup()
+        return content
+
+    def rasterize(self, out_fn):
+        phantom = settings.PHANTOMJS_PATH
+        rasterize = os.path.join(settings.PROJECT_PATH, 'static', 'js', 'rasterize.js')
+        html_fn = self.convert_to_html()
+        try:
+            commands = [phantom, rasterize, html_fn, out_fn]
+            subprocess.call(commands)
+            logger.info('Conversion successful')
+        except Exception as e:
+            logger.error(e.message, exc_info=True)
+
+    @shared_task
+    def convert_to_pptx(_, self):
         logger.info('Converting svg to pptx')
         pptx = None
 
         try:
-            # get converted png image path
-            fn_png = self.png_path
-
             # create blank presentation slide layout
             prs = Presentation()
             blank_slidelayout = prs.slide_layouts[6]
@@ -169,7 +164,7 @@ class SVGConverter():
                 width = height*width_to_height_ratio
                 left = left + int((Inches(max_width)-width)*0.5)
 
-            slide.shapes.add_picture(fn_png, left, top, width, height)
+            slide.shapes.add_picture(self.png_fn, left, top, width, height)
 
             # add HAWC logo
             left = Inches(8.55)
@@ -184,43 +179,14 @@ class SVGConverter():
             prs.save(output)
             output.seek(0)
 
-            # remove png file from disk
-            self._try_to_remove_files([fn_png])
-
             pptx = output
             logger.info('Conversion successful')
 
         except Exception as e:
             logger.error(e.message, exc_info=True)
 
+        self.cleanup()
         return pptx
-
-    @shared_task
-    def convert_to_pdf(self):
-        """
-        Given an svg data object, convert to a pdf object, and return the
-        status of if conversion was successful and the object if complete.
-        Uses Inkscape to convert, requires writing files to disk.
-        """
-        logger.info('Converting svg to pdf')
-        pdf = None
-
-        try:
-            (fn_in, fn_out) = self._save_svg(output_extension='.pdf')
-            export_tag = '--export-pdf=' + fn_out
-            commands = [self.inkscape, fn_in, export_tag]
-            subprocess.call(commands, cwd=self.temp_path)
-            logger.info('Conversion successful')
-        except Exception as e:
-            logger.error(e.message, exc_info=True)
-            return None
-
-        if os.path.exists(fn_out):
-            pdf = open(fn_out, 'rb').read()
-
-        self._try_to_remove_files([fn_in, fn_out])
-
-        return pdf
 
 
 @shared_task

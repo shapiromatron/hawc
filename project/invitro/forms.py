@@ -1,6 +1,8 @@
+import json
 from django import forms
 from django.core.urlresolvers import reverse
-from django.forms.models import BaseModelFormSet, modelformset_factory
+from django.forms.models import \
+    BaseModelFormSet, modelformset_factory, inlineformset_factory
 from django.forms.widgets import Select
 from selectable import forms as selectable
 
@@ -185,7 +187,7 @@ class IVEndpointForm(forms.ModelForm):
     class Meta:
         model = models.IVEndpoint
         exclude = (
-            'assessment', 'experiment', 'additional_fields',
+            'assessment', 'experiment',
         )
         widgets = {
             'NOEL': OELWidget(),
@@ -217,6 +219,14 @@ class IVEndpointForm(forms.ModelForm):
                 .get_assessment_qs(self.instance.assessment.id)
 
         self.helper = self.setHelper()
+
+    def clean_additional_fields(self):
+        data = self.cleaned_data['additional_fields']
+        try:
+            json.loads(data)
+        except ValueError:
+            raise forms.ValidationError("Must be valid JSON.")
+        return data
 
     def setHelper(self):
         for fld in self.fields.keys():
@@ -291,4 +301,18 @@ BlankIVEndpointGroupFormset = modelformset_factory(
     form=IVEndpointGroupForm,
     formset=BaseIVEndpointGroupFormset,
     can_delete=True,
+    extra=1)
+
+
+class BaseIVBenchmarkForm(forms.ModelForm):
+
+    class Meta:
+        model = models.IVBenchmark
+        fields = '__all__'
+
+
+IVBenchmarkFormset = inlineformset_factory(
+    models.IVEndpoint,
+    models.IVBenchmark,
+    form=BaseIVBenchmarkForm,
     extra=1)

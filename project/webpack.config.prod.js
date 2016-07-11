@@ -24,7 +24,7 @@ config.module = {
     loaders: [{
         test: /\.js$/,
         loader: 'babel',
-        include: path.join(__dirname, 'assets/js'),
+        include: path.join(__dirname, 'assets'),
     }, {
         test: /\.css$/, loader: 'style!css',
     }],

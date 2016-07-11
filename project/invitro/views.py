@@ -131,8 +131,13 @@ class EndpointUpdate(BaseUpdateWithFormset):
     formset_factory = forms.IVEndpointGroupFormset
 
     def build_initial_formset_factory(self):
-        return forms.IVEndpointGroupFormset(
-            queryset=self.object.groups.all().order_by('dose_group_id'))
+            # make sure at least one group exists; we check because it's
+            # possible to delete as well as create objects in this view.
+            qs = self.object.groups.all().order_by('dose_group_id')
+            fs = forms.IVEndpointGroupFormset(queryset=qs)
+            if qs.count() == 0:
+                fs.extra = 1
+            return fs
 
     def post_object_save(self, form, formset):
         dose_group_id = 0
@@ -145,6 +150,15 @@ class EndpointUpdate(BaseUpdateWithFormset):
                 if form.has_changed() is False:
                     form.instance.save()  # ensure new dose_group_id saved to db
                 dose_group_id += 1
+
+        benchmark_formset = forms.IVBenchmarkFormset(self.request.POST, instance=self.object)
+        if benchmark_formset.is_valid():
+            benchmark_formset.save()
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointUpdate, self).get_context_data(**kwargs)
+        context['benchmark_formset'] = forms.IVBenchmarkFormset(instance=self.object)
+        return context
 
 
 class EndpointDelete(BaseDelete):

@@ -1,18 +1,19 @@
 {% load compress %}
 {% load server_role %}
+{% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=Edge;">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-256.png" rel="shortcut icon" sizes="256x256">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64">
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-256.png" rel="shortcut icon" sizes="256x256" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64" />
+    <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/font-awesome/css/font-awesome.css" />
@@ -23,18 +24,21 @@
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
-      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css">
+      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
     {% endif %}
     {% compress css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css">
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
     {% endcompress %}
     {% block extrastyle %}{% endblock %}
   </head>
 
+
   <body {% block bodyattrs %}class="fill"{% endblock %}>
 
     <!-- Navigation bar -->
+    {% block navbar_outer %}
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner  {% server_role %}">
         <div class="container-fluid">
@@ -83,8 +87,10 @@
         </div>
       </div>
     </div>
+    {% endblock navbar_outer %}
 
     <!-- Main Container -->
+    {% block content_outer %}
     <div id="container" class="container-fluid ">
 
       {% block messages_base %}
@@ -95,8 +101,8 @@
 
       <div id="footer">{% block footer %}{% endblock %}</div>
       <div id='hidden' style="display:none">{% block hidden_content %}{% endblock %}</div>
-
     </div>
+    {% endblock content_outer %}
     <!-- END Container -->
 
     <!-- JS at bottom for quicker pageloads -->
@@ -132,6 +138,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}js/d3.v3.min.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}assessment/js/models.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}lit/js/models.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}riskofbias/js/models.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}study/js/models.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}animal/js/endpoint.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}epi/js/models.js"></script>
@@ -142,6 +149,7 @@
     <script type="text/javascript" src="{{STATIC_URL}}summary/js/smart_tags.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}comments/js/comments.js"></script>
     {% endcompress %}
+    {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}
   </body>

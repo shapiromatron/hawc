@@ -4,10 +4,10 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 
+from bmd.serializers import BMDModelRunSerializer
+from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
-from study.serializers import StudySerializer, StudyQualitySerializer
-from bmd.serializers import BMDModelRunSerializer
 
 from . import models
 
@@ -102,7 +102,6 @@ class EndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
     animal_group = AnimalGroupSerializer()
     groups = EndpointGroupSerializer(many=True)
-    qualities = StudyQualitySerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
         ret = super(EndpointSerializer, self).to_representation(instance)
@@ -111,11 +110,14 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret['variance_name'] = instance.variance_name
         ret['data_type_label'] = instance.get_data_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()
+        ret['expected_adversity_direction_text'] = instance.get_expected_adversity_direction_display()
         ret['monotonicity'] = instance.get_monotonicity_display()
         ret['trend_result'] = instance.get_trend_result_display()
         ret['additional_fields'] = json.loads(instance.additional_fields)
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['groups'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
+        models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
+        models.Endpoint.setMaximumPercentControlChange(ret)
 
         # get BMD
         ret['BMD'] = None
@@ -132,11 +134,27 @@ class EndpointSerializer(serializers.ModelSerializer):
         model = models.Endpoint
 
 
-class CleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Experiment
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+
+class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.AnimalGroup
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+
+class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Endpoint
-        cleanup_fields = model.text_cleanup_fields()
-        fields = cleanup_fields + ('id', 'name')
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

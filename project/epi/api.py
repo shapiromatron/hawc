@@ -41,6 +41,6 @@ class Group(AssessmentViewset):
     serializer_class = serializers.GroupSerializer
 
 
-class Cleanup(CleanupFieldsBaseViewSet):
-    serializer_class = serializers.CleanupFieldsSerializer
+class OutcomeCleanup(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.OutcomeCleanupFieldsSerializer
     model = models.Outcome

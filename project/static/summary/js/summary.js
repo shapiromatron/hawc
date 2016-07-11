@@ -326,6 +326,7 @@ _.extend(VisualCollection, {
     },
 });
 VisualCollection.prototype = {
+    null_filter: '---',
     build_table: function($el){
         if(this.visuals.length === 0)
             return $el.html('<p><i>No custom-visuals are available for this assessment.</i></p>');
@@ -336,14 +337,45 @@ VisualCollection.prototype = {
         for(var i=0; i<this.visuals.length; i++){
             tbl.addRow(this.visuals[i].build_row());
         }
-        $el.html(tbl.getTbl());
-        this.setTableSorting($el.find('table'));
+        $el
+            .append(this.setTableFilter())
+            .append(tbl.getTbl());
+        this.$tbl = $($el.find('table'));
+        this.setTableSorting(this.$tbl);
         return $el;
     },
-    setTableSorting: function($el){
-        var name = $el.find('thead tr th')[0];
+    setTableSorting: function(){
+        var name = this.$tbl.find('thead tr th')[0];
         name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
-        new Tablesort($el[0]);
+        new Tablesort(this.$tbl[0]);
+    },
+    setTableFilter: function(){
+        var types = _.chain(this.visuals)
+                .pluck('data')
+                .pluck('visual_type')
+                .sort()
+                .uniq(true)
+                .unshift(this.null_filter)
+                .map(function(d){
+                    return '<option value="{0}">{1}</option>'.printf(d, d);
+                }).value();
+
+        return $('<div>').append(
+            '<label class="control-label">Filter by visualization type:</label>',
+            $('<select>').append(types).change(this.filterRows.bind(this))
+        );
+    },
+    filterRows: function(e){
+        var filter = (e)? e.target.value: this.null_filter,
+            isNullFilter = (filter === this.null_filter);
+
+        this.$tbl.find('tbody tr').each(function(){
+            if (isNullFilter || this.innerHTML.indexOf(filter)>=0){
+                this.style.display = null;
+            } else {
+                this.style.display = 'none';
+            }
+        });
     },
 };
 
@@ -764,13 +796,13 @@ _.extend(EndpointAggregationForestPlot.prototype, D3Visualization.prototype, {
                 if (e.data.data_type == 'C'){
                     txt.push('Mean: ' + eg.response, 'Stdev: ' + eg.stdev);
                     val = (eg.response - control) / control;
-                    lower_ci = (eg.lower_limit - control) / control;
-                    upper_ci = (eg.upper_limit - control) / control;
+                    lower_ci = (eg.lower_ci - control) / control;
+                    upper_ci = (eg.upper_ci - control) / control;
                 } else {
                     txt.push('Incidence: ' + eg.incidence);
                     val = eg.incidence / eg.n;
-                    lower_ci = eg.lower_limit;
-                    upper_ci = eg.upper_limit;
+                    lower_ci = eg.lower_ci;
+                    upper_ci = eg.upper_ci;
                 }
                 points.push({
                     'x': val,
@@ -1626,6 +1658,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .filter(applyEndpointFilters)
                 .map(processEndpoint)
+                .filter(function(d){return d.plotting.length>0;})
                 .value(),
             container_height = settings.height + 50,  // menu-spacing
             dose_scale = (settings.dose_isLog) ? 'log' : 'linear';
@@ -2198,7 +2231,7 @@ _.extend(CrossviewPlot.prototype, D3Visualization.prototype, {
 RoBHeatmap = function(data){
     Visual.apply(this, arguments);
     var studies = _.map(data.studies, function(d){return new Study(d);});
-    this.sqa = new StudyQualityAggregation(studies);
+    this.roba = new RiskOfBiasAggregation(studies);
     delete this.data.studies;
 };
 _.extend(RoBHeatmap.prototype, Visual.prototype, {
@@ -2240,15 +2273,15 @@ _.extend(RoBHeatmap.prototype, Visual.prototype, {
     },
     getPlotData: function(){
         return {
-            aggregation: this.sqa,
-            settings: this.data.settings,
-        };
-    },
+            aggregation: this.roba,
+            settings: this.data.settings
+        }
+    }
 });
 
 
 RoBHeatmapPlot = function(parent, data, options){
-    // heatmap of risk-of-bias information. Criteria are on the y-axis,
+    // heatmap of risk of bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();
@@ -2259,7 +2292,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
+            return this.plot_div.html('<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
@@ -2281,6 +2314,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     setDefaults: function(){
         _.extend(this, {
             firstPass: true,
+            included_metrics: [],
             padding: {},
             x_axis_settings: {
                 scale_type: 'ordinal',
@@ -2304,22 +2338,27 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
     },
     processData: function(){
 
-        var dataset = [], studies, metrics, xIsStudy;
+        var dataset = [],
+            included_metrics = this.data.settings.included_metrics,
+            studies, metrics, xIsStudy;
 
         _.each(this.data.aggregation.metrics_dataset, function(metric){
-            _.each(metric.study_qualities, function(sq){
-                dataset.push({
-                    study_quality:      sq,
-                    study:              sq.study,
-                    study_label:        sq.study.data.short_citation,
-                    metric:             sq.data.metric,
-                    metric_label:       sq.data.metric.metric,
-                    score:              sq.data.score,
-                    score_text:         sq.data.score_text,
-                    score_color:        sq.data.score_color,
-                    score_text_color:   sq.data.score_text_color,
-                });
-            });
+            _.chain(metric.rob_scores)
+             .filter(function(rob){
+                 return _.contains(included_metrics, rob.data.metric.id);
+             }).each(function(rob){
+                 dataset.push({
+                     riskofbias:         rob,
+                     study:              rob.study,
+                     study_label:        rob.study.data.short_citation,
+                     metric:             rob.data.metric,
+                     metric_label:       rob.data.metric.metric,
+                     score:              rob.data.score,
+                     score_text:         rob.data.score_text,
+                     score_color:        rob.data.score_color,
+                     score_text_color:   rob.data.score_text_color,
+                 });
+             });
         });
 
         studies = _.chain(dataset)
@@ -2346,7 +2385,6 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         }
 
         xIsStudy = (this.data.settings.x_field!=='metric');
-
         _.extend(this,{
             cell_size: this.data.settings.cell_size,
             dataset: dataset,
@@ -2395,20 +2433,20 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             width = this.cell_size,
             half_width = width/2,
             showSQs = function(v){
-                self.print_details(self.modal.getBody(), $(this).data('sqs'));
+                self.print_details(self.modal.getBody(), $(this).data('robs'));
                 self.modal
-                    .addHeader('<h4>Risk-of-bias details: {0}</h4>'.printf(this.textContent))
+                    .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
                     .addFooter('')
                     .show({maxWidth: 900});
             }, getMetricSQs = function(i, v){
                 var vals = self.dataset.filter(function(e,i,a){return e.metric_label===v.textContent;});
-                vals = vals.map(function(v){return v.study_quality;});
-                $(this).data('sqs', {type: 'metric', sqs: vals});
+                vals = vals.map(function(v){return v.riskofbias;});
+                $(this).data('robs', {type: 'metric', robs: vals});
             }, getStudySQs = function(i, v){
                 var vals = self.dataset.filter(function(e,i,a){return e.study_label===v.textContent;});
-                vals = vals.map(function(v){return v.study_quality;});
-                $(this).data('sqs', {type: 'study', sqs: vals});
-            }, hideHovers = function(v){self.draw_hovers(this, {draw: false});};
+                vals = vals.map(function(v){return v.riskofbias;});
+                $(this).data('robs', {type: 'study', robs: vals});
+            }, hideHovers = function(v){self.draw_hovers(this, {draw: false});}
 
         this.cells_group = this.vis.append('g');
 
@@ -2424,9 +2462,9 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
         .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
         .on('click', function(v){
-            self.print_details(self.modal.getBody(), {type: 'cell', sqs: [v]});
+            self.print_details(self.modal.getBody(), {type: 'cell', robs: [v]});
             self.modal
-                .addHeader('<h4>Risk-of-bias details</h4>')
+                .addHeader('<h4>Risk of bias details</h4>')
                 .addFooter('')
                 .show({maxWidth: 900});
         });
@@ -2545,7 +2583,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             .attr('class','dr_axis_labels y_axis_label');
     },
     build_legend: function(){
-        // and move to StudyQuality or some other object
+        // and move to RiskOfBias or some other object
         if (this.legend_group || !this.data.settings.show_legend) return;
 
         var self = this,
@@ -2554,14 +2592,14 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             svgH = parseInt(svg.attr('height'), 10),
             x = this.data.settings.legend_x,
             y = this.data.settings.legend_y,
-            fields = _.map(StudyQuality.score_values, function(v){
+            fields = _.map(RiskOfBiasScore.score_values, function(v){
                 return {
                     value:          v,
-                    color:          StudyQuality.score_shades[v],
-                    text_color:     String.contrasting_color(StudyQuality.score_shades[v]),
-                    text:           StudyQuality.score_text[v],
-                    description:    StudyQuality.score_text_description[v],
-                };
+                    color:          RiskOfBiasScore.score_shades[v],
+                    text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
+                    text:           RiskOfBiasScore.score_text[v],
+                    description:    RiskOfBiasScore.score_text_description[v],
+                }
             }),
             width = 22,
             half_width = width/2,
@@ -2643,21 +2681,31 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
         this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
     },
     print_details: function($div, d){
-        var content = [];
-
-        switch (d.type){
-        case 'cell':
-            content.push(d.sqs[0].study_quality.build_details_div({show_study: true}));
-            break;
-        case 'study':
-            content.push(StudyQuality.build_metric_comparison_div(d.sqs));
-            break;
-        case 'metric':
-            content.push(StudyQuality.build_study_comparison_div(d.sqs));
-            break;
-        }
-
-        StudyQuality.display_details_divs($div, content);
+        var config = {
+            display: 'all',
+            isForm: false,
+        };
+        // delay rendering until modal is displayed, as component depends on accurate width.
+        window.setTimeout(function(){
+            switch (d.type){
+            case 'cell':
+                _.extend(config, {show_study: true, study: { name: d.robs[0].study_label, url:d.robs[0].study.data.url}})
+                window.app.renderRiskOfBiasDisplay(
+                    RiskOfBiasScore.format_for_react([d.robs[0].riskofbias], config),
+                    $div[0]);
+                break;
+            case 'study':
+                window.app.renderRiskOfBiasDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs, config),
+                    $div[0]);
+                break;
+            case 'metric':
+                window.app.renderCrossStudyDisplay(
+                    RiskOfBiasScore.format_for_react(d.robs, config),
+                    $div[0]);
+                break;
+            }
+        }, 200);
     },
 });
 
@@ -2704,15 +2752,15 @@ _.extend(RoBBarchart.prototype, Visual.prototype, {
     },
     getPlotData: function(){
         return {
-            aggregation: this.sqa,
-            settings: this.data.settings,
-        };
-    },
+            aggregation: this.roba,
+            settings: this.data.settings
+        }
+    }
 });
 
 
 RoBBarchartPlot = function(parent, data, options){
-    // stacked-bars of risk-of-bias information. Criteria are on the y-axis,
+    // stacked-bars of risk of bias information. Criteria are on the y-axis,
     // and studies are on the x-axis
     D3Visualization.apply(this, arguments);
     this.setDefaults();
@@ -2722,7 +2770,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
         this.plot_div = $div.html('');
         this.processData();
         if(this.dataset.length === 0){
-            return this.plot_div.html('<p>Error: no studies with risk-of-bias selected. Please select at least one study with risk-of-bias.</p>');
+            return this.plot_div.html('<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>');
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
@@ -2751,6 +2799,7 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
     setDefaults: function(){
         _.extend(this, {
             firstPass: true,
+            included_metrics: [],
             padding: {},
             x_axis_settings: {
                 domain: [0, 1],
@@ -2771,42 +2820,41 @@ _.extend(RoBBarchartPlot.prototype, D3Plot.prototype, {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale.ordinal().range(_.values(StudyQuality.score_shades)),
+            color_scale: d3.scale.ordinal().range(_.values(RiskOfBiasScore.score_shades))
         });
     },
     processData: function(){
 
-        var dataset = [],
+        var included_metrics = this.data.settings.included_metrics,
             stack_order = ['N/A', '--', '-', '+', '++'],
-            metrics, stack;
+            metrics, stack, dataset;
 
-        _.each(this.data.aggregation.metrics_dataset, function(metric){
-
-            var vals = {
-                    'metric_label': metric.study_qualities[0].data.metric.metric,
-                    'N/A': 0,
-                    '--': 0,
-                    '-': 0,
-                    '+': 0,
-                    '++': 0,
-                },
-                weight = 1/metric.study_qualities.length;
-            metric.study_qualities.forEach(function(sq){
-                vals[sq.data.score_text] += weight;
-            });
-            dataset.push(vals);
-
-        });
+        dataset = _.chain(this.data.aggregation.metrics_dataset)
+            .filter(function(d){
+                var metric_id = d.rob_scores[0].data.metric.id;
+                return _.contains(included_metrics, metric_id);
+            }).map(function(d){
+                var vals = {
+                        'label': d.rob_scores[0].data.metric.metric,
+                        'N/A':0, '--':0, '-':0, '+':0, '++':0,
+                    },
+                    weight = 1/d.rob_scores.length;
+                d.rob_scores.forEach(function(rob){
+                    vals[rob.data.score_text] += weight;
+                });
+                return vals;
+            })
+            .value();
 
         metrics = _.chain(dataset)
-                   .map(function(d){return d.metric_label;})
+                   .map(function(d){return d.label;})
                    .uniq()
                    .value();
 
         stack = d3.layout.stack()(
             _.map(stack_order, function(score){
                 return _.map(dataset, function(d){
-                    return {x: d.metric_label, y: d[score]};
+                    return {x: d.label, y: d[score]};
                 });
             })
         );
