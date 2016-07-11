@@ -74,7 +74,6 @@ class SVGConverter(object):
             if delete_and_return_object:
                 with open(png, 'rb') as f:
                     content = f.read()
-                self.cleanup()
             else:
                 content = png
         except Exception as e:
