@@ -65,17 +65,18 @@ class SVGConverter(object):
 
         return svg
 
-    def to_png(self, delete_and_return_object=True):
-        logger.info('Converting svg -> html -> png')
+    def _rasterize_png(self):
+        # rasterize png and return filename
+        png = self.get_tempfile(suffix='.png')
+        self._rasterize(png)
+        return png
+
+    def to_png(self):
         content = None
         try:
-            png = self.get_tempfile(suffix='.png')
-            self._rasterize(png)
-            if delete_and_return_object:
-                with open(png, 'rb') as f:
-                    content = f.read()
-            else:
-                content = png
+            png = self._rasterize_png()
+            with open(png, 'rb') as f:
+                content = f.read()
         except Exception as e:
             logger.error(e.message, exc_info=True)
         finally:
@@ -146,7 +147,7 @@ class SVGConverter(object):
         content = None
         try:
             # convert to png
-            png_fn = self.to_png(delete_and_return_object=False)
+            png_fn = self._rasterize_png()
 
             # create blank presentation slide layout
             prs = Presentation()
