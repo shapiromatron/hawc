@@ -3,6 +3,7 @@ var page = require('webpage').create(),
     system = require('system'),
     address = system.args[1],
     output = system.args[2],
+    renderTimeout = 750,
     pageEvalGetSvgSize = function(){
         var d = document.querySelector('svg').getBoundingClientRect();
         return {
@@ -11,6 +12,13 @@ var page = require('webpage').create(),
             left: d.left,
             width: d.width,
         };
+    },
+    renderAndExit = function(){
+        // Wait for animations, after viewport size change
+        window.setTimeout(function(){
+            page.render(output);
+            phantom.exit();
+        }, renderTimeout);
     },
     getPdf = function(){
         var svg = page.evaluate(pageEvalGetSvgSize);
@@ -26,11 +34,11 @@ var page = require('webpage').create(),
             margin: '5px',
         };
 
-        page.render(output);
-        phantom.exit();
+        renderAndExit();
+
     }, getRasterization = function(){
-        var svg = page.evaluate(pageEvalGetSvgSize);
-        var zoomFactor = 3;
+        var svg = page.evaluate(pageEvalGetSvgSize),
+            zoomFactor = 3;
 
         page.zoomFactor = zoomFactor;
 
@@ -42,17 +50,16 @@ var page = require('webpage').create(),
         };
 
         page.viewportSize = {
-            height: 20 + svg.top + svg.height * zoomFactor,
-            width: 20 + svg.left + svg.width * zoomFactor,
+            height: 2 * svg.top + svg.height * zoomFactor,
+            width: 2 * svg.left + svg.width * zoomFactor,
         };
 
-        page.render(output);
-        phantom.exit();
+        renderAndExit();
     };
 
 var func = (output.substr(-4) === '.pdf') ? getPdf : getRasterization,
     onPageReady = function(){
-        window.setTimeout(func, 500);
+        window.setTimeout(func, renderTimeout);
     },
     checkReadyState = function() {
         // continue to check until ready-state is complete
