@@ -50,19 +50,38 @@ var page = require('webpage').create(),
         phantom.exit();
     };
 
+var func = (output.substr(-4) === '.pdf') ? getPdf : getRasterization,
+    onPageReady = function(){
+        window.setTimeout(func, 500);
+    },
+    checkReadyState = function() {
+        // continue to check until ready-state is complete
+        setTimeout(function () {
+            var readyState = page.evaluate(function () {
+                return document.readyState;
+            });
+            if (readyState === 'complete') {
+                onPageReady();
+            } else {
+                checkReadyState();
+            }
+        });
+    },
+    onLoadFinished = function (status) {
+        // page loaded but other resources may not be complete
+        if (status === 'success') {
+            checkReadyState();
+        } else {
+            console.log('Unable to load the address!');
+            phantom.exit(1);
+        }
+    };
+
 // start with a large viewport to render maximum-size
 page.viewportSize = {
     height: 1440,
     width: 2560,
 };
-page.open(address, function (status) {
-    if (status === 'success') {
-        var func = (output.substr(-4) === '.pdf') ?
-            getPdf :
-            getRasterization;
-        window.setTimeout(func, 200);
-    } else {
-        console.log('Unable to load the address!');
-        phantom.exit(1);
-    }
-});
+
+
+page.open(address, onLoadFinished);
