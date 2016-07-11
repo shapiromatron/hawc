@@ -3,7 +3,7 @@ var page = require('webpage').create(),
     system = require('system'),
     address = system.args[1],
     output = system.args[2],
-    renderTimeout = 750,
+    renderTimeout = 500,
     pageEvalGetSvgSize = function(){
         var d = document.querySelector('svg').getBoundingClientRect();
         return {
