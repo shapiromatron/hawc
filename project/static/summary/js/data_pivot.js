@@ -3342,7 +3342,7 @@ DataPivotLegend.prototype = {
         .attr("width", 10);
 
     var vertical_spacing = 22,
-        text_x_offset = 24,
+        text_x_offset,
         columns = this.settings.columns,
         rows = Math.ceil(this.settings.fields.length/columns),
         style, colg, row_index;
@@ -3360,6 +3360,7 @@ DataPivotLegend.prototype = {
 
       // add line
       if(datum.line_style !== DataPivot.NULL_CASE){
+        text_x_offset = 25;
         style = self._get_line_style(datum);
         colg.selectAll()
             .data([{"x1":buffer,
@@ -3383,6 +3384,8 @@ DataPivotLegend.prototype = {
                 .attr("y1", function(v){return v.y1;})
                 .attr("y2", function(v){return v.y2;})
                 .each(apply_styles);
+      } else {
+        text_x_offset = 15;
       }
 
       // add symbol
