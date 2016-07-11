@@ -23,6 +23,7 @@ import requests
 from pptx import Presentation
 from pptx.util import Inches, Pt
 
+from utils.chemspider import fetch_chemspider
 
 logger = get_task_logger(__name__)
 
@@ -191,46 +192,13 @@ class SVGConverter():
 
 @shared_task
 def get_chemspider_details(cas_number):
-
-    cache_name = 'chemspider-{cas_number}'.format(cas_number=cas_number.replace(' ', '_'))
+    cache_name = 'chemspider-{}'.format(cas_number.replace(' ', '_'))
     d = cache.get(cache_name)
     if d is None:
         d = {"status": "failure"}
         if cas_number:
-            try:
-                # get chemspider chem id
-                url = 'http://www.chemspider.com/Search.asmx/SimpleSearch'
-                payload = {'query': cas_number,
-                           'token': settings.CHEMSPIDER_TOKEN}
-                r = requests.post(url, data=payload)
-
-                id_val = re.search(r'\<int\>(\d+)\</int\>', r.content).group(1)
-
-                # get details
-                url = 'http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo'
-                payload = {'CSID': id_val,
-                           'token': settings.CHEMSPIDER_TOKEN}
-                r = requests.post(url, data=payload)
-                xml = ET.fromstring(r.content)
-                namespace = '{http://www.chemspider.com/}'
-                d['CommonName'] = xml.find('{ns}CommonName'.format(ns=namespace)).text
-                d['SMILES'] = xml.find('{ns}SMILES'.format(ns=namespace)).text
-                d['MW'] = xml.find('{ns}MolecularWeight'.format(ns=namespace)).text
-
-                # get image
-                url = 'http://www.chemspider.com/Search.asmx/GetCompoundThumbnail'
-                payload = {'id': id_val,
-                           'token': settings.CHEMSPIDER_TOKEN}
-                r = requests.post(url, data=payload)
-                xml = ET.fromstring(r.content)
-                d['image'] = xml.text
-
-                # call it a success if we made it here
-                d['status'] = 'success'
-
-                logger.info('setting cache: {cache_name}'.format(cache_name=cache_name))
+            d = fetch_chemspider(cas_number)
+            if d['status'] == 'success':
+                logger.info('setting cache: {}'.format(cache_name))
                 cache.set(cache_name, d)
-            except Exception as e:
-                logger.error(e.message, exc_info=True)
-
     return d
