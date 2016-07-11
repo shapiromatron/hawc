@@ -35,10 +35,11 @@ class UnicodeCommand(BaseCommand):
 class ExternalLibraryExports(object):
 
     def empty_qs(self, cls):
-        # return a deliberately emtpy table of results
+        # return no rows in table
         return cls.objects.filter(id=-1)
 
     def complete_qs(self, cls):
+        # return all rows in table
         return cls.objects.all()
 
     def auth_permission(self, cls, assessment_id):
@@ -54,7 +55,7 @@ class ExternalLibraryExports(object):
         return cls.objects.filter(session_key='null')
 
     def django_site(self, cls, assessment_id):
-        return self.empty_qs(cls)
+        return self.complete_qs(cls)
 
     def django_admin_log(self, cls, assessment_id):
         return self.empty_qs(cls)
