@@ -107,15 +107,20 @@ class BMDSession(models.Model):
     def _import_results(self):
         pass
 
-    def get_available_models(self):
-        data_type = self.endpoint.data_type
-        version = self.version
-        return bmds.get_models_for_version(version)[data_type]
+    @property
+    def session(self):
+        if not hasattr(self, '_session'):
+            version = self.endpoint.assessment.BMD_Settings.version
+            self._session = bmds.get_session(version)()
+        return self._session
 
-    def get_available_bmrs(self):
-        data_type = self.endpoint.data_type
-        version = self.version
-        return bmds.get_bmrs_for_version(version)[data_type]
+    def get_model_options(self):
+        return self.session\
+            .get_model_options(self.endpoint.data_type)
+
+    def get_bmr_options(self):
+        return self.session\
+            .get_bmr_options(self.endpoint.data_type)
 
 
 class BMDModel(models.Model):
