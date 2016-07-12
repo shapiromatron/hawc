@@ -17,6 +17,8 @@ const defaultState = {
     selectedBmr: null,
     allModelOptions: [],
     allBmrOptions: null,
+    isExecuting: false,
+    validationErrors: [],
 };
 
 var tmp;

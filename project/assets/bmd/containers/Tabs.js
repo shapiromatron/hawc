@@ -78,7 +78,7 @@ class Tabs extends React.Component {
 
     render(){
         let {editMode, bmds_version} = this.props.config,
-            {endpoint, dataType} = this.props,
+            {endpoint, dataType, validationErrors, isExecuting} = this.props,
             showResultsTabs = (editMode)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
@@ -122,6 +122,8 @@ class Tabs extends React.Component {
                         </div>
                         <ExecuteWell
                             editMode={editMode}
+                            validationErrors={validationErrors}
+                            isExecuting={isExecuting}
                             handleExecute={this.handleExecute.bind(this)} />
                     </div>
                     <div id="results" className="tab-pane">
@@ -147,6 +149,8 @@ function mapStateToProps(state) {
         bmrs: state.bmd.bmrs,
         allModelOptions: state.bmd.allModelOptions,
         allBmrOptions: state.bmd.allBmrOptions,
+        validationErrors: state.bmd.validationErrors,
+        isExecuting: state.bmd.isExecuting,
     };
 }
 
