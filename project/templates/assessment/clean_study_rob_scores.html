@@ -1,0 +1,33 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}{{assessment}} | Studies | HAWC {% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li>Clean study risk of bias scores</li>
+{% endblock %}
+
+{% block content %}
+    <div id="root"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "items": {
+            "url": "{% url 'study:api:final-list' %}",
+            "title": "Studies"
+        },
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}"
+    }
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  window.app.robScoreCleanupStartup(document.getElementById('root'));
+});
+</script>
+{% endblock extrajs %}

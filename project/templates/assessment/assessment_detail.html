@@ -54,10 +54,15 @@
           {% endif %}
 
           <!-- data cleanup -->
-          {% if assessment.enable_data_extraction and obj_perms.edit %}
+          {% if assessment.enable_data_extraction or assessment.enable_risk_of_bias and obj_perms.edit %}
           <li class="divider"></li>
           <li class="disabled"><a tabindex="-1" href="#">Data cleanup views</a></li>
-          <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
+              {% if assessment.enable_data_extraction %}
+              <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
+              {% endif%}
+              {% if assessment.enable_risk_of_bias %}
+              <li><a href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean Risk of bias Metrics</a></li>
+              {% endif %}
           {% endif %}
 
         </ul>

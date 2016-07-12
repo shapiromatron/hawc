@@ -33,6 +33,9 @@
           <li class="disabled"><a tabindex="-1" href="#">Study assignment</a></li>
           <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
 
+          <li class="disabled"><a tabindex="-1" href="#">Data cleanup</a></li>
+          <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean Risk of bias Metrics</a></li>
+
         </ul>
     </div>
     {% endif %}

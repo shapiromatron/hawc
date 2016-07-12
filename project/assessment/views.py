@@ -17,7 +17,8 @@ from rest_framework.response import Response
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList, TeamMemberOrHigherMixin)
+                         BaseDelete, BaseVersion, BaseList,
+                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 from utils.helper import tryParseInt
 from assessment.api.views import DisabledPagination
 from celery import chain
@@ -459,6 +460,12 @@ def download_plot(request):
         raise Http404
 
 
+class AssessmentRoBList(views.AssessmentViewset):
+    assessment_filter_args = "id"
+    model = models.Assessment
+    pagination_class = DisabledPagination
+
+
 class AssessmentEndpointList(views.AssessmentViewset):
     serializer_class = serializers.AssessmentEndpointSerializer
     assessment_filter_args = "id"
@@ -541,3 +548,11 @@ class AssessmentEndpointList(views.AssessmentViewset):
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
         return queryset
+
+
+class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
+    template_name = 'assessment/clean_study_rob_scores.html'
+    model = models.Assessment
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs['pk'])

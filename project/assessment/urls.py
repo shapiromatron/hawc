@@ -111,6 +111,11 @@ urlpatterns = [
         views.CloseWindow.as_view(),
         name='close_window'),
 
+    # assessment level study
+    url(r'^(?P<pk>\d+)/clean-study-metrics',
+        views.CleanStudyRoB.as_view(),
+        name='clean_study_metrics'),
+
     # api views
     url(r'^api/endpoints/$',
         views.AssessmentEndpointList.as_view({'get': 'list'}),
