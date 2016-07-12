@@ -16,6 +16,8 @@ BMDS_CHOICES = (
     ('2.30', 'Version 2.30'),
     ('2.31', 'Version 2.31'),
     ('2.40', 'Version 2.40'),
+    ('2.60', 'Version 2.60'),
+    ('2.601', 'Version 2.601'),
 )
 
 LOGIC_BIN_CHOICES = (
@@ -32,7 +34,7 @@ class BMDSession(models.Model):
     dose_units = models.ForeignKey(
         'assessment.DoseUnits',
         related_name='bmd_sessions')
-    bmds_version = models.CharField(
+    version = models.CharField(
         max_length=10,
         choices=BMDS_CHOICES)
     bmrs = JSONField(
@@ -81,11 +83,11 @@ class BMDSession(models.Model):
     @classmethod
     def create_new(cls, endpoint):
         dose_units = endpoint.get_doses_json(json_encode=False)[0]['id']
-        version = endpoint.assessment.BMD_Settings.BMDS_version
+        version = endpoint.assessment.BMD_Settings.version
         return cls.objects.create(
             endpoint_id=endpoint.id,
             dose_units_id=dose_units,
-            bmds_version=version)
+            version=version)
 
     @property
     def is_executed(self):
@@ -107,12 +109,12 @@ class BMDSession(models.Model):
 
     def get_available_models(self):
         data_type = self.endpoint.data_type
-        version = self.bmds_version
+        version = self.version
         return bmds.get_models_for_version(version)[data_type]
 
     def get_available_bmrs(self):
         data_type = self.endpoint.data_type
-        version = self.bmds_version
+        version = self.version
         return bmds.get_bmrs_for_version(version)[data_type]
 
 
@@ -191,10 +193,10 @@ class BMD_Assessment_Settings(models.Model):
     assessment = models.OneToOneField(
         'assessment.Assessment',
         related_name='BMD_Settings')
-    BMDS_version = models.CharField(
+    version = models.CharField(
         max_length=10,
         choices=BMDS_CHOICES,
-        default=max(BMDS_CHOICES)[0])
+        default=BMDS_CHOICES[-1][0])
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
