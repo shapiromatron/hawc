@@ -267,6 +267,10 @@ class Study(Reference):
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
     def get_final_rob(self):
         try:
             return self.riskofbiases.get(final=True, active=True)
@@ -335,5 +339,10 @@ class Attachment(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
 
 reversion.register(Study)

@@ -58,6 +58,10 @@ class RiskOfBiasDomain(models.Model):
                     description=domain['description'])
                 RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class RiskOfBiasMetric(models.Model):
     domain = models.ForeignKey(
@@ -89,6 +93,10 @@ class RiskOfBiasMetric(models.Model):
 
     def get_assessment(self):
         return self.domain.get_assessment()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(domain__assessment=assessment_id)
 
     @classmethod
     def get_required_metrics(cls, assessment, study):
@@ -149,6 +157,10 @@ class RiskOfBias(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
 
     def get_final_url(self):
         return reverse('riskofbias:rob_detail', args=[self.study_id])
@@ -314,6 +326,10 @@ class RiskOfBiasScore(models.Model):
             cleanHTML(ser['notes']),
         )
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(riskofbias__study__assessment=assessment_id)
+
     @property
     def score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
@@ -336,6 +352,10 @@ class RiskOfBiasAssessment(models.Model):
     @classmethod
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(assessment=assessment)
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
 
 reversion.register(RiskOfBiasDomain)

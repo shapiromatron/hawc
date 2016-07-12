@@ -350,6 +350,10 @@ class Search(models.Model):
         d['search_type'] = self.get_search_type_display()
         return d
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class PubMedQuery(models.Model):
 
@@ -435,6 +439,10 @@ class PubMedQuery(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(search__assessment=assessment_id)
 
 
 class Identifiers(models.Model):
@@ -636,6 +644,10 @@ class Identifiers(models.Model):
         return cls.objects.filter(database=EXTERNAL_LINK)\
             .aggregate(models.Max('unique_id'))["unique_id__max"]
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(references__assessment=assessment_id)
+
 
 class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
     cache_template_taglist = 'reference-taglist-assessment-{0}'
@@ -667,17 +679,17 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         return tag
 
     @classmethod
-    def get_all_tags(cls, assessment, json_encode=True):
+    def get_all_tags(cls, assessment_id, json_encode=True):
         """
         Get all tags for the selected assessment.
         """
-        key = cls.cache_template_tagtree.format(assessment.pk)
+        key = cls.cache_template_tagtree.format(assessment_id)
         tags = cache.get(key)
         if tags:
             logging.info('cache used: {0}'.format(key))
         else:
 
-            root = cls.get_assessment_root(assessment.pk)
+            root = cls.get_assessment_root(assessment_id)
             try:
                 tags = cls.dump_bulk(root)
             except KeyError as e:
@@ -812,6 +824,11 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
                 cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
             cursor.close()
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        ids = list(cls.get_descendants_pks(assessment_id))  # force evaluation
+        return cls.objects.filter(id__in=ids)
+
 
 class ReferenceTags(ItemBase):
     # required to be copied when overridden tag object. See GitHub bug report:
@@ -829,6 +846,10 @@ class ReferenceTags(ItemBase):
         return cls.tag_model().objects.filter(**{
             '%s__content_object__isnull' % cls.tag_relname(): False
         }).distinct()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(content_object__assessment=assessment_id)
 
 
 class Reference(models.Model):
@@ -1213,3 +1234,7 @@ class Reference(models.Model):
         df.apply(fn, axis=1)
 
         return errors
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)

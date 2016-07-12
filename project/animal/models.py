@@ -188,6 +188,10 @@ class Experiment(models.Model):
         )
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
+    @classmethod
     def delete_caches(cls, ids):
         Endpoint.delete_caches(
             Endpoint.objects
@@ -366,6 +370,10 @@ class AnimalGroup(models.Model):
         )
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(experiment__study__assessment=assessment_id)
+
+    @classmethod
     def delete_caches(cls, ids):
         Endpoint.delete_caches(
             Endpoint.objects
@@ -515,6 +523,11 @@ class DosingRegime(models.Model):
         else:
             return doses
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(dosed_animals__experiment__study__assessment=assessment_id)
+
 
 class DoseGroup(models.Model):
     dose_regime = models.ForeignKey(
@@ -550,6 +563,11 @@ class DoseGroup(models.Model):
             cols.append(v)
 
         return cols
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(dose_regime__dosed_animals__experiment__study__assessment=assessment_id)  # noqa
 
 
 class Endpoint(BaseEndpoint):
@@ -1244,6 +1262,10 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser['dose_group_id'] == endpoint['LOEL'],
             ser['dose_group_id'] == endpoint['FEL'],
         )
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(Experiment)

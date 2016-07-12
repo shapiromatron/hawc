@@ -89,7 +89,6 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-
     class Meta:
         ordering = ("last_name", )
 
@@ -138,14 +137,22 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         msg.attach_alternative(html, "text/html")
         msg.send()
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(
+                models.Q(assessment_pms=assessment_id) |
+                models.Q(assessment_teams=assessment_id) |
+                models.Q(assessment_reviewers=assessment_id)
+            ).distinct()
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(HAWCUser, related_name='profile')
     HERO_access = models.BooleanField(default=False,
         verbose_name='HERO access',
         help_text='All HERO links will redirect to the login-only HERO access ' + \
-                  'page, allowing for full article text.'
-    )
+                  'page, allowing for full article text.')
 
     def __unicode__(self):
         return self.user.get_full_name() + ' Profile'

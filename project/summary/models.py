@@ -46,6 +46,10 @@ class SummaryText(MP_Node):
         return self.title
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
+    @classmethod
     def get_assessment_root_node(cls, assessment_id):
         return SummaryText.objects.get(title='assessment-{}'.format(assessment_id))
 
@@ -208,6 +212,10 @@ class Visual(models.Model):
         return self.title
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
+    @classmethod
     def get_list_url(cls, assessment_id):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
@@ -349,6 +357,10 @@ class DataPivot(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
     @classmethod
     def get_list_url(cls, assessment_id):
