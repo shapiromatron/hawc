@@ -64,7 +64,4 @@ class FinalRobStudy(Study):
     list_actions = ['list']
 
     def get_serializer_class(self):
-        cls = serializers.FinalRobStudySerializer
-        if self.action == "list":
-            cls = serializers.SimpleStudySerializer
-        return cls
+        return serializers.FinalRobStudySerializer
