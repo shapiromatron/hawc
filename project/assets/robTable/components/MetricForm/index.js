@@ -10,6 +10,7 @@ class MetricForm extends Component {
     constructor(props) {
         super(props);
         this.state = {addText: ''};
+        this.copyNotes = this.copyNotes.bind(this);
     }
 
     copyNotes(text){
@@ -26,7 +27,7 @@ class MetricForm extends Component {
                 return <ScoreDisplay key={score.id}
                             score={score}
                             config={config}
-                            copyNotes={config.display ==='final' ? this.copyNotes.bind(this) : undefined} />;
+                            copyNotes={config.display ==='final' ? this.copyNotes : undefined} />;
             })}
             </div>
         );

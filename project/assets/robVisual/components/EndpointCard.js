@@ -9,6 +9,13 @@ import './EndpointCard.css';
 
 
 class EndpointCard extends Component {
+
+    constructor(props) {
+        super(props);
+        this.showEndpointModal = this.showEndpointModal.bind(this);
+        this.showStudyModal = this.showStudyModal.bind(this);
+    }
+
     groupByDoseUnit() {
         let doses = this.props.endpoint.animal_group.dosing_regime.doses;
         return _.chain(doses)
@@ -95,8 +102,8 @@ class EndpointCard extends Component {
                     endpoint={endpoint}
                     study={study}
                     citation={endpoint.animal_group.experiment.study.short_citation}
-                    showEndpointModal={this.showEndpointModal.bind(this)}
-                    showStudyModal={this.showStudyModal.bind(this)}/>
+                    showEndpointModal={this.showEndpointModal}
+                    showStudyModal={this.showStudyModal}/>
                 {dataNull ?
                     this.renderNullData() :
                     this.renderChart(doses, responses)}

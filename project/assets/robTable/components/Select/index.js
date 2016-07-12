@@ -4,6 +4,12 @@ import './Select.css';
 
 
 class Select extends Component {
+
+    constructor(props) {
+        super(props);
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
     handleSelect(e){
         this.props.handleSelect(e.target.value);
     }
@@ -15,7 +21,7 @@ class Select extends Component {
                     id={id}
                     ref='select'
                     defaultValue={defVal}
-                    onChange={this.handleSelect.bind(this)}>
+                    onChange={this.handleSelect}>
                 {_.map(choices, (choice, key) => {
                     return <option key={key} value={key}>{choice}</option>;
                 })}

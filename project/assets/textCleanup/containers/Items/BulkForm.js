@@ -12,6 +12,12 @@ import FormComponent from 'textCleanup/components/Items/BulkForm';
 
 class BulkForm extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleBulkSubmit = this.handleBulkSubmit.bind(this);
+        this.handleDetailSubmit = this.handleDetailSubmit.bind(this);
+    }
+
     componentWillMount() {
         this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
     }
@@ -43,7 +49,7 @@ class BulkForm extends Component {
 
     render() {
         let { items, model, field, params, config } = this.props,
-            modelEndpoint = config[params.type].title,
+            modalClass = config[params.type].title,
             thisField = items[0][field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
         this.isRendered = true;
@@ -53,10 +59,10 @@ class BulkForm extends Component {
                 object={model.editObject[thisField]}
                 errors={model.editObjectErrors}
                 field={thisField}
-                handleBulkSubmit={this.handleBulkSubmit.bind(this)}
-                handleDetailSubmit={this.handleDetailSubmit.bind(this)}
+                handleBulkSubmit={this.handleBulkSubmit}
+                handleDetailSubmit={this.handleDetailSubmit}
                 params={params}
-                modelEndpoint={modelEndpoint}
+                modalClass={modalClass}
             />
 
         );

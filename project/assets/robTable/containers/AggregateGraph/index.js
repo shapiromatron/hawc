@@ -8,6 +8,11 @@ import Loading from 'shared/components/Loading';
 
 class AggregateGraph extends Component {
 
+    constructor(props) {
+        super(props);
+        this.selectActiveWithName = this.selectActiveWithName.bind(this);
+    }
+
     componentWillMount(){
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
@@ -36,7 +41,7 @@ class AggregateGraph extends Component {
         let domains = this.formatRiskofbiasForDisplay();
         return (
             <DisplayComponent domains={domains}
-                              handleClick={this.selectActiveWithName.bind(this)}/>
+                              handleClick={this.selectActiveWithName}/>
         );
     }
 }

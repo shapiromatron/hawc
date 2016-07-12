@@ -6,6 +6,11 @@ import './EffectSelector.css';
 
 class EffectSelector extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
     handleChange(e){
         this.props.handleChange(e);
     }
@@ -19,7 +24,7 @@ class EffectSelector extends Component {
                 </label>
                 <select multiple='true'
                         size='8'
-                        onChange={this.handleChange.bind(this)}>
+                        onChange={this.handleChange}>
                     {_.map(effects, (effect) => {
                         return (
                             <option key={effect} value={effect}>

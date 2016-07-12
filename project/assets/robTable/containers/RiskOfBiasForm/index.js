@@ -10,6 +10,12 @@ import './RiskOfBiasForm.css';
 
 class RiskOfBiasForm extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleCancel = this.handleCancel.bind(this);
+        this.submitForm = this.submitForm.bind(this);
+    }
+
     componentWillMount(){
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
@@ -40,7 +46,7 @@ class RiskOfBiasForm extends Component {
         return (
             <div className='riskofbias-display'>
                 { error ? <ScrollToErrorBox error={error} /> : null}
-                <form onSubmit={this.submitForm.bind(this)}>
+                <form onSubmit={this.submitForm}>
 
                     {_.map(riskofbiases, (domain) => {
                         return <DomainDisplay key={domain.key}
@@ -53,7 +59,7 @@ class RiskOfBiasForm extends Component {
                         Update risk of bias
                     </button>
                     <button className='btn'
-                            onClick={this.handleCancel.bind(this)}>Cancel</button>
+                            onClick={this.handleCancel}>Cancel</button>
                 </form>
             </div>
         );

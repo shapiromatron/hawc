@@ -33,7 +33,8 @@ class ScoreForm extends Component {
             score: null,
             notes: props.score.notes,
         };
-
+        this.handleEditorInput = this.handleEditorInput.bind(this);
+        this.selectScore = this.selectScore.bind(this);
     }
 
     componentWillMount(){
@@ -69,14 +70,14 @@ class ScoreForm extends Component {
                     <Select choices={this.state.scoreChoices}
                           id={score.metric.metric}
                           defVal={score.score}
-                          handleSelect={this.selectScore.bind(this)}/>
+                          handleSelect={this.selectScore}/>
                     <br/><br/>
                     <ScoreIcon shade={this.state.selectedShade}
                              symbol={this.state.selectedSymbol}/>
                 </div>
                 <ReactQuill id={score.metric.metric}
                          value={this.state.notes}
-                         onChange={this.handleEditorInput.bind(this)}
+                         onChange={this.handleEditorInput}
                          theme='snow'
                          className='score-editor' />
             </div>

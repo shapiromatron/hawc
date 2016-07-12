@@ -7,6 +7,12 @@ import { fetchEffects, selectEffects } from 'robVisual/actions/Filter';
 
 
 class EffectSelector extends Component {
+
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
     componentWillMount(){
         this.props.dispatch(fetchEffects());
     }
@@ -22,7 +28,7 @@ class EffectSelector extends Component {
         return (
             <Selector
                 effects={this.props.effects}
-                handleChange={this.handleChange.bind(this)}/>
+                handleChange={this.handleChange}/>
         );
     }
 }

@@ -9,6 +9,11 @@ import { fetchEndpoints, formatError, clearErrors } from 'robVisual/actions/Filt
 
 class ApplyFilters extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
     hasNoErrors(){
         let { effects, dispatch } = this.props;
         if (effects === null) {
@@ -36,7 +41,7 @@ class ApplyFilters extends Component {
             <div>
                 <FormFieldError errors={this.props.errors} />
                 <button type='button' className='btn btn-primary'
-                        onClick={this.handleSubmit.bind(this)}>Apply filters</button>
+                        onClick={this.handleSubmit}>Apply filters</button>
                 {this.props.isFetching ? <Filtering /> : null}
             </div>
         );

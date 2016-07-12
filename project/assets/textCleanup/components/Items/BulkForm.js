@@ -12,6 +12,13 @@ class BulkForm extends Component {
     constructor(props) {
         super(props);
         this.state = props.object;
+        this.handleChange = this.handleChange.bind(this);
+        this.handleCheckAll = this.handleCheckAll.bind(this);
+        this.handleCheck = this.handleCheck.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.onDetailChange = this.onDetailChange.bind(this);
+        this.showModal = this.showModal.bind(this);
+        this._toggleDetails = this._toggleDetails.bind(this);
     }
 
     _toggleDetails() {
@@ -67,25 +74,25 @@ class BulkForm extends Component {
 
     // Uses eval() as the object supplying displayAsModal is dynamic.
     showModal(e){
-        eval(this.props.modelEndpoint + '.displayAsModal(e.target.id)');
+        eval(this.props.modalClass + '.displayAsModal(e.target.id)');
     }
 
     render() {
         let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails?
-                'fa-minus-square':
+            detailShow = this.state.showDetails ?
+                'fa-minus-square' :
                 'fa-plus-square',
-            editButtonText = this.state.showDetails?
-                'Submit selected items':
+            editButtonText = this.state.showDetails ?
+                'Submit selected items' :
                 'Submit bulk edit';
         return (
             <div className="stripe row">
-                <form onSubmit={this.handleSubmit.bind(this)}>
+                <form onSubmit={this.handleSubmit}>
                     <span className='bulk-element field span4'>
                         <button type='button'
                             title='Show/hide all items'
                             className='btn btn-inverse btn-mini'
-                            onClick={this._toggleDetails.bind(this)}>
+                            onClick={this._toggleDetails}>
                             <i className={`fa ${detailShow}`}></i>
                         </button>
                         &nbsp;{field || `N/A`} ({items.length})
@@ -93,20 +100,19 @@ class BulkForm extends Component {
                     <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
                         <input name={field} className='form-control' type="text"
                             defaultValue={object[params.field]}
-                            onChange={this.handleChange.bind(this)}/>
+                            onChange={this.handleChange}/>
                         <FormFieldError errors={errors.name} />
                     </span>
                     <span className='bulk-element button span'>
                         <button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
                 </form>
-                <div>{this.state.showDetails ?
-                        <DetailList
-                            checkedRows={this.state.detailIDs}
-                            items={items}
-                            onDetailChange={this.onDetailChange.bind(this)}
-                            showModal={this.showModal.bind(this)}
-                        /> : null}
-                </div>
+                {this.state.showDetails ?
+                    <DetailList
+                        checkedRows={this.state.detailIDs}
+                        items={items}
+                        onDetailChange={this.onDetailChange}
+                        showModal={this.showModal}
+                    /> : null}
             </div>
         );
     }

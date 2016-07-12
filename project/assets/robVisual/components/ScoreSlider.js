@@ -3,6 +3,11 @@ import React, { Component, PropTypes } from 'react';
 
 class ScoreSlider extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
     handleChange(e){
         this.props.handleChange(e);
     }
@@ -21,7 +26,7 @@ class ScoreSlider extends Component {
                     name='scoreSlider'
                     min='0' max={max}
                     defaultValue='0'
-                    onChange={this.handleChange.bind(this)} />
+                    onChange={this.handleChange} />
             </form>
             </div>
         );

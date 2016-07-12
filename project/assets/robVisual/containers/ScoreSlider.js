@@ -8,6 +8,11 @@ import { fetchRobScores, setScoreThreshold } from 'robVisual/actions/Filter';
 
 class ScoreSlider extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this)
+    }
+
     componentWillMount(){
         this.props.dispatch(fetchRobScores());
         this.setState({threshold: 0});
@@ -29,7 +34,7 @@ class ScoreSlider extends Component {
                 null :
                 <Slider
                     max={max} threshold={threshold}
-                    handleChange={this.handleChange.bind(this)}/>
+                    handleChange={this.handleChange}/>
         );
     }
 }
