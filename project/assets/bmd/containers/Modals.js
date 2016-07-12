@@ -20,8 +20,8 @@ class Modals extends React.Component {
         this.props.dispatch(showOutputModal);
     }
 
-    handleModelUpdate(){
-        this.props.dispatch(updateModel());
+    handleModelUpdate(values){
+        this.props.dispatch(updateModel(values));
     }
 
     handleModelDelete(){

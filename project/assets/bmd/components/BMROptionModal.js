@@ -11,7 +11,9 @@ import EditableModalFooter from 'bmd/components/EditableModalFooter';
 class BMROptionModal extends React.Component {
 
     componentWillReceiveProps(nextProps){
-        this.setState(deepCopy(nextProps.bmr));
+        if (nextProps.bmr){
+            this.setState(deepCopy(nextProps.bmr));
+        }
     }
 
     handleSave(){

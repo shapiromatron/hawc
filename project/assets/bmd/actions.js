@@ -85,9 +85,10 @@ var showModal = function(name){
             modelIndex: parseInt(modelIndex),
         };
     },
-    updateModel = function(){
+    updateModel = function(values){
         return {
             type: types.UPDATE_MODEL,
+            values,
         };
     },
     deleteModel = function(){

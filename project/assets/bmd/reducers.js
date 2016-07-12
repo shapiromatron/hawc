@@ -21,6 +21,7 @@ const defaultState = {
 
 var tmp;
 
+
 function bmd(state=defaultState, action){
     switch (action.type){
 
@@ -31,6 +32,11 @@ function bmd(state=defaultState, action){
         });
 
     case types.RECEIVE_SESSION:
+
+        // add key-prop to each values dict for parameter
+        _.each(action.settings.allModelOptions,
+            (d) => _.each(d.defaults, (v, k) => v.key = k));
+
         return Object.assign({}, state, {
             models: action.settings.models,
             bmrs: action.settings.bmrs,
@@ -39,14 +45,27 @@ function bmd(state=defaultState, action){
         });
 
     case types.CREATE_MODEL:
+        tmp = Object.assign(
+            deepCopy(state.allModelOptions[action.modelIndex]),
+            {overrides: {}}
+        );
         return Object.assign({}, state, {
-            models: [...state.models, state.allModelOptions[action.modelIndex]],
+            models: [...state.models, tmp],
         });
 
     case types.SELECT_MODEL:
         return Object.assign({}, state, {
             selectedModelIndex: action.modelIndex,
             selectedModel: state.models[action.modelIndex],
+        });
+
+    case types.UPDATE_MODEL:
+        tmp = deepCopy(state.models);
+        tmp[state.selectedModelIndex].overrides = action.values;
+        return Object.assign({}, state, {
+            models: tmp,
+            selectedModelIndex: null,
+            selectedModel: null,
         });
 
     case types.DELETE_MODEL:
@@ -75,8 +94,8 @@ function bmd(state=defaultState, action){
         tmp[state.selectedBmrIndex] = action.values;
         return Object.assign({}, state, {
             bmrs: tmp,
-            selectedModelIndex: null,
-            selectedModel: null,
+            selectedBmrIndex: null,
+            selectedBmr: null,
         });
 
     case types.DELETE_BMR:
