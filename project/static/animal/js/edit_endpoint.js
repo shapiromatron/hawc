@@ -156,9 +156,9 @@ var SampleSizeWidget = function(){
 };
 SampleSizeWidget.prototype = {
     getSD: function(){
-        var n = $("#n_1").val(),
+        var n = $("#id_form-0-n").val(),
             varType = $("#id_variance_type").val(),
-            variance = $("#variance_0").val(),
+            variance = $("#id_form-0-variance").val(),
             val = NaN;
 
         switch(varType){
@@ -172,9 +172,9 @@ SampleSizeWidget.prototype = {
         return val;
     },
     setCalculator: function(){
-        this.form.find("input[name=mean]").val( $("#resp_0").val() );
+        this.form.find("input[name=mean]").val( $("#id_form-0-response").val() );
         this.form.find("input[name=sd]").val( this.getSD() );
-        this.form.find("input[name=n]").val( $("#n_1").val() );
+        this.form.find("input[name=n]").val( $("#id_form-0-n").val() );
         this.recalculate();
     },
     recalculate: function(){
