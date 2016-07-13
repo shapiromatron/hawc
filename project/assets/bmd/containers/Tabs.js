@@ -16,7 +16,7 @@ import {
     fetchSessionSettings,
     showOptionModal,
     showBmrModal,
-    execute,
+    tryExecute,
     toggleVariance,
     createModel,
     createBmr,
@@ -45,7 +45,7 @@ class Tabs extends React.Component {
     }
 
     handleExecute(){
-        this.props.dispatch(execute());
+        this.props.dispatch(tryExecute());
     }
 
     handleVarianceToggle(){

@@ -110,6 +110,21 @@ function bmd(state=defaultState, action){
             selectedBmr: null,
         });
 
+    case types.VALIDATE:
+        return Object.assign({}, state, {
+            validationErrors: action.validationErrors,
+        });
+
+    case types.EXECUTE_START:
+        return Object.assign({}, state, {
+            isExecuting: true,
+        });
+
+    case types.EXECUTE_STOP:
+        return Object.assign({}, state, {
+            isExecuting: false,
+        });
+
     default:
         return state;
     }

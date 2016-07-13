@@ -1,6 +1,8 @@
 import $ from '$';
 import fetch from 'isomorphic-fetch';
 
+import {getAjaxHeaders} from 'shared/utils';
+
 import * as types from 'bmd/constants';
 
 import Endpoint from 'Endpoint';
@@ -69,9 +71,67 @@ var showModal = function(name){
     showOutputModal = function(){
         showModal(types.OUTPUT_MODAL_ID);
     },
-    execute = function(){
+    setErrors = function(validationErrors){
         return {
-            type: 'execute',
+            type: types.VALIDATE,
+            validationErrors,
+        };
+    },
+    execute_start = function(){
+        return {
+            type: types.EXECUTE_START,
+        };
+    },
+    execute_stop = function(){
+        return {
+            type: types.EXECUTE_STOP,
+        };
+    },
+    execute = function(){
+        return (dispatch, getState) => {
+            let state = getState(),
+                url = state.config.execute_url,
+                payload = {
+                    credentials: 'same-origin',
+                    method: 'POST',
+                    headers: getAjaxHeaders(state.config.csrf),
+                    body: {},
+                };
+
+            return new Promise((res, rej)=>{res();})
+                .then(() => dispatch(execute_start()))
+                .then(() => {
+                    fetch(url, payload)
+                        .then((response) => response.json())
+                        .then((res) => console.log(res))
+                        .then(() => dispatch(execute_stop()))
+                        .then(() => $('#tabs a:eq(1)').tab('show'));
+                });
+        };
+    },
+    validate = function(state){
+        let errs = [];
+        if (state.bmd.bmrs.length === 0){
+            errs.push('At least one BMR setting is required.');
+        }
+        if (state.bmd.models.length === 0){
+            errs.push('At least one model is required.');
+        }
+        return errs;
+    },
+    tryExecute = function(){
+        return (dispatch, getState) => {
+            return new Promise((res, rej)=>{res();})
+                .then(() => {
+                    let validationErrors = validate(getState());
+                    dispatch(setErrors(validationErrors));
+                })
+                .then(() => {
+                    let state = getState();
+                    if (state.bmd.validationErrors.length === 0){
+                        dispatch(execute());
+                    }
+                });
         };
     },
     toggleVariance = function(){
@@ -123,7 +183,7 @@ export {fetchSessionSettings};
 export {showOptionModal};
 export {showBmrModal};
 export {showOutputModal};
-export {execute};
+export {tryExecute};
 export {toggleVariance};
 export {createModel};
 export {updateModel};
