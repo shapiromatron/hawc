@@ -17,3 +17,9 @@ export const CREATE_BMR = 'CREATE_BMR';
 export const SELECT_BMR = 'SELECT_BMR';
 export const UPDATE_BMR = 'UPDATE_BMR';
 export const DELETE_BMR = 'DELETE_BMR';
+
+export const param_cw = {
+    'd': 'Default',
+    'i': 'Initialized',
+    's': 'Specified',
+};

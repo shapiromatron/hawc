@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {param_cw} from 'bmd/constants';
+
 
 class ModelOptionTable extends React.Component {
 
@@ -54,14 +56,50 @@ class ModelOptionTable extends React.Component {
         );
     }
 
+    renderOverrideList(d){
+
+        var getText = function(k, v){
+            let def = d.defaults[k],
+                tmp;
+            switch (def.t){
+            case 'i':
+            case 'd':
+            case 'dd':
+            case 'rp':
+                return <span><b>{def.n}:</b> {v}</span>;
+            case 'b':
+                tmp = (v===1) ? 'fa fa-check-square-o' :'fa fa-square-o';
+                return <span><b>{def.n}:</b> <i className={tmp}></i></span>;
+            case 'p':
+                v = v.split('|');
+                return <span><b>{def.n}:</b> {param_cw[v[0]]} to {v[1]}</span>;
+            default:
+                alert(`Invalid type: ${d.t}`);
+                return null;
+            }
+        };
+
+        if (_.isEmpty(d.overrides)){
+            return <span>-</span>;
+        } else {
+            return <ul>{
+                _.map(d.overrides, function(k, v){
+                    return <li key={k}>{getText(v, k)}</li>;
+                })
+            }</ul>;
+        }
+    }
+
     renderRow(d, i){
-        let header = (this.props.editMode)?
-             'View/edit': 'View';
+        let header = (this.props.editMode)?'View/edit': 'View';
+
 
         return (
             <tr key={i}>
                 <td>{d.name}</td>
-                <td></td>
+                <td>
+                    {this.renderOverrideList(d)}
+                </td>
                 <td>
                     <button
                         type="button"
@@ -81,8 +119,8 @@ class ModelOptionTable extends React.Component {
                 <table className="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th style={{width: '30%'}}>Model name</th>
-                            <th style={{width: '55%'}}>Non-default settings</th>
+                            <th style={{width: '25%'}}>Model name</th>
+                            <th style={{width: '60%'}}>Non-default settings</th>
                             <th style={{width: '15%'}}>{header}</th>
                         </tr>
                     </thead>
