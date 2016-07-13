@@ -21,7 +21,15 @@ class RiskOfBiasFlat(FlatFileExporter):
             ser = obj.get_json(json_encode=False)
             row = []
             row.extend(Study.flat_complete_data_row(ser))
-            scores = [rob['scores'] for rob in ser.get('riskofbiases', []) if rob['final'] and rob['active']][0]
+
+            try:
+                scores = [
+                    rob['scores'] for rob in ser.get('riskofbiases', [])
+                    if rob['final'] and rob['active']
+                ][0]
+            except IndexError:
+                scores = []
+
             for score in scores:
                 row_copy = list(row)  # clone
                 row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
