@@ -97,7 +97,7 @@ var showModal = function(name){
                     headers: getAjaxHeaders(state.config.csrf),
                     body: JSON.stringify({
                         bmrs: state.bmd.bmrs,
-                        models: state.bmd.models,
+                        modelSettings: state.bmd.modelSettings,
                     }),
                 };
 
@@ -120,7 +120,7 @@ var showModal = function(name){
         if (state.bmd.bmrs.length === 0){
             errs.push('At least one BMR setting is required.');
         }
-        if (state.bmd.models.length === 0){
+        if (state.bmd.modelSettings.length === 0){
             errs.push('At least one model is required.');
         }
         return errs;

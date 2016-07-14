@@ -6,10 +6,16 @@ import { combineReducers } from 'redux';
 import config from 'shared/reducers/Config';
 import * as types from 'bmd/constants';
 
+/*
+    The user-interface is normalized more than the serialized data on the
+    server. The `models` includes duplicate model-settings; `modelSettings`
+    are derived from the models and the allModelOptions.
+*/
 const defaultState = {
     endpoint: null,
     dataType: null,
     models: [],
+    modelSettings: [],
     selectedModelIndex: null,
     selectedModel: null,
     bmrs: [],
@@ -21,7 +27,7 @@ const defaultState = {
     validationErrors: [],
 };
 
-var tmp;
+var tmp, tmp2;
 
 
 function bmd(state=defaultState, action){
@@ -39,8 +45,22 @@ function bmd(state=defaultState, action){
         _.each(action.settings.allModelOptions,
             (d) => _.each(d.defaults, (v, k) => v.key = k));
 
+        // create model-settings
+        // 1) only get the first bmr instance of the model
+        // 2) add defaults based on the model name
+        tmp2 = _.indexBy(action.settings.allModelOptions, 'name');
+        tmp = _.chain(action.settings.models)
+               .filter((d) => d.bmr_id === 0)
+               .map((d) => {
+                   let copy = deepCopy(d);
+                   copy.defaults = tmp2[d.name].defaults;
+                   return copy;
+               })
+               .value();
+
         return Object.assign({}, state, {
             models: action.settings.models,
+            modelSettings: tmp,
             bmrs: action.settings.bmrs,
             allModelOptions: action.settings.allModelOptions,
             allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
@@ -52,30 +72,30 @@ function bmd(state=defaultState, action){
             {overrides: {}}
         );
         return Object.assign({}, state, {
-            models: [...state.models, tmp],
+            modelSettings: [...state.modelSettings, tmp],
         });
 
     case types.SELECT_MODEL:
         return Object.assign({}, state, {
             selectedModelIndex: action.modelIndex,
-            selectedModel: state.models[action.modelIndex],
+            selectedModel: state.modelSettings[action.modelIndex],
         });
 
     case types.UPDATE_MODEL:
-        tmp = deepCopy(state.models);
+        tmp = deepCopy(state.modelSettings);
         tmp[state.selectedModelIndex].overrides = action.values;
         return Object.assign({}, state, {
-            models: tmp,
+            modelSettings: tmp,
             selectedModelIndex: null,
             selectedModel: null,
         });
 
     case types.DELETE_MODEL:
-        tmp = state.models
+        tmp = state.modelSettings
             .slice(0, state.selectedModelIndex)
-            .concat(state.models.slice(state.selectedModelIndex+1));
+            .concat(state.modelSettings.slice(state.selectedModelIndex+1));
         return Object.assign({}, state, {
-            models: tmp,
+            modelSettings: tmp,
             selectedModelIndex: null,
             selectedModel: null,
         });

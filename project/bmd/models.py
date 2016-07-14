@@ -116,13 +116,12 @@ class BMDSession(models.Model):
 
 class BMDModel(models.Model):
     session = models.ForeignKey(
-        BMDSession)
+        BMDSession,
+        related_name='models')
     model_id = models.PositiveSmallIntegerField()
     bmr_id = models.PositiveSmallIntegerField()
     name = models.CharField(
         max_length=25)
-    defaults = JSONField(
-        default=dict)
     overrides = JSONField(
         default=dict)
     date_executed = models.DateTimeField(
@@ -143,7 +142,7 @@ class BMDModel(models.Model):
 
     class Meta:
         get_latest_by = "created"
-        ordering = ('created', )
+        ordering = ('model_id', )
 
     def get_assessment(self):
         return self.session.get_assessment()

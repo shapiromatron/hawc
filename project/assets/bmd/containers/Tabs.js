@@ -112,7 +112,7 @@ class Tabs extends React.Component {
                                 handleVarianceToggle={this.handleVarianceToggle.bind(this)}
                                 handleCreateModel={this.handleCreateModel.bind(this)}
                                 handleModalDisplay={this.handleOptionModal.bind(this)}
-                                models={this.props.models}
+                                models={this.props.modelSettings}
                                 allOptions={this.props.allModelOptions}/>
                             <BMROptionTable
                                 editMode={editMode}
@@ -145,7 +145,7 @@ function mapStateToProps(state) {
         config: state.config,
         endpoint: state.bmd.endpoint,
         dataType: state.bmd.dataType,
-        models: state.bmd.models,
+        modelSettings: state.bmd.modelSettings,
         bmrs: state.bmd.bmrs,
         allModelOptions: state.bmd.allModelOptions,
         allBmrOptions: state.bmd.allBmrOptions,
