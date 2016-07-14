@@ -6,6 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse_lazy
+from django.utils.timezone import now
 
 from utils.models import get_crumbs
 
@@ -90,22 +91,12 @@ class BMDSession(models.Model):
             version=version)
 
     @property
-    def is_executed(self):
-        return self.execute is not None
+    def is_finished(self):
+        return self.date_executed is not None
 
     def execute(self):
-        self._save_models()
-        self._execute_models()
-        self._import_results()
-
-    def _save_models(self, models):
-        pass
-
-    def _execute_models(self):
-        pass
-
-    def _import_results(self):
-        pass
+        self.date_executed = now()
+        self.save()
 
     @property
     def session(self):

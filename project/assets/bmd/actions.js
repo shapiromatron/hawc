@@ -95,17 +95,23 @@ var showModal = function(name){
                     credentials: 'same-origin',
                     method: 'POST',
                     headers: getAjaxHeaders(state.config.csrf),
-                    body: {},
+                    body: JSON.stringify({
+                        bmrs: state.bmd.bmrs,
+                        models: state.bmd.models,
+                    }),
                 };
 
             return new Promise((res, rej)=>{res();})
                 .then(() => dispatch(execute_start()))
                 .then(() => {
                     fetch(url, payload)
-                        .then((response) => response.json())
-                        .then((res) => console.log(res))
-                        .then(() => dispatch(execute_stop()))
-                        .then(() => $('#tabs a:eq(1)').tab('show'));
+                        .then((response) => {
+                            if (!response.ok){
+                                dispatch(setErrors(['An error occurred.']));
+                            }
+                            return response.json();
+                        })
+                        .then(() => dispatch(getExecuteStatus()));
                 });
         };
     },
@@ -132,6 +138,29 @@ var showModal = function(name){
                         dispatch(execute());
                     }
                 });
+        };
+    },
+    getExecuteStatus = function(){
+        return (dispatch, getState) => {
+            let url = getState().config.execute_status_url;
+            fetch(url)
+                .then((res) => res.json())
+                .then((res) => {
+                    if (res.finished){
+                        dispatch(getExecutionResults());
+                    } else {
+                        setTimeout(() => dispatch(getExecuteStatus()), 5000);
+                    }
+                });
+        };
+    },
+    getExecutionResults = function(){
+        return (dispatch, getState) => {
+            let url = getState().config.session_url;
+            return new Promise((res, rej)=>{res();})
+                .then(() => dispatch(fetchSessionSettings(url)))
+                .then(() => dispatch(execute_stop()))
+                .then(() => $('#tabs a:eq(1)').tab('show'));
         };
     },
     toggleVariance = function(){

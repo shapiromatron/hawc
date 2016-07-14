@@ -12,21 +12,26 @@ from . import models, serializers
 class BMDSession(AssessmentViewset):
     assessment_filter_args = "endpoint__assessment"
     model = models.BMDSession
-    serializer_class = serializers.BMDSessionSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'execute':
+            return serializers.BMDSessionUpdateSerializer
+        else:
+            return serializers.BMDSessionSerializer
 
     @detail_route(methods=['post'])
     def execute(self, request, pk=None):
-        session = self.get_object()
-        # 1. get bmrs and models in serializer
-        # 2. save
-        # 3. kick off execution task
-        return Response({'status': 'bmd executed'})
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'started': True})
 
     @detail_route(methods=['get'])
     def execute_status(self, request, pk=None):
         # ping until execution is complete
         session = self.get_object()
-        return Response({'status': session.get_execute_status()})
+        return Response({'finished': session.is_finished})
 
     @detail_route(methods=['post'])
     def selected_model(self, request, pk=None):

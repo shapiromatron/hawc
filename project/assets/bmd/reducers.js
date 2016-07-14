@@ -113,6 +113,7 @@ function bmd(state=defaultState, action){
     case types.VALIDATE:
         return Object.assign({}, state, {
             validationErrors: action.validationErrors,
+            isExecuting: false,
         });
 
     case types.EXECUTE_START:

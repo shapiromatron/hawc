@@ -17,6 +17,7 @@ django-webpack-loader==0.3.0
 djangorestframework==3.4.0
 git+https://github.com/chibisov/drf-extensions@5d7bdbb1e29a8ed6681366d3d243771a350ed412
 docutils==0.12
+jsonschema==2.5.1
 kombu==3.0.26
 lxml==3.4.4
 pillow==3.1.1
