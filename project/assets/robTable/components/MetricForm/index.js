@@ -60,7 +60,7 @@ MetricForm.propTypes = {
                     metric: PropTypes.string.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
-                score_description: PropTypes.string.isRequired,
+                score_description: PropTypes.string,
                 score_symbol: PropTypes.string.isRequired,
                 score_shade: PropTypes.string.isRequired,
             }).isRequired
