@@ -101,7 +101,7 @@ class RefDownloadExcel(BaseList):
             self.fn = "{}-refs".format(self.assessment)
             self.sheet_name = unicode(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
-                assessment=self.assessment.id, json_encode=False)
+                self.assessment.id, json_encode=False)
 
     def get_queryset(self):
         if self.tag:
@@ -229,7 +229,8 @@ class SearchDownloadExcel(BaseDetail):
             filename=self.object.slug,
             sheet_name=self.object.slug,
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(assessment=self.assessment.id, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(
+                self.assessment.id, json_encode=False),
             include_parent_tag=False)
         return exporter.build_response()
 
