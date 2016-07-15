@@ -6,6 +6,13 @@ from myuser.serializers import HAWCUserSerializer
 from . import models
 
 
+class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = ('id', 'metric', 'description')
+
+
 class AssessmentMetricSerializer(serializers.ModelSerializer):
 
     class Meta:

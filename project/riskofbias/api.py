@@ -4,7 +4,7 @@ from rest_framework import filters
 from rest_framework import viewsets
 
 from assessment.api import AssessmentLevelPermissions, \
-    InAssessmentFilter, DisabledPagination
+    InAssessmentFilter, DisabledPagination, AssessmentViewset
 
 from . import models, serializers
 
@@ -32,3 +32,13 @@ class RiskOfBias(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.model.objects.all()\
             .prefetch_related('study', 'author', 'scores__metric__domain')
+
+
+class AssessmentMetricViewset(AssessmentViewset):
+    model = models.RiskOfBiasMetric
+    serializer_class = serializers.AssessmentMetricChoiceSerializer
+    pagination_class = DisabledPagination
+    assessment_filter_args = "domain__assessment"
+
+    def get_queryset(self):
+        return self.model.objects.all()

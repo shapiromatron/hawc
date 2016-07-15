@@ -11,8 +11,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from . import models, serializers
-from riskofbias.models import RiskOfBiasMetric
-
 from utils.helper import tryParseInt
 
 

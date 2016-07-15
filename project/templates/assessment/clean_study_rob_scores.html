@@ -21,6 +21,13 @@
             "url": "{% url 'study:api:final-list' %}",
             "title": "Studies"
         },
+        "metrics": {
+            "url": "{% url 'riskofbias:api:metrics-list' %}",
+            "title": "Metric Choices"
+        },
+        "scores": {
+            "url": "url"
+        },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }

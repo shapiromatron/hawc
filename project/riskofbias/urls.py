@@ -7,6 +7,8 @@ from . import views, api
 router = DefaultRouter()
 router.register(r'domain', api.RiskOfBiasDomain, base_name='domain')
 router.register(r'review', api.RiskOfBias, base_name='review')
+router.register(r'metrics', api.AssessmentMetricViewset, base_name='metrics')
+
 
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
