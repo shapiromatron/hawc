@@ -5,7 +5,7 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID, DisabledPagination
+from assessment.api import AssessmentEditViewset, InAssessmentFilter, RequiresAssessmentID, DisabledPagination
 from . import views
 
 

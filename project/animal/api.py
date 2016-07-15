@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from django.db.models import Q
-from assessment.api.views import AssessmentViewset, DoseUnitsViewset
+from assessment.api import AssessmentViewset, DoseUnitsViewset
 
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet

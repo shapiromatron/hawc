@@ -16,7 +16,7 @@
 <script id="config" type="text/json" charset="utf-8">
     {
         "assessment_id": "{{ assessment.id }}",
-        "assessment": "{% url 'assessment:endpoint_type_list' %}",
+        "assessment": "{% url 'assessment:api:endpoint_type-list' %}",
         "epi": {
           "url": "{% url 'epi:api:outcome-cleanup-list' %}",
           "title": "Outcome"

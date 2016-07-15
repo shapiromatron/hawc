@@ -1,7 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+router = DefaultRouter()
+router.register(r'endpoints', api.AssessmentEndpointList, base_name='endpoint_type')
 
 urlpatterns = [
 
@@ -117,9 +122,8 @@ urlpatterns = [
         name='clean_study_metrics'),
 
     # api views
-    url(r'^api/endpoints/$',
-        views.AssessmentEndpointList.as_view({'get': 'list'}),
-        name='endpoint_type_list'),
+    url(r'^api/', include(router.urls, namespace='api')),
+
 ]
 
 admin.autodiscover()

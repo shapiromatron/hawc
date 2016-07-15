@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from rest_framework import filters
 from rest_framework import viewsets
 
-from assessment.api.views import AssessmentLevelPermissions, \
+from assessment.api import AssessmentLevelPermissions, \
     InAssessmentFilter, DisabledPagination
 
 from . import models, serializers
