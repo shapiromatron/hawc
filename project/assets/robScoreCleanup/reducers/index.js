@@ -1,31 +1,18 @@
 import { combineReducers } from 'redux';
 
 import config from 'shared/reducers/Config';
+import items from './Items';
+import metrics from './Metrics';
+import scores from './Scores';
 import * as types from 'robScoreCleanup/constants';
 
 const defaultState = {
-    isFetching: false,
-    itemsLoaded: false,
     error: null,
-    metric: null,
-    studies: [],
 };
 
-function assessment(state=defaultState, action) {
+function error(state=defaultState, action) {
 
     switch(action.type){
-
-    case types.REQUEST:
-        return Object.assign({}, state, {
-            isFetching: true,
-        });
-
-    case types.RECEIVE:
-        return Object.assign({}, state, {
-            isFetching: false,
-            itemsLoaded: true,
-            studies: action.studies,
-        });
 
     case types.SET_ERROR:
         return Object.assign({}, state, {
@@ -37,11 +24,6 @@ function assessment(state=defaultState, action) {
             error: null,
         });
 
-    case types.SELECT_METRIC:
-        return Object.assign({}, state, {
-            metric: action.metric,
-        });
-
     default:
         return state;
     }
@@ -50,7 +32,10 @@ function assessment(state=defaultState, action) {
 
 const rootReducer = combineReducers({
     config,
-    assessment,
+    error,
+    items,
+    metrics,
+    scores,
 });
 
 export default rootReducer;

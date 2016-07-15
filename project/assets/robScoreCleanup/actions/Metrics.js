@@ -4,16 +4,16 @@ import * as types from 'robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
 
 
-function requestStudies(){
+function makeMetricRequest(){
     return {
-        type: types.REQUEST,
+        type: types.REQUEST_METRIC_OPTIONS,
     };
 }
 
-function receiveStudies(studies){
+function receiveMetrics(metrics){
     return {
-        type: types.RECEIVE,
-        studies,
+        type: types.RECEIVE_METRIC_OPTIONS,
+        metrics,
     };
 }
 
@@ -30,19 +30,26 @@ function resetError(){
     };
 }
 
-export function fetchStudies(){
+export function selectMetric(metric){
+    return {
+        type: types.SELECT_METRIC,
+        metric,
+    };
+}
+
+export function fetchMetricOptions(){
     return (dispatch, getState) => {
         let state = getState();
-        if (state.isFetching || state.itemsLoaded) return;
-        dispatch(requestStudies());
+        if (state.metrics.isFetching || state.metrics.isLoaded) return;
+        dispatch(makeMetricRequest());
         dispatch(resetError());
-        let { host, studies_url, assessment_id } = state.config;
+        let { host, metrics, assessment_id } = state.config;
         const url = h.getUrlWithAssessment(
-                        h.getListUrl(host, studies_url),
+                        h.getListUrl(host, metrics.url),
                         assessment_id);
         return fetch(url, h.fetchGet)
             .then((response) => response.json())
-            .then((json) => dispatch(receiveStudies(json)))
+            .then((json) => dispatch(receiveMetrics(json)))
             .catch((error) => dispatch(setError(error)));
     };
 }
