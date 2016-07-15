@@ -19,27 +19,27 @@
         "assessment": "{% url 'assessment:endpoint_type_list' %}",
         "epi": {
           "url": "{% url 'epi:api:outcome-cleanup-list' %}",
-          "endpoint": "Outcome"
+          "title": "Outcome"
         },
         "ani": {
           "url": "{% url 'animal:api:endpoint-cleanup-list' %}",
-          "endpoint": "Endpoint"
+          "title": "Endpoint"
         },
         "experiment": {
           "url": "{% url 'animal:api:experiment-cleanup-list' %}",
-          "endpoint": "Experiment"
+          "title": "Experiment"
         },
         "animal-groups": {
           "url": "{% url 'animal:api:animal_group-cleanup-list' %}",
-          "endpoint": "AnimalGroup"
+          "title": "AnimalGroup"
         },
         "in-vitro": {
           "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",
-          "endpoint": "IVEndpoint"
+          "title": "IVEndpoint"
         },
         "in-vitro-chemical": {
           "url": "{% url 'invitro:api:ivchemical-cleanup-list' %}",
-          "endpoint": "IVChemical"
+          "title": "IVChemical"
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"

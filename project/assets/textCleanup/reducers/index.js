@@ -3,14 +3,14 @@ import { combineReducers } from 'redux';
 
 import config from 'shared/reducers/Config';
 import assessment from './Assessment';
-import endpoint from './Endpoint';
+import items from './Items';
 
 
 const rootReducer = combineReducers({
     router,
     config,
     assessment,
-    endpoint,
+    items,
 });
 
 export default rootReducer;

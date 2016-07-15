@@ -76,14 +76,14 @@ class BulkForm extends Component {
                 'fa-minus-square':
                 'fa-plus-square',
             editButtonText = this.state.showDetails?
-                'Submit selected endpoints':
+                'Submit selected items':
                 'Submit bulk edit';
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit.bind(this)}>
                     <span className='bulk-element field span4'>
                         <button type='button'
-                            title='Show/hide all endpoints'
+                            title='Show/hide all items'
                             className='btn btn-inverse btn-mini'
                             onClick={this._toggleDetails.bind(this)}>
                             <i className={`fa ${detailShow}`}></i>
@@ -95,7 +95,6 @@ class BulkForm extends Component {
                             defaultValue={object[params.field]}
                             onChange={this.handleChange.bind(this)}/>
                         <FormFieldError errors={errors.name} />
-
                     </span>
                     <span className='bulk-element button span'>
                         <button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
@@ -104,7 +103,6 @@ class BulkForm extends Component {
                         <DetailList
                             checkedRows={this.state.detailIDs}
                             items={items}
-                            field={field}
                             onDetailChange={this.onDetailChange.bind(this)}
                             showModal={this.showModal.bind(this)}
                         /> : null}

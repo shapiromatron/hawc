@@ -5,9 +5,9 @@ import {
     initializeBulkEditForm,
     patchBulkList,
     patchDetailList,
-} from 'textCleanup/actions/Endpoint';
+} from 'textCleanup/actions/Items';
 import Loading from 'shared/components/Loading';
-import FormComponent from 'textCleanup/components/Endpoint/BulkForm';
+import FormComponent from 'textCleanup/components/Items/BulkForm';
 
 
 class BulkForm extends Component {
@@ -32,6 +32,7 @@ class BulkForm extends Component {
         let ids = this.getIDs(this.props),
             { field, model } = this.props;
 
+
         if (ids && model.editObject == null ||
             ids && model.editObject[thisField] == null ||
             ids && model.editObject[thisField][field] == null){
@@ -42,7 +43,7 @@ class BulkForm extends Component {
 
     render() {
         let { items, model, field, params, config } = this.props,
-            modelEndpoint = config[params.type].endpoint,
+            modelEndpoint = config[params.type].title,
             thisField = items[0][field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
         this.isRendered = true;
@@ -67,8 +68,7 @@ function mapStateToProps(state){
     return {
         config: state.config,
         params: state.router.params,
-        model: state.endpoint,
-        itemsLoaded: state.endpoint.itemsLoaded,
+        model: state.items,
     };
 }
 

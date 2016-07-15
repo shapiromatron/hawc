@@ -1,35 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import _ from 'underscore';
 
+import DetailItem from 'textCleanup/components/Items/DetailItem';
 import h from 'textCleanup/utils/helpers';
 
 
 class DetailList extends Component {
 
-    renderItem(item){
-        let fields = _.keys(_.omit(item, ['id', 'ids', 'field', 'showDetails'])),
-            checked = _.contains(this.props.checkedRows, item.id);
-        return (
-            <div key={item.id} className='detail-stripe'>
-                {_.map(fields, (field) => {
-                    return(
-                        <span key={field} id={item.id} className='detail-item' onClick={this.props.showModal}>
-                            {item[field] || 'N/A'}
-                        </span>
-                    );
-                })}
-                <span className='detail-item'>
-                <input type="checkbox"
-                       title="Include/exclude selected object in change"
-                       checked={checked}
-                       id={item.id}
-                       onChange={this.props.onDetailChange}/></span>
-            </div>
-        );
-    }
-
     render() {
-        let { items, field, checkedRows } = this.props,
+        let { items, checkedRows, onDetailChange, showModal } = this.props,
             fields = _.keys(_.omit(items[0], ['id', 'ids', 'field', 'showDetails'])),
             allChecked = checkedRows ? checkedRows.length === items.length : false;
         return (
@@ -42,10 +20,16 @@ class DetailList extends Component {
                         <br/>
                         <input type="checkbox" id='all'
                             checked={allChecked}
-                            onChange={this.props.onDetailChange}/>
+                            onChange={onDetailChange}/>
                     </h5>
                 </div>
-                {_.map(_.sortBy(items, 'name'), this.renderItem.bind(this))}
+                {_.map(_.sortBy(items, 'name'),
+                    (item) => {
+                        return <DetailItem key={item.id} item={item}
+                                    fields={fields}
+                                    onDetailChange={onDetailChange}
+                                    showModal={showModal}
+                                    checkedRows={checkedRows} />})}
             </div>
         );
     }

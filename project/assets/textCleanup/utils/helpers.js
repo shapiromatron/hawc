@@ -70,7 +70,7 @@ var helpers = {
     getAssessmentApiUrl(config){
         return `${config.host}${config.assessment}?assessment_id=${config.assessment_id}`;
     },
-    getEndpointApiURL(state, filterFields=false, fetchModel=false, ids=null){
+    getItemApiURL(state, filterFields=false, fetchModel=false, ids=null){
         let getFields = fetchModel ? 'fields/' : '',
             fields = (filterFields && state.router.params.field) ? `&fields=${state.router.params.field}` : '',
             idList = ids ? `&ids=${ids}` : '';

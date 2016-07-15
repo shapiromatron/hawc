@@ -8,8 +8,8 @@ class Header extends Component {
     render() {
         let { params } = this.props;
         return (
-            <h2 className='endpoint_list_title'>
-                {`${h.caseToWords(params.field)} endpoint cleanup`}
+            <h2 className='item_list_title'>
+                {`${h.caseToWords(params.field)} data cleanup`}
             </h2>
         );
     }

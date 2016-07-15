@@ -7,78 +7,78 @@ let defaultState = {
     itemsLoaded: false,
     isFetching: false,
     model: null,
-    items: [],
+    list: [],
     editObject: {},
     editObjectErrors: {},
 };
 
 export default function (state=defaultState, action){
-    let index, items, patch, ids;
+    let index, list, patch, ids;
     switch (action.type){
 
-    case types.EP_REQUEST:
+    case types.ITEM_REQUEST:
         return Object.assign({}, state, {
             isFetching: true,
         });
 
-    case types.EP_RECEIVE_OBJECTS:
+    case types.ITEM_RECEIVE_OBJECTS:
         return Object.assign({}, state, {
-            items: action.items,
+            list: action.items,
             isFetching: false,
             itemsLoaded: true,
         });
 
-    case types.EP_RECEIVE_OBJECT:
-        index = state.items.indexOf(
-            _.findWhere(state.items, {id: action.item.id})
+    case types.ITEM_RECEIVE_OBJECT:
+        index = state.list.indexOf(
+            _.findWhere(state.list, {id: action.item.id})
         );
         if (index >= 0){
-            items = [
-                ...state.items.slice(0, index),
+            list = [
+                ...state.list.slice(0, index),
                 action.item,
-                ...state.items.slice(index + 1),
+                ...state.list.slice(index + 1),
             ];
         } else {
-            items = [
-                ...state.items,
+            list = [
+                ...state.list,
                 action.item,
             ];
         }
         return Object.assign({}, state, {
             isFetching: false,
             itemsLoaded: true,
-            items,
+            list,
         });
 
-    case types.EP_RECEIVE_MODEL:
+    case types.ITEM_RECEIVE_MODEL:
         return Object.assign({}, state, {
             isFetching: false,
             model: action.model.text_cleanup_fields,
         });
 
-    case types.EP_DELETE_OBJECT:
-        index = state.items.indexOf(
-            _.findWhere(state.items, {id: action.id})
+    case types.ITEM_DELETE_OBJECT:
+        index = state.list.indexOf(
+            _.findWhere(state.list, {id: action.id})
         );
         if (index >= 0){
-            items = [
-                ...state.items.slice(0, index),
-                ...state.items.slice(index + 1),
+            list = [
+                ...state.list.slice(0, index),
+                ...state.list.slice(index + 1),
             ];
         }
 
         return Object.assign({}, state, {
             isFetching: false,
-            items,
+            list,
         });
 
-    case types.EP_RESET_EDIT_OBJECT:
+    case types.ITEM_RESET_EDIT_OBJECT:
         return Object.assign({}, state, {
             editObject: _.omit(state.editObject, action.field),
             editObjectErrors: {},
         });
 
-    case types.EP_REMOVE_EDIT_OBJECT_IDS:
+    case types.ITEM_REMOVE_EDIT_OBJECT_IDS:
         patch = state.editObject[action.field];
         ids = patch.ids;
         action.ids.map((id) => {
@@ -94,7 +94,7 @@ export default function (state=defaultState, action){
             editObject: {...state.editObject, [action.field]: {...patch, ids} },
         });
 
-    case types.EP_CREATE_EDIT_OBJECT:
+    case types.ITEM_CREATE_EDIT_OBJECT:
         let obj = action.object,
             field = obj.field,
             thisField = obj[field];
@@ -109,38 +109,38 @@ export default function (state=defaultState, action){
             editObjectErrors: {},
         });
 
-    case types.EP_PATCH_OBJECTS:
+    case types.ITEM_PATCH_OBJECTS:
         ids = action.patch.ids;
         patch = _.omit(action.patch, 'ids');
-        items = state.items;
+        list = state.list;
         ids.map((id) => {
-            let index = state.items.indexOf(
-                _.findWhere(state.items, {id})
+            let index = state.list.indexOf(
+                _.findWhere(state.list, {id})
             );
             if (index >= 0){
-                items = [
-                    ...items.slice(0, index),
-                    Object.assign({}, items[index], {...patch, id}),
-                    ...items.slice(index + 1),
+                list = [
+                    ...list.slice(0, index),
+                    Object.assign({}, list[index], {...patch, id}),
+                    ...list.slice(index + 1),
                 ];
             } else {
-                items = [
-                    ...items,
-                    Object.assign({}, items[index], patch),
+                list = [
+                    ...list,
+                    Object.assign({}, list[index], patch),
                 ];
             }
 
         });
         return Object.assign({}, state, {
-            items,
+            list,
         });
 
-    case types.EP_RECEIVE_EDIT_ERRORS:
+    case types.ITEM_RECEIVE_EDIT_ERRORS:
         return Object.assign({}, state, {
             editObjectErrors: action.errors,
         });
 
-    case types.EP_RELEASE:
+    case types.ITEM_RELEASE:
         return Object.assign({}, defaultState);
 
     default:

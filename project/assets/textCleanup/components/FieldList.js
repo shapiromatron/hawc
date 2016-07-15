@@ -5,6 +5,7 @@ import h from 'textCleanup/utils/helpers';
 
 
 class FieldList extends Component {
+
     renderField(field) {
         return (
             <li key={field}>

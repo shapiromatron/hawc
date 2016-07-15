@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import 'babel-polyfill';
 
 import * as types from 'textCleanup/constants/ActionTypes';
@@ -7,55 +6,55 @@ import h from 'textCleanup/utils/helpers';
 
 function requestContent() {
     return {
-        type: types.EP_REQUEST,
+        type: types.ITEM_REQUEST,
     };
 }
 
 function receiveModel(json){
     return {
-        type: types.EP_RECEIVE_MODEL,
+        type: types.ITEM_RECEIVE_MODEL,
         model: json,
     };
 }
 
 function receiveObjects(json) {
     return {
-        type: types.EP_RECEIVE_OBJECTS,
+        type: types.ITEM_RECEIVE_OBJECTS,
         items: json,
     };
 }
 
 function receiveObject(json) {
     return {
-        type: types.EP_RECEIVE_OBJECT,
+        type: types.ITEM_RECEIVE_OBJECT,
         item: json,
     };
 }
 
 function removeObject(id){
     return {
-        type: types.EP_DELETE_OBJECT,
+        type: types.ITEM_DELETE_OBJECT,
         id,
     };
 }
 
 function setEdititableObject(object){
     return {
-        type: types.EP_CREATE_EDIT_OBJECT,
+        type: types.ITEM_CREATE_EDIT_OBJECT,
         object,
     };
 }
 
 function resetEditObject(field){
     return {
-        type: types.EP_RESET_EDIT_OBJECT,
+        type: types.ITEM_RESET_EDIT_OBJECT,
         field,
     };
 }
 
 function removeEditObjectIds(field, ids){
     return {
-        type: types.EP_REMOVE_EDIT_OBJECT_IDS,
+        type: types.ITEM_REMOVE_EDIT_OBJECT_IDS,
         field,
         ids,
     };
@@ -63,44 +62,44 @@ function removeEditObjectIds(field, ids){
 
 function patchItems(patch){
     return {
-        type: types.EP_PATCH_OBJECTS,
+        type: types.ITEM_PATCH_OBJECTS,
         patch,
     };
 }
 
 function receiveEditErrors(errors){
     return {
-        type: types.EP_RECEIVE_EDIT_ERRORS,
+        type: types.ITEM_RECEIVE_EDIT_ERRORS,
         errors,
     };
 }
 
 function releaseContent(){
     return {
-        type: types.EP_RELEASE,
+        type: types.ITEM_RELEASE,
     };
 }
 
 export function fetchModelIfNeeded(){
     return (dispatch, getState) => {
         let state = getState();
-        if (state.endpoint.isFetching) return;
+        if (state.items.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getEndpointApiURL(state, false, true),
+                h.getItemApiURL(state, false, true),
                 h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveModel(json)))
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
 export function fetchObjectsIfNeeded(ids=null) {
     return (dispatch, getState) => {
         let state = getState();
-        if (state.endpoint.isFetching) return;
+        if (state.items.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getEndpointApiURL(state, false, false, ids), h.fetchGet)
+        return fetch(h.getItemApiURL(state, false, false, ids), h.fetchGet)
             .then((response) => response.json())
             .then((json) => {
                 if (ids === null){
@@ -111,7 +110,7 @@ export function fetchObjectsIfNeeded(ids=null) {
                     });
                 }
             })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -122,7 +121,7 @@ export function patchBulkList(patchObject){
             patch = {[field]: patchObject[field]},
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
         return fetch(
-            `${h.getEndpointApiURL(state)}&ids=${ids}`,
+            `${h.getItemApiURL(state)}&ids=${ids}`,
             opts)
             .then((response) => {
                 patchObject = _.omit(patchObject, 'stale');
@@ -135,7 +134,7 @@ export function patchBulkList(patchObject){
                     .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -146,7 +145,7 @@ export function patchDetailList(patchObject){
             patch = {[field]: patchObject[field]},
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
         return fetch(
-            `${h.getEndpointApiURL(state)}&ids=${ids}`,
+            `${h.getItemApiURL(state)}&ids=${ids}`,
             opts)
             .then((response) => {
                 patchObject = _.omit(patchObject, 'stale');
@@ -159,7 +158,7 @@ export function patchDetailList(patchObject){
                     .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -168,7 +167,7 @@ export function deleteObject(id){
         let state = getState(),
             opts = h.fetchDelete(state.config.csrf);
         return fetch(
-                h.getEndpointApiURL(state),
+                h.getItemApiURL(state),
                 opts)
             .then(function(response){
                 if (response.status === 204){
@@ -178,11 +177,11 @@ export function deleteObject(id){
                         .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch((ex) => console.error('Endpoint parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
-export function releaseEndpoint(){
+export function releaseItems(){
     return (dispatch) => {
         dispatch(releaseContent());
     };
@@ -193,7 +192,7 @@ export function initializeBulkEditForm(ids=[], field='system'){
         let state = getState(),
             thisField, object;
         if (ids){
-            thisField = _.findWhere(state.endpoint.items, {id: ids[0]})[field];
+            thisField = _.findWhere(state.items.list, {id: ids[0]})[field];
             object = {
                 ids,
                 [field]: thisField,
