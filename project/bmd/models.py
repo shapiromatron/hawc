@@ -150,7 +150,8 @@ class BMDSession(models.Model):
             for model in self.models.all():
                 session.add_model(
                     model.name,
-                    overrides=model.overrides
+                    overrides=model.overrides,
+                    id=model.id
                 )
 
         return session
