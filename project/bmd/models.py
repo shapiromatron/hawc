@@ -83,6 +83,7 @@ class BMDSession(models.Model):
 
     @classmethod
     def create_new(cls, endpoint):
+        # todo - get dose_units from user-input
         dose_units = endpoint.get_doses_json(json_encode=False)[0]['id']
         version = endpoint.assessment.BMD_Settings.version
         return cls.objects.create(
