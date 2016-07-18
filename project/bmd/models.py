@@ -97,6 +97,8 @@ class BMDSession(models.Model):
     def execute(self):
         self.date_executed = now()
         self.save()
+        session = self.get_session(withModels=True)
+        session.execute()
 
     def get_endpoint_dataset(self):
         ds = self.endpoint.d_response(json_encode=False)
@@ -143,6 +145,13 @@ class BMDSession(models.Model):
                 dataset=dataset
             )
             self._session = session
+
+        if withModels and not session.has_models:
+            for model in self.models.all():
+                session.add_model(
+                    model.name,
+                    overrides=model.overrides
+                )
 
         return session
 
