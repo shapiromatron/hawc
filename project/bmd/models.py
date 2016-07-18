@@ -190,7 +190,7 @@ class BMDModel(models.Model):
 
     class Meta:
         get_latest_by = "created"
-        ordering = ('model_id', )
+        ordering = ('model_id', 'bmr_id')
 
     def get_assessment(self):
         return self.session.get_assessment()

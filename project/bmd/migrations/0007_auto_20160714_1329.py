@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='bmdmodel',
-            options={'get_latest_by': 'created', 'ordering': ('model_id',)},
+            options={'get_latest_by': 'created', 'ordering': ('model_id', 'bmr_id')},
         ),
         migrations.RemoveField(
             model_name='bmdmodel',
