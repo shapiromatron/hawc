@@ -4,6 +4,12 @@ import './Select.css';
 
 
 class Select extends Component {
+    /**
+     * The choices props should be an object, whose key value pairs are the ids
+     * and display values of the available choices.
+     *
+     * choices = { 0: 'Option 1', 1: 'Option 2'};
+     */
 
     constructor(props) {
         super(props);

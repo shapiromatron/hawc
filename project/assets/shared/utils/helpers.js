@@ -64,7 +64,7 @@ const helpers = {
         }
     },
     getObjectUrl(host, base, id){
-        return `${host}${base}${id}`;
+        return `${host}${base}${id}/`;
     },
     getListUrl(host, base){
         return `${host}${base}`;

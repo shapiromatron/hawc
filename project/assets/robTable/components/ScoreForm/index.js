@@ -4,7 +4,7 @@ import '../../../../node_modules/quill/dist/quill.base.css';
 import '../../../../node_modules/quill/dist/quill.snow.css';
 
 import ScoreIcon from 'robTable/components/ScoreIcon';
-import Select from 'robTable/components/Select';
+import Select from 'shared/components/Select';
 import './ScoreForm.css';
 
 
