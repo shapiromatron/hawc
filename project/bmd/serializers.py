@@ -1,7 +1,7 @@
 from jsonschema import validate, ValidationError
 from rest_framework import serializers
 
-from . import models, tasks
+from . import models
 
 
 class BMDModelSerializer(serializers.ModelSerializer):
@@ -93,4 +93,3 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
                 )
                 objects.append(obj)
         models.BMDModel.objects.bulk_create(objects)
-        tasks.execute.delay(self.instance.id)

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from assessment.api.views import AssessmentViewset, AssessmentEditViewset, \
     AssessmentLevelPermissions
 
-from . import models, serializers
+from . import models, serializers, tasks
 
 
 class BMDSession(AssessmentViewset):
@@ -25,6 +25,7 @@ class BMDSession(AssessmentViewset):
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        tasks.execute.delay(instance.id)
         return Response({'started': True})
 
     @detail_route(methods=['get'])
