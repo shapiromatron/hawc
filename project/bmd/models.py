@@ -98,6 +98,28 @@ class BMDSession(models.Model):
         self.date_executed = now()
         self.save()
 
+    def get_endpoint_dataset(self):
+        ds = self.endpoint.d_response(json_encode=False)
+        doses = [
+            dose['dose']
+            for dose in ds['animal_group']['dosing_regime']['doses']
+            if dose['dose_units']['id'] == self.dose_units_id
+        ]
+        grps = ds['groups']
+        if self.endpoint.data_type == 'C':
+            return bmds.ContinuousDataset(
+                doses=doses,
+                ns=[d['n'] for d in grps],
+                responses=[d['response'] for d in grps],
+                stdevs=[d['stdev'] for d in grps],
+            )
+        else:
+            return bmds.DichotomousDataset(
+                doses=doses,
+                ns=[d['n'] for d in grps],
+                incidences=[d['incidence'] for d in grps],
+            )
+
     def get_bmr_overrides(self, session, index):
         # convert bmr overrides from GUI to modeling version
         bmr = self.bmrs[index]
@@ -115,8 +137,10 @@ class BMDSession(models.Model):
         if session is None:
             version = self.endpoint.assessment.BMD_Settings.version
             Session = bmds.get_session(version)
+            dataset = self.get_endpoint_dataset()
             session = Session(
                 self.endpoint.data_type,
+                dataset=dataset
             )
             self._session = session
 
