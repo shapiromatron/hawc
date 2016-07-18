@@ -83,9 +83,15 @@ class ModelOptionTable extends React.Component {
             return <span>-</span>;
         } else {
             return <ul>{
-                _.map(d.overrides, function(k, v){
-                    return <li key={k}>{getText(v, k)}</li>;
-                })
+                _.chain(d.overrides)
+                    .pairs()
+                    .filter(function(d2){
+                        return (d.defaults[d2[0]].n !== undefined);
+                    })
+                    .map(function(d2){
+                        return <li key={d2[0]}>{getText(d2[0], d2[1])}</li>;
+                    })
+                    .value()
             }</ul>;
         }
     }
