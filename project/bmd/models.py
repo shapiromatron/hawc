@@ -98,6 +98,16 @@ class BMDSession(models.Model):
         self.date_executed = now()
         self.save()
 
+    def get_bmr_overrides(self, session, index):
+        # convert bmr overrides from GUI to modeling version
+        bmr = self.bmrs[index]
+        type_ = bmds.constants.BMR_CROSSWALK[session.dtype][bmr['type']]
+        return {
+            'bmr_type': type_,
+            'bmr': bmr['value'],
+            'confidence_level': bmr['confidence_level'],
+        }
+
     def get_session(self, withModels=False):
 
         session = getattr(self, '_session', None)

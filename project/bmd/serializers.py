@@ -1,5 +1,7 @@
+from copy import deepcopy
 from jsonschema import validate, ValidationError
 from rest_framework import serializers
+
 
 from . import models
 
@@ -83,13 +85,17 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
         self.instance.models.all().delete()
         objects = []
         for i, bmr in enumerate(self.validated_data['bmrs']):
+            bmr_overrides = self.instance.get_bmr_overrides(
+                self.instance.get_session(), i)
             for j, settings in enumerate(self.validated_data['modelSettings']):
+                overrides = deepcopy(settings['overrides'])
+                overrides.update(bmr_overrides)
                 obj = models.BMDModel(
                     session=self.instance,
                     bmr_id=i,
                     model_id=j,
                     name=settings['name'],
-                    overrides=settings['overrides']
+                    overrides=overrides,
                 )
                 objects.append(obj)
         models.BMDModel.objects.bulk_create(objects)
