@@ -98,20 +98,25 @@ class BMDSession(models.Model):
         self.date_executed = now()
         self.save()
 
-    @property
-    def session(self):
-        if not hasattr(self, '_session'):
+    def get_session(self, withModels=False):
+
+        session = getattr(self, '_session', None)
+
+        if session is None:
             version = self.endpoint.assessment.BMD_Settings.version
-            self._session = bmds.get_session(version)()
-        return self._session
+            Session = bmds.get_session(version)
+            session = Session(
+                self.endpoint.data_type,
+            )
+            self._session = session
+
+        return session
 
     def get_model_options(self):
-        return self.session\
-            .get_model_options(self.endpoint.data_type)
+        return self.get_session().get_model_options()
 
     def get_bmr_options(self):
-        return self.session\
-            .get_bmr_options(self.endpoint.data_type)
+        return self.get_session().get_bmr_options()
 
 
 class BMDModel(models.Model):
@@ -146,12 +151,6 @@ class BMDModel(models.Model):
 
     def get_assessment(self):
         return self.session.get_assessment()
-
-    def to_bmds_model(self):
-        pass
-
-    def from_bmds_model(self):
-        pass
 
 
 class SelectedModel(models.Model):
