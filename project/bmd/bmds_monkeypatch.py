@@ -24,19 +24,21 @@ def get_dataset(session):
     }
 
 
-def get_dataset2(self):
+def get_dataset2(session):
+    name = "DichoHill"
+    dfile = "Dichotomous-Hill \nBMDS_Model_Run \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-AcroleinInhalation.dax \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-Acrolein_Inhalation-DichHill-10Pct-4d.out \n4 \n500 0.00000001 0.00000001 0 1 1 0 0 \n0.1 0 0.95 \n-9999 -9999 -9999 -9999 \n0 \n-9999 -9999 -9999 -9999 \nDose Incidence NEGATIVE_RESPONSE \n0 0 12 \n0.2 0 12 \n0.6 7 5 \n1.8 11 0 \n"
     # temporary
     return {
         "options": {
             "bmds_version": "BMDS2601",
-            "emf_YN": True,
+            "emf_YN": False,
         },
         "runs": [
             {
-                "id": 29,
-                "model_app_name": "DichoHill",
-                "dfile": "Dichotomous-Hill \nBMDS_Model_Run \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-AcroleinInhalation.dax \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-Acrolein_Inhalation-DichHill-10Pct-4d.out \n4 \n500 0.00000001 0.00000001 0 1 1 0 0 \n0.1 0 0.95 \n-9999 -9999 -9999 -9999 \n0 \n-9999 -9999 -9999 -9999 \nDose Incidence NEGATIVE_RESPONSE \n0 0 12 \n0.2 0 12 \n0.6 7 5 \n1.8 11 0 \n"
-            },
+                "id": model.id,
+                "model_app_name": name,
+                "dfile": dfile,
+            } for model in session._models
         ]
     }
 
@@ -60,10 +62,10 @@ def execute(self):
     data = {'BMDS_Service_Number': job_id}
     r = requests.get(url, data)
 
-    # todo - set results to session
-    print(r.json())
-
-    return r.json()
-
+    # parse results for each model
+    response = r.json()
+    for model, resp in zip(self._models, response['BMDS_Results']):
+        assert resp['id'] == model.id
+        model.parse_results(resp['OUT_file_str'])
 
 bmds.Session.execute = execute

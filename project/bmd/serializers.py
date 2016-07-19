@@ -13,7 +13,7 @@ class BMDModelSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'model_id', 'bmr_id',
             'name', 'overrides', 'date_executed',
-            'execution_error', 'outputs',
+            'execution_error', 'output', 'outfile',
             'created', 'last_updated',
         )
 

@@ -100,6 +100,9 @@ class BMDSession(models.Model):
         self.save()
         session = self.get_session(withModels=True)
         session.execute()
+        for model, resp in zip(self.models.all(), session._models):
+            assert model.id == resp.id
+            model.save_model(resp)
 
     def get_endpoint_dataset(self):
         ds = self.endpoint.d_response(json_encode=False)
@@ -179,12 +182,14 @@ class BMDModel(models.Model):
     execution_error = models.BooleanField(
         default=False)
     dfile = models.TextField(
-        blank=True)  # bmds raw output file
+        blank=True)
+    outfile = models.TextField(
+        blank=True)
+    output = JSONField(
+        default=dict)
     plot = models.ImageField(
         upload_to='bmds_plot',
         blank=True)
-    outputs = JSONField(
-        default=dict)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -196,6 +201,15 @@ class BMDModel(models.Model):
 
     def get_assessment(self):
         return self.session.get_assessment()
+
+    def save_model(self, model):
+        self.execution_error = False
+        self.dfile = model.as_dfile()
+        self.outfile = model.outfile
+        self.output = model.output
+        self.plot = None  # todo: change
+        self.date_executed = now()
+        self.save()
 
 
 class SelectedModel(models.Model):
