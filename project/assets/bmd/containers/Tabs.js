@@ -73,8 +73,8 @@ class Tabs extends React.Component {
         this.props.dispatch(saveSelected());
     }
 
-    handleOutputModal(outfile){
-        this.props.dispatch(showOutputModal(outfile));
+    handleOutputModal(model){
+        this.props.dispatch(showOutputModal(model));
     }
 
     isReady(){

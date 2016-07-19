@@ -4,7 +4,7 @@ import React from 'react';
 class OutputTable extends React.Component {
 
     handleRowClick(i, d){
-        this.props.handleModal(this.props.models[i].outfile);
+        this.props.handleModal(this.props.models[i]);
     }
 
     render() {

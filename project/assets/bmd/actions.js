@@ -46,10 +46,10 @@ var showModal = function(name){
             modelIndex,
         };
     },
-    selectOutfile = function(outfile){
+    selectOutput = function(model){
         return {
-            type: types.SELECT_OUTFILE,
-            outfile,
+            type: types.SELECT_OUTPUT,
+            model,
         };
     },
     showOptionModal = function(modelIndex){
@@ -74,11 +74,11 @@ var showModal = function(name){
                 .then(() => showModal(types.BMR_MODAL_ID));
         };
     },
-    showOutputModal = function(outfile){
+    showOutputModal = function(model){
         return (dispatch, getState) => {
             // create a new noop Promise to chain events
             return new Promise((res, rej)=>{res();})
-                .then(() => dispatch(selectOutfile(outfile)))
+                .then(() => dispatch(selectOutput(model)))
                 .then(() => showModal(types.OUTPUT_MODAL_ID));
         };
     },
