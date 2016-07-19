@@ -6,7 +6,6 @@ import BMROptionModal from 'bmd/components/BMROptionModal';
 import OutputModal from 'bmd/components/OutputModal';
 
 import {
-    showOutputModal,
     updateModel,
     deleteModel,
     updateBmr,
@@ -15,10 +14,6 @@ import {
 
 
 class Modals extends React.Component {
-
-    handleOutputClick(){
-        this.props.dispatch(showOutputModal);
-    }
 
     handleModelUpdate(values){
         this.props.dispatch(updateModel(values));
@@ -51,17 +46,15 @@ class Modals extends React.Component {
                     model={this.props.selectedModel}
                     editMode={editMode}
                     handleSave={this.handleModelUpdate.bind(this)}
-                    handleDelete={this.handleModelDelete.bind(this)}/>
+                    handleDelete={this.handleModelDelete.bind(this)} />
                 <BMROptionModal
                     bmr={this.props.selectedBmr}
                     allOptions={this.props.allBmrOptions}
                     editMode={editMode}
                     handleSave={this.handleBmrUpdate.bind(this)}
                     handleDelete={this.handleBmrDelete.bind(this)} />
-                <OutputModal />
-
-                <button type='button'
-                    onClick={this.handleOutputClick.bind(this)}>Output</button>
+                <OutputModal
+                    outfile={this.props.selectedOutfile} />
             </div>
         );
     }
@@ -73,6 +66,7 @@ function mapStateToProps(state) {
         selectedModel: state.bmd.selectedModel,
         selectedBmr: state.bmd.selectedBmr,
         allBmrOptions: state.bmd.allBmrOptions,
+        selectedOutfile: state.bmd.selectedOutfile,
     };
 }
 

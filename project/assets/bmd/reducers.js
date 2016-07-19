@@ -25,6 +25,7 @@ const defaultState = {
     allBmrOptions: null,
     isExecuting: false,
     validationErrors: [],
+    selectedOutfile: null,
 };
 
 var tmp, tmp2;
@@ -144,6 +145,11 @@ function bmd(state=defaultState, action){
     case types.EXECUTE_STOP:
         return Object.assign({}, state, {
             isExecuting: false,
+        });
+
+    case types.SELECT_OUTFILE:
+        return Object.assign({}, state, {
+            selectedOutfile: action.outfile,
         });
 
     default:

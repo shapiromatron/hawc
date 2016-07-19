@@ -16,6 +16,7 @@ import {
     fetchSessionSettings,
     showOptionModal,
     showBmrModal,
+    showOutputModal,
     tryExecute,
     toggleVariance,
     createModel,
@@ -72,14 +73,18 @@ class Tabs extends React.Component {
         this.props.dispatch(saveSelected());
     }
 
+    handleOutputModal(outfile){
+        this.props.dispatch(showOutputModal(outfile));
+    }
+
     isReady(){
         return (this.props.endpoint !== null);
     }
 
     render(){
         let {editMode, bmds_version} = this.props.config,
-            {endpoint, dataType, validationErrors, isExecuting} = this.props,
-            showResultsTabs = (editMode)?'':'disabled';  // todo - only show if results available
+            {endpoint, dataType, models, validationErrors, isExecuting} = this.props,
+            showResultsTabs = (models.length>0)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
             return <Loading />;
@@ -127,7 +132,9 @@ class Tabs extends React.Component {
                             handleExecute={this.handleExecute.bind(this)} />
                     </div>
                     <div id="results" className="tab-pane">
-                        <OutputTable />
+                        <OutputTable
+                            models={models}
+                            handleModal={this.handleOutputModal.bind(this)}/>
                     </div>
                     <div id="recommendations" className="tab-pane">
                         <RecommendationTable
@@ -146,6 +153,7 @@ function mapStateToProps(state) {
         endpoint: state.bmd.endpoint,
         dataType: state.bmd.dataType,
         modelSettings: state.bmd.modelSettings,
+        models: state.bmd.models,
         bmrs: state.bmd.bmrs,
         allModelOptions: state.bmd.allModelOptions,
         allBmrOptions: state.bmd.allBmrOptions,

@@ -6,7 +6,8 @@ import * as types from 'bmd/constants';
 class OutputModal extends React.Component {
 
     render() {
-        var modelName = 'Multistage';
+        var modelName = 'Multistage',
+            { outfile } = this.props;
         return (
             <div className="modal hide fade" tabindex="-1" id={types.OUTPUT_MODAL_ID} role="dialog">
 
@@ -16,7 +17,7 @@ class OutputModal extends React.Component {
                 </div>
 
                 <div className="modal-body">
-                    <pre></pre>
+                    <pre>{outfile}</pre>
                 </div>
 
                 <div className="modal-footer">
@@ -31,6 +32,7 @@ class OutputModal extends React.Component {
 }
 
 OutputModal.propTypes = {
+    outfile: React.PropTypes.string,
 };
 
 export default OutputModal;

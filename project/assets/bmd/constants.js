@@ -18,6 +18,8 @@ export const SELECT_BMR = 'SELECT_BMR';
 export const UPDATE_BMR = 'UPDATE_BMR';
 export const DELETE_BMR = 'DELETE_BMR';
 
+export const SELECT_OUTFILE = 'SELECT_OUTFILE';
+
 export const param_cw = {
     'd': 'Default',
     'i': 'Initialized',
