@@ -9,6 +9,11 @@ class DoseResponse extends React.Component {
         endpoint.renderPlot($(this.refs.epFigure));
     }
 
+    componentWillUnmount(){
+        $(this.refs.epTable).empty();
+        $(this.refs.epFigure).empty();
+    }
+
     render() {
         return (
             <div>
