@@ -43,11 +43,12 @@ let getColWidths = function(numBmrs){
 
 class OutputTable extends React.Component {
 
-    handleRowClick(i, d){
-        this.props.handleModal(this.props.models[i]);
+    handleRowClick(id){
+        let model = _.findWhere(this.props.models, {id, });
+        this.props.handleModal(model);
     }
 
-    renderRow(models, i){
+    renderRow(models){
         let first = models[0],
             bmds = _.chain(models)
                     .map((d)=>{
@@ -70,7 +71,7 @@ class OutputTable extends React.Component {
                     <button
                         type="button"
                         className='btn btn-link'
-                        onClick={this.handleRowClick.bind(this, i)}>View</button>
+                        onClick={this.handleRowClick.bind(this, first.id)}>View</button>
                 </td>
             </tr>
         );
@@ -115,7 +116,7 @@ class OutputTable extends React.Component {
                 <div className="row-fluid">
 
                     <div className='span8'>
-                        <table className="table table-condensed">
+                        <table className="table table-condensed table-hover">
                             <thead>
                                 {this.renderHeader.bind(this)()}
                             </thead>
@@ -126,7 +127,7 @@ class OutputTable extends React.Component {
                                     </td>
                                 </tr>
                             </tfoot>
-                            <tbody>
+                            <tbody style={{cursor: 'pointer'}}>
                             {binnedModels.map(this.renderRow.bind(this))}
                             </tbody>
                         </table>
