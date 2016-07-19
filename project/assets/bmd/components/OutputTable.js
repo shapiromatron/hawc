@@ -1,6 +1,44 @@
+import _ from 'underscore';
 import React from 'react';
 
 import {asLabel} from 'bmd/models/bmr';
+
+
+let getColWidths = function(numBmrs){
+        switch(numBmrs){
+        case 1:
+            return {
+                name: '20%',
+                nums: '14%',
+                view: '10%',
+            };
+        case 2:
+            return {
+                name: '16%',
+                nums: '11%',
+                view: '7%',
+            };
+        case 3:
+            return {
+                name: '12%',
+                nums: '9%',
+                view: '7%',
+            };
+        default:
+            return {
+                name: '1%',
+                nums: '1%',
+                view: '1%',
+            };
+        }
+    },
+    binModels = function(models){
+        return _.chain(models)
+            .groupBy('model_id')
+            .values()
+            .value();
+    };
+
 
 
 class OutputTable extends React.Component {
@@ -9,17 +47,25 @@ class OutputTable extends React.Component {
         this.props.handleModal(this.props.models[i]);
     }
 
-    renderRow(d, i){
-        let {bmrs} = this.props;
+    renderRow(models, i){
+        let first = models[0],
+            bmds = _.chain(models)
+                    .map((d)=>{
+                        return [
+                            <td>{d.output.BMD}</td>,
+                            <td>{d.output.BMDL}</td>,
+                        ];
+                    })
+                    .flatten()
+                    .value();
 
         return (
-            <tr key={d.id}>
-                <td>{d.name}</td>
-                <td>{d.output.p_value4}</td>
-                <td>{d.output.AIC}</td>
-                <td>{d.output.BMD}</td>
-                <td>{d.output.BMDL}</td>
-                <td>{d.output.residual_of_interest}</td>
+            <tr key={first.id}>
+                <td>{first.name}</td>
+                <td>{first.output.p_value4}</td>
+                <td>{first.output.AIC}</td>
+                {bmds}
+                <td>{first.output.residual_of_interest}</td>
                 <td>
                     <button
                         type="button"
@@ -32,36 +78,8 @@ class OutputTable extends React.Component {
 
     renderHeader(){
 
-        let widths = function(numBmrs){
-            switch(numBmrs){
-            case 1:
-                return {
-                    name: '20%',
-                    nums: '14%',
-                    view: '10%',
-                };
-            case 2:
-                return {
-                    name: '16%',
-                    nums: '11%',
-                    view: '7%',
-                };
-            case 3:
-                return {
-                    name: '12%',
-                    nums: '9%',
-                    view: '7%',
-                };
-            default:
-                return {
-                    name: '1%',
-                    nums: '1%',
-                    view: '1%',
-                };
-            }
-        }(this.props.bmrs.length);
-
-        let ths = _.chain(this.props.bmrs)
+        let widths = getColWidths(this.props.bmrs.length),
+            ths = _.chain(this.props.bmrs)
                 .map((d)=>{
                     let lbl = asLabel(d);
                     return [
@@ -85,6 +103,12 @@ class OutputTable extends React.Component {
     }
 
     render() {
+        if (this.props.models.length ===0){
+            return null;
+        }
+
+        let binnedModels = binModels(this.props.models);
+
         return (
             <div>
                 <h3>BMDS output summary</h3>
@@ -98,12 +122,12 @@ class OutputTable extends React.Component {
                             <tfoot>
                                 <tr>
                                     <td colSpan="100">
-                                        Selected model highlighted in yellow
+                                        Selected model (if any) highlighted in yellow
                                     </td>
                                 </tr>
                             </tfoot>
                             <tbody>
-                            {this.props.models.map(this.renderRow.bind(this))}
+                            {binnedModels.map(this.renderRow.bind(this))}
                             </tbody>
                         </table>
                     </div>
