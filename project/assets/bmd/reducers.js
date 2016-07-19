@@ -101,6 +101,20 @@ function bmd(state=defaultState, action){
             selectedModel: null,
         });
 
+    case types.ADD_ALL_MODELS:
+        tmp = _.map(state.allModelOptions,(d) => Object.assign(
+            deepCopy(d),
+            {overrides: {}}
+        ));
+        return Object.assign({}, state, {
+            modelSettings: [...state.modelSettings, ...tmp],
+        });
+
+    case types.REMOVE_ALL_MODELS:
+        return Object.assign({}, state, {
+            modelSettings: [],
+        });
+
     case types.CREATE_BMR:
         return Object.assign({}, state, {
             bmrs: [...state.bmrs, _.values(state.allBmrOptions)[0]],

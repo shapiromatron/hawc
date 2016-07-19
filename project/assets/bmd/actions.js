@@ -179,6 +179,16 @@ var showModal = function(name){
             type: 'toggleVariance',
         };
     },
+    addAllModels = function(settings){
+        return {
+            type: types.ADD_ALL_MODELS,
+        };
+    },
+    removeAllModels = function(settings){
+        return {
+            type: types.REMOVE_ALL_MODELS,
+        };
+    },
     createModel = function(modelIndex){
         return {
             type: types.CREATE_MODEL,
@@ -225,6 +235,8 @@ export {showBmrModal};
 export {showOutputModal};
 export {tryExecute};
 export {toggleVariance};
+export {addAllModels};
+export {removeAllModels};
 export {createModel};
 export {updateModel};
 export {deleteModel};

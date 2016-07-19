@@ -44,7 +44,7 @@ let getColWidths = function(numBmrs){
 class OutputTable extends React.Component {
 
     handleRowClick(id){
-        let model = _.findWhere(this.props.models, {id, });
+        let model = _.findWhere(this.props.models, {id});
         this.props.handleModal(model);
     }
 

@@ -12,6 +12,8 @@ export const CREATE_MODEL = 'CREATE_MODEL';
 export const SELECT_MODEL = 'SELECT_MODEL';
 export const UPDATE_MODEL = 'UPDATE_MODEL';
 export const DELETE_MODEL = 'DELETE_MODEL';
+export const ADD_ALL_MODELS = 'ADD_ALL_MODELS';
+export const REMOVE_ALL_MODELS = 'REMOVE_ALL_MODELS';
 
 export const CREATE_BMR = 'CREATE_BMR';
 export const SELECT_BMR = 'SELECT_BMR';

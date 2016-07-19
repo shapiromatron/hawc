@@ -19,6 +19,8 @@ import {
     showOutputModal,
     tryExecute,
     toggleVariance,
+    addAllModels,
+    removeAllModels,
     createModel,
     createBmr,
     saveSelected,
@@ -49,8 +51,19 @@ class Tabs extends React.Component {
         this.props.dispatch(tryExecute());
     }
 
-    handleVarianceToggle(){
+    handleVarianceToggle(evt){
+        evt.preventDefault();
         this.props.dispatch(toggleVariance());
+    }
+
+    handleAddAll(evt){
+        evt.preventDefault();
+        this.props.dispatch(addAllModels());
+    }
+
+    handleRemoveAll(evt){
+        evt.preventDefault();
+        this.props.dispatch(removeAllModels());
     }
 
     handleCreateModel(modelName){
@@ -115,6 +128,8 @@ class Tabs extends React.Component {
                                 editMode={editMode}
                                 dataType={dataType}
                                 handleVarianceToggle={this.handleVarianceToggle.bind(this)}
+                                handleAddAll={this.handleAddAll.bind(this)}
+                                handleRemoveAll={this.handleRemoveAll.bind(this)}
                                 handleCreateModel={this.handleCreateModel.bind(this)}
                                 handleModalDisplay={this.handleOptionModal.bind(this)}
                                 models={this.props.modelSettings}

@@ -34,7 +34,20 @@ class ModelOptionTable extends React.Component {
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
                         className="btn btn-small"><i className="icon-plus"></i></button>
-                    {this.renderToggleVarianceBtn()}
+
+                    <div className="btn-group pull-right">
+                        <a className="btn dropdown-toggle" data-toggle="dropdown">Actions
+                            &nbsp;<span className="caret"></span>
+                        </a>
+                        <ul className="dropdown-menu">
+                            <li><a href="#"
+                                onClick={this.props.handleAddAll}>Add all models</a></li>
+                            <li><a href="#"
+                                onClick={this.props.handleRemoveAll}>Remove all models</a></li>
+                            {this.renderToggleVarianceBtn()}
+                        </ul>
+                    </div>
+
                 </div>
 
             </div>
@@ -47,12 +60,10 @@ class ModelOptionTable extends React.Component {
         }
 
         return (
-            <button
+            <li><a href='#'
                    onClick={this.props.handleVarianceToggle}
-                   type="button"
-                   className='btn btn-small pull-right'
                    title='Change the variance model for all continuous models'
-                   >Toggle all variance models</button>
+                   >Toggle all variance models</a></li>
         );
     }
 
@@ -144,6 +155,8 @@ ModelOptionTable.propTypes = {
     editMode: React.PropTypes.bool.isRequired,
     dataType: React.PropTypes.string.isRequired,
     handleVarianceToggle: React.PropTypes.func.isRequired,
+    handleAddAll: React.PropTypes.func.isRequired,
+    handleRemoveAll: React.PropTypes.func.isRequired,
     handleCreateModel: React.PropTypes.func.isRequired,
     handleModalDisplay: React.PropTypes.func.isRequired,
     models: React.PropTypes.array.isRequired,
