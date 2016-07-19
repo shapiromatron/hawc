@@ -176,7 +176,7 @@ var showModal = function(name){
     },
     toggleVariance = function(){
         return {
-            type: 'toggleVariance',
+            type: types.TOGGLE_VARIANCE,
         };
     },
     addAllModels = function(settings){
