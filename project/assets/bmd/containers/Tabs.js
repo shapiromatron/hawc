@@ -83,7 +83,7 @@ class Tabs extends React.Component {
 
     render(){
         let {editMode, bmds_version} = this.props.config,
-            {endpoint, dataType, models, validationErrors, isExecuting} = this.props,
+            {bmrs, endpoint, dataType, models, validationErrors, isExecuting} = this.props,
             showResultsTabs = (models.length>0)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
@@ -134,6 +134,7 @@ class Tabs extends React.Component {
                     <div id="results" className="tab-pane">
                         <OutputTable
                             models={models}
+                            bmrs={bmrs}
                             handleModal={this.handleOutputModal.bind(this)}/>
                     </div>
                     <div id="recommendations" className="tab-pane">
