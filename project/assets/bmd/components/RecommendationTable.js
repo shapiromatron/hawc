@@ -4,12 +4,16 @@ import React from 'react';
 class RecommendationTable extends React.Component {
 
     renderWarningTd(d){
-        let tdId = (this.props.selectedModelId === d.id)?
-            'bmd_selected_model': '';
+        let tdId = '';
 
-        if (this.props.selectedModelId-1 === d.id){
+        if (this.props.selectedModelId-1 === d.id){ // TODO: change
             tdId = 'bmd_recommended_model';
         }
+
+        if (this.props.selectedModelId === d.id){
+            tdId = 'bmd_selected_model';
+        }
+
         return (
             <td id={tdId}>{d.name}</td>
         );
