@@ -281,6 +281,9 @@ class RiskOfBiasScore(models.Model):
     def __unicode__(self):
         return u'{} {}'.format(self.riskofbias, self.metric)
 
+    def get_assessment(self):
+        return self.metric.get_assessment()
+
     @staticmethod
     def flat_complete_header_row():
         return (

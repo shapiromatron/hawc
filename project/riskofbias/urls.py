@@ -8,7 +8,8 @@ router = DefaultRouter()
 router.register(r'domain', api.RiskOfBiasDomain, base_name='domain')
 router.register(r'review', api.RiskOfBias, base_name='review')
 router.register(r'metrics', api.AssessmentMetricViewset, base_name='metrics')
-
+router.register(r'metrics/scores', api.AssessmentMetricScoreViewset, base_name='metric_scores')
+router.register(r'score_choices', api.RiskOfBiasScore, base_name='score_choices')
 
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),

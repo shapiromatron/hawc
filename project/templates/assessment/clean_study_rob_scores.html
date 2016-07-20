@@ -18,15 +18,16 @@
         "assessment_id": "{{ assessment.id }}",
         "assessment": "{% url 'assessment:api:endpoint_type-list' %}",
         "items": {
-            "url": "{% url 'study:api:final-list' %}",
-            "title": "Studies"
+            "url": "{% url 'riskofbias:api:metric_scores-list' %}",
+            "title": "Metric Scores"
         },
         "metrics": {
             "url": "{% url 'riskofbias:api:metrics-list' %}",
             "title": "Metric Choices"
         },
         "scores": {
-            "url": "url"
+            "url": "{% url 'riskofbias:api:score_choices-list' %}",
+            "title": "Score Choices"
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
@@ -34,7 +35,7 @@
 </script>
 <script type="text/javascript">
 $(document).ready(function(){
-  window.app.robScoreCleanupStartup(document.getElementById('root'));
+    window.app.robScoreCleanupStartup(document.getElementById('root'));
 });
 </script>
 {% endblock extrajs %}

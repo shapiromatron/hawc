@@ -39,6 +39,13 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
         model = models.RiskOfBiasMetric
 
 
+class RiskOfBiasScoreChoiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = ('RISK_OF_BIAS_SCORE_CHOICES',)
+
+
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
 
@@ -77,5 +84,12 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score.save()
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)
 
+
+class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
+    scores = RiskOfBiasScoreSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = ('id', 'metric', 'description', 'scores')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)
