@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
-import { fetchStudies } from 'robScoreCleanup/actions/Items';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 
 import MetricForm from 'robTable/components/MetricForm';
@@ -19,33 +18,29 @@ class Root extends Component {
         this.loadMetrics = this.loadMetrics.bind(this);
         this.clearMetrics = this.clearMetrics.bind(this);
         this.state = {
-            scores: [
-                {
-                    id: 0,
-                    value: 'Not applicable',
-                },
-                {
-                    id: 1,
-                    value: 'Definitely high risk of bias',
-                },
-                {
-                    id: 2,
-                    value: 'Probably high risk of bias',
-                },
-                {
-                    id: 3,
-                    value: 'Probably low risk of bias',
-                },
-                {
-                    id: 4,
-                    value: 'Definitely low risk of bias',
-                },
-                {
-                    id: 10,
-                    value: 'Not reported',
-                },
-            ],
-        };
+            formMetric: {
+                key: 'metric',
+                values:[
+                    {
+                        riskofbias_id: 0,
+                        score: 4,
+                        score_description: 'Probably high risk of bias',
+                        score_shade: '#FFCC00',
+                        score_symbol: '-',
+                        notes: 'This will change to reflect the first selected metric.',
+                        metric: {
+                            id: 0,
+                            metric: 'metric',
+                            description: 'description',
+                        },
+                        author: {
+                            full_name: '',
+                        },
+                    },
+                ],
+
+            }
+        }
     }
 
     componentWillMount() {
@@ -61,30 +56,32 @@ class Root extends Component {
         console.log('clear metrics');
     }
 
-    loadMetrics(e){
+    loadMetrics(e) {
         e.preventDefault();
-        console.log('load metrics');
+        this.updateFormMetric();
+    }
+
+    updateFormMetric() {
+        let { selected, isLoaded } = this.props.state.metrics,
+            { formMetric } = this.state;
+        if (isLoaded && formMetric.id !== selected.id){
+            this.setState({
+                formMetric: {
+                    ...formMetric,
+                    key: selected.metric,
+                    values: [{ ...formMetric.values[0], metric: {...selected}}],
+                }
+            });
+        }
     }
 
     render() {
-            metric = {
-                key: 'metric',
-                values:[
-                    {
-                        riskofbias_id: 3,
-                        score: 4,
-                        notes: 'This will change to reflect the first selected metric.',
-                        metric: {
-                            metric: 'metric',
-                            description: 'description',
-                        },
-                    },
-                ]
-            },
-            config = {
+        let config = {
+                display: 'all',
+                isForm: 'false',
                 riskofbias: {
-                    id: 3
-                }
+                    id: 0,
+                },
             },
             { items, metrics, scores, error } = this.props.state;
 
@@ -100,8 +97,8 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    {items.isLoaded ? <MetricForm /> : null}
                     {items.isLoaded ? <ScoreList /> : null}
+                    {items.isLoaded ? <MetricForm metric={this.state.formMetric} config={config}/> : null}
                 </div>
         );
     }
