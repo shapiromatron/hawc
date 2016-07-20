@@ -8,7 +8,7 @@ import DoseResponse from 'bmd/components/DoseResponse';
 import ModelOptionTable from 'bmd/components/ModelOptionTable';
 import BMROptionTable from 'bmd/components/BMROptionTable';
 import ExecuteWell from 'bmd/components/ExecuteWell';
-import RecommendationTable from 'bmd/components/RecommendationTable';
+import Recommendation from 'bmd/components/Recommendation';
 import OutputTable from 'bmd/components/OutputTable';
 import OutputFigure from 'bmd/components/OutputFigure';
 
@@ -175,7 +175,7 @@ class Tabs extends React.Component {
                         </div>
                     </div>
                     <div id="recommendations" className="tab-pane">
-                        <RecommendationTable
+                        <Recommendation
                             models={models}
                             bmrs={bmrs}
                             selectedModelId={selectedModelId}
