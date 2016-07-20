@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
+import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
+import { fetchScores, clearScores } from 'robScoreCleanup/actions/Items';
 
 import MetricForm from 'robTable/components/MetricForm';
 import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
@@ -49,15 +51,17 @@ class Root extends Component {
 
     componentDidMount() {
         this.props.dispatch(fetchMetricOptions());
+        this.props.dispatch(fetchScoreOptions());
     }
 
-    clearMetrics(e){
+    clearMetrics(e) {
         e.preventDefault();
-        console.log('clear metrics');
+        this.props.dispatch(clearScores());
     }
 
     loadMetrics(e) {
         e.preventDefault();
+        this.props.dispatch(fetchScores());
         this.updateFormMetric();
     }
 
@@ -97,8 +101,8 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    {items.isLoaded ? <ScoreList /> : null}
                     {items.isLoaded ? <MetricForm metric={this.state.formMetric} config={config}/> : null}
+                    {items.isLoaded ? <ScoreList config={config} /> : null}
                 </div>
         );
     }
