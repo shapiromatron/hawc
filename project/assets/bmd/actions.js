@@ -228,9 +228,32 @@ var showModal = function(name){
             type: types.DELETE_BMR,
         };
     },
-    saveSelected = function(){
+    setSelectedModel = function(model_id, notes){
         return {
-            type: 'saveSelected',
+            type: types.SET_SELECTED_MODEL,
+            model_id,
+            notes,
+        };
+    },
+    saveSelectedModel = function(model_id, notes){
+        return (dispatch, getState) => {
+            let state = getState(),
+                url = state.config.selected_model_url,
+                payload = {
+                    credentials: 'same-origin',
+                    method: 'POST',
+                    headers: getAjaxHeaders(state.config.csrf),
+                    body: JSON.stringify({
+                        model: model_id,
+                        notes,
+                    }),
+                };
+
+            return new Promise((res, rej)=>{res();})
+                .then(() => {
+                    fetch(url, payload)
+                        .then(() => dispatch(setSelectedModel(model_id, notes)));
+                });
         };
     };
 
@@ -250,4 +273,6 @@ export {deleteModel};
 export {createBmr};
 export {updateBmr};
 export {deleteBmr};
-export {saveSelected};
+export {selectModel};
+export {setSelectedModel};
+export {saveSelectedModel};

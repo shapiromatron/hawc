@@ -27,9 +27,11 @@ const defaultState = {
     validationErrors: [],
     selectedOutput: null,
     hoverModel: null,
+    selectedModelId: null,
+    selectedModelNotes: '',
 };
 
-var tmp, tmp2;
+var tmp, tmp2, tmp3;
 
 
 function bmd(state=defaultState, action){
@@ -60,12 +62,16 @@ function bmd(state=defaultState, action){
                })
                .value();
 
+        tmp3 = action.settings.selected_model || {};
+
         return Object.assign({}, state, {
             models: action.settings.models,
             modelSettings: tmp,
             bmrs: action.settings.bmrs,
             allModelOptions: action.settings.allModelOptions,
             allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
+            selectedModelId: tmp3.model || null,
+            selectedModelNotes: tmp3.notes || '',
         });
 
     case types.CREATE_MODEL:
@@ -180,6 +186,12 @@ function bmd(state=defaultState, action){
     case types.HOVER_MODEL:
         return Object.assign({}, state, {
             hoverModel: action.model,
+        });
+
+    case types.SET_SELECTED_MODEL:
+        return Object.assign({}, state, {
+            selectedModelId: action.model_id,
+            selectedModelNotes: action.notes,
         });
 
     default:

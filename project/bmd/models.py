@@ -166,6 +166,11 @@ class BMDSession(models.Model):
     def get_bmr_options(self):
         return self.get_session().get_bmr_options()
 
+    def get_selected_model(self):
+        return SelectedModel.objects\
+            .filter(endpoint=self.endpoint_id)\
+            .first()
+
 
 class BMDModel(models.Model):
     session = models.ForeignKey(

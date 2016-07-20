@@ -16,6 +16,8 @@ class BMDSession(AssessmentViewset):
     def get_serializer_class(self):
         if self.action == 'execute':
             return serializers.BMDSessionUpdateSerializer
+        elif self.action == 'selected_model':
+            return serializers.SelectedModelUpdateSerializer
         else:
             return serializers.BMDSessionSerializer
 
@@ -36,6 +38,8 @@ class BMDSession(AssessmentViewset):
 
     @detail_route(methods=['post'])
     def selected_model(self, request, pk=None):
-        # get_or_create selected model for this endpoint; use serializer
         session = self.get_object()
-        return Response({'status': 'selected_model'})
+        serializer = self.get_serializer(session, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'status': True})

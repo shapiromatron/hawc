@@ -26,7 +26,7 @@ import {
     removeAllModels,
     createModel,
     createBmr,
-    saveSelected,
+    saveSelectedModel,
 } from 'bmd/actions';
 
 
@@ -85,8 +85,8 @@ class Tabs extends React.Component {
         this.props.dispatch(createBmr());
     }
 
-    handleSaveSelected(){
-        this.props.dispatch(saveSelected());
+    handleSaveSelected(model_id, notes){
+        this.props.dispatch(saveSelectedModel(model_id, notes));
     }
 
     handleOutputModal(model){
@@ -107,8 +107,10 @@ class Tabs extends React.Component {
 
     render(){
         let {editMode, bmds_version} = this.props.config,
-            {bmrs, endpoint, dataType, models,
-             validationErrors, isExecuting, hoverModel} = this.props,
+            {
+                bmrs, endpoint, dataType, models, selectedModelId,
+                selectedModelNotes, validationErrors, isExecuting, hoverModel,
+            } = this.props,
             showResultsTabs = (models.length>0)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
@@ -174,6 +176,10 @@ class Tabs extends React.Component {
                     </div>
                     <div id="recommendations" className="tab-pane">
                         <RecommendationTable
+                            models={models}
+                            bmrs={bmrs}
+                            selectedModelId={selectedModelId}
+                            selectedModelNotes={selectedModelNotes}
                             handleSaveSelected={this.handleSaveSelected.bind(this)}/>
                     </div>
                 </div>
@@ -196,6 +202,8 @@ function mapStateToProps(state) {
         validationErrors: state.bmd.validationErrors,
         isExecuting: state.bmd.isExecuting,
         hoverModel: state.bmd.hoverModel,
+        selectedModelId: state.bmd.selectedModelId,
+        selectedModelNotes: state.bmd.selectedModelNotes,
     };
 }
 

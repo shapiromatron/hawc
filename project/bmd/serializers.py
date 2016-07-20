@@ -6,6 +6,13 @@ from rest_framework import serializers
 from . import models
 
 
+class SelectedModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.SelectedModel
+        fields = ('id', 'model', 'notes')
+
+
 class BMDModelSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -21,6 +28,7 @@ class BMDModelSerializer(serializers.ModelSerializer):
 class BMDSessionSerializer(serializers.ModelSerializer):
     allModelOptions = serializers.JSONField(source='get_model_options', read_only=True)
     allBmrOptions = serializers.JSONField(source='get_bmr_options', read_only=True)
+    selected_model = SelectedModelSerializer(source='get_selected_model', read_only=True)
     models = BMDModelSerializer(many=True)
 
     class Meta:
@@ -28,6 +36,7 @@ class BMDSessionSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'bmrs', 'models',
             'allModelOptions', 'allBmrOptions',
+            'selected_model',
         )
 
 
@@ -99,3 +108,23 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
                 )
                 objects.append(obj)
         models.BMDModel.objects.bulk_create(objects)
+
+
+class SelectedModelUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.SelectedModel
+        fields = (
+            'id', 'model', 'notes'
+        )
+
+    def save(self):
+        session = self.instance
+
+        instance = session.get_selected_model()
+        if not instance:
+            instance = models.SelectedModel(endpoint_id=session.endpoint_id)
+
+        instance.model = self.validated_data['model']
+        instance.notes = self.validated_data['notes']
+        instance.save()
