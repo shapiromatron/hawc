@@ -47,6 +47,7 @@ export function fetchScores(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.items.isFetching) return;
+        dispatch(clearScores());
         dispatch(makeScoreRequest());
         dispatch(resetError());
         let { host, items, assessment_id } = state.config;

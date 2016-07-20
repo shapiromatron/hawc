@@ -8,7 +8,7 @@ const defaultState = {
 };
 
 function items(state=defaultState, action) {
-    let list;
+
     switch(action.type){
 
     case types.REQUEST_ITEMS:
@@ -22,12 +22,14 @@ function items(state=defaultState, action) {
             isFetching: false,
             isLoaded: true,
             items: action.items,
+            updateIds: [],
         });
 
     case types.CLEAR_STUDY_SCORES:
         return Object.assign({}, state, {
             isLoaded: false,
             items: [],
+            updateIds: [],
         });
 
     case types.SELECT_SCORE_FOR_UPDATE:
