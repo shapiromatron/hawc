@@ -5,8 +5,10 @@ import { loadConfig } from 'shared/actions/Config';
 import { fetchStudies } from 'robScoreCleanup/actions/Items';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 
-import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
 import MetricForm from 'robTable/components/MetricForm';
+import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
+import ScoreList from 'robScoreCleanup/containers/ScoreList';
+import ScoreSelect from 'robScoreCleanup/containers/ScoreSelect';
 import h from 'shared/utils/helpers';
 
 
@@ -88,14 +90,8 @@ class Root extends Component {
 
         return (
                 <div>
-                    <MetricSelect />
-                    <div>
-                        <select multiple name="" id="">
-                        {_.map(this.state.scores, (score) => {
-                            return <option value={score.id}>{score.value}</option>;
-                        })}
-                        </select>
-                    </div>
+                    {metrics.isLoaded ? <MetricSelect /> : null}
+                    {scores.isLoaded ? <ScoreSelect /> : null}
                     <div>
                         <button className='btn btn-primary' onClick={this.loadMetrics}>
                             Load Metrics
@@ -104,7 +100,8 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    <MetricForm metric={metric} config={config}/>
+                    {items.isLoaded ? <MetricForm /> : null}
+                    {items.isLoaded ? <ScoreList /> : null}
                 </div>
         );
     }
