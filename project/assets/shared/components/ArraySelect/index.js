@@ -20,7 +20,8 @@ class ArraySelect extends Component {
     }
 
     render() {
-        let { id, defVal, choices } = this.props;
+        let { id, choices } = this.props,
+            defVal = this.props.defVal || _.first(choices);
         return (
             <select className='react-select'
                     id={id}
@@ -44,7 +45,7 @@ ArraySelect.propTypes = {
         })
     ).isRequired,
     id: PropTypes.string.isRequired,
-    defVal: PropTypes.any.isRequired,
+    defVal: PropTypes.any,
 };
 
 export default ArraySelect;
