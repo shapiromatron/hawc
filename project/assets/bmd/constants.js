@@ -22,6 +22,7 @@ export const UPDATE_BMR = 'UPDATE_BMR';
 export const DELETE_BMR = 'DELETE_BMR';
 
 export const SELECT_OUTPUT = 'SELECT_OUTPUT';
+export const HOVER_MODEL = 'HOVER_MODEL';
 
 export const param_cw = {
     'd': 'Default',

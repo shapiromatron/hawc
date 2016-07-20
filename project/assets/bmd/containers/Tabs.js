@@ -10,6 +10,8 @@ import BMROptionTable from 'bmd/components/BMROptionTable';
 import ExecuteWell from 'bmd/components/ExecuteWell';
 import RecommendationTable from 'bmd/components/RecommendationTable';
 import OutputTable from 'bmd/components/OutputTable';
+import OutputFigure from 'bmd/components/OutputFigure';
+
 
 import {
     fetchEndpoint,
@@ -17,6 +19,7 @@ import {
     showOptionModal,
     showBmrModal,
     showOutputModal,
+    setHoverModel,
     tryExecute,
     toggleVariance,
     addAllModels,
@@ -90,13 +93,22 @@ class Tabs extends React.Component {
         this.props.dispatch(showOutputModal(model));
     }
 
+    handleModelHover(model){
+        this.props.dispatch(setHoverModel(model));
+    }
+
+    handleModelNoHover(){
+        this.props.dispatch(setHoverModel(null));
+    }
+
     isReady(){
         return (this.props.endpoint !== null);
     }
 
     render(){
         let {editMode, bmds_version} = this.props.config,
-            {bmrs, endpoint, dataType, models, validationErrors, isExecuting} = this.props,
+            {bmrs, endpoint, dataType, models,
+             validationErrors, isExecuting, hoverModel} = this.props,
             showResultsTabs = (models.length>0)?'':'disabled';  // todo - only show if results available
 
         if (!this.isReady()){
@@ -147,10 +159,18 @@ class Tabs extends React.Component {
                             handleExecute={this.handleExecute.bind(this)} />
                     </div>
                     <div id="results" className="tab-pane">
-                        <OutputTable
-                            models={models}
-                            bmrs={bmrs}
-                            handleModal={this.handleOutputModal.bind(this)}/>
+                        <h3>BMDS output summary</h3>
+                        <div className="row-fluid">
+                            <OutputTable
+                                models={models}
+                                bmrs={bmrs}
+                                handleModal={this.handleOutputModal.bind(this)}
+                                handleModelHover={this.handleModelHover.bind(this)}
+                                handleModelNoHover={this.handleModelNoHover.bind(this)}/>
+                            <OutputFigure
+                                endpoint={endpoint}
+                                hoverModel={hoverModel} />
+                        </div>
                     </div>
                     <div id="recommendations" className="tab-pane">
                         <RecommendationTable
@@ -175,6 +195,7 @@ function mapStateToProps(state) {
         allBmrOptions: state.bmd.allBmrOptions,
         validationErrors: state.bmd.validationErrors,
         isExecuting: state.bmd.isExecuting,
+        hoverModel: state.bmd.hoverModel,
     };
 }
 

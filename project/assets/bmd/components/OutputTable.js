@@ -48,20 +48,38 @@ class OutputTable extends React.Component {
         this.props.handleModal(model);
     }
 
+    handleMouseOver(model, evt){
+        if (!evt) return;
+        evt.stopPropagation();
+        evt.nativeEvent.stopImmediatePropagation();
+        this.props.handleModelHover(model);
+    }
+
+    handleMouseOut(evt){
+        if (!evt) return;
+        evt.stopPropagation();
+        evt.nativeEvent.stopImmediatePropagation();
+        this.props.handleModelNoHover();
+    }
+
     renderRow(models){
         let first = models[0],
             bmds = _.chain(models)
                     .map((d)=>{
                         return [
-                            <td>{d.output.BMD}</td>,
-                            <td>{d.output.BMDL}</td>,
+                            <td onMouseOver={this.handleMouseOver.bind(this, d)}
+                                onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMD}</td>,
+                            <td onMouseOver={this.handleMouseOver.bind(this)}
+                                onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMDL}</td>,
                         ];
                     })
                     .flatten()
                     .value();
 
         return (
-            <tr key={first.id}>
+            <tr key={first.id}
+                onMouseOver={this.handleMouseOver.bind(this, first)}
+                onMouseOut={this.handleMouseOut.bind(this)}>
                 <td>{first.name}</td>
                 <td>{first.output.p_value4}</td>
                 <td>{first.output.AIC}</td>
@@ -111,32 +129,22 @@ class OutputTable extends React.Component {
         let binnedModels = binModels(this.props.models);
 
         return (
-            <div>
-                <h3>BMDS output summary</h3>
-                <div className="row-fluid">
-
-                    <div className='span8'>
-                        <table className="table table-condensed table-hover">
-                            <thead>
-                                {this.renderHeader.bind(this)()}
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <td colSpan="100">
-                                        Selected model (if any) highlighted in yellow
-                                    </td>
-                                </tr>
-                            </tfoot>
-                            <tbody style={{cursor: 'pointer'}}>
-                            {binnedModels.map(this.renderRow.bind(this))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className='d3_container span4'>
-                    </div>
-
-                </div>
+            <div className='span8'>
+                <table className="table table-condensed table-hover">
+                    <thead>
+                        {this.renderHeader.bind(this)()}
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <td colSpan="100">
+                                Selected model (if any) highlighted in yellow
+                            </td>
+                        </tr>
+                    </tfoot>
+                    <tbody style={{cursor: 'pointer'}}>
+                    {binnedModels.map(this.renderRow.bind(this))}
+                    </tbody>
+                </table>
             </div>
         );
     }
@@ -146,6 +154,8 @@ OutputTable.propTypes = {
     models: React.PropTypes.array.isRequired,
     bmrs: React.PropTypes.array.isRequired,
     handleModal: React.PropTypes.func.isRequired,
+    handleModelHover: React.PropTypes.func.isRequired,
+    handleModelNoHover: React.PropTypes.func.isRequired,
 };
 
 export default OutputTable;

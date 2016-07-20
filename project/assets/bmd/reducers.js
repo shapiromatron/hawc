@@ -26,6 +26,7 @@ const defaultState = {
     isExecuting: false,
     validationErrors: [],
     selectedOutput: null,
+    hoverModel: null,
 };
 
 var tmp, tmp2;
@@ -174,6 +175,11 @@ function bmd(state=defaultState, action){
     case types.SELECT_OUTPUT:
         return Object.assign({}, state, {
             selectedOutput: action.model,
+        });
+
+    case types.HOVER_MODEL:
+        return Object.assign({}, state, {
+            hoverModel: action.model,
         });
 
     default:

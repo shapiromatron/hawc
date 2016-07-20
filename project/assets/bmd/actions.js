@@ -52,6 +52,12 @@ var showModal = function(name){
             model,
         };
     },
+    setHoverModel = function(model){
+        return {
+            type: types.HOVER_MODEL,
+            model,
+        };
+    },
     showOptionModal = function(modelIndex){
         return (dispatch, getState) => {
             // create a new noop Promise to chain events
@@ -233,6 +239,7 @@ export {fetchSessionSettings};
 export {showOptionModal};
 export {showBmrModal};
 export {showOutputModal};
+export {setHoverModel};
 export {tryExecute};
 export {toggleVariance};
 export {addAllModels};
