@@ -42,9 +42,12 @@ export class ScoreList extends Component {
 
 function mapStateToProps(state) {
     const { items, updateIds } = state.items;
+    const { selected } = state.scores;
+    let filteredItems = _.isEmpty(selected) ? items : _.filter(items, (item) => {return _.contains(selected, item.score.toString())});
     return {
-        items,
+        items: filteredItems,
         updateIds,
+        selected,
     };
 }
 
