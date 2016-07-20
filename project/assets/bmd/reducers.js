@@ -16,8 +16,8 @@ const defaultState = {
     dataType: null,
     models: [],
     modelSettings: [],
-    selectedModelIndex: null,
-    selectedModel: null,
+    selectedModelOptionIndex: null,
+    selectedModelOption: null,
     bmrs: [],
     selectedBmrIndex: null,
     selectedBmr: null,
@@ -79,27 +79,27 @@ function bmd(state=defaultState, action){
 
     case types.SELECT_MODEL:
         return Object.assign({}, state, {
-            selectedModelIndex: action.modelIndex,
-            selectedModel: state.modelSettings[action.modelIndex],
+            selectedModelOptionIndex: action.modelIndex,
+            selectedModelOption: state.modelSettings[action.modelIndex],
         });
 
     case types.UPDATE_MODEL:
         tmp = deepCopy(state.modelSettings);
-        tmp[state.selectedModelIndex].overrides = action.values;
+        tmp[state.selectedModelOptionIndex].overrides = action.values;
         return Object.assign({}, state, {
             modelSettings: tmp,
-            selectedModelIndex: null,
-            selectedModel: null,
+            selectedModelOptionIndex: null,
+            selectedModelOption: null,
         });
 
     case types.DELETE_MODEL:
         tmp = state.modelSettings
-            .slice(0, state.selectedModelIndex)
-            .concat(state.modelSettings.slice(state.selectedModelIndex+1));
+            .slice(0, state.selectedModelOptionIndex)
+            .concat(state.modelSettings.slice(state.selectedModelOptionIndex+1));
         return Object.assign({}, state, {
             modelSettings: tmp,
-            selectedModelIndex: null,
-            selectedModel: null,
+            selectedModelOptionIndex: null,
+            selectedModelOption: null,
         });
 
     case types.TOGGLE_VARIANCE:

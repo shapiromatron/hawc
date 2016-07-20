@@ -43,7 +43,7 @@ class Modals extends React.Component {
         return (
             <div>
                 <ModelOptionModal
-                    model={this.props.selectedModel}
+                    model={this.props.selectedModelOption}
                     editMode={editMode}
                     handleSave={this.handleModelUpdate.bind(this)}
                     handleDelete={this.handleModelDelete.bind(this)} />
@@ -63,7 +63,7 @@ class Modals extends React.Component {
 function mapStateToProps(state) {
     return {
         config: state.config,
-        selectedModel: state.bmd.selectedModel,
+        selectedModelOption: state.bmd.selectedModelOption,
         selectedBmr: state.bmd.selectedBmr,
         allBmrOptions: state.bmd.allBmrOptions,
         selectedOutput: state.bmd.selectedOutput,
