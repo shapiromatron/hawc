@@ -1,32 +1,47 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import DisplayComponent from 'robScoreCleanup/components/MetricSelect';
+import { selectMetric } from 'robScoreCleanup/actions/Metrics';
+
+import ArraySelect from 'shared/components/ArraySelect';
 
 export class MetricSelect extends Component {
   
     constructor(props) {
         super(props);
-        this.selectMetric = this.selectMetric.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.choices = this.formatMetricChoices();
+        this.defaultValue = _.first(this.choices).id;
     }
 
     componentWillMount() {
-        
+        this.handleSelect(this.defaultValue);
     }
 
-    selectMetric(e){
-        console.log(e)
+    formatMetricChoices(){
+        return _.map(this.props.choices, (choice) => {
+            return {id: choice.id, value: choice.metric};
+        });
+    }
+
+    handleSelect(option=null){
+        let choice = _.findWhere(this.props.choices, {id: parseInt(option)});
+        this.props.dispatch(selectMetric(choice));
     }
 
     render() {
         return (
-            <DisplayComponent choices={this.props.choices} />
+            <ArraySelect id='metric-select'
+                    choices={this.choices}
+                    handleSelect={this.handleSelect}
+                    defVal={this.defaultValue}/>
         );
     }
 }
 
 function mapStateToProps(state) {
     return {
+        itemsLoaded: state.metrics.isLoaded,
         choices: state.metrics.items,
     };
 }
