@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { Provider } from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
 import { fetchStudies } from 'robScoreCleanup/actions/Items';
@@ -46,13 +46,12 @@ class Root extends Component {
         };
     }
 
-    componentWillMount(){
-        this.props.store.dispatch(loadConfig());
+    componentWillMount() {
+        this.props.dispatch(loadConfig());
     }
 
     componentDidMount() {
-        this.props.store.dispatch(fetchStudies());
-        this.props.store.dispatch(fetchMetricOptions());
+        this.props.dispatch(fetchMetricOptions());
     }
 
     clearMetrics(e){
@@ -66,7 +65,6 @@ class Root extends Component {
     }
 
     render() {
-        let store = this.props.store,
             metric = {
                 key: 'metric',
                 values:[
@@ -86,10 +84,9 @@ class Root extends Component {
                     id: 3
                 }
             },
-            state = store.getState();
-        console.log(state.metrics.items)
+            { items, metrics, scores, error } = this.props.state;
+
         return (
-            <Provider store={store}>
                 <div>
                     <MetricSelect />
                     <div>
@@ -109,13 +106,13 @@ class Root extends Component {
                     </div>
                     <MetricForm metric={metric} config={config}/>
                 </div>
-            </Provider>
         );
     }
 }
-
-Root.propTypes = {
-    store: PropTypes.object.isRequired,
+function mapStateToProps(state){
+    return {
+        state,
+    };
 };
 
-export default Root;
+export default connect(mapStateToProps)(Root);
