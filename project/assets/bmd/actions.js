@@ -255,6 +255,11 @@ var showModal = function(name){
                         .then(() => dispatch(setSelectedModel(model_id, notes)));
                 });
         };
+    },
+    applyLogic = function(){
+        return {
+            type: types.APPLY_LOGIC,
+        };
     };
 
 export {fetchEndpoint};
@@ -274,5 +279,6 @@ export {createBmr};
 export {updateBmr};
 export {deleteBmr};
 export {selectModel};
+export {applyLogic};
 export {setSelectedModel};
 export {saveSelectedModel};

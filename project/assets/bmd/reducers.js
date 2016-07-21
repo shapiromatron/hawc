@@ -6,12 +6,16 @@ import { combineReducers } from 'redux';
 import config from 'shared/reducers/Config';
 import * as types from 'bmd/constants';
 
+import {apply_logic} from 'bmd/models/logic';
+
 /*
     The user-interface is normalized more than the serialized data on the
     server. The `models` includes duplicate model-settings; `modelSettings`
     are derived from the models and the allModelOptions.
 */
 const defaultState = {
+    hasSession: false,
+    hasEndpoint: false,
     endpoint: null,
     dataType: null,
     models: [],
@@ -29,6 +33,8 @@ const defaultState = {
     hoverModel: null,
     selectedModelId: null,
     selectedModelNotes: '',
+    logic: [],
+    logicApplied: false,
 };
 
 var tmp, tmp2, tmp3;
@@ -41,6 +47,8 @@ function bmd(state=defaultState, action){
         return Object.assign({}, state, {
             endpoint: action.endpoint,
             dataType: action.endpoint.data.data_type,
+            hasEndpoint: true,
+            logicApplied: false,
         });
 
     case types.RECEIVE_SESSION:
@@ -72,6 +80,17 @@ function bmd(state=defaultState, action){
             allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
             selectedModelId: tmp3.model || null,
             selectedModelNotes: tmp3.notes || '',
+            logic: action.settings.logic,
+            hasSession: true,
+            logicApplied: false,
+        });
+
+    case types.APPLY_LOGIC:
+        apply_logic(state.logic,
+                    state.models,
+                    state.endpoint);
+        return Object.assign({}, state, {
+            logicApplied: true,
         });
 
     case types.CREATE_MODEL:

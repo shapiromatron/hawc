@@ -171,6 +171,10 @@ class BMDSession(models.Model):
             .filter(endpoint=self.endpoint_id)\
             .first()
 
+    def get_logic(self):
+        return LogicField.objects\
+            .filter(assessment=self.endpoint.assessment_id)
+
 
 class BMDModel(models.Model):
     session = models.ForeignKey(
@@ -288,13 +292,13 @@ class LogicField(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
     logic_id = models.PositiveSmallIntegerField(
-        editable=False)
+        editable=False)  # todo - remove?
     name = models.CharField(
         max_length=30,
         editable=False)
     function_name = models.CharField(
         max_length=25,
-        editable=False)
+        editable=False)  # todo - remove?
     description = models.TextField(
         editable=False)
     failure_bin = models.PositiveSmallIntegerField(

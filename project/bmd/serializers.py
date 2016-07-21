@@ -6,6 +6,22 @@ from rest_framework import serializers
 from . import models
 
 
+class LogicFieldSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.LogicField
+        fields = (
+            'id',
+            'name',
+            'description',
+            'failure_bin',
+            'threshold',
+            'continuous_on',
+            'dichotomous_on',
+            'cancer_dichotomous_on',
+        )
+
+
 class SelectedModelSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -30,13 +46,14 @@ class BMDSessionSerializer(serializers.ModelSerializer):
     allBmrOptions = serializers.JSONField(source='get_bmr_options', read_only=True)
     selected_model = SelectedModelSerializer(source='get_selected_model', read_only=True)
     models = BMDModelSerializer(many=True)
+    logic = LogicFieldSerializer(source='get_logic', many=True)
 
     class Meta:
         model = models.BMDSession
         fields = (
             'id', 'bmrs', 'models',
             'allModelOptions', 'allBmrOptions',
-            'selected_model',
+            'selected_model', 'logic',
         )
 
 

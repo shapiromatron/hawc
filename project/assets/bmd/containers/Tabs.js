@@ -27,6 +27,7 @@ import {
     createModel,
     createBmr,
     saveSelectedModel,
+    applyLogic,
 } from 'bmd/actions';
 
 
@@ -40,6 +41,15 @@ class Tabs extends React.Component {
     componentDidUpdate(){
         if ($('.tab-pane.active').length === 0){
             $('#tabs a:first').tab('show');
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        if (nextProps.logicApplied === false &&
+                nextProps.hasSession &&
+                nextProps.hasEndpoint){
+
+            this.props.dispatch(applyLogic());
         }
     }
 
@@ -204,6 +214,9 @@ function mapStateToProps(state) {
         hoverModel: state.bmd.hoverModel,
         selectedModelId: state.bmd.selectedModelId,
         selectedModelNotes: state.bmd.selectedModelNotes,
+        hasSession: state.bmd.hasSession,
+        hasEndpoint: state.bmd.hasEndpoint,
+        logicApplied: state.bmd.logicApplied,
     };
 }
 
