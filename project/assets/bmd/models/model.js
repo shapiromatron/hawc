@@ -22,9 +22,10 @@ let formulas = {
 
 class BMDLine {
 
-    constructor(model, plot){
+    constructor(model, plot, color){
         this.model = model;
         this.plot = plot;
+        this.color = color;
     }
 
     render(){
@@ -68,7 +69,7 @@ class BMDLine {
         return {
             id: this.model.id,
             name: this.model.name,
-            stroke: 'red',  // TODO - temporary; fix
+            stroke: this.color,
             data,
         };
 

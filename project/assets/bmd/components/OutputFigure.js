@@ -25,7 +25,7 @@ class OutputFigure extends React.Component {
                 return;
             }
 
-            this.hover_line = new BMDLine(model, this.plt);
+            this.hover_line = new BMDLine(model, this.plt, 'red');
             this.hover_line.render();
         }
     }
@@ -39,7 +39,7 @@ class OutputFigure extends React.Component {
         }
 
         if (model !== null){
-            this.selected_line = new BMDLine(model, this.plt);
+            this.selected_line = new BMDLine(model, this.plt, 'blue');
             this.selected_line.render();
         }
     }
