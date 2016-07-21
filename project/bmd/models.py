@@ -291,14 +291,9 @@ class LogicField(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
-    logic_id = models.PositiveSmallIntegerField(
-        editable=False)  # todo - remove?
     name = models.CharField(
         max_length=30,
         editable=False)
-    function_name = models.CharField(
-        max_length=25,
-        editable=False)  # todo - remove?
     description = models.TextField(
         editable=False)
     failure_bin = models.PositiveSmallIntegerField(
@@ -322,7 +317,7 @@ class LogicField(models.Model):
         verbose_name="Cancer Dichotomous Datasets")
 
     class Meta:
-        ordering = ['logic_id']
+        ordering = ('id', )
 
     def __unicode__(self):
         return self.description
@@ -349,7 +344,7 @@ class LogicField(models.Model):
                 object_pairs_hook=collections.OrderedDict)
 
         objects = [
-            cls(assessment_id=assessment.id, logic_id=i, **obj)
+            cls(assessment_id=assessment.id, **obj)
             for i, obj in enumerate(text['objects'])
         ]
         cls.objects.bulk_create(objects)
