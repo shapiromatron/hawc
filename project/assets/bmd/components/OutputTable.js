@@ -65,11 +65,13 @@ class OutputTable extends React.Component {
     renderRow(models){
         let first = models[0],
             bmds = _.chain(models)
-                    .map((d)=>{
+                    .map((d, i)=>{
                         return [
-                            <td onMouseOver={this.handleMouseOver.bind(this, d)}
+                            <td key={i+'bmd'}
+                                onMouseOver={this.handleMouseOver.bind(this, d)}
                                 onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMD}</td>,
-                            <td onMouseOver={this.handleMouseOver.bind(this)}
+                            <td key={i+'bmdl'}
+                                onMouseOver={this.handleMouseOver.bind(this)}
                                 onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMDL}</td>,
                         ];
                     })
@@ -99,11 +101,11 @@ class OutputTable extends React.Component {
 
         let widths = getColWidths(this.props.bmrs.length),
             ths = _.chain(this.props.bmrs)
-                .map((d)=>{
+                .map((d, i)=>{
                     let lbl = asLabel(d);
                     return [
-                        <th style={{width: widths.nums}}>BMD<br/><span>({lbl})</span></th>,
-                        <th style={{width: widths.nums}}>BMDL<br/><span>({lbl})</span></th>,
+                        <th key={i+'bmd'} style={{width: widths.nums}}>BMD<br/><span>({lbl})</span></th>,
+                        <th key={i+'bmdl'} style={{width: widths.nums}}>BMDL<br/><span>({lbl})</span></th>,
                     ];
                 })
                 .flatten()
