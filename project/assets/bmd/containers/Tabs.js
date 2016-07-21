@@ -121,7 +121,8 @@ class Tabs extends React.Component {
                 bmrs, endpoint, dataType, models, selectedModelId,
                 selectedModelNotes, validationErrors, isExecuting, hoverModel,
             } = this.props,
-            showResultsTabs = (models.length>0)?'':'disabled';  // todo - only show if results available
+            showResultsTabs = (models.length>0)?'':'disabled',  // todo - only show if results available
+            selectedModel = _.findWhere(models, {id: selectedModelId});
 
         if (!this.isReady()){
             return <Loading />;
@@ -178,10 +179,12 @@ class Tabs extends React.Component {
                                 bmrs={bmrs}
                                 handleModal={this.handleOutputModal.bind(this)}
                                 handleModelHover={this.handleModelHover.bind(this)}
-                                handleModelNoHover={this.handleModelNoHover.bind(this)}/>
+                                handleModelNoHover={this.handleModelNoHover.bind(this)}
+                                selectedModelId={selectedModelId}/>
                             <OutputFigure
                                 endpoint={endpoint}
-                                hoverModel={hoverModel} />
+                                hoverModel={hoverModel}
+                                selectedModel={selectedModel} />
                         </div>
                     </div>
                     <div id="recommendations" className="tab-pane">

@@ -70,28 +70,35 @@ class RecommendationTable extends React.Component {
     }
 
     renderRecommendationTd(d){
-        let tdId = '',
-            txt = d.recommended_text;
+        let txt = d.recommended_text;
 
         if (d.recommended){
-            tdId = 'bmd_recommended_model';
             txt = `Recommended best-fitting model, based on the lowest ${d.recommended_variable} from valid models`;
         }
 
         if (this.props.selectedModelId === d.id){
-            tdId = 'bmd_selected_model';
             txt = 'Selected as the best-fitting model by the user';
         }
 
-        return <td id={tdId}>
+        return <td>
             {this.renderLogicBatch(d)}
             <p><b>{txt}</b></p>
         </td>;
     }
 
     renderRow(d, i){
+        let tdId = '';
+
+        if (d.recommended){
+            tdId = 'bmd_recommended_model';
+        }
+
+        if (this.props.selectedModelId === d.id){
+            tdId = 'bmd_selected_model';
+        }
+
         return (
-            <tr key={i}>
+            <tr key={i} id={tdId}>
                 {this.renderModelTd(d)}
                 {this.renderWarningTd(d)}
                 {this.renderRecommendationTd(d)}

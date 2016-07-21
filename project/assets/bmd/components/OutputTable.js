@@ -76,12 +76,14 @@ class OutputTable extends React.Component {
                         ];
                     })
                     .flatten()
-                    .value();
+                    .value(),
+            id = _.contains(_.pluck(models, 'id'), this.props.selectedModelId)? 'bmd_selected_model': '';
 
         return (
             <tr key={first.id}
                 onMouseOver={this.handleMouseOver.bind(this, first)}
-                onMouseOut={this.handleMouseOut.bind(this)}>
+                onMouseOut={this.handleMouseOut.bind(this)}
+                id={id}>
                 <td>{first.name}</td>
                 <td>{first.output.p_value4}</td>
                 <td>{first.output.AIC}</td>
@@ -132,7 +134,7 @@ class OutputTable extends React.Component {
 
         return (
             <div className='span8'>
-                <table className="table table-condensed table-hover">
+                <table className="table table-condensed">
                     <thead>
                         {this.renderHeader.bind(this)()}
                     </thead>
@@ -158,6 +160,7 @@ OutputTable.propTypes = {
     handleModal: React.PropTypes.func.isRequired,
     handleModelHover: React.PropTypes.func.isRequired,
     handleModelNoHover: React.PropTypes.func.isRequired,
+    selectedModelId: React.PropTypes.number,
 };
 
 export default OutputTable;
