@@ -40,6 +40,12 @@ var showModal = function(name){
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
+    changeUnits = function(doseUnits){
+        return {
+            type: types.CHANGE_UNITS,
+            doseUnits,
+        };
+    },
     selectModel = function(modelIndex){
         return {
             type: types.SELECT_MODEL,
@@ -113,6 +119,7 @@ var showModal = function(name){
                     method: 'POST',
                     headers: getAjaxHeaders(state.config.csrf),
                     body: JSON.stringify({
+                        dose_units: state.bmd.doseUnits,
                         bmrs: state.bmd.bmrs,
                         modelSettings: state.bmd.modelSettings,
                     }),
@@ -264,6 +271,7 @@ var showModal = function(name){
 
 export {fetchEndpoint};
 export {fetchSessionSettings};
+export {changeUnits};
 export {showOptionModal};
 export {showBmrModal};
 export {showOutputModal};

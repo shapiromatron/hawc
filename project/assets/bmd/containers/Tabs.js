@@ -5,6 +5,7 @@ import $ from '$';
 import Loading from 'shared/components/Loading';
 
 import DoseResponse from 'bmd/components/DoseResponse';
+import DoseUnitsSelector from 'bmd/components/DoseUnitsSelector';
 import ModelOptionTable from 'bmd/components/ModelOptionTable';
 import BMROptionTable from 'bmd/components/BMROptionTable';
 import ExecuteWell from 'bmd/components/ExecuteWell';
@@ -19,6 +20,7 @@ import {
     showOptionModal,
     showBmrModal,
     showOutputModal,
+    changeUnits,
     setHoverModel,
     tryExecute,
     toggleVariance,
@@ -58,6 +60,10 @@ class Tabs extends React.Component {
         if (!tabDisabled){
             $(event.currentTarget).tab('show');
         }
+    }
+
+    handleUnitsChange(doseUnits){
+        this.props.dispatch(changeUnits(doseUnits));
     }
 
     handleExecute(){
@@ -120,6 +126,7 @@ class Tabs extends React.Component {
             {
                 bmrs, endpoint, dataType, models, selectedModelId,
                 selectedModelNotes, validationErrors, isExecuting, hoverModel,
+                doseUnits,
             } = this.props,
             showResultsTabs = (models.length>0)?'':'disabled',  // todo - only show if results available
             selectedModel = _.findWhere(models, {id: selectedModelId});
@@ -137,7 +144,7 @@ class Tabs extends React.Component {
                         <li className={showResultsTabs}><a href="#results"
                             onClick={this.handleTabClick}>Results</a></li>
                         <li className={showResultsTabs}><a href="#recommendations"
-                            onClick={this.handleTabClick}>Recommendation and selection</a></li>
+                            onClick={this.handleTabClick}>Model recommendation and selection</a></li>
                     </ul>
                 </div>
 
@@ -145,9 +152,12 @@ class Tabs extends React.Component {
                     <div id="setup" className="tab-pane">
                         <DoseResponse endpoint={endpoint} />
                         <h3>Selected models and options</h3>
-                        <p>
-                            <i>BMDS version: {bmds_version}</i>
-                        </p>
+                        <DoseUnitsSelector
+                            version={bmds_version}
+                            editMode={editMode}
+                            endpoint={endpoint}
+                            doseUnits={doseUnits}
+                            handleUnitsChange={this.handleUnitsChange.bind(this)}/>
                         <div className="row-fluid">
                             <ModelOptionTable
                                 editMode={editMode}
@@ -206,6 +216,7 @@ function mapStateToProps(state) {
     return {
         config: state.config,
         endpoint: state.bmd.endpoint,
+        doseUnits: state.bmd.doseUnits,
         dataType: state.bmd.dataType,
         modelSettings: state.bmd.modelSettings,
         models: state.bmd.models,

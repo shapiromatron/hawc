@@ -96,6 +96,11 @@ function bmd(state=defaultState, action){
             logicApplied: true,
         });
 
+    case types.CHANGE_UNITS:
+        return Object.assign({}, state, {
+            doseUnits: action.doseUnits,
+        });
+
     case types.CREATE_MODEL:
         tmp = Object.assign(
             deepCopy(state.allModelOptions[action.modelIndex]),

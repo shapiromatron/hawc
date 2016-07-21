@@ -60,6 +60,7 @@ class BMDSessionSerializer(serializers.ModelSerializer):
 class BMDSessionUpdateSerializer(serializers.Serializer):
     bmrs = serializers.JSONField()
     modelSettings = serializers.JSONField()
+    dose_units = serializers.IntegerField()
 
     bmr_schema = schema = {
         'type': 'array',
@@ -106,6 +107,7 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
     def save(self):
         self.instance.bmrs = self.validated_data['bmrs']
         self.instance.date_executed = None
+        self.instance.dose_units_id = self.validated_data['dose_units']
         self.instance.save()
 
         self.instance.models.all().delete()

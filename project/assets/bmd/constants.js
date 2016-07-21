@@ -3,6 +3,7 @@ export const BMR_MODAL_ID = 'bmr_modal';
 export const OUTPUT_MODAL_ID = 'output_modal';
 export const RECEIVE_ENDPOINT = 'RECEIVE_ENDPOINT';
 export const RECEIVE_SESSION = 'RECEIVE_SESSION';
+export const CHANGE_UNITS = 'CHANGE_UNITS';
 
 export const VALIDATE = 'VALIDATE';
 export const EXECUTE_START = 'EXECUTE_START';

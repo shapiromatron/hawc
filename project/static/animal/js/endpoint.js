@@ -313,6 +313,13 @@ _.extend(Endpoint.prototype, Observee.prototype, {
                 .pluck('dose')
                 .value();
     },
+    _get_doses_units: function(){
+        return _.chain(this.data.animal_group.dosing_regime.doses)
+                .map(function(d){return d.dose_units;})
+                .indexBy('id')
+                .values()
+                .value();
+    },
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{
