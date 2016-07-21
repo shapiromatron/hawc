@@ -27,6 +27,10 @@ export const HOVER_MODEL = 'HOVER_MODEL';
 export const SET_SELECTED_MODEL = 'SET_SELECTED_MODEL';
 export const APPLY_LOGIC = 'APPLY_LOGIC';
 
+export const CONTINUOUS = 'C';
+export const DICHOTOMOUS = 'D';
+export const DICHOTOMOUS_CANCER = 'DC';
+
 export const param_cw = {
     'd': 'Default',
     'i': 'Initialized',

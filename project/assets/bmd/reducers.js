@@ -18,6 +18,7 @@ const defaultState = {
     hasEndpoint: false,
     endpoint: null,
     dataType: null,
+    doseUnits: null,
     models: [],
     modelSettings: [],
     selectedModelOptionIndex: null,
@@ -61,13 +62,13 @@ function bmd(state=defaultState, action){
         // 1) only get the first bmr instance of the model
         // 2) add defaults based on the model name
         tmp2 = _.indexBy(action.settings.allModelOptions, 'name');
+
+        action.settings.models
+            .forEach((d)=>d.defaults = tmp2[d.name].defaults);
+
         tmp = _.chain(action.settings.models)
                .filter((d) => d.bmr_id === 0)
-               .map((d) => {
-                   let copy = deepCopy(d);
-                   copy.defaults = tmp2[d.name].defaults;
-                   return copy;
-               })
+               .map((d) => deepCopy(d))
                .value();
 
         tmp3 = action.settings.selected_model || {};
@@ -76,6 +77,7 @@ function bmd(state=defaultState, action){
             models: action.settings.models,
             modelSettings: tmp,
             bmrs: action.settings.bmrs,
+            doseUnits: action.settings.dose_units,
             allModelOptions: action.settings.allModelOptions,
             allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
             selectedModelId: tmp3.model || null,
@@ -88,7 +90,8 @@ function bmd(state=defaultState, action){
     case types.APPLY_LOGIC:
         apply_logic(state.logic,
                     state.models,
-                    state.endpoint);
+                    state.endpoint,
+                    state.doseUnits);
         return Object.assign({}, state, {
             logicApplied: true,
         });

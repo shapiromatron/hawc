@@ -322,20 +322,10 @@ span.smart-tag.active:hover{
   background-color: yellow;
 }
 
-/* BMD modal form */
-.logic_test_pass {
-  background-color: #BCED91;
+.bmd_recommendation{
+  font-size: 1rem;
+  padding: 5px 10px;
 }
-.logic_test_warning {
-  background-color: yellow;
-}
-.logic_test_questionable {
-  background-color: #FA9A50;
-}
-.logic_test_fail {
-  background-color: #F08080;
-}
-
 
 /* Sidebar for summary text */
 .affix-sidenav {

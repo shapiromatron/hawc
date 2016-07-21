@@ -307,6 +307,12 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         }
         return {'type': undefined, 'value': undefined};
     },
+    _get_doses_by_dose_id: function(id){
+        return _.chain(this.data.animal_group.dosing_regime.doses)
+                .filter(function(d){ return d.dose_units.id === id;})
+                .pluck('dose')
+                .value();
+    },
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
         try{

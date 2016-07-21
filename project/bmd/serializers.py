@@ -51,7 +51,7 @@ class BMDSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BMDSession
         fields = (
-            'id', 'bmrs', 'models',
+            'id', 'bmrs', 'models', 'dose_units',
             'allModelOptions', 'allBmrOptions',
             'selected_model', 'logic',
         )
