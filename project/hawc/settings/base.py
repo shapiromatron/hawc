@@ -253,11 +253,7 @@ COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMM
 
 
 # BMD modeling settings
-BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')   # BMD server
-BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH', '')
-BMD_PLOT = r'gnuplot'
-BMD_EXTENSION = ''
-BMD_SHELL = 'x11'
+BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')
 
 
 # Chemspider token details
