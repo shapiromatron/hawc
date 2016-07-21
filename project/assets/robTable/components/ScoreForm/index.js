@@ -42,9 +42,18 @@ class ScoreForm extends Component {
     }
 
     componentWillUpdate(nextProps, nextState) {
+        // update notes is addText is modified
+        // (usually by copying notes over from another form)
         if(nextProps.addText !== this.props.addText){
             this.setState({
                 notes: this.state.notes + nextProps.addText,
+            });
+        }
+        // update notes if the notes in the score prop change.
+        if((nextProps.score.notes !== this.state.notes) &&
+            (nextProps.score.notes !== this.props.score.notes)) {
+            this.setState({
+                notes: nextProps.score.notes,
             });
         }
     }
