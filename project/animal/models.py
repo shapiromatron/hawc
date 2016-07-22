@@ -1023,6 +1023,13 @@ class Endpoint(BaseEndpoint):
         except ObjectDoesNotExist:
             return None
 
+    def get_selected_bmd_model(self):
+        try:
+            return self.bmd_model.model
+        except ObjectDoesNotExist:
+            return None
+
+
 class ConfidenceIntervalsMixin(object):
     """
     Mixin class which calculates standard deviation and confidence intervals

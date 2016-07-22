@@ -456,10 +456,17 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             tbl = new DescriptiveTable(),
             critical_dose = function(type){
                 if(self.data[type]<0) return;
-                var span = $("<span>"),
-                    dose = new EndpointCriticalDose(self, span, type, true);
+                var span = $('<span>');
+                new EndpointCriticalDose(self, span, type, true);
                 return span;
-            }, getTaglist = function(tags, assessment_id){
+            },
+            bmd_response = function(type, showURL){
+                if(self.data.bmd === null) return;
+                var span = $('<span>');
+                new BMDResult(self, span, type, true, showURL);
+                return span;
+            },
+            getTaglist = function(tags, assessment_id){
                 if(tags.length === 0) return false;
                 var ul = $('<ul class="nav nav-pills nav-stacked">');
                 tags.forEach(function(v){
@@ -491,6 +498,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         tbl.add_tbody_tr("NOEL", critical_dose("NOEL"))
            .add_tbody_tr("LOEL", critical_dose("LOEL"))
            .add_tbody_tr("FEL",  critical_dose("FEL"))
+           .add_tbody_tr("BMD",  bmd_response('BMD', true))
+           .add_tbody_tr("BMDL",  bmd_response('BMDL', false))
            .add_tbody_tr("Monotonicity", this.data.monotonicity)
            .add_tbody_tr("Statistical test description", this.data.statistical_test)
            .add_tbody_tr("Trend result", this.data.trend_result)
@@ -657,6 +666,7 @@ var EndpointCriticalDose = function(endpoint, span, type, show_units){
     endpoint.addObserver(this);
     this.endpoint = endpoint;
     this.span = span;
+    this.type = type;
     this.critical_effect_idx = endpoint.data[type];
     this.show_units = show_units;
     this.display();
@@ -675,8 +685,35 @@ EndpointCriticalDose.prototype = {
     },
     update: function(){
         this.display();
-    }
+    },
 };
+
+
+var BMDResult = function(endpoint, span, type, show_units, show_url){
+    this.show_url = show_url;
+    EndpointCriticalDose.apply(this, arguments);
+};
+_.extend(BMDResult.prototype, EndpointCriticalDose.prototype, {
+    display: function(){
+        var txt,
+            bmd = this.endpoint.data.bmd,
+            currentUnits = this.endpoint.dose_units_id,
+            bmdUnits = this.endpoint.data.bmd.dose_units;
+
+        if (currentUnits == bmdUnits){
+            txt = bmd.output[this.type].toHawcString();
+            if (this.show_units){
+                txt = txt + ' {0}'.printf(this.endpoint.dose_units);
+            }
+            if (this.show_url){
+                txt = txt + ' <a href="{0}">(view details)</a>'.printf(bmd.url);
+            }
+        } else {
+            txt = '-';
+        }
+        return this.span.html(txt);
+    },
+});
 
 
 var EndpointPlotContainer = function(endpoint, plot_id){

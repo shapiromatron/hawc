@@ -30,11 +30,13 @@ class SelectedModelSerializer(serializers.ModelSerializer):
 
 
 class BMDModelSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    dose_units = serializers.IntegerField(source='session.dose_units_id', read_only=True)
 
     class Meta:
         model = models.BMDModel
         fields = (
-            'id', 'model_id', 'bmr_id',
+            'id', 'url', 'dose_units', 'model_id', 'bmr_id',
             'name', 'overrides', 'date_executed',
             'execution_error', 'output', 'outfile',
             'created', 'last_updated',

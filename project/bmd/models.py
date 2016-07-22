@@ -208,6 +208,9 @@ class BMDModel(models.Model):
         get_latest_by = "created"
         ordering = ('model_id', 'bmr_id')
 
+    def get_absolute_url(self):
+        return reverse_lazy('bmd:session_detail', args=[self.session_id])
+
     def get_assessment(self):
         return self.session.get_assessment()
 

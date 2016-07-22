@@ -10,6 +10,8 @@ from utils.helper import SerializerHelper
 
 from . import models
 
+from bmd.serializers import BMDModelSerializer
+
 
 class ExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer()
@@ -117,6 +119,12 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
         models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
         models.Endpoint.setMaximumPercentControlChange(ret)
+
+        ret['bmd'] = None
+        bmd = instance.get_selected_bmd_model()
+        if bmd:
+            ret['bmd'] = BMDModelSerializer().to_representation(bmd)
+
         return ret
 
     class Meta:
