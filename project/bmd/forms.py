@@ -1,4 +1,4 @@
-from django.forms import ModelForm, HiddenInput
+from django.forms import ModelForm
 
 from . import models
 
@@ -6,7 +6,7 @@ from . import models
 class AssessmentSettingsForm(ModelForm):
 
     class Meta:
-        model = models.BMD_Assessment_Settings
+        model = models.AssessmentSettings
         exclude = ('assessment', )
 
 
@@ -22,8 +22,8 @@ class LogicFieldForm(ModelForm):
             self.fields.pop('threshold')
 
 
-class BMDSessionForm(ModelForm):
+class SessionForm(ModelForm):
 
     class Meta:
-        model = models.BMDSession
+        model = models.Session
         fields = '__all__'

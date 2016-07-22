@@ -656,7 +656,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? "log" : "linear";
     },
     renderPlot: function($div, withBMD){
-        withBMD = withBMD || true;
+        withBMD = (withBMD === undefined)? true: withBMD;
         var epc = new EndpointPlotContainer(this, $div);
         if (withBMD && this.data.bmd){
             this._render_bmd_lines(epc);

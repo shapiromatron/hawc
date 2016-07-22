@@ -41,7 +41,7 @@ class DoseUnitsSelector extends React.Component {
     render() {
         return <div className='row-fluid'>
             <div className='span3'>
-                <p><b>BMDS version:</b> {this.props.version}</p>
+                <p>{this.props.version}</p>
             </div>
             {this.renderDoseForm()}
         </div>;

@@ -9,6 +9,6 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def execute(session_id):
-    logger.info('BMD exeuction -> {}'.format(session_id))
-    session = apps.get_model('bmd', 'BMDSession').objects.get(id=session_id)
+    logger.info('BMD execution -> {}'.format(session_id))
+    session = apps.get_model('bmd', 'Session').objects.get(id=session_id)
     session.execute()

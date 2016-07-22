@@ -3,23 +3,22 @@ from __future__ import absolute_import
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from assessment.api.views import AssessmentViewset, AssessmentEditViewset, \
-    AssessmentLevelPermissions
+from assessment.api.views import AssessmentViewset
 
 from . import models, serializers, tasks
 
 
-class BMDSession(AssessmentViewset):
+class Session(AssessmentViewset):
     assessment_filter_args = "endpoint__assessment"
-    model = models.BMDSession
+    model = models.Session
 
     def get_serializer_class(self):
         if self.action == 'execute':
-            return serializers.BMDSessionUpdateSerializer
+            return serializers.SessionUpdateSerializer
         elif self.action == 'selected_model':
             return serializers.SelectedModelUpdateSerializer
         else:
-            return serializers.BMDSessionSerializer
+            return serializers.SessionSerializer
 
     @detail_route(methods=['post'])
     def execute(self, request, pk=None):

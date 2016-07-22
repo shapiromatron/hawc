@@ -42,7 +42,7 @@
           {% endif %}
 
           {% if assessment.enable_bmd %}
-          <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">BMDS settings</a></li>
+          <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a></li>
           {% endif %}
 
           {% if assessment.enable_comments %}

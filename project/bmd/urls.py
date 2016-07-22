@@ -6,7 +6,7 @@ from . import api, views
 
 
 router = DefaultRouter()
-router.register(r'session', api.BMDSession, base_name="bmd_session")
+router.register(r'session', api.Session, base_name="session")
 
 
 urlpatterns = [
@@ -45,7 +45,5 @@ urlpatterns = [
     url(r'^session/(?P<pk>\d+)/delete/$',
         views.SessionDelete.as_view(),
         name='session_delete'),
-
-    # BMD template JSON helper-functions
 
 ]

@@ -13,12 +13,12 @@ from . import forms, models
 
 # Assessment settings
 class AssessSettingsRead(BaseDetail):
-    model = models.BMD_Assessment_Settings
+    model = models.AssessmentSettings
 
 
 class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     success_message = 'BMD Settings updated.'
-    model = models.BMD_Assessment_Settings
+    model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
 
     def get_assessment(self, request, *args, **kwargs):
@@ -26,7 +26,7 @@ class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
 
 
 class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
-    success_message = 'BMD Logic Settings updated.'
+    success_message = 'BMD logic settings updated.'
     model = models.LogicField
     form_class = forms.LogicFieldForm
 
@@ -42,13 +42,13 @@ class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
         return self.object.assessment
 
     def get_redirect_url(self, *args, **kwargs):
-        obj = models.BMDSession.create_new(self.object)
+        obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
 
 class SessionList(BaseList):
     parent_model = Endpoint
-    model = models.BMDSession
+    model = models.Session
     parent_template_name = 'object'
 
     def get_queryset(self):
@@ -56,23 +56,23 @@ class SessionList(BaseList):
 
 
 class SessionDetail(BaseDetail):
-    model = models.BMDSession
+    model = models.Session
 
 
 class SessionUpdate(BaseUpdate):
 
     success_message = 'BMD session updated.'
-    model = models.BMDSession
-    form_class = forms.BMDSessionForm
+    model = models.Session
+    form_class = forms.SessionForm
 
     def get_redirect_url(self, *args, **kwargs):
-        obj = models.BMDSession.create_new(self.object)
+        obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
 
 class SessionDelete(BaseDelete):
     success_message = "BMD session deleted."
-    model = models.BMDSession
+    model = models.Session
 
     def get_success_url(self):
         return self.object.endpoint.get_absolute_url()

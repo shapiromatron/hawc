@@ -32,13 +32,13 @@
       <col style="width: 70%;">
     </colgroup>
     <tbody>
-      <tr><th>BMDS Version</th><td>{{object.get_version_display}}</td></tr>
-      <tr><th>Last Updated</th><td>{{object.last_updated}}</td></tr>
+      <tr><th>Benchmark dose modeling<br/>software (<a href="https://www.epa.gov/bmds">BMDS</a>) version</th><td>{{object.get_version_display}}</td></tr>
+      <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>
     </tbody>
   </table>
 
-  <h2>BMD Decision Logic</h2>
-  {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.BMD_Logic_Fields.all %}
+  <h2>BMD decision logic</h2>
+  {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.bmd_logic_fields.all %}
 
 {% endblock %}
 

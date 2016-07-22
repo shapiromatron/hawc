@@ -29,12 +29,12 @@ class SelectedModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'model', 'notes')
 
 
-class BMDModelSerializer(serializers.ModelSerializer):
+class ModelSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     dose_units = serializers.IntegerField(source='session.dose_units_id', read_only=True)
 
     class Meta:
-        model = models.BMDModel
+        model = models.Model
         fields = (
             'id', 'url', 'dose_units', 'model_id', 'bmr_id',
             'name', 'overrides', 'date_executed',
@@ -43,15 +43,15 @@ class BMDModelSerializer(serializers.ModelSerializer):
         )
 
 
-class BMDSessionSerializer(serializers.ModelSerializer):
+class SessionSerializer(serializers.ModelSerializer):
     allModelOptions = serializers.JSONField(source='get_model_options', read_only=True)
     allBmrOptions = serializers.JSONField(source='get_bmr_options', read_only=True)
     selected_model = SelectedModelSerializer(source='get_selected_model', read_only=True)
-    models = BMDModelSerializer(many=True)
+    models = ModelSerializer(many=True)
     logic = LogicFieldSerializer(source='get_logic', many=True)
 
     class Meta:
-        model = models.BMDSession
+        model = models.Session
         fields = (
             'id', 'bmrs', 'models', 'dose_units',
             'allModelOptions', 'allBmrOptions',
@@ -59,7 +59,7 @@ class BMDSessionSerializer(serializers.ModelSerializer):
         )
 
 
-class BMDSessionUpdateSerializer(serializers.Serializer):
+class SessionUpdateSerializer(serializers.Serializer):
     bmrs = serializers.JSONField()
     modelSettings = serializers.JSONField()
     dose_units = serializers.IntegerField()
@@ -120,7 +120,7 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
             for j, settings in enumerate(self.validated_data['modelSettings']):
                 overrides = deepcopy(settings['overrides'])
                 overrides.update(bmr_overrides)
-                obj = models.BMDModel(
+                obj = models.Model(
                     session=self.instance,
                     bmr_id=i,
                     model_id=j,
@@ -128,7 +128,7 @@ class BMDSessionUpdateSerializer(serializers.Serializer):
                     overrides=overrides,
                 )
                 objects.append(obj)
-        models.BMDModel.objects.bulk_create(objects)
+        models.Model.objects.bulk_create(objects)
 
 
 class SelectedModelUpdateSerializer(serializers.ModelSerializer):

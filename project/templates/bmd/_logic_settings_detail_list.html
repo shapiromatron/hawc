@@ -17,7 +17,11 @@
       {% for logic in object_list %}
       <tr>
         <td>
-        <a href="#" class="popovers" data-placement="bottom" data-trigger="hover" data-toggle="popover" data-content="{{logic.description}}" data-original-title="{{logic.name}}">{{logic.name}}</a>
+        <a
+          href="#" class="popovers" data-placement="bottom"
+          data-trigger="hover" data-toggle="popover"
+          data-content="{{logic.description}}"
+          data-original-title="{{logic.name}}">{{logic.name}}</a>
         </td>
         <td>{{logic.continuous_on}}</td>
         <td>{{logic.dichotomous_on}}</td>
@@ -25,7 +29,8 @@
         <td>{{logic.threshold}}</td>
         <td>{{logic.get_failure_bin_display }}</td>
         {% if obj_perms.edit_assessment %}
-          <td><a href="{% url 'bmd:assess_logic_update' logic.pk %}" class="btn btn-primary btn-small">Edit</a> </td>
+          <td><a href="{% url 'bmd:assess_logic_update' logic.pk %}"
+            class="btn btn-primary btn-small">Edit</a> </td>
         {% endif %}
         <td>{{logic.last_updated}}</td>
       </tr>

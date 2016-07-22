@@ -10,7 +10,7 @@ from utils.helper import SerializerHelper
 
 from . import models
 
-from bmd.serializers import BMDModelSerializer
+from bmd.serializers import ModelSerializer
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -123,7 +123,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret['bmd'] = None
         bmd = instance.get_selected_bmd_model()
         if bmd:
-            ret['bmd'] = BMDModelSerializer().to_representation(bmd)
+            ret['bmd'] = ModelSerializer().to_representation(bmd)
 
         return ret
 

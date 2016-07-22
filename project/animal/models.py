@@ -1017,7 +1017,6 @@ class Endpoint(BaseEndpoint):
         ep['percentControlMaxChange'] = val
 
     def get_latest_bmd_session(self):
-        BMDSession = apps.get_model('bmd', 'BMDSession')
         try:
             return self.bmd_sessions.latest()
         except ObjectDoesNotExist:
