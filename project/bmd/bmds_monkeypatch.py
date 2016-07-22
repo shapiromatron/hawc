@@ -10,7 +10,7 @@ def get_dataset(session):
     runs = [
         {
             'id': model.id,
-            'model_app_name': model.model_name,
+            'model_app_name': model.exe,
             'dfile': model.as_dfile()
         } for model in session._models
     ]
@@ -18,34 +18,15 @@ def get_dataset(session):
     return {
         'options': {
             'bmds_version': session.version,
-            'emf_YN': 'True'
+            'emf_YN': False
         },
         'runs': runs
     }
 
 
-def get_dataset2(session):
-    name = "DichoHill"
-    dfile = "Dichotomous-Hill \nBMDS_Model_Run \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-AcroleinInhalation.dax \nC:/USEPA/BMDS/BMDS2601/Dorman2008/1-2008-Acrolein_Inhalation-DichHill-10Pct-4d.out \n4 \n500 0.00000001 0.00000001 0 1 1 0 0 \n0.1 0 0.95 \n-9999 -9999 -9999 -9999 \n0 \n-9999 -9999 -9999 -9999 \nDose Incidence NEGATIVE_RESPONSE \n0 0 12 \n0.2 0 12 \n0.6 7 5 \n1.8 11 0 \n"
-    # temporary
-    return {
-        "options": {
-            "bmds_version": "BMDS2601",
-            "emf_YN": False,
-        },
-        "runs": [
-            {
-                "id": model.id,
-                "model_app_name": name,
-                "dfile": dfile,
-            } for model in session._models
-        ]
-    }
-
-
 def execute(self):
     host = settings.BMD_HOST
-    data = get_dataset2(self)
+    data = get_dataset(self)
 
     # submit data
     url = '{}/Server-receiving.php'.format(host)
