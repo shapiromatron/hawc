@@ -15,7 +15,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="disabled"><a tabindex="-1" href="#">BMD editing</a></li>
-                <li><a href="{{object.get_update_url}}">Create new</a></li>
+                <li><a href="{% url 'bmd:session_create' object.pk %}">Create new</a></li>
             </ul>
           </div>
         {% endif %}
