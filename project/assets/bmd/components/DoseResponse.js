@@ -6,7 +6,7 @@ class DoseResponse extends React.Component {
     componentDidMount(){
         let {endpoint} = this.props;
         endpoint.build_endpoint_table($(this.refs.epTable));
-        endpoint.renderPlot($(this.refs.epFigure));
+        endpoint.renderPlot($(this.refs.epFigure), false);
     }
 
     componentWillUnmount(){

@@ -632,7 +632,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         modal.getModal().on('shown', function(){
-            new EndpointPlotContainer(self, $plot);
+            self.renderPlot($plot, true);
         });
 
         modal.addHeader(title)
@@ -655,8 +655,20 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         if (doses.length !== 2) return "linear";
         return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? "log" : "linear";
     },
-    renderPlot: function($div){
-        return new EndpointPlotContainer(this, $div);
+    renderPlot: function($div, withBMD){
+        withBMD = withBMD || true;
+        var epc = new EndpointPlotContainer(this, $div);
+        if (withBMD && this.data.bmd){
+            this._render_bmd_lines(epc);
+        }
+        return epc;
+    },
+    _render_bmd_lines(epc){
+        let model = this.data.bmd,
+            dr = epc.plot,
+            line = new window.app.BMDLine(model, dr, 'blue');
+
+        line.render();
     },
 });
 
@@ -998,7 +1010,7 @@ var EndpointDetailRow = function(endpoint, div, hide_level, options){
     this.div.append('<div class="row-fluid"><div class="span7"><table id="{0}" class="table table-condensed table-striped"></table></div><div class="span5"><div id="{1}" style="max-width:400px;" class="d3_container"></div></div></div>'.printf(table_id, plot_div_id));
 
     this.endpoint.build_endpoint_table($('#' + table_id));
-    new EndpointPlotContainer(this.endpoint, '#' + plot_div_id);
+    this.endpoint.renderPlot($('#' + plot_div_id));
 
     $(div + ' a.close').on('click', function(e){e.preventDefault(); self.toggle_view(false);});
     this.object_visible = true;
