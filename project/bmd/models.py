@@ -39,7 +39,7 @@ class BMDSession(models.Model):
         max_length=10,
         choices=BMDS_CHOICES)
     bmrs = JSONField(
-        default=dict)
+        default=list)
     date_executed = models.DateTimeField(
         null=True)
     created = models.DateTimeField(
