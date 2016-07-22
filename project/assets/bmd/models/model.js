@@ -44,7 +44,8 @@ class BMDLine {
             params_in_formula = formula.match(/\{[\w\(\)]+\}/g);
 
         _.each(params_in_formula, function(param){
-            let v = (params[param])? params[param].estimate: 0.,
+            let unbracketed = param.slice(1, param.length-1),
+                v = (params[unbracketed])? params[unbracketed].estimate: 0.,
                 re = new RegExp(param, 'g');
             formula = formula.replace(re, v);
         });
@@ -61,7 +62,7 @@ class BMDLine {
             .map((x) => {
                 return {
                     x,
-                    y: eval(model) || 3,  // TODO - temporary; fix
+                    y: eval(model),
                 };
             })
             .value();

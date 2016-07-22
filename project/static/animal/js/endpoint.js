@@ -1567,6 +1567,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             .data(this.bmd)
             .enter()
                 .append('path')
+                .attr('class', 'bmd_line')
                 .attr('d', function(d){ return liner(d.data); })
                 .attr('stroke', function(d){ return d.stroke; });
 
