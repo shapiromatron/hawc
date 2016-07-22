@@ -16,6 +16,7 @@ import {apply_logic} from 'bmd/models/logic';
 const defaultState = {
     hasSession: false,
     hasEndpoint: false,
+    hasExecuted: false,
     endpoint: null,
     dataType: null,
     doseUnits: null,
@@ -84,6 +85,7 @@ function bmd(state=defaultState, action){
             selectedModelNotes: tmp3.notes || '',
             logic: action.settings.logic,
             hasSession: true,
+            hasExecuted: action.settings.is_finished,
             logicApplied: false,
         });
 
