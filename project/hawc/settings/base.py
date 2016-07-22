@@ -118,6 +118,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
         'HOST': '',
         'PORT': '',
+        'CONN_MAX_AGE': 300,
     }
 }
 
