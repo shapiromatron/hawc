@@ -77,10 +77,10 @@
     {% include "comments/_comments_extrajs.html" %}
   {% endif %}
   <script type="text/javascript">
-    var endpoint = new Endpoint({{object.d_response|safe}}),
-        plot = new EndpointPlotContainer(endpoint, '#bmd_ds_plot');
+    var endpoint = new Endpoint({{object.d_response|safe}});
 
     endpoint.build_details_table($('#endpoint-details-table'));
     endpoint.build_endpoint_table($('#dr-tbl'));
+    endpoint.renderPlot($('#bmd_ds_plot'));
   </script>
 {% endblock %}
