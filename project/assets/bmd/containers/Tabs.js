@@ -118,7 +118,7 @@ class Tabs extends React.Component {
     }
 
     isReady(){
-        return (this.props.endpoint !== null);
+        return (this.props.logicApplied === true);
     }
 
     render(){
@@ -129,7 +129,7 @@ class Tabs extends React.Component {
                 doseUnits,
             } = this.props,
             showResultsTabs = (models.length>0)?'':'disabled',  // todo - only show if results available
-            selectedModel = _.findWhere(models, {id: selectedModelId});
+            selectedModel = _.findWhere(models, {id: selectedModelId}) || null;
 
         if (!this.isReady()){
             return <Loading />;

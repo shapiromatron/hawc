@@ -1,6 +1,7 @@
 import _ from 'underscore';
-import * as types from 'bmd/constants';
 import { deepCopy } from 'shared/utils';
+
+import * as types from 'bmd/constants';
 
 /*
 Failure bins:
@@ -265,7 +266,6 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
     };
 
 let apply_logic = function(logics, models, endpoint, doseUnits){
-    // todo - get doses, responses, stdevs for checks
 
     let doses = endpoint._get_doses_by_dose_id(doseUnits),
         groups = _.chain(endpoint.data.groups)

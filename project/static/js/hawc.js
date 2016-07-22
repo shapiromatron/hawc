@@ -746,8 +746,10 @@ D3Plot.prototype = {
         if(this.legend){
             var buffer = parseInt(this.legend.attr('data-buffer')),
                 dim = this.legend.node().getBoundingClientRect();
-            this.legend.select('.legend').attr('width', dim.width+buffer)
-                                         .attr('height', dim.height+buffer);
+            this.legend
+                .select('.legend')
+                .attr('width', dim.width+buffer)
+                .attr('height', dim.height+buffer);
         }
     },
     build_plot_skeleton: function(background){
