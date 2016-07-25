@@ -6,11 +6,10 @@ import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
 import { fetchScores, clearScores } from 'robScoreCleanup/actions/Items';
 
-import MetricForm from 'robTable/components/MetricForm';
+import MetricForm from 'robScoreCleanup/containers/MetricForm';
 import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
 import ScoreList from 'robScoreCleanup/containers/ScoreList';
 import ScoreSelect from 'robScoreCleanup/containers/ScoreSelect';
-import h from 'shared/utils/helpers';
 
 
 class Root extends Component {
@@ -20,29 +19,14 @@ class Root extends Component {
         this.loadMetrics = this.loadMetrics.bind(this);
         this.clearMetrics = this.clearMetrics.bind(this);
         this.state = {
-            formMetric: {
-                key: 'metric',
-                values:[
-                    {
-                        riskofbias_id: 0,
-                        score: 4,
-                        score_description: 'Probably high risk of bias',
-                        score_shade: '#FFCC00',
-                        score_symbol: '-',
-                        notes: 'This will change to reflect the first selected metric.',
-                        metric: {
-                            id: 0,
-                            metric: 'metric',
-                            description: 'description',
-                        },
-                        author: {
-                            full_name: '',
-                        },
-                    },
-                ],
-
-            }
-        }
+            config: {
+                display: 'all',
+                isForm: 'false',
+                riskofbias: {
+                    id: 0,
+                },
+            },
+        };
     }
 
     componentWillMount() {
@@ -62,37 +46,15 @@ class Root extends Component {
     loadMetrics(e) {
         e.preventDefault();
         this.props.dispatch(fetchScores());
-        this.updateFormMetric();
-    }
-
-    updateFormMetric() {
-        let { selected, isLoaded } = this.props.state.metrics,
-            { formMetric } = this.state;
-        if (isLoaded && formMetric.id !== selected.id){
-            this.setState({
-                formMetric: {
-                    ...formMetric,
-                    key: selected.metric,
-                    values: [{ ...formMetric.values[0], metric: {...selected}}],
-                }
-            });
-        }
     }
 
     render() {
-        let config = {
-                display: 'all',
-                isForm: 'false',
-                riskofbias: {
-                    id: 0,
-                },
-            },
-            { items, metrics, scores, error } = this.props.state;
-
+        let { itemsLoaded, metricsLoaded, scoresLoaded, error } = this.props,
+            { config } = this.state;
         return (
                 <div>
-                    {metrics.isLoaded ? <MetricSelect /> : null}
-                    {scores.isLoaded ? <ScoreSelect /> : null}
+                    {metricsLoaded ? <MetricSelect /> : null}
+                    {scoresLoaded ? <ScoreSelect /> : null}
                     <div>
                         <button className='btn btn-primary' onClick={this.loadMetrics}>
                             Load Metrics
@@ -101,16 +63,20 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    {items.isLoaded ? <MetricForm metric={this.state.formMetric} config={config}/> : null}
-                    {items.isLoaded ? <ScoreList config={config} /> : null}
+                    {itemsLoaded ? <MetricForm config={config}/> : null}
+                    {itemsLoaded ? <ScoreList config={config} /> : null}
                 </div>
         );
     }
 }
 function mapStateToProps(state){
+    const { metrics, items, scores, error } = state;
     return {
-        state,
+        metricsLoaded: metrics.isLoaded,
+        scoresLoaded: scores.isLoaded,
+        itemsLoaded: items.isLoaded,
+        error,
     };
-};
+}
 
 export default connect(mapStateToProps)(Root);

@@ -11,7 +11,8 @@ class CheckboxScoreDisplay extends Component {
             config: {
                 display: 'final',
                 isForm: false,
-        }};
+            },
+        };
     }
 
     render() {
