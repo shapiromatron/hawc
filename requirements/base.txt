@@ -1,4 +1,4 @@
-Django==1.9.4
+Django==1.9.8
 amqp==1.4.6
 anyjson==0.3.3
 billiard==3.3.0.20
@@ -14,7 +14,7 @@ django-selectable==0.9.0
 django-taggit==0.18.0
 django-treebeard==4.0
 django-webpack-loader==0.3.0
-djangorestframework==3.3.2
+djangorestframework==3.4.0
 git+https://github.com/chibisov/drf-extensions@5d7bdbb1e29a8ed6681366d3d243771a350ed412
 docutils==0.12
 kombu==3.0.26

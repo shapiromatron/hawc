@@ -22,7 +22,7 @@ class StudyFormTests(TestCase):
         study_dict = {
             'short_citation': 'foo et al.',
             'full_citation': 'cite',
-            'study_type': 0,
+            'bioassay': True,
             'coi_reported': 0
         }
 

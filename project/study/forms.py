@@ -14,8 +14,8 @@ class BaseStudyForm(forms.ModelForm):
     """
     class Meta:
         model = models.Study
-        fields = ('short_citation', 'study_identifier',
-                  'full_citation', 'study_type',
+        fields = ('short_citation', 'study_identifier', 'full_citation',
+                  'bioassay', 'in_vitro', 'epi', 'epi_meta',
                   'coi_reported', 'coi_details',
                   'funding_source', 'full_text_url',
                   'contact_author', 'ask_author',
@@ -46,6 +46,7 @@ class BaseStudyForm(forms.ModelForm):
         if 'authors' in self.fields:
             helper.add_fluid_row('authors', 2, "span6")
         helper.add_fluid_row('short_citation', 2, "span6")
+        helper.add_fluid_row('bioassay', 4, 'span3')
         helper.add_fluid_row('coi_reported', 2, "span6")
         helper.add_fluid_row('contact_author', 2, "span6")
         return helper
@@ -83,10 +84,9 @@ class ReferenceStudyForm(BaseStudyForm):
     """
     class Meta:
         model = models.Study
-        fields = ('short_citation', 'study_identifier',
-                  'full_citation',
-                  'title', 'authors', 'journal',
-                  'abstract', 'study_type',
+        fields = ('short_citation', 'study_identifier', 'full_citation',
+                  'title', 'authors', 'journal', 'abstract',
+                  'bioassay', 'in_vitro', 'epi', 'epi_meta',
                   'coi_reported', 'coi_details',
                   'funding_source', 'full_text_url',
                   'contact_author', 'ask_author',
@@ -140,7 +140,7 @@ class StudiesCopy(forms.Form):
         self.fields['assessment'].queryset = self.fields['assessment']\
             .queryset.model.get_editable_assessments(user, assessment.id)
         self.fields['studies'].queryset = self.fields['studies']\
-            .queryset.filter(assessment_id=assessment.id, study_type=1)
+            .queryset.filter(assessment_id=assessment.id, epi=True)
         self.helper = self.setHelper(assessment)
 
     def setHelper(self, assessment):
@@ -149,7 +149,7 @@ class StudiesCopy(forms.Form):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": "Copy studies across assessments",
+            "legend_text": "Copy epi studies across assessments",
             "help_text": self.HELP_TEXT,
             "cancel_url": reverse("study:list", args=[assessment.id]),
         }

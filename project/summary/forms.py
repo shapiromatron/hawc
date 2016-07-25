@@ -173,16 +173,16 @@ class PrefilterMixin(object):
             prefilters = {}
 
         if type(self.instance) is models.Visual:
-            evidence_type = 0
+            evidence_type = models.BIOASSAY
         else:
             evidence_type = self.instance.evidence_type
 
         for k, v in prefilters.iteritems():
             if k == "system__in":
-                if evidence_type == 0:
+                if evidence_type == models.BIOASSAY:
                     self.fields["prefilter_system"].initial = True
                     self.fields["systems"].initial = v
-                elif evidence_type == 1:
+                elif evidence_type == models.EPI:
                     self.fields["prefilter_episystem"].initial = True
                     self.fields["episystems"].initial = v
 
@@ -191,10 +191,10 @@ class PrefilterMixin(object):
                 self.fields["organs"].initial = v
 
             if k == "effect__in":
-                if evidence_type == 0:
+                if evidence_type == models.BIOASSAY:
                     self.fields["prefilter_effect"].initial = True
                     self.fields["effects"].initial = v
-                elif evidence_type == 1:
+                elif evidence_type == models.EPI:
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
@@ -276,13 +276,13 @@ class PrefilterMixin(object):
             if self.__class__.__name__ == "CrossviewForm":
                 evidence_type = 0
 
-            if evidence_type == 0:  # Bioassay
+            if evidence_type == models.BIOASSAY:
                 prefilters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == 1:  # Epi
-                prefilters["study_population__study__in"] = studies
-            elif evidence_type == 2:  # in-vitro
+            elif evidence_type == models.IN_VITRO:
                 prefilters["experiment__study__in"] = studies
-            elif evidence_type == 4:  # meta
+            elif evidence_type == models.EPI:
+                prefilters["study_population__study__in"] = studies
+            elif evidence_type == models.EPI_META:
                 prefilters["protocol__study__in"] = studies
             else:
                 raise ValueError("Unknown evidence type")
@@ -507,10 +507,10 @@ class RoBForm(PrefilterMixin, VisualForm):
 def get_visual_form(visual_type):
     try:
         return {
-            0: EndpointAggregationForm,
-            1: CrossviewForm,
-            2: RoBForm,
-            3: RoBForm
+            models.Visual.BIOASSAY_AGGREGATION: EndpointAggregationForm,
+            models.Visual.BIOASSAY_CROSSVIEW: CrossviewForm,
+            models.Visual.ROB_HEATMAP: RoBForm,
+            models.Visual.ROB_BARCHART: RoBForm,
         }[visual_type]
     except:
         raise ValueError()
@@ -586,10 +586,10 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def __init__(self, *args, **kwargs):
         super(DataPivotQueryForm, self).__init__(*args, **kwargs)
         self.fields["evidence_type"].choices = (
-            (0, 'Animal Bioassay'),
-            (1, 'Epidemiology'),
-            (4, 'Epidemiology meta-analysis/pooled analysis'),
-            (2, 'In vitro'))
+            (models.BIOASSAY, 'Animal Bioassay'),
+            (models.EPI, 'Epidemiology'),
+            (models.EPI_META, 'Epidemiology meta-analysis/pooled analysis'),
+            (models.IN_VITRO, 'In vitro'))
         self.fields['preferred_units'].required = False
         self.helper = self.setHelper()
 
@@ -600,7 +600,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def clean_export_style(self):
         evidence_type = self.cleaned_data['evidence_type']
         export_style = self.cleaned_data['export_style']
-        if evidence_type != 2 and export_style != 0:
+        if evidence_type != models.IN_VITRO and export_style != self.instance.EXPORT_GROUP:
             raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
         return export_style
 

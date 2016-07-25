@@ -65,7 +65,7 @@ class StudyPermissions(TestCase):
                     'assessment': self.assessment_working.pk,
                     'short_citation': 'foo et al.',
                     'full_citation': 'cite',
-                    'study_type': 0,
+                    'bioassay': True,
                     'coi_reported': 0
                 })
             self.assertTrue(response.status_code == 302)

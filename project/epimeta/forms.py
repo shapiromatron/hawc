@@ -197,7 +197,7 @@ class SingleResultForm(forms.ModelForm):
             self.instance.meta_result = parent
 
         self.fields['study'].queryset = self.fields['study'].queryset\
-            .filter(assessment=assessment, study_type=1)
+            .filter(assessment=assessment, epi=True)
 
         self.helper = self.setHelper()
 
