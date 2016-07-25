@@ -100,14 +100,16 @@ class RiskOfBiasMetric(models.Model):
 
     @classmethod
     def get_required_metrics(cls, assessment, study):
-        filters = {
-            'domain__in': RiskOfBiasDomain.objects.filter(assessment=assessment),
-        }
-        if study.study_type == 0:
-            filters['required_animal'] = True
-        elif study.study_type in [1, 4]:
-            filters['required_epi'] = True
-        return RiskOfBiasMetric.objects.filter(**filters)
+
+        requireds = models.Q()
+        if study.bioassay:
+            requireds |= models.Q(required_animal=True)
+        if study.epi or study.epi_meta:
+            requireds |= models.Q(required_epi=True)
+
+        return RiskOfBiasMetric.objects\
+            .filter(domain__assessment=assessment)\
+            .filter(requireds)
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):

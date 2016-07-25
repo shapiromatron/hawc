@@ -23,23 +23,27 @@ from utils.models import get_crumbs
 
 class Study(Reference):
 
-    STUDY_TYPE_CHOICES = (
-        (0, 'Animal Bioassay'),
-        (1, 'Epidemiology'),
-        (4, 'Epidemiology meta-analysis/pooled analysis'),
-        (2, 'In vitro'),
-        (3, 'Other'))
-
     COI_REPORTED_CHOICES = (
         (0, 'Authors report they have no COI'),
         (1, 'Authors disclosed COI'),
         (2, 'Unknown'),
         (3, 'Not reported'))
 
-    study_type = models.PositiveSmallIntegerField(
-        choices=STUDY_TYPE_CHOICES,
-        help_text="Type of data captured in the selected study. "
-                  "This determines which fields are required for data-extraction.")
+    bioassay = models.BooleanField(
+        verbose_name='Animal bioassay',
+        default=False,
+        help_text='Study contains animal bioassay data')
+    epi = models.BooleanField(
+        verbose_name='Epidemiology',
+        default=False,
+        help_text='Study contains epidemiology data')
+    epi_meta = models.BooleanField(
+        verbose_name='Epidemiology meta-analysis',
+        default=False,
+        help_text='Study contains epidemiology meta-analysis/pooled analysis data')
+    in_vitro = models.BooleanField(
+        default=False,
+        help_text='Study contains in-vitro data')
     short_citation = models.CharField(
         max_length=256,
         help_text="How the study should be identified (i.e. Smith et al. (2012), etc.)")
@@ -112,20 +116,22 @@ class Study(Reference):
             logging.info("Copying {} to  {}".format(study, assessment))
 
             # get child-types before changing
-            type_ = study.study_type
-            if type_ == 0:  # bioassay
-                children = list(study.experiments.all())
-            elif type_ == 1:  # epi
-                children = list(study.study_populations.all())
-            elif type_ == 2:  # in-vitro
-                children = list(itertools.chain(
+            children = []
+
+            if study.bioassay:
+                children.extend(list(study.experiments.all()))
+
+            if study.epi:
+                children.extend(list(study.study_populations.all()))
+
+            if study.in_vitro:
+                children.extend(itertools.chain(
                     study.ivchemicals.all(),
                     study.ivcelltypes.all(),
                     study.ivexperiments.all()))
-            elif type_ == 3:  # other
-                children = []
-            elif type_ == 4:  # meta-analysis
-                children = list(study.meta_protocols.all())
+
+            if study.epi_meta:
+                children.extend(list(study.meta_protocols.all()))
 
             # copy reference and identifiers
             # (except RIS which is assessment-specific)
@@ -203,7 +209,7 @@ class Study(Reference):
         Experiment = apps.get_model('animal', 'Experiment')
         AnimalGroup = apps.get_model('animal', 'AnimalGroup')
 
-        if self.study_type != 0:  # not a bioassay study
+        if not self.bioassay:
             return Endpoint.objects.none()
 
         return Endpoint.objects.filter(
@@ -220,7 +226,10 @@ class Study(Reference):
             'study-coi_reported',
             'study-coi_details',
             'study-funding_source',
-            'study-study_type',
+            'study-bioassay',
+            'study-epi',
+            'study-epi_meta',
+            'study-in_vitro',
             'study-study_identifier',
             'study-contact_author',
             'study-ask_author',
@@ -238,7 +247,10 @@ class Study(Reference):
             ser['coi_reported'],
             ser['coi_details'],
             ser['funding_source'],
-            ser['study_type'],
+            ser['bioassay'],
+            ser['epi'],
+            ser['epi_meta'],
+            ser['in_vitro'],
             ser['study_identifier'],
             ser['contact_author'],
             ser['ask_author'],

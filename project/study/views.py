@@ -80,8 +80,7 @@ class StudyCreateFromReference(BaseCreate):
 
         # hack - use custom validation since will always fail for one-to-one
         if ((form.data['short_citation'] == u'') or
-            (form.data['full_citation'] == u'') or
-            (form.data['study_type'] == u'')):
+            (form.data['full_citation'] == u'')):
             return self.form_invalid(form)
         else:
             #save using our custom saving tool

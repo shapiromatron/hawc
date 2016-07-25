@@ -26,12 +26,6 @@ class ExperimentCreate(BaseCreate):
     model = models.Experiment
     form_class = forms.ExperimentForm
 
-    def dispatch(self, *args, **kwargs):
-        response = super(ExperimentCreate, self).dispatch(*args, **kwargs)
-        if self.parent.get_study_type_display() != "Animal Bioassay":
-            raise Http404
-        return response
-
 
 class ExperimentRead(BaseDetail):
     model = models.Experiment

@@ -1,15 +1,3 @@
-var RiskOfBiasStudy = function(data){
-    this.data = data;
-};
-RiskOfBiasStudy.prototype = {
-    get_url: function(){
-        return '<a href="/rob{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
-    },
-    build_row: function(){
-        return [this.get_url(), this.data.full_citation, this.data.study_type];
-    },
-};
-
 var RiskOfBiasScore = function(study, data){
     this.study = study;
     this.data = data;
