@@ -5,6 +5,28 @@ const defaultState = {
     isLoaded: false,
     items: [],
     updateIds: [],
+    editMetric: {
+        key: 'metric',
+        values:[
+            {
+                id: 0,
+                riskofbias_id: 0,
+                score: 4,
+                score_description: 'Probably high risk of bias',
+                score_shade: '#FFCC00',
+                score_symbol: '-',
+                notes: 'This will change to reflect the first selected metric.',
+                metric: {
+                    id: 0,
+                    metric: '',
+                    description: '',
+                },
+                author: {
+                    full_name: '',
+                },
+            },
+        ],
+    },
 };
 
 function items(state=defaultState, action) {
@@ -38,6 +60,11 @@ function items(state=defaultState, action) {
             updateIds,
         });
     
+    case types.UPDATE_EDIT_METRIC:
+        return Object.assign({}, state, {
+            editMetric: action.editMetric,
+        })
+
     default:
         return state;
     }

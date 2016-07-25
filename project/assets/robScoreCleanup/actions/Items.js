@@ -60,3 +60,35 @@ export function fetchScores(){
             .catch((error) => dispatch(setError(error)));
     };
 }
+
+function updateEditMetric(editMetric) {
+    return {
+        type: types.UPDATE_EDIT_METRIC,
+        editMetric,
+    };
+}
+
+export function updateEditMetricIfNeeded() {
+    return (dispatch, getState) => {
+        let state = getState(),
+            current = state.items.editMetric,
+            update;
+        if (!state.items.isLoaded) return;
+        if (_.isEmpty(state.items.updateIds)) {
+            update = {
+                key: state.items.items[0].metric.metric,
+                values: [
+                    {...current.values[0],
+                        metric: {...state.items.items[0].metric}
+                    },
+                ],
+            };
+            if (!_.isEqual(update, current)){
+                dispatch(updateEditMetric(update));
+            }
+        } else {
+            update = _.findWhere(state.items.items, {id: parseInt(state.items.updateIds[0])});
+            dispatch(updateEditMetric(update));
+        }
+    };
+}
