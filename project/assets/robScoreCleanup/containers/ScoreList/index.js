@@ -18,12 +18,14 @@ export class ScoreList extends Component {
     }
 
     render() {
-        let { items, updateIds } = this.props;
+        let { items, idList, selected } = this.props,
+            filteredItems = _.isEmpty(selected) ? items : _.filter(items, (item) => {return _.contains(selected, item.score.toString())});
+
         return (
             <div>
-            {_.map(items, (item) => {
+            {_.map(filteredItems, (item) => {
                 item = item.author ? item : Object.assign({}, item, {author: { full_name: ''}});
-                let checked = _.contains(updateIds, item.id);
+                let checked = _.contains(idList, item.id);
                 return (
                     <div key={item.id}>
                         <CheckboxScoreDisplay
@@ -41,13 +43,10 @@ export class ScoreList extends Component {
 }
 
 function mapStateToProps(state) {
-    const { items, updateIds } = state.items;
-    const { selected } = state.scores;
-    let filteredItems = _.isEmpty(selected) ? items : _.filter(items, (item) => {return _.contains(selected, item.score.toString())});
     return {
-        items: filteredItems,
-        updateIds,
-        selected,
+        selected: state.scores.selected,
+        items: state.items.items,
+        idList: state.items.updateIds,
     };
 }
 
