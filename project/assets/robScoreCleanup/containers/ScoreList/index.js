@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { selectScoreForUpdate } from 'robScoreCleanup/actions/Items';
+import { checkScoreForUpdate } from 'robScoreCleanup/actions/Items';
 
 import CheckboxScoreDisplay from 'robScoreCleanup/components/CheckboxScoreDisplay';
 
@@ -14,7 +14,7 @@ export class ScoreList extends Component {
     }
 
     handleCheck({target}) {
-        this.props.dispatch(selectScoreForUpdate(target.id));
+        this.props.dispatch(checkScoreForUpdate(target.id));
     }
 
     render() {

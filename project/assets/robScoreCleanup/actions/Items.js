@@ -23,10 +23,10 @@ export function clearScores() {
     };
 }
 
-export function selectScoreForUpdate(id) {
+export function checkScoreForUpdate(id) {
     return {
-        type: types.SELECT_SCORE_FOR_UPDATE,
-        id,
+        type: types.CHECK_SCORE_FOR_UPDATE,
+        id: parseInt(id),
     };
 }
 

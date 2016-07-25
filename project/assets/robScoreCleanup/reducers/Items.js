@@ -30,7 +30,7 @@ const defaultState = {
 };
 
 function items(state=defaultState, action) {
-
+    let list, index;
     switch(action.type){
 
     case types.REQUEST_ITEMS:
@@ -54,16 +54,27 @@ function items(state=defaultState, action) {
             updateIds: [],
         });
 
-    case types.SELECT_SCORE_FOR_UPDATE:
-        let updateIds = _.contains(state.updateIds, action.id) ? state.updateIds : [...state.updateIds, parseInt(action.id)];
+    case types.CHECK_SCORE_FOR_UPDATE:
+        index = state.updateIds.indexOf(action.id);
+        if (index >= 0){
+            list = [
+                ...state.updateIds.slice(0, index),
+                ...state.updateIds.slice(index + 1),
+            ];
+        } else {
+            list = [
+                ...state.updateIds,
+                action.id,
+            ];
+        }
         return Object.assign({}, state, {
-            updateIds,
+            updateIds: list,
         });
     
     case types.UPDATE_EDIT_METRIC:
         return Object.assign({}, state, {
             editMetric: action.editMetric,
-        })
+        });
 
     default:
         return state;
