@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { deepCopy } from 'shared/utils';
+import { deepCopy, toHawcString } from 'shared/utils';
 
 import * as types from 'bmd/constants';
 
@@ -30,13 +30,13 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
     },
     assertLessThan = function(value, threshold, failure_bin, varname){
         if (value > threshold){
-            let txt = `${varname} (=${value}) is greater-than than threshold value (${threshold})`;
+            let txt = `${varname} (=${toHawcString(value)}) is greater-than than threshold value (${threshold})`;
             return returnFailure(failure_bin, txt);
         }
     },
     assertGreaterThan = function(value, threshold, failure_bin, varname){
         if (value < threshold){
-            let txt = `${varname} (=${value}) is less-than than threshold value (${threshold})`;
+            let txt = `${varname} (=${toHawcString(value)}) is less-than than threshold value (${threshold})`;
             return returnFailure(failure_bin, txt);
         }
     },
