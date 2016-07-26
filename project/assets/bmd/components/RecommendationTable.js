@@ -70,19 +70,19 @@ class RecommendationTable extends React.Component {
     }
 
     renderRecommendationTd(d){
-        let txt = d.recommended_text;
+        let txts = [];
 
         if (d.recommended){
-            txt = `Recommended best-fitting model, based on the lowest ${d.recommended_variable} from valid models`;
+            txts.push(`Recommended best-fitting model, based on the lowest ${d.recommended_variable} from valid models.`);
         }
 
         if (this.props.selectedModelId === d.id){
-            txt = 'Selected as the best-fitting model by the user';
+            txts.push('Selected as the best-fitting model by the user.');
         }
 
         return <td>
             {this.renderLogicBatch(d)}
-            <p><b>{txt}</b></p>
+            <p><b>{txts.join(' ')}</b></p>
         </td>;
     }
 

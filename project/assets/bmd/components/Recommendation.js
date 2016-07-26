@@ -52,7 +52,7 @@ class Recommendation extends React.Component {
         );
 
         return (
-            <div className='row-fluid'>
+            <div className='row-fluid' key={0}>
             <legend>Select BMD model</legend>
             <form className="form">
                 <div className='span4'>
@@ -105,12 +105,23 @@ class Recommendation extends React.Component {
 
     renderWell(){
         return (
-            <div className='well'>
+            <div className='well' key={1}>
                 <button type='button'
                         className='btn btn-primary'
                         onClick={this.handleSaveSelected.bind(this)}>Save selected model</button>
             </div>
         );
+    }
+
+    renderEditMode(){
+        if (!this.props.editMode){
+            return null;
+        }
+
+        return [
+            this.renderForm(),
+            this.renderWell(),
+        ];
     }
 
     render() {
@@ -128,14 +139,14 @@ class Recommendation extends React.Component {
                 <RecommendationTable
                     models={modelSubset}
                     selectedModelId={this.props.selectedModelId} />
-                {this.renderForm()}
-                {this.renderWell()}
+                {this.renderEditMode()}
             </div>
         );
     }
 }
 
 Recommendation.propTypes = {
+    editMode: React.PropTypes.bool.isRequired,
     selectedModelId: React.PropTypes.number,
     selectedModelNotes: React.PropTypes.string.isRequired,
     handleSaveSelected: React.PropTypes.func.isRequired,

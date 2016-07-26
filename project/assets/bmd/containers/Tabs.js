@@ -182,13 +182,15 @@ class Tabs extends React.Component {
     }
 
     renderRecommendationTab(){
-        let { bmrs, models, selectedModelId, selectedModelNotes, hasExecuted } = this.props;
+        let {editMode} = this.props.config,
+            { bmrs, models, selectedModelId, selectedModelNotes, hasExecuted } = this.props;
 
         if(!hasExecuted){
             return null;
         }
 
         return <Recommendation
+            editMode={editMode}
             models={models}
             bmrs={bmrs}
             selectedModelId={selectedModelId}
