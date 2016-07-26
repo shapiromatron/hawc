@@ -39,7 +39,7 @@ class BMDLine {
 
     _getModel(){
         // Construct BMD model-form
-        let params = this.model.output.parameters,
+        let params = this.model.output.parameters || {},
             formula = formulas[this.model.name],
             params_in_formula = formula.match(/\{[\w\(\)]+\}/g);
 

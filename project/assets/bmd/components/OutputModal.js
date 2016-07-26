@@ -10,6 +10,21 @@ class OutputModal extends React.Component {
         $(this.refs.modalBody).animate({scrollTop: 0}, 'fast');
     }
 
+    renderBody(){
+        var { model } = this.props;
+
+        if (model.execution_error){
+            return <div className='alert alert-danger'>
+                <p>
+                An error occurred during BMDS execution, please report
+                to HAWC administrators if the error continues to occur.
+                </p>
+            </div>;
+        }
+
+        return <pre>{model.outfile}</pre>;
+    }
+
     render() {
         var { model } = this.props;
 
@@ -26,7 +41,7 @@ class OutputModal extends React.Component {
                 </div>
 
                 <div className="modal-body" ref='modalBody'>
-                    <pre>{model.outfile}</pre>
+                    {this.renderBody()}
                 </div>
 
                 <div className="modal-footer">

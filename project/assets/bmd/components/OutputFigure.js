@@ -20,8 +20,7 @@ class OutputFigure extends React.Component {
                 delete this.hover_line;
             }
         } else {
-
-            if (this.selected_line && model.id == this.selected_line.model.id){
+            if (model.execution_error || (this.selected_line && model.id == this.selected_line.model.id)){
                 return;
             }
 
@@ -31,7 +30,7 @@ class OutputFigure extends React.Component {
     }
 
     renderSelectedLine(model){
-        if (model === null || (this.selected_line && this.selected_line.model.id !== model.id)){
+        if (model === null || model.execution_error || (this.selected_line && this.selected_line.model.id !== model.id)){
             if (this.selected_line){
                 this.selected_line.destroy();
                 delete this.selected_line;

@@ -315,7 +315,7 @@ class Model(models.Model):
         return self.session.get_assessment()
 
     def save_model(self, model):
-        self.execution_error = False
+        self.execution_error = (model.outfile == '')
         self.dfile = model.as_dfile()
         self.outfile = model.outfile
         self.output = model.output

@@ -167,7 +167,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
         },
         'Warnings'(logic, model, groups){
             let vals = model.output.warnings;
-            if (vals.length > 0){
+            if (vals && vals.length > 0){
                 return returnFailure(logic.failure_bin, vals.join(' '));
             }
         },
@@ -242,6 +242,9 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
         },
         'Control residual'(logic, model, groups){
+            if (model.output.fit_residuals === undefined){
+                return;
+            }
             let val = Math.abs(model.output.fit_residuals[0]);
             if (validNumeric(val)){
                 return assertLessThan(
@@ -252,6 +255,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
         },
         'Control stdev'(logic, model, groups){
+            if (model.output.fit_est_stdev === undefined ||
+                model.output.fit_stdev === undefined){
+                return;
+            }
+
             let modeled = model.output.fit_est_stdev[0],
                 actual = model.output.fit_stdev[0];
 
