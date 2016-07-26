@@ -54,7 +54,25 @@ class BMDLine {
 
     _getPlotData(){
         let model = this._getModel(),
-            data;
+            bmd = this.model.output.BMD,
+            bmdl = this.model.output.BMDL,
+            data, bmd_line, bmdl_line, x;
+
+        if(bmd && bmd>0){
+            x = bmd;
+            bmd_line = {
+                x: bmd,
+                y: eval(model),
+            };
+        }
+
+        if(bmdl && bmdl>0){
+            x = bmdl;
+            bmdl_line = {
+                x: bmdl,
+                y: eval(model),
+            };
+        }
 
         data = _.chain(this.plot.x_scale.ticks(100))
             .filter((d) => d >= 0)
@@ -72,6 +90,8 @@ class BMDLine {
             name: this.model.name,
             stroke: this.color,
             data,
+            bmd_line,
+            bmdl_line,
         };
 
     }

@@ -1552,17 +1552,69 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     },
     render_bmd_lines: function(){
         this.remove_bmd_lines();
-        let g = this.vis
-            .append('g')
-            .attr('class', 'bmd');
 
-        let x = this.x_scale,
+        var x = this.x_scale,
             y = this.y_scale,
             liner = d3.svg.line()
                 .x(function(d){return x(d.x);})
                 .y(function(d){return y(d.y);})
                 .interpolate('linear');
 
+        var bmds = _.chain(this.bmd)
+                    .filter(function(d){
+                        return  d.bmd_line !== undefined;
+                    })
+                    .map(function(d){
+                        return [
+                            {
+                                x1: x(d.bmd_line.x),
+                                x2: x(d.bmd_line.x),
+                                y1: y.range()[0],
+                                y2: y(d.bmd_line.y),
+                                stroke: d.stroke,
+                            },
+                            {
+                                x1: x.range()[0],
+                                x2: x(d.bmd_line.x),
+                                y1: y(d.bmd_line.y),
+                                y2: y(d.bmd_line.y),
+                                stroke: d.stroke,
+                            },
+                        ];
+                    })
+                    .flatten()
+                    .value();
+
+        var bmdls = _.chain(this.bmd)
+                    .filter(function(d){
+                        return  d.bmdl_line !== undefined;
+                    })
+                    .map(function(d){
+                        return [
+                            {
+                                x1: x(d.bmdl_line.x),
+                                x2: x(d.bmdl_line.x),
+                                y1: y.range()[0],
+                                y2: y(d.bmdl_line.y),
+                                stroke: d.stroke,
+                            },
+                            {
+                                x1: x.range()[0],
+                                x2: x(d.bmdl_line.x),
+                                y1: y(d.bmdl_line.y),
+                                y2: y(d.bmdl_line.y),
+                                stroke: d.stroke,
+                            },
+                        ];
+                    })
+                    .flatten()
+                    .value();
+
+        var g = this.vis
+            .append('g')
+            .attr('class', 'bmd');
+
+        // add lines
         g.selectAll('path')
             .data(this.bmd)
             .enter()
@@ -1570,6 +1622,30 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                 .attr('class', 'bmd_line')
                 .attr('d', function(d){ return liner(d.data); })
                 .attr('stroke', function(d){ return d.stroke; });
+
+        // add bmd lines
+        g.selectAll('line.bmd')
+            .data(bmds)
+            .enter()
+                .append('line')
+                .attr('class', 'bmd_line')
+                .attr('x1', function(d){return d.x1; })
+                .attr('x2', function(d){return d.x2; })
+                .attr('y1', function(d){return d.y1; })
+                .attr('y2', function(d){return d.y2; })
+                .attr('stroke', function(d){return d.stroke; });
+
+        // add bmdl lines
+        g.selectAll('line.bmd')
+            .data(bmdls)
+            .enter()
+                .append('line')
+                .attr('class', 'bmd_line')
+                .attr('x1', function(d){return d.x1; })
+                .attr('x2', function(d){return d.x2; })
+                .attr('y1', function(d){return d.y1; })
+                .attr('y2', function(d){return d.y2; })
+                .attr('stroke', function(d){return d.stroke; });
 
         this.add_legend();
     },
