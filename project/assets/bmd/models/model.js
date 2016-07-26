@@ -4,8 +4,8 @@ import _ from 'underscore';
 let formulas = {
     'Polynomial': '{beta_0} + ({beta_1}*x) + ({beta_2}*Math.pow(x,2)) + ({beta_3}*Math.pow(x,3)) + ({beta_4}*Math.pow(x,4)) + ({beta_5}*Math.pow(x,5)) + ({beta_6}*Math.pow(x,6)) + ({beta_7}*Math.pow(x,7)) + ({beta_8}*Math.pow(x,8))',
     'Linear': '{beta_0} + ({beta_1}*x)',
-    'Exponential-M2': '{a} * Math.exp({sign}*{b}*x)',
-    'Exponential-M3': '{a} * Math.exp({sign}*Math.pow({b}*x,{d}))',
+    'Exponential-M2': '{a} * Math.exp({isIncreasing}*{b}*x)',
+    'Exponential-M3': '{a} * Math.exp({isIncreasing}*Math.pow({b}*x,{d}))',
     'Exponential-M4': '{a} * ({c}-({c}-1) * Math.exp(-1.*{b}*x))',
     'Exponential-M5': '{a} * ({c}-({c}-1) *  Math.exp(-1.*Math.pow({b}*x,{d})))',
     'Power': '{control} + {slope} * Math.pow(x,{power})',
@@ -39,13 +39,20 @@ class BMDLine {
 
     _getModel(){
         // Construct BMD model-form
-        let params = this.model.output.parameters || {},
+        let params = {},
             formula = formulas[this.model.name],
+            estimates = this.model.output.fit_estimated,
             params_in_formula = formula.match(/\{[\w\(\)]+\}/g);
+
+        // get parameter values for models
+        _.each(this.model.output.parameters, (v, k)=>{
+            params[k] = v.estimate;
+        });
+        params['isIncreasing'] = (estimates[0] < estimates[estimates.length-1])? 1: -1;
 
         _.each(params_in_formula, function(param){
             let unbracketed = param.slice(1, param.length-1),
-                v = (params[unbracketed])? params[unbracketed].estimate: 0.,
+                v = (params[unbracketed] !== undefined)? params[unbracketed]: 0.,
                 regex = param.replace('(', '\\(').replace(')', '\\)'), // escape ()
                 re = new RegExp(regex, 'g');
             formula = formula.replace(re, v);
