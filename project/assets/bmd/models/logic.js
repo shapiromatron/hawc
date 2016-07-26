@@ -354,7 +354,7 @@ let apply_logic = function(logics, models, endpoint, doseUnits){
         } else {
             let targetValue = d3.min(bmdls);
             _.chain(subset)
-                .filter((d)=>d.output.AIC === targetValue)
+                .filter((d)=>d.output.BMDL === targetValue)
                 .each((d)=>{
                     d.recommended = true;
                     d.recommended_variable = 'BMDL';
