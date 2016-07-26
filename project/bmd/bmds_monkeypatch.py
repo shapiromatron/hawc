@@ -5,12 +5,20 @@ import requests
 from django.conf import settings
 
 
+def get_model_name(model):
+    # special case for exponential models
+    if hasattr(model, 'output_prefix'):
+        return '{}_{}'.format(model.exe, model.output_prefix.lower())
+    else:
+        return model.exe
+
+
 # monkey-patch execution in bmds package
 def get_dataset(session):
     runs = [
         {
             'id': model.id,
-            'model_app_name': model.exe,
+            'model_app_name': get_model_name(model),
             'dfile': model.as_dfile()
         } for model in session._models
     ]
