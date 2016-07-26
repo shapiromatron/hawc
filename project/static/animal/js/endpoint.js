@@ -663,7 +663,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         }
         return epc;
     },
-    _render_bmd_lines(epc){
+    _render_bmd_lines: function(epc){
         let model = this.data.bmd,
             dr = epc.plot,
             line = new window.app.BMDLine(model, dr, 'blue');
@@ -1501,13 +1501,18 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
         if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text': 'LOEL', 'classes': 'dose_points LOEL', 'color': undefined}); }
         if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text': 'NOEL', 'classes': 'dose_points NOEL', 'color': undefined}); }
-        this.bmd.forEach(function(d){
-            legend_settings.items.push({
-                'text': d.name,
-                'classes': '',
-                'color': d.stroke,
+        var doseUnits = parseInt(this.endpoint.dose_units_id);
+        this.bmd
+            .filter(function(d){
+                return d.dose_units_id === doseUnits;
+            })
+            .forEach(function(d){
+                legend_settings.items.push({
+                    'text': d.name,
+                    'classes': '',
+                    'color': d.stroke,
+                });
             });
-        });
 
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
@@ -1553,16 +1558,21 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     render_bmd_lines: function(){
         this.remove_bmd_lines();
 
-        var x = this.x_scale,
+        var doseUnits = parseInt(this.endpoint.dose_units_id),
+            lines = this.bmd.filter(function(d){
+                return d.dose_units_id === doseUnits;
+            }),
+            x = this.x_scale,
+            xs = this.x_scale.ticks(100),
             y = this.y_scale,
             liner = d3.svg.line()
                 .x(function(d){return x(d.x);})
                 .y(function(d){return y(d.y);})
                 .interpolate('linear');
 
-        var bmds = _.chain(this.bmd)
+        var bmds = _.chain(lines)
                     .filter(function(d){
-                        return  d.bmd_line !== undefined;
+                        return d.bmd_line !== undefined;
                     })
                     .map(function(d){
                         return [
@@ -1585,9 +1595,9 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                     .flatten()
                     .value();
 
-        var bmdls = _.chain(this.bmd)
+        var bmdls = _.chain(lines)
                     .filter(function(d){
-                        return  d.bmdl_line !== undefined;
+                        return d.bmdl_line !== undefined;
                     })
                     .map(function(d){
                         return [
@@ -1616,11 +1626,11 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
         // add lines
         g.selectAll('path')
-            .data(this.bmd)
+            .data(lines)
             .enter()
                 .append('path')
                 .attr('class', 'bmd_line')
-                .attr('d', function(d){ return liner(d.data); })
+                .attr('d', function(d){ return liner(d.getData(xs)); })
                 .attr('stroke', function(d){ return d.stroke; });
 
         // add bmd lines

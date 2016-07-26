@@ -82,22 +82,23 @@ class BMDLine {
             };
         }
 
-        data = _.chain(this.plot.x_scale.ticks(100))
-            .filter((d) => d >= 0)
-            .map((d) => (d === 0)? 1e-8: d)
-            .map((x) => {
-                return {
-                    x,
-                    y: eval(model),
-                };
-            })
-            .value();
-
         return {
             id: this.model.id,
+            dose_units_id: this.model.dose_units,
             name: this.model.name,
             stroke: this.color,
-            data,
+            getData(xs){
+                return _.chain(xs)
+                    .filter((d) => d >= 0)
+                    .map((d) => (d === 0)? 1e-8: d)
+                    .map((x) => {
+                        return {
+                            x,
+                            y: eval(model),
+                        };
+                    })
+                    .value();
+            },
             bmd_line,
             bmdl_line,
         };
