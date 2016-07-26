@@ -96,7 +96,7 @@ _.extend(Math, {
                     A1=A1/B1;
                     B1=1;
                 }
-                var Prob=exp(A*log(X)-X-GammaCDF.LogGamma(A))*A1;
+                var Prob=exp(A*log(X)-X-LogGamma(A))*A1;
             }
             return 1-Prob;
         },
@@ -110,7 +110,7 @@ _.extend(Math, {
                     G=G+T9;
                     I=I+1;
                 }
-                G=G*exp(A*log(X)-X-GammaCDF.LogGamma(A));
+                G=G*exp(A*log(X)-X-LogGamma(A));
             }
             return G;
         },
@@ -126,22 +126,13 @@ _.extend(Math, {
             }
             return LG;
         },
-        normalcdf = function(X){   //HASTINGS.  MAX ERROR = .000001
-            var T=1/(1+0.2316419*Math.abs(X)),
-                D=0.3989423*Math.exp(-X*X/2),
-                Prob=D*T*(0.3193815+T*(-0.3565638+T*(1.781478+T*(-1.821256+T*1.330274))));
-            if (X>0){
-                Prob=1-Prob;
-            }
-            return Prob;
-        },
         GI;
 
         if (x<=0){
             GI=0;
         } else if(a>200){
             var z=(x-a)/Math.sqrt(a);
-            var y=Math.GammaCDF.normalcdf(z);
+            var y=Math.normalcdf(z);
             var b1=2/Math.sqrt(a);
             var phiz=0.39894228*Math.exp(-z*z/2);
             var w=y-b1*(z*z-1)*phiz/6;  //Edgeworth1
@@ -149,11 +140,19 @@ _.extend(Math, {
             var u=3*b2*(z*z-3)+b1*b1*(z^4-10*z*z+15);
             GI=w-phiz*z*u/72;        //Edgeworth2
         }else if(x<a+1){
-            GI=Math.GammaCDF.Gser(x,a);
+            GI=Gser(x,a);
         }else{
-            GI=Math.GammaCDF.Gcf(x,a);
+            GI=Gcf(x,a);
         }
         return GI;
+    },
+    normalcdf: function(X){
+        // cumulative density function (CDF) for the standard normal distribution
+        // HASTINGS.  MAX ERROR = .000001
+        var T = 1 / (1 + 0.2316419 * Math.abs(X)),
+            D = 0.3989423 * Math.exp(-X * X / 2),
+            p = D * T * (0.3193815 + T * (-0.3565638 + T * (1.781478 + T * (-1.821256 + T * 1.330274))));
+        return (X > 0)? 1 - p: p;
     },
     inv_tdist_05: function(df){
         // Calculates the inverse t-distribution using a piecewise linear form for

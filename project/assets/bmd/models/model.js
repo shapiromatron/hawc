@@ -13,8 +13,8 @@ let formulas = {
     'Multistage': '{Background} + (1. - {Background}) * (1. - Math.exp( -1. * {Beta(1)}*x - {Beta(2)}*Math.pow(x,2) - {Beta(3)}*Math.pow(x,3) - {Beta(4)}*Math.pow(x,4) - {Beta(5)}*Math.pow(x,5) - {Beta(6)}*Math.pow(x,6) - {Beta(7)}*Math.pow(x,7) - {Beta(8)}*Math.pow(x,8)))',
     'Multistage-Cancer': '{Background} + (1. - {Background}) * (1. - Math.exp( -1. * {Beta(1)}*x - {Beta(2)}*Math.pow(x,2) - {Beta(3)}*Math.pow(x,3) - {Beta(4)}*Math.pow(x,4) - {Beta(5)}*Math.pow(x,5) - {Beta(6)}*Math.pow(x,6) - {Beta(7)}*Math.pow(x,7) - {Beta(8)}*Math.pow(x,8)))',
     'Weibull': '{Background} + (1-{Background}) * (1 - Math.exp( -1.*{Slope} * Math.pow(x,{Power}) ))',
-    'LogProbit': '{background} + (1-{background}) * Math.normalcdf(0,1,{intercept} + {slope}*Math.log(x))',
-    'Probit': 'Math.normalcdf(0,1,{intercept} + {slope}*x)',
+    'LogProbit': '{background} + (1-{background}) * Math.normalcdf({intercept} + {slope}*Math.log(x))',
+    'Probit': 'Math.normalcdf({intercept} + {slope}*x)',
     'Gamma': '{Background} + (1 - {Background}) * Math.GammaCDF(x*{Slope},{Power})',
     'LogLogistic': '{background} + (1-{background})/( 1 + Math.exp(-1.*{intercept}-1.*{slope}*Math.log(x) ) )',
     'Logistic': '1/( 1 + Math.exp(-1*{intercept}-{slope}*x ))',
@@ -46,7 +46,8 @@ class BMDLine {
         _.each(params_in_formula, function(param){
             let unbracketed = param.slice(1, param.length-1),
                 v = (params[unbracketed])? params[unbracketed].estimate: 0.,
-                re = new RegExp(param, 'g');
+                regex = param.replace('(', '\\(').replace(')', '\\)'), // escape ()
+                re = new RegExp(regex, 'g');
             formula = formula.replace(re, v);
         });
         return formula;
