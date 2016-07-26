@@ -198,7 +198,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                 bmd = model.output.BMD;
 
             if (validNumeric(bmd) && validNumeric(minDose)){
-                return assertGreaterThan(
+                return assertLessThan(
                     minDose/bmd,
                     logic.threshold,
                     logic.failure_bin,
@@ -210,7 +210,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                 bmdl = model.output.BMD;
 
             if (validNumeric(bmdl) && validNumeric(minDose)){
-                return assertGreaterThan(
+                return assertLessThan(
                     minDose/bmdl,
                     logic.threshold,
                     logic.failure_bin,
@@ -222,7 +222,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                 bmd = model.output.BMD;
 
             if (validNumeric(bmd) && validNumeric(minDose)){
-                return assertGreaterThan(
+                return assertLessThan(
                     minDose/bmd,
                     logic.threshold,
                     logic.failure_bin,
@@ -234,7 +234,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                 bmdl = model.output.BMD;
 
             if (validNumeric(bmdl) && validNumeric(minDose)){
-                return assertGreaterThan(
+                return assertLessThan(
                     minDose/bmdl,
                     logic.threshold,
                     logic.failure_bin,
