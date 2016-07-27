@@ -889,10 +889,12 @@ AnimalGroupTable.prototype = {
             ngroups = this._sort_egs_by_n();
 
         ngroups.forEach(function(endpoints){
-            endpoints.forEach(function(v, i){
-                if(i===0) tbl.addRow(v._build_ag_n_row());
-                tbl.addRow(v._build_ag_response_row(tbl.footnotes));
-            });
+            _.chain(endpoints)
+                .sortBy(function(d){return d.data.name.toLowerCase();})
+                .each(function(v, i){
+                    if(i===0) tbl.addRow(v._build_ag_n_row());
+                    tbl.addRow(v._build_ag_response_row(tbl.footnotes));
+                });
         });
     },
     _sort_egs_by_n: function(){
