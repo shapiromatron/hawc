@@ -26,7 +26,7 @@ def get_dataset(session):
     return {
         'options': {
             'bmds_version': session.version,
-            'emf_YN': False
+            'emf_YN': True
         },
         'runs': runs
     }
@@ -56,5 +56,8 @@ def execute(self):
     for model, resp in zip(self._models, response['BMDS_Results']):
         assert resp['id'] == model.id
         model.parse_results(resp['OUT_file_str'])
+
+        if 'base64_emf_str' in resp and len(resp['base64_emf_str']) > 0:
+            model.plot_base64 = resp['base64_emf_str']
 
 bmds.Session.execute = execute

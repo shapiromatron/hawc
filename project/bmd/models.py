@@ -183,7 +183,6 @@ class Session(models.Model):
 
     @classmethod
     def create_new(cls, endpoint):
-        # todo - get dose_units from user-input
         dose_units = endpoint.get_doses_json(json_encode=False)[0]['id']
         version = endpoint.assessment.bmd_settings.version
         return cls.objects.create(
@@ -277,6 +276,9 @@ class Session(models.Model):
 
 
 class Model(models.Model):
+
+    IMAGE_UPLOAD_TO = 'bmds_plot'
+
     session = models.ForeignKey(
         Session,
         related_name='models')
@@ -297,7 +299,7 @@ class Model(models.Model):
     output = JSONField(
         default=dict)
     plot = models.ImageField(
-        upload_to='bmds_plot',
+        upload_to=IMAGE_UPLOAD_TO,
         blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
@@ -319,8 +321,14 @@ class Model(models.Model):
         self.dfile = model.as_dfile()
         self.outfile = model.outfile
         self.output = model.output
-        self.plot = None  # todo: change
         self.date_executed = now()
+
+        if hasattr(model, 'plot_base64'):
+            fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + '.emf')
+            with open(os.path.join(self.plot.storage.location, fn), 'wb') as f:
+                f.write(model.plot_base64.decode('base64'))
+            self.plot = fn
+
         self.save()
 
 
