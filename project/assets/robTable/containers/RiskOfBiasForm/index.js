@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
-import ScrollToErrorBox from 'robTable/components/ScrollToErrorBox';
+import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 import './RiskOfBiasForm.css';
 
 

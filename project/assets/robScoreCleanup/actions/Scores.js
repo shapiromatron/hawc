@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
+import { setError, resetError } from 'robScoreCleanup/actions/Errors';
 import * as types from 'robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
 
@@ -14,19 +15,6 @@ function receiveScoreOptions(items){
     return {
         type: types.RECEIVE_SCORE_OPTIONS,
         items,
-    };
-}
-
-function setError(error){
-    return {
-        type: types.SET_ERROR,
-        error,
-    };
-}
-
-function resetError(){
-    return {
-        type: types.RESET_ERROR,
     };
 }
 

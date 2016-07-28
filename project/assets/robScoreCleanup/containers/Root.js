@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
+import { setError, resetError } from 'robScoreCleanup/actions/Errors';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
-import { fetchScores, clearScores, updateEditMetricIfNeeded } from 'robScoreCleanup/actions/Items';
+import { fetchItemScores, clearItemScores, updateEditMetricIfNeeded } from 'robScoreCleanup/actions/Items';
 
+import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 import MetricForm from 'robScoreCleanup/containers/MetricForm';
 import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
 import ScoreList from 'robScoreCleanup/containers/ScoreList';
@@ -42,17 +44,20 @@ class Root extends Component {
 
     clearMetrics(e) {
         e.preventDefault();
-        this.props.dispatch(clearScores());
-    }
-
-    handleCancel(e) {
-        e.preventDefault();
+        this.props.dispatch(resetError());
+        this.props.dispatch(clearItemScores());
     }
 
     loadMetrics(e) {
         e.preventDefault();
-        this.props.dispatch(fetchScores());
+        this.props.dispatch(resetError());
+        this.props.dispatch(fetchItemScores());
         this.props.dispatch(updateEditMetricIfNeeded());
+    }
+
+    handleCancel(e) {
+        e.preventDefault();
+        this.props.dispatch(resetError());
     }
 
     submitForm(e) {
@@ -60,10 +65,11 @@ class Root extends Component {
     }
 
     render() {
-        let { itemsLoaded, metricsLoaded, scoresLoaded, error } = this.props,
+        let { items, metricsLoaded, scoresLoaded, error } = this.props,
             { config } = this.state;
         return (
                 <div>
+                    {error ? <ScrollToErrorBox error={error} /> : null}
                     {metricsLoaded ? <MetricSelect /> : null}
                     {scoresLoaded ? <ScoreSelect /> : null}
                     <div>
@@ -75,12 +81,14 @@ class Root extends Component {
                         </button>
                     </div>
                     <form onSubmit={this.submitForm}>
-                        {itemsLoaded ? <MetricForm config={config} /> : null}
-                        {
-                        itemsLoaded ? <ScoreList config={config} /> : null
-                        }
-                        <button className='btn btn-primary' type='submit'>Update Metric</button>
-                        <button className='btn' onClick={this.handleCancel}>Cancel</button>
+                        {items.isLoaded ?
+                            <div>
+                                <MetricForm config={config} />
+                                <button className='btn btn-primary' type='submit'>Update {items.updateIds.length} Metrics</button>
+                                <button className='btn' onClick={this.handleCancel}>Cancel</button>
+                                <ScoreList config={config} />
+                            </div>
+                            : null}
                     </form>
                 </div>
         );
@@ -91,8 +99,8 @@ function mapStateToProps(state){
     return {
         metricsLoaded: metrics.isLoaded,
         scoresLoaded: scores.isLoaded,
-        itemsLoaded: items.isLoaded,
-        error,
+        items,
+        error: error.error,
     };
 }
 

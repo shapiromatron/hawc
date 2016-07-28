@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
+import { setError, resetError } from 'robScoreCleanup/actions/Errors';
 import * as types from 'robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
 
@@ -17,7 +18,7 @@ function receiveScores(items){
     };
 }
 
-export function clearScores() {
+export function clearItemScores() {
     return {
         type: types.CLEAR_STUDY_SCORES,
     };
@@ -30,24 +31,11 @@ export function checkScoreForUpdate(id) {
     };
 }
 
-function setError(error){
-    return {
-        type: types.SET_ERROR,
-        error,
-    };
-}
-
-function resetError(){
-    return {
-        type: types.RESET_ERROR,
-    };
-}
-
-export function fetchScores(){
+export function fetchItemScores(){
     return (dispatch, getState) => {
         let state = getState();
         if (state.items.isFetching) return;
-        dispatch(clearScores());
+        dispatch(clearItemScores());
         dispatch(makeScoreRequest());
         dispatch(resetError());
         let { host, items, assessment_id } = state.config;
@@ -99,17 +87,18 @@ export function updateEditMetricIfNeeded() {
         let state = getState(),
             current = state.items.editMetric,
             update;
-        if (!state.items.isLoaded) {
+        if (!state.items.isLoaded) { 
+            // update displayed metric and description to selected metric
             update = updateMetric(state.metrics.selected, current.values[0]);
             dispatch(updateEditMetric(update));
-            return;
-        };
-        if (_.isEmpty(state.items.updateIds)) {
+        } else if (_.isEmpty(state.items.updateIds)) {
+            // if the selected metric changed, update displayed metric and description
             update = updateMetric(state.items.items[0].metric, current.values[0]);
             if (!_.isEqual(update, current)){
                 dispatch(updateEditMetric(update));
             }
         } else {
+            // update metricForm to reflect the first selected item
             let updateItem = _.findWhere(state.items.items, {id: parseInt(state.items.updateIds[0])});
             update = addItemToMetric(updateItem, current.values[0]);
             dispatch(updateEditMetric(update));
