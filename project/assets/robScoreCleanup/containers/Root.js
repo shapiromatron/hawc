@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { loadConfig } from 'shared/actions/Config';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
-import { fetchScores, clearScores } from 'robScoreCleanup/actions/Items';
+import { fetchScores, clearScores, updateEditMetricIfNeeded } from 'robScoreCleanup/actions/Items';
 
 import MetricForm from 'robScoreCleanup/containers/MetricForm';
 import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
@@ -18,6 +18,8 @@ class Root extends Component {
         super(props);
         this.loadMetrics = this.loadMetrics.bind(this);
         this.clearMetrics = this.clearMetrics.bind(this);
+        this.submitForm = this.submitForm.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
         this.state = {
             config: {
                 display: 'all',
@@ -43,9 +45,18 @@ class Root extends Component {
         this.props.dispatch(clearScores());
     }
 
+    handleCancel(e) {
+        e.preventDefault();
+    }
+
     loadMetrics(e) {
         e.preventDefault();
         this.props.dispatch(fetchScores());
+        this.props.dispatch(updateEditMetricIfNeeded());
+    }
+
+    submitForm(e) {
+        e.preventDefault();
     }
 
     render() {
@@ -63,8 +74,14 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    {itemsLoaded ? <MetricForm config={config}/> : null}
-                    {itemsLoaded ? <ScoreList config={config} /> : null}
+                    <form onSubmit={this.submitForm}>
+                        {itemsLoaded ? <MetricForm config={config} /> : null}
+                        {
+                        itemsLoaded ? <ScoreList config={config} /> : null
+                        }
+                        <button className='btn btn-primary' type='submit'>Update Metric</button>
+                        <button className='btn' onClick={this.handleCancel}>Cancel</button>
+                    </form>
                 </div>
         );
     }

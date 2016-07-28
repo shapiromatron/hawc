@@ -10,20 +10,29 @@ export class MetricForm extends React.Component {
 
     constructor(props) {
         super(props);
-        
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (_.isEqual(nextProps, this.props)){
+            return false;
+        }
+        return true;
+    }
+
+    componentWillUpdate(prevProps, prevState) {
+        this.props.dispatch(updateEditMetricIfNeeded());
     }
 
     render() {
         return (
-            <div><DisplayComponent metric={this.props.items.editMetric} config={this.props.config}/></div>
+            <DisplayComponent metric={this.props.items.editMetric} config={this.props.config}/>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { metrics, items } = state;
+    const { items } = state;
     return {
-        metrics,
         items,
     };
 }

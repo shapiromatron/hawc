@@ -14,7 +14,6 @@ class Items extends Component {
 
     render() {
         if (_.isEmpty(this.props.items)) return <Loading />;
-        console.log("items", this.props.items);
         return <ItemList {...this.props}/>;
     }
 }

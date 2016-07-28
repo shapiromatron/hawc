@@ -19,7 +19,10 @@ export class ScoreList extends Component {
 
     render() {
         let { items, idList, selected } = this.props,
-            filteredItems = _.isEmpty(selected) ? items : _.filter(items, (item) => {return _.contains(selected, item.score.toString())});
+            filteredItems = _.isEmpty(selected) ?
+                items :
+                _.filter(items,
+                    (item) => { return _.contains(selected, item.score.toString()); });
 
         return (
             <div>

@@ -68,26 +68,50 @@ function updateEditMetric(editMetric) {
     };
 }
 
+function addItemToMetric(item, current){
+    let valueUpdate = Object.assign({}, current, item);
+    return {
+        key: item.metric.metric,
+        values: [
+            {
+                ...valueUpdate,
+            },
+        ],
+    };
+}
+
+function updateMetric(item, current){
+    return {
+        key: item.metric,
+        values:[
+            {
+                ...current,
+                metric: {
+                    ...item,
+                },
+            },
+        ],
+    };
+}
+
 export function updateEditMetricIfNeeded() {
     return (dispatch, getState) => {
         let state = getState(),
             current = state.items.editMetric,
             update;
-        if (!state.items.isLoaded) return;
+        if (!state.items.isLoaded) {
+            update = updateMetric(state.metrics.selected, current.values[0]);
+            dispatch(updateEditMetric(update));
+            return;
+        };
         if (_.isEmpty(state.items.updateIds)) {
-            update = {
-                key: state.items.items[0].metric.metric,
-                values: [
-                    {...current.values[0],
-                        metric: {...state.items.items[0].metric}
-                    },
-                ],
-            };
+            update = updateMetric(state.items.items[0].metric, current.values[0]);
             if (!_.isEqual(update, current)){
                 dispatch(updateEditMetric(update));
             }
         } else {
-            update = _.findWhere(state.items.items, {id: parseInt(state.items.updateIds[0])});
+            let updateItem = _.findWhere(state.items.items, {id: parseInt(state.items.updateIds[0])});
+            update = addItemToMetric(updateItem, current.values[0]);
             dispatch(updateEditMetric(update));
         }
     };
