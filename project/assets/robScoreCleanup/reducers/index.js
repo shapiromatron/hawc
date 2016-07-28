@@ -7,7 +7,7 @@ import scores from './Scores';
 import * as types from 'robScoreCleanup/constants';
 
 const defaultState = {
-    error: null,
+    message: null,
 };
 
 function error(state=defaultState, action) {
@@ -16,12 +16,12 @@ function error(state=defaultState, action) {
 
     case types.SET_ERROR:
         return Object.assign({}, state, {
-            error: action.error,
+            message: action.error,
         });
 
     case types.RESET_ERROR:
         return Object.assign({}, state, {
-            error: null,
+            message: null,
         });
 
     default:

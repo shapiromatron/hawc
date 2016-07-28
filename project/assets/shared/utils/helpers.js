@@ -72,6 +72,9 @@ const helpers = {
     getUrlWithAssessment(url, assessment_id){
         return `${url}?assessment_id=${assessment_id}`;
     },
+    getBulkUrl(host, base, ids=null){
+        return `${host}${base}&ids=${ids}`;
+    },
     datetimeFormat(dt){
         return moment(dt).format('MMMM Do YYYY, h:mm:ss a');
     },

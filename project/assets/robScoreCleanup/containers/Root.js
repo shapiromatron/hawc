@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
-import { setError, resetError } from 'robScoreCleanup/actions/Errors';
+import { resetError } from 'robScoreCleanup/actions/Errors';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
 import { fetchItemScores, clearItemScores, updateEditMetricIfNeeded } from 'robScoreCleanup/actions/Items';
@@ -20,8 +20,6 @@ class Root extends Component {
         super(props);
         this.loadMetrics = this.loadMetrics.bind(this);
         this.clearMetrics = this.clearMetrics.bind(this);
-        this.submitForm = this.submitForm.bind(this);
-        this.handleCancel = this.handleCancel.bind(this);
         this.state = {
             config: {
                 display: 'all',
@@ -55,11 +53,6 @@ class Root extends Component {
         this.props.dispatch(updateEditMetricIfNeeded());
     }
 
-    handleCancel(e) {
-        e.preventDefault();
-        this.props.dispatch(resetError());
-    }
-
     submitForm(e) {
         e.preventDefault();
     }
@@ -69,7 +62,7 @@ class Root extends Component {
             { config } = this.state;
         return (
                 <div>
-                    {error ? <ScrollToErrorBox error={error} /> : null}
+                    {error.message ? <ScrollToErrorBox error={error} /> : null}
                     {metricsLoaded ? <MetricSelect /> : null}
                     {scoresLoaded ? <ScoreSelect /> : null}
                     <div>
@@ -80,16 +73,12 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    <form onSubmit={this.submitForm}>
-                        {items.isLoaded ?
-                            <div>
-                                <MetricForm config={config} />
-                                <button className='btn btn-primary' type='submit'>Update {items.updateIds.length} Metrics</button>
-                                <button className='btn' onClick={this.handleCancel}>Cancel</button>
-                                <ScoreList config={config} />
-                            </div>
-                            : null}
-                    </form>
+                    {items.isLoaded ?
+                        <div>
+                            <MetricForm config={config} />
+                            <ScoreList config={config} />
+                        </div>
+                        : null}
                 </div>
         );
     }
@@ -100,7 +89,7 @@ function mapStateToProps(state){
         metricsLoaded: metrics.isLoaded,
         scoresLoaded: scores.isLoaded,
         items,
-        error: error.error,
+        error,
     };
 }
 

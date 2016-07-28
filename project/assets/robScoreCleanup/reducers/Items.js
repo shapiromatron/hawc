@@ -76,6 +76,31 @@ function items(state=defaultState, action) {
             editMetric: action.editMetric,
         });
 
+    case types.PATCH_ITEMS:
+        let ids = action.patch.ids,
+            patch = _.omit(action.patch, 'ids'),
+            items = state.items;
+
+        _.map(ids, (id) => {
+            let index = state.items.indexOf(
+                _.findWhere(state.items, {id})
+            );
+            if (index >= 0){
+                items = [
+                    ...items.slice(0, index),
+                    Object.assign({}, items[index], {...patch, id}),
+                    ...items.slice(index + 1),
+                ];
+            } else {
+                items = [
+                    ...items,
+                    Object.assign({}, items[index], patch),
+                ];
+            }
+        });
+
+        return Object.assign({}, state, { items, });
+
     default:
         return state;
     }

@@ -92,4 +92,10 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
         model = models.RiskOfBiasMetric
         fields = ('id', 'metric', 'description', 'scores')
 
+
+class AssessmentRiskOfBiasScoreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = ('id', 'notes', 'score')
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

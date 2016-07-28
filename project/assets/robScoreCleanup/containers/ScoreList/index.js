@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { checkScoreForUpdate } from 'robScoreCleanup/actions/Items';
 
-import CheckboxScoreDisplay from 'robScoreCleanup/components/CheckboxScoreDisplay';
+import DisplayComponent from 'robScoreCleanup/components/ScoreList';
 
 
 export class ScoreList extends Component {
@@ -18,29 +18,18 @@ export class ScoreList extends Component {
     }
 
     render() {
-        let { items, idList, selected } = this.props,
+        let { items, idList, selected, config } = this.props,
             filteredItems = _.isEmpty(selected) ?
                 items :
                 _.filter(items,
                     (item) => { return _.contains(selected, item.score.toString()); });
 
         return (
-            <div>
-            {_.map(filteredItems, (item) => {
-                item = item.author ? item : Object.assign({}, item, {author: { full_name: ''}});
-                let checked = _.contains(idList, item.id);
-                return (
-                    <div key={item.id}>
-                        <CheckboxScoreDisplay
-                            item={item}
-                            config={this.props.config}
-                            handleCheck={this.handleCheck}
-                            checked={checked}/>
-                        <hr/>
-                    </div>
-                    );
-            })}
-            </div>
+            <DisplayComponent
+                idList={idList}
+                items={filteredItems}
+                config={config}
+                handleCheck={this.handleCheck} />
         );
     }
 }

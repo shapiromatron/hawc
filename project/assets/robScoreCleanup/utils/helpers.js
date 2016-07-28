@@ -30,6 +30,9 @@ var helpers = Object.assign({}, shared, {
     getScoreInfo(score){
         return this.scores[score];
     },
+    buildPatchUrl(config, ids) {
+        return shared.getBulkUrl(config.host, shared.getUrlWithAssessment(config.items.patchUrl, config.assessment_id), ids);
+    },
 });
 
 export default helpers;

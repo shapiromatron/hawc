@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 
 import { setError, resetError } from 'robScoreCleanup/actions/Errors';
 import * as types from 'robScoreCleanup/constants';
-import h from 'shared/utils/helpers';
+import h from 'robScoreCleanup/utils/helpers';
 
 
 function makeScoreRequest(){
@@ -56,6 +56,13 @@ function updateEditMetric(editMetric) {
     };
 }
 
+function patchItems(patch){
+    return {
+        type: types.PATCH_ITEMS,
+        patch,
+    };
+}
+
 function addItemToMetric(item, current){
     let valueUpdate = Object.assign({}, current, item);
     return {
@@ -103,5 +110,30 @@ export function updateEditMetricIfNeeded() {
             update = addItemToMetric(updateItem, current.values[0]);
             dispatch(updateEditMetric(update));
         }
+    };
+}
+
+export function submitItemEdits(metric) {
+    return (dispatch, getState) => {
+        dispatch(resetError());
+        let state = getState(),
+            { updateIds } = state.items,
+            opts = h.fetchBulk(state.config.csrf, { ...metric});
+
+        if (updateIds.length === 0) {
+            dispatch(setError('A metric must be selected to update.'));
+            return;
+        }
+
+        return fetch(h.buildPatchUrl(state.config, updateIds), opts)
+        .then((response) => {
+            if (response.ok){
+                let patch = {ids: updateIds, ...metric};
+                dispatch(patchItems(patch));
+            } else {
+                response.json()
+                .then((json) => dispatch(setError(json)));
+            }
+        });
     };
 }
