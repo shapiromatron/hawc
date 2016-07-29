@@ -50,6 +50,8 @@ class OutcomeDataPivot(FlatFileExporter):
 
             'study population id',
             'study population name',
+            'study population age profile',
+            'study population source',
             'design',
 
             'outcome id',
@@ -110,6 +112,8 @@ class OutcomeDataPivot(FlatFileExporter):
 
                 ser['study_population']['id'],
                 ser['study_population']['name'],
+                ser['study_population']['age_profile'],
+                ser['study_population']['source'],
                 ser['study_population']['design'],
 
                 ser['id'],
