@@ -262,9 +262,16 @@ Study.prototype = {
             });
         }
     },
+    get_citation_row(){
+        var content = [this.get_url()];
+        if (!this.data.published){
+            content.push('<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>');
+        }
+        return content;
+    },
     build_row: function(){
         return [
-            this.get_url(),
+            this.get_citation_row(),
             this.data.full_citation,
             HAWCUtils.booleanCheckbox(this.data.bioassay),
             HAWCUtils.booleanCheckbox(this.data.epi),

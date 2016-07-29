@@ -2592,15 +2592,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             svgH = parseInt(svg.attr('height'), 10),
             x = this.data.settings.legend_x,
             y = this.data.settings.legend_y,
-            fields = _.map(RiskOfBiasScore.score_values, function(v){
-                return {
-                    value:          v,
-                    color:          RiskOfBiasScore.score_shades[v],
-                    text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
-                    text:           RiskOfBiasScore.score_text[v],
-                    description:    RiskOfBiasScore.score_text_description[v],
-                }
-            }),
+            scores = RiskOfBiasScore.score_values.slice(),  // shallow copy
             width = 22,
             half_width = width/2,
             buff = 5,
@@ -2611,7 +2603,21 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 self.data.settings.legend_x = parseInt(x, 10);
                 self.data.settings.legend_y = parseInt(y, 10);
             }) : function(){},
-            title;
+            fields, title;
+
+        // determine which scores to present in legend
+        if (!this.data.settings.show_nr_legend){
+            scores.pop(scores.indexOf(10));
+        }
+        fields = _.map(scores, function(v){
+            return {
+                value:          v,
+                color:          RiskOfBiasScore.score_shades[v],
+                text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
+                text:           RiskOfBiasScore.score_text[v],
+                description:    RiskOfBiasScore.score_text_description[v],
+            };
+        });
 
         // create a new g.legend_group object on the main svg graphic
         this.legend_group = svg.append('g')

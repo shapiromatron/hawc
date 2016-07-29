@@ -48,6 +48,7 @@ _.extend(DataPivot, {
         "filter_logic": "and",
         "font_style": 'Arial',
         "merge_descriptions": false,
+        "merge_aggressive": true,
         "text_background": true,
         "text_background_color": "#EEEEEE"
       },
@@ -1865,6 +1866,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
     "padding_bottom": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)),
     "padding_left": $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)),
     "merge_descriptions": $('<input type="checkbox">').prop('checked', values.merge_descriptions),
+    "merge_aggressive": $('<input type="checkbox">').prop('checked', values.merge_aggressive),
     "merge_until": $('<select name="merge_until">'),
     "text_background": $('<input type="checkbox">').prop('checked', values.text_background),
     "text_background_color": $('<input type="color">').val(values.text_background_color)
@@ -1896,6 +1898,7 @@ var _DataPivot_settings_general = function(data_pivot, values){
       build_tr('Plot padding left', this.content.padding_left),
       build_tr('Merge descriptions', this.content.merge_descriptions),
       build_tr('Merge descriptions up to', this.content.merge_until),
+      build_tr('Merge aggressively', this.content.merge_aggressive),
       build_tr('Highlight background text', this.content.text_background),
       build_tr('Highlight background text color', this.content.text_background_color)];
 
@@ -1905,8 +1908,15 @@ var _DataPivot_settings_general = function(data_pivot, values){
   // display merge_until only when merge_descriptions activated
   var show_mergeUntil = function(){
     var show = self.content.merge_descriptions.prop('checked')
-        row = self.content.merge_until.parent().parent();
-    return (show) ? row.show() : row.hide();
+        row1 = self.content.merge_until.parent().parent(),
+        row2 = self.content.merge_aggressive.parent().parent();
+    if (show){
+      row1.show();
+      row2.show();
+    } else {
+      row1.hide();
+      row2.hide();
+    };
   };
   this.content.merge_descriptions.on('change', show_mergeUntil);
   show_mergeUntil();
@@ -1930,6 +1940,7 @@ _DataPivot_settings_general.prototype = {
     this.values.padding.bottom = parseInt(this.content.padding_bottom.val(), 10);
     this.values.padding.left = parseInt(this.content.padding_left.val(), 10);
     this.values.merge_descriptions = this.content.merge_descriptions.prop('checked');
+    this.values.merge_aggressive = this.content.merge_aggressive.prop('checked');
     this.values.merge_until = parseInt(this.content.merge_until.val(), 10) || 0;
     this.values.text_background = this.content.text_background.prop('checked');
     this.values.text_background_color = this.content.text_background_color.val();
@@ -2405,26 +2416,57 @@ _.extend(DataPivot_visualization.prototype, D3Plot.prototype, {
   },
   merge_descriptions: function(){
     // Merge identical columns
-    var field_names = this.dp_settings.description_settings.map(function(v){return v.field_name}),
-        merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length-1;
-    for(var i=this.datarows.length-1; i>0; i--){
-      var isMerged = this.dp_settings.plot_settings.merge_descriptions;
-      if(isMerged){
-        // check if all columns are identical between this and the prior column
+    var merge_aggressive = this.dp_settings.plot_settings.merge_aggressive,
+        merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length-1,
+        shouldMerge = this.dp_settings.plot_settings.merge_descriptions,
+        field_names = this.dp_settings.description_settings.map(function(v){return v.field_name});
+
+    if (!shouldMerge){
+      for(var i=this.datarows.length-1; i>0; i--){
+        this.datarows[i]._dp_isMerged = false;
+      };
+      return;
+    }
+
+    if (merge_aggressive){
+      // merge all identical columns (regardless of merge_until similarity)
+      for(var i=this.datarows.length-1; i>0; i--){
+        this.datarows[i]._dp_isMerged = false;
         for(var j=0; j<=merge_until; j++){
-          if (this.datarows[i][field_names[j]] !== this.datarows[i-1][field_names[j]]){
-            isMerged = false;
-            break;
-          }
-        }
-        // Merge if passed check
-        if (isMerged){
-          for(var j=0; j<=merge_until; j++){
-            this.datarows[i][field_names[j]] = "";
+          var v1 = this.datarows[i][field_names[j]],
+              v2 = this.datarows[i-1][field_names[j]];
+          if (v1 !== v2){
+            break; // stop checks on columns to the right
+          } else {
+            this.datarows[i][field_names[j]] = '';
+            if (j == merge_until){
+              // background rectangle indicates rows are related
+              this.datarows[i]._dp_isMerged = true;
+            }
           }
         }
       }
-      this.datarows[i]._dp_isMerged = isMerged;
+    } else {
+      // merge only columns which have the value in merge_until
+      for(var i=this.datarows.length-1; i>0; i--){
+        shouldMerge = true;
+        if(shouldMerge){
+          // check if all columns are identical between this and the prior column
+          for(var j=0; j<=merge_until; j++){
+            if (this.datarows[i][field_names[j]] !== this.datarows[i-1][field_names[j]]){
+              shouldMerge = false;
+              break;
+            }
+          }
+          // Merge if passed check
+          if (shouldMerge){
+            for(var j=0; j<=merge_until; j++){
+              this.datarows[i][field_names[j]] = '';
+            }
+          }
+        }
+        this.datarows[i]._dp_isMerged = shouldMerge;
+      }
     }
   },
   add_axes: function(){
