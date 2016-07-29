@@ -1,7 +1,10 @@
+import logging
+
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 
@@ -34,6 +37,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if view.action in self.list_actions:
+            logging.info('Permission checked')
+
             assessment_id = tryParseInt(request.GET.get('assessment_id'))
             if assessment_id is None:
                 raise RequiresAssessmentID
@@ -71,6 +76,26 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class AssessmentRootedTagTreeViewset(viewsets.GenericViewSet):
+    """
+    Base viewset used with utils/models/AssessmentRootedTagTree subclasses
+    """
+    permission_classes = (AssessmentLevelPermissions, )
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def list(self, request):
+        assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
+        data = self.model.get_all_tags(assessment_id, json_encode=False)
+        return Response(data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):
