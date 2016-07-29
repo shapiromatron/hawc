@@ -264,7 +264,7 @@ Study.prototype = {
     },
     get_citation_row(){
         var content = [this.get_url()];
-        if (window.can_edit && !this.data.published){
+        if (!this.data.published){
             content.push('<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>');
         }
         return content;
