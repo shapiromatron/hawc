@@ -15,10 +15,18 @@
 {% endblock %}
 
 {% block extrajs %}
+<script type="text/json" id="config">
+{
+    "assessment_id": {{assessment.id}},
+    "base_url": "{% url "invitro:api:category-list" %}",
+    "list_url": "{% url "invitro:api:category-list" %}?assessment_id={{assessment.id}}",
+    "csrf": "{{ csrf_token }}",
+    "host": "//{{request.get_host}}"
+}
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
-    let categories = JSON.parse('{{categories|safe}}');
-    window.app.ivEndpointCategoryStartup(categories);
+    window.app.ivEndpointCategoryStartup();
 });
 </script>
 {% endblock extrajs %}

@@ -288,11 +288,6 @@ class IVEndpointCategory(AssessmentRootedTagTree):
             for cat in cls.get_assessment_qs(assessment_id)
         ]
 
-    @classmethod
-    def get_edit_payload(cls, assessment_id):
-        qs = cls.dump_bulk(parent=cls.get_root(assessment_id))
-        return json.dumps(qs[0]['children'])
-
 
 class IVEndpoint(BaseEndpoint):
 

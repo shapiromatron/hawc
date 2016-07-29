@@ -69,6 +69,13 @@ class IVBenchmarkSerializer(serializers.ModelSerializer):
         model = models.IVBenchmark
 
 
+class IVEndpointCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IVEndpointCategory
+        fields = ('id', 'name', )
+
+
 class IVEndpointCategory(serializers.ModelSerializer):
 
     def to_representation(self, instance):

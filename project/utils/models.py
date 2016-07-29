@@ -2,6 +2,8 @@ import json
 import logging
 
 import django
+
+from django.apps import apps
 from django.db import models, IntegrityError, transaction
 from django.db.models import URLField
 from django.core.cache import cache
@@ -127,6 +129,15 @@ class AssessmentRootedTagTree(MP_Node):
             return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
         else:
             return tags
+
+    def get_assessment(self):
+        try:
+            name = self.get_ancestors()[0].name
+            assessment_id = int(name[name.find('-')+1:])
+            Assessment = apps.get_model('assessment', 'Assessment')
+            return Assessment.objects.get(id=assessment_id)
+        except:
+            raise self.__class__.DoesNotExist()
 
     @classmethod
     def get_descendants_pks(cls, assessment_id):

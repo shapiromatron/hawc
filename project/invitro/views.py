@@ -102,17 +102,6 @@ class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object()
 
-    def post(self, request, *args, **kwargs):
-        if not self.request.is_ajax():
-            raise PermissionDenied()
-
-    def get_context_data(self, **kwargs):
-        context = super(EndpointCategoryUpdate, self).get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['categories'] = \
-            models.IVEndpointCategory.get_edit_payload(self.assessment.id)
-        return context
-
 
 # Endpoint
 class EndpointCreate(BaseCreateWithFormset):
