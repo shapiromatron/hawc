@@ -1,0 +1,1 @@
+export const RECEIVE_TAGLIST = 'RECEIVE_TAGLIST';

@@ -40,6 +40,7 @@ class Node extends React.Component {
     }
 
     renderDetail(){
+        console.log(this.props.node)
         return (
             <p className='node'>
                 {this.renderIndents()}
