@@ -1,20 +1,17 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import Tree from './containers/Tree';
+import configureStore from 'shared/store/configureStore';
+
+import Root from './containers/Root';
+
+import reducer from 'ivEndpointCategories/reducers';
 
 
-let setDepth = function(node, depth){
-    node.data.depth = depth;
-    if (node.children){
-        node.children.forEach(function(d){setDepth(d, depth+1);});
-    }
-};
-
-const startup = function(data){
-    data.forEach(function(d){setDepth(d, 0);});
+const startup = function(){
+    const store = configureStore(reducer);
     render(
-       <Tree nodes={data}/>,
+       <Root store={store}/>,
        document.getElementById('root')
     );
 };
