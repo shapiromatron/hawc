@@ -7,7 +7,8 @@ from django.db import migrations
 
 
 def add_merge_option(apps, schema_editor):
-    for obj in apps.get_model("summary", "DataPivot").objects.all():
+    DataPivot = apps.get_model("summary", "DataPivot")
+    for obj in DataPivot.objects.all():
         try:
             settings = json.loads(obj.settings)
         except ValueError:
@@ -16,11 +17,16 @@ def add_merge_option(apps, schema_editor):
         if settings:
             settings['plot_settings']['merge_aggressive'] = False
             obj.settings = json.dumps(settings)
-            obj.save()
+
+            # don't change last_updated timestamp
+            DataPivot.objects\
+                .filter(id=obj.id)\
+                .update(settings=obj.settings)
 
 
 def remove_merge_option(apps, schema_editor):
-    for obj in apps.get_model("summary", "DataPivot").objects.all():
+    DataPivot = apps.get_model("summary", "DataPivot")
+    for obj in DataPivot.objects.all():
         try:
             settings = json.loads(obj.settings)
         except ValueError:
@@ -29,7 +35,11 @@ def remove_merge_option(apps, schema_editor):
             if settings:
                 settings['plot_settings'].pop('merge_aggressive')
                 obj.settings = json.dumps(settings)
-                obj.save()
+
+            # don't change last_updated timestamp
+            DataPivot.objects\
+                .filter(id=obj.id)\
+                .update(settings=obj.settings)
 
 
 class Migration(migrations.Migration):
