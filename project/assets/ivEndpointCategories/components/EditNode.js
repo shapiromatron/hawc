@@ -14,6 +14,11 @@ class EditNode extends React.Component {
         this.setState(d);
     }
 
+    handleUpdate(e){
+        e.stopPropagation();
+        this.props.handleUpdate(this.state);
+    }
+
     render() {
         return (
             <div className="editNodeForm container-fluid" >
@@ -31,7 +36,7 @@ class EditNode extends React.Component {
                     <div className="well">
                         <button
                             className="btn btn-primary"
-                            onClick={this.props.handleSave}
+                            onClick={this.handleUpdate.bind(this)}
                             >Save</button>
                         <button
                             onClick={this.props.handleCancel}
@@ -51,7 +56,7 @@ EditNode.propTypes = {
     parent: React.PropTypes.object,
     node: React.PropTypes.object.isRequired,
     handleCancel: React.PropTypes.func.isRequired,
-    handleSave: React.PropTypes.func.isRequired,
+    handleUpdate: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,
 };
 

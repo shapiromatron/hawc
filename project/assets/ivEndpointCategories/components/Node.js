@@ -29,18 +29,18 @@ class Node extends React.Component {
         this.setState({showForm: false});
     }
 
-    handleSave(e){
-        e.stopPropagation();
+    handleUpdate(newNodeState){
+        this.props.handleUpdate(this.props.node.id, newNodeState.name);
         this.setState({showForm: false});
     }
 
     handleDelete(e){
         e.stopPropagation();
         this.setState({showForm: false});
+        this.props.handleDelete(this.props.node.id);
     }
 
     renderDetail(){
-        console.log(this.props.node)
         return (
             <p className='node'>
                 {this.renderIndents()}
@@ -54,7 +54,7 @@ class Node extends React.Component {
             node={this.props.node}
             parent={this.props.parent}
             handleCancel={this.handleCancel.bind(this)}
-            handleSave={this.handleSave.bind(this)}
+            handleUpdate={this.handleUpdate.bind(this)}
             handleDelete={this.handleDelete.bind(this)}
         />;
     }
@@ -69,8 +69,13 @@ class Node extends React.Component {
                     this.renderForm():
                     this.renderDetail()
                 }
-                {children.map(function(child){
-                    return <Node key={child.id} parent={node} node={child}/>;
+                {children.map((child)=>{
+                    return <Node
+                        key={child.id}
+                        parent={node}
+                        node={child}
+                        handleUpdate={this.props.handleUpdate}
+                        handleDelete={this.props.handleDelete}/>;
                 })}
             </div>
         );
@@ -80,6 +85,8 @@ class Node extends React.Component {
 Node.propTypes = {
     node: React.PropTypes.object.isRequired,
     parent: React.PropTypes.object,
+    handleUpdate: React.PropTypes.func.isRequired,
+    handleDelete: React.PropTypes.func.isRequired,
 };
 
 export default Node;
