@@ -2,6 +2,8 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 
+import addPromiseSupportToDispatch from './promisedDispatch';
+
 
 const logger = createLogger({
     level: 'info',
@@ -17,5 +19,6 @@ const finalCreateStore = compose(
 
 export default function configureStore(reducer, initialState) {
     const store = finalCreateStore(reducer, initialState);
+    store.dispatch = addPromiseSupportToDispatch(store);
     return store;
 }
