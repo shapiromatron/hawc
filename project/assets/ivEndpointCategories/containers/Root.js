@@ -15,8 +15,9 @@ import Tree from 'ivEndpointCategories/containers/Tree';
 class Root extends React.Component {
 
     componentWillMount(){
-        this.props.store.dispatch(loadConfig());
-        this.props.store.dispatch(getTags());
+        let {dispatch} = this.props.store;
+        Promise.all([dispatch(loadConfig())])
+            .then(() => dispatch(getTags()));
     }
 
     render() {
