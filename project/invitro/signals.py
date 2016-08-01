@@ -44,5 +44,9 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
 @receiver(post_save, sender=models.IVEndpointCategory)
 @receiver(pre_delete, sender=models.IVEndpointCategory)
 def invalidate_ivcategory_cache(sender, instance, **kwargs):
-    assessment_id = instance.get_assessment_id()
-    instance.clear_cache(assessment_id)
+    try:
+        # may be root-node
+        assessment_id = instance.get_assessment_id()
+        instance.clear_cache(assessment_id)
+    except IndexError:
+        pass

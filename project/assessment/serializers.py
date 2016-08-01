@@ -42,3 +42,14 @@ class AssessmentEndpointSerializer(serializers.Serializer):
     name = serializers.CharField()
     id = serializers.IntegerField()
     items = serializers.ListField(child=EndpointItemSerializer())
+
+
+class AssessmentRootedSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        assessment = self.root.context['view'].assessment
+        return self.Meta.model.create_tag(
+            assessment.id,
+            parent_id=None,
+            **validated_data
+        )
