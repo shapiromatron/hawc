@@ -72,6 +72,13 @@ class Tree extends React.Component {
         />;
     }
 
+    renderNoTags(){
+        if (this.props.tags.length > 0){
+            return;
+        }
+        return <p className='help-block'><i>No content is available - create some!</i></p>;
+    }
+
     render() {
         if (!this.props.tagsLoaded){
             return <Loading />;
@@ -87,6 +94,7 @@ class Tree extends React.Component {
             <div>
                 {(this.state.showCreate)?this.renderCreateNode():null}
                 {this.props.tags.map(this.renderNode.bind(this))}
+                {this.renderNoTags()}
             </div>
         </div>;
     }
