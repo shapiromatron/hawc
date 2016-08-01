@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Loading from 'shared/components/Loading';
 import Node from 'ivEndpointCategories/components/Node';
+import EditNode from 'ivEndpointCategories/components/EditNode';
 
 import {
     createTag,
@@ -13,8 +14,11 @@ import {
 
 class Tree extends React.Component {
 
-    handleCreate(){
-        this.props.dispatch(createTag());
+    constructor() {
+        super();
+        this.state = {
+            showCreate: false,
+        };
     }
 
     handleUpdate(id, name){
@@ -33,6 +37,34 @@ class Tree extends React.Component {
             handleDelete={this.handleDelete.bind(this)} />;
     }
 
+    handleCreateClick(){
+        this.setState({showCreate: true});
+    }
+
+    handleCreateClickCancel(){
+        this.setState({showCreate: false});
+    }
+
+    handleCreate(newNode){
+        this.handleCreateClickCancel();
+        this.props.dispatch(createTag(newNode));
+    }
+
+    renderCreateNode(){
+        let newNode = {
+            data: {
+                name: '',
+            },
+            id: null,
+        };
+
+        return <EditNode
+            node={newNode}
+            handleCancel={this.handleCreateClickCancel.bind(this)}
+            handleCreate={this.handleCreate.bind(this)}
+        />;
+    }
+
     render() {
         if (!this.props.tagsLoaded){
             return <Loading />;
@@ -42,10 +74,11 @@ class Tree extends React.Component {
             <h1 key={0}>
                 Modify in-vitro endpoint categories
                 <button
-                    onClick={this.handleCreate.bind(this)}
+                    onClick={this.handleCreateClick.bind(this)}
                     className="pull-right btn btn-primary">Add new category</button>
             </h1>
             <div>
+                {(this.state.showCreate)?this.renderCreateNode():null}
                 {this.props.tags.map(this.renderNode.bind(this))}
             </div>
         </div>;
