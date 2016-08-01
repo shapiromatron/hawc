@@ -15,7 +15,7 @@ class Node extends React.Component {
 
     renderIndents(){
         return _.map(_.range(this.props.node.data.depth), function(d, i){
-            return <span key={i} className='nbsp'>&nbsp;</span>;
+            return <span key={i} className='nbsp'>&nbsp;&nbsp;</span>;
         });
     }
 
@@ -30,7 +30,7 @@ class Node extends React.Component {
     }
 
     handleUpdate(newNodeState){
-        this.props.handleUpdate(this.props.node.id, newNodeState.name);
+        this.props.handleUpdate(this.props.node.id, newNodeState);
         this.setState({showForm: false});
     }
 
@@ -52,6 +52,7 @@ class Node extends React.Component {
     renderForm(){
         return <EditNode
             node={this.props.node}
+            parentOptions={this.props.parentOptions}
             parent={this.props.parent}
             handleCancel={this.handleCancel.bind(this)}
             handleUpdate={this.handleUpdate.bind(this)}
@@ -72,8 +73,9 @@ class Node extends React.Component {
                 {children.map((child)=>{
                     return <Node
                         key={child.id}
-                        parent={node}
+                        parent={node.id}
                         node={child}
+                        parentOptions={this.props.parentOptions}
                         handleUpdate={this.props.handleUpdate}
                         handleDelete={this.props.handleDelete}/>;
                 })}
@@ -84,7 +86,8 @@ class Node extends React.Component {
 
 Node.propTypes = {
     node: React.PropTypes.object.isRequired,
-    parent: React.PropTypes.object,
+    parent: React.PropTypes.number.isRequired,
+    parentOptions: React.PropTypes.array.isRequired,
     handleUpdate: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,
 };

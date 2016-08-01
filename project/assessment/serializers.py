@@ -46,10 +46,41 @@ class AssessmentEndpointSerializer(serializers.Serializer):
 
 class AssessmentRootedSerializer(serializers.ModelSerializer):
 
+    NO_PARENT = -1
+
+    def get_parent(self, assessment_id, validated_data, canSelectRoot):
+        parent_id = validated_data.pop('parent')
+
+        parent = None
+        if parent_id == self.NO_PARENT and canSelectRoot:
+            parent = self.Meta.model.get_root(assessment_id)
+        elif parent_id > 0:
+            checkParent = self.Meta.model.objects.filter(id=parent_id).first()
+            if checkParent and checkParent.get_root(assessment_id).name == self.Meta.model.get_root_name(assessment_id):
+                parent = checkParent
+
+        return parent
+
     def create(self, validated_data):
         assessment = self.root.context['view'].assessment
+        parent = self.get_parent(assessment.id, validated_data, canSelectRoot=False)
+        parent_id = parent.id if parent else None
+
         return self.Meta.model.create_tag(
             assessment.id,
-            parent_id=None,
+            parent_id=parent_id,
             **validated_data
         )
+
+    def update(self, instance, validated_data):
+        assessment = self.root.context['view'].assessment
+        parent = self.get_parent(assessment.id, validated_data, canSelectRoot=True)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if parent and parent.id != instance.get_parent().id:
+            instance.move(parent, pos='last-child')
+
+        return instance

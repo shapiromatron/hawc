@@ -8,6 +8,7 @@ import * as types from 'ivEndpointCategories/constants';
 const defaultState = {
     tagsLoaded: false,
     tags: [],
+    parentOptions: [],
 };
 
 function tree(state=defaultState, action){
@@ -16,6 +17,7 @@ function tree(state=defaultState, action){
     case types.RECEIVE_TAGLIST:
         return Object.assign({}, state, {
             tags: action.tags,
+            parentOptions: action.parentOptions,
             tagsLoaded: true,
         });
 
