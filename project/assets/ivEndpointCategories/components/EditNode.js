@@ -5,6 +5,7 @@ class EditNode extends React.Component {
     componentWillMount(){
         this.setState({
             name: this.props.node.data.name,
+            parent: this.props.parent,
         });
     }
 
@@ -64,11 +65,23 @@ class EditNode extends React.Component {
         return (
             <div className="editNodeForm container-fluid" >
                 <div className="row-fluid">
-                    <div className="control-group span12">
+                    <div className="control-group span6">
                         <label htmlFor="tag_name" className="control-label">Name</label>
-                        <div className="controls">
+                        <div className="controls controls-row">
                             <input name="name" type="text" maxLength="128"
+                                className='span12'
                                 onChange={this.onChange.bind(this)} value={this.state.name} />
+                        </div>
+                    </div>
+                    <div className="control-group span6">
+                        <label htmlFor="parent" className="control-label">Parent</label>
+                        <div className="controls controls-row">
+                            <select name="parent"
+                                className='span12'
+                                onChange={this.onChange.bind(this)}
+                                value={this.state.parent}>
+                                {this.props.parentOptions.map((d) => <option key={d[0]} value={d[0]}>{d[1]}</option>)}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -82,8 +95,9 @@ class EditNode extends React.Component {
 }
 
 EditNode.propTypes = {
-    parent: React.PropTypes.object,
+    parent: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
+    parentOptions: React.PropTypes.array.isRequired,
     handleCancel: React.PropTypes.func.isRequired,
     handleCreate: React.PropTypes.func,
     handleUpdate: React.PropTypes.func,

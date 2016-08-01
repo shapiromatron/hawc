@@ -70,10 +70,11 @@ class IVBenchmarkSerializer(serializers.ModelSerializer):
 
 
 class IVEndpointCategorySerializer(AssessmentRootedSerializer):
+    parent = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = models.IVEndpointCategory
-        fields = ('id', 'name', )
+        fields = ('id', 'name', 'parent')
 
 
 class IVEndpointCategory(serializers.ModelSerializer):

@@ -10,6 +10,9 @@ import {
     updateTag,
     deleteTag,
 } from 'ivEndpointCategories/actions';
+import {
+    NO_PARENT,
+} from 'ivEndpointCategories/constants';
 
 
 class Tree extends React.Component {
@@ -21,8 +24,8 @@ class Tree extends React.Component {
         };
     }
 
-    handleUpdate(id, name){
-        this.props.dispatch(updateTag(id, name));
+    handleUpdate(id, node){
+        this.props.dispatch(updateTag(id, node));
     }
 
     handleDelete(id){
@@ -33,6 +36,8 @@ class Tree extends React.Component {
         return <Node
             key={node.id}
             node={node}
+            parent={NO_PARENT}
+            parentOptions={this.props.parentOptions}
             handleUpdate={this.handleUpdate.bind(this)}
             handleDelete={this.handleDelete.bind(this)} />;
     }
@@ -60,6 +65,8 @@ class Tree extends React.Component {
 
         return <EditNode
             node={newNode}
+            parent={NO_PARENT}
+            parentOptions={this.props.parentOptions}
             handleCancel={this.handleCreateClickCancel.bind(this)}
             handleCreate={this.handleCreate.bind(this)}
         />;
@@ -89,6 +96,7 @@ function mapStateToProps(state) {
     return {
         tagsLoaded: state.tree.tagsLoaded,
         tags: state.tree.tags,
+        parentOptions: state.tree.parentOptions,
     };
 }
 

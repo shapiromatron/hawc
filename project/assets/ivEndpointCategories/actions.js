@@ -3,6 +3,9 @@ import fetch from 'isomorphic-fetch';
 import h from 'textCleanup/utils/helpers';
 import * as types from 'ivEndpointCategories/constants';
 
+import {
+    NO_PARENT,
+} from 'ivEndpointCategories/constants';
 
 var addDepth = function(node, depth){
         // add depth to each node, and recursively to child nodes
@@ -12,12 +15,27 @@ var addDepth = function(node, depth){
             node.children.forEach((d) => addDepth(d, depth+1));
         }
     },
+    getOptions = function(nodes){
+        let opts = [],
+            addOption = function(node){
+                let indentedName =  _.times(node.data.depth, (d) => ' _ ').join('') + node.data.name;
+                opts.push([node.id, indentedName]);
+                if (node.children){
+                    node.children.forEach(addOption);
+                }
+            };
+
+        nodes.forEach(addOption);
+        opts.unshift([NO_PARENT, '---']);
+        return opts;
+    },
     receiveTags = function(allTags){
         let tags = allTags[0].children || [];
         tags.forEach((d) => addDepth(d, 0));
         return {
             type: types.RECEIVE_TAGLIST,
             tags,
+            parentOptions: getOptions(tags),
         };
     },
     getTags = function(){
@@ -38,6 +56,7 @@ var addDepth = function(node, depth){
                 obj = {
                     assessment_id: state.config.assessment_id,
                     name: newNode.name,
+                    parent: newNode.parent,
                 };
 
             return fetch(url, h.fetchPost(csrf, obj, 'POST'))
@@ -49,12 +68,15 @@ var addDepth = function(node, depth){
                 .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
-    updateTag = function(id, name){
+    updateTag = function(id, newNode){
         return (dispatch, getState) => {
             let state = getState(),
                 url = `${state.config.base_url}${id}/`,
                 csrf = state.config.csrf,
-                obj = {name};
+                obj = {
+                    name: newNode.name,
+                    parent: newNode.parent,
+                };
 
             return fetch(url, h.fetchPost(csrf, obj, 'PATCH'))
                 .then((response) => response.json())
