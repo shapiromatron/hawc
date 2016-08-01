@@ -39,3 +39,10 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
             .values_list('id', flat=True)
 
     models.IVEndpoint.delete_caches(ids)
+
+
+@receiver(post_save, sender=models.IVEndpointCategory)
+@receiver(pre_delete, sender=models.IVEndpointCategory)
+def invalidate_ivcategory_cache(sender, instance, **kwargs):
+    assessment_id = instance.get_assessment_id()
+    instance.clear_cache(assessment_id)
