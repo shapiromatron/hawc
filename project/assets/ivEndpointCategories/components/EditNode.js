@@ -19,7 +19,48 @@ class EditNode extends React.Component {
         this.props.handleUpdate(this.state);
     }
 
+    handleCreate(e){
+        e.stopPropagation();
+        this.props.handleCreate(this.state);
+    }
+
+    renderUpdateWell(){
+        return (
+            <div className="well">
+                <button
+                    className="btn btn-primary"
+                    onClick={this.handleUpdate.bind(this)}
+                    >Save</button>
+                <button
+                    onClick={this.props.handleCancel}
+                    className="btn btn-default">Cancel</button>
+                <button
+                    className="btn btn-danger pull-right"
+                    onClick={this.props.handleDelete}
+                    >Delete</button>
+            </div>
+        );
+    }
+
+    renderCreateWell(){
+        return (
+            <div className="well">
+                <button
+                    className="btn btn-primary"
+                    onClick={this.handleCreate.bind(this)}
+                    >Create</button>
+                <button
+                    onClick={this.props.handleCancel}
+                    className="btn btn-default">Cancel</button>
+            </div>
+        );
+    }
+
     render() {
+        let well = (this.props.node.id === null)?
+            this.renderCreateWell:
+            this.renderUpdateWell;
+
         return (
             <div className="editNodeForm container-fluid" >
                 <div className="row-fluid">
@@ -33,19 +74,7 @@ class EditNode extends React.Component {
                 </div>
 
                 <div className='row-fluid'>
-                    <div className="well">
-                        <button
-                            className="btn btn-primary"
-                            onClick={this.handleUpdate.bind(this)}
-                            >Save</button>
-                        <button
-                            onClick={this.props.handleCancel}
-                            className="btn btn-default">Cancel</button>
-                        <button
-                            className="btn btn-danger pull-right"
-                            onClick={this.props.handleDelete}
-                            >Delete</button>
-                    </div>
+                    {well.bind(this)()}
                 </div>
             </div>
         );
@@ -56,8 +85,9 @@ EditNode.propTypes = {
     parent: React.PropTypes.object,
     node: React.PropTypes.object.isRequired,
     handleCancel: React.PropTypes.func.isRequired,
-    handleUpdate: React.PropTypes.func.isRequired,
-    handleDelete: React.PropTypes.func.isRequired,
+    handleCreate: React.PropTypes.func,
+    handleUpdate: React.PropTypes.func,
+    handleDelete: React.PropTypes.func,
 };
 
 export default EditNode;

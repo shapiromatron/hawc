@@ -30,10 +30,23 @@ var addDepth = function(node, depth){
                 .catch((ex) => console.error('Tag parsing failed', ex));
         };
     },
-    createTag = function(){
+    createTag = function(newNode){
         return (dispatch, getState) => {
-            console.log('create me!')
-            return null;
+            let state = getState(),
+                url = `${state.config.base_url}`,
+                csrf = state.config.csrf,
+                obj = {
+                    assessment_id: state.config.assessment_id,
+                    name: newNode.name,
+                };
+
+            return fetch(url, h.fetchPost(csrf, obj, 'POST'))
+                .then((response) => {
+                    if (response.ok){
+                        return dispatch(getTags());
+                    }
+                })
+                .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
     updateTag = function(id, name){
