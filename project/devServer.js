@@ -1,7 +1,16 @@
-var path = require('path'),
+var args = process.argv.slice(2),
     express = require('express'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev');
+
+if (args.indexOf('--testProduction')>=0){
+    console.log('Using test production;');
+    config.plugins.unshift(new webpack.DefinePlugin({
+        'process.env': {
+            'NODE_ENV': JSON.stringify('production'),
+        },
+    }));
+}
 
 var app = express(),
     compiler = webpack(config);
