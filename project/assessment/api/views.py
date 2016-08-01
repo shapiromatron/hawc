@@ -3,7 +3,7 @@ import logging
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework import filters
+from rest_framework import filters, mixins
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
@@ -78,7 +78,10 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
         return self.model.objects.all()
 
 
-class AssessmentRootedTagTreeViewset(viewsets.GenericViewSet):
+class AssessmentRootedTagTreeViewset(mixins.RetrieveModelMixin,
+                                     mixins.DestroyModelMixin,
+                                     mixins.UpdateModelMixin,
+                                     viewsets.GenericViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
@@ -91,11 +94,6 @@ class AssessmentRootedTagTreeViewset(viewsets.GenericViewSet):
         assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
         data = self.model.get_all_tags(assessment_id, json_encode=False)
         return Response(data)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):

@@ -130,10 +130,13 @@ class AssessmentRootedTagTree(MP_Node):
         else:
             return tags
 
+    def get_assessment_id(self):
+        name = self.get_ancestors()[0].name
+        return int(name[name.find('-') + 1:])
+
     def get_assessment(self):
         try:
-            name = self.get_ancestors()[0].name
-            assessment_id = int(name[name.find('-')+1:])
+            assessment_id = self.get_assessment_id()
             Assessment = apps.get_model('assessment', 'Assessment')
             return Assessment.objects.get(id=assessment_id)
         except:
