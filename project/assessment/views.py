@@ -379,9 +379,9 @@ class CASDetails(TemplateView):
         cas = self.request.GET.get('cas')
         task = tasks.get_chemspider_details.delay(cas)
         v = task.get(timeout=60)
-        if v:
-            return HttpResponse(json.dumps(v),
-                                content_type="application/json")
+        if v is None:
+            v = {}
+        return HttpResponse(json.dumps(v), content_type="application/json")
 
 
 class CloseWindow(TemplateView):
