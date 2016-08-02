@@ -118,6 +118,7 @@ class Tree extends React.Component {
                     {this.props.btnLabel}</button>
             </h1>
             <p className='help-block'>
+                <span dangerouslySetInnerHTML={{__html: this.props.extraHelpHtml}}></span>
                 Click on any node to edit that node or move the node to
                 a different parent. If you move a node, by default the
                 node will be the last-child to that parent.
@@ -142,6 +143,7 @@ function mapStateToProps(state) {
         tags: state.tree.tags,
         parentOptions: state.tree.parentOptions,
         title: state.config.title,
+        extraHelpHtml: state.config.extraHelpHtml,
         btnLabel: state.config.btnLabel
     };
 }
