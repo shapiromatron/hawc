@@ -4,7 +4,7 @@ import robTableStartup from 'robTable';
 import { renderCrossStudyDisplay } from 'robTable/components/CrossStudyDisplay';
 import { renderRiskOfBiasDisplay } from 'robTable/components/RiskOfBiasDisplay';
 import { renderStudyDisplay } from 'robTable/components/StudyDisplay';
-import ivEndpointCategoryStartup from 'ivEndpointCategories';
+import nestedTagEditorStartup from 'nestedTagEditor';
 
 window.app = {
     textCleanupStartup,
@@ -13,5 +13,5 @@ window.app = {
     renderCrossStudyDisplay,
     renderRiskOfBiasDisplay,
     renderStudyDisplay,
-    ivEndpointCategoryStartup,
+    nestedTagEditorStartup,
 };
