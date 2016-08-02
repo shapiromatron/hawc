@@ -1,6 +1,3 @@
-import json
-
-from django.core.exceptions import PermissionDenied
 from django.views.generic import DetailView
 from utils.views import (
     GenerateReport, BaseList, BaseDetail, BaseCreate,
