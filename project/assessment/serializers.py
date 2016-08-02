@@ -80,7 +80,16 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
 
-        if parent and parent.id != instance.get_parent().id:
+        # check the following before moving:
+        #   1) parent exists
+        #   2) parent != self
+        #   3) new parent != old parent
+        #   4) new parent != descendant of self
+        if parent and \
+                instance.id != parent.id and  \
+                parent.id != instance.get_parent().id and \
+                parent.id not in instance.get_descendants().values_list('id', flat=True):
+
             instance.move(parent, pos='last-child')
 
         return instance
