@@ -10,6 +10,7 @@ class Node extends React.Component {
         super();
         this.state = {
             showForm: false,
+            showChildren: true,
         };
     }
 
@@ -40,10 +41,38 @@ class Node extends React.Component {
         this.props.handleDelete(this.props.node.id);
     }
 
+    toggleChildrenVisibility(e){
+        e.stopPropagation();
+        this.setState({showChildren: !this.state.showChildren});
+    }
+
+    renderShowHide(){
+        let active = (this.props.node.children && this.props.node.children.length>0),
+            classed = 'fa fa-fw',
+            action = null;
+
+        if (active){
+            classed += (this.state.showChildren)?' fa-minus': ' fa-plus';
+            action = this.toggleChildrenVisibility.bind(this);
+        }
+
+        return (
+            <button
+                className='btn btn-mini btn-link'
+                title='Show/hide child nodes'
+                onClick={action}>
+                    <i className={classed}></i>
+            </button>
+        );
+    }
+
     renderDetail(){
+
+
         return (
             <p className='node'>
                 {this.renderIndents()}
+                {this.renderShowHide()}
                 {this.props.node.data.name}
             </p>
         );
@@ -62,7 +91,8 @@ class Node extends React.Component {
 
     render() {
         let {node, sortableGroupDecorator} = this.props,
-            children = node.children || [];
+            children = node.children || [],
+            displayChildren = (this.state.showChildren)? 'inherit': 'none';
 
         return (
             <div onClick={this.handleEditClick.bind(this)} className='draggable' data-id={node.id}>
@@ -71,7 +101,8 @@ class Node extends React.Component {
                     this.renderForm():
                     this.renderDetail()
                 }
-                <div ref={this.props.sortableGroupDecorator}>
+                <div ref={this.props.sortableGroupDecorator}
+                    style={{display: displayChildren}}>
                 {children.map((child)=>{
                     return <Node
                         key={child.id}
