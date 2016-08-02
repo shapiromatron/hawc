@@ -7,9 +7,9 @@ import { loadConfig } from 'shared/actions/Config';
 
 import {
     getTags,
-} from 'ivEndpointCategories/actions';
+} from 'nestedTagEditor/actions';
 
-import Tree from 'ivEndpointCategories/containers/Tree';
+import Tree from 'nestedTagEditor/containers/Tree';
 
 
 class Root extends React.Component {

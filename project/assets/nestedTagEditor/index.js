@@ -5,7 +5,7 @@ import configureStore from 'shared/store/configureStore';
 
 import Root from './containers/Root';
 
-import reducer from 'ivEndpointCategories/reducers';
+import reducer from 'nestedTagEditor/reducers';
 
 
 const startup = function(){

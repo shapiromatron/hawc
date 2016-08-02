@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Loading from 'shared/components/Loading';
-import Node from 'ivEndpointCategories/components/Node';
-import EditNode from 'ivEndpointCategories/components/EditNode';
+import Node from 'nestedTagEditor/components/Node';
+import EditNode from 'nestedTagEditor/components/EditNode';
 import Sortable from 'sortablejs';
 
 import {
@@ -11,10 +11,10 @@ import {
     updateTag,
     deleteTag,
     moveTag,
-} from 'ivEndpointCategories/actions';
+} from 'nestedTagEditor/actions';
 import {
     NO_PARENT,
-} from 'ivEndpointCategories/constants';
+} from 'nestedTagEditor/constants';
 
 
 class Tree extends React.Component {

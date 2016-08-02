@@ -7,7 +7,7 @@ import {BMDLine} from 'bmd/models/model.js';
 import { renderCrossStudyDisplay } from 'robTable/components/CrossStudyDisplay';
 import { renderRiskOfBiasDisplay } from 'robTable/components/RiskOfBiasDisplay';
 import { renderStudyDisplay } from 'robTable/components/StudyDisplay';
-import ivEndpointCategoryStartup from 'ivEndpointCategories';
+import nestedTagEditorStartup from 'nestedTagEditor';
 
 
 window.app = {
@@ -20,4 +20,5 @@ window.app = {
     bmdStartup,
     BMDLine,
     ivEndpointCategoryStartup,
+    nestedTagEditorStartup,
 };

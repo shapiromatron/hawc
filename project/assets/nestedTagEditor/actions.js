@@ -1,11 +1,11 @@
 import fetch from 'isomorphic-fetch';
 
 import h from 'textCleanup/utils/helpers';
-import * as types from 'ivEndpointCategories/constants';
+import * as types from 'nestedTagEditor/constants';
 
 import {
     NO_PARENT,
-} from 'ivEndpointCategories/constants';
+} from 'nestedTagEditor/constants';
 
 var addDepth = function(node, depth){
         // add depth to each node, and recursively to child nodes
