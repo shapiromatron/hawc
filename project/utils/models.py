@@ -207,6 +207,25 @@ class AssessmentRootedTagTree(MP_Node):
             depth = max(descendants) - 1
         return depth
 
+    def moveWithinSiblingsToIndex(self, newIndex):
+        siblings = list(self.get_siblings())
+        currentPosition = siblings.index(self)
+
+        if currentPosition == newIndex:
+            return
+
+        if newIndex == 0:
+            self.move(self.get_parent(), pos='first-child')
+        else:
+            anchor = siblings[newIndex]
+            pos = 'left' if (newIndex < currentPosition) else 'right'
+            self.move(anchor, pos=pos)
+
+        self.clear_assessment_cache()
+
+    def clear_assessment_cache(self):
+        self.clear_cache(self.get_assessment_id())
+
 
 class CustomURLField(URLField):
     default_validators = [validators.CustomURLValidator()]
