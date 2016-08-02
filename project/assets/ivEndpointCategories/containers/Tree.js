@@ -115,6 +115,13 @@ class Tree extends React.Component {
                     onClick={this.handleCreateClick.bind(this)}
                     className="pull-right btn btn-primary">Add new category</button>
             </h1>
+            <p className='help-block'>
+                Click on any node to edit that node or move the node to
+                a different parent. If you move a node, by default the
+                node will be the last-child to that parent.
+
+                You can also drag nodes to re-organize siblings.
+            </p>
             <div>
                 {(this.state.showCreate)?this.renderCreateNode():null}
                 <div ref={this.sortableGroupDecorator}>
