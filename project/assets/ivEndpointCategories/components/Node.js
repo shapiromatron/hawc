@@ -61,15 +61,17 @@ class Node extends React.Component {
     }
 
     render() {
-        let node = this.props.node,
+        let {node, sortableGroupDecorator} = this.props,
             children = node.children || [];
+
         return (
-            <div onClick={this.handleEditClick.bind(this)}>
+            <div onClick={this.handleEditClick.bind(this)} className='draggable' data-id={node.id}>
                 {
                     (this.state.showForm)?
                     this.renderForm():
                     this.renderDetail()
                 }
+                <div ref={this.props.sortableGroupDecorator}>
                 {children.map((child)=>{
                     return <Node
                         key={child.id}
@@ -77,8 +79,11 @@ class Node extends React.Component {
                         node={child}
                         parentOptions={this.props.parentOptions}
                         handleUpdate={this.props.handleUpdate}
-                        handleDelete={this.props.handleDelete}/>;
+                        handleDelete={this.props.handleDelete}
+                        sortableGroupDecorator={sortableGroupDecorator}
+                        />;
                 })}
+                </div>
             </div>
         );
     }
@@ -90,6 +95,7 @@ Node.propTypes = {
     parentOptions: React.PropTypes.array.isRequired,
     handleUpdate: React.PropTypes.func.isRequired,
     handleDelete: React.PropTypes.func.isRequired,
+    sortableGroupDecorator: React.PropTypes.func.isRequired,
 };
 
 export default Node;
