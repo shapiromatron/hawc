@@ -4,7 +4,7 @@ from django.core import exceptions
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework import filters
+from rest_framework import decorators, filters
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
@@ -98,7 +98,6 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         return Response(data)
 
     def create(self, request, *args, **kwargs):
-
         # get an assessment
         assessment_id = tryParseInt(request.data.get('assessment_id'), -1)
         self.assessment = models.Assessment.objects\
@@ -107,7 +106,20 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         if self.assessment is None:
             raise RequiresAssessmentID
 
-        # ensure user can edit assessment
+        self.check_editing_permission(request)
+
+        return super(AssessmentRootedTagTreeViewset, self)\
+            .create(request, *args, **kwargs)
+
+    @decorators.detail_route(methods=('patch',))
+    def move(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.assessment = instance.get_assessment()
+        self.check_editing_permission(request)
+        instance.moveWithinSiblingsToIndex(request.data['newIndex'])
+        return Response({'status': True})
+
+    def check_editing_permission(self, request):
         if self.create_requires == self.PROJECT_MANAGER:
             permissions_check = self.assessment.user_can_edit_assessment
         elif self.create_requires == self.TEAM_MEMBER:
@@ -117,9 +129,6 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
         if not permissions_check(request.user):
             raise exceptions.PermissionDenied()
-
-        return super(AssessmentRootedTagTreeViewset, self)\
-            .create(request, *args, **kwargs)
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):

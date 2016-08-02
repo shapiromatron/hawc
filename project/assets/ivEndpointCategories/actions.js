@@ -98,9 +98,26 @@ var addDepth = function(node, depth){
                 })
                 .catch((ex) => console.error('Tag delete failed', ex));
         };
+    },
+    moveTag = function(nodeId, oldIndex, newIndex){
+        return (dispatch, getState) => {
+            let state = getState(),
+                url = `${state.config.base_url}${nodeId}/move/`,
+                csrf = state.config.csrf,
+                obj = {
+                    oldIndex,
+                    newIndex,
+                };
+
+            return fetch(url, h.fetchPost(csrf, obj, 'PATCH'))
+                .then((response) => response.json())
+                .then((json) => dispatch(getTags()))
+                .catch((ex) => console.error('Tag patch failed', ex));
+        };
     };
 
 export { getTags };
 export { createTag };
 export { updateTag };
 export { deleteTag };
+export { moveTag };

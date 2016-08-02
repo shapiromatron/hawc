@@ -10,6 +10,7 @@ import {
     createTag,
     updateTag,
     deleteTag,
+    moveTag,
 } from 'ivEndpointCategories/actions';
 import {
     NO_PARENT,
@@ -82,8 +83,8 @@ class Tree extends React.Component {
         return <p className='help-block'><i>No content is available - create some!</i></p>;
     }
 
-    handleMoveNode(item, oldIndex, newIndex){
-        console.log(item, oldIndex, newIndex);
+    handleMoveNode(nodeId, oldIndex, newIndex){
+        this.props.dispatch(moveTag(nodeId, oldIndex, newIndex));
     }
 
     sortableGroupDecorator = (componentBackingInstance) => {
