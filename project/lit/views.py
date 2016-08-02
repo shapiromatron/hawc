@@ -1,4 +1,3 @@
-import abc
 import json
 
 from datetime import datetime
@@ -7,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
@@ -595,7 +594,7 @@ class TagsJSON(BaseDetail):
         return HttpResponse(json.dumps(tags), content_type="application/json")
 
 
-class TagsUpdate(BaseUpdate):
+class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
     """
     Update tags for an assessment. Note that right now, only project managers
     of the assessment can update tags. (we use the Assessment as the model in an
@@ -603,44 +602,9 @@ class TagsUpdate(BaseUpdate):
     """
     model = Assessment
     template_name = "lit/tags_update.html"
-    form_class = forms.NullForm
 
-    def get_context_data(self, **kwargs):
-        context = super(TagsUpdate, self).get_context_data(**kwargs)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        if self.request.is_ajax():
-            self.object = self.get_object()
-            response = self.post_update_ReferenceFilterTag({"status": "success"})
-            return HttpResponse(json.dumps(response), content_type="application/json")
-        else:
-            raise Http404
-
-    def post_update_ReferenceFilterTag(self, response):
-        pk = tryParseInt(self.request.POST.get('pk'), -1)
-        try:
-            status = self.request.POST.get('status')
-            if status == "add":
-                parent_pk = self.request.POST.get('parent_pk', None)
-                name = self.request.POST.get('name')
-                response["node"] = models.ReferenceFilterTag.add_tag(self.assessment.pk, name, parent_pk)
-            elif status == "remove":
-                models.ReferenceFilterTag.remove_tag(self.assessment.pk, pk)
-            elif status == "move":
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
-                offset = int(self.request.POST.get('offset'))
-                tag.move_within_parent(self.assessment.pk, offset)
-            elif status == 'rename':
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
-                assert tag.id in models.ReferenceFilterTag.get_descendants_pks(self.object.id)
-                tag.rename(self.request.POST.get('name'))
-            else:
-                raise Exception()
-        except:
-            response["status"] = "fail"
-        return response
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object()
 
 
 class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
