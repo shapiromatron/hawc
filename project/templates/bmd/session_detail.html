@@ -1,0 +1,52 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{object}}
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">BMD editing</a></li>
+                <li><a href="{{object.get_update_url}}">Update</a></li>
+                <li><a href="{{object.get_delete_url}}">Delete</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+
+    <div id="bmd"></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "editMode": false,
+        "assessment_id": {{ assessment.id }},
+        "bmds_version": "{{object.get_version_display}}",
+        "endpoint_id": {{ object.endpoint_id }},
+        "session_url": "{{ object.get_api_url }}",
+        "execute_url": "{{ object.get_execute_url }}",
+        "execute_status_url": "{{ object.get_execute_status_url }}",
+        "selected_model_url": "{{ object.get_selected_model_url }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{request.get_host}}"
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.app.bmdStartup();
+    });
+</script>
+{% endblock %}

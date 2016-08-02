@@ -235,8 +235,11 @@ var Endpoint = function(data, options){
     this.unpack_doses();
 };
 _.extend(Endpoint, {
+    get_endpoint_url: function(id){
+        return '/ani/api/endpoint/{0}/'.printf(id);
+    },
     get_object: function(id, cb){
-        $.get('/ani/api/endpoint/{0}/'.printf(id), function(d){
+        $.get(Endpoint.get_endpoint_url(id), function(d){
             cb(new Endpoint(d));
         });
     },
@@ -303,6 +306,19 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             return {'type': 'FEL', 'value': this.get_special_dose_text('FEL')};
         }
         return {'type': undefined, 'value': undefined};
+    },
+    _get_doses_by_dose_id: function(id){
+        return _.chain(this.data.animal_group.dosing_regime.doses)
+                .filter(function(d){ return d.dose_units.id === id;})
+                .pluck('dose')
+                .value();
+    },
+    _get_doses_units: function(){
+        return _.chain(this.data.animal_group.dosing_regime.doses)
+                .map(function(d){return d.dose_units;})
+                .indexBy('id')
+                .values()
+                .value();
     },
     get_special_dose_text: function(name){
         // return the appropriate dose of interest
@@ -440,10 +456,17 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             tbl = new DescriptiveTable(),
             critical_dose = function(type){
                 if(self.data[type]<0) return;
-                var span = $("<span>"),
-                    dose = new EndpointCriticalDose(self, span, type, true);
+                var span = $('<span>');
+                new EndpointCriticalDose(self, span, type, true);
                 return span;
-            }, getTaglist = function(tags, assessment_id){
+            },
+            bmd_response = function(type, showURL){
+                if(self.data.bmd === null) return;
+                var span = $('<span>');
+                new BMDResult(self, span, type, true, showURL);
+                return span;
+            },
+            getTaglist = function(tags, assessment_id){
                 if(tags.length === 0) return false;
                 var ul = $('<ul class="nav nav-pills nav-stacked">');
                 tags.forEach(function(v){
@@ -475,6 +498,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         tbl.add_tbody_tr("NOEL", critical_dose("NOEL"))
            .add_tbody_tr("LOEL", critical_dose("LOEL"))
            .add_tbody_tr("FEL",  critical_dose("FEL"))
+           .add_tbody_tr("BMD",  bmd_response('BMD', true))
+           .add_tbody_tr("BMDL",  bmd_response('BMDL', false))
            .add_tbody_tr("Monotonicity", this.data.monotonicity)
            .add_tbody_tr("Statistical test description", this.data.statistical_test)
            .add_tbody_tr("Trend result", this.data.trend_result)
@@ -607,7 +632,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         modal.getModal().on('shown', function(){
-            new EndpointPlotContainer(self, $plot);
+            self.renderPlot($plot, true);
         });
 
         modal.addHeader(title)
@@ -629,7 +654,22 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         doses = d3.extent(doses)
         if (doses.length !== 2) return "linear";
         return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? "log" : "linear";
-    }
+    },
+    renderPlot: function($div, withBMD){
+        withBMD = (withBMD === undefined)? true: withBMD;
+        var epc = new EndpointPlotContainer(this, $div);
+        if (withBMD && this.data.bmd){
+            this._render_bmd_lines(epc);
+        }
+        return epc;
+    },
+    _render_bmd_lines: function(epc){
+        let model = this.data.bmd,
+            dr = epc.plot,
+            line = new window.app.BMDLine(model, dr, 'blue');
+
+        line.render();
+    },
 });
 
 
@@ -638,6 +678,7 @@ var EndpointCriticalDose = function(endpoint, span, type, show_units){
     endpoint.addObserver(this);
     this.endpoint = endpoint;
     this.span = span;
+    this.type = type;
     this.critical_effect_idx = endpoint.data[type];
     this.show_units = show_units;
     this.display();
@@ -656,8 +697,35 @@ EndpointCriticalDose.prototype = {
     },
     update: function(){
         this.display();
-    }
+    },
 };
+
+
+var BMDResult = function(endpoint, span, type, show_units, show_url){
+    this.show_url = show_url;
+    EndpointCriticalDose.apply(this, arguments);
+};
+_.extend(BMDResult.prototype, EndpointCriticalDose.prototype, {
+    display: function(){
+        var txt,
+            bmd = this.endpoint.data.bmd,
+            currentUnits = this.endpoint.dose_units_id,
+            bmdUnits = this.endpoint.data.bmd.dose_units;
+
+        if (currentUnits == bmdUnits){
+            txt = bmd.output[this.type].toHawcString();
+            if (this.show_units){
+                txt = txt + ' {0}'.printf(this.endpoint.dose_units);
+            }
+            if (this.show_url){
+                txt = txt + ' <a href="{0}">(view details)</a>'.printf(bmd.url);
+            }
+        } else {
+            txt = '-';
+        }
+        return this.span.html(txt);
+    },
+});
 
 
 var EndpointPlotContainer = function(endpoint, plot_id){
@@ -679,7 +747,9 @@ var EndpointPlotContainer = function(endpoint, plot_id){
 };
 EndpointPlotContainer.prototype = {
     add_bmd_line: function(selected_model, line_class){
-        if (this.plot.add_bmd_line){this.plot.add_bmd_line(selected_model, line_class);}
+        if (this.plot.add_bmd_line){
+            this.plot.add_bmd_line(selected_model, line_class);
+        }
     },
     toggle_views: function(){
         // change the current plot style
@@ -942,7 +1012,7 @@ var EndpointDetailRow = function(endpoint, div, hide_level, options){
     this.div.append('<div class="row-fluid"><div class="span7"><table id="{0}" class="table table-condensed table-striped"></table></div><div class="span5"><div id="{1}" style="max-width:400px;" class="d3_container"></div></div></div>'.printf(table_id, plot_div_id));
 
     this.endpoint.build_endpoint_table($('#' + table_id));
-    new EndpointPlotContainer(this.endpoint, '#' + plot_div_id);
+    this.endpoint.renderPlot($('#' + plot_div_id));
 
     $(div + ' a.close').on('click', function(e){e.preventDefault(); self.toggle_view(false);});
     this.object_visible = true;
@@ -976,7 +1046,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
     },
     dose_scale_change: function(){
         // get latest data from endpoint
-        this.clear_bmd_lines('d3_bmd_selected');
+        this.remove_bmd_lines();
         this.get_dataset_info();
 
         //update if plot is live
@@ -999,7 +1069,6 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             delete this.error_bars_upper;
             delete this.error_bars_lower;
             delete this.error_bar_group;
-            this.clear_bmd_lines();
         }catch (err){}
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -1008,7 +1077,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.add_dr_error_bars();
         this.add_dose_response();
         this.add_selected_endpoint_BMD();
-        this.rebuild_bmd_lines();
+        this.render_bmd_lines();
         this.build_x_label();
         this.build_y_label();
         this.add_title();
@@ -1160,7 +1229,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         //rebuild error-bars
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
-        this.build_bmd_lines();
+        this.render_bmd_lines();
     },
     x_axis_change_chart_update: function(){
         // Assuming the plot has already been constructed once,
@@ -1193,7 +1262,7 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
-        this.build_bmd_lines();
+        this.render_bmd_lines();
     },
     get_dataset_info: function(){
         // Get values to be used in dose-response plots
@@ -1434,9 +1503,18 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
         if (this.plot_div.find('.LOEL').length > 0) { legend_settings.items.push({'text': 'LOEL', 'classes': 'dose_points LOEL', 'color': undefined}); }
         if (this.plot_div.find('.NOEL').length > 0) { legend_settings.items.push({'text': 'NOEL', 'classes': 'dose_points NOEL', 'color': undefined}); }
-        $.each($(this.bmd), function(i, v){
-            legend_settings.items.push({'text': this.BMD.model_name, 'classes': '', 'color': this.line_color });
-        });
+        var doseUnits = parseInt(this.endpoint.dose_units_id);
+        this.bmd
+            .filter(function(d){
+                return d.dose_units_id === doseUnits;
+            })
+            .forEach(function(d){
+                legend_settings.items.push({
+                    'text': d.name,
+                    'classes': '',
+                    'color': d.stroke,
+                });
+            });
 
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
@@ -1466,175 +1544,129 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         // build legend
         this.build_legend(legend_settings);
     },
-    clear_bmd_lines: function(line_class){
-        // reclaim the color to be used again in the future
-        if (line_class === undefined){line_class = 'd3_bmd_clicked';}
-
-        // use a reverse-for loop so it won't skip indices when deleted
-        if(this.bmd.length>=1){
-            for (var i = this.bmd.length - 1; i >= 0; i -= 1) {
-                if (this.bmd[i].line_class == line_class){
-                    this.line_colors.push(this.bmd[i].line_color); // reclaim color
-                    this.bmd[i].remove_line_group(); // remove lines
-                    this.bmd.splice(i,1);   // remove from array
-                }
-            }
-        }
-
-        this.add_legend();
-    },
     cleanup_before_change: function(){
-        this.bmd.forEach(function(v){
-            v.remove_line_group();
-        });
+        this.remove_bmd_lines();
     },
-    build_bmd_lines: function(){
-        // build any bmd lines to ensure they're persistent on graph
-        this.bmd.forEach(function(v, i){
-            v.construct_line();
-        });
-    },
-    rebuild_bmd_lines: function(){
-        // rebuild any bmd lines to ensure they're persistent on graph
-        this.bmd.forEach(function(v, i){
-            v.remove_line_group();
-            v.construct_line();
-        });
-    },
-    add_bmd_line: function(BMD, line_class){
-        // Add a BMD line to a DRPlot, using one of three line classess specified:
-        // 1) d3_bmd_hover
-        // 2) d3_bmd_clicked
-        // 3) d3_bmd_selected
-
-        if (line_class === undefined){line_class = 'd3_bmd_clicked';}
-        line = new BMDline(this, BMD, line_class);
+    add_bmd_line: function(line){
         this.bmd.push(line);
-        this.add_legend();
-    }
-});
-
-
-var BMDline = function(DRPlot, BMD, line_class){
-    this.DRPlot = DRPlot;
-    this.BMD = BMD;
-    this.line_class = line_class;
-    this.line_color = DRPlot.line_colors.splice(0,1)[0];
-    this.construct_line();
-};
-BMDline.prototype = {
-    remove_line_group: function(){
-        if (this.line_group){
-            this.bmd_line.remove();
-            this.bmr_lines.remove();
-            this.line_group.remove();
-            delete this.bmd_line;
-            delete this.bmr_lines;
-            delete this.line_group;
-        }
+        this.render_bmd_lines();
     },
-    construct_line: function(){
-
-        // build BMD-line estimate of the dose-range
-        var x = this.DRPlot.x_scale,
-            y = this.DRPlot.y_scale,
-            x_domain = x.domain(),
-            min_x;
-
-        // Construct BMD model-form
-        var modelform = this.BMD.plotting.formula;
-        $.each(this.BMD.plotting.parameters, function(k, v){
-           k = k.replace('(','\\(').replace(')','\\)'); // escape parenthesis (multistage models)
-           var re = new RegExp("{" + k +"}", "g");
-           modelform = modelform.replace(re, v);
+    remove_bmd_line: function(model_id){
+        this.bmd = _.reject(this.bmd, function(d){
+            return d.id === model_id;
         });
-        this.modelform = modelform;
+        this.render_bmd_lines();
+    },
+    render_bmd_lines: function(){
+        this.remove_bmd_lines();
 
-        // determine minimum x to model
-        if (($.inArray(this.DRPlot.endpoint.data.data_type, ["D", "DC"]) >= 0) ||
-            ($.inArray(this.BMD.model_name, ["Exponential-M3", "Hill", "Power"]) >= 0)) {
-            min_x = 1e-10; // zero can cause problems
-        } else {
-            min_x = x_domain[0];
-        }
-        if (this.DRPlot.x_axis_settings.scale_type === "log"){
-            min_x = 1e-10;
-        }
+        var doseUnits = parseInt(this.endpoint.dose_units_id),
+            lines = this.bmd.filter(function(d){
+                return d.dose_units_id === doseUnits;
+            }),
+            x = this.x_scale,
+            xs = this.x_scale.ticks(100),
+            y = this.y_scale,
+            liner = d3.svg.line()
+                .x(function(d){return x(d.x);})
+                .y(function(d){return y(d.y);})
+                .interpolate('linear');
 
-        // Build line group
-        this.line_group = this.DRPlot.vis.append("g")
-                            .attr('class', (this.line_class + ' bmd_line'))
-                            .style('stroke', this.line_color);
+        var bmds = _.chain(lines)
+                    .filter(function(d){
+                        return d.bmd_line !== undefined;
+                    })
+                    .map(function(d){
+                        return [
+                            {
+                                x1: x(d.bmd_line.x),
+                                x2: x(d.bmd_line.x),
+                                y1: y.range()[0],
+                                y2: y(d.bmd_line.y),
+                                stroke: d.stroke,
+                            },
+                            {
+                                x1: x.range()[0],
+                                x2: x(d.bmd_line.x),
+                                y1: y(d.bmd_line.y),
+                                y2: y(d.bmd_line.y),
+                                stroke: d.stroke,
+                            },
+                        ];
+                    })
+                    .flatten()
+                    .value();
 
-        // Build BMD lines
-        var values = d3.range(min_x, x_domain[1], x_domain[1]/100.0)
-            .map(function(x){
-                var val = eval(modelform);
-                val = (isNaN(val)) ? y.domain()[0] : val;
-                return {x1: x, y1:val};});
+        var bmdls = _.chain(lines)
+                    .filter(function(d){
+                        return d.bmdl_line !== undefined;
+                    })
+                    .map(function(d){
+                        return [
+                            {
+                                x1: x(d.bmdl_line.x),
+                                x2: x(d.bmdl_line.x),
+                                y1: y.range()[0],
+                                y2: y(d.bmdl_line.y),
+                                stroke: d.stroke,
+                            },
+                            {
+                                x1: x.range()[0],
+                                x2: x(d.bmdl_line.x),
+                                y1: y(d.bmdl_line.y),
+                                y2: y(d.bmdl_line.y),
+                                stroke: d.stroke,
+                            },
+                        ];
+                    })
+                    .flatten()
+                    .value();
 
-        // add line to plot
-        var line_function = d3.svg.line()
-                    .interpolate("basis")
-                    .x(function(d) { return x(d.x1); })
-                    .y(function(d) { return y(d.y1); });
+        var g = this.vis
+            .append('g')
+            .attr('class', 'bmd');
 
-        if (this.bmd_line){
-            this.bmd_line
-                .transition()
-                .duration(1000)
-                .attr("d", line_function(values));
-        } else {
-            this.bmd_line = this.line_group.append("svg:path")
-                                .attr("d", line_function(values));
-        }
+        // add lines
+        g.selectAll('path')
+            .data(lines)
+            .enter()
+                .append('path')
+                .attr('class', 'bmd_line')
+                .attr('d', function(d){ return liner(d.getData(xs)); })
+                .attr('stroke', function(d){ return d.stroke; });
 
-        // add BMD, BMDL, and BMR lines
-        if ('BMD' in this.BMD.outputs){
-            var model = this.modelform,
-                within_range = function(value, range){
-                    return ((value >= range[0]) &&( value <= range[1]));
-                },
-                func = function(x){return eval(model);},
-                bmr = func(this.BMD.outputs.BMD),
-                options = {
-                    append_to: this.line_group,
-                    data: [],
-                    x1: function(d) {return x(d.x1);},
-                    x2: function(d) {return x(d.x2);},
-                    y1: function(d) {return y(d.y1);},
-                    y2: function(d) {return y(d.y2);}
-                };
+        // add bmd lines
+        g.selectAll('line.bmd')
+            .data(bmds)
+            .enter()
+                .append('line')
+                .attr('class', 'bmd_line')
+                .attr('x1', function(d){return d.x1; })
+                .attr('x2', function(d){return d.x2; })
+                .attr('y1', function(d){return d.y1; })
+                .attr('y2', function(d){return d.y2; })
+                .attr('stroke', function(d){return d.stroke; });
 
-            if (within_range(bmr, y.domain())){
-                options.data.push({x1: x.domain()[0],
-                                   x2: d3.min([this.BMD.outputs.BMD, x.domain()[1]]),
-                                   y1: bmr,
-                                   y2: bmr});
-            }
+        // add bmdl lines
+        g.selectAll('line.bmd')
+            .data(bmdls)
+            .enter()
+                .append('line')
+                .attr('class', 'bmd_line')
+                .attr('x1', function(d){return d.x1; })
+                .attr('x2', function(d){return d.x2; })
+                .attr('y1', function(d){return d.y1; })
+                .attr('y2', function(d){return d.y2; })
+                .attr('stroke', function(d){return d.stroke; });
 
-            if (within_range(this.BMD.outputs.BMD, x.domain())){
-                options.data.push({x1: this.BMD.outputs.BMD,
-                                   x2: this.BMD.outputs.BMD,
-                                   y1: y.domain()[0],
-                                   y2: d3.min([bmr, y.domain()[1]])});
-           }
-
-            if (within_range(this.BMD.outputs.BMDL, x.domain())){
-                options.data.push({x1: this.BMD.outputs.BMDL,
-                                   x2: this.BMD.outputs.BMDL,
-                                   y1: y.domain()[0],
-                                   y2: d3.min([bmr, y.domain()[1]])});
-            }
-
-            if (this.bmr_lines){
-                this.bmr_lines = this.DRPlot.build_line(options, this.bmr_lines);
-            } else {
-                this.bmr_lines = this.DRPlot.build_line(options);
-            }
-        }
-    }
-};
+        this.add_legend();
+    },
+    remove_bmd_lines: function(){
+        this.vis
+            .selectAll('g.bmd')
+            .remove();
+    },
+});
 
 
 var Barplot = function(endpoint, plot_id, options, parent){

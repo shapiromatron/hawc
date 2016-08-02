@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.contenttypes import fields
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ObjectDoesNotExist
+from django.apps import apps
 
 from reversion import revisions as reversion
 from scipy import stats
@@ -15,9 +17,10 @@ from scipy import stats
 from assessment.models import BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
 
-from bmd.models import BMD_session
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
-from utils.models import get_distinct_charfield_opts, get_distinct_charfield
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, \
+    cleanHTML, tryParseInt
+from utils.models import get_distinct_charfield_opts, \
+    get_distinct_charfield, get_crumbs
 
 
 class Experiment(models.Model):
@@ -140,6 +143,9 @@ class Experiment(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
 
     @property
     def cas_url(self):
@@ -302,6 +308,9 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.experiment)
 
     @property
     def is_generational(self):
@@ -780,6 +789,9 @@ class Endpoint(BaseEndpoint):
     def get_absolute_url(self):
         return reverse('animal:endpoint_detail', args=[str(self.pk)])
 
+    def get_crumbs(self):
+        return get_crumbs(self, self.animal_group)
+
     @property
     def dose_response_available(self):
         return self.data_reported and self.data_extracted
@@ -833,21 +845,6 @@ class Endpoint(BaseEndpoint):
         for i in xrange(1, len(resps)):
             change += resps[i] - resps[0]
         return change >= 0
-
-    def bmds_session_exists(self):
-        """
-        Check if at least one BMDS session exists for the specified Endpoint ID
-        """
-        return BMD_session.objects.filter(endpoint=self.pk).count() > 0
-
-    def get_bmds_session(self):
-        """
-        Return BMDS session
-        """
-        try:
-            return BMD_session.objects.filter(endpoint=self.pk).latest('last_updated')
-        except:
-            return None
 
     @classmethod
     def flat_complete_header_row(cls):
@@ -1018,6 +1015,18 @@ class Endpoint(BaseEndpoint):
             val = min_ if abs(min_) > abs(max_) else max_
 
         ep['percentControlMaxChange'] = val
+
+    def get_latest_bmd_session(self):
+        try:
+            return self.bmd_sessions.latest()
+        except ObjectDoesNotExist:
+            return None
+
+    def get_selected_bmd_model(self):
+        try:
+            return self.bmd_model.model
+        except ObjectDoesNotExist:
+            return None
 
 
 class ConfidenceIntervalsMixin(object):

@@ -14,10 +14,7 @@ DATABASES = {
 }
 
 # BMD MODELING SETTINGS
-BMD_ROOT_PATH = r'/path/to/bmds'
-BMD_PLOT = r'gnuplot'
-BMD_EXTENSION = ''
-BMD_SHELL = 'x11'
+BMD_HOST = 'http://example.com'  # optional; used for BMD module
 
 # MODELING TEMP PATH
 TEMP_PATH = r'/path/to/temp'

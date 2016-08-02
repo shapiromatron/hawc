@@ -1,0 +1,47 @@
+{% extends 'animal/endpoint_detail.html' %}
+
+{% block breadcrumbs_self %}
+  <li><a href="{{object.get_absolute_url}}">{{object}}
+    </a><span class="divider">/</span></li>
+  <li class="active">BMD sessions<span class="divider">/</span></li>
+{% endblock breadcrumbs_self %}
+
+{% block content %}
+    <h1>BMD sessions
+        {% if obj_perms.edit and crud == "Read" %}
+          <div class="btn-group pull-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="disabled"><a tabindex="-1" href="#">BMD editing</a></li>
+                <li><a href="{% url 'bmd:session_create' object.pk %}">Create new</a></li>
+            </ul>
+          </div>
+        {% endif %}
+    </h1>
+    <table class='table table-condensed table-striped'>
+      <thead>
+        <tr>
+          <th>Session</th>
+          <th>Created</th>
+          <th>Last updated</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for o in object_list %}
+        <tr>
+          <td>
+            <a href="{{o.get_absolute_url}}">{{o}}</a>
+          </td>
+          <td>{{o.created}}</td>
+          <td>{{o.last_updated}}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3"><p class='help-block'><i>No BMD modeling sessions available.</i></p></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

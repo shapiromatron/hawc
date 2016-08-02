@@ -313,58 +313,18 @@ span.smart-tag.active:hover{
 }
 
 /* BMD APPLICATION STYLES */
-#bmd_settings_form{
-  left: 5%;
-  width:85%;
-  margin:0px;
-}
-#bmd_raw_output{
-  left: 2.5%;
-  width:90%;
-  margin:0px;
-  top: 5%;
-  max-height: 90%;
-}
-#bmd_raw_output .modal-body {
-  max-height: 600px;
-}
-#raw_output_img {
-  float:right;
-}
-
 
 /* BMD output table */
-#bmd_output_tbl .d3_modeled {
-  background-color: #ede;
+#bmd_recommended_model {
+  background-color: #BCED91;
 }
-.bmd_selected_model {
+#bmd_selected_model {
   background-color: yellow;
 }
-
-
-/* BMD modal form */
-#raw_output_img {
-  width: 400px;
+.bmd_recommendation{
+  font-size: 1rem;
+  padding: 5px 10px;
 }
-.logic_popover, .popover {
-  width: 600px;
-}
-.logic_popover, .popover-inner {
-  width: 600px;
-}
-.logic_test_pass {
-  background-color:#BCED91;
-}
-.logic_test_warning {
-  background-color:yellow;
-}
-.logic_test_questionable {
-  background-color:#FA9A50;
-}
-.logic_test_fail {
-  background-color:#F08080;
-}
-
 
 /* Sidebar for summary text */
 .affix-sidenav {
