@@ -99,8 +99,6 @@
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
-    <div id="comments_block"></div>
-
   {% endif %}
 
 {% endblock %}
@@ -117,7 +115,4 @@
 
     window.plot = new RiskOfBias_Donut(study, '#rob_plot', {'build_plot_startup': true});
   </script>
-  {% if crud == "Read" %}
-    {% include "comments/_comments_extrajs.html" %}
-  {% endif %}
 {% endblock extrajs %}

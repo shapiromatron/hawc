@@ -66,8 +66,7 @@ class Assessment(models.Model):
         related_name='assessment_reviewers',
         blank=True,
         help_text="Can view the assessment even if the assessment is not public, "
-                  "but cannot add or change content. Reviewers may optionally add "
-                  "comments, if this feature is enabled. You can add multiple reviewers.")
+                  "but cannot add or change content. You can add multiple reviewers.")
     editable = models.BooleanField(
         default=True,
         help_text='Project-managers and team-members are allowed to edit assessment components.')
@@ -105,11 +104,6 @@ class Assessment(models.Model):
         help_text="Create custom-text to describe methodology and results of the "
                   "assessment; insert tables, figures, and visualizations to using "
                   "\"smart-tags\" which link to other data in HAWC.")
-    enable_comments = models.BooleanField(
-        default=True,
-        help_text="Enable comments from reviewers or the general-public on "
-                  "datasets or findings; comment-functionality and visibility "
-                  "can be controlled in advanced-settings.")
     conflicts_of_interest = models.TextField(
         blank=True,
         help_text="Describe any conflicts of interest by the assessment-team.")

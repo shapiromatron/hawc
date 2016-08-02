@@ -30,12 +30,6 @@ class ExperimentCreate(BaseCreate):
 class ExperimentRead(BaseDetail):
     model = models.Experiment
 
-    def get_context_data(self, **kwargs):
-        context = super(ExperimentRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "experiment"
-        context['comment_object_id'] = self.object.pk
-        return context
-
 
 class ExperimentUpdate(BaseUpdate):
     success_message = "Experiment updated."
@@ -153,12 +147,6 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
 class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
-
-    def get_context_data(self, **kwargs):
-        context = super(AnimalGroupRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "animal_group"
-        context['comment_object_id'] = self.object.pk
-        return context
 
 
 class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
@@ -422,12 +410,6 @@ class EndpointRead(BaseDetail):
                         'animal_group__dosing_regime',
                         'animal_group__experiment',
                         'animal_group__experiment__study')
-
-    def get_context_data(self, **kwargs):
-        context = super(EndpointRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "endpoint"
-        context['comment_object_id'] = self.object.pk
-        return context
 
 
 class EndpointDelete(BaseDelete):

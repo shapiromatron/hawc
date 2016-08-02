@@ -90,17 +90,11 @@
       </div>
     {% endif %}
 
-    <!-- Comments -->
-    <div id="comments_block"></div>
-
   {% endif %}
 
 {% endblock %}
 
 {% block extrajs %}
-  {% if crud == "Read" %}
-    {% include "comments/_comments_extrajs.html" %}
-  {% endif %}
   <script type="text/javascript">
     var endpoint = new Endpoint({{object.d_response|safe}}),
         plot = new EndpointPlotContainer(endpoint, '#bmd_ds_plot');

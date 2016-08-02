@@ -45,10 +45,6 @@
           <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">BMDS settings</a></li>
           {% endif %}
 
-          {% if assessment.enable_comments %}
-          <li><a href="{% url 'comments:comment_settings_details' object.pk %}">Commenting settings</a></li>
-          {% endif %}
-
           {% if debug %}
           <li><a href="{% url 'assessment:template_list' object.pk %}">Word report templates</a></li>
           {% endif %}
@@ -170,14 +166,11 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
-    <div id="comments_block"></div>
   {% endif %}
 
 {% endblock content %}
 
 {% block extrajs %}
-  {% include "comments/_comments_extrajs.html" %}
-
   {% if crud == "Read" and object.cas %}
     <script type="text/javascript">
       $(document).on('ready', function(){

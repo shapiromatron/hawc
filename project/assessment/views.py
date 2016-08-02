@@ -110,8 +110,6 @@ class AssessmentRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(AssessmentRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "assessment"
-        context['comment_object_id'] = self.object.pk
         context['attachments'] = models.Attachment.get_attachments(
             self.object,
             not context['obj_perms']['edit']

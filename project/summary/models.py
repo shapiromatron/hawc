@@ -13,7 +13,6 @@ from animal.models import Endpoint
 from epi.models import Outcome
 from epimeta.models import MetaResult
 from invitro.models import IVEndpoint
-from comments.models import Comment
 
 from animal.exports import EndpointFlatDataPivot
 from epi.exports import OutcomeDataPivot
@@ -86,15 +85,6 @@ class SummaryText(MP_Node):
         """
         root = cls.get_assessment_root_node(assessment_id)
         tags = SummaryText.dump_bulk(root)
-
-        if root.assessment.comment_settings.public_comments:
-            descendants = root.get_descendants()
-            obj_type = Comment.get_content_object_type('summary_text')
-            comments = Comment.objects.filter(
-                content_type=obj_type,
-                object_id__in=descendants
-            )
-            tags[0]['data']['comments'] = Comment.get_jsons(comments, json_encode=False)
 
         if json_encode:
             return json.dumps(tags, cls=HAWCDjangoJSONEncoder)

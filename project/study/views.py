@@ -121,8 +121,6 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(StudyRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "study"
-        context['comment_object_id'] = self.object.pk
         context['attachments_viewable'] = self.assessment.user_can_view_attachments(self.request.user)
         return context
 
