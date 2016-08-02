@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'invitro',
     'bmd',
     'summary',
-    'comments',
 )
 
 
