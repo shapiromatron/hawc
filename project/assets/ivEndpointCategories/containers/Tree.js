@@ -110,10 +110,12 @@ class Tree extends React.Component {
 
         return <div>
             <h1 key={0}>
-                Modify in-vitro endpoint categories
+                {this.props.title}
                 <button
                     onClick={this.handleCreateClick.bind(this)}
-                    className="pull-right btn btn-primary">Add new category</button>
+                    className="pull-right btn btn-primary">
+                    <i className="fa fa-fw fa-plus"></i>
+                    {this.props.btnLabel}</button>
             </h1>
             <p className='help-block'>
                 Click on any node to edit that node or move the node to
@@ -139,6 +141,8 @@ function mapStateToProps(state) {
         tagsLoaded: state.tree.tagsLoaded,
         tags: state.tree.tags,
         parentOptions: state.tree.parentOptions,
+        title: state.config.title,
+        btnLabel: state.config.btnLabel
     };
 }
 
