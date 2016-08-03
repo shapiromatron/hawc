@@ -65,15 +65,15 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      var loadTaglist = function(){
-        $.get("{% url 'lit:tags_list' %}", {'pk': $('#id_assessment').val()}, function(d){
-          window.tagtree = new TagTree(JSON.parse(d));
-          $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
-        });
-      };
+        var loadTaglist = function(){
+            $.get("{% url 'lit:tags_list' %}", {'pk': $('#id_assessment').val()}, function(d){
+                window.tagtree = new window.app.lit.TagTree(JSON.parse(d));
+                $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
+            });
+        };
 
-      $('#id_assessment').on('change', loadTaglist);
-      loadTaglist();
+        $('#id_assessment').on('change', loadTaglist);
+        loadTaglist();
 
     });
   </script>

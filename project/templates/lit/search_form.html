@@ -34,38 +34,38 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      {% if type == "Search" or object.search_type == "s" %}
-        // allow for font-colors in descriptive-text
-        var ss = ["//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css",
-                  "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css",
-                  "{{STATIC_URL}}css/hawc.css",
-                  "{{STATIC_URL}}css/d3.css"];
-        $('#id_search_string').wysihtml5({stylesheets: ss,
-            "color": true,
-            "font-styles": false,
-            "emphasis": false,
-            "hawc": false,
-            "lists": false,
-            "html": false,
-            "link": false,
-            "image": false
+        {% if type == "Search" or object.search_type == "s" %}
+            // allow for font-colors in descriptive-text
+            var ss = ["//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css",
+                      "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css",
+                      "{{STATIC_URL}}css/hawc.css",
+                      "{{STATIC_URL}}css/d3.css"];
+            $('#id_search_string').wysihtml5({stylesheets: ss,
+                "color": true,
+                "font-styles": false,
+                "emphasis": false,
+                "hawc": false,
+                "lists": false,
+                "html": false,
+                "link": false,
+                "image": false
+            });
+        {% endif %}
+
+        // autogenerate slugs
+        var slugify = function(txt){
+          return txt.toLowerCase()
+                    .replace(/[^\w ]+/g,'')
+                    .replace(/ +/g,'-');
+        }
+        $('#id_title').on('keyup', function(){$('#id_slug').val(slugify($(this).val()));});
+
+        // add a loading notification
+        $('input[type=submit]').click(function(e){
+            $(e.target).addClass('disabled').css('pointer-events', 'none');
+            $(e.target).parent().append('<p><br>Please wait, loading... <img src="/static/img/loading.gif"></p>');
+            return true;
         });
-      {% endif %}
-
-      // autogenerate slugs
-      var slugify = function(txt){
-        return txt.toLowerCase()
-                  .replace(/[^\w ]+/g,'')
-                  .replace(/ +/g,'-');
-      }
-      $('#id_title').on('keyup', function(){$('#id_slug').val(slugify($(this).val()));});
-
-      // add a loading notification
-      $('input[type=submit]').click(function(e){
-        $(e.target).addClass('disabled').css('pointer-events', 'none');
-        $(e.target).parent().append('<p><br>Please wait, loading... <img src="/static/img/loading.gif"></p>');
-        return true;
-      });
     });
   </script>
 {% endblock extrajs %}
