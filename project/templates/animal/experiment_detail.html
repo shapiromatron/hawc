@@ -47,7 +47,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Experiment.get_object({{object.id}}, function(d){
+      window.app.animal.Experiment.get_object({{object.id}}, function(d){
         $('h1').after(d.build_details_table());
       });
     });

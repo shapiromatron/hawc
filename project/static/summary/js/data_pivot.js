@@ -2957,13 +2957,13 @@ _.extend(DataPivotExtension, {
     {
       _dpe_name:        "experiment",
       _dpe_key:         "experiment id",
-      _dpe_cls:         Experiment,
+      _dpe_cls:         "window.app.animal.Experiment",  // TODO - fix
       _dpe_option_txt:  "Show experiment",
     },
     {
       _dpe_name:        "animal_group",
       _dpe_key:         "animal group id",
-      _dpe_cls:         AnimalGroup,
+      _dpe_cls:         "window.app.animal.AnimalGroup",  // TODO - fix
       _dpe_option_txt:  "Show animal group",
     },
     {
