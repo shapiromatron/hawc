@@ -11,6 +11,7 @@ import { renderStudyDisplay } from 'robTable/components/StudyDisplay';
 import nestedTagEditorStartup from 'nestedTagEditor';
 
 import assessment from 'assessment';
+import animal from 'animal';
 import lit from 'lit';
 
 
@@ -26,5 +27,6 @@ window.app = {
     BMDLine,
     nestedTagEditorStartup,
     assessment,
+    animal,
     lit,
 };

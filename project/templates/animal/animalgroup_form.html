@@ -65,7 +65,6 @@
   {{ form.media }}
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/dose_regime_form.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function() {
 
@@ -123,7 +122,7 @@
         $('#id_generation').on('change', toggle_dosing_regime);
         toggle_dosing_regime();
 
-        new DosingRegimeForm($("#animal_group"), dose_types, dose_values);
+        new window.app.animal.DosingRegimeForm($("#animal_group"), dose_types, dose_values);
 
       {% endif %}
     });
