@@ -48,7 +48,7 @@ def get_chemspider_details(cas_number):
         d = {"status": "failure"}
         if cas_number:
             d = fetch_chemspider(cas_number)
-            if d['status'] == 'success':
+            if d.get('status') == 'success':
                 logger.info('setting cache: {}'.format(cache_name))
                 cache.set(cache_name, d)
     return d
