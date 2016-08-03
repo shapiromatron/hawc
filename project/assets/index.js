@@ -19,6 +19,5 @@ window.app = {
     renderStudyDisplay,
     bmdStartup,
     BMDLine,
-    ivEndpointCategoryStartup,
     nestedTagEditorStartup,
 };

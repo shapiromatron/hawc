@@ -16,9 +16,6 @@ DATABASES = {
 # BMD MODELING SETTINGS
 BMD_HOST = 'http://example.com'  # optional; used for BMD module
 
-# MODELING TEMP PATH
-TEMP_PATH = r'/path/to/temp'
-
 # PHANTOMJS SETTINGS
 PHANTOMJS_PATH = r'/path/to/phantomjs'
 
