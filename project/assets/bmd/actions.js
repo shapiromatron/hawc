@@ -1,7 +1,7 @@
 import $ from '$';
 import fetch from 'isomorphic-fetch';
 
-import {getAjaxHeaders} from 'shared/utils';
+import h from 'robTable/utils/helpers';
 
 import * as types from 'bmd/constants';
 
@@ -26,7 +26,7 @@ var showModal = function(name){
     fetchEndpoint = function(id){
         return (dispatch, getState) => {
             const url = Endpoint.get_endpoint_url(id);
-            return fetch(url)
+            return fetch(url, h.fetchGet)
                 .then((response) => response.json())
                 .then((json) => dispatch(receiveEndpoint(new Endpoint(json))))
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
@@ -34,7 +34,7 @@ var showModal = function(name){
     },
     fetchSessionSettings = function(session_url){
         return (dispatch, getState) => {
-            return fetch(session_url)
+            return fetch(session_url, h.fetchGet)
                 .then((response) => response.json())
                 .then((json) => dispatch(receiveSession(json)))
                 .catch((ex) => console.error('Endpoint parsing failed', ex));
@@ -114,21 +114,16 @@ var showModal = function(name){
         return (dispatch, getState) => {
             let state = getState(),
                 url = state.config.execute_url,
-                payload = {
-                    credentials: 'same-origin',
-                    method: 'POST',
-                    headers: getAjaxHeaders(state.config.csrf),
-                    body: JSON.stringify({
-                        dose_units: state.bmd.doseUnits,
-                        bmrs: state.bmd.bmrs,
-                        modelSettings: state.bmd.modelSettings,
-                    }),
+                data = {
+                    dose_units: state.bmd.doseUnits,
+                    bmrs: state.bmd.bmrs,
+                    modelSettings: state.bmd.modelSettings,
                 };
 
             return new Promise((res, rej)=>{res();})
                 .then(() => dispatch(execute_start()))
                 .then(() => {
-                    fetch(url, payload)
+                    fetch(url, h.fetchPost(state.config.csrf, data))
                         .then((response) => {
                             if (!response.ok){
                                 dispatch(setErrors(['An error occurred.']));
@@ -167,7 +162,7 @@ var showModal = function(name){
     getExecuteStatus = function(){
         return (dispatch, getState) => {
             let url = getState().config.execute_status_url;
-            fetch(url)
+            fetch(url, h.fetchGet)
                 .then((res) => res.json())
                 .then((res) => {
                     if (res.finished){
@@ -246,19 +241,14 @@ var showModal = function(name){
         return (dispatch, getState) => {
             let state = getState(),
                 url = state.config.selected_model_url,
-                payload = {
-                    credentials: 'same-origin',
-                    method: 'POST',
-                    headers: getAjaxHeaders(state.config.csrf),
-                    body: JSON.stringify({
-                        model: model_id,
-                        notes,
-                    }),
+                data = {
+                    model: model_id,
+                    notes,
                 };
 
             return new Promise((res, rej)=>{res();})
                 .then(() => {
-                    fetch(url, payload)
+                    fetch(url, h.fetchPost(state.config.csrf, data))
                         .then(() => dispatch(setSelectedModel(model_id, notes)));
                 });
         };
