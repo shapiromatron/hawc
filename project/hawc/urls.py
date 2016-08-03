@@ -41,8 +41,6 @@ urlpatterns = [
         include('lit.urls', namespace='lit')),
     url(r'^summary/',
         include('summary.urls', namespace='summary')),
-    url(r'^comments/',
-        include('comments.urls', namespace='comments')),
     url(r'^rob/',
         include('riskofbias.urls', namespace='riskofbias')),
 

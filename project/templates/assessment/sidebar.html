@@ -20,10 +20,6 @@
         <li class=""><a href="{% url 'summary:list' assessment.pk %}">Executive summary</a></li>
     {% endif %}
 
-    {% if assessment.enable_comments %}
-        <li class=""><a href="{% url 'comments:comment_list_assessment' assessment.pk %}">Comment summary</a></li>
-    {% endif %}
-
     <li class="nav-header">Downloads</li>
     <li class=""><a href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a></li>
     {% if debug %}

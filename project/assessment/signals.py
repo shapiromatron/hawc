@@ -30,8 +30,5 @@ def default_configuration(sender, instance, created, **kwargs):
         logging.info("Creating default summary text")
         apps.get_model('summary', 'SummaryText').build_default(instance)
 
-        logging.info("Building default comment settings")
-        apps.get_model('comments', 'CommentSettings')(assessment=instance).save()
-
         logging.info("Building in-vitro endpoint category-root")
         apps.get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)

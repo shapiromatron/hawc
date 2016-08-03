@@ -40,7 +40,6 @@
     <h2>Available animal groups</h2>
     {% include "animal/_animal_group_list_tbl.html" with object_list=object.animal_groups.all %}
 
-    <div id="comments_block"></div>
   {% endif %}
 {% endblock %}
 
@@ -55,7 +54,6 @@
   </script>
 
   {% if crud == "Read" %}
-    {% include "comments/_comments_extrajs.html" %}
 
     {% if object.cas %}
       <script type="text/javascript">

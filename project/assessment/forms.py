@@ -21,8 +21,7 @@ class AssessmentForm(forms.ModelForm):
                    'enable_data_extraction',
                    'enable_risk_of_bias',
                    'enable_bmd',
-                   'enable_summary_text',
-                   'enable_comments')
+                   'enable_summary_text')
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
@@ -80,8 +79,7 @@ class AssessmentModulesForm(forms.ModelForm):
                   'enable_data_extraction',
                   'enable_risk_of_bias',
                   'enable_bmd',
-                  'enable_summary_text',
-                  'enable_comments')
+                  'enable_summary_text')
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):

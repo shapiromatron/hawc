@@ -48,16 +48,12 @@
   {% if crud == "Read" %}
     <h2>Available endpoints</h2>
     <div id="endpointsDiv"></div>
-    <div id="comments_block"></div>
   {% endif %}
 
 {% endblock %}
 
 
 {% block extrajs %}
-  {% if crud == "Read" %}
-    {% include "comments/_comments_extrajs.html" %}
-  {% endif %}
 
   <script type="text/javascript">
     $(document).ready(function(){
