@@ -69,7 +69,7 @@
 
       var endpoints = [];
       {% for obj in object.endpoints.all %}
-        endpoints.push(new Endpoint({{obj.d_response|safe}}));
+        endpoints.push(new window.app.animal.Endpoint({{obj.d_response|safe}}));
       {% endfor %}
       window.app.animal.AnimalGroupTable.render($("#endpointsDiv"), endpoints);
     });

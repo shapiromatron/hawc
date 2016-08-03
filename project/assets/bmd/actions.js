@@ -5,7 +5,7 @@ import h from 'robTable/utils/helpers';
 
 import * as types from 'bmd/constants';
 
-import Endpoint from 'Endpoint';
+import Endpoint from 'animal/Endpoint';
 
 
 var showModal = function(name){

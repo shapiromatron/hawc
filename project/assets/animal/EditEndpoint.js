@@ -1,3 +1,6 @@
+import Endpoint from './Endpoint';
+
+
 // Endpoint subclass with editing functionality
 var EditEndpoint = function(endpoint, doses, eg_table, plot){
     Endpoint.call(this, endpoint); // call parent constructor

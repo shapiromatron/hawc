@@ -1,4 +1,6 @@
-var DataPivot = function(data, settings, dom_bindings, title, url){
+$(document).ready(function(){
+
+  var DataPivot = function(data, settings, dom_bindings, title, url){
   this.data = data;
   this.settings = settings || DataPivot.default_plot_settings();
   if(dom_bindings.update) this.build_edit_settings(dom_bindings);
@@ -2957,19 +2959,19 @@ _.extend(DataPivotExtension, {
     {
       _dpe_name:        "experiment",
       _dpe_key:         "experiment id",
-      _dpe_cls:         "window.app.animal.Experiment",  // TODO - fix
+      _dpe_cls:         window.app.animal.Experiment,
       _dpe_option_txt:  "Show experiment",
     },
     {
       _dpe_name:        "animal_group",
       _dpe_key:         "animal group id",
-      _dpe_cls:         "window.app.animal.AnimalGroup",  // TODO - fix
+      _dpe_cls:         window.app.animal.AnimalGroup,
       _dpe_option_txt:  "Show animal group",
     },
     {
       _dpe_name:        "endpoint",
       _dpe_key:         "endpoint id",
-      _dpe_cls:         Endpoint,
+      _dpe_cls:         window.app.animal.Endpoint,
       _dpe_option_txt:  "Show endpoint (basic)",
       _dpe_options: {
           complete: false
@@ -2978,7 +2980,7 @@ _.extend(DataPivotExtension, {
     {
       _dpe_name:        "endpoint_complete",
       _dpe_key:         "endpoint id",
-      _dpe_cls:         Endpoint,
+      _dpe_cls:         window.app.animal.Endpoint,
       _dpe_option_txt:  "Show endpoint (complete)",
       _dpe_options: {
           complete: true
@@ -4212,4 +4214,6 @@ _.extend(StyleViewer.prototype, D3Plot.prototype, {
     this.style=style;
     this._update_styles(this.style.settings, true);
   }
+});
+
 });

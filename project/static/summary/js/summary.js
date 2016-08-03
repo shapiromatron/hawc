@@ -511,7 +511,7 @@ _.extend(D3Visualization.prototype, D3Plot.prototype, {
 EndpointAggregation = function(data){
     Visual.apply(this, arguments);
     this.endpoints = data.endpoints.map(function(d){
-        var e = new Endpoint(d);
+        var e = new window.app.animal.Endpoint(d);
         e.switch_dose_units(data.dose_units);
         return e;
     });

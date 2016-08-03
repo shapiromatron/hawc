@@ -24,7 +24,6 @@ module.exports = {
     externals: {
         $: '$',
         Outcome: 'Outcome',
-        Endpoint: 'Endpoint',
     },
 
     plugins: [
