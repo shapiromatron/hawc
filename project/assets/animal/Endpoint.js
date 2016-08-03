@@ -1,3 +1,9 @@
+import EndpointCriticalDose from './EndpointCriticalDose';
+import BMDResult from './BMDResult';
+import EndpointTable from './EndpointTable';
+import EndpointPlotContainer from './EndpointPlotContainer';
+
+
 var Endpoint = function(data, options){
     Observee.apply(this, arguments);
     if (!data) return;  // added for edit_endpoint prototype extension
@@ -369,7 +375,7 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             $tbl = $('<table class="table table-condensed table-striped">'),
             $content = $('<div class="container-fluid">'),
             $study, $exp, $ag, $end,
-            exp, ag;
+            exp, ag, tabs, divs;
 
         if (complete){
             tabs = $('<ul class="nav nav-tabs">').append(

@@ -5,6 +5,7 @@ import Experiment from './Experiment';
 import AnimalGroup from './AnimalGroup';
 import AnimalGroupTable from './AnimalGroupTable';
 import Endpoint from './Endpoint';
+import EndpointListTable from './EndpointListTable';
 
 export default {
     DosingRegimeForm,
@@ -14,4 +15,5 @@ export default {
     AnimalGroup,
     AnimalGroupTable,
     Endpoint,
+    EndpointListTable,
 };
