@@ -123,7 +123,7 @@ var showModal = function(name){
             return new Promise((res, rej)=>{res();})
                 .then(() => dispatch(execute_start()))
                 .then(() => {
-                    fetch(url, h.fetchPost(state.config.csrf, data))
+                    fetch(url, h.fetchPost(state.config.csrf, data, 'POST'))
                         .then((response) => {
                             if (!response.ok){
                                 dispatch(setErrors(['An error occurred.']));
@@ -248,7 +248,7 @@ var showModal = function(name){
 
             return new Promise((res, rej)=>{res();})
                 .then(() => {
-                    fetch(url, h.fetchPost(state.config.csrf, data))
+                    fetch(url, h.fetchPost(state.config.csrf, data, 'POST'))
                         .then(() => dispatch(setSelectedModel(model_id, notes)));
                 });
         };
