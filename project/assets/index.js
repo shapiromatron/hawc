@@ -10,6 +10,7 @@ import { renderRiskOfBiasDisplay } from 'robTable/components/RiskOfBiasDisplay';
 import { renderStudyDisplay } from 'robTable/components/StudyDisplay';
 import nestedTagEditorStartup from 'nestedTagEditor';
 
+import assessment from 'assessment';
 import lit from 'lit';
 
 
@@ -24,5 +25,6 @@ window.app = {
     bmdStartup,
     BMDLine,
     nestedTagEditorStartup,
+    assessment,
     lit,
 };

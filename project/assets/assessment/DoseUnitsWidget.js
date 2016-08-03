@@ -3,7 +3,7 @@ var DoseUnitsWidget = function(form, opts){
     this.init(opts);
 };
 DoseUnitsWidget.prototype = {
-    init: function(opts){
+    init(opts){
         this.$input = $(opts.el).hide();
         this.$widgetDiv = $('#pduDiv');
         this.$available = $('#pduAvailable');
@@ -71,5 +71,7 @@ DoseUnitsWidget.prototype = {
         //render on DOM
         this.$input.parent().prepend(this.$widgetDiv);
         this.$widgetDiv.show();
-    }
+    },
 };
+
+export default DoseUnitsWidget;
