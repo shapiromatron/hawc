@@ -102,7 +102,6 @@ class StudyPermissions(TestCase):
             reverse('study:new_ref', kwargs={'pk': self.assessment_working.pk}),
             reverse('study:update', kwargs={'pk': self.study_working.pk}),
             reverse('study:delete', kwargs={'pk': self.study_working.pk}),
-            reverse('study:versions', kwargs={'pk': self.study_working.pk}),
         ]
 
         for client in clients:
@@ -122,7 +121,6 @@ class StudyPermissions(TestCase):
             reverse('study:new_ref', kwargs={'pk': self.assessment_final.pk}),
             reverse('study:update', kwargs={'pk': self.study_final.pk}),
             reverse('study:delete', kwargs={'pk': self.study_final.pk}),
-            reverse('study:versions', kwargs={'pk': self.study_final.pk}),
         ]
 
         for client in clients:

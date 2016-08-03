@@ -187,20 +187,6 @@ class Study(Reference):
             d.append(attachment.get_dict())
         return json.dumps(d, cls=HAWCDjangoJSONEncoder)
 
-    def get_prior_versions_json(self):
-        """
-        Return a JSON list of other prior versions of selected model
-        """
-        versions = reversion.get_for_object(self)
-        versions_json = []
-        for version in versions:
-            fields = version.field_dict
-            fields['changed_by'] = version.revision.user.get_full_name()
-            fields['updated'] = version.revision.date_created
-            fields.pop('assessment')
-            versions_json.append(fields)
-        return json.dumps(versions_json, cls=DjangoJSONEncoder)
-
     def get_bioassay_endpoints(self):
         """
         Return a queryset of related bioassay endpoints for selected study

@@ -26,7 +26,6 @@
             <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
             <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
             <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
-            <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
             <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
             {% if object.bioassay %}

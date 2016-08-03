@@ -274,15 +274,6 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return context
 
 
-class BaseVersion(BaseDetail):
-    crud = 'Update'  # requires edit-level permissions to view
-
-    def get_context_data(self, **kwargs):
-        context = super(BaseVersion, self).get_context_data(**kwargs)
-        context['versions'] = self.object.get_prior_versions_json()
-        return context
-
-
 class BaseUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = 'Update'
 

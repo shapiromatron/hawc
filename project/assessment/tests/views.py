@@ -121,7 +121,7 @@ class PermissionTests(TestCase):
     # Edit view permissions
     def test_edit_view_success(self):
         clients = ('sudo@sudo.com', 'pm@pm.com')
-        views = ('assessment:update', 'assessment:versions', 'assessment:delete')
+        views = ('assessment:update', 'assessment:delete')
         pks = (self.assessment_working.pk, self.assessment_final.pk)
         for client in clients:
             c = Client()
@@ -146,7 +146,7 @@ class PermissionTests(TestCase):
 
     def test_edit_view_forbidden(self):
         clients = (None, 'team@team.com', 'rev@rev.com')
-        views = ('assessment:update', 'assessment:versions', 'assessment:delete')
+        views = ('assessment:update', 'assessment:delete')
         pks = [self.assessment_working.pk, self.assessment_final.pk]
         for client in clients:
             c = Client()

@@ -1,19 +1,3 @@
-var StudyVersion = function(obj, version){
-    // implements requirements for js/hawc_utils Version interface
-    // unpack JSON object into Study
-    for (var i in obj) {
-        this[i] = obj[i];
-    }
-    this.version = version;
-    // convert datetime formats
-    this.updated = new Date(this.updated);
-    this.banner = this.version + ': ' + this.updated + ' by ' + this.changed_by;
-};
-_.extend(StudyVersion, {
-    field_order: ['short_citation', 'citation', 'hero_id', 'summary', 'updated'],
-});
-
-
 var StudyCollection = function(objs){
     this.object_list = objs;
 };

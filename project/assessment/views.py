@@ -132,11 +132,6 @@ class AssessmentDelete(BaseDelete):
     success_message = 'Assessment deleted.'
 
 
-class AssessmentVersions(BaseVersion):
-    model = models.Assessment
-    template_name = "assessment/assessment_versions.html"
-
-
 class AssessmentReports(BaseList):
     """
     Download assessment-level Microsoft Word reports.
