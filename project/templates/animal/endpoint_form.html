@@ -161,7 +161,6 @@
   {{ form.media }}
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/edit_endpoint.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function () {
 
@@ -181,7 +180,7 @@
         $(v).html(doses[0].values[i]);
       });
 
-      var endpoint = new EditEndpoint({
+      var endpoint = new window.app.animal.EditEndpoint({
         "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
         "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
         "FEL": {{form.FEL.value|default_if_none:"-999"}}
@@ -197,7 +196,7 @@
         .on('change', function(){
           var varHeader = $('#varianceHeader'),
               varType = parseInt($('#id_variance_type').val(), 0);
-          varHeader.html(EditEndpoint.getVarianceType(varType));
+          varHeader.html(window.app.animal.EditEndpoint.getVarianceType(varType));
         })
         .trigger('change');
 
@@ -255,7 +254,7 @@
         }).trigger('change');
 
       // initialize sample-size power widget
-      new SampleSizeWidget();
+      new window.app.animal.SampleSizeWidget();
 
     });
   </script>
