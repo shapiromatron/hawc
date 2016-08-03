@@ -2,7 +2,9 @@ import json
 import logging
 
 import django
-from django.db import models, IntegrityError, transaction
+
+from django.apps import apps
+from django.db import models, IntegrityError, transaction, connection
 from django.db.models import URLField
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
@@ -78,35 +80,32 @@ class NonUniqueTagBase(models.Model):
         return slug
 
 
-class AssessmentRootedTagTree(MP_Node):
-    """
-    MPTT tree, with one root-note for each assessment object in database.
-    Implements caching of the tree for quick retrieval. Expects relatively
-    small tree for each assessment (<1000 nodes).
-    """
-    name = models.CharField(max_length=128)
+class AssessmentRootMixin(object):
 
     cache_template_taglist = NotImplementedAttribute
     cache_template_tagtree = NotImplementedAttribute
 
-    class Meta:
-        abstract = True
-
     @classmethod
-    def get_root_name(cls, assessment_id):
+    def get_assessment_root_name(cls, assessment_id):
         return 'assessment-{pk}'.format(pk=assessment_id)
 
     @classmethod
-    def get_root(cls, assessment_id):
+    def get_assessment_root(cls, assessment_id):
         try:
-            return cls.objects.get(name=cls.get_root_name(assessment_id))
+            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id))
         except ObjectDoesNotExist:
             return cls.create_root(assessment_id)
 
     @classmethod
     def get_assessment_qs(cls, assessment_id):
         # return queryset, excluding root
-        return cls.get_root(assessment_id).get_descendants()
+        return cls.get_assessment_root(assessment_id).get_descendants()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        ids = cls.get_assessment_qs(assessment_id).values_list('id', flat=True)
+        ids = list(ids)  # force evaluation
+        return cls.objects.filter(id__in=ids)
 
     @classmethod
     def get_all_tags(cls, assessment_id, json_encode=True):
@@ -118,8 +117,14 @@ class AssessmentRootedTagTree(MP_Node):
         if tags:
             logging.info('cache used: {0}'.format(key))
         else:
-            root = cls.get_root(assessment_id)
-            tags = cls.dump_bulk(root)
+            root = cls.get_assessment_root(assessment_id)
+            try:
+                tags = cls.dump_bulk(root)
+            except KeyError as e:
+                logging.exception(e)
+                cls.clean_orphans()
+                tags = cls.dump_bulk(root)
+                logging.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
             logging.info('cache set: {0}'.format(key))
 
@@ -129,6 +134,28 @@ class AssessmentRootedTagTree(MP_Node):
             return tags
 
     @classmethod
+    def clean_orphans(cls):
+        """
+        Treebeard can sometimes delete parents but retain orphans; this will
+        remove all orphans from the tree.
+        """
+        name = cls.__name__
+        logging.warning("{}: attempting to recover...".format(name))
+        problems = cls.find_problems()
+        cls.fix_tree()
+        problems = cls.find_problems()
+        logging.warning("{}: problems identified: {}".format(name, problems))
+        orphan_ids = problems[2]
+        if len(orphan_ids) > 0:
+            cursor = connection.cursor()
+            for orphan_id in orphan_ids:
+                orphan = cls.objects.get(id=orphan_id)
+                logging.warning('{} "{}" {} is orphaned [path={}]. Deleting.'.format(
+                    name, orphan.name, orphan.id, orphan.path))
+                cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
+            cursor.close()
+
+    @classmethod
     def get_descendants_pks(cls, assessment_id):
         # Return a list of all descendant ids
         key = cls.cache_template_taglist.format(assessment_id)
@@ -136,7 +163,7 @@ class AssessmentRootedTagTree(MP_Node):
         if descendants:
             logging.info('cache used: {0}'.format(key))
         else:
-            root = cls.get_root(assessment_id)
+            root = cls.get_assessment_root(assessment_id)
             descendants = list(root.get_descendants().values_list('pk', flat=True))
             cache.set(key, descendants)
             logging.info('cache set: {0}'.format(key))
@@ -158,10 +185,10 @@ class AssessmentRootedTagTree(MP_Node):
                 raise ObjectDoesNotExist("parent_id is not a descendant of assessment_id")
             parent = cls.objects.get(pk=parent_id)
         else:
-            parent = cls.get_root(assessment_id)
+            parent = cls.get_assessment_root(assessment_id)
 
         # make sure name is valid and not root-like
-        if kwargs.get('name') == cls.get_root_name(assessment_id):
+        if kwargs.get('name') == cls.get_assessment_root_name(assessment_id):
             raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
@@ -169,16 +196,11 @@ class AssessmentRootedTagTree(MP_Node):
         return parent.add_child(**kwargs)
 
     @classmethod
-    def delete_tag(cls, assessment_id, pk):
-        cls.clear_cache(assessment_id)
-        cls.objects.filter(pk=pk).delete()
-
-    @classmethod
     def create_root(cls, assessment_id, **kwargs):
         """
         Constructor to define root with assessment-creation
         """
-        kwargs["name"] = cls.get_root_name(assessment_id)
+        kwargs["name"] = cls.get_assessment_root(assessment_id)
         return cls.add_root(**kwargs)
 
     @classmethod
@@ -186,12 +208,55 @@ class AssessmentRootedTagTree(MP_Node):
         # get maximum depth; subtracting root-level
         depth = 0
         descendants = cls\
-            .get_root(assessment_id)\
+            .get_assessment_root(assessment_id)\
             .get_descendants()\
             .values_list('depth', flat=True)
         if descendants:
             depth = max(descendants) - 1
         return depth
+
+    def get_assessment_id(self):
+        name = self.get_ancestors()[0].name
+        return int(name[name.find('-') + 1:])
+
+    def get_assessment(self):
+        try:
+            assessment_id = self.get_assessment_id()
+            Assessment = apps.get_model('assessment', 'Assessment')
+            return Assessment.objects.get(id=assessment_id)
+        except:
+            raise self.__class__.DoesNotExist()
+
+    def moveWithinSiblingsToIndex(self, newIndex):
+        siblings = list(self.get_siblings())
+        currentPosition = siblings.index(self)
+
+        if currentPosition == newIndex:
+            return
+
+        if newIndex == 0:
+            self.move(self.get_parent(), pos='first-child')
+        else:
+            anchor = siblings[newIndex]
+            pos = 'left' if (newIndex < currentPosition) else 'right'
+            self.move(anchor, pos=pos)
+
+        self.clear_assessment_cache()
+
+    def clear_assessment_cache(self):
+        self.clear_cache(self.get_assessment_id())
+
+
+class AssessmentRootedTagTree(AssessmentRootMixin, MP_Node):
+    """
+    MPTT tree, with one root-note for each assessment object in database.
+    Implements caching of the tree for quick retrieval. Expects relatively
+    small tree for each assessment (<1000 nodes).
+    """
+    name = models.CharField(max_length=128)
+
+    class Meta:
+        abstract = True
 
 
 class CustomURLField(URLField):

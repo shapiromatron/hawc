@@ -261,12 +261,6 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        ids = cls.get_assessment_qs(assessment_id).values_list('id', flat=True)
-        ids = list(ids)  # force evaluation
-        return cls.objects.filter(id__in=ids)
-
     def get_list_representation(self):
         lst = list(self.get_ancestors().values_list('name', flat=True))
         lst.pop(0)

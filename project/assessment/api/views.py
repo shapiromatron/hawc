@@ -1,7 +1,11 @@
+import logging
+
+from django.core import exceptions
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework import filters
+from rest_framework import decorators, filters
+from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 
@@ -34,6 +38,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if view.action in self.list_actions:
+            logging.info('Permission checked')
+
             assessment_id = tryParseInt(request.GET.get('assessment_id'))
             if assessment_id is None:
                 raise RequiresAssessmentID
@@ -71,6 +77,58 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
+    """
+    Base viewset used with utils/models/AssessmentRootedTagTree subclasses
+    """
+    permission_classes = (AssessmentLevelPermissions, )
+
+    PROJECT_MANAGER = 'PROJECT_MANAGER'
+    TEAM_MEMBER = 'TEAM_MEMBER'
+    create_requires = TEAM_MEMBER
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def list(self, request):
+        self.filter_queryset(self.get_queryset())
+        data = self.model.get_all_tags(self.assessment.id, json_encode=False)
+        return Response(data)
+
+    def create(self, request, *args, **kwargs):
+        # get an assessment
+        assessment_id = tryParseInt(request.data.get('assessment_id'), -1)
+        self.assessment = models.Assessment.objects\
+                .filter(id=assessment_id)\
+                .first()
+        if self.assessment is None:
+            raise RequiresAssessmentID
+
+        self.check_editing_permission(request)
+
+        return super(AssessmentRootedTagTreeViewset, self)\
+            .create(request, *args, **kwargs)
+
+    @decorators.detail_route(methods=('patch',))
+    def move(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.assessment = instance.get_assessment()
+        self.check_editing_permission(request)
+        instance.moveWithinSiblingsToIndex(request.data['newIndex'])
+        return Response({'status': True})
+
+    def check_editing_permission(self, request):
+        if self.create_requires == self.PROJECT_MANAGER:
+            permissions_check = self.assessment.user_can_edit_assessment
+        elif self.create_requires == self.TEAM_MEMBER:
+            permissions_check = self.assessment.user_can_edit_object
+        else:
+            raise ValueError('invalid configuration of `create_requires`')
+
+        if not permissions_check(request.user):
+            raise exceptions.PermissionDenied()
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):
