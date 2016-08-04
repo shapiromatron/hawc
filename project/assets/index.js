@@ -13,6 +13,8 @@ import nestedTagEditorStartup from 'nestedTagEditor';
 import assessment from 'assessment';
 import animal from 'animal';
 import lit from 'lit';
+import study from 'study';
+import riskofbias from 'riskofbias';
 
 
 window.app = {
@@ -29,4 +31,6 @@ window.app = {
     assessment,
     animal,
     lit,
+    study,
+    riskofbias,
 };

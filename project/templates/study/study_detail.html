@@ -104,7 +104,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new Study({{study.get_json|safe}})
+    window.study = new window.app.study.Study({{study.get_json|safe}})
     var detail_div = $('#study_details')
     study.build_details_table(detail_div);
 
@@ -112,6 +112,6 @@
       study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    window.plot = new RiskOfBias_Donut(study, '#rob_plot', {'build_plot_startup': true});
+    window.plot = new window.app.riskofbias.Donut(study, '#rob_plot', {'build_plot_startup': true});
   </script>
 {% endblock extrajs %}

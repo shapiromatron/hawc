@@ -1,0 +1,209 @@
+import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+
+
+class Study{
+
+    constructor(data){
+        this.data = data;
+        this.riskofbias = [];
+        this.final = _.findWhere(this.data.riskofbiases, {final: true, active: true});
+        if(this.final) this.unpack_riskofbias();
+    }
+
+    static get_object(id, cb){
+        $.get('/study/api/study/{0}/'.printf(id), function(d){
+            cb(new Study(d));
+        });
+    }
+
+    static displayAsModal(id){
+        Study.get_object(id, function(d){d.displayAsModal();});
+    }
+
+    static render(id, $div, $shower){
+        Study.get_object(id, function(d){d.render($div, $shower);});
+    }
+
+    has_riskofbias(){
+        return this.riskofbias.length>0;
+    }
+
+    unpack_riskofbias(){
+        // unpack risk of bias information and nest by domain
+        var self = this,
+            riskofbias = [],
+            gradient_colors = d3.scale.linear()
+                .domain(RiskOfBiasScore.score_values)
+                .range(_.values(RiskOfBiasScore.score_shades));
+        this.final.scores.forEach(function(v, i){
+            v.score_color = gradient_colors(v.score);
+            v.score_text_color = String.contrasting_color(v.score_color);
+            v.score_text = RiskOfBiasScore.score_text[v.score];
+            riskofbias.push(new RiskOfBiasScore(self, v));
+        });
+
+        //construct dataset in structure for a donut plot
+        this.riskofbias = d3.nest()
+                                .key(function(d){return d.data.metric.domain.name;})
+                                .entries(riskofbias);
+
+        // now generate a score for each
+        this.riskofbias.forEach(function(v, i){
+            v.domain = v.values[0].data.metric.domain.id;
+            v.domain_text = v.values[0].data.metric.domain.name;
+            v.criteria = v.values;
+            // we only want to calculate score for cases where answer !== N/A, or >0
+            var non_zeros = d3.sum(v.criteria.map(function(v){return (v.data.score>0)?1:0;}));
+            if (non_zeros>0){
+                v.score = d3.round(d3.sum(v.criteria, function(v,i){return v.data.score;})/non_zeros,2);
+            } else {
+                v.score = 0;
+            }
+            v.score_text = (v.score>0) ? v.score : 'N/A';
+            v.score_color = gradient_colors(v.score);
+            v.score_text_color = String.contrasting_color(v.score_color);
+        });
+
+        // try to put the 'other' domain at the end
+        var l = this.riskofbias.length;
+        for(var i=0; i<l; i++){
+            if (this.riskofbias[i].domain_text.toLowerCase() === 'other'){
+                this.riskofbias.push(this.riskofbias.splice(i, 1)[0]);
+                break;
+            }
+        }
+    }
+
+    build_breadcrumbs(){
+        var urls = [{ url: this.data.url, name: this.data.short_citation }];
+        return HAWCUtils.build_breadcrumbs(urls);
+    }
+
+    get_name(){
+        return this.data.short_citation;
+    }
+
+    get_url(){
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
+    }
+
+    _get_data_types(){
+        var data = this.data;
+        return _.chain(Study.typeNames)
+            .keys()
+            .filter(function(d){return data[d];})
+            .map(function(d){return Study.typeNames[d];})
+            .value()
+            .join(', ');
+    }
+
+    build_details_table(div){
+        var tbl = new DescriptiveTable(),
+            links = this._get_identifiers_hyperlinks_ul();
+        tbl.add_tbody_tr('Data type(s)', this._get_data_types());
+        tbl.add_tbody_tr('Full citation', this.data.full_citation);
+        tbl.add_tbody_tr('Abstract', this.data.abstract);
+        if (links.children().length>0) tbl.add_tbody_tr('Reference hyperlink', links);
+        tbl.add_tbody_tr_list('Literature review tags', this.data.tags.map(function(d){return d.name;}));
+        if (this.data.full_text_url) tbl.add_tbody_tr('Full-text link', '<a href={0}>{0}</a>'.printf(this.data.full_text_url));
+        tbl.add_tbody_tr('COI reported', this.data.coi_reported);
+        tbl.add_tbody_tr('COI details', this.data.coi_details);
+        tbl.add_tbody_tr('Funding source', this.data.funding_source);
+        tbl.add_tbody_tr('Study identifier', this.data.study_identifier);
+        tbl.add_tbody_tr('Author contacted?', HAWCUtils.booleanCheckbox(this.data.contact_author));
+        tbl.add_tbody_tr('Author contact details', this.data.ask_author);
+        tbl.add_tbody_tr('Summary and/or extraction comments', this.data.summary);
+        $(div).html(tbl.get_tbl());
+    }
+
+    _get_identifiers_hyperlinks_ul(){
+        var ul = $('<ul>');
+
+        this.data.identifiers.forEach(function(v){
+            if (v.url){
+                ul.append($('<li>').append(
+                    $('<a>').attr('href', v.url).attr('target', '_blank').text(v.database)));
+            }
+        });
+
+        return ul;
+    }
+
+    add_attachments_row(div, attachments){
+        if (attachments.length===0) return;
+
+        var tbody = div.find('table tbody'),
+            ul = $('<ul>'),
+            tr = $('<tr>').append('<th>Attachments</th>'),
+            td = $('<td>');
+
+        attachments.forEach(function(v){
+            ul.append('<li><a target="_blank" href="{0}">{1}</a> <a class="pull-right" title="Delete {1}" href="{2}"><i class="icon-trash"></i></a></li>'.printf(v.url, v.filename, v.url_delete));
+        });
+        tbody.append(tr.append(td.append(ul)));
+    }
+
+    displayAsModal(){
+        var modal = new HAWCModal(),
+            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            $content = $('<div class="container-fluid">');
+
+        this.render($content, modal.getModal());
+
+        modal.addHeader(title)
+            .addBody($content)
+            .addFooter('')
+            .show({maxWidth: 1000});
+    }
+
+    render($div, $shower){
+        var self = this,
+            $details = $('<div class="row-fluid">').appendTo($div);
+        this.build_details_table($details);
+        if(this.has_riskofbias()){
+            var $rob = $('<div class="span12">');
+            $div.prepend($('<div class="row-fluid">').append($rob));
+            $shower.on('shown', function(){
+                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
+                render_obj = self.format_for_react(self.riskofbias);
+                window.app.renderStudyDisplay(render_obj, $rob[0]);
+            });
+        }
+    }
+
+    get_citation_row(){
+        var content = [this.get_url()];
+        if (!this.data.published){
+            content.push('<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>');
+        }
+        return content;
+    }
+
+    build_row(){
+        return [
+            this.get_citation_row(),
+            this.data.full_citation,
+            HAWCUtils.booleanCheckbox(this.data.bioassay),
+            HAWCUtils.booleanCheckbox(this.data.epi),
+            HAWCUtils.booleanCheckbox(this.data.epi_meta),
+            HAWCUtils.booleanCheckbox(this.data.in_vitro),
+        ];
+    }
+
+    format_for_react(riskofbias){
+        scores = _.flatten(_.map(riskofbias, function(rob){
+            return rob.values;
+        }));
+        return RiskOfBiasScore.format_for_react(scores);
+    }
+}
+
+
+Study.typeNames = {
+    bioassay: 'Animal bioassay',
+    epi: 'Epidemiology',
+    epi_meta: 'Epidemiology meta-analysis/pooled analysis',
+    in_vitro: 'In vitro',
+};
+
+export default Study;
