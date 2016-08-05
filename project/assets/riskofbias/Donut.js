@@ -1,3 +1,5 @@
+import D3Plot from 'utils/D3Plot';
+
 var Donut = function(study, plot_id, options){
     var self = this;
     D3Plot.call(this); // call parent constructor

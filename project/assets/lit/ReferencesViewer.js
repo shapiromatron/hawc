@@ -1,21 +1,27 @@
+import HAWCUtils from 'utils/HAWCUtils';
+
 import Reference from './Reference';
 
 
-var ReferencesViewer = function($div, options){
-    this.options = options;
-    this.$div = $div;
-    this.$table_div = $('<div id="references_detail_block"></div>');
-    this.$div.html([this._print_header(), this.$table_div]);
-    this._set_loading_view();
-};
-ReferencesViewer.prototype = {
+class ReferencesViewer {
+
+    constructor($div, options){
+        this.options = options;
+        this.$div = $div;
+        this.$table_div = $('<div id="references_detail_block"></div>');
+        this.$div.html([this._print_header(), this.$table_div]);
+        this._set_loading_view();
+    }
+
     set_references(refs){
         this.refs = refs.sort(Reference.sortCompare);
         this._build_reference_table();
-    },
+    }
+
     set_error(){
         this.$table_div.html('<p>An error has occured</p>');
-    },
+    }
+
     _print_header(){
         var h3 = $('<h3>'),
             $div = this.$div,
@@ -62,10 +68,12 @@ ReferencesViewer.prototype = {
         }
 
         return h3;
-    },
+    }
+
     _set_loading_view(){
         this.$table_div.html('<p>Loading: <img src="/static/img/loading.gif"></p>');
-    },
+    }
+
     _build_reference_table(){
         var content;
         if(this.refs.length===0){
@@ -74,7 +82,7 @@ ReferencesViewer.prototype = {
             content = _.map(this.refs, function(d){ return d.print_div_row();});
         }
         this.$table_div.html(content);
-    },
-};
+    }
+}
 
 export default ReferencesViewer;

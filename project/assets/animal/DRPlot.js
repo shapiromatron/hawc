@@ -1,3 +1,5 @@
+import D3Plot from 'utils/D3Plot';
+
 var DRPlot = function(endpoint, div, options, parent){
     /*
      * Create a dose-response plot for a single dataset given an endpoint object

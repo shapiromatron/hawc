@@ -1,14 +1,17 @@
+import Observee from 'utils/Observee';
 import Reference from './Reference';
 import NestedTag from './NestedTag';
 
 
-var TagTree = function(data){
-    Observee.apply(this, arguments);
-    this.tags = this._construct_tags(data[0], true);
-    this.dict = this._build_dictionary();
-    this.observers = [];
-};
-_.extend(TagTree.prototype, Observee.prototype, {
+class TagTree extends Observee {
+
+    constructor(data){
+        super();
+        this.tags = this._construct_tags(data[0], true);
+        this.dict = this._build_dictionary();
+        this.observers = [];
+    }
+
     add_root_tag(name){
         var self = this,
             data = {'content': 'tag',
@@ -21,23 +24,27 @@ _.extend(TagTree.prototype, Observee.prototype, {
                 self.tree_changed();
             }
         });
-    },
+    }
+
     get_nested_list(options){
         // builds a nested list
         var div = $('<div>');
         this.tags.forEach(function(v){v.get_nested_list_item(div, '', options);});
         return div;
-    },
+    }
+
     get_options(){
         var list = [];
         this.tags.forEach(function(v){v.get_option_item(list);});
         return list;
-    },
+    }
+
     _build_dictionary(){
         var dict = {};
         this.tags.forEach(function(v){v._append_to_dict(dict);});
         return dict;
-    },
+    }
+
     _construct_tags(data, skip_root){
         // unpack our tags and construct NestedTag objects
         var self = this,
@@ -52,14 +59,17 @@ _.extend(TagTree.prototype, Observee.prototype, {
             tags.push(new NestedTag(v, 0, self));
         }
         return tags;
-    },
+    }
+
     tree_changed(){
         this.dict = this._build_dictionary();
         this.notifyObservers('TagTree');
-    },
+    }
+
     remove_child(tag){
         this.tags.splice_object(tag);
-    },
+    }
+
     add_references(references){
         var nodeDict = this.dict,
             addRef = function(ref){
@@ -90,12 +100,14 @@ _.extend(TagTree.prototype, Observee.prototype, {
         if (this.data){
             this.data.reference_count = d3.sum(_.map(this.tags, (d)=>d.data.reference_count));
         }
-    },
+    }
+
     build_top_level_node(name){
         //transform top-level of tagtree to resemble node for plotting
         this.children = this.tags;
         this.data = { name };
-    },
+    }
+
     view_untagged_references(reference_viewer){
         var url = '/lit/assessment/{0}/references/untagged/json/'.printf(window.assessment_pk);
         if (window.search_id) url += '?search_id={0}'.printf(window.search_id);
@@ -111,10 +123,11 @@ _.extend(TagTree.prototype, Observee.prototype, {
                 reference_viewer.set_error();
             }
         });
-    },
+    }
+
     get_tag(pk){
         return this.dict[pk] || null;
-    },
-});
+    }
+}
 
 export default TagTree;

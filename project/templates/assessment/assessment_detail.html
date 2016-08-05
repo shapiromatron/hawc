@@ -178,14 +178,14 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {% if crud == "Read" and object.cas %}
-    <script type="text/javascript">
-      $(document).on('ready', function(){
-        var url = "{{object.cas_url}}",
+{% if crud == "Read" and object.cas %}
+<script type="text/javascript">
+    $(document).on('ready', function(){
+        var url = '{{object.cas_url}}',
             div = $('<div>').insertAfter($('#assessment_table'));
-        HAWCUtils.renderChemicalProperties(url, div, true);
-      });
-    </script>
-  {% endif %}
 
+        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+    });
+</script>
+{% endif %}
 {% endblock extrajs %}

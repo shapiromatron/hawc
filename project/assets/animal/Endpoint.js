@@ -1,34 +1,39 @@
+import Observee from 'utils/Observee';
 import EndpointCriticalDose from './EndpointCriticalDose';
 import BMDResult from './BMDResult';
 import EndpointTable from './EndpointTable';
 import EndpointPlotContainer from './EndpointPlotContainer';
 
 
-var Endpoint = function(data, options){
-    Observee.apply(this, arguments);
-    if (!data) return;  // added for edit_endpoint prototype extension
-    this.options = options || {};
-    this.doses = [];
-    this.data = data;
-    this.unpack_doses();
-};
-_.extend(Endpoint, {
-    get_endpoint_url(id){
+class Endpoint extends Observee {
+
+    constructor(data, options){
+        super();
+        if (!data) return;  // added for edit_endpoint prototype extension
+        this.options = options || {};
+        this.doses = [];
+        this.data = data;
+        this.unpack_doses();
+    }
+
+    static get_endpoint_url(id){
         return '/ani/api/endpoint/{0}/'.printf(id);
-    },
-    get_object(id, cb){
+    }
+
+    static get_object(id, cb){
         $.get(Endpoint.get_endpoint_url(id), function(d){
             cb(new Endpoint(d));
         });
-    },
-    getTagURL(assessment, slug){
+    }
+
+    static getTagURL(assessment, slug){
         return '/ani/assessment/{0}/endpoints/tags/{1}/'.printf(assessment, slug);
-    },
-    displayAsModal(id, opts){
+    }
+
+    static displayAsModal(id, opts){
         Endpoint.get_object(id, function(d){d.displayAsModal(opts);});
-    },
-});
-_.extend(Endpoint.prototype, Observee.prototype, {
+    }
+
     unpack_doses(){
         if (!this.data.animal_group) return;  // added for edit_endpoint prototype extension
         this.doses = d3.nest()
@@ -38,13 +43,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         this.doses.forEach(function(v){ v.name = v.values[0].dose_units.name; });
         this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
         this.switch_dose_units(this.dose_units_id);
-    },
+    }
+
     toggle_dose_units(){
         var units = _.pluck(this.doses, 'key'),
             idx = units.indexOf(this.dose_units_id),
             new_idx = (idx < units.length-1) ? (idx+1) : 0;
         this._switch_dose(new_idx);
-    },
+    }
+
     switch_dose_units(id_){
         id_ = id_.toString();
         for(var i=0; i<this.doses.length; i++){
@@ -53,7 +60,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             }
         }
         console.log('Error: dose units not found');
-    },
+    }
+
     _switch_dose(idx){
         // switch doses to the selected index
         try {
@@ -69,10 +77,12 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         } catch(err){
             console.log('error, dose index does not exist');
         }
-    },
+    }
+
     get_name(){
         return this.data.name;
-    },
+    }
+
     get_pod(){
         // Get point-of-departure and point-of-departure type.
         if (isFinite(this.get_bmd_special_values('BMDL'))){
@@ -88,20 +98,23 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             return {'type': 'FEL', 'value': this.get_special_dose_text('FEL')};
         }
         return {'type': undefined, 'value': undefined};
-    },
+    }
+
     _get_doses_by_dose_id(id){
         return _.chain(this.data.animal_group.dosing_regime.doses)
                 .filter(function(d){ return d.dose_units.id === id;})
                 .pluck('dose')
                 .value();
-    },
+    }
+
     _get_doses_units(){
         return _.chain(this.data.animal_group.dosing_regime.doses)
                 .map(function(d){return d.dose_units;})
                 .indexBy('id')
                 .values()
                 .value();
-    },
+    }
+
     get_special_dose_text(name){
         // return the appropriate dose of interest
         try{
@@ -109,7 +122,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         }catch(err){
             return '-';
         }
-    },
+    }
+
     get_bmd_special_values(name){
         // return the appropriate BMD output value
         try{
@@ -117,11 +131,13 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         }catch(err){
             return 'none';
         }
-    },
+    }
+
     build_endpoint_table(tbl_id){
         this.table = new EndpointTable(this, tbl_id);
         return this.table.tbl;
-    },
+    }
+
     build_breadcrumbs(){
         var urls = [
             { url: this.data.animal_group.experiment.study.url, name: this.data.animal_group.experiment.study.short_citation },
@@ -130,12 +146,14 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             { url: this.data.url, name: this.data.name },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    },
+    }
+
     get_pd_string(eg){
         var txt = '{0}%'.printf(eg.response);
         if(eg.lower_ci && eg.upper_ci) txt += ' ({0}-{1})'.printf(eg.lower_ci, eg.upper_ci);
         return txt;
-    },
+    }
+
     _calculate_stdev(eg){
         // stdev is required for plotting; calculate if SE is specified
         var convert = ((this.data.data_type === 'C') &&
@@ -149,7 +167,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         } else {
             eg.stdev = eg.variance;
         }
-    },
+    }
+
     _build_ag_dose_rows(options){
 
         var nGroups = this.doses[0].values.length,
@@ -176,17 +195,21 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         }
 
         return {html: [tr1, tr2], ncols: nGroups+1};
-    },
+    }
+
     build_ag_no_dr_li(){
         return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
-    },
+    }
+
     build_ag_n_key(){
         return _.map(this.data.groups, function(v, i){return v.n || 'NR-{}'.printf(i);}).join('-');
-    },
+    }
+
     _build_ag_n_row(options){
         return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
             this.data.groups.map(function(v){return '<td>{0}</td>'.printf(v.n || '-');})));
-    },
+    }
+
     _build_ag_response_row(footnote_object){
         var self = this, footnotes, response, td, txt, dr_control,
             data_type = this.data.data_type,
@@ -227,12 +250,14 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             tr.append(td);
         });
         return tr;
-    },
+    }
+
     _endpoint_detail_td(){
         return '<a class="endpoint-selector" href="#">{0} ({1})</a> \
                 <a class="pull-right" title="View endpoint details (new window)" href="{2}"> \
                 <i class="icon-share-alt"></i></a>'.printf(this.data.name, this.data.response_units, this.data.url);
-    },
+    }
+
     build_details_table(div){
         var self = this,
             tbl = new DescriptiveTable(),
@@ -291,20 +316,24 @@ _.extend(Endpoint.prototype, Observee.prototype, {
            .add_tbody_tr('General notes/methodology', this.data.endpoint_notes);
 
         $(div).html(tbl.get_tbl());
-    },
+    }
+
     _dichotomous_percent_change_incidence(eg){
         return (eg.isReported) ? Math.round((eg.incidence/eg.n*100), 3) : 'NR';
-    },
+    }
+
     _continuous_percent_difference_from_control(eg, eg_control){
         var txt = 'NR';
         if (eg_control.isReported && eg.isReported && eg_control.response !== 0){
             txt = Math.round(100*((eg.response - eg_control.response)/eg_control.response), 3).toString();
         }
         return txt;
-    },
+    }
+
     _pd_percent_difference_from_control(eg){
         return eg.response;
-    },
+    }
+
     add_endpoint_group_footnotes(footnote_object, endpoint_group_index){
         var footnotes = [], self = this;
         if (self.data.groups[endpoint_group_index].significant){
@@ -321,7 +350,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             footnotes.push('FEL (Frank Effect Level)');
         }
         return footnote_object.add_footnote(footnotes);
-    },
+    }
+
     build_endpoint_list_row(){
         var self = this,
             link = '<a href="{0}" target="_blank">{1}</a>'.printf(this.data.url, this.data.name),
@@ -347,7 +377,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             this.get_special_dose_text('NOEL'),
             this.get_special_dose_text('LOEL'),
         ];
-    },
+    }
+
     _percent_change_control(index){
         try{
             if (this.data.data_type == 'C'){
@@ -364,7 +395,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         } catch(err){
             return '-';
         }
-    },
+    }
+
     displayAsModal(opts){
         var complete = (opts) ? opts.complete : true,
             self = this,
@@ -421,13 +453,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 1200});
-    },
+    }
+
     hasEGdata(){
         return (
             this.data.groups.length > 0 &&
             _.any(_.pluck(this.data.groups, 'isReported'))
         );
-    },
+    }
+
     defaultDoseAxis(){
         var doses = _.chain(this.data.groups)
             .pluck('dose')
@@ -436,7 +470,8 @@ _.extend(Endpoint.prototype, Observee.prototype, {
         doses = d3.extent(doses);
         if (doses.length !== 2) return 'linear';
         return ((Math.log10(doses[1])-Math.log10(doses[0]))>=3) ? 'log' : 'linear';
-    },
+    }
+
     renderPlot($div, withBMD){
         withBMD = (withBMD === undefined)? true: withBMD;
         var epc = new EndpointPlotContainer(this, $div);
@@ -444,14 +479,15 @@ _.extend(Endpoint.prototype, Observee.prototype, {
             this._render_bmd_lines(epc);
         }
         return epc;
-    },
+    }
+
     _render_bmd_lines(epc){
         let model = this.data.bmd,
             dr = epc.plot,
             line = new window.app.BMDLine(model, dr, 'blue');
 
         line.render();
-    },
-});
+    }
+}
 
 export default Endpoint;

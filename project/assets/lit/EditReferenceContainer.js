@@ -1,17 +1,19 @@
 import Reference from './Reference';
 
 
-var EditReferenceContainer = function(refs, tagtree, settings){
-    this.refs = refs.sort(Reference.sortCompare);
-    this.tagtree = tagtree;
-    this.tagtree.addObserver(this);
-    this.$div_content = $(settings.content_div);
-    // build containers and load first reference
-    this._build_containers();
-    this._get_next_ref();
-    this.load_reference();
-};
-EditReferenceContainer.prototype = {
+class EditReferenceContainer {
+
+    constructor(refs, tagtree, settings){
+        this.refs = refs.sort(Reference.sortCompare);
+        this.tagtree = tagtree;
+        this.tagtree.addObserver(this);
+        this.$div_content = $(settings.content_div);
+        // build containers and load first reference
+        this._build_containers();
+        this._get_next_ref();
+        this.load_reference();
+    }
+
     _build_containers(){
 
         this.$div_selected_tags = $('<div class="well well-small"></div>');
@@ -64,7 +66,8 @@ EditReferenceContainer.prototype = {
             self.loaded_ref = $(this).data('d');
             self.load_reference();
         });
-    },
+    }
+
     unload_reference(){
         if (this.loaded_ref){
             this._update_referencelist();
@@ -72,7 +75,8 @@ EditReferenceContainer.prototype = {
             this.loaded_ref.deselect_name();
             this.loaded_ref = undefined;
         }
-    },
+    }
+
     load_reference(){
         if (this.loaded_ref){
             this.loaded_ref.addObserver(this);
@@ -82,7 +86,8 @@ EditReferenceContainer.prototype = {
             this.clear_errors();
             this._build_tagslist();
         }
-    },
+    }
+
     _get_next_ref(){
         //Get the next reference that's untagged, unless none are available, If
         // none are available, just get the next one
@@ -96,7 +101,8 @@ EditReferenceContainer.prototype = {
         } else {
             this.set_references_complete();
         }
-    },
+    }
+
     save_and_next(){
 
         var self = this,
@@ -111,14 +117,16 @@ EditReferenceContainer.prototype = {
                 self.$div_error.html(div).prepend('<br>');
             };
         if (this.loaded_ref) this.loaded_ref.save(success, failure);
-    },
+    }
+
     update(status){
         if(status==='TagTree'){
             this.$tags_content.html(this.load_tags());
         } else { //reference update
             this.load_reference();
         }
-    },
+    }
+
     _populate_reflist(){
         var $refs_tagged = $('<div class="accordion-inner"></div>'),
             $refs_untagged = $('<div class="accordion-inner"></div>'),
@@ -149,7 +157,8 @@ EditReferenceContainer.prototype = {
         this.$refs_tagged = $refs_tagged;
         this.$refs_untagged = $refs_untagged;
         this.$div_reflist.html(['<h4>References</h4>', acc]);
-    },
+    }
+
     _update_referencelist(){
         var self = this,
             has_tags = (this.loaded_ref.data.tags.length>0);
@@ -180,16 +189,20 @@ EditReferenceContainer.prototype = {
                 this.$refs_untagged.append(this.loaded_ref.$list);
             }
         }
-    },
+    }
+
     _build_tagslist(){
         this.$div_selected_tags.html(this.loaded_ref.print_taglist());
-    },
+    }
+
     load_tags(){
         return this.tagtree.get_nested_list();
-    },
+    }
+
     clear_errors(){
         this.$div_error.empty();
-    },
+    }
+
     set_references_complete(){
 
         var txt = 'All references have been successfully tagged. Congratulations!',
@@ -197,7 +210,7 @@ EditReferenceContainer.prototype = {
         this.$div_details.html(div).prepend('<br>');
 
         this.$div_selected_tags.html('');
-    },
-};
+    }
+}
 
 export default EditReferenceContainer;

@@ -1,20 +1,26 @@
+import d3 from 'd3';
+
+import HAWCModal from 'utils/HAWCModal';
+import D3Plot from 'utils/D3Plot';
 import ReferencesViewer from './ReferencesViewer';
 
 
-var TagTreeViz = function(tagtree, plot_div, title, downloadURL, options){
-    // Displays multiple-dose-response details on the same view and allows for
-    // custom visualization of these plots
-    D3Plot.call(this); // call parent constructor
-    this.options = options || {};
-    this.set_defaults();
-    this.plot_div = $(plot_div);
-    this.tagtree = tagtree;
-    this.title_str = title;
-    this.downloadURL = downloadURL;
-    this.modal = new HAWCModal();
-    if(this.options.build_plot_startup){this.build_plot();}
-};
-_.extend(TagTreeViz.prototype, D3Plot.prototype, {
+class TagTreeViz extends D3Plot {
+
+    constructor (tagtree, plot_div, title, downloadURL, options){
+        // Displays multiple-dose-response details on the same view and allows for
+        // custom visualization of these plots
+        super();
+        this.options = options || {};
+        this.set_defaults();
+        this.plot_div = $(plot_div);
+        this.tagtree = tagtree;
+        this.title_str = title;
+        this.downloadURL = downloadURL;
+        this.modal = new HAWCModal();
+        if(this.options.build_plot_startup){this.build_plot();}
+    }
+
     build_plot(){
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -22,12 +28,14 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
         this.draw_visualization();
         this.add_menu();
         this.trigger_resize();
-    },
+    }
+
     get_plot_sizes(){
         var menu_spacing = (this.options.show_menu_bar) ? 40 : 0;
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
             menu_spacing) + 'px'});
-    },
+    }
+
     set_defaults(){
         this.padding = {top:40, right:5, bottom:5, left:100};
         this.w = 1280 - this.padding.left - this.padding.right;
@@ -35,7 +43,8 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
         this.minimum_radius = 8;
         this.maximum_radius = 30;
         if(!this.options.build_plot_startup){this.options.build_plot_startup=true;}
-    },
+    }
+
     draw_visualization(){
         var i = 0,
             root = this.tagtree,
@@ -199,7 +208,7 @@ _.extend(TagTreeViz.prototype, D3Plot.prototype, {
                 d.y0 = d.y;
             });
         }
-    },
-});
+    }
+}
 
 export default TagTreeViz;

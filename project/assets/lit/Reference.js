@@ -1,20 +1,22 @@
-var Reference = function(data, tagtree){
-    Observee.apply(this, arguments);
-    var self = this,
-        tag_ids = data.tags;
-    this.data = data;
-    this.data.tags = [];
-    tag_ids.forEach(function(v){self.add_tag(tagtree.dict[v]);});
-};
-_.extend(Reference, {
-    no_authors_text: '[No authors listed]',
-    sortCompare(a,b){
+import Observee from 'utils/Observee';
+
+class Reference extends Observee {
+
+    constructor(data, tagtree){
+        super();
+        var self = this,
+            tag_ids = data.tags;
+        this.data = data;
+        this.data.tags = [];
+        tag_ids.forEach(function(v){self.add_tag(tagtree.dict[v]);});
+    }
+
+    static sortCompare(a,b){
         if (a.data.authors > b.data.authors) return 1;
         if (a.data.authors < b.data.authors) return -1;
         return 0;
-    },
-});
-_.extend(Reference.prototype, Observee.prototype, {
+    }
+
     print_self(show_taglist){
         var taglist = show_taglist || false,
             content = [
@@ -29,7 +31,8 @@ _.extend(Reference.prototype, Observee.prototype, {
         content.push('<p>{0}</p>'.printf(this.data.abstract));
         content.push(this.getLinks());
         return content;
-    },
+    }
+
     print_taglist(){
         var title = (window.isEdit) ? 'click to remove' : '',
             cls = (window.isEdit) ? 'refTag refTagEditing' : 'refTag';
@@ -37,19 +40,23 @@ _.extend(Reference.prototype, Observee.prototype, {
             return $('<span title="{0}" class="{1}">{2}</span>'
                         .printf(title, cls, d.get_full_name())).data('d', d);
         });
-    },
+    }
+
     print_name(){
         this.$list = $('<p class="reference">{0} {1}</p>'.printf(
             this.data.authors || Reference.no_authors_text, this.data.year || ''))
             .data('d', this);
         return this.$list;
-    },
+    }
+
     select_name(){
         this.$list.addClass('selected');
-    },
+    }
+
     deselect_name(){
         this.$list.removeClass('selected');
-    },
+    }
+
     getLinks(){
         var links = $('<p>');
 
@@ -82,7 +89,8 @@ _.extend(Reference.prototype, Observee.prototype, {
 
 
         return (links.children().length>0) ? links : null;
-    },
+    }
+
     print_div_row(){
 
         var self = this,
@@ -140,7 +148,8 @@ _.extend(Reference.prototype, Observee.prototype, {
             };
 
         return div.html(populate_div().concat(this.print_taglist())).append(get_searches());
-    },
+    }
+
     get_abstract_button(div){
         // get abstract button if abstract available, or return undefined
         if(this.data.abstract){
@@ -158,7 +167,8 @@ _.extend(Reference.prototype, Observee.prototype, {
                     }
                 });
         }
-    },
+    }
+
     get_edit_button(){
         // return content or undefined
         if(window.canEdit){
@@ -168,7 +178,8 @@ _.extend(Reference.prototype, Observee.prototype, {
                 .append('<li><a href="{0}" target="_blank">Edit reference</a></li>'.printf(
                         this.edit_reference_url()));
         }
-    },
+    }
+
     add_tag(tag){
         var tag_already_exists = false;
         this.data.tags.forEach(function(v){if(tag===v){tag_already_exists=true;}});
@@ -176,32 +187,42 @@ _.extend(Reference.prototype, Observee.prototype, {
         this.data.tags.push(tag);
         tag.addObserver(this);
         this.notifyObservers();
-    },
+    }
+
     edit_tags_url(){
         return '/lit/reference/{0}/tag/'.printf(this.data.pk);
-    },
+    }
+
     edit_reference_url(){
         return '/lit/reference/{0}/edit/'.printf(this.data.pk);
-    },
+    }
+
     remove_tag(tag){
         this.data.tags.splice_object(tag);
         tag.removeObserver(this);
         this.notifyObservers();
-    },
+    }
+
     remove_tags(){
         this.data.tags = [];
         this.notifyObservers();
-    },
+    }
+
     save(success, failure){
         var data = {'pk': this.data.pk,
                     'tags': this.data.tags.map(function(v){return v.data.pk;})};
         $.post('.', data, function(v) {
             return (v.status==='success') ? success() : failure();
         }).fail(failure);
-    },
+    }
+
     update(status){
         if (status.event =='tag removed'){this.remove_tag(status.object);}
-    },
+    }
+}
+
+_.extend(Reference, {
+    no_authors_text: '[No authors listed]',
 });
 
 export default Reference;

@@ -38,6 +38,7 @@
     "chai": "^3.4.1",
     "chai-immutable": "^1.5.3",
     "css-loader": "^0.23.0",
+    "d3": "^3.5.17",
     "enzyme": "^2.3.0",
     "eslint": "^1.10.3",
     "eslint-plugin-babel": "^3.0.0",

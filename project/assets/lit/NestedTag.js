@@ -1,26 +1,28 @@
-import _ from 'underscore';
+import Observee from 'utils/Observee';
 import Reference from './Reference';
 
 
-var NestedTag = function(item, level, tree, parent){
-    Observee.apply(this, arguments);
-    var self = this,
-        children = [];
-    this.observers= [];
-    this.parent = parent;
-    this.data = item.data;
-    this.data.pk = item.id;
-    this.level = level;
-    this.tree = tree;
-    if(item.children){
-        item.children.forEach(function(v){
-            children.push(new NestedTag(v, level+1, tree, self));
-        });
+class NestedTag extends Observee {
+
+    constructor(item, level, tree, parent){
+        super();
+        var self = this,
+            children = [];
+        this.observers= [];
+        this.parent = parent;
+        this.data = item.data;
+        this.data.pk = item.id;
+        this.level = level;
+        this.tree = tree;
+        if(item.children){
+            item.children.forEach(function(v){
+                children.push(new NestedTag(v, level+1, tree, self));
+            });
+        }
+        this.children = children;
+        return this;
     }
-    this.children = children;
-    return this;
-};
-_.extend(NestedTag.prototype, Observee.prototype, {
+
     get_nested_list_item(parent, padding, options){
         var div = $('<div data-id="{0}">'.printf(this.data.pk)),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
@@ -74,7 +76,8 @@ _.extend(NestedTag.prototype, Observee.prototype, {
         }
 
         return parent;
-    },
+    }
+
     get_reference_objects_by_tag(reference_viewer){
         var url = '/lit/assessment/{0}/references/{1}/json/'
             .printf(window.assessment_pk, this.data.pk);
@@ -89,25 +92,29 @@ _.extend(NestedTag.prototype, Observee.prototype, {
                 reference_viewer.set_error();
             }
         });
-    },
+    }
+
     get_option_item(lst){
         lst.push($('<option value="{0}">{1}{2}</option>'
                     .printf(this.data.pk, Array(this.level+1).join('&nbsp;&nbsp;'), this.data.name))
                     .data('d', this));
         this.children.forEach(function(v){v.get_option_item(lst);});
         return lst;
-    },
+    }
+
     _append_to_dict(dict){
         dict[this.data.pk] = this;
         this.children.forEach(function(v){v._append_to_dict(dict);});
-    },
+    }
+
     get_full_name(){
         if(this.parent && this.parent.get_full_name){
             return this.parent.get_full_name() + ' ➤ ' + this.data.name;
         } else {
             return this.data.name;
         }
-    },
+    }
+
     add_child(name){
         var self = this,
             data = {
@@ -122,7 +129,8 @@ _.extend(NestedTag.prototype, Observee.prototype, {
                 self.tree.tree_changed();
             }
         });
-    },
+    }
+
     remove_self(){
         this.children.forEach(function(v){v.remove_self();});
         var self = this,
@@ -142,7 +150,8 @@ _.extend(NestedTag.prototype, Observee.prototype, {
                 self.tree.tree_changed();
             }
         });
-    },
+    }
+
     move_self(offset){
         var self = this,
             lst = this.parent.children,
@@ -159,7 +168,8 @@ _.extend(NestedTag.prototype, Observee.prototype, {
         $.post('.', data, function(v){
             if (v.status === 'success') self.tree.tree_changed();
         });
-    },
+    }
+
     rename_self(name){
         var self = this,
             data = {
@@ -174,10 +184,11 @@ _.extend(NestedTag.prototype, Observee.prototype, {
                 self.tree.tree_changed();
             }
         });
-    },
+    }
+
     remove_child(tag){
         this.children.splice_object(tag);
-    },
-});
+    }
+}
 
 export default NestedTag;

@@ -1,3 +1,5 @@
+import D3Plot from 'utils/D3Plot';
+
 var Barplot = function(endpoint, plot_id, options, parent){
     D3Plot.call(this); // call parent constructor
     this.parent = parent;
