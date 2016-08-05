@@ -1,6 +1,11 @@
-import HAWCUtils from 'utils/HAWCUtils';
-import HAWCModal from 'utils/HAWCModal';
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 
 

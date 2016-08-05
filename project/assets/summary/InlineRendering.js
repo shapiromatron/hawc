@@ -1,3 +1,6 @@
+import $ from '$';
+
+
 class InlineRendering {
 
     constructor(data){

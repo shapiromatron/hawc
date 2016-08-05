@@ -1,7 +1,14 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
+import D3Visualization from './D3Visualization';
+
+
 class EndpointAggregationForestPlot extends D3Visualization {
 
     constructor(parent, data, options){
-        D3Visualization.apply(this, arguments);
+        super(parent, data, options);
         this.setDefaults();
     }
 
@@ -63,7 +70,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             });
 
             egs.forEach(function(eg, i){
-                txt = [
+                var txt = [
                     e.data.animal_group.experiment.study.short_citation,
                     e.data.name,
                     'Dose: ' + eg.dose,

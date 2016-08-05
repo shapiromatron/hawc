@@ -1,13 +1,21 @@
-class RoBBarchartForm extends RoBHeatmapForm {
+import _ from 'underscore';
 
-    constructor($el){
-        VisualForm.apply(this, arguments);
-    }
+import RoBBarchart from 'summary/RoBBarchart';
+
+import RoBHeatmapForm from './RoBHeatmapForm';
+import RoBMetricTable from './RoBMetricTable';
+import {
+    TextField,
+    IntegerField,
+    CheckboxField,
+} from './Fields';
+
+
+class RoBBarchartForm extends RoBHeatmapForm {
 
     buildPreview($parent, data){
         this.preview = new RoBBarchart(data).displayAsPage( $parent.empty(), {'dev': true} );
     }
-
 }
 
 _.extend(RoBBarchartForm, {

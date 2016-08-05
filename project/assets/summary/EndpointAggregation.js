@@ -1,5 +1,15 @@
-import HAWCModal from 'utils/HAWCModal';
+import $ from '$';
+
 import BaseTable from 'utils/BaseTable';
+import HAWCModal from 'utils/HAWCModal';
+
+import EndpointDetailRow from 'animal/EndpointDetailRow';
+
+import EndpointAggregationExposureResponsePlot from './EndpointAggregationExposureResponsePlot';
+import EndpointAggregationForestPlot from './EndpointAggregationForestPlot';
+import SmartTagContainer from './SmartTagContainer';
+import Visual from './Visual';
+
 
 class EndpointAggregation extends Visual {
 

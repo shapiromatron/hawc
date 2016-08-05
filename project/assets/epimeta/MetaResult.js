@@ -1,7 +1,13 @@
-import DescriptiveTable from 'utils/DescriptiveTable';
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import SingleStudyResult from './SingleStudyResult';
+
 
 class MetaResult {
 

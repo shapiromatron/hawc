@@ -1,5 +1,9 @@
+import $ from '$';
+
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
 
 class IVCellType {
 

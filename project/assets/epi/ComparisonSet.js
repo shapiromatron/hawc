@@ -1,6 +1,13 @@
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
-import HAWCUtils from 'utils/HAWCUtils';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import Exposure from './Exposure';
+import Group from './Group';
+
 
 class ComparisonSet {
 

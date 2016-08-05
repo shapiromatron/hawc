@@ -1,3 +1,5 @@
+import $ from '$';
+
 import Reference from './Reference';
 
 

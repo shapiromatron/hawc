@@ -1,5 +1,12 @@
-import DescriptiveTable from 'utils/DescriptiveTable';
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HawcTooltip from 'utils/HawcTooltip';
+
+import GroupDescription from './GroupDescription';
+
 
 class Group {
 

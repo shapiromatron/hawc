@@ -1,11 +1,15 @@
-var DosingRegimeForm = function(form, dose_types, initial){
-    this.form = form;
-    this.dose_types = dose_types;
-    this._setInitialValues(initial);
-    this.rebuildTable();
-    this._setEventHandlers();
-};
-DosingRegimeForm.prototype = {
+import $ from '$';
+
+
+class DosingRegimeForm {
+    constructor(form, dose_types, initial){
+        this.form = form;
+        this.dose_types = dose_types;
+        this._setInitialValues(initial);
+        this.rebuildTable();
+        this._setEventHandlers();
+    }
+
     _setInitialValues(initial){
         var rows = 0,
             columns = 0,
@@ -54,7 +58,8 @@ DosingRegimeForm.prototype = {
         this.dose_units = dose_units;
 
         this.rebuildTable();
-    },
+    }
+
     jsonify(){
         this._syncFromForm();
         var vals = [];
@@ -66,7 +71,8 @@ DosingRegimeForm.prototype = {
             }
         }
         return vals;
-    },
+    }
+
     add_dose_column(){
         this._syncFromForm();
         this.columns += 1;
@@ -75,7 +81,8 @@ DosingRegimeForm.prototype = {
             this.array[i].doses.push('');
         }
         this.rebuildTable();
-    },
+    }
+
     remove_dose_column(index){
         this._syncFromForm();
         this.dose_units.splice(index, 1);
@@ -84,7 +91,8 @@ DosingRegimeForm.prototype = {
         }
         this.columns -= 1;
         this.rebuildTable();
-    },
+    }
+
     change_rows(){
         this._syncFromForm();
         var new_rows = this._get_number_dose_groups();
@@ -101,7 +109,8 @@ DosingRegimeForm.prototype = {
             this.rows = new_rows;
             this.rebuildTable();
         }
-    },
+    }
+
     rebuildTable(){
         $('#dose_table')
             .html('')
@@ -110,7 +119,8 @@ DosingRegimeForm.prototype = {
                 this._build_thead(),
                 this._build_tbody()
             );
-    },
+    }
+
     _syncFromForm(){
         // rebuild dose-units and dose-array values from form
         var self = this;
@@ -125,14 +135,16 @@ DosingRegimeForm.prototype = {
                 self.array[i1].doses[i2] = $(v2).val();
             });
         });
-    },
+    }
+
     _add_blank_row(numCols){
         var doses = [];
         for(var j=0; j<numCols; j++){
             doses.push('');
         }
         return {doses};
-    },
+    }
+
     _build_thead(){
         var tr = $('<tr>').append('<th>Dose Units</th>');
         for(var j=0; j<this.columns; j++){
@@ -151,7 +163,8 @@ DosingRegimeForm.prototype = {
             tr.append(th);
         }
         return $('<thead>').html(tr);
-    },
+    }
+
     _build_colgroup(){
         var cols = [];
         cols.push('<col style="width:10%"></col>');
@@ -159,7 +172,8 @@ DosingRegimeForm.prototype = {
             cols.push('<col style="width:' + (90/this.columns) +'%"></col>');
         }
         return $('<colgroup>').html(cols.join(''));
-    },
+    }
+
     _build_tbody(){
         var tbody = $('<tbody>');
         for(var i=0; i<this.rows; i++){
@@ -173,10 +187,12 @@ DosingRegimeForm.prototype = {
             tbody.append(tr);
         }
         return tbody;
-    },
+    }
+
     _get_number_dose_groups(){
         return Math.min(parseInt(this.form.find('#id_num_dose_groups').val()), 20);
-    },
+    }
+
     _setEventHandlers(){
         var self = this;
 
@@ -199,7 +215,7 @@ DosingRegimeForm.prototype = {
             self.form.find('#dose_groups_json').val(JSON.stringify(self.jsonify()));
             return true;
         });
-    },
-};
+    }
+}
 
 export default DosingRegimeForm;

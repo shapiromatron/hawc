@@ -1,15 +1,20 @@
+import $ from '$';
+import _ from 'underscore';
+
+
 // Widget to calculate if sample size is appropriate for measured results
-var SampleSizeWidget = function(){
-    this.btn = $('#ssBtn')
-        .appendTo($('#hint_id_power_notes'))
-        .click(this.setCalculator.bind(this));
-    this.modal = $('#ssModal');
-    this.form = $('#ssForm');
-    this.result = this.form.find('#ssResult');
-    this.form.find('input').on('change keyup', this.recalculate.bind(this));
-    $('#ssSavePower').click(this.savePower.bind(this));
-};
-SampleSizeWidget.prototype = {
+class SampleSizeWidget {
+    constructor(){
+        this.btn = $('#ssBtn')
+            .appendTo($('#hint_id_power_notes'))
+            .click(this.setCalculator.bind(this));
+        this.modal = $('#ssModal');
+        this.form = $('#ssForm');
+        this.result = this.form.find('#ssResult');
+        this.form.find('input').on('change keyup', this.recalculate.bind(this));
+        $('#ssSavePower').click(this.savePower.bind(this));
+    }
+
     getSD(){
         var n = $('#id_form-0-n').val(),
             varType = $('#id_variance_type').val(),
@@ -26,13 +31,15 @@ SampleSizeWidget.prototype = {
             }
         }
         return val;
-    },
+    }
+
     setCalculator(){
         this.form.find('input[name=mean]').val( $('#id_form-0-response').val() );
         this.form.find('input[name=sd]').val( this.getSD() );
         this.form.find('input[name=n]').val( $('#id_form-0-n').val() );
         this.recalculate();
-    },
+    }
+
     recalculate(){
         var fields = _.object(_.map(this.form.serializeArray(), function(d){
                 return [d.name, parseFloat(d.value, 10)]; })),
@@ -56,7 +63,8 @@ SampleSizeWidget.prototype = {
             txt += 'requires approximately {0} animals to detect a {1}% change from control at 80% power'.printf(power, fields.percentToDetect);
         }
         return this.result.html(txt);
-    },
+    }
+
     getPower(mean, sd, percentToDetect){
         // Calculate the sample size required to detect a response with 80%
         // power, which is dependent on the control mean and standard-deviation,
@@ -65,10 +73,11 @@ SampleSizeWidget.prototype = {
             d = mean*fracToDetect/sd,
             ss80 = 16/Math.pow(d, 2);
         return ss80;
-    },
+    }
+
     savePower(){
         $('#id_power_notes').html(this.result.html());
-    },
-};
+    }
+}
 
 export default SampleSizeWidget;

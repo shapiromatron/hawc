@@ -1,4 +1,7 @@
+import $ from '$';
+
 import Observee from 'utils/Observee';
+
 import Reference from './Reference';
 
 

@@ -1,4 +1,12 @@
+import $ from '$';
+
 import HAWCUtils from 'utils/HAWCUtils';
+
+import Crossview from './Crossview';
+import EndpointAggregation from './EndpointAggregation';
+import RoBBarchart from './RoBBarchart';
+import RoBHeatmap from './RoBHeatmap';
+
 
 class Visual {
 

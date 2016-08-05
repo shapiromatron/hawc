@@ -1,3 +1,10 @@
+import _ from 'underscore';
+
+import EndpointAggregation from './summary/EndpointAggregation';
+
+import VisualForm from './VisualForm';
+
+
 class EndpointAggregationForm extends VisualForm {
 
     constructor($el){

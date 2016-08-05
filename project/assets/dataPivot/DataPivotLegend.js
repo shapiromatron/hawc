@@ -1,4 +1,14 @@
+import $ from '$';
+import d3 from 'd3';
+
 import HAWCUtils from 'utils/HAWCUtils';
+
+import DataPivot from './DataPivot';
+import {
+    StyleSymbol,
+    StyleLine,
+} from './Styles';
+
 
 class DataPivotLegend {
 

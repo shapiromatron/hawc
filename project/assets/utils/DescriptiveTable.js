@@ -1,3 +1,6 @@
+import $ from '$';
+
+
 // Method for creating a table for descriptive information
 class DescriptiveTable {
 

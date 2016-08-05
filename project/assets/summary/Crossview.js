@@ -1,9 +1,18 @@
+import $ from '$';
+import d3 from 'd3';
+
 import HAWCModal from 'utils/HAWCModal';
 
-class Crossview extends Visual {
+import CrossviewPlot from './CrossviewPlot';
+import EndpointAggregation from './EndpointAggregation';
+import SmartTagContainer from './SmartTagContainer';
+
+
+
+class Crossview extends EndpointAggregation {
 
     constructor(data){
-        EndpointAggregation.apply(this, arguments);
+        super(data);
         // D3.js monkey-patch
         d3.selection.prototype.moveToFront = function(){
             return this.each(function(){

@@ -1,9 +1,16 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import HAWCUtils from 'utils/HAWCUtils';
+
+import D3Visualization from './D3Visualization';
+
 
 class CrossviewPlot extends D3Visualization {
 
     constructor(parent, data, options){
-        D3Visualization.apply(this, arguments);
+        super(parent, data, options);
         this.setDefaults();
     }
 
@@ -169,7 +176,7 @@ class CrossviewPlot extends D3Visualization {
 
                 // apply color filters (reverse order)
                 for (i = settings.colorFilters.length-1; i>=0; i--){
-                    colorFilt = settings.colorFilters[i];
+                    let colorFilt = settings.colorFilters[i];
                     vals = CrossviewPlot._cw_filter_process[colorFilt.field](e);
                     if(self.isMatch(vals, colorFilt.value)){
                         stroke = colorFilt.color;
@@ -592,7 +599,7 @@ class CrossviewPlot extends D3Visualization {
         this._draw_labels();
         this._draw_colorFilterLabels();
 
-        for (i = this.plot_settings.colorFilters.length-1; i>=0; i--){
+        for (let i = this.plot_settings.colorFilters.length-1; i>=0; i--){
             this._bringColorFilterToFront(this.plot_settings.colorFilters[i]);
         }
     }

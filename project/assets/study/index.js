@@ -1,7 +1,8 @@
-import StudyCollection from './StudyCollection';
 import Study from './Study';
+import StudyCollection from './StudyCollection';
+
 
 export default {
-    StudyCollection,
     Study,
+    StudyCollection,
 };

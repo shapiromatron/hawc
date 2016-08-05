@@ -1,4 +1,13 @@
+import _ from 'underscore';
+import $ from '$';
+
 import HAWCUtils from 'utils/HAWCUtils';
+
+import EndpointAggregationForm from './EndpointAggregationForm';
+import CrossviewForm from './CrossviewForm';
+import RoBHeatmapForm from './RoBHeatmapForm';
+import RoBBarchartForm from './RoBBarchartForm';
+
 
 class VisualForm {
 
@@ -157,7 +166,8 @@ class VisualForm {
         this.buildSettingsSubtabs($parent);
 
         this.constructor.schema.forEach(function(d){
-            self.fields.push(new d.type(d, getParent(d.tab), self));
+            let Cls = d.type;
+            self.fields.push(new Cls(d, getParent(d.tab), self));
         });
 
         this.fields.forEach(function(d){d.render();});

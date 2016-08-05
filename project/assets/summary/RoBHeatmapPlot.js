@@ -1,5 +1,14 @@
-import HAWCUtils from 'utils/HAWCUtils';
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+
+import D3Visualization from './D3Visualization';
+
 
 class RoBHeatmapPlot extends D3Visualization {
 
@@ -457,7 +466,6 @@ class RoBHeatmapPlot extends D3Visualization {
             }
         }, 200);
     }
-
 }
 
 export default RoBHeatmapPlot;

@@ -1,4 +1,6 @@
-// Generic tooltip
+import $ from '$';
+
+
 class HawcTooltip {
 
     constructor(styles){

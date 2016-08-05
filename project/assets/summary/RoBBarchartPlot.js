@@ -1,4 +1,11 @@
+import _ from 'underscore';
+import d3 from 'd3';
+
+import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+
 import D3Visualization from './D3Visualization';
+import RoBHeatmapPlot from './RoBHeatmapPlot';
+
 
 class RoBBarchartPlot extends D3Visualization {
 
@@ -169,7 +176,7 @@ class RoBBarchartPlot extends D3Visualization {
             .style('stroke', function(d, i){return d3.rgb(colors(i)).darker();});
 
         // Add a rect for each score.
-        rects = groups.selectAll('rect')
+        groups.selectAll('rect')
             .data(Object)
             .enter().append('svg:rect')
             .attr('x', function(d) { return x(d.y0); })
@@ -178,7 +185,7 @@ class RoBBarchartPlot extends D3Visualization {
             .attr('height', 20);
 
         if(this.data.settings.show_values){
-            labels = groups.selectAll('text')
+            groups.selectAll('text')
                 .data(Object)
                 .enter().append('text')
                 .attr('class', 'centeredLabel')

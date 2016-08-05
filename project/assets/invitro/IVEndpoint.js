@@ -1,6 +1,14 @@
+import $ from '$';
+import _ from 'underscore';
+
+import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import IVChemical from './IVChemical';
+import IVEndpointGroup from './IVEndpointGroup';
+
 
 class IVEndpoint {
 

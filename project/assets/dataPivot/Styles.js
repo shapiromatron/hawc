@@ -1,4 +1,10 @@
+import $ from '$';
+import d3 from 'd3';
+
 import D3Plot from 'utils/D3Plot';
+
+import DataPivot from './DataPivot';
+
 
 class StyleSymbol {
 
@@ -107,7 +113,6 @@ class StyleSymbol {
         this.controls = form;
     }
 }
-
 
 class StyleText {
 
@@ -238,7 +243,6 @@ class StyleText {
     }
 }
 
-
 class StyleLine {
 
     constructor(style_manager, settings, isNew){
@@ -342,7 +346,6 @@ class StyleLine {
     }
 }
 
-
 class StyleRectangle {
 
     constructor(style_manager, settings, isNew){
@@ -429,8 +432,6 @@ class StyleRectangle {
         this.controls = form;
     }
 }
-
-
 
 class StyleViewer extends D3Plot {
 

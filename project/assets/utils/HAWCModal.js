@@ -1,4 +1,7 @@
-// Generic modal
+import $ from '$';
+import _ from 'underscore';
+
+
 class HAWCModal {
 
     constructor(){

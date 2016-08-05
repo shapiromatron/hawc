@@ -1,7 +1,9 @@
+import $ from '$';
 import d3 from 'd3';
 
-import HAWCModal from 'utils/HAWCModal';
 import D3Plot from 'utils/D3Plot';
+import HAWCModal from 'utils/HAWCModal';
+
 import ReferencesViewer from './ReferencesViewer';
 
 

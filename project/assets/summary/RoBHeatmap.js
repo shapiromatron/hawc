@@ -1,4 +1,12 @@
+import $ from '$';
+import _ from 'underscore';
+
 import HAWCModal from 'utils/HAWCModal';
+
+import RoBHeatmapPlot from './RoBHeatmapPlot';
+import SmartTagContainer from './SmartTagContainer';
+import Visual from './Visual';
+
 
 class RoBHeatmap extends Visual {
 

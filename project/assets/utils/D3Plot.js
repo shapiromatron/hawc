@@ -1,3 +1,7 @@
+import $ from '$';
+import d3 from 'd3';
+
+
 // Generic parent for all d3.js visualizations
 class D3Plot {
 

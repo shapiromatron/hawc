@@ -1,3 +1,6 @@
+import $ from '$';
+
+
 class IVEndpointGroup {
 
     constructor(data){

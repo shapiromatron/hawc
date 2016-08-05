@@ -1,4 +1,8 @@
+import _ from 'underscore';
+import d3 from 'd3';
+
 import BaseTable from 'utils/BaseTable';
+
 
 class ResultGroupTable {
 
@@ -70,7 +74,7 @@ class ResultGroupTable {
                 },
                 estimate(){
                     return (!_.contains([null, 'other'], d.estimate_type)) ?
-                        estTxt = 'Estimate ({0})'.printf(d.estimate_type) :
+                        'Estimate ({0})'.printf(d.estimate_type) :
                         'Estimate';
                 },
                 variance(){

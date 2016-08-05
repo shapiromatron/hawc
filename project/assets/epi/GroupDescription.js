@@ -1,3 +1,6 @@
+import _ from 'underscore';
+
+
 class GroupDescription {
 
     constructor(data){

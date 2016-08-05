@@ -1,8 +1,14 @@
-var DoseUnitsWidget = function(form, opts){
-    form.on('submit', this.handleFormSubmit.bind(this));
-    this.init(opts);
-};
-DoseUnitsWidget.prototype = {
+import $ from '$';
+import _ from 'underscore';
+
+
+class DoseUnitsWidget {
+
+    constructor (form, opts){
+        form.on('submit', this.handleFormSubmit.bind(this));
+        this.init(opts);
+    }
+
     init(opts){
         this.$input = $(opts.el).hide();
         this.$widgetDiv = $('#pduDiv');
@@ -13,7 +19,8 @@ DoseUnitsWidget.prototype = {
         $('#pduUp').on('click', this.handleUp.bind(this));
         $('#pduDown').on('click', this.handleDown.bind(this));
         $.get(opts.api, this.render.bind(this));
-    },
+    }
+
     handleAdd(){
         // add new units, after de-duping those already available.
         var optsMap = {};
@@ -24,31 +31,36 @@ DoseUnitsWidget.prototype = {
             delete optsMap[el.value];
         });
         this.$selected.append($(_.values(optsMap)).clone());
-    },
+    }
+
     handleRemove(){
         this.$selected.find('option:selected').remove();
-    },
+    }
+
     handleUp(){
         this.$selected.find('option:selected')
             .each(function(i, el){
                 var $el = $(el);
                 $el.insertBefore($el.prev());
             });
-    },
+    }
+
     handleDown(){
         this.$selected.find('option:selected')
             .get().reverse().forEach(function(el){
                 var $el = $(el);
                 $el.insertAfter($el.next());
             });
-    },
+    }
+
     handleFormSubmit(){
         var selected_ids = this.$selected.children()
                 .map(function(i, el){return parseInt(el.value);})
                 .get();
         this.$input.val(selected_ids.join(','));
         return true;
-    },
+    }
+
     render(objects){
         var self = this;
 
@@ -71,7 +83,7 @@ DoseUnitsWidget.prototype = {
         //render on DOM
         this.$input.parent().prepend(this.$widgetDiv);
         this.$widgetDiv.show();
-    },
-};
+    }
+}
 
 export default DoseUnitsWidget;

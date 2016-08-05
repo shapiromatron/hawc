@@ -1,4 +1,8 @@
+import _ from 'underscore';
+import d3 from 'd3';
+
 import D3Plot from 'utils/D3Plot';
+
 
 class ResultForestPlot extends D3Plot {
 

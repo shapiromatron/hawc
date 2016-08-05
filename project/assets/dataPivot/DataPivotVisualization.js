@@ -1,4 +1,19 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import D3Plot from 'utils/D3Plot';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import DataPivot from './DataPivot';
+import DataPivotExtension from './DataPivotExtension';
+import DataPivotLegend from './DataPivotLegend';
+import {
+    StyleLine,
+    StyleSymbol,
+    StyleText,
+} from './Styles';
+
 
 class DataPivot_visualization extends D3Plot {
 
@@ -585,7 +600,7 @@ class DataPivot_visualization extends D3Plot {
             };
 
         if (this.datarows.length>0){
-            first_index = 0;
+            var first_index = 0;
             // starting with second-row, build rectangles
             for(var i=1; i<this.datarows.length; i++){
                 if (!this.datarows[i]._dp_isMerged){

@@ -1,6 +1,15 @@
+import $ from '$';
+import _ from 'underscore';
+
 import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import ComparisonSet from './ComparisonSet';
+import ResultGroup from './ResultGroup';
+import ResultGroupTable from './ResultGroupTable';
+import ResultForestPlot from './ResultForestPlot';
+
 
 class Result {
 
@@ -26,7 +35,7 @@ class Result {
         Result.get_object(id, function(d){d.displayAsModal();});
     }
 
-    displayFullPager(el){
+    displayFullPager($el){
         $el.hide()
             .append(this.build_content($el, {tabbed: false}))
             .fadeIn()

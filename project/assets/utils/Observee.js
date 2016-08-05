@@ -1,4 +1,3 @@
-// Observer design pattern; observers require an `update` method.
 class Observee {
 
     constructor(){

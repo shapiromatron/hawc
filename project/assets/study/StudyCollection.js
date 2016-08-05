@@ -1,4 +1,8 @@
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
+
 import Study from './Study';
 
 

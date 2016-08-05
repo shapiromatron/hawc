@@ -1,15 +1,20 @@
-import Observee from 'utils/Observee';
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
-import HAWCModal from 'utils/HAWCModal';
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
 
-import EndpointCriticalDose from './EndpointCriticalDose';
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+import Observee from 'utils/Observee';
+
 import Study from 'study/Study';
-import Experiment from './Experiment';
+
 import AnimalGroup from './AnimalGroup';
 import BMDResult from './BMDResult';
-import EndpointTable from './EndpointTable';
+import EndpointCriticalDose from './EndpointCriticalDose';
 import EndpointPlotContainer from './EndpointPlotContainer';
+import EndpointTable from './EndpointTable';
+import Experiment from './Experiment';
 
 
 class Endpoint extends Observee {

@@ -1,4 +1,16 @@
+import _ from 'underscore';
+import $ from '$';
+
 import HAWCUtils from 'utils/HAWCUtils';
+import D3Visualization from 'summary/D3Visualization';
+
+import {
+    InputField,
+    SpacerNullField,
+    HeaderNullField,
+    HelpTextNullField,
+} from './Fields';
+
 
 class TableField extends InputField {
 
@@ -147,7 +159,6 @@ class TableField extends InputField {
     }
 }
 
-
 class ReferenceLineField extends TableField {
 
     constructor(){
@@ -189,7 +200,6 @@ class ReferenceLineField extends TableField {
             'style': row.find('select[name="style"]').val(),
         };
     }
-
 }
 
 class ReferenceRangeField extends TableField {
@@ -237,9 +247,7 @@ class ReferenceRangeField extends TableField {
             style: row.find('select[name="style"]').val(),
         };
     }
-
 }
-
 
 class ReferenceLabelField extends TableField {
 
@@ -290,10 +298,9 @@ class ReferenceLabelField extends TableField {
             y: parseInt(row.find('input[name="y"]').val(), 10),
         };
     }
-
 }
 
-
+export {TableField};
 export {ReferenceLineField};
 export {ReferenceRangeField};
 export {ReferenceLabelField};

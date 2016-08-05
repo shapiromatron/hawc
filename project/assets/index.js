@@ -1,31 +1,34 @@
+// startup
 import 'utils/startup';
-
 import utils from 'utils';
-import assessment from 'assessment';
-import animal from 'animal';
-import lit from 'lit';
-import study from 'study';
-import riskofbias from 'riskofbias';
 
-import textCleanupStartup from 'textCleanup';
+// object models
+import animal from 'animal';
+import assessment from 'assessment';
+import lit from 'lit';
+import riskofbias from 'riskofbias';
+import study from 'study';
+
+// custom applications
+import bmdStartup from 'bmd';
 import robVisualStartup from 'robVisual';
 import robTableStartup from 'robTable';
 import robScoreCleanupStartup from 'robScoreCleanup';
-import bmdStartup from 'bmd';
+import textCleanupStartup from 'textCleanup';
 import nestedTagEditorStartup from 'nestedTagEditor';
 
 
 window.app = {
     utils,
-    assessment,
     animal,
+    assessment,
     lit,
-    study,
     riskofbias,
-    textCleanupStartup,
+    study,
+    bmdStartup,
     robVisualStartup,
     robTableStartup,
     robScoreCleanupStartup,
-    bmdStartup,
+    textCleanupStartup,
     nestedTagEditorStartup,
 };

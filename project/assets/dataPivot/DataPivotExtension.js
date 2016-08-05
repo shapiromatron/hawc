@@ -1,3 +1,28 @@
+import _ from 'underscore';
+import d3 from 'd3';
+
+import DataPivot from './DataPivot';
+
+import Study from 'animal/Study';
+import Experiment from 'animal/Experiment';
+import AnimalGroup from 'animal/AnimalGroup';
+import Endpoint from 'animal/Endpoint';
+
+import StudyPopulation from 'epi/StudyPopulation';
+import ComparisonSet from 'epi/ComparisonSet';
+import Exposure from 'epi/Exposure';
+import Outcome from 'epi/Outcome';
+import Result from 'epi/Result';
+
+import MetaProtocol from 'epimeta/MetaProtocol';
+import MetaResult from 'epimeta/MetaResult';
+
+import IVChemical from 'invitro/IVChemical';
+import IVExperiment from 'invitro/IVExperiment';
+import IVCellType from 'invitro/IVCellType';
+import IVEndpoint from 'invitro/IVEndpoint';
+
+
 class DataPivotExtension {
 
     static extByName(){
@@ -63,19 +88,19 @@ _.extend(DataPivotExtension, {
         {
             _dpe_name:        'experiment',
             _dpe_key:         'experiment id',
-            _dpe_cls:         window.app.animal.Experiment,
+            _dpe_cls:         Experiment,
             _dpe_option_txt:  'Show experiment',
         },
         {
             _dpe_name:        'animal_group',
             _dpe_key:         'animal group id',
-            _dpe_cls:         window.app.animal.AnimalGroup,
+            _dpe_cls:         AnimalGroup,
             _dpe_option_txt:  'Show animal group',
         },
         {
             _dpe_name:        'endpoint',
             _dpe_key:         'endpoint id',
-            _dpe_cls:         window.app.animal.Endpoint,
+            _dpe_cls:         Endpoint,
             _dpe_option_txt:  'Show endpoint (basic)',
             _dpe_options: {
                 complete: false,
@@ -84,7 +109,7 @@ _.extend(DataPivotExtension, {
         {
             _dpe_name:        'endpoint_complete',
             _dpe_key:         'endpoint id',
-            _dpe_cls:         window.app.animal.Endpoint,
+            _dpe_cls:         Endpoint,
             _dpe_option_txt:  'Show endpoint (complete)',
             _dpe_options: {
                 complete: true,

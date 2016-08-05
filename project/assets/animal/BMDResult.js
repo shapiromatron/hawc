@@ -1,12 +1,12 @@
-import _ from 'underscore';
 import EndpointCriticalDose from './EndpointCriticalDose';
 
 
-var BMDResult = function(endpoint, span, type, show_units, show_url){
-    this.show_url = show_url;
-    EndpointCriticalDose.apply(this, arguments);
-};
-_.extend(BMDResult.prototype, EndpointCriticalDose.prototype, {
+class BMDResult extends EndpointCriticalDose {
+    constructor(endpoint, span, type, show_units, show_url){
+        super(...arguments);
+        this.show_url = show_url;
+    }
+
     display(){
         var txt,
             bmd = this.endpoint.data.bmd,
@@ -25,8 +25,8 @@ _.extend(BMDResult.prototype, EndpointCriticalDose.prototype, {
             txt = '-';
         }
         return this.span.html(txt);
-    },
-});
+    }
+}
 
 
 export default BMDResult;

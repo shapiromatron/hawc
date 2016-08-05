@@ -1,14 +1,18 @@
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
 
-var AnimalGroupTable = function(endpoints){
-    this.endpoints = endpoints;
-    this.tbl = new BaseTable();
-    this.endpoints_no_dr = this.endpoints.filter(function(v){return !v.hasEGdata();}),
-    this.endpoints_dr = this.endpoints.filter(function(v){return v.hasEGdata();});
-};
 
-_.extend(AnimalGroupTable, {
-    render($div, endpoints){
+class AnimalGroupTable {
+    constructor(endpoints){
+        this.endpoints = endpoints;
+        this.tbl = new BaseTable();
+        this.endpoints_no_dr = this.endpoints.filter(function(v){return !v.hasEGdata();}),
+        this.endpoints_dr = this.endpoints.filter(function(v){return v.hasEGdata();});
+    }
+
+    static render($div, endpoints){
         var tbl = new window.app.animal.AnimalGroupTable(endpoints);
 
         $div.append(tbl.build_table());
@@ -18,10 +22,8 @@ _.extend(AnimalGroupTable, {
                 .append('<p>Endpoints which have no dose-response data extracted.</p>')
                 .append(tbl.build_no_dr_ul());
         }
-    },
-});
+    }
 
-AnimalGroupTable.prototype = {
     build_table(){
         if(this.endpoints_dr.length === 0)
             return '<p>No endpoints with dose-response data extracted are available.</p>';
@@ -29,12 +31,14 @@ AnimalGroupTable.prototype = {
         this._build_header();
         this._build_tbody();
         return this.tbl.getTbl();
-    },
+    }
+
     _build_header(){
         var header = this.endpoints[0]._build_ag_dose_rows();
         _.each(header.html, this.tbl.addHeaderRow.bind(this.tbl));
         this.ncols = header.ncols;
-    },
+    }
+
     _build_tbody(){
         var tbl = this.tbl,
             ngroups = this._sort_egs_by_n();
@@ -47,7 +51,8 @@ AnimalGroupTable.prototype = {
                     tbl.addRow(v._build_ag_response_row(tbl.footnotes));
                 });
         });
-    },
+    }
+
     _sort_egs_by_n(){
         /*
         Return an array of arrays of endpoints which have the same
@@ -61,14 +66,15 @@ AnimalGroupTable.prototype = {
             eps[key].push(v);
         });
         return _.values(eps);
-    },
+    }
+
     build_no_dr_ul(){
         var ul = $('<ul>');
         this.endpoints_no_dr.forEach(function(v){
             ul.append(v.build_ag_no_dr_li());
         });
         return ul;
-    },
-};
+    }
+}
 
 export default AnimalGroupTable;

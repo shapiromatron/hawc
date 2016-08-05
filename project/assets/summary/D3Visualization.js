@@ -1,3 +1,10 @@
+import _ from 'underscore';
+import d3 from 'd3';
+
+import D3Plot from 'utils/D3Plot';
+import HAWCUtils from 'utils/HAWCUtils';
+
+
 class D3Visualization extends D3Plot {
 
     constructor(parent, data, options){
@@ -9,15 +16,15 @@ class D3Visualization extends D3Plot {
     }
 
     setDefaults(){
-        throw 'Abstract method; requires implementation';
+        return HAWCUtils.abstractMethod();
     }
 
     render($div){
-        throw 'Abstract method; requires implementation';
+        return HAWCUtils.abstractMethod();
     }
 
     processData(){
-        throw 'Abstract method; requires implementation';
+        return HAWCUtils.abstractMethod();
     }
 
     apply_text_styles(obj, styles){

@@ -1,17 +1,22 @@
+import $ from '$';
+import _ from 'underscore';
+
 import TableFootnotes from 'utils/TableFootnotes';
 
-var EndpointTable = function(endpoint, tbl_id){
-    this.endpoint = endpoint;
-    this.tbl = $(tbl_id);
-    this.footnotes = new TableFootnotes();
-    this.build_table();
-    this.endpoint.addObserver(this);
-};
 
-EndpointTable.prototype = {
+class EndpointTable {
+    constructor(endpoint, tbl_id){
+        this.endpoint = endpoint;
+        this.tbl = $(tbl_id);
+        this.footnotes = new TableFootnotes();
+        this.build_table();
+        this.endpoint.addObserver(this);
+    }
+
     update(status){
         this.build_table();
-    },
+    }
+
     build_table(){
         if (!this.endpoint.hasEGdata()){
             this.tbl.html('<p>Dose-response data unavailable.</p>');
@@ -24,13 +29,15 @@ EndpointTable.prototype = {
             this.tbl.html([this.colgroup, this.thead, this.tfoot, this.tbody]);
         }
         return this.tbl;
-    },
+    }
+
     hasValues(val){
         return _.chain(this.endpoint.data.groups)
                 .map(function(d){return d[val];})
                 .any($.isNumeric)
                 .value();
-    },
+    }
+
     build_header(){
         var self = this,
             d = this.endpoint.data,
@@ -76,7 +83,8 @@ EndpointTable.prototype = {
 
         this.number_columns = tr.children().length;
         this.thead = $('<thead>').append(tr);
-    },
+    }
+
     build_body(){
         this.tbody = $('<tbody></tbody>');
         var self = this;
@@ -104,18 +112,20 @@ EndpointTable.prototype = {
             }
             self.tbody.append(tr);
         });
-    },
+    }
+
     build_footer(){
         var txt = this.footnotes.html_list().join('<br>');
         this.tfoot = $('<tfoot><tr><td colspan="{0}">{1}</td></tr></tfoot>'.printf(this.number_columns, txt));
-    },
+    }
+
     build_colgroup(){
         this.colgroup = $('<colgroup></colgroup>');
         var self = this;
         for(var i=0; i<this.number_columns; i++){
             self.colgroup.append('<col style="width:{0}%;">'.printf((100/self.number_columns)));
         }
-    },
-};
+    }
+}
 
 export default EndpointTable;

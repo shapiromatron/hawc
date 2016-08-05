@@ -1,21 +1,25 @@
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
-import HAWCModal from 'utils/HAWCModal';
+import $ from '$';
 
-var Experiment = function(data){
-    this.data = data;
-};
-_.extend(Experiment, {
-    get_object(id, cb){
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+
+class Experiment {
+    constructor(data){
+        this.data = data;
+    }
+
+    static get_object(id, cb){
         $.get('/ani/api/experiment/{0}/'.printf(id), function(d){
             cb(new Experiment(d));
         });
-    },
-    displayAsModal(id){
+    }
+
+    static displayAsModal(id){
         Experiment.get_object(id, function(d){d.displayAsModal();});
-    },
-});
-Experiment.prototype = {
+    }
+
     build_breadcrumbs(){
         var urls = [
             {
@@ -28,7 +32,8 @@ Experiment.prototype = {
             },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    },
+    }
+
     build_details_table(){
         var self = this,
             getGenerations = function(){
@@ -66,7 +71,8 @@ Experiment.prototype = {
         }
 
         return tbl.get_tbl();
-    },
+    }
+
     displayAsModal(){
         var modal = new HAWCModal(),
             title = $('<h4>').html(this.build_breadcrumbs()),
@@ -80,10 +86,11 @@ Experiment.prototype = {
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 1000});
-    },
+    }
+
     render($div){
         $div.append(this.build_details_table());
-    },
-};
+    }
+}
 
 export default Experiment;

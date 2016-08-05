@@ -1,3 +1,27 @@
+import _ from 'underscore';
+import $ from '$';
+
+import CrossviewPlot from 'summary/CrossviewPlot';
+import Crossview from 'summary/Crossview';
+
+import VisualForm from './VisualForm';
+
+import {
+    TextField,
+    IntegerField,
+    ColorField,
+    CheckboxField,
+    RadioField,
+} from './Fields';
+
+import {
+    TableField,
+    ReferenceLineField,
+    ReferenceRangeField,
+    ReferenceLabelField,
+} from '/.TableFields';
+
+
 class CrossviewSelectorField extends TableField {
 
     renderHeader(){
@@ -40,7 +64,7 @@ class CrossviewSelectorField extends TableField {
             }
         }).trigger('change');
 
-        allValuesLeg = $('<label class="checkbox">')
+        $('<label class="checkbox">')
             .append(allValues)
             .append('Use all values')
             .prependTo(valuesTd);
@@ -87,7 +111,6 @@ class CrossviewSelectorField extends TableField {
         };
     }
 }
-
 
 class CrossviewColorFilterField extends TableField {
 
@@ -153,7 +176,6 @@ class CrossviewColorFilterField extends TableField {
         };
     }
 }
-
 
 class CrossviewEndpointFilterField extends TableField {
 
@@ -223,7 +245,6 @@ class CrossviewForm extends VisualForm {
     }
 
     updateSettingsFromPreview(){
-        settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
         this.unpackSettings();
     }
 
@@ -252,7 +273,6 @@ class CrossviewForm extends VisualForm {
         });
     }
 }
-
 
 _.extend(CrossviewForm, {
     tabs: [

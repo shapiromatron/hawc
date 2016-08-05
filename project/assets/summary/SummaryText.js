@@ -1,3 +1,6 @@
+import $ from '$';
+
+
 class SummaryText {
 
     constructor(obj, depth, tree, sibling_id, parent){

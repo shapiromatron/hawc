@@ -1,14 +1,15 @@
-var EndpointCriticalDose = function(endpoint, span, type, show_units){
-    // custom field to observe dose changes and respond based on selected dose
-    endpoint.addObserver(this);
-    this.endpoint = endpoint;
-    this.span = span;
-    this.type = type;
-    this.critical_effect_idx = endpoint.data[type];
-    this.show_units = show_units;
-    this.display();
-};
-EndpointCriticalDose.prototype = {
+class EndpointCriticalDose {
+    constructor(endpoint, span, type, show_units){
+        // custom field to observe dose changes and respond based on selected dose
+        endpoint.addObserver(this);
+        this.endpoint = endpoint;
+        this.span = span;
+        this.type = type;
+        this.critical_effect_idx = endpoint.data[type];
+        this.show_units = show_units;
+        this.display();
+    }
+
     display(){
         var txt = '',
             self = this,
@@ -21,10 +22,11 @@ EndpointCriticalDose.prototype = {
             console.log('dose units not found');
         }
         this.span.html(txt);
-    },
+    }
+
     update(){
         this.display();
-    },
-};
+    }
+}
 
 export default EndpointCriticalDose;

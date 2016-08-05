@@ -1,8 +1,19 @@
-class RoBHeatmapForm extends VisualForm {
+import _ from 'underscore';
+import $ from '$';
 
-    constructor($el){
-        VisualForm.apply(this, arguments);
-    }
+import RoBHeatmap from 'summary/RoBHeatmap';
+
+import VisualForm from './VisualForm';
+import RoBMetricTable from './RoBMetricTable';
+import {
+    TextField,
+    IntegerField,
+    CheckboxField,
+    SelectField,
+} from './Fields';
+
+
+class RoBHeatmapForm extends VisualForm {
 
     buildPreview($parent, data){
         this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty(), {'dev': true} );
@@ -18,7 +29,6 @@ class RoBHeatmapForm extends VisualForm {
     }
 
     updateSettingsFromPreview(){
-        settings = $('#id_settings').val(JSON.stringify(this.preview.data.settings));
         this.unpackSettings();
     }
 

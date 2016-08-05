@@ -1,4 +1,8 @@
-// Utility functions in custom namespace
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
+
 class HAWCUtils {
 
     static booleanCheckbox(value){
@@ -7,7 +11,7 @@ class HAWCUtils {
 
     static newWindowPopupLink(triggeringLink) {
         // Force new window to be a popup window
-        href = triggeringLink.href + '?_popup=1';
+        var href = triggeringLink.href + '?_popup=1';
         var win = window.open(href, '_blank', 'height=500,width=980,resizable=yes,scrollbars=yes');
         win.focus();
         return false;

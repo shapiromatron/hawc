@@ -1,14 +1,16 @@
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
 
-var EndpointListTable = function(endpoints, dose_id){
-    if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
-    this.endpoints = endpoints;
-    this.tbl = new BaseTable();
-};
 
-EndpointListTable.prototype = {
+class EndpointListTable {
+    constructor(endpoints, dose_id){
+        if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
+        this.endpoints = endpoints;
+        this.tbl = new BaseTable();
+    }
+
     build_table(){
-
         if(this.endpoints.length === 0)
             return '<p>No endpoints available.</p>';
 
@@ -28,7 +30,7 @@ EndpointListTable.prototype = {
             tbl.addRow(v.build_endpoint_list_row());
         });
         return tbl.getTbl();
-    },
-};
+    }
+}
 
 export default EndpointListTable;

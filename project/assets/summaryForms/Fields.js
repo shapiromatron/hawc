@@ -1,3 +1,6 @@
+import _ from 'underscore';
+import $ from '$';
+
 import HAWCUtils from 'utils/HAWCUtils';
 
 class InputField {
@@ -21,7 +24,6 @@ class InputField {
         return HAWCUtils.abstractMethod();
     }
 }
-
 
 class TextField extends InputField {
 
@@ -52,7 +54,6 @@ class TextField extends InputField {
     }
 }
 
-
 class IntegerField extends TextField {
 
     toSerialized() {
@@ -63,7 +64,6 @@ class IntegerField extends TextField {
         this.$inp = $('<input type="number" name="{0}" class="span12" required>'.printf(this.schema.name));
     }
 }
-
 
 class FloatField extends TextField {
 
@@ -76,14 +76,12 @@ class FloatField extends TextField {
     }
 }
 
-
 class ColorField extends TextField {
 
     _setInput(){
         this.$inp = $('<input type="color" name="{0}" class="span12" required>'.printf(this.schema.name));
     }
 }
-
 
 class CheckboxField extends TextField {
 
@@ -99,7 +97,6 @@ class CheckboxField extends TextField {
         this.$inp = $('<input type="checkbox" name="{0}">'.printf(this.schema.name));
     }
 }
-
 
 class RadioField extends TextField {
 
@@ -139,13 +136,11 @@ class NullField extends InputField {
     }
 }
 
-
 class SpacerNullField extends NullField {
     render(){
         this.$parent.append('<hr>');
     }
 }
-
 
 class HeaderNullField extends NullField {
     render(){
@@ -153,13 +148,11 @@ class HeaderNullField extends NullField {
     }
 }
 
-
 class HelpTextNullField extends NullField{
     render() {
         this.$parent.append('<p class="helpTextForTable help-inline">{0}</p>'.printf(this.schema.helpText));
     }
 }
-
 
 export {InputField};
 export {TextField};

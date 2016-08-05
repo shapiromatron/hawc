@@ -1,3 +1,6 @@
+import SmartTag from './SmartTag';
+
+
 class SmartTagContainer {
 
     constructor($el, options){

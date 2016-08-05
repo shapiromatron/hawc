@@ -1,3 +1,7 @@
+import $ from '$';
+import _ from 'underscore';
+
+
 // Dynamic formset to add and remove forms via JS
 class DynamicFormset {
 
@@ -39,7 +43,7 @@ class DynamicFormset {
     _updateFieldIndices(){
         var self = this;
         this._formsInFormset().each(function(i, tr){
-            _.each(inps = $(tr).find('input,select'), function(inp){
+            _.each($(tr).find('input,select'), function(inp){
                 self.updateElementIndex(inp, i);
             });
         });

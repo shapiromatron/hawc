@@ -1,23 +1,27 @@
+import $ from '$';
+import _ from 'underscore';
+
 import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
 
 
-var AnimalGroup = function(data){
-    this.data = data;
-};
-_.extend(AnimalGroup, {
-    get_object(id, cb){
+class AnimalGroup {
+    constructor(data){
+        this.data = data;
+    }
+
+    static get_object(id, cb){
         $.get('/ani/api/animal-group/{0}/'.printf(id), function(d){
             cb(new AnimalGroup(d));
         });
-    },
-    displayAsModal(id){
+    }
+
+    static displayAsModal(id){
         AnimalGroup.get_object(id, function(d){d.displayAsModal();});
-    },
-});
-AnimalGroup.prototype = {
+    }
+
     build_breadcrumbs(){
         var urls = [
             {
@@ -34,11 +38,13 @@ AnimalGroup.prototype = {
             },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    },
+    }
+
     _getAniRelationLink(obj){
         if (!obj) return undefined;
         return $('<a href="{0}">{1}</a>'.printf(obj.url, obj.name));
-    },
+    }
+
     build_details_table(){
         var self = this,
             getDurObs = function(){
@@ -69,7 +75,8 @@ AnimalGroup.prototype = {
             .add_tbody_tr('Description', this.data.comments);
 
         return tbl.get_tbl();
-    },
+    }
+
     build_dr_details_table(){
         var self = this,
             data = this.data.dosing_regime,
@@ -95,11 +102,13 @@ AnimalGroup.prototype = {
                             .groupBy(function(d){return d.dose_units.name;})
                             .value(),
                     units = _.keys(grps),
-                    doses = _.zip.apply(null,
-                                _.map(_.values(grps), function(d){
-                                    return _.map(d, function(x){return x.dose;});
-                            })),
                     tbl = new BaseTable();
+
+                doses = _.zip.apply(null,
+                    _.map(_.values(grps), function(d){
+                        return _.map(d, function(x){return x.dose;});
+                    })
+                );
 
                 tbl.addHeaderRow(units);
                 _.each(doses, function(d){tbl.addRow(d);});
@@ -122,7 +131,8 @@ AnimalGroup.prototype = {
             .add_tbody_tr('Description', data.description);
 
         return tbl.get_tbl();
-    },
+    }
+
     displayAsModal(){
         var modal = new HAWCModal(),
             title = $('<h4>').html(this.build_breadcrumbs()),
@@ -136,14 +146,15 @@ AnimalGroup.prototype = {
             .addBody($content)
             .addFooter('')
             .show({maxWidth: 1000});
-    },
+    }
+
     render($div){
         $div.append(
             this.build_details_table(),
             $('<h2>Dosing regime</h2>'),
             this.build_dr_details_table()
         );
-    },
-};
+    }
+}
 
 export default AnimalGroup;

@@ -1,4 +1,11 @@
+import $ from '$';
+import _ from 'underscore';
+
 import HAWCUtils from 'utils/HAWCUtils';
+
+import SmartTagContainer from './SmartTagContainer';
+import SummaryText from './SummaryText';
+
 
 class SummaryTextTree {
 

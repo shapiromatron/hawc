@@ -1,4 +1,12 @@
+import $ from '$';
+
 import HAWCModal from 'utils/HAWCModal';
+
+import RoBBarchartPlot from './RoBBarchartPlot';
+import RoBHeatmap from './RoBHeatmap';
+import SmartTagContainer from './SmartTagContainer';
+import Visual from './Visual';
+
 
 class RoBBarchart extends Visual {
 

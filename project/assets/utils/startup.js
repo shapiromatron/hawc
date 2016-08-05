@@ -1,5 +1,6 @@
-import _ from 'underscore';
 import $ from '$';
+import _ from 'underscore';
+
 
 // Extend JS built-ins
 Object.defineProperty(Object.prototype, 'rename_property', {
@@ -18,11 +19,11 @@ _.extend(Date.prototype, {
     toString(){
         var pad = function(x){return ((x<10) ? '0' : '') + x;};
         if(this.getTime()){
-            d = pad(this.getDate());
-            m = pad(this.getMonth()+1);
-            y = this.getFullYear();
-            hr = pad(this.getHours());
-            min = pad(this.getMinutes());
+            var d = pad(this.getDate());
+            var m = pad(this.getMonth()+1);
+            var y = this.getFullYear();
+            var hr = pad(this.getHours());
+            var min = pad(this.getMinutes());
             return [y, m, d].join('/') + ' ' + hr +  ':' + min;
         }
         return null;
@@ -225,7 +226,7 @@ var getCookie = function(name) {
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+                var cookie = $.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));

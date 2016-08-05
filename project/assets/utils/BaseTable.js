@@ -1,4 +1,9 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import TableFootnotes from './TableFootnotes';
+
 
 // General object for creating any table
 class BaseTable {
@@ -39,7 +44,7 @@ class BaseTable {
         if(val instanceof Array){
             tr = $('<tr>');
             val.forEach(function(v){tr.append($(tagName).html(v));});
-        } else if (val instanceof jQuery && val.first().prop('tagName') === 'TR') {
+        } else if (val instanceof $ && val.first().prop('tagName') === 'TR') {
             tr = val;
         } else {
             console.log('unknown input type');

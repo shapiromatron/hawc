@@ -1,20 +1,23 @@
+import $ from '$';
+import _ from 'underscore';
+
+import DRPlot from './DRPlot';
 import Endpoint from './Endpoint';
 
 
-// Endpoint subclass with editing functionality
-var EditEndpoint = function(endpoint, doses, eg_table, plot){
-    Endpoint.call(this, endpoint); // call parent constructor
-    this.doses = endpoint.doses;
-    this.eg_table = eg_table;
-    this.plot_div = plot;
-    this.inject_doses(doses);
-    this.setOELS();
-    this.update_endpoint_from_form();
-};
+class EditEndpoint extends Endpoint {
 
+    constructor(endpoint, doses, eg_table, plot){
+        super(endpoint); // call parent constructor
+        this.doses = endpoint.doses;
+        this.eg_table = eg_table;
+        this.plot_div = plot;
+        this.inject_doses(doses);
+        this.setOELS();
+        this.update_endpoint_from_form();
+    }
 
-_.extend(EditEndpoint, {
-    getVarianceType(variance_type){
+    static getVarianceType(variance_type){
         // static method used for returning the 'pretty-name' for variance type
         switch(variance_type){
         case 0:
@@ -28,11 +31,8 @@ _.extend(EditEndpoint, {
         default:
             throw('Unknown variance_type');
         }
-    },
-});
+    }
 
-
-EditEndpoint.prototype = {
     update_endpoint_from_form(){
         var vals = { 'groups': [] };
         //save form values
@@ -60,7 +60,8 @@ EditEndpoint.prototype = {
         this.calculate_confidence_intervals();
         this._switch_dose(0);
         new DRPlot(this, '#endpoint_plot').build_plot();
-    },
+    }
+
     inject_doses(doses){
         // add dose-units into endpoint-representation
         this.doses = _.map(doses, function(v){
@@ -71,7 +72,8 @@ EditEndpoint.prototype = {
             };
         });
         this._switch_dose(0);
-    },
+    }
+
     setOELS(){
         // set NOEL, LOEL, FEL
         var fields = $('#id_NOEL, #id_LOEL, #id_FEL')
@@ -84,7 +86,8 @@ EditEndpoint.prototype = {
         $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
         $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
         $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
-    },
+    }
+
     calculate_confidence_intervals(){
         // Calculate 95% confidence intervals
         if ((this.data !== undefined) &&
@@ -98,7 +101,8 @@ EditEndpoint.prototype = {
                 this._add_dichotomous_confidence_intervals();
             }
         }
-    },
+    }
+
     _add_dichotomous_confidence_intervals(){
         /*
         Procedure adds confidence intervals to dichotomous datasets.
@@ -128,7 +132,8 @@ EditEndpoint.prototype = {
                 v.upper_ci = (((2*v.n*p + 2*z + 1) +
                                  z * Math.sqrt(2*z + (2+1/v.n) + 4*p*(v.n*q-1))) / (2*(v.n+2*z)));
             });
-    },
+    }
+
     _add_continuous_confidence_intervals(){
         /*
         Use t-test z-score of 1.96 for approximation. Note only used during
@@ -146,9 +151,7 @@ EditEndpoint.prototype = {
                 v.lower_ci = v.response - se * z;
                 v.upper_ci = v.response + se * z;
             });
-    },
-};
-_.extend(EditEndpoint.prototype, Endpoint.prototype);
-
+    }
+}
 
 export default EditEndpoint;

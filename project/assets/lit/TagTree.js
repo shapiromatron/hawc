@@ -1,6 +1,11 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import Observee from 'utils/Observee';
-import Reference from './Reference';
+
 import NestedTag from './NestedTag';
+import Reference from './Reference';
 
 
 class TagTree extends Observee {
@@ -56,7 +61,7 @@ class TagTree extends Observee {
                 });
             }
         } else {
-            tags.push(new NestedTag(v, 0, self));
+            tags.push(new NestedTag(data, 0, self));
         }
         return tags;
     }

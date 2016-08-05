@@ -1,4 +1,9 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import D3Plot from 'utils/D3Plot';
+
 
 class Barplot extends D3Plot {
     constructor(endpoint, plot_id, options, parent){

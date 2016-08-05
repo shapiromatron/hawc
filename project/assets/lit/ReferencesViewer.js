@@ -1,3 +1,6 @@
+import $ from '$';
+import _ from 'underscore';
+
 import HAWCUtils from 'utils/HAWCUtils';
 
 import Reference from './Reference';

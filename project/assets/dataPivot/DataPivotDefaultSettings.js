@@ -1,3 +1,12 @@
+import DataPivotLegend from './DataPivotLegend';
+import {
+    StyleSymbol,
+    StyleLine,
+    StyleText,
+    StyleRectangle,
+} from './Styles';
+
+
 export default {
     plot_settings: {
         plot_width: 400,

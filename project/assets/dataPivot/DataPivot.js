@@ -1,4 +1,28 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
 import HAWCModal from 'utils/HAWCModal';
+
+import DataPivotDefaultSettings from './DataPivotDefaultSettings';
+import DataPivotExtension from './DataPivotExtension';
+import DataPivotLegend from './DataPivotLegend';
+import {
+    _DataPivot_settings_description,
+    _DataPivot_settings_linedata,
+    _DataPivot_settings_pointdata,
+    _DataPivot_settings_filters,
+    _DataPivot_settings_sorts,
+    _DataPivot_settings_spacers,
+    _DataPivot_settings_refline,
+    _DataPivot_settings_refrect,
+    _DataPivot_settings_label,
+    _DataPivot_settings_general,
+} from './DataPivotUtilities';
+import StyleManager from './StyleManager';
+import StyleViewer from './StyleViewer';
+import DataPivot_visualization from './DataPivot_visualization';
+
 
 const NULL_CASE = '---';
 
@@ -233,7 +257,7 @@ class DataPivot {
                 headers = ['Column header', 'Display name', 'Marker style', 'Conditional formatting', 'On-click'];
                 headers.push('Ordering');
                 thead = $('<thead></thead>').html(header_tr(headers));
-                point_tbody = $('<tbody></tbody>');
+                var point_tbody = $('<tbody></tbody>');
 
                 var add_point_data_row = function(i){
                         if(!self.settings.datapoint_settings[i]){

@@ -1,6 +1,13 @@
+import $ from '$';
+import _ from 'underscore';
+
 import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCUtils from 'utils/HAWCUtils';
 import HAWCModal from 'utils/HAWCModal';
+import HAWCUtils from 'utils/HAWCUtils';
+
+import ComparisonSet from './ComparisonSet';
+import Result from './Result';
+
 
 class Outcome {
 

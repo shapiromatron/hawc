@@ -1,7 +1,14 @@
+import $ from '$';
+import _ from 'underscore';
+import d3 from 'd3';
+
+import D3Visualization from './D3Visualization';
+
+
 class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
     constructor(parent, data, options){
-        D3Visualization.apply(this, arguments);
+        super(parent, data, options);
         this.setDefaults();
     }
 
@@ -102,7 +109,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
             // add LOEL/NOEL
             egs.forEach(function(v2,i2){
-                txt = [e.data.animal_group.experiment.study.short_citation,
+                var txt = [e.data.animal_group.experiment.study.short_citation,
                        e.data.name,
                        'Dose: ' + v2.dose,
                        'N: ' + v2.n];
@@ -112,7 +119,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                     } else {
                         txt.push('Incidence: ' + v2.incidence);
                     }
-                    coords = {endpoint:e,
+                    var coords = {endpoint:e,
                               x:v2.dose,
                               y:e.data.id,
                               classes:'',
@@ -124,7 +131,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             });
             // add BMDL
             if (isFinite(e.get_bmd_special_values('BMDL'))) {
-                txt = [
+                var txt = [
                     e.data.animal_group.experiment.study.short_citation,
                     e.data.name,
                     'BMD Model: ' + e.data.BMD.outputs.model_name,

@@ -1,4 +1,8 @@
+import $ from '$';
+import _ from 'underscore';
+
 import Observee from 'utils/Observee';
+
 
 class Reference extends Observee {
 

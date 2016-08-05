@@ -1,3 +1,9 @@
+import $ from '$';
+
+import InlineRendering from './InlineRendering';
+import SmartTag from './SmartTag';
+
+
 class SmartTagEditor {
 
     constructor($el, options){

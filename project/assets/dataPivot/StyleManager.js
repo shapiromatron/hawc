@@ -1,3 +1,15 @@
+import $ from '$';
+
+import DataPivot from './DataPivot';
+import {
+    StyleSymbol,
+    StyleLine,
+    StyleText,
+    StyleRectangle,
+    StyleViewer,
+} from './Styles';
+
+
 class StyleManager {
 
     constructor(pivot){
@@ -89,22 +101,22 @@ class StyleManager {
                 }
             },
             new_style = function(){
-                var func;
+                var Cls;
                 switch(style_type){
                 case 'symbols':
-                    func = StyleSymbol;
+                    Cls = StyleSymbol;
                     break;
                 case 'lines':
-                    func = StyleLine;
+                    Cls = StyleLine;
                     break;
                 case 'texts':
-                    func = StyleText;
+                    Cls = StyleText;
                     break;
                 case 'rectangles':
-                    func = StyleRectangle;
+                    Cls = StyleRectangle;
                     break;
                 }
-                var style = new func(self, undefined, true);
+                var style = new Cls(self, undefined, true);
                 modal.modal('show');
                 style.draw_modal(modal);
             },
