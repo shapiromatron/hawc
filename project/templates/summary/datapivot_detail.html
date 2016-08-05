@@ -55,7 +55,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      DataPivot.get_object({{object.id}}, function(dp){
+      window.app.dataPivot.DataPivot.get_object({{object.id}}, function(dp){
         $('#loading_div').fadeOut(function(){
           dp.build_data_pivot_vis($('#dp_display'));
         });

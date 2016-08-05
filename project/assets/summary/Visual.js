@@ -84,6 +84,3 @@ class Visual {
 }
 
 export default Visual;
-
-
-

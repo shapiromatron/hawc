@@ -13,9 +13,12 @@ import {
     StyleSymbol,
     StyleText,
 } from './Styles';
+import {
+   NULL_CASE,
+} from './shared';
 
 
-class DataPivot_visualization extends D3Plot {
+class DataPivotVisualization extends D3Plot {
 
     constructor(dp_data, dp_settings, plot_div, editable){
         // Metadata viewer visualization
@@ -115,7 +118,7 @@ class DataPivot_visualization extends D3Plot {
         for(var i=0; i<filters.length; i++){
             func = filters_map.get(filters[i].quantifier);
             field_name = filters[i].field_name;
-            if(field_name === DataPivot.NULL_CASE) continue;
+            if(field_name === NULL_CASE) continue;
             value = filters[i].value;
             if (func){
                 if(filter_logic === 'and'){
@@ -252,11 +255,11 @@ class DataPivot_visualization extends D3Plot {
 
         // unpack datapoints and data bar settings
         this.dp_settings.datapoint_settings.forEach(function(datum){
-            if (datum.field_name !== DataPivot.NULL_CASE){
+            if (datum.field_name !== NULL_CASE){
                 var copy = {};
 
                 // get dpe settings (if any)
-                if(datum.dpe !== DataPivot.NULL_CASE){
+                if(datum.dpe !== NULL_CASE){
                     DataPivotExtension.update_extensions(copy, datum.dpe);
                 }
 
@@ -267,10 +270,10 @@ class DataPivot_visualization extends D3Plot {
 
         // unpack description settings
         this.dp_settings.description_settings.forEach(function(datum){
-            if (datum.field_name !== DataPivot.NULL_CASE){
+            if (datum.field_name !== NULL_CASE){
                 var copy = {};
                 // get dpe settings (if any)
-                if(datum.dpe !== DataPivot.NULL_CASE){
+                if(datum.dpe !== NULL_CASE){
                     DataPivotExtension.update_extensions(copy, datum.dpe);
                 }
                 // now, push extended settings values
@@ -278,7 +281,7 @@ class DataPivot_visualization extends D3Plot {
             }
         });
 
-        var get_selected_fields = function(v){return v.field_name !== DataPivot.NULL_CASE;};
+        var get_selected_fields = function(v){return v.field_name !== NULL_CASE;};
         settings.sorts = this.dp_settings.sorts.filter(get_selected_fields);
         settings.filters = this.dp_settings.filters.filter(get_selected_fields);
 
@@ -312,7 +315,7 @@ class DataPivot_visualization extends D3Plot {
         rows = _.chain(self.dp_data)
                 .filter(
                   _.partial(
-                    DataPivot_visualization.shouldInclude,
+                    DataPivotVisualization.shouldInclude,
                     _,
                     settings.bars,
                     self.dp_settings.datapoint_settings
@@ -325,7 +328,7 @@ class DataPivot_visualization extends D3Plot {
                     };
 
                     _.chain(self.dp_settings.datapoint_settings)
-                      .filter(function(d){return d.field_name !== DataPivot.NULL_CASE;})
+                      .filter(function(d){return d.field_name !== NULL_CASE;})
                       .each(function(d, i){
                           styles['points_' + i] = get_associated_style('symbols', d.marker_style);
                       });
@@ -339,10 +342,10 @@ class DataPivot_visualization extends D3Plot {
                 })
                 .value();
 
-        rows = DataPivot_visualization.filter(rows, settings.filters,
+        rows = DataPivotVisualization.filter(rows, settings.filters,
                                               this.dp_settings.plot_settings.filter_logic);
 
-        rows = DataPivot_visualization.sorter(rows, settings.sorts);
+        rows = DataPivotVisualization.sorter(rows, settings.sorts);
 
         // row-overrides: order
         this.dp_settings.row_overrides.forEach(function(v){
@@ -416,7 +419,7 @@ class DataPivot_visualization extends D3Plot {
                     var hash = d3.map();
                     cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
                     rows.forEach(function(d){
-                        if(hash.get(d[cf.field_name]) !== DataPivot.NULL_CASE){
+                        if(hash.get(d[cf.field_name]) !== NULL_CASE){
                             d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
                         }
                     });
@@ -431,21 +434,21 @@ class DataPivot_visualization extends D3Plot {
 
         // row-overrides: apply styles
         this.dp_settings.row_overrides.forEach(function(v){
-            if((v.text_style !== DataPivot.NULL_CASE) ||
-               (v.line_style !== DataPivot.NULL_CASE) ||
-               (v.symbol_style !== DataPivot.NULL_CASE)){
+            if((v.text_style !== NULL_CASE) ||
+               (v.line_style !== NULL_CASE) ||
+               (v.symbol_style !== NULL_CASE)){
                 rows.forEach(function(v2){
                     if(v2._dp_pk === v.pk){
                         for(var key in v2._styles){
-                            if((v.text_style !== DataPivot.NULL_CASE) && (key.substr(0,4) === 'text')){
+                            if((v.text_style !== NULL_CASE) && (key.substr(0,4) === 'text')){
                                 v2._styles[key] = get_associated_style('texts', v.text_style);
                             }
 
-                            if((v.line_style !== DataPivot.NULL_CASE) && (key === 'bars')){
+                            if((v.line_style !== NULL_CASE) && (key === 'bars')){
                                 v2._styles[key] = get_associated_style('lines', v.line_style);
                             }
 
-                            if((v.symbol_style !== DataPivot.NULL_CASE) && (key.substr(0,6) === 'points')){
+                            if((v.symbol_style !== NULL_CASE) && (key.substr(0,6) === 'points')){
                                 v2._styles[key] = get_associated_style('symbols', v.symbol_style);
                             }
                         }
@@ -1030,4 +1033,4 @@ class DataPivot_visualization extends D3Plot {
     }
 }
 
-export default DataPivot_visualization;
+export default DataPivotVisualization;

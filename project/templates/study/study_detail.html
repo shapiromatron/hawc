@@ -104,14 +104,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new window.app.study.Study({{study.get_json|safe}})
-    var detail_div = $('#study_details')
+    var study = new window.app.study.Study({{study.get_json|safe}});
+    var detail_div = $('#study_details');
     study.build_details_table(detail_div);
 
     {% if attachments_viewable %}
       study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    window.plot = new window.app.riskofbias.Donut(study, '#rob_plot', {'build_plot_startup': true});
+    if (study.has_riskofbias()){
+      new window.app.riskofbias.Donut(study, '#rob_plot', {'build_plot_startup': true});
+    }
+
   </script>
 {% endblock extrajs %}

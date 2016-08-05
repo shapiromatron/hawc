@@ -1,9 +1,8 @@
 import _ from 'underscore';
 import d3 from 'd3';
 
-import DataPivot from './DataPivot';
+import Study from 'study/Study';
 
-import Study from 'animal/Study';
 import Experiment from 'animal/Experiment';
 import AnimalGroup from 'animal/AnimalGroup';
 import Endpoint from 'animal/Endpoint';
@@ -21,6 +20,10 @@ import IVChemical from 'invitro/IVChemical';
 import IVExperiment from 'invitro/IVExperiment';
 import IVCellType from 'invitro/IVCellType';
 import IVEndpoint from 'invitro/IVEndpoint';
+
+import {
+   NULL_CASE,
+} from './shared';
 
 
 class DataPivotExtension {
@@ -49,7 +52,7 @@ class DataPivotExtension {
                 return '<option value="{0}">{1}</option>'.printf(val, txt);
             },
             opts = [
-                build_opt(DataPivot.NULL_CASE, DataPivot.NULL_CASE),
+                build_opt(NULL_CASE, NULL_CASE),
             ],
             headers;
 

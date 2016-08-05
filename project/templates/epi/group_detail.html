@@ -29,7 +29,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Group.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epi.Group.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

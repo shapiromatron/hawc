@@ -7,7 +7,7 @@ import D3Plot from 'utils/D3Plot';
 
 class Barplot extends D3Plot {
     constructor(endpoint, plot_id, options, parent){
-        super();
+        super(...arguments);
         this.parent = parent;
         this.endpoint = endpoint;
         this.plot_div = $(plot_id);

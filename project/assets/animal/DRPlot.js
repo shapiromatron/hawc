@@ -11,7 +11,7 @@ class DRPlot extends D3Plot {
          * Create a dose-response plot for a single dataset given an endpoint object
          * and the div where the object should be placed.
          */
-        super();
+        super(...arguments);
         this.parent = parent;
         this.options = options || {build_plot_startup:true};
         this.endpoint = endpoint;

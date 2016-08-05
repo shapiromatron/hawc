@@ -7,9 +7,9 @@ import Endpoint from './Endpoint';
 
 class EditEndpoint extends Endpoint {
 
-    constructor(endpoint, doses, eg_table, plot){
-        super(endpoint); // call parent constructor
-        this.doses = endpoint.doses;
+    constructor(data, doses, eg_table, plot){
+        super(data);
+        this.doses = data.doses;
         this.eg_table = eg_table;
         this.plot_div = plot;
         this.inject_doses(doses);

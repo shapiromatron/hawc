@@ -39,7 +39,7 @@
 
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{crud|lower}}" == "create",
-          fs = new DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
+          fs = new window.app.utils.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           comparison_set_id = {{ form.comparison_set.value|default:"null" }},
           updateFormset = function(d){
             var n;

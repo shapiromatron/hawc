@@ -10,7 +10,7 @@ import D3Visualization from './D3Visualization';
 class CrossviewPlot extends D3Visualization {
 
     constructor(parent, data, options){
-        super(parent, data, options);
+        super(...arguments);
         this.setDefaults();
     }
 

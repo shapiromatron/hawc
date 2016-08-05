@@ -19,12 +19,13 @@ import {
     _DataPivot_settings_label,
     _DataPivot_settings_general,
 } from './DataPivotUtilities';
+import {
+    NULL_CASE,
+} from './shared';
 import StyleManager from './StyleManager';
 import StyleViewer from './StyleViewer';
-import DataPivot_visualization from './DataPivot_visualization';
+import DataPivotVisualization from './DataPivotVisualization';
 
-
-const NULL_CASE = '---';
 
 class DataPivot {
 
@@ -159,7 +160,7 @@ class DataPivot {
         delete this.plot;
         editable = editable || false;
         var data = JSON.parse(JSON.stringify(this.data));  // deep-copy
-        this.plot = new DataPivot_visualization(data, this.settings, div, editable);
+        this.plot = new DataPivotVisualization(data, this.settings, div, editable);
     }
 
     build_data_table(){
@@ -296,7 +297,7 @@ class DataPivot {
                     },
                     build_manual_rows = function(){
                         var rows = [],
-                            get_selected_fields = function(v){return v.field_name !== DataPivot.NULL_CASE;},
+                            get_selected_fields = function(v){return v.field_name !== NULL_CASE;},
                             descriptions = self.settings.description_settings.filter(get_selected_fields),
                             filters = self.settings.filters.filter(get_selected_fields),
                             sorts = self.settings.sorts.filter(get_selected_fields);
@@ -307,12 +308,12 @@ class DataPivot {
                         }
 
                         // apply filters
-                        var data_copy = DataPivot_visualization.filter(self.data,
+                        var data_copy = DataPivotVisualization.filter(self.data,
                                           filters, self.settings.plot_settings.filter_logic);
 
                         data_copy = _.filter(data_copy,
                           _.partial(
-                            DataPivot_visualization.shouldInclude,
+                            DataPivotVisualization.shouldInclude,
                             _,
                             self.settings.dataline_settings[0],
                             self.settings.datapoint_settings
@@ -325,7 +326,7 @@ class DataPivot {
                         }
 
                         // apply sorts
-                        data_copy = DataPivot_visualization.sorter(data_copy, sorts);
+                        data_copy = DataPivotVisualization.sorter(data_copy, sorts);
 
                         var row_override_map = d3.map(),
                             get_matched_override_or_default = function(pk){
@@ -335,9 +336,9 @@ class DataPivot {
                                     pk,
                                     include: true,
                                     offset: 0,
-                                    text_style: DataPivot.NULL_CASE,
-                                    line_style: DataPivot.NULL_CASE,
-                                    symbol_style: DataPivot.NULL_CASE,
+                                    text_style: NULL_CASE,
+                                    line_style: NULL_CASE,
+                                    symbol_style: NULL_CASE,
                                 };
                             },
                             offsets = [],
@@ -583,9 +584,9 @@ class DataPivot {
                             // only add if settings are non-default
                             if ((obj.include === false) ||
                                 (obj.offset !== 0) ||
-                                (obj.text_style !== DataPivot.NULL_CASE) ||
-                                (obj.line_style !== DataPivot.NULL_CASE) ||
-                                (obj.symbol_style !== DataPivot.NULL_CASE)){
+                                (obj.text_style !== NULL_CASE) ||
+                                (obj.line_style !== NULL_CASE) ||
+                                (obj.symbol_style !== NULL_CASE)){
                                 self.settings.row_overrides.push(obj);
                             }
                         });
@@ -800,9 +801,9 @@ class DataPivot {
                                 } else{
                                     modal.removeData('d');
                                 }
-                                var tmp_label = (d) ? d.label : DataPivot.NULL_CASE,
-                                    tmp_line = (d) ? d.line_style : DataPivot.NULL_CASE,
-                                    tmp_symbol = (d) ? d.symbol_style : DataPivot.NULL_CASE,
+                                var tmp_label = (d) ? d.label : NULL_CASE,
+                                    tmp_line = (d) ? d.line_style : NULL_CASE,
+                                    tmp_symbol = (d) ? d.symbol_style : NULL_CASE,
                                     name = $('<input name="legend_name" value="{0}">'.printf(tmp_label)),
                                     line = self.style_manager.add_select('lines', tmp_line, true)
                                                 .removeClass('span12').attr('name', 'legend_line'),
@@ -864,8 +865,8 @@ class DataPivot {
                                         symbol_style = modal.find('select[name="legend_symbol"] option:selected').val();
 
                                     if((label === '') ||
-                                       ((line_style === DataPivot.NULL_CASE) &&
-                                        (symbol_style === DataPivot.NULL_CASE))){
+                                       ((line_style === NULL_CASE) &&
+                                        (symbol_style === NULL_CASE))){
                                         alert('Error - name must not be blank, and at least one style must be selected');
                                         return;
                                     }
@@ -945,7 +946,7 @@ class DataPivot {
 
     _get_header_options(show_blank){
         var opts = [];
-        if (show_blank) opts.push('<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE));
+        if (show_blank) opts.push('<option value="{0}">{0}</option>'.printf(NULL_CASE));
         return opts.concat(this.data_headers.map(function(v){
             return '<option value="{0}">{0}</option>'.printf(v);
         }));
@@ -992,9 +993,5 @@ class DataPivot {
             .text(this.title);
     }
 }
-
-_.extend(DataPivot, {
-    NULL_CASE,
-});
 
 export default DataPivot;

@@ -19,7 +19,7 @@ import {
     ReferenceLineField,
     ReferenceRangeField,
     ReferenceLabelField,
-} from '/.TableFields';
+} from './TableFields';
 
 
 class CrossviewSelectorField extends TableField {

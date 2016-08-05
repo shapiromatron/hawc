@@ -6,14 +6,9 @@ import SmartTagContainer from 'smartTags/SmartTagContainer';
 
 import RoBBarchartPlot from './RoBBarchartPlot';
 import RoBHeatmap from './RoBHeatmap';
-import Visual from './Visual';
 
 
-class RoBBarchart extends Visual {
-
-    constructor(data){
-        RoBHeatmap.apply(this, arguments);
-    }
+class RoBBarchart extends RoBHeatmap {
 
     displayAsPage($el, options){
         var title = $('<h1>').text(this.data.title),

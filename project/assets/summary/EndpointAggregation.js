@@ -14,7 +14,7 @@ import Visual from './Visual';
 class EndpointAggregation extends Visual {
 
     constructor(data){
-        Visual.apply(this, arguments);
+        super(data);
         this.endpoints = data.endpoints.map(function(d){
             var e = new window.app.animal.Endpoint(d);
             e.switch_dose_units(data.dose_units);
@@ -194,7 +194,6 @@ class EndpointAggregation extends Visual {
             on_click: this.buildPlot.bind(this),
         };
     }
-
 }
 
 export default EndpointAggregation;

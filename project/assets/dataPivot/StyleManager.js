@@ -1,13 +1,15 @@
 import $ from '$';
 
-import DataPivot from './DataPivot';
+import StyleViewer from './StyleViewer';
 import {
     StyleSymbol,
     StyleLine,
     StyleText,
     StyleRectangle,
-    StyleViewer,
 } from './Styles';
+import {
+   NULL_CASE,
+} from './shared';
 
 
 class StyleManager {
@@ -38,7 +40,7 @@ class StyleManager {
 
         var select = $('<select class="span12"></select>').html(this._build_options(style_type));
         if(include_null){
-            select.prepend('<option value="{0}">{0}</option>'.printf(DataPivot.NULL_CASE));
+            select.prepend('<option value="{0}">{0}</option>'.printf(NULL_CASE));
         }
         if(selected_style){
             select.find('option[value="{0}"]'.printf(selected_style)).prop('selected', true);

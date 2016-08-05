@@ -134,24 +134,20 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
+<script type="text/javascript">
+$(document).ready(function(){
+    var a = $('#create_btn'),
+        sel = $('#vis_selector'),
+        showcase = $('#showcase');
 
-      var a = $('#create_btn'),
-          sel = $('#vis_selector'),
-          showcase = $('#showcase');
-
-      sel.on('change', function(e){
-
+    sel.on('change', function(e){
         a.attr('href', e.target.value);
-
         var clone = $(sel.find(':selected').data('showcase')).clone();
-
         showcase
           .fadeOut(function(){showcase.html(clone);})
           .fadeIn();
-      })
-      .trigger("change");
-    });
-  </script>
+    })
+    .trigger('change');
+});
+</script>
 {% endblock %}

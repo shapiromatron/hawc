@@ -17,7 +17,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     window.canEdit = {{obj_perms.edit|lower}};
-    IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
+    window.app.invitro.IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
 });
 </script>
 {% endblock %}

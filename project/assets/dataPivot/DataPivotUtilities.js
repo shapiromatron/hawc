@@ -3,7 +3,10 @@ import _ from 'underscore';
 import d3 from 'd3';
 
 import DataPivot from './DataPivot';
-import DataPivot_visualization from './DataPivot_visualization';
+import DataPivotVisualization from './DataPivotVisualization';
+import {
+   NULL_CASE,
+} from './shared';
 
 
 class _DataPivot_settings_refline {
@@ -37,7 +40,7 @@ class _DataPivot_settings_refline {
 
     static defaults(){
         return {
-            value: DataPivot.NULL_CASE,
+            value: NULL_CASE,
             line_style: 'reference line',
         };
     }
@@ -82,8 +85,8 @@ class _DataPivot_settings_refrect {
 
     static defaults(){
         return {
-            'x1': DataPivot.NULL_CASE,
-            'x2': DataPivot.NULL_CASE,
+            'x1': NULL_CASE,
+            'x2': NULL_CASE,
             'rectangle_style': 'base',
         };
     }
@@ -168,7 +171,7 @@ class _DataPivot_settings_sorts {
 
     static defaults(){
         return {
-            'field_name': DataPivot.NULL_CASE,
+            'field_name': NULL_CASE,
             'ascending': true,
         };
     }
@@ -239,7 +242,7 @@ class _DataPivot_settings_filters {
 
     static defaults(){
         return {
-            'field_name': DataPivot.NULL_CASE,
+            'field_name': NULL_CASE,
             'quantifier': 'contains',
             'value': '',
         };
@@ -288,7 +291,7 @@ class _DataPivot_settings_spacers {
 
     static defaults(){
         return {
-            index: DataPivot.NULL_CASE,
+            index: NULL_CASE,
             show_line: true,
             line_style: 'reference line',
             extra_space: false,
@@ -349,11 +352,11 @@ class _DataPivot_settings_description {
 
     static defaults(){
         return {
-            'field_name': DataPivot.NULL_CASE,
+            'field_name': NULL_CASE,
             'header_name': '',
             'header_style': 'header',
             'text_style': 'base',
-            'dpe': DataPivot.NULL_CASE,
+            'dpe': NULL_CASE,
             'max_width': undefined,
         };
     }
@@ -365,7 +368,7 @@ class _DataPivot_settings_description {
         this.values.text_style = this.content.text_style.find('option:selected').val();
         this.values.header_name = this.content.header_name.val();
         this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
-        this.values.dpe = DataPivot.NULL_CASE;
+        this.values.dpe = NULL_CASE;
         if(this.values.header_name === ''){this.values.header_name = this.values.field_name;}
         if(this.content.dpe){this.values.dpe = this.content.dpe.find('option:selected').val();}
     }
@@ -425,10 +428,10 @@ class _DataPivot_settings_pointdata {
 
     static defaults(){
         return {
-            'field_name': DataPivot.NULL_CASE,
+            'field_name': NULL_CASE,
             'header_name': '',
             'marker_style': 'base',
-            'dpe': DataPivot.NULL_CASE,
+            'dpe': NULL_CASE,
             'conditional_formatting': [],
         };
     }
@@ -437,7 +440,7 @@ class _DataPivot_settings_pointdata {
         this.values.field_name = this.content.field_name.find('option:selected').val();
         this.values.header_name = this.content.header_name.val();
         this.values.marker_style = this.content.marker_style.find('option:selected').text();
-        this.values.dpe = DataPivot.NULL_CASE;
+        this.values.dpe = NULL_CASE;
         this.values.conditional_formatting = this.conditional_formatter.data;
         if(this.values.header_name === ''){this.values.header_name = this.values.field_name;}
         if(this.content.dpe){this.values.dpe = this.content.dpe.find('option:selected').val();}
@@ -535,7 +538,7 @@ _.extend(_DataPivot_settings_conditionalFormat, {
         'discrete-style',
     ],
     defaults: {
-        field_name: DataPivot.NULL_CASE,
+        field_name: NULL_CASE,
         condition_type: 'point-size',
         min_size: 50,
         max_size: 150,
@@ -668,7 +671,7 @@ class _DataPivot_settings_conditional {
             self.discrete_styles = [];
             discrete.empty();
 
-            var subset = DataPivot_visualization.filter(dp.data, dp.settings.filters, dp.settings.plot_settings.filter_logic),
+            var subset = DataPivotVisualization.filter(dp.data, dp.settings.filters, dp.settings.plot_settings.filter_logic),
                 arr = subset.map(function(v){return v[fieldName.val()]; }),
                 vals = DataPivot.getRowDetails(arr);
 
@@ -778,8 +781,8 @@ class _DataPivot_settings_linedata {
 
     static defaults(){
         return {
-            'low_field_name': DataPivot.NULL_CASE,
-            'high_field_name': DataPivot.NULL_CASE,
+            'low_field_name': NULL_CASE,
+            'high_field_name': NULL_CASE,
             'header_name': '',
             'marker_style': 'base',
         };

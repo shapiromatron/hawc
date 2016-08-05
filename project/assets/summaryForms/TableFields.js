@@ -14,10 +14,6 @@ import {
 
 class TableField extends InputField {
 
-    constructor() {
-        return InputField.apply(this, arguments);
-    }
-
     renderHeader(){
         return HAWCUtils.abstractMethod();
     }
@@ -161,10 +157,6 @@ class TableField extends InputField {
 
 class ReferenceLineField extends TableField {
 
-    constructor(){
-        return TableField.apply(this, arguments);
-    }
-
     renderHeader() {
         return $('<tr>')
             .append(
@@ -203,10 +195,6 @@ class ReferenceLineField extends TableField {
 }
 
 class ReferenceRangeField extends TableField {
-
-    constructor(){
-        return TableField.apply(this, arguments);
-    }
 
     renderHeader(){
         return $('<tr>')
@@ -250,10 +238,6 @@ class ReferenceRangeField extends TableField {
 }
 
 class ReferenceLabelField extends TableField {
-
-    constructor(){
-        return TableField.apply(this, arguments);
-    }
 
     renderHeader(){
         return $('<tr>')

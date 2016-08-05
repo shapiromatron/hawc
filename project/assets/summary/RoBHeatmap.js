@@ -11,7 +11,7 @@ import Visual from './Visual';
 class RoBHeatmap extends Visual {
 
     constructor(data){
-        Visual.apply(this, arguments);
+        super(data);
         var studies = _.map(data.studies, function(d){
             return new window.app.study.Study(d);
         });

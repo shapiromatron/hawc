@@ -5,9 +5,16 @@ import utils from 'utils';
 // object models
 import animal from 'animal';
 import assessment from 'assessment';
+import dataPivot from 'dataPivot';
+import epi from 'epi';
+import epimeta from 'epimeta';
+import invitro from 'invitro';
 import lit from 'lit';
 import riskofbias from 'riskofbias';
 import study from 'study';
+import smartTags from 'smartTags';
+import summary from 'summary';
+import summaryForms from 'summaryForms';
 
 // custom applications
 import bmdStartup from 'bmd';
@@ -22,9 +29,16 @@ window.app = {
     utils,
     animal,
     assessment,
+    dataPivot,
+    epi,
+    epimeta,
+    invitro,
     lit,
     riskofbias,
     study,
+    smartTags,
+    summary,
+    summaryForms,
     bmdStartup,
     robVisualStartup,
     robTableStartup,

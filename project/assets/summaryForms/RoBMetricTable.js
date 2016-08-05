@@ -3,14 +3,10 @@ import $ from '$';
 
 import {
     TableField,
-} from './TableField';
+} from './TableFields';
 
 
 class RoBMetricTable extends TableField{
-
-    constructor(){
-        return TableField.apply(this, arguments);
-    }
 
     renderHeader(){
         return $('<tr>')

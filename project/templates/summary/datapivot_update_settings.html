@@ -63,7 +63,7 @@
         .row(function(d, i){ return DataPivot.massage_row(d, i); })
         .get(function(error, data){
           $('#loading_div').fadeOut();
-          window.dp = new DataPivot(
+          window.dp = new window.app.dataPivot.DataPivot(
             data,
             {{object.settings|safe}},
             {
@@ -75,12 +75,11 @@
             });
         });
 
-    });
-  </script>
-  <script type="text/javascript">
-    $('#dp_settings_form').submit(function(){
-        $('#id_settings').val(dp.get_settings_json());
-        return true;
+        $('#dp_settings_form').submit(function(){
+            $('#id_settings').val(dp.get_settings_json());
+            return true;
+        });
+
     });
   </script>
 {% endblock extrajs %}

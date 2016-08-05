@@ -12,7 +12,7 @@ class RoBBarchartPlot extends D3Visualization {
     constructor(parent, data, options){
         // stacked-bars of risk of bias information. Criteria are on the y-axis,
         // and studies are on the x-axis
-        super(parent, data, options);
+        super(...arguments);
         this.setDefaults();
     }
 

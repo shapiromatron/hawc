@@ -19,7 +19,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
       window.isEditable = {{obj_perms.edit|lower}};
-      Visual.displayAsPage({{object.id}}, $(".visualization"));
+      window.app.summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
   </script>
 {% endblock %}

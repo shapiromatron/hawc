@@ -41,7 +41,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      StudyPopulation.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epi.StudyPopulation.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

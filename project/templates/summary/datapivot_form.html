@@ -29,7 +29,6 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script src="{{STATIC_URL}}admin/js/urlify.js" type="text/javascript" ></script>
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}summary/js/smart_tags_edit.js" type="text/javascript"></script>
@@ -47,7 +46,7 @@
         el: '#id_preferred_units',
       });
 
-      new SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
+      new window.app.smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
 
       var togglePrefilterSelectorVisibility = function(d){
          var fields = [

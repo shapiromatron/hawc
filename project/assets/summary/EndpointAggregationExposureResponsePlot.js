@@ -8,7 +8,7 @@ import D3Visualization from './D3Visualization';
 class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
     constructor(parent, data, options){
-        super(parent, data, options);
+        super(...arguments);
         this.setDefaults();
     }
 
@@ -354,7 +354,6 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             box_padding: 5,
         });
     }
-
 }
 
 export default EndpointAggregationExposureResponsePlot;

@@ -33,7 +33,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      MetaResult.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epimeta.MetaResult.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

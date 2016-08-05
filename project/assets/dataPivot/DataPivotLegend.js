@@ -3,11 +3,13 @@ import d3 from 'd3';
 
 import HAWCUtils from 'utils/HAWCUtils';
 
-import DataPivot from './DataPivot';
 import {
     StyleSymbol,
     StyleLine,
 } from './Styles';
+import {
+   NULL_CASE,
+} from './shared';
 
 
 class DataPivotLegend {
@@ -108,7 +110,7 @@ class DataPivotLegend {
             }
 
             // add line
-            if(datum.line_style !== DataPivot.NULL_CASE){
+            if(datum.line_style !== NULL_CASE){
                 text_x_offset = 25;
                 style = self._get_line_style(datum);
                 colg.selectAll()
@@ -145,7 +147,7 @@ class DataPivotLegend {
             }
 
             // add symbol
-            if(datum.symbol_style !== DataPivot.NULL_CASE){
+            if(datum.symbol_style !== NULL_CASE){
                 style = self._get_symbol_style(datum);
                 colg.selectAll()
                     .data([
@@ -206,8 +208,8 @@ class DataPivotLegend {
         if(legend_item){
             for(var key in obj){legend_item[key] = obj[key];}
         } else {
-            if(!obj.line_style) obj.line_style = DataPivot.NULL_CASE;
-            if(!obj.symbol_style) obj.symbol_style = DataPivot.NULL_CASE;
+            if(!obj.line_style) obj.line_style = NULL_CASE;
+            if(!obj.symbol_style) obj.symbol_style = NULL_CASE;
             this.settings.fields.push(obj);
         }
         this._update_selects();
