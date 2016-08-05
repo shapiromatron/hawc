@@ -56,8 +56,6 @@
   {{ smart_tag_form.media }}
   <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
   <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}summary/js/summary_form.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}summary/js/smart_tags_edit.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
 
@@ -70,8 +68,8 @@
       window.rob_metrics = {{rob_metrics|safe}};
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
       new window.app.summaryForms.VisualForm.create({{visual_type}}, $('.tabbable'));
-      new window.app.smarTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
-
+      new window.app.smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
+      window.app.smartTags.SmartTagEditor.init();
     });
   </script>
 {% endblock %}
