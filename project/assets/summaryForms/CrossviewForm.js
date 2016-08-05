@@ -4,7 +4,7 @@ import $ from '$';
 import CrossviewPlot from 'summary/CrossviewPlot';
 import Crossview from 'summary/Crossview';
 
-import VisualForm from './VisualForm';
+import BaseVisualForm from './BaseVisualForm';
 
 import {
     TextField,
@@ -238,7 +238,7 @@ class CrossviewEndpointFilterField extends TableField {
     }
 }
 
-class CrossviewForm extends VisualForm {
+class CrossviewForm extends BaseVisualForm {
 
     buildPreview($parent, data){
         this.preview = new Crossview(data).displayAsPage( $parent.empty(), {dev: true});

@@ -2,10 +2,10 @@ import _ from 'underscore';
 
 import EndpointAggregation from 'summary/EndpointAggregation';
 
-import VisualForm from './VisualForm';
+import BaseVisualForm from './BaseVisualForm';
 
 
-class EndpointAggregationForm extends VisualForm {
+class EndpointAggregationForm extends BaseVisualForm {
 
     buildPreview($parent, data){
         this.preview = new EndpointAggregation(data).displayAsPage( $parent.empty() );

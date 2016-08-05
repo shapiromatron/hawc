@@ -3,7 +3,7 @@ import $ from '$';
 
 import RoBHeatmap from 'summary/RoBHeatmap';
 
-import VisualForm from './VisualForm';
+import BaseVisualForm from './BaseVisualForm';
 import RoBMetricTable from './RoBMetricTable';
 import {
     TextField,
@@ -13,7 +13,7 @@ import {
 } from './Fields';
 
 
-class RoBHeatmapForm extends VisualForm {
+class RoBHeatmapForm extends BaseVisualForm {
 
     buildPreview($parent, data){
         this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty(), {'dev': true} );

@@ -8,10 +8,10 @@ import SmartTagContainer from 'smartTags/SmartTagContainer';
 
 import EndpointAggregationExposureResponsePlot from './EndpointAggregationExposureResponsePlot';
 import EndpointAggregationForestPlot from './EndpointAggregationForestPlot';
-import Visual from './Visual';
+import BaseVisual from './BaseVisual';
 
 
-class EndpointAggregation extends Visual {
+class EndpointAggregation extends BaseVisual {
 
     constructor(data){
         super(data);

@@ -4,15 +4,17 @@ import _ from 'underscore';
 import BaseTable from 'utils/BaseTable';
 import HAWCUtils from 'utils/HAWCUtils';
 
-import Visual from './Visual';
+import BaseVisual from './BaseVisual';
 
+
+const NULL_FILTER = '---';
 
 class VisualCollection {
 
     constructor(data){
         this.visuals = [];
         for(var i=0; i<data.length; i++){
-            this.visuals.push(new Visual(data[i]));
+            this.visuals.push(new BaseVisual(data[i]));
         }
     }
 
@@ -64,10 +66,9 @@ class VisualCollection {
                 .pluck('visual_type')
                 .sort()
                 .uniq(true)
-                .unshift(this.null_filter)
-                .map(function(d){
-                    return '<option value="{0}">{1}</option>'.printf(d, d);
-                }).value();
+                .unshift(NULL_FILTER)
+                .map((d) =>`<option value="${d}">${d}</option>`)
+                .value();
 
         return $('<div>').append(
             '<label class="control-label">Filter by visualization type:</label>',
@@ -76,8 +77,8 @@ class VisualCollection {
     }
 
     filterRows(e){
-        var filter = (e)? e.target.value: this.null_filter,
-            isNullFilter = (filter === this.null_filter);
+        var filter = (e)? e.target.value: NULL_FILTER,
+            isNullFilter = (filter === NULL_FILTER);
 
         this.$tbl.find('tbody tr').each(function(){
             if (isNullFilter || this.innerHTML.indexOf(filter)>=0){
@@ -89,7 +90,5 @@ class VisualCollection {
     }
 
 }
-
-VisualCollection.null_filter = '---';
 
 export default VisualCollection;

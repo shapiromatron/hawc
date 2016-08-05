@@ -5,10 +5,10 @@ import HAWCModal from 'utils/HAWCModal';
 import SmartTagContainer from 'smartTags/SmartTagContainer';
 
 import RoBHeatmapPlot from './RoBHeatmapPlot';
-import Visual from './Visual';
+import BaseVisual from './BaseVisual';
 
 
-class RoBHeatmap extends Visual {
+class RoBHeatmap extends BaseVisual {
 
     constructor(data){
         super(data);
