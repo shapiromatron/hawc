@@ -13,7 +13,7 @@ class AnimalGroupTable {
     }
 
     static render($div, endpoints){
-        var tbl = new window.app.animal.AnimalGroupTable(endpoints);
+        var tbl = new AnimalGroupTable(endpoints);
 
         $div.append(tbl.build_table());
 

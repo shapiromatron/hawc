@@ -1,5 +1,9 @@
 import $ from '$';
 
+import {
+    renderRiskOfBiasDisplay,
+} from 'robTable/components/RiskOfBiasDisplay';
+
 
 class InlineRendering {
 
@@ -74,7 +78,7 @@ class InlineRendering {
 
         this.setTitle(title);
         this.setMainContent(content);
-        window.app.renderRiskOfBiasDisplay(obj, content[0]);
+        renderRiskOfBiasDisplay(obj, content[0]);
     }
 
     display_visual(obj){

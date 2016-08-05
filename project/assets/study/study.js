@@ -7,6 +7,9 @@ import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+import {
+    renderStudyDisplay,
+} from 'robTable/components/StudyDisplay';
 
 
 class Study{
@@ -174,7 +177,7 @@ class Study{
             $shower.on('shown', function(){
                 var render_obj = {riskofbias: self.riskofbias, display: 'final'};
                 render_obj = self.format_for_react(self.riskofbias);
-                window.app.renderStudyDisplay(render_obj, $rob[0]);
+                renderStudyDisplay(render_obj, $rob[0]);
             });
         }
     }

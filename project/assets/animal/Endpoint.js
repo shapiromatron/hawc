@@ -7,6 +7,9 @@ import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 import Observee from 'utils/Observee';
 
+import {
+    BMDLine,
+} from 'bmd/models/model.js';
 import Study from 'study/Study';
 
 import AnimalGroup from './AnimalGroup';
@@ -496,7 +499,7 @@ class Endpoint extends Observee {
     _render_bmd_lines(epc){
         let model = this.data.bmd,
             dr = epc.plot,
-            line = new window.app.BMDLine(model, dr, 'blue');
+            line = new BMDLine(model, dr, 'blue');
 
         line.render();
     }

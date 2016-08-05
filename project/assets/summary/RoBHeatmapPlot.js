@@ -6,6 +6,12 @@ import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+import {
+    renderCrossStudyDisplay,
+} from 'robTable/components/CrossStudyDisplay';
+import {
+    renderRiskOfBiasDisplay,
+} from 'robTable/components/RiskOfBiasDisplay';
 
 import D3Visualization from './D3Visualization';
 
@@ -449,17 +455,17 @@ class RoBHeatmapPlot extends D3Visualization {
                         url:d.robs[0].study.data.url,
                     },
                 });
-                window.app.renderRiskOfBiasDisplay(
+                renderRiskOfBiasDisplay(
                     RiskOfBiasScore.format_for_react([d.robs[0].riskofbias], config),
                     $div[0]);
                 break;
             case 'study':
-                window.app.renderRiskOfBiasDisplay(
+                renderRiskOfBiasDisplay(
                     RiskOfBiasScore.format_for_react(d.robs, config),
                     $div[0]);
                 break;
             case 'metric':
-                window.app.renderCrossStudyDisplay(
+                renderCrossStudyDisplay(
                     RiskOfBiasScore.format_for_react(d.robs, config),
                     $div[0]);
                 break;
