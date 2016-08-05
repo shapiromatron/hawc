@@ -1,6 +1,8 @@
 import $ from '$';
 import _ from 'underscore';
 
+import Quillify from './Quillify';
+
 
 // Extend JS built-ins
 Object.defineProperty(Object.prototype, 'rename_property', {
@@ -219,6 +221,8 @@ _.extend(Number.prototype, {
     },
 });
 
+
+$.fn.quillify = Quillify;
 
 // Django AJAX with CSRF protection.
 var getCookie = function(name) {

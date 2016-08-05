@@ -25,9 +25,7 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    $('#id_summary').wysihtml5({"stylesheets": false});
-  </script>
+<script type="text/javascript">
+    $('#id_summary').quillify();
+</script>
 {% endblock extrajs %}

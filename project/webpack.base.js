@@ -24,6 +24,7 @@ module.exports = {
     externals: {
         $: '$',
         Outcome: 'Outcome',
+        QuillUno: 'Quill',
     },
 
     plugins: [
