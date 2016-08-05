@@ -3,7 +3,8 @@ import _ from 'underscore';
 
 import HAWCUtils from 'utils/HAWCUtils';
 
-import SmartTagContainer from './SmartTagContainer';
+import SmartTagContainer from 'smartTags/SmartTagContainer';
+
 import SummaryText from './SummaryText';
 
 

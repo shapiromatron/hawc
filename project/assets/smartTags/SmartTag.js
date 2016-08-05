@@ -3,9 +3,9 @@ import $ from '$';
 import DataPivot from 'dataPivot/DataPivot';
 import Endpoint from 'animal/Endpoint';
 import Study from 'study/Study';
+import Visual from 'summary/Visual';
 
 import InlineRendering from './InlineRendering';
-import Visual from './Visual';
 
 
 class SmartTag {

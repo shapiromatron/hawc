@@ -2,9 +2,9 @@ import $ from '$';
 import _ from 'underscore';
 
 import HAWCModal from 'utils/HAWCModal';
+import SmartTagContainer from 'smartTags/SmartTagContainer';
 
 import RoBHeatmapPlot from './RoBHeatmapPlot';
-import SmartTagContainer from './SmartTagContainer';
 import Visual from './Visual';
 
 

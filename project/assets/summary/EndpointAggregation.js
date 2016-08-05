@@ -4,10 +4,10 @@ import BaseTable from 'utils/BaseTable';
 import HAWCModal from 'utils/HAWCModal';
 
 import EndpointDetailRow from 'animal/EndpointDetailRow';
+import SmartTagContainer from 'smartTags/SmartTagContainer';
 
 import EndpointAggregationExposureResponsePlot from './EndpointAggregationExposureResponsePlot';
 import EndpointAggregationForestPlot from './EndpointAggregationForestPlot';
-import SmartTagContainer from './SmartTagContainer';
 import Visual from './Visual';
 
 

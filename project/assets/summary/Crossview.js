@@ -3,10 +3,10 @@ import d3 from 'd3';
 
 import HAWCModal from 'utils/HAWCModal';
 
+import SmartTagContainer from 'smartTags/SmartTagContainer';
+
 import CrossviewPlot from './CrossviewPlot';
 import EndpointAggregation from './EndpointAggregation';
-import SmartTagContainer from './SmartTagContainer';
-
 
 
 class Crossview extends EndpointAggregation {

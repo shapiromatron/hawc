@@ -2,9 +2,10 @@ import $ from '$';
 
 import HAWCModal from 'utils/HAWCModal';
 
+import SmartTagContainer from 'smartTags/SmartTagContainer';
+
 import RoBBarchartPlot from './RoBBarchartPlot';
 import RoBHeatmap from './RoBHeatmap';
-import SmartTagContainer from './SmartTagContainer';
 import Visual from './Visual';
 
 
