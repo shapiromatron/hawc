@@ -29,6 +29,8 @@ class BaseVisualForm {
         // check if any data have changed
         $data.find(':input').on('change', setDataChanged);
         $data.on('djselectableadd djselectableremove', setDataChanged);
+
+        // TODO - fix!
         $data.find('.wysihtml5-sandbox').contents().find('body').on('keyup', setDataChanged);
 
         // whenever data is synced, rebuild

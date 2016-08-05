@@ -24,18 +24,9 @@ class SmartTagEditor {
 
         this.$el
             .css('height', '300px')
-            .wysihtml5({
-                'smartTag': true,
-                'smartTagModal': '#smartTagModal',
-                'font-styles': false,
-                'stylesheets': [
-                    '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css',
-                    '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css',
-                    '/static/css/hawc.css',
-                    '/static/css/d3.css',
-                ],
-            });
+            .quillify();
 
+        // TODO - fix!
         var editor = this.$el.data('wysihtml5').editor;
         editor.on('load', function(){
             SmartTag.initialize_tags($(editor.composer.doc));

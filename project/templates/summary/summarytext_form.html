@@ -8,10 +8,6 @@
   {{assessment}} | Summary Text | Modify | HAWC
 {% endblock %}
 
-{% block extrastyle %}
-  <link href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" rel="stylesheet" type="text/css" />
-{% endblock %}
-
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'summary:list' assessment.pk %}">Summary</a><span class="divider">/</span></li>
@@ -58,8 +54,6 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script>
     $(document).ready(function(){
 

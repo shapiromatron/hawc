@@ -6,10 +6,6 @@
   {{assessment}} | {{crud}} {% if crud == "Create" %}Study{% else %}{{object}}{% endif %} | HAWC
 {% endblock %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
   {% if crud == "Update" %}
@@ -26,6 +22,8 @@
 
 {% block extrajs %}
 <script type="text/javascript">
+$(document).ready(function(){
     $('#id_summary').quillify();
+});
 </script>
 {% endblock extrajs %}

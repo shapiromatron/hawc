@@ -18,10 +18,6 @@
   <li class="active">{{crud}}<span class="divider">/</span></li>
 {% endblock %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
 {% block content %}
 
   {% crispy form %}
@@ -29,27 +25,11 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript" src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js"></script>
-  <script type="text/javascript" src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js"></script>
   <script type="text/javascript">
     $(document).ready(function(){
 
         {% if type == "Search" or object.search_type == "s" %}
-            // allow for font-colors in descriptive-text
-            var ss = ["//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css",
-                      "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css",
-                      "{{STATIC_URL}}css/hawc.css",
-                      "{{STATIC_URL}}css/d3.css"];
-            $('#id_search_string').wysihtml5({stylesheets: ss,
-                "color": true,
-                "font-styles": false,
-                "emphasis": false,
-                "hawc": false,
-                "lists": false,
-                "html": false,
-                "link": false,
-                "image": false
-            });
+            $('#id_search_string').quillify();
         {% endif %}
 
         // autogenerate slugs
