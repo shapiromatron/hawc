@@ -1,3 +1,7 @@
+import BaseTable from 'utils/BaseTable';
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
 class ComparisonSet {
 
     constructor(data){

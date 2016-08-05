@@ -1,8 +1,10 @@
+import D3Plot from 'utils/D3Plot';
+
 class DataPivot_visualization extends D3Plot {
 
     constructor(dp_data, dp_settings, plot_div, editable){
         // Metadata viewer visualization
-        D3Plot.call(this); // call parent constructor
+        super();
         this.editable = editable || false;
         this.dp_data = dp_data;
         this.dp_settings = dp_settings;

@@ -1,3 +1,5 @@
+import HAWCModal from 'utils/HAWCModal';
+
 class RoBHeatmap extends Visual {
 
     constructor(data){

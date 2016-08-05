@@ -1,3 +1,6 @@
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+import DescriptiveTable from 'utils/DescriptiveTable';
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 
 
@@ -191,7 +194,7 @@ class Study{
     }
 
     format_for_react(riskofbias){
-        scores = _.flatten(_.map(riskofbias, function(rob){
+        let scores = _.flatten(_.map(riskofbias, function(rob){
             return rob.values;
         }));
         return RiskOfBiasScore.format_for_react(scores);

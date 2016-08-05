@@ -1,3 +1,5 @@
+import HAWCModal from 'utils/HAWCModal';
+
 const NULL_CASE = '---';
 
 class DataPivot {

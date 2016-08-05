@@ -1,3 +1,7 @@
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
 class Result {
 
     constructor(data){

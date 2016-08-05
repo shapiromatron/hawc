@@ -1,3 +1,5 @@
+import HAWCUtils from 'utils/HAWCUtils';
+
 class SummaryTextTree {
 
     constructor(options){

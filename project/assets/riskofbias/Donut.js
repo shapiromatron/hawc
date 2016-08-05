@@ -1,20 +1,22 @@
 import D3Plot from 'utils/D3Plot';
 
-var Donut = function(study, plot_id, options){
-    var self = this;
-    D3Plot.call(this); // call parent constructor
-    this.study = study;
-    this.plot_div = $(plot_id);
-    this.options = options;
-    this.viewlock = false;
-    if(!this.study.riskofbias || this.study.riskofbias.length === 0 ) return;
-    this.set_defaults(options);
-    if(this.options && this.options.build_plot_startup){this.build_plot();}
-    $('body').on('keydown', function() {
-        if (event.ctrlKey || event.metaKey){self.toggle_lock_view();}
-    });
-};
-_.extend(Donut.prototype, D3Plot.prototype, {
+class Donut extends D3Plot {
+
+    constructor(study, plot_id, options){
+        super();
+        var self = this;
+        this.study = study;
+        this.plot_div = $(plot_id);
+        this.options = options;
+        this.viewlock = false;
+        if(!this.study.riskofbias || this.study.riskofbias.length === 0 ) return;
+        this.set_defaults(options);
+        if(this.options && this.options.build_plot_startup){this.build_plot();}
+        $('body').on('keydown', function() {
+            if (event.ctrlKey || event.metaKey){self.toggle_lock_view();}
+        });
+    }
+
     set_defaults(options){
         this.w = 800;
         this.h = 400;
@@ -23,7 +25,8 @@ _.extend(Donut.prototype, D3Plot.prototype, {
         this.radius_outer = 200;
         this.padding = {top:10, right:10, bottom:10, left:10};
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom) + 'px'});
-    },
+    }
+
     build_plot(){
         this.plot_div.html('');
         this.get_dataset_info();
@@ -31,7 +34,8 @@ _.extend(Donut.prototype, D3Plot.prototype, {
         this.draw_visualizations();
         this.customize_menu();
         this.trigger_resize();
-    },
+    }
+
     customize_menu(){
         this.add_menu();
         var plot = this;
@@ -43,11 +47,13 @@ _.extend(Donut.prototype, D3Plot.prototype, {
                        on_click(){plot.toggle_lock_view();}};
 
         this.add_menu_button(options);
-    },
+    }
+
     toggle_lock_view(){
         this.plot_div.find('#lock_view').toggleClass('btn-info');
         this.viewlock = !this.viewlock;
-    },
+    }
+
     get_dataset_info(){
 
         var domain_donut_data = [],
@@ -74,7 +80,8 @@ _.extend(Donut.prototype, D3Plot.prototype, {
         });
         this.domain_donut_data = domain_donut_data;
         this.question_donut_data = question_donut_data;
-    },
+    }
+
     draw_visualizations(){
         var self = this,
             donut_center = 'translate(' + (200) + ',' + (this.h / 2) + ')';
@@ -193,7 +200,8 @@ _.extend(Donut.prototype, D3Plot.prototype, {
             .text('{0} risk of bias summary'.printf(this.study.data.short_citation));
 
         setTimeout(function(){self.toggle_domain_width();}, 2.0);
-    },
+    }
+
     toggle_domain_width(){
         var new_radius = this.radius_middle;
         if (this.domain_outer_radius === this.radius_middle)
@@ -224,10 +232,12 @@ _.extend(Donut.prototype, D3Plot.prototype, {
                 var centroid = domain_arc.centroid(d);
                 return 'translate(' + [centroid[0],centroid[1]+15] + ')';
             });
-    },
+    }
+
     clear_subset(){
         this.subset_div.empty();
-    },
+    }
+
     show_subset(metric){
         this.clear_subset();
         this.subset_div.append('<h4>{0} domain</h4>'.printf(metric.parent.domain_text));
@@ -240,7 +250,7 @@ _.extend(Donut.prototype, D3Plot.prototype, {
         ol.append($('<li>').html([div, metric_txt, notes_txt]));
         this.subset_div.append(ol);
         this.subset_div.fadeIn('500');
-    },
-});
+    }
+}
 
 export default Donut;

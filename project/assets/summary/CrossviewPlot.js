@@ -1,3 +1,5 @@
+import HAWCUtils from 'utils/HAWCUtils';
+
 class CrossviewPlot extends D3Visualization {
 
     constructor(parent, data, options){

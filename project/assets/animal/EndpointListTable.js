@@ -1,3 +1,5 @@
+import BaseTable from 'utils/BaseTable';
+
 var EndpointListTable = function(endpoints, dose_id){
     if(dose_id) _.each(endpoints, function(e){e.switch_dose_units(dose_id);});
     this.endpoints = endpoints;

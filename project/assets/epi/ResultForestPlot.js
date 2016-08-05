@@ -1,16 +1,20 @@
-var ResultForestPlot = function(res, $div, options){
-    D3Plot.call(this); // call parent constructor
-    this.options = options || this.default_options();
-    this.set_defaults();
-    this.plot_div = $div;
-    this.res = res;
-    if(this.options.build_plot_startup){this.build_plot();}
-};
+import D3Plot from 'utils/D3Plot';
 
-_.extend(ResultForestPlot.prototype, D3Plot.prototype, {
+class ResultForestPlot extends D3Plot {
+
+    constructor(res, $div, options){
+        super();
+        this.options = options || this.default_options();
+        this.set_defaults();
+        this.plot_div = $div;
+        this.res = res;
+        if(this.options.build_plot_startup){this.build_plot();}
+    }
+
     default_options(){
         return {'build_plot_startup': true};
-    },
+    }
+
     build_plot(){
         this.plot_div.empty();
         this.get_dataset();
@@ -25,7 +29,8 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
         this.add_menu();
         this.resize_plot_dimensions();
         this.trigger_resize();
-    },
+    }
+
     get_dataset(){
         var data = this.res.data,
             estimates = _.chain(this.res.resultGroups)
@@ -35,7 +40,7 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
                                 'group': d,
                                 'name': d.data.group.name,
                                 'estimate': d.data.estimate,
-                            }
+                            };
                         }).value(),
             lines = _.chain(estimates)
                     .map(function(d){return d.group.getCI();})
@@ -90,10 +95,12 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
             'x_domain': getXDomain(this.scale_type, vals),
             'x_label_text': data.metric.metric,
         });
-    },
+    }
+
     isPlottable(){
         return this.estimates.length > 0 || this.lines.length > 0;
-    },
+    }
+
     set_defaults(){
         _.extend(this, {
             'padding': {
@@ -125,7 +132,8 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
                 'label_format': undefined,
             },
         });
-    },
+    }
+
     get_plot_sizes(){
         this.h = this.row_height * this.names.length;
         this.w = this.plot_div.width() - this.padding.right - this.padding.left; // extra for margins
@@ -133,7 +141,8 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
         this.plot_div.css({
             'height': (this.h + this.padding.top + this.padding.bottom + menu_spacing) + 'px',
         });
-    },
+    }
+
     add_axes() {
         if (this.scale_type === 'log' && this.x_domain[0] >= 1){
             this.x_domain[0] = 0.1;
@@ -156,7 +165,8 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
 
         this.build_y_axis();
         this.build_x_axis();
-    },
+    }
+
     draw_visualizations(){
         var x = this.x_scale,
             y = this.y_scale,
@@ -211,7 +221,8 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
           .style('cursor', 'pointer')
           .on('click', function(d){d.group.show_group_tooltip(d3.event);})
           .append('title').text(function(d){return '{0}: click to view exposure-group details'.printf(d.estimate);});
-    },
+    }
+
     resize_plot_dimensions(){
         // Resize plot based on the dimensions of the labels.
         var ylabel_width = this.plot_div.find('.y_axis')[0].getBoundingClientRect().width;
@@ -219,7 +230,7 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
             this.padding.left = this.padding.left_original + ylabel_width;
             this.build_plot();
         }
-    },
-});
+    }
+}
 
 export default ResultForestPlot;

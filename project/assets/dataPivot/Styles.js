@@ -1,3 +1,5 @@
+import D3Plot from 'utils/D3Plot';
+
 class StyleSymbol {
 
     constructor(style_manager, settings, isNew){
@@ -433,7 +435,7 @@ class StyleRectangle {
 class StyleViewer extends D3Plot {
 
     constructor($plot_div, style, settings){
-        D3Plot.call(this); // call parent constructor
+        super();
         this.style=style;
         this.settings = settings || StyleViewer.default_settings();
         this.set_defaults();

@@ -1,3 +1,5 @@
+import BaseTable from 'utils/BaseTable';
+
 class ResultGroupTable {
 
     constructor(res){

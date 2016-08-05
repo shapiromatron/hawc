@@ -1,3 +1,6 @@
+import HAWCModal from 'utils/HAWCModal';
+import BaseTable from 'utils/BaseTable';
+
 class EndpointAggregation extends Visual {
 
     constructor(data){

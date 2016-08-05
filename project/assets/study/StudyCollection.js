@@ -1,3 +1,4 @@
+import BaseTable from 'utils/BaseTable';
 import Study from './Study';
 
 

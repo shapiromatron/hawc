@@ -1,3 +1,5 @@
+import BaseTable from 'utils/BaseTable';
+
 var AnimalGroupTable = function(endpoints){
     this.endpoints = endpoints;
     this.tbl = new BaseTable();

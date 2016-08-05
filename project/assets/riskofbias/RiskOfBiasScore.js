@@ -10,7 +10,7 @@ class RiskOfBiasScore {
         this.data.metric.last_updated = new Date(this.data.metric.last_updated);
     }
 
-    format_for_react(robs, config){
+    static format_for_react(robs, config){
         config = config || {display: 'final', isForm: false};
         var scores = _.map(robs, function(rob){
             if(!rob.data.author){ _.extend(rob.data, {author: {full_name: ''}});}

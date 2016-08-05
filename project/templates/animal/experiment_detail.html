@@ -61,7 +61,7 @@
           var url = "{{object.cas_url}}",
               div = $('<div>').appendTo($('#chem_details'));
 
-          HAWCUtils.renderChemicalProperties(url, div, false);
+          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, false);
         });
       </script>
     {% endif %}

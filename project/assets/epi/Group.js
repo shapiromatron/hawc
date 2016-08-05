@@ -1,3 +1,6 @@
+import DescriptiveTable from 'utils/DescriptiveTable';
+import BaseTable from 'utils/BaseTable';
+
 class Group {
 
     constructor(data){

@@ -1,3 +1,5 @@
+import HAWCUtils from 'utils/HAWCUtils';
+
 class InputField {
 
     constructor(schema, $parent, parent){

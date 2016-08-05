@@ -1,3 +1,8 @@
+import DescriptiveTable from 'utils/DescriptiveTable';
+import BaseTable from 'utils/BaseTable';
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
 class MetaResult {
 
     constructor(data){

@@ -1,3 +1,5 @@
+import TableFootnotes from 'utils/TableFootnotes';
+
 var EndpointTable = function(endpoint, tbl_id){
     this.endpoint = endpoint;
     this.tbl = $(tbl_id);

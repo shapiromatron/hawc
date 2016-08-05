@@ -1,17 +1,18 @@
 import D3Plot from 'utils/D3Plot';
 
-var Barplot = function(endpoint, plot_id, options, parent){
-    D3Plot.call(this); // call parent constructor
-    this.parent = parent;
-    this.endpoint = endpoint;
-    this.plot_div = $(plot_id);
-    this.options = options || {build_plot_startup:true};
-    this.set_defaults();
-    this.get_dataset_info();
-    this.endpoint.addObserver(this);
-    if (this.options.build_plot_startup){this.build_plot();}
-};
-_.extend(Barplot.prototype, D3Plot.prototype, {
+class Barplot extends D3Plot {
+    constructor(endpoint, plot_id, options, parent){
+        super();
+        this.parent = parent;
+        this.endpoint = endpoint;
+        this.plot_div = $(plot_id);
+        this.options = options || {build_plot_startup:true};
+        this.set_defaults();
+        this.get_dataset_info();
+        this.endpoint.addObserver(this);
+        if (this.options.build_plot_startup){this.build_plot();}
+    }
+
     build_plot(){
         this.plot_div.html('');
         this.get_plot_sizes();
@@ -29,7 +30,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
         var plot = this;
         this.y_axis_label.on('click', function(v){plot.toggle_y_axis();});
         this.trigger_resize();
-    },
+    }
+
     customize_menu(){
         if (this.menu_div){
             this.menu_div.remove();
@@ -55,7 +57,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
                       on_click(){plot.endpoint.toggle_dose_units();}};
             plot.add_menu_button(options);
         }
-    },
+    }
+
     toggle_y_axis(){
         if (this.endpoint.data.data_type == 'C'){
             if (this.y_axis_settings.scale_type == 'linear'){
@@ -79,12 +82,14 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
         }
         this.y_scale = this._build_scale(this.y_axis_settings);
         this.y_axis_change_chart_update();
-    },
+    }
+
     update(status){
         if (status.status === 'dose_changed'){
             this.dose_scale_change();
         }
-    },
+    }
+
     dose_scale_change(){
         this.get_dataset_info();
         if (this.parent && this.parent.plot === this){
@@ -93,7 +98,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             this.x_axis_change_chart_update();
             this.build_x_label();
         }
-    },
+    }
+
     set_defaults(){
         // Default settings
         this.padding = {top:40, right:20, bottom:40, left:60};
@@ -119,12 +125,14 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             'axis_labels':true,
             'label_format':undefined,  //default
         };
-    },
+    }
+
     get_plot_sizes(){
         this.w = this.plot_div.width() - this.padding.left - this.padding.right; // plot width
         this.h = this.w; //plot height
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom) + 'px'});
-    },
+    }
+
     get_dataset_info(){
 
         this.get_plot_sizes();
@@ -200,7 +208,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             min_y: min,
             max_y: max,
         });
-    },
+    }
+
     add_axes() {
         $.extend(this.x_axis_settings, {
             domain: _.pluck(this.values, 'dose'),
@@ -219,7 +228,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
 
         this.build_x_axis();
         this.build_y_axis();
-    },
+    }
+
     add_bars(){
         var x = this.x_scale,
             y = this.y_scale,
@@ -252,13 +262,15 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
 
         this.sigs_labels = this.sigs.append('svg:title')
                 .text(function(d) { return 'Statistically significant at {0}'.printf(d.significance_level); });
-    },
+    }
+
     x_axis_change_chart_update(){
         this.xAxis.scale(this.x_scale);
         this.vis.selectAll('.x_axis')
             .transition()
             .call(this.xAxis);
-    },
+    }
+
     y_axis_change_chart_update(){
         // Assuming the plot has already been constructed once,
         // rebuild plot with updated y-scale.
@@ -306,7 +318,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             .transition()
             .duration(1000)
             .attr('y', function(d){return y(d.y);});
-    },
+    }
+
     add_error_bars(){
         var hline_width = this.w * 0.02,
             x = this.x_scale,
@@ -341,7 +354,8 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
             y1(d) {return y(d.high);},
             y2(d) {return y(d.high);}});
         this.error_bars_upper = this.build_line(bar_options);
-    },
+    }
+
     add_legend(){
         var legend_settings = {};
         legend_settings.items = [{'text':'Doses in Study', 'classes':'dose_points', 'color':undefined}];
@@ -373,10 +387,11 @@ _.extend(Barplot.prototype, D3Plot.prototype, {
         }
 
         this.build_legend(legend_settings);
-    },
+    }
+
     cleanup_before_change(){
-    },
-});
+    }
+}
 
 
 export default Barplot;

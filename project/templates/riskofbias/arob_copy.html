@@ -47,9 +47,9 @@
                 tr.appendChild(th);
                 tdMetric.innerHTML = data.metric +
                     '<br><br><strong>Required for animal bioassay: </strong>'
-                    + HAWCUtils.booleanCheckbox(data.required_animal)
+                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_animal)
                     + '<br><strong>Required for epidemiological: </strong>'
-                    + HAWCUtils.booleanCheckbox(data.required_epi);
+                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_epi);
 
                 tdDescr.innerHTML = data.description;
                 tr.appendChild(tdMetric);

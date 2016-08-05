@@ -1,9 +1,12 @@
-class RoBHeatmapPlot extends D3Plot {
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
+class RoBHeatmapPlot extends D3Visualization {
 
     constructor(parent, data, options){
         // heatmap of risk of bias information. Criteria are on the y-axis,
         // and studies are on the x-axis
-        D3Visualization.apply(this, arguments);
+        super(parent, data, options);
         this.setDefaults();
         this.modal = new HAWCModal();
     }

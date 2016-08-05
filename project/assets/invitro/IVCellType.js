@@ -1,3 +1,6 @@
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCModal from 'utils/HAWCModal';
+
 class IVCellType {
 
     constructor(data){

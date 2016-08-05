@@ -1,3 +1,6 @@
+import BaseTable from 'utils/BaseTable';
+import HAWCUtils from 'utils/HAWCUtils';
+
 class VisualCollection {
 
     constructor(data){

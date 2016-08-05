@@ -1,3 +1,5 @@
+import HAWCUtils from 'utils/HAWCUtils';
+
 class DataPivotLegend {
 
     constructor(vis, settings, dp_settings, options){

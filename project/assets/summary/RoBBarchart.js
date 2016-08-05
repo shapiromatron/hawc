@@ -1,3 +1,5 @@
+import HAWCModal from 'utils/HAWCModal';
+
 class RoBBarchart extends Visual {
 
     constructor(data){

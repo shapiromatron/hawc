@@ -1,3 +1,5 @@
+import TableFootnotes from './TableFootnotes';
+
 // General object for creating any table
 class BaseTable {
 

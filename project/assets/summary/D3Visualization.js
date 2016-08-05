@@ -1,7 +1,7 @@
 class D3Visualization extends D3Plot {
 
     constructor(parent, data, options){
-        D3Plot.apply(this, arguments);
+        super();
         this.parent = parent;
         this.data = data;
         this.options = options || {};

@@ -1,3 +1,9 @@
+import BaseTable from 'utils/BaseTable';
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
+
 var AnimalGroup = function(data){
     this.data = data;
 };

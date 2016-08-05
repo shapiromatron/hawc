@@ -12,7 +12,7 @@
             <a class="btn btn-primary adders pull-right"
                  title="{{adderTitle}}"
                  href="{{adderURL}}"
-                 onclick="return HAWCUtils.newWindowPopupLink(this);">
+                 onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);">
                  <i class="icon-plus icon-white"></i></a>
             {% crispy_field field %}
             {% include 'bootstrap/layout/help_text_and_errors.html' %}

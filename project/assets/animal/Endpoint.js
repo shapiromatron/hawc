@@ -1,5 +1,12 @@
 import Observee from 'utils/Observee';
+import DescriptiveTable from 'utils/DescriptiveTable';
+import HAWCUtils from 'utils/HAWCUtils';
+import HAWCModal from 'utils/HAWCModal';
+
 import EndpointCriticalDose from './EndpointCriticalDose';
+import Study from 'study/Study';
+import Experiment from './Experiment';
+import AnimalGroup from './AnimalGroup';
 import BMDResult from './BMDResult';
 import EndpointTable from './EndpointTable';
 import EndpointPlotContainer from './EndpointPlotContainer';
@@ -422,11 +429,11 @@ class Endpoint extends Observee {
                          tabs.find('a[href="#modalStudy"]'));
 
             $exp = $('<div class="tab-pane" id="modalExp">');
-            exp = new window.app.animal.Experiment(this.data.animal_group.experiment);
+            exp = new Experiment(this.data.animal_group.experiment);
             exp.render($exp);
 
             $ag = $('<div class="tab-pane" id="modalAG">');
-            ag = new window.app.animal.AnimalGroup(this.data.animal_group);
+            ag = new AnimalGroup(this.data.animal_group);
             ag.render($ag);
 
             $end = $('<div class="tab-pane active" id="modalEnd">');

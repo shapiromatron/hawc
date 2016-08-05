@@ -1,24 +1,27 @@
 import D3Plot from 'utils/D3Plot';
 
-var DRPlot = function(endpoint, div, options, parent){
-    /*
-     * Create a dose-response plot for a single dataset given an endpoint object
-     * and the div where the object should be placed.
-     */
-    this.parent = parent;
-    this.options = options || {build_plot_startup:true};
-    this.endpoint = endpoint;
-    this.plot_div = $(div);
-    this.bmd = [];
-    this.set_defaults(options);
-    this.get_dataset_info();
-    endpoint.addObserver(this);
-    if (this.options.build_plot_startup){this.build_plot();}
-};
-_.extend(DRPlot.prototype, D3Plot.prototype, {
+class DRPlot extends D3Plot {
+    constructor(endpoint, div, options, parent){
+        /*
+         * Create a dose-response plot for a single dataset given an endpoint object
+         * and the div where the object should be placed.
+         */
+        super();
+        this.parent = parent;
+        this.options = options || {build_plot_startup:true};
+        this.endpoint = endpoint;
+        this.plot_div = $(div);
+        this.bmd = [];
+        this.set_defaults(options);
+        this.get_dataset_info();
+        endpoint.addObserver(this);
+        if (this.options.build_plot_startup){this.build_plot();}
+    }
+
     update(status){
         if (status.status === 'dose_changed') this.dose_scale_change();
-    },
+    }
+
     dose_scale_change(){
         // get latest data from endpoint
         this.remove_bmd_lines();
@@ -37,7 +40,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             this.add_selected_endpoint_BMD();
             this.x_axis_change_chart_update();
         }
-    },
+    }
+
     build_plot() {
         try{
             delete this.error_bars_vertical;
@@ -65,7 +69,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.y_axis_label.on('click', function(v){plot.toggle_y_axis();});
         this.x_axis_label.on('click', function(v){plot.toggle_x_axis();});
         this.trigger_resize();
-    },
+    }
+
     customize_menu(){
         if (this.menu_div){
             this.menu_div.remove();
@@ -97,7 +102,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                       on_click(){plot.endpoint.toggle_dose_units();}};
             plot.add_menu_button(options);
         }
-    },
+    }
+
     toggle_y_axis(){
         if(window.event && window.event.stopPropagation) event.stopPropagation();
         if(this.endpoint.data.data_type == 'C'){
@@ -121,7 +127,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         }
         this.y_scale = this._build_scale(this.y_axis_settings);
         this.y_axis_change_chart_update();
-    },
+    }
+
     toggle_x_axis(){
         // get minimum non-zero dose and then set all control doses
         // equal to ten-times lower than the lowest dose
@@ -138,7 +145,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this._setPlottableDoseValues();
         this.x_scale = this._build_scale(this.x_axis_settings);
         this.x_axis_change_chart_update();
-    },
+    }
+
     _setPlottableDoseValues(){
         if (this.x_axis_settings.scale_type == 'linear'){
             this.min_x = d3.min(_.pluck(this.values, 'x'));
@@ -147,7 +155,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             this.min_x = d3.min(_.pluck(this.values, 'x_log'));
             this.x_axis_settings.domain = [this.min_x/10, this.max_x*(1+this.buff)];
         }
-    },
+    }
+
     set_defaults(){
         // Default settings for a DR plot instance
         this.line_colors = ['#BF3F34', '#545FF2', '#D9B343', '#228C5E', '#B27373']; //bmd lines
@@ -175,12 +184,14 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             'axis_labels':true,
             'label_format':undefined,  //default
         };
-    },
+    }
+
     get_plot_sizes(){
         this.w = this.plot_div.width() - this.padding.left - this.padding.right; // plot width
         this.h = this.w; //plot height
         this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom) + 'px'});
-    },
+    }
+
     y_axis_change_chart_update(){
         // Assuming the plot has already been constructed once,
         // rebuild plot with updated y-scale.
@@ -203,7 +214,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
         this.render_bmd_lines();
-    },
+    }
+
     x_axis_change_chart_update(){
         // Assuming the plot has already been constructed once,
         // rebuild plot with updated x-scale.
@@ -234,7 +246,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
         this.render_bmd_lines();
-    },
+    }
+
     get_dataset_info(){
         // Get values to be used in dose-response plots
         var ep = this.endpoint.data,
@@ -314,7 +327,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             this.min_y = d3.min(values, function(d){return d.y_lower || d.y;});
             this.max_y = d3.max([max_upper, max_sig]);
         }
-    },
+    }
+
     add_axes(){
         // customizations for axis updates
         $.extend(this.x_axis_settings, {
@@ -332,7 +346,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
         this.build_x_axis();
         this.build_y_axis();
-    },
+    }
+
     add_selected_endpoint_BMD(){
         // Update BMD lines based on dose-changes
         var self = this;
@@ -344,7 +359,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             });
             if (append){this.add_bmd_line(this.endpoint.data.BMD, 'd3_bmd_selected');}
         }
-    },
+    }
+
     add_dr_error_bars(update){
         var x = this.x_scale,
             y = this.y_scale,
@@ -405,7 +421,8 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
         } else {
             this.error_bars_upper = this.build_line(bar_options);
         }
-    },
+    }
+
     add_dose_response(update) {
 
         // update or create dose-response dots and labels
@@ -460,13 +477,15 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
             this.sigs_labels = this.sigs.append('svg:title')
                                 .text(function(d) { return 'Statistically significant at {0}'.printf(d.significance_level); });
         }
-    },
+    }
+
     clear_legend(){
         //remove existing legend
         $($(this.legend)[0]).remove();
         $(this.plot_div.find('.legend_circle')).remove();
         $(this.plot_div.find('.legend_text')).remove();
-    },
+    }
+
     add_legend(){
         // clear any existing legends
         this.clear_legend();
@@ -515,20 +534,24 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
 
         // build legend
         this.build_legend(legend_settings);
-    },
+    }
+
     cleanup_before_change(){
         this.remove_bmd_lines();
-    },
+    }
+
     add_bmd_line(line){
         this.bmd.push(line);
         this.render_bmd_lines();
-    },
+    }
+
     remove_bmd_line(model_id){
         this.bmd = _.reject(this.bmd, function(d){
             return d.id === model_id;
         });
         this.render_bmd_lines();
-    },
+    }
+
     render_bmd_lines(){
         this.remove_bmd_lines();
 
@@ -632,12 +655,13 @@ _.extend(DRPlot.prototype, D3Plot.prototype, {
                 .attr('stroke', function(d){return d.stroke; });
 
         this.add_legend();
-    },
+    }
+
     remove_bmd_lines(){
         this.vis
             .selectAll('g.bmd')
             .remove();
-    },
-});
+    }
+}
 
 export default DRPlot;
