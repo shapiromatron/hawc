@@ -1,6 +1,37 @@
 import $ from '$';
 import Quill from 'QuillUno';
 
+
+let toolbarOptions = [
+    [
+        {header: [false, 1, 2, 3, 4]},
+    ],
+    [
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+    ],
+    [
+        {script: 'sub'},
+        {script: 'super'},
+    ],
+    [
+        {color: []},
+        {background:[]},
+    ],
+    [
+        'link',
+        {list: 'ordered'},
+        {list: 'bullet' },
+        'blockquote',
+    ],
+    [
+        'clean',
+    ],
+];
+
+
 export default function(){
     return this.each(function(){
         let editor = document.createElement('div'),
@@ -8,7 +39,12 @@ export default function(){
             q;
 
         textarea.hide().before(editor);
-        q = new Quill(editor, {theme: 'snow'});
+        q = new Quill(editor, {
+            modules: {
+                toolbar: toolbarOptions,
+            },
+            theme: 'snow',
+        });
         q.pasteHTML(textarea.val());
         q.on('text-change', function(delta, oldDelta, source){
             let content = $(editor).find('.ql-editor').html();
