@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import $ from '$';
 
+import Endpoint from 'animal/Endpoint';
 import CrossviewPlot from 'summary/CrossviewPlot';
 import Crossview from 'summary/Crossview';
 
@@ -250,7 +251,7 @@ class CrossviewForm extends BaseVisualForm {
 
     afterGetDataHook(data){
         this.endpoints = data.endpoints.map(function(d){
-            var e = new window.app.animal.Endpoint(d);
+            var e = new Endpoint(d);
             e.switch_dose_units(data.dose_units);
             return e;
         });

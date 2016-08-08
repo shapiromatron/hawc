@@ -3,6 +3,7 @@ import $ from '$';
 import BaseTable from 'utils/BaseTable';
 import HAWCModal from 'utils/HAWCModal';
 
+import Endpoint from 'animal/Endpoint';
 import EndpointDetailRow from 'animal/EndpointDetailRow';
 import SmartTagContainer from 'smartTags/SmartTagContainer';
 
@@ -16,7 +17,7 @@ class EndpointAggregation extends BaseVisual {
     constructor(data){
         super(data);
         this.endpoints = data.endpoints.map(function(d){
-            var e = new window.app.animal.Endpoint(d);
+            var e = new Endpoint(d);
             e.switch_dose_units(data.dose_units);
             return e;
         });

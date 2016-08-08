@@ -3,6 +3,8 @@ import _ from 'underscore';
 
 import HAWCModal from 'utils/HAWCModal';
 import SmartTagContainer from 'smartTags/SmartTagContainer';
+import Study from 'study/Study';
+import Aggregation from 'riskofbias/Aggregation';
 
 import RoBHeatmapPlot from './RoBHeatmapPlot';
 import BaseVisual from './BaseVisual';
@@ -13,9 +15,9 @@ class RoBHeatmap extends BaseVisual {
     constructor(data){
         super(data);
         var studies = _.map(data.studies, function(d){
-            return new window.app.study.Study(d);
+            return new Study(d);
         });
-        this.roba = new window.app.riskofbias.Aggregation(studies);
+        this.roba = new Aggregation(studies);
         delete this.data.studies;
     }
 
