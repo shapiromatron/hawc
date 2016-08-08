@@ -26,22 +26,21 @@ class SmartTagEditor {
             .css('height', '300px')
             .quillify();
 
-        // TODO - fix!
-        var editor = this.$el.data('wysihtml5').editor;
-        editor.on('load', function(){
-            SmartTag.initialize_tags($(editor.composer.doc));
-        });
-        this.editor = editor;
+        // var editor = this.$el.data('wysihtml5').editor;
+        // editor.on('load', function(){
+        //     SmartTag.initialize_tags($(editor.composer.doc));
+        // });
+        // this.editor = editor;
     }
 
     prepareSubmission(){
-        InlineRendering.reset_renderings($(this.editor.composer.doc));
-        this.editor.synchronizer.sync();
+        // InlineRendering.reset_renderings($(this.editor.composer.doc));
+        // this.editor.synchronizer.sync();
     }
 
     setContent(content){
-        this.editor.setValue(content);
-        SmartTag.initialize_tags($(this.editor.composer.element));
+        // this.editor.setValue(content);
+        // SmartTag.initialize_tags($(this.editor.composer.element));
     }
 
 }
