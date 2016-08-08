@@ -29,6 +29,8 @@ class RoBHeatmapForm extends BaseVisualForm {
     }
 
     updateSettingsFromPreview(){
+        var plotSettings = JSON.stringify(this.preview.data.settings);
+        $('#id_settings').val(plotSettings);
         this.unpackSettings();
     }
 

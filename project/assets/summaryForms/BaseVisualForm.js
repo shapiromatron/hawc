@@ -124,7 +124,9 @@ class BaseVisualForm {
         try {
             settings = JSON.parse($('#id_settings').val());
             _.each(settings, function(val, key){
-                if(self.settings[key] !== undefined) self.settings[key] = val;
+                if(self.settings[key] !== undefined){
+                    self.settings[key] = val;
+                }
             });
         } catch(err) {
 
