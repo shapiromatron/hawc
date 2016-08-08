@@ -436,9 +436,7 @@ class DRPlot extends D3Plot {
                 .data(this.values)
                 .transition()
                 .duration(1000)
-                .attr('transform', function(d) {
-                    return 'translate(' + x(d.x)  + ',' + y(d.y) + ')';
-                });
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
 
             this.sigs
                 .data(this.sigs_data)
@@ -456,9 +454,7 @@ class DRPlot extends D3Plot {
             .enter().append('circle')
                 .attr('r', this.radius)
                 .attr('class', function(d) {return d.cls;})
-                .attr('transform', function(d) {
-                    return 'translate(' + x(d.x) + ',' + y(d.y) + ')';
-                });
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
 
             this.dot_labels = this.dots.append('svg:title')
                                 .text(function(d) { return d.txt; });

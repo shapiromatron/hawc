@@ -45,14 +45,14 @@ class D3Plot {
                     if (m !== null && m.length===3){
                         var x = parseFloat(m[1]) + d3.event.dx,
                             y = parseFloat(m[2]) + d3.event.dy;
-                        p.attr('transform', 'translate(' + x + ',' + y + ')');
+                        p.attr('transform', `translate(${x},${y})`);
                         plot.set_legend_location(y, x);
                     }
                 });
 
         this.legend = this.vis.append('g')
                         .attr('class', 'plot_legend')
-                        .attr('transform', 'translate(' + settings.box_l + ',' + settings.box_t + ')')
+                        .attr('transform', `translate(${settings.box_l},${settings.box_t})`)
                         .attr('cursor', 'pointer')
                         .attr('data-buffer', buffer)
                         .call(drag);
@@ -112,10 +112,10 @@ class D3Plot {
             .attr('width', w)
             .attr('height', h)
             .attr('class', 'd3')
-            .attr('viewBox', '0 0 {0} {1}'.printf(w, h))
+            .attr('viewBox', `0 0 ${w} ${h}`)
             .attr('preserveAspectRatio', 'xMinYMin')
           .append('g')
-            .attr('transform', 'translate({0},{1})'.printf(this.padding.left, this.padding.top));
+            .attr('transform', `translate(${this.padding.left},${this.padding.top})`);
         this.svg = this.vis[0][0].parentNode;
 
         var chart = $(this.svg),
@@ -238,8 +238,7 @@ class D3Plot {
 
         if (settings.axis_labels){
             this.vis.append('g')
-                .attr('transform', 'translate(' + (settings.x_translate) + ',' +
-                      (settings.y_translate) + ')')
+                .attr('transform', `translate(${(settings.x_translate)},${(settings.y_translate)})`)
                 .attr('class', settings.axis_class)
                 .call(axis);
         }

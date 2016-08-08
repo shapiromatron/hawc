@@ -228,30 +228,30 @@ class EndpointAggregationForestPlot extends D3Visualization {
         this.vis.selectAll('svg.error_bars')
             .data(lines)
           .enter().append('line')
-            .attr('x1', function(d) { return x(d.lower_ci); })
-            .attr('y1', function(d) { return y(d.y); })
-            .attr('x2', function(d) { return x(d.upper_ci); })
-            .attr('y2', function(d) { return y(d.y); })
+            .attr('x1', (d) => x(d.lower_ci))
+            .attr('y1', (d) => y(d.y))
+            .attr('x2', (d) => x(d.upper_ci))
+            .attr('y2', (d) => y(d.y))
             .attr('class','dr_err_bars');
 
         // lower vertical vertical confidence intervals line
         this.vis.selectAll('svg.error_bars')
             .data(lines)
           .enter().append('line')
-            .attr('x1', function(d) { return x(d.lower_ci); })
-            .attr('y1', function(d) { return y(d.y)-5; })
-            .attr('x2', function(d) { return x(d.lower_ci); })
-            .attr('y2', function(d) {return y(d.y)+5; })
+            .attr('x1', (d) => x(d.lower_ci))
+            .attr('y1', (d) => y(d.y)-5)
+            .attr('x2', (d) => x(d.lower_ci))
+            .attr('y2', (d) => y(d.y)+5)
             .attr('class','dr_err_bars');
 
         // upper vertical confidence intervals line
         this.vis.selectAll('svg.error_bars')
             .data(lines)
           .enter().append('line')
-            .attr('x1', function(d) { return x(d.upper_ci); })
-            .attr('y1', function(d) { return y(d.y)-5; })
-            .attr('x2', function(d) { return x(d.upper_ci); })
-            .attr('y2', function(d) {return y(d.y)+5; })
+            .attr('x1', (d) => x(d.upper_ci))
+            .attr('y1', (d) => y(d.y)-5)
+            .attr('x2', (d) => x(d.upper_ci))
+            .attr('y2', (d) => y(d.y)+5)
             .attr('class','dr_err_bars');
 
         // central tendency of percent-change
@@ -259,13 +259,13 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .data(points)
           .enter().append('circle')
             .attr('r','7')
-            .attr('class', function(d){ return 'dose_points ' + d.class;})
+            .attr('class', (d) => 'dose_points ' + d.class)
             .style('cursor', 'pointer')
-            .attr('transform', function(d) { return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; })
-            .on('click', function(v){v.endpoint.displayAsModal();});
+            .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
+            .on('click', (d) => d.endpoint.displayAsModal());
 
         // add the outer element last
-        this.dots.append('svg:title').text(function(d) { return d.text; });
+        this.dots.append('svg:title').text((d) => d.text);
     }
 
     add_axis_text(){

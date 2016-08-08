@@ -776,10 +776,8 @@ class DataPivotVisualization extends D3Plot {
                   .attr('d', d3.svg.symbol()
                       .size(function(d){return d._styles['points_' + i].size;})
                       .type(function(d){return d._styles['points_' + i].type;}))
-                  .attr('transform', function(d){
-                      return 'translate({0},{1})'.printf(x(d[datum.field_name]),
-                                                       self.row_heights[d._dp_index].mid);
-                  }).each(function(d){
+                  .attr('transform', (d) => `translate(${x(d[datum.field_name])},${self.row_heights[d._dp_index].mid})`)
+                  .each(function(d){
                       var obj = d3.select(this);
                       for (var property in d._styles['points_' + i]) {
                           obj.style(property, d._styles['points_' + i][property]);
@@ -1015,7 +1013,7 @@ class DataPivotVisualization extends D3Plot {
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;
 
-        this.vis.attr('transform', 'translate({0},{1})'.printf(left, top));
+        this.vis.attr('transform', `translate(${left},${top})`);
         this.vis.select('.dp_bg').attr('height', this.h);
 
         // resize SVG to account for new size

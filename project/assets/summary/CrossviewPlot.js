@@ -442,7 +442,7 @@ class CrossviewPlot extends D3Visualization {
                     if (m !== null && m.length===3){
                         var x = parseFloat(m[1]) + d3.event.dx,
                             y = parseFloat(m[2]) + d3.event.dy;
-                        p.attr('transform', 'translate(' + x + ',' + y + ')');
+                        p.attr('transform', `translate(${x},${y})`);
                         self.setLabelLocation(i, x, y);
                     }
                 });
@@ -456,9 +456,7 @@ class CrossviewPlot extends D3Visualization {
                 .data(dlabels)
             .enter().append('g')
             .attr('class', 'labels')
-            .attr('transform', function(d,i){
-                return 'translate({0},{1})'.printf(d.x, d.y);
-            })
+            .attr('transform', (d) => `translate(${d.x||0},${d.y||0})`)
             .attr('cursor', (this.options.dev) ? 'pointer' : 'auto')
             .call(drag)
             .each(function(d){
@@ -497,9 +495,7 @@ class CrossviewPlot extends D3Visualization {
         if (!this.plot_settings.colorFilterLegend || this.plot_settings.colorFilters.length === 0) return;
 
         var self = this,
-            translate = 'translate({0},{1})'.printf(
-                this.plot_settings.colorFilterLegendX,
-                this.plot_settings.colorFilterLegendY),
+            translate = `translate(${this.plot_settings.colorFilterLegendX},${this.plot_settings.colorFilterLegendY})`,
             height = 0,
             drag = (!this.options.dev) ? function(){} :
                 HAWCUtils.updateDragLocationTransform(function(x, y){
@@ -637,7 +633,7 @@ class CrossviewPlot extends D3Visualization {
         colg = d3.select(g).selectAll('g.crossview_cols')
             .data(cols)
                 .enter().append('g')
-                .attr('transform', 'translate({0},0)'.printf(xOffset))
+                .attr('transform', `translate(${xOffset},0)`)
                 .attr('class', 'crossview_cols');
 
         //layout text
@@ -660,7 +656,7 @@ class CrossviewPlot extends D3Visualization {
 
         // offset filter-column groups to prevent overlap
         colg.each(function(d){
-            d3.select(this).attr('transform', 'translate({0},0)'.printf(xOffset));
+            d3.select(this).attr('transform', `translate(${xOffset},0)`);
             xOffset += this.getBBox().width + self.settings.column_padding;
         });
 
@@ -705,7 +701,7 @@ class CrossviewPlot extends D3Visualization {
             .attr('transform', function(d,i){
                 var x = self.data.settings.filters[i].x||0,
                     y = self.data.settings.filters[i].y||0;
-                return 'translate({0},{1})'.printf(x, y);
+                return `translate(${x},${y})`;
             })
             .each(function(d, i){ self.layout_filter(this, d, i); })
             .call(drag);

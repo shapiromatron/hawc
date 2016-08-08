@@ -88,7 +88,7 @@ class Donut extends D3Plot {
 
     draw_visualizations(){
         var self = this,
-            donut_center = 'translate(' + (200) + ',' + (this.h / 2) + ')';
+            donut_center = `translate(200,${(this.h / 2)})`;
 
         // setup pie layout generator
         this.pie_layout = d3.layout.pie()
@@ -126,7 +126,7 @@ class Donut extends D3Plot {
             .enter()
                 .append('text')
                 .attr('class', 'centeredLabel domain_arc')
-                .attr('transform', function(d) { return 'translate(' + (domain_arc.centroid(d)) + ')'; })
+                .attr('transform', (d) => `translate(${domain_arc.centroid(d)})`)
                 .attr('text-anchor', 'middle')
                 .text(function(d) { return d.data.domain; });
 
@@ -138,8 +138,8 @@ class Donut extends D3Plot {
                 .style('fill',  function(d){return d.data.score_text_color;})
                 .attr('transform', function(d){
                     var centroid = domain_arc.centroid(d);
-                    return 'translate(' + [centroid[0],centroid[1]+15] + ')';})
-                .attr('text-anchor', 'middle');
+                    return `translate(${[centroid[0],centroid[1]+15]})`;
+                }).attr('text-anchor', 'middle');
 
         // add detail labels
         this.detail_labels = this.detail_label_group.selectAll('text')
@@ -147,7 +147,7 @@ class Donut extends D3Plot {
             .enter().append('text')
             .attr('class', 'centeredLabel')
             .style('fill',  function(d){return d.data.score_text_color;})
-            .attr('transform', function(d) { return 'translate(' + (details_arc.centroid(d)) + ')'; })
+            .attr('transform', (d) => `translate(${details_arc.centroid(d)})`)
             .attr('text-anchor', 'middle')
             .text(function(d) { return d.data.score_text; });
 
@@ -225,16 +225,14 @@ class Donut extends D3Plot {
         this.domain_domain_labels
             .transition()
             .duration('500')
-            .attr('transform', function(d) {
-                return 'translate(' + (domain_arc.centroid(d)) + ')';
-            });
+            .attr('transform', (d) => `translate(${(domain_arc.centroid(d))})`);
 
         this.domain_score_labels
             .transition()
             .duration('500')
             .attr('transform', function(d){
                 var centroid = domain_arc.centroid(d);
-                return 'translate(' + [centroid[0],centroid[1]+15] + ')';
+                return `translate(${[centroid[0],centroid[1]+15]})`;
             });
     }
 

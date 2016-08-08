@@ -373,8 +373,8 @@ class RoBHeatmapPlot extends D3Visualization {
 
         // create a new g.legend_group object on the main svg graphic
         this.legend_group = svg.append('g')
-                .attr('transform', 'translate({0}, {1})'.printf(x, y)
-                ).attr('cursor', cursor)
+                .attr('transform', `translate(${x}, ${y})`)
+                .attr('cursor', cursor)
                 .call(drag);
 
         // add the text 'Legend'; we set the x to a temporarily small value,
@@ -436,7 +436,7 @@ class RoBHeatmapPlot extends D3Visualization {
         if (x < 0) x = 2 * buff;
         if (y+dim.height > svgH) y = svgH - dim.height - 2 * buff;
         if (y < 0) y = 2 * buff;
-        this.legend_group.attr('transform', 'translate({0}, {1})'.printf(x, y));
+        this.legend_group.attr('transform', `translate(${x},${y})`);
     }
 
     print_details($div, d){

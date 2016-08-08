@@ -123,7 +123,7 @@ class HAWCUtils {
                 if (coords){
                     x = parseInt(coords[0] + d3.event.dx, 10);
                     y = parseInt(coords[1] + d3.event.dy, 10);
-                    p.attr('transform', 'translate({0},{1})'.printf(x, y));
+                    p.attr('transform', `translate(${x},${y})`);
                     if(setDragCB){
                         setDragCB.bind(this)(x, y);
                     }

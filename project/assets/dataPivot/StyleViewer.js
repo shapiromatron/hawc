@@ -126,9 +126,7 @@ class StyleViewer extends D3Plot {
                 ])
                 .enter().append('path')
                     .attr('d', d3.svg.symbol())
-                    .attr('transform', function(d) {
-                        return 'translate(' + x(d.x) + ',' + y(d.y) + ')';
-                    })
+                    .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                     .on('click', function(){self._update_styles(self.style.settings, true);});
 
             this._update_styles(this.style.settings, false);
@@ -190,7 +188,7 @@ class StyleViewer extends D3Plot {
             .data([{x: 1, y: 1}])
             .enter().append('path')
                 .attr('d', d3.svg.symbol())
-                .attr('transform', function(d) {return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; });
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
     }
 
     _update_styles(style_settings, randomize_position){
@@ -219,7 +217,7 @@ class StyleViewer extends D3Plot {
                 .data(d)
                 .transition()
                 .duration(1000)
-                .attr('transform', function(d) {return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; })
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                 .attr('d', d3.svg.symbol()
                     .size(style_settings.size)
                     .type(style_settings.type))
@@ -265,7 +263,7 @@ class StyleViewer extends D3Plot {
                 this.symbol
                     .transition()
                     .duration(1000)
-                    .attr('transform', function(d) {return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; })
+                    .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                     .attr('d', d3.svg.symbol()
                         .size(style_settings.symbol_style.settings.size)
                         .type(style_settings.symbol_style.settings.type))

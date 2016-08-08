@@ -116,8 +116,7 @@ class TagTreeViz extends D3Plot {
             // Enter any new nodes at the parent's previous position.
             var nodeEnter = node.enter().append('svg:g')
                         .attr('class', 'tagnode')
-                        .attr('transform', function(d) {
-                            return 'translate(' + source.y0 + ',' + source.x0 + ')'; })
+                        .attr('transform', (d) => `translate(${source.y0},${source.x0})`)
                         .on('click', function(d){
                             if(d3.event.ctrlKey || d3.event.metaKey){
                                 if (d.depth == 0){
@@ -154,7 +153,7 @@ class TagTreeViz extends D3Plot {
             // Transition nodes to their new position.
             var nodeUpdate = node.transition()
                     .duration(duration)
-                    .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
+                    .attr('transform', (d) => `translate(${d.y},${d.x})`);
 
             nodeUpdate.select('circle')
                     .attr('r', function(d){return radius_scale(d.data.reference_count);})
@@ -166,7 +165,7 @@ class TagTreeViz extends D3Plot {
             // Transition exiting nodes to the parent's new position.
             var nodeExit = node.exit().transition()
                     .duration(duration)
-                    .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
+                    .attr('transform', (d) => `translate(${source.y},${source.x})`)
                     .remove();
 
             nodeExit.select('circle')

@@ -81,7 +81,7 @@ class DataPivotLegend {
 
         if (this.options.offset){
             this.legend.attr('cursor', cursor)
-                .attr('transform', 'translate({0},{1})'.printf(self.settings.left, self.settings.top))
+                .attr('transform', `translate(${self.settings.left},${self.settings.top})`)
                 .call(drag);
         }
 
@@ -161,9 +161,8 @@ class DataPivotLegend {
                       .attr('d', d3.svg.symbol()
                           .size(style.size)
                           .type(style.type))
-                      .attr('transform', function(d){
-                          return 'translate(' + (d.x) + ',' + (d.y) + ')';
-                      }).each(apply_styles);
+                      .attr('transform', (d) => `translate(${d.x},${d.y})`)
+                      .each(apply_styles);
             }
 
             // add text
@@ -183,7 +182,7 @@ class DataPivotLegend {
         var offset=0;
         for(var i=1; i<this.legend_columns.length; i++){
             offset += this.legend_columns[i-1].node().getBoundingClientRect().width + buffer;
-            this.legend_columns[i].attr('transform', function(){return 'translate({0},0)'.printf(offset);});
+            this.legend_columns[i].attr('transform',  `translate(${offset},0)`);
         }
 
         var resize_legend = function(){
