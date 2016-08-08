@@ -68,11 +68,8 @@
         "update_textdiv": $('#summarytext_edit'),
         "update_new": $('.new_summary'),
         "update_delete": $('#deleteSTconfirm'),
-        "text_editor": new SmartTagEditor($('#id_text'))
+        "text_editor": new window.app.smartTags.SmartTagEditor($('#id_text'))
       });
-
-      window.app.smartTags.SmartTagEditor.init();
-
     });
   </script>
 {% endblock extrajs %}

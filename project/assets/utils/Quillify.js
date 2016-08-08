@@ -14,5 +14,6 @@ export default function(){
             let content = $(editor).find('.ql-editor').html();
             textarea.val(content);
         });
+        textarea.data('_quill', q);
     });
 }

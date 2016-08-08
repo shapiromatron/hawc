@@ -1,8 +1,5 @@
 import $ from '$';
 
-import InlineRendering from './InlineRendering';
-import SmartTag from './SmartTag';
-
 
 class SmartTagEditor {
 
@@ -25,22 +22,16 @@ class SmartTagEditor {
         this.$el
             .css('height', '300px')
             .quillify();
-
-        // var editor = this.$el.data('wysihtml5').editor;
-        // editor.on('load', function(){
-        //     SmartTag.initialize_tags($(editor.composer.doc));
-        // });
-        // this.editor = editor;
     }
 
     prepareSubmission(){
-        // InlineRendering.reset_renderings($(this.editor.composer.doc));
-        // this.editor.synchronizer.sync();
+        // TODO: trigger smart-tag deconstruction
     }
 
     setContent(content){
-        // this.editor.setValue(content);
-        // SmartTag.initialize_tags($(this.editor.composer.element));
+        let q = this.$el.data('_quill');
+        q.pasteHTML(content);
+        // TODO: trigger smart-tag construction
     }
 
 }

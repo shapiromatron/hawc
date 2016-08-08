@@ -11,7 +11,9 @@ class SmartTagContainer {
             SmartTag.initialize_tags($el);
         });
 
-        if (options.showOnStartup) this.ready();
+        if (options.showOnStartup){
+            this.ready();
+        }
     }
 
     ready(){
