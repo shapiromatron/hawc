@@ -135,6 +135,28 @@ class DataPivot {
         return $('<div>').append(input, text);
     }
 
+    static displayEditView(data_url, settings, options){
+        var dp;
+
+        d3.tsv(data_url)
+            .row((d, i) => DataPivot.massage_row(d, i))
+            .get((error, data) => {
+                $('#loading_div').fadeOut();
+                dp = new DataPivot(data, settings,{
+                    update: true,
+                    container: options.container,
+                    data_div: options.dataDiv,
+                    settings_div: options.settingsDiv,
+                    display_div: options.displayDiv,
+                });
+            });
+
+        $(options.submissionDiv).submit(function(){
+            $(options.settingsField).val(dp.get_settings_json());
+            return true;
+        });
+    }
+
     build_edit_settings(dom_bindings){
         var self = this,
             editable = true;

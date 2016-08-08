@@ -289,4 +289,4 @@ class StyleViewer extends D3Plot {
     }
 }
 
-export {StyleViewer};
+export default StyleViewer;

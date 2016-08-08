@@ -36,7 +36,7 @@ class DataPivotVisualization extends D3Plot {
     static sorter(arr, sorts){
         var chunkify = function(t){
                 var tz = [], x = 0, y = -1, n = 0, i, j;
-                while(i == (j = t.charAt(x++)).charCodeAt(0)){
+                while(i = (j = t.charAt(x++)).charCodeAt(0)){
                     var m = (i == 46 || i == 45 || (i >=48 && i <= 57));
                     if (m !== n) {
                         tz[++y] = '';
@@ -83,18 +83,15 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                if(ascending){
-                    return aa.length - bb.length;
-                } else {
-                    return bb.length - aa.length;
-                }
+                return (ascending)?
+                    aa.length - bb.length:
+                    bb.length - aa.length;
+
             };
 
-        if (sorts.length>0){
-            return arr.sort(alphanum);
-        } else {
-            return arr;
-        }
+        return (sorts.length>0)?
+            arr.sort(alphanum):
+            arr;
     }
 
     static filter(arr, filters, filter_logic){

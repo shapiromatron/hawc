@@ -57,29 +57,18 @@
   {% endif %}
   <script src="{{STATIC_URL}}js/FileSaver.js" type="text/javascript"></script>
   <script type="text/javascript">
-    $(document).ready(function(){
-
-      d3.tsv("{{object.get_data_url|safe}}")
-        .row(function(d, i){ return DataPivot.massage_row(d, i); })
-        .get(function(error, data){
-          $('#loading_div').fadeOut();
-          window.dp = new window.app.dataPivot.DataPivot(
-            data,
-            {{object.settings|safe}},
-            {
-              "update": true,
-              "container": '#data_pivot',
-              "data_div": '#dp_data',
-              "settings_div": '#dp_settings',
-              "display_div": '#dp_display'
-            });
-        });
-
-        $('#dp_settings_form').submit(function(){
-            $('#id_settings').val(dp.get_settings_json());
-            return true;
-        });
-
-    });
+  $(document).ready(function(){
+      var data_url = '{{object.get_data_url|safe}}',
+          settings = {{object.settings|safe}},
+          options = {
+              container: '#data_pivot',
+              dataDiv: '#dp_data',
+              settingsDiv: '#dp_settings',
+              displayDiv: '#dp_display',
+              submissionDiv: '#dp_settings_form',
+              settingsField: '#id_settings',
+          };
+      window.app.dataPivot.DataPivot.displayEditView(data_url, settings, options)
+  });
   </script>
 {% endblock extrajs %}
