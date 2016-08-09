@@ -45,10 +45,13 @@ class OutcomeDataPivot(FlatFileExporter):
         return [
             'study id',
             'study name',
+            'study identifier',
             'study published',
 
             'study population id',
             'study population name',
+            'study population age profile',
+            'study population source',
             'design',
 
             'outcome id',
@@ -104,10 +107,13 @@ class OutcomeDataPivot(FlatFileExporter):
             row = [
                 ser['study_population']['study']['id'],
                 ser['study_population']['study']['short_citation'],
+                ser['study_population']['study']['study_identifier'],
                 ser['study_population']['study']['published'],
 
                 ser['study_population']['id'],
                 ser['study_population']['name'],
+                ser['study_population']['age_profile'],
+                ser['study_population']['source'],
                 ser['study_population']['design'],
 
                 ser['id'],

@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'invitro',
     'bmd',
     'summary',
-    'comments',
 )
 
 
@@ -118,6 +117,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
         'HOST': '',
         'PORT': '',
+        'CONN_MAX_AGE': 300,
     }
 }
 
@@ -178,7 +178,6 @@ MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT')
 
 
 # Filesystem settings
-TEMP_PATH = os.getenv('DJANGO_TEMP_PATH')
 PHANTOMJS_PATH = os.getenv('PHANTOMJS_PATH')
 
 # Logging configuration
@@ -253,10 +252,7 @@ COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMM
 
 
 # BMD modeling settings
-BMD_ROOT_PATH = os.getenv('DJANGO_BMD_ROOT_PATH', '')
-BMD_PLOT = r'gnuplot'
-BMD_EXTENSION = ''
-BMD_SHELL = 'x11'
+BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')
 
 
 # Chemspider token details

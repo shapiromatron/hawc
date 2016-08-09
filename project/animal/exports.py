@@ -95,6 +95,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
         return [
             'study id',
             'study name',
+            'study identifier',
             'study published',
 
             'experiment id',
@@ -136,12 +137,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
             'LOEL',
             'FEL',
             'high_dose',
-
-            'BMD model name',
-            'BMDL',
-            'BMD',
-            'BMDU',
-            'CSF',
 
             'key',
             'dose index',
@@ -219,6 +214,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             row = [
                 ser['animal_group']['experiment']['study']['id'],
                 ser['animal_group']['experiment']['study']['short_citation'],
+                ser['animal_group']['experiment']['study']['study_identifier'],
                 ser['animal_group']['experiment']['study']['published'],
 
                 ser['animal_group']['experiment']['id'],
@@ -265,19 +261,6 @@ class EndpointFlatDataPivot(FlatFileExporter):
                     get_dose(doses, ser['LOEL']),
                     get_dose(doses, ser['FEL']),
                     get_dose(doses, len(ser['groups'])-1),
-                ])
-            else:
-                row.extend([None]*5)
-
-            # BMD information
-            if ser['BMD'] and preferred_units and ser['BMD'].get('outputs')\
-                    and ser['BMD']['dose_units_id'] in preferred_units:
-                row.extend([
-                    ser['BMD']['outputs']['model_name'],
-                    ser['BMD']['outputs']['BMDL'],
-                    ser['BMD']['outputs']['BMD'],
-                    ser['BMD']['outputs']['BMDU'],
-                    ser['BMD']['outputs']['CSF']
                 ])
             else:
                 row.extend([None]*5)

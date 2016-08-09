@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 
-from assessment.api import AssessmentViewset
-
 from . import models, serializers
+from assessment.api import AssessmentViewset, AssessmentRootedTagTreeViewset
 from utils.api import CleanupFieldsBaseViewSet
 
 
@@ -24,6 +23,11 @@ class IVExperiment(AssessmentViewset):
     serializer_class = serializers.IVExperimentSerializerFull
 
 
+class IVEndpointCategory(AssessmentRootedTagTreeViewset):
+    model = models.IVEndpointCategory
+    serializer_class = serializers.IVEndpointCategorySerializer
+
+
 class IVEndpoint(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.IVEndpoint
@@ -39,4 +43,3 @@ class IVChemicalCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.IVChemicalCleanupFieldsSerializer
     model = models.IVChemical
     assessment_filter_args = "study__assessment"
-

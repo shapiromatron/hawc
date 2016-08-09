@@ -4,12 +4,13 @@ from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
 
-from bmd.serializers import BMDModelRunSerializer
 from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
+
+from bmd.serializers import ModelSerializer
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -119,14 +120,10 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
-        # get BMD
-        ret['BMD'] = None
-        try:
-            model = instance.BMD_session.latest().selected_model
-            if model is not None:
-                ret['BMD'] = BMDModelRunSerializer().to_representation(model)
-        except instance.BMD_session.model.DoesNotExist:
-            pass
+        ret['bmd'] = None
+        bmd = instance.get_selected_bmd_model()
+        if bmd:
+            ret['bmd'] = ModelSerializer().to_representation(bmd)
 
         return ret
 

@@ -1,11 +1,13 @@
-from assessment.models import Assessment
+from django.views.generic import DetailView
 from utils.views import (
     GenerateReport, BaseList, BaseDetail, BaseCreate,
     BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
 )
 
+from assessment.models import Assessment
 from study.models import Study
 from . import models, forms, exports
+from utils.views import ProjectManagerOrHigherMixin
 
 
 # Experiment
@@ -87,6 +89,15 @@ class CellTypeDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
+
+
+# Endpoint categories
+class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
+    model = Assessment
+    template_name = 'invitro/ivendpointecategory_form.html'
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object()
 
 
 # Endpoint

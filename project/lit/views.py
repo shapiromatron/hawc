@@ -1,4 +1,3 @@
-import abc
 import json
 
 from datetime import datetime
@@ -7,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
@@ -36,7 +35,7 @@ class LitOverview(BaseList):
         if context['obj_perms']['edit']: # expensive, only calculate if needed
             qryset = models.Reference.get_references_ready_for_import(self.assessment)
             context['need_import_count'] = qryset.count()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -101,7 +100,7 @@ class RefDownloadExcel(BaseList):
             self.fn = "{}-refs".format(self.assessment)
             self.sheet_name = unicode(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
-                assessment=self.assessment, json_encode=False)
+                self.assessment.id, json_encode=False)
 
     def get_queryset(self):
         if self.tag:
@@ -229,7 +228,8 @@ class SearchDownloadExcel(BaseDetail):
             filename=self.object.slug,
             sheet_name=self.object.slug,
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(assessment=self.assessment, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(
+                self.assessment.id, json_encode=False),
             include_parent_tag=False)
         return exporter.build_response()
 
@@ -311,7 +311,7 @@ class TagBySearch(TagReferences):
         context['references'] = models.Reference.objects\
             .filter(searches=self.object)\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -332,7 +332,7 @@ class TagByReference(TagReferences):
         context['references'] = self.model.objects\
             .filter(pk=self.object.pk)\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -354,7 +354,7 @@ class TagByTag(TagReferences):
             .filter(tags=self.object.pk)\
             .distinct()\
             .prefetch_related('identifiers')
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -371,7 +371,7 @@ class TagByUntagged(TagReferences):
     def get_context_data(self, **kwargs):
         context = super(TagByUntagged, self).get_context_data(**kwargs)
         context['references'] = models.Reference.get_untagged_references(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -389,7 +389,7 @@ class SearchRefList(BaseDetail):
         context = super(SearchRefList, self).get_context_data(**kwargs)
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['object_type'] = 'search'
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['untagged'] = self.object.references_untagged
         return context
 
@@ -408,7 +408,7 @@ class SearchTagsVisualization(BaseDetail):
         context = super(SearchTagsVisualization, self).get_context_data(**kwargs)
         context['object_type'] = 'search'
         context['ref_objs'] = self.object.get_all_reference_tags()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['objectType'] = self.model.__name__
         return context
 
@@ -421,7 +421,7 @@ class RefList(BaseList):
         context = super(RefList, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['untagged'] = models.Reference.get_untagged_references(self.assessment)
         return context
 
@@ -490,7 +490,7 @@ class RefDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(RefDetail, self).get_context_data(**kwargs)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['object_json'] = self.object.get_json()
         return context
 
@@ -524,7 +524,7 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
         context = super(FormView, self).get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['obj_perms'] = super(RefSearch, self).get_obj_perms()
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
 
@@ -575,7 +575,7 @@ class RefVisualization(BaseDetail):
         context = super(RefVisualization, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
+        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['objectType'] = self.model.__name__
         return context
 
@@ -590,11 +590,11 @@ class TagsJSON(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(self.object)
+        tags = models.ReferenceFilterTag.get_all_tags(self.object.id)
         return HttpResponse(json.dumps(tags), content_type="application/json")
 
 
-class TagsUpdate(BaseUpdate):
+class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
     """
     Update tags for an assessment. Note that right now, only project managers
     of the assessment can update tags. (we use the Assessment as the model in an
@@ -602,44 +602,9 @@ class TagsUpdate(BaseUpdate):
     """
     model = Assessment
     template_name = "lit/tags_update.html"
-    form_class = forms.NullForm
 
-    def get_context_data(self, **kwargs):
-        context = super(TagsUpdate, self).get_context_data(**kwargs)
-        context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        if self.request.is_ajax():
-            self.object = self.get_object()
-            response = self.post_update_ReferenceFilterTag({"status": "success"})
-            return HttpResponse(json.dumps(response), content_type="application/json")
-        else:
-            raise Http404
-
-    def post_update_ReferenceFilterTag(self, response):
-        pk = tryParseInt(self.request.POST.get('pk'), -1)
-        try:
-            status = self.request.POST.get('status')
-            if status == "add":
-                parent_pk = self.request.POST.get('parent_pk', None)
-                name = self.request.POST.get('name')
-                response["node"] = models.ReferenceFilterTag.add_tag(self.assessment.pk, name, parent_pk)
-            elif status == "remove":
-                models.ReferenceFilterTag.remove_tag(self.assessment.pk, pk)
-            elif status == "move":
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
-                offset = int(self.request.POST.get('offset'))
-                tag.move_within_parent(self.assessment.pk, offset)
-            elif status == 'rename':
-                tag = get_object_or_404(models.ReferenceFilterTag, pk=pk)
-                assert tag.id in models.ReferenceFilterTag.get_descendants_pks(self.object.id)
-                tag.rename(self.request.POST.get('name'))
-            else:
-                raise Exception()
-        except:
-            response["status"] = "fail"
-        return response
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object()
 
 
 class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):

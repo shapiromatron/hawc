@@ -26,21 +26,9 @@ class ExperimentCreate(BaseCreate):
     model = models.Experiment
     form_class = forms.ExperimentForm
 
-    def dispatch(self, *args, **kwargs):
-        response = super(ExperimentCreate, self).dispatch(*args, **kwargs)
-        if self.parent.get_study_type_display() != "Animal Bioassay":
-            raise Http404
-        return response
-
 
 class ExperimentRead(BaseDetail):
     model = models.Experiment
-
-    def get_context_data(self, **kwargs):
-        context = super(ExperimentRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "experiment"
-        context['comment_object_id'] = self.object.pk
-        return context
 
 
 class ExperimentUpdate(BaseUpdate):
@@ -159,12 +147,6 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
 
 class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
-
-    def get_context_data(self, **kwargs):
-        context = super(AnimalGroupRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "animal_group"
-        context['comment_object_id'] = self.object.pk
-        return context
 
 
 class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
@@ -431,8 +413,7 @@ class EndpointRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(EndpointRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "endpoint"
-        context['comment_object_id'] = self.object.pk
+        context['bmd_session'] = self.object.get_latest_bmd_session()
         return context
 
 

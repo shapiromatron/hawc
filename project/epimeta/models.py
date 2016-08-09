@@ -73,6 +73,11 @@ class MetaProtocol(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(study__assessment=assessment_id)
+
     def get_assessment(self):
         return self.study.get_assessment()
 
@@ -177,6 +182,11 @@ class MetaResult(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(protocol__study__assessment=assessment_id)
 
     def get_crumbs(self):
         return get_crumbs(self, self.protocol)
@@ -384,6 +394,11 @@ class SingleResult(models.Model):
 
     def __unicode__(self):
         return self.exposure_name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(meta_result__protocol__study__assessment=assessment_id)
 
     @property
     def estimate_formatted(self):

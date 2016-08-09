@@ -66,8 +66,7 @@ class Assessment(models.Model):
         related_name='assessment_reviewers',
         blank=True,
         help_text="Can view the assessment even if the assessment is not public, "
-                  "but cannot add or change content. Reviewers may optionally add "
-                  "comments, if this feature is enabled. You can add multiple reviewers.")
+                  "but cannot add or change content. You can add multiple reviewers.")
     editable = models.BooleanField(
         default=True,
         help_text='Project-managers and team-members are allowed to edit assessment components.')
@@ -105,11 +104,6 @@ class Assessment(models.Model):
         help_text="Create custom-text to describe methodology and results of the "
                   "assessment; insert tables, figures, and visualizations to using "
                   "\"smart-tags\" which link to other data in HAWC.")
-    enable_comments = models.BooleanField(
-        default=True,
-        help_text="Enable comments from reviewers or the general-public on "
-                  "datasets or findings; comment-functionality and visibility "
-                  "can be controlled in advanced-settings.")
     conflicts_of_interest = models.TextField(
         blank=True,
         help_text="Describe any conflicts of interest by the assessment-team.")
@@ -154,6 +148,10 @@ class Assessment(models.Model):
 
     def get_absolute_url(self):
         return reverse('assessment:detail', args=[str(self.pk)])
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(id=assessment_id)
 
     @property
     def cas_url(self):
@@ -305,6 +303,12 @@ class Attachment(models.Model):
             filters["publicly_available"] = True
         return cls.objects.filter(**filters)
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        a = ContentType.objects\
+            .get(app_label="assessment", model="assessment").id
+        return cls.objects.filter(content_type=a, object_id=assessment_id)
+
 
 class DoseUnits(models.Model):
     name = models.CharField(
@@ -318,6 +322,10 @@ class DoseUnits(models.Model):
     class Meta:
         verbose_name_plural = "dose units"
         ordering = ("name", )
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.all()
 
     def __unicode__(self):
         return self.name
@@ -374,6 +382,10 @@ class Species(models.Model):
         verbose_name_plural = "species"
         ordering = ("name", )
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.all()
+
     def __unicode__(self):
         return self.name
 
@@ -391,6 +403,10 @@ class Strain(models.Model):
     class Meta:
         unique_together = (("species", "name"),)
         ordering = ("species", "name")
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.all()
 
     def __unicode__(self):
         return self.name
@@ -423,6 +439,12 @@ class EffectTag(models.Model):
         return '|'.join(queryset.values_list("name", flat=True))
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(baseendpoint__assessment_id=assessment_id)\
+            .distinct()
+
+    @classmethod
     def get_choices(cls, assessment_id):
         return cls.objects\
                 .filter(baseendpoint__assessment_id=assessment_id)\
@@ -448,6 +470,10 @@ class BaseEndpoint(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
     def get_assessment(self):
         return self.assessment

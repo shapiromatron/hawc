@@ -14,13 +14,7 @@ DATABASES = {
 }
 
 # BMD MODELING SETTINGS
-BMD_ROOT_PATH = r'/path/to/bmds'
-BMD_PLOT = r'gnuplot'
-BMD_EXTENSION = ''
-BMD_SHELL = 'x11'
-
-# MODELING TEMP PATH
-TEMP_PATH = r'/path/to/temp'
+BMD_HOST = 'http://example.com'  # optional; used for BMD module
 
 # PHANTOMJS SETTINGS
 PHANTOMJS_PATH = r'/path/to/phantomjs'

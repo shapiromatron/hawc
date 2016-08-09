@@ -11,7 +11,6 @@ class StudySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(StudySerializer, self).to_representation(instance)
-        ret['study_type'] = instance.get_study_type_display()
         ret['coi_reported'] = instance.get_coi_reported_display()
         ret['url'] = instance.get_absolute_url()
         return ret

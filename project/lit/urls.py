@@ -1,6 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
-from . import views
+from rest_framework.routers import DefaultRouter
+
+from . import views, api
+
+
+router = DefaultRouter()
+router.register(r'tags', api.ReferenceFilterTag, base_name="tags")
 
 urlpatterns = [
 
@@ -109,4 +115,6 @@ urlpatterns = [
     url(r'^ris-export-instructions/$',
         views.RISExportInstructions.as_view(),
         name='ris_export_instructions'),
+
+    url(r'^api/', include(router.urls, namespace='api')),
 ]

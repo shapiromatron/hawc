@@ -322,12 +322,6 @@ class TagsCopyForm(forms.Form):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data['assessment'])
 
 
-class NullForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-
 class ReferenceExcelUploadForm(forms.Form):
 
     excel_file = forms.FileField(

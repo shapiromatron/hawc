@@ -188,11 +188,13 @@ _.extend(InlineRendering.prototype, {
         var title  = $('<h4>').html(obj.build_breadcrumbs()),
             plot_div = $('<div style="height:350px; width:350px">'),
             tbl = $(obj.build_endpoint_table($('<table class="table table-condensed table-striped">'))),
-            content = [plot_div, tbl];
+            content = $('<div class="row-fluid">')
+                .append($('<div class="span8">').append(tbl))
+                .append($('<div class="span4">').append(plot_div));
 
         this.setTitle(title);
         this.setMainContent(content);
-        new EndpointPlotContainer(obj, plot_div);
+        obj.renderPlot(plot_div);
     },
     display_study: function(obj){
         var title  = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),

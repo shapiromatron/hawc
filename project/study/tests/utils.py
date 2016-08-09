@@ -7,12 +7,12 @@ def build_studies_for_permission_testing(obj):
 
     obj.study_working = Study.objects.create(
         assessment=obj.assessment_working,
-        study_type=0,
+        bioassay=True,
         full_citation="Foo et al.",
         short_citation="Foo et al.")
 
     obj.study_final = Study.objects.create(
         assessment=obj.assessment_final,
-        study_type=0,
+        bioassay=True,
         full_citation="Foo et al.",
         short_citation="Foo et al.")

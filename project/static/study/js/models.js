@@ -39,25 +39,41 @@ StudyCollection.prototype = {
     },
     build_filters: function(){
         var $el = $('<div class="row-fluid">'),
-            filters = _.chain(this.object_list)
-                       .map(function(d){return d.data.study_type;})
-                       .uniq()
-                       .value();
+            flds = [];
 
-        if (filters.length>1){
-            $el.html(
-                $('<select class="span12" size="6" multiple>').html(_.map(filters, function(d){
-                    return '<option value="{0}" selected>{0}</option>'.printf(d);
+        if (this.object_list.filter(function(d){return d.data.bioassay;}).length>0){
+            flds.push('bioassay');
+        }
+        if (this.object_list.filter(function(d){return d.data.epi;}).length>0){
+            flds.push('epi');
+        }
+        if (this.object_list.filter(function(d){return d.data.epi_meta;}).length>0){
+            flds.push('epi_meta');
+        }
+        if (this.object_list.filter(function(d){return d.data.in_vitro;}).length>0){
+            flds.push('in_vitro');
+        }
+
+        if (flds.length > 1){
+            $('<select class="span12" size="6" multiple>')
+                .append(_.map(flds, function(d){
+                    return '<option value="{0}">{1}</option>'.printf(d, Study.typeNames[d]);
                 }))
-            );
+                .appendTo($el);
         }
         return $el;
     },
     build_table: function(){
-        var self = this,
-            tbl = new BaseTable(),
-            colgroups = [25, 60, 15],
-            header = ['Short citation', 'Full citation', 'Study type'];
+        var tbl = new BaseTable(),
+            colgroups = [25, 50, 7, 7, 8, 7],
+            header = [
+                'Short citation',
+                'Full citation',
+                'Bioassay',
+                'Epidemiology',
+                'Epidemiology meta-analysis',
+                'In vitro',
+            ];
 
         tbl.addHeaderRow(header);
         tbl.setColGroup(colgroups);
@@ -72,9 +88,12 @@ StudyCollection.prototype = {
         var trs = _.map($el.find('table tbody tr'), $),
             vals;
         $el.find('select').on('change', function(e){
-            vals = $(this).val();
+            vals = $(this).val() || $.map($el.find('option'), function(d){return d.value;});
+
             _.each(trs, function(tr){
-                tr.toggle(vals.indexOf(tr.data('obj').data.study_type)>=0);
+                let data = tr.data('obj').data,
+                    dataTypes = vals.filter(function(d){return data[d];}).length;
+                tr.toggle(dataTypes>0);
             });
         });
     },
@@ -98,6 +117,12 @@ _.extend(Study, {
     },
     render: function(id, $div, $shower){
         Study.get_object(id, function(d){d.render($div, $shower);});
+    },
+    typeNames: {
+        bioassay: 'Animal bioassay',
+        epi: 'Epidemiology',
+        epi_meta: 'Epidemiology meta-analysis/pooled analysis',
+        in_vitro: 'In vitro',
     },
 });
 Study.prototype = {
@@ -159,10 +184,19 @@ Study.prototype = {
     get_url: function(){
         return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
     },
+    _get_data_types: function(){
+        var data = this.data;
+        return _.chain(Study.typeNames)
+            .keys()
+            .filter(function(d){return data[d];})
+            .map(function(d){return Study.typeNames[d];})
+            .value()
+            .join(', ');
+    },
     build_details_table: function(div){
         var tbl = new DescriptiveTable(),
             links = this._get_identifiers_hyperlinks_ul();
-        tbl.add_tbody_tr('Study type', this.data.study_type);
+        tbl.add_tbody_tr('Data type(s)', this._get_data_types());
         tbl.add_tbody_tr('Full citation', this.data.full_citation);
         tbl.add_tbody_tr('Abstract', this.data.abstract);
         if (links.children().length>0) tbl.add_tbody_tr('Reference hyperlink', links);
@@ -203,8 +237,7 @@ Study.prototype = {
         tbody.append(tr.append(td.append(ul)));
     },
     displayAsModal: function(){
-        var self = this,
-            modal = new HAWCModal(),
+        var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">');
 
@@ -229,13 +262,27 @@ Study.prototype = {
             });
         }
     },
+    get_citation_row(){
+        var content = [this.get_url()];
+        if (!this.data.published){
+            content.push('<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>');
+        }
+        return content;
+    },
     build_row: function(){
-        return [this.get_url(), this.data.full_citation, this.data.study_type];
+        return [
+            this.get_citation_row(),
+            this.data.full_citation,
+            HAWCUtils.booleanCheckbox(this.data.bioassay),
+            HAWCUtils.booleanCheckbox(this.data.epi),
+            HAWCUtils.booleanCheckbox(this.data.epi_meta),
+            HAWCUtils.booleanCheckbox(this.data.in_vitro),
+        ];
     },
     format_for_react: function(riskofbias){
         scores = _.flatten(_.map(riskofbias, function(rob){
             return rob.values;
         }));
-        return RiskOfBiasScore.format_for_react(scores)
+        return RiskOfBiasScore.format_for_react(scores);
     },
 };

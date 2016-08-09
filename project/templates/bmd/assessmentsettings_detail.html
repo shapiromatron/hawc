@@ -1,0 +1,50 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{ assessment }} | BMD Options | HAWC
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="active">BMD Settings<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}
+    {% if obj_perms.edit_assessment %}
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </h1>
+
+  <p>BMD assessment-settings can only be modified by project managers.</p>
+
+  <table class="table table-condensed table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+      <tr><th>Benchmark dose modeling<br/>software (<a href="https://www.epa.gov/bmds">BMDS</a>) version</th><td>{{object.get_version_display}}</td></tr>
+      <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>
+    </tbody>
+  </table>
+
+  <h2>BMD decision logic</h2>
+  {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.bmd_logic_fields.all %}
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    // turn on popovers for the bmd logic settings page
+    $(".popovers").popover();
+  </script>
+{% endblock %}

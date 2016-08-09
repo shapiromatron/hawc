@@ -42,6 +42,10 @@ class Criteria(models.Model):
             description=self.description)
         cw[self.COPY_NAME][self.id] = new_obj.id
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class Country(models.Model):
     code = models.CharField(
@@ -57,6 +61,12 @@ class Country(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(studypopulation__study__assessment=assessment_id)\
+            .distinct()
 
 
 class AdjustmentFactor(models.Model):
@@ -83,6 +93,10 @@ class AdjustmentFactor(models.Model):
             description=self.description)
         cw[self.COPY_NAME][self.id] = new_obj.id
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class Ethnicity(models.Model):
     name = models.CharField(
@@ -98,6 +112,10 @@ class Ethnicity(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.all()
 
 
 class StudyPopulationCriteria(models.Model):
@@ -125,6 +143,10 @@ class StudyPopulationCriteria(models.Model):
         self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(criteria__assessment=assessment_id)
 
 
 class StudyPopulation(models.Model):
@@ -195,6 +217,10 @@ class StudyPopulation(models.Model):
         auto_now=True)
 
     COPY_NAME = "study_populations"
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
 
     @staticmethod
     def flat_complete_header_row():
@@ -360,6 +386,10 @@ class Outcome(BaseEndpoint):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
+    @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
@@ -370,7 +400,7 @@ class Outcome(BaseEndpoint):
         return get_crumbs(self, self.study_population)
 
     def can_create_sets(self):
-            return not self.study_population.can_create_sets()
+        return not self.study_population.can_create_sets()
 
     @staticmethod
     def flat_complete_header_row():
@@ -479,6 +509,12 @@ class ComparisonSet(models.Model):
 
     class Meta:
         ordering = ('name', )
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(
+            models.Q(study_population__study__assessment=assessment_id) |
+            models.Q(outcome__assessment=assessment_id))
 
     def save(self, *args, **kwargs):
         if not xor(self.outcome is None, self.study_population is None):
@@ -608,6 +644,12 @@ class Group(models.Model):
 
     class Meta:
         ordering = ('comparison_set', 'group_id', )
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(
+            models.Q(comparison_set__study_population__study__assessment=assessment_id) |  # noqa
+            models.Q(comparison_set__outcome__assessment=assessment_id))
 
     def get_absolute_url(self):
         return reverse('epi:g_detail', kwargs={'pk': self.pk})
@@ -748,6 +790,11 @@ class Exposure(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(study_population__study__assessment=assessment_id)
 
     def get_assessment(self):
         return self.study_population.get_assessment()
@@ -893,6 +940,12 @@ class GroupNumericalDescriptions(models.Model):
     def __unicode__(self):
         return self.description
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(
+            models.Q(group__comparison_set__study_population__study__assessment=assessment_id) |  # noqa
+            models.Q(group__comparison_set__outcome__assessment=assessment_id))
+
     def copy_across_assessments(self, cw):
         children = list(self.descriptions.all())
         old_id = self.id
@@ -932,6 +985,15 @@ class ResultMetric(models.Model):
     def __unicode__(self):
         return self.metric
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(
+                models.Q(results__outcome__assessment=assessment_id) |
+                models.Q(metaresult__protocol__study__assessment=assessment_id)
+            )\
+            .distinct()
+
 
 class ResultAdjustmentFactor(models.Model):
     adjustment_factor = models.ForeignKey('AdjustmentFactor',
@@ -949,6 +1011,11 @@ class ResultAdjustmentFactor(models.Model):
         self.result_id = cw[Result.COPY_NAME][self.result_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(adjustment_factor__assessment=assessment_id)
 
 
 class Result(models.Model):
@@ -1070,6 +1137,11 @@ class Result(models.Model):
     def factors_considered(self):
         return self.adjustment_factors\
             .filter(resfactors__included_in_final_model=False)
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(outcome__assessment=assessment_id)
 
     def __unicode__(self):
         return u"{0}: {1}".format(self.comparison_set, self.metric)
@@ -1240,6 +1312,11 @@ class GroupResult(models.Model):
                 txt = u"{0}{1:g}".format(txt, self.p_value)
 
         return txt
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects\
+            .filter(result__outcome__assessment=assessment_id)
 
     @staticmethod
     def flat_complete_header_row():

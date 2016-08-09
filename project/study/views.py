@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.apps import apps
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import FormView
 
 from assessment.models import Assessment
@@ -80,8 +80,7 @@ class StudyCreateFromReference(BaseCreate):
 
         # hack - use custom validation since will always fail for one-to-one
         if ((form.data['short_citation'] == u'') or
-            (form.data['full_citation'] == u'') or
-            (form.data['study_type'] == u'')):
+            (form.data['full_citation'] == u'')):
             return self.form_invalid(form)
         else:
             #save using our custom saving tool
@@ -122,8 +121,6 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(StudyRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "study"
-        context['comment_object_id'] = self.object.pk
         context['attachments_viewable'] = self.assessment.user_can_view_attachments(self.request.user)
         return context
 
@@ -179,6 +176,15 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
 
     def get_success_url(self):
         return reverse_lazy('study:list', kwargs={'pk': self.assessment.id})
+
+
+class StudyRoBRedirect(StudyRead):
+    # permanent redirect of RoB results; link is required to work based on
+    # older OHAT reports which use this legacy URL route.
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return redirect(self.object.get_final_rob_url(), permanent=True)
 
 
 # Attachment views

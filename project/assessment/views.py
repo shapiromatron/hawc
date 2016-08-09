@@ -20,7 +20,7 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
 from utils.helper import tryParseInt
 from celery import chain
 
-from . import api, forms, models, tasks, serializers
+from . import forms, models, tasks, serializers
 
 
 # General views
@@ -108,8 +108,6 @@ class AssessmentRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(AssessmentRead, self).get_context_data(**kwargs)
-        context['comment_object_type'] = "assessment"
-        context['comment_object_id'] = self.object.pk
         context['attachments'] = models.Attachment.get_attachments(
             self.object,
             not context['obj_perms']['edit']
@@ -377,9 +375,9 @@ class CASDetails(TemplateView):
         cas = self.request.GET.get('cas')
         task = tasks.get_chemspider_details.delay(cas)
         v = task.get(timeout=60)
-        if v:
-            return HttpResponse(json.dumps(v),
-                                content_type="application/json")
+        if v is None:
+            v = {}
+        return HttpResponse(json.dumps(v), content_type="application/json")
 
 
 class CloseWindow(TemplateView):
@@ -403,57 +401,55 @@ class UpdateSession(View):
         return HttpResponse(True)
 
 
-@csrf_exempt  # todo: get rid of this! update page to use csrf.js
-def download_plot(request):
-    if request.method == 'POST':
+class DownloadPlot(FormView):
+
+    http_method_names = [u'post', ]
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(DownloadPlot, self).dispatch(*args, **kwargs)
+
+    EXPORT_CROSSWALK = {
+        'svg': {
+            'fn': tasks.convert_to_svg,
+            'ct': 'image/svg+xml',
+        },
+        'png': {
+            'fn': tasks.convert_to_png,
+            'ct': 'application/png',
+        },
+        'pdf': {
+            'fn': tasks.convert_to_pdf,
+            'ct': 'application/pdf',
+        },
+        'pptx': {
+            'fn': tasks.convert_to_pptx,
+            'ct': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',  # noqa
+        },
+    }
+
+    def post(self, request, *args, **kwargs):
 
         # default response
         response = HttpResponse("<p>An error in processing occurred.</p>")
 
         # grab input values and create converter object
-        output_type = request.POST.get('output', None)
+        extension = request.POST.get('output', None)
         svg = request.POST['svg']
         url = request.META['HTTP_REFERER']
         width = int(float(request.POST['width'])*5)
         height = int(float(request.POST['height'])*5)
-        converter = tasks.SVGConverter(svg, url, width, height)
 
-        if output_type == 'svg':
-            svg = converter.get_svg_with_embedded_styles()
-            response = HttpResponse(svg, content_type="image/svg+xml")
-            response['Content-Disposition'] = 'attachment; filename="download.svg"'
-
-        elif output_type == 'png':
-            task = converter.convert_to_png.delay(converter)
-            output = task.get(timeout=60)
-            if output:
-                response = HttpResponse(output, content_type="image/png")
-                response['Content-Disposition'] = 'attachment; filename="download.png"'
-
-        elif output_type == 'pdf':
-            task = converter.convert_to_pdf.delay(converter)
-            output = task.get(timeout=60)
-            if output:
-                response = HttpResponse(output, content_type="application/pdf")
-                response['Content-Disposition'] = 'attachment; filename="download.pdf"'
-
-        elif output_type == 'pptx':
-            task = chain(
-                converter.convert_to_png.s(converter, delete_and_return_object=False),
-                converter.convert_to_pptx.s(converter)
-            )()
+        handler = self.EXPORT_CROSSWALK.get(extension, None)
+        if handler:
+            task = handler['fn'].delay(svg, url, width, height)
             output = task.get(timeout=90)
             if output:
-                response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")
-                response['Content-Disposition'] = 'attachment; filename="download.pptx"'
-
-
-        else:
-            response = HttpResponse("<p>An error in processing occurred - unknown output type.</p>")
+                response = HttpResponse(output, content_type=handler['ct'])
+                response['Content-Disposition'] = \
+                    'attachment; filename="download.{}"'.format(extension)
 
         return response
-    else:
-        raise Http404
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):

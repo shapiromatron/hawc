@@ -8,7 +8,7 @@
 
 {% block breadcrumbs %}
     <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
+    <li><a href="{% url 'study:list' assessment.pk %}">Study list</a><span class="divider">/</span></li>
     <li class="active">Copy studies<span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 

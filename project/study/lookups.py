@@ -13,7 +13,7 @@ class StudyLookup(RelatedLookup):
 class AnimalStudyLookup(StudyLookup):
     model = models.Study
     search_fields = ('short_citation__icontains', )
-    filters = {"study_type": 0}
+    filters = {"bioassay": True}
 
 
 registry.register(StudyLookup)

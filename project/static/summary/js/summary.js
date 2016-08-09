@@ -9,9 +9,6 @@ SummaryTextTree.prototype = {
             url = SummaryText.assessment_list_url(this.options.assessment_id);
         $.get(url, function(d){
             self.root = new SummaryText(d[0], 1, self, 0);
-            if((self.root.data.comments) && (self.root.data.comments.length>0)){
-                self._unpack_comments();
-            }
             if(self.options.mode=='read'){
                 self._update_read();
             } else if (self.options.mode==='modify'){
@@ -24,11 +21,6 @@ SummaryTextTree.prototype = {
         this.render_doctext();
         this.enable_affix();
         this._setSmartTags();
-    },
-    _unpack_comments: function(){
-        _.each(this.root.data.comments, function(d){
-            this.root._add_comment(d);
-        }, this);
     },
     _update_modified: function(){
         this.options.update_textdiv.fadeOut();
@@ -198,16 +190,6 @@ var SummaryText = function(obj, depth, tree, sibling_id, parent){
     this.depth = depth;
     this.id = obj.id;
     this.data = obj.data;
-    if ((window.comment_module_enabled) && (tree.options.commenting_public || tree.options.commenting_enabled)){
-        this.comment_manager = new CommentManager(null, {
-            'displayAsTable': false,
-            'object_type': 'summary_text',
-            'object_id': this.id,
-            'commenting_public': this.tree.options.commenting_public,
-            'commenting_enabled': this.tree.options.commenting_enabled,
-            'user': this.tree.options.user,
-        }, this);
-    }
     this.section_label = (parent) ? (this.parent.section_label +
                                      (sibling_id+1).toString() + '.') : ('');
 
@@ -262,7 +244,6 @@ SummaryText.prototype = {
                                                      this.depth)),
             content = $('<div>{0}</div>'.printf(this.data.text));
 
-        if(this.comment_manager){this.comment_manager.add_popup_button(header);}
         return div.append(header, content);
     },
     render_header: function(lst){
@@ -286,15 +267,6 @@ SummaryText.prototype = {
             });
         }
         return result;
-    },
-    _add_comment: function(comment_data){
-        if (this.comment_manager && comment_data.parent_object.pk == this.id){
-            this.comment_manager.comments.push(new Comment(this.comment_manager, comment_data));
-        } else {
-            this.children.forEach(function(v){
-                v._add_comment(comment_data);
-            });
-        }
     },
 };
 
@@ -2592,15 +2564,7 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
             svgH = parseInt(svg.attr('height'), 10),
             x = this.data.settings.legend_x,
             y = this.data.settings.legend_y,
-            fields = _.map(RiskOfBiasScore.score_values, function(v){
-                return {
-                    value:          v,
-                    color:          RiskOfBiasScore.score_shades[v],
-                    text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
-                    text:           RiskOfBiasScore.score_text[v],
-                    description:    RiskOfBiasScore.score_text_description[v],
-                }
-            }),
+            scores = RiskOfBiasScore.score_values.slice(),  // shallow copy
             width = 22,
             half_width = width/2,
             buff = 5,
@@ -2611,7 +2575,21 @@ _.extend(RoBHeatmapPlot.prototype, D3Plot.prototype, {
                 self.data.settings.legend_x = parseInt(x, 10);
                 self.data.settings.legend_y = parseInt(y, 10);
             }) : function(){},
-            title;
+            fields, title;
+
+        // determine which scores to present in legend
+        if (!this.data.settings.show_nr_legend){
+            scores.pop(scores.indexOf(10));
+        }
+        fields = _.map(scores, function(v){
+            return {
+                value:          v,
+                color:          RiskOfBiasScore.score_shades[v],
+                text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
+                text:           RiskOfBiasScore.score_text[v],
+                description:    RiskOfBiasScore.score_text_description[v],
+            };
+        });
 
         // create a new g.legend_group object on the main svg graphic
         this.legend_group = svg.append('g')

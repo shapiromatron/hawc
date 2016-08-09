@@ -6,24 +6,24 @@ from . import models
 class AssessmentSettingsForm(ModelForm):
 
     class Meta:
-        model = models.BMD_Assessment_Settings
+        model = models.AssessmentSettings
         exclude = ('assessment', )
 
 
 class LogicFieldForm(ModelForm):
-    # TODO: if default threshold is blank, don't display field, otherwise make required
 
     class Meta:
         model = models.LogicField
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super(LogicFieldForm, self).__init__(*args, **kwargs)
+        if self.instance.threshold is None:
+            self.fields.pop('threshold')
 
-class BMD_SessionForm(ModelForm):
+
+class SessionForm(ModelForm):
 
     class Meta:
-        model = models.BMD_session
+        model = models.Session
         fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('parent', None)
-        super(BMD_SessionForm, self).__init__(*args, **kwargs)

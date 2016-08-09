@@ -49,14 +49,20 @@ class RiskOfBiasDomain(models.Model):
             'riskofbias/fixtures/ohat_study_quality_defaults.json'
         )
         with open(fn, 'r') as f:
-            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            objects = json.loads(
+                f.read(),
+                object_pairs_hook=collections.OrderedDict)
 
-            for domain in objects['domains']:
-                d = RiskOfBiasDomain.objects.create(
-                    assessment=assessment,
-                    name=domain['name'],
-                    description=domain['description'])
-                RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
+        for domain in objects['domains']:
+            d = RiskOfBiasDomain.objects.create(
+                assessment=assessment,
+                name=domain['name'],
+                description=domain['description'])
+            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
 
 class RiskOfBiasMetric(models.Model):
@@ -91,15 +97,21 @@ class RiskOfBiasMetric(models.Model):
         return self.domain.get_assessment()
 
     @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(domain__assessment=assessment_id)
+
+    @classmethod
     def get_required_metrics(cls, assessment, study):
-        filters = {
-            'domain__in': RiskOfBiasDomain.objects.filter(assessment=assessment),
-        }
-        if study.study_type == 0:
-            filters['required_animal'] = True
-        elif study.study_type in [1, 4]:
-            filters['required_epi'] = True
-        return RiskOfBiasMetric.objects.filter(**filters)
+
+        requireds = models.Q()
+        if study.bioassay:
+            requireds |= models.Q(required_animal=True)
+        if study.epi or study.epi_meta:
+            requireds |= models.Q(required_epi=True)
+
+        return RiskOfBiasMetric.objects\
+            .filter(domain__assessment=assessment)\
+            .filter(requireds)
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
@@ -149,6 +161,13 @@ class RiskOfBias(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(study__assessment=assessment_id)
+
+    def get_final_url(self):
+        return reverse('riskofbias:rob_detail', args=[self.study_id])
 
     def get_absolute_url(self):
         return reverse('riskofbias:arob_reviewers',
@@ -314,6 +333,10 @@ class RiskOfBiasScore(models.Model):
             cleanHTML(ser['notes']),
         )
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(riskofbias__study__assessment=assessment_id)
+
     @property
     def score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
@@ -336,6 +359,10 @@ class RiskOfBiasAssessment(models.Model):
     @classmethod
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(assessment=assessment)
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
 
 
 reversion.register(RiskOfBiasDomain)

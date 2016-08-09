@@ -19,7 +19,7 @@ from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField
+from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, AssessmentRootMixin
 
 from fetchers.pubmed import PubMedSearch, PubMedFetch
 from fetchers.hero import HEROFetch
@@ -350,6 +350,10 @@ class Search(models.Model):
         d['search_type'] = self.get_search_type_display()
         return d
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)
+
 
 class PubMedQuery(models.Model):
 
@@ -435,6 +439,10 @@ class PubMedQuery(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(search__assessment=assessment_id)
 
 
 class Identifiers(models.Model):
@@ -636,98 +644,20 @@ class Identifiers(models.Model):
         return cls.objects.filter(database=EXTERNAL_LINK)\
             .aggregate(models.Max('unique_id'))["unique_id__max"]
 
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(references__assessment=assessment_id)
 
-class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
+
+class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = 'reference-taglist-assessment-{0}'
     cache_template_tagtree = 'reference-tagtree-assessment-{0}'
-
-    @classmethod
-    def get_assessment_root_name(cls, assessment_pk):
-        return 'assessment-{pk}'.format(pk=assessment_pk)
-
-    @classmethod
-    def get_assessment_root(cls, assessment_pk):
-        return cls.objects.get(name=cls.get_assessment_root_name(assessment_pk))
-
-    def get_assessment(self):
-        name = self.get_root().name
-        Assessment = apps.get_model('assessment', 'Assessment')
-        return Assessment.objects.get(pk=int(name[name.find('-')+1:]))
-
-    def rename(self, newName):
-        self.name = newName
-        self.slug = slugify(newName)
-        self.save()
-        self.clear_cache(self.get_assessment().id)
 
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
         tag = cls.objects.get(id=tag_id)
         assert tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
         return tag
-
-    @classmethod
-    def get_all_tags(cls, assessment, json_encode=True):
-        """
-        Get all tags for the selected assessment.
-        """
-        key = cls.cache_template_tagtree.format(assessment.pk)
-        tags = cache.get(key)
-        if tags:
-            logging.info('cache used: {0}'.format(key))
-        else:
-
-            root = cls.get_assessment_root(assessment.pk)
-            try:
-                tags = cls.dump_bulk(root)
-            except KeyError as e:
-                logging.exception(e)
-                cls.clean_orphans()
-                tags = cls.dump_bulk(root)
-                logging.info("ReferenceFilterTag cleanup successful.")
-            cache.set(key, tags)
-            logging.info('cache set: {0}'.format(key))
-
-        if json_encode:
-            return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
-        else:
-            return tags
-
-    @classmethod
-    def get_descendants_pks(cls, assessment_pk):
-        # get a list of keys for assessment descendants
-        key = cls.cache_template_taglist.format(assessment_pk)
-        descendants = cache.get(key)
-        if descendants:
-            logging.info('cache used: {0}'.format(key))
-        else:
-            root = cls.get_assessment_root(assessment_pk)
-            descendants = root.get_descendants().values_list('pk', flat=True)
-            cache.set(key, descendants)
-            logging.info('cache set: {0}'.format(key))
-        return descendants
-
-    @classmethod
-    def clear_cache(cls, assessment_pk):
-        keys = (cls.cache_template_taglist.format(assessment_pk),
-                cls.cache_template_tagtree.format(assessment_pk))
-        logging.info('removing cache: {0}'.format(', '.join(keys)))
-        cache.delete_many(keys)
-
-    @classmethod
-    def add_tag(cls, assessment_pk, name, parent_pk=None):
-        cls.clear_cache(assessment_pk)
-        if parent_pk:
-            parent = cls.objects.get(pk=parent_pk)
-        else:
-            parent = cls.get_assessment_root(assessment_pk)
-        new_tag = parent.add_child(name=name)
-        return cls.dump_bulk(new_tag)
-
-    @classmethod
-    def remove_tag(cls, assessment_pk, pk):
-        cls.clear_cache(assessment_pk)
-        cls.objects.filter(pk=pk).delete()
 
     @classmethod
     def build_default(cls, assessment):
@@ -762,15 +692,6 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
         cls.load_bulk(tags, parent=None, keep_ids=False)
         cls.clear_cache(copy_to_assessment.pk)
 
-    def move_within_parent(self, assessment_pk, offset):
-        # move the node within the current parent
-        self.clear_cache(assessment_pk)
-        siblings = list(self.get_siblings())
-        index = siblings.index(self)
-        related = siblings[index+offset]
-        pos = 'right' if (offset > 0) else 'left'
-        self.move(related, pos)
-
     @classmethod
     def get_flattened_taglist(cls, tagslist, include_parent=True):
         # expects tags dictionary dump_bulk format
@@ -791,27 +712,6 @@ class ReferenceFilterTag(NonUniqueTagBase, MP_Node):
 
         return lst
 
-    @classmethod
-    def clean_orphans(cls):
-        """
-        Treebeard can sometimes delete parents but retain orphans; this will
-        remove all orphans from the tree.
-        """
-        logging.warning("ReferenceFilterTag: attempting to recover...")
-        problems = ReferenceFilterTag.find_problems()
-        ReferenceFilterTag.fix_tree()
-        problems = ReferenceFilterTag.find_problems()
-        logging.warning("ReferenceFilterTag: problems identified: {}".format(problems))
-        orphan_ids = problems[2]
-        if len(orphan_ids) > 0:
-            cursor = connection.cursor()
-            for orphan_id in orphan_ids:
-                orphan = cls.objects.get(id=orphan_id)
-                logging.warning('ReferenceFilterTag "{}" {} is orphaned [path={}]. Deleting.'.format(
-                    orphan.name, orphan.id, orphan.path))
-                cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
-            cursor.close()
-
 
 class ReferenceTags(ItemBase):
     # required to be copied when overridden tag object. See GitHub bug report:
@@ -829,6 +729,10 @@ class ReferenceTags(ItemBase):
         return cls.tag_model().objects.filter(**{
             '%s__content_object__isnull' % cls.tag_relname(): False
         }).distinct()
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(content_object__assessment=assessment_id)
 
 
 class Reference(models.Model):
@@ -1213,3 +1117,7 @@ class Reference(models.Model):
         df.apply(fn, axis=1)
 
         return errors
+
+    @classmethod
+    def assessment_qs(cls, assessment_id):
+        return cls.objects.filter(assessment=assessment_id)

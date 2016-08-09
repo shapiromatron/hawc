@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
-from assessment.serializers import EffectTagsSerializer
+from assessment.serializers import EffectTagsSerializer, AssessmentRootedSerializer
 from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
@@ -67,6 +67,14 @@ class IVBenchmarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVBenchmark
+
+
+class IVEndpointCategorySerializer(AssessmentRootedSerializer):
+    parent = serializers.IntegerField(write_only=True, required=False)
+
+    class Meta:
+        model = models.IVEndpointCategory
+        fields = ('id', 'name', 'parent')
 
 
 class IVEndpointCategory(serializers.ModelSerializer):

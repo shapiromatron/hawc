@@ -1288,6 +1288,14 @@ _.extend(RoBHeatmapForm, {
             tab: "legend"
         },
         {
+            type: CheckboxField,
+            name: "show_nr_legend",
+            label: "Show NR in legend",
+            def: true,
+            helpText: "Show \"Not Reported\" in the legend",
+            tab: "legend"
+        },
+        {
             type: IntegerField,
             name: "legend_x",
             label: "Legend x-location (px)",
@@ -1429,6 +1437,14 @@ _.extend(RoBBarchartForm, {
             name: "show_legend",
             label: "Show legend",
             def: true,
+            tab: "legend"
+        },
+        {
+            type: CheckboxField,
+            name: "show_nr_legend",
+            label: "Show NR in legend",
+            def: true,
+            helpText: "Show \"Not Reported\" in the legend",
             tab: "legend"
         },
         {

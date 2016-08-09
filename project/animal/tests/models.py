@@ -135,12 +135,6 @@ class Endpoint(TestCase):
     def test_dataset_increasing(self):
         self.assertEqual(self.endpoint_working.dataset_increasing, True)
 
-    def bmds_session_exists(self):
-        self.assertEqual(self.endpoint_working.bmds_session_exists(), False)
-
-    def test_get_bmds_session(self):
-        self.assertEqual(self.endpoint_working.get_bmds_session(), None)
-
 
 class EndpointGroupPercentControl(TestCase):
 

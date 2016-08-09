@@ -1,4 +1,4 @@
-Django==1.9.4
+Django==1.9.8
 amqp==1.4.6
 anyjson==0.3.3
 billiard==3.3.0.20
@@ -14,9 +14,10 @@ django-selectable==0.9.0
 django-taggit==0.18.0
 django-treebeard==4.0
 django-webpack-loader==0.3.0
-djangorestframework==3.3.2
+djangorestframework==3.4.0
 git+https://github.com/chibisov/drf-extensions@5d7bdbb1e29a8ed6681366d3d243771a350ed412
 docutils==0.12
+jsonschema==2.5.1
 kombu==3.0.26
 lxml==3.4.4
 pillow==3.1.1
@@ -39,6 +40,9 @@ xlwt==1.0.0
 # docx helper-tools
 git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
 git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
+
+# bmds
+git+https://github.com/shapiromatron/bmds@30b963583338e742f3c6de05723937e838ee8afb
 
 # for import scripts
 jupyter==1.0.0

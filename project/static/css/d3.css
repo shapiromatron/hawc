@@ -5,7 +5,7 @@ unrecognized HTML expressions.
 */
 
 .d3 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
   border: thin solid black;
   background-color: white;
 }
@@ -142,10 +142,11 @@ path.dr_line {
   stroke-width: 3;
 }
 
-.bmd_line line, .bmd_line path{
-  stroke-width:2;
-  fill:none;
+path.bmd_line{
+  stroke-width: 3px;
+  fill: none;
 }
+
 
 .d3modal {
   background-color: white;
