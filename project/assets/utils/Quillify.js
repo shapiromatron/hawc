@@ -3,11 +3,10 @@ import Quill from 'QuillUno';
 
 import SmartTag from './QuillSmartTag';
 import SmartInline from './QuillSmartInline';
-
+import SmartTagModal from 'smartTags/QuillSmartTagModal';
 
 Quill.register(SmartTag, true);
 Quill.register(SmartInline, true);
-
 
 const toolbarOptions = {
         container: [
@@ -47,14 +46,14 @@ const toolbarOptions = {
                 if (sel === null || sel.length === 0){
                     return;
                 }
-                this.quill.format('smartTag', {id: 123, type: 'Endpoint'});
+                this.quill.smartTagModal.showModal('smartTag', sel, value);
             },
             smartInline(value){
                 let sel = this.quill.getSelection();
                 if (sel === null || sel.length === 0){
                     return;
                 }
-                this.quill.format('smartInline', {id: 123, type: 'Endpoint'});
+                this.quill.smartTagModal.showModal('smartInline', sel, value);
             },
         },
     },
@@ -64,15 +63,26 @@ const toolbarOptions = {
             .append('<i class="fa fa-tag">');
         $(tb.container).find('.ql-smartInline')
             .append('<i class="fa fa-sticky-note">');
+        q.smartTagModal = new SmartTagModal(q, $('#smartTagModal'));
+    },
+    hideSmartTagButtons = function(q){
+        var tb = q.getModule('toolbar');
+        $(tb.container).find('.ql-smartTag').hide();
+        $(tb.container).find('.ql-smartInline').hide();
     };
 
 export default function(){
+
+    let modal = $('#smartTagModal'),
+        showHawcTools = (modal.length === 1);
+
     return this.each(function(){
         let editor = document.createElement('div'),
             textarea = $(this),
             q;
 
         textarea.hide().before(editor);
+
         q = new Quill(editor, {
             modules: {
                 toolbar: toolbarOptions,
@@ -80,7 +90,12 @@ export default function(){
             theme: 'snow',
         });
 
-        formatSmartTagButtons(q);
+        if (showHawcTools){
+            formatSmartTagButtons(q);
+        } else {
+            hideSmartTagButtons(q);
+        }
+
         q.pasteHTML(textarea.val());
         q.on('text-change', function(delta, oldDelta, source){
             let content = $(editor).find('.ql-editor').html();

@@ -7,14 +7,18 @@ class SmartInline extends Block {
     static create(value) {
         let el = document.createElement('DIV');
         el.setAttribute('class', 'inlineSmartTagContainer');
-        el.dataset.id = value.id;
+        el.dataset.pk = value.pk;
         el.dataset.type = value.type;
         return el;
     }
 
     static formats(domNode) {
+        let cls = domNode.getAttribute('class') || '';
+        if (cls.indexOf('inlineSmartTagContainer')<0){
+            return null;
+        }
         return {
-            id: parseInt(domNode.dataset.id),
+            pk: parseInt(domNode.dataset.pk),
             type: domNode.dataset.type,
         };
     }
