@@ -9,11 +9,16 @@ class ScrollToErrorBox extends Component {
 
     render(){
         let { error } = this.props;
-        if (error.detail){
+
+        if (_.isNull(error)) {
+            error;
+        } else if (error.hasOwnProperty('detail')) {
             error = error.detail;
-        } else if (error.message) {
+        } else if (error.hasOwnProperty('message')) {
             error = error.message;
         }
+
+        if (!error) return <div></div>;
         return (
             <div className='alert alert-danger' >
                 {error}

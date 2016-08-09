@@ -29,7 +29,7 @@ class DetailList extends Component {
                                     fields={fields}
                                     onDetailChange={onDetailChange}
                                     showModal={showModal}
-                                    checkedRows={checkedRows} />})}
+                                    checkedRows={checkedRows} />;})}
             </div>
         );
     }

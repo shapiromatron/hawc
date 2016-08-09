@@ -41,6 +41,7 @@ export class MetricForm extends React.Component {
 
     render() {
         let { items, config } = this.props;
+        if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
                 <DisplayComponent ref='metricForm' metric={items.editMetric} config={config}/>

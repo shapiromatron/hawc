@@ -18,6 +18,7 @@ export class ScoreList extends Component {
     }
 
     render() {
+        if (!this.props.isLoaded) return null;
         let { items, idList, selected, config } = this.props,
             filteredItems = _.isEmpty(selected) ?
                 items :
@@ -35,10 +36,12 @@ export class ScoreList extends Component {
 }
 
 function mapStateToProps(state) {
+    const { items, updateIds, isLoaded } = state.items;
     return {
         selected: state.scores.selected,
-        items: state.items.items,
-        idList: state.items.updateIds,
+        items,
+        idList: updateIds,
+        isLoaded,
     };
 }
 

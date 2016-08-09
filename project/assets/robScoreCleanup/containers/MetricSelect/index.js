@@ -10,11 +10,11 @@ export class MetricSelect extends Component {
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);
-        this.choices = this.formatMetricChoices();
-        this.defaultValue = _.first(this.choices).id;
     }
 
-    componentWillMount() {
+    setDefaultValue() {
+        this.choices = this.formatMetricChoices();
+        this.defaultValue = _.first(this.choices).id;
         this.handleSelect(this.defaultValue);
     }
 
@@ -30,6 +30,8 @@ export class MetricSelect extends Component {
     }
 
     render() {
+        if (!this.props.isLoaded) return null;
+        this.setDefaultValue();
         return (
             <ArraySelect id='metric-select'
                     choices={this.choices}
@@ -41,7 +43,7 @@ export class MetricSelect extends Component {
 
 function mapStateToProps(state) {
     return {
-        itemsLoaded: state.metrics.isLoaded,
+        isLoaded: state.metrics.isLoaded,
         choices: state.metrics.items,
     };
 }

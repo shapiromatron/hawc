@@ -5,16 +5,6 @@ import './CheckboxScoreDisplay.css';
 
 class CheckboxScoreDisplay extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            config: {
-                display: 'final',
-                isForm: false,
-            },
-        };
-    }
-
     render() {
         let { checked, item, config, handleCheck } = this.props;
         return (

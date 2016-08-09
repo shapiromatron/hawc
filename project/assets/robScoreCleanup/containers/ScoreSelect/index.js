@@ -17,6 +17,7 @@ export class ScoreSelect extends React.Component {
     }
 
     render() {
+        if (!this.props.isLoaded) return null;
         return (
             <div>
                 <select multiple name="score_filter" id="score_filter" onChange={this.handleChange}>

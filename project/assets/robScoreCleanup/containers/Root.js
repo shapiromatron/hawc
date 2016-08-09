@@ -58,13 +58,13 @@ class Root extends Component {
     }
 
     render() {
-        let { items, metricsLoaded, scoresLoaded, error } = this.props,
+        let { error } = this.props,
             { config } = this.state;
         return (
                 <div>
-                    {error.message ? <ScrollToErrorBox error={error} /> : null}
-                    {metricsLoaded ? <MetricSelect /> : null}
-                    {scoresLoaded ? <ScoreSelect /> : null}
+                    <ScrollToErrorBox error={error} />
+                    <MetricSelect />
+                    <ScoreSelect />
                     <div>
                         <button className='btn btn-primary' onClick={this.loadMetrics}>
                             Load Metrics
@@ -73,22 +73,15 @@ class Root extends Component {
                             Clear Results
                         </button>
                     </div>
-                    {items.isLoaded ?
-                        <div>
-                            <MetricForm config={config} />
-                            <ScoreList config={config} />
-                        </div>
-                        : null}
+                    <MetricForm config={config} />
+                    <ScoreList config={config} />
                 </div>
         );
     }
 }
 function mapStateToProps(state){
-    const { metrics, items, scores, error } = state;
+    const { error } = state;
     return {
-        metricsLoaded: metrics.isLoaded,
-        scoresLoaded: scores.isLoaded,
-        items,
         error,
     };
 }

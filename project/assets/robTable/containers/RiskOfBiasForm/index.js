@@ -45,7 +45,7 @@ class RiskOfBiasForm extends Component {
 
         return (
             <div className='riskofbias-display'>
-                { error ? <ScrollToErrorBox error={error} /> : null}
+                <ScrollToErrorBox error={error} />
                 <form onSubmit={this.submitForm}>
 
                     {_.map(riskofbiases, (domain) => {

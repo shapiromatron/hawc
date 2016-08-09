@@ -87,7 +87,7 @@ export default function (state=defaultState, action){
                 ids = [
                     ...ids.slice(0, index),
                     ...ids.slice(index + 1),
-                ]
+                ];
             }
         });
         return Object.assign({}, state, {
