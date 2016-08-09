@@ -196,6 +196,11 @@ span.smart-tag.active{
 span.smart-tag.active:hover{
   color: orange;
 }
+div.smart-tag.active{
+  border: 2px solid gray;
+  border-radius: 5px;
+  padding: 1em;
+}
 .inlineSmartTagContainer {
   margin: 0 2em 0 2em;
   border: 2px solid #B2B2B2;

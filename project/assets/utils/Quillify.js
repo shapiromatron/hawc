@@ -1,8 +1,8 @@
 import $ from '$';
 import Quill from 'QuillUno';
 
-import SmartTag from './QuillSmartTag';
-import SmartInline from './QuillSmartInline';
+import SmartTag from 'smartTags/QuillSmartTag';
+import SmartInline from 'smartTags/QuillSmartInline';
 import SmartTagModal from 'smartTags/QuillSmartTagModal';
 
 Quill.register(SmartTag, true);

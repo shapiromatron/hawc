@@ -15,9 +15,9 @@ class SmartTag {
         this.type = this.$tag.data('type');
         this.pk = this.$tag.data('pk');
         this.resource = undefined;
-        this.rendering = this.$tag.is('span') ? 'tooltip' : 'inline';
-        if (this.rendering === 'tooltip'){
-            this.$tag.on('click', $.proxy(this.display_modal, this));
+
+        if (this.$tag.is('span')){
+            this.$tag.click(this.display_modal.bind(this));
         } else {
             this.display_inline();
         }
@@ -28,15 +28,24 @@ class SmartTag {
         $('span.smart-tag').toggleClass('active');
     }
 
-    static initialize_tags($frame){
-        var doc = $frame || $(document);
-
-        doc.find('span.smart-tag')
-            .each(function(i, v){ if(!$(this).data('obj')){new SmartTag(v);}})
-            .addClass('active');
+    static initialize_tags($el){
+        var doc = $el || $(document);
 
         doc.find('div.smart-tag')
-            .each(function(i, v){if(!$(this).data('obj')){new SmartTag(v);}});
+            .each(function(_, el){
+                if(!$(this).data('obj')){
+                    new SmartTag(el);
+                }
+            });
+
+        doc.find('span.smart-tag')
+            .each(function(_, el){
+                if(!$(this).data('obj')){
+                    new SmartTag(el);
+                }
+            })
+            .addClass('active');
+
     }
 
     static getExistingTag($node){
@@ -59,7 +68,7 @@ class SmartTag {
             cb;
 
         if (context === undefined){
-            console.log('unknown context: {0}'.printf(this.type));
+            throw('unknown context: {0}'.printf(this.type));
         } else {
             cb = $.proxy(
                 function(obj){new InlineRendering(this)[context.inline_func](obj);},

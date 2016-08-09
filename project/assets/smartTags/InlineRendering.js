@@ -9,14 +9,20 @@ class InlineRendering {
 
     constructor(data){
         this.data = data;
+
+        this.data.$tag.removeClass('active');
+
+        this.inline = $('<div>').insertBefore(data.$tag);
+
         this.$title = $('<div class="row-fluid inlineSmartTagTitle">');
         this.$div = $('<div class="row-fluid">');
-        this.$caption = $('<div class="row-fluid inlineSmartTagCaption">').html(data.$tag.text());
+        this.$caption = $('<div class="row-fluid inlineSmartTagCaption">')
+            .append(data.$tag.detach());
         this.$container = $('<div class="inlineSmartTagContainer container-fluid">')
                             .append([this.$title, this.$div, this.$caption])
                             .data('obj', this);
 
-        this.data.$tag.replaceWith(this.$container);
+        this.inline.append(this.$container);
         return this;
     }
 

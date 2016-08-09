@@ -1,12 +1,5 @@
+import $ from '$';
 import _ from 'underscore';
-
-
-let getValues = function(){
-
-    },
-    getDefaultValues = function(){
-
-    };
 
 
 class SmartTagModal {
@@ -14,19 +7,16 @@ class SmartTagModal {
     constructor(quill, modal){
         this.quill = quill;
         this.modal = modal;
-
         this.setupEventListeners();
     }
 
     setupEventListeners(){
         let m = this.modal;
-
         m.find('#id_resource')
             .off('change')
             .change(function(){
                 let v = $(this).val(),
                     show,
-                    focuser,
                     hides = [
                         '#div_id_study',
                         '#div_id_endpoint',
@@ -78,25 +68,26 @@ class SmartTagModal {
             pk;
 
         switch(type){
-            case 'study':
-                pk = m.find('#id_study_1').val();
-                break;
-            case 'endpoint':
-                pk = m.find('#id_endpoint_1').val();
-                break;
-            case 'data_pivot':
-                pk = m.find('#id_data_pivot_1').val();
-                break;
-            case 'visual':
-                pk = m.find('#id_visual_1').val();
-                break;
+        case 'study':
+            pk = m.find('#id_study_1').val();
+            break;
+        case 'endpoint':
+            pk = m.find('#id_endpoint_1').val();
+            break;
+        case 'data_pivot':
+            pk = m.find('#id_data_pivot_1').val();
+            break;
+        case 'visual':
+            pk = m.find('#id_visual_1').val();
+            break;
         }
 
         pk = parseInt(pk);
-        if (!_.isNaN(pk)){
-            return {type, pk,};
+        if (_.isNaN(pk)){
+            return null;
+        } else {
+            return {type, pk};
         }
-        return null;
     }
 
     tryToSave(){
