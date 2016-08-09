@@ -11,7 +11,7 @@ const defaultState = {
             {
                 id: 0,
                 riskofbias_id: 0,
-                score: 4,
+                score: 10,
                 score_description: 'Probably high risk of bias',
                 score_shade: '#FFCC00',
                 score_symbol: '-',

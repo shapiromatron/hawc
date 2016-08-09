@@ -2,11 +2,14 @@ import React, { Component, PropTypes } from 'react';
 
 import ScoreDisplay from 'robTable/components/ScoreDisplay';
 import './CheckboxScoreDisplay.css';
+import h from 'robScoreCleanup/utils/helpers';
 
 class CheckboxScoreDisplay extends Component {
 
     render() {
-        let { checked, item, config, handleCheck } = this.props;
+        let { checked, item, config, handleCheck } = this.props,
+            scoreInfo = h.getScoreInfo(item.score);
+        item = {...item, score_shade: scoreInfo.shade, score_description: scoreInfo.text};
         return (
             <div className='flexRow-container'>
                 <input className='score-display-checkbox'

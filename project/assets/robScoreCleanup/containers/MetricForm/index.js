@@ -35,7 +35,7 @@ export class MetricForm extends React.Component {
     onSubmit(e){
         e.preventDefault();
         let { notes, score } = this.refs.metricForm.refs.form.state,
-            metric = { notes, score };
+            metric = { notes, score: parseInt(score) };
         this.props.dispatch(submitItemEdits(metric));
     }
 

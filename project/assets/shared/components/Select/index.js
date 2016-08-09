@@ -21,12 +21,12 @@ class Select extends Component {
     }
 
     render() {
-        let { id, defVal, choices } = this.props;
+        let { id, value, choices } = this.props;
         return (
             <select className='react-select'
                     id={id}
                     ref='select'
-                    defaultValue={defVal}
+                    value={value}
                     onChange={this.handleSelect}>
                 {_.map(choices, (choice, key) => {
                     return <option key={key} value={key}>{choice}</option>;

@@ -95,18 +95,18 @@ export function updateEditMetricIfNeeded() {
             current = state.items.editMetric,
             update;
         if (!state.items.isLoaded) { 
-            // update displayed metric and description to selected metric
+        // update displayed metric and description to selected metric
             update = updateMetric(state.metrics.selected, current.values[0]);
             dispatch(updateEditMetric(update));
         } else if (_.isEmpty(state.items.updateIds)) {
-            // if the selected metric changed, update displayed metric and description
+        // if the selected metric changed, update displayed metric and description
             update = updateMetric(state.items.items[0].metric, current.values[0]);
             if (!_.isEqual(update, current)){
                 dispatch(updateEditMetric(update));
             }
         } else {
-            // update metricForm to reflect the first selected item
-            let updateItem = _.findWhere(state.items.items, {id: parseInt(state.items.updateIds[0])});
+        // update metricForm to reflect the first selected item
+            let updateItem = _.findWhere(state.items.items, {id: state.items.updateIds[0]});
             update = addItemToMetric(updateItem, current.values[0]);
             dispatch(updateEditMetric(update));
         }

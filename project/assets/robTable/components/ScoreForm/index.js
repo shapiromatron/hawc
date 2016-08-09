@@ -74,20 +74,21 @@ class ScoreForm extends Component {
     }
 
     render() {
-        let { score } = this.props;
+        let { metric } = this.props.score.metric,
+            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
         return (
             <div className='score-form'>
                 <div>
-                    <Select choices={this.state.scoreChoices}
-                          id={score.metric.metric}
-                          defVal={score.score}
+                    <Select choices={scoreChoices}
+                          id={metric}
+                          value={score}
                           handleSelect={this.selectScore}/>
                     <br/><br/>
-                    <ScoreIcon shade={this.state.selectedShade}
-                             symbol={this.state.selectedSymbol}/>
+                    <ScoreIcon shade={selectedShade}
+                             symbol={selectedSymbol}/>
                 </div>
-                <ReactQuill id={score.metric.metric}
-                         value={this.state.notes}
+                <ReactQuill id={metric}
+                         value={notes}
                          onChange={this.handleEditorInput}
                          theme='snow'
                          className='score-editor' />
