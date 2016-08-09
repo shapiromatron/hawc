@@ -200,7 +200,7 @@ class AssessmentRootMixin(object):
         """
         Constructor to define root with assessment-creation
         """
-        kwargs["name"] = cls.get_assessment_root(assessment_id)
+        kwargs["name"] = cls.get_assessment_root_name(assessment_id)
         return cls.add_root(**kwargs)
 
     @classmethod
