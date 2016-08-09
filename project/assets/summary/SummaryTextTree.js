@@ -134,7 +134,7 @@ class SummaryTextTree {
             .unbind()
             .on('click', function(){
                 var url = SummaryText.delete_url(self.selected.id);
-                $.post(url, $.proxy(self._redraw, self));
+                $.post(url, self._redraw.bind(self));
             });
 
         this.options.update_doctree
@@ -175,7 +175,7 @@ class SummaryTextTree {
         if (this.selected && this.selected.id){
             url = SummaryText.update_url(this.selected.id);
         }
-        $.post(url, data, $.proxy(this._redraw, this));
+        $.post(url, data, this._redraw.bind(this));
         return false;
     }
 

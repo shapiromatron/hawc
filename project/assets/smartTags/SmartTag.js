@@ -64,16 +64,13 @@ class SmartTag {
     }
 
     display_inline(){
-        var context = SmartTag.context[this.type],
-            cb;
+        var context = SmartTag.context[this.type];
 
         if (context === undefined){
             throw('unknown context: {0}'.printf(this.type));
         } else {
-            cb = $.proxy(
-                function(obj){new InlineRendering(this)[context.inline_func](obj);},
-                this);
-            context.Cls.get_object(this.pk, cb);
+            var cb = function(obj){new InlineRendering(this)[context.inline_func](obj);};
+            context.Cls.get_object(this.pk, cb.bind(this));
         }
     }
 

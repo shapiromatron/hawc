@@ -10,7 +10,7 @@ class HawcTooltip {
 
         if (tooltip.length === 0){
             close = $('<button type="button" title="click or press ESC to close" class="close">&times;</button>')
-                .click($.proxy(this.hide, this));
+                .click(this.hide.bind(this));
             heading = $('<div class="popover-title" title="drag to reposition">')
                 .append(close)
                 .append('<div class="hawcTooltipHeading">');
@@ -77,10 +77,14 @@ class HawcTooltip {
             .fadeIn('slow')
             .scrollTop();
 
-        $(document).bind('keyup', $.proxy(function(e){
+        var showTooltip = function(e){
             e.stopPropagation();
-            if(e.keyCode === 27) this.hide();
-        }, this));
+            if(e.keyCode === 27){
+                this.hide();
+            }
+        };
+
+        $(document).bind('keyup', showTooltip.bind(this));
     }
 
 }

@@ -39,7 +39,7 @@ class InlineRendering {
 
     setTitle($content){
         var isMax = true,
-            clickHandler = $.proxy(function(){
+            clickHandler = function(){
                 if (isMax){
                     this.$title.find('.icon-minus').removeClass('icon-minus').addClass('icon-plus');
                     this.$div.fadeOut('slow');
@@ -48,10 +48,10 @@ class InlineRendering {
                     this.$div.fadeIn('slow');
                 }
                 isMax = !isMax;
-            }, this),
+            },
             toggler = $('<a title="click to toggle visibility" class="toggler btn btn-mini pull-right"></a>')
                 .append('<i class="icon-minus"></i>')
-                .click(clickHandler);
+                .click(clickHandler.bind(this));
 
         this.$title.append($content.append(toggler));
     }
