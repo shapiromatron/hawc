@@ -47,18 +47,18 @@ const toolbarOptions = {
                 if (sel === null || sel.length === 0){
                     return;
                 }
-                this.quill.format('smartTag', value);
+                this.quill.format('smartTag', {id: 123, type: 'Endpoint'});
             },
             smartInline(value){
                 let sel = this.quill.getSelection();
                 if (sel === null || sel.length === 0){
                     return;
                 }
-                this.quill.format('smartInline', value);
+                this.quill.format('smartInline', {id: 123, type: 'Endpoint'});
             },
         },
     },
-    formatToolbarExtras = function(q){
+    formatSmartTagButtons = function(q){
         var tb = q.getModule('toolbar');
         $(tb.container).find('.ql-smartTag')
             .append('<i class="fa fa-tag">');
@@ -80,12 +80,14 @@ export default function(){
             theme: 'snow',
         });
 
-        formatToolbarExtras(q);
+        formatSmartTagButtons(q);
         q.pasteHTML(textarea.val());
         q.on('text-change', function(delta, oldDelta, source){
             let content = $(editor).find('.ql-editor').html();
             textarea.val(content);
         });
         textarea.data('_quill', q);
+
+        window.q = q;
     });
 }
