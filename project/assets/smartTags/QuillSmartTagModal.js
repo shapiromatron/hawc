@@ -40,6 +40,15 @@ class SmartTagModal {
         m.find('.smartTagSave')
             .off('click')
             .click(this.tryToSave.bind(this));
+
+        m.on('show', ()=>{
+            m.find('input').val('');
+        });
+
+        m.on('shown', ()=>{
+            this.quill.blur();
+            m.find('input:visible').focus();
+        });
     }
 
     setInitialValues(){
