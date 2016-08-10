@@ -1,37 +1,28 @@
 import $ from '$';
 
+import SmartTagContainer from './SmartTagContainer';
 
-class SmartTagEditor {
+
+class SmartTagEditor extends SmartTagContainer {
 
     constructor($el, options){
-        options = options || {};
-        this.$el = $el;
-        this.init();
-
-        if (options.submitEl){
-            var self = this;
-            $(options.submitEl).submit(function(){
-                self.prepareSubmission();
-                return true;
-            });
+        $el.quillify();
+        super(...arguments);
+        if(this.options.submitEl){
+            $(options.submitEl)
+                .submit(this.prepareSubmission.bind(this));
         }
     }
 
-    init(){
-
-        this.$el
-            .css('height', '300px')
-            .quillify();
-    }
-
     prepareSubmission(){
-        // TODO: trigger smart-tag deconstruction
+        this.unrenderAndDisable();
+        return true;
     }
 
     setContent(content){
         let q = this.$el.data('_quill');
         q.pasteHTML(content);
-        // TODO: trigger smart-tag construction
+        this.renderAndEnable();
     }
 
 }

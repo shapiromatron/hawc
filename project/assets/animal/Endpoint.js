@@ -49,6 +49,21 @@ class Endpoint extends Observee {
         Endpoint.get_object(id, function(d){d.displayAsModal(opts);});
     }
 
+    static displayInline(id, setTitle, setBody){
+        Endpoint.get_object(id, (obj)=>{
+            let title  = $('<h4>').html(obj.build_breadcrumbs()),
+                plot_div = $('<div style="height:350px; width:350px">'),
+                tbl = obj.build_endpoint_table($('<table class="table table-condensed table-striped">')),
+                content = $('<div class="row-fluid">')
+                    .append($('<div class="span8">').append(tbl))
+                    .append($('<div class="span4">').append(plot_div));
+
+            setTitle(title);
+            setBody(content);
+            obj.renderPlot(plot_div);
+        });
+    }
+
     unpack_doses(){
         if (!this.data.animal_group) return;  // added for edit_endpoint prototype extension
         this.doses = d3.nest()

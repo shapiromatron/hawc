@@ -26,7 +26,8 @@ class EndpointAggregation extends BaseVisual {
 
     displayAsPage($el, options){
         var title = $('<h1>').text(this.data.title),
-            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
+            captionDiv = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer(captionDiv),
             self = this;
 
         options = options || {};
@@ -47,13 +48,13 @@ class EndpointAggregation extends BaseVisual {
         if (!options.visualOnly){
             $el.prepend(title)
                 .append('<h2>Caption</h2>')
-                .append(caption.getEl());
+                .append(captionDiv);
         }
 
         this.buildTbl();
         this.plotData = this.getPlotData();
         this.buildPlot();
-        caption.ready();
+        caption.renderAndEnable();
         return this;
     }
 
@@ -62,14 +63,15 @@ class EndpointAggregation extends BaseVisual {
 
         var self = this,
             modal = new HAWCModal(),
-            caption = new SmartTagContainer($('<div>').html(this.data.caption));
+            captionDiv = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer(captionDiv);
 
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
         modal.getModal().on('shown', function(){
             self.buildPlot();
-            caption.ready();
+            caption.renderAndEnable();
         });
 
         this.buildTbl();
@@ -78,7 +80,7 @@ class EndpointAggregation extends BaseVisual {
             .addBody($('<div>').append(
                 this.$plotDiv,
                 this.$tblDiv,
-                caption.getEl()
+                captionDiv
             ))
             .addFooter('')
             .show({maxWidth: 1200});

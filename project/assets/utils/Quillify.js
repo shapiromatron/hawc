@@ -102,7 +102,5 @@ export default function(){
             textarea.val(content);
         });
         textarea.data('_quill', q);
-
-        window.q = q;
     });
 }

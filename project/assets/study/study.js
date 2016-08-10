@@ -35,6 +35,17 @@ class Study{
         Study.get_object(id, function(d){d.render($div, $shower);});
     }
 
+    static displayInline(id, setTitle, setBody){
+        Study.get_object(id, (obj)=>{
+            var title  = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),
+                content = $('<div>');
+
+            setTitle(title);
+            setBody(content);
+            obj.render(content);
+        });
+    }
+
     has_riskofbias(){
         return this.riskofbias.length>0;
     }
@@ -169,16 +180,24 @@ class Study{
 
     render($div, $shower){
         var self = this,
-            $details = $('<div class="row-fluid">').appendTo($div);
+            $details = $('<div class="row-fluid">').appendTo($div),
+            displayRoB = () => {
+                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
+                render_obj = self.format_for_react(self.riskofbias);
+                renderStudyDisplay(render_obj, $rob[0]);
+            };
         this.build_details_table($details);
         if(this.has_riskofbias()){
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
-            $shower.on('shown', function(){
-                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
-                render_obj = self.format_for_react(self.riskofbias);
-                renderStudyDisplay(render_obj, $rob[0]);
-            });
+            if($shower){
+                $shower.on('shown', function(){
+                    displayRoB();
+                });
+            } else {
+                displayRoB();
+            }
+
         }
     }
 

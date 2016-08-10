@@ -12,7 +12,8 @@ class RoBBarchart extends RoBHeatmap {
 
     displayAsPage($el, options){
         var title = $('<h1>').text(this.data.title),
-            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
+            captionDiv = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer(captionDiv),
             $plotDiv = $('<div>'),
             data = this.getPlotData();
 
@@ -21,10 +22,10 @@ class RoBBarchart extends RoBHeatmap {
         if (window.isEditable) title.append(this.addActionsMenu());
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(caption.getEl());
+        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
-        caption.ready();
+        caption.renderAndEnable();
         return this;
     }
 
@@ -33,17 +34,18 @@ class RoBBarchart extends RoBHeatmap {
 
         var self = this,
             data = this.getPlotData(),
-            caption = new SmartTagContainer($('<div>').html(this.data.caption)),
+            captionDiv = $('<div>').html(this.data.caption),
+            caption = new SmartTagContainer(captionDiv),
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
         modal.getModal().on('shown', function(){
             new RoBBarchartPlot(self, data, options).render($plotDiv);
-            caption.ready();
+            caption.renderAndEnable();
         });
 
         modal.addHeader($('<h4>').text(this.data.title))
-            .addBody([$plotDiv, caption.getEl()])
+            .addBody([$plotDiv, captionDiv])
             .addFooter('')
             .show({maxWidth: 1200});
     }

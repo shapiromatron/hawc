@@ -39,6 +39,17 @@ class Visual {
     static displayAsModal(id, options){
         Visual.get_object(id, function(d){d.displayAsModal(options);});
     }
+
+    static displayInline(id, setTitle, setBody){
+        Visual.get_object(id, (obj)=>{
+            var title = $('<h4>').html(obj.object_hyperlink()),
+                content = $('<div>');
+
+            setTitle(title);
+            setBody(content);
+            obj.displayAsPage(content, {visualOnly: true});
+        });
+    }
 }
 
 export default Visual;

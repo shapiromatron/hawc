@@ -204,7 +204,10 @@ class SummaryTextTree {
     }
 
     _setSmartTags(){
-        new SmartTagContainer(this.options.read_text_div, {showOnStartup: true});
+        new SmartTagContainer(
+            this.options.read_text_div,
+            {showOnStartup: true}
+        );
     }
 
 }

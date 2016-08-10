@@ -1,29 +1,92 @@
-import SmartTag from './SmartTag';
+import $ from '$';
+
+import SmartTagModal from './SmartTagModal';
+import SmartTagInline from './SmartTagInline';
 
 
 class SmartTagContainer {
 
     constructor($el, options){
-        options = options || {};
+        this.options = options || {};
         this.$el = $el;
-
-        this.$el.on('SmartTagContainerReady', function(){
-            SmartTag.initialize_tags($el);
-        });
-
-        if (options.showOnStartup){
-            this.ready();
+        if (this.options.showOnStartup){
+            this.renderAndEnable();
         }
     }
 
-    ready(){
-        this.$el.trigger('SmartTagContainerReady');
+    static toggleAllModals(el){
+        $(el)
+            .find('span.smart-tag')
+            .each(function(){
+                let st = $(this).data('_smartTag');
+                if(!st){
+                    st = new SmartTagModal(this);
+                }
+                if(st.isActive){
+                    st.disable();
+                } else {
+                    st.enable();
+                }
+            });
     }
 
-    getEl(){
-        return this.$el;
+    renderAndEnable(){
+        this.renderInlines();
+        this.enableModals();
     }
 
+    unrenderAndDisable(){
+        this.unrenderInlines();
+        this.disableModals();
+    }
+
+    renderInlines(){
+        this.$el
+            .find('div.smart-tag')
+            .each(function(){
+                let st = $(this).data('_smartTag');
+                if(!st){
+                    st = new SmartTagInline(this);
+                }
+                st.render();
+            });
+    }
+
+    unrenderInlines($el){
+        this.$el
+            .find('div.smart-tag')
+            .each(function(){
+                let st = $(this).data('_smartTag');
+                if(!st){
+                    st = new SmartTagInline(this);
+                }
+                st.unrender();
+            });
+    }
+
+    enableModals(){
+        this.$el
+            .find('span.smart-tag')
+            .each(function(){
+                let st = $(this).data('_smartTag');
+                if(!st){
+                    st = new SmartTagModal(this);
+                }
+                st.enable();
+            });
+    }
+
+    disableModals(){
+        this.$el
+            .find('span.smart-tag')
+            .each(function(){
+                let st = $(this).data('_smartTag');
+                if(!st){
+                    st = new SmartTagModal(this);
+                }
+                st.disable();
+            });
+    }
 }
 
 export default SmartTagContainer;

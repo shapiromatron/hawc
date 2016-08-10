@@ -56,6 +56,17 @@ class DataPivot {
         DataPivot.get_object(id, function(d){d.displayAsModal();});
     }
 
+    static displayInline(id, setTitle, setBody){
+        DataPivot.get_object(id, (obj)=>{
+            var title  = $('<h4>').html(obj.object_hyperlink()),
+                content = $('<div>');
+
+            setTitle(title);
+            setBody(content);
+            obj.build_data_pivot_vis(content);
+        });
+    }
+
     static default_plot_settings(){
         return DataPivotDefaultSettings;
     }
