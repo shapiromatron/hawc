@@ -5,10 +5,12 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li>Clean study risk of bias scores</li>
+  <li>Clean study risk of bias metrics</li>
 {% endblock %}
 
 {% block content %}
+    <h2>Clean {{assessment}} metrics</h2>
+    <p class='help-block'>Clean and standardize the risk of bias metric reviews across studies assessment-wide. Both <b>score</b> and <b>text</b> are editable.</p>
     <div id="root"></div>
 {% endblock %}
 

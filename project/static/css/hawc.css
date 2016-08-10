@@ -402,6 +402,9 @@ span.smart-tag.active:hover{
 .control-label {
   font-weight: bold;
 }
+.space {
+  margin: 5px;
+}
 .adders {
   margin-left: 5px;
 }

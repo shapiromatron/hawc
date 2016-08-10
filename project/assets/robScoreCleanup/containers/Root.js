@@ -66,10 +66,10 @@ class Root extends Component {
                     <MetricSelect />
                     <ScoreSelect />
                     <div>
-                        <button className='btn btn-primary' onClick={this.loadMetrics}>
+                        <button className='btn btn-primary space' onClick={this.loadMetrics}>
                             Load Metrics
                         </button>
-                        <button className='btn' onClick={this.clearMetrics}>
+                        <button className='btn space' onClick={this.clearMetrics}>
                             Clear Results
                         </button>
                     </div>

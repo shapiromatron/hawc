@@ -20,6 +20,7 @@ export class ScoreSelect extends React.Component {
         if (!this.props.isLoaded) return null;
         return (
             <div>
+                <label className='control-label'>(Optional) Select Risk of Bias score filter:</label>
                 <select multiple name="score_filter" id="score_filter" onChange={this.handleChange}>
                 {_.map(this.props.choices, (score) => {
                     return <option key={score.id} value={score.id}>{score.value}</option>;

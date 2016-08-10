@@ -33,10 +33,13 @@ export class MetricSelect extends Component {
         if (!this.props.isLoaded) return null;
         this.setDefaultValue();
         return (
-            <ArraySelect id='metric-select'
-                    choices={this.choices}
-                    handleSelect={this.handleSelect}
-                    defVal={this.defaultValue}/>
+            <div>
+                <label className='control-label'>Select the metric to edit:</label>
+                <ArraySelect id='metric-select'
+                        choices={this.choices}
+                        handleSelect={this.handleSelect}
+                        defVal={this.defaultValue}/>
+            </div>
         );
     }
 }

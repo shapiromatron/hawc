@@ -5,7 +5,6 @@ import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'robTable/actions
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
-import './RiskOfBiasForm.css';
 
 
 class RiskOfBiasForm extends Component {
@@ -54,11 +53,11 @@ class RiskOfBiasForm extends Component {
                                            domain={domain}
                                            config={config} />;
                     })}
-                    <button className='btn btn-primary'
+                    <button className='btn btn-primary space'
                             type='submit'>
                         Update risk of bias
                     </button>
-                    <button className='btn'
+                    <button className='btn space'
                             onClick={this.handleCancel}>Cancel</button>
                 </form>
             </div>

@@ -18,7 +18,6 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          BaseDelete, BaseVersion, BaseList,
                          TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 from utils.helper import tryParseInt
-from celery import chain
 
 from . import forms, models, tasks, serializers
 
