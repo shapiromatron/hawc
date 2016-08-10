@@ -68,6 +68,7 @@
     "sinon": "^1.17.2",
     "sortablejs": "^1.4.2",
     "style-loader": "^0.13.0",
+    "tablesort": "^4.1.0",
     "underscore": "^1.8.3",
     "unexpected": "^10.13.2",
     "unexpected-react": "^3.2.1",

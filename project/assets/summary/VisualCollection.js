@@ -1,6 +1,8 @@
 import $ from '$';
 import _ from 'underscore';
 
+import Tablesort from 'Tablesort';
+
 import BaseTable from 'utils/BaseTable';
 import HAWCUtils from 'utils/HAWCUtils';
 
