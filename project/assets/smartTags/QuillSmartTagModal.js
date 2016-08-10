@@ -12,6 +12,7 @@ class SmartTagModal {
 
     setupEventListeners(){
         let m = this.modal;
+
         m.find('#id_resource')
             .off('change')
             .change(function(){
@@ -48,6 +49,10 @@ class SmartTagModal {
         m.on('shown', ()=>{
             this.quill.blur();
             m.find('input:visible').focus();
+        });
+
+        m.on('hidden', ()=>{
+            this.quill.stc.enableModals();
         });
     }
 

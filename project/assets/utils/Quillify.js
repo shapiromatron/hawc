@@ -4,6 +4,8 @@ import Quill from 'QuillUno';
 import SmartTag from 'smartTags/QuillSmartTag';
 import SmartInline from 'smartTags/QuillSmartInline';
 import SmartTagModal from 'smartTags/QuillSmartTagModal';
+import SmartTagContainer from 'smartTags/SmartTagContainer';
+
 
 Quill.register(SmartTag, true);
 Quill.register(SmartInline, true);
@@ -91,6 +93,7 @@ export default function(){
         });
 
         if (showHawcTools){
+            q.stc = new SmartTagContainer($(q.container).find('.ql-editor'));
             formatSmartTagButtons(q);
         } else {
             hideSmartTagButtons(q);
@@ -102,5 +105,9 @@ export default function(){
             textarea.val(content);
         });
         textarea.data('_quill', q);
+
+        if (q.stc){
+            q.stc.enableModals();
+        }
     });
 }
