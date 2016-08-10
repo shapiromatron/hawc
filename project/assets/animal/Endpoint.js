@@ -202,6 +202,8 @@ class Endpoint extends Observee {
     _build_ag_dose_rows(options){
 
         var nGroups = this.doses[0].values.length,
+            nCols = nGroups+3,
+            percents = 100/(nCols+1),
             tr1 = $('<tr>'),
             tr2 = $('<tr>'),
             txt;
@@ -212,8 +214,10 @@ class Endpoint extends Observee {
             txt += (i===0) ? v.name : ' ({0})'.printf(v.name);
         });
 
-        tr1.append('<th rowspan="2">Endpoint</th>')
-           .append('<th colspan="{0}">{1}</th>'.printf(nGroups, txt));
+        tr1.append(`<th style="width: ${percents*2}%" rowspan="2">Endpoint</th>`)
+           .append(`<th style="width: ${percents}%" rowspan="2">Organ</th>`)
+           .append(`<th style="width: ${percents}%" rowspan="2">Obs. time</th>`)
+           .append(`<th style="width: ${percents*nGroups}%" colspan="${nGroups}">${txt}</th>`);
 
         // now build header row showing available doses
         for(var i=0; i<nGroups; i++){
@@ -224,7 +228,7 @@ class Endpoint extends Observee {
             tr2.append('<th>{0}</th>'.printf(txt));
         }
 
-        return {html: [tr1, tr2], ncols: nGroups+1};
+        return {html: [tr1, tr2], ncols: nCols};
     }
 
     build_ag_no_dr_li(){
@@ -236,15 +240,17 @@ class Endpoint extends Observee {
     }
 
     _build_ag_n_row(options){
-        return $('<tr><td>Sample Size</td>{0}</tr>'.printf(
+        return $('<tr><td>Sample Size</td><td>-</td><td>-</td>{0}</tr>'.printf(
             this.data.groups.map(function(v){return '<td>{0}</td>'.printf(v.n || '-');})));
     }
 
     _build_ag_response_row(footnote_object){
         var self = this, footnotes, response, td, txt, dr_control,
             data_type = this.data.data_type,
-            tr = $('<tr>').append('<td><a href="{0}">{1}</a></td>'.printf(
-                    this.data.url, this.data.name));
+            tr = $('<tr>')
+                .append(`<td><a href="${this.data.url}">${this.data.name}</a></td>`)
+                .append(`<td>${this.data.organ || '-'}</td>`)
+                .append(`<td>${this.data.observation_time_text || '-'}</td>`);
 
         this.data.groups.forEach(function(v, i){
             td = $('<td>');
