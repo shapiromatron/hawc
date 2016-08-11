@@ -4,24 +4,30 @@ import ReactDOM from 'react-dom';
 class ScrollToErrorBox extends Component {
 
     componentDidMount(){
-        ReactDOM.findDOMNode(this).scrollIntoView(false);
+        let node = ReactDOM.findDOMNode(this);
+        if (node){
+            node.scrollIntoView(false);
+        }
     }
 
     render(){
         let { error } = this.props;
 
         if (_.isNull(error)) {
-            error;
+            error = null;
         } else if (error.hasOwnProperty('detail')) {
             error = error.detail;
         } else if (error.hasOwnProperty('message')) {
             error = error.message;
         }
 
-        if (!error) return <div></div>;
+        if (!error){
+            return null;
+        }
+
         return (
-            <div className='alert alert-danger' >
-                {error}
+            <div className='alert alert-danger'>
+                {error.toString()}
             </div>
         );
 

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { checkScoreForUpdate } from 'robScoreCleanup/actions/Items';
+import {
+    checkScoreForUpdate,
+    updateVisibleItems,
+} from 'robScoreCleanup/actions/Items';
 
 import DisplayComponent from 'robScoreCleanup/components/ScoreList';
 
@@ -13,17 +16,29 @@ export class ScoreList extends Component {
         this.handleCheck = this.handleCheck.bind(this);
     }
 
+    componentWillReceiveProps(nextProps){
+        if (nextProps.selected != this.props.selected ||
+            nextProps.items != this.props.items){
+            this.props.dispatch(updateVisibleItems(nextProps.selected));
+        }
+    }
+
     handleCheck({target}) {
         this.props.dispatch(checkScoreForUpdate(target.id));
     }
 
+    renderEmptyScoreList(){
+        return <p className='lead'>No items meet your criteria.</p>;
+    }
+
     render() {
         if (!this.props.isLoaded) return null;
-        let { items, idList, selected, config } = this.props,
-            filteredItems = _.isEmpty(selected) ?
-                items :
-                _.filter(items,
-                    (item) => { return _.contains(selected, item.score.toString()); });
+        let { items, visibleItemIds, idList, config } = this.props,
+            filteredItems = items.filter((d)=>_.contains(visibleItemIds, d.id));
+
+        if (filteredItems.length === 0){
+            return this.renderEmptyScoreList();
+        }
 
         return (
             <DisplayComponent
@@ -36,10 +51,11 @@ export class ScoreList extends Component {
 }
 
 function mapStateToProps(state) {
-    const { items, updateIds, isLoaded } = state.items;
+    const { items, visibleItemIds, updateIds, isLoaded } = state.items;
     return {
         selected: state.scores.selected,
         items,
+        visibleItemIds,
         idList: updateIds,
         isLoaded,
     };

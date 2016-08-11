@@ -89,6 +89,25 @@ function updateMetric(item, current){
     };
 }
 
+
+export function selectAll(){
+    return {
+        type: types.TOGGLE_CHECK_VISIBLE_SCORES,
+    };
+}
+
+
+export function updateVisibleItems(selectedScores){
+    if (selectedScores !== null){
+        selectedScores = selectedScores.map((d) => parseInt(d));
+    }
+    return {
+        type: types.UPDATE_VISIBLE_ITEMS,
+        selectedScores,
+    };
+}
+
+
 export function updateEditMetricIfNeeded() {
     return (dispatch, getState) => {
         let state = getState(),

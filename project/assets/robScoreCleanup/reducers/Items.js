@@ -1,9 +1,13 @@
 import * as types from 'robScoreCleanup/constants';
 
+import {deepCopy} from 'shared/utils';
+
+
 const defaultState = {
     isFetching: false,
     isLoaded: false,
     items: [],
+    visibleItemIds: [],
     updateIds: [],
     editMetric: {
         key: 'metric',
@@ -30,7 +34,7 @@ const defaultState = {
 };
 
 function items(state=defaultState, action) {
-    let list, index;
+    let list, list2, index;
     switch(action.type){
 
     case types.REQUEST_ITEMS:
@@ -70,7 +74,36 @@ function items(state=defaultState, action) {
         return Object.assign({}, state, {
             updateIds: list,
         });
-    
+
+    case types.UPDATE_VISIBLE_ITEMS:
+        // when the items or selected scores change, we need to make sure
+        // the following:
+        // 1) `visibleItems` is the intersection of `items` and `selectedScores`
+        // 2) `updateIds` is subset of `visibleItems`
+
+        // visibleItems
+        list = (action.selectedScores === null || action.selectedScores.length === 0)?
+                _.pluck(state.items, 'id'):
+                state.items.filter((d) => _.contains(action.selectedScores, d.score))
+                           .map((d)=>d.id);
+
+        // updateIds
+        list2 = state.updateIds.filter((d) => _.contains(list, d));
+
+        return Object.assign({}, state, {
+            visibleItemIds: list,
+            updateIds: list2,
+        });
+
+    case types.TOGGLE_CHECK_VISIBLE_SCORES:
+        list = (state.updateIds.length === state.visibleItemIds.length)?
+            []:
+            deepCopy(state.visibleItemIds);
+
+        return Object.assign({}, state, {
+            updateIds: list,
+        });
+
     case types.UPDATE_EDIT_METRIC:
         return Object.assign({}, state, {
             editMetric: action.editMetric,

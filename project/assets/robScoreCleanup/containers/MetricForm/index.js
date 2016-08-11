@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { resetError } from 'robScoreCleanup/actions/Errors';
+import { selectAll } from 'robScoreCleanup/actions/Items';
 import { updateEditMetricIfNeeded, submitItemEdits } from 'robScoreCleanup/actions/Items';
 
 import DisplayComponent from 'robTable/components/MetricForm';
@@ -12,6 +13,7 @@ export class MetricForm extends React.Component {
     constructor(props) {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
+        this.handleSelectAll = this.handleSelectAll.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -32,6 +34,11 @@ export class MetricForm extends React.Component {
         this.props.dispatch(resetError());
     }
 
+    handleSelectAll(e){
+        e.preventDefault();
+        this.props.dispatch(selectAll());
+    }
+
     onSubmit(e){
         e.preventDefault();
         let { notes, score } = this.refs.metricForm.refs.form.state,
@@ -45,9 +52,12 @@ export class MetricForm extends React.Component {
         return (
             <form onSubmit={this.onSubmit}>
                 <DisplayComponent ref='metricForm' metric={items.editMetric} config={config}/>
-                <button className='btn btn-primary space' type='submit'>Update {items.updateIds.length} responses</button>
-                <button className='btn space' onClick={this.handleCancel}>Cancel</button>
+                <button type='submit' className='btn btn-primary space'>Update {items.updateIds.length} responses</button>
+                <button type='button' className='btn btn-info space' onClick={this.handleSelectAll}>Select/unselect all</button>
+                <button type='button' className='btn' onClick={this.handleCancel}>Cancel</button>
+                <hr />
             </form>
+
         );
     }
 }

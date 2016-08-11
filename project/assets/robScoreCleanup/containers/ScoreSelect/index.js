@@ -21,7 +21,7 @@ export class ScoreSelect extends React.Component {
         return (
             <div>
                 <label className='control-label'>Rating filter (optional):</label>
-                <select multiple name="score_filter" id="score_filter" onChange={this.handleChange}>
+                <select multiple name="score_filter" id="score_filter" onChange={this.handleChange} style={{height: '120px'}}>
                 {_.map(this.props.choices, (score) => {
                     return <option key={score.id} value={score.id}>{score.value}</option>;
                 })}
