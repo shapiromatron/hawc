@@ -1051,6 +1051,8 @@ class Result(models.Model):
         (4, "GSD"),
         (5, "other"))
 
+    name = models.CharField(
+        max_length=256)
     outcome = models.ForeignKey(
         Outcome,
         related_name="results")
@@ -1144,7 +1146,7 @@ class Result(models.Model):
             .filter(outcome__assessment=assessment_id)
 
     def __unicode__(self):
-        return u"{0}: {1}".format(self.comparison_set, self.metric)
+        return self.name
 
     def get_assessment(self):
         return self.outcome.get_assessment()
@@ -1162,6 +1164,7 @@ class Result(models.Model):
             "metric-name",
             "metric-abbreviation",
             "result-id",
+            "result-name",
             "result-metric_description",
             "result-data_location",
             "result-population_description",
@@ -1195,6 +1198,7 @@ class Result(models.Model):
             ser['metric']['metric'],
             ser['metric']['abbreviation'],
             ser['id'],
+            ser['name'],
             ser['metric_description'],
             ser['data_location'],
             ser['population_description'],

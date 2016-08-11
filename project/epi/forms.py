@@ -691,6 +691,7 @@ class ResultForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
 
+        helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('metric', 2, "span6")
         helper.add_fluid_row('data_location', 2, "span6")
         helper.add_fluid_row('dose_response', 3, "span4")

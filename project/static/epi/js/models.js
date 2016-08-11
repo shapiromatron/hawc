@@ -674,7 +674,7 @@ Result.prototype = {
         var urls = [
             {
                 url: this.data.url,
-                name: this.data.full_name
+                name: this.data.name
             },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
@@ -690,7 +690,7 @@ Result.prototype = {
         return '<li {0}><a href="#{1}" data-toggle="tab">{2}</a></li>'.printf(
             cls,
             this.get_tab_id(),
-            this.data.full_name
+            this.data.name
         );
     },
     build_content_tab: function(isActive){
@@ -837,7 +837,7 @@ _.extend(ResultForestPlot.prototype, D3Plot.prototype, {
             };
 
         _.extend(this, {
-            "title_str": data.full_name,
+            "title_str": data.name,
             "scale_type": (data.metric.isLog) ? "log" : "linear",
             "estimates": estimates,
             "lines": lines,
