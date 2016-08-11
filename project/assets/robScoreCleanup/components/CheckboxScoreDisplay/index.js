@@ -13,12 +13,12 @@ class CheckboxScoreDisplay extends Component {
         return (
             <div className='flexRow-container'>
                 <div className='score-display-checkbox'>
+                    <p onClick={() => { Study.displayAsModal(item.study_id); }}><b>{item.study_name}</b></p>
                     <input type="checkbox"
                         title="Include/exclude selected item in change"
                         checked={checked}
                         id={item.id}
                         onChange={handleCheck}/>
-                    <span onClick={() => { Study.displayAsModal(item.study_id); }}>{item.study_name}</span>
                 </div>
                 <ScoreDisplay key={item.id} score={item} config={config} />
             </div>
