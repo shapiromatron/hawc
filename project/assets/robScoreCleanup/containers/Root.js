@@ -13,6 +13,8 @@ import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
 import ScoreList from 'robScoreCleanup/containers/ScoreList';
 import ScoreSelect from 'robScoreCleanup/containers/ScoreSelect';
 
+import './Root.css';
+
 
 class Root extends Component {
 
@@ -63,15 +65,21 @@ class Root extends Component {
         return (
                 <div>
                     <ScrollToErrorBox error={error} />
-                    <MetricSelect />
-                    <ScoreSelect />
-                    <div>
-                        <button className='btn btn-primary space' onClick={this.loadMetrics}>
-                            Load Metrics
-                        </button>
-                        <button className='btn space' onClick={this.clearMetrics}>
-                            Clear Results
-                        </button>
+                    <div className='container-fluid cleanStudyMetricForm' >
+                        <div className='span8'>
+                            <MetricSelect />
+                            <div>
+                                <button className='btn btn-primary space' onClick={this.loadMetrics}>
+                                    Load responses
+                                </button>
+                                <button className='btn space' onClick={this.clearMetrics}>
+                                    Hide currently shown responses
+                                </button>
+                            </div>
+                        </div>
+                        <div className='span4'>
+                            <ScoreSelect />
+                        </div>
                     </div>
                     <MetricForm config={config} />
                     <ScoreList config={config} />

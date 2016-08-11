@@ -94,7 +94,7 @@ export function updateEditMetricIfNeeded() {
         let state = getState(),
             current = state.items.editMetric,
             update;
-        if (!state.items.isLoaded) { 
+        if (!state.items.isLoaded) {
         // update displayed metric and description to selected metric
             update = updateMetric(state.metrics.selected, current.values[0]);
             dispatch(updateEditMetric(update));

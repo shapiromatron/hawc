@@ -6,7 +6,7 @@ import { selectMetric } from 'robScoreCleanup/actions/Metrics';
 import ArraySelect from 'shared/components/ArraySelect';
 
 export class MetricSelect extends Component {
-  
+
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);
@@ -36,9 +36,10 @@ export class MetricSelect extends Component {
             <div>
                 <label className='control-label'>Select the metric to edit:</label>
                 <ArraySelect id='metric-select'
-                        choices={this.choices}
-                        handleSelect={this.handleSelect}
-                        defVal={this.defaultValue}/>
+                    className='span12'
+                    choices={this.choices}
+                    handleSelect={this.handleSelect}
+                    defVal={this.defaultValue}/>
             </div>
         );
     }

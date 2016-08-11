@@ -8,7 +8,7 @@ export class ScoreSelect extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);   
+        this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange({ target: {options} }) {
@@ -20,7 +20,7 @@ export class ScoreSelect extends React.Component {
         if (!this.props.isLoaded) return null;
         return (
             <div>
-                <label className='control-label'>(Optional) Select Risk of Bias score filter:</label>
+                <label className='control-label'>Rating filter (optional):</label>
                 <select multiple name="score_filter" id="score_filter" onChange={this.handleChange}>
                 {_.map(this.props.choices, (score) => {
                     return <option key={score.id} value={score.id}>{score.value}</option>;
