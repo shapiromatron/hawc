@@ -55,6 +55,8 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret['score_symbol'] = instance.score_symbol
         ret['score_shade'] = instance.score_shade
         ret['url_edit'] = instance.riskofbias.get_edit_url()
+        ret['study_name'] = instance.riskofbias.study.short_citation
+        ret['study_id'] = instance.riskofbias.study.id
         return ret
 
     class Meta:
@@ -98,4 +100,5 @@ class AssessmentRiskOfBiasScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
         fields = ('id', 'notes', 'score')
+
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

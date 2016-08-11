@@ -6,7 +6,7 @@ import { selectMetric } from 'robScoreCleanup/actions/Metrics';
 import ArraySelect from 'shared/components/ArraySelect';
 
 export class MetricSelect extends Component {
-  
+
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);

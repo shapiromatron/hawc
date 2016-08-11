@@ -1,4 +1,12 @@
 .score-display-checkbox {
-	width: 40px !important;
+	width: 140px !important;
 	margin-top: 25px !important;
+}
+
+.score-display-checkbox span {
+	cursor: pointer;
+}
+
+.score-display-checkbox input {
+	margin: 0 5px 0 0;
 }
