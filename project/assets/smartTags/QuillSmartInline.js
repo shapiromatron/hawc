@@ -1,4 +1,4 @@
-import Quill from 'QuillUno';
+import Quill from 'quill';
 
 
 let Block = Quill.imports['blots/block'];

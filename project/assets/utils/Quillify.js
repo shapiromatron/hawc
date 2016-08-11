@@ -1,5 +1,7 @@
 import $ from '$';
-import Quill from 'QuillUno';
+import Quill from 'quill';
+
+import 'quill/dist/quill.snow.css';
 
 import SmartTag from 'smartTags/QuillSmartTag';
 import SmartInline from 'smartTags/QuillSmartInline';

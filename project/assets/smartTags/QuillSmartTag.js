@@ -1,4 +1,4 @@
-import Quill from 'QuillUno';
+import Quill from 'quill';
 
 
 let Inline = Quill.imports['blots/inline'];
