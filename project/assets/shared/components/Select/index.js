@@ -40,7 +40,7 @@ Select.propTypes = {
     handleSelect: PropTypes.func.isRequired,
     choices: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
-    defVal: PropTypes.any.isRequired,
+    value: PropTypes.any,
 };
 
 export default Select;
