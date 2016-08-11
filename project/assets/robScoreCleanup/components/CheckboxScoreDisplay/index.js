@@ -12,12 +12,14 @@ class CheckboxScoreDisplay extends Component {
         item = {...item, score_shade: scoreInfo.shade, score_description: scoreInfo.text};
         return (
             <div className='flexRow-container'>
-                <input className='score-display-checkbox'
-                       type="checkbox"
-                       title="Include/exclude selected item in change"
-                       checked={checked}
-                       id={item.id}
-                       onChange={handleCheck}/>
+                <div className='score-display-checkbox'>
+                    <input type="checkbox"
+                        title="Include/exclude selected item in change"
+                        checked={checked}
+                        id={item.id}
+                        onChange={handleCheck}/>
+                    <span onClick={() => { Study.displayAsModal(item.study_id); }}>{item.study_name}</span>
+                </div>
                 <ScoreDisplay key={item.id} score={item} config={config} />
             </div>
         );
