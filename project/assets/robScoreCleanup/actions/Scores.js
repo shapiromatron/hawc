@@ -25,8 +25,8 @@ export function selectScores(scores){
     };
 }
 
-function formatScoreOptions(json){
-    return _.map(json[0].RISK_OF_BIAS_SCORE_CHOICES, (choice) => {
+function formatScoreOptions(choices){
+    return choices.map((choice) => {
         return {id: choice[0], value: choice[1]};
     });
 }

@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 
+from django.shortcuts import get_object_or_404
+
 from rest_framework import filters
+from rest_framework.response import Response
+from rest_framework.decorators import list_route
 from rest_framework import viewsets
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
@@ -37,15 +41,6 @@ class RiskOfBias(viewsets.ModelViewSet):
             .prefetch_related('study', 'author', 'scores__metric__domain')
 
 
-class RiskOfBiasScore(viewsets.ReadOnlyModelViewSet):
-    model = models.RiskOfBiasScore
-    pagination_class = DisabledPagination
-    serializer_class = serializers.RiskOfBiasScoreChoiceSerializer
-
-    def get_queryset(self):
-        return self.model.objects.all()[:1]
-
-
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.AssessmentMetricChoiceSerializer
@@ -79,6 +74,10 @@ class AssessmentScoreViewset(AssessmentEditViewset, TeamMemberOrHigherMixin, Lis
             raise RequiresAssessmentID
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
+
+    @list_route()
+    def choices(self, request):
+        return Response(models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES)
 
     def get_queryset(self):
         return self.model.objects.all()
