@@ -61,23 +61,22 @@
   <script type="text/javascript">
     $(document).ready(function(){
         var isSearch = function(txt){
-          return (txt.search('{Search}')>=0);
+            return (txt.search('{Search}')>=0);
         };
 
         $('#submit_form').on('click', function(){
-          var val = parseInt($('#id_searches').val(), 10),
-              txt = $('#id_searches option:selected').text(),
-              search_url = "{% url 'lit:search_new' assessment.pk %}",
-              import_url = "{% url 'lit:import_new' assessment.pk %}";
+            var val = parseInt($('#id_searches').val(), 10),
+                txt = $('#id_searches option:selected').text(),
+                search_url = "{% url 'lit:search_new' assessment.pk %}",
+                import_url = "{% url 'lit:import_new' assessment.pk %}";
 
-          if (val){
-            var url = (isSearch(txt)) ? search_url : import_url;
-            $(this).attr('href', "{0}?initial={1}".printf(url, val));
-            return true;
-          }
-          return false;
+            if (val){
+                var url = (isSearch(txt)) ? search_url : import_url;
+                $(this).attr('href', "{0}?initial={1}".printf(url, val));
+                return true;
+            }
+            return false;
         });
-
     });
   </script>
 {% endblock extrajs %}

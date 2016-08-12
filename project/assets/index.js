@@ -1,25 +1,48 @@
-import robScoreCleanupStartup from 'robScoreCleanup';
-import robTableStartup from 'robTable';
-import robVisualStartup from 'robVisual';
-import textCleanupStartup from 'textCleanup';
-import bmdStartup from 'bmd';
-import { BMDLine } from 'bmd/models/model.js';
+// startup
+import 'utils/startup';
+import utils from 'utils';
 
-import { renderCrossStudyDisplay } from 'robTable/components/CrossStudyDisplay';
-import { renderRiskOfBiasDisplay } from 'robTable/components/RiskOfBiasDisplay';
-import { renderStudyDisplay } from 'robTable/components/StudyDisplay';
+// object models
+import animal from 'animal';
+import assessment from 'assessment';
+import dataPivot from 'dataPivot';
+import epi from 'epi';
+import epimeta from 'epimeta';
+import invitro from 'invitro';
+import lit from 'lit';
+import riskofbias from 'riskofbias';
+import study from 'study';
+import smartTags from 'smartTags';
+import summary from 'summary';
+import summaryForms from 'summaryForms';
+
+// custom applications
+import bmdStartup from 'bmd';
+import robVisualStartup from 'robVisual';
+import robTableStartup from 'robTable';
+import robScoreCleanupStartup from 'robScoreCleanup';
+import textCleanupStartup from 'textCleanup';
 import nestedTagEditorStartup from 'nestedTagEditor';
 
 
 window.app = {
-    renderCrossStudyDisplay,
-    renderRiskOfBiasDisplay,
-    renderStudyDisplay,
-    robScoreCleanupStartup,
-    robTableStartup,
-    robVisualStartup,
-    textCleanupStartup,
+    utils,
+    animal,
+    assessment,
+    dataPivot,
+    epi,
+    epimeta,
+    invitro,
+    lit,
+    riskofbias,
+    study,
+    smartTags,
+    summary,
+    summaryForms,
     bmdStartup,
-    BMDLine,
+    robVisualStartup,
+    robTableStartup,
+    robScoreCleanupStartup,
+    textCleanupStartup,
     nestedTagEditorStartup,
 };

@@ -4,7 +4,6 @@
 {% load selectable_tags %}
 
 {% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
   {% include_ui_theme %}
 {% endblock %}
 
@@ -54,11 +53,6 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script src="{{STATIC_URL}}admin/js/urlify.js" type="text/javascript" ></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}summary/js/summary_form.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}summary/js/smart_tags_edit.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
 
@@ -67,11 +61,11 @@
           $('#id_slug').val(URLify($(this).val(), 50));
         });
       {% endif %}
+
       window.rob_metrics = {{rob_metrics|safe}};
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
-      new VisualForm.create({{visual_type}}, $('.tabbable'));
-      new SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
-
+      new window.app.summaryForms.VisualForm.create({{visual_type}}, $('.tabbable'));
+      new window.app.smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
     });
   </script>
 {% endblock %}

@@ -4,7 +4,7 @@ import _ from 'underscore';
 import CardHeader from './CardHeader';
 import DoseResponseChart from './Graph/DoseResponseChart';
 import Content from './Content';
-import Endpoint from 'Endpoint';
+import Endpoint from 'animal/Endpoint';
 import './EndpointCard.css';
 
 

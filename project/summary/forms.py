@@ -648,10 +648,6 @@ class SmartTagForm(forms.Form):
         ('visual', 'Visualization'),
         ('data_pivot', 'Data Pivot'),
     )
-    DISPLAY_TYPE_CHOICES = (
-        ('popup', 'Popup'),
-        ('inline', 'Inline'),
-    )
     resource = forms.ChoiceField(
         choices=RESOURCE_CHOICES)
     study = selectable.AutoCompleteSelectField(
@@ -666,14 +662,6 @@ class SmartTagForm(forms.Form):
     data_pivot = selectable.AutoCompleteSelectField(
         lookup_class=lookups.DataPivotLookup,
         help_text="Type a few characters of the data-pivot name, then click to select.")
-    display_type = forms.ChoiceField(
-        choices=DISPLAY_TYPE_CHOICES,
-        help_text="A popup will appear as a hyperlink which a user can select to see more details; an inline visual is shown on page-load.")
-    title = forms.CharField(
-        help_text="This is the inline text-displayed as a hyperlink; if user clicks, then the resource is presented in a popup.")
-    caption = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3}),
-        help_text="This is caption presented beneath an inline display of the selected resource.")
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id', -1)

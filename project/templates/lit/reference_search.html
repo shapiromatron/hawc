@@ -51,12 +51,12 @@
   <script type="text/javascript">
     $(document).ready(function(){
       window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new TagTree({{tags|safe}});
+      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
       window.canEdit = {{obj_perms.edit|lower}};
 
       $('#reference_search_form').submit(function(event){
         options = {fixed_title: "Search Results"}
-        window.refviewer = new ReferencesViewer($('#references_detail_div'), options);
+        window.refviewer = new window.app.lit.ReferencesViewer($('#references_detail_div'), options);
         var form = $(this);
         print_search_fields();
         $('#results_div').fadeIn();
@@ -68,7 +68,7 @@
             if(results.status=="success"){
               window.refviewer.set_references(
                 _.map(results.refs, function(d){
-                  return new Reference(d, window.tagtree);
+                  return new window.app.lit.Reference(d, window.tagtree);
                 }));
             } else {
                 window.refviewer.set_error();

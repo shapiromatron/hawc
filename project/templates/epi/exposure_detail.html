@@ -30,7 +30,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Exposure.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epi.Exposure.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

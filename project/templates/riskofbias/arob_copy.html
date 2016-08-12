@@ -7,10 +7,6 @@
   {{assessment}} | Copy risk of bias approach | HAWC
 {% endblock %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
@@ -47,9 +43,9 @@
                 tr.appendChild(th);
                 tdMetric.innerHTML = data.metric +
                     '<br><br><strong>Required for animal bioassay: </strong>'
-                    + HAWCUtils.booleanCheckbox(data.required_animal)
+                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_animal)
                     + '<br><strong>Required for epidemiological: </strong>'
-                    + HAWCUtils.booleanCheckbox(data.required_epi);
+                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_epi);
 
                 tdDescr.innerHTML = data.description;
                 tr.appendChild(tdMetric);
@@ -60,7 +56,7 @@
             var displayDomain = function(domain){
                 var div  = document.createElement('div'),
                     header = document.createElement('h3'),
-                    table = new BaseTable(),
+                    table = new window.app.utils.BaseTable(),
                     colgroups = [5, 35, 60],
                     thead = ['ID', 'Metric', 'Description'];
 

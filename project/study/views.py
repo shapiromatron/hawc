@@ -8,8 +8,8 @@ from django.views.generic import FormView
 from assessment.models import Assessment
 from lit.models import Reference
 from utils.views import (MessageMixin, BaseDetail, BaseDelete,
-                         BaseVersion, BaseUpdate, BaseCreate,
-                         BaseList, GenerateReport, TeamMemberOrHigherMixin)
+                         BaseUpdate, BaseCreate, BaseList,
+                         GenerateReport, TeamMemberOrHigherMixin)
 
 from . import models, forms
 
@@ -137,11 +137,6 @@ class StudyDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy('study:list', kwargs={'pk': self.assessment.pk})
-
-
-class StudyVersions(BaseVersion):
-    model = models.Study
-    template_name = "study/study_versions.html"
 
 
 class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):

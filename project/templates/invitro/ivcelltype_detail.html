@@ -17,7 +17,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     window.canEdit = {{obj_perms.edit|lower}};
-    IVCellType.displayAsPage({{object.id}}, $("#ivCellType"));
+    window.app.invitro.IVCellType.displayAsPage({{object.id}}, $("#ivCellType"));
 });
 </script>
 {% endblock %}

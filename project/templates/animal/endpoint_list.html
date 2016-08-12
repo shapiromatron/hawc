@@ -105,9 +105,9 @@
             var endpoints = [],
                 dose_units = {{dose_units|default_if_none:"undefined"}};
             {{endpoints_json|safe}}.forEach(function(datum){
-                endpoints.push(new Endpoint(datum));
+                endpoints.push(new window.app.animal.Endpoint(datum));
             });
-            var tbl = new EndpointListTable(endpoints, dose_units);
+            var tbl = new window.app.animal.EndpointListTable(endpoints, dose_units);
             $("#endpointTbl").html(tbl.build_table());
         });
     </script>

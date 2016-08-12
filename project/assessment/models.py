@@ -115,34 +115,6 @@ class Assessment(models.Model):
 
     COPY_NAME = 'assessments'
 
-    def get_prior_versions_json(self):
-        """
-        Return a JSON list of other prior versions of selected model
-        """
-        def get_users(pk_list):
-            users = []
-            for pk in pk_list:
-                try:
-                    u = HAWCUser.objects.get(pk=pk)
-                except:
-                    deleted_users = reversion.get_deleted(HAWCUser)
-                    u = deleted_users.get(pk=pk)
-                users.append(u.get_full_name())
-            return '<br>'.join(sorted(users))
-
-        versions = reversion.get_for_object(self)
-        versions_json = []
-        for version in versions:
-            fields = version.field_dict
-            # replace M2M with objects in field-list
-            fields['project_manager'] = get_users(fields['project_manager'])
-            fields['team_members'] = get_users(fields['team_members'])
-            fields['reviewers'] = get_users(fields['reviewers'])
-            fields['changed_by'] = version.revision.user.get_full_name()
-            fields['updated'] = version.revision.date_created
-            versions_json.append(fields)
-        return json.dumps(versions_json, cls=DjangoJSONEncoder)
-
     def get_assessment(self):
         return self
 

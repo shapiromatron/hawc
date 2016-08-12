@@ -15,8 +15,8 @@ from django.shortcuts import HttpResponse, get_object_or_404
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList,
-                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
+                         BaseDelete, BaseList, TeamMemberOrHigherMixin,
+                         ProjectManagerOrHigherMixin)
 from utils.helper import tryParseInt
 
 from . import forms, models, tasks, serializers
@@ -130,11 +130,6 @@ class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy('portal')
     success_message = 'Assessment deleted.'
-
-
-class AssessmentVersions(BaseVersion):
-    model = models.Assessment
-    template_name = "assessment/assessment_versions.html"
 
 
 class AssessmentReports(BaseList):

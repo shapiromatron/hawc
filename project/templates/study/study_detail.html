@@ -26,7 +26,6 @@
             <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
             <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
             <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
-            <li><a href="{% url 'study:versions' object.pk %}">View prior versions</a></li>
             <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
             {% if object.bioassay %}
@@ -105,14 +104,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.study = new Study({{study.get_json|safe}})
-    var detail_div = $('#study_details')
+    var study = new window.app.study.Study({{study.get_json|safe}});
+    var detail_div = $('#study_details');
     study.build_details_table(detail_div);
 
     {% if attachments_viewable %}
       study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    window.plot = new RiskOfBias_Donut(study, '#rob_plot', {'build_plot_startup': true});
+    if (study.has_riskofbias()){
+      new window.app.riskofbias.Donut(study, '#rob_plot', {'build_plot_startup': true});
+    }
+
   </script>
 {% endblock extrajs %}

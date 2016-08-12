@@ -22,7 +22,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      new HAWCUtils.InitialForm({
+      new window.app.utils.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'epi:exp_create' object.pk %}"
       });

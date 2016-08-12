@@ -31,7 +31,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epi.ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

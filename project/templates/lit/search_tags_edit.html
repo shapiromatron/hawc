@@ -29,14 +29,14 @@
     $(document).ready(function(){
       window.isEdit = true;
       {% if obj_perms.edit_assessment %}
-        window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
+          window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
       {% endif %}
-      window.tagtree = new TagTree({{tags|safe}});
+      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
       window.refs = [];
       {% for ref in references %}
-        refs.push(new Reference({{ref.get_json|safe}}, window.tagtree));
+          refs.push(new window.app.lit.Reference({{ref.get_json|safe}}, window.tagtree));
       {% endfor %}
-      window.ref_container = new EditReferenceContainer(window.refs, window.tagtree,
+      window.ref_container = new window.app.lit.EditReferenceContainer(window.refs, window.tagtree,
                                     {"content_div": "#reference_details"});
     });
   </script>

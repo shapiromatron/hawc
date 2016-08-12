@@ -14,7 +14,6 @@
 
 {% block extrastyle %}
   {% include_ui_theme %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
 {% endblock %}
 
 {% block content %}
@@ -25,8 +24,6 @@
 
 {% block extrajs %}
   {{ form.media }}
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
 
@@ -37,7 +34,7 @@
         (isPublic) ? hideFromPublic.show() : hideFromPublic.hide();
       }).trigger('change');
 
-      $('.html5text').wysihtml5({"stylesheets": false});
+      $('.html5text').quillify();
 
     });
   </script>

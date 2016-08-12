@@ -127,25 +127,6 @@ ul.sponsors {
 }
 
 
-/* Versioning */
-.version_primary {
-  background-color:#7ECEFD;
-}
-.version_secondary {
-  background-color:#FF7F66;
-}
-.diff-insert{
-  background-color: #BCED91;
-  color: #4A7023;
-  padding: 0 2px 0 2px;
-}
-.diff-delete{
-  background-color: #FFC1C1;
-  color: #8B1A1A;
-  padding: 0 2px 0 2px;
-}
-
-
 /* Formset field labels */
 .formsetFieldLabel{
   cursor: pointer;
@@ -214,6 +195,11 @@ span.smart-tag.active{
 }
 span.smart-tag.active:hover{
   color: orange;
+}
+div.smart-tag.active{
+  border: 2px solid gray;
+  border-radius: 5px;
+  padding: 1em;
 }
 .inlineSmartTagContainer {
   margin: 0 2em 0 2em;

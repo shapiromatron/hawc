@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import ReactQuill from 'react-quill';
-import '../../../../node_modules/quill/dist/quill.base.css';
-import '../../../../node_modules/quill/dist/quill.snow.css';
 
 import ScoreIcon from 'robTable/components/ScoreIcon';
 import Select from 'shared/components/Select';
@@ -90,6 +88,7 @@ class ScoreForm extends Component {
                 <ReactQuill id={metric}
                          value={notes}
                          onChange={this.handleEditorInput}
+                         toolbar={false}
                          theme='snow'
                          className='score-editor' />
             </div>

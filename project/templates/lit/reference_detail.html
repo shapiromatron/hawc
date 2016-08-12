@@ -30,8 +30,8 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      window.tagtree = new TagTree({{tags|safe}});
-      window.ref = new Reference({{object_json|safe}}, window.tagtree);
+      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
+      window.ref = new window.app.lit.Reference({{object_json|safe}}, window.tagtree);
       $('#reference_detail_div').html(ref.print_self(true)); });
   </script>
 {% endblock extrajs %}

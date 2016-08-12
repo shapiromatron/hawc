@@ -1,0 +1,232 @@
+import $ from '$';
+import _ from 'underscore';
+
+import Observee from 'utils/Observee';
+
+
+class Reference extends Observee {
+
+    constructor(data, tagtree){
+        super();
+        var self = this,
+            tag_ids = data.tags;
+        this.data = data;
+        this.data.tags = [];
+        tag_ids.forEach(function(v){self.add_tag(tagtree.dict[v]);});
+    }
+
+    static sortCompare(a,b){
+        if (a.data.authors > b.data.authors) return 1;
+        if (a.data.authors < b.data.authors) return -1;
+        return 0;
+    }
+
+    print_self(show_taglist){
+        var taglist = show_taglist || false,
+            content = [
+                '<h4>Reference details:</h4>',
+                '<p class="ref_small">{0}</p>'.printf(this.data.journal),
+                '<p class="ref_title">{0}</p>'.printf(this.data.title),
+                '<p class="ref_small">{0}</p>'.printf(this.data.authors || Reference.no_authors_text),
+            ];
+        if(taglist){
+            content = content.concat(this.print_taglist());
+        }
+        content.push('<p>{0}</p>'.printf(this.data.abstract));
+        content.push(this.getLinks());
+        return content;
+    }
+
+    print_taglist(){
+        var title = (window.isEdit) ? 'click to remove' : '',
+            cls = (window.isEdit) ? 'refTag refTagEditing' : 'refTag';
+        return _.map(this.data.tags, function(d){
+            return $('<span title="{0}" class="{1}">{2}</span>'
+                        .printf(title, cls, d.get_full_name())).data('d', d);
+        });
+    }
+
+    print_name(){
+        this.$list = $('<p class="reference">{0} {1}</p>'.printf(
+            this.data.authors || Reference.no_authors_text, this.data.year || ''))
+            .data('d', this);
+        return this.$list;
+    }
+
+    select_name(){
+        this.$list.addClass('selected');
+    }
+
+    deselect_name(){
+        this.$list.removeClass('selected');
+    }
+
+    getLinks(){
+        var links = $('<p>');
+
+        if (this.data.full_text_url){
+            links.append($('<a>')
+                .attr('class', 'btn btn-mini btn-primary')
+                .attr('target', '_blank')
+                .attr('href', this.data.full_text_url)
+                .text('Full text link'));
+            links.append('<span>&nbsp;</span>');
+        }
+
+        _.chain(this.data.identifiers)
+            .filter(function(v){return v.url.length>0;})
+            .sortBy(function(v){return v.database_id;})
+            .each(function(v){
+                links.append('<a class="btn btn-mini btn-success" target="_blank" href="{0}" title="ID {1}">{2}</a>'.printf(
+                    v.url, v.id, v.database));
+                links.append('<span>&nbsp;</span>');
+            });
+
+        _.chain(this.data.identifiers)
+            .reject(function(v){return v.url.length>0 || v.database === 'External link';})
+            .sortBy(function(v){return v.database_id;})
+            .each(function(v){
+                links.append('<button class="btn btn-mini disabled" title="ID {0}">{1}</button>'.printf(
+                    v.id, v.database));
+                links.append('<span>&nbsp;</span>');
+            });
+
+
+        return (links.children().length>0) ? links : null;
+    }
+
+    print_div_row(){
+
+        var self = this,
+            data = this.data,
+            div = $('<div>'),
+            abs_btn = this.get_abstract_button(div),
+            edit_btn = this.get_edit_button(),
+            get_title = function(){
+                if(data.title)
+                    return '<p class="ref_title">{0}</p>'.printf(data.title);
+            },
+            get_journal = function(){
+                if(data.journal)
+                    return '<p class="ref_small">{0}</p>'.printf(data.journal);
+            },
+            get_abstract = function(){
+                if(data.abstract)
+                    return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
+            },
+            get_authors_row = function(){
+                var p = $('<p class="ref_small">{0} {1}</p>'.printf(
+                            data.authors || Reference.no_authors_text,
+                            data.year || ''));
+
+                if(abs_btn || edit_btn){
+                    var ul = $('<ul class="dropdown-menu">');
+
+                    if (abs_btn) ul.append($('<li>').append(abs_btn));
+                    if (edit_btn) ul.append($('<li>').append(edit_btn));
+
+                    $('<div class="btn-group pull-right">')
+                        .append('<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>')
+                        .append(ul)
+                        .appendTo(p);
+                }
+
+                return p;
+            },
+            get_searches = function(){
+                if(data.searches){
+                    var title = '<p><strong>HAWC searches/imports:</strong></p>',
+                        ul = $('<ul>').html(_.map(data.searches, function(d){return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.title);}));
+                    return $('<div>').append(title, ul);
+                }
+            },
+            populate_div = function(){
+                return [
+                    '<hr>',
+                    get_authors_row(),
+                    get_title(),
+                    get_journal(),
+                    get_abstract(),
+                    self.getLinks(),
+                ];
+            };
+
+        return div.html(populate_div().concat(this.print_taglist())).append(get_searches());
+    }
+
+    get_abstract_button(div){
+        // get abstract button if abstract available, or return undefined
+        if(this.data.abstract){
+            return $('<a>')
+                .text('Show abstract')
+                .attr('class', 'abstractToggle')
+                .on('click', function(){
+                    var sel = $(this);
+                    if(sel.text() === 'Show abstract'){
+                        div.find('.abstracts').collapse('show');
+                        sel.text('Hide abstract');
+                    } else {
+                        div.find('.abstracts').collapse('hide');
+                        sel.text('Show abstract');
+                    }
+                });
+        }
+    }
+
+    get_edit_button(){
+        // return content or undefined
+        if(window.canEdit){
+            return $('<div>')
+                .append('<li><a href="{0}" target="_blank">Edit tags</a></li>'.printf(
+                        this.edit_tags_url()))
+                .append('<li><a href="{0}" target="_blank">Edit reference</a></li>'.printf(
+                        this.edit_reference_url()));
+        }
+    }
+
+    add_tag(tag){
+        var tag_already_exists = false;
+        this.data.tags.forEach(function(v){if(tag===v){tag_already_exists=true;}});
+        if(tag_already_exists) return;
+        this.data.tags.push(tag);
+        tag.addObserver(this);
+        this.notifyObservers();
+    }
+
+    edit_tags_url(){
+        return '/lit/reference/{0}/tag/'.printf(this.data.pk);
+    }
+
+    edit_reference_url(){
+        return '/lit/reference/{0}/edit/'.printf(this.data.pk);
+    }
+
+    remove_tag(tag){
+        this.data.tags.splice_object(tag);
+        tag.removeObserver(this);
+        this.notifyObservers();
+    }
+
+    remove_tags(){
+        this.data.tags = [];
+        this.notifyObservers();
+    }
+
+    save(success, failure){
+        var data = {'pk': this.data.pk,
+                    'tags': this.data.tags.map(function(v){return v.data.pk;})};
+        $.post('.', data, function(v) {
+            return (v.status==='success') ? success() : failure();
+        }).fail(failure);
+    }
+
+    update(status){
+        if (status.event =='tag removed'){this.remove_tag(status.object);}
+    }
+}
+
+_.extend(Reference, {
+    no_authors_text: '[No authors listed]',
+});
+
+export default Reference;

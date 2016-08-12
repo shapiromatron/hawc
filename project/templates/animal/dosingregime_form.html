@@ -8,10 +8,6 @@
   {{assessment}} | {{object.dosed_animals.experiment.study}} | {{object.dosed_animals.experiment}} | {{object.dosed_animals}} | {{object}} | HAWC
 {% endblock title %}
 
-{% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
-{% endblock %}
-
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
   <li><a href="{% url 'study:detail' object.dosed_animals.experiment.study.pk %}">{{object.dosed_animals.experiment.study}}</a><span class="divider">/</span></li>
@@ -29,7 +25,7 @@
     <legend>Dose-groups
       <span class='pull-right'>
         <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-        <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+        <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
       </span>
     </legend>
 
@@ -42,13 +38,10 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/dose_regime_form.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function() {
 
-      $('#id_description').wysihtml5({"stylesheets": false});
+      $('#id_description').quillify();
 
       // reorganize forms
       var actions = $('.form-actions');
@@ -57,7 +50,7 @@
       var dose_types = {{dose_types|safe}},
           dose_values = {{dose_groups_json|safe}};
 
-      new DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
+      new window.app.animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
     });
   </script>
 {% endblock extrajs %}

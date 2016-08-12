@@ -31,7 +31,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      Result.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epi.Result.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

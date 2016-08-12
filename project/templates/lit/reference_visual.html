@@ -23,17 +23,16 @@
   <script type="text/javascript">
     $(document).ready(function(){
       window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new TagTree({{tags|safe}});
-      window.tagtree.add_references({{ref_objs|safe}});
-      window.tagtree.get_refs_count();
+      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
       window.tagtree.build_top_level_node("{{assessment}}");
+      window.tagtree.add_references({{ref_objs|safe}});
       window.canEdit = {{obj_perms.edit|lower}};
       window.search_id = {% if objectType == "Search" %} parseInt("{{object.id}}", 10) {% else %} null {% endif %};
 
       var title = {% if object_type == 'reference' %}
           "{{assessment}}: Literature Tagtree"; {% else %}
           '"{{object}}" Literature Tagtree'; {% endif %}
-      window.treeviz = new TagTreeViz(window.tagtree,
+      window.treeviz = new window.app.lit.TagTreeViz(window.tagtree,
                                       $('#tagtree'),
                                       title,
                                       "{% url 'lit:ref_download_excel' assessment.pk %}");

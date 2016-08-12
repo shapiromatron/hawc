@@ -27,7 +27,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      VisualCollection.buildTable(
+      window.app.summary.VisualCollection.buildTable(
         "{% url 'summary:visual-list' %}?assessment_id={{assessment.id}}",
         "{% url 'summary:data_pivot-list' %}?assessment_id={{assessment.id}}",
         $('.visualizationsList'));

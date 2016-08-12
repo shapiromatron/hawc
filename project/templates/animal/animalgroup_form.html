@@ -13,7 +13,6 @@
 {% endblock title %}
 
 {% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}wysihtml5/css/bootstrap-wysihtml5.css" />
   {% include_ui_theme %}
 {% endblock %}
 
@@ -46,7 +45,7 @@
         <legend>Dose-groups
           <span class='pull-right'>
             <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
           </span>
         </legend>
 
@@ -63,14 +62,10 @@
 
 {% block extrajs %}
   {{ form.media }}
-  <script src="{{STATIC_URL}}wysihtml5/js/wysihtml5-0.3.0.min.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}wysihtml5/js/bootstrap-wysihtml5.js" type="text/javascript"></script>
-  <script src="{{STATIC_URL}}animal/js/dose_regime_form.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-
-      $('#id_comments').wysihtml5({"stylesheets": false});
-      $('#id_description').wysihtml5({"stylesheets": false});
+      $('#id_comments').quillify();
+      $('#id_description').quillify();
 
       // load strains
       var load_strains = function(){
@@ -123,7 +118,7 @@
         $('#id_generation').on('change', toggle_dosing_regime);
         toggle_dosing_regime();
 
-        new DosingRegimeForm($("#animal_group"), dose_types, dose_values);
+        new window.app.animal.DosingRegimeForm($("#animal_group"), dose_types, dose_values);
 
       {% endif %}
     });

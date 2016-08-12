@@ -292,10 +292,12 @@ class ReferenceSearchForm(forms.Form):
             query['journal__icontains'] = self.cleaned_data['journal']
         if self.cleaned_data['db_id']:
             query['identifiers__unique_id'] = self.cleaned_data['db_id']
+
         refs = [
             r.get_json(json_encode=False, searches=True)
             for r in models.Reference.objects.filter(**query)
         ]
+
         return refs
 
 

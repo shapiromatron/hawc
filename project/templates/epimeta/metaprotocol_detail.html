@@ -37,7 +37,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      MetaProtocol.displayFullPager($("#objContainer"), {{object.id}});
+      window.app.epimeta.MetaProtocol.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}
