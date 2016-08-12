@@ -61,7 +61,7 @@ class Result {
         var urls = [
             {
                 url: this.data.url,
-                name: this.data.full_name,
+                name: this.data.name,
             },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
@@ -72,7 +72,7 @@ class Result {
     }
 
     build_link(){
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.metric.metric);
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
     }
 
     build_tab(isActive){
@@ -80,7 +80,7 @@ class Result {
         return '<li {0}><a href="#{1}" data-toggle="tab">{2}</a></li>'.printf(
             cls,
             this.get_tab_id(),
-            this.data.full_name
+            this.data.name
         );
     }
 

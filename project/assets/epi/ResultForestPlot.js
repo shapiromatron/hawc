@@ -91,7 +91,7 @@ class ResultForestPlot extends D3Plot {
             };
 
         _.extend(this, {
-            'title_str': data.full_name,
+            'title_str': data.name,
             'scale_type': (data.metric.isLog) ? 'log' : 'linear',
             estimates,
             lines,
