@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 
-import ScoreDisplay from 'robTable/components/ScoreDisplay';
-import './CheckboxScoreDisplay.css';
 import h from 'robScoreCleanup/utils/helpers';
+import ScoreDisplay from 'robTable/components/ScoreDisplay';
+import Study from 'study/Study';
+import './CheckboxScoreDisplay.css';
 
 class CheckboxScoreDisplay extends Component {
 
