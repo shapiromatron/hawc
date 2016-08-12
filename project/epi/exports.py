@@ -73,6 +73,7 @@ class OutcomeDataPivot(FlatFileExporter):
             'age of exposure',
 
             'result id',
+            'result name',
             'result population description',
             'statistical metric',
             'statistical metric abbreviation',
@@ -149,6 +150,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 # outcome details
                 row_copy.extend([
                     res['id'],
+                    res['name'],
                     res['population_description'],
                     res['metric']['metric'],
                     res['metric']['abbreviation'],
