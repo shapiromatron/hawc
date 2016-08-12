@@ -4,9 +4,9 @@ import { render } from 'react-dom';
 import Root from 'robVisual/containers/Root';
 import configureStore from 'robVisual/store/configureStore';
 
-const startup = function(){
+const startup = function(element){
     const store = configureStore();
-    render(<Root store={store}/>, document.getElementById('rootRobFilter'));
+    render(<Root store={store}/>, element);
 };
 
 export default startup;

@@ -5,12 +5,12 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api.views import AssessmentEditViewset, InAssessmentFilter, \
+from assessment.api import AssessmentEditViewset, InAssessmentFilter, \
     RequiresAssessmentID, DisabledPagination
 from . import views
 
 
-class CleanupFieldsFilter(InAssessmentFilter):
+class BulkIdFilter(InAssessmentFilter):
     """
     Filters objects in Assessment on GET using InAssessmentFilter.
     Filters objects on ID on PATCH. If ID is not supplied in query_params,
@@ -21,7 +21,7 @@ class CleanupFieldsFilter(InAssessmentFilter):
     Catches AttributeError when `ids` is not supplied.
     """
     def filter_queryset(self, request, queryset, view):
-        queryset = super(CleanupFieldsFilter, self).filter_queryset(request, queryset, view)
+        queryset = super(BulkIdFilter, self).filter_queryset(request, queryset, view)
         ids = request.query_params.get('ids')\
             if (request.query_params.get('ids') is not u'')\
             else None
@@ -50,7 +50,7 @@ class CleanupFieldsBaseViewSet(AssessmentEditViewset, views.TeamMemberOrHigherMi
     assessment_filter_args = "assessment"
     template_name = 'assessment/endpointcleanup_list.html'
     pagination_class = DisabledPagination
-    filter_backends = (CleanupFieldsFilter, )
+    filter_backends = (BulkIdFilter, )
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = request.GET.get('assessment_id', None)

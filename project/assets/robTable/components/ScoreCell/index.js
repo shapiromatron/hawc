@@ -4,6 +4,11 @@ import './ScoreCell.css';
 
 class ScoreCell extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
     handleClick(){
         let { score, handleClick } = this.props;
         handleClick({domain: score.domain_name, metric: score.metric.metric});
@@ -15,7 +20,7 @@ class ScoreCell extends Component {
             <div className='score-cell'
                  name={score.metric.metric}
                  style={{backgroundColor: score.score_shade}}
-                 onClick={this.handleClick.bind(this)}>
+                 onClick={this.handleClick}>
                 <span className='tooltips'
                       data-toggle='tooltip'
                       title={score.metric.metric}>

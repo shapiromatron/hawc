@@ -9,6 +9,11 @@ import Loading from 'shared/components/Loading';
 
 class RiskOfBiasDisplay extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleShowAllClick = this.handleShowAllClick.bind(this);
+    }
+
     componentWillMount(){
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
@@ -33,7 +38,7 @@ class RiskOfBiasDisplay extends Component {
                 <DisplayComponent active={active} config={config} />
                 <ShowAll
                     allShown={this.isAllShown()}
-                    handleClick={this.handleShowAllClick.bind(this)} />
+                    handleClick={this.handleShowAllClick} />
             </div>
         );
     }

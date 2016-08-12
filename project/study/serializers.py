@@ -37,7 +37,13 @@ class VerboseStudySerializer(StudySerializer):
         model = models.Study
 
 
-class FinalRobStudySerializer(VerboseStudySerializer):
+class FinalRobStudySerializer(StudySerializer):
+    assessment = serializers.PrimaryKeyRelatedField(read_only=True)
+    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Study
+        exclude = ('searches', 'identifiers', )
 
     def to_representation(self, instance):
         instance.riskofbiases = instance.riskofbiases.filter(final=True)

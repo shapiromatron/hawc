@@ -1,7 +1,7 @@
 import json
 
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.apps import apps
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -13,16 +13,13 @@ from django.views.generic import View, ListView, DetailView, TemplateView, FormV
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse, get_object_or_404
 
-from rest_framework.response import Response
-
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList, TeamMemberOrHigherMixin)
+                         BaseDelete, BaseVersion, BaseList,
+                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 from utils.helper import tryParseInt
-from assessment.api.views import DisabledPagination
 
 from . import forms, models, tasks, serializers
-from .api import views
 
 
 # General views
@@ -454,85 +451,9 @@ class DownloadPlot(FormView):
         return response
 
 
-class AssessmentEndpointList(views.AssessmentViewset):
-    serializer_class = serializers.AssessmentEndpointSerializer
-    assessment_filter_args = "id"
+class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
+    template_name = 'assessment/clean_study_rob_scores.html'
     model = models.Assessment
-    pagination_class = DisabledPagination
 
-    def list(self, request, *args, **kwargs):
-        """
-        List has been optimized for queryset speed; some counts in get_queryset
-        and others in the list here; depends on if a "select distinct" is
-        required which significantly decreases query speed.
-        """
-
-        instance = self.filter_queryset(self.get_queryset())[0]
-        app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
-        instance.items = []
-
-        # animal
-        instance.items.append({
-            'count': instance.endpoint_count,
-            'title': "animal bioassay endpoints",
-            'type': 'ani',
-            'url': "{}{}".format(app_url, 'ani/'),
-        })
-        count = apps.get_model('animal', 'Experiment')\
-            .objects\
-            .filter(study__assessment=instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "animal bioassay experiments",
-            'type': 'experiment',
-            'url': "{}{}".format(app_url, 'experiment/'),
-        })
-        count = apps.get_model('animal', 'AnimalGroup')\
-            .objects\
-            .filter(experiment__study__assessment=instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "animal bioassay animal groups",
-            'type': 'animal-groups',
-            'url': "{}{}".format(app_url, 'animal-groups/'),
-        })
-
-        # epi
-        instance.items.append({
-            "count": instance.outcome_count,
-            "title": "epidemiological outcomes assessed",
-            'type': 'epi',
-            'url': "{}{}".format(app_url, 'epi/')
-        })
-
-        # in vitro
-        instance.items.append({
-            "count": instance.ivendpoint_count,
-            "title": "in vitro endpoints",
-            'type': 'in-vitro',
-            'url': "{}{}".format(app_url, 'in-vitro/'),
-        })
-        count = apps.get_model('invitro', 'ivchemical')\
-            .objects\
-            .filter(study__assessment=instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "in vitro chemicals",
-            'type': 'in-vitro-chemical',
-            'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
-        })
-
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def get_queryset(self):
-        id_ = tryParseInt(self.request.GET.get('assessment_id'))
-        queryset = self.model.objects\
-            .filter(id=id_)\
-            .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
-            .annotate(outcome_count=Count('baseendpoint__outcome'))\
-            .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
-        return queryset
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs['pk'])

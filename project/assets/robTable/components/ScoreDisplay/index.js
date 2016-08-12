@@ -69,6 +69,7 @@ ScoreDisplay.propTypes = {
         score_description: PropTypes.string.isRequired,
         score_symbol: PropTypes.string.isRequired,
         score_shade: PropTypes.string.isRequired,
+        score: PropTypes.number.isRequired,
     }).isRequired,
     config: PropTypes.object.isRequired,
     copyNotes: PropTypes.func,

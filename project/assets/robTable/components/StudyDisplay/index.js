@@ -13,6 +13,8 @@ class StudyDisplay extends Component {
         this.state = {
             scores: [],
         };
+        this.selectActive = this.selectActive.bind(this);
+        this.selectAllActive = this.selectActive.bind(this, {display: 'all'});
     }
 
     isAllShown(){
@@ -36,11 +38,9 @@ class StudyDisplay extends Component {
 
     render() {
         return (<div>
-            <AggregateGraph domains={this.props.riskofbias.scores} handleClick={this.selectActive.bind(this)}/>
+            <AggregateGraph domains={this.props.riskofbias.scores} handleClick={this.selectActive}/>
             <RiskOfBiasDisplay active={this.state.scores} config={this.props.config} />
-            <ShowAll
-                allShown={this.isAllShown()}
-                handleClick={this.selectActive.bind(this, {domain: 'all'})}/>
+            <ShowAll allShown={this.isAllShown()} handleClick={this.selectAllActive}/>
         </div>);
     }
 }

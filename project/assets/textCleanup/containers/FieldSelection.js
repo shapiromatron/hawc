@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchModelIfNeeded } from 'textCleanup/actions/Endpoint';
+import { fetchModelIfNeeded } from 'textCleanup/actions/Items';
 import FieldList from 'textCleanup/components/FieldList';
 import Loading from 'shared/components/Loading';
 import urls from 'textCleanup/constants/urls';
@@ -36,7 +36,7 @@ class FieldSelection extends Component {
 function mapStateToProps(state){
     return {
         types: state.assessment.active.items,
-        objects: state.endpoint.model,
+        objects: state.items.model,
     };
 }
 

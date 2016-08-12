@@ -4,11 +4,16 @@ import { connect } from 'react-redux';
 import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'robTable/actions';
 import DomainDisplay from 'robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
-import ScrollToErrorBox from 'robTable/components/ScrollToErrorBox';
-import './RiskOfBiasForm.css';
+import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 
 
 class RiskOfBiasForm extends Component {
+
+    constructor(props) {
+        super(props);
+        this.handleCancel = this.handleCancel.bind(this);
+        this.submitForm = this.submitForm.bind(this);
+    }
 
     componentWillMount(){
         this.props.dispatch(fetchFullStudyIfNeeded());
@@ -39,8 +44,8 @@ class RiskOfBiasForm extends Component {
 
         return (
             <div className='riskofbias-display'>
-                { error ? <ScrollToErrorBox error={error} /> : null}
-                <form onSubmit={this.submitForm.bind(this)}>
+                <ScrollToErrorBox error={error} />
+                <form onSubmit={this.submitForm}>
 
                     {_.map(riskofbiases, (domain) => {
                         return <DomainDisplay key={domain.key}
@@ -48,12 +53,12 @@ class RiskOfBiasForm extends Component {
                                            domain={domain}
                                            config={config} />;
                     })}
-                    <button className='btn btn-primary'
+                    <button className='btn btn-primary space'
                             type='submit'>
                         Update risk of bias
                     </button>
-                    <button className='btn'
-                            onClick={this.handleCancel.bind(this)}>Cancel</button>
+                    <button className='btn space'
+                            onClick={this.handleCancel}>Cancel</button>
                 </form>
             </div>
         );

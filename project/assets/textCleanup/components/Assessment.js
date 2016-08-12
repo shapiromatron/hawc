@@ -3,7 +3,8 @@ import { Link } from 'react-router';
 
 
 class Assessment extends Component{
-    renderEndpointType(item){
+
+    renderItemType(item){
         if(item.count == 0){
             return null;
         } else {
@@ -16,24 +17,22 @@ class Assessment extends Component{
     }
 
     render() {
-        const { items, name } = this.props.object;
+        const { object, helpText } = this.props;
 
-        const isEmpty = (items.reduce( (prev, curr) => prev + curr.count) === 0);
+        const isEmpty = (object.items.reduce( (prev, curr) => prev + curr.count) === 0);
         if(isEmpty){
-            return <li><i>No endpoints are available for {name}.</i></li>;
+            return <li><i>No items are available for {object.name}.</i></li>;
 
         }
         return (
             <div className='assessment'>
-                <h2 className='assessment_title'>Cleanup {name}</h2>
+                <h2 className='assessment_title'>Cleanup {object.name}</h2>
                 <p className='help-block'>
-                    After data has been initially extracted, this module can be
-                    used to update and standardize text which was used during
-                    data extraction.
+                    {helpText}
                 </p>
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
-                    {items.map(this.renderEndpointType)}
+                    {object.items.map(this.renderItemType)}
                 </ul>
             </div>
         );
@@ -50,6 +49,7 @@ Assessment.propTypes = {
             url: PropTypes.string.isRequired,
         })).isRequired,
     }).isRequired,
+    helpText: PropTypes.string.isRequired,
 };
 
 export default Assessment;

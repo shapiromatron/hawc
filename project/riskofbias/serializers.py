@@ -6,6 +6,13 @@ from myuser.serializers import HAWCUserSerializer
 from . import models
 
 
+class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = ('id', 'metric', 'description')
+
+
 class AssessmentMetricSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -41,6 +48,8 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret['score_symbol'] = instance.score_symbol
         ret['score_shade'] = instance.score_shade
         ret['url_edit'] = instance.riskofbias.get_edit_url()
+        ret['study_name'] = instance.riskofbias.study.short_citation
+        ret['study_id'] = instance.riskofbias.study.id
         return ret
 
     class Meta:
@@ -70,5 +79,19 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score.save()
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)
 
+
+class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
+    scores = RiskOfBiasScoreSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = ('id', 'metric', 'description', 'scores')
+
+
+class AssessmentRiskOfBiasScoreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = ('id', 'notes', 'score')
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

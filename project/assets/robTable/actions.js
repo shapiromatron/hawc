@@ -97,7 +97,7 @@ export function fetchFullStudyIfNeeded(){
         dispatch(requestStudy());
         dispatch(resetError());
         return fetch(
-                h.getObjectURL(
+                h.getObjectUrl(
                     state.config.host,
                     state.config.study.url,
                     state.config.study.id), h.fetchGet)
@@ -116,7 +116,7 @@ export function submitRiskOfBiasScores(scores){
 
         dispatch(resetError());
         return fetch(
-            `${h.getObjectURL(state.config.host,
+            `${h.getObjectUrl(state.config.host,
                 state.config.riskofbias.url,
                 state.config.riskofbias.id)}`, opts)
             .then((response) => response.json())

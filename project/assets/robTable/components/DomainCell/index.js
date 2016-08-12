@@ -6,6 +6,11 @@ import './DomainCell.css';
 
 class DomainCell extends Component {
 
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
     componentDidMount(){
         $('.tooltips').tooltip();
     }
@@ -19,7 +24,7 @@ class DomainCell extends Component {
         let { domain, handleClick } = this.props;
         return (
             <div className='domain-cell' style={{flex: domain.values.length}}>
-                <div className='header-box' onClick={this.handleClick.bind(this)}>
+                <div className='header-box' onClick={this.handleClick}>
                     <span className='domain-header'>{domain.key}</span>
                 </div>
                 <div className='score-row'>

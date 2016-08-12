@@ -45,16 +45,24 @@
           <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a></li>
           {% endif %}
 
+          {% if assessment.enable_data_extraction %}
+          <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a></li>
+          {% endif%}
+
           {% if debug %}
           <li><a href="{% url 'assessment:template_list' object.pk %}">Word report templates</a></li>
           {% endif %}
 
           <!-- data cleanup -->
-          {% if assessment.enable_data_extraction and obj_perms.edit %}
+          {% if assessment.enable_data_extraction or assessment.enable_risk_of_bias and obj_perms.edit %}
           <li class="divider"></li>
           <li class="disabled"><a tabindex="-1" href="#">Data cleanup views</a></li>
-          <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
-          <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a></li>
+              {% if assessment.enable_data_extraction %}
+              <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
+              {% endif%}
+              {% if assessment.enable_risk_of_bias %}
+              <li><a href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean risk of bias responses</a></li>
+              {% endif %}
           {% endif %}
 
         </ul>

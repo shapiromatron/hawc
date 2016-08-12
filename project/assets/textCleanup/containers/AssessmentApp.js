@@ -22,10 +22,13 @@ class App extends Component{
     }
 
     render() {
-        let object = this.getObject();
+        let object = this.getObject(),
+            helpText = 'After data has been initially extracted, this module can be\
+                        used to update and standardize text which was used during\
+                        data extraction.';
         if (_.isUndefined(object)) return <Loading />;
         return (
-            <Assessment object={object}/>
+            <Assessment object={object} helpText={helpText}/>
         );
     }
 }

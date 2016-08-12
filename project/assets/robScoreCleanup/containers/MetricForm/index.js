@@ -1,0 +1,72 @@
+import React from 'react';
+import { connect } from 'react-redux';
+
+import { resetError } from 'robScoreCleanup/actions/Errors';
+import { selectAll } from 'robScoreCleanup/actions/Items';
+import { updateEditMetricIfNeeded, submitItemEdits } from 'robScoreCleanup/actions/Items';
+
+import DisplayComponent from 'robTable/components/MetricForm';
+
+
+export class MetricForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.handleCancel = this.handleCancel.bind(this);
+        this.handleSelectAll = this.handleSelectAll.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (!_.isEqual(nextProps, this.props) ||
+            !_.isEqual(nextState, this.state)){
+            return true;
+        }
+        return false;
+    }
+
+    componentWillUpdate(prevProps, prevState) {
+        this.props.dispatch(updateEditMetricIfNeeded());
+    }
+
+    handleCancel(e) {
+        e.preventDefault();
+        this.props.dispatch(resetError());
+    }
+
+    handleSelectAll(e){
+        e.preventDefault();
+        this.props.dispatch(selectAll());
+    }
+
+    onSubmit(e){
+        e.preventDefault();
+        let { notes, score } = this.refs.metricForm.refs.form.state,
+            metric = { notes, score: parseInt(score) };
+        this.props.dispatch(submitItemEdits(metric));
+    }
+
+    render() {
+        let { items, config } = this.props;
+        if (!items.isLoaded) return null;
+        return (
+            <form onSubmit={this.onSubmit}>
+                <DisplayComponent ref='metricForm' metric={items.editMetric} config={config}/>
+                <button type='submit' className='btn btn-primary space'>Update {items.updateIds.length} responses</button>
+                <button type='button' className='btn btn-info space' onClick={this.handleSelectAll}>Select/unselect all</button>
+                <button type='button' className='btn' onClick={this.handleCancel}>Cancel</button>
+                <hr />
+            </form>
+
+        );
+    }
+}
+
+function mapStateToProps(state) {
+    const { items } = state;
+    return {
+        items,
+    };
+}
+
+export default connect(mapStateToProps)(MetricForm);

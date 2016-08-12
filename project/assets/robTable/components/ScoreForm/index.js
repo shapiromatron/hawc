@@ -4,7 +4,7 @@ import '../../../../node_modules/quill/dist/quill.base.css';
 import '../../../../node_modules/quill/dist/quill.snow.css';
 
 import ScoreIcon from 'robTable/components/ScoreIcon';
-import Select from 'robTable/components/Select';
+import Select from 'shared/components/Select';
 import './ScoreForm.css';
 
 
@@ -33,7 +33,8 @@ class ScoreForm extends Component {
             score: null,
             notes: props.score.notes,
         };
-
+        this.handleEditorInput = this.handleEditorInput.bind(this);
+        this.selectScore = this.selectScore.bind(this);
     }
 
     componentWillMount(){
@@ -41,10 +42,22 @@ class ScoreForm extends Component {
     }
 
     componentWillUpdate(nextProps, nextState) {
+        // update notes if addText is modified
+        // (usually by copying notes over from another form)
         if(nextProps.addText !== this.props.addText){
             this.setState({
                 notes: this.state.notes + nextProps.addText,
             });
+        }
+        // if score notes is changed, change notes to new notes
+        if(nextProps.score.notes !== this.props.score.notes){
+            this.setState({
+                notes: nextProps.score.notes,
+            });
+        }
+        // if score is changed, change to new score
+        if (nextProps.score.score !== this.props.score.score) {
+            this.selectScore(nextProps.score.score);
         }
     }
 
@@ -61,22 +74,22 @@ class ScoreForm extends Component {
     }
 
     render() {
-        let { score } = this.props;
-
+        let { metric } = this.props.score.metric,
+            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
         return (
             <div className='score-form'>
                 <div>
-                    <Select choices={this.state.scoreChoices}
-                          id={score.metric.metric}
-                          defVal={score.score}
-                          handleSelect={this.selectScore.bind(this)}/>
+                    <Select choices={scoreChoices}
+                          id={metric}
+                          value={score}
+                          handleSelect={this.selectScore}/>
                     <br/><br/>
-                    <ScoreIcon shade={this.state.selectedShade}
-                             symbol={this.state.selectedSymbol}/>
+                    <ScoreIcon shade={selectedShade}
+                             symbol={selectedSymbol}/>
                 </div>
-                <ReactQuill id={score.metric.metric}
-                         value={this.state.notes}
-                         onChange={this.handleEditorInput.bind(this)}
+                <ReactQuill id={metric}
+                         value={notes}
+                         onChange={this.handleEditorInput}
                          theme='snow'
                          className='score-editor' />
             </div>
