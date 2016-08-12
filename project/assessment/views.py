@@ -15,8 +15,8 @@ from django.shortcuts import HttpResponse, get_object_or_404
 
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
-                         BaseDelete, BaseVersion, BaseList,
-                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
+                         BaseDelete, BaseList, TeamMemberOrHigherMixin,
+                         ProjectManagerOrHigherMixin)
 from utils.helper import tryParseInt
 
 from . import forms, models, tasks, serializers
