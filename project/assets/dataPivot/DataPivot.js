@@ -2,7 +2,7 @@ import $ from '$';
 import _ from 'underscore';
 import d3 from 'd3';
 
-import {saveAs} from 'FileSaver.js';
+import {saveAs} from 'filesaver.js';
 
 import HAWCModal from 'utils/HAWCModal';
 
