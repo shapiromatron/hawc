@@ -1,0 +1,12 @@
+-r base.txt
+selenium==2.46.0
+coverage==3.7.1
+django-coverage==1.2.4
+django-debug-toolbar==1.4
+django-extensions==1.6.1
+
+# for django_extensions.graph_models
+pyparsing==2.0.3
+pydot==1.0.2
+curtsies==0.2.6
+greenlet==0.4.9
