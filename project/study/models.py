@@ -326,6 +326,9 @@ class Attachment(models.Model):
     def get_delete_url(self):
         return reverse('study:attachment_delete', args=[self.pk])
 
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.study)
+
     @property
     def filename(self):
         return os.path.basename(self.attachment.name)
