@@ -21,6 +21,7 @@ export class ScoreSelect extends React.Component {
         return (
             <div>
                 <label className='control-label'>Rating filter (optional):</label>
+                <p className='help-block'>To de-select a filter, click on the filter while holding ⌘ on Mac or Control on Windows</p>
                 <select multiple name="score_filter" id="score_filter" onChange={this.handleChange} style={{height: '120px'}}>
                 {_.map(this.props.choices, (score) => {
                     return <option key={score.id} value={score.id}>{score.value}</option>;
