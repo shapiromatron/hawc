@@ -33,8 +33,10 @@
           <li class="disabled"><a tabindex="-1" href="#">Study assignment</a></li>
           <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
 
+          {% if obj_perms.edit_assessment %}
           <li class="disabled"><a tabindex="-1" href="#">Data cleanup</a></li>
-          <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean Risk of bias Metrics</a></li>
+          <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean risk of bias responses</a></li>
+          {% endif %}
 
         </ul>
     </div>
