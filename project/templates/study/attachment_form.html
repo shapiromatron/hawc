@@ -3,13 +3,11 @@
 {% load add_class %}
 
 {% block title %}
-  {{assessment}} | {{study}} | Add attachment | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
-  <li class="active"> Add attachment <span class="divider">/</span></li>
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

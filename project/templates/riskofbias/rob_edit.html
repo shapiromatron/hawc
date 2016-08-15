@@ -5,17 +5,15 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | {{object.study}} | Edit risk of bias | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:rob_detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
-  <li class="active">Edit risk of bias <span class="divider">/</span></li>
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-    <h2>{{object}}: Risk of Bias</h2>
+    <h2>{{object}}</h2>
     {% if object.final and not object.study_reviews_complete %}
         <h4 class="alert alert-danger">All other risk of bias reviews for
             {{object.study}} must be complete in order to complete the final review.

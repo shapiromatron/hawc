@@ -2,15 +2,13 @@
 
 
 {% block title %}
-  {{object.assessment}} | {{object}} | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' object.assessment.pk %}">{{ object.assessment }}</a><span class="divider">/</span></li>
-  {% block breadcrumbs_self %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
-  {% endblock breadcrumbs_self %}
-{% endblock breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
 
 {% block content %}
 

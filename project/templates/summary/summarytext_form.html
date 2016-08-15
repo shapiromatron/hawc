@@ -5,17 +5,14 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | Summary Text | Modify | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:list' assessment.pk %}">Summary</a><span class="divider">/</span></li>
-  <li class="active">Modify<span class="divider">/</span></li>
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
-
   <div class='row-fluid'>
     <div class="span3">
       <b>Document tree:</b><br>

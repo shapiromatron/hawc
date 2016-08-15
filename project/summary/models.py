@@ -24,6 +24,7 @@ from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, \
     SerializerHelper, tryParseInt
+from utils.models import get_crumbs
 
 
 BIOASSAY = 0
@@ -141,6 +142,9 @@ class SummaryText(MP_Node):
         return '{url}#{id}'.format(url=reverse('summary:list', kwargs={'assessment': self.assessment.pk}),
                                    id=self.slug)
 
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
+
     def get_assessment(self):
         return self.assessment
 
@@ -236,6 +240,9 @@ class Visual(models.Model):
 
     def get_delete_url(self):
         return reverse('summary:visualization_delete', args=[str(self.pk)])
+
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
 
     def get_assessment(self):
         return self.assessment

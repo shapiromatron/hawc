@@ -1,7 +1,9 @@
 {% extends 'portal.html' %}
 
 
-{% block title %}{{assessment}} | Endpoints | Data Pivot | HAWC {% endblock title %}
+{% block title %}
+  {{assessment}} | Endpoints | Data Pivot | HAWC 
+{% endblock title %}
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>

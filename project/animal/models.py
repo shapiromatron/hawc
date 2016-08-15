@@ -475,6 +475,9 @@ class DosingRegime(models.Model):
     def get_absolute_url(self):
         return self.dosed_animals.get_absolute_url()
 
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.dosed_animals.experiment)
+
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
 

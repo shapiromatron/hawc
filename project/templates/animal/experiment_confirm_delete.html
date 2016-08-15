@@ -1,13 +1,12 @@
 {% extends 'animal/experiment_detail.html' %}
 
 {% block title %}
-  {{ block.super }} | Delete
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
-{% block breadcrumbs_self %}
-  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-  <li class="active">Delete<span class="divider">/</span></li>
-{% endblock breadcrumbs_self %}
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
 
 {% block content %}
   {{ block.super }}

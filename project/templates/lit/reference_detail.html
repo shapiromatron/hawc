@@ -1,8 +1,8 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Literature Review | References | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
