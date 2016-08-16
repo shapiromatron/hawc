@@ -9,6 +9,7 @@ from assessment.api import (
     AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination)
 
 from . import models, serializers
+from utils.api import CleanupFieldsBaseViewSet
 from utils.helper import tryParseInt
 
 
@@ -54,3 +55,8 @@ class FinalRobStudy(Study):
 
     def get_serializer_class(self):
         return serializers.FinalRobStudySerializer
+
+
+class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
+    model = models.Study
+    serializer_class = serializers.StudyCleanupFieldsSerializer

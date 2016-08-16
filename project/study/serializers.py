@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from riskofbias.serializers import RiskOfBiasSerializer
+from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
@@ -49,5 +50,14 @@ class FinalRobStudySerializer(StudySerializer):
         instance.riskofbiases = instance.riskofbiases.filter(final=True)
         ret = super(FinalRobStudySerializer, self).to_representation(instance)
         return ret
+
+
+class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Study
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = ('id', 'short_citation', ) + cleanup_fields
+
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

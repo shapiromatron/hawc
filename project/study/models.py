@@ -29,6 +29,11 @@ class Study(Reference):
         (2, 'Unknown'),
         (3, 'Not reported'))
 
+    TEXT_CLEANUP_FIELDS = (
+        'coi_details',
+        'funding_source',
+    )
+
     bioassay = models.BooleanField(
         verbose_name='Animal bioassay',
         default=False,
