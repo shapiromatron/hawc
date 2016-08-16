@@ -158,7 +158,7 @@ class RiskOfBias(models.Model):
         ordering = ('final',)
 
     def __unicode__(self):
-        return '{} Risk of Bias review'.format(self.study.short_citation)
+        return '{} (Risk of bias)'.format(self.study.short_citation)
 
     def get_assessment(self):
         return self.study.get_assessment()
