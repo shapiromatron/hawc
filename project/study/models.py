@@ -34,6 +34,13 @@ class Study(Reference):
         'funding_source',
     )
 
+    STUDY_TYPE_FIELDS = {
+        'bioassay',
+        'epi',
+        'epi_meta',
+        'in_vitro',
+    }
+
     bioassay = models.BooleanField(
         verbose_name='Animal bioassay',
         default=False,
@@ -206,6 +213,13 @@ class Study(Reference):
         return Endpoint.objects.filter(
                     animal_group__in=AnimalGroup.objects.filter(
                     experiment__in=Experiment.objects.filter(study=self)))
+
+    def get_study_type(self):
+        types = []
+        for field in self.STUDY_TYPE_FIELDS:
+            if getattr(self, field):
+                types.append(field)
+        return types
 
     @classmethod
     def flat_complete_header_row(cls):
