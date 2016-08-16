@@ -5,7 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+  {{assessment}} | Summary text | Modify | HAWC
 {% endblock title %}
 
 {% block breadcrumbs %}
