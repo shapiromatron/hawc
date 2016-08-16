@@ -3,13 +3,11 @@
 {% load add_class %}
 
 {% block title %}
-  {{assessment}} | {{object.study}} | Delete Attachment | {{object}} | HAWC
-{% endblock %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{{object.study.get_absolute_url}}">{{object.study}}</a><span class="divider">/</span></li>
-  <li class="active"> Delete attachment <span class="divider">/</span></li>
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

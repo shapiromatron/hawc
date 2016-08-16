@@ -3,19 +3,11 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | {{study}} | {{crud}} {% if crud == "Create" %}Experiment{% else %}{{object}}{% endif %} | HAWC
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  {% if crud == "Update" %}
-    <li><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'animal:experiment_detail' object.pk %}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">{{ crud }} </li>
-  {% else %}
-    <li><a href="{% url 'study:detail' study.pk %}">{{study}}</a><span class="divider">/</span></li>
-    <li class="active"> {{ crud }} Experiment <span class="divider">/</span></li>
-  {% endif %}
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

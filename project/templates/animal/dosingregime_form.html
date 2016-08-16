@@ -5,15 +5,11 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | {{object.dosed_animals.experiment.study}} | {{object.dosed_animals.experiment}} | {{object.dosed_animals}} | {{object}} | HAWC
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'study:detail' object.dosed_animals.experiment.study.pk %}">{{object.dosed_animals.experiment.study}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'animal:experiment_detail' object.dosed_animals.experiment.pk %}">{{object.dosed_animals.experiment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'animal:animal_group_detail' object.dosed_animals.pk %}">{{object.dosed_animals}}</a><span class="divider">/</span></li>
-  <li class="active">Update</li>
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

@@ -5,11 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {% if crud == "Create" %}
-    {{assessment}} | {{animal_group.experiment.study}} | {{animal_group.experiment}} | {{animal_group}} | Create Endpoint | HAWC
-  {% elif crud == "Update" %}
-    {{assessment}} | {{object.animal_group.experiment.study}} | {{object.animal_group.experiment}} | {{object.animal_group}} | Update {{object}} | HAWC
-  {% endif %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block extrastyle %}
@@ -17,26 +13,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
-  {% if crud == "Create" %}
-    <li><a href="{{ animal_group.experiment.study.get_absolute_url }}">
-      {{animal_group.experiment.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{ animal_group.experiment.get_absolute_url }}">
-      {{animal_group.experiment}}</a><span class="divider">/</span></li>
-    <li><a href="{{ animal_group.get_absolute_url }}">
-      {{animal_group}}</a><span class="divider">/</span></li>
-    <li class="active"> Create Endpoint <span class="divider">/</span></li>
-  {% elif crud == "Update" %}
-    <li><a href="{{ object.animal_group.experiment.study.get_absolute_url }}">
-      {{object.animal_group.experiment.study}}</a><span class="divider">/</span></li>
-    <li><a href="{{ object.animal_group.experiment.get_absolute_url }}">
-      {{object.animal_group.experiment}}</a><span class="divider">/</span></li>
-    <li><a href="{{ object.animal_group.get_absolute_url }}">
-      {{object.animal_group}}</a><span class="divider">/</span></li>
-    <li><a href="{{ object.get_absolute_url }}">
-      {{object}}</a><span class="divider">/</span></li>
-    <li class="active">Update<span class="divider">/</span></li>
-  {% endif %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

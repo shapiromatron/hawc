@@ -13,6 +13,7 @@ from reversion import revisions as reversion
 from assessment.models import Assessment
 from myuser.models import HAWCUser
 from utils.helper import cleanHTML, SerializerHelper
+from utils.models import get_crumbs
 
 
 class RiskOfBiasDomain(models.Model):
@@ -157,7 +158,7 @@ class RiskOfBias(models.Model):
         ordering = ('final',)
 
     def __unicode__(self):
-        return self.study.short_citation
+        return '{} (Risk of bias)'.format(self.study.short_citation)
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -175,6 +176,9 @@ class RiskOfBias(models.Model):
 
     def get_edit_url(self):
         return reverse('riskofbias:rob_update', args=[self.pk])
+
+    def get_crumbs(self):
+        return get_crumbs(self, self.study)
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
