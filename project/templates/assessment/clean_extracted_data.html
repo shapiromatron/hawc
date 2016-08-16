@@ -41,6 +41,10 @@
           "url": "{% url 'invitro:api:ivchemical-cleanup-list' %}",
           "title": "IVChemical"
         },
+        "study": {
+          "url": "{% url 'study:api:study-cleanup-list' %}",
+          "title": "Study"
+        },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }

@@ -173,6 +173,7 @@ class AssessmentEndpointList(AssessmentViewset):
             'type': 'ani',
             'url': "{}{}".format(app_url, 'ani/'),
         })
+
         count = apps.get_model('animal', 'Experiment')\
             .objects\
             .filter(study__assessment=instance.id)\
@@ -183,6 +184,7 @@ class AssessmentEndpointList(AssessmentViewset):
             'type': 'experiment',
             'url': "{}{}".format(app_url, 'experiment/'),
         })
+
         count = apps.get_model('animal', 'AnimalGroup')\
             .objects\
             .filter(experiment__study__assessment=instance.id)\
@@ -209,6 +211,7 @@ class AssessmentEndpointList(AssessmentViewset):
             'type': 'in-vitro',
             'url': "{}{}".format(app_url, 'in-vitro/'),
         })
+
         count = apps.get_model('invitro', 'ivchemical')\
             .objects\
             .filter(study__assessment=instance.id)\
@@ -219,6 +222,18 @@ class AssessmentEndpointList(AssessmentViewset):
             'type': 'in-vitro-chemical',
             'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
         })
+
+        # study
+        count = apps.get_model('study', 'Study')\
+            .objects\
+            .filter(assessment=instance.id)\
+            .count()
+        instance.items.append({
+            "count": count,
+            "title": "studies",
+            "type": "study",
+            "url": "{}{}".format(app_url, 'study/'),
+            })
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
