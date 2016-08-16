@@ -9,7 +9,9 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'summary:list' assessment.pk %}">Summary</a><span class="divider">/</span></li>
+  <li class="active">Modify<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
