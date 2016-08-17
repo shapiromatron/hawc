@@ -49,6 +49,11 @@ class Study(viewsets.ReadOnlyModelViewSet):
         scores = self.model.rob_scores(assessment_id)
         return Response(scores)
 
+    @list_route()
+    def types(self, request):
+        study_types = self.model.STUDY_TYPE_FIELDS
+        return Response(study_types)
+
 
 class FinalRobStudy(Study):
     list_actions = ['list']

@@ -1,6 +1,6 @@
 import * as types from 'robScoreCleanup/constants';
 
-import {deepCopy} from 'shared/utils';
+import { deepCopy } from 'shared/utils';
 
 
 const defaultState = {
@@ -34,7 +34,7 @@ const defaultState = {
 };
 
 function items(state=defaultState, action) {
-    let list, list2, index;
+    let list, list2, list3, intersection, index;
     switch(action.type){
 
     case types.REQUEST_ITEMS:
@@ -76,23 +76,31 @@ function items(state=defaultState, action) {
         });
 
     case types.UPDATE_VISIBLE_ITEMS:
-        // when the items or selected scores change, we need to make sure
+        // when the items, selected scores, or select study type change, we need to make sure
         // the following:
-        // 1) `visibleItems` is the intersection of `items` and `selectedScores`
+        // 1) `visibleItems` is the intersection of `items`, `selectedScores`, and 'selectedStudyTypes'
         // 2) `updateIds` is subset of `visibleItems`
 
-        // visibleItems
+        // visibleItems: selectedScores
         list = (action.selectedScores === null || action.selectedScores.length === 0)?
                 _.pluck(state.items, 'id'):
                 state.items.filter((d) => _.contains(action.selectedScores, d.score))
                            .map((d)=>d.id);
 
+        // visibleItems: selectedStudyTypes
+        list2 = (action.selectedStudyTypes === null || action.selectedStudyTypes.length === 0)?
+                _.pluck(state.items, 'id'):
+                state.items.filter((d) => _.intersection(action.selectedStudyTypes, d.study_types).length !== 0)
+                           .map((d)=>d.id);
+
+        intersection = _.intersection(list, list2);
+
         // updateIds
-        list2 = state.updateIds.filter((d) => _.contains(list, d));
+        list3 = state.updateIds.filter((d) => _.contains(intersection, d));
 
         return Object.assign({}, state, {
-            visibleItemIds: list,
-            updateIds: list2,
+            visibleItemIds: intersection,
+            updateIds: list3,
         });
 
     case types.TOGGLE_CHECK_VISIBLE_SCORES:
