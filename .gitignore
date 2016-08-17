@@ -70,3 +70,4 @@ target/
 node_modules
 bundles/
 webpack-stats.json
+.happypack/

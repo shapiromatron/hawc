@@ -46,6 +46,7 @@
     "exports-loader": "^0.6.2",
     "express": "^4.13.3",
     "filesaver.js": "^0.2.0",
+    "happypack": "^2.2.1",
     "history": "^1.13.1",
     "immutable": "^3.7.6",
     "imports-loader": "^0.6.5",
