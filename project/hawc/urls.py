@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
+import django.views.static
 
 from assessment import views
 
@@ -71,7 +72,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += [
         url(r'^media/(?P<path>.*)$',
-            'django.views.static.serve',
+            django.views.static.serve,
             {'document_root': settings.MEDIA_ROOT, }),
     ]
 
