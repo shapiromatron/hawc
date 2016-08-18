@@ -85,7 +85,6 @@ class StudyCreateFromReference(BaseCreate):
         else:
             #save using our custom saving tool
             dt = dict(form.data)
-            dt.pop('_wysihtml5_mode')
             dt.pop('csrfmiddlewaretoken')
             dt.pop('save')  # crispyform
             for k,v in dt.iteritems(): #unpack list
