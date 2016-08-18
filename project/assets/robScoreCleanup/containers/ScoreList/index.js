@@ -17,9 +17,10 @@ export class ScoreList extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        if (nextProps.selected != this.props.selected ||
-            nextProps.items != this.props.items){
-            this.props.dispatch(updateVisibleItems(nextProps.selected));
+        if (nextProps.selectedScores != this.props.selectedScores ||
+            nextProps.items != this.props.items ||
+            nextProps.selectedStudies != this.props.selectedStudies){
+            this.props.dispatch(updateVisibleItems(nextProps.selectedScores, nextProps.selectedStudies));
         }
     }
 
@@ -53,7 +54,8 @@ export class ScoreList extends Component {
 function mapStateToProps(state) {
     const { items, visibleItemIds, updateIds, isLoaded } = state.items;
     return {
-        selected: state.scores.selected,
+        selectedScores: state.scores.selected,
+        selectedStudies: state.studyTypes.selected,
         items,
         visibleItemIds,
         idList: updateIds,

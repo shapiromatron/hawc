@@ -32,6 +32,10 @@
             "url": "{% url 'riskofbias:api:scores-choices' %}",
             "title": "Score Choices"
         },
+        "studyTypes": {
+            "url": "{% url 'study:api:study-types' %}",
+            "title": "Study Types"
+        },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
     }

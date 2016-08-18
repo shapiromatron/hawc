@@ -50,6 +50,7 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret['url_edit'] = instance.riskofbias.get_edit_url()
         ret['study_name'] = instance.riskofbias.study.short_citation
         ret['study_id'] = instance.riskofbias.study.id
+        ret['study_types'] = instance.riskofbias.study.get_study_type()
         return ret
 
     class Meta:
