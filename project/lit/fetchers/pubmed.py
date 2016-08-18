@@ -10,7 +10,7 @@ from .utils import get_author_short_text
 
 """
 PubMed API:
-http://www.ncbi.nlm.nih.gov/books/NBK25499/
+https://www.ncbi.nlm.nih.gov/books/NBK25499/
 
 """
 THIS_TOOL = "HAWC"
@@ -22,7 +22,7 @@ class PubMedSearch(object):
     Given a search term upon initialization, search PubMed and return a full
     list of PubMed IDs from the selected search term.
     """
-    base_url = r'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
+    base_url = r'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
     default_settings = {
         "retmax": 5000,
         "db": "pubmed",
@@ -98,7 +98,7 @@ class PubMedFetch(object):
     Given a list of PubMed IDs, fetch the content for each one and return a
     list of dictionaries of PubMed citation information.
     """
-    base_url = r'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
+    base_url = r'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
     default_settings = {
         "retmax": 1000,
         "db": "pubmed",

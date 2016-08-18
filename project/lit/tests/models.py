@@ -16,7 +16,7 @@ class PubMedSearchTests(TestCase):
     and that all IDs are identical to what were expected. Example from the
     PubMed quickstart guide here:
 
-        http://www.ncbi.nlm.nih.gov/books/NBK25500/
+        https://www.ncbi.nlm.nih.gov/books/NBK25500/
 
     """
     def setUp(self):
@@ -69,7 +69,7 @@ class PubMedFetchTests(TestCase):
     and that all IDs are identical to what were expected. Example from the
     PubMed quickstart guide here:
 
-        http://www.ncbi.nlm.nih.gov/books/NBK25500/
+        https://www.ncbi.nlm.nih.gov/books/NBK25500/
 
     """
     def setUp(self):
@@ -109,7 +109,7 @@ class PubMedFetchTests(TestCase):
     def test_structured_abstract(self):
         """
         Some abstracts have structure in XML; make sure HAWC can import these.
-        For example: http://www.ncbi.nlm.nih.gov/pubmed/21813367
+        For example: https://www.ncbi.nlm.nih.gov/pubmed/21813367
         """
         self.ids = (21813367, )
         self.fetch = PubMedFetch(id_list=self.ids)
@@ -120,7 +120,7 @@ class PubMedFetchTests(TestCase):
     def test_doi(self):
         """
         Make sure HAWC grabs the DOI
-        For example: http://www.ncbi.nlm.nih.gov/pubmed/21813142?retmod=xml&report=xml&format=text  # NOQA
+        For example: https://www.ncbi.nlm.nih.gov/pubmed/21813142?retmod=xml&report=xml&format=text  # NOQA
         """
         self.ids = (21813142, )
         self.fetch = PubMedFetch(id_list=self.ids)

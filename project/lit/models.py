@@ -463,7 +463,7 @@ class Identifiers(models.Model):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
     URL_TEMPLATES = {
-        PUBMED: ur'http://www.ncbi.nlm.nih.gov/pubmed/{0}',
+        PUBMED: ur'https://www.ncbi.nlm.nih.gov/pubmed/{0}',
         HERO: ur'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
         DOI: ur'https://doi.org/{0}',
         WOS: ur'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
