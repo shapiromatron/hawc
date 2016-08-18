@@ -7,7 +7,7 @@
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "build:dev": "webpack --config webpack.config.dev.js",
     "build": "npm run clean && npm run build:webpack",
-    "start": "npm run build:dev && node devServer.js",
+    "start": "npm run build:dev && webpack-dashboard -- node devServer.js",
     "test": "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint assets"
@@ -75,7 +75,7 @@
     "unexpected-react": "^3.2.1",
     "webpack": "^1.13.0",
     "webpack-bundle-tracker": "0.0.93",
-    "webpack-dashboard": "0.0.1",
+    "webpack-dashboard": "^0.1.1",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-hot-middleware": "^2.6.0"
   },

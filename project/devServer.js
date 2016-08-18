@@ -15,10 +15,9 @@ if (args.indexOf('--testProduction')>=0){
 }
 
 var app = express(),
-    compiler = webpack(config),
-    dashboard = new Dashboard();
+    compiler = webpack(config);
 
-compiler.apply(new DashboardPlugin(dashboard.setData));
+compiler.apply(new DashboardPlugin());
 
 app.use(require('webpack-dev-middleware')(compiler, {
     quiet: true,
