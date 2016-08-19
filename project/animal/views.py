@@ -379,7 +379,6 @@ class EndpointList(BaseList):
 
         if order_by:
             qs = qs.order_by(order_by)
-            print order_by
 
         return qs
 

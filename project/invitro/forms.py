@@ -1,15 +1,21 @@
 import json
 from django import forms
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.forms.models import \
     BaseModelFormSet, modelformset_factory, inlineformset_factory
 from django.forms.widgets import Select
+
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
+from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup
+from study.lookups import InvitroStudyLookup
 from utils.forms import BaseFormHelper
 
-from . import models
+from . import models, lookups
 
 
 class IVChemicalForm(forms.ModelForm):
@@ -272,6 +278,160 @@ class IVEndpointForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[2], 1, url, 'Add new effect tag', 'span6')
 
         return helper
+
+
+class IVEndpointFilterForm(forms.Form):
+
+    ORDER_BY_CHOICES = (
+        ('experiment__study__short_citation', 'study'),
+        ('name', 'endpoint name'),
+        ('assay_type', 'assay type'),
+        ('effect', 'effect'),
+        ('chemical__name', 'chemical'),
+        ('category__name', 'category'),
+        ('observation_time', 'observation time'),
+    )
+
+    studies = selectable.AutoCompleteSelectMultipleField(
+        label='Study reference',
+        lookup_class=InvitroStudyLookup,
+        help_text="ex: Smith et al. 2010",
+        required=False)
+
+    name = forms.CharField(
+        label='Endpoint name',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointByAssessmentTextLookup),
+        help_text="ex: B cells",
+        required=False)
+
+    chemical = forms.CharField(
+        label='Chemical Name',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalNameLookup),
+        help_text="ex: PFOA",
+        required=False)
+
+    cas = forms.CharField(
+        label='CAS',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalCASLookup),
+        help_text="ex: 107-02-8",
+        required=False)
+
+    chemical_source = forms.CharField(
+        label='Chemical Source',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup),
+        help_text="ex: Sigma Aldrich",
+        required=False)
+
+    chemical_purity = forms.CharField(
+        label='Chemical Purity',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalPurityLookup),
+        help_text="ex: 98%",
+        required=False)
+
+    effect = forms.CharField(
+        label='Effect',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointEffectLookup),
+        help_text="ex: gene expression",
+        required=False)
+
+    response_units = forms.CharField(
+        label='Response Units',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup),
+        help_text="ex: counts",
+        required=False)
+
+    dose_units = forms.ModelChoiceField(
+       queryset=DoseUnits.objects.all(),
+       required=False
+    )
+
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
+
+    paginate_by = forms.IntegerField(
+        label='Items per page',
+        min_value=1,
+        initial=25,
+        max_value=10000,
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id')
+        super(IVEndpointFilterForm, self).__init__(*args, **kwargs)
+        self.fields['studies'].widget.update_query_parameters(
+            {'related': assessment_id})
+        self.fields['name'].widget.update_query_parameters(
+            {'related': assessment_id})
+
+        # disabled; dramatically slows-down page rendering;
+        # involuntary context_switches
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
+                widget.attrs['class'] = 'span12'
+
+        helper = BaseFormHelper(self)
+
+        helper.form_method = "GET"
+        helper.form_class = None
+
+        helper.add_fluid_row('studies', 4, "span3")
+        helper.add_fluid_row('chemical_source', 4, "span3")
+        helper.add_fluid_row('dose_units', 4, "span3")
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Apply filters'),
+            )
+        )
+
+        return helper
+
+    def get_query(self):
+
+        studies = self.cleaned_data.get('studies')
+        name = self.cleaned_data.get('name')
+        chemical = self.cleaned_data.get('chemical')
+        cas = self.cleaned_data.get('cas')
+        chemical_source = self.cleaned_data.get('chemical_source')
+        chemical_purity = self.cleaned_data.get('chemical_purity')
+        effect = self.cleaned_data.get('effect')
+        response_units = self.cleaned_data.get('response_units')
+        dose_units = self.cleaned_data.get('dose_units')
+
+        query = Q()
+        if studies:
+            query &= Q(experiment__study__in=studies)
+        if name:
+            query &= Q(name__icontains=name)
+        if chemical:
+            query &= Q(chemical__name__icontains=chemical)
+        if cas:
+            query &= Q(chemical__cas__icontains=cas)
+        if chemical_source:
+            query &= Q(chemical__source__icontains=chemical_source)
+        if chemical_purity:
+            query &= Q(chemical__purity__icontains=chemical_purity)
+        if effect:
+            query &= Q(effect__icontains=effect)
+        if response_units:
+            query &= Q(response_units__icontains=response_units)
+        if dose_units:
+            query &= Q(experiment__dose_units=dose_units)
+        return query
+
+    def get_order_by(self):
+        return self.cleaned_data.get('order_by', self.ORDER_BY_CHOICES[0][0])
+
+    def get_dose_units_id(self):
+        if hasattr(self, "cleaned_data") and self.cleaned_data.get('dose_units'):
+            return self.cleaned_data.get('dose_units').id
 
 
 class IVEndpointGroupForm(forms.ModelForm):
