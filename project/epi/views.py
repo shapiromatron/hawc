@@ -1,11 +1,12 @@
-from utils.views import (BaseDetail, BaseDelete,
-                         BaseUpdate, BaseCreate,
-                         BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList)
+from django.db.models import Q
 
 from assessment.models import Assessment
 from study.models import Study
 from study.views import StudyRead
+from utils.views import (BaseDetail, BaseDelete,
+                         BaseUpdate, BaseCreate,
+                         BaseCreateWithFormset, BaseUpdateWithFormset,
+                         CloseIfSuccessMixin, BaseList)
 
 from . import forms, exports, models
 
@@ -128,12 +129,47 @@ class OutcomeList(BaseList):
             pass
         return val
 
+    def get(self, request, *args, **kwargs):
+        if len(self.request.GET) > 0:
+            self.form = forms.OutcomeFilterForm(
+                self.request.GET,
+                assessment_id=self.assessment.id
+            )
+        else:
+            self.form = forms.OutcomeFilterForm(
+                assessment_id=self.assessment.id
+            )
+        return super(OutcomeList, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = self.get_obj_perms()
+        perms = super(OutcomeList, self).get_obj_perms()
+
+        query = Q(assessment=self.assessment)
+        order_by = None
+
         if not perms['edit']:
-            filters["study_population__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('name')
+            query &= Q(study_population__study__published=True)
+        if self.form.is_valid():
+            query &= self.form.get_query()
+            order_by = self.form.get_order_by()
+
+        ids = self.model.objects.filter(query)\
+            .distinct('id')\
+            .values_list('id', flat=True)
+
+        qs = self.model.objects.filter(id__in=ids)
+
+        if order_by:
+            qs = qs.order_by(order_by)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(OutcomeList, self).get_context_data(**kwargs)
+        context['form'] = self.form
+        # context['endpoints_json'] = self.object.get_json(
+        #     context['object_list'], json_encode=True)
+        return context
 
 
 class OutcomeExport(OutcomeList):

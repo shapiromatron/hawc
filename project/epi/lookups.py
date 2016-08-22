@@ -5,6 +5,17 @@ from utils.lookups import DistinctStringLookup, RelatedLookup
 from . import models
 
 
+class StudyPopulationByAssessmentLookup(RelatedLookup):
+    model = models.StudyPopulation
+    search_fields = ('name__icontains', )
+    related_filter = 'study__assessment_id'
+
+    def get_query(self, request, term):
+        return super(StudyPopulationByAssessmentLookup, self)\
+            .get_query(request, term)\
+            .distinct('name')
+
+
 class StudyPopulationByStudyLookup(RelatedLookup):
     model = models.StudyPopulation
     search_fields = ('name__icontains', )
@@ -64,6 +75,12 @@ class AgeOfExposureLookup(DistinctStringLookup):
     distinct_field = "age_of_exposure"
 
 
+class OutcomeLookup(RelatedLookup):
+    model = models.Outcome
+    search_fields = ('name__icontains', )
+    related_filter = 'assessment_id'
+
+
 class OutcomeByStudyPopulationLookup(RelatedLookup):
     model = models.Outcome
     search_fields = ('name__icontains', )
@@ -85,7 +102,7 @@ class EffectSubtypeLookup(DistinctStringLookup):
     distinct_field = "effect_subtype"
 
 
-class AgeOfMeasurement(DistinctStringLookup):
+class AgeOfMeasurementLookup(DistinctStringLookup):
     model = models.Outcome
     distinct_field = "age_of_measurement"
 
@@ -99,6 +116,7 @@ class ResultByOutcomeLookup(RelatedLookup):
     related_filter = 'outcome_id'
 
 
+registry.register(StudyPopulationByAssessmentLookup)
 registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
@@ -110,9 +128,10 @@ registry.register(ExposureMetricLookup)
 registry.register(AgeOfExposureLookup)
 registry.register(ComparisonSetByStudyPopulationLookup)
 registry.register(ComparisonSetByOutcomeLookup)
+registry.register(OutcomeLookup)
 registry.register(OutcomeByStudyPopulationLookup)
 registry.register(SystemLookup)
 registry.register(EffectLookup)
 registry.register(EffectSubtypeLookup)
-registry.register(AgeOfMeasurement)
+registry.register(AgeOfMeasurementLookup)
 registry.register(ResultByOutcomeLookup)
