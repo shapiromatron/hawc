@@ -18,7 +18,7 @@ class EndpointListTable {
             headers = [
                 'Study',
                 'Experiment',
-                'Animal Group',
+                'Animal group',
                 'Endpoint',
                 'Units',
                 'NOEL',

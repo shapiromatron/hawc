@@ -58,15 +58,7 @@
       </div>
     </div>
 
-    <div>
-        <ul>
-            {% for object in object_list %}
-                <li><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-            {% empty %}
-                <li><i>No outcomes are available.</i></li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div id='endpointTable'></div>
 
     {% if is_paginated %}
         <div class="pagination pagination-centered">
@@ -95,7 +87,15 @@
     {{ form.media }}
     <script type="text/javascript">
         $(document).ready(function(){
-            var endpoints = [];
+            var outcomes = [],
+                outcomeArray = {{outcome_json|safe}};
+            console.log(outcomeArray);
+            outcomeArray.map(function(outcome){
+                outcomes.push(new window.app.epi.Outcome(outcome));
+            })
+
+            var tbl = new window.app.epi.OutcomeListTable(outcomes);
+            $("#endpointTable").html(tbl.buildTable());
         });
     </script>
 {% endblock %}

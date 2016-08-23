@@ -167,8 +167,8 @@ class OutcomeList(BaseList):
     def get_context_data(self, **kwargs):
         context = super(OutcomeList, self).get_context_data(**kwargs)
         context['form'] = self.form
-        # context['endpoints_json'] = self.object.get_json(
-        #     context['object_list'], json_encode=True)
+        context['outcome_json'] = self.model.get_qs_json(
+            context['object_list'], json_encode=True)
         return context
 
 
