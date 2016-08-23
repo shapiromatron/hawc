@@ -168,6 +168,28 @@ class IVEndpoint {
         return tbl.getTbl();
     }
 
+    buildListRow(){
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
+            detail = $('<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">').click(() => {
+                this.displayAsModal({complete: true});
+            }),
+            endpoint = $('<span>')
+                        .append(link, detail)
+                        .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+
+        return [
+            `<a href=${this.data.experiment.study.url} target="_blank">${this.data.experiment.study.short_citation}</a>`,
+            `<a href=${this.data.experiment.url} target="_blank">${this.data.experiment.name}</a>`,
+            `<a href=${this.chemical.data.url} target="_blank">${this.chemical.data.name}</a>`,
+            endpoint,
+            this.data.effect ? this.data.effect : '--',
+            this.data.effects.length > 0 ? _.pluck(this.data.effects, 'name').join(', ') : '--',
+            this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : '--',
+            this.data.response_units ? this.data.response_units : '--',
+        ];
+
+    }
+
     displayAsModal(){
         var modal = new HAWCModal(),
             $details = $('<div class="span12">'),

@@ -60,15 +60,7 @@
       </div>
     </div>
 
-    <div>
-        <ul>
-            {% for object in object_list %}
-                <li><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-            {% empty %}
-                <li><i>No endpoints are available.</i></li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div id="endpointTable"></div>
 
     {% if is_paginated %}
         <div class="pagination pagination-centered">
@@ -98,7 +90,14 @@
     <script type="text/javascript">
         $(document).ready(function(){
             var endpoints = [],
-                dose_units = {{dose_units|default_if_none:"undefined"}};
+                endpointArray = {{endpoint_json|safe}};
+
+            endpointArray.map(function(endpoint){
+                endpoints.push(new window.app.invitro.IVEndpoint(endpoint));
+            })
+
+            var tbl = new window.app.invitro.IVEndpointListTable(endpoints);
+            $("#endpointTable").html(tbl.buildTable());
         });
     </script>
 {% endblock %}

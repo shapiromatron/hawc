@@ -230,8 +230,8 @@ class EndpointList(BaseList):
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
         context['form'] = self.form
-        # context['endpoints_json'] = self.object.get_json(
-        #     context['object_list'], json_encode=True)
+        context['endpoint_json'] = self.model.get_qs_json(
+            context['object_list'], json_encode=True)
         context['dose_units'] = self.form.get_dose_units_id()
         return context
 
