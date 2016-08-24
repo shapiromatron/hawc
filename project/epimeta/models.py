@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import json
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -9,7 +10,7 @@ from reversion import revisions as reversion
 
 from assessment.serializers import AssessmentSerializer
 from epi.models import Criteria, ResultMetric, AdjustmentFactor
-from utils.helper import SerializerHelper
+from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs
 
 
@@ -212,6 +213,14 @@ class MetaResult(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        results = [result.get_json(json_encode=False) for result in queryset]
+        if json_encode:
+            return json.dumps(results, cls=HAWCDjangoJSONEncoder)
+        else:
+            return results
 
     @staticmethod
     def flat_complete_header_row():

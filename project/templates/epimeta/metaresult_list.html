@@ -13,15 +13,7 @@
 
     <h1>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h1>
 
-    <div>
-        <ul>
-            {% for object in object_list %}
-                <li><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-            {% empty %}
-                <li><i>No outcomes are available.</i></li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div id="endpointTable"></div>
 
     {% if is_paginated %}
         <div class="pagination pagination-centered">
@@ -45,3 +37,20 @@
     {% endif %}
 
 {% endblock content %}
+
+{% block extrajs %}
+    {{ form.media }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var results = [],
+                resultArray = {{result_json|safe}};
+
+            resultArray.map(function(endpoint){
+                results.push(new window.app.epimeta.MetaResult(endpoint));
+            })
+
+            var tbl = new window.app.epimeta.MetaResultListTable(results);
+            $("#endpointTable").html(tbl.buildTable());
+        });
+    </script>
+{% endblock %}

@@ -148,6 +148,11 @@ class MetaResultList(utilViews.BaseList):
             filters["protocol__study__published"] = True
         return self.model.objects.filter(**filters).order_by('label')
 
+    def get_context_data(self, **kwargs):
+        context = super(MetaResultList, self).get_context_data(**kwargs)
+        context['result_json'] = self.model.get_qs_json(
+            context['object_list'], json_encode=True)
+        return context
 
 class MetaResultFullExport(MetaResultList):
     """
