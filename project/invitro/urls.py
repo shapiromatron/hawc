@@ -72,7 +72,7 @@ urlpatterns = [
         name='endpointcategory_update'),
 
     # endpoint
-    url(r'^endpoints/(?P<pk>\d+)/$',
+    url(r'^assessment/(?P<pk>\d+)/endpoints/$',
         views.EndpointList.as_view(),
         name='endpoint_list'),
 
