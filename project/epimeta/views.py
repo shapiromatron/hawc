@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.forms.models import modelformset_factory
 
 from assessment.models import Assessment
@@ -141,18 +142,49 @@ class MetaResultList(utilViews.BaseList):
             pass
         return val
 
+    def get(self, request, *args, **kwargs):
+        if len(self.request.GET) > 0:
+            self.form = forms.MetaResultFilterForm(
+                self.request.GET,
+                assessment_id=self.assessment.id
+            )
+        else:
+            self.form = forms.MetaResultFilterForm(
+                assessment_id=self.assessment.id
+            )
+        return super(MetaResultList, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
-        filters = {"protocol__study__assessment": self.assessment}
-        perms = self.get_obj_perms()
+        perms = super(MetaResultList, self).get_obj_perms()
+
+        query = Q(protocol__study__assessment=self.assessment)
+        order_by = None
+
         if not perms['edit']:
-            filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('label')
+            query &= Q(protocol__study__published=True)
+        if self.form.is_valid():
+            query &= self.form.get_query()
+            order_by = self.form.get_order_by()
+
+        ids = self.model.objects.filter(query)\
+            .order_by('id')\
+            .distinct('id')\
+            .values_list('id', flat=True)
+
+        qs = self.model.objects.filter(id__in=ids)
+
+        if order_by:
+            qs = qs.order_by(order_by)
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(MetaResultList, self).get_context_data(**kwargs)
+        context['form'] = self.form
         context['result_json'] = self.model.get_qs_json(
             context['object_list'], json_encode=True)
         return context
+
 
 class MetaResultFullExport(MetaResultList):
     """

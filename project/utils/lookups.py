@@ -14,7 +14,7 @@ class DistinctStringLookup(ModelLookup):
     distinct_field = None
 
     def get_query(self, request, term):
-        return self.model.objects\
+        return self.get_queryset()\
             .filter(**{self.distinct_field + "__icontains": term})\
             .order_by(self.distinct_field)\
             .distinct(self.distinct_field)

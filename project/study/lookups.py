@@ -18,6 +18,10 @@ class EpiStudyLookup(StudyLookup):
     filters = {'epi': True, }
 
 
+class EpimetaStudyLookup(StudyLookup):
+    filters = {'epi_meta': True, }
+
+
 class InvitroStudyLookup(StudyLookup):
     filters = {'in_vitro': True, }
 
@@ -25,4 +29,5 @@ class InvitroStudyLookup(StudyLookup):
 registry.register(StudyLookup)
 registry.register(AnimalStudyLookup)
 registry.register(EpiStudyLookup)
+registry.register(EpimetaStudyLookup)
 registry.register(InvitroStudyLookup)
