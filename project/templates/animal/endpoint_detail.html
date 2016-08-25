@@ -61,7 +61,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    var endpoint = new window.app.animal.Endpoint({{object.d_response|safe}});
+    var endpoint = new window.app.animal.Endpoint({{object.get_json|safe}});
 
     endpoint.build_details_table($('#endpoint-details-table'));
     endpoint.build_endpoint_table($('#dr-tbl'));

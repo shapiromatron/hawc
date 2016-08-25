@@ -459,7 +459,7 @@ class BaseEndpoint(models.Model):
         if hasattr(self, 'outcome'):
             d = self.outcome.get_json(*args, **kwargs)
         elif hasattr(self, 'endpoint'):
-            d = self.endpoint.d_response(*args, **kwargs)
+            d = self.endpoint.get_json(*args, **kwargs)
         elif hasattr(self, 'ivendpoint'):
             d = self.ivendpoint.get_json(*args, **kwargs)
         return d
