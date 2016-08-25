@@ -3,15 +3,16 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 
 from assessment.models import Assessment
-from utils import views as utilViews
-
 from study.models import Study
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
+                         BaseDetail, BaseEndpointFilterList, BaseUpdate,
+                         BaseUpdateWithFormset, GenerateReport)
 
 from . import forms, models, exports
 
 
 # MetaProtocol
-class MetaProtocolCreate(utilViews.BaseCreate):
+class MetaProtocolCreate(BaseCreate):
     success_message = 'Meta-protocol created.'
     parent_model = Study
     parent_template_name = 'study'
@@ -19,17 +20,17 @@ class MetaProtocolCreate(utilViews.BaseCreate):
     form_class = forms.MetaProtocolForm
 
 
-class MetaProtocolDetail(utilViews.BaseDetail):
+class MetaProtocolDetail(BaseDetail):
     model = models.MetaProtocol
 
 
-class MetaProtocolUpdate(utilViews.BaseUpdate):
+class MetaProtocolUpdate(BaseUpdate):
     success_message = "Meta-protocol updated."
     model = models.MetaProtocol
     form_class = forms.MetaProtocolForm
 
 
-class MetaProtocolDelete(utilViews.BaseDelete):
+class MetaProtocolDelete(BaseDelete):
     success_message = "Meta-protocol deleted."
     model = models.MetaProtocol
 
@@ -38,7 +39,7 @@ class MetaProtocolDelete(utilViews.BaseDelete):
 
 
 # MetaResult
-class MetaResultCreate(utilViews.BaseCreateWithFormset):
+class MetaResultCreate(BaseCreateWithFormset):
     success_message = 'Meta-Result created.'
     parent_model = models.MetaProtocol
     parent_template_name = 'protocol'
@@ -74,11 +75,11 @@ class MetaResultCopyAsNew(MetaProtocolDetail):
         return context
 
 
-class MetaResultDetail(utilViews.BaseDetail):
+class MetaResultDetail(BaseDetail):
     model = models.MetaResult
 
 
-class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
+class MetaResultUpdate(BaseUpdateWithFormset):
     success_message = "Meta-Result updated."
     model = models.MetaResult
     form_class = forms.MetaResultForm
@@ -103,7 +104,7 @@ class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
             form.instance.meta_result = self.object
 
 
-class MetaResultDelete(utilViews.BaseDelete):
+class MetaResultDelete(BaseDelete):
     success_message = "Meta-Result deleted."
     model = models.MetaResult
 
@@ -111,7 +112,7 @@ class MetaResultDelete(utilViews.BaseDelete):
         return self.object.protocol.get_absolute_url()
 
 
-class MetaResultReport(utilViews.GenerateReport):
+class MetaResultReport(GenerateReport):
     parent_model = Assessment
     model = models.MetaResult
     report_type = 4
@@ -130,60 +131,16 @@ class MetaResultReport(utilViews.GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class MetaResultList(utilViews.BaseList):
-    parent_model = Assessment
+class MetaResultList(BaseEndpointFilterList):
     model = models.MetaResult
+    form_class = forms.MetaResultFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
-    def get(self, request, *args, **kwargs):
-        if len(self.request.GET) > 0:
-            self.form = forms.MetaResultFilterForm(
-                self.request.GET,
-                assessment_id=self.assessment.id
-            )
-        else:
-            self.form = forms.MetaResultFilterForm(
-                assessment_id=self.assessment.id
-            )
-        return super(MetaResultList, self).get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        perms = super(MetaResultList, self).get_obj_perms()
-
+    def get_query(self, perms):
         query = Q(protocol__study__assessment=self.assessment)
-        order_by = None
 
         if not perms['edit']:
             query &= Q(protocol__study__published=True)
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        ids = self.model.objects.filter(query)\
-            .order_by('id')\
-            .distinct('id')\
-            .values_list('id', flat=True)
-
-        qs = self.model.objects.filter(id__in=ids)
-
-        if order_by:
-            qs = qs.order_by(order_by)
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(MetaResultList, self).get_context_data(**kwargs)
-        context['form'] = self.form
-        context['result_json'] = self.model.get_qs_json(
-            context['object_list'], json_encode=True)
-        return context
+        return query
 
 
 class MetaResultFullExport(MetaResultList):

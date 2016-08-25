@@ -88,10 +88,9 @@
     {{ form.media }}
     <script type="text/javascript">
         $(document).ready(function(){
-            var results = [],
-                resultArray = {{result_json|safe}};
+            var results = [];
 
-            resultArray.map(function(endpoint){
+            {{list_json|safe}}.map(function(endpoint){
                 results.push(new window.app.epimeta.MetaResult(endpoint));
             })
 

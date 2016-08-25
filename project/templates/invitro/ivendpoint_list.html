@@ -89,10 +89,9 @@
     {{ form.media }}
     <script type="text/javascript">
         $(document).ready(function(){
-            var endpoints = [],
-                endpointArray = {{endpoint_json|safe}};
+            var endpoints = [];
 
-            endpointArray.map(function(endpoint){
+            {{list_json|safe}}.map(function(endpoint){
                 endpoints.push(new window.app.invitro.IVEndpoint(endpoint));
             })
 

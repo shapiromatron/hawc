@@ -87,10 +87,8 @@
     {{ form.media }}
     <script type="text/javascript">
         $(document).ready(function(){
-            var outcomes = [],
-                outcomeArray = {{outcome_json|safe}};
-            console.log(outcomeArray);
-            outcomeArray.map(function(outcome){
+            var outcomes = [];
+            {{list_json|safe}}.map(function(outcome){
                 outcomes.push(new window.app.epi.Outcome(outcome));
             })
 

@@ -3,12 +3,12 @@ from django.views.generic import DetailView
 
 from assessment.models import Assessment
 from study.models import Study
-from . import models, forms, exports
-from utils.views import (
-    GenerateReport, BaseList, BaseDetail, BaseCreate,
-    BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
-    ProjectManagerOrHigherMixin)
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
+                         BaseDetail, BaseEndpointFilterList, BaseUpdate,
+                         BaseUpdateWithFormset, GenerateReport,
+                         ProjectManagerOrHigherMixin)
 
+from . import models, forms, exports
 
 # Experiment
 class ExperimentCreate(BaseCreate):
@@ -180,60 +180,22 @@ class EndpointDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointList(BaseList):
+class EndpointList(BaseEndpointFilterList):
     parent_model = Assessment
     model = models.IVEndpoint
+    form_class = forms.IVEndpointFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
-    def get(self, request, *args, **kwargs):
-        if len(self.request.GET) > 0:
-            self.form = forms.IVEndpointFilterForm(
-                self.request.GET,
-                assessment_id=self.assessment.id
-            )
-        else:
-            self.form = forms.IVEndpointFilterForm(
-                assessment_id=self.assessment.id
-            )
-        return super(EndpointList, self).get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        perms = super(EndpointList, self).get_obj_perms()
-
+    def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        order_by = None
-
         if not perms['edit']:
             query &= Q(experiment__study__published=True)
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        ids = self.model.objects.filter(query)\
-            .distinct('id')\
-            .values_list('id', flat=True)
-
-        qs = self.model.objects.filter(id__in=ids)
-
-        if order_by:
-            qs = qs.order_by(order_by)
-
-        return qs
+        return query
 
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
-        context['form'] = self.form
-        context['endpoint_json'] = self.model.get_qs_json(
-            context['object_list'], json_encode=True)
         context['dose_units'] = self.form.get_dose_units_id()
         return context
+
 
 class EndpointFullExport(EndpointList):
     parent_model = Assessment

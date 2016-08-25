@@ -3,10 +3,9 @@ from django.db.models import Q
 from assessment.models import Assessment
 from study.models import Study
 from study.views import StudyRead
-from utils.views import (BaseDetail, BaseDelete,
-                         BaseUpdate, BaseCreate,
-                         BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList)
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
+                         BaseDelete, BaseEndpointFilterList, BaseUpdate,
+                         BaseUpdateWithFormset, CloseIfSuccessMixin)
 
 from . import forms, exports, models
 
@@ -117,59 +116,16 @@ class ExposureDelete(BaseDelete):
 
 
 # Outcome
-class OutcomeList(BaseList):
+class OutcomeList(BaseEndpointFilterList):
     parent_model = Assessment
     model = models.Outcome
+    form_class = forms.OutcomeFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
-    def get(self, request, *args, **kwargs):
-        if len(self.request.GET) > 0:
-            self.form = forms.OutcomeFilterForm(
-                self.request.GET,
-                assessment_id=self.assessment.id
-            )
-        else:
-            self.form = forms.OutcomeFilterForm(
-                assessment_id=self.assessment.id
-            )
-        return super(OutcomeList, self).get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        perms = super(OutcomeList, self).get_obj_perms()
-
+    def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        order_by = None
-
         if not perms['edit']:
             query &= Q(study_population__study__published=True)
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        ids = self.model.objects.filter(query)\
-            .distinct('id')\
-            .values_list('id', flat=True)
-
-        qs = self.model.objects.filter(id__in=ids)
-
-        if order_by:
-            qs = qs.order_by(order_by)
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(OutcomeList, self).get_context_data(**kwargs)
-        context['form'] = self.form
-        context['outcome_json'] = self.model.get_qs_json(
-            context['object_list'], json_encode=True)
-        return context
+        return query
 
 
 class OutcomeExport(OutcomeList):
