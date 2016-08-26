@@ -81,7 +81,7 @@ class RoBBarchartPlot extends D3Visualization {
     processData(){
 
         var included_metrics = this.data.settings.included_metrics,
-            stack_order = ['N/A', '--', '-', '+', '++'],
+            stack_order = ['N/A', '--', '-', '+', '++', 'NR'],
             metrics, stack, dataset;
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
@@ -91,7 +91,7 @@ class RoBBarchartPlot extends D3Visualization {
             }).map(function(d){
                 var vals = {
                         'label': d.rob_scores[0].data.metric.metric,
-                        'N/A':0, '--':0, '-':0, '+':0, '++':0,
+                        'N/A':0, '--':0, '-':0, '+':0, '++':0, 'NR': 0,
                     },
                     weight = 1/d.rob_scores.length;
                 d.rob_scores.forEach(function(rob){
