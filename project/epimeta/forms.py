@@ -189,7 +189,7 @@ class MetaResultFilterForm(forms.Form):
     ORDER_BY_CHOICES = (
         ('protocol__study__short_citation', 'study'),
         ('label', 'meta result label'),
-        ('protocol_name', 'protocol'),
+        ('protocol__name', 'protocol'),
         ('health_outcome', 'health outcome'),
         ('exposure', 'exposure'),
     )
