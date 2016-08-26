@@ -249,8 +249,6 @@ class MetaResultFilterForm(forms.Form):
         self.fields['exposure_name'].widget.update_query_parameters(
             {'related': assessment_id})
 
-        # disabled; dramatically slows-down page rendering;
-        # involuntary context_switches
         self.helper = self.setHelper()
 
     def setHelper(self):

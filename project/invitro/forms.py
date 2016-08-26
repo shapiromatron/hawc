@@ -364,8 +364,6 @@ class IVEndpointFilterForm(forms.Form):
         self.fields['name'].widget.update_query_parameters(
             {'related': assessment_id})
 
-        # disabled; dramatically slows-down page rendering;
-        # involuntary context_switches
         self.helper = self.setHelper()
 
     def setHelper(self):
