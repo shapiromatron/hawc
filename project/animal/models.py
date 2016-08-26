@@ -815,17 +815,14 @@ class Endpoint(BaseEndpoint):
         return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
 
     @staticmethod
-    def d_responses(queryset, json_encode=True):
-        """
-        Return a list of queryset responses with the specified dosing protocol
-        """
-        endpoints = [e.d_response(json_encode=False) for e in queryset]
+    def get_qs_json(queryset, json_encode=True):
+        endpoints = [e.get_json(json_encode=False) for e in queryset]
         if json_encode:
             return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
         else:
             return endpoints
 
-    def d_response(self, json_encode=True):
+    def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_assessment(self):

@@ -14,7 +14,7 @@ class DistinctStringLookup(ModelLookup):
     distinct_field = None
 
     def get_query(self, request, term):
-        return self.model.objects\
+        return self.get_queryset()\
             .filter(**{self.distinct_field + "__icontains": term})\
             .order_by(self.distinct_field)\
             .distinct(self.distinct_field)
@@ -47,4 +47,17 @@ class RelatedLookup(ModelLookup):
         return qs.filter(
             Q(**{self.related_filter: id_}) &
             reduce(operator.or_, search_fields)
+        )
+
+
+class RelatedDistinctStringLookup(DistinctStringLookup):
+    related_filter = None
+
+    def get_query(self, request, term):
+        qs = super(RelatedDistinctStringLookup, self)\
+                .get_query(request, term)
+        id_ = tryParseInt(request.GET.get('related'), -1)
+
+        return qs.filter(
+            Q(**{self.related_filter: id_})
         )

@@ -87,6 +87,26 @@ class MetaResult {
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
+    buildListRow(){
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.label}</a>`,
+            detail = $('<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">').click(() => {
+                this.displayAsModal({complete: true});
+            }),
+            endpoint = $('<span>')
+                        .append(link, detail)
+                        .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+
+        return [
+            `<a href=${this.data.protocol.study.url} target="_blank">${this.data.protocol.study.short_citation}</a>`,
+            endpoint,
+            `<a href=${this.data.protocol.url} target="_blank">${this.data.protocol.name}</a>`,
+            this.data.health_outcome ? this.data.health_outcome : '--',
+            this.data.exposure_name ? this.data.exposure_name : '--',
+            this.data.ci_units ? `${this.data.ci_units * 100}%` : '--',
+            this.data.estimateFormatted ? this.data.estimateFormatted : '--',
+        ];
+    }
+
     displayAsModal(){
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
@@ -101,9 +121,6 @@ class MetaResult {
         $content
            .append(this.build_details_table())
            .append($singleResultsDiv);
-
-
-
 
         modal.addHeader(title)
             .addBody($content)

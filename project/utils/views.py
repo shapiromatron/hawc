@@ -485,6 +485,69 @@ class BaseUpdateWithFormset(BaseUpdate):
         return context
 
 
+class BaseEndpointFilterList(BaseList):
+    parent_model = Assessment
+    form_class = None # required
+
+    def get_paginate_by(self, qs):
+        val = 25
+        try:
+            val = int(self.request.GET.get('paginate_by', val))
+        except ValueError:
+            pass
+        return val
+
+    def get(self, request, *args, **kwargs):
+        if len(self.request.GET) > 0:
+            self.form = self.form_class(
+                self.request.GET,
+                assessment_id=self.assessment.id
+            )
+        else:
+            self.form = self.form_class(
+                assessment_id=self.assessment.id
+            )
+        return super(BaseEndpointFilterList, self).get(request, *args, **kwargs)
+
+    def get_query(self, perms):
+        """
+        query = Q(relation__to__assessment=self.assessment)
+        if not perms['edit']:
+            query &= Q(study__published=True)
+        return query
+        """
+        pass
+
+    def get_queryset(self):
+        perms = super(BaseEndpointFilterList, self).get_obj_perms()
+        order_by = None
+
+        query = self.get_query(perms)
+
+        if self.form.is_valid():
+            query &= self.form.get_query()
+            order_by = self.form.get_order_by()
+
+        ids = self.model.objects.filter(query)\
+            .order_by('id')\
+            .distinct('id')\
+            .values_list('id', flat=True)
+
+        qs = self.model.objects.filter(id__in=ids)
+
+        if order_by:
+            qs = qs.order_by(order_by)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseEndpointFilterList, self).get_context_data(**kwargs)
+        context['form'] = self.form
+        context['list_json'] = self.model.get_qs_json(
+            context['object_list'], json_encode=True)
+        return context
+
+
 class GenerateReport(BaseList):
     """
     Generate a docx report given an assessment, data-type, and template.

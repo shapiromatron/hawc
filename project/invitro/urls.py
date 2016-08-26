@@ -72,8 +72,8 @@ urlpatterns = [
         name='endpointcategory_update'),
 
     # endpoint
-    url(r'^endpoints/(?P<pk>\d+)/$',
-        views.EndpointsList.as_view(),
+    url(r'^assessment/(?P<pk>\d+)/endpoints/$',
+        views.EndpointList.as_view(),
         name='endpoint_list'),
 
     url(r'^experiment/(?P<pk>\d+)/create-endpoint/$',
@@ -93,11 +93,11 @@ urlpatterns = [
         name='endpoint_delete'),
 
     url(r'^assessment/(?P<pk>\d+)/full-export/$',
-        views.EndpointsFullExport.as_view(),
+        views.EndpointFullExport.as_view(),
         name='endpoints_export'),
 
     url(r'^assessment/(?P<pk>\d+)/report/$',
-        views.EndpointsReport.as_view(),
+        views.EndpointReport.as_view(),
         name='endpoints_report'),
 
     url(r'^api/', include(router.urls, namespace='api')),

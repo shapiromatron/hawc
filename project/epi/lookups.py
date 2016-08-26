@@ -1,8 +1,20 @@
 from selectable.registry import registry
 
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import (DistinctStringLookup, RelatedLookup,
+                           RelatedDistinctStringLookup)
 
 from . import models
+
+
+class StudyPopulationByAssessmentLookup(RelatedLookup):
+    model = models.StudyPopulation
+    search_fields = ('name__icontains', )
+    related_filter = 'study__assessment_id'
+
+    def get_query(self, request, term):
+        return super(StudyPopulationByAssessmentLookup, self)\
+            .get_query(request, term)\
+            .distinct('name')
 
 
 class StudyPopulationByStudyLookup(RelatedLookup):
@@ -64,30 +76,40 @@ class AgeOfExposureLookup(DistinctStringLookup):
     distinct_field = "age_of_exposure"
 
 
+class OutcomeLookup(RelatedLookup):
+    model = models.Outcome
+    search_fields = ('name__icontains', )
+    related_filter = 'assessment_id'
+
+
 class OutcomeByStudyPopulationLookup(RelatedLookup):
     model = models.Outcome
     search_fields = ('name__icontains', )
     related_filter = 'study_population_id'
 
 
-class SystemLookup(DistinctStringLookup):
+class SystemLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "system"
+    related_filter = 'assessment_id'
 
 
-class EffectLookup(DistinctStringLookup):
+class EffectLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect"
+    related_filter = 'assessment_id'
 
 
-class EffectSubtypeLookup(DistinctStringLookup):
+class EffectSubtypeLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect_subtype"
+    related_filter = 'assessment_id'
 
 
-class AgeOfMeasurement(DistinctStringLookup):
+class AgeOfMeasurementLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "age_of_measurement"
+    related_filter = 'assessment_id'
 
 
 class ResultByOutcomeLookup(RelatedLookup):
@@ -99,6 +121,7 @@ class ResultByOutcomeLookup(RelatedLookup):
     related_filter = 'outcome_id'
 
 
+registry.register(StudyPopulationByAssessmentLookup)
 registry.register(StudyPopulationByStudyLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
@@ -110,9 +133,10 @@ registry.register(ExposureMetricLookup)
 registry.register(AgeOfExposureLookup)
 registry.register(ComparisonSetByStudyPopulationLookup)
 registry.register(ComparisonSetByOutcomeLookup)
+registry.register(OutcomeLookup)
 registry.register(OutcomeByStudyPopulationLookup)
 registry.register(SystemLookup)
 registry.register(EffectLookup)
 registry.register(EffectSubtypeLookup)
-registry.register(AgeOfMeasurement)
+registry.register(AgeOfMeasurementLookup)
 registry.register(ResultByOutcomeLookup)

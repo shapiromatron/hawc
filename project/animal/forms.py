@@ -136,10 +136,14 @@ class AnimalGroupForm(ModelForm):
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageExposedLookup,
             allow_new=True)
+        self.fields['lifestage_exposed'].widget.update_query_parameters(
+            {'related': self.instance.experiment.study.assessment.id})
 
         self.fields['lifestage_assessed'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AnimalGroupLifestageAssessedLookup,
             allow_new=True)
+        self.fields['lifestage_assessed'].widget.update_query_parameters(
+            {'related': self.instance.experiment.study.assessment.id})
 
         self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
                 experiment=self.instance.experiment)
@@ -662,13 +666,11 @@ class EndpointFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
-        self.fields['studies'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['name'].widget.update_query_parameters(
-            {'related': assessment_id})
+        for field in self.fields:
+            if field not in ('sex', 'data_extracted', 'dose_units', 'order_by', 'paginate_by'):
+                self.fields[field].widget.update_query_parameters(
+                    {'related': assessment_id})
 
-        # disabled; dramatically slows-down page rendering;
-        # involuntary context_switches
         self.helper = self.setHelper()
 
     def setHelper(self):

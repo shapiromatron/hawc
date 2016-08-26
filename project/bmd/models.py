@@ -204,7 +204,7 @@ class Session(models.Model):
             model.save_model(resp)
 
     def get_endpoint_dataset(self):
-        ds = self.endpoint.d_response(json_encode=False)
+        ds = self.endpoint.get_json(json_encode=False)
         doses = [
             dose['dose']
             for dose in ds['animal_group']['dosing_regime']['doses']

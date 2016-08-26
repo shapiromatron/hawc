@@ -1,14 +1,14 @@
+from django.db.models import Q
 from django.views.generic import DetailView
-from utils.views import (
-    GenerateReport, BaseList, BaseDetail, BaseCreate,
-    BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
-)
 
 from assessment.models import Assessment
 from study.models import Study
-from . import models, forms, exports
-from utils.views import ProjectManagerOrHigherMixin
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
+                         BaseDetail, BaseEndpointFilterList, BaseUpdate,
+                         BaseUpdateWithFormset, GenerateReport,
+                         ProjectManagerOrHigherMixin)
 
+from . import models, forms, exports
 
 # Experiment
 class ExperimentCreate(BaseCreate):
@@ -180,27 +180,24 @@ class EndpointDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointsList(BaseList):
+class EndpointList(BaseEndpointFilterList):
     parent_model = Assessment
     model = models.IVEndpoint
+    form_class = forms.IVEndpointFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
-    def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointsList, self).get_obj_perms()
+    def get_query(self, perms):
+        query = Q(assessment=self.assessment)
         if not perms['edit']:
-            filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('name')
+            query &= Q(experiment__study__published=True)
+        return query
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointList, self).get_context_data(**kwargs)
+        context['dose_units'] = self.form.get_dose_units_id()
+        return context
 
 
-class EndpointsFullExport(EndpointsList):
+class EndpointFullExport(EndpointList):
     parent_model = Assessment
     model = models.IVEndpoint
 
@@ -214,7 +211,7 @@ class EndpointsFullExport(EndpointsList):
         return exporter.build_response()
 
 
-class EndpointsReport(GenerateReport):
+class EndpointReport(GenerateReport):
     parent_model = Assessment
     model = models.IVEndpoint
     report_type = 5

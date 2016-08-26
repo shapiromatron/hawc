@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import itertools
+import json
 import math
 from operator import xor
-import itertools
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -14,7 +15,7 @@ from scipy.stats import t
 from assessment.models import Assessment, BaseEndpoint
 from study.models import Study
 from utils.models import get_crumbs, get_distinct_charfield_opts
-from utils.helper import SerializerHelper
+from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 
 
 class Criteria(models.Model):
@@ -384,6 +385,14 @@ class Outcome(BaseEndpoint):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        outcomes = [outcome.get_json(json_encode=False) for outcome in queryset]
+        if json_encode:
+            return json.dumps(outcomes, cls=HAWCDjangoJSONEncoder)
+        else:
+            return outcomes
 
     @classmethod
     def assessment_qs(cls, assessment_id):

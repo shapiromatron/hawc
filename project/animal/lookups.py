@@ -1,47 +1,55 @@
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import RelatedLookup, RelatedDistinctStringLookup
 
 
-class ExperimentCASLookup(DistinctStringLookup):
+class ExperimentCASLookup(RelatedDistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
+    related_filter = 'study__assessment_id'
 
 
-class AnimalGroupLifestageExposedLookup(DistinctStringLookup):
+class AnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_exposed"
+    related_filter = 'experiment__study__assessment_id'
 
 
-class AnimalGroupLifestageAssessedLookup(DistinctStringLookup):
+class AnimalGroupLifestageAssessedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_assessed"
+    related_filter = 'experiment__study__assessment_id'
 
 
-class EndpointSystemLookup(DistinctStringLookup):
+class EndpointSystemLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "system"
+    related_filter = 'assessment_id'
 
 
-class EndpointOrganLookup(DistinctStringLookup):
+class EndpointOrganLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "organ"
+    related_filter = 'assessment_id'
 
 
-class EndpointEffectLookup(DistinctStringLookup):
+class EndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect"
+    related_filter = 'assessment_id'
 
 
-class EndpointEffectSubtypeLookup(DistinctStringLookup):
+class EndpointEffectSubtypeLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect_subtype"
+    related_filter = 'assessment_id'
 
 
-class EndpointStatisticalTestLookup(DistinctStringLookup):
+class EndpointStatisticalTestLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "statistical_test"
+    related_filter = 'assessment_id'
 
 
 class EndpointByStudyLookup(RelatedLookup):
