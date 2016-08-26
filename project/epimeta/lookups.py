@@ -1,6 +1,6 @@
 from selectable.registry import registry
 
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import RelatedDistinctStringLookup, RelatedLookup
 from utils.helper import tryParseInt
 from . import models
 
@@ -17,16 +17,18 @@ class MetaResultByAssessmentLookup(RelatedLookup):
     related_filter = 'protocol__study__assessment_id'
 
 
-class MetaResultHealthOutcomeLookup(DistinctStringLookup):
+class MetaResultHealthOutcomeLookup(RelatedDistinctStringLookup):
     model = models.MetaResult
     distinct_field = 'health_outcome'
-    search_fields = ('health_outcome__icontains', )
+    search_fields = ('health_outcome__icontains', )    
+    related_filter = 'protocol__study__assessment_id'
 
 
-class MetaResultExposureNameLookup(DistinctStringLookup):
+class MetaResultExposureNameLookup(RelatedDistinctStringLookup):
     model = models.MetaResult
     distinct_field = 'exposure_name'
     search_fields = ('exposure_name__icontains', )
+    related_filter = 'protocol__study__assessment_id'
 
 
 class MetaProtocolLookup(RelatedLookup):
@@ -35,16 +37,11 @@ class MetaProtocolLookup(RelatedLookup):
     related_filter = 'study__assessment_id'
 
 
-class ExposureLookup(DistinctStringLookup):
+class ExposureLookup(RelatedDistinctStringLookup):
     model = models.MetaResult
     distinct_field = 'exposure_name'
     search_fields = ('exposure_name__icontains', )
-
-
-class NumberStudiesLookup(DistinctStringLookup):
-    model = models.MetaResult
-    distinct_field = 'number_studies'
-    search_fields = ('number_studies__icontains', )
+    related_filter = 'protocol__study__assessment_id'
 
 
 registry.register(MetaResultByStudyLookup)

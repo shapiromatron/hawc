@@ -238,16 +238,10 @@ class MetaResultFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
         super(MetaResultFilterForm, self).__init__(*args, **kwargs)
-        self.fields['studies'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['label'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['protocol'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['health_outcome'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['exposure_name'].widget.update_query_parameters(
-            {'related': assessment_id})
+        for field in self.fields:
+            if field not in ('order_by', 'paginate_by'):
+                self.fields[field].widget.update_query_parameters(
+                    {'related': assessment_id})
 
         self.helper = self.setHelper()
 

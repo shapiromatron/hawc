@@ -1,6 +1,7 @@
 from selectable.registry import registry
 
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import (DistinctStringLookup, RelatedLookup,
+                           RelatedDistinctStringLookup)
 
 from . import models
 
@@ -87,24 +88,28 @@ class OutcomeByStudyPopulationLookup(RelatedLookup):
     related_filter = 'study_population_id'
 
 
-class SystemLookup(DistinctStringLookup):
+class SystemLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "system"
+    related_filter = 'assessment_id'
 
 
-class EffectLookup(DistinctStringLookup):
+class EffectLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect"
+    related_filter = 'assessment_id'
 
 
-class EffectSubtypeLookup(DistinctStringLookup):
+class EffectSubtypeLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect_subtype"
+    related_filter = 'assessment_id'
 
 
-class AgeOfMeasurementLookup(DistinctStringLookup):
+class AgeOfMeasurementLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "age_of_measurement"
+    related_filter = 'assessment_id'
 
 
 class ResultByOutcomeLookup(RelatedLookup):

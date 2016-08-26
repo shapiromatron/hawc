@@ -48,3 +48,16 @@ class RelatedLookup(ModelLookup):
             Q(**{self.related_filter: id_}) &
             reduce(operator.or_, search_fields)
         )
+
+
+class RelatedDistinctStringLookup(DistinctStringLookup):
+    related_filter = None
+
+    def get_query(self, request, term):
+        qs = super(RelatedDistinctStringLookup, self)\
+                .get_query(request, term)
+        id_ = tryParseInt(request.GET.get('related'), -1)
+
+        return qs.filter(
+            Q(**{self.related_filter: id_})
+        )
