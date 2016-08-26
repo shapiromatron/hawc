@@ -305,7 +305,7 @@ class IVEndpointFilterForm(forms.Form):
         required=False)
 
     chemical = forms.CharField(
-        label='Chemical Name',
+        label='Chemical name',
         widget=selectable.AutoCompleteWidget(lookups.IVChemicalNameLookup),
         help_text="ex: PFOA",
         required=False)
@@ -317,13 +317,13 @@ class IVEndpointFilterForm(forms.Form):
         required=False)
 
     chemical_source = forms.CharField(
-        label='Chemical Source',
+        label='Chemical source',
         widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup),
         help_text="ex: Sigma Aldrich",
         required=False)
 
     chemical_purity = forms.CharField(
-        label='Chemical Purity',
+        label='Chemical purity',
         widget=selectable.AutoCompleteWidget(lookups.IVChemicalPurityLookup),
         help_text="ex: 98%",
         required=False)
@@ -335,7 +335,7 @@ class IVEndpointFilterForm(forms.Form):
         required=False)
 
     response_units = forms.CharField(
-        label='Response Units',
+        label='Response units',
         widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup),
         help_text="ex: counts",
         required=False)

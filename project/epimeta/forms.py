@@ -201,7 +201,7 @@ class MetaResultFilterForm(forms.Form):
         required=False)
 
     label = forms.CharField(
-        label='Meta Result Label',
+        label='Meta result label',
         widget=selectable.AutoCompleteWidget(lookups.MetaResultByAssessmentLookup),
         help_text="ex: ALL, folic acid, any time",
         required=False)
@@ -213,13 +213,13 @@ class MetaResultFilterForm(forms.Form):
         required=False)
 
     health_outcome = forms.CharField(
-        label='Health Outcome',
+        label='Health outcome',
         widget=selectable.AutoCompleteWidget(lookups.MetaResultHealthOutcomeLookup),
         help_text="ex: Any adenoma",
         required=False)
 
     exposure_name = forms.CharField(
-        label='Exposure Name',
+        label='Exposure name',
         widget=selectable.AutoCompleteWidget(lookups.ExposureLookup),
         help_text="ex: Folate",
         required=False)

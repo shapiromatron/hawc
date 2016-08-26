@@ -442,7 +442,7 @@ class OutcomeFilterForm(forms.Form):
         required=False)
 
     study_population = forms.CharField(
-        label='Study Population',
+        label='Study population',
         widget=selectable.AutoCompleteWidget(lookups.StudyPopulationByAssessmentLookup),
         help_text="ex: population near a Teflon manufacturing plant",
         required=False)
@@ -466,7 +466,7 @@ class OutcomeFilterForm(forms.Form):
         required=False)
 
     effect_subtype = forms.CharField(
-        label='Effect Subtype',
+        label='Effect subtype',
         widget=selectable.AutoCompleteWidget(lookups.EffectSubtypeLookup),
         help_text="ex: Melanoma",
         required=False)
@@ -478,7 +478,7 @@ class OutcomeFilterForm(forms.Form):
         required=False)
 
     age_of_measurement = forms.CharField(
-        label='Age of Measurement',
+        label='Age of measurement',
         widget=selectable.AutoCompleteWidget(lookups.AgeOfMeasurementLookup),
         help_text="ex: 10-12 years of age",
         required=False)
