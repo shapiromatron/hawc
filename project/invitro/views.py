@@ -10,6 +10,7 @@ from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
 
 from . import models, forms, exports
 
+
 # Experiment
 class ExperimentCreate(BaseCreate):
     success_message = "Experiment created."
@@ -224,11 +225,11 @@ class EndpointReport(GenerateReport):
     report_type = 5
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointsReport, self).get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        perms = self.get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            filters &= Q(experiment__study__published=True)
+        return self.model.objects.filter(filters)
 
     def get_filename(self):
         return "in-vitro.docx"

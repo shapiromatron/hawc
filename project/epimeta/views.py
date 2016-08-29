@@ -1,6 +1,4 @@
-from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.forms.models import modelformset_factory
 
 from assessment.models import Assessment
 from study.models import Study

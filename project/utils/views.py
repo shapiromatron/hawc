@@ -487,7 +487,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 class BaseEndpointFilterList(BaseList):
     parent_model = Assessment
-    form_class = None # required
+    form_class = None  # required
 
     def get_paginate_by(self, qs):
         val = 25
