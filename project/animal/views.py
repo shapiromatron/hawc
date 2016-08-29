@@ -358,12 +358,15 @@ class EndpointTags(EndpointList):
     # List of Endpoints associated with an assessment and tag
 
     def get_queryset(self):
-        return self.model.objects.filter(effects__slug=self.kwargs['tag_slug'])\
-                         .select_related('animal_group', 'animal_group__dosing_regime')\
-                         .prefetch_related('animal_group__dosing_regime__doses')\
-                         .filter(animal_group__in=models.AnimalGroup.objects.filter(
-                             experiment__in=models.Experiment.objects.filter(
-                                 study__in=Study.objects.filter(assessment=self.assessment.pk))))
+        return self.model.objects\
+            .filter(effects__slug=self.kwargs['tag_slug'])\
+            .select_related('animal_group', 'animal_group__dosing_regime')\
+            .prefetch_related('animal_group__dosing_regime__doses')\
+            .filter(
+                animal_group__in=models.AnimalGroup.objects.filter(
+                    experiment__in=models.Experiment.objects.filter(
+                        study__in=Study.objects.filter(
+                            assessment=self.assessment.pk))))
 
 
 class EndpointRead(BaseDetail):
@@ -433,11 +436,11 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(FullExport, self).get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            filters &= Q(animal_group__experiment__study__published=True)
+        return self.model.objects.filter(filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
