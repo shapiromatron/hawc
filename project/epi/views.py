@@ -5,7 +5,7 @@ from study.models import Study
 from study.views import StudyRead
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
                          BaseDelete, BaseEndpointFilterList, BaseUpdate,
-                         BaseUpdateWithFormset, CloseIfSuccessMixin)
+                         BaseList, BaseUpdateWithFormset, CloseIfSuccessMixin)
 
 from . import forms, exports, models
 
@@ -128,10 +128,17 @@ class OutcomeList(BaseEndpointFilterList):
         return query
 
 
-class OutcomeExport(OutcomeList):
-    """
-    Full XLS data export for the epidemiology outcome.
-    """
+class OutcomeExport(BaseList):
+    parent_model = Assessment
+    model = models.Outcome
+
+    def get_queryset(self):
+        perms = self.get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        if not perms['edit']:
+            filters &= Q(study_population__study__published=True)
+        return self.model.objects.filter(filters)
+
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.OutcomeComplete(

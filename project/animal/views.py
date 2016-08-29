@@ -433,11 +433,11 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(FullExport, self).get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            filters &= Q(animal_group__experiment__study__published=True)
+        return self.model.objects.filter(filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

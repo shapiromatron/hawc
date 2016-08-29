@@ -4,9 +4,9 @@ from django.forms.models import modelformset_factory
 
 from assessment.models import Assessment
 from study.models import Study
-from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
-                         BaseDetail, BaseEndpointFilterList, BaseUpdate,
-                         BaseUpdateWithFormset, GenerateReport)
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseList,
+                         BaseDelete, BaseDetail, BaseEndpointFilterList,
+                         BaseUpdate, BaseUpdateWithFormset, GenerateReport)
 
 from . import forms, models, exports
 
@@ -143,10 +143,17 @@ class MetaResultList(BaseEndpointFilterList):
         return query
 
 
-class MetaResultFullExport(MetaResultList):
-    """
-    Full XLS data export for the epidemiology meta-analyses.
-    """
+class MetaResultFullExport(BaseList):
+    parent_model = Assessment
+    model = models.MetaResult
+
+    def get_queryset(self):
+        perms = self.get_obj_perms()
+        filters = Q(protocol__study__assessment=self.assessment)
+        if not perms['edit']:
+            filters &= Q(protocol__study__published=True)
+        return self.model.objects.filter(filters)
+
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(
