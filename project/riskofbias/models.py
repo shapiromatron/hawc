@@ -352,7 +352,7 @@ class RiskOfBiasScore(models.Model):
 
     @classmethod
     def delete_caches(cls, ids):
-        id_lists = [(score.riskofbias.id, score.riskofbias.study.id) for score in cls.objects.filter(id__in=ids)]
+        id_lists = [(score.riskofbias.id, score.riskofbias.study_id) for score in cls.objects.filter(id__in=ids)]
         rob_ids, study_ids = zip(*id_lists)
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
