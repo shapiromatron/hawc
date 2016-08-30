@@ -317,7 +317,7 @@ class IVEndpointFilterForm(forms.Form):
         required=False)
 
     cell_type = forms.CharField(
-        label='Cell Type',
+        label='Cell type',
         widget=selectable.AutoCompleteWidget(lookups.IVCellTypeNameLookup),
         help_text="ex: 107-02-8",
         required=False)
