@@ -12,6 +12,7 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from myuser.models import HAWCUser
+from study.models import Study
 from utils.helper import cleanHTML, SerializerHelper
 from utils.models import get_crumbs
 
@@ -348,6 +349,13 @@ class RiskOfBiasScore(models.Model):
     @property
     def score_shade(self):
         return self.SCORE_SHADES[self.score]
+
+    @classmethod
+    def delete_caches(cls, ids):
+        id_lists = [(score.riskofbias.id, score.riskofbias.study_id) for score in cls.objects.filter(id__in=ids)]
+        rob_ids, study_ids = zip(*id_lists)
+        RiskOfBias.delete_caches(rob_ids)
+        Study.delete_caches(study_ids)
 
 
 class RiskOfBiasAssessment(models.Model):

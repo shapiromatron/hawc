@@ -369,16 +369,16 @@ class IVEndpointFilterForm(forms.Form):
         help_text="ex: 107-02-8",
         required=False)
 
-    chemical_source = forms.CharField(
-        label='Chemical source',
-        widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup),
-        help_text="ex: Sigma Aldrich",
+    cell_type = forms.CharField(
+        label='Cell type',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeNameLookup),
+        help_text='ex: HeLa',
         required=False)
 
-    chemical_purity = forms.CharField(
-        label='Chemical purity',
-        widget=selectable.AutoCompleteWidget(lookups.IVChemicalPurityLookup),
-        help_text="ex: 98%",
+    tissue = forms.CharField(
+        label='Tissue',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup),
+        help_text='ex: adipocytes',
         required=False)
 
     effect = forms.CharField(
@@ -433,7 +433,7 @@ class IVEndpointFilterForm(forms.Form):
         helper.form_class = None
 
         helper.add_fluid_row('studies', 4, "span3")
-        helper.add_fluid_row('chemical_source', 4, "span3")
+        helper.add_fluid_row('cell_type', 4, "span3")
         helper.add_fluid_row('dose_units', 4, "span3")
 
         helper.layout.append(
@@ -450,8 +450,8 @@ class IVEndpointFilterForm(forms.Form):
         name = self.cleaned_data.get('name')
         chemical = self.cleaned_data.get('chemical')
         cas = self.cleaned_data.get('cas')
-        chemical_source = self.cleaned_data.get('chemical_source')
-        chemical_purity = self.cleaned_data.get('chemical_purity')
+        cell_type = self.cleaned_data.get('cell_type')
+        tissue = self.cleaned_data.get('tissue')
         effect = self.cleaned_data.get('effect')
         response_units = self.cleaned_data.get('response_units')
         dose_units = self.cleaned_data.get('dose_units')
@@ -465,10 +465,10 @@ class IVEndpointFilterForm(forms.Form):
             query &= Q(chemical__name__icontains=chemical)
         if cas:
             query &= Q(chemical__cas__icontains=cas)
-        if chemical_source:
-            query &= Q(chemical__source__icontains=chemical_source)
-        if chemical_purity:
-            query &= Q(chemical__purity__icontains=chemical_purity)
+        if cell_type:
+            query &= Q(experiment__cell_type__cell_type__icontains=cell_type)
+        if tissue:
+            query &= Q(experiment__cell_type__tissue__icontains=tissue)
         if effect:
             query &= Q(effect__icontains=effect)
         if response_units:

@@ -4,6 +4,7 @@ from . import models
 from utils.lookups import RelatedDistinctStringLookup, RelatedLookup
 
 
+# Chemical
 class IVChemicalNameLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'name'
@@ -25,6 +26,13 @@ class IVChemicalSourceLookup(RelatedDistinctStringLookup):
 class IVChemicalPurityLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'purity'
+    related_filter = 'study__assessment_id'
+
+
+# CellType
+class IVCellTypeNameLookup(RelatedDistinctStringLookup):
+    model = models.IVCellType
+    distinct_field = 'cell_type'
     related_filter = 'study__assessment_id'
 
 
@@ -58,6 +66,7 @@ class IVCellTypeSourceLookup(RelatedDistinctStringLookup):
     related_filter = 'study__assessment_id'
 
 
+# Experiment
 class IVExperimentTransfectionLookup(RelatedDistinctStringLookup):
     model = models.IVExperiment
     distinct_field = 'transfection'
@@ -82,6 +91,7 @@ class IVExperimentVehicleControlLookup(RelatedDistinctStringLookup):
     related_filter = 'study__assessment_id'
 
 
+# Endpoint
 class IVEndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.IVEndpoint
     distinct_field = 'effect'
@@ -110,19 +120,28 @@ class IVEndpointByAssessmentTextLookup(RelatedLookup):
             .get_query(request, term)\
             .distinct('name')
 
+
+# Chemical
 registry.register(IVChemicalNameLookup)
 registry.register(IVChemicalCASLookup)
 registry.register(IVChemicalSourceLookup)
 registry.register(IVChemicalPurityLookup)
+
+# CellType
+registry.register(IVCellTypeNameLookup)
 registry.register(IVCellTypeSpeciesLookup)
 registry.register(IVCellTypeStrainLookup)
 registry.register(IVCellTypeCellTypeLookup)
 registry.register(IVCellTypeTissueLookup)
 registry.register(IVCellTypeSourceLookup)
+
+# Experiment
 registry.register(IVExperimentTransfectionLookup)
 registry.register(IVExperimentPositiveControlLookup)
 registry.register(IVExperimentNegativeControlLookup)
 registry.register(IVExperimentVehicleControlLookup)
+
+# Endpoint
 registry.register(IVEndpointEffectLookup)
 registry.register(IVEndpointAssayTypeLookup)
 registry.register(IVEndpointResponseUnitsLookup)

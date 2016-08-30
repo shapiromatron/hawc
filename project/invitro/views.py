@@ -4,11 +4,12 @@ from django.views.generic import DetailView
 from assessment.models import Assessment
 from study.models import Study
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
-                         BaseDetail, BaseEndpointFilterList, BaseUpdate,
-                         BaseUpdateWithFormset, GenerateReport,
+                         BaseDetail, BaseList, BaseEndpointFilterList,
+                         BaseUpdate, BaseUpdateWithFormset, GenerateReport,
                          ProjectManagerOrHigherMixin)
 
 from . import models, forms, exports
+
 
 # Experiment
 class ExperimentCreate(BaseCreate):
@@ -197,9 +198,16 @@ class EndpointList(BaseEndpointFilterList):
         return context
 
 
-class EndpointFullExport(EndpointList):
+class EndpointFullExport(BaseList):
     parent_model = Assessment
     model = models.IVEndpoint
+
+    def get_queryset(self):
+        perms = self.get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        if not perms['edit']:
+            filters &= Q(experiment__study__published=True)
+        return self.model.objects.filter(filters)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -217,11 +225,11 @@ class EndpointReport(GenerateReport):
     report_type = 5
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointsReport, self).get_obj_perms()
+        filters = Q(assessment=self.assessment)
+        perms = self.get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            filters &= Q(experiment__study__published=True)
+        return self.model.objects.filter(filters)
 
     def get_filename(self):
         return "in-vitro.docx"
