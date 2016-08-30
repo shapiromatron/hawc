@@ -261,6 +261,9 @@ class IVEndpointForm(forms.ModelForm):
         self.fields['NOEL'].widget.set_default_choices(self.instance)
         self.fields['LOEL'].widget.set_default_choices(self.instance)
 
+        self.fields['effect'].widget = selectable.AutoCompleteWidget(
+            lookups.IVEndpointEffectLookup, allow_new=True)
+
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
         self.fields['effects'].help_text = 'Tags used to help categorize effect description.'
@@ -273,7 +276,7 @@ class IVEndpointForm(forms.ModelForm):
             self.fields['category'].queryset.model\
                 .get_assessment_qs(self.instance.assessment.id)
 
-        for field in ('assay_type', 'response_units'):
+        for field in ('assay_type', 'response_units', 'effect'):
             self.fields[field].widget.update_query_parameters(
                 {'related': self.instance.assessment.id})
 
