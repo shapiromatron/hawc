@@ -428,7 +428,7 @@ class OutcomeFilterForm(forms.Form):
 
     ORDER_BY_CHOICES = (
         ('study_population__study__short_citation', 'study'),
-        ('study_population_name', 'study population'),
+        ('study_population__name', 'study population'),
         ('name', 'outcome name'),
         ('system', 'system'),
         ('effect', 'effect'),
