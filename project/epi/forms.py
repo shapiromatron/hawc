@@ -428,11 +428,11 @@ class OutcomeFilterForm(forms.Form):
 
     ORDER_BY_CHOICES = (
         ('study_population__study__short_citation', 'study'),
+        ('study_population__name', 'study population'),
         ('name', 'outcome name'),
         ('system', 'system'),
         ('effect', 'effect'),
         ('diagnostic', 'diagnostic'),
-        ('age_of_measurement', 'age of measurement'),
     )
 
     studies = selectable.AutoCompleteSelectMultipleField(
@@ -441,16 +441,47 @@ class OutcomeFilterForm(forms.Form):
         help_text="ex: Smith et al. 2010",
         required=False)
 
+    name = forms.CharField(
+        label='Outcome name',
+        widget=selectable.AutoCompleteWidget(lookups.OutcomeLookup),
+        help_text="ex: blood, glucose",
+        required=False)
+
     study_population = forms.CharField(
         label='Study population',
         widget=selectable.AutoCompleteWidget(lookups.StudyPopulationByAssessmentLookup),
         help_text="ex: population near a Teflon manufacturing plant",
         required=False)
 
-    name = forms.CharField(
-        label='Outcome name',
-        widget=selectable.AutoCompleteWidget(lookups.OutcomeLookup),
-        help_text="ex: blood: glucose",
+    metric = forms.CharField(
+        label='Measurement metric',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedExposureMetricLookup),
+        help_text="ex: drinking water",
+        required=False)
+
+    age_profile = forms.CharField(
+        label='Age profile',
+        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationAgeProfileLookup),
+        help_text="ex: children",
+        required=False)
+
+    source = forms.CharField(
+        label='Study population source',
+        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationSourceLookup),
+        help_text="ex: occupational exposure",
+        required=False)
+
+    country = forms.CharField(
+        label='Study population country',
+        widget=selectable.AutoCompleteWidget(lookups.CountryNameLookup),
+        help_text="ex: Japan",
+        required=False)
+
+    design = forms.MultipleChoiceField(
+        label='Study design',
+        choices=models.StudyPopulation.DESIGN_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        initial=[c[0] for c in models.StudyPopulation.DESIGN_CHOICES],
         required=False)
 
     system = forms.CharField(
@@ -477,12 +508,6 @@ class OutcomeFilterForm(forms.Form):
         initial=[c[0] for c in models.Outcome.DIAGNOSTIC_CHOICES],
         required=False)
 
-    age_of_measurement = forms.CharField(
-        label='Age of measurement',
-        widget=selectable.AutoCompleteWidget(lookups.AgeOfMeasurementLookup),
-        help_text="ex: 10-12 years of age",
-        required=False)
-
     order_by = forms.ChoiceField(
         choices=ORDER_BY_CHOICES,
     )
@@ -498,7 +523,7 @@ class OutcomeFilterForm(forms.Form):
         assessment_id = kwargs.pop('assessment_id')
         super(OutcomeFilterForm, self).__init__(*args, **kwargs)
         for field in self.fields:
-            if field not in ('diagnostic', 'order_by', 'paginate_by'):
+            if field not in ('design', 'diagnostic', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
                     {'related': assessment_id})
 
@@ -518,7 +543,8 @@ class OutcomeFilterForm(forms.Form):
         helper.form_class = None
 
         helper.add_fluid_row('studies', 4, "span3")
-        helper.add_fluid_row('effect', 4, "span3")
+        helper.add_fluid_row('age_profile', 4, "span3")
+        helper.add_fluid_row('system', 4, "span3")
 
         helper.layout.append(
             cfb.FormActions(
@@ -531,21 +557,35 @@ class OutcomeFilterForm(forms.Form):
     def get_query(self):
 
         studies = self.cleaned_data.get('studies')
-        study_population = self.cleaned_data.get('study_population')
         name = self.cleaned_data.get('name')
+        study_population = self.cleaned_data.get('study_population')
+        metric = self.cleaned_data.get('metric')
+        age_profile = self.cleaned_data.get('age_profile')
+        source = self.cleaned_data.get('source')
+        country = self.cleaned_data.get('country')
+        design = self.cleaned_data.get('design')
         system = self.cleaned_data.get('system')
         effect = self.cleaned_data.get('effect')
         effect_subtype = self.cleaned_data.get('effect_subtype')
         diagnostic = self.cleaned_data.get('diagnostic')
-        age_of_measurement = self.cleaned_data.get('age_of_measurement')
 
         query = Q()
         if studies:
             query &= Q(study_population__study__in=studies)
-        if study_population:
-            query &= Q(study_population__name__icontains=study_population)
         if name:
             query &= Q(name__icontains=name)
+        if study_population:
+            query &= Q(study_population__name__icontains=study_population)
+        if metric:
+            query &= Q(study_population__exposures__metric__icontains=metric)
+        if age_profile:
+            query &= Q(study_population__age_profile__icontains=age_profile)
+        if source:
+            query &= Q(study_population__source__icontains=source)
+        if country:
+            query &= Q(study_population__country__name__icontains=country)
+        if design:
+            query &= Q(study_population__design__in=design)
         if system:
             query &= Q(system__icontains=system)
         if effect:
@@ -554,8 +594,6 @@ class OutcomeFilterForm(forms.Form):
             query &= Q(effect_subtype__icontains=effect_subtype)
         if diagnostic:
             query &= Q(diagnostic__in=diagnostic)
-        if age_of_measurement:
-            query &= Q(age_of_measurement__icontains=age_of_measurement)
         return query
 
     def get_order_by(self):

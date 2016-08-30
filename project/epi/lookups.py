@@ -23,6 +23,24 @@ class StudyPopulationByStudyLookup(RelatedLookup):
     related_filter = 'study_id'
 
 
+class StudyPopulationAgeProfileLookup(RelatedDistinctStringLookup):
+    model = models.StudyPopulation
+    distinct_field = 'age_profile'
+    related_filter = 'study__assessment_id'
+
+
+class StudyPopulationSourceLookup(RelatedDistinctStringLookup):
+    model = models.StudyPopulation
+    distinct_field = 'source'
+    related_filter = 'study__assessment_id'
+
+
+class CountryNameLookup(RelatedDistinctStringLookup):
+    model = models.Country
+    distinct_field = 'name'
+    related_filter = 'studypopulation__study__assessment_id'
+
+
 class RegionLookup(DistinctStringLookup):
     model = models.StudyPopulation
     distinct_field = "region"
@@ -69,6 +87,12 @@ class ExposureMeasuredLookup(DistinctStringLookup):
 class ExposureMetricLookup(DistinctStringLookup):
     model = models.Exposure
     distinct_field = "metric"
+
+
+class RelatedExposureMetricLookup(RelatedDistinctStringLookup):
+    model = models.Exposure
+    distinct_field = "metric"
+    related_filter = 'study_population__study__assessment_id'
 
 
 class AgeOfExposureLookup(DistinctStringLookup):
@@ -123,6 +147,9 @@ class ResultByOutcomeLookup(RelatedLookup):
 
 registry.register(StudyPopulationByAssessmentLookup)
 registry.register(StudyPopulationByStudyLookup)
+registry.register(StudyPopulationAgeProfileLookup)
+registry.register(StudyPopulationSourceLookup)
+registry.register(CountryNameLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
@@ -130,6 +157,7 @@ registry.register(AdjustmentFactorLookup)
 registry.register(ExposureByStudyPopulationLookup)
 registry.register(ExposureMeasuredLookup)
 registry.register(ExposureMetricLookup)
+registry.register(RelatedExposureMetricLookup)
 registry.register(AgeOfExposureLookup)
 registry.register(ComparisonSetByStudyPopulationLookup)
 registry.register(ComparisonSetByOutcomeLookup)
