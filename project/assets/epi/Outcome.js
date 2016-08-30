@@ -112,7 +112,6 @@ class Outcome {
             this.data.system ? this.data.system : '--',
             this.data.effect ? this.data.effect : '--',
             this.data.diagnostic ? this.data.diagnostic : '--',
-            this.data.age_of_measurement ? this.data.age_of_measurement : '--',
         ];
     }
 
