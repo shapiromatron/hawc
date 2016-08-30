@@ -22,6 +22,10 @@ class IVChemicalForm(forms.ModelForm):
     HELP_TEXT_CREATE = "Describes the chemical used in the current experiment."
     HELP_TEXT_UPDATE = "Update an existing chemical."
 
+    source = forms.CharField(
+        label='Source of chemical',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup, allow_new=True))
+
     class Meta:
         model = models.IVChemical
         exclude = ('study', )
@@ -31,6 +35,10 @@ class IVChemicalForm(forms.ModelForm):
         super(IVChemicalForm, self).__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+        self.fields['source'].widget.update_query_parameters(
+            {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -67,6 +75,22 @@ class IVCellTypeForm(forms.ModelForm):
     HELP_TEXT_CREATE = "Describes the cell type used in the current experiment."
     HELP_TEXT_UPDATE = "Update an existing cell type."
 
+    species = forms.CharField(
+        label='Species',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSpeciesLookup, allow_new=True))
+    strain = forms.CharField(
+        label='Strain',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeStrainLookup, allow_new=True))
+    cell_type = forms.CharField(
+        label='Cell type',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeCellTypeLookup, allow_new=True))
+    tissue = forms.CharField(
+        label='Tissue',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup, allow_new=True))
+    source = forms.CharField(
+        label='Source of cell cultures',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSourceLookup, allow_new=True))
+
     class Meta:
         model = models.IVCellType
         exclude = ('study', )
@@ -76,6 +100,11 @@ class IVCellTypeForm(forms.ModelForm):
         super(IVCellTypeForm, self).__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+        for field in ('species', 'strain', 'cell_type', 'tissue', 'source'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -113,6 +142,15 @@ class IVExperimentForm(forms.ModelForm):
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing experiment."
 
+    transfection = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentTransfectionLookup, allow_new=True))
+    positive_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentPositiveControlLookup, allow_new=True))
+    negative_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentNegativeControlLookup, allow_new=True))
+    vehicle_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentVehicleControlLookup, allow_new=True))
+
     class Meta:
         model = models.IVExperiment
         exclude = ('study', )
@@ -125,6 +163,11 @@ class IVExperimentForm(forms.ModelForm):
         self.fields['cell_type'].queryset = \
             self.fields['cell_type'].queryset\
                 .filter(study=self.instance.study)
+
+        for field in ('transfection', 'positive_control', 'negative_control', 'vehicle_control'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -189,6 +232,12 @@ class IVEndpointForm(forms.ModelForm):
     category = CategoryModelChoice(
         required=False,
         queryset=models.IVEndpointCategory.objects.none())
+    assay_type = forms.CharField(
+        label='Assay Type',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointAssayTypeLookup, allow_new=True))
+    response_units = forms.CharField(
+        label='Response Units',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup, allow_new=True))
 
     class Meta:
         model = models.IVEndpoint
@@ -212,6 +261,9 @@ class IVEndpointForm(forms.ModelForm):
         self.fields['NOEL'].widget.set_default_choices(self.instance)
         self.fields['LOEL'].widget.set_default_choices(self.instance)
 
+        self.fields['effect'].widget = selectable.AutoCompleteWidget(
+            lookups.IVEndpointEffectLookup, allow_new=True)
+
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
         self.fields['effects'].help_text = 'Tags used to help categorize effect description.'
@@ -223,6 +275,10 @@ class IVEndpointForm(forms.ModelForm):
         self.fields['category'].queryset = \
             self.fields['category'].queryset.model\
                 .get_assessment_qs(self.instance.assessment.id)
+
+        for field in ('assay_type', 'response_units', 'effect'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.assessment.id})
 
         self.helper = self.setHelper()
 
