@@ -319,13 +319,13 @@ class IVEndpointFilterForm(forms.Form):
     cell_type = forms.CharField(
         label='Cell type',
         widget=selectable.AutoCompleteWidget(lookups.IVCellTypeNameLookup),
-        help_text="ex: 107-02-8",
+        help_text='ex: HeLa',
         required=False)
 
     tissue = forms.CharField(
         label='Tissue',
         widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup),
-        help_text="ex: 107-02-8",
+        help_text='ex: adipocytes',
         required=False)
 
     effect = forms.CharField(

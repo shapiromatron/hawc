@@ -444,7 +444,7 @@ class OutcomeFilterForm(forms.Form):
     name = forms.CharField(
         label='Outcome name',
         widget=selectable.AutoCompleteWidget(lookups.OutcomeLookup),
-        help_text="ex: blood: glucose",
+        help_text="ex: blood, glucose",
         required=False)
 
     study_population = forms.CharField(
@@ -462,19 +462,19 @@ class OutcomeFilterForm(forms.Form):
     age_profile = forms.CharField(
         label='Age profile',
         widget=selectable.AutoCompleteWidget(lookups.StudyPopulationAgeProfileLookup),
-        help_text="ex: immune and lymphatic system",
+        help_text="ex: children",
         required=False)
 
     source = forms.CharField(
         label='Study population source',
         widget=selectable.AutoCompleteWidget(lookups.StudyPopulationSourceLookup),
-        help_text="ex: immune and lymphatic system",
+        help_text="ex: occupational exposure",
         required=False)
 
     country = forms.CharField(
         label='Study population country',
         widget=selectable.AutoCompleteWidget(lookups.CountryNameLookup),
-        help_text="ex: immune and lymphatic system",
+        help_text="ex: Japan",
         required=False)
 
     design = forms.MultipleChoiceField(
