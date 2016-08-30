@@ -81,3 +81,7 @@ class AssessmentScoreViewset(AssessmentEditViewset, TeamMemberOrHigherMixin, Lis
 
     def get_queryset(self):
         return self.model.objects.all()
+
+    def post_save_bulk(self, queryset, update_bulk_dict):
+        ids = list(queryset.values_list('id', flat=True))
+        queryset.model.delete_caches(ids)
