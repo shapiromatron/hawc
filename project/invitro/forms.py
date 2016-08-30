@@ -23,7 +23,7 @@ class IVChemicalForm(forms.ModelForm):
     HELP_TEXT_UPDATE = "Update an existing chemical."
 
     source = forms.CharField(
-        label='Source of Chemical',
+        label='Source of chemical',
         widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup, allow_new=True))
 
     class Meta:
@@ -150,7 +150,7 @@ class IVExperimentForm(forms.ModelForm):
         widget=selectable.AutoCompleteWidget(lookups.IVExperimentNegativeControlLookup, allow_new=True))
     vehicle_control = forms.CharField(
         widget=selectable.AutoCompleteWidget(lookups.IVExperimentVehicleControlLookup, allow_new=True))
-    
+
     class Meta:
         model = models.IVExperiment
         exclude = ('study', )
