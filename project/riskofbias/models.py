@@ -284,7 +284,7 @@ class RiskOfBiasScore(models.Model):
         3: '#6FFF00',
         4: '#00CC00',
         0: '#FFCC00',
-        10: '#E8E8E8',
+        10: '#FFCC00',
     }
 
     riskofbias = models.ForeignKey(
