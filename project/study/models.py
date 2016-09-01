@@ -223,8 +223,8 @@ class Study(Reference):
                 types.append(field)
         return types
 
-    @classmethod
-    def flat_complete_header_row(cls):
+    @staticmethod
+    def flat_complete_header_row():
         return (
             'study-id',
             'study-url',
@@ -244,8 +244,8 @@ class Study(Reference):
             'study-published'
         )
 
-    @classmethod
-    def flat_complete_data_row(cls, ser):
+    @staticmethod
+    def flat_complete_data_row(ser):
         return (
             ser['id'],
             ser['url'],
@@ -265,8 +265,8 @@ class Study(Reference):
             ser['published']
         )
 
-    @classmethod
-    def get_docx_template_context(cls, assessment, queryset):
+    @staticmethod
+    def get_docx_template_context(assessment, queryset):
         studies = [SerializerHelper.get_serialized(study, json=False) for study in queryset]
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),

@@ -333,8 +333,8 @@ class EffectTag(models.Model):
         else:
             return d
 
-    @classmethod
-    def get_name_list(self, queryset):
+    @staticmethod
+    def get_name_list(queryset):
         return '|'.join(queryset.values_list("name", flat=True))
 
 

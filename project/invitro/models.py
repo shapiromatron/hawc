@@ -434,8 +434,8 @@ class IVEndpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @classmethod
-    def max_dose_count(cls, queryset):
+    @staticmethod
+    def max_dose_count(queryset):
         max_val = 0
         qs = queryset\
             .annotate(max_egs=models.Count('groups'))\
@@ -444,8 +444,8 @@ class IVEndpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @classmethod
-    def max_benchmark_count(cls, queryset):
+    @staticmethod
+    def max_benchmark_count(queryset):
         max_val = 0
         qs = queryset\
             .annotate(max_benchmarks=models.Count('benchmarks'))\
@@ -454,8 +454,8 @@ class IVEndpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @classmethod
-    def get_docx_template_context(cls, queryset):
+    @staticmethod
+    def get_docx_template_context(queryset):
         return {
             "field1": "a",
             "field2": "b",

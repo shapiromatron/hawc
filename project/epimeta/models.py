@@ -265,8 +265,8 @@ class MetaResult(models.Model):
             ser['notes'],
         )
 
-    @classmethod
-    def get_docx_template_context(cls, assessment, queryset):
+    @staticmethod
+    def get_docx_template_context(assessment, queryset):
         """
         Given a queryset of meta-results, invert the cached results to build
         a top-down data hierarchy from study to meta-result. We use this

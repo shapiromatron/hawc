@@ -22,6 +22,13 @@ from utils.models import get_crumbs
 from . import managers
 
 
+def getRelationID(rel):
+    if rel:
+        return str(rel['id'])
+    else:
+        return None
+
+
 class Experiment(models.Model):
     objects = managers.ExperimentManager()
 
@@ -348,16 +355,8 @@ class AnimalGroup(models.Model):
             "strain-name",
         )
 
-    @classmethod
-    def getRelatedAnimalGroupID(cls, rel):
-        if rel:
-            return str(rel['id'])
-        else:
-            return None
-
-    @classmethod
-    def flat_complete_data_row(cls, ser):
-
+    @staticmethod
+    def flat_complete_data_row(ser):
         return (
             ser['id'],
             ser['url'],
@@ -367,8 +366,8 @@ class AnimalGroup(models.Model):
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
             ser['duration_observation'],
-            cls.getRelatedAnimalGroupID(ser['siblings']),
-            '|'.join([cls.getRelatedAnimalGroupID(p) for p in ser['parents']]),
+            getRelationID(ser['siblings']),
+            '|'.join([getRelationID(p) for p in ser['parents']]),
             ser['generation'],
             cleanHTML(ser['comments']),
             ser['species'],
@@ -553,8 +552,8 @@ class DoseGroup(models.Model):
     def __unicode__(self):
         return u"{0} {1}".format(self.dose, self.dose_units)
 
-    @classmethod
-    def flat_complete_data_row(cls, ser_full, units, idx):
+    @staticmethod
+    def flat_complete_data_row(ser_full, units, idx):
         cols = []
         ser = [v for v in ser_full if v["dose_group_id"] == idx]
         for unit in units:
@@ -817,8 +816,8 @@ class Endpoint(BaseEndpoint):
             change += resps[i] - resps[0]
         return change >= 0
 
-    @classmethod
-    def flat_complete_header_row(cls):
+    @staticmethod
+    def flat_complete_header_row():
         return (
             "endpoint-id",
             "endpoint-url",
@@ -851,8 +850,8 @@ class Endpoint(BaseEndpoint):
             "endpoint-additional_fields",
         )
 
-    @classmethod
-    def flat_complete_data_row(cls, ser):
+    @staticmethod
+    def flat_complete_data_row(ser):
         return (
             ser['id'],
             ser['url'],
@@ -885,8 +884,8 @@ class Endpoint(BaseEndpoint):
             json.dumps(ser['additional_fields']),
         )
 
-    @classmethod
-    def get_docx_template_context(cls, assessment, queryset):
+    @staticmethod
+    def get_docx_template_context(assessment, queryset):
         """
         Given a queryset of endpoints, invert the cached results to build
         a top-down data hierarchy from study to endpoint. We use this
@@ -951,8 +950,8 @@ class Endpoint(BaseEndpoint):
             "studies": studies
         }
 
-    @classmethod
-    def setMaximumPercentControlChange(cls, ep):
+    @staticmethod
+    def setMaximumPercentControlChange(ep):
         """
         For each endpoint, return the maximum absolute-change percent control
         for that endpoint, or 0 if it cannot be calculated. Useful for
@@ -1193,8 +1192,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         else:
             return u"{}-{}".format(nmin, nmax)
 
-    @classmethod
-    def flat_complete_header_row(cls):
+    @staticmethod
+    def flat_complete_header_row():
         return (
             "endpoint_group-id",
             "endpoint_group-dose_group_id",
@@ -1211,8 +1210,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             "endpoint_group-FEL",
         )
 
-    @classmethod
-    def flat_complete_data_row(cls, ser, endpoint):
+    @staticmethod
+    def flat_complete_data_row(ser, endpoint):
         return (
             ser['id'],
             ser['dose_group_id'],

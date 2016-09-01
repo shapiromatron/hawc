@@ -222,8 +222,8 @@ class Visual(models.Model):
     def __unicode__(self):
         return self.title
 
-    @classmethod
-    def get_list_url(cls, assessment_id):
+    @staticmethod
+    def get_list_url(assessment_id):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
     def get_absolute_url(self):
@@ -367,8 +367,8 @@ class DataPivot(models.Model):
     def __unicode__(self):
         return self.title
 
-    @classmethod
-    def get_list_url(cls, assessment_id):
+    @staticmethod
+    def get_list_url(assessment_id):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
     def get_absolute_url(self):
@@ -406,8 +406,8 @@ class DataPivot(models.Model):
             return None
 
 
-    @classmethod
-    def reset_row_overrides(cls, settings):
+    @staticmethod
+    def reset_row_overrides(settings):
         settings_as_json = json.loads(settings)
         settings_as_json['row_overrides'] = []
         return json.dumps(settings_as_json)
@@ -610,8 +610,8 @@ class Prefilter(object):
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """
-    @classmethod
-    def setFiltersFromForm(cls, filters, d, visual_type):
+    @staticmethod
+    def setFiltersFromForm(filters, d, visual_type):
         evidence_type = d.get('evidence_type')
 
         if visual_type == Visual.BIOASSAY_CROSSVIEW:
@@ -660,8 +660,8 @@ class Prefilter(object):
             else:
                 raise ValueError("Unknown evidence type")
 
-    @classmethod
-    def setFiltersFromObj(cls, filters, prefilters):
+    @staticmethod
+    def setFiltersFromObj(filters, prefilters):
         filters.update(json.loads(prefilters))
 
 

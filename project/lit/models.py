@@ -480,8 +480,8 @@ class Identifiers(models.Model):
             "url": self.get_url()
         }
 
-    @classmethod
-    def update_pubmed_content(cls, idents):
+    @staticmethod
+    def update_pubmed_content(idents):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
 
