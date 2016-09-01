@@ -6,14 +6,10 @@ import logging
 import re
 import HTMLParser
 
-from django.db import connection, models, transaction
-from django.apps import apps
-from django.core.cache import cache
+from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import URLValidator
 from django.utils.html import strip_tags
-from django.utils.text import slugify
 
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
@@ -21,30 +17,11 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, AssessmentRootMixin
 
-from fetchers.pubmed import PubMedSearch, PubMedFetch
-from fetchers.hero import HEROFetch
 from fetchers import ris
+from fetchers.pubmed import PubMedSearch, PubMedFetch
 from . import managers, tasks
-
-
-EXTERNAL_LINK = 0
-PUBMED = 1
-HERO = 2
-RIS = 3
-DOI = 4
-WOS = 5
-SCOPUS = 6
-EMBASE = 7
-REFERENCE_DATABASES = (
-    (EXTERNAL_LINK, 'External link'),
-    (PUBMED, 'PubMed'),
-    (HERO, 'HERO'),
-    (RIS, 'RIS (EndNote/Reference Manager)'),
-    (DOI, 'DOI'),
-    (WOS, 'Web of Science'),
-    (SCOPUS, 'Scopus'),
-    (EMBASE, 'Embase')
-)
+from managers import EXTERNAL_LINK, PUBMED, HERO, RIS, DOI, WOS, SCOPUS,\
+    EMBASE, REFERENCE_DATABASES, IMPORT_SLUG
 
 
 class TooManyPubMedResults(Exception):
@@ -59,8 +36,9 @@ class TooManyPubMedResults(Exception):
 
 
 class Search(models.Model):
+    objects = managers.SearchManager()
 
-    MANUAL_IMPORT_SLUG = 'manual-import'
+    MANUAL_IMPORT_SLUG = IMPORT_SLUG
 
     SEARCH_TYPES = (
         ('s', 'Search'),
@@ -268,17 +246,6 @@ class Search(models.Model):
         else:
             return self.last_updated
 
-    def get_pubmed_queries(self):
-        """
-        Get all PubMed queries for the selected search, unpacking the JSON
-        description object which details imported details.
-        """
-        dicts = []
-        pubmed_queries = PubMedQuery.objects.filter(search=self)
-        for pubmed_query in pubmed_queries:
-            dicts.append(pubmed_query.get_json(json_encode=False))
-        return dicts
-
     @classmethod
     def build_default(cls, assessment):
         """
@@ -296,15 +263,16 @@ class Search(models.Model):
             search_string="None. This is used to manually enter literature."
         )
 
-    @classmethod
-    def get_manually_added(cls, assessment):
-        try:
-            return Search.objects.get(assessment=assessment,
-                                      source=EXTERNAL_LINK,
-                                      title="Manual import",
-                                      slug="manual-import")
-        except Exception:
-            return None
+    def get_pubmed_queries(self):
+        """
+        Get all PubMed queries for the selected search, unpacking the JSON
+        description object which details imported details.
+        """
+        dicts = []
+        pubmed_queries = PubMedQuery.objects.filter(search=self)
+        for pubmed_query in pubmed_queries:
+            dicts.append(pubmed_query.get_json(json_encode=False))
+        return dicts
 
     def get_all_reference_tags(self, json_encode=True):
         refs = self.references.all().values_list('pk', flat=True)
@@ -350,12 +318,9 @@ class Search(models.Model):
         d['search_type'] = self.get_search_type_display()
         return d
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
 
 class PubMedQuery(models.Model):
+    objects = managers.PubMedQueryManager()
 
     MAX_QUERY_SIZE = 5000
 
@@ -440,12 +405,10 @@ class PubMedQuery(models.Model):
         else:
             return d
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(search__assessment=assessment_id)
-
 
 class Identifiers(models.Model):
+    objects = managers.IdentifiersManager()
+
     unique_id = models.CharField(
         max_length=256,  # DOI has no limit; we make this relatively large
         db_index=True)
@@ -518,135 +481,8 @@ class Identifiers(models.Model):
         }
 
     @classmethod
-    def get_hero_identifiers(cls, hero_ids):
-        # Return a queryset of identifiers, one for each hero ID. Either get or
-        # create an identifier, whatever is required
-
-        # Filter HERO IDs to those which need to be imported
-        idents = list(Identifiers.objects
-            .filter(database=HERO, unique_id__in=hero_ids)
-            .values_list('unique_id', flat=True))
-        need_import = tuple(set(hero_ids) - set(idents))
-
-        # Grab HERO objects
-        fetcher = HEROFetch(need_import)
-        fetcher.get_content()
-
-        # Save new Identifier objects
-        for content in fetcher.content:
-            ident = Identifiers(database=HERO,
-                                unique_id=content["HEROID"],
-                                content=json.dumps(content, encoding='utf-8'))
-            ident.save()
-            idents.append(ident.unique_id)
-
-        return Identifiers.objects.filter(database=HERO, unique_id__in=idents)
-
-    @classmethod
-    def get_pubmed_identifiers(cls, ids):
-        # Return a queryset of identifiers, one for each PubMed ID. Either get
-        # or create an identifier, whatever is required
-
-        # Filter IDs which need to be imported
-        idents = list(Identifiers.objects
-            .filter(database=PUBMED, unique_id__in=ids)
-            .values_list('unique_id', flat=True))
-        need_import = tuple(set(ids) - set(idents))
-
-        # Grab Pubmed objects
-        fetch = PubMedFetch(need_import)
-
-        # Save new Identifier objects
-        for item in fetch.get_content():
-            ident = Identifiers(unique_id=item['PMID'],
-                                database=PUBMED,
-                                content=json.dumps(item, encoding='utf-8'))
-            ident.save()
-            idents.append(ident.unique_id)
-
-        return Identifiers.objects\
-            .filter(database=PUBMED, unique_id__in=idents)
-
-    @classmethod
-    def get_from_ris(cls, search_id, references):
-        # Return a queryset of identifiers for each object in RIS file.
-        # Expensive; requires a maximum of ~5N queries
-        pimdsFetch = []
-        refs = []
-        for ref in references:
-            ids = []
-
-            db = ref.get('accession_db')
-            if db:
-                db = db.lower()
-
-            # Create Endnote identifier
-            # create id based on search_id and id from RIS file.
-            id_ = "s{}-id{}".format(search_id, ref['id'])
-            content = json.dumps(ref, encoding='utf8')
-            ident = Identifiers.objects\
-                .filter(database=RIS, unique_id=id_)\
-                .first()
-            if ident:
-                ident.update(content=content)
-            else:
-                ident = Identifiers.objects\
-                    .create(database=RIS, unique_id=id_, content=content)
-            ids.append(ident)
-
-            # create DOI identifier
-            if ref["doi"] is not None:
-                ident, _ = Identifiers.objects\
-                    .get_or_create(database=DOI, unique_id=ref['doi'], content="None")
-                ids.append(ident)
-
-            # create PMID identifier
-            # (some may include both an accession number and PMID)
-            if ref["PMID"] is not None or db == "nlm":
-                id_ = ref['PMID'] or ref['accession_number']
-                ident = Identifiers.objects\
-                    .filter(database=PUBMED, unique_id=id_)\
-                    .first()
-                if not ident:
-                    ident = Identifiers.objects.create(
-                        database=PUBMED, unique_id=id_, content="None")
-                    pimdsFetch.append(ident)
-                ids.append(ident)
-
-            # create other accession identifiers
-            if db is not None and ref['accession_number'] is not None:
-                db_id = None
-                if db == "wos":
-                    db_id = WOS
-                elif db == "scopus":
-                    db_id = SCOPUS
-                elif db == "emb":
-                    db_id = EMBASE
-
-                if db_id:
-                    id_ = ref['accession_number']
-                    ident, _ = Identifiers.objects\
-                                .get_or_create(database=db_id, unique_id=id_, content="None")
-                    ids.append(ident)
-
-            refs.append(ids)
-
-        Identifiers.update_pubmed_content(pimdsFetch)
-
-        return refs
-
-    @classmethod
     def update_pubmed_content(cls, idents):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
-
-    @classmethod
-    def get_max_external_id(cls):
-        return cls.objects.filter(database=EXTERNAL_LINK)\
-            .aggregate(models.Max('unique_id'))["unique_id__max"]
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(references__assessment=assessment_id)
 
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
@@ -736,6 +572,8 @@ class ReferenceTags(ItemBase):
 
 
 class Reference(models.Model):
+    objects = managers.ReferenceManager()
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='references')
@@ -865,32 +703,6 @@ class Reference(models.Model):
                     database=EXTERNAL_LINK, unique_id=unique_id, url=url))
 
     @classmethod
-    def get_untagged_references(cls, assessment):
-        return cls.objects\
-                .filter(assessment_id=assessment.id)\
-                .annotate(tag_count=models.Count('tags'))\
-                .filter(tag_count=0)
-
-    @classmethod
-    def get_overview_details(cls, assessment):
-        # Get an overview of tagging progress for an assessment
-        refs = Reference.objects.filter(assessment=assessment)
-        total = refs.count()
-        total_tagged = refs.annotate(tag_count=models.Count('tags'))\
-            .filter(tag_count__gt=0).count()
-        total_untagged = total-total_tagged
-        total_searched = refs.filter(searches__search_type='s').distinct().count()
-        total_imported = total - total_searched
-        overview = {
-            'total_references': total,
-            'total_tagged': total_tagged,
-            'total_untagged': total_untagged,
-            'total_searched': total_searched,
-            'total_imported': total_imported
-        }
-        return overview
-
-    @classmethod
     def delete_orphans(cls, assessment_pk):
         # Remove orphan references (references with no associated searches)
         orphans = cls.objects\
@@ -901,36 +713,6 @@ class Reference(models.Model):
         logging.info("Removing {} orphan references from assessment {}".format(
                         orphans.count(), assessment_pk))
         orphans.delete()
-
-    @classmethod
-    def get_full_assessment_json(cls, assessment, json_encode=True):
-        refs = Reference.objects.filter(assessment=assessment).values_list('pk', flat=True)
-        ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
-
-    @classmethod
-    def get_references_ready_for_import(cls, assessment):
-        try:
-            root_inclusion = ReferenceFilterTag.objects \
-                .get(name='assessment-{a}'.format(a=assessment.pk)) \
-                .get_descendants().get(name='Inclusion')
-            inclusion_tags = list(
-                root_inclusion.get_descendants().values_list('pk', flat=True))
-            inclusion_tags.append(root_inclusion.pk)
-        except:
-            inclusion_tags = []
-        Study = apps.get_model('study', 'Study')
-
-        return Reference.objects\
-            .filter(assessment=assessment, referencetags__tag_id__in=inclusion_tags)\
-            .exclude(pk__in=
-                Study.objects
-                    .filter(assessment=assessment)
-                    .values_list('pk', flat=True)
-            ).distinct()
 
     @classmethod
     def update_from_ris_identifiers(cls, search, identifiers):
@@ -976,7 +758,7 @@ class Reference(models.Model):
     def build_ref_search_m2m(cls, refs, search):
         # Bulk-create reference-search relationships
         logging.debug("Starting bulk creation of reference-search values")
-        m2m = Reference.searches.through
+        m2m = cls.searches.through
         objects = [
             m2m(reference_id=ref.id, search_id=search.id)
             for ref in refs
@@ -987,137 +769,13 @@ class Reference(models.Model):
     def build_ref_ident_m2m(cls, objs):
         # Bulk-create reference-search relationships
         logging.debug("Starting bulk creation of reference-identifer values")
-        m2m = Reference.identifiers.through
+        m2m = cls.identifiers.through
         objects = [
             m2m(reference_id=ref_id, identifiers_id=ident_id)
             for ref_id, ident_id in objs
         ]
         m2m.objects.bulk_create(objects)
 
-    @classmethod
-    def get_hero_references(cls, search, identifiers):
-        """
-        Given a list of Identifiers, return a list of references associated
-        with each of these identifiers.
-        """
-        # Get references which already existing and are tied to this identifier
-        # but are not associated with the current search and save this search
-        # as well to this Reference.
-        refs = Reference.objects\
-            .filter(assessment=search.assessment, identifiers__in=identifiers)\
-            .exclude(searches=search)
-        cls.build_ref_search_m2m(refs, search)
-
-        # get references associated with these identifiers, and get a subset of
-        # identifiers which have no reference associated with them
-        refs = list(
-            Reference.objects
-            .filter(assessment=search.assessment, identifiers__in=identifiers)
-        )
-        if refs:
-            identifiers = identifiers.exclude(references__in=refs)
-
-        for identifier in identifiers:
-            # check if any identifiers have a pubmed ID that already exists
-            # in database. If not, save a new reference.
-            content = json.loads(identifier.content, encoding='utf-8')
-            pmid = content.get('PMID', None)
-
-            if pmid:
-                ref = Reference.objects.filter(
-                    assessment=search.assessment,
-                    identifiers__unique_id=pmid,
-                    identifiers__database=PUBMED)
-            else:
-                ref = Reference.objects.none()
-
-            if ref.count() == 1:
-                ref = ref[0]
-            elif ref.count() > 1:
-                raise Exception("Duplicate HERO reference found")
-            else:
-                ref = identifier.create_reference(search.assessment)
-                ref.save()
-
-            ref.searches.add(search)
-            ref.identifiers.add(identifier)
-            refs.append(ref)
-
-        return refs
-
-    @classmethod
-    def get_pubmed_references(cls, search, identifiers):
-        """
-        Given a list of Identifiers, return a list of references associated
-        with each of these identifiers.
-        """
-        # Get references which already existing and are tied to this identifier
-        # but are not associated with the current search and save this search
-        # as well to this Reference.
-        refs = Reference.objects\
-            .filter(assessment=search.assessment, identifiers__in=identifiers)\
-            .exclude(searches=search)
-        cls.build_ref_search_m2m(refs, search)
-
-        # Get any references already are associated with these identifiers
-        refs = list(
-            Reference.objects
-            .filter(assessment=search.assessment, identifiers__in=identifiers)
-        )
-
-        # Only process identifiers which have no reference
-        if refs:
-            identifiers = identifiers.exclude(references__in=refs)
-
-        # don't bulk-create because we need the pks
-        for identifier in identifiers:
-            ref = identifier.create_reference(search.assessment)
-            ref.save()
-            ref.searches.add(search)
-            ref.identifiers.add(identifier)
-            refs.append(ref)
-
-        return refs
-
-    @classmethod
-    def get_references_with_tag(cls, tag, descendants=False):
-        tag_ids = [tag.id]
-        if descendants:
-            tag_ids.extend(list(tag.get_descendants().values_list('pk', flat=True)))
-        return cls.objects.filter(tags__in=tag_ids).distinct('pk')
 
     def get_assessment(self):
         return self.assessment
-
-    @classmethod
-    def process_excel(cls, df, assessment_id):
-        """
-        Expects a data-frame with two columns - HAWC ID and Full text URL
-        """
-        errors = []
-
-        def fn(d):
-            if d["HAWC ID"] in cw and d["Full text URL"] != cw[d["HAWC ID"]]:
-                try:
-                    validator(d["Full text URL"])
-                    cls.objects\
-                        .filter(id=d["HAWC ID"])\
-                        .update(full_text_url=d["Full text URL"])
-                except ValidationError:
-                    errors.append("HAWC ID {0}, invalid URL: {1}".format(
-                        d["HAWC ID"], d["Full text URL"]))
-
-        cw = {}
-        validator = URLValidator()
-        existing = cls.objects\
-            .filter(id__in=df["HAWC ID"].unique(), assessment_id=assessment_id)\
-            .values_list('id', 'full_text_url')
-        for obj in existing:
-            cw[obj[0]] = obj[1]
-        df.apply(fn, axis=1)
-
-        return errors
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)

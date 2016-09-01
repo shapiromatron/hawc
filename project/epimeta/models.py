@@ -13,8 +13,11 @@ from epi.models import Criteria, ResultMetric, AdjustmentFactor
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs
 
+from . import managers
+
 
 class MetaProtocol(models.Model):
+    objects = managers.MetaProtocolManager()
 
     META_PROTOCOL_CHOICES = (
         (0, "Meta-analysis"),
@@ -74,11 +77,6 @@ class MetaProtocol(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(study__assessment=assessment_id)
-
     def get_assessment(self):
         return self.study.get_assessment()
 
@@ -129,6 +127,8 @@ class MetaProtocol(models.Model):
 
 
 class MetaResult(models.Model):
+    objects = managers.MetaResultManager()
+
     protocol = models.ForeignKey(
         MetaProtocol,
         related_name="results")
@@ -183,11 +183,6 @@ class MetaResult(models.Model):
 
     def __unicode__(self):
         return self.label
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(protocol__study__assessment=assessment_id)
 
     def get_crumbs(self):
         return get_crumbs(self, self.protocol)
@@ -353,6 +348,8 @@ class MetaResult(models.Model):
 
 
 class SingleResult(models.Model):
+    objects = managers.SingleResultManager()
+
     meta_result = models.ForeignKey(
         MetaResult,
         related_name="single_results")
@@ -403,11 +400,6 @@ class SingleResult(models.Model):
 
     def __unicode__(self):
         return self.exposure_name
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(meta_result__protocol__study__assessment=assessment_id)
 
     @property
     def estimate_formatted(self):

@@ -25,6 +25,7 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, \
     SerializerHelper, tryParseInt
 
+from . import managers
 
 BIOASSAY = 0
 EPI = 1
@@ -167,6 +168,7 @@ class SummaryText(MP_Node):
 
 
 class Visual(models.Model):
+    objects = managers.VisualManager()
 
     BIOASSAY_AGGREGATION = 0
     BIOASSAY_CROSSVIEW = 1
@@ -219,10 +221,6 @@ class Visual(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
     @classmethod
     def get_list_url(cls, assessment_id):
@@ -340,6 +338,8 @@ class Visual(models.Model):
 
 
 class DataPivot(models.Model):
+    objects = managers.DataPivotManager()
+
     assessment = models.ForeignKey(
         Assessment)
     title = models.CharField(
@@ -366,10 +366,6 @@ class DataPivot(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
     @classmethod
     def get_list_url(cls, assessment_id):
@@ -409,17 +405,6 @@ class DataPivot(models.Model):
         except ValueError:
             return None
 
-    @classmethod
-    def clonable_queryset(cls, user):
-        """
-        Return data-pivots which can cloned by a specific user
-        """
-        assessment_ids = Assessment\
-            .get_viewable_assessments(user, public=True)\
-            .values_list('id', flat=True)
-        return cls.objects.filter(assessment__in=assessment_ids)\
-            .select_related('assessment')\
-            .order_by('assessment__name', 'title')
 
     @classmethod
     def reset_row_overrides(cls, settings):

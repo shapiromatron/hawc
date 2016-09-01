@@ -8,7 +8,6 @@ from django.db import models, transaction
 from django.apps import apps
 from django.core.exceptions import (ValidationError, ObjectDoesNotExist,
                                     MultipleObjectsReturned)
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 from django.http import Http404
 
@@ -20,8 +19,11 @@ from lit.models import Reference
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from utils.models import get_crumbs
 
+from . import managers
+
 
 class Study(Reference):
+    objects = managers.StudyManager()
 
     COI_REPORTED_CHOICES = (
         (0, 'Authors report they have no COI'),
@@ -275,18 +277,8 @@ class Study(Reference):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @classmethod
-    def get_choices(cls, assessment_id):
-        return cls.objects\
-                  .filter(assessment_id=assessment_id)\
-                  .values_list('id', 'short_citation')
-
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
     def get_final_rob(self):
         try:
@@ -309,18 +301,6 @@ class Study(Reference):
                .filter(active=True, final=False)\
                .order_by('last_updated')\
                .prefetch_related('author')
-
-    @classmethod
-    def rob_scores(cls, assessment_id):
-        return Study.objects\
-            .filter(assessment_id=assessment_id)\
-            .annotate(final_score=models.Sum(
-                models.Case(
-                    models.When(riskofbiases__active=True,
-                                riskofbiases__final=True,
-                                then='riskofbiases__scores__score'),
-                    default=0)))\
-            .values('id', 'short_citation', 'final_score')
 
     def optimized_for_serialization(self):
         return self.__class__.objects\
@@ -359,10 +339,6 @@ class Attachment(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
 
 
 reversion.register(Study)

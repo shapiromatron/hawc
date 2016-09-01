@@ -1,5 +1,39 @@
+import json
+import logging
+
+from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+from django.db import models
+
 from taggit.utils import require_instance_manager
 from taggit.managers import TaggableManager, _TaggableManager
+
+from fetchers.hero import HEROFetch
+from fetchers.pubmed import PubMedFetch
+from utils.helper import HAWCDjangoJSONEncoder
+from utils.models import BaseManager
+
+
+EXTERNAL_LINK = 0
+PUBMED = 1
+HERO = 2
+RIS = 3
+DOI = 4
+WOS = 5
+SCOPUS = 6
+EMBASE = 7
+REFERENCE_DATABASES = (
+    (EXTERNAL_LINK, 'External link'),
+    (PUBMED, 'PubMed'),
+    (HERO, 'HERO'),
+    (RIS, 'RIS (EndNote/Reference Manager)'),
+    (DOI, 'DOI'),
+    (WOS, 'Web of Science'),
+    (SCOPUS, 'Scopus'),
+    (EMBASE, 'Embase')
+)
+IMPORT_SLUG = 'manual-import'
 
 
 class ReferenceFilterTagManager(TaggableManager):
@@ -12,7 +46,7 @@ class ReferenceFilterTagManager(TaggableManager):
             through=self.through,
             model=model,
             instance=instance,
-            prefetch_cache_name = self.name
+            prefetch_cache_name=self.name
         )
         return manager
 
@@ -33,3 +67,271 @@ class _ReferenceFilterTagManager(_TaggableManager):
         for tag_id in selected_tags:
             tagrefs.append(self.through(tag_id=tag_id, content_object=self.instance))
         self.through.objects.bulk_create(tagrefs)
+
+
+class SearchManager(BaseManager):
+    assessment_relation = 'assessment'
+
+    def get_manually_added(self, assessment):
+        try:
+            return self.get(assessment=assessment,
+                                      source=EXTERNAL_LINK,
+                                      title="Manual import",
+                                      slug=IMPORT_SLUG)
+        except Exception:
+            return None
+
+
+class PubMedQueryManager(BaseManager):
+    assessment_relation = 'search__assessment'
+
+
+class IdentifiersManager(BaseManager):
+    assessment_relation = 'references__assessment'
+
+    def get_from_ris(self, search_id, references):
+        # Return a queryset of identifiers for each object in RIS file.
+        # Expensive; requires a maximum of ~5N queries
+        pimdsFetch = []
+        refs = []
+        Identifiers = apps.get_model('lit', 'Identifiers')
+        for ref in references:
+            ids = []
+
+            db = ref.get('accession_db')
+            if db:
+                db = db.lower()
+
+            # Create Endnote identifier
+            # create id based on search_id and id from RIS file.
+            id_ = "s{}-id{}".format(search_id, ref['id'])
+            content = json.dumps(ref, encoding='utf8')
+            ident = self.filter(database=RIS, unique_id=id_).first()
+            if ident:
+                ident.update(content=content)
+            else:
+                ident = self.create(database=RIS, unique_id=id_, content=content)
+            ids.append(ident)
+
+            # create DOI identifier
+            if ref["doi"] is not None:
+                ident, _ = self.get_or_create(database=DOI, unique_id=ref['doi'], content="None")
+                ids.append(ident)
+
+            # create PMID identifier
+            # (some may include both an accession number and PMID)
+            if ref["PMID"] is not None or db == "nlm":
+                id_ = ref['PMID'] or ref['accession_number']
+                ident = self.filter(database=PUBMED, unique_id=id_).first()
+                if not ident:
+                    ident = self.create(database=PUBMED, unique_id=id_, content="None")
+                    pimdsFetch.append(ident)
+                ids.append(ident)
+
+            # create other accession identifiers
+            if db is not None and ref['accession_number'] is not None:
+                db_id = None
+                if db == "wos":
+                    db_id = WOS
+                elif db == "scopus":
+                    db_id = SCOPUS
+                elif db == "emb":
+                    db_id = EMBASE
+
+                if db_id:
+                    id_ = ref['accession_number']
+                    ident, _ = self.get_or_create(database=db_id, unique_id=id_, content="None")
+                    ids.append(ident)
+
+            refs.append(ids)
+
+        Identifiers.update_pubmed_content(pimdsFetch)
+
+        return refs
+
+    def get_hero_identifiers(self, hero_ids):
+        # Return a queryset of identifiers, one for each hero ID. Either get or
+        # create an identifier, whatever is required
+        Identifiers = apps.get_model('lit', 'Identifiers')
+        # Filter HERO IDs to those which need to be imported
+        idents = list(self.filter(database=HERO, unique_id__in=hero_ids)
+                            .values_list('unique_id', flat=True))
+        need_import = tuple(set(hero_ids) - set(idents))
+
+        # Grab HERO objects
+        fetcher = HEROFetch(need_import)
+        fetcher.get_content()
+
+        # Save new Identifier objects
+        for content in fetcher.content:
+            ident = Identifiers(database=HERO,
+                                unique_id=content["HEROID"],
+                                content=json.dumps(content, encoding='utf-8'))
+            ident.save()
+            idents.append(ident.unique_id)
+
+        return self.filter(database=HERO, unique_id__in=idents)
+
+    def get_max_external_id(self):
+        return self.filter(database=EXTERNAL_LINK)\
+            .aggregate(models.Max('unique_id'))["unique_id__max"]
+
+    def get_pubmed_identifiers(self, ids):
+        # Return a queryset of identifiers, one for each PubMed ID. Either get
+        # or create an identifier, whatever is required
+        Identifiers = apps.get_model('lit', 'Identifiers')
+        # Filter IDs which need to be imported
+        idents = list(self.filter(database=PUBMED, unique_id__in=ids)
+                            .values_list('unique_id', flat=True))
+        need_import = tuple(set(ids) - set(idents))
+
+        # Grab Pubmed objects
+        fetch = PubMedFetch(need_import)
+
+        # Save new Identifier objects
+        for item in fetch.get_content():
+            ident = Identifiers(unique_id=item['PMID'],
+                                database=PUBMED,
+                                content=json.dumps(item, encoding='utf-8'))
+            ident.save()
+            idents.append(ident.unique_id)
+
+        return self.filter(database=PUBMED, unique_id__in=idents)
+
+
+class ReferenceManager(BaseManager):
+    assessment_relation = 'assessment'
+
+    def get_full_assessment_json(self, assessment, json_encode=True):
+        ReferenceTags = apps.get_model('lit', 'ReferenceTags')
+        refs = self.filter(assessment=assessment).values_list('pk', flat=True)
+        ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
+        if json_encode:
+            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
+        else:
+            return ref_objs
+
+    def get_hero_references(self, search, identifiers):
+        """
+        Given a list of Identifiers, return a list of references associated
+        with each of these identifiers.
+        """
+        Reference = apps.get_model('lit', 'Reference')
+        # Get references which already existing and are tied to this identifier
+        # but are not associated with the current search and save this search
+        # as well to this Reference.
+        refs = self.filter(assessment=search.assessment, identifiers__in=identifiers)\
+            .exclude(searches=search)
+        Reference.build_ref_search_m2m(refs, search)
+
+        # get references associated with these identifiers, and get a subset of
+        # identifiers which have no reference associated with them
+        refs = list(
+            self.filter(assessment=search.assessment, identifiers__in=identifiers)
+        )
+        if refs:
+            identifiers = identifiers.exclude(references__in=refs)
+
+        for identifier in identifiers:
+            # check if any identifiers have a pubmed ID that already exists
+            # in database. If not, save a new reference.
+            content = json.loads(identifier.content, encoding='utf-8')
+            pmid = content.get('PMID', None)
+
+            if pmid:
+                ref = self.filter(
+                    assessment=search.assessment,
+                    identifiers__unique_id=pmid,
+                    identifiers__database=PUBMED)
+            else:
+                ref = self.none()
+
+            if ref.count() == 1:
+                ref = ref[0]
+            elif ref.count() > 1:
+                raise Exception("Duplicate HERO reference found")
+            else:
+                ref = identifier.create_reference(search.assessment)
+                ref.save()
+
+            ref.searches.add(search)
+            ref.identifiers.add(identifier)
+            refs.append(ref)
+
+        return refs
+
+    def get_overview_details(self, assessment):
+        # Get an overview of tagging progress for an assessment
+        refs = self.filter(assessment=assessment)
+        total = refs.count()
+        total_tagged = refs.annotate(tag_count=models.Count('tags'))\
+                            .filter(tag_count__gt=0)\
+                            .count()
+        total_untagged = total - total_tagged
+        total_searched = refs.filter(searches__search_type='s').distinct().count()
+        total_imported = total - total_searched
+        overview = {
+            'total_references': total,
+            'total_tagged': total_tagged,
+            'total_untagged': total_untagged,
+            'total_searched': total_searched,
+            'total_imported': total_imported
+        }
+        return overview
+
+    def get_references_ready_for_import(self, assessment):
+        ReferenceFilterTag = apps.get_model('lit', 'ReferenceFilterTag')
+        Study = apps.get_model('study', 'Study')
+        try:
+            root_inclusion = ReferenceFilterTag.objects \
+                .get(name='assessment-{a}'.format(a=assessment.pk)) \
+                .get_descendants().get(name='Inclusion')
+            inclusion_tags = list(
+                root_inclusion.get_descendants().values_list('pk', flat=True))
+            inclusion_tags.append(root_inclusion.pk)
+        except:
+            inclusion_tags = []
+
+        return self.filter(assessment=assessment, referencetags__tag_id__in=inclusion_tags)\
+            .exclude(pk__in=
+                Study.objects
+                    .filter(assessment=assessment)
+                    .values_list('pk', flat=True)
+            ).distinct()
+
+    def get_references_with_tag(self, tag, descendants=False):
+        tag_ids = [tag.id]
+        if descendants:
+            tag_ids.extend(list(tag.get_descendants().values_list('pk', flat=True)))
+        return self.filter(tags__in=tag_ids).distinct('pk')
+
+    def get_untagged_references(self, assessment):
+        return self.filter(assessment_id=assessment.id)\
+                .annotate(tag_count=models.Count('tags'))\
+                .filter(tag_count=0)
+
+    def process_excel(self, df, assessment_id):
+        """
+        Expects a data-frame with two columns - HAWC ID and Full text URL
+        """
+        errors = []
+
+        def fn(d):
+            if d["HAWC ID"] in cw and d["Full text URL"] != cw[d["HAWC ID"]]:
+                try:
+                    validator(d["Full text URL"])
+                    self.filter(id=d["HAWC ID"])\
+                        .update(full_text_url=d["Full text URL"])
+                except ValidationError:
+                    errors.append("HAWC ID {0}, invalid URL: {1}".format(
+                        d["HAWC ID"], d["Full text URL"]))
+
+        cw = {}
+        validator = URLValidator()
+        existing = self.filter(id__in=df["HAWC ID"].unique(), assessment_id=assessment_id)\
+            .values_list('id', 'full_text_url')
+        for obj in existing:
+            cw[obj[0]] = obj[1]
+        df.apply(fn, axis=1)
+
+        return errors

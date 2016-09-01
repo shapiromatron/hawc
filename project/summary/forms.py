@@ -235,23 +235,23 @@ class PrefilterMixin(object):
         choices = None
 
         if field_name == "systems":
-            choices = Endpoint.get_system_choices(assessment_id)
+            choices = Endpoint.objects.get_system_choices(assessment_id)
         elif field_name == "organs":
-            choices = Endpoint.get_organ_choices(assessment_id)
+            choices = Endpoint.objects.get_organ_choices(assessment_id)
         elif field_name == "effects":
-            choices = Endpoint.get_effect_choices(assessment_id)
+            choices = Endpoint.objects.get_effect_choices(assessment_id)
         elif field_name == "iv_categories":
             choices = IVEndpointCategory.get_choices(assessment_id)
         elif field_name == "iv_chemicals":
-            choices = IVChemical.get_choices(assessment_id)
+            choices = IVChemical.objects.get_choices(assessment_id)
         elif field_name == "effect_tags":
-            choices = EffectTag.get_choices(assessment_id)
+            choices = EffectTag.objects.get_choices(assessment_id)
         elif field_name == "studies":
-            choices = Study.get_choices(assessment_id)
+            choices = Study.objects.get_choices(assessment_id)
         elif field_name == "episystems":
-            choices = Outcome.get_system_choices(assessment_id)
+            choices = Outcome.objects.get_system_choices(assessment_id)
         elif field_name == "epieffects":
-            choices = Outcome.get_effect_choices(assessment_id)
+            choices = Outcome.objects.get_effect_choices(assessment_id)
         else:
             raise ValueError("Unknown field name: {}".format(field_name))
 

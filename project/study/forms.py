@@ -138,7 +138,7 @@ class StudiesCopy(forms.Form):
         assessment = kwargs.pop('assessment')
         super(StudiesCopy, self).__init__(*args, **kwargs)
         self.fields['assessment'].queryset = self.fields['assessment']\
-            .queryset.model.get_editable_assessments(user, assessment.id)
+            .queryset.model.objects.get_editable_assessments(user, assessment.id)
         self.fields['studies'].queryset = self.fields['studies']\
             .queryset.filter(assessment_id=assessment.id, epi=True)
         self.helper = self.setHelper(assessment)

@@ -5,7 +5,7 @@ import django
 
 from django.apps import apps
 from django.db import models, IntegrityError, transaction, connection
-from django.db.models import URLField
+from django.db.models import URLField, Q
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.template.defaultfilters import slugify as default_slugify
@@ -17,6 +17,18 @@ from utils.helper import HAWCDjangoJSONEncoder
 
 from . import forms, validators
 
+
+class BaseManager(models.Manager):
+    assessment_relation = None
+
+    def get_qs(self, assessment_id):
+        if assessment_id:
+            return self.assessment_qs(assessment_id)
+        return self.get_queryset()
+
+
+    def assessment_qs(self, assessment_id):
+        return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
 
 @property
 def NotImplementedAttribute(self):

@@ -46,7 +46,7 @@ class Endpoint(AssessmentViewset):
     @list_route()
     def effects(self, request):
         assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
-        effects = models.Endpoint.get_effects(assessment_id)
+        effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
     @list_route()

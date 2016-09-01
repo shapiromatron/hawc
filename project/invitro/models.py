@@ -13,8 +13,11 @@ from animal.models import ConfidenceIntervalsMixin
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs, AssessmentRootedTagTree
 
+from . import managers
 
 class IVChemical(models.Model):
+    objects = managers.IVChemicalManager()
+
     study = models.ForeignKey(
         'study.Study',
         related_name='ivchemicals')
@@ -56,10 +59,6 @@ class IVChemical(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
@@ -83,16 +82,9 @@ class IVChemical(models.Model):
             .values_list('id', flat=True)
         )
 
-    @classmethod
-    def get_choices(cls, assessment_id):
-        return cls.objects\
-            .filter(study__assessment_id=assessment_id)\
-            .order_by('name')\
-            .distinct('name')\
-            .values_list('name', 'name')
-
 
 class IVCellType(models.Model):
+    objects = managers.IVCellTypeManager()
 
     SEX_CHOICES = (
         ('m', 'Male'),
@@ -143,10 +135,6 @@ class IVCellType(models.Model):
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
@@ -167,6 +155,7 @@ class IVCellType(models.Model):
 
 
 class IVExperiment(models.Model):
+    objects = managers.IVExperimentManager()
 
     METABOLIC_ACTIVATION_CHOICES = (
         ('+',  'with metabolic activation'),
@@ -233,10 +222,6 @@ class IVExperiment(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_assessment(self):
         return self.study.assessment
 
@@ -285,6 +270,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 
 
 class IVEndpoint(BaseEndpoint):
+    objects = managers.IVEndpointManager()
 
     VARIANCE_TYPE_CHOICES = (
         (0, "NA"),
@@ -421,10 +407,6 @@ class IVEndpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -482,6 +464,7 @@ class IVEndpoint(BaseEndpoint):
 
 
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
+    objects = managers.IVEndpointGroupManager()
 
     DIFFERENCE_CONTROL_CHOICES = (
         ('nc', 'no-change'),
@@ -546,25 +529,19 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     def difference_control_symbol(self):
         return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(endpoint__assessment=assessment_id)
-
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
 
 
 class IVBenchmark(models.Model):
+    objects = managers.IVBenchmarkManager()
+
     endpoint = models.ForeignKey(
         IVEndpoint,
         related_name="benchmarks")
     benchmark = models.CharField(
         max_length=32)
     value = models.FloatField()
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(IVChemical)

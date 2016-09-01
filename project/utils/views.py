@@ -317,7 +317,7 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
             if initial and initial.get_assessment() in \
-                    Assessment.get_viewable_assessments(self.request.user, public=True):
+                    Assessment.objects.get_viewable_assessments(self.request.user, public=True):
                 kwargs['initial'] = model_to_dict(initial)
 
         return kwargs

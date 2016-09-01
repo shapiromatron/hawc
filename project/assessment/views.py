@@ -107,7 +107,7 @@ class AssessmentRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(AssessmentRead, self).get_context_data(**kwargs)
-        context['attachments'] = models.Attachment.get_attachments(
+        context['attachments'] = models.Attachment.objects.get_attachments(
             self.object,
             not context['obj_perms']['edit']
         )
@@ -350,11 +350,11 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
      - add model count dict to assessment.views.AssessmentEndpointList
-     - add model serializer that uses utils.api.DynamicFieldsMixin 
+     - add model serializer that uses utils.api.DynamicFieldsMixin
      - add api view that inherits from assessment.api.CleanupFieldsBaseViewSet
         with model={model} & serializer_class={new serializer}
      - add url for api view to urls.py
-     - add url and model title to templates/assessment/clean_extracted_data.html config object 
+     - add url and model title to templates/assessment/clean_extracted_data.html config object
     '''
 
     template_name = 'assessment/clean_extracted_data.html'
