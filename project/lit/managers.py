@@ -14,26 +14,7 @@ from fetchers.pubmed import PubMedFetch
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import BaseManager
 
-
-EXTERNAL_LINK = 0
-PUBMED = 1
-HERO = 2
-RIS = 3
-DOI = 4
-WOS = 5
-SCOPUS = 6
-EMBASE = 7
-REFERENCE_DATABASES = (
-    (EXTERNAL_LINK, 'External link'),
-    (PUBMED, 'PubMed'),
-    (HERO, 'HERO'),
-    (RIS, 'RIS (EndNote/Reference Manager)'),
-    (DOI, 'DOI'),
-    (WOS, 'Web of Science'),
-    (SCOPUS, 'Scopus'),
-    (EMBASE, 'Embase')
-)
-IMPORT_SLUG = 'manual-import'
+from . import constants
 
 
 class ReferenceFilterTagManager(TaggableManager):
@@ -75,9 +56,9 @@ class SearchManager(BaseManager):
     def get_manually_added(self, assessment):
         try:
             return self.get(assessment=assessment,
-                                      source=EXTERNAL_LINK,
+                                      source=constants.EXTERNAL_LINK,
                                       title="Manual import",
-                                      slug=IMPORT_SLUG)
+                                      slug=self.model.MANUAL_IMPORT_SLUG)
         except Exception:
             return None
 
@@ -106,25 +87,25 @@ class IdentifiersManager(BaseManager):
             # create id based on search_id and id from RIS file.
             id_ = "s{}-id{}".format(search_id, ref['id'])
             content = json.dumps(ref, encoding='utf8')
-            ident = self.filter(database=RIS, unique_id=id_).first()
+            ident = self.filter(database=constants.RIS, unique_id=id_).first()
             if ident:
                 ident.update(content=content)
             else:
-                ident = self.create(database=RIS, unique_id=id_, content=content)
+                ident = self.create(database=constants.RIS, unique_id=id_, content=content)
             ids.append(ident)
 
             # create DOI identifier
             if ref["doi"] is not None:
-                ident, _ = self.get_or_create(database=DOI, unique_id=ref['doi'], content="None")
+                ident, _ = self.get_or_create(database=constants.DOI, unique_id=ref['doi'], content="None")
                 ids.append(ident)
 
             # create PMID identifier
             # (some may include both an accession number and PMID)
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref['PMID'] or ref['accession_number']
-                ident = self.filter(database=PUBMED, unique_id=id_).first()
+                ident = self.filter(database=constants.PUBMED, unique_id=id_).first()
                 if not ident:
-                    ident = self.create(database=PUBMED, unique_id=id_, content="None")
+                    ident = self.create(database=constants.PUBMED, unique_id=id_, content="None")
                     pimdsFetch.append(ident)
                 ids.append(ident)
 
@@ -132,11 +113,11 @@ class IdentifiersManager(BaseManager):
             if db is not None and ref['accession_number'] is not None:
                 db_id = None
                 if db == "wos":
-                    db_id = WOS
+                    db_id = constants.WOS
                 elif db == "scopus":
-                    db_id = SCOPUS
+                    db_id = constants.SCOPUS
                 elif db == "emb":
-                    db_id = EMBASE
+                    db_id = constants.EMBASE
 
                 if db_id:
                     id_ = ref['accession_number']
@@ -154,7 +135,7 @@ class IdentifiersManager(BaseManager):
         # create an identifier, whatever is required
         Identifiers = apps.get_model('lit', 'Identifiers')
         # Filter HERO IDs to those which need to be imported
-        idents = list(self.filter(database=HERO, unique_id__in=hero_ids)
+        idents = list(self.filter(database=constants.HERO, unique_id__in=hero_ids)
                             .values_list('unique_id', flat=True))
         need_import = tuple(set(hero_ids) - set(idents))
 
@@ -164,16 +145,16 @@ class IdentifiersManager(BaseManager):
 
         # Save new Identifier objects
         for content in fetcher.content:
-            ident = Identifiers(database=HERO,
+            ident = Identifiers(database=constants.HERO,
                                 unique_id=content["HEROID"],
                                 content=json.dumps(content, encoding='utf-8'))
             ident.save()
             idents.append(ident.unique_id)
 
-        return self.filter(database=HERO, unique_id__in=idents)
+        return self.filter(database=constants.HERO, unique_id__in=idents)
 
     def get_max_external_id(self):
-        return self.filter(database=EXTERNAL_LINK)\
+        return self.filter(database=constants.EXTERNAL_LINK)\
             .aggregate(models.Max('unique_id'))["unique_id__max"]
 
     def get_pubmed_identifiers(self, ids):
@@ -181,7 +162,7 @@ class IdentifiersManager(BaseManager):
         # or create an identifier, whatever is required
         Identifiers = apps.get_model('lit', 'Identifiers')
         # Filter IDs which need to be imported
-        idents = list(self.filter(database=PUBMED, unique_id__in=ids)
+        idents = list(self.filter(database=constants.PUBMED, unique_id__in=ids)
                             .values_list('unique_id', flat=True))
         need_import = tuple(set(ids) - set(idents))
 
@@ -191,12 +172,12 @@ class IdentifiersManager(BaseManager):
         # Save new Identifier objects
         for item in fetch.get_content():
             ident = Identifiers(unique_id=item['PMID'],
-                                database=PUBMED,
+                                database=constants.PUBMED,
                                 content=json.dumps(item, encoding='utf-8'))
             ident.save()
             idents.append(ident.unique_id)
 
-        return self.filter(database=PUBMED, unique_id__in=idents)
+        return self.filter(database=constants.PUBMED, unique_id__in=idents)
 
 
 class ReferenceManager(BaseManager):
@@ -242,7 +223,7 @@ class ReferenceManager(BaseManager):
                 ref = self.filter(
                     assessment=search.assessment,
                     identifiers__unique_id=pmid,
-                    identifiers__database=PUBMED)
+                    identifiers__database=constants.PUBMED)
             else:
                 ref = self.none()
 

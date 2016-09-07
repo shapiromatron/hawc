@@ -19,9 +19,7 @@ from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, Assessmen
 
 from fetchers import ris
 from fetchers.pubmed import PubMedSearch, PubMedFetch
-from . import managers, tasks
-from managers import EXTERNAL_LINK, PUBMED, HERO, RIS, DOI, WOS, SCOPUS,\
-    EMBASE, REFERENCE_DATABASES, IMPORT_SLUG
+from . import constants, managers, tasks
 
 
 class TooManyPubMedResults(Exception):
@@ -38,7 +36,7 @@ class TooManyPubMedResults(Exception):
 class Search(models.Model):
     objects = managers.SearchManager()
 
-    MANUAL_IMPORT_SLUG = IMPORT_SLUG
+    MANUAL_IMPORT_SLUG = 'manual-import'
 
     SEARCH_TYPES = (
         ('s', 'Search'),
@@ -51,7 +49,7 @@ class Search(models.Model):
         max_length=1,
         choices=SEARCH_TYPES)
     source = models.PositiveSmallIntegerField(
-        choices=REFERENCE_DATABASES,
+        choices=constants.REFERENCE_DATABASES,
         help_text="Database used to identify literature.")
     title = models.CharField(
         max_length=128,
@@ -128,7 +126,7 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_query(self):
-        if self.source == PUBMED:
+        if self.source == constants.PUBMED:
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest('query_date')
@@ -146,15 +144,15 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_import(self):
-        if self.source == EXTERNAL_LINK:
+        if self.source == constants.EXTERNAL_LINK:
             raise Exception("Import functionality disabled for manual import")
-        elif self.source == PUBMED:
+        elif self.source == constants.PUBMED:
             identifiers = Identifiers.get_pubmed_identifiers(self.import_ids)
             Reference.get_pubmed_references(self, identifiers)
-        elif self.source == HERO:
+        elif self.source == constants.HERO:
             identifiers = Identifiers.get_hero_identifiers(self.import_ids)
             Reference.get_hero_references(self, identifiers)
-        elif self.source == RIS:
+        elif self.source == constants.RIS:
             # check if importer references are cached on object
             refs = getattr(self, '_references', None)
             if refs is None:
@@ -236,7 +234,7 @@ class Search(models.Model):
 
     @property
     def date_last_run(self):
-        if self.source == PUBMED and self.search_type == "s":
+        if self.source == constants.PUBMED and self.search_type == "s":
             try:
                 return PubMedQuery.objects\
                     .filter(search=self)\
@@ -253,7 +251,7 @@ class Search(models.Model):
         """
         Search.objects.create(
             assessment=assessment,
-            source=EXTERNAL_LINK,
+            source=constants.EXTERNAL_LINK,
             search_type='i',
             title="Manual import",
             slug=cls.MANUAL_IMPORT_SLUG,
@@ -367,7 +365,7 @@ class PubMedQuery(models.Model):
         # our database.
         new_ids = json.loads(self.results)['added']
         existing_pmids = list(Identifiers.objects
-            .filter(database=PUBMED, unique_id__in=new_ids)
+            .filter(database=constants.PUBMED, unique_id__in=new_ids)
             .values_list('unique_id', flat=True))
         ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
@@ -383,7 +381,7 @@ class PubMedQuery(models.Model):
             identifiers = []
             for item in fetch.get_content():
                 identifiers.append(Identifiers(unique_id=item['PMID'],
-                                               database=PUBMED,
+                                               database=constants.PUBMED,
                                                content=json.dumps(item)))
             Identifiers.objects.bulk_create(identifiers)
 
@@ -413,7 +411,7 @@ class Identifiers(models.Model):
         max_length=256,  # DOI has no limit; we make this relatively large
         db_index=True)
     database = models.IntegerField(
-        choices=REFERENCE_DATABASES)
+        choices=constants.REFERENCE_DATABASES)
     content = models.TextField()
     url = models.URLField(
         blank=True)
@@ -426,11 +424,11 @@ class Identifiers(models.Model):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
     URL_TEMPLATES = {
-        PUBMED: ur'https://www.ncbi.nlm.nih.gov/pubmed/{0}',
-        HERO: ur'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
-        DOI: ur'https://doi.org/{0}',
-        WOS: ur'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
-        SCOPUS: ur'http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist',
+        constants.PUBMED: ur'https://www.ncbi.nlm.nih.gov/pubmed/{0}',
+        constants.HERO: ur'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
+        constants.DOI: ur'https://doi.org/{0}',
+        constants.WOS: ur'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
+        constants.SCOPUS: ur'http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist',
     }
 
     def get_url(self):
@@ -446,7 +444,7 @@ class Identifiers(models.Model):
             content = json.loads(self.content, encoding='utf-8')
         except ValueError:
             raise AttributeError('Content invalid JSON: {}'.format(self.id))
-        if self.database == PUBMED:
+        if self.database == constants.PUBMED:
             ref = Reference(
                 assessment=assessment,
                 title=content.get('title', ""),
@@ -455,7 +453,7 @@ class Identifiers(models.Model):
                 abstract=content.get('abstract', ""),
                 year=content.get('year', None),
                 block_id=block_id)
-        elif self.database == HERO:
+        elif self.database == constants.HERO:
             # in some cases; my return None, we want "" instead of null
             title = content.get('title')
             journal = content.get('source') or content.get('journaltitle')
@@ -692,7 +690,7 @@ class Reference(models.Model):
         Special-case. Add an Identifier with the selected URL for this reference.
         Only-one custom URL is allowed for each reference; overwrites existing.
         """
-        i = self.identifiers.filter(database=EXTERNAL_LINK).first()
+        i = self.identifiers.filter(database=constants.EXTERNAL_LINK).first()
         if i:
             i.url = url
             i.save()
@@ -700,7 +698,7 @@ class Reference(models.Model):
             unique_id = Identifiers.get_max_external_id() + 1
             self.identifiers.add(
                 Identifiers.objects.create(
-                    database=EXTERNAL_LINK, unique_id=unique_id, url=url))
+                    database=constants.EXTERNAL_LINK, unique_id=unique_id, url=url))
 
     @classmethod
     def delete_orphans(cls, assessment_pk):
