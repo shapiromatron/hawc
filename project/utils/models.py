@@ -285,8 +285,7 @@ class CustomURLField(URLField):
 
 
 def get_distinct_charfield(Cls, assessment_id, field):
-    return Cls.objects\
-              .filter(assessment_id=assessment_id)\
+    return Cls.filter(assessment_id=assessment_id)\
               .distinct(field)\
               .order_by(field)\
               .values_list(field, flat=True)

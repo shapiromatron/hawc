@@ -564,7 +564,7 @@ class GenerateReport(BaseList):
         ReportTemplate = apps.get_model("assessment", "ReportTemplate")
         try:
             template_id = tryParseInt(self.request.GET.get('template_id'), -1)
-            return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)
+            return ReportTemplate.objects.get_template(template_id, self.assessment.id, self.report_type)
         except ObjectDoesNotExist:
             raise Http404
 

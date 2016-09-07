@@ -2,20 +2,6 @@ from django.apps import apps
 from utils.models import BaseManager
 
 
-BIOASSAY = 0
-EPI = 1
-EPI_META = 4
-IN_VITRO = 2
-OTHER = 3
-
-STUDY_TYPE_CHOICES = (
-    (BIOASSAY, 'Animal Bioassay'),
-    (EPI, 'Epidemiology'),
-    (EPI_META, 'Epidemiology meta-analysis/pooled analysis'),
-    (IN_VITRO, 'In vitro'),
-    (OTHER, 'Other'))
-
-
 class VisualManager(BaseManager):
     assessment_relation = 'assessment'
 

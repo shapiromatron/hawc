@@ -637,7 +637,7 @@ class DataPivotSelectorForm(forms.Form):
         for fld in self.fields.keys():
             self.fields[fld].widget.attrs['class'] = 'span12'
 
-        self.fields['dp'].queryset = models.DataPivot\
+        self.fields['dp'].queryset = models.DataPivot.objects\
             .clonable_queryset(user)
 
 

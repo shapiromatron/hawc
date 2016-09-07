@@ -130,7 +130,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         context["crud"] = self.crud
         context["experiment"] = self.experiment
         context["assessment"] = self.assessment
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
@@ -170,7 +170,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
         return context
 
 
@@ -244,7 +244,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if self.request.method == 'POST':  # send back dose-group errors
             context['dose_groups_json'] = self.request.POST['dose_groups_json']

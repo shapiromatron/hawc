@@ -46,7 +46,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
     @list_route()
     def rob_scores(self, request):
         assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
-        scores = self.model.rob_scores(assessment_id)
+        scores = self.model.objects.rob_scores(assessment_id)
         return Response(scores)
 
     @list_route()
