@@ -112,27 +112,41 @@ class OutcomeByStudyPopulationLookup(RelatedLookup):
     related_filter = 'study_population_id'
 
 
-class SystemLookup(RelatedDistinctStringLookup):
+class SystemLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "system"
+
+
+class EffectLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "effect"
+
+
+class EffectSubtypeLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "effect_subtype"
+
+
+class AgeOfMeasurementLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "age_of_measurement"
+
+
+class RelatedSystemLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "system"
     related_filter = 'assessment_id'
 
 
-class EffectLookup(RelatedDistinctStringLookup):
+class RelatedEffectLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect"
     related_filter = 'assessment_id'
 
 
-class EffectSubtypeLookup(RelatedDistinctStringLookup):
+class RelatedEffectSubtypeLookup(RelatedDistinctStringLookup):
     model = models.Outcome
     distinct_field = "effect_subtype"
-    related_filter = 'assessment_id'
-
-
-class AgeOfMeasurementLookup(RelatedDistinctStringLookup):
-    model = models.Outcome
-    distinct_field = "age_of_measurement"
     related_filter = 'assessment_id'
 
 
