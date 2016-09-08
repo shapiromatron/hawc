@@ -185,7 +185,7 @@ class ReferenceManager(BaseManager):
 
     def get_full_assessment_json(self, assessment, json_encode=True):
         ReferenceTags = apps.get_model('lit', 'ReferenceTags')
-        refs = self.filter(assessment=assessment).values_list('pk', flat=True)
+        refs = self.get_qs(assessment).values_list('pk', flat=True)
         ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
         if json_encode:
             return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
@@ -201,14 +201,14 @@ class ReferenceManager(BaseManager):
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
-        refs = self.filter(assessment=search.assessment, identifiers__in=identifiers)\
+        refs = self.get_qs(search.assessment).filter(identifiers__in=identifiers)\
             .exclude(searches=search)
         Reference.build_ref_search_m2m(refs, search)
 
         # get references associated with these identifiers, and get a subset of
         # identifiers which have no reference associated with them
         refs = list(
-            self.filter(assessment=search.assessment, identifiers__in=identifiers)
+            self.get_qs(search.assessment).filter(identifiers__in=identifiers)
         )
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
@@ -220,10 +220,9 @@ class ReferenceManager(BaseManager):
             pmid = content.get('PMID', None)
 
             if pmid:
-                ref = self.filter(
-                    assessment=search.assessment,
-                    identifiers__unique_id=pmid,
-                    identifiers__database=constants.PUBMED)
+                ref = self.get_qs(search.assessment)\
+                    .filter(identifiers__unique_id=pmid,
+                        identifiers__database=constants.PUBMED)
             else:
                 ref = self.none()
 
@@ -243,7 +242,7 @@ class ReferenceManager(BaseManager):
 
     def get_overview_details(self, assessment):
         # Get an overview of tagging progress for an assessment
-        refs = self.filter(assessment=assessment)
+        refs = self.get_qs(assessment)
         total = refs.count()
         total_tagged = refs.annotate(tag_count=models.Count('tags'))\
                             .filter(tag_count__gt=0)\
@@ -273,10 +272,9 @@ class ReferenceManager(BaseManager):
         except:
             inclusion_tags = []
 
-        return self.filter(assessment=assessment, referencetags__tag_id__in=inclusion_tags)\
+        return self.get_qs(assessment).filter(referencetags__tag_id__in=inclusion_tags)\
             .exclude(pk__in=
-                Study.objects
-                    .filter(assessment=assessment)
+                Study.objects.get_qs(assessment)
                     .values_list('pk', flat=True)
             ).distinct()
 
@@ -287,7 +285,7 @@ class ReferenceManager(BaseManager):
         return self.filter(tags__in=tag_ids).distinct('pk')
 
     def get_untagged_references(self, assessment):
-        return self.filter(assessment_id=assessment.id)\
+        return self.get_qs(assessment)\
                 .annotate(tag_count=models.Count('tags'))\
                 .filter(tag_count=0)
 
@@ -309,7 +307,7 @@ class ReferenceManager(BaseManager):
 
         cw = {}
         validator = URLValidator()
-        existing = self.filter(id__in=df["HAWC ID"].unique(), assessment_id=assessment_id)\
+        existing = self.get_qs(assessment_id).filter(id__in=df["HAWC ID"].unique())\
             .values_list('id', 'full_text_url')
         for obj in existing:
             cw[obj[0]] = obj[1]

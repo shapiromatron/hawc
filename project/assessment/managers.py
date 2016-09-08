@@ -12,6 +12,10 @@ from utils.models import BaseManager
 class AssessmentManager(BaseManager):
     assessment_relation = 'id'
 
+    def get_public_assessments(self):
+        return self.filter(public=True, hide_from_public_page=False)\
+                    .order_by('name')
+
     def get_viewable_assessments(self, user, exclusion_id=None, public=False):
         """
         Return queryset of all assessments which that user is able to view,
@@ -76,8 +80,7 @@ class DoseUnitManager(BaseManager):
                 dose_regime__in=DosingRegime.objects.filter(
                     dosed_animals__in=AnimalGroup.objects.filter(
                         experiment__in=Experiment.objects.filter(
-                            study__in=Study.objects.filter(
-                                assessment=assessment))))))\
+                            study__in=Study.objects.get_qs(assessment))))))\
             .values_list('name', flat=True)\
             .distinct()
 
@@ -102,9 +105,8 @@ class EffectTagManager(BaseManager):
             .distinct()
 
     def get_choices(self, assessment_id):
-        return self.filter(baseendpoint__assessment_id=assessment_id)\
+        return self.get_qs(assessment_id)\
                 .values_list('id', 'name')\
-                .distinct()\
                 .order_by('name')
 
 
@@ -114,6 +116,9 @@ class BaseEndpointManager(BaseManager):
 
 class ReportTemplateManager(BaseManager):
     assessment_relation = 'assessment'
+
+    def with_global(self, assessment_id):
+        return self.filter(Q(assessment=None) | Q(assessment=assessment_id))
 
     def get_template(self, template_id, assessment_id, report_type):
         # Return a template object if one exists which matches the specified

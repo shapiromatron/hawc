@@ -19,7 +19,7 @@ class StudyList(BaseList):
     model = models.Study
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment.id)
 
 
 class StudyReport(GenerateReport):
@@ -28,11 +28,10 @@ class StudyReport(GenerateReport):
     report_type = 1
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = super(StudyReport, self).get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment.id)
+        return self.model.objects.get_qs(self.assessment.id)
 
     def get_filename(self):
         return "study.docx"

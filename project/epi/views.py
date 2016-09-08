@@ -134,10 +134,9 @@ class OutcomeExport(BaseList):
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        filters = Q(assessment=self.assessment)
         if not perms['edit']:
-            filters &= Q(study_population__study__published=True)
-        return self.model.objects.filter(filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

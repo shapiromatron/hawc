@@ -115,7 +115,7 @@ class VisualizationList(BaseList):
     model = models.Visual
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
 
 class VisualizationDetail(BaseDetail):

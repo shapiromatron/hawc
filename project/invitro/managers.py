@@ -5,7 +5,7 @@ class IVChemicalManager(BaseManager):
     assessment_relation = 'study__assessment'
 
     def get_choices(self, assessment_id):
-        return self.filter(study__assessment_id=assessment_id)\
+        return self.get_qs(assessment_id)\
             .order_by('name')\
             .distinct('name')\
             .values_list('name', 'name')

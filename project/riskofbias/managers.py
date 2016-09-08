@@ -17,16 +17,23 @@ class RiskOfBiasMetricManager(BaseManager):
         if study.epi or study.epi_meta:
             requireds |= models.Q(required_epi=True)
 
-        return self.filter(domain__assessment=assessment)\
-            .filter(requireds)
+        return self.get_qs(assessment).filter(requireds)
 
     def get_metrics_for_visuals(self, assessment_id):
-        return self.filter(domain__assessment_id=assessment_id)\
-            .values('id', 'metric')
+        return self.get_qs(assessment_id).values('id', 'metric')
 
 
 class RiskOfBiasManager(BaseManager):
     assessment_relation = 'study__assessment'
+
+    def all_active(self, assessment=None):
+        return self.get_qs(assessment).filter(active=True)
+
+    def active(self, assessment=None):
+        return self.get_qs(assessment).filter(active=True, final=False)
+
+    def final(self, assessment=None):
+        return self.get_qs(assessment).filter(final=True)
 
 
 class RiskOfBiasScoreManager(BaseManager):

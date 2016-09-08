@@ -28,20 +28,15 @@ class Study(viewsets.ReadOnlyModelViewSet):
         return cls
 
     def get_queryset(self):
-        filters = {}
-        prefetch = ()
-
         if self.action == "list":
             if not self.assessment.user_can_edit_object(self.request.user):
-                filters["published"] = True
+                return self.model.objects.published(self.assessment)
+            return self.model.objects.get_qs(self.assessment)
         else:
-            prefetch = (
+            return self.model.objects.prefetch_related(
                 'identifiers',
                 'riskofbiases__scores__metric__domain',
             )
-
-        return self.model.objects.filter(**filters)\
-                   .prefetch_related(*prefetch)
 
     @list_route()
     def rob_scores(self, request):

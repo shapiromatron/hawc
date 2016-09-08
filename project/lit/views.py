@@ -44,7 +44,7 @@ class SearchList(BaseList):
     model = models.Search
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
 
 class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
@@ -106,7 +106,7 @@ class RefDownloadExcel(BaseList):
         if self.tag:
             return self.model.objects.get_references_with_tag(self.tag, descendants=True)
         else:
-            return self.model.objects.assessment_qs(self.assessment)
+            return self.model.objects.get_qs(self.assessment)
 
     def render_to_response(self, context, **response_kwargs):
         exporter = exports.ReferenceFlatComplete(
@@ -466,7 +466,7 @@ class RefReport(GenerateReport):
     report_type = 0
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "literature.docx"

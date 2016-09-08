@@ -45,7 +45,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
                 raise RequiresAssessmentID
 
             view.assessment = models.Assessment.objects\
-                .filter(id=assessment_id)\
+                .get_qs(assessment_id)\
                 .first()
 
             if view.assessment is None:
@@ -110,7 +110,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         # get an assessment
         assessment_id = tryParseInt(request.data.get('assessment_id'), -1)
         self.assessment = models.Assessment.objects\
-                .filter(id=assessment_id)\
+                .get_qs(assessment_id)\
                 .first()
         if self.assessment is None:
             raise RequiresAssessmentID
@@ -176,7 +176,7 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model('animal', 'Experiment')\
             .objects\
-            .filter(study__assessment=instance.id)\
+            .get_qs(instance.id)\
             .count()
         instance.items.append({
             "count": count,
@@ -187,7 +187,7 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model('animal', 'AnimalGroup')\
             .objects\
-            .filter(experiment__study__assessment=instance.id)\
+            .get_qs(instance.id)\
             .count()
         instance.items.append({
             "count": count,
@@ -214,7 +214,7 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model('invitro', 'ivchemical')\
             .objects\
-            .filter(study__assessment=instance.id)\
+            .get_qs(instance.id)\
             .count()
         instance.items.append({
             "count": count,
@@ -226,7 +226,7 @@ class AssessmentEndpointList(AssessmentViewset):
         # study
         count = apps.get_model('study', 'Study')\
             .objects\
-            .filter(assessment=instance.id)\
+            .get_qs(instance.id)\
             .count()
         instance.items.append({
             "count": count,
@@ -241,7 +241,7 @@ class AssessmentEndpointList(AssessmentViewset):
     def get_queryset(self):
         id_ = tryParseInt(self.request.GET.get('assessment_id'))
         queryset = self.model.objects\
-            .filter(id=id_)\
+            .get_qs(id_)\
             .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))

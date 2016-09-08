@@ -21,14 +21,18 @@ from . import forms, validators
 class BaseManager(models.Manager):
     assessment_relation = None
 
-    def get_qs(self, assessment_id):
+    def get_qs(self, assessment_id=None):
+        '''
+        Allows for queryset to be filtered on assessment if assessment_id is passed as argument.
+        If assessment_id is not passed, then functions identically to .all()
+        '''
         if assessment_id:
             return self.assessment_qs(assessment_id)
         return self.get_queryset()
 
-
     def assessment_qs(self, assessment_id):
         return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
+
 
 @property
 def NotImplementedAttribute(self):
