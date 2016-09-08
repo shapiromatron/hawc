@@ -486,19 +486,19 @@ class OutcomeFilterForm(forms.Form):
 
     system = forms.CharField(
         label='System',
-        widget=selectable.AutoCompleteWidget(lookups.SystemLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedSystemLookup),
         help_text="ex: immune and lymphatic system",
         required=False)
 
     effect = forms.CharField(
         label='Effect',
-        widget=selectable.AutoCompleteWidget(lookups.EffectLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectLookup),
         help_text="ex: Cancer",
         required=False)
 
     effect_subtype = forms.CharField(
         label='Effect subtype',
-        widget=selectable.AutoCompleteWidget(lookups.EffectSubtypeLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectSubtypeLookup),
         help_text="ex: Melanoma",
         required=False)
 
