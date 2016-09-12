@@ -116,7 +116,7 @@ class Search(models.Model):
     def delete(self, **kwargs):
         assessment_pk = self.assessment.pk
         super(Search, self).delete(**kwargs)
-        Reference.delete_orphans(assessment_pk)
+        Reference.objects.delete_orphans(assessment_pk)
 
     @property
     def search_string_text(self):
@@ -147,19 +147,19 @@ class Search(models.Model):
         if self.source == constants.EXTERNAL_LINK:
             raise Exception("Import functionality disabled for manual import")
         elif self.source == constants.PUBMED:
-            identifiers = Identifiers.get_pubmed_identifiers(self.import_ids)
-            Reference.get_pubmed_references(self, identifiers)
+            identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
+            Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
-            identifiers = Identifiers.get_hero_identifiers(self.import_ids)
-            Reference.get_hero_references(self, identifiers)
+            identifiers = Identifiers.objects.get_hero_identifiers(self.import_ids)
+            Reference.objects.get_hero_references(self, identifiers)
         elif self.source == constants.RIS:
             # check if importer references are cached on object
             refs = getattr(self, '_references', None)
             if refs is None:
                 importer = ris.RisImporter(self.import_file.path)
                 refs = importer.references
-            identifiers = Identifiers.get_from_ris(self.id, refs)
-            Reference.update_from_ris_identifiers(self, identifiers)
+            identifiers = Identifiers.objects.get_from_ris(self.id, refs)
+            Reference.objects.update_from_ris_identifiers(self, identifiers)
         else:
             raise ValueError("Unknown import type")
 
@@ -195,7 +195,7 @@ class Search(models.Model):
         # proper subset.
         ids = Identifiers.objects\
             .filter(database=self.source, unique_id__in=results['added'])\
-            .exclude(references__in=Reference.objects.filter(assessment=self.assessment))\
+            .exclude(references__in=Reference.objects.get_qs(self.assessment))\
             .order_by('pk')
         ids_count = ids.count()
 
@@ -249,7 +249,7 @@ class Search(models.Model):
         """
         Constructor to define default search when a new assessment is created.
         """
-        Search.objects.create(
+        cls.objects.create(
             assessment=assessment,
             source=constants.EXTERNAL_LINK,
             search_type='i',
@@ -695,85 +695,10 @@ class Reference(models.Model):
             i.url = url
             i.save()
         else:
-            unique_id = Identifiers.get_max_external_id() + 1
+            unique_id = Identifiers.objects.get_max_external_id() + 1
             self.identifiers.add(
                 Identifiers.objects.create(
                     database=constants.EXTERNAL_LINK, unique_id=unique_id, url=url))
-
-    @classmethod
-    def delete_orphans(cls, assessment_pk):
-        # Remove orphan references (references with no associated searches)
-        orphans = cls.objects\
-                     .filter(assessment=assessment_pk)\
-                     .only("id")\
-                     .annotate(searches_count=models.Count('searches'))\
-                     .filter(searches_count=0)
-        logging.info("Removing {} orphan references from assessment {}".format(
-                        orphans.count(), assessment_pk))
-        orphans.delete()
-
-    @classmethod
-    def update_from_ris_identifiers(cls, search, identifiers):
-        """
-        Create or update Reference from list of lists of identifiers.
-        Expensive; each reference requires 4N queries.
-        """
-        assessment_id = search.assessment_id
-        for idents in identifiers:
-
-            # check if existing reference is found
-            ref = cls.objects\
-                .filter(assessment_id=assessment_id, identifiers__in=idents)\
-                .first()
-
-            # find ref if exists and update content
-            # first identifier is from RIS file; use this content
-            content = json.loads(idents[0].content)
-            if ref:
-                ref.__dict__.update(
-                    title=content['title'],
-                    authors=content['authors_short'],
-                    year=content['year'],
-                    journal=content['citation'],
-                    abstract=content['abstract'],
-                )
-                ref.save()
-            else:
-                ref = cls.objects.create(
-                    assessment_id=assessment_id,
-                    title=content['title'],
-                    authors=content['authors_short'],
-                    year=content['year'],
-                    journal=content['citation'],
-                    abstract=content['abstract'],
-                )
-
-            # add all identifiers and searches
-            ref.identifiers.add(*idents)
-            ref.searches.add(search)
-
-    @classmethod
-    def build_ref_search_m2m(cls, refs, search):
-        # Bulk-create reference-search relationships
-        logging.debug("Starting bulk creation of reference-search values")
-        m2m = cls.searches.through
-        objects = [
-            m2m(reference_id=ref.id, search_id=search.id)
-            for ref in refs
-        ]
-        m2m.objects.bulk_create(objects)
-
-    @classmethod
-    def build_ref_ident_m2m(cls, objs):
-        # Bulk-create reference-search relationships
-        logging.debug("Starting bulk creation of reference-identifer values")
-        m2m = cls.identifiers.through
-        objects = [
-            m2m(reference_id=ref_id, identifiers_id=ident_id)
-            for ref_id, ident_id in objs
-        ]
-        m2m.objects.bulk_create(objects)
-
 
     def get_assessment(self):
         return self.assessment

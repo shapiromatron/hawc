@@ -420,7 +420,7 @@ class RefList(BaseList):
     def get_context_data(self, **kwargs):
         context = super(RefList, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
-        context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
+        context['ref_objs'] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['untagged'] = models.Reference.objects.get_untagged_references(self.assessment)
         return context
@@ -443,7 +443,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        errors = models.Reference.process_excel(
+        errors = models.Reference.objects.process_excel(
             form.cleaned_data['df'],
             self.assessment.id
         )
@@ -482,7 +482,7 @@ class RefListExtract(BaseList):
     template_name = 'lit/reference_extract_list.html'
 
     def get_queryset(self):
-        return self.model.get_references_ready_for_import(self.assessment)
+        return self.model.objects.get_references_ready_for_import(self.assessment)
 
 
 class RefDetail(BaseDetail):
@@ -545,7 +545,7 @@ class RefsByTagJSON(BaseDetail):
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
-            refs = search\
+            refs = search.objects\
                 .get_references_with_tag(tag=tag, descendants=True)\
                 .prefetch_related('searches', 'identifiers')
         elif tag:

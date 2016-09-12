@@ -183,6 +183,36 @@ class IdentifiersManager(BaseManager):
 class ReferenceManager(BaseManager):
     assessment_relation = 'assessment'
 
+    def build_ref_ident_m2m(self, objs):
+        # Bulk-create reference-search relationships
+        logging.debug("Starting bulk creation of reference-identifer values")
+        m2m = self.model.identifiers.through
+        objects = [
+            m2m(reference_id=ref_id, identifiers_id=ident_id)
+            for ref_id, ident_id in objs
+        ]
+        m2m.objects.bulk_create(objects)
+
+    def build_ref_search_m2m(self, refs, search):
+        # Bulk-create reference-search relationships
+        logging.debug("Starting bulk creation of reference-search values")
+        m2m = self.model.searches.through
+        objects = [
+            m2m(reference_id=ref.id, search_id=search.id)
+            for ref in refs
+        ]
+        m2m.objects.bulk_create(objects)
+
+    def delete_orphans(self, assessment_pk):
+        # Remove orphan references (references with no associated searches)
+        orphans = self.get_qs(assessment_pk)\
+                     .only("id")\
+                     .annotate(searches_count=models.Count('searches'))\
+                     .filter(searches_count=0)
+        logging.info("Removing {} orphan references from assessment {}".format(
+                        orphans.count(), assessment_pk))
+        orphans.delete()
+
     def get_full_assessment_json(self, assessment, json_encode=True):
         ReferenceTags = apps.get_model('lit', 'ReferenceTags')
         refs = self.get_qs(assessment).values_list('pk', flat=True)
@@ -197,13 +227,12 @@ class ReferenceManager(BaseManager):
         Given a list of Identifiers, return a list of references associated
         with each of these identifiers.
         """
-        Reference = apps.get_model('lit', 'Reference')
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
         refs = self.get_qs(search.assessment).filter(identifiers__in=identifiers)\
             .exclude(searches=search)
-        Reference.build_ref_search_m2m(refs, search)
+        self.build_ref_search_m2m(refs, search)
 
         # get references associated with these identifiers, and get a subset of
         # identifiers which have no reference associated with them
@@ -260,6 +289,39 @@ class ReferenceManager(BaseManager):
         }
         return overview
 
+    def get_pubmed_references(self, search, identifiers):
+        """
+        Given a list of Identifiers, return a list of references associated
+        with each of these identifiers.
+        """
+        # Get references which already existing and are tied to this identifier
+        # but are not associated with the current search and save this search
+        # as well to this Reference.
+        refs = self.get_qs(search.assessment)\
+            .filter(identifiers__in=identifiers)\
+            .exclude(searches=search)
+        self.build_ref_search_m2m(refs, search)
+
+        # Get any references already are associated with these identifiers
+        refs = list(
+            self.get_qs(search.assessment)\
+                .filter(identifiers__in=identifiers)
+        )
+
+        # Only process identifiers which have no reference
+        if refs:
+            identifiers = identifiers.exclude(references__in=refs)
+
+        # don't bulkcreate because we need the pks
+        for identifier in identifiers:
+            ref = identifier.create_reference(search.assessment)
+            ref.save()
+            ref.searches.add(search)
+            ref.identifiers.add(identifier)
+            refs.append(ref)
+
+        return refs
+
     def get_references_ready_for_import(self, assessment):
         ReferenceFilterTag = apps.get_model('lit', 'ReferenceFilterTag')
         Study = apps.get_model('study', 'Study')
@@ -315,3 +377,42 @@ class ReferenceManager(BaseManager):
         df.apply(fn, axis=1)
 
         return errors
+
+    def update_from_ris_identifiers(self, search, identifiers):
+        """
+        Create or update Reference from list of lists of identifiers.
+        Expensive; each reference requires 4N queries.
+        """
+        assessment_id = search.assessment_id
+        for idents in identifiers:
+
+            # check if existing reference is found
+            ref = self.get_qs(assessment_id)\
+                .filter(identifiers__in=idents)\
+                .first()
+
+            # find ref if exists and update content
+            # first identifier is from RIS file; use this content
+            content = json.loads(idents[0].content)
+            if ref:
+                ref.__dict__.update(
+                    title=content['title'],
+                    authors=content['authors_short'],
+                    year=content['year'],
+                    journal=content['citation'],
+                    abstract=content['abstract'],
+                )
+                ref.save()
+            else:
+                ref = self.create(
+                    assessment_id=assessment_id,
+                    title=content['title'],
+                    authors=content['authors_short'],
+                    year=content['year'],
+                    journal=content['citation'],
+                    abstract=content['abstract'],
+                )
+
+            # add all identifiers and searches
+            ref.identifiers.add(*idents)
+            ref.searches.add(search)
