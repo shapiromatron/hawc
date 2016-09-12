@@ -1284,7 +1284,8 @@ class GroupResult(models.Model):
             "result_group-p_value",
             "result_group-is_main_finding",
             "result_group-main_finding_support",
-            "result_group-created",            "result_group-last_updated",
+            "result_group-created",
+            "result_group-last_updated",
         )
 
     @staticmethod
