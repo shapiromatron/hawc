@@ -53,36 +53,27 @@ class Study{
     unpack_riskofbias(){
         // unpack risk of bias information and nest by domain
         var self = this,
-            riskofbias = [],
-            gradient_colors = d3.scale.linear()
-                .domain(RiskOfBiasScore.score_values)
-                .range(_.values(RiskOfBiasScore.score_shades));
+            riskofbias = [];
+
         this.final.scores.forEach(function(v, i){
-            v.score_color = gradient_colors(v.score);
+            v.score_color = RiskOfBiasScore.score_shades[v.score];
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = RiskOfBiasScore.score_text[v.score];
             riskofbias.push(new RiskOfBiasScore(self, v));
         });
 
-        //construct dataset in structure for a donut plot
+        // group rob by domains
         this.riskofbias = d3.nest()
-                                .key(function(d){return d.data.metric.domain.name;})
-                                .entries(riskofbias);
+            .key(function(d){return d.data.metric.domain.name;})
+            .entries(riskofbias);
 
         // now generate a score for each
         this.riskofbias.forEach(function(v, i){
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
             v.criteria = v.values;
-            // we only want to calculate score for cases where answer !== N/A, or >0
-            var non_zeros = d3.sum(v.criteria.map(function(v){return (v.data.score>0)?1:0;}));
-            if (non_zeros>0){
-                v.score = d3.round(d3.sum(v.criteria, function(v,i){return v.data.score;})/non_zeros,2);
-            } else {
-                v.score = 0;
-            }
             v.score_text = (v.score>0) ? v.score : 'N/A';
-            v.score_color = gradient_colors(v.score);
+            v.score_color = '#E8E8E8';
             v.score_text_color = String.contrasting_color(v.score_color);
         });
 
