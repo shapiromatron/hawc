@@ -12,12 +12,13 @@
 
     {% if assessment.enable_data_extraction %}
         <li class=""><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
+
+        {% if assessment.enable_risk_of_bias and obj_perms.edit %}
+            <li class=""><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of bias</a></li>
+        {% endif %}
+
         <li class=""><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>
         <li class=""><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
-    {% endif %}
-
-    {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-        <li class=""><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of bias reviewers</a></li>
     {% endif %}
 
     {% if assessment.enable_summary_text %}
