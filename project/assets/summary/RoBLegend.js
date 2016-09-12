@@ -15,25 +15,9 @@ class RoBLegend  {
         this.render();
     }
 
-    render(){
-        let self = this,
-            svg = d3.select(this.svg),
-            svgW = parseInt(svg.attr('width'), 10),
-            svgH = parseInt(svg.attr('height'), 10),
-            x = this.settings.legend_x,
-            y = this.settings.legend_y,
-            scores = RiskOfBiasScore.score_values.slice(),  // shallow copy
-            width = 22,
-            half_width = width/2,
-            buff = 5,
-            title_offset = 8,
-            dim = this.svg.getBBox(),
-            cursor = (this.options.dev) ? 'pointer' : 'auto',
-            drag = (this.options.dev) ? HAWCUtils.updateDragLocationTransform(function(x, y){
-                self.settings.legend_x = parseInt(x, 10);
-                self.settings.legend_y = parseInt(y, 10);
-            }) : function(){},
-            fields, title, g;
+    get_data(){
+        let scores = RiskOfBiasScore.score_values.slice(),  // shallow copy
+            fields;
 
         // determine which scores to present in legend
         if (!this.settings.show_na_legend){
@@ -52,13 +36,36 @@ class RoBLegend  {
             };
         });
 
+        return fields;
+
+    }
+
+    render(){
+        let svg = d3.select(this.svg),
+            svgW = parseInt(svg.attr('width'), 10),
+            svgH = parseInt(svg.attr('height'), 10),
+            x = this.settings.legend_x,
+            y = this.settings.legend_y,
+            width = 22,
+            half_width = width/2,
+            buff = 5,
+            title_offset = 8,
+            dim = this.svg.getBBox(),
+            cursor = (this.options.dev) ? 'pointer' : 'auto',
+            drag = (this.options.dev) ? HAWCUtils.updateDragLocationTransform((x, y)=>{
+                this.settings.legend_x = parseInt(x, 10);
+                this.settings.legend_y = parseInt(y, 10);
+            }) : function(){},
+            fields = this.get_data(),
+            title, g;
+
         // create a new g.legend_group object on the main svg graphic
         g = svg.append('g')
                 .attr('transform', `translate(${x}, ${y})`)
                 .attr('cursor', cursor)
                 .call(drag);
 
-        // add the text 'Legend'; we set the x to a temporarily small value,
+        // add text 'Legend'; we set the x to a temporarily small value,
         // which we change below after we know the size of the legend
         title = g.append('text')
              .attr('x', 10)
@@ -67,7 +74,7 @@ class RoBLegend  {
              .attr('class', 'dr_title')
              .text(function(d){return 'Legend';});
 
-        // Add the color rectangles
+        // Add color rectangles
         g.selectAll('svg.rect')
             .data(fields)
           .enter().append('rect')
@@ -113,10 +120,18 @@ class RoBLegend  {
         title.attr('x', dim.width/2);
 
         // set legend in-bounds if out of svg boundaries
-        if (x+dim.width > svgW) x = svgW - dim.width - buff;
-        if (x < 0) x = 2 * buff;
-        if (y+dim.height > svgH) y = svgH - dim.height - 2 * buff;
-        if (y < 0) y = 2 * buff;
+        if (x+dim.width > svgW){
+            x = svgW - dim.width - buff;
+        }
+        if (x < 0){
+            x = 2 * buff;
+        }
+        if (y+dim.height > svgH){
+            y = svgH - dim.height - 2 * buff;
+        }
+        if (y < 0){
+            y = 2 * buff;
+        }
         g.attr('transform', `translate(${x},${y})`);
 
         this.legend_group = g;
