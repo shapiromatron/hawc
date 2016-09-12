@@ -1,0 +1,23 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+    <div id='dashboard'></div>
+{% endblock content %}
+
+{% block extrajs %}
+<script id='config'>
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.app.mgmt.Dashboard(document.getElementById('dashboard'));
+    });
+</script>
+{% endblock extrajs %}
