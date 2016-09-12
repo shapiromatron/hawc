@@ -22,12 +22,6 @@ from utils.models import get_crumbs
 from . import managers
 
 
-def getRelationID(rel):
-    if rel:
-        return str(rel['id'])
-    else:
-        return None
-
 
 class Experiment(models.Model):
     objects = managers.ExperimentManager()
@@ -355,8 +349,12 @@ class AnimalGroup(models.Model):
             "strain-name",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    @classmethod
+    def get_relation_id(cls, rel):
+        return str(rel['id']) if rel else None
+
+    @classmethod
+    def flat_complete_data_row(cls, ser):
         return (
             ser['id'],
             ser['url'],
@@ -366,8 +364,8 @@ class AnimalGroup(models.Model):
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
             ser['duration_observation'],
-            getRelationID(ser['siblings']),
-            '|'.join([getRelationID(p) for p in ser['parents']]),
+            cls.get_relation_id(ser['siblings']),
+            '|'.join([cls.get_relation_id(p) for p in ser['parents']]),
             ser['generation'],
             cleanHTML(ser['comments']),
             ser['species'],
@@ -503,7 +501,7 @@ class DosingRegime(models.Model):
     def flat_complete_data_row(ser):
         return (
             ser['id'],
-            AnimalGroup.getRelatedAnimalGroupID(ser['dosed_animals']),
+            AnimalGroup.get_relation_id(ser['dosed_animals']),
             ser['route_of_exposure'],
             ser['duration_exposure'],
             ser['duration_exposure_text'],
