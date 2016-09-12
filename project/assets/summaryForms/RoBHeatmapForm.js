@@ -128,10 +128,18 @@ _.extend(RoBHeatmapForm, {
         },
         {
             type: CheckboxField,
+            name: 'show_na_legend',
+            label: 'Show N/A in legend',
+            def: true,
+            helpText: 'Show "Not applicable" in the legend',
+            tab: 'legend',
+        },
+        {
+            type: CheckboxField,
             name: 'show_nr_legend',
             label: 'Show NR in legend',
             def: true,
-            helpText: 'Show \'Not Reported\' in the legend',
+            helpText: 'Show "Not reported" in the legend',
             tab: 'legend',
         },
         {
