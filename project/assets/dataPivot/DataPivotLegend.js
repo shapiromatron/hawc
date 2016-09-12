@@ -243,7 +243,7 @@ class DataPivotLegend {
     delete_field(obj){
         for(var i=0; i<this.settings.fields.length; i++){
             if(this.settings.fields[i] === obj){
-                this.settings.fields.pop(i);
+                this.settings.fields.splice(i, 1);
                 break;
             }
         }

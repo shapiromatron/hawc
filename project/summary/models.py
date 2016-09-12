@@ -25,6 +25,7 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, \
     SerializerHelper, tryParseInt
 
+from . import managers
 
 BIOASSAY = 0
 EPI = 1
@@ -167,6 +168,7 @@ class SummaryText(MP_Node):
 
 
 class Visual(models.Model):
+    objects = managers.VisualManager()
 
     BIOASSAY_AGGREGATION = 0
     BIOASSAY_CROSSVIEW = 1
@@ -220,12 +222,8 @@ class Visual(models.Model):
     def __unicode__(self):
         return self.title
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
-    @classmethod
-    def get_list_url(cls, assessment_id):
+    @staticmethod
+    def get_list_url(assessment_id):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
     def get_absolute_url(self):
@@ -340,6 +338,8 @@ class Visual(models.Model):
 
 
 class DataPivot(models.Model):
+    objects = managers.DataPivotManager()
+
     assessment = models.ForeignKey(
         Assessment)
     title = models.CharField(
@@ -367,12 +367,8 @@ class DataPivot(models.Model):
     def __unicode__(self):
         return self.title
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
-    @classmethod
-    def get_list_url(cls, assessment_id):
+    @staticmethod
+    def get_list_url(assessment_id):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
     def get_absolute_url(self):
@@ -409,20 +405,9 @@ class DataPivot(models.Model):
         except ValueError:
             return None
 
-    @classmethod
-    def clonable_queryset(cls, user):
-        """
-        Return data-pivots which can cloned by a specific user
-        """
-        assessment_ids = Assessment\
-            .get_viewable_assessments(user, public=True)\
-            .values_list('id', flat=True)
-        return cls.objects.filter(assessment__in=assessment_ids)\
-            .select_related('assessment')\
-            .order_by('assessment__name', 'title')
 
-    @classmethod
-    def reset_row_overrides(cls, settings):
+    @staticmethod
+    def reset_row_overrides(settings):
         settings_as_json = json.loads(settings)
         settings_as_json['row_overrides'] = []
         return json.dumps(settings_as_json)
@@ -625,8 +610,8 @@ class Prefilter(object):
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """
-    @classmethod
-    def setFiltersFromForm(cls, filters, d, visual_type):
+    @staticmethod
+    def setFiltersFromForm(filters, d, visual_type):
         evidence_type = d.get('evidence_type')
 
         if visual_type == Visual.BIOASSAY_CROSSVIEW:
@@ -675,8 +660,8 @@ class Prefilter(object):
             else:
                 raise ValueError("Unknown evidence type")
 
-    @classmethod
-    def setFiltersFromObj(cls, filters, prefilters):
+    @staticmethod
+    def setFiltersFromObj(filters, prefilters):
         filters.update(json.loads(prefilters))
 
 

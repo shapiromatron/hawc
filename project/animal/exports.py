@@ -52,7 +52,7 @@ class EndpointFlatComplete(FlatFileExporter):
     """
 
     def _get_header_row(self):
-        self.doses = DoseUnits.get_animal_units(self.kwargs.get('assessment'))
+        self.doses = DoseUnits.objects.get_animal_units(self.kwargs.get('assessment'))
 
         header = []
         header.extend(Study.flat_complete_header_row())

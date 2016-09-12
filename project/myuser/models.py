@@ -117,7 +117,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def get_assessments(self):
         Assessment = apps.get_model('assessment', 'Assessment')
-        return Assessment.get_viewable_assessments(self)
+        return Assessment.objects.get_viewable_assessments(self)
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)

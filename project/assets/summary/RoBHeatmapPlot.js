@@ -358,8 +358,11 @@ class RoBHeatmapPlot extends D3Visualization {
             fields, title;
 
         // determine which scores to present in legend
+        if (!this.data.settings.show_na_legend){
+            scores.splice(scores.indexOf(0), 1);
+        }
         if (!this.data.settings.show_nr_legend){
-            scores.pop(scores.indexOf(10));
+            scores.splice(scores.indexOf(10), 1);
         }
         fields = _.map(scores, function(v){
             return {

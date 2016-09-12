@@ -90,10 +90,7 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        return self.model.objects.filter(
-            public=True,
-            hide_from_public_page=False
-        ).order_by('name')
+        return self.model.objects.get_public_assessments()
 
 
 class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
@@ -107,7 +104,7 @@ class AssessmentRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super(AssessmentRead, self).get_context_data(**kwargs)
-        context['attachments'] = models.Attachment.get_attachments(
+        context['attachments'] = models.Attachment.objects.get_attachments(
             self.object,
             not context['obj_perms']['edit']
         )
@@ -143,8 +140,7 @@ class AssessmentReports(BaseList):
     def get_queryset(self):
         # Get report-templates associated with no assessment (global) and
         # those associated with selected assessment
-        return self.model.objects.filter(
-            Q(assessment=None) | Q(assessment=self.assessment))
+        return self.model.objects.with_global(self.assessment)
 
     def get_context_data(self, **kwargs):
         context = super(AssessmentReports, self).get_context_data(**kwargs)
@@ -238,7 +234,7 @@ class ReportTemplateList(BaseList):
     model = models.ReportTemplate
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
 
 class ReportTemplateDetail(BaseDetail):
@@ -314,22 +310,22 @@ class BaseEndpointList(BaseList):
 
         eps = self.model.endpoint\
             .related.related_model.objects\
-            .filter(assessment_id=self.assessment.id)\
+            .get_qs(self.assessment.id)\
             .count()
 
         os = self.model.outcome\
             .related.related_model.objects\
-            .filter(assessment_id=self.assessment.id)\
+            .get_qs(self.assessment.id)\
             .count()
 
         mrs = apps.get_model('epimeta', 'metaresult')\
             .objects\
-            .filter(protocol__study__assessment_id=self.assessment.id)\
+            .get_qs(self.assessment.id)\
             .count()
 
         iveps = self.model.ivendpoint\
             .related.related_model.objects\
-            .filter(assessment_id=self.assessment.id)\
+            .get_qs(self.assessment.id)\
             .count()
 
         alleps = eps + os + mrs + iveps
@@ -350,11 +346,11 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
      - add model count dict to assessment.views.AssessmentEndpointList
-     - add model serializer that uses utils.api.DynamicFieldsMixin 
+     - add model serializer that uses utils.api.DynamicFieldsMixin
      - add api view that inherits from assessment.api.CleanupFieldsBaseViewSet
         with model={model} & serializer_class={new serializer}
      - add url for api view to urls.py
-     - add url and model title to templates/assessment/clean_extracted_data.html config object 
+     - add url and model title to templates/assessment/clean_extracted_data.html config object
     '''
 
     template_name = 'assessment/clean_extracted_data.html'

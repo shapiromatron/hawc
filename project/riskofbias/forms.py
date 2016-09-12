@@ -249,7 +249,7 @@ class RiskOfBiasCopyForm(forms.Form):
         self.assessment = kwargs.pop('assessment', None)
         super(RiskOfBiasCopyForm, self).__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
-        self.fields['assessment'].queryset = Assessment\
+        self.fields['assessment'].queryset = Assessment.objects\
             .get_viewable_assessments(user, exclusion_id=self.assessment.id)
         self.helper = self.setHelper()
 

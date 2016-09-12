@@ -12,8 +12,7 @@ from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
                          GenerateFixedReport, MessageMixin,
-                         TeamMemberOrHigherMixin, IsAuthorMixin,
-                         ProjectManagerOrHigherMixin)
+                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
 
 from . import models, forms
 
@@ -26,7 +25,7 @@ class ARoBDetail(BaseList):
 
     def get_queryset(self):
         return self.model.objects\
-            .filter(assessment=self.assessment)\
+            .get_qs(self.assessment)\
             .prefetch_related('metrics')
 
 
@@ -75,12 +74,11 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
 
     def get_queryset(self):
         return self.model.objects\
-            .filter(assessment=self.assessment)\
+            .get_qs(self.assessment)\
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
-                    queryset=models.RiskOfBias.objects
-                                   .filter(active=True)
+                    queryset=models.RiskOfBias.objects.all_active()
                                    .prefetch_related('author'),
                     to_attr='active_riskofbiases'))
 
@@ -107,15 +105,14 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
         return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def build_initial_formset_factory(self):
-        queryset = Study.objects.filter(assessment=self.assessment)\
+        queryset = Study.objects.get_qs(self.assessment)\
             .prefetch_related('identifiers')\
             .prefetch_related('searches')\
             .prefetch_related('assessment__rob_settings')\
             .prefetch_related(
                 Prefetch(
                     'riskofbiases',
-                    queryset=models.RiskOfBias.objects
-                                   .filter(active=True, final=False),
+                    queryset=models.RiskOfBias.objects.active(),
                     to_attr='active_riskofbiases')
                 )
 
@@ -233,11 +230,10 @@ class RoBFixedReport(GenerateFixedReport):
     ReportClass = reports.RoBDOCXReport
 
     def get_queryset(self):
-        filters = {'assessment': self.assessment}
         perms = super(RoBFixedReport, self).get_obj_perms()
         if not perms['edit']:
-            filters['published'] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return 'riskofbias.docx'

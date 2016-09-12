@@ -48,6 +48,7 @@ const toolbarOptions = {
             smartTag(value){
                 let sel = this.quill.getSelection();
                 if (sel === null || sel.length === 0){
+                    window.alert('Select text to add a smart-tag.');
                     return;
                 }
                 this.quill.smartTagModal.showModal('smartTag', sel, value);
@@ -55,6 +56,7 @@ const toolbarOptions = {
             smartInline(value){
                 let sel = this.quill.getSelection();
                 if (sel === null || sel.length === 0){
+                    window.alert('Select text to add an inline smart-tag.');
                     return;
                 }
                 this.quill.smartTagModal.showModal('smartInline', sel, value);
