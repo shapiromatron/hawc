@@ -17,7 +17,7 @@
     {% endif %}
 
     {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-        <li class=""><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of Bias reviewers</a></li>
+        <li class=""><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of bias reviewers</a></li>
     {% endif %}
 
     {% if assessment.enable_summary_text %}
