@@ -56,9 +56,9 @@ class SearchManager(BaseManager):
     def get_manually_added(self, assessment):
         try:
             return self.get(assessment=assessment,
-                                      source=constants.EXTERNAL_LINK,
-                                      title="Manual import",
-                                      slug=self.model.MANUAL_IMPORT_SLUG)
+                            source=constants.EXTERNAL_LINK,
+                            title="Manual import",
+                            slug=self.model.MANUAL_IMPORT_SLUG)
         except Exception:
             return None
 
@@ -222,7 +222,7 @@ class ReferenceManager(BaseManager):
             if pmid:
                 ref = self.get_qs(search.assessment)\
                     .filter(identifiers__unique_id=pmid,
-                        identifiers__database=constants.PUBMED)
+                            identifiers__database=constants.PUBMED)
             else:
                 ref = self.none()
 
@@ -244,9 +244,10 @@ class ReferenceManager(BaseManager):
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         total = refs.count()
-        total_tagged = refs.annotate(tag_count=models.Count('tags'))\
-                            .filter(tag_count__gt=0)\
-                            .count()
+        total_tagged = refs\
+            .annotate(tag_count=models.Count('tags'))\
+            .filter(tag_count__gt=0)\
+            .count()
         total_untagged = total - total_tagged
         total_searched = refs.filter(searches__search_type='s').distinct().count()
         total_imported = total - total_searched
@@ -286,8 +287,8 @@ class ReferenceManager(BaseManager):
 
     def get_untagged_references(self, assessment):
         return self.get_qs(assessment)\
-                .annotate(tag_count=models.Count('tags'))\
-                .filter(tag_count=0)
+            .annotate(tag_count=models.Count('tags'))\
+            .filter(tag_count=0)
 
     def process_excel(self, df, assessment_id):
         """
