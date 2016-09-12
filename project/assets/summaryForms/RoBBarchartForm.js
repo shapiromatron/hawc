@@ -120,14 +120,6 @@ _.extend(RoBBarchartForm, {
             tab: 'legend',
         },
         {
-            type: CheckboxField,
-            name: 'show_nr_legend',
-            label: 'Show NR in legend',
-            def: true,
-            helpText: 'Show "Not reported" in the legend',
-            tab: 'legend',
-        },
-        {
             type: IntegerField,
             name: 'legend_x',
             label: 'Legend x-location (px)',
