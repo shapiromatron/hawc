@@ -317,7 +317,7 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
             if initial and initial.get_assessment() in \
-                    Assessment.get_viewable_assessments(self.request.user, public=True):
+                    Assessment.objects.get_viewable_assessments(self.request.user, public=True):
                 kwargs['initial'] = model_to_dict(initial)
 
         return kwargs
@@ -564,7 +564,7 @@ class GenerateReport(BaseList):
         ReportTemplate = apps.get_model("assessment", "ReportTemplate")
         try:
             template_id = tryParseInt(self.request.GET.get('template_id'), -1)
-            return ReportTemplate.get_template(template_id, self.assessment.id, self.report_type)
+            return ReportTemplate.objects.get_template(template_id, self.assessment.id, self.report_type)
         except ObjectDoesNotExist:
             raise Http404
 

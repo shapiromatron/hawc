@@ -17,8 +17,12 @@ from study.models import Study
 from utils.models import get_crumbs, get_distinct_charfield_opts
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 
+from . import managers
+
 
 class Criteria(models.Model):
+    objects = managers.CriteriaManager()
+
     assessment = models.ForeignKey(
         'assessment.Assessment')
     description = models.TextField()
@@ -43,12 +47,10 @@ class Criteria(models.Model):
             description=self.description)
         cw[self.COPY_NAME][self.id] = new_obj.id
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
 
 class Country(models.Model):
+    objects = managers.CountryManager()
+
     code = models.CharField(
         blank=True,
         max_length=2)
@@ -62,12 +64,6 @@ class Country(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(studypopulation__study__assessment=assessment_id)\
-            .distinct()
 
 
 class AdjustmentFactor(models.Model):
@@ -94,12 +90,10 @@ class AdjustmentFactor(models.Model):
             description=self.description)
         cw[self.COPY_NAME][self.id] = new_obj.id
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
 
 class Ethnicity(models.Model):
+    objects = managers.EthnicityManger()
+
     name = models.CharField(
         max_length=64,
         unique=True)
@@ -114,12 +108,10 @@ class Ethnicity(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.all()
-
 
 class StudyPopulationCriteria(models.Model):
+    objects = managers.StudyPopulationCriteriaManager()
+
     CRITERIA_TYPE = (
         ("I", "Inclusion"),
         ("E", "Exclusion"),
@@ -145,12 +137,9 @@ class StudyPopulationCriteria(models.Model):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(criteria__assessment=assessment_id)
-
 
 class StudyPopulation(models.Model):
+    objects = managers.StudyPopulationManager()
 
     DESIGN_CHOICES = (
         ('CO', 'Cohort'),
@@ -218,10 +207,6 @@ class StudyPopulation(models.Model):
         auto_now=True)
 
     COPY_NAME = "study_populations"
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
 
     @staticmethod
     def flat_complete_header_row():
@@ -323,6 +308,7 @@ class StudyPopulation(models.Model):
 
 
 class Outcome(BaseEndpoint):
+    objects = managers.OutcomeManager()
 
     TEXT_CLEANUP_FIELDS = (
         'name',
@@ -393,10 +379,6 @@ class Outcome(BaseEndpoint):
             return json.dumps(outcomes, cls=HAWCDjangoJSONEncoder)
         else:
             return outcomes
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
     @classmethod
     def delete_caches(cls, ids):
@@ -481,16 +463,10 @@ class Outcome(BaseEndpoint):
         for child in children:
             child.copy_across_assessments(cw)
 
-    @classmethod
-    def get_system_choices(cls, assessment_id):
-        return get_distinct_charfield_opts(cls, assessment_id, 'system')
-
-    @classmethod
-    def get_effect_choices(cls, assessment_id):
-        return get_distinct_charfield_opts(cls, assessment_id, 'effect')
-
 
 class ComparisonSet(models.Model):
+    objects = managers.ComparisonSetManager()
+
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='comparison_sets',
@@ -518,12 +494,6 @@ class ComparisonSet(models.Model):
 
     class Meta:
         ordering = ('name', )
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(
-            models.Q(study_population__study__assessment=assessment_id) |
-            models.Q(outcome__assessment=assessment_id))
 
     def save(self, *args, **kwargs):
         if not xor(self.outcome is None, self.study_population is None):
@@ -587,6 +557,8 @@ class ComparisonSet(models.Model):
 
 
 class Group(models.Model):
+    objects = managers.GroupManager()
+
     SEX_CHOICES = (
         ("U", "Not reported"),
         ("M", "Male"),
@@ -654,12 +626,6 @@ class Group(models.Model):
     class Meta:
         ordering = ('comparison_set', 'group_id', )
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(
-            models.Q(comparison_set__study_population__study__assessment=assessment_id) |  # noqa
-            models.Q(comparison_set__outcome__assessment=assessment_id))
-
     def get_absolute_url(self):
         return reverse('epi:g_detail', kwargs={'pk': self.pk})
 
@@ -722,6 +688,8 @@ class Group(models.Model):
 
 
 class Exposure(models.Model):
+    objects = managers.ExposureManager()
+
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='exposures')
@@ -800,11 +768,6 @@ class Exposure(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(study_population__study__assessment=assessment_id)
-
     def get_assessment(self):
         return self.study_population.get_assessment()
 
@@ -880,6 +843,7 @@ class Exposure(models.Model):
 
 
 class GroupNumericalDescriptions(models.Model):
+    objects = managers.GroupNumericalDescriptionsManager()
 
     MEAN_TYPE_CHOICES = (
         (0, None),
@@ -949,12 +913,6 @@ class GroupNumericalDescriptions(models.Model):
     def __unicode__(self):
         return self.description
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(
-            models.Q(group__comparison_set__study_population__study__assessment=assessment_id) |  # noqa
-            models.Q(group__comparison_set__outcome__assessment=assessment_id))
-
     def copy_across_assessments(self, cw):
         children = list(self.descriptions.all())
         old_id = self.id
@@ -967,6 +925,8 @@ class GroupNumericalDescriptions(models.Model):
 
 
 class ResultMetric(models.Model):
+    objects = managers.ResultMetricManager()
+
     metric = models.CharField(
         max_length=128,
         unique=True)
@@ -994,17 +954,10 @@ class ResultMetric(models.Model):
     def __unicode__(self):
         return self.metric
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(
-                models.Q(results__outcome__assessment=assessment_id) |
-                models.Q(metaresult__protocol__study__assessment=assessment_id)
-            )\
-            .distinct()
-
 
 class ResultAdjustmentFactor(models.Model):
+    objects = managers.ResultAdjustmentFactorManager()
+
     adjustment_factor = models.ForeignKey('AdjustmentFactor',
         related_name='resfactors')
     result = models.ForeignKey('Result',
@@ -1021,13 +974,9 @@ class ResultAdjustmentFactor(models.Model):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(adjustment_factor__assessment=assessment_id)
-
 
 class Result(models.Model):
+    objects = managers.ResultManager()
 
     DOSE_RESPONSE_CHOICES = (
         (0, "not-applicable"),
@@ -1149,11 +1098,6 @@ class Result(models.Model):
         return self.adjustment_factors\
             .filter(resfactors__included_in_final_model=False)
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(outcome__assessment=assessment_id)
-
     def __unicode__(self):
         return self.name
 
@@ -1243,6 +1187,7 @@ class Result(models.Model):
 
 
 class GroupResult(models.Model):
+    objects = managers.GroupResultManager()
 
     P_VALUE_QUALIFIER_CHOICES = (
         (' ', '-'),
@@ -1325,11 +1270,6 @@ class GroupResult(models.Model):
                 txt = u"{0}{1:g}".format(txt, self.p_value)
 
         return txt
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(result__outcome__assessment=assessment_id)
 
     @staticmethod
     def flat_complete_header_row():

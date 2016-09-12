@@ -2,7 +2,7 @@ import json
 
 from django.db.models import Q
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
 
@@ -130,7 +130,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         context["crud"] = self.crud
         context["experiment"] = self.experiment
         context["assessment"] = self.assessment
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
@@ -170,7 +170,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
         return context
 
 
@@ -219,7 +219,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
             # instead of checking existing vs. new, just delete all old
             # dose-groups, and save new formset
-            models.DoseGroup.objects.filter(dose_regime=self.object).delete()
+            models.DoseGroup.objects.by_dose_regime(self.object).delete()
 
             # now save dose-groups, one for each dosing regime
             for dose in fs.forms:
@@ -244,7 +244,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if self.request.method == 'POST':  # send back dose-group errors
             context['dose_groups_json'] = self.request.POST['dose_groups_json']
@@ -342,10 +342,8 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(assessment=self.assessment)
-
         if not perms['edit']:
             query &= Q(animal_group__experiment__study__published=True)
-
         return query
 
     def get_context_data(self, **kwargs):
@@ -358,15 +356,7 @@ class EndpointTags(EndpointList):
     # List of Endpoints associated with an assessment and tag
 
     def get_queryset(self):
-        return self.model.objects\
-            .filter(effects__slug=self.kwargs['tag_slug'])\
-            .select_related('animal_group', 'animal_group__dosing_regime')\
-            .prefetch_related('animal_group__dosing_regime__doses')\
-            .filter(
-                animal_group__in=models.AnimalGroup.objects.filter(
-                    experiment__in=models.Experiment.objects.filter(
-                        study__in=Study.objects.filter(
-                            assessment=self.assessment.pk))))
+        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs['tag_slug'])
 
 
 class EndpointRead(BaseDetail):
@@ -396,11 +386,10 @@ class EndpointsReport(GenerateReport):
     report_type = 2
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = super(EndpointsReport, self).get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "animal-bioassay.docx"
@@ -415,11 +404,10 @@ class EndpointsFixedReport(GenerateFixedReport):
     ReportClass = reports.EndpointDOCXReport
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = super(EndpointsFixedReport, self).get_obj_perms()
         if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "animal-bioassay.docx"
@@ -436,11 +424,10 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        filters = Q(assessment=self.assessment)
         perms = self.get_obj_perms()
         if not perms['edit']:
-            filters &= Q(animal_group__experiment__study__published=True)
-        return self.model.objects.filter(filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

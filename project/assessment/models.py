@@ -4,13 +4,10 @@ import os
 from StringIO import StringIO
 
 from django.db import models
-from django.apps import apps
 from django.core.urlresolvers import reverse
-from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
@@ -21,6 +18,8 @@ from utils.models import get_crumbs
 from utils.helper import HAWCDjangoJSONEncoder
 from myuser.models import HAWCUser
 
+from . import managers
+
 
 def get_cas_url(cas):
     if cas:
@@ -30,6 +29,8 @@ def get_cas_url(cas):
 
 
 class Assessment(models.Model):
+    objects = managers.AssessmentManager()
+
     name = models.CharField(
         max_length=80,
         verbose_name='Assessment Name',
@@ -121,10 +122,6 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse('assessment:detail', args=[str(self.pk)])
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(id=assessment_id)
-
     @property
     def cas_url(self):
         return get_cas_url(self.cas)
@@ -201,38 +198,13 @@ class Assessment(models.Model):
                     (user in self.team_members.all()) or
                     (user in self.reviewers.all()))
 
-    @classmethod
-    def get_viewable_assessments(cls, user, exclusion_id=None, public=False):
-        """
-        Return queryset of all assessments which that user is able to view,
-        optionally excluding assessment exclusion_id,
-        not including public assessments
-        """
-        filters = (Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))
-        if public:
-            filters |= (Q(public=True) & Q(hide_from_public_page=False))
-        return Assessment.objects\
-            .filter(filters)\
-            .exclude(id=exclusion_id)\
-            .distinct()
-
-    @classmethod
-    def get_editable_assessments(cls, user, exclusion_id=None):
-        """
-        Return queryset of all assessments which that user is able to edit,
-        optionally excluding assessment exclusion_id,
-        not including public assessments
-        """
-        return Assessment.objects\
-            .filter(Q(project_manager=user) | Q(team_members=user))\
-            .exclude(id=exclusion_id)\
-            .distinct()
-
     def get_crumbs(self):
         return get_crumbs(self)
 
 
 class Attachment(models.Model):
+    objects = managers.AttachmentManager()
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = fields.GenericForeignKey('content_type', 'object_id')
@@ -265,24 +237,10 @@ class Attachment(models.Model):
     def get_assessment(self):
         return self.content_object.get_assessment()
 
-    @classmethod
-    def get_attachments(cls, obj, isPublic):
-        filters = {
-            "content_type": ContentType.objects.get_for_model(obj),
-            "object_id": obj.id
-        }
-        if isPublic:
-            filters["publicly_available"] = True
-        return cls.objects.filter(**filters)
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        a = ContentType.objects\
-            .get(app_label="assessment", model="assessment").id
-        return cls.objects.filter(content_type=a, object_id=assessment_id)
-
 
 class DoseUnits(models.Model):
+    objects = managers.DoseUnitManager()
+
     name = models.CharField(
         max_length=20,
         unique=True)
@@ -294,10 +252,6 @@ class DoseUnits(models.Model):
     class Meta:
         verbose_name_plural = "dose units"
         ordering = ("name", )
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.all()
 
     def __unicode__(self):
         return self.name
@@ -314,33 +268,10 @@ class DoseUnits(models.Model):
     def invitro_experiment_count(self):
         return self.ivexperiments.count()
 
-    @classmethod
-    def json_all(cls):
-        return json.dumps(list(cls.objects.all().values()), cls=HAWCDjangoJSONEncoder)
-
-    @classmethod
-    def get_animal_units(cls, assessment):
-        """
-        Returns a list of the dose-units which are used in the selected
-        assessment for animal bioassay data.
-        """
-        Study = apps.get_model('study', 'Study')
-        Experiment = apps.get_model('animal', 'Experiment')
-        AnimalGroup = apps.get_model('animal', 'AnimalGroup')
-        DosingRegime = apps.get_model('animal', 'DosingRegime')
-        DoseGroup = apps.get_model('animal', 'DoseGroup')
-        return cls.objects.filter(
-            dosegroup__in=DoseGroup.objects.filter(
-                dose_regime__in=DosingRegime.objects.filter(
-                    dosed_animals__in=AnimalGroup.objects.filter(
-                        experiment__in=Experiment.objects.filter(
-                            study__in=Study.objects.filter(
-                                assessment=assessment))))))\
-            .values_list('name', flat=True)\
-            .distinct()
-
 
 class Species(models.Model):
+    objects = managers.SpeciesManager()
+
     name = models.CharField(
         max_length=30,
         help_text="Enter species in singular (ex: Mouse, not Mice)",
@@ -354,15 +285,13 @@ class Species(models.Model):
         verbose_name_plural = "species"
         ordering = ("name", )
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.all()
-
     def __unicode__(self):
         return self.name
 
 
 class Strain(models.Model):
+    objects = managers.StrainManager()
+
     species = models.ForeignKey(
         Species)
     name = models.CharField(
@@ -376,15 +305,13 @@ class Strain(models.Model):
         unique_together = (("species", "name"),)
         ordering = ("species", "name")
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.all()
-
     def __unicode__(self):
         return self.name
 
 
 class EffectTag(models.Model):
+    objects = managers.EffectTagManager()
+
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(max_length=128, unique=True,
                             help_text="The URL (web address) used to describe this object (no spaces or special-characters).")
@@ -406,23 +333,9 @@ class EffectTag(models.Model):
         else:
             return d
 
-    @classmethod
-    def get_name_list(self, queryset):
+    @staticmethod
+    def get_name_list(queryset):
         return '|'.join(queryset.values_list("name", flat=True))
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(baseendpoint__assessment_id=assessment_id)\
-            .distinct()
-
-    @classmethod
-    def get_choices(cls, assessment_id):
-        return cls.objects\
-                .filter(baseendpoint__assessment_id=assessment_id)\
-                .values_list('id', 'name')\
-                .distinct()\
-                .order_by('name')
 
 
 class BaseEndpoint(models.Model):
@@ -431,6 +344,8 @@ class BaseEndpoint(models.Model):
     in-vitro endpoints used in assessment. Not fully abstract so efficient
     queries can pull data from all three more-specific endpoint types.
     """
+    objects = managers.BaseEndpointManager()
+
     assessment = models.ForeignKey(Assessment, db_index=True)
     # Some denormalization but required for efficient capture of all endpoints
     # in assessment; major use case in HAWC.
@@ -442,10 +357,6 @@ class BaseEndpoint(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
     def get_assessment(self):
         return self.assessment
@@ -492,6 +403,7 @@ class ChangeLog(models.Model):
 
 
 class ReportTemplate(models.Model):
+    objects = managers.ReportTemplateManager()
 
     REPORT_TYPE_CHOICES = (
         (0, 'Literature search'),
@@ -559,19 +471,6 @@ class ReportTemplate(models.Model):
             templates[obj.report_type].append(obj)
 
         return templates
-
-    @classmethod
-    def get_template(cls, template_id, assessment_id, report_type):
-        # Return a template object if one exists which matches the specified
-        # criteria, else throw an ObjectDoesNotExist error
-        qs = cls.objects\
-                .filter(id=template_id, report_type=report_type)\
-                .filter(Q(assessment=assessment_id) | Q(assessment=None))
-
-        if qs.count() == 1:
-            return qs[0]
-        else:
-            raise models.ObjectDoesNotExist()
 
 
 reversion.register(Assessment)

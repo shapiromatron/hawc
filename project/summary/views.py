@@ -115,7 +115,7 @@ class VisualizationList(BaseList):
     model = models.Visual
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
 
 class VisualizationDetail(BaseDetail):
@@ -150,7 +150,7 @@ class VisualizationCreate(BaseCreate):
         context['visual_type'] = int(self.kwargs.get('visual_type'))
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
-            RiskOfBiasMetric.get_metrics_for_visuals(self.assessment.id)))
+            RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 
@@ -181,7 +181,7 @@ class VisualizationUpdate(BaseUpdate):
         context['visual_type'] = self.object.visual_type
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
-            RiskOfBiasMetric.get_metrics_for_visuals(self.assessment.id)))
+            RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 

@@ -116,11 +116,10 @@ class MetaResultReport(GenerateReport):
     report_type = 4
 
     def get_queryset(self):
-        filters = {"protocol__study__assessment": self.assessment}
         perms = super(MetaResultReport, self).get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "meta-results.docx"
@@ -147,10 +146,9 @@ class MetaResultFullExport(BaseList):
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        filters = Q(protocol__study__assessment=self.assessment)
         if not perms['edit']:
-            filters &= Q(protocol__study__published=True)
-        return self.model.objects.filter(filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
