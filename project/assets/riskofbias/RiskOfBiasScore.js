@@ -66,6 +66,7 @@ _.extend(RiskOfBiasScore, {
         3: 'Probably low risk of bias',
         4: 'Definitely low risk of bias',
     },
+    collapsedNR: 'Probably high risk of bias/not reported',
 });
 
 export default RiskOfBiasScore;

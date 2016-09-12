@@ -17,7 +17,8 @@ class RoBLegend  {
 
     get_data(){
         let scores = RiskOfBiasScore.score_values.slice(),  // shallow copy
-            fields;
+            fields,
+            collapseNR = this.options.collapseNR;
 
         // determine which scores to present in legend
         if (!this.settings.show_na_legend){
@@ -27,17 +28,20 @@ class RoBLegend  {
             scores.splice(scores.indexOf(10), 1);
         }
         fields = _.map(scores, function(v){
+            let desc = RiskOfBiasScore.score_text_description[v];
+            if (v === 2 && collapseNR){
+                desc = RiskOfBiasScore.collapsedNR;
+            }
             return {
                 value:          v,
                 color:          RiskOfBiasScore.score_shades[v],
                 text_color:     String.contrasting_color(RiskOfBiasScore.score_shades[v]),
                 text:           RiskOfBiasScore.score_text[v],
-                description:    RiskOfBiasScore.score_text_description[v],
+                description:    desc,
             };
         });
 
         return fields;
-
     }
 
     render(){

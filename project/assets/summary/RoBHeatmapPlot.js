@@ -336,10 +336,14 @@ class RoBHeatmapPlot extends D3Visualization {
 
     build_legend(){
         if (this.legend || !this.data.settings.show_legend) return;
+        let options = {
+            dev: this.options.dev || false,
+            collapseNR: false,
+        };
         this.legend = new RoBLegend(
             this.svg,
             this.data.settings,
-            this.options
+            options
         );
     }
 
