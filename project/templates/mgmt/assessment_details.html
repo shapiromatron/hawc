@@ -1,0 +1,41 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Tasks | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a><span class="divider">/</span></li>
+  <li class="active">Task list<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>Task list table
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="{% url 'mgmt:assessment_modify' assessment.pk %}">Modify tasks</a></li>
+        </ul>
+    </div>
+  </h2>
+
+  <pre id='response'></pre>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $.get('{% url "mgmt:api:task-list" %}?assessment_id={{assessment.pk}}', function(d){
+        $('#response').html(JSON.stringify(d, null, '  '));
+    });
+});
+</script>
+{% endblock extrajs %}
+
+

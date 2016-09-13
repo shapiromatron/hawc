@@ -15,6 +15,14 @@ class AssessmentSerializer(serializers.ModelSerializer):
         model = models.Assessment
 
 
+class AssessmentMiniSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url')
+
+    class Meta:
+        model = models.Assessment
+        fields = ('id', 'url', 'name')
+
+
 class EffectTagsSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):

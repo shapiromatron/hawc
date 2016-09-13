@@ -68,7 +68,8 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Your HAWC <b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="{% url 'portal' %}">Portal</a></li>
-                    <li><a href="{% url 'user:settings' %}">View profile</a></li>
+                    <li><a href="{% url 'user:settings' %}">Profile</a></li>
+                    <li><a href="{% url 'mgmt:user_assignments' %}">My task assignments</a></li>
                     {% if user.is_staff %}
                       <li class="divider"></li>
                       <li><a href="{%url 'admin:index' %}">Admin</a></li>

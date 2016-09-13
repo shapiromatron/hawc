@@ -1,0 +1,21 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  Task assignments | HAWC
+{% endblock title %}
+
+{% block content %}
+  <h1>Task assignments</h1>
+  <pre id='response'></pre>
+{% endblock content %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $.get('{% url "mgmt:api:task-assignments" %}', function(d){
+        $('#response').html(JSON.stringify(d, null, '  '));
+    });
+});
+</script>
+{% endblock extrajs %}
