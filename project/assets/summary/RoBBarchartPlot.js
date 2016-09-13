@@ -4,7 +4,7 @@ import d3 from 'd3';
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 
 import D3Visualization from './D3Visualization';
-import RoBHeatmapPlot from './RoBHeatmapPlot';
+import RoBLegend from './RoBLegend';
 
 
 class RoBBarchartPlot extends D3Visualization {
@@ -30,7 +30,7 @@ class RoBBarchartPlot extends D3Visualization {
         this.trigger_resize();
         this.build_labels();
         this.add_menu();
-        RoBHeatmapPlot.prototype.build_legend.call(this);
+        this.build_legend();
     }
 
     resize_plot_dimensions(){
@@ -81,7 +81,7 @@ class RoBBarchartPlot extends D3Visualization {
     processData(){
 
         var included_metrics = this.data.settings.included_metrics,
-            stack_order = ['N/A', '--', '-', '+', '++', 'NR'],
+            stack_order = ['N/A', '--', '-', '+', '++'],
             metrics, stack, dataset;
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
@@ -91,11 +91,14 @@ class RoBBarchartPlot extends D3Visualization {
             }).map(function(d){
                 var vals = {
                         'label': d.rob_scores[0].data.metric.metric,
-                        'N/A':0, '--':0, '-':0, '+':0, '++':0, 'NR': 0,
+                        'N/A':0, '--':0, '-':0, '+':0, '++':0,
                     },
                     weight = 1/d.rob_scores.length;
                 d.rob_scores.forEach(function(rob){
                     vals[rob.data.score_text] += weight;
+                    if(rob.data.score_text==='NR'){
+                        vals['-'] += weight;
+                    }
                 });
                 return vals;
             })
@@ -228,6 +231,19 @@ class RoBBarchartPlot extends D3Visualization {
             .attr('transform','rotate(270, {0}, {1})'.printf(x, y))
             .attr('class', 'dr_axis_labels x_axis_label')
             .text(this.y_label_text);
+    }
+
+    build_legend(){
+        if (this.legend || !this.data.settings.show_legend) return;
+        let options = {
+            dev: this.options.dev || false,
+            collapseNR: true,
+        };
+        this.legend = new RoBLegend(
+            this.svg,
+            this.data.settings,
+            options
+        );
     }
 
 }
