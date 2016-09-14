@@ -65,9 +65,11 @@ def update_study_type_metrics(sender, instance, created, **kwargs):
     # type changes)
     Study = apps.get_model('study', 'Study')
     assessment = instance.get_assessment()
-    for study in Study.objects.get_qs(assessment):
-        for rob in study.riskofbiases.all():
-            rob.update_scores(assessment, study)
+    for rob in models.RiskOfBias.objects\
+            .filter(study__in=Study.objects.get_qs(assessment))\
+            .select_related('study', 'study__assessment')\
+            .prefetch_related('scores'):
+        rob.update_scores(assessment)
 
 
 @receiver(post_save, sender=models.RiskOfBias)

@@ -161,14 +161,22 @@ class RiskOfBias(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
-    def update_scores(self, assessment, study):
-        metrics = RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+    def update_scores(self, assessment):
+        """Sync RiskOfBiasScore for this study based on assessment requirements.
+
+        Metrics may change based on study type and metric requirements by study
+        type. This method is called via signals when the study type changes,
+        or when a metric is altered.  RiskOfBiasScore are created/deleted as
+        needed.
+        """
+        metrics = RiskOfBiasMetric.objects.get_required_metrics(assessment, self.study)\
+            .prefetch_related('scores')
         scores = self.scores.all()
-        # add any scores that are required
+        # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
-        # delete any scores that are no loner required
+        # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
                 score.delete()
