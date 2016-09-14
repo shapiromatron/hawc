@@ -18,8 +18,10 @@ def clear_cache(Model, filters):
 def update_study_rob_scores(sender, instance, created, **kwargs):
     # update RiskOfBiasScores when a Study's type is changed.
     assessment = instance.get_assessment()
-    for rob in instance.riskofbiases.all():
-        rob.update_scores(assessment, instance)
+    for rob in instance.riskofbiases.all()\
+            .select_related('study', 'study__assessment')\
+            .prefetch_related('scores'):
+        rob.update_scores(assessment)
 
 
 @receiver(post_save, sender=models.Study)
