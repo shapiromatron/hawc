@@ -545,7 +545,7 @@ class RefsByTagJSON(BaseDetail):
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
-            refs = search.objects\
+            refs = search\
                 .get_references_with_tag(tag=tag, descendants=True)\
                 .prefetch_related('searches', 'identifiers')
         elif tag:
