@@ -161,6 +161,18 @@ class RiskOfBias(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
+    def update_scores(self, assessment, study):
+        metrics = RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+        scores = self.scores.all()
+        # add any scores that are required
+        for metric in metrics:
+            if not (metric.scores.all() & scores):
+                RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
+        # delete any scores that are no loner required
+        for score in scores:
+            if score.metric not in metrics:
+                score.delete()
+
     def build_scores(self, assessment, study):
         scores = [
             RiskOfBiasScore(riskofbias=self, metric=metric)
