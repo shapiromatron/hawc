@@ -59,6 +59,17 @@ def create_rob_scores(sender, instance, created, **kwargs):
         models.RiskOfBiasScore.objects.bulk_create(objs)
 
 
+@receiver(post_save, sender=models.RiskOfBiasMetric)
+def update_study_type_metrics(sender, instance, created, **kwargs):
+    # update RiskOfBiasScores with RiskOfBiasMetric requirements are updated (required study
+    # type changes)
+    Study = apps.get_model('study', 'Study')
+    assessment = instance.get_assessment()
+    for study in Study.objects.get_qs(assessment):
+        for rob in study.riskofbiases.all():
+            rob.update_scores(assessment, study)
+
+
 @receiver(post_save, sender=models.RiskOfBias)
 @receiver(pre_delete, sender=models.RiskOfBias)
 @receiver(post_save, sender=models.RiskOfBiasScore)
