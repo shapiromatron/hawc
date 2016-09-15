@@ -1,55 +1,68 @@
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import RelatedLookup, RelatedDistinctStringLookup
+from utils.lookups import DistinctStringLookup, RelatedLookup, RelatedDistinctStringLookup
 
 
-class ExperimentCASLookup(RelatedDistinctStringLookup):
+class RelatedExperimentCASLookup(RelatedDistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
     related_filter = 'study__assessment_id'
 
 
-class AnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
+class RelatedAnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_exposed"
     related_filter = 'experiment__study__assessment_id'
 
 
-class AnimalGroupLifestageAssessedLookup(RelatedDistinctStringLookup):
+class RelatedAnimalGroupLifestageAssessedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_assessed"
     related_filter = 'experiment__study__assessment_id'
 
 
-class EndpointSystemLookup(RelatedDistinctStringLookup):
+class RelatedEndpointSystemLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "system"
     related_filter = 'assessment_id'
 
 
-class EndpointOrganLookup(RelatedDistinctStringLookup):
+class RelatedEndpointOrganLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "organ"
     related_filter = 'assessment_id'
 
 
-class EndpointEffectLookup(RelatedDistinctStringLookup):
+class RelatedEndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect"
     related_filter = 'assessment_id'
 
 
-class EndpointEffectSubtypeLookup(RelatedDistinctStringLookup):
+class EndpointSystemLookup(DistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "system"
+
+
+class EndpointOrganLookup(DistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "organ"
+
+
+class EndpointEffectLookup(DistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "effect"
+
+
+class EndpointEffectSubtypeLookup(DistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect_subtype"
-    related_filter = 'assessment_id'
 
 
-class EndpointStatisticalTestLookup(RelatedDistinctStringLookup):
+class EndpointStatisticalTestLookup(DistinctStringLookup):
     model = models.Endpoint
     distinct_field = "statistical_test"
-    related_filter = 'assessment_id'
 
 
 class EndpointByStudyLookup(RelatedLookup):
@@ -116,9 +129,12 @@ class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
         )
 
 
-registry.register(ExperimentCASLookup)
-registry.register(AnimalGroupLifestageExposedLookup)
-registry.register(AnimalGroupLifestageAssessedLookup)
+registry.register(RelatedExperimentCASLookup)
+registry.register(RelatedAnimalGroupLifestageExposedLookup)
+registry.register(RelatedAnimalGroupLifestageAssessedLookup)
+registry.register(RelatedEndpointSystemLookup)
+registry.register(RelatedEndpointOrganLookup)
+registry.register(RelatedEndpointEffectLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)

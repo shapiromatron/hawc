@@ -23,19 +23,19 @@ class StudyPopulationByStudyLookup(RelatedLookup):
     related_filter = 'study_id'
 
 
-class StudyPopulationAgeProfileLookup(RelatedDistinctStringLookup):
+class RelatedStudyPopulationAgeProfileLookup(RelatedDistinctStringLookup):
     model = models.StudyPopulation
     distinct_field = 'age_profile'
     related_filter = 'study__assessment_id'
 
 
-class StudyPopulationSourceLookup(RelatedDistinctStringLookup):
+class RelatedStudyPopulationSourceLookup(RelatedDistinctStringLookup):
     model = models.StudyPopulation
     distinct_field = 'source'
     related_filter = 'study__assessment_id'
 
 
-class CountryNameLookup(RelatedDistinctStringLookup):
+class RelatedCountryNameLookup(RelatedDistinctStringLookup):
     model = models.Country
     distinct_field = 'name'
     related_filter = 'studypopulation__study__assessment_id'
@@ -161,9 +161,9 @@ class ResultByOutcomeLookup(RelatedLookup):
 
 registry.register(StudyPopulationByAssessmentLookup)
 registry.register(StudyPopulationByStudyLookup)
-registry.register(StudyPopulationAgeProfileLookup)
-registry.register(StudyPopulationSourceLookup)
-registry.register(CountryNameLookup)
+registry.register(RelatedStudyPopulationAgeProfileLookup)
+registry.register(RelatedStudyPopulationSourceLookup)
+registry.register(RelatedCountryNameLookup)
 registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
