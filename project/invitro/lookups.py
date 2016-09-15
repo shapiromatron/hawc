@@ -1,110 +1,114 @@
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import RelatedDistinctStringLookup, RelatedLookup
+from utils.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
 
 
 # Chemical
-class IVChemicalNameLookup(RelatedDistinctStringLookup):
+class RelatedIVChemicalNameLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'name'
     related_filter = 'study__assessment_id'
 
 
-class IVChemicalCASLookup(RelatedDistinctStringLookup):
+class RelatedIVChemicalCASLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'cas'
     related_filter = 'study__assessment_id'
 
 
-class IVChemicalSourceLookup(RelatedDistinctStringLookup):
+class IVChemicalSourceLookup(DistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'source'
-    related_filter = 'study__assessment_id'
 
 
-class IVChemicalPurityLookup(RelatedDistinctStringLookup):
+class IVChemicalPurityLookup(DistinctStringLookup):
     model = models.IVChemical
     distinct_field = 'purity'
-    related_filter = 'study__assessment_id'
 
 
 # CellType
-class IVCellTypeNameLookup(RelatedDistinctStringLookup):
+class RelatedIVCellTypeNameLookup(RelatedDistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'cell_type'
     related_filter = 'study__assessment_id'
 
 
-class IVCellTypeSpeciesLookup(RelatedDistinctStringLookup):
+class IVCellTypeSpeciesLookup(DistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'species'
-    related_filter = 'study__assessment_id'
 
 
-class IVCellTypeStrainLookup(RelatedDistinctStringLookup):
+class IVCellTypeStrainLookup(DistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'strain'
-    related_filter = 'study__assessment_id'
 
 
-class IVCellTypeCellTypeLookup(RelatedDistinctStringLookup):
+class IVCellTypeCellTypeLookup(DistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'cell_type'
-    related_filter = 'study__assessment_id'
 
 
-class IVCellTypeTissueLookup(RelatedDistinctStringLookup):
+class RelatedIVCellTypeTissueLookup(RelatedDistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'tissue'
     related_filter = 'study__assessment_id'
 
 
-class IVCellTypeSourceLookup(RelatedDistinctStringLookup):
+class IVCellTypeTissueLookup(DistinctStringLookup):
+    model = models.IVCellType
+    distinct_field = 'tissue'
+
+
+class IVCellTypeSourceLookup(DistinctStringLookup):
     model = models.IVCellType
     distinct_field = 'source'
-    related_filter = 'study__assessment_id'
 
 
 # Experiment
-class IVExperimentTransfectionLookup(RelatedDistinctStringLookup):
+class IVExperimentTransfectionLookup(DistinctStringLookup):
     model = models.IVExperiment
     distinct_field = 'transfection'
-    related_filter = 'study__assessment_id'
 
 
-class IVExperimentPositiveControlLookup(RelatedDistinctStringLookup):
+class IVExperimentPositiveControlLookup(DistinctStringLookup):
     model = models.IVExperiment
     distinct_field = 'positive_control'
-    related_filter = 'study__assessment_id'
 
 
-class IVExperimentNegativeControlLookup(RelatedDistinctStringLookup):
+class IVExperimentNegativeControlLookup(DistinctStringLookup):
     model = models.IVExperiment
     distinct_field = 'negative_control'
-    related_filter = 'study__assessment_id'
 
 
-class IVExperimentVehicleControlLookup(RelatedDistinctStringLookup):
+class IVExperimentVehicleControlLookup(DistinctStringLookup):
     model = models.IVExperiment
     distinct_field = 'vehicle_control'
-    related_filter = 'study__assessment_id'
 
 
 # Endpoint
-class IVEndpointEffectLookup(RelatedDistinctStringLookup):
+class RelatedIVEndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.IVEndpoint
     distinct_field = 'effect'
     related_filter = 'assessment_id'
 
 
-class IVEndpointAssayTypeLookup(RelatedDistinctStringLookup):
+class IVEndpointEffectLookup(DistinctStringLookup):
+    model = models.IVEndpoint
+    distinct_field = 'effect'
+
+
+class IVEndpointAssayTypeLookup(DistinctStringLookup):
     model = models.IVEndpoint
     distinct_field = 'assay_type'
-    related_filter = 'assessment_id'
 
 
-class IVEndpointResponseUnitsLookup(RelatedDistinctStringLookup):
+class IVEndpointResponseUnitsLookup(DistinctStringLookup):
+    model = models.IVEndpoint
+    distinct_field = 'response_units'
+
+
+class RelatedIVEndpointResponseUnitsLookup(RelatedDistinctStringLookup):
     model = models.IVEndpoint
     distinct_field = 'response_units'
     related_filter = 'assessment_id'
@@ -122,16 +126,17 @@ class IVEndpointByAssessmentTextLookup(RelatedLookup):
 
 
 # Chemical
-registry.register(IVChemicalNameLookup)
-registry.register(IVChemicalCASLookup)
+registry.register(RelatedIVChemicalNameLookup)
+registry.register(RelatedIVChemicalCASLookup)
 registry.register(IVChemicalSourceLookup)
 registry.register(IVChemicalPurityLookup)
 
 # CellType
-registry.register(IVCellTypeNameLookup)
+registry.register(RelatedIVCellTypeNameLookup)
 registry.register(IVCellTypeSpeciesLookup)
 registry.register(IVCellTypeStrainLookup)
 registry.register(IVCellTypeCellTypeLookup)
+registry.register(RelatedIVCellTypeTissueLookup)
 registry.register(IVCellTypeTissueLookup)
 registry.register(IVCellTypeSourceLookup)
 
@@ -142,7 +147,9 @@ registry.register(IVExperimentNegativeControlLookup)
 registry.register(IVExperimentVehicleControlLookup)
 
 # Endpoint
+registry.register(RelatedIVEndpointEffectLookup)
 registry.register(IVEndpointEffectLookup)
 registry.register(IVEndpointAssayTypeLookup)
 registry.register(IVEndpointResponseUnitsLookup)
+registry.register(RelatedIVEndpointResponseUnitsLookup)
 registry.register(IVEndpointByAssessmentTextLookup)

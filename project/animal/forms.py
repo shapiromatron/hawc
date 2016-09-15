@@ -134,13 +134,13 @@ class AnimalGroupForm(ModelForm):
             self.instance.experiment = parent
 
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AnimalGroupLifestageExposedLookup,
+            lookup_class=lookups.RelatedAnimalGroupLifestageExposedLookup,
             allow_new=True)
         self.fields['lifestage_exposed'].widget.update_query_parameters(
             {'related': self.instance.experiment.study.assessment.id})
 
         self.fields['lifestage_assessed'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AnimalGroupLifestageAssessedLookup,
+            lookup_class=lookups.RelatedAnimalGroupLifestageAssessedLookup,
             allow_new=True)
         self.fields['lifestage_assessed'].widget.update_query_parameters(
             {'related': self.instance.experiment.study.assessment.id})
@@ -578,19 +578,19 @@ class EndpointFilterForm(forms.Form):
 
     cas = forms.CharField(
         label='CAS',
-        widget=selectable.AutoCompleteWidget(lookups.ExperimentCASLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedExperimentCASLookup),
         help_text="ex: 107-02-8",
         required=False)
 
     lifestage_exposed = forms.CharField(
         label='Lifestage exposed',
-        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageExposedLookup),
         help_text="ex: pup",
         required=False)
 
     lifestage_assessed = forms.CharField(
         label='Lifestage assessed',
-        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageAssessedLookup),
         help_text="ex: adult",
         required=False)
 
@@ -625,19 +625,19 @@ class EndpointFilterForm(forms.Form):
 
     system = forms.CharField(
         label='System',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointSystemLookup),
         help_text="ex: endocrine",
         required=False)
 
     organ = forms.CharField(
         label='Organ',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointOrganLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointOrganLookup),
         help_text="ex: pituitary",
         required=False)
 
     effect = forms.CharField(
         label='Effect',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointEffectLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointEffectLookup),
         help_text="ex: alanine aminotransferase (ALT)",
         required=False)
 
