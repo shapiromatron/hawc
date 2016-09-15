@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import logging
 import os
 import collections
 
@@ -175,10 +176,12 @@ class RiskOfBias(models.Model):
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
+                logging.info(u'Creating score: {}->{}'.format(self.study, metric))
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
+                logging.info(u'Deleting score: {}->{}'.format(self.study, score.metric))
                 score.delete()
 
     def build_scores(self, assessment, study):
