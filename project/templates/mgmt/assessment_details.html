@@ -23,19 +23,28 @@
     </div>
   </h2>
 
-  <pre id='response'></pre>
+  <div id='taskTable'></div>
 
 {% endblock %}
 
 
 {% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{ request.get_host }}",
+        "tasks": {
+            "url": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}"
+        },
+        "studies": {
+            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
+        }
+    }
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
-    $.get('{% url "mgmt:api:task-list" %}?assessment_id={{assessment.pk}}', function(d){
-        $('#response').html(JSON.stringify(d, null, '  '));
-    });
+    window.app.mgmt.TaskTable(document.getElementById('taskTable'))
 });
 </script>
 {% endblock extrajs %}
-
-
