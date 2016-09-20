@@ -18,6 +18,8 @@ class TaskManager(BaseManager):
         Tasks are only added, not removed with changes. Method called via
         signal whenever assessment is created/modified.
         """
+        if not assessment.enable_project_management:
+            return
         studies = Study.objects\
             .assessment_qs(assessment.id)\
             .prefetch_related('tasks')
@@ -25,6 +27,19 @@ class TaskManager(BaseManager):
         for study in studies:
             tasks.extend(self._get_missing_tasks(study, assessment))
         logging.info(u'Creating {} tasks for assessment {}.'.format(len(tasks), assessment.id))
+        self.bulk_create(tasks)
+
+    def create_study_tasks(self, study):
+        """
+        Create tasks for study and save to database.
+
+        Method called via signal whenever a study is created/modified.
+        """
+        assessment = study.assessment
+        if not assessment.enable_project_management:
+            return
+        tasks = self._get_missing_tasks(study, assessment)
+        logging.info(u'Creating {} tasks for study {}.'.format(len(tasks), study.id))
         self.bulk_create(tasks)
 
     def _get_missing_tasks(self, study, assessment):
