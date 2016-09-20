@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import logging
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -89,3 +91,18 @@ class Task(models.Model):
             self.open = False
 
         super(Task, self).save(*args, **kwargs)
+
+    def start_if_unstarted(self, user):
+        """Save task as started by user if currently not started."""
+        if self.status == self.STATUS_NOT_STARTED:
+            logging.info('Starting "{}" task {}'.format(self.get_type_display(), self.id))
+            self.owner = user
+            self.status = self.STATUS_STARTED
+            self.save()
+
+    def stop_if_started(self):
+        """Stop task if currently started."""
+        if self.status == self.STATUS_STARTED:
+            logging.info('Stopping "{}" task {}'.format(self.get_type_display(), self.id))
+            self.status = self.STATUS_COMPLETED
+            self.save()
