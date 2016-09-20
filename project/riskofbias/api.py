@@ -71,7 +71,7 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(AssessmentEditViewset, TeamMemberOrHigherMixin, ListUpdateModelMixin):
+class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     model = models.RiskOfBiasScore
     serializer_class = serializers.AssessmentRiskOfBiasScoreSerializer
     pagination_class = DisabledPagination
