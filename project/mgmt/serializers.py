@@ -19,6 +19,8 @@ class TaskSerializer(serializers.ModelSerializer):
             'id',
             'study',
             'open',
+            'started',
+            'completed',
         )
 
 
