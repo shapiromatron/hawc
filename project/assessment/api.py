@@ -65,11 +65,10 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 class InAssessmentFilter(filters.BaseFilterBackend):
     """
     Filter objects which are in a particular assessment.
-
-    Requires AssessmentLevelPermissions to set assessment
     """
     def filter_queryset(self, request, queryset, view):
-        if view.action != 'list':
+        list_actions = getattr(view, 'list_actions', ['list'])
+        if view.action not in list_actions:
             return queryset
 
         if not hasattr(view, 'assessment'):

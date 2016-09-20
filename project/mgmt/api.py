@@ -14,6 +14,7 @@ class Task(AssessmentEditViewset):
     serializer_class = serializers.TaskSerializer
     permission_classes = (AssessmentLevelPermissions, permissions.IsAuthenticated, )
     pagination_class = DisabledPagination
+    list_actions = ['list', 'dashboard']
 
     def filter_queryset(self, queryset):
         return super(Task, self)\
