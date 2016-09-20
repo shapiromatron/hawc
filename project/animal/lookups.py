@@ -40,6 +40,26 @@ class RelatedEndpointEffectLookup(RelatedDistinctStringLookup):
     related_filter = 'assessment_id'
 
 
+class ExpChemicalLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "chemical"
+
+
+class ExpCasLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "cas"
+
+
+class ExpChemSourceLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "chemical_source"
+
+
+class ExpGlpLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "guideline_compliance"
+
+
 class EndpointSystemLookup(DistinctStringLookup):
     model = models.Endpoint
     distinct_field = "system"
@@ -135,11 +155,17 @@ registry.register(RelatedAnimalGroupLifestageAssessedLookup)
 registry.register(RelatedEndpointSystemLookup)
 registry.register(RelatedEndpointOrganLookup)
 registry.register(RelatedEndpointEffectLookup)
+
+registry.register(ExpChemicalLookup)
+registry.register(ExpCasLookup)
+registry.register(ExpChemSourceLookup)
+registry.register(ExpGlpLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)
 registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
+
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)
