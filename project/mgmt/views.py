@@ -7,6 +7,30 @@ from utils.views import LoginRequiredMixin, TeamMemberOrHigherMixin
 from . import models
 
 
+# View mixins for ensuring tasks are started
+class EnsurePreparationStartedMixin(object):
+    """Ensure the preparation task has been started if form is valid."""
+
+    def get_success_url(self):
+        models.Task.objects.ensure_preparation_started(
+            self.object,
+            self.request.user
+        )
+        return super(EnsurePreparationStartedMixin, self).get_success_url()
+
+
+class EnsureExtractionStartedMixin(object):
+    """Ensure the extraction task has been started if form is valid."""
+
+    def get_success_url(self):
+        study = self.object.study
+        user = self.request.user
+        models.Task.objects.ensure_preparation_stopped(study)
+        models.Task.objects.ensure_extraction_started(study, user)
+        return super(EnsureExtractionStartedMixin, self).get_success_url()
+
+
+# User-level task views
 class UserAssignments(LoginRequiredMixin, ListView):
     model = models.Task
     template_name = 'mgmt/user_assignments.html'
@@ -15,6 +39,7 @@ class UserAssignments(LoginRequiredMixin, ListView):
         return self.model.objects.owned_by(self.request.user)
 
 
+# Assessment-level task views
 class TaskDashboard(TeamMemberOrHigherMixin, ListView):
     model = models.Task
     template_name = 'mgmt/assessment_dashboard.html'

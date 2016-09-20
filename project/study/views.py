@@ -7,6 +7,7 @@ from django.views.generic import FormView
 
 from assessment.models import Assessment
 from lit.models import Reference
+from mgmt.views import EnsurePreparationStartedMixin
 from utils.views import (MessageMixin, BaseDetail, BaseDelete,
                          BaseUpdate, BaseCreate, BaseList,
                          GenerateReport, TeamMemberOrHigherMixin)
@@ -40,7 +41,7 @@ class StudyReport(GenerateReport):
         return self.model.get_docx_template_context(queryset)
 
 
-class StudyCreateFromReference(BaseCreate):
+class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     """
     Create view of Study, given a lit.Reference already exists. This is more
     difficult because we must pass the reference object to the newly created
@@ -94,7 +95,7 @@ class StudyCreateFromReference(BaseCreate):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ReferenceStudyCreate(BaseCreate):
+class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     """
     Creation of both a reference and study. Easier because there is no
     existing Reference instance in table, so we just create both at once.

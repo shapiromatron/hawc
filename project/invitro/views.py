@@ -7,12 +7,13 @@ from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
                          BaseDetail, BaseList, BaseEndpointFilterList,
                          BaseUpdate, BaseUpdateWithFormset, GenerateReport,
                          ProjectManagerOrHigherMixin)
+from mgmt.views import EnsureExtractionStartedMixin
 
 from . import models, forms, exports
 
 
 # Experiment
-class ExperimentCreate(BaseCreate):
+class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Experiment created."
     parent_model = Study
     parent_template_name = 'study'
@@ -39,7 +40,7 @@ class ExperimentDelete(BaseDelete):
 
 
 # Chemical
-class ChemicalCreate(BaseCreate):
+class ChemicalCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Chemical created."
     parent_model = Study
     parent_template_name = 'study'
@@ -66,7 +67,7 @@ class ChemicalDelete(BaseDelete):
 
 
 # Cell type
-class CellTypeCreate(BaseCreate):
+class CellTypeCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Cell-type created."
     parent_model = Study
     parent_template_name = 'study'

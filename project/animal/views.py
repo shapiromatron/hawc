@@ -9,6 +9,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
+from mgmt.views import EnsureExtractionStartedMixin
 from utils.views import (AssessmentPermissionsMixin, BaseCreate,
                          BaseCreateWithFormset, BaseDelete, BaseDetail,
                          BaseEndpointFilterList, BaseList, BaseUpdate,
@@ -19,7 +20,7 @@ from . import forms, models, exports, reports
 
 
 # Experiment Views
-class ExperimentCreate(BaseCreate):
+class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Experiment created.'
     parent_model = Study
     parent_template_name = 'study'

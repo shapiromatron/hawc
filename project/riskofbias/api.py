@@ -13,6 +13,7 @@ from assessment.api import AssessmentLevelPermissions, AssessmentEditViewset,\
 from utils.api import BulkIdFilter
 from utils.views import TeamMemberOrHigherMixin
 
+from mgmt.models import Task
 from . import models, serializers
 
 
@@ -39,6 +40,15 @@ class RiskOfBias(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.model.objects.all()\
             .prefetch_related('study', 'author', 'scores__metric__domain')
+
+    def perform_update(self, serializer):
+        super(RiskOfBias, self).perform_update(serializer)
+        study = serializer.instance.study
+        user = self.request.user
+        Task.objects.ensure_extraction_stopped(study)
+        Task.objects.ensure_rob_started(study, user)
+        if serializer.instance.final and serializer.instance.is_complete:
+            Task.objects.ensure_rob_stopped(study)
 
 
 class AssessmentMetricViewset(AssessmentViewset):

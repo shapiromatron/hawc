@@ -90,3 +90,32 @@ class TaskManager(BaseManager):
 
         return new_tasks
 
+    def ensure_preparation_started(self, study, user):
+        """Start preparation task if not started."""
+        task = self.get(study=study, type=self.model.TYPE_PREPARATION)
+        task.start_if_unstarted(user)
+
+    def ensure_preparation_stopped(self, study):
+        """Stop preparation task if started."""
+        task = self.get(study=study, type=self.model.TYPE_PREPARATION)
+        task.stop_if_started()
+
+    def ensure_extraction_started(self, study, user):
+        """Start extraction task if not started."""
+        task = self.get(study=study, type=self.model.TYPE_EXTRACTION)
+        task.start_if_unstarted(user)
+
+    def ensure_extraction_stopped(self, study):
+        """Stop extraction task if started."""
+        task = self.get(study=study, type=self.model.TYPE_EXTRACTION)
+        task.stop_if_started()
+
+    def ensure_rob_started(self, study, user):
+        """Start RoB task if not started."""
+        task = self.get(study=study, type=self.model.TYPE_ROB)
+        task.start_if_unstarted(user)
+
+    def ensure_rob_stopped(self, study):
+        """Stop RoB task if started."""
+        task = self.get(study=study, type=self.model.TYPE_ROB)
+        task.stop_if_started()
