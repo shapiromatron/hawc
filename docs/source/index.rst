@@ -26,7 +26,7 @@ Contents:
 
    dev_setup
    server_setup
-   statistical_methods
+   reference
    management_commands
    contributing
 
