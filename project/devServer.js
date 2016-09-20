@@ -2,7 +2,6 @@ var args = process.argv.slice(2),
     express = require('express'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev'),
-    Dashboard = require('webpack-dashboard'),
     DashboardPlugin = require('webpack-dashboard/plugin');
 
 if (args.indexOf('--testProduction')>=0){
@@ -20,13 +19,11 @@ var app = express(),
 compiler.apply(new DashboardPlugin());
 
 app.use(require('webpack-dev-middleware')(compiler, {
-    quiet: true,
+    noInfo: true,
     publicPath: config.output.publicPath,
 }));
 
-app.use(require('webpack-hot-middleware')(compiler, {
-    log: () => {},
-}));
+app.use(require('webpack-hot-middleware')(compiler));
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

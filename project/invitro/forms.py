@@ -362,37 +362,37 @@ class IVEndpointFilterForm(forms.Form):
 
     chemical = forms.CharField(
         label='Chemical name',
-        widget=selectable.AutoCompleteWidget(lookups.IVChemicalNameLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalNameLookup),
         help_text="ex: PFOA",
         required=False)
 
     cas = forms.CharField(
         label='CAS',
-        widget=selectable.AutoCompleteWidget(lookups.IVChemicalCASLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalCASLookup),
         help_text="ex: 107-02-8",
         required=False)
 
     cell_type = forms.CharField(
         label='Cell type',
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeNameLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeNameLookup),
         help_text='ex: HeLa',
         required=False)
 
     tissue = forms.CharField(
         label='Tissue',
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeTissueLookup),
         help_text='ex: adipocytes',
         required=False)
 
     effect = forms.CharField(
         label='Effect',
-        widget=selectable.AutoCompleteWidget(lookups.IVEndpointEffectLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointEffectLookup),
         help_text="ex: gene expression",
         required=False)
 
     response_units = forms.CharField(
         label='Response units',
-        widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointResponseUnitsLookup),
         help_text="ex: counts",
         required=False)
 

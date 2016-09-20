@@ -461,19 +461,19 @@ class OutcomeFilterForm(forms.Form):
 
     age_profile = forms.CharField(
         label='Age profile',
-        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationAgeProfileLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationAgeProfileLookup),
         help_text="ex: children",
         required=False)
 
     source = forms.CharField(
         label='Study population source',
-        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationSourceLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationSourceLookup),
         help_text="ex: occupational exposure",
         required=False)
 
     country = forms.CharField(
         label='Study population country',
-        widget=selectable.AutoCompleteWidget(lookups.CountryNameLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedCountryNameLookup),
         help_text="ex: Japan",
         required=False)
 
