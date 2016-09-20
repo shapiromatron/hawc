@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from study.models import Study
 
@@ -68,7 +69,23 @@ class Task(models.Model):
 
     @classmethod
     def dashboard_metrics(cls, qs):
-        return {
-            'studies': qs.order_by('study_id').distinct('study_id').count(),
-            'tasks': qs.count()
-        }
+        return dict(
+            studies=qs.order_by('study_id').distinct('study_id').count(),
+            tasks=qs.count(),
+        )
+
+    def save(self, *args, **kwargs):
+        """Alter model business logic for timestamps and open/closed."""
+        if self.status == self.STATUS_NOT_STARTED:
+            self.started = None
+            self.completed = None
+            self.open = False
+        elif self.status == self.STATUS_STARTED:
+            self.started = timezone.now()
+            self.completed = None
+            self.open = True
+        elif self.status in [self.STATUS_COMPLETED, self.STATUS_ABANDONED]:
+            self.completed = timezone.now()
+            self.open = False
+
+        super(Task, self).save(*args, **kwargs)
