@@ -10,10 +10,16 @@ import Header from 'mgmt/TaskTable/components/Header';
 import List from 'mgmt/TaskTable/components/List';
 import Loading from 'shared/components/Loading';
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
-import TaskStudy from 'mgmt/TaskTable/components/TaskStudy';
+import TaskStudyEdit from 'mgmt/TaskTable/components/TaskStudyEdit';
 
 
-class App extends Component {
+class EditApp extends Component {
+
+    constructor(props) {
+        super(props);
+        this._updateForm = this._updateForm.bind(this);
+    }
+
 
     componentWillMount() {
         this.props.dispatch(fetchTasks());
@@ -25,11 +31,16 @@ class App extends Component {
             taskList = studies.list.map((study) => {
                 let formattedTasks = tasks.list.filter((task) => {
                     return task.study.id === study.id;
+                }).map((task) => {
+                    return {...task, update: this._updateForm};
                 }).sort((a, b) => (a.type - b.type));
 
                 return {tasks: formattedTasks , study};
             });
         return taskList;
+    }
+
+    _updateForm(task) {
     }
 
     render() {
@@ -41,7 +52,7 @@ class App extends Component {
                 <div>
                     <ScrollToErrorBox error={error} />
                     <Header headings={headings}/>
-                    <List component={TaskStudy} items={taskList} />
+                    <List component={TaskStudyEdit} items={taskList} />
                 </div>
         );
     }
@@ -56,4 +67,4 @@ function mapStateToProps(state){
     };
 }
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(EditApp);

@@ -1,5 +1,7 @@
 {% extends 'portal.html' %}
 
+{% load selectable_tags %}
+
 {% block title %}
   {{assessment}} | Tasks | HAWC
 {% endblock %}
@@ -15,18 +17,29 @@
 
   <h2>Task list modify table</h2>
 
-  <pre id='response'></pre>
+  <div id='taskTable'></div>
 
 {% endblock %}
 
 
 {% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{ request.get_host }}",
+        "type": "edit",
+        "tasks": {
+            "url": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}"
+        },
+        "studies": {
+            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
+        }
+    }
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
-    $.get('{% url "mgmt:api:task-list" %}?assessment_id={{assessment.pk}}', function(d){
-        $('#response').html(JSON.stringify(d, null, '  '));
-    });
+    window.app.mgmt.TaskTable(document.getElementById('taskTable'))
 });
 </script>
 {% endblock extrajs %}
-
