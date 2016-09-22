@@ -10,6 +10,17 @@ class UserAutocomplete extends Component {
 
     constructor(props) {
         super(props);
+        this.defaultTheme = {
+            container:            'react-autosuggest__container',
+            containerOpen:        'react-autosuggest__container--open',
+            input:                'react-autosuggest__input',
+            suggestionsContainer: 'react-autosuggest__suggestions-container',
+            suggestionsList:      'react-autosuggest__suggestions-list',
+            suggestion:           'react-autosuggest__suggestion',
+            suggestionFocused:    'react-autosuggest__suggestion--focused',
+            sectionContainer:     'react-autosuggest__section-container',
+            sectionTitle:         'react-autosuggest__section-title',
+        };
         this.fetchUserMatch = this.fetchUserMatch.bind(this);
         this.getSuggestionValue = this.getSuggestionValue.bind(this);
         this.getTheme = this.getTheme.bind(this);
@@ -23,17 +34,7 @@ class UserAutocomplete extends Component {
             value: '',
             suggestions: [],
             selected: null,
-            theme: {
-                container:            'react-autosuggest__container',
-                containerOpen:        'react-autosuggest__container--open',
-                input:                'react-autosuggest__input',
-                suggestionsContainer: 'react-autosuggest__suggestions-container',
-                suggestionsList:      'react-autosuggest__suggestions-list',
-                suggestion:           'react-autosuggest__suggestion',
-                suggestionFocused:    'react-autosuggest__suggestion--focused',
-                sectionContainer:     'react-autosuggest__section-container',
-                sectionTitle:         'react-autosuggest__section-title',
-            },
+            theme: { ...this.defaultTheme },
         };
 
     }
@@ -49,30 +50,33 @@ class UserAutocomplete extends Component {
     }
 
     getTheme(event) {
-        const { theme, value, selected } = this.state;
-        let input = 'react-autosuggest__input';
-        switch (event) {
-            case 'onBlur':
-                // if !selected.id set ui-state-error
-                break;
-            case 'onChange':
-
-                break;
-            default:
-
+        const { theme, selected } = this.state;
+        let input = this.defaultTheme.input;
+        if (event.type === 'blur' && !selected) {
+            input = `${input} autocomplete-error`;
         }
         return {
             ...theme,
             input,
-        }
+        };
     }
 
     getSuggestionValue(suggestion) {
         return suggestion.value;
     }
 
+    onBlur(event, { focusedSuggestion }) {
+        this.setState({
+            theme: this.getTheme(event),
+        });
+    }
+
     onChange(event, { newValue }) {
-        this.setState({ value: newValue });
+        this.setState({
+            value: newValue,
+            theme: this.getTheme(event),
+            selected: null,
+        });
     }
 
     onSuggestionsFetchRequested(value) {
@@ -86,7 +90,9 @@ class UserAutocomplete extends Component {
     }
 
     onSuggestionSelected(event, { suggestion }) {
-        this.setState({ selected: suggestion.id });
+        this.setState({
+            selected: suggestion.id,
+        });
     }
 
     renderSuggestion(suggestion) {
@@ -94,13 +100,12 @@ class UserAutocomplete extends Component {
     }
 
     render() {
-        const { suggestions, value } = this.state,
-            theme = this.getTheme(),
+        const { suggestions, theme, value } = this.state,
             inputProps = {
                 placeholder: 'owner',
                 value,
                 onChange: this.onChange,
-                omBlur: this.onBlur,
+                onBlur: this.onBlur,
             };
         return (
             <AutoSuggest className='ui-state-error'
@@ -111,7 +116,6 @@ class UserAutocomplete extends Component {
                 getSuggestionValue={this.getSuggestionValue}
                 renderSuggestion={this.renderSuggestion}
                 inputProps={inputProps}
-                focusFirstSuggestion={true}
                 theme={theme}/>
         );
     }

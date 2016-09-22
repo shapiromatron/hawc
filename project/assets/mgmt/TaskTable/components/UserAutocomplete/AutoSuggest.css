@@ -5,8 +5,7 @@
 .react-autosuggest__input {
   width: auto;
   padding: 10px 20px;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 300;
+  font-family: Verdana,Arial,sans-serif;
   font-size: 16px;
   border: 1px solid #aaa;
   border-radius: 4px;
@@ -28,18 +27,16 @@
 
 .react-autosuggest__suggestions-container {
   display: none;
+  width: auto
 }
 
 .react-autosuggest__container--open .react-autosuggest__suggestions-container {
   display: block;
   position: absolute;
   top: 30px;
-  width: 214px;
   border: 1px solid #aaa;
   background-color: #fff;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   border-top-left-radius: 4px;
@@ -55,11 +52,19 @@
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 10px 20px;
+  padding: .2em .4em;
+  font-family: Verdana,Arial,sans-serif;
+  font-size: 1.1em;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .react-autosuggest__suggestion--focused {
-  background-color: #ddd;
+  background: #dadada url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x;
+  border: 1px solid #999999;
+  border-radius: 4px;
+  color: #212121;
+  font-weight: normal;
 }
 
 .react-autosuggest__section-title {
@@ -71,4 +76,18 @@
 
 .react-autosuggest__section-container:first-child .react-autosuggest__section-title {
   border-top: 0;
+}
+
+.autocomplete-error {
+    border: 1px solid #cd0a0a;
+    background: #fef1ec url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x;
+	color: #cd0a0a;
+}
+
+.autocomplete-error a{
+    color: #cd0a0a;
+}
+
+.autocomplete-error-text {
+    color: #cd0a0a;
 }
