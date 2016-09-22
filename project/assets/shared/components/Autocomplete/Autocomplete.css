@@ -1,8 +1,8 @@
-.react-autosuggest__container {
+.autocomplete__container {
   position: relative;
 }
 
-.react-autosuggest__input {
+.autocomplete__input {
   width: auto;
   padding: 10px 20px;
   font-family: Verdana,Arial,sans-serif;
@@ -12,25 +12,25 @@
   -webkit-appearance: none;
 }
 
-.react-autosuggest__input:focus {
+.autocomplete__input:focus {
   outline: none;
 }
 
-.react-autosuggest__input::-ms-clear {
+.autocomplete__input::-ms-clear {
   display: none;
 }
 
-.react-autosuggest__container--open .react-autosuggest__input {
+.autocomplete__container--open .autocomplete__input {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.react-autosuggest__suggestions-container {
+.autocomplete__suggestions-container {
   display: none;
   width: auto
 }
 
-.react-autosuggest__container--open .react-autosuggest__suggestions-container {
+.autocomplete__container--open .autocomplete__suggestions-container {
   display: block;
   position: absolute;
   top: 30px;
@@ -44,13 +44,13 @@
   z-index: 2;
 }
 
-.react-autosuggest__suggestions-list {
+.autocomplete__suggestions-list {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
 
-.react-autosuggest__suggestion {
+.autocomplete__suggestion {
   cursor: pointer;
   padding: .2em .4em;
   font-family: Verdana,Arial,sans-serif;
@@ -59,7 +59,7 @@
   line-height: 1.5;
 }
 
-.react-autosuggest__suggestion--focused {
+.autocomplete__suggestion--focused {
   background: #dadada url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x;
   border: 1px solid #999999;
   border-radius: 4px;
@@ -67,14 +67,14 @@
   font-weight: normal;
 }
 
-.react-autosuggest__section-title {
+.autocomplete__section-title {
   padding: 10px 0 0 10px;
   font-size: 12px;
   color: #777;
   border-top: 1px dashed #ccc;
 }
 
-.react-autosuggest__section-container:first-child .react-autosuggest__section-title {
+.autocomplete__section-container:first-child .autocomplete__section-title {
   border-top: 0;
 }
 
