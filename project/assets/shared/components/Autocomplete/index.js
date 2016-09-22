@@ -10,6 +10,7 @@ class Autocomplete extends Component {
 
     constructor(props) {
         super(props);
+        let { loaded } = props;
         this.defaultTheme = {
             container:            'autocomplete__container',
             containerOpen:        'autocomplete__container--open',
@@ -30,9 +31,9 @@ class Autocomplete extends Component {
         this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
 
         this.state = {
-            value: '',
+            value: loaded.display ? loaded.display : '',
             suggestions: [],
-            selected: null,
+            selected: loaded.id ? loaded.id : null,
             theme: { ...this.defaultTheme },
         };
 
@@ -104,7 +105,7 @@ class Autocomplete extends Component {
                 onBlur: this.onBlur,
             };
         return (
-            <AutoSuggest className='ui-state-error'
+            <AutoSuggest
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -119,7 +120,7 @@ class Autocomplete extends Component {
 
 Autocomplete.propTypes = {
     assessment: PropTypes.number.isRequired,
-    placeholder: PropTypes.string.isRequired,
+    placeholder: PropTypes.string,
     url: PropTypes.string.isRequired,
 };
 
