@@ -8,10 +8,10 @@ class List extends Component {
 
         if (this.props.items) {
             content = this.props.items.map((item, index) => (
-                <ComponentToRender key={`item-${index}`} item={item}/>
+                <ComponentToRender ref={`item-${index}`} key={`item-${index}`} item={item}/>
             ));
         } else {
-            content = (<ComponentToRender />);
+            content = (<ComponentToRender ref='item' />);
         }
 
         return (

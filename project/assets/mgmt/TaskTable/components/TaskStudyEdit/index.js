@@ -13,7 +13,7 @@ class TaskStudyEdit extends Component {
                 <div className='flexRow-container taskStudy'>
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
-                        <TaskForm key={task.id} task={task} className={`task-${index} flex-1`}/>
+                        <TaskForm ref={`form-${index}`} key={task.id} task={task} className={`task-${index} flex-1`}/>
                     ))}
                 </div>
                 <hr/>

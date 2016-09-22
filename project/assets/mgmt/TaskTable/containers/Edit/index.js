@@ -10,6 +10,7 @@ import Header from 'mgmt/TaskTable/components/Header';
 import List from 'mgmt/TaskTable/components/List';
 import Loading from 'shared/components/Loading';
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
+import SubmitButton from 'mgmt/TaskTable/components/SubmitButton';
 import TaskStudyEdit from 'mgmt/TaskTable/components/TaskStudyEdit';
 
 
@@ -31,8 +32,6 @@ class EditApp extends Component {
             taskList = studies.list.map((study) => {
                 let formattedTasks = tasks.list.filter((task) => {
                     return task.study.id === study.id;
-                }).map((task) => {
-                    return {...task, update: this._updateForm};
                 }).sort((a, b) => (a.type - b.type));
 
                 return {tasks: formattedTasks , study};
@@ -40,7 +39,7 @@ class EditApp extends Component {
         return taskList;
     }
 
-    _updateForm(task) {
+    _updateForm() {
     }
 
     render() {
@@ -52,7 +51,8 @@ class EditApp extends Component {
                 <div>
                     <ScrollToErrorBox error={error} />
                     <Header headings={headings}/>
-                    <List component={TaskStudyEdit} items={taskList} />
+                    <List component={TaskStudyEdit} items={taskList} ref='list' />
+                    <SubmitButton submitForm={this._updateForm} />
                 </div>
         );
     }
