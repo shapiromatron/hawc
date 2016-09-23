@@ -29,6 +29,7 @@ class Autocomplete extends Component {
         this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
         this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
         this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
+        this.selectionIsInvalid = this.selectionIsInvalid.bind(this);
 
         this.state = {
             value: loaded.display ? loaded.display : '',
@@ -39,21 +40,21 @@ class Autocomplete extends Component {
 
     }
 
-    componentWillMount() {
-        let { url, assessment } = this.props;
-        this.url = `${url}?related=${assessment}`;
-    }
-
     getTheme(event) {
-        const { theme, selected } = this.state;
+        const { theme } = this.state;
         let input = this.defaultTheme.input;
-        if (event.type === 'blur' && !selected) {
+        if (this.selectionIsInvalid(event)) {
             input = `${input} autocomplete-error`;
         }
         return {
             ...theme,
             input,
         };
+    }
+
+    selectionIsInvalid(event) {
+        const { selected } = this.state;
+        return (event.type === 'blur' && !selected);
     }
 
     getSuggestionValue(suggestion) {
@@ -75,7 +76,7 @@ class Autocomplete extends Component {
     }
 
     onSuggestionsFetchRequested({ value }) {
-        fetch(`${this.url}&term=${value}`, h.fetchGet)
+        fetch(`${this.props.url}&term=${value}`, h.fetchGet)
             .then((response) => response.json())
             .then((json) => { this.setState({suggestions: json.data}); });
     }
@@ -90,6 +91,7 @@ class Autocomplete extends Component {
         this.setState({
             selected: suggestion.id,
         });
+        this.props.onChange(suggestion);
     }
 
     renderSuggestion(suggestion) {
@@ -98,14 +100,16 @@ class Autocomplete extends Component {
 
     render() {
         const { suggestions, theme, value } = this.state,
+            { placeholder, id } = this.props,
             inputProps = {
-                placeholder: this.props.placeholder,
+                placeholder,
                 value,
                 onChange: this.onChange,
                 onBlur: this.onBlur,
             };
         return (
             <AutoSuggest
+                id={id}
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -119,9 +123,10 @@ class Autocomplete extends Component {
 }
 
 Autocomplete.propTypes = {
-    assessment: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     url: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 export default Autocomplete;

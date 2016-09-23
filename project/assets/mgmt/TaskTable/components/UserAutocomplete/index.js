@@ -7,12 +7,8 @@ class UserAutocomplete extends Component {
 
     constructor(props) {
         super(props);
-        this.getSelectedUserID = this.getSelectedUserID.bind(this);
         this.getPopulatedOwner = this.getPopulatedOwner.bind(this);
-    }
-
-    componentWillMount() {
-        this.url = '/selectable/myuser-assessmentteammemberorhigherlookup'; /* TODO get url from django-selectable in template*/
+        this.url = `/selectable/myuser-assessmentteammemberorhigherlookup?related=${props.task.study.assessment}`; /* TODO get url from django-selectable in template*/
     }
 
     getPopulatedOwner() {
@@ -22,10 +18,6 @@ class UserAutocomplete extends Component {
         };
     }
 
-    getSelectedUserID() {
-        return this.refs.owner.state.selected;
-    }
-
     render() {
         let idName = `${this.props.task.id}-owner`,
             loaded = this.getPopulatedOwner();
@@ -33,11 +25,10 @@ class UserAutocomplete extends Component {
             <div>
                 <label htmlFor={idName}>Owner</label>
                 <Autocomplete
+                    onChange={this.props.onChange}
                     id={idName}
                     url={this.url}
-                    assessment={this.props.task.study.assessment}
-                    loaded={loaded}
-                    ref='owner'/>
+                    loaded={loaded}/>
             </div>
         );
     }
