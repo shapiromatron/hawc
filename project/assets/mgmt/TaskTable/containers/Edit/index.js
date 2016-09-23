@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 
-import { fetchTasks } from 'mgmt/TaskTable/actions';
-import { fetchStudies } from 'mgmt/TaskTable/actions';
+import { fetchTasks, fetchStudies } from 'mgmt/TaskTable/actions';
 
 import { TASK_TYPES } from 'mgmt/TaskTable/constants';
 import Header from 'mgmt/TaskTable/components/Header';
@@ -40,6 +39,11 @@ class EditApp extends Component {
     }
 
     _updateForm() {
+        const updatedData = _.chain(this.refs.list.refs)
+                    .map((ref) => { return ref.getChangedData(); })
+                    .filter((data) => { return !_.isEmpty(data); })
+                    .flatten()
+                    .value();
     }
 
     render() {

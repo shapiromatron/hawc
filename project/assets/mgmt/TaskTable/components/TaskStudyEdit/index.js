@@ -1,10 +1,23 @@
 import React, { Component, PropTypes } from 'react';
+import _ from 'underscore';
 
 import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
 import TaskForm from 'mgmt/TaskTable/components/TaskForm';
 
 
 class TaskStudyEdit extends Component {
+
+    constructor(props) {
+        super(props);
+        this.getChangedData = this.getChangedData.bind(this);
+    }
+
+    getChangedData() {
+        return _.chain(this.refs)
+                .filter((ref) => { return ref.formDidChange(); })
+                .map((ref) => { return ref.state; })
+                .value();
+    }
 
     render() {
         const { tasks, study } = this.props.item;

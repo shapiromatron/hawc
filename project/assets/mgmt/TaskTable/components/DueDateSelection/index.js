@@ -16,6 +16,7 @@ class DueDateSelection extends Component {
             changeMonth: true,
             changeYear: true,
             yearRange: '1930 : * ',
+            onSelect: this.props.onChange
         };
         if (this.props.task.due_date){
             opts = {...opts, setDate: this.props.task.due_date};
@@ -27,7 +28,8 @@ class DueDateSelection extends Component {
         let idName = `${this.props.task.id}-due_date`;
         return (
             <div>
-                <label htmlFor={idName}>Due Date</label><DatePicker opts={this.getOptions()} id={idName} />
+                <label htmlFor={idName}>Due Date (Optional)</label>
+                <DatePicker opts={this.getOptions()} id={idName} />
             </div>
         );
     }

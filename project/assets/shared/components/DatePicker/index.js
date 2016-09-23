@@ -20,11 +20,12 @@ class DatePicker extends Component {
 
 DatePicker.propTypes = {
     opts: PropTypes.shape({
-        showAnim: PropTypes.string,
         changeMonth: PropTypes.bool,
         changeYear: PropTypes.bool,
-        yearRange: PropTypes.string,
+        onSelect: PropTypes.func.isRequired,
         setDate: PropTypes.string,
+        showAnim: PropTypes.string,
+        yearRange: PropTypes.string,
     }).isRequired,
     id: PropTypes.string.isRequired,
 };

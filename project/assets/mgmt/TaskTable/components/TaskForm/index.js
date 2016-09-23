@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import _ from 'underscore';
 
 import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
 import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';
@@ -9,29 +10,47 @@ class TaskForm extends Component {
 
     constructor(props) {
         super(props);
-        const { owner, status, due_date } = props.task;
+        const { owner, status, due_date, id } = props.task;
         this.state = {
+            id,
             owner,
             status,
             due_date,
         };
 
+        this.formDidChange = this.formDidChange.bind(this);
         this.getOwnerUpdate = this.getOwnerUpdate.bind(this);
         this.getStatusUpdate = this.getStatusUpdate.bind(this);
         this.getDueDateUpdate = this.getDueDateUpdate.bind(this);
     }
 
-
-    getOwnerUpdate() {
-
+    formDidChange() {
+        const { owner, status, due_date, id } = this.props.task;
+        return !_.isEqual(
+            this.state,
+            { owner, status, due_date, id }
+        );
     }
 
-    getStatusUpdate() {
-
+    getOwnerUpdate(owner) {
+        this.setState({
+            owner: {
+                id: owner.id,
+                full_name: owner.value,
+            },
+        });
     }
 
-    getDueDateUpdate() {
+    getStatusUpdate(status) {
+        this.setState({
+            status,
+        });
+    }
 
+    getDueDateUpdate(due_date) {
+        this.setState({
+            due_date,
+        });
     }
 
     render() {
@@ -50,10 +69,11 @@ TaskForm.propTypes = {
     task: PropTypes.shape({
         due_date: PropTypes.string,
         id: PropTypes.number.isRequired,
+        status: PropTypes.number.isRequired,
+        status_display: PropTypes.string.isRequired,
         study: PropTypes.shape({
             assessment: PropTypes.number.isRequired,
         }).isRequired,
-        status: PropTypes.number.isRequired,
     }).isRequired,
     className: PropTypes.string.isRequired,
 };
