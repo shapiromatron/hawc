@@ -17,8 +17,8 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, AssessmentRootMixin
 
-from fetchers import ris
-from fetchers.pubmed import PubMedSearch, PubMedFetch
+from get_litter import ris, pubmed
+
 from . import constants, managers, tasks
 
 
@@ -336,7 +336,7 @@ class PubMedQuery(models.Model):
 
     def run_new_query(self, prior_query):
         # Create a new search
-        search = PubMedSearch(term=self.search.search_string_text)
+        search = pubmed.PubMedSearch(term=self.search.search_string_text)
         search.get_ids_count()
 
         if search.id_count > self.MAX_QUERY_SIZE:
@@ -376,7 +376,7 @@ class PubMedQuery(models.Model):
             start_index = int(i*block_size)
             end_index = min(int(i*block_size+block_size), ids_to_add_len)
             logging.debug("Building from {0} to {1}".format(start_index, end_index))
-            fetch = PubMedFetch(id_list=ids_to_add[start_index:end_index],
+            fetch = pubmed.PubMedFetch(id_list=ids_to_add[start_index:end_index],
                                 retmax=int(block_size))
             identifiers = []
             for item in fetch.get_content():

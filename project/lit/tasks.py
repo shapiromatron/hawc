@@ -6,22 +6,25 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 
-from .fetchers import pubmed
+from get_litter import pubmed
+
+from . import constants
+
 
 logger = get_task_logger(__name__)
 
 
 @shared_task
 def update_pubmed_content(ids):
-    """
-    For each pubmed_id, fetch the latest data from Pubmed, then parse and save
-    the parsed data for each identifier. Next, update existing records in the
-    database with the revised content.
-    """
+    """Fetch the latest data from Pubmed and update identifier object."""
     Identifiers = apps.get_model('lit', 'identifiers')
     fetcher = pubmed.PubMedFetch(ids)
     contents = fetcher.get_content()
     for d in contents:
+        content = json.dumps(d, encoding='utf-8')
         Identifiers.objects\
-            .filter(unique_id=d['PMID'], database=1)\
-            .update(content=json.dumps(d, encoding='utf-8'))
+            .filter(
+                unique_id=d['PMID'],
+                database=constants.PUBMED
+            )\
+            .update(content=content)

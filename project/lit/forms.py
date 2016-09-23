@@ -3,15 +3,15 @@ import logging
 import numpy as np
 import pandas as pd
 
-from crispy_forms import layout as cfl
 from django.core.urlresolvers import reverse_lazy
 from django import forms
 
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper, addPopupLink
-from .fetchers.ris import RisImporter
 
-from . import models, fetchers
+from get_litter import ris
+
+from . import models
 
 
 class SearchForm(forms.ModelForm):
@@ -188,7 +188,7 @@ class RISForm(SearchForm):
         if not self._errors:
             # create a copy for RisImporter to open/close
             f = StringIO(cleaned_data['import_file'].read())
-            importer = fetchers.ris.RisImporter(f)
+            importer = ris.RisImporter(f)
             self.instance._references = importer.references
 
 

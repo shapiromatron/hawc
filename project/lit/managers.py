@@ -9,8 +9,8 @@ from django.db import models
 from taggit.utils import require_instance_manager
 from taggit.managers import TaggableManager, _TaggableManager
 
-from fetchers.hero import HEROFetch
-from fetchers.pubmed import PubMedFetch
+from get_litter import hero, pubmed
+
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import BaseManager
 
@@ -140,7 +140,7 @@ class IdentifiersManager(BaseManager):
         need_import = tuple(set(hero_ids) - set(idents))
 
         # Grab HERO objects
-        fetcher = HEROFetch(need_import)
+        fetcher = hero.HEROFetch(need_import)
         fetcher.get_content()
 
         # Save new Identifier objects
@@ -167,7 +167,7 @@ class IdentifiersManager(BaseManager):
         need_import = tuple(set(ids) - set(idents))
 
         # Grab Pubmed objects
-        fetch = PubMedFetch(need_import)
+        fetch = pubmed.PubMedFetch(need_import)
 
         # Save new Identifier objects
         for item in fetch.get_content():
