@@ -1,51 +1,61 @@
 import React, { Component, PropTypes } from 'react';
 
-import TaskLabel from 'mgmt/TaskTable/components/TaskLabel';
-import UpdateForm from 'mgmt/TaskTable/components/UpdateForm';
+import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
+import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';
+import DueDateSelection from 'mgmt/TaskTable/components/DueDateSelection';
 
 
 class TaskForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { showForm: false };
-        this._toggleForm = this._toggleForm.bind(this);
-        this._update = this._update.bind(this);
+        const { owner, status, due_date } = props.task;
+        this.state = {
+            owner,
+            status,
+            due_date,
+        };
+
+        this.getOwnerUpdate = this.getOwnerUpdate.bind(this);
+        this.getStatusUpdate = this.getStatusUpdate.bind(this);
+        this.getDueDateUpdate = this.getDueDateUpdate.bind(this);
     }
 
-    _toggleForm() {
-        if (this.state.showForm) {
-            this.setState({showForm: false});
-        } else {
-            this.setState({ showForm: true });
-        }
+
+    getOwnerUpdate() {
+
     }
 
-    _update() {
-        this.props.task.update(this.props.task);
+    getStatusUpdate() {
+
+    }
+
+    getDueDateUpdate() {
+
     }
 
     render() {
         const { task, className } = this.props;
         return (
-            <div id={task.id} className={className}>
-                <div onClick={this._toggleForm}>
-                    <TaskLabel key={task.id} task={task} className={className}/>
-                </div>
-                {this.state.showForm ? <UpdateForm task={task} /> : null}
+            <div className={className}>
+                <UserAutocomplete onChange={this.getOwnerUpdate} task={task} />
+                <StatusSelection onChange={this.getStatusUpdate} task={task} />
+                <DueDateSelection onChange={this.getDueDateUpdate} task={task} />
             </div>
         );
     }
 }
 
 TaskForm.propTypes = {
-    className: PropTypes.string,
     task: PropTypes.shape({
+        due_date: PropTypes.string,
         id: PropTypes.number.isRequired,
-        owner: PropTypes.string,
+        study: PropTypes.shape({
+            assessment: PropTypes.number.isRequired,
+        }).isRequired,
         status: PropTypes.number.isRequired,
-        status_display: PropTypes.string.isRequired,
     }).isRequired,
+    className: PropTypes.string.isRequired,
 };
 
 export default TaskForm;
