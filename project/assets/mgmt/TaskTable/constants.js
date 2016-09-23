@@ -1,5 +1,8 @@
 export const REQUEST_TASKS = 'REQUEST_TASKS';
 export const RECEIVE_TASKS = 'RECEIVE_TASKS';
+export const PATCH_TASK = 'PATCH_TASK';
+export const SUBMIT_TASKS = 'SUBMIT_TASKS';
+export const SUBMIT_FINISHED = 'SUBMIT_FINISHED';
 export const REQUEST_STUDIES = 'REQUEST_STUDIES';
 export const RECEIVE_STUDIES = 'RECEIVE_STUDIES';
 export const STATUS = {

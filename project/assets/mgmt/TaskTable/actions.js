@@ -17,17 +17,55 @@ function receiveTasks(tasks){
     };
 }
 
+function patchTask(task){
+    return {
+        type: types.PATCH_TASK,
+        task,
+    };
+}
+
 export function fetchTasks(){
     return (dispatch, getState) => {
+        dispatch(resetError());
         let state = getState();
         if (state.tasks.isFetching) return;
         dispatch(makeTaskRequest());
         let { host, tasks } = state.config;
-        const url = h.getListUrl(host, tasks.url);
+        const url = h.getUrlWithAssessment(h.getListUrl(host, tasks.url), state.config.assessment_id);
         return fetch(url, h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveTasks(json)))
             .catch((error) => dispatch(setError(error)));
+    };
+}
+
+function submitTaskEdit(task) {
+    return (dispatch, getState) => {
+        let state = getState();
+        let { host, tasks } = state.config;
+        const url = h.getObjectUrl(host, tasks.url, task.id),
+            opts = h.fetchPost(state.config.csrf, task, 'PATCH');
+        return fetch(url, opts)
+            .then((response) => {
+                if (response.ok){
+                    response.json()
+                        .then((json) => dispatch(patchTask(json)));
+                } else {
+                    response.json()
+                        .then((json) => dispatch(setError(json)));
+                }
+            });
+    };
+}
+
+export function submitTasks(tasks){
+    return (dispatch, getState) => {
+        dispatch(resetError());
+        let state = getState();
+        if (state.tasks.isSubmitting) return;
+        Promise.all(
+            tasks.map((task) => {return dispatch(submitTaskEdit(task));})
+        );
     };
 }
 
