@@ -76,6 +76,9 @@ class Task(models.Model):
             tasks=qs.count(),
         )
 
+    def get_assessment(self):
+        return self.study.get_assessment()
+
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""
         if self.status == self.STATUS_NOT_STARTED:
