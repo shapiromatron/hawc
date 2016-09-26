@@ -9,7 +9,7 @@ from django.db import models
 from taggit.utils import require_instance_manager
 from taggit.managers import TaggableManager, _TaggableManager
 
-from get_litter import hero, pubmed
+from litter_getter import hero, pubmed
 
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import BaseManager

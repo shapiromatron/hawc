@@ -17,7 +17,7 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, AssessmentRootMixin
 
-from get_litter import ris, pubmed
+from litter_getter import ris, pubmed
 
 from . import constants, managers, tasks
 

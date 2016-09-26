@@ -9,7 +9,7 @@ from django import forms
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper, addPopupLink
 
-from get_litter import ris
+from litter_getter import ris
 
 from . import models
 

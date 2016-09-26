@@ -251,6 +251,11 @@ GIT_COMMIT = get_git_commit()
 COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMMIT)
 
 
+# PubMed settings
+PUBMED_TOOL = os.getenv('PUBMED_TOOL', 'hawc')
+PUBMED_EMAIL = os.getenv('PUBMED_EMAIL', DEFAULT_FROM_EMAIL)
+
+
 # BMD modeling settings
 BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')
 

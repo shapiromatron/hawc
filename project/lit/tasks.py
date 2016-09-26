@@ -6,7 +6,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 
-from get_litter import pubmed
+from litter_getter import pubmed
 
 from . import constants
 
