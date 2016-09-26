@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from myuser.models import HAWCUser
 from myuser.serializers import HAWCUserSerializer
 from study.serializers import StudyAssessmentSerializer, SimpleStudySerializer
 
@@ -22,6 +23,13 @@ class TaskSerializer(serializers.ModelSerializer):
             'started',
             'completed',
         )
+
+    def update(self, instance, validated_data):
+        if self.initial_data['owner']:
+            owner_id = self.initial_data['owner']['id']
+            instance.owner = HAWCUser.objects.get(pk=owner_id)
+            instance.save()
+        return super(TaskSerializer, self).update(instance, validated_data)
 
 
 class TaskByAssessmentSerializer(TaskSerializer):
