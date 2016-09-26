@@ -45,7 +45,7 @@ git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc
 git+https://github.com/shapiromatron/bmds@30b963583338e742f3c6de05723937e838ee8afb
 
 # literature tools
-git+https://github.com/shapiromatron/get_litter@0caedde34eb5529bda5b24abb51c14cc8276b7ed
+litter-getter==0.1.0
 
 # for import scripts
 jupyter==1.0.0
