@@ -85,6 +85,7 @@
     "react-addons-css-transition-group": "^15.2.1",
     "react-addons-transition-group": "^15.2.1",
     "react-autosuggest": "^6.0.4",
+    "react-datepicker": "^0.29.0",
     "react-dom": "^15.2.1",
     "react-quill": "git://github.com/alexkrolick/react-quill.git#30adc25cf2c73fc6b2d0674e986de82c64f4afca",
     "react-redux": "^4.4.5",

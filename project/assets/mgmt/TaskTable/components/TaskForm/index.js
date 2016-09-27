@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
 import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';
-import DueDateSelection from 'mgmt/TaskTable/components/DueDateSelection';
+import ReactDatePicker from 'shared/components/ReactDatePicker';
 
 
 class TaskForm extends Component {
@@ -59,7 +59,7 @@ class TaskForm extends Component {
             <div className={className}>
                 <UserAutocomplete onChange={this.getOwnerUpdate} task={task} />
                 <StatusSelection onChange={this.getStatusUpdate} task={task} />
-                <DueDateSelection onChange={this.getDueDateUpdate} task={task} />
+                <ReactDatePicker onChange={this.getDueDateUpdate} id={`${task.id}-due_date`} date={task.due_date} />
             </div>
         );
     }
