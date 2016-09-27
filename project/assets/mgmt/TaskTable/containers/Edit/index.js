@@ -2,22 +2,27 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 
-import { fetchTasks, fetchStudies, submitTasks } from 'mgmt/TaskTable/actions';
+import { fetchTasks, fetchStudies, filterAndSortStudies, submitTasks } from 'mgmt/TaskTable/actions';
 
 import { TASK_TYPES } from 'mgmt/TaskTable/constants';
+import EmptyListNotification from 'shared/components/EmptyListNotification';
 import Header from 'mgmt/TaskTable/components/Header';
 import List from 'mgmt/TaskTable/components/List';
 import Loading from 'shared/components/Loading';
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 import SubmitButton from 'mgmt/TaskTable/components/SubmitButton';
+import StudyFilter from 'mgmt/TaskTable/components/StudyFilter';
 import TaskStudyEdit from 'mgmt/TaskTable/components/TaskStudyEdit';
+import './Edit.css';
 
 
 class EditApp extends Component {
 
     constructor(props) {
         super(props);
-        this._updateForm = this._updateForm.bind(this);
+        this.filterStudies = this.filterStudies.bind(this);
+        this.getTaskTypes = this.getTaskTypes.bind(this);
+        this.updateForm = this.updateForm.bind(this);
     }
 
 
@@ -26,9 +31,13 @@ class EditApp extends Component {
         this.props.dispatch(fetchStudies());
     }
 
-    _formatTasks() {
+    filterStudies(opts) {
+        this.props.dispatch(filterAndSortStudies(opts));
+    }
+
+    formatTasks() {
         const { tasks, studies } = this.props,
-            taskList = studies.list.map((study) => {
+            taskList = studies.visibleList.map((study) => {
                 let formattedTasks = tasks.list.filter((task) => {
                     return task.study.id === study.id;
                 }).sort((a, b) => (a.type - b.type));
@@ -38,7 +47,16 @@ class EditApp extends Component {
         return taskList;
     }
 
-    _updateForm(e) {
+    getTaskTypes() {
+        const { tasks, studies } = this.props;
+        return _.pluck(
+                tasks.list.filter((task) => (
+                    task.study.id === studies.list[0].id
+                )).sort((a, b) => (a.type - b.type)),
+                'type');
+    }
+
+    updateForm(e) {
         e.preventDefault();
         const updatedData = _.chain(this.refs.list.refs)
                     .map((ref) => { return ref.getChangedData(); })
@@ -51,14 +69,16 @@ class EditApp extends Component {
     render() {
         if (!this.props.tasks.isLoaded) return <Loading />;
         const { error } = this.props,
-            taskList = this._formatTasks(),
-            headings = _.pluck(taskList[0].tasks, 'type').map((type) => TASK_TYPES[type]);
+            taskList = this.formatTasks(),
+            emptyTaskList = (taskList.length === 0),
+            headings = emptyTaskList ? [] : this.getTaskTypes().map((type) => TASK_TYPES[type]);
         return (
                 <div>
                     <ScrollToErrorBox error={error} />
+                    <StudyFilter taskOptions={this.getTaskTypes()} selectFilter={this.filterStudies}/>
                     <Header headings={headings}/>
-                    <List component={TaskStudyEdit} items={taskList} ref='list' />
-                    <SubmitButton submitForm={this._updateForm} />
+                    {emptyTaskList ? <EmptyListNotification listItem={'studies'} /> : <List component={TaskStudyEdit} items={taskList} ref='list' />}
+                    <SubmitButton submitForm={this.updateForm} />
                 </div>
         );
     }

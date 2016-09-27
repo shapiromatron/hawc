@@ -5,6 +5,8 @@ export const SUBMIT_TASKS = 'SUBMIT_TASKS';
 export const SUBMIT_FINISHED = 'SUBMIT_FINISHED';
 export const REQUEST_STUDIES = 'REQUEST_STUDIES';
 export const RECEIVE_STUDIES = 'RECEIVE_STUDIES';
+export const FILTER_STUDY_ON_TYPE = 'FILTER_STUDY_ON_TYPE';
+export const SORT_STUDIES = 'SORT_STUDIES';
 export const STATUS = {
     10: { color: '#CFCFCF' /* grey */, type: 'not started' },
     20: { color: '#FFCC00' /* yellow */, type: 'started' },
@@ -16,4 +18,10 @@ export const TASK_TYPES = {
     20: 'Data extraction',
     30: 'QA/QC',
     40: 'Risk of bias completed',
+};
+export const STUDY_TYPES = {
+    bioassay: 'Animal Bioassay',
+    epi: 'Epidemiology',
+    epi_meta: 'Epidemiology meta-analysis',
+    in_vitro: 'In vitro',
 };

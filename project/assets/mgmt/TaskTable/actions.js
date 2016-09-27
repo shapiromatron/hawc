@@ -82,6 +82,27 @@ function receiveStudies(studies){
     };
 }
 
+function filterStudyOnType(studyTypes) {
+    return {
+        type: types.FILTER_STUDY_ON_TYPE,
+        types: studyTypes,
+    };
+}
+
+function sortStudies(sortOpts) {
+    return {
+        type: types.SORT_STUDIES,
+        opts: sortOpts,
+    };
+}
+
+export function filterAndSortStudies(opts) {
+    return (dispatch, getState) => {
+        dispatch(sortStudies(opts.sortOpts));
+        dispatch(filterStudyOnType(opts.filterOpts));
+    };
+}
+
 export function fetchStudies(){
     return (dispatch, getState) => {
         let state = getState();
