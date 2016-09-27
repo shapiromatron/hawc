@@ -8,6 +8,10 @@ django-extensions==1.6.1
 # for better-shell (optional; doesn't work on windows)
 bpython==0.15
 
+# for docs
+watchdog==0.8.3
+Sphinx==1.4.6
+
 # for django_extensions.graph_models
 pyparsing==2.0.3
 pydot==1.0.2
