@@ -13,7 +13,7 @@ class TaskLabel extends Component {
             <div className={`taskLabel ${className}`}>
                 <div>Status: <StatusIcon status={task.status} /> {task.status_display}</div>
                 <div>Owner: {task.owner ? task.owner.full_name : '-'}</div>
-                <DueDateLabel due_date={task.due_date} />
+                <DueDateLabel status={task.status} due_date={task.due_date} />
             </div>
         );
     }

@@ -1,0 +1,21 @@
+import React, { Component, PropTypes } from 'react';
+
+
+class StudyLabel extends Component {
+    render() {
+        return (
+            <div className={this.props.className}>
+                <a href={this.props.study.url}>{this.props.study.short_citation}</a>
+            </div>
+        );
+    }
+}
+
+StudyLabel.propTypes = {
+    study: PropTypes.shape({
+        url: PropTypes.string.isRequired,
+        short_citation: PropTypes.string.isRequired,
+    }).isRequired,
+};
+
+export default StudyLabel;
