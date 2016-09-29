@@ -34,7 +34,7 @@ class StudyAssessmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Study
-        fields = ('id', 'url', 'assessment', )
+        fields = ('id', 'url', 'assessment', 'short_citation')
 
 
 class VerboseStudySerializer(StudySerializer):
