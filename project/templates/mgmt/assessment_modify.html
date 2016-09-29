@@ -29,6 +29,7 @@
         "csrf": "{{ csrf_token }}",
         "host": "//{{ request.get_host }}",
         "type": "edit",
+        "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
         "tasks": {
             "url": "{% url 'mgmt:api:task-list' %}"
         },

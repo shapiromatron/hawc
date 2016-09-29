@@ -59,7 +59,7 @@ class TaskForm extends Component {
             <div className={className}>
                 <UserAutocomplete onChange={this.getOwnerUpdate} task={task} />
                 <StatusSelection onChange={this.getStatusUpdate} task={task} />
-                <ReactDatePicker onChange={this.getDueDateUpdate} id={`${task.id}-due_date`} date={task.due_date} />
+                <ReactDatePicker onChange={this.getDueDateUpdate} label='Due date (optional)' id={`${task.id}-due_date`} date={task.due_date} />
             </div>
         );
     }

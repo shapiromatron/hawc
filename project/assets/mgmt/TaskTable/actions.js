@@ -42,9 +42,9 @@ export function fetchTasks(){
 function submitTaskEdit(task) {
     return (dispatch, getState) => {
         let state = getState();
-        let { host, tasks } = state.config;
+        let { host, tasks, csrf } = state.config;
         const url = h.getObjectUrl(host, tasks.url, task.id),
-            opts = h.fetchPost(state.config.csrf, task, 'PATCH');
+            opts = h.fetchPost(csrf, task, 'PATCH');
         return fetch(url, opts)
             .then((response) => {
                 if (response.ok){
@@ -65,7 +65,7 @@ export function submitTasks(tasks){
         if (state.tasks.isSubmitting) return;
         Promise.all(
             tasks.map((task) => {return dispatch(submitTaskEdit(task));})
-        );
+        ).then(() => window.location.href = state.config.cancelUrl);
     };
 }
 

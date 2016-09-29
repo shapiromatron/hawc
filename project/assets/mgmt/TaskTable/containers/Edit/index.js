@@ -5,6 +5,7 @@ import _ from 'underscore';
 import { fetchTasks, fetchStudies, filterAndSortStudies, submitTasks } from 'mgmt/TaskTable/actions';
 
 import { TASK_TYPES } from 'mgmt/TaskTable/constants';
+import CancelButton from 'mgmt/TaskTable/components/CancelButton';
 import EmptyListNotification from 'shared/components/EmptyListNotification';
 import Header from 'mgmt/TaskTable/components/Header';
 import List from 'mgmt/TaskTable/components/List';
@@ -20,15 +21,19 @@ class EditApp extends Component {
 
     constructor(props) {
         super(props);
+        this.handleCancel = this.handleCancel.bind(this);
         this.filterStudies = this.filterStudies.bind(this);
         this.getTaskTypes = this.getTaskTypes.bind(this);
         this.updateForm = this.updateForm.bind(this);
     }
 
-
     componentWillMount() {
         this.props.dispatch(fetchTasks());
         this.props.dispatch(fetchStudies());
+    }
+
+    handleCancel() {
+        window.location.href = this.props.config.cancelUrl;
     }
 
     filterStudies(opts) {
@@ -79,14 +84,16 @@ class EditApp extends Component {
                     <Header headings={headings}/>
                     {emptyTaskList ? <EmptyListNotification listItem={'studies'} /> : <List component={TaskStudyEdit} items={taskList} ref='list' />}
                     <SubmitButton submitForm={this.updateForm} />
+                    <CancelButton onCancel={this.handleCancel} />
                 </div>
         );
     }
 }
 
 function mapStateToProps(state){
-    const { error, tasks, studies } = state;
+    const { error, tasks, studies, config } = state;
     return {
+        config,
         error,
         tasks,
         studies,
