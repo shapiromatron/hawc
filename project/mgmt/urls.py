@@ -17,6 +17,9 @@ urlpatterns = [
     url(r'^my-assignments/$',
         views.UserAssignments.as_view(),
         name='user_assignments'),
+    url(r'^my-assignments/(?P<pk>\d+)/$',
+        views.UserAssessmentAssignments.as_view(),
+        name='user_assessment_assignments'),
 
     # assessment-level views
     url(r'^assessment/(?P<pk>\d+)/$',

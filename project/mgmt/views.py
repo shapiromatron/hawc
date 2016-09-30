@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 
 from assessment.models import Assessment
-from utils.views import LoginRequiredMixin, TeamMemberOrHigherMixin
+from utils.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
 
 from . import models
 
@@ -37,6 +37,12 @@ class UserAssignments(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.owned_by(self.request.user)
+
+
+class UserAssessmentAssignments(LoginRequiredMixin, BaseList):
+    parent_model = Assessment
+    model = models.Task
+    template_name = 'mgmt/user_assessment_assignments.html'
 
 
 # Assessment-level task views

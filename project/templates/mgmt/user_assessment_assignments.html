@@ -1,0 +1,39 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+    Task assignments | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a><span class="divider">/</span></li>
+  <li class="active">Task Assignments<span class="divider">/</span></li>  
+{% endblock %}
+
+{% block content %}
+
+  <h2>Task assignments</h2>
+
+  <div id='taskAssignments'></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{ request.get_host }}",
+        "tasks": {
+            "url": "{% url 'mgmt:api:task-assessment-assignments' assessment.id %}"
+        }
+    }
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.app.mgmt.TaskAssignments(document.getElementById('taskAssignments'))
+});
+</script>
+{% endblock extrajs %}
