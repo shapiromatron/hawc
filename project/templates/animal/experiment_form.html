@@ -1,6 +1,7 @@
 {% extends 'portal.html' %}
 
 {% load crispy_forms_tags %}
+{% load selectable_tags %}
 
 {% block title %}
   {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
@@ -17,6 +18,7 @@
 {% endblock %}
 
 {% block extrajs %}
+  {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
       $('#id_description').quillify();

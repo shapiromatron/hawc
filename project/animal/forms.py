@@ -29,6 +29,23 @@ class ExperimentForm(ModelForm):
         super(ExperimentForm, self).__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
+
+        self.fields['chemical'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpChemicalLookup,
+            allow_new=True)
+
+        self.fields['cas'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpCasLookup,
+            allow_new=True)
+
+        self.fields['chemical_source'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpChemSourceLookup,
+            allow_new=True)
+
+        self.fields['guideline_compliance'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpGlpLookup,
+            allow_new=True)
+
         self.helper = self.setHelper()
 
     def setHelper(self):

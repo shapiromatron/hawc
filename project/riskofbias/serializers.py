@@ -82,11 +82,16 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
 
 class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
-    scores = RiskOfBiasScoreSerializer(many=True)
+    scores = serializers.SerializerMethodField('get_final_score')
 
     class Meta:
         model = models.RiskOfBiasMetric
         fields = ('id', 'metric', 'description', 'scores')
+
+    def get_final_score(self, instance):
+        scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)
+        serializer = RiskOfBiasScoreSerializer(scores, many=True)
+        return serializer.data
 
 
 class AssessmentRiskOfBiasScoreSerializer(serializers.ModelSerializer):
