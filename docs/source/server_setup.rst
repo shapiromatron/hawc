@@ -1,4 +1,4 @@
-Server Setup
+Server setup
 ============
 
 Minimum hardware requirements:

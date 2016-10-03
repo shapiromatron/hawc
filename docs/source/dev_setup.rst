@@ -16,13 +16,13 @@ following applications installed on your local development system:
 - git >= 1.7
 
 
-.. note::
+.. warning::
     HAWC can be developed in Windows, however, in versions older than Windows 10,
     it may not be possible due to file-system restrictions. The maximum
     path length in some Windows environments is 260; the Node.js packaging
     system may often exceed this length, and does in the current HAWC environment.
 
-    There's nothing we can do to fix this :( that we're aware of.
+    There's nothing we can do to fix this that we're aware of.
 
 
 HAWC setup: Part I (OS-specific)
