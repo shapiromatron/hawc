@@ -6,7 +6,7 @@ from django.test.client import Client
 
 from assessment.tests.utils import build_assessments_for_permissions_testing
 
-from lit import models
+from lit import constants, models
 
 
 class ImportFormTest(TestCase):
@@ -258,7 +258,7 @@ class RISImportTest(TestCase):
         self.search = models.Search.objects.create(
             assessment_id=self.assessment_working.pk,
             search_type="i",
-            source=models.RIS,
+            source=constants.RIS,
             title="ris",
             slug="ris",
             description="-",
@@ -276,14 +276,14 @@ class RISImportTest(TestCase):
         self.assertEqual(models.Identifiers.objects.count(), 3)
         self.assertEqual(models.Reference.objects.first().identifiers.count(), 3)
 
-        self.assertEqual(models.Identifiers.objects.filter(database=models.PUBMED).count(), 1)
-        self.assertEqual(models.Identifiers.objects.filter(database=models.RIS).count(), 1)
-        self.assertEqual(models.Identifiers.objects.filter(database=models.DOI).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.PUBMED).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.RIS).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.DOI).count(), 1)
 
         # assert Pubmed XML content is loaded
         self.assertTrue(
             "<PubmedArticle>" in
-            models.Identifiers.objects.filter(database=models.PUBMED).first().content
+            models.Identifiers.objects.filter(database=constants.PUBMED).first().content
         )
 
     def test_import_with_existing(self):
@@ -294,9 +294,9 @@ class RISImportTest(TestCase):
 
         # create existing identifiers
         models.Identifiers.objects.create(
-            database=models.PUBMED, unique_id="19425233", content="None")
+            database=constants.PUBMED, unique_id="19425233", content="None")
         models.Identifiers.objects.create(
-            database=models.DOI, unique_id="10.1016/j.fct.2009.02.003", content="None")
+            database=constants.DOI, unique_id="10.1016/j.fct.2009.02.003", content="None")
 
         self.search.run_new_import()
         self.assertEqual(models.Reference.objects.count(), 1)
@@ -304,6 +304,6 @@ class RISImportTest(TestCase):
         self.assertEqual(models.Reference.objects.first().identifiers.count(), 3)
 
         # ensure new ones aren't created
-        self.assertEqual(models.Identifiers.objects.filter(database=models.PUBMED).count(), 1)
-        self.assertEqual(models.Identifiers.objects.filter(database=models.RIS).count(), 1)
-        self.assertEqual(models.Identifiers.objects.filter(database=models.DOI).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.PUBMED).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.RIS).count(), 1)
+        self.assertEqual(models.Identifiers.objects.filter(database=constants.DOI).count(), 1)
