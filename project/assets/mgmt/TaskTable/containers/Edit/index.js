@@ -82,7 +82,9 @@ class EditApp extends Component {
                     <ScrollToErrorBox error={error} />
                     <StudyFilter taskOptions={this.getTaskTypes()} selectFilter={this.filterStudies}/>
                     <Header headings={headings}/>
-                    {emptyTaskList ? <EmptyListNotification listItem={'studies'} /> : <List component={TaskStudyEdit} items={taskList} ref='list' />}
+                    {emptyTaskList ?
+                        <EmptyListNotification listItem={'studies'} /> :
+                        <List component={TaskStudyEdit} items={taskList} autocompleteUrl={this.props.config.autocomplete.url} ref='list' />}
                     <SubmitButton submitForm={this.updateForm} />
                     <CancelButton onCancel={this.handleCancel} />
                 </div>

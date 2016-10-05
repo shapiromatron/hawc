@@ -54,10 +54,10 @@ class TaskForm extends Component {
     }
 
     render() {
-        const { task, className } = this.props;
+        const { task, className, autocompleteUrl } = this.props;
         return (
             <div className={className}>
-                <UserAutocomplete onChange={this.getOwnerUpdate} task={task} />
+                <UserAutocomplete onChange={this.getOwnerUpdate} task={task} url={autocompleteUrl} />
                 <StatusSelection onChange={this.getStatusUpdate} task={task} />
                 <ReactDatePicker onChange={this.getDueDateUpdate} label='Due date (optional)' id={`${task.id}-due_date`} date={task.due_date} />
             </div>
@@ -76,6 +76,7 @@ TaskForm.propTypes = {
         }).isRequired,
     }).isRequired,
     className: PropTypes.string.isRequired,
+    autocompleteUrl: PropTypes.string.isRequired,
 };
 
 export default TaskForm;

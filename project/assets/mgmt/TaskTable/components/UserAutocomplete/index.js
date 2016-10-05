@@ -8,7 +8,7 @@ class UserAutocomplete extends Component {
     constructor(props) {
         super(props);
         this.getPopulatedOwner = this.getPopulatedOwner.bind(this);
-        this.url = `/selectable/myuser-assessmentteammemberorhigherlookup?related=${props.task.study.assessment}`; /* TODO get url from django-selectable in template*/
+        this.url = `${this.props.url}?related=${props.task.study.assessment}`;
     }
 
     getPopulatedOwner() {
@@ -40,6 +40,7 @@ UserAutocomplete.propTypes = {
             assessment: PropTypes.number.isRequired,
         }).isRequired,
     }).isRequired,
+    url: PropTypes.string.isRequired,
 };
 
 export default UserAutocomplete;

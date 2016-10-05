@@ -35,6 +35,9 @@
         },
         "studies": {
             "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
+        },
+        "autocomplete": {
+            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
         }
     }
 </script>

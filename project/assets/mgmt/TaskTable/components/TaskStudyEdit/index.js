@@ -26,7 +26,12 @@ class TaskStudyEdit extends Component {
                 <div className='flexRow-container taskStudy'>
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
-                        <TaskForm ref={`form-${index}`} key={task.id} task={task} className={`task-${index} flex-1`}/>
+                        <TaskForm
+                            key={task.id}
+                            ref={`form-${index}`}
+                            task={task}
+                            className={`task-${index} flex-1`}
+                            autocompleteUrl={this.props.autocompleteUrl}/>
                     ))}
                 </div>
                 <hr/>
@@ -49,6 +54,7 @@ TaskStudyEdit.propTypes = {
             })
         ).isRequired,
     }),
+    autocompleteUrl: PropTypes.string.isRequired,
 };
 
 export default TaskStudyEdit;

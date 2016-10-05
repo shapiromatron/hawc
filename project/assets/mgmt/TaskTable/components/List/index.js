@@ -3,15 +3,16 @@ import React, { Component, PropTypes } from 'react';
 
 class List extends Component {
     render() {
-        const ComponentToRender = this.props.component;
+        const { component, items, ...rest } = this.props,
+            ComponentToRender = component;
         let content = (<div></div>);
 
-        if (this.props.items) {
+        if (items) {
             content = this.props.items.map((item, index) => (
-                <ComponentToRender ref={`item-${index}`} key={`item-${index}`} item={item}/>
+                <ComponentToRender ref={`item-${index}`} key={`item-${index}`} item={item} {...rest} />
             ));
         } else {
-            content = (<ComponentToRender ref='item' />);
+            content = (<ComponentToRender ref='item' {...rest} />);
         }
 
         return (
