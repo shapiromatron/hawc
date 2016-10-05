@@ -85,7 +85,7 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: 'padding_left',
             label: 'Plot padding-left (px)',
-            def: 25,
+            def: 70,
             tab: 'overall',
         },
         {
