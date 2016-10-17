@@ -39,6 +39,11 @@ class ReferencesViewer {
                 text: 'Download references',
             });
 
+            actionLinks.push({
+                url: '{0}?tag_id={1}&fmt=tb'.printf(this.options.download_url, this.options.tag.data.pk),
+                text: 'Download references (table-builder format)',
+            });
+
             if (window.canEdit){
                 actionLinks.push({
                     url: '/lit/tag/{0}/tag/'.printf(this.options.tag.data.pk),
