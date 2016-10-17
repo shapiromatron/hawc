@@ -1,5 +1,6 @@
 import $ from '$';
 import _ from 'underscore';
+import Clipboard from 'clipboard';
 
 import Observee from 'utils/Observee';
 
@@ -78,17 +79,27 @@ class Reference extends Observee {
             .filter(function(v){return v.url.length>0;})
             .sortBy(function(v){return v.database_id;})
             .each(function(v){
-                links.append('<a class="btn btn-mini btn-success" target="_blank" href="{0}" title="ID {1}">{2}</a>'.printf(
-                    v.url, v.id, v.database));
+                let grp = $('<div class="btn-group">'),
+                    link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
+                    copyID = $(`<button type="button" class="btn btn-mini btn-success" title="Copy ID ${v.id} to clipboard"><i class="fa fa-clipboard"></i></button>`);
+
+                // copy ID to clipboard
+                new Clipboard(copyID.get(0), {text: () => v.id});
+
+                links.append(grp.append(link, copyID));
                 links.append('<span>&nbsp;</span>');
             });
 
         _.chain(this.data.identifiers)
-            .reject(function(v){return v.url.length>0 || v.database === 'External link';})
+            .reject(function(v){return v.url.length > 0 || v.database === 'External link';})
             .sortBy(function(v){return v.database_id;})
             .each(function(v){
-                links.append('<button class="btn btn-mini disabled" title="ID {0}">{1}</button>'.printf(
-                    v.id, v.database));
+                let copyID = $(`<button class="btn btn-mini" title="Copy ID ${v.id} to clipboard">${v.database} <i class="fa fa-clipboard"></i></button>`);
+
+                // copy ID to clipboard
+                new Clipboard(copyID.get(0), {text: () => v.id});
+
+                links.append(copyID);
                 links.append('<span>&nbsp;</span>');
             });
 
