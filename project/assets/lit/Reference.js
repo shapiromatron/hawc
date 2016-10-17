@@ -69,7 +69,8 @@ class Reference extends Observee {
                 .attr('class', 'btn btn-mini btn-primary')
                 .attr('target', '_blank')
                 .attr('href', this.data.full_text_url)
-                .text('Full text link'));
+                .text('Full text link ')
+                .append('<i class="fa fa-fw fa-file-pdf-o"></i>'));
             links.append('<span>&nbsp;</span>');
         }
 
