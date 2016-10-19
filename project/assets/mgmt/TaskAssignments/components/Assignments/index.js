@@ -16,9 +16,18 @@ class Assignments extends Component {
         return _.groupBy(this.props.tasks.list, (task) => { return task.study.assessment.name; });
     }
 
+    renderNoTasks() {
+        return <p className="help-block">There are no tasks available.</p>;
+    }
+
     render() {
         if (!this.props.tasks.isLoaded) return <Loading/>;
         const groupedTasks = this.formatTasks();
+
+        if (_.keys(groupedTasks).length === 0 ){
+            return this.renderNoTasks();
+        }
+
         return (
             <div>
                 {_.map(groupedTasks, (tasks, key) => {
