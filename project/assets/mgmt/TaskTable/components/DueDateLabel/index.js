@@ -8,10 +8,15 @@ class DueDateLabel extends Component {
             pastDueStyle = status < 30 ?
                             moment().isAfter(due_date) ? {backgroundColor: 'yellow', maxWidth: '175px'} : null
                             : null,
-            dueDate = due_date ? moment(due_date).format('MM/DD/YYYY') : '-';
+            dueDate = due_date ? moment(due_date).format('MM/DD/YYYY') : null;
+
+        if (dueDate === null){
+            return null;
+        }
+
         return (
             <div style={pastDueStyle}>
-                Due date: {dueDate}
+                <b>Due date:</b> <span>{dueDate}</span>
             </div>
         );
     }

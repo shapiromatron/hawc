@@ -39,7 +39,7 @@ class ReactDatePicker extends Component {
         const compProps = this.getDatePickerProps();
         return (
             <div>
-                <label htmlFor={compProps.id}>{this.props.label}</label>
+                <label htmlFor={compProps.id} className={this.props.labelClassName || ''}>{this.props.label}</label>
                 <DatePicker {...compProps} />
             </div>
         );
@@ -50,6 +50,7 @@ ReactDatePicker.propTypes = {
     date: PropTypes.string,
     id: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    labelClassName: PropTypes.string,
 };
 
 export default ReactDatePicker;

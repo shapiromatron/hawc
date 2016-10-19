@@ -11,12 +11,8 @@ class TaskLabel extends Component {
         const { id, due_date, status, status_display, type } = this.props.task;
         return (
             <div className={this.props.className}>
-                <label htmlFor={`type-${id}-task`} style={{cursor: 'default'}}>Task:
-                    <span id={`type-${id}-task`}> {TASK_TYPES[type]}</span>
-                </label>
-                <label htmlFor={`type-${id}-status`} style={{cursor: 'default'}}>Status:
-                    <span id={`type-${id}-status`}> <StatusIcon status={status} /> {h.caseToWords(status_display)}</span>
-                </label>
+                <b>Task:</b><span id={`type-${id}-task`}> {TASK_TYPES[type]}</span><br/>
+                <b>Status:</b><span id={`type-${id}-status`}><StatusIcon status={status}/>{h.caseToWords(status_display)}</span><br/>
                 <DueDateLabel status={status} due_date={due_date} />
             </div>
         );

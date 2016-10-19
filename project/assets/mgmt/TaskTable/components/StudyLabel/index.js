@@ -6,13 +6,8 @@ class StudyLabel extends Component {
     render() {
         return (
             <div className='study-label flex-1'>
-                <label className='control-label' htmlFor={`short-citation-${this.props.study.id}`}>Short citation</label>
-                <a id={`short-citation-${this.props.study.id}`} href={this.props.study.url}>
-                    {this.props.study.short_citation}
-                </a>
-                <br/>
-                <label className='control-label' htmlFor={`creation-date-${this.props.study.id}`}>Created on</label>
-                <span id={`creation-date-${this.props.study.id}`}>{moment(this.props.study.created).format('MMM Do YYYY')}</span>
+                <a href={this.props.study.url}>{this.props.study.short_citation}</a><br/>
+                <b>Date created: </b><span>{moment(this.props.study.created).format('L')}</span>
             </div>
         );
     }

@@ -30,7 +30,7 @@ class StatusSelection extends Component {
             idName = `${this.props.task.id}-status_selection`;
         return (
             <div>
-                <label htmlFor={idName}>Status</label>
+                <label className="control-label" htmlFor={idName}>Status</label>
                 <select
                     defaultValue={this.props.task.status}
                     id={idName}

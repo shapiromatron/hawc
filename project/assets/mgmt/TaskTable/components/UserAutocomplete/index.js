@@ -23,7 +23,7 @@ class UserAutocomplete extends Component {
             loaded = this.getPopulatedOwner();
         return (
             <div>
-                <label htmlFor={idName}>Owner</label>
+                <label className="control-label" htmlFor={idName}>Owner</label>
                 <Autocomplete
                     onChange={this.props.onChange}
                     id={idName}
