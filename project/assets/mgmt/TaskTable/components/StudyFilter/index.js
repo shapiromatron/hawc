@@ -73,8 +73,9 @@ class StudyFilter extends Component {
                         orderOptions={this.state.orderOptions}
                         studySorting={this.state.studySorting}/>
                 </div>
-                <button className='btn btn-primary' onClick={this.filterResults}>Filter and sort results</button>
-                <button className='btn btn-secondary' onClick={this.clearFilters}>Clear filters</button>
+                <button className='btn btn-primary' onClick={this.filterResults}>Filter & sort studies</button>
+                <span>&nbsp;</span>
+                <button className='btn btn-secondary' onClick={this.clearFilters}>Reset</button>
             </div>
         );
     }

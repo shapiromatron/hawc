@@ -20,7 +20,7 @@ export const TASK_TYPES = {
     40: 'Risk of bias completed',
 };
 export const STUDY_TYPES = {
-    bioassay: 'Animal Bioassay',
+    bioassay: 'Animal bioassay',
     epi: 'Epidemiology',
     epi_meta: 'Epidemiology meta-analysis',
     in_vitro: 'In vitro',

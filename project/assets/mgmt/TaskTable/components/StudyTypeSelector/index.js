@@ -23,7 +23,7 @@ class StudyTypeSelector extends Component {
     render() {
         return (
             <div className={this.props.className}>
-                <label className='control-label'>Study Type filter (optional):</label>
+                <label className='control-label'>Study type filter (optional):</label>
                 <select multiple name="studyType_filter" id="studyType_filter" onChange={this.handleChange} style={{height: '80px'}}>
                 {_.map(STUDY_TYPES, (choice, key) => {
                     return <option key={key} value={key}>{choice}</option>;

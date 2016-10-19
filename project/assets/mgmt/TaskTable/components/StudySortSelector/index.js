@@ -30,11 +30,10 @@ class StudySortSelector extends Component {
         const { className, fieldOptions, orderOptions, studySorting } = this.props;
         return (
             <div className={className}>
-                <label className='control-label'>Sort studies</label>
                 <div className='flexRow-container'>
 
                     <div className='flex-1'>
-                        <label className='control-label' htmlFor='study_sorting-field'>Field</label>
+                        <label className='control-label' htmlFor='study_sorting-field'>Sort studies by:</label>
                         <form id='study_sorting-field'>
                         {fieldOptions.map((field) => {
                             return (
@@ -47,7 +46,7 @@ class StudySortSelector extends Component {
                     </div>
 
                     <div className='flex-1'>
-                        <label className='control-label' htmlFor="study_sorting-order">Order</label>
+                        <label className='control-label' htmlFor="study_sorting-order">Order studies by:</label>
                         <form id='study_sorting-order'>
                         {orderOptions.map((order) => {
                             return (
