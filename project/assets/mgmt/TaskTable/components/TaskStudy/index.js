@@ -10,13 +10,13 @@ class TaskStudy extends Component {
         const { tasks, study } = this.props.item;
         return (
             <div>
+                <hr className='hr-tight' />
                 <div className='flexRow-container taskStudy'>
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
                         <TaskLabel key={task.id} task={task} className={`task-${index} flex-1`}/>
                     ))}
                 </div>
-                <hr/>
             </div>
         );
     }

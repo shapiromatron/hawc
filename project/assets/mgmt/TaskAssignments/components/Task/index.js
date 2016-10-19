@@ -14,12 +14,12 @@ class Task extends Component {
 
         return (
             <div>
+                <hr className='hr-tight' />
                 <div className='flexRow-container'>
                     {assessmentLbl}
                     <StudyLabel className='flex-1' study={this.props.task.study}/>
                     <TaskLabel className='flex-2' task={this.props.task} />
                 </div>
-                <hr style={{margin: '10px 0'}}/>
             </div>
         );
     }

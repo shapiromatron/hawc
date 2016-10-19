@@ -23,6 +23,7 @@ class TaskStudyEdit extends Component {
         const { tasks, study } = this.props.item;
         return (
             <div>
+                <hr className='hr-tight' />
                 <div className='flexRow-container taskStudy'>
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
@@ -34,7 +35,6 @@ class TaskStudyEdit extends Component {
                             autocompleteUrl={this.props.autocompleteUrl}/>
                     ))}
                 </div>
-                <hr/>
             </div>
         );
     }
