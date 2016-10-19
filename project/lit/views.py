@@ -108,8 +108,18 @@ class RefDownloadExcel(BaseList):
         else:
             return self.model.objects.get_qs(self.assessment)
 
+    def get_exporter(self):
+        fmt = self.request.GET.get('fmt', 'complete')
+        if fmt == 'complete':
+            return exports.ReferenceFlatComplete
+        elif fmt == 'tb':
+            return exports.TableBuilderFormat
+        else:
+            raise ValueError('Unknown export format.')
+
     def render_to_response(self, context, **response_kwargs):
-        exporter = exports.ReferenceFlatComplete(
+        exporter_cls = self.get_exporter()
+        exporter = exporter_cls(
             self.object_list,
             export_format="excel",
             filename=self.fn,
