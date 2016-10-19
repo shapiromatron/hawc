@@ -7,6 +7,7 @@ from django.views.generic import FormView
 
 from assessment.models import Assessment
 from lit.models import Reference
+from mgmt.views import EnsurePreparationStartedMixin
 from utils.views import (MessageMixin, BaseDetail, BaseDelete,
                          BaseUpdate, BaseCreate, BaseList,
                          GenerateReport, TeamMemberOrHigherMixin)
@@ -40,7 +41,7 @@ class StudyReport(GenerateReport):
         return self.model.get_docx_template_context(queryset)
 
 
-class StudyCreateFromReference(BaseCreate):
+class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     """
     Create view of Study, given a lit.Reference already exists. This is more
     difficult because we must pass the reference object to the newly created
@@ -59,42 +60,41 @@ class StudyCreateFromReference(BaseCreate):
         return self.initial
 
     def get(self, request, *args, **kwargs):
-        if self.model.objects.filter(pk=self.parent.pk).count()>0:
+        if self.model.objects.filter(pk=self.parent.pk).count() > 0:
             raise Http404
         return super(StudyCreateFromReference, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if self.model.objects.filter(pk=self.parent.pk).count()>0:
+        if self.model.objects.filter(pk=self.parent.pk).count() > 0:
             raise Http404
 
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
 
-        #hack- this will fail but will also create errors if needed
+        # hack- this will fail but will also create errors if needed
         try:
-           form.is_valid()
+            form.is_valid()
         except:
             pass
 
         # hack - use custom validation since will always fail for one-to-one
-        if ((form.data['short_citation'] == u'') or
-            (form.data['full_citation'] == u'')):
+        if ((form.data['short_citation'] == u'') or (form.data['full_citation'] == u'')):
             return self.form_invalid(form)
         else:
-            #save using our custom saving tool
+            # save using our custom saving tool
             dt = dict(form.data)
             dt.pop('csrfmiddlewaretoken')
             dt.pop('save')  # crispyform
-            for k,v in dt.iteritems(): #unpack list
-                dt[k]=v[0]
+            for k, v in dt.iteritems():  # unpack list
+                dt[k] = v[0]
             self.object = self.model.save_new_from_reference(self.parent, dt)
 
         self.send_message()  # replicate MessageMixin
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ReferenceStudyCreate(BaseCreate):
+class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     """
     Creation of both a reference and study. Easier because there is no
     existing Reference instance in table, so we just create both at once.
@@ -107,9 +107,7 @@ class ReferenceStudyCreate(BaseCreate):
 
     def form_valid(self, form):
         self.object = form.save()
-        search=apps.get_model('lit', 'Search').objects.get(assessment=self.assessment,
-                                                      source=0, #manual import
-                                                      title="Manual import")
+        search = apps.get_model('lit', 'Search').objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
         return super(ReferenceStudyCreate, self).form_valid(form)
 

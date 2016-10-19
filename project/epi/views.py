@@ -1,6 +1,7 @@
 from django.db.models import Q
 
 from assessment.models import Assessment
+from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from study.views import StudyRead
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
@@ -20,7 +21,7 @@ class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
 
 
 # Study population
-class StudyPopulationCreate(BaseCreate):
+class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Study-population created.'
     parent_model = Study
     parent_template_name = 'study'

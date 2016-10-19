@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from assessment.serializers import AssessmentMiniSerializer
 from lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from riskofbias.serializers import RiskOfBiasSerializer
 from utils.api import DynamicFieldsMixin
@@ -25,6 +26,15 @@ class SimpleStudySerializer(StudySerializer):
     class Meta:
         model = models.Study
         exclude = ('searches', 'identifiers', )
+
+
+class StudyAssessmentSerializer(serializers.ModelSerializer):
+    assessment = AssessmentMiniSerializer(read_only=True)
+    url = serializers.CharField(source='get_absolute_url')
+
+    class Meta:
+        model = models.Study
+        fields = ('id', 'url', 'assessment', 'short_citation')
 
 
 class VerboseStudySerializer(StudySerializer):

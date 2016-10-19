@@ -52,3 +52,9 @@ def invalidate_caches_study(sender, instance, **kwargs):
             apps.get_model('epimeta', 'MetaResult'),
             {'protocol__study': instance.id}
         )
+
+
+@receiver(post_save, sender=models.Study)
+def create_study_tasks(sender, instance, **kwargs):
+    apps.get_model('mgmt', 'Task').objects\
+        .create_study_tasks(instance)

@@ -1,6 +1,7 @@
 from django.db.models import Q
 
 from assessment.models import Assessment
+from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseList,
                          BaseDelete, BaseDetail, BaseEndpointFilterList,
@@ -10,7 +11,7 @@ from . import forms, models, exports
 
 
 # MetaProtocol
-class MetaProtocolCreate(BaseCreate):
+class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Meta-protocol created.'
     parent_model = Study
     parent_template_name = 'study'

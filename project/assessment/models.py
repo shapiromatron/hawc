@@ -83,6 +83,11 @@ class Assessment(models.Model):
         help_text="Search or import references from PubMed and other literature "
                   "databases, define inclusion, exclusion, or descriptive tags, "
                   "and apply these tags to retrieved literature for your analysis.")
+    enable_project_management = models.BooleanField(
+        default=True,
+        help_text="Enable project management module for data extraction and "
+                  "risk of bias. If enabled, each study will have multiple "
+                  "tasks which can be assigned and tracked for completion.")
     enable_data_extraction = models.BooleanField(
         default=True,
         help_text="Extract animal bioassay, epidemiological, or in-vitro data from "

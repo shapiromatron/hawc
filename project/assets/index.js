@@ -10,6 +10,7 @@ import epi from 'epi';
 import epimeta from 'epimeta';
 import invitro from 'invitro';
 import lit from 'lit';
+import mgmt from 'mgmt';
 import riskofbias from 'riskofbias';
 import study from 'study';
 import smartTags from 'smartTags';
@@ -34,6 +35,7 @@ window.app = {
     epimeta,
     invitro,
     lit,
+    mgmt,
     riskofbias,
     study,
     smartTags,

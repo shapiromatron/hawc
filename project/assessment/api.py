@@ -23,6 +23,17 @@ class DisabledPagination(PageNumberPagination):
     page_size = None
 
 
+def get_assessment_from_query(request):
+    """Returns assessment or None."""
+    assessment_id = tryParseInt(request.GET.get('assessment_id'))
+    if assessment_id is None:
+        raise RequiresAssessmentID
+
+    return models.Assessment.objects\
+        .get_qs(assessment_id)\
+        .first()
+
+
 class AssessmentLevelPermissions(permissions.BasePermission):
 
     list_actions = ['list', ]
@@ -40,13 +51,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
         if view.action in self.list_actions:
             logging.info('Permission checked')
 
-            assessment_id = tryParseInt(request.GET.get('assessment_id'))
-            if assessment_id is None:
-                raise RequiresAssessmentID
-
-            view.assessment = models.Assessment.objects\
-                .get_qs(assessment_id)\
-                .first()
+            if not hasattr(view, 'assessment'):
+                view.assessment = get_assessment_from_query(request)
 
             if view.assessment is None:
                 return False
@@ -59,12 +65,14 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 class InAssessmentFilter(filters.BaseFilterBackend):
     """
     Filter objects which are in a particular assessment.
-
-    Requires AssessmentLevelPermissions to set assessment
     """
     def filter_queryset(self, request, queryset, view):
-        if view.action != 'list':
+        list_actions = getattr(view, 'list_actions', ['list'])
+        if view.action not in list_actions:
             return queryset
+
+        if not hasattr(view, 'assessment'):
+            view.assessment = get_assessment_from_query(request)
 
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
@@ -83,6 +91,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions, )
     parent_model = models.Assessment
+    filter_backends = (InAssessmentFilter, )
 
     def get_queryset(self):
         return self.model.objects.all()
