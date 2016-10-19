@@ -4,7 +4,10 @@ import _ from 'underscore';
 
 import { fetchTasks, fetchStudies, filterAndSortStudies, submitTasks } from 'mgmt/TaskTable/actions';
 
-import { TASK_TYPES } from 'mgmt/TaskTable/constants';
+import {
+    TASK_TYPES,
+    TASK_TYPE_DESCRIPTIONS,
+} from 'mgmt/TaskTable/constants';
 import CancelButton from 'mgmt/TaskTable/components/CancelButton';
 import EmptyListNotification from 'shared/components/EmptyListNotification';
 import Header from 'mgmt/TaskTable/components/Header';
@@ -76,12 +79,14 @@ class EditApp extends Component {
         const { error } = this.props,
             taskList = this.formatTasks(),
             emptyTaskList = (taskList.length === 0),
-            headings = emptyTaskList ? [] : this.getTaskTypes().map((type) => TASK_TYPES[type]);
+            headings = _.values(TASK_TYPES),
+            descriptions = _.values(TASK_TYPE_DESCRIPTIONS);
+
         return (
                 <div>
                     <ScrollToErrorBox error={error} />
                     <StudyFilter taskOptions={this.getTaskTypes()} selectFilter={this.filterStudies}/>
-                    <Header headings={headings}/>
+                    <Header headings={headings} descriptions={descriptions} />
                     {emptyTaskList ?
                         <EmptyListNotification listItem={'studies'} /> :
                         <List component={TaskStudyEdit} items={taskList} autocompleteUrl={this.props.config.autocomplete.url} ref='list' />}

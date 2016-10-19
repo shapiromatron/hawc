@@ -5,7 +5,10 @@ import _ from 'underscore';
 import { fetchTasks } from 'mgmt/TaskTable/actions';
 import { fetchStudies } from 'mgmt/TaskTable/actions';
 
-import { TASK_TYPES } from 'mgmt/TaskTable/constants';
+import {
+    TASK_TYPES,
+    TASK_TYPE_DESCRIPTIONS,
+} from 'mgmt/TaskTable/constants';
 import Header from 'mgmt/TaskTable/components/Header';
 import List from 'mgmt/TaskTable/components/List';
 import Loading from 'shared/components/Loading';
@@ -36,11 +39,13 @@ class ListApp extends Component {
         if (!this.props.tasks.isLoaded) return <Loading />;
         const { error } = this.props,
             taskList = this._formatTasks(),
-            headings = _.pluck(taskList[0].tasks, 'type').map((type) => TASK_TYPES[type]);
+            headings = _.values(TASK_TYPES),
+            descriptions = _.values(TASK_TYPE_DESCRIPTIONS);
+
         return (
                 <div>
                     <ScrollToErrorBox error={error} />
-                    <Header headings={headings}/>
+                    <Header headings={headings} descriptions={descriptions}/>
                     <List component={TaskStudy} items={taskList} />
                 </div>
         );
