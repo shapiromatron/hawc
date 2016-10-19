@@ -36,7 +36,6 @@ In addition, "signals" are also present in HAWC that are automatically fired in 
     - If the study preparation task is currently "started", the task is marked "complete"
     - If the data extraction task is currently "not started", the task is assigned to the user who added the data, and it is marked "started".
 - When ``Risk of Bias`` is modified...
-    - If the data extraction task is currently "started", the task is marked  "complete"
     - If the risk of bias task is currently "not started", the task is assigned to the user who modified the Risk of Bias, and it is marked "started".
 - When a final ``Risk of Bias`` is completed (which may include conflict resolution)...
     - If the risk of bias task is currently "started", the task is marked "complete"

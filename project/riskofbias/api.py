@@ -45,7 +45,6 @@ class RiskOfBias(viewsets.ModelViewSet):
         super(RiskOfBias, self).perform_update(serializer)
         study = serializer.instance.study
         user = self.request.user
-        Task.objects.ensure_extraction_stopped(study)
         Task.objects.ensure_rob_started(study, user)
         if serializer.instance.final and serializer.instance.is_complete:
             Task.objects.ensure_rob_stopped(study)

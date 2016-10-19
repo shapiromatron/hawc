@@ -105,11 +105,6 @@ class TaskManager(BaseManager):
         task = self.get(study=study, type=self.model.TYPE_EXTRACTION)
         task.start_if_unstarted(user)
 
-    def ensure_extraction_stopped(self, study):
-        """Stop extraction task if started."""
-        task = self.get(study=study, type=self.model.TYPE_EXTRACTION)
-        task.stop_if_started()
-
     def ensure_rob_started(self, study, user):
         """Start RoB task if not started."""
         task = self.get(study=study, type=self.model.TYPE_ROB)
