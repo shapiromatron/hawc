@@ -42,9 +42,9 @@ In addition, "signals" are automatically fired in order to help users keep track
 
 Unfortunately, we cannot track everything with the automated signals. Therefore, the following task-operations do not have any "signals" associated with them, and must always be manually performed by a user:
 
-- Marking the Data extraction task as complete OR abandoned
+- Marking the Data extraction task as "complete" OR "abandoned"
 - Marking the QA/QC task as "started"
-- Marking the QA/QC task as completed OR abandoned"
+- Marking the QA/QC task as "completed" OR "abandoned"
 
 .. note::
     Users can always manually modify task status as needed; the signals are designed to help keep track of the tasks where possible automatically in case a user may forget to do so.
