@@ -28,10 +28,13 @@ class Assignments extends Component {
             return this.renderNoTasks();
         }
 
+        // only show assessment header if assessment is unspecified
+        let showAssessment = (this.props.config.assessment_id === undefined);
+
         return (
             <div>
                 {_.map(groupedTasks, (tasks, key) => {
-                    return <AssessmentTasks key={key} name={key} tasks={tasks} />;
+                    return <AssessmentTasks key={key} name={key} tasks={tasks} showAssessment={showAssessment} />;
                 })}
             </div>
         );
