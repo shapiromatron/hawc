@@ -33,7 +33,7 @@ class SearchForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
-        self.fields['source'].choices = [(1, 'PubMed')] # only current choice
+        self.fields['source'].choices = [(1, 'PubMed')]  # only current choice
         self.fields['description'].widget.attrs['rows'] = 3
         if 'search_string' in self.fields:
             self.fields['search_string'].widget.attrs['rows'] = 5
@@ -50,18 +50,19 @@ class SearchForm(forms.ModelForm):
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing literature search",
+                "help_text": u"Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
                 "legend_text": u"Create new literature search",
-                "help_text":   u"""
+                "help_text": u"""
                     Create a new literature search. Note that upon creation,
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
                     attempting to import into HAWC.""",
-                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+                "cancel_url": reverse_lazy(
+                    'lit:overview', kwargs={"pk": self.instance.assessment.pk})
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -73,7 +74,7 @@ class ImportForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super(ImportForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
-        self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."
+        self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
         self.fields['search_string'].label = "ID List"
         self.instance.search_type = 'i'
 
@@ -83,18 +84,19 @@ class ImportForm(SearchForm):
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing literature search",
+                "help_text": u"Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
                 "legend_text": u"Create new literature import",
-                "help_text":   u"""
+                "help_text": u"""
                     Import a list of literature from an external database by
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
                     search based on a query.""",
-                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+                "cancel_url": reverse_lazy(
+                    'lit:overview', kwargs={"pk": self.instance.assessment.pk})
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -142,18 +144,19 @@ class RISForm(SearchForm):
         if self.instance.id:
             inputs = {
                 "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing literature search",
+                "help_text": u"Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
                 "legend_text": u"Create new literature import",
-                "help_text":   u"""
+                "help_text": u"""
                     Import a list of literature from an RIS export; this is a
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
                 """,
-                "cancel_url": reverse_lazy('lit:overview', kwargs={"pk": self.instance.assessment.pk})
+                "cancel_url": reverse_lazy(
+                    'lit:overview', kwargs={"pk": self.instance.assessment.pk})
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -165,7 +168,7 @@ class RISForm(SearchForm):
 
     def clean_import_file(self):
         fileObj = self.cleaned_data['import_file']
-        if fileObj.size > 1024*1024*10:
+        if fileObj.size > 1024 * 1024 * 10:
             raise forms.ValidationError(
                 'Input file must be <10 MB')
         if fileObj.name[-4:] not in (".txt", ".ris", ):
@@ -241,8 +244,7 @@ class ReferenceForm(forms.ModelForm):
 
         inputs = {
             "legend_text": "Update reference details",
-            "help_text":   """Update reference information which was fetched
-                              from database or reference upload.""",
+            "help_text": "Update reference information which was fetched from database or reference upload.",  # noqa
             "cancel_url": self.instance.get_absolute_url()
         }
 
@@ -341,8 +343,7 @@ class ReferenceExcelUploadForm(forms.Form):
     def setHelper(self):
         inputs = {
             "legend_text": "Upload full-text URLs",
-            "help_text":   "Using an Excel file, upload full-text URLs "
-                           "for multiple references",
+            "help_text": "Using an Excel file, upload full-text URLs for multiple references",
             "cancel_url": reverse_lazy("lit:overview", args=[self.assessment.id])
         }
         helper = BaseFormHelper(self, **inputs)
