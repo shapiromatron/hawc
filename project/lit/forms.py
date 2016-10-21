@@ -171,7 +171,7 @@ class RISForm(SearchForm):
         if fileObj.name[-4:] not in (".txt", ".ris", ):
             raise forms.ValidationError(
                 'File must have an ".ris" or ".txt" file-extension')
-        if not RisImporter.file_readable(fileObj):
+        if not ris.RisImporter.file_readable(fileObj):
             raise forms.ValidationError(
                 'File cannot be successfully loaded. Are you sure this is a '
                 'valid RIS file? If you are, please contact us and we will '
