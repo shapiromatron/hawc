@@ -21,14 +21,15 @@ class BMROptionModal extends React.Component {
         this.props.handleSave(bmr);
     }
 
-    handleFieldChange(e){
-        let d;
-        if (e.target.name === 'type'){
-            d = deepCopy(this.props.allOptions[e.target.value]);
-        } else {
-            d = {};
-            d[e.target.name] = e.target.value;
-        }
+
+    handleTypeChange(e){
+        let d = deepCopy(this.props.allOptions[e.target.value]);
+        this.setState(d);
+    }
+
+    handleFloatChange(e){
+        let d = {};
+        d[e.target.name] = parseFloat(e.target.value) || 0.;
         this.setState(d);
     }
 
@@ -69,7 +70,7 @@ class BMROptionModal extends React.Component {
                             id="bmr_type"
                             name="type"
                             value={state.type}
-                            onChange={this.handleFieldChange.bind(this)}>
+                            onChange={this.handleTypeChange.bind(this)}>
                             {opts.map((d, i)=>{
                                 return <option key={i} value={d.type}>{d.type}</option>;
                             })}
@@ -87,7 +88,7 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.value}
-                            onChange={this.handleFieldChange.bind(this)}></input>
+                            onChange={this.handleFloatChange.bind(this)}></input>
                     </div>
                 </div>
 
@@ -101,7 +102,7 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.confidence_level}
-                            onChange={this.handleFieldChange.bind(this)}></input>
+                            onChange={this.handleFloatChange.bind(this)}></input>
                     </div>
                 </div>
             </form>
