@@ -33,7 +33,7 @@ class OutputModal extends React.Component {
         }
 
         return (
-            <div className="modal hide fade" tabindex="-1" id={types.OUTPUT_MODAL_ID} role="dialog">
+            <div className="modal hide fade" tabIndex="-1" id={types.OUTPUT_MODAL_ID} role="dialog">
 
                 <div className="modal-header">
                     <button className="close" type="button" data-dismiss="modal">×</button>
