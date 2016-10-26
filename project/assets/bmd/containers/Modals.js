@@ -54,7 +54,7 @@ class Modals extends React.Component {
                     handleSave={this.handleBmrUpdate.bind(this)}
                     handleDelete={this.handleBmrDelete.bind(this)} />
                 <OutputModal
-                    model={this.props.selectedOutput} />
+                    models={this.props.selectedOutputs} />
             </div>
         );
     }
@@ -66,7 +66,7 @@ function mapStateToProps(state) {
         selectedModelOption: state.bmd.selectedModelOption,
         selectedBmr: state.bmd.selectedBmr,
         allBmrOptions: state.bmd.allBmrOptions,
-        selectedOutput: state.bmd.selectedOutput,
+        selectedOutputs: state.bmd.selectedOutputs,
     };
 }
 

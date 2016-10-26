@@ -52,10 +52,10 @@ var showModal = function(name){
             modelIndex,
         };
     },
-    selectOutput = function(model){
+    selectOutput = function(models){
         return {
             type: types.SELECT_OUTPUT,
-            model,
+            models,
         };
     },
     setHoverModel = function(model){
@@ -86,11 +86,11 @@ var showModal = function(name){
                 .then(() => showModal(types.BMR_MODAL_ID));
         };
     },
-    showOutputModal = function(model){
+    showOutputModal = function(models){
         return (dispatch, getState) => {
             // create a new noop Promise to chain events
             return new Promise((res, rej)=>{res();})
-                .then(() => dispatch(selectOutput(model)))
+                .then(() => dispatch(selectOutput(models)))
                 .then(() => showModal(types.OUTPUT_MODAL_ID));
         };
     },

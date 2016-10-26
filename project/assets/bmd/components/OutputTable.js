@@ -43,9 +43,8 @@ let getColWidths = function(numBmrs){
 
 class OutputTable extends React.Component {
 
-    handleRowClick(id){
-        let model = _.findWhere(this.props.models, {id});
-        this.props.handleModal(model);
+    handleRowClick(models){
+        this.props.handleModal(models);
     }
 
     handleMouseOver(model, evt){
@@ -93,7 +92,7 @@ class OutputTable extends React.Component {
                     <button
                         type="button"
                         className='btn btn-link'
-                        onClick={this.handleRowClick.bind(this, first.id)}>View</button>
+                        onClick={this.handleRowClick.bind(this, models)}>View</button>
                 </td>
             </tr>
         );

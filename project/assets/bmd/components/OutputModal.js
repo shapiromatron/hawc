@@ -10,11 +10,10 @@ class OutputModal extends React.Component {
         $(this.refs.modalBody).animate({scrollTop: 0}, 'fast');
     }
 
-    renderBody(){
-        var { model } = this.props;
+    renderBody(model, i){
 
         if (model.execution_error){
-            return <div className='alert alert-danger'>
+            return <div key={i} className='alert alert-danger'>
                 <p>
                 An error occurred during BMDS execution, please report
                 to HAWC administrators if the error continues to occur.
@@ -22,13 +21,13 @@ class OutputModal extends React.Component {
             </div>;
         }
 
-        return <pre>{model.outfile}</pre>;
+        return <pre key={i}>{model.outfile}</pre>;
     }
 
     render() {
-        var { model } = this.props;
+        let { models } = this.props;
 
-        if (!model){
+        if (models.length === 0){
             return null;
         }
 
@@ -37,11 +36,11 @@ class OutputModal extends React.Component {
 
                 <div className="modal-header">
                     <button className="close" type="button" data-dismiss="modal">×</button>
-                    <h3>{model.name} model output</h3>
+                    <h3>{models[0].name} model output</h3>
                 </div>
 
                 <div className="modal-body" ref='modalBody'>
-                    {this.renderBody()}
+                    {models.map(this.renderBody)}
                 </div>
 
                 <div className="modal-footer">
@@ -56,7 +55,7 @@ class OutputModal extends React.Component {
 }
 
 OutputModal.propTypes = {
-    model: React.PropTypes.object,
+    models: React.PropTypes.arrayOf(React.PropTypes.object),
 };
 
 export default OutputModal;

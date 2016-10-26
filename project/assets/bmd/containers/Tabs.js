@@ -105,8 +105,8 @@ class Tabs extends React.Component {
         this.props.dispatch(saveSelectedModel(model_id, notes));
     }
 
-    handleOutputModal(model){
-        this.props.dispatch(showOutputModal(model));
+    handleOutputModal(models){
+        this.props.dispatch(showOutputModal(models));
     }
 
     handleModelHover(model){
