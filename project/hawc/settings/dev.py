@@ -26,7 +26,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'hawc_cache_table',
-        'TIMEOUT': 60*60*24  # seconds
+        'TIMEOUT': 60 * 60 * 24  # seconds
     }
 }
 

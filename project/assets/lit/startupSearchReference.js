@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import $ from '$';
 
 import Reference from './Reference';
@@ -21,12 +20,17 @@ let startupSearchReference = function(assessment_id, tags, canEdit){
                 refviewer.set_error();
             }
         },
+        renderSearchRow = function(txt, label){
+            return (txt)? `<p><b>${label}:</b>&nbsp;${txt}</p>`: '';
+        },
         print_search_fields = function(){
             $('#search_context').html(`<div>
-                <p><b>Title: </b>${$('#id_title').val()}</p>
-                <p><b>Authors: </b>${$('#id_authors').val()}</p>
-                <p><b>Journal/Year: </b>${$('#id_journal').val()}</p>
-                <p><b>Database ID: </b>${$('#id_db_id').val()}</p>
+                ${renderSearchRow($('#id_id').val(), 'HAWC ID')}
+                ${renderSearchRow($('#id_title').val(), 'Title')}
+                ${renderSearchRow($('#id_authors').val(), 'Authors')}
+                ${renderSearchRow($('#id_journal').val(), 'Journal/year')}
+                ${renderSearchRow($('#id_db_id').val(), 'Database ID')}
+                ${renderSearchRow($('#id_abstract').val(), 'Abstract')}
             </div>`);
         };
 
