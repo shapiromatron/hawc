@@ -306,12 +306,14 @@ class RoBHeatmapPlot extends D3Visualization {
             midX = d3.mean(this.x_scale.range()),
             midY = d3.mean(this.y_scale.range());
 
-        svg.append('svg:text')
-            .attr('x', visMidX)
-            .attr('y', 25)
-            .text(this.title_str)
-            .attr('text-anchor', 'middle')
-            .attr('class','dr_title');
+        if($(this.svg).find('.figureTitle').length === 0){
+            svg.append('svg:text')
+                .attr('x', visMidX)
+                .attr('y', 25)
+                .text(this.title_str)
+                .attr('text-anchor', 'middle')
+                .attr('class','dr_title figureTitle');
+        }
 
         var xLoc = this.padding.left + midX+20,
             yLoc = visMidY*2-5;
