@@ -303,7 +303,10 @@ class Search(models.Model):
 
     @property
     def fraction_tagged(self):
-        return 1. - (len(self.references_untagged)) / float(self.references_count)
+        refs = self.references_count
+        if refs > 0:
+            return 1. - (len(self.references_untagged)) / float(refs)
+        return None
 
     @property
     def references_untagged(self):
