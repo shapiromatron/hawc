@@ -118,8 +118,8 @@ class Reference extends Observee {
                     return '<p class="ref_title">{0}</p>'.printf(data.title);
             },
             get_journal = function(){
-                if(data.journal)
-                    return '<p class="ref_small">{0}</p>'.printf(data.journal);
+                let journal = (data.journal)? `${data.journal}<br/>`: '';
+                return `<p class="ref_small">${journal}HAWC ID: ${data.pk}</p>`;
             },
             get_abstract = function(){
                 if(data.abstract)
