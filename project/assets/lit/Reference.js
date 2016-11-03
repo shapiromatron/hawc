@@ -103,7 +103,6 @@ class Reference extends Observee {
                 links.append('<span>&nbsp;</span>');
             });
 
-
         return (links.children().length>0) ? links : null;
     }
 
@@ -124,7 +123,7 @@ class Reference extends Observee {
             },
             get_abstract = function(){
                 if(data.abstract)
-                    return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
+                    return '<p class="abstracts" style="display: none">{0}</p>'.printf(data.abstract);
             },
             get_authors_row = function(){
                 var p = $('<p class="ref_small">{0} {1}</p>'.printf(
@@ -175,10 +174,10 @@ class Reference extends Observee {
                 .on('click', function(){
                     var sel = $(this);
                     if(sel.text() === 'Show abstract'){
-                        div.find('.abstracts').collapse('show');
+                        div.find('.abstracts').show();
                         sel.text('Hide abstract');
                     } else {
-                        div.find('.abstracts').collapse('hide');
+                        div.find('.abstracts').hide();
                         sel.text('Show abstract');
                     }
                 });
