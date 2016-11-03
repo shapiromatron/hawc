@@ -77,9 +77,12 @@ class ImportForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super(ImportForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
-        self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
-        self.fields['search_string'].label = "ID List"
         self.instance.search_type = 'i'
+        if self.instance.id is None:
+            self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
+            self.fields['search_string'].label = "ID List"
+        else:
+            self.fields.pop('search_string')
 
         self.helper = self.setHelper()
 
@@ -136,10 +139,13 @@ class RISForm(SearchForm):
         super(RISForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(3, 'RIS (EndNote/Reference Manager)')]
         self.instance.search_type = 'i'
-        self.fields['import_file'].required = True
-        self.fields['import_file'].help_text = """Unicode RIS export file
-            ({0} for EndNote library preparation)""".format(
-            addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
+        if self.instance.id is None:
+            self.fields['import_file'].required = True
+            self.fields['import_file'].help_text = """Unicode RIS export file
+                ({0} for EndNote library preparation)""".format(
+                addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
+        else:
+            self.fields.pop('import_file')
 
         self.helper = self.setHelper()
 
@@ -191,7 +197,7 @@ class RISForm(SearchForm):
         instance method, so that upon import we don't need to re-read file.
         """
         cleaned_data = super(RISForm, self).clean()
-        if not self._errors:
+        if 'import_file' in cleaned_data and not self._errors:
             # create a copy for RisImporter to open/close
             f = StringIO(cleaned_data['import_file'].read())
             importer = ris.RisImporter(f)

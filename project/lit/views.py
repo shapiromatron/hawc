@@ -16,7 +16,7 @@ from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
 from utils.helper import listToUl, tryParseInt
 from assessment.models import Assessment
 
-from . import forms, exports, models
+from . import constants, forms, exports, models
 
 
 class LitOverview(BaseList):
@@ -189,17 +189,23 @@ class SearchDetail(BaseDetail):
 class SearchUpdate(BaseUpdate):
     success_message = 'Search updated.'
     model = models.Search
-    form_class = forms.SearchForm
+
+    def get_form_class(self):
+        if self.object.search_type == 's':
+            return forms.SearchForm
+        elif self.object.search_type == 'i':
+            if self.object.source == constants.RIS:
+                return forms.RISForm
+            else:
+                return forms.ImportForm
+        else:
+            raise ValueError('Unknown search type')
 
     def get_object(self):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         assessment = self.kwargs.get('pk', None)
         obj = get_object_or_404(models.Search, assessment=assessment, slug=slug)
         return super(SearchUpdate, self).get_object(object=obj)
-
-    def post_object_save(self, form):
-        if self.object.source == 2:
-            self.object.run_new_query()  # re-import from HERO only
 
     def get_context_data(self, **kwargs):
         context = super(SearchUpdate, self).get_context_data(**kwargs)
