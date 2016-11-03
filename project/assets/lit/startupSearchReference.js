@@ -30,18 +30,18 @@ let startupSearchReference = function(assessment_id, tags, canEdit){
             </div>`);
         };
 
-    $('#reference_search_form').submit(function(event){
+    $('#searchFormHolder > form').submit(function(event){
         event.preventDefault();
         print_search_fields();
         let data = $(this).serialize();
         $.post('.', data).done(handleResults);
-        $('#results_div').fadeIn();
-        $('#search_div').fadeOut();
+        $('#resultsHolder').fadeIn();
+        $('#searchFormHolder').fadeOut();
     });
 
     $('#search_again').click(function(){
-        $('#results_div').fadeOut();
-        $('#search_div').fadeIn();
+        $('#resultsHolder').fadeOut();
+        $('#searchFormHolder').fadeIn();
     });
 };
 

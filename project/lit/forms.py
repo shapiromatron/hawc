@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+from crispy_forms import layout as cfl
 from django.core.urlresolvers import reverse_lazy
 from django import forms
 
@@ -280,6 +281,16 @@ class ReferenceSearchForm(forms.Form):
         super(ReferenceSearchForm, self).__init__(*args, **kwargs)
         if assessment_pk:
             self.assessment = Assessment.objects.get(pk=assessment_pk)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = dict(
+            form_actions=[
+                cfl.Submit('search', 'Search')
+            ],
+        )
+        helper = BaseFormHelper(self, **inputs)
+        return helper
 
     def search(self):
         """

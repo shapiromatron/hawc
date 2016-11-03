@@ -1,49 +1,31 @@
 {% extends 'portal.html' %}
 
 {% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | Literature Review | Reference Search | HAWC
+  {{assessment}} | Literature Review | Find a reference | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li class="active">Search<span class="divider">/</span></li>
+    <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+    <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+    <li class="active">Find a reference<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
 
-  <div id="search_div">
-    <form id="reference_search_form"class="form-horizontal" action="." method="post">
-      <fieldset>
-        <legend>Search for existing references in HAWC</legend>
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
-        {% for field in form %}
-          <div class="control-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {{field|add_class:"input-xlarge"}}<br>
-              <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-error"}}
-          </div>
-        {% endfor %}
-        <div class="form-actions">
-          <button id='submit_search' type="submit" class="btn btn-primary">Search</button>
-        </div>
-        {% csrf_token %}
-      </fieldset>
-    </form>
-  </div>
+<div id="searchFormHolder">
+    {% crispy form %}
+</div>
 
-  <div id="results_div" class="row-fluid" style="display:none">
+<div id="resultsHolder" class="row-fluid" style="display:none">
     <div id="search_context"></div>
     <div id="references_detail_div"></div>
     <div class="well well-small">
-      <button id='search_again' class="btn btn-primary">Search again</button>
+        <button id='search_again' class="btn btn-primary">Search again</button>
     </div>
-  </div>
+</div>
 
 {% endblock %}
 
@@ -51,9 +33,9 @@
 <script type="text/javascript">
 $(document).ready(function(){
     window.app.lit.startupSearchReference(
-        {{assessment.pk}},
-        {{tags|safe}},
-        {{obj_perms.edit|lower}}
+        {{ assessment.pk }},
+        {{ tags|safe }},
+        {{ obj_perms.edit|lower }}
     );
 });
   </script>
