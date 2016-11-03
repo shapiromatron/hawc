@@ -302,6 +302,10 @@ class Search(models.Model):
                     .filter(tag_count__gt=0).count()
 
     @property
+    def fraction_tagged(self):
+        return 1. - (len(self.references_untagged)) / float(self.references_count)
+
+    @property
     def references_untagged(self):
         return self.references.all()\
                    .annotate(tag_count=models.Count('tags'))\

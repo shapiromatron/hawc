@@ -1,17 +1,19 @@
+{% load percentage %}
+
 {% if object_list %}
   <table class="table table-condensed table-striped">
     <colgroup>
       <col style="width: 50%;">
+      <col style="width: 16%;">
       <col style="width: 10%;">
-      <col style="width: 10%;">
-      <col style="width: 15%;">
-      <col style="width: 15%;">
+      <col style="width: 12%;">
+      <col style="width: 12%;">
     </colgroup>
     <thead>
       <tr>
-        <th>Title and Description</th>
+        <th>Title and description</th>
         <th>Source</th>
-        <th>Type</th>
+        <th>References</th>
         <th>Created</th>
         <th>Last Updated</th>
       </tr>
@@ -21,10 +23,11 @@
         <tr>
           <td>
             <a href="{{object.get_absolute_url}}">{{object.title}}</a><br>
-            {{object.description}}
+            <span class='help-block'>{{object.description}}</span>
           </td>
-          <td>{{object.get_search_type_display}}</td>
-          <td>{{object.get_source_display}}</td>
+          <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
+          <td>{{object.references.count}}<br/>
+          <span class='help-block'>{{object.fraction_tagged|percentage}} tagged</span></td>
           <td>{{object.created}}</td>
           <td>{{object.date_last_run}}</td>
         </tr>
