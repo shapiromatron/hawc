@@ -48,50 +48,13 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
-      window.canEdit = {{obj_perms.edit|lower}};
-
-      $('#reference_search_form').submit(function(event){
-        options = {fixed_title: "Search Results"}
-        window.refviewer = new window.app.lit.ReferencesViewer($('#references_detail_div'), options);
-        var form = $(this);
-        print_search_fields();
-        $('#results_div').fadeIn();
-        $('#search_div').fadeOut();
-
-        $.ajax({method: "POST",
-                data: form.serialize()})
-          .done(function(results){
-            if(results.status=="success"){
-              window.refviewer.set_references(
-                _.map(results.refs, function(d){
-                  return new window.app.lit.Reference(d, window.tagtree);
-                }));
-            } else {
-                window.refviewer.set_error();
-            };
-          });
-          event.preventDefault();
-      });
-
-      $('#search_again').click(function(){
-        $('#results_div').fadeOut();
-        $('#search_div').fadeIn();
-      });
-
-      var print_search_fields = function(){
-        var fields = [
-          '<p><b>Title: </b>{0}</p>'.printf($('#id_title').val()),
-          '<p><b>Authors: </b>{0}</p>'.printf($('#id_authors').val()),
-          '<p><b>Journal/Year: </b>{0}</p>'.printf($('#id_journal').val()),
-          '<p><b>Database ID: </b>{0}</p>'.printf($('#id_db_id').val())
-        ];
-        $('#search_context').html(fields);
-      };
-
-    });
+<script type="text/javascript">
+$(document).ready(function(){
+    window.app.lit.startupSearchReference(
+        {{assessment.pk}},
+        {{tags|safe}},
+        {{obj_perms.edit|lower}}
+    );
+});
   </script>
 {% endblock extrajs %}
