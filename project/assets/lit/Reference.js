@@ -146,9 +146,12 @@ class Reference extends Observee {
             },
             get_searches = function(){
                 if(data.searches){
-                    var title = '<p><strong>HAWC searches/imports:</strong></p>',
-                        ul = $('<ul>').html(_.map(data.searches, function(d){return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.title);}));
-                    return $('<div>').append(title, ul);
+                    let links = data.searches
+                        .map((d) => `<a href="${d.url}">${d.title}</a>`)
+                        .join('<span>,&nbsp;</span>'),
+                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
+
+                    return $('<div>').append(text);
                 }
             },
             populate_div = function(){
