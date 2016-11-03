@@ -18,12 +18,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CELERY_ALWAYS_EAGER = True
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
+DEBUG_TOOLBAR_CONFIG = dict(
+    JQUERY_URL='/static/debug/jquery/1.9.1/jquery.js',
+)
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'hawc_cache_table',
-        'TIMEOUT': 60*60*24  # seconds
+        'TIMEOUT': 60 * 60 * 24  # seconds
     }
 }
 

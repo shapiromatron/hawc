@@ -21,11 +21,9 @@
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
           {% if obj_perms.edit %}
-            {% if object.search_type == 's' %}
-              <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update search</a></li>
-              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete search</a></li>
-            {% elif not object.is_manual_import  %}
-              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete import</a></li>
+            {% if not object.is_manual_import %}
+              <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a></li>
+              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a></li>
             {% endif %}
           {% endif %}
 
@@ -44,11 +42,13 @@
       {% if object.description %}
         <tr><th>Description</th><td>{{object.description}}</td></tr>
       {% endif %}
-      <tr><th>Search Type</th><td>{{object.get_search_type_display}}</td></tr>
-      <tr><th>Search Database</th><td>{{object.get_source_display}}</td></tr>
-      <tr><th>Search Text</th><td>{{object.search_string|safe}}</td></tr>
+      <tr><th>Search type</th><td>{{object.get_search_type_display}}</td></tr>
+      <tr><th>Search database</th><td>{{object.get_source_display}}</td></tr>
+      {% if object.search_string %}
+      <tr><th>{{object.get_search_type_display}} text</th><td>{{object.search_string|safe}}</td></tr>
+      {% endif %}
       <tr><th>Created</th><td>{{object.created}}</td></tr>
-      <tr><th>Last Updated</th><td>{{object.last_updated}}</td></tr>
+      <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>
     </tbody>
   </table>
 

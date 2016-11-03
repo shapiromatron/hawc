@@ -103,7 +103,6 @@ class Reference extends Observee {
                 links.append('<span>&nbsp;</span>');
             });
 
-
         return (links.children().length>0) ? links : null;
     }
 
@@ -119,12 +118,12 @@ class Reference extends Observee {
                     return '<p class="ref_title">{0}</p>'.printf(data.title);
             },
             get_journal = function(){
-                if(data.journal)
-                    return '<p class="ref_small">{0}</p>'.printf(data.journal);
+                let journal = (data.journal)? `${data.journal}<br/>`: '';
+                return `<p class="ref_small">${journal}HAWC ID: ${data.pk}</p>`;
             },
             get_abstract = function(){
                 if(data.abstract)
-                    return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
+                    return '<p class="abstracts" style="display: none">{0}</p>'.printf(data.abstract);
             },
             get_authors_row = function(){
                 var p = $('<p class="ref_small">{0} {1}</p>'.printf(
@@ -147,9 +146,12 @@ class Reference extends Observee {
             },
             get_searches = function(){
                 if(data.searches){
-                    var title = '<p><strong>HAWC searches/imports:</strong></p>',
-                        ul = $('<ul>').html(_.map(data.searches, function(d){return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.title);}));
-                    return $('<div>').append(title, ul);
+                    let links = data.searches
+                        .map((d) => `<a href="${d.url}">${d.title}</a>`)
+                        .join('<span>,&nbsp;</span>'),
+                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
+
+                    return $('<div>').append(text);
                 }
             },
             populate_div = function(){
@@ -175,10 +177,10 @@ class Reference extends Observee {
                 .on('click', function(){
                     var sel = $(this);
                     if(sel.text() === 'Show abstract'){
-                        div.find('.abstracts').collapse('show');
+                        div.find('.abstracts').show();
                         sel.text('Hide abstract');
                     } else {
-                        div.find('.abstracts').collapse('hide');
+                        div.find('.abstracts').hide();
                         sel.text('Show abstract');
                     }
                 });

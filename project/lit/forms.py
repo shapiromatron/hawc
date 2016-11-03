@@ -3,7 +3,10 @@ import logging
 import numpy as np
 import pandas as pd
 
+from crispy_forms import layout as cfl
 from django.core.urlresolvers import reverse_lazy
+
+from django.db.models import Q
 from django import forms
 
 from assessment.models import Assessment
@@ -74,9 +77,12 @@ class ImportForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super(ImportForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
-        self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
-        self.fields['search_string'].label = "ID List"
         self.instance.search_type = 'i'
+        if self.instance.id is None:
+            self.fields['search_string'].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
+            self.fields['search_string'].label = "ID List"
+        else:
+            self.fields.pop('search_string')
 
         self.helper = self.setHelper()
 
@@ -133,10 +139,13 @@ class RISForm(SearchForm):
         super(RISForm, self).__init__(*args, **kwargs)
         self.fields['source'].choices = [(3, 'RIS (EndNote/Reference Manager)')]
         self.instance.search_type = 'i'
-        self.fields['import_file'].required = True
-        self.fields['import_file'].help_text = """Unicode RIS export file
-            ({0} for EndNote library preparation)""".format(
-            addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
+        if self.instance.id is None:
+            self.fields['import_file'].required = True
+            self.fields['import_file'].help_text = """Unicode RIS export file
+                ({0} for EndNote library preparation)""".format(
+                addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
+        else:
+            self.fields.pop('import_file')
 
         self.helper = self.setHelper()
 
@@ -188,7 +197,7 @@ class RISForm(SearchForm):
         instance method, so that upon import we don't need to re-read file.
         """
         cleaned_data = super(RISForm, self).clean()
-        if not self._errors:
+        if 'import_file' in cleaned_data and not self._errors:
             # create a copy for RisImporter to open/close
             f = StringIO(cleaned_data['import_file'].read())
             importer = ris.RisImporter(f)
@@ -263,16 +272,22 @@ class ReferenceFilterTagForm(forms.ModelForm):
 
 
 class ReferenceSearchForm(forms.Form):
+    id = forms.IntegerField(
+        label='HAWC ID',
+        required=False)
     title = forms.CharField(
         required=False)
     authors = forms.CharField(
         required=False)
     journal = forms.CharField(
-        required=False,
-        help_text="Use shorthand name for journals.")
+        label='Journal/year',
+        required=False)
     db_id = forms.IntegerField(
-        label='Database ID',
-        help_text="Enter a PubMed or HERO database ID, for example 8675309",
+        label='Database unique identifier',
+        help_text='Identifiers may include Pubmed ID, DOI, etc.',
+        required=False)
+    abstract = forms.CharField(
+        label='Abstract',
         required=False)
 
     def __init__(self, *args, **kwargs):
@@ -280,24 +295,38 @@ class ReferenceSearchForm(forms.Form):
         super(ReferenceSearchForm, self).__init__(*args, **kwargs)
         if assessment_pk:
             self.assessment = Assessment.objects.get(pk=assessment_pk)
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = dict(
+            form_actions=[
+                cfl.Submit('search', 'Search')
+            ],
+        )
+        helper = BaseFormHelper(self, **inputs)
+        return helper
 
     def search(self):
         """
         Returns a queryset of reference-search results.
         """
-        query = {"assessment": self.assessment}
+        query = Q(assessment=self.assessment)
+        if self.cleaned_data['id']:
+            query &= Q(id=self.cleaned_data['id'])
         if self.cleaned_data['title']:
-            query['title__icontains'] = self.cleaned_data['title']
+            query &= Q(title__icontains=self.cleaned_data['title'])
         if self.cleaned_data['authors']:
-            query['authors__icontains'] = self.cleaned_data['authors']
+            query &= Q(authors__icontains=self.cleaned_data['authors'])
         if self.cleaned_data['journal']:
-            query['journal__icontains'] = self.cleaned_data['journal']
+            query &= Q(journal__icontains=self.cleaned_data['journal'])
         if self.cleaned_data['db_id']:
-            query['identifiers__unique_id'] = self.cleaned_data['db_id']
+            query &= Q(identifiers__unique_id=self.cleaned_data['db_id'])
+        if self.cleaned_data['abstract']:
+            query &= Q(abstract__icontains=self.cleaned_data['abstract'])
 
         refs = [
             r.get_json(json_encode=False, searches=True)
-            for r in models.Reference.objects.filter(**query)
+            for r in models.Reference.objects.filter(query)
         ]
 
         return refs
