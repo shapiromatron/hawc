@@ -75,7 +75,7 @@ TaskForm.propTypes = {
             assessment: PropTypes.number.isRequired,
         }).isRequired,
     }).isRequired,
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
     autocompleteUrl: PropTypes.string.isRequired,
 };
 

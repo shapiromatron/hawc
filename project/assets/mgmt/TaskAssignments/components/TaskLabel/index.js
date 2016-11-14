@@ -10,7 +10,7 @@ class TaskLabel extends Component {
     render() {
         const { id, due_date, status, status_display, type } = this.props.task;
         return (
-            <div className={this.props.className}>
+            <div>
                 <b>Task:</b><span id={`type-${id}-task`}> {TASK_TYPES[type]}</span><br/>
                 <b>Status:</b><span id={`type-${id}-status`}><StatusIcon status={status}/>{h.caseToWords(status_display)}</span><br/>
                 <DueDateLabel status={status} due_date={due_date} />

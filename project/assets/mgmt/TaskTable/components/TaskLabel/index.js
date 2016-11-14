@@ -15,9 +15,9 @@ class TaskLabel extends Component {
     }
 
     render() {
-        const { task, className } = this.props;
+        const { task } = this.props;
         return (
-            <div className={`taskLabel ${className}`}>
+            <div className='taskLabel'>
                 <div><b>Status: </b><StatusIcon status={task.status} /> {task.status_display}</div>
                 {this.renderOwner(task)}
                 <DueDateLabel status={task.status} due_date={task.due_date} />
@@ -27,7 +27,6 @@ class TaskLabel extends Component {
 }
 
 TaskLabel.propTypes = {
-    className: PropTypes.string.isRequired,
     task: PropTypes.shape({
         owner: PropTypes.object,
         status: PropTypes.number.isRequired,
