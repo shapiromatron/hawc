@@ -23,8 +23,13 @@
     {
         "csrf": "{{ csrf_token }}",
         "host": "//{{ request.get_host }}",
+        "user": "{{user.id}}",
         "tasks": {
+            "submit_url": "{% url 'mgmt:api:task-list' %}",
             "url": "{% url 'mgmt:api:task-assignments' %}"
+        },
+        "autocomplete": {
+            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
         }
     }
 </script>

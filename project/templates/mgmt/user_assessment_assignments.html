@@ -26,8 +26,13 @@
         "assessment_id": "{{ assessment.id }}",
         "csrf": "{{ csrf_token }}",
         "host": "//{{ request.get_host }}",
+        "user": "{{user.id}}",
         "tasks": {
+            "submit_url": "{% url 'mgmt:api:task-list' %}",
             "url": "{% url 'mgmt:api:task-assessment-assignments' assessment.id %}"
+        },
+        "autocomplete": {
+            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
         }
     }
 </script>
