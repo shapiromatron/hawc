@@ -13,7 +13,10 @@ class Assignments extends Component {
     }
 
     formatTasks() {
-        return _.groupBy(this.props.tasks.list, (task) => { return task.study.assessment.name; });
+        return _.chain(this.props.tasks.list)
+                .filter((task) => task.owner.id == this.props.config.user)
+                .groupBy((task) => { return task.study.assessment.name; })
+                .value();
     }
 
     renderNoTasks() {
