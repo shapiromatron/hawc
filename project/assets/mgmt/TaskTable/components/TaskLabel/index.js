@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import DueDateLabel from 'mgmt/TaskTable/components/DueDateLabel';
-import StatusIcon from 'mgmt/TaskTable/components/StatusIcon';
+import StatusLabel from 'mgmt/TaskTable/components/StatusLabel';
 import './TaskLabel.css';
 
 
@@ -18,7 +18,7 @@ class TaskLabel extends Component {
         const { task } = this.props;
         return (
             <div className='taskLabel'>
-                <div><b>Status: </b><StatusIcon status={task.status} /> {task.status_display}</div>
+                <StatusLabel task={task} />
                 {this.renderOwner(task)}
                 <DueDateLabel status={task.status} due_date={task.due_date} />
             </div>
