@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { submitTaskEdit } from 'mgmt/TaskTable/actions';
 import TaskForm from 'mgmt/TaskTable/components/TaskForm';
+import './TaskToggle.css';
 
 class TaskToggle extends Component {
 
@@ -12,12 +13,19 @@ class TaskToggle extends Component {
             showForm: false,
         };
         this.handleFormDisplay = this.handleFormDisplay.bind(this);
+        this.handleLabelDisplay = this.handleLabelDisplay.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleFormDisplay() {
         this.setState({
             showForm: true,
+        });
+    }
+
+    handleLabelDisplay() {
+        this.setState({
+            showForm: false,
         });
     }
 
@@ -30,7 +38,8 @@ class TaskToggle extends Component {
 
     renderTaskForm() {
         return (
-            <div className={this.props.className}>
+            <div className={`${this.props.className} relative-parent`}>
+                <i  onClick={this.handleLabelDisplay} className="fa fa-times edit-icon" aria-hidden="true"></i>
                 <TaskForm ref={(c) => this.form = c} {...this.props} />
                 <button className='btn btn-primary' onClick={this.handleSubmit}>Submit</button>
             </div>
@@ -39,8 +48,8 @@ class TaskToggle extends Component {
 
     renderTaskLabel() {
         return (
-            <div className={this.props.className}>
-                <i  onClick={this.handleFormDisplay} className="fa fa-pencil-square-o pull-right" aria-hidden="true"></i>
+            <div className={`${this.props.className} relative-parent`}>
+                <i  onClick={this.handleFormDisplay} className="fa fa-pencil-square-o edit-icon" aria-hidden="true"></i>
                 <this.props.TaskLabel
                     task={this.props.task} />
             </div>
