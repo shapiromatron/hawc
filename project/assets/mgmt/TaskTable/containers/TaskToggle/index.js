@@ -39,7 +39,11 @@ class TaskToggle extends Component {
     renderTaskForm() {
         return (
             <div className={`${this.props.className} relative-parent`}>
-                <i  onClick={this.handleLabelDisplay} className="fa fa-times edit-icon" aria-hidden="true"></i>
+                <i onClick={this.handleLabelDisplay}
+                   style={{cursor: 'pointer'}}
+                   title="Cancel edits"
+                   className="fa fa-times edit-icon"
+                   aria-hidden="true"></i>
                 <TaskForm ref={(c) => this.form = c} {...this.props} />
                 <button className='btn btn-primary' onClick={this.handleSubmit}>Submit</button>
             </div>
@@ -49,7 +53,11 @@ class TaskToggle extends Component {
     renderTaskLabel() {
         return (
             <div className={`${this.props.className} relative-parent`}>
-                <i  onClick={this.handleFormDisplay} className="fa fa-pencil-square-o edit-icon" aria-hidden="true"></i>
+                <i onClick={this.handleFormDisplay}
+                   style={{cursor: 'pointer'}}
+                   title="Edit this task"
+                   className="fa fa-pencil-square-o edit-icon"
+                   aria-hidden="true"></i>
                 <this.props.TaskLabel
                     task={this.props.task} />
             </div>
