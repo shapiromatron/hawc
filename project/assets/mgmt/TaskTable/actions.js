@@ -39,11 +39,11 @@ export function fetchTasks(){
     };
 }
 
-function submitTaskEdit(task) {
+export function submitTaskEdit(task) {
     return (dispatch, getState) => {
         let state = getState();
         let { host, tasks, csrf } = state.config;
-        const url = h.getObjectUrl(host, tasks.url, task.id),
+        const url = h.getObjectUrl(host, tasks.submit_url || tasks.url, task.id),
             opts = h.fetchPost(csrf, task, 'PATCH');
         return fetch(url, opts)
             .then((response) => {

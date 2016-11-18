@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import DueDateLabel from 'mgmt/TaskTable/components/DueDateLabel';
-import StatusIcon from 'mgmt/TaskTable/components/StatusIcon';
+import StatusLabel from 'mgmt/TaskTable/components/StatusLabel';
 import './TaskLabel.css';
 
 
@@ -15,10 +15,10 @@ class TaskLabel extends Component {
     }
 
     render() {
-        const { task, className } = this.props;
+        const { task } = this.props;
         return (
-            <div className={`taskLabel ${className}`}>
-                <div><b>Status: </b><StatusIcon status={task.status} /> {task.status_display}</div>
+            <div className='taskLabel'>
+                <StatusLabel task={task} />
                 {this.renderOwner(task)}
                 <DueDateLabel status={task.status} due_date={task.due_date} />
             </div>
@@ -27,7 +27,6 @@ class TaskLabel extends Component {
 }
 
 TaskLabel.propTypes = {
-    className: PropTypes.string.isRequired,
     task: PropTypes.shape({
         owner: PropTypes.object,
         status: PropTypes.number.isRequired,

@@ -8,7 +8,7 @@ class UserAutocomplete extends Component {
     constructor(props) {
         super(props);
         this.getPopulatedOwner = this.getPopulatedOwner.bind(this);
-        this.url = `${this.props.url}?related=${props.task.study.assessment}`;
+        this.url = `${this.props.url}?related=${props.task.study.assessment.id}`;
     }
 
     getPopulatedOwner() {
@@ -37,7 +37,7 @@ class UserAutocomplete extends Component {
 UserAutocomplete.propTypes = {
     task: PropTypes.shape({
         study: PropTypes.shape({
-            assessment: PropTypes.number.isRequired,
+            assessment: PropTypes.object.isRequired,
         }).isRequired,
     }).isRequired,
     url: PropTypes.string.isRequired,

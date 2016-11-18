@@ -1,0 +1,9 @@
+.relative-parent {
+    position: relative;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 5px;
+    left: 170px;
+}

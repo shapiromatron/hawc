@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
 import TaskLabel from 'mgmt/TaskTable/components/TaskLabel';
+import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
 
 
 class TaskStudy extends Component {
@@ -14,7 +15,7 @@ class TaskStudy extends Component {
                 <div className='flexRow-container taskStudy'>
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
-                        <TaskLabel key={task.id} task={task} className={`task-${index} flex-1`}/>
+                        <TaskToggle TaskLabel={TaskLabel} key={task.id} task={task} className={`task-${index} flex-1`}/>
                     ))}
                 </div>
             </div>

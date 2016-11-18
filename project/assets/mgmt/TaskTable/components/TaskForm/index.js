@@ -72,10 +72,10 @@ TaskForm.propTypes = {
         status: PropTypes.number.isRequired,
         status_display: PropTypes.string.isRequired,
         study: PropTypes.shape({
-            assessment: PropTypes.number.isRequired,
+            assessment: PropTypes.object.isRequired,
         }).isRequired,
     }).isRequired,
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
     autocompleteUrl: PropTypes.string.isRequired,
 };
 

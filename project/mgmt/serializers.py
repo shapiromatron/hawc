@@ -9,7 +9,7 @@ from . import models
 
 class TaskSerializer(serializers.ModelSerializer):
     owner = HAWCUserSerializer(read_only=True)
-    study = SimpleStudySerializer(read_only=True)
+    study = StudyAssessmentSerializer(read_only=True)
     type_display = serializers.CharField(source='get_type_display')
     status_display = serializers.CharField(source='get_status_display')
 

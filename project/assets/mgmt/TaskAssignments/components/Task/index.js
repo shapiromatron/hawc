@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import AssessmentLabel from 'mgmt/TaskAssignments/components/AssessmentLabel';
 import StudyLabel from 'mgmt/TaskAssignments/components/StudyLabel';
 import TaskLabel from 'mgmt/TaskAssignments/components/TaskLabel';
+import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
 
 
 class Task extends Component {
@@ -18,7 +19,7 @@ class Task extends Component {
                 <div className='flexRow-container'>
                     {assessmentLbl}
                     <StudyLabel className='flex-1' study={this.props.task.study}/>
-                    <TaskLabel className='flex-2' task={this.props.task} />
+                    <TaskToggle TaskLabel={TaskLabel} className='flex-2' task={this.props.task} />
                 </div>
             </div>
         );
