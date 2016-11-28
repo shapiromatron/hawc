@@ -19,8 +19,6 @@ USE_I18N = False
 USE_L10N = True
 USE_TZ = True
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
-
 ADMINS = []
 _admin_names = os.getenv('DJANGO_ADMIN_NAMES', "")
 _admin_emails = os.getenv('DJANGO_ADMIN_EMAILS', "")
