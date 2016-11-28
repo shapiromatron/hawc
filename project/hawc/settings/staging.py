@@ -2,6 +2,8 @@ from .base import *  # noqa
 
 SERVER_ROLE = "staging"
 
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
+
 SESSION_COOKIE_SECURE = True
 
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
