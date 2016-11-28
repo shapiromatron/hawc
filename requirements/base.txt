@@ -12,11 +12,11 @@ django-pagedown==0.1.1
 django-reversion==1.10.1
 django-selectable==0.9.0
 django-taggit==0.18.0
-git+https://github.com/fladi/django-treebeard@cd4b13d2d58c0c514d1bb4194de9ebb2e562cd77
+django-treebeard==4.1.0
 django-webpack-loader==0.3.0
 djangorestframework==3.4.0
-git+https://github.com/chibisov/drf-extensions@0306a3ab934e6c5f31603e7f452742ac9a5c7c28
 docutils==0.12
+drf-extensions==0.3.1
 jsonschema==2.5.1
 kombu==3.0.26
 lxml==3.4.4
