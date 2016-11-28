@@ -31,7 +31,7 @@ const defaultState = {
     allBmrOptions: null,
     isExecuting: false,
     validationErrors: [],
-    selectedOutput: null,
+    selectedOutputs: [],
     hoverModel: null,
     selectedModelId: null,
     selectedModelNotes: '',
@@ -209,7 +209,7 @@ function bmd(state=defaultState, action){
 
     case types.SELECT_OUTPUT:
         return Object.assign({}, state, {
-            selectedOutput: action.model,
+            selectedOutputs: action.models,
         });
 
     case types.HOVER_MODEL:

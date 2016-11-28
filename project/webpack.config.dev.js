@@ -1,7 +1,8 @@
 var config = require('./webpack.base.js'),
     path = require('path'),
     webpack = require('webpack'),
-    devPort = 3000;
+    devPort = 3000,
+    HappyPack = require('happypack');
 
 config.devPort = devPort;
 config.devtool = 'cheap-module-eval-source-map';
@@ -12,12 +13,14 @@ config.entry = [
 config.output.publicPath = 'http://localhost:' + devPort + '/dist/';
 
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
+config.plugins.unshift(new HappyPack({ id: 'js', verbose: false, threads: 4 }));
 
 config.module = {
     noParse: /node_modules\/quill\/dist\/quill\.js/,
     loaders: [{
         test: /\.js$/,
         loader: 'babel',
+        happy: { id: 'js' },
         include: path.join(__dirname, 'assets'),
         query: {
             plugins: [

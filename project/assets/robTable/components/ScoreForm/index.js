@@ -18,7 +18,7 @@ class ScoreForm extends Component {
                 2: '#FFCC00',
                 3: '#6FFF00',
                 4: '#00CC00',
-                10: '#E8E8E8',
+                10: '#FFCC00',
             },
             scoreChoices: {
                 0: 'Not applicable',

@@ -5,6 +5,7 @@ import { loadConfig } from 'shared/actions/Config';
 import { resetError } from 'robScoreCleanup/actions/Errors';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
+import { fetchStudyTypeOptions } from 'robScoreCleanup/actions/StudyTypes';
 import { fetchItemScores, clearItemScores, updateEditMetricIfNeeded } from 'robScoreCleanup/actions/Items';
 
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
@@ -12,6 +13,7 @@ import MetricForm from 'robScoreCleanup/containers/MetricForm';
 import MetricSelect from 'robScoreCleanup/containers/MetricSelect';
 import ScoreList from 'robScoreCleanup/containers/ScoreList';
 import ScoreSelect from 'robScoreCleanup/containers/ScoreSelect';
+import StudyTypeSelect from 'robScoreCleanup/containers/StudyTypeSelect';
 
 import './Root.css';
 
@@ -40,6 +42,7 @@ class Root extends Component {
     componentDidMount() {
         this.props.dispatch(fetchMetricOptions());
         this.props.dispatch(fetchScoreOptions());
+        this.props.dispatch(fetchStudyTypeOptions());
     }
 
     clearMetrics(e) {
@@ -66,7 +69,7 @@ class Root extends Component {
                 <div>
                     <ScrollToErrorBox error={error} />
                     <div className='container-fluid cleanStudyMetricForm' >
-                        <div className='span8'>
+                        <div className='span6'>
                             <MetricSelect />
                             <div>
                                 <button className='btn btn-primary space' onClick={this.loadMetrics}>
@@ -77,8 +80,14 @@ class Root extends Component {
                                 </button>
                             </div>
                         </div>
-                        <div className='span4'>
-                            <ScoreSelect />
+                        <div className='span6 container-fluid'>
+                            <div className='span6'>
+                                <ScoreSelect />
+                            </div>
+                            <div className='span6'>
+                                <StudyTypeSelect />
+                            </div>
+                            <p className='help-block'>To de-select a filter, click on the filter while holding ⌘ on Mac or Control on Windows</p>
                         </div>
                     </div>
                     <MetricForm config={config} />

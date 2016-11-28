@@ -4,10 +4,13 @@ from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.utils.functional import curry
 
+from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
+from assessment.models import DoseUnits
+from study.lookups import EpiStudyLookup
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 from utils.helper import tryParseInt
 
@@ -369,7 +372,7 @@ class OutcomeForm(forms.ModelForm):
             lookup_class=lookups.EffectSubtypeLookup,
             allow_new=True)
         self.fields['age_of_measurement'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AgeOfMeasurement,
+            lookup_class=lookups.AgeOfMeasurementLookup,
             allow_new=True)
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
@@ -419,6 +422,182 @@ class OutcomeForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
 
         return helper
+
+
+class OutcomeFilterForm(forms.Form):
+
+    ORDER_BY_CHOICES = (
+        ('study_population__study__short_citation', 'study'),
+        ('study_population__name', 'study population'),
+        ('name', 'outcome name'),
+        ('system', 'system'),
+        ('effect', 'effect'),
+        ('diagnostic', 'diagnostic'),
+    )
+
+    studies = selectable.AutoCompleteSelectMultipleField(
+        label='Study reference',
+        lookup_class=EpiStudyLookup,
+        help_text="ex: Smith et al. 2010",
+        required=False)
+
+    name = forms.CharField(
+        label='Outcome name',
+        widget=selectable.AutoCompleteWidget(lookups.OutcomeLookup),
+        help_text="ex: blood, glucose",
+        required=False)
+
+    study_population = forms.CharField(
+        label='Study population',
+        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationByAssessmentLookup),
+        help_text="ex: population near a Teflon manufacturing plant",
+        required=False)
+
+    metric = forms.CharField(
+        label='Measurement metric',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedExposureMetricLookup),
+        help_text="ex: drinking water",
+        required=False)
+
+    age_profile = forms.CharField(
+        label='Age profile',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationAgeProfileLookup),
+        help_text="ex: children",
+        required=False)
+
+    source = forms.CharField(
+        label='Study population source',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationSourceLookup),
+        help_text="ex: occupational exposure",
+        required=False)
+
+    country = forms.CharField(
+        label='Study population country',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedCountryNameLookup),
+        help_text="ex: Japan",
+        required=False)
+
+    design = forms.MultipleChoiceField(
+        label='Study design',
+        choices=models.StudyPopulation.DESIGN_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        initial=[c[0] for c in models.StudyPopulation.DESIGN_CHOICES],
+        required=False)
+
+    system = forms.CharField(
+        label='System',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedSystemLookup),
+        help_text="ex: immune and lymphatic system",
+        required=False)
+
+    effect = forms.CharField(
+        label='Effect',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectLookup),
+        help_text="ex: Cancer",
+        required=False)
+
+    effect_subtype = forms.CharField(
+        label='Effect subtype',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectSubtypeLookup),
+        help_text="ex: Melanoma",
+        required=False)
+
+    diagnostic = forms.MultipleChoiceField(
+        choices=models.Outcome.DIAGNOSTIC_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        initial=[c[0] for c in models.Outcome.DIAGNOSTIC_CHOICES],
+        required=False)
+
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
+
+    paginate_by = forms.IntegerField(
+        label='Items per page',
+        min_value=1,
+        initial=25,
+        max_value=10000,
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id')
+        super(OutcomeFilterForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field not in ('design', 'diagnostic', 'order_by', 'paginate_by'):
+                self.fields[field].widget.update_query_parameters(
+                    {'related': assessment_id})
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
+                widget.attrs['class'] = 'span12'
+
+        helper = BaseFormHelper(self)
+
+        helper.form_method = "GET"
+        helper.form_class = None
+
+        helper.add_fluid_row('studies', 4, "span3")
+        helper.add_fluid_row('age_profile', 4, "span3")
+        helper.add_fluid_row('system', 4, "span3")
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Apply filters'),
+            )
+        )
+
+        return helper
+
+    def get_query(self):
+
+        studies = self.cleaned_data.get('studies')
+        name = self.cleaned_data.get('name')
+        study_population = self.cleaned_data.get('study_population')
+        metric = self.cleaned_data.get('metric')
+        age_profile = self.cleaned_data.get('age_profile')
+        source = self.cleaned_data.get('source')
+        country = self.cleaned_data.get('country')
+        design = self.cleaned_data.get('design')
+        system = self.cleaned_data.get('system')
+        effect = self.cleaned_data.get('effect')
+        effect_subtype = self.cleaned_data.get('effect_subtype')
+        diagnostic = self.cleaned_data.get('diagnostic')
+
+        query = Q()
+        if studies:
+            query &= Q(study_population__study__in=studies)
+        if name:
+            query &= Q(name__icontains=name)
+        if study_population:
+            query &= Q(study_population__name__icontains=study_population)
+        if metric:
+            query &= Q(study_population__exposures__metric__icontains=metric)
+        if age_profile:
+            query &= Q(study_population__age_profile__icontains=age_profile)
+        if source:
+            query &= Q(study_population__source__icontains=source)
+        if country:
+            query &= Q(study_population__country__name__icontains=country)
+        if design:
+            query &= Q(study_population__design__in=design)
+        if system:
+            query &= Q(system__icontains=system)
+        if effect:
+            query &= Q(effect__icontains=effect)
+        if effect_subtype:
+            query &= Q(effect_subtype__icontains=effect_subtype)
+        if diagnostic:
+            query &= Q(diagnostic__in=diagnostic)
+        return query
+
+    def get_order_by(self):
+        return self.cleaned_data.get('order_by', self.ORDER_BY_CHOICES[0][0])
 
 
 class OutcomeSelectorForm(CopyAsNewSelectorForm):

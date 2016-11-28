@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import json
+
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -8,11 +10,14 @@ from reversion import revisions as reversion
 
 from assessment.models import BaseEndpoint
 from animal.models import ConfidenceIntervalsMixin
-from utils.helper import SerializerHelper
+from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs, AssessmentRootedTagTree
 
+from . import managers
 
 class IVChemical(models.Model):
+    objects = managers.IVChemicalManager()
+
     study = models.ForeignKey(
         'study.Study',
         related_name='ivchemicals')
@@ -54,10 +59,6 @@ class IVChemical(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
@@ -81,16 +82,9 @@ class IVChemical(models.Model):
             .values_list('id', flat=True)
         )
 
-    @classmethod
-    def get_choices(cls, assessment_id):
-        return cls.objects\
-            .filter(study__assessment_id=assessment_id)\
-            .order_by('name')\
-            .distinct('name')\
-            .values_list('name', 'name')
-
 
 class IVCellType(models.Model):
+    objects = managers.IVCellTypeManager()
 
     SEX_CHOICES = (
         ('m', 'Male'),
@@ -141,10 +135,6 @@ class IVCellType(models.Model):
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
@@ -165,6 +155,7 @@ class IVCellType(models.Model):
 
 
 class IVExperiment(models.Model):
+    objects = managers.IVExperimentManager()
 
     METABOLIC_ACTIVATION_CHOICES = (
         ('+',  'with metabolic activation'),
@@ -231,10 +222,6 @@ class IVExperiment(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_assessment(self):
         return self.study.assessment
 
@@ -283,6 +270,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 
 
 class IVEndpoint(BaseEndpoint):
+    objects = managers.IVEndpointManager()
 
     VARIANCE_TYPE_CHOICES = (
         (0, "NA"),
@@ -419,12 +407,16 @@ class IVEndpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        endpoints = [endpoint.get_json(json_encode=False) for endpoint in queryset]
+        if json_encode:
+            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
+        else:
+            return endpoints
 
     def get_absolute_url(self):
         return reverse('invitro:endpoint_detail', args=[str(self.id)])
@@ -442,8 +434,8 @@ class IVEndpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @classmethod
-    def max_dose_count(cls, queryset):
+    @staticmethod
+    def max_dose_count(queryset):
         max_val = 0
         qs = queryset\
             .annotate(max_egs=models.Count('groups'))\
@@ -452,8 +444,8 @@ class IVEndpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @classmethod
-    def max_benchmark_count(cls, queryset):
+    @staticmethod
+    def max_benchmark_count(queryset):
         max_val = 0
         qs = queryset\
             .annotate(max_benchmarks=models.Count('benchmarks'))\
@@ -462,8 +454,8 @@ class IVEndpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @classmethod
-    def get_docx_template_context(cls, queryset):
+    @staticmethod
+    def get_docx_template_context(queryset):
         return {
             "field1": "a",
             "field2": "b",
@@ -472,6 +464,7 @@ class IVEndpoint(BaseEndpoint):
 
 
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
+    objects = managers.IVEndpointGroupManager()
 
     DIFFERENCE_CONTROL_CHOICES = (
         ('nc', 'no-change'),
@@ -536,25 +529,19 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     def difference_control_symbol(self):
         return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(endpoint__assessment=assessment_id)
-
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
 
 
 class IVBenchmark(models.Model):
+    objects = managers.IVBenchmarkManager()
+
     endpoint = models.ForeignKey(
         IVEndpoint,
         related_name="benchmarks")
     benchmark = models.CharField(
         max_length=32)
     value = models.FloatField()
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(IVChemical)

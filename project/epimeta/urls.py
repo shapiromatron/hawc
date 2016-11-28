@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/report/$',
         views.MetaResultReport.as_view(),
         name='result_report'),
-    url(r'^assessment/(?P<pk>\d+)/$',
+    url(r'^assessment/(?P<pk>\d+)/results/$',
         views.MetaResultList.as_view(),
         name='result_list'),
     url(r'^protocol/(?P<pk>\d+)/result/create/$',

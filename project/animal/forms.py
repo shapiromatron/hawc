@@ -29,6 +29,23 @@ class ExperimentForm(ModelForm):
         super(ExperimentForm, self).__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
+
+        self.fields['chemical'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpChemicalLookup,
+            allow_new=True)
+
+        self.fields['cas'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpCasLookup,
+            allow_new=True)
+
+        self.fields['chemical_source'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpChemSourceLookup,
+            allow_new=True)
+
+        self.fields['guideline_compliance'].widget = selectable.AutoCompleteWidget(
+            lookup_class=lookups.ExpGlpLookup,
+            allow_new=True)
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -134,12 +151,16 @@ class AnimalGroupForm(ModelForm):
             self.instance.experiment = parent
 
         self.fields['lifestage_exposed'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AnimalGroupLifestageExposedLookup,
+            lookup_class=lookups.RelatedAnimalGroupLifestageExposedLookup,
             allow_new=True)
+        self.fields['lifestage_exposed'].widget.update_query_parameters(
+            {'related': self.instance.experiment.study.assessment.id})
 
         self.fields['lifestage_assessed'].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AnimalGroupLifestageAssessedLookup,
+            lookup_class=lookups.RelatedAnimalGroupLifestageAssessedLookup,
             allow_new=True)
+        self.fields['lifestage_assessed'].widget.update_query_parameters(
+            {'related': self.instance.experiment.study.assessment.id})
 
         self.fields['siblings'].queryset = models.AnimalGroup.objects.filter(
                 experiment=self.instance.experiment)
@@ -574,19 +595,19 @@ class EndpointFilterForm(forms.Form):
 
     cas = forms.CharField(
         label='CAS',
-        widget=selectable.AutoCompleteWidget(lookups.ExperimentCASLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedExperimentCASLookup),
         help_text="ex: 107-02-8",
         required=False)
 
     lifestage_exposed = forms.CharField(
         label='Lifestage exposed',
-        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageExposedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageExposedLookup),
         help_text="ex: pup",
         required=False)
 
     lifestage_assessed = forms.CharField(
         label='Lifestage assessed',
-        widget=selectable.AutoCompleteWidget(lookups.AnimalGroupLifestageAssessedLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageAssessedLookup),
         help_text="ex: adult",
         required=False)
 
@@ -621,19 +642,19 @@ class EndpointFilterForm(forms.Form):
 
     system = forms.CharField(
         label='System',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointSystemLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointSystemLookup),
         help_text="ex: endocrine",
         required=False)
 
     organ = forms.CharField(
         label='Organ',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointOrganLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointOrganLookup),
         help_text="ex: pituitary",
         required=False)
 
     effect = forms.CharField(
         label='Effect',
-        widget=selectable.AutoCompleteWidget(lookups.EndpointEffectLookup),
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointEffectLookup),
         help_text="ex: alanine aminotransferase (ALT)",
         required=False)
 
@@ -662,13 +683,11 @@ class EndpointFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
         super(EndpointFilterForm, self).__init__(*args, **kwargs)
-        self.fields['studies'].widget.update_query_parameters(
-            {'related': assessment_id})
-        self.fields['name'].widget.update_query_parameters(
-            {'related': assessment_id})
+        for field in self.fields:
+            if field not in ('sex', 'data_extracted', 'dose_units', 'order_by', 'paginate_by'):
+                self.fields[field].widget.update_query_parameters(
+                    {'related': assessment_id})
 
-        # disabled; dramatically slows-down page rendering;
-        # involuntary context_switches
         self.helper = self.setHelper()
 
     def setHelper(self):

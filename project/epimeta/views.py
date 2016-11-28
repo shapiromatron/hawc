@@ -1,16 +1,17 @@
-from django.core.urlresolvers import reverse
-from django.forms.models import modelformset_factory
+from django.db.models import Q
 
 from assessment.models import Assessment
-from utils import views as utilViews
-
+from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseList,
+                         BaseDelete, BaseDetail, BaseEndpointFilterList,
+                         BaseUpdate, BaseUpdateWithFormset, GenerateReport)
 
 from . import forms, models, exports
 
 
 # MetaProtocol
-class MetaProtocolCreate(utilViews.BaseCreate):
+class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Meta-protocol created.'
     parent_model = Study
     parent_template_name = 'study'
@@ -18,17 +19,17 @@ class MetaProtocolCreate(utilViews.BaseCreate):
     form_class = forms.MetaProtocolForm
 
 
-class MetaProtocolDetail(utilViews.BaseDetail):
+class MetaProtocolDetail(BaseDetail):
     model = models.MetaProtocol
 
 
-class MetaProtocolUpdate(utilViews.BaseUpdate):
+class MetaProtocolUpdate(BaseUpdate):
     success_message = "Meta-protocol updated."
     model = models.MetaProtocol
     form_class = forms.MetaProtocolForm
 
 
-class MetaProtocolDelete(utilViews.BaseDelete):
+class MetaProtocolDelete(BaseDelete):
     success_message = "Meta-protocol deleted."
     model = models.MetaProtocol
 
@@ -37,7 +38,7 @@ class MetaProtocolDelete(utilViews.BaseDelete):
 
 
 # MetaResult
-class MetaResultCreate(utilViews.BaseCreateWithFormset):
+class MetaResultCreate(BaseCreateWithFormset):
     success_message = 'Meta-Result created.'
     parent_model = models.MetaProtocol
     parent_template_name = 'protocol'
@@ -73,11 +74,11 @@ class MetaResultCopyAsNew(MetaProtocolDetail):
         return context
 
 
-class MetaResultDetail(utilViews.BaseDetail):
+class MetaResultDetail(BaseDetail):
     model = models.MetaResult
 
 
-class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
+class MetaResultUpdate(BaseUpdateWithFormset):
     success_message = "Meta-Result updated."
     model = models.MetaResult
     form_class = forms.MetaResultForm
@@ -102,7 +103,7 @@ class MetaResultUpdate(utilViews.BaseUpdateWithFormset):
             form.instance.meta_result = self.object
 
 
-class MetaResultDelete(utilViews.BaseDelete):
+class MetaResultDelete(BaseDelete):
     success_message = "Meta-Result deleted."
     model = models.MetaResult
 
@@ -110,17 +111,16 @@ class MetaResultDelete(utilViews.BaseDelete):
         return self.object.protocol.get_absolute_url()
 
 
-class MetaResultReport(utilViews.GenerateReport):
+class MetaResultReport(GenerateReport):
     parent_model = Assessment
     model = models.MetaResult
     report_type = 4
 
     def get_queryset(self):
-        filters = {"protocol__study__assessment": self.assessment}
         perms = super(MetaResultReport, self).get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "meta-results.docx"
@@ -129,30 +129,28 @@ class MetaResultReport(utilViews.GenerateReport):
         return self.model.get_docx_template_context(self.assessment, queryset)
 
 
-class MetaResultList(utilViews.BaseList):
+class MetaResultList(BaseEndpointFilterList):
+    model = models.MetaResult
+    form_class = forms.MetaResultFilterForm
+
+    def get_query(self, perms):
+        query = Q(protocol__study__assessment=self.assessment)
+
+        if not perms['edit']:
+            query &= Q(protocol__study__published=True)
+        return query
+
+
+class MetaResultFullExport(BaseList):
     parent_model = Assessment
     model = models.MetaResult
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
     def get_queryset(self):
-        filters = {"protocol__study__assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["protocol__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('label')
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
-
-class MetaResultFullExport(MetaResultList):
-    """
-    Full XLS data export for the epidemiology meta-analyses.
-    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(

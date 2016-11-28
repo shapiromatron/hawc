@@ -2,24 +2,25 @@ import json
 
 from django.db.models import Q
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
 
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
-from utils.views import (MessageMixin, CanCreateMixin,
-                         AssessmentPermissionsMixin,
-                         BaseCreate, BaseDelete, BaseDetail, BaseUpdate, BaseList,
-                         GenerateReport, GenerateFixedReport,
-                         BaseCreateWithFormset, BaseUpdateWithFormset)
+from mgmt.views import EnsureExtractionStartedMixin
+from utils.views import (AssessmentPermissionsMixin, BaseCreate,
+                         BaseCreateWithFormset, BaseDelete, BaseDetail,
+                         BaseEndpointFilterList, BaseList, BaseUpdate,
+                         BaseUpdateWithFormset, CanCreateMixin, GenerateReport,
+                         GenerateFixedReport, MessageMixin)
 
 from . import forms, models, exports, reports
 
 
 # Experiment Views
-class ExperimentCreate(BaseCreate):
+class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Experiment created.'
     parent_model = Study
     parent_template_name = 'study'
@@ -130,7 +131,7 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
         context["crud"] = self.crud
         context["experiment"] = self.experiment
         context["assessment"] = self.assessment
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
@@ -170,7 +171,7 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
         return context
 
 
@@ -219,7 +220,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
             # instead of checking existing vs. new, just delete all old
             # dose-groups, and save new formset
-            models.DoseGroup.objects.filter(dose_regime=self.object).delete()
+            models.DoseGroup.objects.by_dose_regime(self.object).delete()
 
             # now save dose-groups, one for each dosing regime
             for dose in fs.forms:
@@ -244,7 +245,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         context = super(UpdateView, self).get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
-        context["dose_types"] = DoseUnits.json_all()
+        context["dose_types"] = DoseUnits.objects.json_all()
 
         if self.request.method == 'POST':  # send back dose-group errors
             context['dose_groups_json'] = self.request.POST['dose_groups_json']
@@ -334,60 +335,20 @@ class EndpointUpdate(BaseUpdateWithFormset):
         return context
 
 
-class EndpointList(BaseList):
+class EndpointList(BaseEndpointFilterList):
     # List of Endpoints associated with assessment
     parent_model = Assessment
     model = models.Endpoint
+    form_class = forms.EndpointFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
-    def get(self, request, *args, **kwargs):
-        if len(self.request.GET) > 0:
-            self.form = forms.EndpointFilterForm(
-                self.request.GET,
-                assessment_id=self.assessment.id
-            )
-        else:
-            self.form = forms.EndpointFilterForm(
-                assessment_id=self.assessment.id
-            )
-        return super(EndpointList, self).get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        perms = super(EndpointList, self).get_obj_perms()
-
+    def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        order_by = None
-
         if not perms['edit']:
             query &= Q(animal_group__experiment__study__published=True)
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        ids = self.model.objects.filter(query)\
-            .distinct('id')\
-            .values_list('id', flat=True)
-
-        qs = self.model.objects.filter(id__in=ids)
-
-        if order_by:
-            qs = qs.order_by(order_by)
-            print order_by
-
-        return qs
+        return query
 
     def get_context_data(self, **kwargs):
         context = super(EndpointList, self).get_context_data(**kwargs)
-        context['form'] = self.form
-        context['endpoints_json'] = self.model.d_responses(
-            context['object_list'], json_encode=True)
         context['dose_units'] = self.form.get_dose_units_id()
         return context
 
@@ -396,12 +357,7 @@ class EndpointTags(EndpointList):
     # List of Endpoints associated with an assessment and tag
 
     def get_queryset(self):
-        return self.model.objects.filter(effects__slug=self.kwargs['tag_slug'])\
-                         .select_related('animal_group', 'animal_group__dosing_regime')\
-                         .prefetch_related('animal_group__dosing_regime__doses')\
-                         .filter(animal_group__in=models.AnimalGroup.objects.filter(
-                             experiment__in=models.Experiment.objects.filter(
-                                 study__in=Study.objects.filter(assessment=self.assessment.pk))))
+        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs['tag_slug'])
 
 
 class EndpointRead(BaseDetail):
@@ -431,11 +387,10 @@ class EndpointsReport(GenerateReport):
     report_type = 2
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = super(EndpointsReport, self).get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "animal-bioassay.docx"
@@ -450,11 +405,10 @@ class EndpointsFixedReport(GenerateFixedReport):
     ReportClass = reports.EndpointDOCXReport
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = super(EndpointsFixedReport, self).get_obj_perms()
         if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "animal-bioassay.docx"
@@ -471,11 +425,10 @@ class FullExport(BaseList):
     model = models.Endpoint
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(FullExport, self).get_obj_perms()
+        perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["animal_group__experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()

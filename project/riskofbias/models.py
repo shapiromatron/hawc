@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import logging
 import os
 import collections
 
@@ -12,11 +13,16 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from myuser.models import HAWCUser
+from study.models import Study
 from utils.helper import cleanHTML, SerializerHelper
 from utils.models import get_crumbs
 
+from . import managers
+
 
 class RiskOfBiasDomain(models.Model):
+    objects = managers.RiskOfBiasDomainManager()
+
     assessment = models.ForeignKey(
         'assessment.Assessment',
         related_name='rob_domains')
@@ -61,12 +67,10 @@ class RiskOfBiasDomain(models.Model):
                 description=domain['description'])
             RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
 
 class RiskOfBiasMetric(models.Model):
+    objects = managers.RiskOfBiasMetricManager()
+
     domain = models.ForeignKey(
         RiskOfBiasDomain,
         related_name='metrics')
@@ -98,23 +102,6 @@ class RiskOfBiasMetric(models.Model):
         return self.domain.get_assessment()
 
     @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(domain__assessment=assessment_id)
-
-    @classmethod
-    def get_required_metrics(cls, assessment, study):
-
-        requireds = models.Q()
-        if study.bioassay:
-            requireds |= models.Q(required_animal=True)
-        if study.epi or study.epi_meta:
-            requireds |= models.Q(required_epi=True)
-
-        return RiskOfBiasMetric.objects\
-            .filter(domain__assessment=assessment)\
-            .filter(requireds)
-
-    @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
         """
         Build multiple risk of bias metrics given a domain django object and a
@@ -127,14 +114,10 @@ class RiskOfBiasMetric(models.Model):
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
 
-    @classmethod
-    def get_metrics_for_visuals(cls, assessment_id):
-        return cls.objects\
-            .filter(domain__assessment_id=assessment_id)\
-            .values('id', 'metric')
-
 
 class RiskOfBias(models.Model):
+    objects = managers.RiskOfBiasManager()
+
     study = models.ForeignKey(
         'study.Study',
         related_name='riskofbiases',
@@ -163,10 +146,6 @@ class RiskOfBias(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
     def get_final_url(self):
         return reverse('riskofbias:rob_detail', args=[self.study_id])
 
@@ -183,11 +162,33 @@ class RiskOfBias(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
+    def update_scores(self, assessment):
+        """Sync RiskOfBiasScore for this study based on assessment requirements.
+
+        Metrics may change based on study type and metric requirements by study
+        type. This method is called via signals when the study type changes,
+        or when a metric is altered.  RiskOfBiasScore are created/deleted as
+        needed.
+        """
+        metrics = RiskOfBiasMetric.objects.get_required_metrics(assessment, self.study)\
+            .prefetch_related('scores')
+        scores = self.scores.all()
+        # add any scores that are required and not currently created
+        for metric in metrics:
+            if not (metric.scores.all() & scores):
+                logging.info(u'Creating score: {}->{}'.format(self.study, metric))
+                RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
+        # delete any scores that are no longer required
+        for score in scores:
+            if score.metric not in metrics:
+                logging.info(u'Deleting score: {}->{}'.format(self.study, score.metric))
+                score.delete()
+
     def build_scores(self, assessment, study):
         scores = [
             RiskOfBiasScore(riskofbias=self, metric=metric)
             for metric in
-            RiskOfBiasMetric.get_required_metrics(assessment, study)
+            RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
 
@@ -216,8 +217,8 @@ class RiskOfBias(models.Model):
             for rob in self.study.get_active_robs(with_final=False)
         ])
 
-    @classmethod
-    def copy_riskofbias(cls, copy_to_assessment, copy_from_assessment):
+    @staticmethod
+    def copy_riskofbias(copy_to_assessment, copy_from_assessment):
         # delete existing study quality metrics and domains
         copy_to_assessment\
             .rob_domains.all()\
@@ -260,6 +261,8 @@ class RiskOfBias(models.Model):
 
 
 class RiskOfBiasScore(models.Model):
+    objects = managers.RiskOfBiasScoreManager()
+
     RISK_OF_BIAS_SCORE_CHOICES = (
         (10, 'Not reported'),
         (1, 'Definitely high risk of bias'),
@@ -283,7 +286,7 @@ class RiskOfBiasScore(models.Model):
         3: '#6FFF00',
         4: '#00CC00',
         0: '#FFCC00',
-        10: '#E8E8E8',
+        10: '#FFCC00',
     }
 
     riskofbias = models.ForeignKey(
@@ -337,10 +340,6 @@ class RiskOfBiasScore(models.Model):
             cleanHTML(ser['notes']),
         )
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(riskofbias__study__assessment=assessment_id)
-
     @property
     def score_symbol(self):
         return self.SCORE_SYMBOLS[self.score]
@@ -349,8 +348,17 @@ class RiskOfBiasScore(models.Model):
     def score_shade(self):
         return self.SCORE_SHADES[self.score]
 
+    @classmethod
+    def delete_caches(cls, ids):
+        id_lists = [(score.riskofbias.id, score.riskofbias.study_id) for score in cls.objects.filter(id__in=ids)]
+        rob_ids, study_ids = zip(*id_lists)
+        RiskOfBias.delete_caches(rob_ids)
+        Study.delete_caches(study_ids)
+
 
 class RiskOfBiasAssessment(models.Model):
+    objects = managers.RiskOfBiasScoreManager()
+
     assessment = models.OneToOneField(
         Assessment,
         related_name='rob_settings')
@@ -363,10 +371,6 @@ class RiskOfBiasAssessment(models.Model):
     @classmethod
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(assessment=assessment)
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
 
 
 reversion.register(RiskOfBiasDomain)

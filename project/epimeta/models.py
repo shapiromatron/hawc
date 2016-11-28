@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import json
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -9,11 +10,14 @@ from reversion import revisions as reversion
 
 from assessment.serializers import AssessmentSerializer
 from epi.models import Criteria, ResultMetric, AdjustmentFactor
-from utils.helper import SerializerHelper
+from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs
+
+from . import managers
 
 
 class MetaProtocol(models.Model):
+    objects = managers.MetaProtocolManager()
 
     META_PROTOCOL_CHOICES = (
         (0, "Meta-analysis"),
@@ -73,11 +77,6 @@ class MetaProtocol(models.Model):
     def __unicode__(self):
         return self.name
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(study__assessment=assessment_id)
-
     def get_assessment(self):
         return self.study.get_assessment()
 
@@ -128,6 +127,8 @@ class MetaProtocol(models.Model):
 
 
 class MetaResult(models.Model):
+    objects = managers.MetaResultManager()
+
     protocol = models.ForeignKey(
         MetaProtocol,
         related_name="results")
@@ -183,11 +184,6 @@ class MetaResult(models.Model):
     def __unicode__(self):
         return self.label
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(protocol__study__assessment=assessment_id)
-
     def get_crumbs(self):
         return get_crumbs(self, self.protocol)
 
@@ -212,6 +208,14 @@ class MetaResult(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        results = [result.get_json(json_encode=False) for result in queryset]
+        if json_encode:
+            return json.dumps(results, cls=HAWCDjangoJSONEncoder)
+        else:
+            return results
 
     @staticmethod
     def flat_complete_header_row():
@@ -261,8 +265,8 @@ class MetaResult(models.Model):
             ser['notes'],
         )
 
-    @classmethod
-    def get_docx_template_context(cls, assessment, queryset):
+    @staticmethod
+    def get_docx_template_context(assessment, queryset):
         """
         Given a queryset of meta-results, invert the cached results to build
         a top-down data hierarchy from study to meta-result. We use this
@@ -344,6 +348,8 @@ class MetaResult(models.Model):
 
 
 class SingleResult(models.Model):
+    objects = managers.SingleResultManager()
+
     meta_result = models.ForeignKey(
         MetaResult,
         related_name="single_results")
@@ -394,11 +400,6 @@ class SingleResult(models.Model):
 
     def __unicode__(self):
         return self.exposure_name
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(meta_result__protocol__study__assessment=assessment_id)
 
     @property
     def estimate_formatted(self):

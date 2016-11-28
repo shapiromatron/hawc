@@ -1,6 +1,6 @@
 from selectable.registry import registry
 
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import RelatedDistinctStringLookup, RelatedLookup
 from utils.helper import tryParseInt
 from . import models
 
@@ -11,30 +11,42 @@ class MetaResultByStudyLookup(RelatedLookup):
     related_filter = 'protocol__study'
 
 
-class MetaResultHealthOutcomeLookup(DistinctStringLookup):
+class MetaResultByAssessmentLookup(RelatedLookup):
+    model = models.MetaResult
+    search_fields = ('label__icontains', )
+    related_filter = 'protocol__study__assessment_id'
+
+
+class MetaResultHealthOutcomeLookup(RelatedDistinctStringLookup):
     model = models.MetaResult
     distinct_field = 'health_outcome'
-    search_fields = ('health_outcome__icontains', )
-
-    def get_query(self, request, term):
-        id_ = tryParseInt(request.GET.get('related'), -1)
-        return self.model.objects.filter(
-            protocol__study__assessment_id=id_,
-            health_outcome__icontains=term)
+    search_fields = ('health_outcome__icontains', )    
+    related_filter = 'protocol__study__assessment_id'
 
 
-class MetaResultExposureNameLookup(DistinctStringLookup):
+class MetaResultExposureNameLookup(RelatedDistinctStringLookup):
     model = models.MetaResult
     distinct_field = 'exposure_name'
     search_fields = ('exposure_name__icontains', )
+    related_filter = 'protocol__study__assessment_id'
 
-    def get_query(self, request, term):
-        id_ = tryParseInt(request.GET.get('related'), -1)
-        return self.model.objects.filter(
-            protocol__study__assessment_id=id_,
-            exposure_name__icontains=term)
+
+class MetaProtocolLookup(RelatedLookup):
+    model = models.MetaProtocol
+    search_fields = ('name__icontains', )
+    related_filter = 'study__assessment_id'
+
+
+class ExposureLookup(RelatedDistinctStringLookup):
+    model = models.MetaResult
+    distinct_field = 'exposure_name'
+    search_fields = ('exposure_name__icontains', )
+    related_filter = 'protocol__study__assessment_id'
 
 
 registry.register(MetaResultByStudyLookup)
+registry.register(MetaResultByAssessmentLookup)
 registry.register(MetaResultHealthOutcomeLookup)
 registry.register(MetaResultExposureNameLookup)
+registry.register(MetaProtocolLookup)
+registry.register(ExposureLookup)

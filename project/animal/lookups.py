@@ -1,22 +1,63 @@
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import DistinctStringLookup, RelatedLookup
+from utils.lookups import DistinctStringLookup, RelatedLookup, RelatedDistinctStringLookup
 
 
-class ExperimentCASLookup(DistinctStringLookup):
+class RelatedExperimentCASLookup(RelatedDistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "cas"
+    related_filter = 'study__assessment_id'
+
+
+class RelatedAnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_exposed"
+    related_filter = 'experiment__study__assessment_id'
+
+
+class RelatedAnimalGroupLifestageAssessedLookup(RelatedDistinctStringLookup):
+    model = models.AnimalGroup
+    distinct_field = "lifestage_assessed"
+    related_filter = 'experiment__study__assessment_id'
+
+
+class RelatedEndpointSystemLookup(RelatedDistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "system"
+    related_filter = 'assessment_id'
+
+
+class RelatedEndpointOrganLookup(RelatedDistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "organ"
+    related_filter = 'assessment_id'
+
+
+class RelatedEndpointEffectLookup(RelatedDistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "effect"
+    related_filter = 'assessment_id'
+
+
+class ExpChemicalLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "chemical"
+
+
+class ExpCasLookup(DistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
 
 
-class AnimalGroupLifestageExposedLookup(DistinctStringLookup):
-    model = models.AnimalGroup
-    distinct_field = "lifestage_exposed"
+class ExpChemSourceLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "chemical_source"
 
 
-class AnimalGroupLifestageAssessedLookup(DistinctStringLookup):
-    model = models.AnimalGroup
-    distinct_field = "lifestage_assessed"
+class ExpGlpLookup(DistinctStringLookup):
+    model = models.Experiment
+    distinct_field = "guideline_compliance"
 
 
 class EndpointSystemLookup(DistinctStringLookup):
@@ -108,14 +149,23 @@ class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
         )
 
 
-registry.register(ExperimentCASLookup)
-registry.register(AnimalGroupLifestageExposedLookup)
-registry.register(AnimalGroupLifestageAssessedLookup)
+registry.register(RelatedExperimentCASLookup)
+registry.register(RelatedAnimalGroupLifestageExposedLookup)
+registry.register(RelatedAnimalGroupLifestageAssessedLookup)
+registry.register(RelatedEndpointSystemLookup)
+registry.register(RelatedEndpointOrganLookup)
+registry.register(RelatedEndpointEffectLookup)
+
+registry.register(ExpChemicalLookup)
+registry.register(ExpCasLookup)
+registry.register(ExpChemSourceLookup)
+registry.register(ExpGlpLookup)
 registry.register(EndpointSystemLookup)
 registry.register(EndpointOrganLookup)
 registry.register(EndpointEffectLookup)
 registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
+
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)

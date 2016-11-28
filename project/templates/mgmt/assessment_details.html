@@ -1,0 +1,55 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Tasks | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a><span class="divider">/</span></li>
+  <li class="active">Task list<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>Task assignments
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="{% url 'mgmt:assessment_modify' assessment.pk %}">Modify tasks</a></li>
+            <li><a href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a></li>
+        </ul>
+    </div>
+  </h2>
+
+  <div id='taskTable'></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": "{{ assessment.id }}",
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{ request.get_host }}",
+        "type": "display",
+        "tasks": {
+            "url": "{% url 'mgmt:api:task-list' %}"
+        },
+        "studies": {
+            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
+        },
+        "autocomplete": {
+            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
+        }
+    }
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.app.mgmt.TaskTable(document.getElementById('taskTable'))
+});
+</script>
+{% endblock extrajs %}

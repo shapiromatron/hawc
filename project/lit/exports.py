@@ -101,3 +101,24 @@ class ReferenceFlatComplete(FlatFileExporter):
             rows.append(row)
 
         return rows
+
+
+class TableBuilderFormat(FlatFileExporter):
+    """Format for importing into Table builder."""
+
+    def _get_header_row(self):
+        return [
+            'PubMed ID', 'Name', 'Full Citation',
+            'Other URL', 'PDF URL',
+        ]
+
+    def _get_data_rows(self):
+        return [
+            [
+                ref.getPubMedID(),
+                ref.get_short_citation_estimate(),
+                ref.reference_citation,
+                None,
+                ref.full_text_url,
+            ] for ref in self.queryset
+        ]

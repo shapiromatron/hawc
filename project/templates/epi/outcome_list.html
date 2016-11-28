@@ -13,15 +13,52 @@
 
     <h1>Outcomes ({{page_obj.paginator.count}} found)</h1>
 
-    <div>
-        <ul>
-            {% for object in object_list %}
-                <li><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-            {% empty %}
-                <li><i>No outcomes are available.</i></li>
-            {% endfor %}
-        </ul>
+    <div class="accordion" id="filterForm">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#filterForm" href="#EndpointForm" title="Filter outcomes">
+            Filter outcomes
+          </a>
+        </div>
+        <div id="EndpointForm" class="accordion-body collapse">
+          <div class="accordion-inner container-fluid">
+
+            <form action="." method="get">
+              <fieldset>
+                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+
+                    {% for field in form %}
+
+                        {% if forloop.counter0|divisibleby:4 %}
+                            <div class="row-fluid">
+                        {% endif %}
+
+                        <div class="span3">
+                            {{field.label_tag|add_class:"control-label"}}
+                            <div class="controls">
+                                {{field}}<br>
+                                <span class='help-inline'>{{field.help_text}}</span>
+                            </div>
+                            {{field.errors|add_class:"alert alert-error"}}
+                        </div>
+
+                        {% if forloop.counter0|add:1|divisibleby:4 %}
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+                </fieldset>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Apply filters</button>
+                </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div id='endpointTable'></div>
 
     {% if is_paginated %}
         <div class="pagination pagination-centered">
@@ -45,3 +82,18 @@
     {% endif %}
 
 {% endblock content %}
+
+{% block extrajs %}
+    {{ form.media }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var outcomes = [];
+            {{list_json|safe}}.map(function(outcome){
+                outcomes.push(new window.app.epi.Outcome(outcome));
+            })
+
+            var tbl = new window.app.epi.OutcomeListTable(outcomes);
+            $("#endpointTable").html(tbl.buildTable());
+        });
+    </script>
+{% endblock %}

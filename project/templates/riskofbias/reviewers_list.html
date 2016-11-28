@@ -28,7 +28,7 @@
     </h2>
 
     <p>
-        <b>Independent reviews required: </b>{{assessment.rob_settings.number_of_reviewers}}
+        <b>Independent reviews: </b>{{assessment.rob_settings.number_of_reviewers}}
     </p>
 
     <table class="table table-condensed table-striped">
@@ -66,7 +66,7 @@
                         <td>
                     {% endif %}
                     {{rob.author}}
-                    {% if request.user == rob.author or obj_perms.edit_assessment and rob.final %}
+                    {% if request.user == rob.author or obj_perms.edit_assessment %}
                         <a href="{{rob.get_edit_url}}">
                             <i title="Edit"
                                class="fa fa-pencil-square-o"

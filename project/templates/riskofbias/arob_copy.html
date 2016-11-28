@@ -92,7 +92,7 @@
             // load approach on assessment change
             $('#id_assessment')
                 .on('change', function(){
-                    var url = '/study/api/domain/?assessment_id=' + $('#id_assessment').val();
+                    var url = '{% url "riskofbias:api:domain-list" %}?assessment_id=' + $('#id_assessment').val();
                     $.get(url, displayApproach);
                 })
                 .trigger('change');

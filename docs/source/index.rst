@@ -14,6 +14,7 @@ identification and potentially derive quantitative levels of concern.
 The development team consists of:
 
 * Andy Shapiro
+* Josh Addington
 
 The Principal Investigator (PI) is:
 
@@ -26,7 +27,7 @@ Contents:
 
    dev_setup
    server_setup
-   statistical_methods
+   reference
    management_commands
    contributing
 

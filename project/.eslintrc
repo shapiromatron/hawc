@@ -17,16 +17,19 @@
         "react/jsx-uses-vars": 2,
         "react/react-in-jsx-scope": 2
     },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+            },
+    },
     "env": {
         "es6": true,
         "browser": true
     },
     "extends": "eslint:recommended",
-    "ecmaFeatures": {
-        "modules": true,
-        "jsx": true,
-        "experimentalObjectRestSpread": true
-    },
     "plugins": [
       "babel",
       "react"

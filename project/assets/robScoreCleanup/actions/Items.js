@@ -97,13 +97,14 @@ export function selectAll(){
 }
 
 
-export function updateVisibleItems(selectedScores){
+export function updateVisibleItems(selectedScores=null, selectedStudyTypes=null){
     if (selectedScores !== null){
         selectedScores = selectedScores.map((d) => parseInt(d));
     }
     return {
         type: types.UPDATE_VISIBLE_ITEMS,
         selectedScores,
+        selectedStudyTypes,
     };
 }
 

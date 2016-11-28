@@ -1,20 +1,30 @@
 import json
 from django import forms
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.forms.models import \
     BaseModelFormSet, modelformset_factory, inlineformset_factory
 from django.forms.widgets import Select
+
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
+from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup
+from study.lookups import InvitroStudyLookup
 from utils.forms import BaseFormHelper
 
-from . import models
+from . import models, lookups
 
 
 class IVChemicalForm(forms.ModelForm):
     HELP_TEXT_CREATE = "Describes the chemical used in the current experiment."
     HELP_TEXT_UPDATE = "Update an existing chemical."
+
+    source = forms.CharField(
+        label='Source of chemical',
+        widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup, allow_new=True))
 
     class Meta:
         model = models.IVChemical
@@ -25,6 +35,10 @@ class IVChemicalForm(forms.ModelForm):
         super(IVChemicalForm, self).__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+        self.fields['source'].widget.update_query_parameters(
+            {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -61,6 +75,22 @@ class IVCellTypeForm(forms.ModelForm):
     HELP_TEXT_CREATE = "Describes the cell type used in the current experiment."
     HELP_TEXT_UPDATE = "Update an existing cell type."
 
+    species = forms.CharField(
+        label='Species',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSpeciesLookup, allow_new=True))
+    strain = forms.CharField(
+        label='Strain',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeStrainLookup, allow_new=True))
+    cell_type = forms.CharField(
+        label='Cell type',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeCellTypeLookup, allow_new=True))
+    tissue = forms.CharField(
+        label='Tissue',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup, allow_new=True))
+    source = forms.CharField(
+        label='Source of cell cultures',
+        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSourceLookup, allow_new=True))
+
     class Meta:
         model = models.IVCellType
         exclude = ('study', )
@@ -70,6 +100,11 @@ class IVCellTypeForm(forms.ModelForm):
         super(IVCellTypeForm, self).__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+        for field in ('species', 'strain', 'cell_type', 'tissue', 'source'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -107,6 +142,15 @@ class IVExperimentForm(forms.ModelForm):
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing experiment."
 
+    transfection = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentTransfectionLookup, allow_new=True))
+    positive_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentPositiveControlLookup, allow_new=True))
+    negative_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentNegativeControlLookup, allow_new=True))
+    vehicle_control = forms.CharField(
+        widget=selectable.AutoCompleteWidget(lookups.IVExperimentVehicleControlLookup, allow_new=True))
+
     class Meta:
         model = models.IVExperiment
         exclude = ('study', )
@@ -119,6 +163,11 @@ class IVExperimentForm(forms.ModelForm):
         self.fields['cell_type'].queryset = \
             self.fields['cell_type'].queryset\
                 .filter(study=self.instance.study)
+
+        for field in ('transfection', 'positive_control', 'negative_control', 'vehicle_control'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.study.assessment.id})
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -183,6 +232,12 @@ class IVEndpointForm(forms.ModelForm):
     category = CategoryModelChoice(
         required=False,
         queryset=models.IVEndpointCategory.objects.none())
+    assay_type = forms.CharField(
+        label='Assay Type',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointAssayTypeLookup, allow_new=True))
+    response_units = forms.CharField(
+        label='Response Units',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup, allow_new=True))
 
     class Meta:
         model = models.IVEndpoint
@@ -206,6 +261,9 @@ class IVEndpointForm(forms.ModelForm):
         self.fields['NOEL'].widget.set_default_choices(self.instance)
         self.fields['LOEL'].widget.set_default_choices(self.instance)
 
+        self.fields['effect'].widget = selectable.AutoCompleteWidget(
+            lookups.IVEndpointEffectLookup, allow_new=True)
+
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
         self.fields['effects'].help_text = 'Tags used to help categorize effect description.'
@@ -217,6 +275,10 @@ class IVEndpointForm(forms.ModelForm):
         self.fields['category'].queryset = \
             self.fields['category'].queryset.model\
                 .get_assessment_qs(self.instance.assessment.id)
+
+        for field in ('assay_type', 'response_units', 'effect'):
+            self.fields[field].widget.update_query_parameters(
+                {'related': self.instance.assessment.id})
 
         self.helper = self.setHelper()
 
@@ -272,6 +334,158 @@ class IVEndpointForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[2], 1, url, 'Add new effect tag', 'span6')
 
         return helper
+
+
+class IVEndpointFilterForm(forms.Form):
+
+    ORDER_BY_CHOICES = (
+        ('experiment__study__short_citation', 'study'),
+        ('name', 'endpoint name'),
+        ('assay_type', 'assay type'),
+        ('effect', 'effect'),
+        ('chemical__name', 'chemical'),
+        ('category__name', 'category'),
+        ('observation_time', 'observation time'),
+    )
+
+    studies = selectable.AutoCompleteSelectMultipleField(
+        label='Study reference',
+        lookup_class=InvitroStudyLookup,
+        help_text="ex: Smith et al. 2010",
+        required=False)
+
+    name = forms.CharField(
+        label='Endpoint name',
+        widget=selectable.AutoCompleteWidget(lookups.IVEndpointByAssessmentTextLookup),
+        help_text="ex: B cells",
+        required=False)
+
+    chemical = forms.CharField(
+        label='Chemical name',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalNameLookup),
+        help_text="ex: PFOA",
+        required=False)
+
+    cas = forms.CharField(
+        label='CAS',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalCASLookup),
+        help_text="ex: 107-02-8",
+        required=False)
+
+    cell_type = forms.CharField(
+        label='Cell type',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeNameLookup),
+        help_text='ex: HeLa',
+        required=False)
+
+    tissue = forms.CharField(
+        label='Tissue',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeTissueLookup),
+        help_text='ex: adipocytes',
+        required=False)
+
+    effect = forms.CharField(
+        label='Effect',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointEffectLookup),
+        help_text="ex: gene expression",
+        required=False)
+
+    response_units = forms.CharField(
+        label='Response units',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointResponseUnitsLookup),
+        help_text="ex: counts",
+        required=False)
+
+    dose_units = forms.ModelChoiceField(
+       queryset=DoseUnits.objects.all(),
+       required=False
+    )
+
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
+
+    paginate_by = forms.IntegerField(
+        label='Items per page',
+        min_value=1,
+        initial=25,
+        max_value=10000,
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        assessment_id = kwargs.pop('assessment_id')
+        super(IVEndpointFilterForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field not in ('dose_units', 'order_by', 'paginate_by'):
+                self.fields[field].widget.update_query_parameters(
+                    {'related': assessment_id})
+
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
+                widget.attrs['class'] = 'span12'
+
+        helper = BaseFormHelper(self)
+
+        helper.form_method = "GET"
+        helper.form_class = None
+
+        helper.add_fluid_row('studies', 4, "span3")
+        helper.add_fluid_row('cell_type', 4, "span3")
+        helper.add_fluid_row('dose_units', 4, "span3")
+
+        helper.layout.append(
+            cfb.FormActions(
+                cfl.Submit('submit', 'Apply filters'),
+            )
+        )
+
+        return helper
+
+    def get_query(self):
+
+        studies = self.cleaned_data.get('studies')
+        name = self.cleaned_data.get('name')
+        chemical = self.cleaned_data.get('chemical')
+        cas = self.cleaned_data.get('cas')
+        cell_type = self.cleaned_data.get('cell_type')
+        tissue = self.cleaned_data.get('tissue')
+        effect = self.cleaned_data.get('effect')
+        response_units = self.cleaned_data.get('response_units')
+        dose_units = self.cleaned_data.get('dose_units')
+
+        query = Q()
+        if studies:
+            query &= Q(experiment__study__in=studies)
+        if name:
+            query &= Q(name__icontains=name)
+        if chemical:
+            query &= Q(chemical__name__icontains=chemical)
+        if cas:
+            query &= Q(chemical__cas__icontains=cas)
+        if cell_type:
+            query &= Q(experiment__cell_type__cell_type__icontains=cell_type)
+        if tissue:
+            query &= Q(experiment__cell_type__tissue__icontains=tissue)
+        if effect:
+            query &= Q(effect__icontains=effect)
+        if response_units:
+            query &= Q(response_units__icontains=response_units)
+        if dose_units:
+            query &= Q(experiment__dose_units=dose_units)
+        return query
+
+    def get_order_by(self):
+        return self.cleaned_data.get('order_by', self.ORDER_BY_CHOICES[0][0])
+
+    def get_dose_units_id(self):
+        if hasattr(self, "cleaned_data") and self.cleaned_data.get('dose_units'):
+            return self.cleaned_data.get('dose_units').id
 
 
 class IVEndpointGroupForm(forms.ModelForm):

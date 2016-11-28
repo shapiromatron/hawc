@@ -1,5 +1,5 @@
 Django==1.10
-amqp==1.4.6
+amqp==1.4.9
 anyjson==0.3.3
 billiard==3.3.0.20
 celery==3.1.18
@@ -18,7 +18,7 @@ djangorestframework==3.4.0
 docutils==0.12
 drf-extensions==0.3.1
 jsonschema==2.5.1
-kombu==3.0.26
+kombu==3.0.35
 lxml==3.4.4
 pillow==3.1.1
 psycopg2==2.6.1
@@ -30,7 +30,7 @@ redis==2.10.3
 requests==2.9.1
 RISparser==0.4.1
 six==1.10.0
-scipy==0.17.0
+scipy==0.18.0
 sqlparse==0.1.15
 unicodecsv==0.13.0
 XlsxWriter==0.7.3
@@ -44,10 +44,13 @@ git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc
 # bmds
 git+https://github.com/shapiromatron/bmds@30b963583338e742f3c6de05723937e838ee8afb
 
+# literature tools
+litter-getter==0.1.1
+
 # for import scripts
 jupyter==1.0.0
 ipython==4.1.1
 runipy==0.1.5
-numpy==1.9.2
+numpy==1.11.1
 python-dateutil==2.4.2
 fuzzywuzzy==0.7.0

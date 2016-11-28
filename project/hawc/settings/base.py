@@ -25,7 +25,7 @@ ADMINS = []
 _admin_names = os.getenv('DJANGO_ADMIN_NAMES', "")
 _admin_emails = os.getenv('DJANGO_ADMIN_EMAILS', "")
 if (len(_admin_names) > 0 and len(_admin_emails) > 0):
-    ADMINS = zip(_admin_names.split("|"), _admin_emails.split("|"))
+    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
 MANAGERS = ADMINS
 
 
@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'invitro',
     'bmd',
     'summary',
+    'mgmt',
 )
 
 
@@ -249,6 +250,11 @@ def get_git_commit():
 
 GIT_COMMIT = get_git_commit()
 COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMMIT)
+
+
+# PubMed settings
+PUBMED_TOOL = os.getenv('PUBMED_TOOL', 'hawc')
+PUBMED_EMAIL = os.getenv('PUBMED_EMAIL', DEFAULT_FROM_EMAIL)
 
 
 # BMD modeling settings

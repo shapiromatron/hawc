@@ -5,7 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock title %}
 
 {% block extrastyle %}
@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

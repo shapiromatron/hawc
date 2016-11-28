@@ -1,7 +1,8 @@
 var args = process.argv.slice(2),
     express = require('express'),
     webpack = require('webpack'),
-    config = require('./webpack.config.dev');
+    config = require('./webpack.config.dev'),
+    DashboardPlugin = require('webpack-dashboard/plugin');
 
 if (args.indexOf('--testProduction')>=0){
     console.log('Using test production;');
@@ -14,6 +15,8 @@ if (args.indexOf('--testProduction')>=0){
 
 var app = express(),
     compiler = webpack(config);
+
+compiler.apply(new DashboardPlugin());
 
 app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,

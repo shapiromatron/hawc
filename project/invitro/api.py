@@ -18,7 +18,7 @@ class IVCellType(AssessmentViewset):
 
 
 class IVExperiment(AssessmentViewset):
-    assessment_filter_args = "assessment"
+    assessment_filter_args = "study__assessment"
     model = models.IVExperiment
     serializer_class = serializers.IVExperimentSerializerFull
 

@@ -8,20 +8,39 @@ following applications installed on your local development system:
 - Python 2.7
 - `Node.js >= 4.0 <https://nodejs.org/>`_
 - `Npm.js >= 3.0 <https://npmjs.org/>`_
-- `pip >= 1.5 <http://www.pip-installer.org/>`_
+- `pip >= 8.1 <http://www.pip-installer.org/>`_
 - `virtualenv >= 1.9 <http://www.virtualenv.org/>`_
-- `virtualenvwrapper >= 3.5 <http://pypi.python.org/pypi/virtualenvwrapper>`_
+- `virtualenvwrapper >= 3.5 <http://pypi.python.org/pypi/virtualenvwrapper>`_ (mac/linux)
+- `virtualenvwrapper-win >= 1.2.1 <https://pypi.python.org/pypi/virtualenvwrapper-win>`_. (windows)
 - Postgres >= 9.3
 - git >= 1.7
 
 
-Getting Started
----------------
+.. warning::
+    HAWC can be developed in Windows, however, in versions older than Windows 10,
+    it may not be possible due to file-system restrictions. The maximum
+    path length in some Windows environments is 260; the Node.js packaging
+    system may often exceed this length, and does in the current HAWC environment.
+
+    There's nothing we can do to fix this that we're aware of.
+
+
+HAWC setup: Part I (OS-specific)
+--------------------------------
+
+The initial HAWC setup is operating-system specific, due to limitations in
+the ease of installing scientific python software on Windows. Choose your
+own adventure below.
+
+Mac/Linux
+~~~~~~~~~
 
 To setup your local environment you should create a virtualenv and install the
 necessary requirements::
 
     mkvirtualenv hawc
+    git clone https://github.com/shapiromatron/hawc.git
+    cd hawc
     $VIRTUAL_ENV/bin/pip install -r $PWD/requirements/dev.txt
 
 Create a local settings file and update the necessary fields within the settings::
@@ -44,7 +63,49 @@ Next, update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivat
     # move to project path
     cd $HOME/dev/hawc/project
 
-Re-activate the virtual environment::
+Windows
+~~~~~~~~~
+
+To setup your local environment you should create a virtualenv and install the
+necessary requirements::
+
+    mkvirtualenv hawc
+    git clone https://github.com/shapiromatron/hawc.git
+
+To install python packages, ensure you have the Python C++ compiler, available
+from `Microsoft <https://www.microsoft.com/en-us/download/details.aspx?id=44266>`_. Also
+ensure that your version of pip allows for installation of wheels (v8 or higher).
+Install numpy and scipy using precompiled binaries, available for download from
+`Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ (they're difficult to build on Windows),
+by using these commands (adapted to the filename/location on your computer)::
+
+    pip install "C:\Users\username\Desktop\numpy-version.whl"
+    pip install "C:\Users\username\Desktop\scipy-version.whl"
+
+Then, you should be able to install remaining packages via pip::
+
+    cd hawc
+    pip install -r requirements/windows/dev.txt
+
+Create a local settings file and update the necessary fields within the settings::
+
+    copy project\hawc\settings\local.example.py project\hawc\settings\local.py
+
+Next, add these values to the bottom of the ``activate.bat`` file, which should be
+located in ``%VIRTUAL_ENV%\Scripts\activate.bat``::
+
+    :: django environment-variable settings
+    set "DJANGO_SETTINGS_MODULE=hawc.settings.local"
+    set "DJANGO_STATIC_ROOT=%USERPROFILE%\dev\temp\hawc\static"
+    set "DJANGO_MEDIA_ROOT=$HOME\dev\temp\hawc\media"
+
+    :: move to project path (change to correct path)
+    cd %USERPROFILE%\dev\hawc\project"
+
+HAWC setup: Part II
+-------------------
+
+start the virtual environment::
 
     deactivate
     workon hawc
@@ -72,21 +133,11 @@ development environment::
 
 After installing dependencies, run the javascript bundler in a second terminal::
 
-    npm run start
+    npm start
 
 If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
 .. _`localhost`: http://127.0.0.1:8000/
-
-
-Compiling dependencies on Windows
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Some dependencies in the ``requirements.txt`` file require compilation of
-python extension modules on the development computer, often using C or C++.
-For details on how to resolve these dependencies, see this `Microsoft post`_.
-
-.. _`Microsoft post`: https://blogs.msdn.microsoft.com/pythonengineering/2016/04/11/unable-to-find-vcvarsall-bat/
 
 
 Loading a database export:

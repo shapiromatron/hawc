@@ -5,11 +5,9 @@ import json
 import math
 
 from django.db import models
-from django.contrib.contenttypes import fields
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist
-from django.apps import apps
 
 from reversion import revisions as reversion
 from scipy import stats
@@ -19,11 +17,14 @@ from assessment.serializers import AssessmentSerializer
 
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, \
     cleanHTML, tryParseInt
-from utils.models import get_distinct_charfield_opts, \
-    get_distinct_charfield, get_crumbs
+from utils.models import get_crumbs
+
+from . import managers
+
 
 
 class Experiment(models.Model):
+    objects = managers.ExperimentManager()
 
     EXPERIMENT_TYPE_CHOICES = (
         ("Ac", "Acute (<24 hr)"),
@@ -194,10 +195,6 @@ class Experiment(models.Model):
         )
 
     @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(study__assessment=assessment_id)
-
-    @classmethod
     def delete_caches(cls, ids):
         Endpoint.delete_caches(
             Endpoint.objects
@@ -207,6 +204,7 @@ class Experiment(models.Model):
 
 
 class AnimalGroup(models.Model):
+    objects = managers.AnimalGroupManager()
 
     SEX_SYMBOLS = {
         "M": u"♂",
@@ -352,15 +350,11 @@ class AnimalGroup(models.Model):
         )
 
     @classmethod
-    def getRelatedAnimalGroupID(cls, rel):
-        if rel:
-            return str(rel['id'])
-        else:
-            return None
+    def get_relation_id(cls, rel):
+        return str(rel['id']) if rel else None
 
     @classmethod
     def flat_complete_data_row(cls, ser):
-
         return (
             ser['id'],
             ser['url'],
@@ -370,17 +364,13 @@ class AnimalGroup(models.Model):
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
             ser['duration_observation'],
-            cls.getRelatedAnimalGroupID(ser['siblings']),
-            '|'.join([cls.getRelatedAnimalGroupID(p) for p in ser['parents']]),
+            cls.get_relation_id(ser['siblings']),
+            '|'.join([cls.get_relation_id(p) for p in ser['parents']]),
             ser['generation'],
             cleanHTML(ser['comments']),
             ser['species'],
             ser['strain']
         )
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(experiment__study__assessment=assessment_id)
 
     @classmethod
     def delete_caches(cls, ids):
@@ -392,6 +382,8 @@ class AnimalGroup(models.Model):
 
 
 class DosingRegime(models.Model):
+
+    objects = managers.DosingRegimeManager()
 
     ROUTE_EXPOSURE_CHOICES = (
         ("OR", u"Oral"),
@@ -509,7 +501,7 @@ class DosingRegime(models.Model):
     def flat_complete_data_row(ser):
         return (
             ser['id'],
-            AnimalGroup.getRelatedAnimalGroupID(ser['dosed_animals']),
+            AnimalGroup.get_relation_id(ser['dosed_animals']),
             ser['route_of_exposure'],
             ser['duration_exposure'],
             ser['duration_exposure_text'],
@@ -535,13 +527,10 @@ class DosingRegime(models.Model):
         else:
             return doses
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(dosed_animals__experiment__study__assessment=assessment_id)
-
 
 class DoseGroup(models.Model):
+    objects = managers.DoseGroupManager()
+
     dose_regime = models.ForeignKey(
         DosingRegime,
         related_name='doses')
@@ -561,8 +550,8 @@ class DoseGroup(models.Model):
     def __unicode__(self):
         return u"{0} {1}".format(self.dose, self.dose_units)
 
-    @classmethod
-    def flat_complete_data_row(cls, ser_full, units, idx):
+    @staticmethod
+    def flat_complete_data_row(ser_full, units, idx):
         cols = []
         ser = [v for v in ser_full if v["dose_group_id"] == idx]
         for unit in units:
@@ -576,13 +565,9 @@ class DoseGroup(models.Model):
 
         return cols
 
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects\
-            .filter(dose_regime__dosed_animals__experiment__study__assessment=assessment_id)  # noqa
-
 
 class Endpoint(BaseEndpoint):
+    objects = managers.EndpointManager()
 
     TEXT_CLEANUP_FIELDS = (
         'name',
@@ -769,23 +754,6 @@ class Endpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @classmethod
-    def optimized_qs(cls, **filters):
-        # Use this method to get proper prefetch and select-related when
-        # returning API-style endpoints
-        return cls.objects\
-            .filter(**filters)\
-            .select_related(
-                'animal_group',
-                'animal_group__dosed_animals',
-                'animal_group__experiment',
-                'animal_group__experiment__study',
-            ).prefetch_related(
-                'groups',
-                'effects',
-                'animal_group__dosed_animals__doses',
-            )
-
     def __unicode__(self):
         return self.name
 
@@ -815,17 +783,14 @@ class Endpoint(BaseEndpoint):
         return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
 
     @staticmethod
-    def d_responses(queryset, json_encode=True):
-        """
-        Return a list of queryset responses with the specified dosing protocol
-        """
-        endpoints = [e.d_response(json_encode=False) for e in queryset]
+    def get_qs_json(queryset, json_encode=True):
+        endpoints = [e.get_json(json_encode=False) for e in queryset]
         if json_encode:
             return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
         else:
             return endpoints
 
-    def d_response(self, json_encode=True):
+    def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_assessment(self):
@@ -849,8 +814,8 @@ class Endpoint(BaseEndpoint):
             change += resps[i] - resps[0]
         return change >= 0
 
-    @classmethod
-    def flat_complete_header_row(cls):
+    @staticmethod
+    def flat_complete_header_row():
         return (
             "endpoint-id",
             "endpoint-url",
@@ -883,8 +848,8 @@ class Endpoint(BaseEndpoint):
             "endpoint-additional_fields",
         )
 
-    @classmethod
-    def flat_complete_data_row(cls, ser):
+    @staticmethod
+    def flat_complete_data_row(ser):
         return (
             ser['id'],
             ser['url'],
@@ -917,8 +882,8 @@ class Endpoint(BaseEndpoint):
             json.dumps(ser['additional_fields']),
         )
 
-    @classmethod
-    def get_docx_template_context(cls, assessment, queryset):
+    @staticmethod
+    def get_docx_template_context(assessment, queryset):
         """
         Given a queryset of endpoints, invert the cached results to build
         a top-down data hierarchy from study to endpoint. We use this
@@ -983,24 +948,8 @@ class Endpoint(BaseEndpoint):
             "studies": studies
         }
 
-    @classmethod
-    def get_system_choices(cls, assessment_id):
-        return get_distinct_charfield_opts(cls, assessment_id, 'system')
-
-    @classmethod
-    def get_organ_choices(cls, assessment_id):
-        return get_distinct_charfield_opts(cls, assessment_id, 'organ')
-
-    @classmethod
-    def get_effect_choices(cls, assessment_id):
-        return get_distinct_charfield_opts(cls, assessment_id, 'effect')
-
-    @classmethod
-    def get_effects(cls, assessment_id):
-        return get_distinct_charfield(cls, assessment_id, 'effect')
-
-    @classmethod
-    def setMaximumPercentControlChange(cls, ep):
+    @staticmethod
+    def setMaximumPercentControlChange(ep):
         """
         For each endpoint, return the maximum absolute-change percent control
         for that endpoint, or 0 if it cannot be calculated. Useful for
@@ -1172,6 +1121,8 @@ class ConfidenceIntervalsMixin(object):
 
 
 class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
+    objects = managers.EndpointGroupManager()
+
     endpoint = models.ForeignKey(
         Endpoint,
         related_name='groups')
@@ -1239,8 +1190,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         else:
             return u"{}-{}".format(nmin, nmax)
 
-    @classmethod
-    def flat_complete_header_row(cls):
+    @staticmethod
+    def flat_complete_header_row():
         return (
             "endpoint_group-id",
             "endpoint_group-dose_group_id",
@@ -1257,8 +1208,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             "endpoint_group-FEL",
         )
 
-    @classmethod
-    def flat_complete_data_row(cls, ser, endpoint):
+    @staticmethod
+    def flat_complete_data_row(ser, endpoint):
         return (
             ser['id'],
             ser['dose_group_id'],
@@ -1274,10 +1225,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser['dose_group_id'] == endpoint['LOEL'],
             ser['dose_group_id'] == endpoint['FEL'],
         )
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(endpoint__assessment=assessment_id)
 
 
 reversion.register(Experiment)

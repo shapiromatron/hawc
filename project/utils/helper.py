@@ -251,7 +251,7 @@ class ExcelFileBuilder(FlatFile):
             for c, val in enumerate(row):
                 write_cell(r, c, val)
 
-        self.ws.autofilter(0, 0, r, self.ncols)
+        self.ws.autofilter(0, 0, r, self.ncols - 1)
 
     def _django_response(self):
         fn = '{}.xlsx'.format(self.filename)

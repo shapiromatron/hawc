@@ -18,6 +18,7 @@ class AssessmentForm(forms.ModelForm):
 
     class Meta:
         exclude = ('enable_literature_review',
+                   'enable_project_management',
                    'enable_data_extraction',
                    'enable_risk_of_bias',
                    'enable_bmd',
@@ -77,6 +78,7 @@ class AssessmentModulesForm(forms.ModelForm):
     class Meta:
         fields = ('enable_literature_review',
                   'enable_data_extraction',
+                  'enable_project_management',
                   'enable_risk_of_bias',
                   'enable_bmd',
                   'enable_summary_text')

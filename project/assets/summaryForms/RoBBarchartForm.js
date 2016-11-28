@@ -85,7 +85,7 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: 'padding_left',
             label: 'Plot padding-left (px)',
-            def: 25,
+            def: 70,
             tab: 'overall',
         },
         {
@@ -113,10 +113,10 @@ _.extend(RoBBarchartForm, {
         },
         {
             type: CheckboxField,
-            name: 'show_nr_legend',
-            label: 'Show NR in legend',
+            name: 'show_na_legend',
+            label: 'Show N/A in legend',
             def: true,
-            helpText: 'Show \'Not Reported\' in the legend',
+            helpText: 'Show "Not applicable" in the legend',
             tab: 'legend',
         },
         {

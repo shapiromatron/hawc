@@ -390,7 +390,7 @@ class AdminUserForm(PasswordForm):
     def save(self, commit=True):
         user = super(AdminUserForm, self).save(commit=commit)
         if user.id:
-            user.assessment_pms.add(*self.cleaned_data['project_manager'])
-            user.assessment_teams.add(*self.cleaned_data['team_member'])
-            user.assessment_reviewers.add(*self.cleaned_data['reviewer'])
+            user.assessment_pms.set(self.cleaned_data['project_manager'])
+            user.assessment_teams.set(self.cleaned_data['team_member'])
+            user.assessment_reviewers.set(self.cleaned_data['reviewer'])
         return user

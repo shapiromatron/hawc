@@ -13,6 +13,7 @@ from assessment.api import AssessmentLevelPermissions, AssessmentEditViewset,\
 from utils.api import BulkIdFilter
 from utils.views import TeamMemberOrHigherMixin
 
+from mgmt.models import Task
 from . import models, serializers
 
 
@@ -40,6 +41,14 @@ class RiskOfBias(viewsets.ModelViewSet):
         return self.model.objects.all()\
             .prefetch_related('study', 'author', 'scores__metric__domain')
 
+    def perform_update(self, serializer):
+        super(RiskOfBias, self).perform_update(serializer)
+        study = serializer.instance.study
+        user = self.request.user
+        Task.objects.ensure_rob_started(study, user)
+        if serializer.instance.final and serializer.instance.is_complete:
+            Task.objects.ensure_rob_stopped(study)
+
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
@@ -61,7 +70,7 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(AssessmentEditViewset, TeamMemberOrHigherMixin, ListUpdateModelMixin):
+class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     model = models.RiskOfBiasScore
     serializer_class = serializers.AssessmentRiskOfBiasScoreSerializer
     pagination_class = DisabledPagination
@@ -81,3 +90,7 @@ class AssessmentScoreViewset(AssessmentEditViewset, TeamMemberOrHigherMixin, Lis
 
     def get_queryset(self):
         return self.model.objects.all()
+
+    def post_save_bulk(self, queryset, update_bulk_dict):
+        ids = list(queryset.values_list('id', flat=True))
+        queryset.model.delete_caches(ids)

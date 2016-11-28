@@ -32,3 +32,5 @@ def default_configuration(sender, instance, created, **kwargs):
 
         logging.info("Building in-vitro endpoint category-root")
         apps.get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
+
+    apps.get_model('mgmt', 'Task').objects.create_assessment_tasks(assessment=instance)

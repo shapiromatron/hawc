@@ -1,11 +1,12 @@
-from utils.views import (BaseDetail, BaseDelete,
-                         BaseUpdate, BaseCreate,
-                         BaseCreateWithFormset, BaseUpdateWithFormset,
-                         CloseIfSuccessMixin, BaseList)
+from django.db.models import Q
 
 from assessment.models import Assessment
+from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from study.views import StudyRead
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
+                         BaseDelete, BaseEndpointFilterList, BaseUpdate,
+                         BaseList, BaseUpdateWithFormset, CloseIfSuccessMixin)
 
 from . import forms, exports, models
 
@@ -20,7 +21,7 @@ class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
 
 
 # Study population
-class StudyPopulationCreate(BaseCreate):
+class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = 'Study-population created.'
     parent_model = Study
     parent_template_name = 'study'
@@ -116,30 +117,28 @@ class ExposureDelete(BaseDelete):
 
 
 # Outcome
-class OutcomeList(BaseList):
+class OutcomeList(BaseEndpointFilterList):
+    parent_model = Assessment
+    model = models.Outcome
+    form_class = forms.OutcomeFilterForm
+
+    def get_query(self, perms):
+        query = Q(assessment=self.assessment)
+        if not perms['edit']:
+            query &= Q(study_population__study__published=True)
+        return query
+
+
+class OutcomeExport(BaseList):
     parent_model = Assessment
     model = models.Outcome
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
-
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
         perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["study_population__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('name')
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
-
-class OutcomeExport(OutcomeList):
-    """
-    Full XLS data export for the epidemiology outcome.
-    """
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.OutcomeComplete(

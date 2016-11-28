@@ -13,19 +13,6 @@ var helpers = Object.assign({}, shared, {
     getObjectUrl(base, id){
         return `${base}${id}/`;
     },
-    caseToWords(string){
-        return string
-            // replace underscores and dashes with spaces
-            .replace(/[_-]/g, ' ')
-            // insert a space between lower followed by upper
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            // insert a space between last upper in sequence followed by lower
-            .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-            // uppercase the first character of first word
-            .replace(/\w\S*/, function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            });
-    },
     extendBreadcrumbs(url){
         $('.breadcrumb').children().last().contents().eq(-2).wrap(`<a href=${url}></a>`);
     },

@@ -1,5 +1,6 @@
 import $ from '$';
 import _ from 'underscore';
+import Clipboard from 'clipboard';
 
 import Observee from 'utils/Observee';
 
@@ -69,7 +70,8 @@ class Reference extends Observee {
                 .attr('class', 'btn btn-mini btn-primary')
                 .attr('target', '_blank')
                 .attr('href', this.data.full_text_url)
-                .text('Full text link'));
+                .text('Full text link ')
+                .append('<i class="fa fa-fw fa-file-pdf-o"></i>'));
             links.append('<span>&nbsp;</span>');
         }
 
@@ -77,20 +79,29 @@ class Reference extends Observee {
             .filter(function(v){return v.url.length>0;})
             .sortBy(function(v){return v.database_id;})
             .each(function(v){
-                links.append('<a class="btn btn-mini btn-success" target="_blank" href="{0}" title="ID {1}">{2}</a>'.printf(
-                    v.url, v.id, v.database));
+                let grp = $('<div class="btn-group">'),
+                    link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
+                    copyID = $(`<button type="button" class="btn btn-mini btn-success" title="Copy ID ${v.id} to clipboard"><i class="fa fa-clipboard"></i></button>`);
+
+                // copy ID to clipboard
+                new Clipboard(copyID.get(0), {text: () => v.id});
+
+                links.append(grp.append(link, copyID));
                 links.append('<span>&nbsp;</span>');
             });
 
         _.chain(this.data.identifiers)
-            .reject(function(v){return v.url.length>0 || v.database === 'External link';})
+            .reject(function(v){return v.url.length > 0 || v.database === 'External link';})
             .sortBy(function(v){return v.database_id;})
             .each(function(v){
-                links.append('<button class="btn btn-mini disabled" title="ID {0}">{1}</button>'.printf(
-                    v.id, v.database));
+                let copyID = $(`<button class="btn btn-mini" title="Copy ID ${v.id} to clipboard">${v.database} <i class="fa fa-clipboard"></i></button>`);
+
+                // copy ID to clipboard
+                new Clipboard(copyID.get(0), {text: () => v.id});
+
+                links.append(copyID);
                 links.append('<span>&nbsp;</span>');
             });
-
 
         return (links.children().length>0) ? links : null;
     }
@@ -107,12 +118,12 @@ class Reference extends Observee {
                     return '<p class="ref_title">{0}</p>'.printf(data.title);
             },
             get_journal = function(){
-                if(data.journal)
-                    return '<p class="ref_small">{0}</p>'.printf(data.journal);
+                let journal = (data.journal)? `${data.journal}<br/>`: '';
+                return `<p class="ref_small">${journal}HAWC ID: ${data.pk}</p>`;
             },
             get_abstract = function(){
                 if(data.abstract)
-                    return '<p class="abstracts collapse">{0}</p>'.printf(data.abstract);
+                    return '<p class="abstracts" style="display: none">{0}</p>'.printf(data.abstract);
             },
             get_authors_row = function(){
                 var p = $('<p class="ref_small">{0} {1}</p>'.printf(
@@ -135,9 +146,12 @@ class Reference extends Observee {
             },
             get_searches = function(){
                 if(data.searches){
-                    var title = '<p><strong>HAWC searches/imports:</strong></p>',
-                        ul = $('<ul>').html(_.map(data.searches, function(d){return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.title);}));
-                    return $('<div>').append(title, ul);
+                    let links = data.searches
+                        .map((d) => `<a href="${d.url}">${d.title}</a>`)
+                        .join('<span>,&nbsp;</span>'),
+                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
+
+                    return $('<div>').append(text);
                 }
             },
             populate_div = function(){
@@ -163,10 +177,10 @@ class Reference extends Observee {
                 .on('click', function(){
                     var sel = $(this);
                     if(sel.text() === 'Show abstract'){
-                        div.find('.abstracts').collapse('show');
+                        div.find('.abstracts').show();
                         sel.text('Hide abstract');
                     } else {
-                        div.find('.abstracts').collapse('hide');
+                        div.find('.abstracts').hide();
                         sel.text('Show abstract');
                     }
                 });

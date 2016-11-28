@@ -1,17 +1,19 @@
+from django.db.models import Q
 from django.views.generic import DetailView
-from utils.views import (
-    GenerateReport, BaseList, BaseDetail, BaseCreate,
-    BaseUpdate, BaseDelete, BaseUpdateWithFormset, BaseCreateWithFormset,
-)
 
 from assessment.models import Assessment
 from study.models import Study
+from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
+                         BaseDetail, BaseList, BaseEndpointFilterList,
+                         BaseUpdate, BaseUpdateWithFormset, GenerateReport,
+                         ProjectManagerOrHigherMixin)
+from mgmt.views import EnsureExtractionStartedMixin
+
 from . import models, forms, exports
-from utils.views import ProjectManagerOrHigherMixin
 
 
 # Experiment
-class ExperimentCreate(BaseCreate):
+class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Experiment created."
     parent_model = Study
     parent_template_name = 'study'
@@ -38,7 +40,7 @@ class ExperimentDelete(BaseDelete):
 
 
 # Chemical
-class ChemicalCreate(BaseCreate):
+class ChemicalCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Chemical created."
     parent_model = Study
     parent_template_name = 'study'
@@ -65,7 +67,7 @@ class ChemicalDelete(BaseDelete):
 
 
 # Cell type
-class CellTypeCreate(BaseCreate):
+class CellTypeCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Cell-type created."
     parent_model = Study
     parent_template_name = 'study'
@@ -180,29 +182,32 @@ class EndpointDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointsList(BaseList):
+class EndpointList(BaseEndpointFilterList):
     parent_model = Assessment
     model = models.IVEndpoint
+    form_class = forms.IVEndpointFilterForm
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get('paginate_by', val))
-        except ValueError:
-            pass
-        return val
+    def get_query(self, perms):
+        query = Q(assessment=self.assessment)
+        if not perms['edit']:
+            query &= Q(experiment__study__published=True)
+        return query
+
+    def get_context_data(self, **kwargs):
+        context = super(EndpointList, self).get_context_data(**kwargs)
+        context['dose_units'] = self.form.get_dose_units_id()
+        return context
+
+
+class EndpointFullExport(BaseList):
+    parent_model = Assessment
+    model = models.IVEndpoint
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointsList, self).get_obj_perms()
+        perms = self.get_obj_perms()
         if not perms['edit']:
-            filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters).order_by('name')
-
-
-class EndpointsFullExport(EndpointsList):
-    parent_model = Assessment
-    model = models.IVEndpoint
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -214,17 +219,16 @@ class EndpointsFullExport(EndpointsList):
         return exporter.build_response()
 
 
-class EndpointsReport(GenerateReport):
+class EndpointReport(GenerateReport):
     parent_model = Assessment
     model = models.IVEndpoint
     report_type = 5
 
     def get_queryset(self):
-        filters = {"assessment": self.assessment}
-        perms = super(EndpointsReport, self).get_obj_perms()
+        perms = self.get_obj_perms()
         if not perms['edit'] or self.onlyPublished:
-            filters["experiment__study__published"] = True
-        return self.model.objects.filter(**filters)
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "in-vitro.docx"

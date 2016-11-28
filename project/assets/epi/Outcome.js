@@ -96,6 +96,25 @@ class Outcome {
         return $el;
     }
 
+    buildListRow() {
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
+            detail = $('<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">').click(() => {
+                this.displayAsModal({complete: true});
+            }),
+            outcome = $('<span>')
+                        .append(link, detail)
+                        .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+
+        return [
+            `<a href=${this.data.study_population.study.url} target="_blank">${this.data.study_population.study.short_citation}</a>`,
+            `<a href=${this.data.study_population.url} target="_blank">${this.data.study_population.name}</a>`,
+            outcome,
+            this.data.system ? this.data.system : '--',
+            this.data.effect ? this.data.effect : '--',
+            this.data.diagnostic ? this.data.diagnostic : '--',
+        ];
+    }
+
     build_breadcrumbs(){
         var urls = [
             {

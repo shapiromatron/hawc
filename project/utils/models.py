@@ -5,7 +5,7 @@ import django
 
 from django.apps import apps
 from django.db import models, IntegrityError, transaction, connection
-from django.db.models import URLField
+from django.db.models import URLField, Q
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.template.defaultfilters import slugify as default_slugify
@@ -16,6 +16,22 @@ from treebeard.mp_tree import MP_Node
 from utils.helper import HAWCDjangoJSONEncoder
 
 from . import forms, validators
+
+
+class BaseManager(models.Manager):
+    assessment_relation = None
+
+    def get_qs(self, assessment_id=None):
+        '''
+        Allows for queryset to be filtered on assessment if assessment_id is passed as argument.
+        If assessment_id is not passed, then functions identically to .all()
+        '''
+        if assessment_id:
+            return self.assessment_qs(assessment_id)
+        return self.get_queryset()
+
+    def assessment_qs(self, assessment_id):
+        return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
 
 
 @property
@@ -273,8 +289,7 @@ class CustomURLField(URLField):
 
 
 def get_distinct_charfield(Cls, assessment_id, field):
-    return Cls.objects\
-              .filter(assessment_id=assessment_id)\
+    return Cls.filter(assessment_id=assessment_id)\
               .distinct(field)\
               .order_by(field)\
               .values_list(field, flat=True)

@@ -1,0 +1,41 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+    Task assignments | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li class="active">My assigned tasks<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h2>My assigned tasks</h2>
+
+  <div id='taskAssignments'></div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+    {
+        "csrf": "{{ csrf_token }}",
+        "host": "//{{ request.get_host }}",
+        "user": "{{user.id}}",
+        "tasks": {
+            "submit_url": "{% url 'mgmt:api:task-list' %}",
+            "url": "{% url 'mgmt:api:task-assignments' %}"
+        },
+        "autocomplete": {
+            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
+        }
+    }
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.app.mgmt.TaskAssignments(document.getElementById('taskAssignments'));
+});
+</script>
+{% endblock extrajs %}

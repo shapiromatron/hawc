@@ -16,7 +16,7 @@ from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
 from utils.helper import listToUl, tryParseInt
 from assessment.models import Assessment
 
-from . import forms, exports, models
+from . import constants, forms, exports, models
 
 
 class LitOverview(BaseList):
@@ -30,10 +30,10 @@ class LitOverview(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super(LitOverview, self).get_context_data(**kwargs)
-        context['overview'] = models.Reference.get_overview_details(self.assessment)
-        context['manual_import'] = models.Search.get_manually_added(self.assessment)
+        context['overview'] = models.Reference.objects.get_overview_details(self.assessment)
+        context['manual_import'] = models.Search.objects.get_manually_added(self.assessment)
         if context['obj_perms']['edit']: # expensive, only calculate if needed
-            qryset = models.Reference.get_references_ready_for_import(self.assessment)
+            qryset = models.Reference.objects.get_references_ready_for_import(self.assessment)
             context['need_import_count'] = qryset.count()
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
@@ -44,7 +44,7 @@ class SearchList(BaseList):
     model = models.Search
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
 
 class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
@@ -104,12 +104,22 @@ class RefDownloadExcel(BaseList):
 
     def get_queryset(self):
         if self.tag:
-            return self.model.get_references_with_tag(self.tag, descendants=True)
+            return self.model.objects.get_references_with_tag(self.tag, descendants=True)
         else:
-            return self.model.objects.filter(assessment=self.assessment)
+            return self.model.objects.get_qs(self.assessment)
+
+    def get_exporter(self):
+        fmt = self.request.GET.get('fmt', 'complete')
+        if fmt == 'complete':
+            return exports.ReferenceFlatComplete
+        elif fmt == 'tb':
+            return exports.TableBuilderFormat
+        else:
+            raise ValueError('Unknown export format.')
 
     def render_to_response(self, context, **response_kwargs):
-        exporter = exports.ReferenceFlatComplete(
+        exporter_cls = self.get_exporter()
+        exporter = exporter_cls(
             self.object_list,
             export_format="excel",
             filename=self.fn,
@@ -141,7 +151,7 @@ class SearchNew(BaseCreate):
 
         if pk > 0:
             obj = self.model.objects.filter(pk=pk).first()
-            permitted_assesments = Assessment.get_viewable_assessments(
+            permitted_assesments = Assessment.objects.get_viewable_assessments(
                 self.request.user, exclusion_id=self.assessment.pk)
             if obj and obj.assessment in permitted_assesments:
                 kwargs['initial'] = model_to_dict(obj)
@@ -179,17 +189,23 @@ class SearchDetail(BaseDetail):
 class SearchUpdate(BaseUpdate):
     success_message = 'Search updated.'
     model = models.Search
-    form_class = forms.SearchForm
+
+    def get_form_class(self):
+        if self.object.search_type == 's':
+            return forms.SearchForm
+        elif self.object.search_type == 'i':
+            if self.object.source == constants.RIS:
+                return forms.RISForm
+            else:
+                return forms.ImportForm
+        else:
+            raise ValueError('Unknown search type')
 
     def get_object(self):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         assessment = self.kwargs.get('pk', None)
         obj = get_object_or_404(models.Search, assessment=assessment, slug=slug)
         return super(SearchUpdate, self).get_object(object=obj)
-
-    def post_object_save(self, form):
-        if self.object.source == 2:
-            self.object.run_new_query()  # re-import from HERO only
 
     def get_context_data(self, **kwargs):
         context = super(SearchUpdate, self).get_context_data(**kwargs)
@@ -370,7 +386,7 @@ class TagByUntagged(TagReferences):
 
     def get_context_data(self, **kwargs):
         context = super(TagByUntagged, self).get_context_data(**kwargs)
-        context['references'] = models.Reference.get_untagged_references(self.assessment)
+        context['references'] = models.Reference.objects.get_untagged_references(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -420,9 +436,9 @@ class RefList(BaseList):
     def get_context_data(self, **kwargs):
         context = super(RefList, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
-        context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
+        context['ref_objs'] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context['untagged'] = models.Reference.get_untagged_references(self.assessment)
+        context['untagged'] = models.Reference.objects.get_untagged_references(self.assessment)
         return context
 
 
@@ -443,7 +459,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        errors = models.Reference.process_excel(
+        errors = models.Reference.objects.process_excel(
             form.cleaned_data['df'],
             self.assessment.id
         )
@@ -466,7 +482,7 @@ class RefReport(GenerateReport):
     report_type = 0
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     def get_filename(self):
         return "literature.docx"
@@ -482,7 +498,7 @@ class RefListExtract(BaseList):
     template_name = 'lit/reference_extract_list.html'
 
     def get_queryset(self):
-        return self.model.get_references_ready_for_import(self.assessment)
+        return self.model.objects.get_references_ready_for_import(self.assessment)
 
 
 class RefDetail(BaseDetail):
@@ -549,11 +565,11 @@ class RefsByTagJSON(BaseDetail):
                 .get_references_with_tag(tag=tag, descendants=True)\
                 .prefetch_related('searches', 'identifiers')
         elif tag:
-            refs = models.Reference\
+            refs = models.Reference.objects\
                 .get_references_with_tag(tag, descendants=True)\
                 .prefetch_related('searches', 'identifiers')
         else:
-            refs = models.Reference\
+            refs = models.Reference.objects\
                 .get_untagged_references(self.assessment)\
                 .prefetch_related('searches', 'identifiers')
 
@@ -574,7 +590,7 @@ class RefVisualization(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super(RefVisualization, self).get_context_data(**kwargs)
         context['object_type'] = 'reference'
-        context['ref_objs'] = models.Reference.get_full_assessment_json(self.assessment)
+        context['ref_objs'] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['objectType'] = self.model.__name__
         return context
