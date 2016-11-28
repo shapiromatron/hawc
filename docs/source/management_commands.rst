@@ -74,3 +74,34 @@ Assessment module commands
         > myuser.models   UserProfile 290
         > assessment.models   Assessment  212
         > ...
+
+Additional commands
+-------------------
+
+- Database ER diagrams
+
+To view the HAWC database schema, make sure the `django_extensions`_ package
+is required, as well as `pydot2`_  (not pydot or graphviz). Then, run the following
+django management command(s)::
+
+    # create for all apps
+    python manage.py graph_models -a -g --pydot -o hawc.png
+
+    # create ER for single apps
+    python manage.py graph_models -g --pydot -o utils.png utils
+    python manage.py graph_models -g --pydot -o myuser.png myuser
+    python manage.py graph_models -g --pydot -o assessment.png assessment
+    python manage.py graph_models -g --pydot -o lit.png lit
+    python manage.py graph_models -g --pydot -o study.png study
+    python manage.py graph_models -g --pydot -o riskofbias.png riskofbias
+    python manage.py graph_models -g --pydot -o mgmt.png mgmt
+    python manage.py graph_models -g --pydot -o animal.png animal
+    python manage.py graph_models -g --pydot -o epi.png epi
+    python manage.py graph_models -g --pydot -o epimeta.png epimeta
+    python manage.py graph_models -g --pydot -o invitro.png invitro
+    python manage.py graph_models -g --pydot -o bmd.png bmd
+    python manage.py graph_models -g --pydot -o summary.png summary
+    python manage.py graph_models -g --pydot -o comments.png comments
+
+.. _`django_extensions`: https://github.com/django-extensions/django-extensions
+.. _`pydot2`: https://pypi.python.org/pypi/pydot2/1.0.33
