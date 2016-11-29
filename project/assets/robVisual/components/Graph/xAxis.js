@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import d3 from 'd3';
 
 
 class xAxis extends Component {
