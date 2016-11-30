@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
 import { fetchTasks } from 'mgmt/Dashboard/actions';
+import TaskChart from 'mgmt/Dashboard/components/TaskChart';
 import UnderConstruction from 'mgmt/Dashboard/components/UnderConstruction';
 
 class Root extends Component {
@@ -19,6 +20,7 @@ class Root extends Component {
     render() {
         return (
             <div>
+                <TaskChart tasks={this.props.tasks} />
                 <UnderConstruction />
             </div>
         );
