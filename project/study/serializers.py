@@ -19,6 +19,7 @@ class StudySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Study
+        fields = '__all__'
 
 
 class SimpleStudySerializer(StudySerializer):
@@ -46,6 +47,7 @@ class VerboseStudySerializer(StudySerializer):
 
     class Meta:
         model = models.Study
+        fields = '__all__'
 
 
 class FinalRobStudySerializer(StudySerializer):

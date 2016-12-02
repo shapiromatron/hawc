@@ -27,6 +27,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Experiment
+        fields = '__all__'
 
 
 class DosesSerializer(serializers.ModelSerializer):
@@ -34,6 +35,7 @@ class DosesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DoseGroup
+        fields = '__all__'
         depth = 1
 
 
@@ -62,6 +64,7 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DosingRegime
+        fields = '__all__'
 
 
 class AnimalGroupSerializer(serializers.ModelSerializer):
@@ -83,6 +86,7 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.AnimalGroup
+        fields = '__all__'
 
 
 class EndpointGroupSerializer(serializers.ModelSerializer):
@@ -96,6 +100,7 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.EndpointGroup
+        fields = '__all__'
 
 
 class EndpointSerializer(serializers.ModelSerializer):
@@ -129,6 +134,7 @@ class EndpointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Endpoint
+        fields = '__all__'
 
 
 class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

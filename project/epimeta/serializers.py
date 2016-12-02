@@ -18,6 +18,7 @@ class SingleResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.SingleResult
+        fields = '__all__'
 
 
 class MetaResultLinkSerializer(serializers.ModelSerializer):
@@ -39,6 +40,7 @@ class MetaProtocolSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MetaProtocol
+        fields = '__all__'
 
 
 class MetaResultSerializer(serializers.ModelSerializer):
@@ -55,6 +57,7 @@ class MetaResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MetaResult
+        fields = '__all__'
 
 
 SerializerHelper.add_serializer(models.MetaProtocol, MetaProtocolSerializer)
