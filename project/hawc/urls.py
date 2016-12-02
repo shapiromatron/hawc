@@ -72,7 +72,11 @@ urlpatterns = [
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
+    import debug_toolbar
+
     urlpatterns += [
+        url(r'^__debug__/',
+            include(debug_toolbar.urls)),
         url(r'^media/(?P<path>.*)$',
             django.views.static.serve,
             {'document_root': settings.MEDIA_ROOT, }),

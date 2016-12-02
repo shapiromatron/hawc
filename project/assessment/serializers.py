@@ -13,6 +13,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Assessment
+        fields = '__all__'
 
 
 class AssessmentMiniSerializer(serializers.ModelSerializer):
@@ -37,6 +38,7 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DoseUnits
+        fields = '__all__'
 
 
 class EndpointItemSerializer(serializers.Serializer):
