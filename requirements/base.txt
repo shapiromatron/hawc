@@ -23,6 +23,7 @@ lxml==3.4.4
 pillow==3.1.1
 psycopg2==2.6.1
 pandas==0.16.2
+numexpr==2.6.1
 python-docx==0.8.5
 python-pptx==0.5.7
 pytz==2015.4
