@@ -60,4 +60,5 @@ def execute(self):
         if 'base64_emf_str' in resp and len(resp['base64_emf_str']) > 0:
             model.plot_base64 = resp['base64_emf_str']
 
-bmds.Session.execute = execute
+# TODO - fix completely
+bmds.BMDS.execute = execute
