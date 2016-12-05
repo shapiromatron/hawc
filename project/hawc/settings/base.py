@@ -256,7 +256,9 @@ PUBMED_EMAIL = os.getenv('PUBMED_EMAIL', DEFAULT_FROM_EMAIL)
 
 
 # BMD modeling settings
-BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')
+BMD_HOST = os.getenv('BMDS_HOST', 'http://example.com')
+BMDS_USERNAME = os.getenv('BMDS_USERNAME', 'username')
+BMDS_PASSWORD = os.getenv('BMDS_PASSWORD', 'password')
 
 
 # Chemspider token details
