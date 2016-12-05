@@ -130,7 +130,7 @@ var showModal = function(name){
                             }
                             return response.json();
                         })
-                        .then(() => dispatch(getExecuteStatus()));
+                        .then(() => setTimeout(() => dispatch(getExecuteStatus()), 3000));
                 });
         };
     },
@@ -168,7 +168,7 @@ var showModal = function(name){
                     if (res.finished){
                         dispatch(getExecutionResults());
                     } else {
-                        setTimeout(() => dispatch(getExecuteStatus()), 5000);
+                        setTimeout(() => dispatch(getExecuteStatus()), 3000);
                     }
                 });
         };
