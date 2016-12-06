@@ -23,7 +23,7 @@
             <li class="divider"></li>
             {% endif %}
 
-            {% if assessment.enable_bmd and object.dose_response_available %}
+            {% if assessment.enable_bmd and object.bmd_modeling_possible %}
               {% if bmd_session %}
                 <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
                 <li><a href="{{bmd_session.get_absolute_url}}">View session</a></li>
