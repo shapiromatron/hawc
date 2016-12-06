@@ -1,79 +1,167 @@
-import React, { Component, PropTypes } from 'react';
-import d3 from 'd3';
+import React, { PureComponent, PropTypes } from 'react';
+import vg from 'vega';
 import _ from 'underscore';
 
-import XAxis from 'Graphing/xAxis';
-import YAxis from 'Graphing/yAxis';
 import './TaskChart.css';
 
 
-class TaskChart extends Component {
+class TaskChart extends PureComponent {
 
-    componentWillMount() {
-        const xData = this.getXAxisData(),
-            yData = this.getYAxisData(),
-            xScale = this.makeXScale(xData),
-            yScale = this.makeYScale(yData);
+    constructor(props) {
+        super(props);
+        this.state = {
+            vis: null,
+        };
+    }
 
-        this.setState({
-            xData: { ...xData, xScale},
-            yData: { ...yData, yScale},
+    componentDidMount() {
+        const data = this.formatData(),
+            spec = this._spec();
+
+        vg.parse.spec(spec, (chart) => {
+            const vis = chart({ el: this.graphMount });
+            vis.data('tasks').insert(data);
+            vis.update();
+            this.setState({ vis });
         });
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const { vis } = this.state,
+            data = this.formatData();
+
+        console.log('data', data);
+        if (vis) {
+            vis.data('tasks').remove(() => true).insert(data);
+            vis.update();
+        }
+    }
 
     formatData() {
         let { tasks } = this.props,
-            parseDate = d3.time.format("%d-%b-%y").parse
-        return tasks;
-    }
-
-    getXAxisData() {
-        const { chartData, tasks } = this.props;
-        return {
-            ...chartData,
-            transform: chartData.xTransform,
-            label: 'Date',
-            min: Date.parse(d3.min(_.compact(_.pluck(tasks, 'started')))),
-            max: Date.now(),
-        };
-    }
-
-    getYAxisData() {
-        const { chartData, tasks } = this.props;
-        return {
-            ...chartData,
-            transform: chartData.yTransform,
-            label: 'Task completion',
-            min: 0,
-            max: tasks.length,
-        };
-    }
-
-    makeXScale(data){
-        let { min, max, width, padding } = data;
-        return d3.time.scale()
-            .domain([min, max])
-            .range([padding[3], width - padding[1] - padding[3]]);
-    }
-
-
-    makeYScale(data){
-        let { min, max, height, padding } = data;
-        return d3.scale.linear()
-            .domain([max, min])
-            .range([padding[0], height - padding[2]]);
+            // reshape tasks to only have current status and status date, group by current status, then transform tasks into { date: count} objects
+            // data => [{completed: [{'2016-11-15T17:51:23.463608Z': 1, '2016-11-18T17:31:23.4223Z': 2}]}, 'not started': [{'2016-09-26T17:17:53.404134Z': 1}]]
+            counts = { 'not_started': tasks.length, started: 1, completed: 1, abandoned: 1},
+            data = _.chain(tasks)
+                    .filter((task) => task.status_display != 'not started' )
+                    .map((task) =>  {
+                        let date = task.status_display == 'abandoned' ? task.completed : task[task.status_display];
+                        return {
+                            started: Date.parse(task.started || date),
+                            status: task.status,
+                            status_display: task.status_display,
+                            date: Date.parse(date),
+                        }})
+                    .sort((a, b) => a.started - b.started)
+                    .map((task, i) => {
+                        return [{ status_rank: 10, status_display: 'not started', x: task.started, y: counts['not_started']-- }, { status_rank: task.status, status_display: task.status_display, x: task.date, y: counts[task.status_display]++ }]
+                    })
+                    .flatten()
+                    .value()
+        return data;
     }
 
     render() {
-        let tasks = this.formatData();
-        return (
-            <svg>
-                <XAxis {...this.state.xData} renderScale ticks={d3.time.days}/>
+        return <div ref={(e) => this.graphMount = e} />
+    }
 
-                <YAxis {...this.state.yData} renderScale/>
-            </svg>
-        );
+    _spec() {
+        const { width, height, padding } = this.props.chartData;
+        return {
+            width,
+            height: 800,
+            padding,
+            data: [
+                {
+                    name: 'tasks',
+                    format: {
+                        type: 'json',
+                        parse: { x: 'date', status_rank: 'number', y: 'number', status_display: 'string'}
+                    },
+                    transform: [
+                        { type: 'sort', by: ['-status_rank'] }
+                    ]
+                }
+            ],
+            scales: [
+                {
+                    name: 'x',
+                    type: 'time',
+                    domain: { data: 'tasks', field: 'x' },
+                    range: 'width'
+                }, {
+                    name: 'y',
+                    type: 'linear',
+                    domain: { data: 'tasks', field: 'y'},
+                    range: 'height',
+                    nice: true,
+                    sort: {
+                        field: 'date'
+                    }
+                }, {
+                    name: 'color',
+                    type: 'ordinal',
+                    domain: { data: 'tasks', field: 'status_rank'},
+                    range: ['#CFCFCF', '#FFCC00', '#00CC00', '#CC3333']
+                }
+            ],
+            axes: [
+                {
+                    type: 'x',
+                    scale: 'x',
+                    offset: 5,
+                    ticks: 5,
+                    title: 'Date',
+                    layer: 'back',
+                    format: '%b %y',
+                    formatType: 'time'
+                }, {
+                    type: 'y',
+                    scale: 'y',
+                    offset: 5,
+                    ticks: 5,
+                    title: 'Tasks',
+                    layer: 'back'
+                }
+            ],
+            marks: [
+                {
+                    type: 'group',
+                    from: {
+                        data: 'tasks',
+                        transform: [
+                            { type: 'facet', groupby: ['status_rank'] },
+                        ]
+                    },
+                    marks: [
+                        {
+                            type: 'line',
+                            properties: {
+                                enter: {
+                                    x: { scale: 'x', field: 'x' },
+                                    y: { scale: 'y', field: 'y' },
+                                    stroke: { scale: 'color', field: 'status_rank' },
+                                    strokeWidth: { value: 2 }
+                                }
+                            }
+
+                        }
+                    ]
+                }
+            ],
+            legends:[
+                {
+                    fill: 'color',
+                    offset: -50,
+                    properties: {
+                        labels: {
+                            fontSize: { value: 13 }
+                        }
+                    },
+                    values: ['not started', 'started', 'completed', 'abandoned']
+                }
+            ]
+        }
     }
 }
 
@@ -82,7 +170,12 @@ TaskChart.propTypes = {
     chartData: PropTypes.shape({
         height: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
-        padding: PropTypes.array.isRequired,
+        padding: PropTypes.shape({
+            top: PropTypes.number.isRequired,
+            right: PropTypes.number.isRequired,
+            bottom: PropTypes.number.isRequired,
+            left: PropTypes.number.isRequired,
+        }).isRequired,
         xTransform: PropTypes.array.isRequired,
         yTransform: PropTypes.array.isRequired
     }).isRequired,

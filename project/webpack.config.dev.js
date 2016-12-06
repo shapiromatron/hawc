@@ -5,7 +5,7 @@ var config = require('./webpack.base.js'),
     HappyPack = require('happypack');
 
 config.devPort = devPort;
-config.devtool = 'cheap-module-eval-source-map';
+config.devtool = 'eval-source-map';
 config.entry = [
     'webpack-hot-middleware/client?path=http://localhost:' + devPort + '/__webpack_hmr',
     './assets/index',
@@ -40,6 +40,14 @@ config.module = {
         },
     }, {
         test: /\.css$/, loader: 'style!css',
+    },{
+        test: require.resolve('vega'),
+        loaders: [
+            'transform?vega/scripts/strip-schema.js',
+      ]
+    },{
+        test: /\.json$/,
+        loader: 'json-loader'
     }],
 };
 
