@@ -18,6 +18,8 @@ class BMROptionModal extends React.Component {
 
     handleSave(){
         let bmr = this.state;
+        bmr.value = parseFloat(bmr.value);
+        bmr.confidence_level = parseFloat(bmr.confidence_level);
         this.props.handleSave(bmr);
     }
 
@@ -27,9 +29,9 @@ class BMROptionModal extends React.Component {
         this.setState(d);
     }
 
-    handleFloatChange(e){
+    handleChange(e){
         let d = {};
-        d[e.target.name] = parseFloat(e.target.value) || 0.;
+        d[e.target.name] = e.target.value;
         this.setState(d);
     }
 
@@ -64,7 +66,7 @@ class BMROptionModal extends React.Component {
             <form className="form-horizontal">
                 <div className="control-group form-row">
                     <label className="control-label"
-                           for="bmr_type">BMR type</label>
+                           htmlFor="bmr_type">BMR type</label>
                     <div className="controls">
                         <select
                             id="bmr_type"
@@ -80,7 +82,7 @@ class BMROptionModal extends React.Component {
 
                 <div className="control-group form-row">
                     <label className="control-label"
-                           for="bmr_value">BMR value</label>
+                           htmlFor="bmr_value">BMR value</label>
                     <div className="controls">
                         <input
                             id="bmr_value"
@@ -88,13 +90,13 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.value}
-                            onChange={this.handleFloatChange.bind(this)}></input>
+                            onChange={this.handleChange.bind(this)}></input>
                     </div>
                 </div>
 
                 <div className="control-group form-row">
                     <label className="control-label"
-                           for="bmr_confidence_level">BMR confidence level</label>
+                           htmlFor="bmr_confidence_level">BMR confidence level</label>
                     <div className="controls">
                         <input
                             id="bmr_confidence_level"
@@ -102,7 +104,7 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.confidence_level}
-                            onChange={this.handleFloatChange.bind(this)}></input>
+                            onChange={this.handleChange.bind(this)}></input>
                     </div>
                 </div>
             </form>
