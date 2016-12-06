@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import d3 from 'd3';
+import _ from 'underscore';
 
 import './SplineChart.css';
 

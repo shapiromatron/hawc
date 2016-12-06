@@ -767,6 +767,10 @@ class Endpoint(BaseEndpoint):
     def dose_response_available(self):
         return self.data_reported and self.data_extracted
 
+    @property
+    def bmd_modeling_possible(self):
+        return self.dose_response_available and self.groups.count() >= 3
+
     def get_doses_json(self, json_encode=True):
         """
         Return a dictionary containing the doses available for the selected

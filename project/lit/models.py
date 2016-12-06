@@ -450,7 +450,10 @@ class Identifiers(models.Model):
         try:
             content = json.loads(self.content, encoding='utf-8')
         except ValueError:
+            if self.database == constants.PUBMED:
+                self.update_pubmed_content([self])
             raise AttributeError('Content invalid JSON: {}'.format(self.id))
+
         if self.database == constants.PUBMED:
             ref = Reference(
                 assessment=assessment,

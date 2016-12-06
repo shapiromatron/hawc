@@ -16,6 +16,7 @@ class IdentifiersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Identifiers
+        fields = '__all__'
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

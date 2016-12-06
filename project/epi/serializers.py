@@ -68,12 +68,14 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Group
+        fields = '__all__'
 
 
 class ResultMetricSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ResultMetric
+        fields = '__all__'
 
 
 class SimpleExposureSerializer(serializers.ModelSerializer):
@@ -82,6 +84,7 @@ class SimpleExposureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Exposure
+        fields = '__all__'
 
 
 class ComparisonSetLinkSerializer(serializers.ModelSerializer):
@@ -105,6 +108,7 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.StudyPopulation
+        fields = '__all__'
 
 
 class ExposureSerializer(serializers.ModelSerializer):
@@ -114,6 +118,7 @@ class ExposureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Exposure
+        fields = '__all__'
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
@@ -124,6 +129,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.GroupResult
+        fields = '__all__'
 
 
 class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
@@ -141,6 +147,7 @@ class SimpleComparisonSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ComparisonSet
+        fields = '__all__'
 
 
 class ResultSerializer(serializers.ModelSerializer):
@@ -176,6 +183,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Outcome
+        fields = '__all__'
 
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
@@ -187,6 +195,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ComparisonSet
+        fields = '__all__'
 
 
 class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

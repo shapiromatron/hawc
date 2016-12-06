@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 
+from datetime import timedelta
 import json
 
 from celery import shared_task
+from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 
@@ -28,3 +30,11 @@ def update_pubmed_content(ids):
                 database=constants.PUBMED
             )\
             .update(content=content)
+
+
+@periodic_task(run_every=timedelta(hours=1))
+def fix_pubmed_without_content():
+    # Try getting pubmed data without content
+    Identifiers = apps.get_model('lit', 'identifiers')
+    ids = Identifiers.objects.filter(content='None', database=constants.PUBMED)
+    Identifiers.update_pubmed_content(ids)

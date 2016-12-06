@@ -5,6 +5,7 @@ import CardHeader from './CardHeader';
 import DoseResponseChart from './Graph/DoseResponseChart';
 import Content from './Content';
 import Endpoint from 'animal/Endpoint';
+import Study from 'study/Study';
 import './EndpointCard.css';
 
 

@@ -5,7 +5,19 @@ DEBUG = True
 
 SERVER_ROLE = "dev"
 
-INSTALLED_APPS += ('debug_toolbar', 'django_extensions', 'django_coverage')
+INSTALLED_APPS += (
+    'debug_toolbar',
+    'django_extensions',
+    'django_coverage',
+)
+
+MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+)
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 STATICFILES_DIRS += (
     os.path.join(PROJECT_ROOT, 'project', 'static'),
