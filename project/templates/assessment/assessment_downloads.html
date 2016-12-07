@@ -13,10 +13,12 @@
 {% block content %}
   <h1>{{object}} downloads</h1>
 
-  <p class='help-block'>Multiple dataset exports are available, with more to be added soon. </p>
+  <p class='help-block'>
+    All data from HAWC are exportable into Excel. Developer exports in JSON
+    format are also available (please <a target="_blank" href="{% url 'contact' %}">contact us</a> for more information).
+  </p>
 
-  <ol>
-
+  <ul>
     {% if assessment.enable_literature_review %}
     <li>
         <b>Literature-review</b><br>
@@ -66,17 +68,16 @@
         <a class='btn btn-primary' href="{% url 'invitro:endpoints_export' assessment.pk %}">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
+
+    <li>
+        <b>Visualizations</b><br>
+        <p class='help-block'>
+            Visualizations can be exported into SVG, PNG, PDF, and PPTX formats;
+            you can download each individual visualization when being viewed.
+        </p>
+
+    </li>
     {% endif %}
 
-  </ol>
-
-    <h3>Additional downloads</h3>
-    <p>In addition to the downloads presented above, the following additional items can be downloaded:</p>
-    <ul>
-        <li>individual study summaries for each study (in Microsoft Word),</li>
-        <li>individual endpoints summaries (including BMD results) (in Microsoft Word),</li>
-        <li>visualization downloads (SVG, PNG, PDF, or Microsoft PowerPoint)</li>
-    </ul>
-    <p>More requests or suggestions? <a target="_blank" href="{% url 'contact' %}">Contact us</a>!</p>
-
+  </ul>
 {% endblock %}

@@ -13,7 +13,7 @@ from mgmt.views import EnsureExtractionStartedMixin
 from utils.views import (AssessmentPermissionsMixin, BaseCreate,
                          BaseCreateWithFormset, BaseDelete, BaseDetail,
                          BaseEndpointFilterList, BaseList, BaseUpdate,
-                         BaseUpdateWithFormset, CanCreateMixin, GenerateReport,
+                         BaseUpdateWithFormset, GenerateReport,
                          GenerateFixedReport, MessageMixin)
 
 from . import forms, models, exports, reports
@@ -47,33 +47,23 @@ class ExperimentDelete(BaseDelete):
 
 
 # Animal Group Views
-class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
-    """
-    Create view of AnimalGroup. Either creates a AnimalGroup, or a
-    GenerationalAnimalGroup, depending on if the experiment is deemed a
-    generational experiment.
-    """
+class AnimalGroupCreate(BaseCreate):
+    # Create view of AnimalGroup, and sometimes DosingRegime if generational.
     model = models.AnimalGroup
+    parent_model = models.Experiment
     template_name = "animal/animalgroup_form.html"
-    form_class = forms.AnimalGroupForm
     success_message = "Animal Group created."
     crud = "Create"
 
-    def dispatch(self, *args, **kwargs):
-        self.experiment = get_object_or_404(models.Experiment, pk=kwargs['pk'])
-        self.is_generational = self.experiment.is_generational()
-        if self.is_generational:
-            self.form_class = forms.GenerationalAnimalGroupForm
-        self.assessment = self.experiment.get_assessment()
-        return super(AnimalGroupCreate, self).dispatch(*args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(CreateView, self).get_form_kwargs()
-        kwargs['parent'] = self.experiment
-        return kwargs
+    def get_form_class(self):
+        self.is_generational = self.parent.is_generational()
+        return forms.GenerationalAnimalGroupForm \
+            if self.is_generational else forms.AnimalGroupForm
 
     def form_valid(self, form):
         """
+        Save form, and perhaps dosing regime and dosing groups, if appropriate.
+
         If an animal group is NOT generational, then it requires its own dosing
         regime. Thus, we must make sure the dosing regime is valid before
         attempting to save. If an animal group IS generational, a dosing-regime
@@ -127,12 +117,8 @@ class AnimalGroupCreate(CanCreateMixin, MessageMixin, CreateView):
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(CreateView, self).get_context_data(**kwargs)
-        context["crud"] = self.crud
-        context["experiment"] = self.experiment
-        context["assessment"] = self.assessment
+        context = super(AnimalGroupCreate, self).get_context_data(**kwargs)
         context["dose_types"] = DoseUnits.objects.json_all()
-
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
         else:

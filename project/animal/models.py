@@ -22,7 +22,6 @@ from utils.models import get_crumbs
 from . import managers
 
 
-
 class Experiment(models.Model):
     objects = managers.ExperimentManager()
 
