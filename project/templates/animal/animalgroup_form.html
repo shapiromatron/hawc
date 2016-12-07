@@ -53,7 +53,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var animalGroupSetup = function(){
-            var load_strains = function(){
+            var onSpeciesChange = function(){
                 // only show proper strains for a given species
                 var selected = $('#id_strain option:selected').val(),
                     update_strain_opts = function(d){
@@ -75,46 +75,50 @@ $(document).ready(function() {
             $('#id_comments').quillify();
             $('#id_description').quillify();
             $('#id_species')
-                .on('change', load_strains)
+                .change(onSpeciesChange)
                 .trigger('change');
         },
         dosingRegimeSetup = function(){
             var drc = $('#dosingRegimeContainer'),
+                drf = $('#dosing_regime'),
+                drInput = $('#id_dosing_regime'),
+                genInput = $('#id_generation'),
                 drcInsertLocation = $('.form-actions'),
                 dose_values = undefined,
                 dose_types = {{dose_types|safe}},
-                toggle_dosing_form = function(){
-                    var show_dosing_regime_form = isNaN(parseInt($('#id_dosing_regime').val()));
-                    return (show_dosing_regime_form) ?
+                onDosingRegimeChange = function(){
+                    var show = isNaN(parseInt(drInput.val()));
+                    return (show) ?
                         drc.insertBefore(drcInsertLocation) :
                         drc.detach();
                 },
-                toggle_dosing_regime = function(){
-                    var drSelectorDiv = $('#id_dosing_regime').parent().parent(),
-                        val = $('#id_generation option:selected').val();
+                onGenerationChange = function(){
+                    var drSelectorDiv = drInput.parent().parent(),
+                        val = genInput.val();
 
                     if (val !== 'P0'){
                         drSelectorDiv.show();
                     } else {
                         drSelectorDiv.hide();
-                        toggle_dosing_form();
+                        onDosingRegimeChange();
                     }
                 };
 
             // reorganize forms
-            $('#dosingRegimeContainer').prepend($('#dosing_regime').children());
-            $('#dosing_regime').remove();
+            drc.prepend(drf.children());
+            drc.insertBefore(drcInsertLocation);
+            drf.remove();
 
             {% if dose_groups_json %}
                 dose_values = {{dose_groups_json|safe}};
             {% endif %}
 
-            $('#id_generation')
-                .on('change', toggle_dosing_regime)
+            genInput
+                .change(onGenerationChange)
                 .trigger('change');
 
-            $('#id_dosing_regime')
-                .on('change', toggle_dosing_form)
+            drInput
+                .change(onDosingRegimeChange)
                 .trigger('change');
 
             new window.app.animal.DosingRegimeForm(
