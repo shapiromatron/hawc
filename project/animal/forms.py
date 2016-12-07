@@ -141,7 +141,7 @@ class AnimalGroupForm(ModelForm):
 
     class Meta:
         model = models.AnimalGroup
-        exclude = ('experiment', 'dosing_regime', 'generation',  'parents')
+        exclude = ('experiment', 'dosing_regime', 'generation', 'parents')
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
