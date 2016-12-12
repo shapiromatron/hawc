@@ -21,9 +21,9 @@ class Root extends Component {
     getChartData() {
         const height = 200,
             width = 500,
-            padding = [20, 70, 70, 55],
-            yTransform = [padding[3], 0],
-            xTransform = [0, height - padding[2]];
+            padding = {top: 20, right: 70, bottom: 70, left: 55},
+            yTransform = [padding.left, 0],
+            xTransform = [0, height - padding.bottom];
         return {height, width, padding, yTransform, xTransform};
     }
 
