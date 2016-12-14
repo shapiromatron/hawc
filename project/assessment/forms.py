@@ -30,6 +30,7 @@ class AssessmentForm(forms.ModelForm):
 
         self.fields['project_manager'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
+        self.fields['project_manager'].required=False
         self.fields['team_members'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
         self.fields['reviewers'].widget = AutoCompleteSelectMultipleWidget(
