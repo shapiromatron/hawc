@@ -70,6 +70,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('version', 2, "span6")
         helper.add_fluid_row('project_manager', 3, "span4")
+        helper.attrs['novalidate'] = ''
         return helper
 
 
