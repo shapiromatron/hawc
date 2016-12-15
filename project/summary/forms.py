@@ -469,6 +469,7 @@ class EndpointAggregationForm(VisualForm):
         self.fields["endpoints"].widget.update_query_parameters(
             {'related': self.instance.assessment_id})
         self.helper = self.setHelper()
+        self.helper.attrs['novalidate'] = ''
 
     class Meta:
         model = models.Visual
