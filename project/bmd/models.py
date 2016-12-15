@@ -220,7 +220,7 @@ class Session(models.Model):
             return bmds.ContinuousDataset(
                 doses=doses,
                 ns=[d['n'] for d in grps],
-                responses=[d['response'] for d in grps],
+                means=[d['response'] for d in grps],
                 stdevs=[d['stdev'] for d in grps],
             )
         else:
