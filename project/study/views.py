@@ -42,11 +42,8 @@ class StudyReport(GenerateReport):
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
-    """
-    Create view of Study, given a lit.Reference already exists. This is more
-    difficult because we must pass the reference object to the newly created
-    study.
-    """
+    # Create Study from an existing lit.Reference.
+
     parent_model = Reference
     parent_template_name = 'reference'
     model = models.Study
@@ -54,43 +51,22 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     success_message = 'Study created.'
 
     def get_initial(self):
-        self.initial = {"reference": self.parent,
-                        "short_citation": self.parent.get_short_citation_estimate(),
-                        "full_citation": self.parent.reference_citation}
+        self.initial = dict(
+            assessment=self.assessment,
+            reference=self.parent,
+            short_citation=self.parent.get_short_citation_estimate(),
+            full_citation=self.parent.reference_citation
+        )
         return self.initial
 
-    def get(self, request, *args, **kwargs):
-        if self.model.objects.filter(pk=self.parent.pk).count() > 0:
-            raise Http404
-        return super(StudyCreateFromReference, self).get(request, *args, **kwargs)
+    def get_form(self, form_class=None):
+        form = super(StudyCreateFromReference, self).get_form(form_class)
+        form.instance.assessment = self.assessment
+        return form
 
-    def post(self, request, *args, **kwargs):
-        if self.model.objects.filter(pk=self.parent.pk).count() > 0:
-            raise Http404
-
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-
-        # hack- this will fail but will also create errors if needed
-        try:
-            form.is_valid()
-        except:
-            pass
-
-        # hack - use custom validation since will always fail for one-to-one
-        if ((form.data['short_citation'] == u'') or (form.data['full_citation'] == u'')):
-            return self.form_invalid(form)
-        else:
-            # save using our custom saving tool
-            dt = dict(form.data)
-            dt.pop('csrfmiddlewaretoken')
-            dt.pop('save')  # crispyform
-            for k, v in dt.iteritems():  # unpack list
-                dt[k] = v[0]
-            self.object = self.model.save_new_from_reference(self.parent, dt)
-
-        self.send_message()  # replicate MessageMixin
+    def form_valid(self, form):
+        self.object = self.model.save_new_from_reference(self.parent, form.cleaned_data)
+        self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
 
