@@ -6,6 +6,7 @@ import { fetchTasks } from 'mgmt/Dashboard/actions';
 import Loading from 'shared/components/Loading';
 import TaskChart from 'mgmt/Dashboard/components/TaskChart';
 import UnderConstruction from 'mgmt/Dashboard/components/UnderConstruction';
+import { STATUS } from 'mgmt/Dashboard/constants';
 
 class Root extends Component {
 
@@ -21,10 +22,12 @@ class Root extends Component {
     getChartData() {
         const height = 200,
             width = 500,
-            padding = {top: 20, right: 70, bottom: 70, left: 55},
+            padding = {top: 20, right: 0, bottom: 50, left: 75},
             yTransform = [padding.left, 0],
-            xTransform = [0, height - padding.bottom];
-        return {height, width, padding, yTransform, xTransform};
+            xTransform = [0, height - padding.bottom],
+            colors = {};
+        Object.keys(STATUS).map((key) => colors[key] = STATUS[key].color );
+        return {height, width, padding, yTransform, xTransform, colors};
     }
 
     render() {

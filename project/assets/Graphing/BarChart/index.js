@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { STATUS } from 'mgmt/Dashboard/constants';
+
 
 class BarChart extends Component {
 
@@ -21,7 +21,7 @@ class BarChart extends Component {
                             y={y}
                             width={width}
                             height={height}
-                            fill={STATUS[bar.key].color}
+                            fill={chartData.colors[bar.key]}
                         />
                         <text
                             y={y + height - 2}
