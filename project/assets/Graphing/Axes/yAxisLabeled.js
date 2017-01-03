@@ -2,13 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import d3 from 'd3';
 
 
-class yAxis extends Component {
+class yAxisLabeled extends Component {
+
     componentWillMount() {
-        let { yScale } = this.props;
+        let { yScale, ticks } = this.props;
         this.yAxis = d3.svg.axis()
             .scale(yScale)
             .orient('left')
-            .ticks(5);
+            .tickFormat(ticks);
     }
 
     componentDidMount() {
@@ -25,8 +26,8 @@ class yAxis extends Component {
                 className='yAxis label'
                 textAnchor='beginning'
                 y={`-${axisLabel.offset}`}
-                x={ padding[2] - height}
-                transform={`rotate(-90)`}>
+                x={padding.bottom - height}
+                transform={'rotate(-90)'}>
                     {axisLabel.label}
             </text>;
     }
@@ -34,7 +35,7 @@ class yAxis extends Component {
     render() {
         let { transform, label, padding, renderScale } = this.props,
             axisLabel = renderScale ?
-                { offset: padding[3] - 20, label} :
+                { offset: padding.left - 20, label} :
                 { offset: 20, label: label.substr(0, label.indexOf(' '))},
             labelElement = this.getLabelElement(axisLabel);
         return (
@@ -46,22 +47,21 @@ class yAxis extends Component {
     }
 
     renderAxis() {
-        let { min, max, height, padding, yScale, renderScale } = this.props;
-        yScale
-            .domain([max, min])
-            .range([padding[0], height - padding[2]]);
-
-        renderScale ? d3.select(this.refs.yAxis).call(this.yAxis) : null;
+        this.props.yScale();
+        this.props.renderScale ? d3.select(this.refs.yAxis).call(this.yAxis) : null;
     }
 }
 
-yAxis.propTypes = {
-    min: PropTypes.number.isRequired,
-    max: PropTypes.number.isRequired,
+yAxisLabeled.propTypes = {
+    min: PropTypes.number,
+    max: PropTypes.number,
     height: PropTypes.number.isRequired,
-    padding: PropTypes.arrayOf(
-        PropTypes.number.isRequired
-    ).isRequired,
+    padding: PropTypes.shape({
+        top: PropTypes.number.isRequired,
+        right: PropTypes.number.isRequired,
+        bottom: PropTypes.number.isRequired,
+        left: PropTypes.number.isRequired,
+    }).isRequired,
     transform: PropTypes.arrayOf(
         PropTypes.number.isRequired
     ).isRequired,
@@ -70,4 +70,4 @@ yAxis.propTypes = {
     yScale: PropTypes.func.isRequired,
 };
 
-export default yAxis;
+export default yAxisLabeled;

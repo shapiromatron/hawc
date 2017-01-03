@@ -4,11 +4,11 @@ import d3 from 'd3';
 
 class xAxis extends Component {
     componentWillMount() {
-        let { xScale } = this.props;
+        let { xScale, ticks } = this.props;
         this.xAxis = d3.svg.axis()
             .scale(xScale)
             .orient('bottom')
-            .ticks(7);
+            .ticks(ticks);
     }
 
     componentDidMount() {
@@ -24,7 +24,7 @@ class xAxis extends Component {
         return <text
                 className='xAxis label'
                 textAnchor='beginning'
-                x={padding[3] + 10}
+                x={padding.left + 10}
                 y={axisLabel.offset} >
                     {axisLabel.label}
             </text>;
@@ -34,7 +34,7 @@ class xAxis extends Component {
     render() {
         let { transform, label, padding, renderScale } = this.props,
             axisLabel = renderScale ?
-                {offset: padding[2] - 15, label} :
+                {offset: padding.bottom - 15, label} :
                 {offset: 20, label: label.substr(0, label.indexOf(' '))},
             labelElement = this.getLabelElement(axisLabel);
         return (
@@ -46,28 +46,26 @@ class xAxis extends Component {
     }
 
     renderAxis() {
-        let { min, max, width, padding, xScale, renderScale } = this.props;
-        xScale
-            .domain([min, max])
-            .range([padding[3], width - padding[1] - padding[3]]);
-
-        renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
+        this.props.xScale();
+        this.props.renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
     }
 }
 
 xAxis.propTypes = {
-    min: PropTypes.number.isRequired,
-    max: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    padding: PropTypes.arrayOf(
-        PropTypes.number.isRequired
-    ).isRequired,
+    padding: PropTypes.shape({
+        top: PropTypes.number.isRequired,
+        right: PropTypes.number.isRequired,
+        bottom: PropTypes.number.isRequired,
+        left: PropTypes.number.isRequired,
+    }).isRequired,
     transform: PropTypes.arrayOf(
         PropTypes.number.isRequired
     ).isRequired,
     label: PropTypes.string.isRequired,
     renderScale: PropTypes.bool,
     xScale: PropTypes.func.isRequired,
+    ticks: PropTypes.oneOfType([PropTypes.array, PropTypes.number]).isRequired,
 };
 
 export default xAxis;
