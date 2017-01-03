@@ -40,14 +40,6 @@ config.module = {
         },
     }, {
         test: /\.css$/, loader: 'style!css',
-    },{
-        test: require.resolve('vega'),
-        loaders: [
-            'transform?vega/scripts/strip-schema.js',
-      ]
-    },{
-        test: /\.json$/,
-        loader: 'json-loader'
     }],
 };
 
