@@ -2,6 +2,7 @@ var args = process.argv.slice(2),
     express = require('express'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev'),
+    port = 3000,
     DashboardPlugin = require('webpack-dashboard/plugin');
 
 if (args.indexOf('--testProduction')>=0){
@@ -31,7 +32,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.listen(config.devPort, 'localhost', function(err) {
+app.listen(port, 'localhost', function(err) {
     if (err) {
         console.log(err);
         return;

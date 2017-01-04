@@ -1,28 +1,22 @@
 var config = require('./webpack.base.js'),
     path = require('path'),
     webpack = require('webpack'),
-    devPort = 3000,
+    port = 3000,
     HappyPack = require('happypack');
 
-config.devPort = devPort;
 config.devtool = 'cheap-module-eval-source-map';
 config.entry = [
-    'webpack-hot-middleware/client?path=http://localhost:' + devPort + '/__webpack_hmr',
+    'webpack-hot-middleware/client?path=http://localhost:' + port + '/__webpack_hmr',
     './assets/index',
 ];
-config.output.publicPath = 'http://localhost:' + devPort + '/dist/';
+config.output.publicPath = 'http://localhost:' + port + '/dist/';
 
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
-config.plugins.unshift(new HappyPack({ id: 'js', verbose: false, threads: 4 }));
-
-config.module = {
-    noParse: /node_modules\/quill\/dist\/quill\.js/,
+config.plugins.unshift(new HappyPack({
+    id: 'js',
     loaders: [{
-        test: /\.js$/,
-        loader: 'babel',
-        happy: { id: 'js' },
-        include: path.join(__dirname, 'assets'),
-        query: {
+        path: 'babel-loader',
+        options: {
             plugins: [
                 ['transform-object-rest-spread'],
                 ['syntax-object-rest-spread'],
@@ -38,8 +32,19 @@ config.module = {
                 }],
             ],
         },
+    }],
+    verbose: false,
+    threads: 4,
+}));
+
+config.module = {
+    noParse: /node_modules\/quill\/dist\/quill\.js/,
+    rules: [{
+        test: /\.js$/,
+        use: 'happypack/loader?id=js',
+        include: path.join(__dirname, 'assets'),
     }, {
-        test: /\.css$/, loader: 'style!css',
+        test: /\.css$/, loader: 'style-loader!css-loader',
     }],
 };
 

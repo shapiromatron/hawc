@@ -8,8 +8,11 @@ module.exports = {
     context: __dirname,
 
     resolve: {
-        root: path.resolve(__dirname, 'assets'),
-        extensions: ['', '.js', '.css'],
+        modules: [
+            path.join(__dirname, "assets"),
+            "node_modules"
+        ],
+        extensions: ['.js', '.css'],
     },
 
     entry: [
@@ -27,7 +30,6 @@ module.exports = {
     },
 
     plugins: [
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
         new BundleTracker({filename: './webpack-stats.json'}),
     ],
