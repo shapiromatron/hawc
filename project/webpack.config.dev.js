@@ -5,7 +5,7 @@ var config = require('./webpack.base.js'),
     HappyPack = require('happypack');
 
 config.devtool = 'cheap-module-eval-source-map';
-config.entry = [
+config.entry.main = [
     'webpack-hot-middleware/client?path=http://localhost:' + port + '/__webpack_hmr',
     './assets/index',
 ];

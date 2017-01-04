@@ -15,13 +15,13 @@ module.exports = {
         extensions: ['.js', '.css'],
     },
 
-    entry: [
-        './assets/index',
-    ],
+    entry: {
+        main: './assets/index',
+    },
 
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js',
+        filename: '[name].[hash].js',
     },
 
     externals: {
@@ -30,6 +30,15 @@ module.exports = {
     },
 
     plugins: [
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            filename: 'vendor.js',
+            minChunks: (module, count) => {
+                // puts any node_modules module that is imported in code into vendor chunk
+                const userRequest = module.userRequest;
+                return userRequest && userRequest.indexOf('node_modules') >= 0;
+        }}),
+        new webpack.optimize.CommonsChunkPlugin({name: 'manifest', filename: 'manifest.js'}),
         new webpack.NoErrorsPlugin(),
         new BundleTracker({filename: './webpack-stats.json'}),
     ],
