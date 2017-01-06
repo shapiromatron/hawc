@@ -20,6 +20,8 @@ config.plugins.unshift(new HappyPack({
             plugins: [
                 ['transform-object-rest-spread'],
                 ['syntax-object-rest-spread'],
+                ['syntax-dynamic-import'],
+                ['dynamic-import-webpack'],
                 ['react-transform', {
                     transforms: [{
                         transform: 'react-transform-hmr',

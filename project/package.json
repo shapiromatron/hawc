@@ -24,11 +24,14 @@
     "react-transform"
   ],
   "devDependencies": {
-    "babel-cli": "^6.4.0",
-    "babel-core": "^6.3.15",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
     "babel-eslint": "^6.1.2",
+    "babel-generator": "^6.21.0",
     "babel-loader": "^6.2.0",
+    "babel-plugin-dynamic-import-webpack": "^1.0.1",
     "babel-plugin-react-transform": "^2.0.0-beta1",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-syntax-object-rest-spread": "^6.3.13",
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
     "babel-polyfill": "^6.3.14",
