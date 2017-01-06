@@ -17,16 +17,20 @@ config.plugins.unshift.apply(config.plugins, [
         compressor: {
             warnings: false,
         },
+        sourceMap: true,
+    }),
+    new webpack.LoaderOptionsPlugin({
+        minimize: true,
     }),
 ]);
 
 config.module = {
     loaders: [{
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         include: path.join(__dirname, 'assets'),
     }, {
-        test: /\.css$/, loader: 'style!css',
+        test: /\.css$/, loader: 'style-loader!css-loader',
     }],
 };
 
