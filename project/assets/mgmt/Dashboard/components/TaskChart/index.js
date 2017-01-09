@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import React, { PureComponent, PropTypes } from 'react';
 import d3 from 'd3';
 
@@ -5,6 +6,8 @@ import BarChart from 'Graphing/BarChart';
 import XAxis from 'Graphing/Axes/xAxis';
 import YAxis from 'Graphing/Axes/yAxisLabeled';
 import './TaskChart.css';
+
+import {STATUS} from 'mgmt/TaskTable/constants';
 
 
 class TaskChart extends PureComponent {
@@ -72,11 +75,30 @@ class TaskChart extends PureComponent {
 
     formatData() {
         let { tasks } = this.props,
-            data = d3.nest()
-                .key((d) => d.status)
-                .rollup((d) => { return { count: d.length, label: d[0].status_display }; })
-                .entries(tasks);
+            data = _.map(STATUS, function(val, key){
+                let keyInt = parseInt(key);
+                return {
+                    key: key.toString(),
+                    values: {
+                        count: tasks.filter((d)=>d.status===keyInt).length,
+                        label: val.type,
+                    },
+                };
+            });
         return data;
+    }
+
+    renderTitle(){
+        const chartData = this.props.chartData;
+
+        if (!chartData.label){
+            return null;
+        }
+
+        return <text className='task-chart-title'
+            x={chartData.width * 0.5}
+            y={chartData.padding.top}
+            >{chartData.label}</text>;
     }
 
     render() {
@@ -93,8 +115,8 @@ class TaskChart extends PureComponent {
             };
         return (
             <div>
-                <h4>Assessment-wide task completion</h4>
                 <svg width={this.props.chartData.width} height={this.props.chartData.height}>
+                    {this.renderTitle()}
                     <XAxis {...xData} ticks={5} renderScale/>
                     <BarChart xScale={xData.xScale} yScale={yData.yScale} data={setData} chartData={this.props.chartData} svg={svg}/>
                     <YAxis {...yData} ticks={ticks} renderScale/>
@@ -105,6 +127,7 @@ class TaskChart extends PureComponent {
 }
 
 TaskChart.propTypes = {
+    label: PropTypes.string,
     tasks: PropTypes.array.isRequired,
     chartData: PropTypes.shape({
         height: PropTypes.number.isRequired,
