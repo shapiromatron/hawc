@@ -181,7 +181,7 @@ class DosingRegimeForm {
             tr.append('<td><label class="control-label">Dose Group {0}</label></td>'
                     .printf(i+1));
             for(var j=0; j<this.columns; j++){
-                tr.append('<td><input type="text" tabindex="{0}" class="input-medium" id="dose_{1}" value="{2}"></td>'
+                tr.append('<td><input type="number" step="any" tabindex="{0}" class="input-medium" id="dose_{1}" value="{2}"></td>'
                         .printf(j+1, i, this.array[i].doses[j]));
             }
             tbody.append(tr);

@@ -1,4 +1,3 @@
-import abc
 from datetime import datetime
 import decimal
 import logging
@@ -28,12 +27,32 @@ def HAWCtoDateString(datetime):
 
 
 def cleanHTML(txt):
-    return html.strip_entities(
-                html.strip_tags(
-                    txt.replace('\n', ' ')
-                       .replace('\r', "")
-                       .replace('<br>', "\n")
-                       .replace("&nbsp;", " ")))
+    return strip_entities(
+        strip_tags(
+            txt.replace('\n', ' ')
+               .replace('\r', "")
+               .replace('<br>', "\n")
+               .replace("&nbsp;", " ")))
+
+
+def strip_entities(value):
+    """Return the given HTML with all entities (&something;) stripped."""
+    # Note: Originally in Django but removed in v1.10
+    return re.sub(r'&(?:\w+|#\d+);', '', html.force_text(value))
+
+
+def strip_tags(value):
+    """Return the given HTML with all tags stripped."""
+    # Note: in typical case this loop executes _strip_once once. Loop condition
+    # is redundant, but helps to reduce number of executions of _strip_once.
+    # Note: Originally in Django but removed in v1.10
+    while '<' in value and '>' in value:
+        new_value = html._strip_once(value)
+        if new_value == value:
+            # _strip_once was not able to detect more tags
+            break
+        value = new_value
+    return value
 
 
 def listToUl(list_):

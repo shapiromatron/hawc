@@ -2,9 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
-import List from 'mgmt/TaskTable/containers/List';
-import Loading from 'shared/components/Loading';
 
+import EditForm from 'robScoreCleanup/containers/EditForm';
 
 
 class Root extends Component {
@@ -14,20 +13,13 @@ class Root extends Component {
     }
 
     render() {
-        let store = this.props.store,
-            state = store.getState(),
-            App = Loading;
-        if (state.config){
-            App = state.config.type ? List : Loading;
-        }
         return (
-            <Provider store={store}>
-                <App />
+            <Provider store={this.props.store}>
+                <EditForm />
             </Provider>
         );
     }
 }
-
 Root.propTypes = {
     store: PropTypes.object.isRequired,
 };

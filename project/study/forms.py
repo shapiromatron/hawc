@@ -9,9 +9,7 @@ from . import models
 
 
 class BaseStudyForm(forms.ModelForm):
-    """
-    Base form
-    """
+
     class Meta:
         model = models.Study
         fields = ('short_citation', 'study_identifier', 'full_citation',
@@ -53,9 +51,8 @@ class BaseStudyForm(forms.ModelForm):
 
 
 class StudyForm(BaseStudyForm):
-    """
-    Study form used for study-updates
-    """
+    # Study form for updates-only.
+
     def setHelper(self):
         inputs = {
             "legend_text": u"Update an existing study",
@@ -66,9 +63,8 @@ class StudyForm(BaseStudyForm):
 
 
 class NewStudyFromReferenceForm(BaseStudyForm):
-    """
-    Form to create a new Study from an existing reference.
-    """
+    # Create new Study from an existing reference.
+
     def setHelper(self):
         inputs = {
             "legend_text": u"Create a new study from an existing reference",
@@ -79,9 +75,8 @@ class NewStudyFromReferenceForm(BaseStudyForm):
 
 
 class ReferenceStudyForm(BaseStudyForm):
-    """
-    Form to create both a Reference and Study at the same-time.
-    """
+    # Create both Reference and Study at the same-time.
+
     class Meta:
         model = models.Study
         fields = ('short_citation', 'study_identifier', 'full_citation',

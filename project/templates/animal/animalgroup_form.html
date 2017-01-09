@@ -35,7 +35,9 @@
           </span>
         </legend>
 
-        {% if dose_groups_errors %}<div class="alert alert-error">{{dose_groups_errors|safe}}</div>{% endif %}
+        {% if dose_groups_errors %}
+          <div class="alert alert-error">{{dose_groups_errors|safe}}</div>
+        {% endif %}
         <table id="dose_table" class="table table-condensed table-striped"></table>
         <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
 
@@ -47,66 +49,86 @@
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}
-  <script type="text/javascript">
-    $(document).ready(function() {
-      $('#id_comments').quillify();
-      $('#id_description').quillify();
+{{form.media}}
+<script type="text/javascript">
+$(document).ready(function() {
+    var animalGroupSetup = function(){
+            var onSpeciesChange = function(){
+                // only show proper strains for a given species
+                var selected = $('#id_strain option:selected').val(),
+                    update_strain_opts = function(d){
+                        var opts = _.map(d, function(v, i){
+                            return '<option value="{0}">{1}</option>'.printf(v.id, v.name);
+                        }).join('');
 
-      // load strains
-      var load_strains = function(){
-        // only show proper strains for a given species
-        var selected = $('#id_strain option:selected').val();
-        $.get('{% url 'assessment:get_strains' %}',{'species': $('#id_species').val()}, function(d){
-          var opts = _.map(d, function(v, i){
-            return '<option value="{0}">{1}</option>'.printf(v.id, v.name)
-          }).join("");
-          $('#id_strain').html(opts);
-          $('#id_strain option[value="{0}"]'.printf(selected)).prop('selected', true);
-        });
+                        $('#id_strain').html(opts);
+                        $('#id_strain option[value="{0}"]'.printf(selected))
+                            .prop('selected', true);
+                    }
+                $.get(
+                    '{% url "assessment:get_strains" %}',
+                    {species: $('#id_species').val()},
+                    update_strain_opts
+                );
+            };
 
-      };
-      $('#id_species').on('change', load_strains).trigger('change');
+            $('#id_comments').quillify();
+            $('#id_description').quillify();
+            $('#id_species')
+                .change(onSpeciesChange)
+                .trigger('change');
+        },
+        dosingRegimeSetup = function(){
+            var drc = $('#dosingRegimeContainer'),
+                drf = $('#dosing_regime'),
+                drInput = $('#id_dosing_regime'),
+                genInput = $('#id_generation'),
+                drcInsertLocation = $('.form-actions'),
+                dose_values = undefined,
+                dose_types = {{dose_types|safe}},
+                onDosingRegimeChange = function(){
+                    var show = isNaN(parseInt(drInput.val()));
+                    return (show) ?
+                        drc.insertBefore(drcInsertLocation) :
+                        drc.detach();
+                },
+                onGenerationChange = function(){
+                    var drSelectorDiv = drInput.parent().parent(),
+                        val = genInput.val();
 
-      {% if crud == "Create" %}  // has dosing-regime
-        var drc = $('#dosingRegimeContainer'),
-            dose_values = undefined,
-            dose_types = {{dose_types|safe}};
+                    if (val !== 'P0'){
+                        drSelectorDiv.show();
+                    } else {
+                        drSelectorDiv.hide();
+                        onDosingRegimeChange();
+                    }
+                };
 
-        // reorganize forms
-        $('#dosingRegimeContainer').prepend($('#dosing_regime').children());
-        $('#dosing_regime').remove();
-        drc.insertBefore($('.form-actions'));
+            // reorganize forms
+            drc.prepend(drf.children());
+            drc.insertBefore(drcInsertLocation);
+            drf.remove();
 
-        {% if dose_groups_json %}
-          dose_values = {{dose_groups_json|safe}};
-        {% endif %}
+            {% if dose_groups_json %}
+                dose_values = {{dose_groups_json|safe}};
+            {% endif %}
 
-        // show/hide dose-regime form
-        var toggle_dosing_form = function(){
-          var show_dosing_regime_form = isNaN(parseInt($('#id_dosing_regime').val()));
-          return (show_dosing_regime_form) ? drc.show() : drc.hide();
-        };
-        $('#id_dosing_regime').on('change', toggle_dosing_form);
-        toggle_dosing_form();
+            genInput
+                .change(onGenerationChange)
+                .trigger('change');
 
-        // show/hide dose-regime selector (generational-only)
-        var toggle_dosing_regime = function(){
-          var drSelectorDiv = $('#id_dosing_regime').parent().parent(),
-              val = $('#id_generation option:selected').val();
-          if (val !== 'P0'){
-            drSelectorDiv.show();
-          } else {
-            drSelectorDiv.hide();
-            toggle_dosing_form();
-          }
-        };
-        $('#id_generation').on('change', toggle_dosing_regime);
-        toggle_dosing_regime();
+            drInput
+                .change(onDosingRegimeChange)
+                .trigger('change');
 
-        new window.app.animal.DosingRegimeForm($("#animal_group"), dose_types, dose_values);
+            new window.app.animal.DosingRegimeForm(
+                $("#animal_group"), dose_types, dose_values);
+        }
 
-      {% endif %}
-    });
-  </script>
-{% endblock %}
+    animalGroupSetup();
+    {% if crud == "Create" %}
+    dosingRegimeSetup();
+    {% endif %}
+});
+</script>
+{% endblock extrajs %}

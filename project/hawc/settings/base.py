@@ -86,7 +86,6 @@ INSTALLED_APPS = (
     'pagedown',
     'markdown_deux',
     'crispy_forms',
-    'compressor',
     'rest_framework_extensions',
     'webpack_loader',
 
@@ -168,7 +167,6 @@ STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 # Media files
@@ -256,7 +254,9 @@ PUBMED_EMAIL = os.getenv('PUBMED_EMAIL', DEFAULT_FROM_EMAIL)
 
 
 # BMD modeling settings
-BMD_HOST = os.getenv('DJANGO_BMD_HOST', 'http://example.com')
+BMD_HOST = os.getenv('BMDS_HOST', 'http://example.com')
+BMDS_USERNAME = os.getenv('BMDS_USERNAME', 'username')
+BMDS_PASSWORD = os.getenv('BMDS_PASSWORD', 'password')
 
 
 # Chemspider token details
@@ -282,9 +282,6 @@ SELECTABLE_MAX_LIMIT = 10
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
-
-# Compressor settings
-COMPRESS_ENABLED = True
 
 # DRF-Extensions header requirement
 REST_FRAMEWORK_EXTENSIONS = {

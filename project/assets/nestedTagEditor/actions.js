@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
+import _ from 'underscore';
 
-import h from 'textCleanup/utils/helpers';
+import h from 'shared/utils/helpers';
 import * as types from 'nestedTagEditor/constants';
 
 import {

@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from utils.models import get_crumbs
 
-from .bmds_monkeypatch import bmds
+import bmds
 
 
 BMDS_CHOICES = (
@@ -195,13 +195,18 @@ class Session(models.Model):
         return self.date_executed is not None
 
     def execute(self):
-        self.date_executed = now()
-        self.save()
-        session = self.get_session(withModels=True)
+        # reset execution datestamp if needed
+        if self.date_executed is not None:
+            self.date_executed = None
+            self.save()
+
+        session = self.get_session(with_models=True)
         session.execute()
-        for model, resp in zip(self.models.all(), session._models):
+        self.date_executed = now()
+        for model, resp in zip(self.models.all(), session.models):
             assert model.id == resp.id
             model.save_model(resp)
+        self.save()
 
     def get_endpoint_dataset(self):
         ds = self.endpoint.get_json(json_encode=False)
@@ -215,7 +220,7 @@ class Session(models.Model):
             return bmds.ContinuousDataset(
                 doses=doses,
                 ns=[d['n'] for d in grps],
-                responses=[d['response'] for d in grps],
+                means=[d['response'] for d in grps],
                 stdevs=[d['stdev'] for d in grps],
             )
         else:
@@ -235,13 +240,13 @@ class Session(models.Model):
             'confidence_level': bmr['confidence_level'],
         }
 
-    def get_session(self, withModels=False):
+    def get_session(self, with_models=False):
 
         session = getattr(self, '_session', None)
 
         if session is None:
             version = self.endpoint.assessment.bmd_settings.version
-            Session = bmds.get_session(version)
+            Session = bmds.BMDS.versions[version]
             dataset = self.get_endpoint_dataset()
             session = Session(
                 self.endpoint.data_type,
@@ -249,7 +254,7 @@ class Session(models.Model):
             )
             self._session = session
 
-        if withModels and not session.has_models:
+        if with_models and not session.has_models:
             for model in self.models.all():
                 session.add_model(
                     model.name,

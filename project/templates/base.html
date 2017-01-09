@@ -1,4 +1,3 @@
-{% load compress %}
 {% load server_role %}
 {% load render_bundle from webpack_loader %}
 
@@ -26,11 +25,9 @@
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
     {% endif %}
-    {% compress css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
-    {% endcompress %}
     {% block extrastyle %}{% endblock %}
   </head>
 
@@ -129,6 +126,8 @@
         </script>
       {% endblock google_analytics %}
     {% endif %}
+    {% render_bundle 'manifest' %}
+    {% render_bundle 'vendor' %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}

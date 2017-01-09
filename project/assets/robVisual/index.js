@@ -1,12 +1,11 @@
-import React from 'react';
-import { render } from 'react-dom';
-
-import Root from 'robVisual/containers/Root';
-import configureStore from 'robVisual/store/configureStore';
+import { splitStartupRedux } from 'utils/WebpackSplit';
 
 const startup = function(element){
-    const store = configureStore();
-    render(<Root store={store}/>, element);
+    import('robVisual/containers/Root').then((Component) => {
+        import('robVisual/store/configureStore').then((store) => {
+            splitStartupRedux(element, Component.default, store.default);
+        });
+    });
 };
 
 export default startup;

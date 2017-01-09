@@ -22,7 +22,6 @@ from utils.models import get_crumbs
 from . import managers
 
 
-
 class Experiment(models.Model):
     objects = managers.ExperimentManager()
 
@@ -766,6 +765,10 @@ class Endpoint(BaseEndpoint):
     @property
     def dose_response_available(self):
         return self.data_reported and self.data_extracted
+
+    @property
+    def bmd_modeling_possible(self):
+        return self.dose_response_available and self.groups.count() >= 3
 
     def get_doses_json(self, json_encode=True):
         """

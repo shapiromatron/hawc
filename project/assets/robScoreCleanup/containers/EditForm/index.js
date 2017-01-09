@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { loadConfig } from 'shared/actions/Config';
 import { resetError } from 'robScoreCleanup/actions/Errors';
 import { fetchMetricOptions } from 'robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'robScoreCleanup/actions/Scores';
@@ -15,10 +14,10 @@ import ScoreList from 'robScoreCleanup/containers/ScoreList';
 import ScoreSelect from 'robScoreCleanup/containers/ScoreSelect';
 import StudyTypeSelect from 'robScoreCleanup/containers/StudyTypeSelect';
 
-import './Root.css';
+import './EditForm.css';
 
 
-class Root extends Component {
+class EditForm extends Component {
 
     constructor(props) {
         super(props);
@@ -36,10 +35,6 @@ class Root extends Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(loadConfig());
-    }
-
-    componentDidMount() {
         this.props.dispatch(fetchMetricOptions());
         this.props.dispatch(fetchScoreOptions());
         this.props.dispatch(fetchStudyTypeOptions());
@@ -103,4 +98,4 @@ function mapStateToProps(state){
     };
 }
 
-export default connect(mapStateToProps)(Root);
+export default connect(mapStateToProps)(EditForm);

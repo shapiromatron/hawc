@@ -22,6 +22,7 @@ class IVCellTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVCellType
+        fields = '__all__'
 
 
 class IVExperimentSerializer(serializers.ModelSerializer):
@@ -32,6 +33,7 @@ class IVExperimentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVExperiment
+        fields = '__all__'
         depth = 1
 
 
@@ -42,6 +44,7 @@ class _IVChemicalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVChemical
+        fields = '__all__'
 
 
 class IVChemicalSerializer(_IVChemicalSerializer):
@@ -61,12 +64,14 @@ class IVEndpointGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpointGroup
+        fields = '__all__'
 
 
 class IVBenchmarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVBenchmark
+        fields = '__all__'
 
 
 class IVEndpointCategorySerializer(AssessmentRootedSerializer):
@@ -84,6 +89,7 @@ class IVEndpointCategory(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpointCategory
+        fields = '__all__'
 
 
 class IVEndpointSerializer(serializers.ModelSerializer):
@@ -113,6 +119,7 @@ class IVEndpointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpoint
+        fields = '__all__'
 
 
 class MiniIVEndpointSerializer(serializers.ModelSerializer):
@@ -129,6 +136,7 @@ class MiniIVEndpointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IVEndpoint
+        fields = '__all__'
 
 
 class IVExperimentSerializerFull(IVExperimentSerializer):

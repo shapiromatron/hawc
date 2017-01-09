@@ -114,7 +114,7 @@ class Study(Reference):
         https://github.com/lsaffre/lino/blob/master/lino/utils/mti.py
         """
         parent_link_field = Study._meta.parents.get(reference.__class__, None)
-        attrs[parent_link_field.name]=reference
+        attrs[parent_link_field.name] = reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
         return Study.objects.create(**attrs)
@@ -172,8 +172,10 @@ class Study(Reference):
         pk_exclusion = {}
         if self.pk:
             pk_exclusion['pk'] = self.pk
-        if Study.objects.filter(assessment=self.assessment,
-                   short_citation=self.short_citation).exclude(**pk_exclusion).count() > 0:
+        if Study.objects.filter(
+                assessment=self.assessment,
+                short_citation=self.short_citation
+            ).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- short-citation name must be unique for assessment.')
 
     def __unicode__(self):
