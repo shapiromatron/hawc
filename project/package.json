@@ -74,7 +74,7 @@
     "history": "^1.13.1",
     "isomorphic-fetch": "^2.2.1",
     "moment": "^2.11.1",
-    "quill": "^1.0.0-beta.11",
+    "quill": "^1.1.9",
     "react": "^15.2.1",
     "react-addons-css-transition-group": "^15.2.1",
     "react-addons-transition-group": "^15.2.1",
