@@ -1,22 +1,26 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
-import Assignments from 'mgmt/TaskAssignments/components/Assignments';
+import Assignments from 'mgmt/TaskAssignments/containers/Assignments';
 
 class Root extends Component {
 
     componentWillMount() {
-        this.props.dispatch(loadConfig());
+        this.props.store.dispatch(loadConfig());
     }
 
     render() {
-        return (<Assignments {...this.props}/>);
+        return (
+            <Provider store={this.props.store}>
+                <Assignments />
+            </Provider>
+        );
     }
 }
 
-function mapStateToProps(state){
-    return state;
+Root.propTypes = {
+    store: PropTypes.object.isRequired,
 }
 
-export default connect(mapStateToProps)(Root);
+export default Root;

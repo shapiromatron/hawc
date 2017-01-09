@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import _ from 'underscore';
 
 import AssessmentTasks from 'mgmt/TaskAssignments/components/AssessmentTasks';
@@ -44,11 +45,12 @@ class Assignments extends Component {
     }
 }
 
-Assignments.propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    tasks: PropTypes.shape({
-        list: PropTypes.array.isRequired,
-    }).isRequired,
-};
+function mapStateToProps(state){
+    const { config, tasks } = state;
+    return {
+        config,
+        tasks,
+    };
+}
 
-export default Assignments;
+export default connect(mapStateToProps)(Assignments);
