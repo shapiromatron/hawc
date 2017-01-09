@@ -1,19 +1,18 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import configureStore from 'shared/store/configureStore';
-
-import Root from './containers/Root';
-
-import reducer from 'nestedTagEditor/reducers';
-
-
 const startup = function(){
-    const store = configureStore(reducer);
-    render(
-       <Root store={store}/>,
-       document.getElementById('root')
-    );
+    import('./containers/Root').then((Component) => {
+        import('shared/store/configureStore').then((configureStore) => {
+            import('nestedTagEditor/reducers').then((reducer) => {
+                const store = configureStore.default(reducer.default);
+                render(
+                   <Component.default store={store}/>,
+                   document.getElementById('root')
+                );
+            });
+        });
+    });
 };
 
 export default startup;

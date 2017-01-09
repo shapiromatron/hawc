@@ -6,6 +6,7 @@ var config = require('./webpack.base.js'),
 config.devtool = 'source-map';
 
 config.output.path = path.resolve('./static/bundles');
+config.output.publicPath = '/static/bundles/';
 
 config.plugins.unshift.apply(config.plugins, [
     new webpack.DefinePlugin({
@@ -17,16 +18,20 @@ config.plugins.unshift.apply(config.plugins, [
         compressor: {
             warnings: false,
         },
+        sourceMap: true,
+    }),
+    new webpack.LoaderOptionsPlugin({
+        minimize: true,
     }),
 ]);
 
 config.module = {
     loaders: [{
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         include: path.join(__dirname, 'assets'),
     }, {
-        test: /\.css$/, loader: 'style!css',
+        test: /\.css$/, loader: 'style-loader!css-loader',
     }],
 };
 
