@@ -5,7 +5,6 @@ import { loadConfig } from 'shared/actions/Config';
 import { fetchTasks } from 'mgmt/Dashboard/actions';
 import Loading from 'shared/components/Loading';
 import TaskChart from 'mgmt/Dashboard/components/TaskChart';
-import UnderConstruction from 'mgmt/Dashboard/components/UnderConstruction';
 import { STATUS } from 'mgmt/Dashboard/constants';
 
 class Root extends Component {
@@ -35,7 +34,6 @@ class Root extends Component {
             this.props.tasks.isLoaded ?
             <div>
                 <TaskChart chartData={this.getChartData()} tasks={this.props.tasks.list} />
-                <UnderConstruction />
             </div> :
             <Loading />
         );
