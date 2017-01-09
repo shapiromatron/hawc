@@ -1,7 +1,8 @@
 {
-  "name": "react-HAWC-endpoint-cleanup",
+  "name": "hawc-frontend",
+  "license": "MIT",
   "version": "1.0.0",
-  "description": "React app for modifying model fields in bulk.",
+  "description": "HAWC frontend code",
   "scripts": {
     "clean": "rimraf dist",
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
@@ -16,13 +17,6 @@
     "type": "git",
     "url": "https://github.com/shapiromatron/hawc.git"
   },
-  "keywords": [
-    "react",
-    "reactjs",
-    "webpack",
-    "babel",
-    "react-transform"
-  ],
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",

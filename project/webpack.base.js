@@ -9,8 +9,8 @@ module.exports = {
 
     resolve: {
         modules: [
-            path.join(__dirname, "assets"),
-            "node_modules"
+            path.join(__dirname, 'assets'),
+            'node_modules',
         ],
         extensions: ['.js', '.css'],
     },
@@ -35,10 +35,11 @@ module.exports = {
             name: 'vendor',
             filename: 'vendor.js',
             minChunks: (module, count) => {
-                // puts any node_modules module that is imported in code into vendor chunk
+                // puts imported node_modules module code into vendor chunk
                 const userRequest = module.userRequest;
                 return userRequest && userRequest.indexOf('node_modules') >= 0;
-        }}),
+            },
+        }),
         new webpack.optimize.CommonsChunkPlugin({name: 'manifest', filename: 'manifest.js'}),
         new webpack.NoErrorsPlugin(),
         new BundleTracker({filename: './webpack-stats.json'}),
