@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import './BarChart.css';
+
 
 class BarChart extends Component {
 
@@ -10,9 +12,11 @@ class BarChart extends Component {
                 {data.map((bar, i) => {
                     let y = yScale(bar.key),
                         x = xScale(bar.values.count),
-                        labelLength = bar.values.count.toString().length * 10,
                         height = yScale.rangeBand(),
-                        width = x - chartData.padding.left;
+                        width = x - chartData.padding.left,
+                        labelText = (width > 25)? 'bar-chart-label-left': 'bar-chart-label-right',
+                        labelOffset = (width > 25)? -5: 2;
+
                     return (
                     <g key={i}>
                         <rect
@@ -24,9 +28,9 @@ class BarChart extends Component {
                             fill={chartData.colors[bar.key]}
                         />
                         <text
-                            y={y + height - 2}
-                            x={(x - chartData.padding.left) > (labelLength) ? x - (labelLength) : x + 5}
-                            fontSize={height - 3}>
+                            className={labelText}
+                            y={y + height/2}
+                            x={(chartData.padding.left + width + labelOffset)}>
                             {bar.values.count}
                         </text>
                     </g>
