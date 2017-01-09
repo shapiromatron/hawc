@@ -42,7 +42,7 @@ git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0a
 git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
 
 # bmds
-bmds==0.4.0
+bmds==0.5.1
 
 # literature tools
 litter-getter==0.1.1
