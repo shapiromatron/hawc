@@ -1,0 +1,8 @@
+.axis path {
+    display: none;
+}
+
+.task-chart-title {
+    text-anchor: middle;
+    font-weight: bold;
+}
