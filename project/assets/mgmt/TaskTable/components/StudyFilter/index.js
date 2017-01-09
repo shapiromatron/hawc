@@ -83,7 +83,6 @@ class StudyFilter extends Component {
 
 StudyFilter.propTypes = {
     selectFilter: PropTypes.func.isRequired,
-    taskOptions: PropTypes.array.isRequired,
 };
 
 export default StudyFilter;

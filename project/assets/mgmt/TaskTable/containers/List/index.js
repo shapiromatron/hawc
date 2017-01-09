@@ -51,15 +51,6 @@ class ListApp extends Component {
         return taskList;
     }
 
-    getTaskTypes() {
-        const { tasks, studies } = this.props;
-        return _.pluck(
-                tasks.list.filter((task) => (
-                    task.study.id === studies.list[0].id
-                )).sort((a, b) => (a.type - b.type)),
-                'type');
-    }
-
     handleCancel() {
         window.location.href = this.props.config.cancelUrl;
     }
@@ -86,7 +77,7 @@ class ListApp extends Component {
         return (
                 <div>
                     <ScrollToErrorBox error={error} />
-                    <StudyFilter taskOptions={this.getTaskTypes()} selectFilter={this.filterStudies}/>
+                    <StudyFilter selectFilter={this.filterStudies}/>
                     <Header headings={headings} descriptions={descriptions} />
                     {emptyTaskList ?
                         <EmptyListNotification listItem={'studies'} /> :
