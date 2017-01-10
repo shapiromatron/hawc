@@ -1,4 +1,4 @@
-import * as types from 'mgmt/TaskTable/constants';
+import * as types from 'mgmt/TaskAssignments/constants';
 
 
 const defaultState = {
