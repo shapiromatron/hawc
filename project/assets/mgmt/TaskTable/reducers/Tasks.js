@@ -43,7 +43,7 @@ function tasks(state=defaultState, action) {
             isSubmitting: true,
         });
 
-    case types.SUBMIT_RESPONDED:
+    case types.SUBMIT_FINISHED:
         return Object.assign({}, state, {
             isSubmitting: false,
         });

@@ -11,7 +11,7 @@ function metrics(state=defaultState, action) {
 
     switch(action.type){
 
-    case types.REQUEST_METRICS:
+    case types.REQUEST_METRIC_OPTIONS:
         return Object.assign({}, state, {
             isFetching: true,
         });
@@ -22,7 +22,7 @@ function metrics(state=defaultState, action) {
             isLoaded: true,
             items: action.metrics,
         });
-    
+
     case types.SELECT_METRIC:
         return Object.assign({}, state, {
             selected: action.metric,

@@ -37,7 +37,7 @@ function items(state=defaultState, action) {
     let list, list2, list3, intersection, index;
     switch(action.type){
 
-    case types.REQUEST_ITEMS:
+    case types.REQUEST_STUDY_SCORES:
         return Object.assign({}, state, {
             isFetching: true,
             isLoaded: false,
