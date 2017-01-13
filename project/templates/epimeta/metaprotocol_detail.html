@@ -36,8 +36,8 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.epimeta.MetaProtocol.displayFullPager($("#objContainer"), {{object.id}});
+    window.app.epimetaStartup(function(epimeta){
+      epimeta.MetaProtocol.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

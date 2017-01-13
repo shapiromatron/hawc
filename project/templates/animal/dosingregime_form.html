@@ -35,8 +35,6 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function() {
-
       $('#id_description').quillify();
 
       // reorganize forms
@@ -46,7 +44,8 @@
       var dose_types = {{dose_types|safe}},
           dose_values = {{dose_groups_json|safe}};
 
-      new window.app.animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
-    });
+      window.app.animalStartup(function(animal){
+          new animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
+      })
   </script>
 {% endblock extrajs %}

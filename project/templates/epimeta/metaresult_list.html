@@ -87,14 +87,14 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        $(document).ready(function(){
+        window.app.epimetaStartup(function(epimeta){
             var results = [];
 
             {{list_json|safe}}.map(function(endpoint){
-                results.push(new window.app.epimeta.MetaResult(endpoint));
+                results.push(new epimeta.MetaResult(endpoint));
             })
 
-            var tbl = new window.app.epimeta.MetaResultListTable(results);
+            var tbl = new epimeta.MetaResultListTable(results);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

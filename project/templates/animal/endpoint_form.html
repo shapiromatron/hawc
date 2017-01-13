@@ -154,81 +154,84 @@
         $(v).html(doses[0].values[i]);
       });
 
-      var endpoint = new window.app.animal.EditEndpoint({
-        "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-        "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-        "FEL": {{form.FEL.value|default_if_none:"-999"}}
-      }, doses, $('#eg'), $('#endpoint_plot'));
+      window.app.animalStartup(function(animal){
+          var endpoint = new animal.EditEndpoint({
+              "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+              "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+              "FEL": {{form.FEL.value|default_if_none:"-999"}}
+          }, doses, $('#eg'), $('#endpoint_plot'));
 
-      // whenever input changes, update data form
-      $('body')
-        .on('keyup', 'input', endpoint.update_endpoint_from_form.bind(endpoint))
-        .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
+          // whenever input changes, update data form
+          $('body')
+            .on('keyup', 'input', endpoint.update_endpoint_from_form.bind(endpoint))
+            .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
 
-      // toggle the name of the variance column header as the value changes
-      $('#id_variance_type')
-        .on('change', function(){
-          var varHeader = $('#varianceHeader'),
-              varType = parseInt($('#id_variance_type').val(), 0);
-          varHeader.html(window.app.animal.EditEndpoint.getVarianceType(varType));
-        })
-        .trigger('change');
+          // toggle the name of the variance column header as the value changes
+          $('#id_variance_type')
+            .on('change', function(){
+              var varHeader = $('#varianceHeader'),
+                  varType = parseInt($('#id_variance_type').val(), 0);
+              varHeader.html(animal.EditEndpoint.getVarianceType(varType));
+            })
+            .trigger('change');
 
-      // change if endpoint-groups div should be shown
-      $('#id_data_reported, #id_data_extracted')
-        .on('change', function(){
-          var egDiv = $('#endpointGroups'),
-              egsRequired = (
-                $('#id_data_reported').prop('checked') &&
-                $('#id_data_extracted').prop('checked')
-              );
-          (egsRequired) ? egDiv.fadeIn() : egDiv.fadeOut();
-        }).trigger('change');
+          // change if endpoint-groups div should be shown
+          $('#id_data_reported, #id_data_extracted')
+            .on('change', function(){
+              var egDiv = $('#endpointGroups'),
+                  egsRequired = (
+                    $('#id_data_reported').prop('checked') &&
+                    $('#id_data_extracted').prop('checked')
+                  );
+              (egsRequired) ? egDiv.fadeIn() : egDiv.fadeOut();
+            }).trigger('change');
 
-      // change required fields based on dataset-type
-      $('#id_data_type')
-        .on('change', function(){
-          var varTypeDiv = $('#div_id_variance_type'),
-                CI = $('#div_id_confidence_interval'),
-                shows, hides;
+          // change required fields based on dataset-type
+          $('#id_data_type')
+            .on('change', function(){
+              var varTypeDiv = $('#div_id_variance_type'),
+                    CI = $('#div_id_confidence_interval'),
+                    shows, hides;
 
-          switch(this.value){
-              case "C":
-                shows = ".c_only,.pc_only";
-                hides =  ".d_only,.p_only";
-                break;
-              case "D":
-              case "DC":
-                shows = ".d_only";
-                hides =  ".c_only,.p_only,.pc_only";
-                break;
-              case "P":
-                shows = ".p_only,.pc_only";
-                hides =  ".c_only,.d_only";
-                break;
-          }
-          $(shows).show();
-          $(hides).hide();
+              switch(this.value){
+                  case "C":
+                    shows = ".c_only,.pc_only";
+                    hides =  ".d_only,.p_only";
+                    break;
+                  case "D":
+                  case "DC":
+                    shows = ".d_only";
+                    hides =  ".c_only,.p_only,.pc_only";
+                    break;
+                  case "P":
+                    shows = ".p_only,.pc_only";
+                    hides =  ".c_only,.d_only";
+                    break;
+              }
+              $(shows).show();
+              $(hides).hide();
 
-          if(this.value==="C"){
-            varTypeDiv.fadeIn();
-            $('#ssBtn').fadeIn();
-          } else {
-            varTypeDiv.fadeOut();
-            $('#id_variance_type').val(0);
-            $('#ssBtn').fadeOut();
-          }
+              if(this.value==="C"){
+                varTypeDiv.fadeIn();
+                $('#ssBtn').fadeIn();
+              } else {
+                varTypeDiv.fadeOut();
+                $('#id_variance_type').val(0);
+                $('#ssBtn').fadeOut();
+              }
 
-          if(this.value==="P"){
-            CI.fadeIn();
-          } else {
-            CI.fadeOut();
-            $('#id_confidence_interval').val("");
-          }
-        }).trigger('change');
+              if(this.value==="P"){
+                CI.fadeIn();
+              } else {
+                CI.fadeOut();
+                $('#id_confidence_interval').val("");
+              }
+            }).trigger('change');
 
-      // initialize sample-size power widget
-      new window.app.animal.SampleSizeWidget();
+          // initialize sample-size power widget
+          new animal.SampleSizeWidget();
+
+      })
 
     });
   </script>

@@ -26,17 +26,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.litStartup(function(lit){
       window.isEdit = true;
       {% if obj_perms.edit_assessment %}
           window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
       {% endif %}
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
+      window.tagtree = new lit.TagTree({{tags|safe}});
       window.refs = [];
       {% for ref in references %}
-          refs.push(new window.app.lit.Reference({{ref.get_json|safe}}, window.tagtree));
+          refs.push(new lit.Reference({{ref.get_json|safe}}, window.tagtree));
       {% endfor %}
-      window.ref_container = new window.app.lit.EditReferenceContainer(window.refs, window.tagtree,
+      window.ref_container = new lit.EditReferenceContainer(window.refs, window.tagtree,
                                     {"content_div": "#reference_details"});
     });
   </script>

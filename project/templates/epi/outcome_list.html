@@ -86,13 +86,13 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        $(document).ready(function(){
+        window.app.epiStartup(function(epi){
             var outcomes = [];
             {{list_json|safe}}.map(function(outcome){
-                outcomes.push(new window.app.epi.Outcome(outcome));
+                outcomes.push(new epi.Outcome(outcome));
             })
 
-            var tbl = new window.app.epi.OutcomeListTable(outcomes);
+            var tbl = new epi.OutcomeListTable(outcomes);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

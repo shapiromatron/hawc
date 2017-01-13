@@ -54,21 +54,23 @@
 {% block extrajs %}
   {{ smart_tag_form.media }}
   <script>
-    $(document).ready(function(){
+    window.app.summaryStartup(function(summary){
 
       $('#id_title').on('keyup', function(){
         $('#id_slug').val(URLify($(this).val()));
       });
 
-      new window.app.summary.SummaryTextTree({
-        "assessment_id": {{assessment.pk}},
-        "mode": "modify",
-        "update_doctree": $('#doctree'),
-        "update_textdiv": $('#summarytext_edit'),
-        "update_new": $('.new_summary'),
-        "update_delete": $('#deleteSTconfirm'),
-        "text_editor": new window.app.smartTags.SmartTagEditor($('#id_text'))
-      });
+      window.app.smartTagsStartup(function(smartTags){
+          new summary.SummaryTextTree({
+            "assessment_id": {{assessment.pk}},
+            "mode": "modify",
+            "update_doctree": $('#doctree'),
+            "update_textdiv": $('#summarytext_edit'),
+            "update_new": $('.new_summary'),
+            "update_delete": $('#deleteSTconfirm'),
+            "text_editor": new smartTags.SmartTagEditor($('#id_text'))
+          });
+      })
     });
   </script>
 {% endblock extrajs %}

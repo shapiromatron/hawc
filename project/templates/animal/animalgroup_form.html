@@ -120,9 +120,11 @@ $(document).ready(function() {
             drInput
                 .change(onDosingRegimeChange)
                 .trigger('change');
-
-            new window.app.animal.DosingRegimeForm(
-                $("#animal_group"), dose_types, dose_values);
+                
+            window.app.animalStartup(function(animal){
+                new animal.DosingRegimeForm(
+                    $("#animal_group"), dose_types, dose_values);
+            })
         }
 
     animalGroupSetup();

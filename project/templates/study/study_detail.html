@@ -102,17 +102,20 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    var study = new window.app.study.Study({{study.get_json|safe}});
+  window.app.studyStartup(function(study){
+    var thisStudy = new study.Study({{study.get_json|safe}});
     var detail_div = $('#study_details');
-    study.build_details_table(detail_div);
+    thisStudy.build_details_table(detail_div);
 
     {% if attachments_viewable %}
-      study.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
+      thisStudy.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
-    if (study.has_riskofbias()){
-      new window.app.riskofbias.Donut(study, '#rob_plot', {'build_plot_startup': true});
+    if (thisStudy.has_riskofbias()){
+        window.app.riskofbiasStartup(function(riskofbias){
+            new riskofbias.Donut(thisStudy, '#rob_plot', {'build_plot_startup': true});
+        })
     }
-
+});
   </script>
 {% endblock extrajs %}

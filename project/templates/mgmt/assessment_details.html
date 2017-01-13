@@ -48,8 +48,8 @@
     }
 </script>
 <script type="text/javascript">
-$(document).ready(function(){
-    window.app.mgmt.TaskTable(document.getElementById('taskTable'))
+window.app.mgmtStartup(function(mgmt){
+    mgmt.TaskTable(document.getElementById('taskTable'))
 });
 </script>
 {% endblock extrajs %}

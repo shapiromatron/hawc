@@ -39,15 +39,14 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.animal.Experiment.get_object({{object.id}}, function(d){
+    window.app.animalStartup(function(){
+      animal.Experiment.get_object({{object.id}}, function(d){
         $('h1').after(d.build_details_table());
       });
     });
   </script>
 
   {% if crud == "Read" %}
-
     {% if object.cas %}
       <script type="text/javascript">
         $(document).on('ready', function(){
@@ -58,6 +57,6 @@
         });
       </script>
     {% endif %}
-
   {% endif %}
+ 
 {% endblock extrajs %}

@@ -38,8 +38,8 @@
     }
 </script>
 <script type="text/javascript">
-$(document).ready(function(){
-    window.app.mgmt.Dashboard(document.getElementById('taskDashboard'));
+window.app.mgmtStartup(function(mgmt){
+    mgmt.Dashboard(document.getElementById('taskDashboard'));
 });
 </script>
 {% endblock extrajs %}

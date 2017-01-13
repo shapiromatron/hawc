@@ -37,8 +37,8 @@
     }
 </script>
 <script type="text/javascript">
-$(document).ready(function(){
-    window.app.mgmt.TaskAssignments(document.getElementById('taskAssignments'))
+window.app.mgmtStartup(function(mgmt){
+    mgmt.TaskAssignments(document.getElementById('taskAssignments'))
 });
 </script>
 {% endblock extrajs %}
