@@ -3,19 +3,19 @@ import 'utils/startup';
 import utils from 'utils';
 
 // object models
-import animal from 'animal';
-import assessment from 'assessment';
-import dataPivot from 'dataPivot';
-import epi from 'epi';
-import epimeta from 'epimeta';
-import invitro from 'invitro';
-import lit from 'lit';
-import mgmt from 'mgmt';
-import riskofbias from 'riskofbias';
-import study from 'study';
-import smartTags from 'smartTags';
-import summary from 'summary';
-import summaryForms from 'summaryForms';
+import animalStartup from 'animal/split';
+import assessmentStartup from 'assessment/split';
+import dataPivotStartup from 'dataPivot/split';
+import epiStartup from 'epi/split';
+import epimetaStartup from 'epimeta/split';
+import invitroStartup from 'invitro/split';
+import litStartup from 'lit/split';
+import mgmtStartup from 'mgmt/split';
+import riskofbiasStartup from 'riskofbias/split';
+import studyStartup from 'study/split';
+import smartTagsStartup from 'smartTags/split';
+import summaryStartup from 'summary/split';
+import summaryFormsStartup from 'summaryForms/split';
 
 // custom applications
 import bmdStartup from 'bmd';
@@ -28,19 +28,19 @@ import nestedTagEditorStartup from 'nestedTagEditor';
 
 window.app = {
     utils,
-    animal,
-    assessment,
-    dataPivot,
-    epi,
-    epimeta,
-    invitro,
-    lit,
-    mgmt,
-    riskofbias,
-    study,
-    smartTags,
-    summary,
-    summaryForms,
+    animalStartup,
+    assessmentStartup,
+    dataPivotStartup,
+    epiStartup,
+    epimetaStartup,
+    invitroStartup,
+    litStartup,
+    mgmtStartup,
+    riskofbiasStartup,
+    studyStartup,
+    smartTagsStartup,
+    summaryStartup,
+    summaryFormsStartup,
     bmdStartup,
     robVisualStartup,
     robTableStartup,
