@@ -39,7 +39,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.animalStartup(function(){
+    window.app.animalStartup(function(animal){
       animal.Experiment.get_object({{object.id}}, function(d){
         $('h1').after(d.build_details_table());
       });
@@ -58,5 +58,5 @@
       </script>
     {% endif %}
   {% endif %}
- 
+
 {% endblock extrajs %}

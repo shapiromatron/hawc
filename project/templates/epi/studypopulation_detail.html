@@ -40,7 +40,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.epiStartup(function(){
+    window.app.epiStartup(function(epi){
       epi.StudyPopulation.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
