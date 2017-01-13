@@ -1,4 +1,5 @@
-import * as types from 'mgmt/TaskTable/constants';
+import _ from 'underscore';
+import * as types from 'mgmt/TaskAssignments/constants';
 
 
 const defaultState = {
@@ -8,6 +9,7 @@ const defaultState = {
 };
 
 function tasks(state=defaultState, action) {
+    let index, list;
     switch (action.type) {
     case types.REQUEST_TASKS:
         return Object.assign({}, state, {
@@ -21,6 +23,19 @@ function tasks(state=defaultState, action) {
             isLoaded: true,
             list: action.tasks,
         });
+
+    case types.PATCH_TASK:
+        index = state.list.indexOf(
+            _.findWhere(state.list, {id: action.task.id})
+        );
+        if (index >= 0){
+            list = [
+                ...state.list.slice(0, index),
+                {...state.list[index], ..._.omit(action.task, 'csrfmiddlewaretoken')},
+                ...state.list.slice(index + 1),
+            ];
+        }
+        return Object.assign({}, state, {list});
 
     default:
         return state;
