@@ -30,8 +30,8 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.epi.ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
+    window.app.epiStartup(function(epi){
+      epi.ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

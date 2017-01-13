@@ -49,9 +49,8 @@
 {% block extrajs %}
 
   <script type="text/javascript">
-    $(document).ready(function(){
-
-      window.app.animal.AnimalGroup.get_object({{object.id}}, function(d){
+  window.app.animalStartup(function(animal){
+      animal.AnimalGroup.get_object({{object.id}}, function(d){
           $('h1')
             .after(
                 d.build_details_table(),
@@ -62,10 +61,9 @@
 
       var endpoints = [];
       {% for obj in object.endpoints.all %}
-        endpoints.push(new window.app.animal.Endpoint({{obj.get_json|safe}}));
+        endpoints.push(new animal.Endpoint({{obj.get_json|safe}}));
       {% endfor %}
-      window.app.animal.AnimalGroupTable.render($("#endpointsDiv"), endpoints);
-    });
+      animal.AnimalGroupTable.render($("#endpointsDiv"), endpoints);
+  })
   </script>
 {% endblock %}
-

@@ -56,7 +56,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.3.0/js/spectrum.min.js" type="text/javascript"></script>
   {% endif %}
   <script type="text/javascript">
-  $(document).ready(function(){
+  window.app.dataPivotStartup(function(dataPivot){
       var data_url = '{{object.get_data_url|safe}}',
           settings = {{object.settings|safe}},
           options = {
@@ -67,7 +67,7 @@
               submissionDiv: '#dp_settings_form',
               settingsField: '#id_settings',
           };
-      window.app.dataPivot.DataPivot.displayEditView(data_url, settings, options)
+      dataPivot.DataPivot.displayEditView(data_url, settings, options)
   });
   </script>
 {% endblock extrajs %}

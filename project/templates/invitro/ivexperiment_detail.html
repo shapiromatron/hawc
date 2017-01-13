@@ -15,9 +15,9 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-$(document).ready(function(){
+window.app.invitroStartup(function(invitro){
     window.canEdit = {{obj_perms.edit|lower}};
-    window.app.invitro.IVExperiment.displayAsPage({{object.id}}, $("#ivExperiment"));
+    invitro.IVExperiment.displayAsPage({{object.id}}, $("#ivExperiment"));
 });
 </script>
 {% endblock %}

@@ -38,6 +38,8 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-  window.app.study.StudyCollection.render({{assessment.id}}, $('#studyTbl'));
+window.app.studyStartup(function(study){
+    study.StudyCollection.render({{assessment.id}}, $('#studyTbl'));
+})
 </script>
 {% endblock extrajs %}

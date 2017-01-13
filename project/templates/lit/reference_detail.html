@@ -29,9 +29,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
-      window.ref = new window.app.lit.Reference({{object_json|safe}}, window.tagtree);
+    window.app.litStartup(function(lit){
+      window.tagtree = new lit.TagTree({{tags|safe}});
+      window.ref = new lit.Reference({{object_json|safe}}, window.tagtree);
       $('#reference_detail_div').html(ref.print_self(true)); });
   </script>
 {% endblock extrajs %}

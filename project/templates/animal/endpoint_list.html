@@ -101,13 +101,13 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        $(document).ready(function(){
+        window.app.animalStartup(function(animal){
             var endpoints = [],
                 dose_units = {{dose_units|default_if_none:"undefined"}};
             {{list_json|safe}}.map(function(datum){
-                endpoints.push(new window.app.animal.Endpoint(datum));
+                endpoints.push(new animal.Endpoint(datum));
             });
-            var tbl = new window.app.animal.EndpointListTable(endpoints, dose_units);
+            var tbl = new animal.EndpointListTable(endpoints, dose_units);
             $("#endpointTbl").html(tbl.build_table());
         });
     </script>

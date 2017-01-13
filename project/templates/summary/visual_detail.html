@@ -17,9 +17,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.summaryStartup(function(summary){
       window.isEditable = {{obj_perms.edit|lower}};
-      window.app.summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+      summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
   </script>
 {% endblock %}

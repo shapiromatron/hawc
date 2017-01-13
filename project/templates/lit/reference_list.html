@@ -34,9 +34,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.litStartup(function(lit){
       window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
+      window.tagtree = new lit.TagTree({{tags|safe}});
       window.canEdit = {{obj_perms.edit|lower}};
       window.search_id = parseInt("{{object.id}}", 10) || null;
 
@@ -52,7 +52,7 @@
                 tag: tag,
                 download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
               },
-              refviewer = new window.app.lit.ReferencesViewer($('#references_detail_div'), options);
+              refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
           tag.get_reference_objects_by_tag(refviewer);
         });
 
@@ -69,7 +69,7 @@
                 ],
                 download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
               },
-              refviewer = new window.app.lit.ReferencesViewer($('#references_detail_div'), options);
+              refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
           tagtree.view_untagged_references(refviewer);
         });
     });

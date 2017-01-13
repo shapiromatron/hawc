@@ -21,9 +21,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.litStartup(function(lit){
       window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
+      window.tagtree = new lit.TagTree({{tags|safe}});
       window.tagtree.build_top_level_node("{{assessment}}");
       window.tagtree.add_references({{ref_objs|safe}});
       window.canEdit = {{obj_perms.edit|lower}};
@@ -32,7 +32,7 @@
       var title = {% if object_type == 'reference' %}
           "{{assessment}}: Literature Tagtree"; {% else %}
           '"{{object}}" Literature Tagtree'; {% endif %}
-      window.treeviz = new window.app.lit.TagTreeViz(window.tagtree,
+      window.treeviz = new lit.TagTreeViz(window.tagtree,
                                       $('#tagtree'),
                                       title,
                                       "{% url 'lit:ref_download_excel' assessment.pk %}");

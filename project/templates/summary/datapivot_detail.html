@@ -56,13 +56,15 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.dataPivot.DataPivot.get_object({{object.id}}, function(dp){
+    window.app.dataPivotStartup(function(dataPivot){
+      dataPivot.DataPivot.get_object({{object.id}}, function(dp){
         $('#loading_div').fadeOut(function(){
           dp.build_data_pivot_vis($('#dp_display'));
         });
       });
-      new window.app.smartTags.SmartTagContainer($('#caption'), {showOnStartup: true});
+      window.app.smartTagsStartup(function(smartTags){
+          new smartTags.SmartTagContainer($('#caption'), {showOnStartup: true});
+      })
     });
   </script>
 {% endblock %}

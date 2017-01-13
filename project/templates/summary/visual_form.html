@@ -54,7 +54,7 @@
 {% block extrajs %}
   {{ smart_tag_form.media }}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.summaryFormsStartup(function(summaryForms){
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
@@ -64,8 +64,11 @@
 
       window.rob_metrics = {{rob_metrics|safe}};
       window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
-      new window.app.summaryForms.VisualForm.create({{visual_type}}, $('.tabbable'));
-      new window.app.smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
+      new summaryForms.VisualForm.create({{visual_type}}, $('.tabbable'));
+
+      window.app.smartTagsStartup(function(smartTags){
+          new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
+      })
     });
   </script>
 {% endblock %}

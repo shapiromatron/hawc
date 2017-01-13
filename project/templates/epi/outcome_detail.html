@@ -38,8 +38,8 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.epi.Outcome.displayFullPager($("#objContainer"), {{object.id}});
+    window.app.epiStartup(function(epi){
+      epi.Outcome.displayFullPager($("#objContainer"), {{object.id}});
     });
   </script>
 {% endblock %}

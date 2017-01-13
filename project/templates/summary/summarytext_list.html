@@ -55,9 +55,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    window.app.summaryStartup(function(summary){
 
-      new window.app.summary.SummaryTextTree({
+      new summary.SummaryTextTree({
         "assessment_id": {{assessment.pk}},
         "mode": "read",
         "read_headers_ul": $('#st_headers_ul'),
@@ -65,8 +65,10 @@
         "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
       });
 
-      $('#smart_tag_toggle').on('click', function(e){
-        window.app.smartTags.SmartTagContainer.toggleAllModals('#st_text_div');
+      window.app.smartTagsStartup(function(smartTags){
+          $('#smart_tag_toggle').on('click', function(e){
+            smartTags.SmartTagContainer.toggleAllModals('#st_text_div');
+          })
       })
 
     });

@@ -71,8 +71,8 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
-      window.tagtree = new window.app.lit.TagTree({{tags|safe}});
+    window.app.litStartup(function(lit){
+      window.tagtree = new lit.TagTree({{tags|safe}});
       $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
     });
   </script>

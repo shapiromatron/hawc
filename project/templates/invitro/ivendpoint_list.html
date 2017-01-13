@@ -88,14 +88,14 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        $(document).ready(function(){
+        window.app.invitroStartup(function(invitro){
             var endpoints = [];
 
             {{list_json|safe}}.map(function(endpoint){
-                endpoints.push(new window.app.invitro.IVEndpoint(endpoint));
+                endpoints.push(new invitro.IVEndpoint(endpoint));
             })
 
-            var tbl = new window.app.invitro.IVEndpointListTable(endpoints);
+            var tbl = new invitro.IVEndpointListTable(endpoints);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>
