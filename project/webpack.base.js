@@ -33,14 +33,14 @@ module.exports = {
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
-            filename: 'vendor.js',
+            filename: 'vendor.[hash].js',
             minChunks: (module, count) => {
                 // puts imported node_modules module code into vendor chunk
                 const userRequest = module.userRequest;
                 return userRequest && userRequest.indexOf('node_modules') >= 0;
             },
         }),
-        new webpack.optimize.CommonsChunkPlugin({name: 'manifest', filename: 'manifest.js'}),
+        new webpack.optimize.CommonsChunkPlugin({name: 'manifest', filename: 'manifest.[hash].js'}),
         new webpack.NoErrorsPlugin(),
         new BundleTracker({filename: './webpack-stats.json'}),
     ],
