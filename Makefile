@@ -24,7 +24,7 @@ export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 dev: ## Start development environment
-	if [ -a ./bin/dev.local.sh ]; then \
+	@if [ -a ./bin/dev.local.sh ]; then \
 		./bin/dev.local.sh; \
 	else \
 		./bin/dev.sh; \
