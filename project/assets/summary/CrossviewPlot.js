@@ -83,25 +83,31 @@ class CrossviewPlot extends D3Visualization {
     build_labels(){
 
         var midX = d3.mean(this.x_scale.range()),
-            midY = d3.mean(this.y_scale.range());
+            midY = d3.mean(this.y_scale.range()),
+            titleOffsetX = this.data.settings.title_x || 0,
+            titleOffsetY = this.data.settings.title_y || 0,
+            xAxisOffsetX = this.data.settings.xlabel_x || 0,
+            xAxisOffsetY = this.data.settings.xlabel_y || 0,
+            yAxisOffsetX = this.data.settings.ylabel_x || 0,
+            yAxisOffsetY = this.data.settings.ylabel_y || 0;
 
         this.vis.append('svg:text')
-            .attr('x', midX)
-            .attr('y', -10)
+            .attr('x', midX + titleOffsetX)
+            .attr('y', -10 + titleOffsetY)
             .text(this.data.settings.title)
             .attr('text-anchor', 'middle')
             .attr('class', 'dr_title');
 
         this.vis.append('svg:text')
-            .attr('x', midX)
-            .attr('y', d3.max(this.y_scale.range())+30)
+            .attr('x', midX + xAxisOffsetX)
+            .attr('y', d3.max(this.y_scale.range()) + 30 + xAxisOffsetY)
             .text(this.data.settings.xAxisLabel)
             .attr('text-anchor', 'middle')
             .attr('class', 'dr_axis_labels x_axis_label');
 
         this.vis.append('svg:text')
-            .attr('x', -50)
-            .attr('y', midY)
+            .attr('x', -50 + yAxisOffsetX)
+            .attr('y', midY + yAxisOffsetY)
             .attr('transform','rotate(270, -50,  {0})'.printf(midY))
             .text(this.data.settings.yAxisLabel)
             .attr('text-anchor', 'middle')
