@@ -84,12 +84,14 @@ class CrossviewPlot extends D3Visualization {
 
         var midX = d3.mean(this.x_scale.range()),
             midY = d3.mean(this.y_scale.range()),
+            yAxisXDefault = -50,
             titleOffsetX = this.data.settings.title_x || 0,
             titleOffsetY = this.data.settings.title_y || 0,
             xAxisOffsetX = this.data.settings.xlabel_x || 0,
             xAxisOffsetY = this.data.settings.xlabel_y || 0,
             yAxisOffsetX = this.data.settings.ylabel_x || 0,
-            yAxisOffsetY = this.data.settings.ylabel_y || 0;
+            yAxisOffsetY = this.data.settings.ylabel_y || 0,
+            settings = this.data.settings;
 
         // add labels
         let dragTitle = (this.options.dev) ? HAWCUtils.updateDragLocationTransform((x, y)=>{
@@ -100,10 +102,21 @@ class CrossviewPlot extends D3Visualization {
                 this.data.settings.xlabel_x = parseInt(x);
                 this.data.settings.xlabel_y = parseInt(y);
             }) : function(){},
-            dragY = (this.options.dev) ? HAWCUtils.updateDragLocationTransform((x, y)=>{
-                this.data.settings.ylabel_x = parseInt(x);
-                this.data.settings.ylabel_y = parseInt(y);
-            }) : function(){};
+            dragY = (this.options.dev) ? d3.behavior.drag()
+                .origin(Object)
+                .on('drag', function(d, i){
+                    let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                        p = d3.select(this),
+                        m = regexp.exec(p.attr('transform'));
+                    if (m !== null && m.length===3){
+                        let x = parseInt(m[1]) + parseInt(d3.event.dx),
+                            y = parseInt(m[2]) + parseInt(d3.event.dy);
+                        p.attr('transform', `translate(${x},${y}) rotate(270,${yAxisXDefault+x},${midY+y})`);
+                        settings.ylabel_x = x;
+                        settings.ylabel_y = y;
+                    }
+                }) : function(){};
+
 
         this.vis.append('svg:text')
             .attr('x', midX)
@@ -126,9 +139,9 @@ class CrossviewPlot extends D3Visualization {
             .call(dragX);
 
         this.vis.append('svg:text')
-            .attr('x', -50)
+            .attr('x', yAxisXDefault)
             .attr('y', midY)
-            .attr('transform',`translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270, ${-50+yAxisOffsetX}, ${midY+yAxisOffsetY})`)
+            .attr('transform',`translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270,${yAxisXDefault+yAxisOffsetX},${midY+yAxisOffsetY})`)
             .text(this.data.settings.yAxisLabel)
             .attr('text-anchor', 'middle')
             .attr('class', 'dr_axis_labels y_axis_label')
