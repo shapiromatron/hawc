@@ -8,6 +8,7 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
+from study.views import StudyRead
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from mgmt.views import EnsureExtractionStartedMixin
 from utils.views import (AssessmentPermissionsMixin, BaseCreate,
@@ -30,6 +31,15 @@ class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
 
 class ExperimentRead(BaseDetail):
     model = models.Experiment
+
+
+class ExperimentCopyAsNewSelector(StudyRead):
+    template_name = 'animal/experiment_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ExperimentCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.ExperimentSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class ExperimentUpdate(BaseUpdate):
@@ -134,6 +144,15 @@ class AnimalGroupCreate(BaseCreate):
 
 class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
+
+
+class AnimalGroupCopyAsNewSelector(ExperimentRead):
+    template_name = 'animal/animalgroup_copy_selector.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AnimalGroupCopyAsNewSelector, self).get_context_data(**kwargs)
+        context['form'] = forms.AnimalGroupSelectorForm(parent_id=self.object.id)
+        return context
 
 
 class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):

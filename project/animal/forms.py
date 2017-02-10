@@ -13,7 +13,7 @@ from selectable import forms as selectable
 from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
 from study.lookups import AnimalStudyLookup
-from utils.forms import BaseFormHelper
+from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 
 from . import models, lookups
 
@@ -137,6 +137,11 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
+class ExperimentSelectorForm(CopyAsNewSelectorForm):
+    label = 'Experiment'
+    lookup_class = lookups.ExperimentByStudyLookup
+
+
 class AnimalGroupForm(ModelForm):
 
     class Meta:
@@ -222,6 +227,11 @@ class AnimalGroupForm(ModelForm):
             self.add_error('strain', err)
 
         return cleaned_data
+
+
+class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
+    label = 'Animal group'
+    lookup_class = lookups.AnimalGroupByExperimentLookup
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):

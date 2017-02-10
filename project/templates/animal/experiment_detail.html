@@ -24,6 +24,7 @@
               <li class="divider"></li>
               <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
               <li><a href="{% url 'animal:animal_group_new' object.pk %}">Create new</a></li>
+              <li><a href="{% url 'animal:animal_group_copy_selector' object.pk %}">Copy from existing</a></li>
           </ul>
         </div>
       {% endif %}

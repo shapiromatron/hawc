@@ -24,12 +24,14 @@ urlpatterns = [
 
     # Experiment
     url(r'^study/(?P<pk>\d+)/experiment/new/$', views.ExperimentCreate.as_view(), name='experiment_new'),
+    url(r'^study/(?P<pk>\d+)/experiment/copy-as-new-selector/$', views.ExperimentCopyAsNewSelector.as_view(), name='experiment_copy_selector'),
     url(r'^experiment/(?P<pk>\d+)/$', views.ExperimentRead.as_view(), name='experiment_detail'),
     url(r'^experiment/(?P<pk>\d+)/edit/$', views.ExperimentUpdate.as_view(), name='experiment_update'),
     url(r'^experiment/(?P<pk>\d+)/delete/$', views.ExperimentDelete.as_view(), name='experiment_delete'),
 
     # AnimalGroup
     url(r'^experiment/(?P<pk>\d+)/animal-group/new/$', views.AnimalGroupCreate.as_view(), name='animal_group_new'),
+    url(r'^experiment/(?P<pk>\d+)/animal-group/copy-as-new-selector/$', views.AnimalGroupCopyAsNewSelector.as_view(), name='animal_group_copy_selector'),
     url(r'^animal-group/(?P<pk>\d+)/$', views.AnimalGroupRead.as_view(), name='animal_group_detail'),
     url(r'^animal-group/(?P<pk>\d+)/edit/$', views.AnimalGroupUpdate.as_view(), name='animal_group_update'),
     url(r'^animal-group/(?P<pk>\d+)/delete/$', views.AnimalGroupDelete.as_view(), name='animal_group_delete'),

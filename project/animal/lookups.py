@@ -10,6 +10,18 @@ class RelatedExperimentCASLookup(RelatedDistinctStringLookup):
     related_filter = 'study__assessment_id'
 
 
+class ExperimentByStudyLookup(RelatedLookup):
+    model = models.Experiment
+    search_fields = ('name__icontains', )
+    related_filter = 'study_id'
+
+
+class AnimalGroupByExperimentLookup(RelatedLookup):
+    model = models.AnimalGroup
+    search_fields = ('name__icontains', )
+    related_filter = 'experiment_id'
+
+
 class RelatedAnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_exposed"
@@ -149,6 +161,8 @@ class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
         )
 
 
+registry.register(ExperimentByStudyLookup)
+registry.register(AnimalGroupByExperimentLookup)
 registry.register(RelatedExperimentCASLookup)
 registry.register(RelatedAnimalGroupLifestageExposedLookup)
 registry.register(RelatedAnimalGroupLifestageAssessedLookup)
