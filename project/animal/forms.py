@@ -564,21 +564,9 @@ EndpointGroupFormSet = modelformset_factory(
     extra=0)
 
 
-class EndpointSelectorForm(forms.Form):
-    model = models.Endpoint
-    selector = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.EndpointByStudyLookup,
-        label='Endpoint',
-        help_text="Type keywords in search-box to filter endpoints by name",
-        widget=selectable.AutoComboboxSelectWidget)
-
-    def __init__(self, *args, **kwargs):
-        study_id = kwargs.pop("study_id")
-        super(EndpointSelectorForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
-            self.fields[fld].widget.attrs['class'] = 'span11'
-        self.fields['selector'].widget.update_query_parameters(
-            {'related': study_id})
+class EndpointSelectorForm(CopyAsNewSelectorForm):
+    label = 'Endpoint'
+    lookup_class = lookups.EndpointByStudyLookup
 
 
 class UploadFileForm(forms.Form):

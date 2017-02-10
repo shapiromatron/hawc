@@ -6,7 +6,8 @@ from study.models import Study
 from study.views import StudyRead
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
                          BaseDelete, BaseEndpointFilterList, BaseUpdate,
-                         BaseList, BaseUpdateWithFormset, CloseIfSuccessMixin)
+                         BaseList, BaseUpdateWithFormset, CloseIfSuccessMixin,
+                         CopyAsNewSelectorMixin)
 
 from . import forms, exports, models
 
@@ -44,13 +45,9 @@ class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
         return kwargs
 
 
-class StudyPopulationCopyAsNewSelector(StudyRead):
-    template_name = 'epi/studypopulation_copy_selector.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(StudyPopulationCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.StudyPopulationSelectorForm(parent_id=self.object.id)
-        return context
+class StudyPopulationCopyAsNewSelector(CopyAsNewSelectorMixin, StudyRead):
+    copy_model = models.StudyPopulation
+    form_class = forms.StudyPopulationSelectorForm
 
 
 class StudyPopulationDetail(BaseDetail):
@@ -89,13 +86,9 @@ class ExposureCreate(BaseCreate):
     form_class = forms.ExposureForm
 
 
-class ExposureCopyAsNewSelector(StudyPopulationDetail):
-    template_name = 'epi/exposure_copy_selector.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ExposureCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ExposureSelectorForm(parent_id=self.object.id)
-        return context
+class ExposureCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+    copy_model = models.Exposure
+    form_class = forms.ExposureSelectorForm
 
 
 class ExposureDetail(BaseDetail):
@@ -162,13 +155,9 @@ class OutcomeCreate(BaseCreate):
         return kwargs
 
 
-class OutcomeCopyAsNewSelector(StudyPopulationDetail):
-    template_name = 'epi/outcome_copy_selector.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(OutcomeCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.OutcomeSelectorForm(parent_id=self.object.id)
-        return context
+class OutcomeCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+    copy_model = models.Outcome
+    form_class = forms.OutcomeSelectorForm
 
 
 class OutcomeDetail(BaseDetail):
@@ -227,13 +216,9 @@ class ResultCreate(BaseCreateWithFormset):
             **self.get_formset_kwargs())
 
 
-class ResultCopyAsNewSelector(OutcomeDetail):
-    template_name = 'epi/result_copy_selector.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ResultCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ResultSelectorForm(parent_id=self.object.id)
-        return context
+class ResultCopyAsNewSelector(CopyAsNewSelectorMixin, OutcomeDetail):
+    copy_model = models.Result
+    form_class = forms.ResultSelectorForm
 
 
 class ResultDetail(BaseDetail):
@@ -303,22 +288,16 @@ class ComparisonSetOutcomeCreate(ComparisonSetCreate):
     parent_template_name = 'outcome'
 
 
-class ComparisonSetStudyPopCopySelector(StudyPopulationDetail):
+class ComparisonSetStudyPopCopySelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+    copy_model = models.ComparisonSet
+    form_class = forms.ComparisonSetByStudyPopulationSelectorForm
     template_name = 'epi/comparisonset_sp_copy_selector.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(ComparisonSetStudyPopCopySelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ComparisonSetByStudyPopulationSelectorForm(parent_id=self.object.id)
-        return context
 
-
-class ComparisonSetOutcomeCopySelector(OutcomeDetail):
+class ComparisonSetOutcomeCopySelector(CopyAsNewSelectorMixin, OutcomeDetail):
+    copy_model = models.ComparisonSet
+    form_class = forms.ComparisonSetByOutcomeSelectorForm
     template_name = 'epi/comparisonset_outcome_copy_selector.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ComparisonSetOutcomeCopySelector, self).get_context_data(**kwargs)
-        context['form'] = forms.ComparisonSetByOutcomeSelectorForm(parent_id=self.object.id)
-        return context
 
 
 class ComparisonSetDetail(BaseDetail):

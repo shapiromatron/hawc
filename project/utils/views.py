@@ -243,6 +243,32 @@ class CanCreateMixin(object):
             raise PermissionDenied
 
 
+class CopyAsNewSelectorMixin(object):
+    form_class = None  # required
+    copy_model = None  # required
+    template_name_suffix = '_copy_selector'
+
+    def get_related_id(self):
+        return self.object.id
+
+    def get_context_data(self, **kwargs):
+        context = super(CopyAsNewSelectorMixin, self).get_context_data(**kwargs)
+        related_id = self.get_related_id()
+        context['form'] = self.form_class(parent_id=related_id)
+        return context
+
+    def get_template_names(self):
+        if hasattr(self, 'template_name'):
+            name = self.template_name
+        else:
+            name = '%s/%s%s.html' % (
+                self.copy_model._meta.app_label,
+                self.copy_model._meta.object_name.lower(),
+                self.template_name_suffix
+            )
+        return [name]
+
+
 # Base HAWC views
 class BaseDetail(AssessmentPermissionsMixin, DetailView):
     crud = 'Read'
