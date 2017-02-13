@@ -83,7 +83,7 @@ class ResultGroupTable {
                         'Variance';
                 },
                 ci(){
-                    let letter = (d.results.length > 0 && d.results[0].ci_calc)?
+                    let letter = (_.chain(d.results).pluck('ci_calc').any().value())?
                       fn.add_footnote(`Confidence intervals calculated in HAWC from distributions provided (<a href="${docUrlRoot}reference.html#statistical-methods-used">source</a>).`):
                       '';
 
