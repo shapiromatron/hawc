@@ -163,19 +163,17 @@ class PrefilterMixin(object):
             self.fields[k] = v
 
     def setInitialValues(self):
+
+        is_new = self.instance.id is None
         try:
-            if self.instance.id is not None:
-                txt = self.instance.prefilters
-            else:
-                txt = self.initial.get('prefilters', "{}")
-            prefilters = json.loads(txt)
+            prefilters = json.loads(self.initial.get('prefilters', '{}'))
         except ValueError:
             prefilters = {}
 
         if type(self.instance) is models.Visual:
             evidence_type = models.BIOASSAY
         else:
-            evidence_type = self.instance.evidence_type
+            evidence_type = self.initial['evidence_type']
 
         for k, v in prefilters.iteritems():
             if k == "system__in":
@@ -221,7 +219,7 @@ class PrefilterMixin(object):
 
         if self.__class__.__name__ == "CrossviewForm":
             published_only = prefilters.get("animal_group__experiment__study__published", False)
-            if self.instance.id is None:
+            if is_new:
                 published_only = True
             self.fields["published_only"].initial = published_only
 
