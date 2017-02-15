@@ -22,7 +22,7 @@ let build_ordering_tab = function(self){
         },
         reset_ordering_overrides = function(){
             self.settings.row_overrides.forEach(function(v){
-                v.offset = 0;
+                console.log('noop');
             });
         },
         build_manual_rows = function(){
@@ -65,17 +65,10 @@ let build_ordering_tab = function(self){
                     return {
                         pk,
                         include: true,
-                        offset: 0,
                         text_style: NULL_CASE,
                         line_style: NULL_CASE,
                         symbol_style: NULL_CASE,
                     };
-                },
-                offsets = [],
-                format_offset = function(offset){
-                    if(offset>0) return '↓{0}'.printf(offset);
-                    if(offset<0) return '↑{0}'.printf(Math.abs(offset));
-                    return '';
                 };
 
             self.settings.row_overrides.forEach(function(v){
@@ -87,56 +80,19 @@ let build_ordering_tab = function(self){
                 var desc = [],
                     obj = get_matched_override_or_default(v._dp_pk),
                     include = $('<input name="ov_include" type="checkbox">').prop('checked', obj.include),
-                    offset_span = $('<span>').text(format_offset(obj.offset)),
-                    move_up = $('<button class="btn btn-mini"><i class="icon-arrow-up"></i></button>')
-                        .click(function(){
-                            var tr = $(this).parent().parent();
-                            if (tr.index()>0){
-                                var offset = $(this).parent().data('offset')-1;
-                                offset_span.text(format_offset(offset));
-                                $(this).parent().data('offset', offset);
-                                tr.insertBefore(tr.prev())
-                                    .animate({'background-color': 'yellow'}, 'fast')
-                                    .animate({'background-color': 'none'}, 'slow');
-                            }
-                        }),
-                    move_down = $('<button class="btn btn-mini"><i class="icon-arrow-down"></i></button>')
-                        .click(function(){
-                            var tr = $(this).parent().parent();
-                            if(tr.index()<tr.parent().children().length-1){
-                                var offset = $(this).parent().data('offset')+1;
-                                offset_span.text(format_offset(offset));
-                                $(this).parent().data('offset', offset);
-                                tr.insertAfter(tr.next())
-                                  .animate({'background-color':'yellow'}, 'fast')
-                                  .animate({'background-color':'none'}, 'slow');
-                            }
-                        }),
                     text_style = self.style_manager.add_select('texts', obj.text_style, true),
                     line_style = self.style_manager.add_select('lines', obj.line_style, true),
                     symbol_style = self.style_manager.add_select('symbols', obj.symbol_style, true);
 
                 descriptions.forEach(function(v2){desc.push(v[v2.field_name]);});
-                var tr = $('<tr></tr>').data({pk: v._dp_pk, obj})
-                        .append('<td>{0}</td>'.printf(desc.join('<br>')))
-                        .append($('<td></td>').append(include))
-                        .append($('<td class="ov_offset"></td>').append(offset_span, move_up, move_down).data('offset', obj.offset))
-                        .append($('<td class="ov_text"></td>').append(text_style))
-                        .append($('<td class="ov_line"></td>').append(line_style))
-                        .append($('<td class="ov_symbol"></td>').append(symbol_style));
+                var tr = $('<tr>').data({pk: v._dp_pk, obj})
+                        .append($('<td>').html(desc.join('<br>')))
+                        .append($('<td>').append(include))
+                        .append($('<td>').append('<span>hi</span>'))
+                        .append($('<td class="ov_text">').append(text_style))
+                        .append($('<td class="ov_line">').append(line_style))
+                        .append($('<td class="ov_symbol">').append(symbol_style));
                 rows.push(tr);
-                if(obj.offset!==0) offsets.push(obj);
-            });
-
-            offsets.forEach(function(os){
-                rows.forEach(function(v, i){
-                    if ($(v).data('obj') === os){
-                        var new_off = i+os.offset;
-                        if (new_off >= rows.length) new_off = rows.length-1;
-                        if (new_off < 0) new_off = 0;
-                        rows.splice(new_off, 0, rows.splice(i, 1)[0]);
-                    }
-                });
             });
 
             return override_tbody.html(rows);
@@ -222,7 +178,7 @@ let build_ordering_tab = function(self){
         build_sorting_div = function(){
             var div = $('<div>'),
                 thead = $('<thead>').html([
-                   $('<tr>').append('<th>Field Name</th>', '<th>Sort Order</th>', '<th>Ordering</th>'),
+                    $('<tr>').append('<th>Field Name</th>', '<th>Sort Order</th>', '<th>Ordering</th>'),
                 ]),
                 tbody = $('<tbody>').on('change', 'input,select', function(){
                     reset_ordering_overrides();
@@ -312,14 +268,12 @@ let build_ordering_tab = function(self){
                     obj = {
                         pk: $v.data('pk'),
                         include: $v.find('input[name="ov_include"]').prop('checked'),
-                        offset: $v.find('.ov_offset').data('offset'),
                         text_style: $v.find('.ov_text select option:selected').val(),
                         line_style: $v.find('.ov_line select option:selected').val(),
                         symbol_style: $v.find('.ov_symbol select option:selected').val(),
                     };
                 // only add if settings are non-default
                 if ((obj.include === false) ||
-                    (obj.offset !== 0) ||
                     (obj.text_style !== NULL_CASE) ||
                     (obj.line_style !== NULL_CASE) ||
                     (obj.symbol_style !== NULL_CASE)){
