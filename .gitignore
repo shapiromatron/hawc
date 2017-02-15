@@ -71,3 +71,5 @@ node_modules
 bundles/
 webpack-stats.json
 .happypack/
+
+bin/*local.sh

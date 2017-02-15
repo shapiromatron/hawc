@@ -41,27 +41,24 @@ necessary requirements::
     mkvirtualenv hawc
     git clone https://github.com/shapiromatron/hawc.git
     cd hawc
-    $VIRTUAL_ENV/bin/pip install -r $PWD/requirements/dev.txt
+    $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
 
 Create a local settings file and update the necessary fields within the settings::
 
-    cp hawc/settings/local.example.py hawc/settings/local.py
+    cp ./project/hawc/settings/local.example.py ./project/hawc/settings/local.py
 
 Next, update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivate``::
 
     #!/bin/sh
     # This hook is sourced after this virtualenv is activated.
 
-    # required to install psycopg2 on Mac
-    export "PATH=/Library/PostgreSQL/9.4/bin:${PATH}"
-
     # django environment-variable settings
     export "DJANGO_SETTINGS_MODULE=hawc.settings.local"
     export "DJANGO_STATIC_ROOT=$HOME/dev/temp/hawc/static"
     export "DJANGO_MEDIA_ROOT=$HOME/dev/temp/hawc/media"
 
-    # move to project path
-    cd $HOME/dev/hawc/project
+    # move to root HAWC path (wherever that is one your computer)
+    cd $HOME/dev/hawc
 
 Windows
 ~~~~~~~~~
@@ -116,28 +113,42 @@ Create a PostgreSQL database and run the initial syncdb/migrate::
 
 Next, we'll run a few management command and apply migrations::
 
+    cd project
     python manage.py build_d3_styles
     python manage.py migrate
     python manage.py createcachetable
 
 You should now be able to run the python backend development server::
 
-    python manage.py runserver
+    cd ./project && python manage.py runserver
 
 Next, you'll need to setup the front-end web bundler. Make sure the ``npm``
 command is accessible from your virtual environment. In the ``/project`` path,
 run the following command, which will install all javascript packages for our
 development environment::
 
-    npm install --save-dev
+    cd ./project && npm install --save-dev
 
 After installing dependencies, run the javascript bundler in a second terminal::
 
-    npm start
+    cd ./project && npm start
 
 If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
 .. _`localhost`: http://127.0.0.1:8000/
+
+
+Using the bundled development environment
+-----------------------------------------
+
+For quicker development, HAWC includes a Makefile command which creates a `tmux`_
+terminal for opening all required tabs for development. To execute, use the command::
+
+    make dev
+
+You can modify the tmux environment by creating a local copy::
+
+    cp bin/dev.sh bin/dev.local.sh
 
 
 Importing a database export:
