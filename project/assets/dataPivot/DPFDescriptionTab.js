@@ -8,7 +8,7 @@ let build_description_tab = function(self){
     var tab = $('<div class="tab-pane active" id="data_pivot_settings_description">'),
         headers = [
             'Column header', 'Display name', 'Header style',
-            'Text style', 'Maximum width (pixels)', 'On-Click', 'Ordering'
+            'Text style', 'Maximum width (pixels)', 'On-click', 'Ordering',
         ],
         tbody = $('<tbody>');
 
@@ -33,7 +33,7 @@ let build_description_tab = function(self){
         add_row(i);
     }
     return tab.html([
-        $('<h3>Descriptive Columns</h3>').append(new_point_button),
+        $('<h3>Descriptive text columns</h3>').append(new_point_button),
         $('<table class="table table-condensed table-bordered">').html([thead, tbody])]);
 };
 

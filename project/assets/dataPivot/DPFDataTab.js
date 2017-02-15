@@ -52,10 +52,11 @@ let build_data_tab = function(self){
     }
 
     return tab.html([
-        '<h3>Data bar options</h3>',
-        tbl_line,
         $('<h3>Data point options</h3>').append(new_point_button),
-        tbl_points]);
+        tbl_points,
+        '<h3>Data point error-bar options</h3>',
+        tbl_line,
+    ]);
 };
 
 export default build_data_tab;

@@ -109,11 +109,11 @@ let build_ordering_tab = function(self){
                   $('<td colspan="6">Row-ordering has changed.</td>').append('<br>', btn)));
         },
         build_filtering_div = function(){
-            var div = $('<div></div>'),
-                thead = $('<thead></thead>').html(
+            var div = $('<div>'),
+                thead = $('<thead>').html(
                     $('<tr>').append(
-                        '<th>Field Name</th>',
-                        '<th>Filter Type</th>',
+                        '<th>Field name</th>',
+                        '<th>Filter type</th>',
                         '<th>Value</th>',
                         '<th>Ordering</th>')),
                 tbody = $('<tbody>'),
@@ -183,7 +183,7 @@ let build_ordering_tab = function(self){
         build_sorting_div = function(){
             var div = $('<div>'),
                 thead = $('<thead>').html([
-                    $('<tr>').append('<th>Field Name</th>', '<th>Sort Order</th>', '<th>Ordering</th>'),
+                    $('<tr>').append('<th>Field name</th>', '<th>Sort order</th>', '<th>Ordering</th>'),
                 ]),
                 tbody = $('<tbody>').on('change', 'input,select', function(){
                     reset_ordering_overrides();
@@ -255,9 +255,9 @@ let build_ordering_tab = function(self){
                         '<th>Description</th>',
                         '<th>Include</th>',
                         '<th style="width: 150px">Row index</th>',
-                        '<th>Override<br>text style</th>',
-                        '<th>Override<br>line style</th>',
-                        '<th>Override<br>symbol style</th>'));
+                        '<th>Override text style</th>',
+                        '<th>Override line style</th>',
+                        '<th>Override symbol style</th>'));
 
             return div.html([
                 $('<h3>Row-level customization</h3>').append(

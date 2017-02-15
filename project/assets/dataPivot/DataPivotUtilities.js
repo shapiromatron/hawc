@@ -480,9 +480,9 @@ class _DataPivot_settings_linedata {
         });
 
         this.tr = $('<tr>')
-            .append($('<td>').append('<b>Low Range:</b><br>',
+            .append($('<td>').append('<b>Low range:</b><br>',
                                           this.content.low_field_name,
-                                          '<br><b>High Range:</b><br>',
+                                          '<br><b>High range:</b><br>',
                                           this.content.high_field_name))
             .append($('<td>').append(this.content.header_name))
             .append($('<td>').append(this.content.marker_style))
@@ -490,9 +490,11 @@ class _DataPivot_settings_linedata {
                 self.data_push();
 
                 // update legend
-                var obj = {'line_index': index,
-                           'label': self.content.header_name.val(),
-                           'line_style': self.content.marker_style.find('option:selected').text()};
+                var obj = {
+                    line_index: index,
+                    label: self.content.header_name.val(),
+                    line_style: self.content.marker_style.find('option:selected').text(),
+                };
                 self.data_pivot.legend.add_or_update_field(obj);
             });
 

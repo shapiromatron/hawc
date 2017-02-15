@@ -234,12 +234,12 @@ class DataPivot {
             content = [
                 $('<ul class="nav nav-tabs">')
                     .append(
-                        '<li class="active"><a href="#data_pivot_settings_description" data-toggle="tab">Description Columns</a></li>',
-                        '<li><a href="#data_pivot_settings_data" data-toggle="tab">Data Columns</a></li>',
-                        '<li><a class="dp_ordering_tab" href="#data_pivot_settings_ordering" data-toggle="tab">Row Ordering</a></li>',
+                        '<li class="active"><a href="#data_pivot_settings_description" data-toggle="tab">Descriptive text columns</a></li>',
+                        '<li><a href="#data_pivot_settings_data" data-toggle="tab">Visualization data</a></li>',
+                        '<li><a class="dp_ordering_tab" href="#data_pivot_settings_ordering" data-toggle="tab">Data filtering and ordering</a></li>',
                         '<li><a href="#data_pivot_settings_ref" data-toggle="tab">References</a></li>',
                         '<li><a href="#data_pivot_settings_styles" data-toggle="tab">Styles</a></li>',
-                        '<li><a class="dp_general_tab" href="#data_pivot_settings_general" data-toggle="tab">General Settings</a></li>'),
+                        '<li><a class="dp_general_tab" href="#data_pivot_settings_general" data-toggle="tab">Other settings</a></li>'),
                 $('<div class="tab-content"></div>')
                     .append(
                         build_description_tab(self),

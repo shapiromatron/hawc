@@ -10,7 +10,7 @@ let build_reference_tab = function(self){
     var tab = $('<div class="tab-pane" id="data_pivot_settings_ref">'),
         build_reference_lines = function(){
             var thead = $('<thead>').html(
-                    [$('<tr>').append('<th>Reference Line Value</th><th>Line Style</th><th>Delete</th>')]),
+                    [$('<tr>').append('<th>Reference line value</th><th>Line style</th><th>Delete</th>')]),
                 tbody = $('<tbody>'),
                 add_row = function(i){
                     if(!self.settings.reference_lines[i]){
@@ -32,12 +32,12 @@ let build_reference_tab = function(self){
                 add_row(i);
             }
             return $('<div>').append(
-                      $('<h3>Reference Lines</h3>').append(new_point_button),
+                      $('<h3>Reference lines</h3>').append(new_point_button),
                       $('<table class="table table-condensed table-bordered">').html([thead, tbody]));
         },
         build_reference_ranges = function(){
             var thead = $('<thead>').html(
-                    [$('<tr>').append('<th>Lower Value</th><th>Upper Value</th><th>Range Style</th><th>Delete</th>')]),
+                    [$('<tr>').append('<th>Lower value</th><th>Upper value</th><th>Range style</th><th>Delete</th>')]),
                 colgroup = $('<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'),
                 tbody = $('<tbody>'),
                 add_row = function(i){
@@ -60,7 +60,7 @@ let build_reference_tab = function(self){
                 add_row(i);
             }
             return $('<div>').append(
-                $('<h3>Reference Ranges</h3>').append(new_point_button),
+                $('<h3>Reference ranges</h3>').append(new_point_button),
                 $('<table class="table table-condensed table-bordered">').html([colgroup, thead, tbody]));
         },
         build_labels = function(){
