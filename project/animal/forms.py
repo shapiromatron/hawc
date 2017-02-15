@@ -13,7 +13,7 @@ from selectable import forms as selectable
 from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
 from study.lookups import AnimalStudyLookup
-from utils.forms import BaseFormHelper
+from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 
 from . import models, lookups
 
@@ -137,6 +137,11 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
+class ExperimentSelectorForm(CopyAsNewSelectorForm):
+    label = 'Experiment'
+    lookup_class = lookups.ExperimentByStudyLookup
+
+
 class AnimalGroupForm(ModelForm):
 
     class Meta:
@@ -222,6 +227,11 @@ class AnimalGroupForm(ModelForm):
             self.add_error('strain', err)
 
         return cleaned_data
+
+
+class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
+    label = 'Animal group'
+    lookup_class = lookups.AnimalGroupByExperimentLookup
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -554,21 +564,9 @@ EndpointGroupFormSet = modelformset_factory(
     extra=0)
 
 
-class EndpointSelectorForm(forms.Form):
-    model = models.Endpoint
-    selector = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.EndpointByStudyLookup,
-        label='Endpoint',
-        help_text="Type keywords in search-box to filter endpoints by name",
-        widget=selectable.AutoComboboxSelectWidget)
-
-    def __init__(self, *args, **kwargs):
-        study_id = kwargs.pop("study_id")
-        super(EndpointSelectorForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
-            self.fields[fld].widget.attrs['class'] = 'span11'
-        self.fields['selector'].widget.update_query_parameters(
-            {'related': study_id})
+class EndpointSelectorForm(CopyAsNewSelectorForm):
+    label = 'Endpoint'
+    lookup_class = lookups.EndpointByStudyLookup
 
 
 class UploadFileForm(forms.Form):

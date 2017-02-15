@@ -30,6 +30,7 @@
               <li class="divider"></li>
               <li class="disabled"><a tabindex="-1" href="#">Animal bioassay editing</a></li>
               <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a></li>
+              <li><a href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a></li>
             {% endif %}
 
             {% if object.in_vitro %}

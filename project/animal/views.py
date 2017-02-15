@@ -8,13 +8,14 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
+from study.views import StudyRead
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from mgmt.views import EnsureExtractionStartedMixin
 from utils.views import (AssessmentPermissionsMixin, BaseCreate,
                          BaseCreateWithFormset, BaseDelete, BaseDetail,
                          BaseEndpointFilterList, BaseList, BaseUpdate,
                          BaseUpdateWithFormset, GenerateReport,
-                         GenerateFixedReport, MessageMixin)
+                         GenerateFixedReport, MessageMixin, CopyAsNewSelectorMixin)
 
 from . import forms, models, exports, reports
 
@@ -30,6 +31,11 @@ class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
 
 class ExperimentRead(BaseDetail):
     model = models.Experiment
+
+
+class ExperimentCopyAsNewSelector(CopyAsNewSelectorMixin, StudyRead):
+    copy_model = models.Experiment
+    form_class = forms.ExperimentSelectorForm
 
 
 class ExperimentUpdate(BaseUpdate):
@@ -136,6 +142,11 @@ class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
 
 
+class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentRead):
+    copy_model = models.AnimalGroup
+    form_class = forms.AnimalGroupSelectorForm
+
+
 class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     """
     Update selected animal-group. Dosing regime cannot be edited.
@@ -169,14 +180,12 @@ class AnimalGroupDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointCopyAsNewSelector(AnimalGroupRead):
-    # Select an existing assessed outcome as a template for a new one
-    template_name = 'animal/endpoint_copy_selector.html'
+class EndpointCopyAsNewSelector(CopyAsNewSelectorMixin, AnimalGroupRead):
+    copy_model = models.Endpoint
+    form_class = forms.EndpointSelectorForm
 
-    def get_context_data(self, **kwargs):
-        context = super(EndpointCopyAsNewSelector, self).get_context_data(**kwargs)
-        context['form'] = forms.EndpointSelectorForm(study_id=self.object.experiment.study_id)
-        return context
+    def get_related_id(self):
+        return self.object.experiment.study_id
 
 
 # Dosing Regime Views
