@@ -1323,7 +1323,7 @@ class GroupResult(models.Model):
                         lower_ci = round(est - change, 2)
                         upper_ci = round(est + change, 2)
 
-                    grp.update(lower_ci=lower_ci, upper_ci=upper_ci)
+                    grp.update(lower_ci=lower_ci, upper_ci=upper_ci, ci_calc=True)
 
     @staticmethod
     def flat_complete_data_row(ser):
