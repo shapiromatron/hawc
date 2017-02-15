@@ -17,12 +17,15 @@ let build_ordering_tab = function(self){
     var tab = $('<div class="tab-pane" id="data_pivot_settings_ordering">'),
         override_tbody = $('<tbody>'),
         reset_overrides = function(){
+            if (!confirm('Remove all row-level customization settings?')){
+                return;
+            }
             self.settings.row_overrides = [];
             build_manual_rows();
         },
         reset_ordering_overrides = function(){
             self.settings.row_overrides.forEach(function(v){
-                console.log('noop');
+                v.index = null;
             });
         },
         build_manual_rows = function(){
@@ -30,7 +33,8 @@ let build_ordering_tab = function(self){
                 get_selected_fields = function(v){return v.field_name !== NULL_CASE;},
                 descriptions = self.settings.description_settings.filter(get_selected_fields),
                 filters = self.settings.filters.filter(get_selected_fields),
-                sorts = self.settings.sorts.filter(get_selected_fields);
+                sorts = self.settings.sorts.filter(get_selected_fields),
+                overrides = self.settings.row_overrides;
 
             if(descriptions.length === 0){
                 rows.push('<tr><td colspan="6">Please provide description columns before manually filtering.</td></tr>');
@@ -43,7 +47,7 @@ let build_ordering_tab = function(self){
 
             data_copy = _.filter(data_copy,
               _.partial(
-                DataPivotVisualization.shouldInclude,
+                DataPivotVisualization.getIncludibleRows,
                 _,
                 self.settings.dataline_settings[0],
                 self.settings.datapoint_settings
@@ -56,30 +60,31 @@ let build_ordering_tab = function(self){
             }
 
             // apply sorts
-            data_copy = DataPivotVisualization.sorter(data_copy, sorts);
+            data_copy = DataPivotVisualization.sort_with_overrides(data_copy, sorts, overrides);
 
-            var row_override_map = d3.map(),
-                get_matched_override_or_default = function(pk){
-                    var match = row_override_map.get(pk);
-                    if(match) return match;
+            // apply manual index offsets
+            var row_override_map = _.indexBy(overrides, 'pk'),
+                get_default = function(pk){
                     return {
                         pk,
                         include: true,
+                        index: null,
                         text_style: NULL_CASE,
                         line_style: NULL_CASE,
                         symbol_style: NULL_CASE,
                     };
+                },
+                get_matched_override_or_default = function(pk){
+                    let match = row_override_map[pk];
+                    return (match)? match: get_default(pk);
                 };
-
-            self.settings.row_overrides.forEach(function(v){
-                row_override_map.set(v.pk, v);
-            });
 
             // build rows
             data_copy.forEach(function(v, i){
                 var desc = [],
                     obj = get_matched_override_or_default(v._dp_pk),
                     include = $('<input name="ov_include" type="checkbox">').prop('checked', obj.include),
+                    index = $('<input name="ov_index" class="span12" type="number" step="any">').val(obj.index),
                     text_style = self.style_manager.add_select('texts', obj.text_style, true),
                     line_style = self.style_manager.add_select('lines', obj.line_style, true),
                     symbol_style = self.style_manager.add_select('symbols', obj.symbol_style, true);
@@ -88,7 +93,7 @@ let build_ordering_tab = function(self){
                 var tr = $('<tr>').data({pk: v._dp_pk, obj})
                         .append($('<td>').html(desc.join('<br>')))
                         .append($('<td>').append(include))
-                        .append($('<td>').append('<span>hi</span>'))
+                        .append($('<td>').append(index))
                         .append($('<td class="ov_text">').append(text_style))
                         .append($('<td class="ov_line">').append(line_style))
                         .append($('<td class="ov_symbol">').append(symbol_style));
@@ -249,17 +254,21 @@ let build_ordering_tab = function(self){
                     $('<tr>').append(
                         '<th>Description</th>',
                         '<th>Include</th>',
-                        '<th>Row Offset</th>',
-                        '<th>Override<br>Text Style</th>',
-                        '<th>Override<br>Line Style</th>',
-                        '<th>Override<br>Symbol Style</th>'));
+                        '<th style="width: 150px">Row index</th>',
+                        '<th>Override<br>text style</th>',
+                        '<th>Override<br>line style</th>',
+                        '<th>Override<br>symbol style</th>'));
 
             return div.html([
                 $('<h3>Row-level customization</h3>').append(
-                    $('<button class="btn btn-primary pull-right">Reset overrides</button>')
-                        .on('click', reset_overrides)),
+                    $('<button class="btn btn-info" style="margin-left: 2em"><i class="fa fa-refresh"></i> Refresh</button>')
+                        .on('click', build_manual_rows),
+                    $('<button class="btn btn-danger pull-right"><i class="fa fa-trash"></i> Reset</button>')
+                        .on('click', reset_overrides)
+                ),
                 $('<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>'),
-                $('<table class="table table-condensed table-bordered table-hover tbl_override"></table>').html([thead, override_tbody])]);
+                $('<table class="table table-condensed table-bordered table-hover tbl_override">')
+                    .html([thead, override_tbody])]);
         },
         update_override_settings = function(){
             self.settings.row_overrides = [];
@@ -268,12 +277,19 @@ let build_ordering_tab = function(self){
                     obj = {
                         pk: $v.data('pk'),
                         include: $v.find('input[name="ov_include"]').prop('checked'),
+                        index:  parseFloat($v.find('input[name="ov_index"]').val()),
                         text_style: $v.find('.ov_text select option:selected').val(),
                         line_style: $v.find('.ov_line select option:selected').val(),
                         symbol_style: $v.find('.ov_symbol select option:selected').val(),
                     };
+
+                if (!_.isFinite(obj.index)){
+                    delete obj.index;
+                }
+
                 // only add if settings are non-default
                 if ((obj.include === false) ||
+                    (obj.index !== undefined) ||
                     (obj.text_style !== NULL_CASE) ||
                     (obj.line_style !== NULL_CASE) ||
                     (obj.symbol_style !== NULL_CASE)){

@@ -94,6 +94,15 @@ class DataPivotVisualization extends D3Plot {
             arr;
     }
 
+    static sort_with_overrides(arr, sorts, overrides){
+        // Return the array of "rows" sorted using any sort fields, and
+        // then with manual row-index overrides specified
+        let override_map = _.object(_.pluck(overrides, 'pk'), _.pluck(overrides, 'index')),
+            sorted = DataPivotVisualization.sorter(arr, sorts);
+        sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
+        return sorted;
+    }
+
     static filter(arr, filters, filter_logic){
         if(filters.length===0) return arr;
 
@@ -134,7 +143,7 @@ class DataPivotVisualization extends D3Plot {
         return new_arr;
     }
 
-    static shouldInclude(row, bar, points){
+    static getIncludibleRows(row, bar, points){
         // Determine row inclusion. Rows can either be included by having any
         // single data-point field being numeric, OR, if both the low-range and
         // high-range fields are both true.
@@ -312,7 +321,7 @@ class DataPivotVisualization extends D3Plot {
         rows = _.chain(self.dp_data)
                 .filter(
                   _.partial(
-                    DataPivotVisualization.shouldInclude,
+                    DataPivotVisualization.getIncludibleRows,
                     _,
                     settings.bars,
                     self.dp_settings.datapoint_settings
@@ -339,26 +348,9 @@ class DataPivotVisualization extends D3Plot {
                 })
                 .value();
 
-        rows = DataPivotVisualization.filter(rows, settings.filters,
-                                              this.dp_settings.plot_settings.filter_logic);
+        rows = DataPivotVisualization.filter(rows, settings.filters, this.dp_settings.plot_settings.filter_logic);
 
-        rows = DataPivotVisualization.sorter(rows, settings.sorts);
-
-        // row-overrides: order
-        this.dp_settings.row_overrides.forEach(function(v){
-            // apply offsets
-            if(v.offset !== 0){
-                for(var i=0; i<rows.length; i++){
-                    if(rows[i]._dp_pk == v.pk){
-                        var new_off = i+v.offset;
-                        if (new_off >= rows.length) new_off = rows.length-1;
-                        if (new_off < 0) new_off = 0;
-                        rows.splice(new_off, 0, rows.splice(i, 1)[0]);
-                        break;
-                    }
-                }
-            }
-        });
+        rows = DataPivotVisualization.sort_with_overrides(rows, settings.sorts, this.dp_settings.row_overrides);
 
         // row-overrides: remove (in separate loop, after offsets)
         this.dp_settings.row_overrides.forEach(function(v){
