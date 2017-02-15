@@ -258,7 +258,7 @@ class CopyAsNewSelectorMixin(object):
         return context
 
     def get_template_names(self):
-        if hasattr(self, 'template_name'):
+        if self.template_name is not None:
             name = self.template_name
         else:
             name = '%s/%s%s.html' % (
