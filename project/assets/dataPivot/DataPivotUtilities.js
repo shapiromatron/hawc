@@ -636,6 +636,10 @@ class _DataPivot_settings_general {
     }
 }
 
+let buildHeaderTr = function(lst){
+    return $('<tr>').html(lst.map((v)=>`<th>${v}</th>`).join());
+};
+
 
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
@@ -647,3 +651,4 @@ export {_DataPivot_settings_description};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_general};
+export {buildHeaderTr};
