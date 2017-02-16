@@ -6,57 +6,67 @@ import {
 } from './DataPivotUtilities';
 
 
-let build_data_tab = function(self){
-    var tab = $('<div class="tab-pane" id="data_pivot_settings_data">'),
-        headers = ['Column header', 'Display name', 'Line style'],
-        header_tr = function(lst){
-            var vals = [];
-            lst.forEach(function(v){vals.push('<th>{0}</th>'.printf(v));});
-            return $('<tr>').html(vals);
-        };
+let headerTr = function(lst){
+        return $('<tr>').html(lst.map((v)=>`<th>${v}</th>`).join());
+    },
+    buildDataPointTable = function(tab, dp){
+        let thead = $('<thead>'),
+            tbody = $('<tbody>'),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            settings = dp.settings.datapoint_settings;
 
-    //Build line table
-    var thead = $('<thead>').html(header_tr(headers)),
+        // Build point table
+        thead.html(headerTr([
+            'Column header', 'Display name', 'Marker style',
+            'Conditional formatting', 'On-click', 'Ordering',
+        ]));
+
+        let addDataRow = function(i){
+                let obj;
+                if(!settings[i]){
+                    settings.push(_DataPivot_settings_pointdata.defaults());
+                }
+                obj = new _DataPivot_settings_pointdata(dp, settings[i]);
+                tbody.append(obj.tr);
+            },
+            newRow = function(){
+                let num_rows = settings.length;
+                addDataRow(num_rows);
+            },
+            num_rows = (settings.length === 0) ? 3 : settings.length,
+            new_point_button = $('<button class="btn btn-primary pull-right">New row</button>').on('click', newRow);
+
+        for(var i=0; i<num_rows; i++){
+            addDataRow(i);
+        }
+
+        tab.append($('<h3>Data point options</h3>').append(new_point_button));
+        tab.append(tbl);
+    },
+    buildLineTable = function(tab, dp){
+        let tbl, thead, tbody, obj;
+
+        thead = $('<thead>').html(headerTr([
+            'Column header', 'Display name', 'Line style',
+        ]));
         tbody = $('<tbody>');
 
-    if(self.settings.dataline_settings.length === 0){
-        self.settings.dataline_settings.push(_DataPivot_settings_linedata.defaults());
-    }
+        if(dp.settings.dataline_settings.length === 0){
+            dp.settings.dataline_settings.push(
+                _DataPivot_settings_linedata.defaults());
+        }
 
-    var obj = new _DataPivot_settings_linedata(self, 0),
-        tbl_line = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
+        obj = new _DataPivot_settings_linedata(dp, 0);
+        tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
+        tbody.append(obj.tr);
 
-    tbody.append(obj.tr);
+        tab.append('<h3>Data point error-bar options</h3>', tbl);
+    },
+    buildDataTab = function(self){
+        let tab = $('<div class="tab-pane" id="data_pivot_settings_data">');
+        buildDataPointTable(tab, self);
+        buildLineTable(tab, self);
+        return tab;
+    };
 
-    // Build point table
-    headers = ['Column header', 'Display name', 'Marker style', 'Conditional formatting', 'On-click'];
-    headers.push('Ordering');
-    thead = $('<thead>').html(header_tr(headers));
-    var point_tbody = $('<tbody>');
-
-    var add_point_data_row = function(i){
-            if(!self.settings.datapoint_settings[i]){
-                self.settings.datapoint_settings.push(_DataPivot_settings_pointdata.defaults());
-            }
-            obj = new _DataPivot_settings_pointdata(self, self.settings.datapoint_settings[i]);
-            point_tbody.append(obj.tr);
-        }, new_point_row = function(){
-            var num_rows = self.settings.datapoint_settings.length;
-            add_point_data_row(num_rows);
-        }, num_rows = (self.settings.datapoint_settings.length === 0) ? 3 : self.settings.datapoint_settings.length,
-        new_point_button = $('<button class="btn btn-primary pull-right">New Row</button>').on('click', new_point_row),
-        tbl_points = $('<table class="table table-condensed table-bordered">').html([thead, point_tbody]);
-
-    for(var i=0; i<num_rows; i++){
-        add_point_data_row(i);
-    }
-
-    return tab.html([
-        $('<h3>Data point options</h3>').append(new_point_button),
-        tbl_points,
-        '<h3>Data point error-bar options</h3>',
-        tbl_line,
-    ]);
-};
-
-export default build_data_tab;
+export default buildDataTab;
