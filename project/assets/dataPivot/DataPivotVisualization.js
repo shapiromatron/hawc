@@ -715,7 +715,7 @@ class DataPivotVisualization extends D3Plot {
                 .attr('y2', function(d){return self.row_heights[d.index].max;})
                 .each(apply_line_styles);
 
-        // Add bars
+        // Add error bars for points
 
         // filter bars to include only bars where the difference between low/high
         // is greater than 0
@@ -776,6 +776,10 @@ class DataPivotVisualization extends D3Plot {
                   .on('click', function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
         });
 
+        // render barchart details
+        this.renderBarChart();
+
+        // add labels
         this.g_labels = this.vis.append('g');
         this.text_labels = this.g_labels.selectAll('text')
               .data(this.settings.labels)
@@ -800,6 +804,53 @@ class DataPivotVisualization extends D3Plot {
         this.x_axis_label
             .attr('cursor', cursor)
             .call(xlabel_drag);
+    }
+
+    renderBarChart(){
+        let x = this.x_scale,
+            barchart_g = this.vis.append('g'),
+            bars_g = barchart_g.append('g'),
+            errorbars_g = barchart_g.append('g'),
+            barXStart = (x.domain()[0]<=0)? 0: x.domain()[0],
+            barPadding = 5,
+            datarows = this.datarows;
+
+        bars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:rect')
+                .attr('x', (d) => x(Math.min(barXStart, d.response)))
+                .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
+                .attr('width', (d) => Math.abs(x(barXStart) - x(d.response)))
+                .attr('height', (d) => this.row_heights[d._dp_index].max -
+                      this.row_heights[d._dp_index].min - barPadding * 2);
+
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d.lower_ci))
+                .attr('x2', (d) => x(d.upper_ci))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid)
+                .attr('class', 'primary_gridlines y_gridlines');
+
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d.lower_ci))
+                .attr('x2', (d) => x(d.lower_ci))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .attr('class', 'primary_gridlines y_gridlines');
+
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d.upper_ci))
+                .attr('x2', (d) => x(d.upper_ci))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .attr('class', 'primary_gridlines y_gridlines');
+
     }
 
     layout_text(){
