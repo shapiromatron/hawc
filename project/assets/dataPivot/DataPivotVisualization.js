@@ -577,156 +577,18 @@ class DataPivotVisualization extends D3Plot {
         this.build_x_axis();
     }
 
-    build_background_rectangles(){
-        var bgs = [],
-            gridlines = [],
-            everyOther = true,
-            self = this,
-            pushBG = function(first, last){
-                bgs.push({
-                    x: -self.text_width-self.padding.left,
-                    y: self.row_heights[first].min,
-                    w: self.text_width+self.padding.left,
-                    h: self.row_heights[last].max-self.row_heights[first].min,
-                });
-            };
-
-        if (this.datarows.length>0){
-            var first_index = 0;
-            // starting with second-row, build rectangles
-            for(var i=1; i<this.datarows.length; i++){
-                if (!this.datarows[i]._dp_isMerged){
-                    if(everyOther){
-                        pushBG(first_index, i-1);
-                    }
-                    everyOther = !everyOther;
-                    first_index = i;
-                    gridlines.push(self.row_heights[first_index].min);
-                }
-                // edge-case to push final-row if needed
-                if (i === this.datarows.length-1 && everyOther) pushBG(first_index, i);
-            }
-
-        }
-        this.bg_rectangles_data = (this.dp_settings.plot_settings.text_background) ? bgs : [];
-        this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
+    getCursorType(){
+        return (this.editable) ? 'pointer': 'auto';
     }
 
     draw_visualizations(){
-
-        var self = this,
-            x = this.x_scale,
-            cursor = (this.editable) ? 'pointer': 'auto',
-            label_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  var p = d3.select(this);
-                  p.data()[0].x = x;
-                  p.data()[0].y = y;
-              }),
-            title_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  self.dp_settings.plot_settings.title_left = x;
-                  self.dp_settings.plot_settings.title_top = y;
-              }),
-            xlabel_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  self.dp_settings.plot_settings.xlabel_left = x;
-                  self.dp_settings.plot_settings.xlabel_top = y;
-              });
-
-
-        // construct inputs for background rectangles and y-gridlines
-        this.build_background_rectangles();
-
-        // add text background rectangles behind text
-        this.g_text_bg_rects = this.vis.append('g');
-        this.text_bg_rects = this.g_text_bg_rects.selectAll()
-            .data(this.bg_rectangles_data)
-            .enter().append('rect')
-                .attr('x', function(d){return d.x;})
-                .attr('height', function(d){return d.h;})
-                .attr('y', function(d){return d.y;})
-                .attr('width', function(d){return d.w;})
-                .style('fill', this.dp_settings.plot_settings.text_background_color);
-
-        // add y-gridlines
-        this.g_y_gridlines = this.vis.append('g')
-            .attr('class', 'primary_gridlines y_gridlines');
-
-        this.y_gridlines = this.g_y_gridlines.selectAll()
-            .data(this.y_gridlines_data)
-          .enter().append('svg:line')
-            .attr('x1', x.range()[0])
-            .attr('x2', x.range()[1])
-            .attr('y1', function(d){return d;})
-            .attr('y2', function(d){return d;})
-            .attr('class', 'primary_gridlines y_gridlines');
-
-        // add x-range rectangles for areas of interest
-        this.g_rects = this.vis.append('g');
-        this.rects_of_interest = this.vis.selectAll('rect.rects_of_interest')
-            .data(this.settings.reference_rectangles)
-            .enter().append('rect')
-                .attr('x', function(d){return x(d.x1);})
-                .attr('height', this.h)
-                .attr('y', 0).transition().duration(1000)
-                .attr('width', function(d){return (x(d.x2)-x(d.x1));})
-                .each(this.apply_styles);
-
-        // draw reference lines
-        this.g_reference_lines = this.vis.append('g');
-        this.line_reference_lines = self.g_reference_lines.selectAll('line')
-                .data(this.settings.reference_lines)
-            .enter().append('svg:line')
-                .attr('x1', function(v){return x(v.x1);})
-                .attr('x2', function(v){return x(v.x2);})
-                .attr('y1', 0).transition().duration(1000)
-                .attr('y2', this.h)
-                .each(this.apply_styles);
-
-        // draw horizontal-spacer lines
-        this.g_spacer_lines = this.vis.append('g');
-        this.spacer_lines = self.g_spacer_lines.selectAll('line')
-                .data(this.settings.spacer_lines)
-            .enter().append('svg:line')
-                .attr('x1', -this.text_width-this.padding.left)
-                .attr('x2', this.w)
-                .attr('y1', function(d){return self.row_heights[d.index].max;})
-                .attr('y2', function(d){return self.row_heights[d.index].max;})
-                .each(this.apply_line_styles);
-
-        // render datapoint details
+        this.calcBackgroundRectanglesAndGridlines();
+        this.renderTextBackgroundRectangles();
+        this.renderYGridlines();
+        this.renderReferenceObjects();
         this.renderDataPoints();
-
-        // render barchart details
         this.renderBarChart();
-
-        // add labels
-        let apply_text_styles = this.apply_text_styles;
-        this.g_labels = this.vis.append('g');
-        this.text_labels = this.g_labels.selectAll('text')
-              .data(this.settings.labels)
-              .enter().append('text')
-              .attr('x', (d) => d.x)
-              .attr('y', (d) => d.y)
-              .text((d) => d.text)
-              .attr('cursor', cursor)
-              .attr('class', 'with_whitespace')
-              .each(function(d){apply_text_styles(this, d._style);})
-              .call(label_drag);
-
-        this.add_title(this.dp_settings.plot_settings.title_left,
-                       this.dp_settings.plot_settings.title_top);
-        this.title
-            .attr('cursor', cursor)
-            .call(title_drag);
-
-        this.build_x_label(this.dp_settings.plot_settings.xlabel_left,
-                           this.dp_settings.plot_settings.xlabel_top);
-
-        this.x_axis_label
-            .attr('cursor', cursor)
-            .call(xlabel_drag);
+        this.renderTextLabels();
     }
 
     apply_styles(d){
@@ -751,6 +613,109 @@ class DataPivotVisualization extends D3Plot {
         if(styles.rotate>0){
             el.attr('transform', `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`);
         }
+    }
+
+    calcBackgroundRectanglesAndGridlines(){
+        var bgs = [],
+            gridlines = [],
+            everyOther = true,
+            datarows = this.datarows,
+            pushBG = (first, last)=>{
+                bgs.push({
+                    x: -this.text_width - this.padding.left,
+                    y: this.row_heights[first].min,
+                    w: this.text_width + this.padding.left,
+                    h: this.row_heights[last].max - this.row_heights[first].min,
+                });
+            };
+
+        if (datarows.length>0){
+            var first_index = 0;
+            // starting with second-row, build rectangles
+            for(var i=1; i<datarows.length; i++){
+                if (!datarows[i]._dp_isMerged){
+                    if(everyOther){
+                        pushBG(first_index, i-1);
+                    }
+                    everyOther = !everyOther;
+                    first_index = i;
+                    gridlines.push(this.row_heights[first_index].min);
+                }
+                // edge-case to push final-row if needed
+                if (i === datarows.length-1 && everyOther) pushBG(first_index, i);
+            }
+
+        }
+        this.bg_rectangles_data = (this.dp_settings.plot_settings.text_background) ? bgs : [];
+        this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
+    }
+
+    renderTextBackgroundRectangles(){
+        // add background rectangles behind text
+        this.g_text_bg_rects = this.vis.append('g');
+
+        this.g_text_bg_rects.selectAll()
+            .data(this.bg_rectangles_data)
+            .enter().append('rect')
+                .attr('x', (d) => d.x)
+                .attr('y', (d) => d.y)
+                .attr('height', (d) => d.h)
+                .attr('width', (d) => d.w)
+                .style('fill', this.dp_settings.plot_settings.text_background_color);
+    }
+
+    renderYGridlines(){
+        let x = this.x_scale;
+
+        this.g_y_gridlines = this.vis.append('g')
+            .attr('class', 'primary_gridlines y_gridlines');
+
+        this.y_gridlines = this.g_y_gridlines.selectAll()
+            .data(this.y_gridlines_data)
+          .enter().append('svg:line')
+            .attr('x1', x.range()[0])
+            .attr('x2', x.range()[1])
+            .attr('y1', (d) => d)
+            .attr('y2', (d) => d)
+            .attr('class', 'primary_gridlines y_gridlines');
+    }
+
+    renderReferenceObjects(){
+
+        let x = this.x_scale;
+
+        // add x-range rectangles for areas of interest
+        this.g_rects = this.vis.append('g');
+        this.rects_of_interest = this.vis.selectAll('rect.rects_of_interest')
+            .data(this.settings.reference_rectangles)
+            .enter().append('rect')
+                .attr('x', (d) => x(d.x1))
+                .attr('height', this.h)
+                .attr('y', 0)
+                .attr('width', (d) => (x(d.x2)-x(d.x1)))
+                .each(this.apply_styles);
+
+        // draw reference lines
+        this.g_reference_lines = this.vis.append('g');
+        this.line_reference_lines = this.g_reference_lines.selectAll('line')
+                .data(this.settings.reference_lines)
+            .enter().append('svg:line')
+                .attr('x1', (v) => x(v.x1))
+                .attr('x2', (v) => x(v.x2))
+                .attr('y1', 0)
+                .attr('y2', this.h)
+                .each(this.apply_styles);
+
+        // draw horizontal-spacer lines
+        this.g_spacer_lines = this.vis.append('g');
+        this.spacer_lines = this.g_spacer_lines.selectAll('line')
+                .data(this.settings.spacer_lines)
+            .enter().append('svg:line')
+                .attr('x1', -this.text_width-this.padding.left)
+                .attr('x2', this.w)
+                .attr('y1', (d) => this.row_heights[d.index].max)
+                .attr('y2', (d) => this.row_heights[d.index].max)
+                .each(this.apply_line_styles);
     }
 
     renderBarChart(){
@@ -862,6 +827,52 @@ class DataPivotVisualization extends D3Plot {
                   .style('cursor', (d) => (datum._dpe_key)? 'pointer': 'auto')
                   .on('click', function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
         });
+    }
+
+    renderTextLabels(){
+        let apply_text_styles = this.apply_text_styles,
+            g_labels = this.vis.append('g'),
+            cursor = this.getCursorType(),
+            label_drag = (!this.editable) ? function(){} :
+              HAWCUtils.updateDragLocationXY(function(x, y){
+                  var p = d3.select(this);
+                  p.data()[0].x = x;
+                  p.data()[0].y = y;
+              }),
+            title_drag = (!this.editable) ? function(){} :
+              HAWCUtils.updateDragLocationXY(function(x, y){
+                  self.dp_settings.plot_settings.title_left = x;
+                  self.dp_settings.plot_settings.title_top = y;
+              }),
+            xlabel_drag = (!this.editable) ? function(){} :
+              HAWCUtils.updateDragLocationXY(function(x, y){
+                  self.dp_settings.plot_settings.xlabel_left = x;
+                  self.dp_settings.plot_settings.xlabel_top = y;
+              });
+
+        g_labels.selectAll('text')
+              .data(this.settings.labels)
+              .enter().append('text')
+              .attr('x', (d) => d.x)
+              .attr('y', (d) => d.y)
+              .text((d) => d.text)
+              .attr('cursor', cursor)
+              .attr('class', 'with_whitespace')
+              .each(function(d){apply_text_styles(this, d._style);})
+              .call(label_drag);
+
+        this.add_title(this.dp_settings.plot_settings.title_left,
+                       this.dp_settings.plot_settings.title_top);
+        this.title
+            .attr('cursor', cursor)
+            .call(title_drag);
+
+        this.build_x_label(this.dp_settings.plot_settings.xlabel_left,
+                           this.dp_settings.plot_settings.xlabel_top);
+
+        this.x_axis_label
+            .attr('cursor', cursor)
+            .call(xlabel_drag);
     }
 
     layout_text(){
