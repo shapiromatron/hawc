@@ -92,16 +92,16 @@ let buildChartSelector = function(tab, dp){
         tab.append('<h3>Data point error-bar options</h3>', tbl);
     },
     buildBarChartDiv = function(tab, dp){
+        // TODO - transform this mockup into functional code
         tab.append(`
            <h3>Barchart settings</h3>
            <table class="table table-condensed table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 20%">Column header</th>
-                    <th style="width: 20%">Legend name</th>
-                    <th style="width: 20%">Style</th>
-                    <th style="width: 20%">Conditional formatting</th>
-                    <th style="width: 20%">Other settings</th>
+                    <th style="width: 25%">Column header</th>
+                    <th style="width: 25%">Legend name</th>
+                    <th style="width: 25%">Style</th>
+                    <th style="width: 25%">Other settings</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,10 +131,9 @@ let buildChartSelector = function(tab, dp){
                             <select id="bc_error_marker_style" name="error_marker_style" class="span12"><select/></br>
                     </td>
                     <td>
-                        <label class="control-label" for="bc_conditional_formatting">Bar:</label>
-                        <input id="bc_conditional_formatting" name="conditional_formatting" type="text" /></br>
-                    </td>
-                    <td>
+                        <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
+                            <input id="bc_conditional_formatting" name="conditional_formatting" type="text" class="span12" /></br>
+
                         <label class="control-label" for="bc_dpe">On click:</label>
                             <select id="bc_dpe" name="dpe" class="span12"></select><br/>
 
