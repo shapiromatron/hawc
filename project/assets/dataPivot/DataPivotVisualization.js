@@ -292,6 +292,11 @@ class DataPivotVisualization extends D3Plot {
 
         // unpack barchart settings
         settings.barchart = this.dp_settings.barchart;
+        if (settings.barchart.dpe !== NULL_CASE){
+            let dpe = {};
+            DataPivotExtension.update_extensions(dpe, settings.barchart.dpe);
+            _.extend(settings.barchart, dpe);
+        }
 
         // unpack description settings
         this.dp_settings.description_settings.forEach(function(datum){
@@ -753,7 +758,8 @@ class DataPivotVisualization extends D3Plot {
                 for (var property in d._styles[type]) {
                     obj.style(property, d._styles[type][property]);
                 }
-            };
+            },
+            self = this;
 
         // exit early if barchart is disabled
         if (!barchart.enabled){
@@ -768,6 +774,8 @@ class DataPivotVisualization extends D3Plot {
                 .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
                 .attr('height', (d) => this.row_heights[d._dp_index].max -
                       this.row_heights[d._dp_index].min - barPadding * 2)
+                .style('cursor', (d) => (barchart._dpe_key)? 'pointer': 'auto')
+                .on('click', (d) => {if(barchart._dpe_key){self.dpe.render_plottip(barchart, d);}})
                 .each(_.partial(applyStyles, _, 'barchartBar'));
 
         // show error bars or exit early
