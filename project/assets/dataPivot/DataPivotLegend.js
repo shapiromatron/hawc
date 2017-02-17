@@ -51,7 +51,7 @@ class DataPivotLegend {
 
     _build_options(){
         return this.settings.fields.map(function(v){
-            return $('<option value="{0}">{0}</option>'.printf(v.label)).data('d', v);
+            return $(`<option value="${v.label}">${v.label}</option>`).data('d', v);
         });
     }
 
@@ -197,11 +197,13 @@ class DataPivotLegend {
 
     add_or_update_field(obj, legend_item){
         if(isFinite(obj.symbol_index)){
-            legend_item=this.settings.fields.filter(function(v){return v.symbol_index === obj.symbol_index;})[0];
+            legend_item=this.settings.fields.filter(
+                function(v){return v.symbol_index === obj.symbol_index;})[0];
         }
 
         if(isFinite(obj.line_index)){
-            legend_item=this.settings.fields.filter(function(v){return v.line_index === obj.line_index;})[0];
+            legend_item=this.settings.fields.filter(
+                function(v){return v.line_index === obj.line_index;})[0];
         }
 
         if(legend_item){

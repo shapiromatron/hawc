@@ -636,6 +636,25 @@ class _DataPivot_settings_general {
     }
 }
 
+
+class _DataPivot_settings_barchart {
+    static defaults(){
+        return {
+            dpe: NULL_CASE,
+            field_name: NULL_CASE,
+            error_low_field_name: NULL_CASE,
+            error_high_field_name: NULL_CASE,
+            header_name: '',
+            error_header_name: '',
+            bar_style: 'base',
+            error_marker_style: 'base',
+            conditional_formatting: [],
+            error_show_tails: true,
+        };
+    }
+
+
+
 let buildHeaderTr = function(lst){
     return $('<tr>').html(lst.map((v)=>`<th>${v}</th>`).join());
 };
@@ -650,5 +669,6 @@ export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
+export {_DataPivot_settings_barchart};
 export {_DataPivot_settings_general};
 export {buildHeaderTr};

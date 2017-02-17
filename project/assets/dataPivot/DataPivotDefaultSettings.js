@@ -5,7 +5,9 @@ import {
     StyleText,
     StyleRectangle,
 } from './Styles';
-
+import {
+    _DataPivot_settings_barchart,
+} from './DataPivotUtilities';
 
 export default {
     plot_settings: {
@@ -33,11 +35,13 @@ export default {
         merge_aggressive: true,
         text_background: true,
         text_background_color: '#EEEEEE',
+        as_barchart: false,
     },
     legend: DataPivotLegend.default_settings(),
     dataline_settings: [],
     datapoint_settings: [],
     description_settings: [],
+    barchart: _DataPivot_settings_barchart.defaults(),
     spacers: [],
     sorts: [],
     filters: [],

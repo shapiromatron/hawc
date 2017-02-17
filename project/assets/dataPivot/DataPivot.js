@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import $ from '$';
 import d3 from 'd3';
 
@@ -27,9 +28,12 @@ class DataPivot {
     constructor(data, settings, dom_bindings, title, url){
         this.data = data;
         this.settings = settings || DataPivot.default_plot_settings();
-        if(dom_bindings.update) this.build_edit_settings(dom_bindings);
         this.title = title;
         this.url = url;
+        this.onRendered = [];
+        if(dom_bindings.update){
+            this.build_edit_settings(dom_bindings);
+        }
     }
 
     static get_object(pk, callback){
@@ -228,6 +232,14 @@ class DataPivot {
         this.data_headers = data_headers;
     }
 
+    addOnRenderedCallback(cb){
+        this.onRendered.push(cb);
+    }
+
+    triggerOnRenderedCallbacks(){
+        this.onRendered.forEach((cb) => cb());
+    }
+
     build_settings(){
         this.dpe_options = DataPivotExtension.get_options(this);
         var self = this,
@@ -256,6 +268,7 @@ class DataPivot {
               if($(e.target).attr('href') === '#data_pivot_settings_general'){
                   self._dp_settings_general.update_merge_until();
               }
+              self.triggerOnRenderedCallbacks();
           });
     }
 

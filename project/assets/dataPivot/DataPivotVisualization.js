@@ -258,17 +258,16 @@ class DataPivotVisualization extends D3Plot {
         // [] add legend
         // [] reformat get/apply styles
         this.dp_settings.barchart = {
-            enabled: true,
             dpe: 'endpoint_complete',
             field_name: 'response',
             header_name: 'response',
-            bar_style: 'blue',
+            bar_style: 'base',
             conditional_formatting: [],
             error_header_name: '95% CI',
-            error_show_tails: true,
+            error_show_tails: false,
             error_low_field_name: 'lower_ci',
             error_high_field_name: 'upper_ci',
-            error_marker_style: 'solid | orange',
+            error_marker_style: 'base',
         };
 
         // unpack data-bars (expects only one bar)
@@ -626,8 +625,11 @@ class DataPivotVisualization extends D3Plot {
         this.renderTextBackgroundRectangles();
         this.renderYGridlines();
         this.renderReferenceObjects();
-        this.renderDataPoints();
-        this.renderBarChart();
+        if (this.dp_settings.plot_settings.as_barchart){
+            this.renderBarChart();
+        } else {
+            this.renderDataPoints();
+        }
         this.renderTextLabels();
     }
 
@@ -774,11 +776,6 @@ class DataPivotVisualization extends D3Plot {
                 }
             },
             self = this;
-
-        // exit early if barchart is disabled
-        if (!barchart.enabled){
-            return;
-        }
 
         bars_g.selectAll()
                 .data(datarows)
