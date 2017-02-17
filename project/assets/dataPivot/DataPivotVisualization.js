@@ -228,6 +228,7 @@ class DataPivotVisualization extends D3Plot {
             settings = {
                 datapoints: [],
                 bars: {},
+                barchart: {},
                 descriptions: [],
                 sorts: [],
                 filters: [],
@@ -251,6 +252,21 @@ class DataPivotVisualization extends D3Plot {
                         defaults[style_type]();
             };
 
+        // temporary; move to UI
+        this.dp_settings.barchart = {
+            enabled: true,
+            dpe: 'endpoint_complete',
+            field_name: 'response',
+            header_name: 'response',
+            bar_style: 'orange',
+            conditional_formatting: [],
+            error_header_name: '95% CI',
+            error_show_tails: true,
+            error_low_field_name: 'lower_ci',
+            error_high_field_name: 'upper_ci',
+            error_marker_style: 'solid | red',
+        };
+
         // unpack data-bars (expects only one bar)
         this.dp_settings.dataline_settings.forEach(function(datum){
             settings.bars.low_field_name = datum.low_field_name;
@@ -273,6 +289,9 @@ class DataPivotVisualization extends D3Plot {
                 settings.datapoints.push($.extend(copy, datum));
             }
         });
+
+        // unpack barchart settings
+        settings.barchart = this.dp_settings.barchart;
 
         // unpack description settings
         this.dp_settings.description_settings.forEach(function(datum){
@@ -331,6 +350,8 @@ class DataPivotVisualization extends D3Plot {
                   // unpack any column-level styles
                     var styles = {
                         bars: get_associated_style('lines', settings.bars.marker_style),
+                        barchartBar: get_associated_style('rectangles', settings.barchart.bar_style),
+                        barchartErrorBar: get_associated_style('lines', settings.barchart.error_marker_style),
                     };
 
                     _.chain(self.dp_settings.datapoint_settings)
@@ -725,43 +746,65 @@ class DataPivotVisualization extends D3Plot {
             errorbars_g = barchart_g.append('g'),
             barXStart = (x.domain()[0]<=0)? 0: x.domain()[0],
             barPadding = 5,
-            datarows = this.datarows;
+            datarows = this.datarows,
+            barchart = this.settings.barchart,
+            applyStyles = function(d, type){
+                let obj = d3.select(this);
+                for (var property in d._styles[type]) {
+                    obj.style(property, d._styles[type][property]);
+                }
+            };
+
+        // exit early if barchart is disabled
+        if (!barchart.enabled){
+            return;
+        }
 
         bars_g.selectAll()
                 .data(datarows)
             .enter().append('svg:rect')
-                .attr('x', (d) => x(Math.min(barXStart, d.response)))
+                .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
                 .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
-                .attr('width', (d) => Math.abs(x(barXStart) - x(d.response)))
+                .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
                 .attr('height', (d) => this.row_heights[d._dp_index].max -
-                      this.row_heights[d._dp_index].min - barPadding * 2);
+                      this.row_heights[d._dp_index].min - barPadding * 2)
+                .each(_.partial(applyStyles, _, 'barchartBar'));
 
+        // show error bars or exit early
+        if (barchart.error_low_field_name === NULL_CASE ||
+            barchart.error_high_field_name === NULL_CASE){
+            return;
+        }
         errorbars_g.selectAll()
                 .data(datarows)
             .enter().append('svg:line')
-                .attr('x1', (d) => x(d.lower_ci))
-                .attr('x2', (d) => x(d.upper_ci))
+                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
                 .attr('y1', (d) => this.row_heights[d._dp_index].mid)
                 .attr('y2', (d) => this.row_heights[d._dp_index].mid)
-                .attr('class', 'primary_gridlines y_gridlines');
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+
+        // show error-bar tails or exit early
+        if (!barchart.error_show_tails){
+            return;
+        }
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_low_field_name]))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         errorbars_g.selectAll()
                 .data(datarows)
             .enter().append('svg:line')
-                .attr('x1', (d) => x(d.lower_ci))
-                .attr('x2', (d) => x(d.lower_ci))
+                .attr('x1', (d) => x(d[barchart.error_high_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
                 .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
                 .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
-                .attr('class', 'primary_gridlines y_gridlines');
-
-        errorbars_g.selectAll()
-                .data(datarows)
-            .enter().append('svg:line')
-                .attr('x1', (d) => x(d.upper_ci))
-                .attr('x2', (d) => x(d.upper_ci))
-                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
-                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
-                .attr('class', 'primary_gridlines y_gridlines');
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
     }
 
     renderDataPoints(){
