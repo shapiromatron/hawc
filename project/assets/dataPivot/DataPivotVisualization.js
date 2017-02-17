@@ -143,10 +143,11 @@ class DataPivotVisualization extends D3Plot {
         return new_arr;
     }
 
-    static getIncludibleRows(row, bar, points){
+    static getIncludibleRows(row, bar, points, barchart){
         // Determine row inclusion. Rows can either be included by having any
         // single data-point field being numeric, OR, if both the low-range and
-        // high-range fields are both true.
+        // high-range fields are both true, OR by having a barchart field
+        if ($.isNumeric(row[barchart.field_name])) return true;
         if (_.some(points, function(d){ return $.isNumeric(row[d.field_name]); })) return true;
         return (($.isNumeric(row[bar.low_field_name])) && ($.isNumeric(row[bar.high_field_name])));
     }
@@ -252,19 +253,22 @@ class DataPivotVisualization extends D3Plot {
                         defaults[style_type]();
             };
 
-        // temporary; move to UI
+        // TODO- remove after UI complete
+        // [] add conditional formatting
+        // [] add legend
+        // [] reformat get/apply styles
         this.dp_settings.barchart = {
             enabled: true,
             dpe: 'endpoint_complete',
             field_name: 'response',
             header_name: 'response',
-            bar_style: 'orange',
+            bar_style: 'blue',
             conditional_formatting: [],
             error_header_name: '95% CI',
             error_show_tails: true,
             error_low_field_name: 'lower_ci',
             error_high_field_name: 'upper_ci',
-            error_marker_style: 'solid | red',
+            error_marker_style: 'solid | orange',
         };
 
         // unpack data-bars (expects only one bar)
@@ -348,12 +352,13 @@ class DataPivotVisualization extends D3Plot {
                     DataPivotVisualization.getIncludibleRows,
                     _,
                     settings.bars,
-                    self.dp_settings.datapoint_settings
+                    self.dp_settings.datapoint_settings,
+                    settings.barchart
                   )
                 )
                 .map(function(d){
-                  // unpack any column-level styles
-                    var styles = {
+                    // unpack any column-level styles
+                    let styles = {
                         bars: get_associated_style('lines', settings.bars.marker_style),
                         barchartBar: get_associated_style('rectangles', settings.barchart.bar_style),
                         barchartErrorBar: get_associated_style('lines', settings.barchart.error_marker_style),
@@ -564,31 +569,40 @@ class DataPivotVisualization extends D3Plot {
         }
     }
 
+    getDomain(){
+        let domain,
+            fields,
+            bars = this.settings.bars,
+            barchart = this.settings.barchart;
+
+        // use user-specified domain if valid
+        domain = _.map(this.dp_settings.plot_settings.domain.split(','), parseFloat);
+        if ((domain.length === 2) && (_.all(domain, isFinite))){
+            return domain;
+        }
+
+        // otherwise calculate domain from data
+        fields = _.chain(this.settings.datapoints)
+                    .pluck('field_name')
+                    .push(bars.low_field_name, bars.high_field_name,
+                        barchart.field_name, barchart.error_low_field_name,
+                        barchart.error_high_field_name)
+                    .compact()
+                    .value();
+
+        return d3.extent(
+            _.chain(this.datarows)
+                .map((d) => _.map(fields, (f) => d[f]))
+                .flatten()
+                .map(parseFloat)
+                .value()
+        );
+    }
+
     add_axes(){
-        var get_domain = function(self){
-            var domain, fields;
-            // use user-specified domain if valid
-            domain = _.each(
-              self.dp_settings.plot_settings.domain.split(','),
-              _.partial(parseFloat, _, 10)
-            );
-            if ((domain.length === 2) && (_.all(domain, isFinite))) return domain;
-
-            // calculate domain from data
-            fields = _.pluck(self.settings.datapoints, 'field_name');
-            fields.push(self.settings.bars.low_field_name, self.settings.bars.high_field_name);
-            return d3.extent(
-                _.chain(self.datarows)
-                    .map(function(d){ return _.map(fields, function(f){ return d[f];}); })
-                    .flatten()
-                    .map(_.partial(parseFloat, _, 10))
-                    .value()
-            );
-        };
-
         $.extend(this.x_axis_settings, {
             gridlines: this.dp_settings.plot_settings.show_xticks,
-            domain: get_domain(this),
+            domain: this.getDomain(),
             rangeRound: [0, this.w],
             y_translate: this.h,
         });

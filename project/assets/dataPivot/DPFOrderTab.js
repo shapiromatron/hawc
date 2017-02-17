@@ -156,6 +156,7 @@ let buildFilterTable = function(tab, dp, handleTableChange){
             filter_logic = dp.settings.plot_settings.filter_logic,
             dataline = dp.settings.dataline_settings[0],
             datapoints = dp.settings.datapoint_settings,
+            barchart = dp.settings.barchart || {}, // TODO - remove {} after migration
             data;
 
         if(descriptions.length === 0){
@@ -167,7 +168,7 @@ let buildFilterTable = function(tab, dp, handleTableChange){
         data = DataPivotVisualization.filter(dp.data, filters, filter_logic);
 
         data = _.filter(data,
-          _.partial(DataPivotVisualization.getIncludibleRows, _, dataline, datapoints)
+          _.partial(DataPivotVisualization.getIncludibleRows, _, dataline, datapoints, barchart)
         );
 
         if(data.length === 0 ){
