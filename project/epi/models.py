@@ -690,6 +690,23 @@ class Group(models.Model):
 class Exposure(models.Model):
     objects = managers.ExposureManager()
 
+    ESTIMATE_TYPE_CHOICES = (
+        (0, None),
+        (1, "mean"),
+        (2, "geometric mean"),
+        (3, "median"),
+        (5, "point"),
+        (4, "other"),
+    )
+
+    VARIANCE_TYPE_CHOICES = (
+        (0, None),
+        (1, "SD"),
+        (2, "SE"),
+        (3, "SEM"),
+        (4, "GSD"),
+        (5, "other"))
+
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='exposures')
@@ -751,6 +768,46 @@ class Exposure(models.Model):
         help_text='May be used to describe the exposure distribution, for '
                   'example, "2.05 µg/g creatinine (urine), geometric mean; '
                   '25th percentile = 1.18, 75th percentile = 3.33"')
+    n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text="Individuals where outcome was measured")
+    estimate = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Central tendency estimate")
+    estimate_type = models.PositiveSmallIntegerField(
+        choices=ESTIMATE_TYPE_CHOICES,
+        verbose_name="Central estimate type",
+        default=0)
+    variance = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Variance',
+        help_text="Variance estimate")
+    variance_type = models.PositiveSmallIntegerField(
+        choices=VARIANCE_TYPE_CHOICES,
+        default=0)
+    lower_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower CI',
+        help_text="Numerical value for lower-confidence interval")
+    upper_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper CI',
+        help_text="Numerical value for upper-confidence interval")
+    lower_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower Range',
+    )
+    upper_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper Range',
+    )
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
