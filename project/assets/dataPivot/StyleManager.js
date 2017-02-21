@@ -39,7 +39,7 @@ class StyleManager {
     add_select(style_type, selected_style, include_null){
         var select = $('<select class="span12">').html(this._build_options(style_type));
         if(include_null){
-            select.prepend(`<option value="${NULL_CASE}">"${NULL_CASE}"</option>`);
+            select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
         if(selected_style){
             select.find(`option[value="${selected_style}"]`).prop('selected', true);

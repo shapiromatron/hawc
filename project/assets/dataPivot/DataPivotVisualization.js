@@ -253,10 +253,8 @@ class DataPivotVisualization extends D3Plot {
                         defaults[style_type]();
             };
 
-        // TODO- remove after UI complete
-        // [] add conditional formatting
-        // [] add legend
-        // [] reformat get/apply styles
+        // TODO - add legend
+        // TODO - reformat get/apply styles
 
         // unpack data-bars (expects only one bar)
         this.dp_settings.dataline_settings.forEach(function(datum){
@@ -383,61 +381,85 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // condition-formatting overrides
-        this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
-            datapoint.conditional_formatting.forEach(function(cf){
-                var arr = rows.map(function(d){return d[cf.field_name]; }),
-                    vals = DataPivot.getRowDetails(arr),
-                    styles = 'points_' + i;
+        if (this.dp_settings.plot_settings.as_barchart){
 
+            settings.barchart.conditional_formatting.forEach(function(cf){
                 switch(cf.condition_type){
-
-                case 'point-size':
-                    if (vals.range){
-                        var pscale = d3.scale.pow().exponent(0.5)
-                              .domain(vals.range)
-                              .range([cf.min_size, cf.max_size]);
-
-                        rows.forEach(function(d){
-                            if ($.isNumeric(d[cf.field_name])){
-                                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                d._styles[styles].size = pscale( d[cf.field_name] );
-                            }
-                        });
-                    }
-                    break;
-
-                case 'point-color':
-                    if (vals.range){
-                        var cscale = d3.scale.linear()
-                              .domain(vals.range)
-                              .interpolate(d3.interpolateRgb)
-                              .range([cf.min_color, cf.max_color]);
-
-                        rows.forEach(function(d){
-                            if ($.isNumeric(d[cf.field_name])){
-                                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                d._styles[styles].fill = cscale( d[cf.field_name] );
-                            }
-                        });
-                    }
-                    break;
 
                 case 'discrete-style':
                     var hash = d3.map();
                     cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
                     rows.forEach(function(d){
-                        if(hash.get(d[cf.field_name]) !== NULL_CASE){
-                            d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
+                        if(hash.get(d[cf.field_name]) === NULL_CASE){
+                            return;
                         }
+                        d._styles.barchartBar = get_associated_style('rectangles', hash.get(d[cf.field_name]));
                     });
-
                     break;
+
                 default:
                     console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
                 }
-
             });
-        });
+
+        } else {
+            this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
+                datapoint.conditional_formatting.forEach(function(cf){
+                    var arr = rows.map(function(d){return d[cf.field_name]; }),
+                        vals = DataPivot.getRowDetails(arr),
+                        styles = 'points_' + i;
+
+                    switch(cf.condition_type){
+
+                    case 'point-size':
+                        if (vals.range){
+                            var pscale = d3.scale.pow().exponent(0.5)
+                                  .domain(vals.range)
+                                  .range([cf.min_size, cf.max_size]);
+
+                            rows.forEach(function(d){
+                                if ($.isNumeric(d[cf.field_name])){
+                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                    d._styles[styles].size = pscale( d[cf.field_name] );
+                                }
+                            });
+                        }
+                        break;
+
+                    case 'point-color':
+                        if (vals.range){
+                            var cscale = d3.scale.linear()
+                                  .domain(vals.range)
+                                  .interpolate(d3.interpolateRgb)
+                                  .range([cf.min_color, cf.max_color]);
+
+                            rows.forEach(function(d){
+                                if ($.isNumeric(d[cf.field_name])){
+                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                    d._styles[styles].fill = cscale( d[cf.field_name] );
+                                }
+                            });
+                        }
+                        break;
+
+                    case 'discrete-style':
+                        var hash = d3.map();
+                        cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
+                        rows.forEach(function(d){
+                            if(hash.get(d[cf.field_name]) !== NULL_CASE){
+                                d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
+                            }
+                        });
+
+                        break;
+                    default:
+                        console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
+                    }
+
+                });
+            });
+
+        }
 
         // row-overrides: apply styles
         this.dp_settings.row_overrides.forEach(function(v){
@@ -969,7 +991,7 @@ class DataPivotVisualization extends D3Plot {
                     txt = txt.toLocaleString();
                 }
                 row.push({
-                    row: i+1,
+                    row: i + 1,
                     col: j,
                     text: txt,
                     style: v._styles['text_' + j],

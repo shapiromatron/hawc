@@ -381,15 +381,16 @@ class _DataPivot_settings_pointdata {
 
         this.data_pivot = data_pivot;
         this.values = values;
-        this.conditional_formatter = new _DataPivot_settings_conditionalFormat(this, values.conditional_formatting || []);
+        this.conditional_formatter = new _DataPivot_settings_conditionalFormat(
+            this, values.conditional_formatting || [], {type: 'symbols'});
 
         // create fields
         this.content = {
-            'field_name': $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
-            'header_name': $('<input class="span12" type="text">'),
-            'marker_style': this.data_pivot.style_manager.add_select(style_type, values.marker_style),
-            'conditional_formatting': this.conditional_formatter.data,
-            'dpe': $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            field_name: $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
+            header_name: $('<input class="span12" type="text">'),
+            marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
+            conditional_formatting: this.conditional_formatter.data,
+            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -412,10 +413,11 @@ class _DataPivot_settings_pointdata {
                 //update self
                 self.data_push();
                 // update legend
-                var obj = {'symbol_index': self.data_pivot.settings.datapoint_settings.indexOf(values),
-                           'label': self.content.header_name.val(),
-                           'symbol_style': self.content.marker_style.find('option:selected').text()};
-                self.data_pivot.legend.add_or_update_field(obj);
+                self.data_pivot.legend.add_or_update_field({
+                    symbol_index: self.data_pivot.settings.datapoint_settings.indexOf(values),
+                    label: self.content.header_name.val(),
+                    symbol_style: self.content.marker_style.find('option:selected').text(),
+                });
             });
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this, {showSort: true});
@@ -640,6 +642,8 @@ class _DataPivot_settings_general {
 class _DataPivot_settings_barchart {
     constructor(dp){
         let values = dp.settings.barchart,
+            cf = new _DataPivot_settings_conditionalFormat(
+                this, values.conditional_formatting, {type: 'rectangles'}),
             styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
             content = {
                 field_name: $('<select id="bc_field_name" name="field_name" class="span12">')
@@ -660,7 +664,7 @@ class _DataPivot_settings_barchart {
                 bar_style: styleSelectFactory('rectangles', values.bar_style),
                 error_marker_style: styleSelectFactory('lines', values.error_marker_style),
 
-                conditional_formatting: $('<input id="bc_conditional_formatting" name="conditional_formatting" type="text" class="span12" />'),
+                conditional_formatting: cf,
                 dpe: $('<select id="bc_dpe" name="dpe" class="span12">')
                     .html(dp.dpe_options)
                     .val(values.dpe),
@@ -694,13 +698,12 @@ class _DataPivot_settings_barchart {
             .after(content.error_marker_style);
 
         div.find('label[for="bc_conditional_formatting"]')
-            .after(content.conditional_formatting);
+            .after(cf.status);
         div.find('label[for="bc_dpe"]')
             .after(content.dpe);
         div.find('label[for="bc_error_show_tails"]')
             .after(content.error_show_tails);
 
-        // TODO: update conditional formatting
         // TODO: update legend
         div.on('change', 'input,select', () => {
             this.data_push();
@@ -790,7 +793,7 @@ class _DataPivot_settings_barchart {
             error_header_name: this.content.error_header_name.val(),
             bar_style: this.content.bar_style.val(),
             error_marker_style: this.content.error_marker_style.val(),
-            conditional_formatting: [],
+            conditional_formatting: this.content.conditional_formatting.data,
             error_show_tails: this.content.error_show_tails.prop('checked'),
         };
     }
