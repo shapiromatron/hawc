@@ -253,9 +253,6 @@ class DataPivotVisualization extends D3Plot {
                         defaults[style_type]();
             };
 
-        // TODO - add legend
-        // TODO - reformat get/apply styles
-
         // unpack data-bars (expects only one bar)
         this.dp_settings.dataline_settings.forEach(function(datum){
             settings.bars.low_field_name = datum.low_field_name;

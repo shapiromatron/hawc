@@ -112,16 +112,21 @@ let build_settings_general_tab = function(self){
                     var tmp_label = (d) ? d.label : NULL_CASE,
                         tmp_line = (d) ? d.line_style : NULL_CASE,
                         tmp_symbol = (d) ? d.symbol_style : NULL_CASE,
+                        tmp_rect = (d) ? d.rect_style : NULL_CASE,
                         name = $('<input name="legend_name" value="{0}">'.printf(tmp_label)),
                         line = self.style_manager.add_select('lines', tmp_line, true)
                                     .removeClass('span12').attr('name', 'legend_line'),
                         symbol = self.style_manager.add_select('symbols', tmp_symbol, true)
-                                    .removeClass('span12').attr('name', 'legend_symbol');
+                                    .removeClass('span12').attr('name', 'legend_symbol'),
+                        rectangle = self.style_manager.add_select('rectangles', tmp_rect, true)
+                                    .removeClass('span12').attr('name', 'legend_rect');
 
                     modal.find('.legend_fields').html([
-                        add_horizontal_field('Legend Name', name),
-                        add_horizontal_field('Symbol Style', symbol),
-                        add_horizontal_field('Line Style', line)]);
+                        add_horizontal_field('Legend name', name),
+                        add_horizontal_field('Symbol style', symbol),
+                        add_horizontal_field('Line style', line),
+                        add_horizontal_field('Rectangle style', rectangle),
+                    ]);
 
                     var svgdiv = modal.find('.style_plot'),
                         build_style_obj = function(){
@@ -129,6 +134,7 @@ let build_settings_general_tab = function(self){
                                 type: 'legend',
                                 line_style: line.find('option:selected').data('d'),
                                 symbol_style: symbol.find('option:selected').data('d'),
+                                rect_style: rectangle.find('option:selected').data('d'),
                             };
                         }, viewer = new StyleViewer(svgdiv, build_style_obj()),
                         update_viewer = function(){
@@ -137,6 +143,7 @@ let build_settings_general_tab = function(self){
 
                     line.on('change', update_viewer);
                     symbol.on('change', update_viewer);
+                    rectangle.on('change', update_viewer);
                 },
                 legend_item = self.legend.add_select(),
                 legend_item_up = $('<button><i class="icon-arrow-up"></i></button>')
@@ -170,17 +177,20 @@ let build_settings_general_tab = function(self){
                     .on('click', function(){
                         var label = modal.find('input[name="legend_name"]').val(),
                             line_style = modal.find('select[name="legend_line"] option:selected').val(),
-                            symbol_style = modal.find('select[name="legend_symbol"] option:selected').val();
+                            symbol_style = modal.find('select[name="legend_symbol"] option:selected').val(),
+                            rect_style = modal.find('select[name="legend_rect"] option:selected').val();
 
-                        if((label === '') ||
+                        if(label === '' ||
                            ((line_style === NULL_CASE) &&
-                            (symbol_style === NULL_CASE))){
+                            (symbol_style === NULL_CASE) &&
+                            (rect_style === NULL_CASE))
+                           ){
                             alert('Error - name must not be blank, and at least one style must be selected');
                             return;
                         }
 
                         var d = modal.data('d'),
-                            obj = {line_style, symbol_style, label};
+                            obj = {line_style, symbol_style, rect_style, label};
 
                         self.legend.add_or_update_field(obj, d);
                         modal.modal('hide');

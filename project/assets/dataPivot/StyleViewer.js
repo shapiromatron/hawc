@@ -179,6 +179,19 @@ class StyleViewer extends D3Plot {
                 .attr('y2', function(v){return y(v.y2);});
     }
 
+    add_legend_rects(){
+        var x = this.x_scale,
+            y = this.y_scale;
+
+        this.rectangles = this.vis.selectAll()
+            .data([{min: 0.1, max: 1.9}])
+            .enter().append('svg:rect')
+                .attr('x', (d) => x(d.min))
+                .attr('y', (d) => y(d.min))
+                .attr('width', (d) => x(d.max) - x(d.min))
+                .attr('height', (d) => y(d.max) - y(d.min));
+    }
+
     add_legend_symbols(){
 
         var x = this.x_scale,
@@ -245,6 +258,18 @@ class StyleViewer extends D3Plot {
         }
 
         if (this.style.type === 'legend'){
+
+            if(style_settings.rect_style){
+                if (!this.rectangles) this.add_legend_rects();
+                this.rectangles.transition()
+                    .duration(1000)
+                    .style(style_settings.rect_style.settings);
+            } else {
+                if (this.rectangles){
+                    this.rectangles.remove();
+                    delete this.rectangles;
+                }
+            }
 
             if(style_settings.line_style){
                 if (!this.lines) this.add_legend_lines();

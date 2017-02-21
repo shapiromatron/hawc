@@ -704,14 +704,28 @@ class _DataPivot_settings_barchart {
         div.find('label[for="bc_error_show_tails"]')
             .after(content.error_show_tails);
 
-        // TODO: update legend
         div.on('change', 'input,select', () => {
             this.data_push();
+            this.updateLegend();
         });
 
         this.content = content;
         this.div = div;
         this.data_pivot = dp;
+    }
+
+    updateLegend(){
+        let settings = this.data_pivot.settings.barchart;
+        this.data_pivot.legend.add_or_update_field({
+            keyField: 'barChartBar',
+            label: settings.header_name,
+            rect_style: settings.bar_style,
+        });
+        this.data_pivot.legend.add_or_update_field({
+            keyField: 'barChartError',
+            label: settings.error_header_name,
+            line_style: settings.error_marker_style,
+        });
     }
 
     getTemplate(){
