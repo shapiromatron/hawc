@@ -357,10 +357,10 @@ class StyleRectangle {
     static default_settings(){
         return {
             name: 'base',
-            fill: '#be6a62',
-            stroke: '#be6a62',
-            'fill-opacity': 0.3,
-            'stroke-width': 1.5,
+            fill: '#999999',
+            stroke: '#000000',
+            'fill-opacity': 0.8,
+            'stroke-width': 1.0,
         };
     }
 

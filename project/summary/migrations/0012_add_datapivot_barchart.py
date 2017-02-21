@@ -16,6 +16,8 @@ def add_barchart(apps, schema_editor):
             settings = False
 
         if settings:
+
+            # add barchart options
             settings['plot_settings']['as_barchart'] = False
             settings['barchart'] = {
                 'dpe': NULL_CASE,
@@ -29,12 +31,21 @@ def add_barchart(apps, schema_editor):
                 'conditional_formatting': [],
                 'error_show_tails': True,
             }
-            obj.settings = json.dumps(settings)
+
+            # remove old row-overrides
+            for row in settings['row_overrides']:
+                row.pop('offset', None)
+
+            # add null rectangle style
+            for item in settings['legend']['fields']:
+                item['rect_style'] = NULL_CASE
+
+            new_settings = json.dumps(settings)
 
             # don't change last_updated timestamp
             DataPivot.objects\
                 .filter(id=obj.id)\
-                .update(settings=obj.settings)
+                .update(settings=new_settings)
 
 
 def remove_barchart(apps, schema_editor):
@@ -45,15 +56,15 @@ def remove_barchart(apps, schema_editor):
         except ValueError:
             settings = False
 
-            if settings:
-                settings['plot_settings'].pop('as_barchart')
-                settings.pop('barchart')
-                obj.settings = json.dumps(settings)
+        if settings:
+            settings['plot_settings'].pop('as_barchart')
+            settings.pop('barchart')
+            new_settings = json.dumps(settings)
 
             # don't change last_updated timestamp
             DataPivot.objects\
                 .filter(id=obj.id)\
-                .update(settings=obj.settings)
+                .update(settings=new_settings)
 
 
 class Migration(migrations.Migration):
