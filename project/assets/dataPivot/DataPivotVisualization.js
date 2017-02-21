@@ -257,18 +257,6 @@ class DataPivotVisualization extends D3Plot {
         // [] add conditional formatting
         // [] add legend
         // [] reformat get/apply styles
-        this.dp_settings.barchart = {
-            dpe: 'endpoint_complete',
-            field_name: 'response',
-            header_name: 'response',
-            bar_style: 'base',
-            conditional_formatting: [],
-            error_header_name: '95% CI',
-            error_show_tails: false,
-            error_low_field_name: 'lower_ci',
-            error_high_field_name: 'upper_ci',
-            error_marker_style: 'base',
-        };
 
         // unpack data-bars (expects only one bar)
         this.dp_settings.dataline_settings.forEach(function(datum){
@@ -892,7 +880,8 @@ class DataPivotVisualization extends D3Plot {
     }
 
     renderTextLabels(){
-        let apply_text_styles = this.apply_text_styles,
+        let self = this,
+            apply_text_styles = this.apply_text_styles,
             g_labels = this.vis.append('g'),
             cursor = this.getCursorType(),
             label_drag = (!this.editable) ? function(){} :

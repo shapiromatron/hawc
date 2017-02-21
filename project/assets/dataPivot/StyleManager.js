@@ -37,13 +37,12 @@ class StyleManager {
     }
 
     add_select(style_type, selected_style, include_null){
-
-        var select = $('<select class="span12"></select>').html(this._build_options(style_type));
+        var select = $('<select class="span12">').html(this._build_options(style_type));
         if(include_null){
-            select.prepend('<option value="{0}">{0}</option>'.printf(NULL_CASE));
+            select.prepend(`<option value="${NULL_CASE}">"${NULL_CASE}"</option>`);
         }
         if(selected_style){
-            select.find('option[value="{0}"]'.printf(selected_style)).prop('selected', true);
+            select.find(`option[value="${selected_style}"]`).prop('selected', true);
         }
         this.selects[style_type].push(select);
         return select;

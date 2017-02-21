@@ -92,58 +92,8 @@ let buildChartSelector = function(tab, dp){
         tab.append('<h3>Data point error-bar options</h3>', tbl);
     },
     buildBarChartDiv = function(tab, dp){
-        // TODO - transform this mockup into functional code
-        tab.append(`
-           <h3>Barchart settings</h3>
-           <table class="table table-condensed table-bordered">
-            <thead>
-                <tr>
-                    <th style="width: 25%">Column header</th>
-                    <th style="width: 25%">Legend name</th>
-                    <th style="width: 25%">Style</th>
-                    <th style="width: 25%">Other settings</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <label class="control-label" for="bc_field_name">Bar:</label>
-                            <select id="bc_field_name" name="field_name" class="span12"></select></br>
-
-                        <label class="control-label" for="bc_error_low_field_name">Error line low:</label>
-                            <select id="bc_error_low_field_name" name="error_low_field_name" class="span12"></select></br>
-
-                        <label class="control-label" for="bc_error_high_field_name">Error line high:</label>
-                            <select id="bc_error_high_field_name" name="error_high_field_name" class="span12"></select></br>
-                    </td>
-                    <td>
-                        <label class="control-label" for="bc_header_name">Bar:</label>
-                            <input id="bc_header_name" name="header_name" type="text" class="span12"/></br>
-
-                        <label class="control-label" for="bc_error_header_name">Error line:</label>
-                            <input id="bc_error_header_name" name="error_header_name" type="text" class="span12"/></br>
-                    </td>
-                    <td>
-                        <label class="control-label" for="bc_bar_style">Bar:</label>
-                            <select id="bc_bar_style" name="bar_style" class="span12"><select/></br>
-
-                        <label class="control-label" for="bc_error_marker_style">Error line:</label>
-                            <select id="bc_error_marker_style" name="error_marker_style" class="span12"><select/></br>
-                    </td>
-                    <td>
-                        <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
-                            <input id="bc_conditional_formatting" name="conditional_formatting" type="text" class="span12" /></br>
-
-                        <label class="control-label" for="bc_dpe">On click:</label>
-                            <select id="bc_dpe" name="dpe" class="span12"></select><br/>
-
-                        <label class="control-label" for="bc_error_show_tails">Show error-line tails:</label>
-                            <input id="bc_error_show_tails" name="error_show_tails" type="checkbox" /></br>
-                    </td>
-                </tr>
-            </tbody>
-           </table>
-        `);
+        let obj = new _DataPivot_settings_barchart(dp);
+        tab.append(obj.div);
     },
     buildDataTab = function(dp){
         let tab = $('<div class="tab-pane" id="data_pivot_settings_data">'),

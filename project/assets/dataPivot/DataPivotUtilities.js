@@ -638,6 +638,133 @@ class _DataPivot_settings_general {
 
 
 class _DataPivot_settings_barchart {
+    constructor(dp){
+        let values = dp.settings.barchart,
+            styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
+            content = {
+                field_name: $('<select id="bc_field_name" name="field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.field_name),
+                error_low_field_name: $('<select id="bc_error_low_field_name" name="error_low_field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.error_low_field_name),
+                error_high_field_name: $('<select id="bc_error_high_field_name" name="error_high_field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.error_high_field_name),
+
+                header_name: $('<input id="bc_header_name" name="header_name" type="text" class="span12"/>')
+                    .val(values.header_name),
+                error_header_name: $('<input id="bc_error_header_name" name="error_header_name" type="text" class="span12"/>')
+                    .val(values.error_header_name),
+
+                bar_style: styleSelectFactory('rectangles', values.bar_style),
+                error_marker_style: styleSelectFactory('lines', values.error_marker_style),
+
+                conditional_formatting: $('<input id="bc_conditional_formatting" name="conditional_formatting" type="text" class="span12" />'),
+                dpe: $('<select id="bc_dpe" name="dpe" class="span12">')
+                    .html(dp.dpe_options)
+                    .val(values.dpe),
+                error_show_tails: $('<input id="bc_error_show_tails" name="error_show_tails" type="checkbox" />')
+                    .prop('checked', values.error_show_tails),
+            },
+            div = $(this.getTemplate());
+
+        // set events
+        content.field_name.on('change', () =>
+            content.header_name.val(content.field_name.val()));
+        content.error_low_field_name.on('change', () =>
+            content.error_header_name.val(content.error_low_field_name.val()));
+
+        // append form inputs to template
+        div.find('label[for="bc_field_name"]')
+            .after(content.field_name);
+        div.find('label[for="bc_error_low_field_name"]')
+            .after(content.error_low_field_name);
+        div.find('label[for="bc_error_high_field_name"]')
+            .after(content.error_high_field_name);
+
+        div.find('label[for="bc_header_name"]')
+            .after(content.header_name);
+        div.find('label[for="bc_error_header_name"]')
+            .after(content.error_header_name);
+
+        div.find('label[for="bc_bar_style"]')
+            .after(content.bar_style);
+        div.find('label[for="bc_error_marker_style"]')
+            .after(content.error_marker_style);
+
+        div.find('label[for="bc_conditional_formatting"]')
+            .after(content.conditional_formatting);
+        div.find('label[for="bc_dpe"]')
+            .after(content.dpe);
+        div.find('label[for="bc_error_show_tails"]')
+            .after(content.error_show_tails);
+
+        // TODO: update conditional formatting
+        // TODO: update legend
+        div.on('change', 'input,select', () => {
+            this.data_push();
+        });
+
+        this.content = content;
+        this.div = div;
+        this.data_pivot = dp;
+    }
+
+    getTemplate(){
+        return `<div>
+            <h3>Barchart settings</h3>
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Data used</th>
+                        <th style="width: 25%">Legend names</th>
+                        <th style="width: 25%">Styles</th>
+                        <th style="width: 25%">Other settings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label class="control-label" for="bc_field_name">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_low_field_name">Error line low:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_high_field_name">Error line high:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_header_name">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_header_name">Error line:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_bar_style">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_marker_style">Error line:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_dpe">On click:</label>
+                            <br/>
+
+                            <label class="control-label" for="bc_error_show_tails">Show error-line tails:</label>
+                            </br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>`;
+    }
+
     static defaults(){
         return {
             dpe: NULL_CASE,
@@ -653,6 +780,21 @@ class _DataPivot_settings_barchart {
         };
     }
 
+    data_push(){
+        this.data_pivot.settings.barchart = {
+            dpe: this.content.dpe.val(),
+            field_name: this.content.field_name.val(),
+            error_low_field_name: this.content.error_low_field_name.val(),
+            error_high_field_name: this.content.error_high_field_name.val(),
+            header_name: this.content.header_name.val(),
+            error_header_name: this.content.error_header_name.val(),
+            bar_style: this.content.bar_style.val(),
+            error_marker_style: this.content.error_marker_style.val(),
+            conditional_formatting: [],
+            error_show_tails: this.content.error_show_tails.prop('checked'),
+        };
+    }
+}
 
 
 let buildHeaderTr = function(lst){

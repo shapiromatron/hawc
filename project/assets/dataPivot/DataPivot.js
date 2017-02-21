@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import $ from '$';
 import d3 from 'd3';
 
