@@ -69,6 +69,16 @@ class Exposure {
             .add_tbody_tr('Duration', this.data.duration)
             .add_tbody_tr('Sampling period', this.data.sampling_period)
             .add_tbody_tr('Exposure distribution', this.data.exposure_distribution)
+            .add_tbody_tr(
+                this.data.estimate_type ? `Estimate (${this.data.estimate_type})`: 'Estimate',
+                this.data.estimate)
+            .add_tbody_tr(
+                this.data.variance_type ? `Variance (${this.data.variance_type})`: 'Variance',
+                this.data.variance)
+            .add_tbody_tr('Lower CI', this.data.lower_ci)
+            .add_tbody_tr('Upper CI', this.data.upper_ci)
+            .add_tbody_tr('Lower Range', this.data.lower_range)
+            .add_tbody_tr('Upper Range', this.data.upper_range)
             .add_tbody_tr('Description', this.data.description)
             .get_tbl();
     }
