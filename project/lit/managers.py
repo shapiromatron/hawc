@@ -103,11 +103,17 @@ class IdentifiersManager(BaseManager):
             # (some may include both an accession number and PMID)
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref['PMID'] or ref['accession_number']
-                ident = self.filter(database=constants.PUBMED, unique_id=id_).first()
-                if not ident:
-                    ident = self.create(database=constants.PUBMED, unique_id=id_, content="None")
-                    pimdsFetch.append(ident)
-                ids.append(ident)
+                if id_ is not None:
+                    ident = self.filter(
+                        database=constants.PUBMED,
+                        unique_id=id_).first()
+                    if not ident:
+                        ident = self.create(
+                            database=constants.PUBMED,
+                            unique_id=id_,
+                            content='None')
+                        pimdsFetch.append(ident)
+                    ids.append(ident)
 
             # create other accession identifiers
             if db is not None and ref['accession_number'] is not None:
