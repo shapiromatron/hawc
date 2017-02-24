@@ -381,15 +381,16 @@ class _DataPivot_settings_pointdata {
 
         this.data_pivot = data_pivot;
         this.values = values;
-        this.conditional_formatter = new _DataPivot_settings_conditionalFormat(this, values.conditional_formatting || []);
+        this.conditional_formatter = new _DataPivot_settings_conditionalFormat(
+            this, values.conditional_formatting || [], {type: 'symbols'});
 
         // create fields
         this.content = {
-            'field_name': $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
-            'header_name': $('<input class="span12" type="text">'),
-            'marker_style': this.data_pivot.style_manager.add_select(style_type, values.marker_style),
-            'conditional_formatting': this.conditional_formatter.data,
-            'dpe': $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            field_name: $('<select class="span12">').html(this.data_pivot._get_header_options(true)),
+            header_name: $('<input class="span12" type="text">'),
+            marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
+            conditional_formatting: this.conditional_formatter.data,
+            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -412,10 +413,11 @@ class _DataPivot_settings_pointdata {
                 //update self
                 self.data_push();
                 // update legend
-                var obj = {'symbol_index': self.data_pivot.settings.datapoint_settings.indexOf(values),
-                           'label': self.content.header_name.val(),
-                           'symbol_style': self.content.marker_style.find('option:selected').text()};
-                self.data_pivot.legend.add_or_update_field(obj);
+                self.data_pivot.legend.add_or_update_field({
+                    symbol_index: self.data_pivot.settings.datapoint_settings.indexOf(values),
+                    label: self.content.header_name.val(),
+                    symbol_style: self.content.marker_style.find('option:selected').text(),
+                });
             });
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.datapoint_settings, this, {showSort: true});
@@ -480,9 +482,9 @@ class _DataPivot_settings_linedata {
         });
 
         this.tr = $('<tr>')
-            .append($('<td>').append('<b>Low Range:</b><br>',
+            .append($('<td>').append('<b>Low range:</b><br>',
                                           this.content.low_field_name,
-                                          '<br><b>High Range:</b><br>',
+                                          '<br><b>High range:</b><br>',
                                           this.content.high_field_name))
             .append($('<td>').append(this.content.header_name))
             .append($('<td>').append(this.content.marker_style))
@@ -490,9 +492,11 @@ class _DataPivot_settings_linedata {
                 self.data_push();
 
                 // update legend
-                var obj = {'line_index': index,
-                           'label': self.content.header_name.val(),
-                           'line_style': self.content.marker_style.find('option:selected').text()};
+                var obj = {
+                    line_index: index,
+                    label: self.content.header_name.val(),
+                    line_style: self.content.marker_style.find('option:selected').text(),
+                };
                 self.data_pivot.legend.add_or_update_field(obj);
             });
 
@@ -635,6 +639,186 @@ class _DataPivot_settings_general {
 }
 
 
+class _DataPivot_settings_barchart {
+    constructor(dp){
+        let values = dp.settings.barchart,
+            cf = new _DataPivot_settings_conditionalFormat(
+                this, values.conditional_formatting, {type: 'rectangles'}),
+            styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
+            content = {
+                field_name: $('<select id="bc_field_name" name="field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.field_name),
+                error_low_field_name: $('<select id="bc_error_low_field_name" name="error_low_field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.error_low_field_name),
+                error_high_field_name: $('<select id="bc_error_high_field_name" name="error_high_field_name" class="span12">')
+                    .html(dp._get_header_options(true))
+                    .val(values.error_high_field_name),
+
+                header_name: $('<input id="bc_header_name" name="header_name" type="text" class="span12"/>')
+                    .val(values.header_name),
+                error_header_name: $('<input id="bc_error_header_name" name="error_header_name" type="text" class="span12"/>')
+                    .val(values.error_header_name),
+
+                bar_style: styleSelectFactory('rectangles', values.bar_style),
+                error_marker_style: styleSelectFactory('lines', values.error_marker_style),
+
+                conditional_formatting: cf,
+                dpe: $('<select id="bc_dpe" name="dpe" class="span12">')
+                    .html(dp.dpe_options)
+                    .val(values.dpe),
+                error_show_tails: $('<input id="bc_error_show_tails" name="error_show_tails" type="checkbox" />')
+                    .prop('checked', values.error_show_tails),
+            },
+            div = $(this.getTemplate());
+
+        // set events
+        content.field_name.on('change', () =>
+            content.header_name.val(content.field_name.val()));
+        content.error_low_field_name.on('change', () =>
+            content.error_header_name.val(content.error_low_field_name.val()));
+
+        // append form inputs to template
+        div.find('label[for="bc_field_name"]')
+            .after(content.field_name);
+        div.find('label[for="bc_error_low_field_name"]')
+            .after(content.error_low_field_name);
+        div.find('label[for="bc_error_high_field_name"]')
+            .after(content.error_high_field_name);
+
+        div.find('label[for="bc_header_name"]')
+            .after(content.header_name);
+        div.find('label[for="bc_error_header_name"]')
+            .after(content.error_header_name);
+
+        div.find('label[for="bc_bar_style"]')
+            .after(content.bar_style);
+        div.find('label[for="bc_error_marker_style"]')
+            .after(content.error_marker_style);
+
+        div.find('label[for="bc_conditional_formatting"]')
+            .after(cf.status);
+        div.find('label[for="bc_dpe"]')
+            .after(content.dpe);
+        div.find('label[for="bc_error_show_tails"]')
+            .after(content.error_show_tails);
+
+        div.on('change', 'input,select', () => {
+            this.data_push();
+            this.updateLegend();
+        });
+
+        this.content = content;
+        this.div = div;
+        this.data_pivot = dp;
+    }
+
+    updateLegend(){
+        let settings = this.data_pivot.settings.barchart;
+        this.data_pivot.legend.add_or_update_field({
+            keyField: 'barChartBar',
+            label: settings.header_name,
+            rect_style: settings.bar_style,
+        });
+        this.data_pivot.legend.add_or_update_field({
+            keyField: 'barChartError',
+            label: settings.error_header_name,
+            line_style: settings.error_marker_style,
+        });
+    }
+
+    getTemplate(){
+        return `<div>
+            <h3>Barchart settings</h3>
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Data used</th>
+                        <th style="width: 25%">Legend names</th>
+                        <th style="width: 25%">Styles</th>
+                        <th style="width: 25%">Other settings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label class="control-label" for="bc_field_name">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_low_field_name">Error line low:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_high_field_name">Error line high:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_header_name">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_header_name">Error line:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_bar_style">Bar:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_error_marker_style">Error line:</label>
+                            </br>
+                        </td>
+                        <td>
+                            <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
+                            </br>
+
+                            <label class="control-label" for="bc_dpe">On click:</label>
+                            <br/>
+
+                            <label class="control-label" for="bc_error_show_tails">Show error-line tails:</label>
+                            </br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>`;
+    }
+
+    static defaults(){
+        return {
+            dpe: NULL_CASE,
+            field_name: NULL_CASE,
+            error_low_field_name: NULL_CASE,
+            error_high_field_name: NULL_CASE,
+            header_name: '',
+            error_header_name: '',
+            bar_style: 'base',
+            error_marker_style: 'base',
+            conditional_formatting: [],
+            error_show_tails: true,
+        };
+    }
+
+    data_push(){
+        this.data_pivot.settings.barchart = {
+            dpe: this.content.dpe.val(),
+            field_name: this.content.field_name.val(),
+            error_low_field_name: this.content.error_low_field_name.val(),
+            error_high_field_name: this.content.error_high_field_name.val(),
+            header_name: this.content.header_name.val(),
+            error_header_name: this.content.error_header_name.val(),
+            bar_style: this.content.bar_style.val(),
+            error_marker_style: this.content.error_marker_style.val(),
+            conditional_formatting: this.content.conditional_formatting.data,
+            error_show_tails: this.content.error_show_tails.prop('checked'),
+        };
+    }
+}
+
+
+let buildHeaderTr = function(lst){
+    return $('<tr>').html(lst.map((v)=>`<th>${v}</th>`).join());
+};
+
+
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
 export {_DataPivot_settings_label};
@@ -644,4 +828,6 @@ export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
+export {_DataPivot_settings_barchart};
 export {_DataPivot_settings_general};
+export {buildHeaderTr};

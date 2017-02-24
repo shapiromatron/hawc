@@ -173,7 +173,8 @@ class PrefilterMixin(object):
         if type(self.instance) is models.Visual:
             evidence_type = models.BIOASSAY
         else:
-            evidence_type = self.initial['evidence_type']
+            evidence_type = self.initial.get('evidence_type') or \
+                self.instance.evidence_type
 
         for k, v in prefilters.iteritems():
             if k == "system__in":

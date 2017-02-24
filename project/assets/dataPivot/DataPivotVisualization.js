@@ -94,6 +94,15 @@ class DataPivotVisualization extends D3Plot {
             arr;
     }
 
+    static sort_with_overrides(arr, sorts, overrides){
+        // Return the array of "rows" sorted using any sort fields, and
+        // then with manual row-index overrides specified
+        let override_map = _.object(_.pluck(overrides, 'pk'), _.pluck(overrides, 'index')),
+            sorted = DataPivotVisualization.sorter(arr, sorts);
+        sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
+        return sorted;
+    }
+
     static filter(arr, filters, filter_logic){
         if(filters.length===0) return arr;
 
@@ -134,10 +143,11 @@ class DataPivotVisualization extends D3Plot {
         return new_arr;
     }
 
-    static shouldInclude(row, bar, points){
+    static getIncludibleRows(row, bar, points, barchart){
         // Determine row inclusion. Rows can either be included by having any
         // single data-point field being numeric, OR, if both the low-range and
-        // high-range fields are both true.
+        // high-range fields are both true, OR by having a barchart field
+        if ($.isNumeric(row[barchart.field_name])) return true;
         if (_.some(points, function(d){ return $.isNumeric(row[d.field_name]); })) return true;
         return (($.isNumeric(row[bar.low_field_name])) && ($.isNumeric(row[bar.high_field_name])));
     }
@@ -199,6 +209,72 @@ class DataPivotVisualization extends D3Plot {
             {offset: true, editable: this.editable});
         this.add_menu();
         this.trigger_resize();
+        this.logRowOrder();
+    }
+
+    logRowOrder(){
+
+        if (window.location.search.indexOf('debug=true') < 0){
+            return;
+        }
+
+        let datarows = this.datarows,
+            overrides = this.dp_settings.row_overrides,
+            hasOffset = _.chain(overrides)
+                .pluck('offset')
+                .map((d)=>d!== 0)
+                .any()
+                .value();
+
+        if (!hasOffset){
+            console.log(false);
+            return;
+        }
+
+        let fullData = _.chain(this.dp_data)
+                .filter(
+                  _.partial(
+                    DataPivotVisualization.getIncludibleRows,
+                    _,
+                    this.settings.bars,
+                    this.dp_settings.datapoint_settings,
+                    this.settings.barchart
+                  )
+                ).value(),
+            currentOverrides = _.indexBy(overrides, 'pk'),
+            currentIndex = {},
+            rowOrder = _.pluck(datarows, '_dp_pk');
+
+        datarows.forEach((d)=>currentIndex[d._dp_pk] = d._dp_index);
+
+        let newOverrides = fullData.map((d) => {
+            // get matching override
+            let pk = d._dp_pk,
+                override = currentOverrides[pk],
+                index = currentIndex[pk];
+
+            if (override === undefined){
+                override = {
+                    pk,
+                    offset: 0,
+                    include: true,
+                    text_style: '---',
+                    symbol_style: '---',
+                    line_style: '---',
+                };
+            }
+
+            if (index === undefined){
+                override.include = false;
+            } else {
+                override.index = index;
+            }
+            return override;
+        });
+        $('#dp_display')
+            .after(`<code id="newOverrides">${window.JSON.stringify(newOverrides)}</code>
+                    <br/>
+                    <code id="rowOrder">${window.JSON.stringify({_dp_pk: rowOrder})}</code>`);
     }
 
     set_font_style(){
@@ -219,6 +295,7 @@ class DataPivotVisualization extends D3Plot {
             settings = {
                 datapoints: [],
                 bars: {},
+                barchart: {},
                 descriptions: [],
                 sorts: [],
                 filters: [],
@@ -264,6 +341,14 @@ class DataPivotVisualization extends D3Plot {
                 settings.datapoints.push($.extend(copy, datum));
             }
         });
+
+        // unpack barchart settings
+        settings.barchart = this.dp_settings.barchart;
+        if (settings.barchart.dpe !== NULL_CASE){
+            let dpe = {};
+            DataPivotExtension.update_extensions(dpe, settings.barchart.dpe);
+            _.extend(settings.barchart, dpe);
+        }
 
         // unpack description settings
         this.dp_settings.description_settings.forEach(function(datum){
@@ -312,16 +397,19 @@ class DataPivotVisualization extends D3Plot {
         rows = _.chain(self.dp_data)
                 .filter(
                   _.partial(
-                    DataPivotVisualization.shouldInclude,
+                    DataPivotVisualization.getIncludibleRows,
                     _,
                     settings.bars,
-                    self.dp_settings.datapoint_settings
+                    self.dp_settings.datapoint_settings,
+                    settings.barchart
                   )
                 )
                 .map(function(d){
-                  // unpack any column-level styles
-                    var styles = {
+                    // unpack any column-level styles
+                    let styles = {
                         bars: get_associated_style('lines', settings.bars.marker_style),
+                        barchartBar: get_associated_style('rectangles', settings.barchart.bar_style),
+                        barchartErrorBar: get_associated_style('lines', settings.barchart.error_marker_style),
                     };
 
                     _.chain(self.dp_settings.datapoint_settings)
@@ -339,26 +427,9 @@ class DataPivotVisualization extends D3Plot {
                 })
                 .value();
 
-        rows = DataPivotVisualization.filter(rows, settings.filters,
-                                              this.dp_settings.plot_settings.filter_logic);
+        rows = DataPivotVisualization.filter(rows, settings.filters, this.dp_settings.plot_settings.filter_logic);
 
-        rows = DataPivotVisualization.sorter(rows, settings.sorts);
-
-        // row-overrides: order
-        this.dp_settings.row_overrides.forEach(function(v){
-            // apply offsets
-            if(v.offset !== 0){
-                for(var i=0; i<rows.length; i++){
-                    if(rows[i]._dp_pk == v.pk){
-                        var new_off = i+v.offset;
-                        if (new_off >= rows.length) new_off = rows.length-1;
-                        if (new_off < 0) new_off = 0;
-                        rows.splice(new_off, 0, rows.splice(i, 1)[0]);
-                        break;
-                    }
-                }
-            }
-        });
+        rows = DataPivotVisualization.sort_with_overrides(rows, settings.sorts, this.dp_settings.row_overrides);
 
         // row-overrides: remove (in separate loop, after offsets)
         this.dp_settings.row_overrides.forEach(function(v){
@@ -373,61 +444,85 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // condition-formatting overrides
-        this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
-            datapoint.conditional_formatting.forEach(function(cf){
-                var arr = rows.map(function(d){return d[cf.field_name]; }),
-                    vals = DataPivot.getRowDetails(arr),
-                    styles = 'points_' + i;
+        if (this.dp_settings.plot_settings.as_barchart){
 
+            settings.barchart.conditional_formatting.forEach(function(cf){
                 switch(cf.condition_type){
-
-                case 'point-size':
-                    if (vals.range){
-                        var pscale = d3.scale.pow().exponent(0.5)
-                              .domain(vals.range)
-                              .range([cf.min_size, cf.max_size]);
-
-                        rows.forEach(function(d){
-                            if ($.isNumeric(d[cf.field_name])){
-                                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                d._styles[styles].size = pscale( d[cf.field_name] );
-                            }
-                        });
-                    }
-                    break;
-
-                case 'point-color':
-                    if (vals.range){
-                        var cscale = d3.scale.linear()
-                              .domain(vals.range)
-                              .interpolate(d3.interpolateRgb)
-                              .range([cf.min_color, cf.max_color]);
-
-                        rows.forEach(function(d){
-                            if ($.isNumeric(d[cf.field_name])){
-                                d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                d._styles[styles].fill = cscale( d[cf.field_name] );
-                            }
-                        });
-                    }
-                    break;
 
                 case 'discrete-style':
                     var hash = d3.map();
                     cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
                     rows.forEach(function(d){
-                        if(hash.get(d[cf.field_name]) !== NULL_CASE){
-                            d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
+                        if(hash.get(d[cf.field_name]) === NULL_CASE){
+                            return;
                         }
+                        d._styles.barchartBar = get_associated_style('rectangles', hash.get(d[cf.field_name]));
                     });
-
                     break;
+
                 default:
                     console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
                 }
-
             });
-        });
+
+        } else {
+            this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
+                datapoint.conditional_formatting.forEach(function(cf){
+                    var arr = rows.map(function(d){return d[cf.field_name]; }),
+                        vals = DataPivot.getRowDetails(arr),
+                        styles = 'points_' + i;
+
+                    switch(cf.condition_type){
+
+                    case 'point-size':
+                        if (vals.range){
+                            var pscale = d3.scale.pow().exponent(0.5)
+                                  .domain(vals.range)
+                                  .range([cf.min_size, cf.max_size]);
+
+                            rows.forEach(function(d){
+                                if ($.isNumeric(d[cf.field_name])){
+                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                    d._styles[styles].size = pscale( d[cf.field_name] );
+                                }
+                            });
+                        }
+                        break;
+
+                    case 'point-color':
+                        if (vals.range){
+                            var cscale = d3.scale.linear()
+                                  .domain(vals.range)
+                                  .interpolate(d3.interpolateRgb)
+                                  .range([cf.min_color, cf.max_color]);
+
+                            rows.forEach(function(d){
+                                if ($.isNumeric(d[cf.field_name])){
+                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                    d._styles[styles].fill = cscale( d[cf.field_name] );
+                                }
+                            });
+                        }
+                        break;
+
+                    case 'discrete-style':
+                        var hash = d3.map();
+                        cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
+                        rows.forEach(function(d){
+                            if(hash.get(d[cf.field_name]) !== NULL_CASE){
+                                d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
+                            }
+                        });
+
+                        break;
+                    default:
+                        console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
+                    }
+
+                });
+            });
+
+        }
 
         // row-overrides: apply styles
         this.dp_settings.row_overrides.forEach(function(v){
@@ -546,31 +641,40 @@ class DataPivotVisualization extends D3Plot {
         }
     }
 
+    getDomain(){
+        let domain,
+            fields,
+            bars = this.settings.bars,
+            barchart = this.settings.barchart;
+
+        // use user-specified domain if valid
+        domain = _.map(this.dp_settings.plot_settings.domain.split(','), parseFloat);
+        if ((domain.length === 2) && (_.all(domain, isFinite))){
+            return domain;
+        }
+
+        // otherwise calculate domain from data
+        fields = _.chain(this.settings.datapoints)
+                    .pluck('field_name')
+                    .push(bars.low_field_name, bars.high_field_name,
+                        barchart.field_name, barchart.error_low_field_name,
+                        barchart.error_high_field_name)
+                    .compact()
+                    .value();
+
+        return d3.extent(
+            _.chain(this.datarows)
+                .map((d) => _.map(fields, (f) => d[f]))
+                .flatten()
+                .map(parseFloat)
+                .value()
+        );
+    }
+
     add_axes(){
-        var get_domain = function(self){
-            var domain, fields;
-            // use user-specified domain if valid
-            domain = _.each(
-              self.dp_settings.plot_settings.domain.split(','),
-              _.partial(parseFloat, _, 10)
-            );
-            if ((domain.length === 2) && (_.all(domain, isFinite))) return domain;
-
-            // calculate domain from data
-            fields = _.pluck(self.settings.datapoints, 'field_name');
-            fields.push(self.settings.bars.low_field_name, self.settings.bars.high_field_name);
-            return d3.extent(
-                _.chain(self.datarows)
-                    .map(function(d){ return _.map(fields, function(f){ return d[f];}); })
-                    .flatten()
-                    .map(_.partial(parseFloat, _, 10))
-                    .value()
-            );
-        };
-
         $.extend(this.x_axis_settings, {
             gridlines: this.dp_settings.plot_settings.show_xticks,
-            domain: get_domain(this),
+            domain: this.getDomain(),
             rangeRound: [0, this.w],
             y_translate: this.h,
         });
@@ -585,34 +689,75 @@ class DataPivotVisualization extends D3Plot {
         this.build_x_axis();
     }
 
-    build_background_rectangles(){
+    getCursorType(){
+        return (this.editable) ? 'pointer': 'auto';
+    }
+
+    draw_visualizations(){
+        this.calcBackgroundRectanglesAndGridlines();
+        this.renderTextBackgroundRectangles();
+        this.renderYGridlines();
+        this.renderReferenceObjects();
+        if (this.dp_settings.plot_settings.as_barchart){
+            this.renderBarChart();
+        } else {
+            this.renderDataPoints();
+        }
+        this.renderTextLabels();
+    }
+
+    apply_styles(d){
+        var obj = d3.select(this);
+        for (var property in d.style) {
+            obj.style(property, d.style[property]);
+        }
+    }
+
+    apply_line_styles(d){
+        var obj = d3.select(this);
+        for (var property in d._styles.bars) {
+            obj.style(property, d._styles.bars[property]);
+        }
+    }
+
+    apply_text_styles(el, styles){
+        el = d3.select(el);
+        for (var property in styles) {
+            el.style(property, styles[property]);
+        }
+        if(styles.rotate>0){
+            el.attr('transform', `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`);
+        }
+    }
+
+    calcBackgroundRectanglesAndGridlines(){
         var bgs = [],
             gridlines = [],
             everyOther = true,
-            self = this,
-            pushBG = function(first, last){
+            datarows = this.datarows,
+            pushBG = (first, last)=>{
                 bgs.push({
-                    x: -self.text_width-self.padding.left,
-                    y: self.row_heights[first].min,
-                    w: self.text_width+self.padding.left,
-                    h: self.row_heights[last].max-self.row_heights[first].min,
+                    x: -this.text_width - this.padding.left,
+                    y: this.row_heights[first].min,
+                    w: this.text_width + this.padding.left,
+                    h: this.row_heights[last].max - this.row_heights[first].min,
                 });
             };
 
-        if (this.datarows.length>0){
+        if (datarows.length>0){
             var first_index = 0;
             // starting with second-row, build rectangles
-            for(var i=1; i<this.datarows.length; i++){
-                if (!this.datarows[i]._dp_isMerged){
+            for(var i=1; i<datarows.length; i++){
+                if (!datarows[i]._dp_isMerged){
                     if(everyOther){
                         pushBG(first_index, i-1);
                     }
                     everyOther = !everyOther;
                     first_index = i;
-                    gridlines.push(self.row_heights[first_index].min);
+                    gridlines.push(this.row_heights[first_index].min);
                 }
                 // edge-case to push final-row if needed
-                if (i === this.datarows.length-1 && everyOther) pushBG(first_index, i);
+                if (i === datarows.length-1 && everyOther) pushBG(first_index, i);
             }
 
         }
@@ -620,31 +765,210 @@ class DataPivotVisualization extends D3Plot {
         this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
     }
 
-    draw_visualizations(){
+    renderTextBackgroundRectangles(){
+        // add background rectangles behind text
+        this.g_text_bg_rects = this.vis.append('g');
 
-        var self = this,
-            x = this.x_scale,
-            apply_styles = function(d) {
-                var obj = d3.select(this);
-                for (var property in d.style) {
-                    obj.style(property, d.style[property]);
-                }
-            }, apply_line_styles = function(d){
-                var obj = d3.select(this);
-                for (var property in d._styles.bars) {
-                    obj.style(property, d._styles.bars[property]);
-                }
-            }, apply_text_styles = function(obj, styles){
-                obj = d3.select(obj);
-                for (var property in styles) {
-                    obj.style(property, styles[property]);
-                }
-                if(styles.rotate>0){
-                    obj.attr('transform', 'rotate({0} {1},{2})'.printf(
-                        styles.rotate, obj.attr('x'), obj.attr('y')));
+        this.g_text_bg_rects.selectAll()
+            .data(this.bg_rectangles_data)
+            .enter().append('rect')
+                .attr('x', (d) => d.x)
+                .attr('y', (d) => d.y)
+                .attr('height', (d) => d.h)
+                .attr('width', (d) => d.w)
+                .style('fill', this.dp_settings.plot_settings.text_background_color);
+    }
+
+    renderYGridlines(){
+        let x = this.x_scale;
+
+        this.g_y_gridlines = this.vis.append('g')
+            .attr('class', 'primary_gridlines y_gridlines');
+
+        this.y_gridlines = this.g_y_gridlines.selectAll()
+            .data(this.y_gridlines_data)
+          .enter().append('svg:line')
+            .attr('x1', x.range()[0])
+            .attr('x2', x.range()[1])
+            .attr('y1', (d) => d)
+            .attr('y2', (d) => d)
+            .attr('class', 'primary_gridlines y_gridlines');
+    }
+
+    renderReferenceObjects(){
+
+        let x = this.x_scale;
+
+        // add x-range rectangles for areas of interest
+        this.g_rects = this.vis.append('g');
+        this.rects_of_interest = this.vis.selectAll('rect.rects_of_interest')
+            .data(this.settings.reference_rectangles)
+            .enter().append('rect')
+                .attr('x', (d) => x(d.x1))
+                .attr('height', this.h)
+                .attr('y', 0)
+                .attr('width', (d) => (x(d.x2)-x(d.x1)))
+                .each(this.apply_styles);
+
+        // draw reference lines
+        this.g_reference_lines = this.vis.append('g');
+        this.line_reference_lines = this.g_reference_lines.selectAll('line')
+                .data(this.settings.reference_lines)
+            .enter().append('svg:line')
+                .attr('x1', (v) => x(v.x1))
+                .attr('x2', (v) => x(v.x2))
+                .attr('y1', 0)
+                .attr('y2', this.h)
+                .each(this.apply_styles);
+
+        // draw horizontal-spacer lines
+        this.g_spacer_lines = this.vis.append('g');
+        this.spacer_lines = this.g_spacer_lines.selectAll('line')
+                .data(this.settings.spacer_lines)
+            .enter().append('svg:line')
+                .attr('x1', -this.text_width-this.padding.left)
+                .attr('x2', this.w)
+                .attr('y1', (d) => this.row_heights[d.index].max)
+                .attr('y2', (d) => this.row_heights[d.index].max)
+                .each(this.apply_line_styles);
+    }
+
+    renderBarChart(){
+        let x = this.x_scale,
+            barchart_g = this.vis.append('g'),
+            bars_g = barchart_g.append('g'),
+            errorbars_g = barchart_g.append('g'),
+            barXStart = (x.domain()[0]<=0)? 0: x.domain()[0],
+            barPadding = 5,
+            datarows = this.datarows,
+            barchart = this.settings.barchart,
+            applyStyles = function(d, type){
+                let obj = d3.select(this);
+                for (var property in d._styles[type]) {
+                    obj.style(property, d._styles[type][property]);
                 }
             },
-            cursor = (this.editable) ? 'pointer': 'auto',
+            self = this;
+
+        bars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:rect')
+                .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
+                .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
+                .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
+                .attr('height', (d) => this.row_heights[d._dp_index].max -
+                      this.row_heights[d._dp_index].min - barPadding * 2)
+                .style('cursor', (d) => (barchart._dpe_key)? 'pointer': 'auto')
+                .on('click', (d) => {if(barchart._dpe_key){self.dpe.render_plottip(barchart, d);}})
+                .each(_.partial(applyStyles, _, 'barchartBar'));
+
+        // show error bars or exit early
+        if (barchart.error_low_field_name === NULL_CASE ||
+            barchart.error_high_field_name === NULL_CASE){
+            return;
+        }
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid)
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+
+        // show error-bar tails or exit early
+        if (!barchart.error_show_tails){
+            return;
+        }
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_low_field_name]))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+
+        errorbars_g.selectAll()
+                .data(datarows)
+            .enter().append('svg:line')
+                .attr('x1', (d) => x(d[barchart.error_high_field_name]))
+                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
+                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+    }
+
+    renderDataPoints(){
+        // Add error bars for points
+        let x = this.x_scale,
+            bars = this.settings.bars,
+            datapoints = this.settings.datapoints,
+            row_heights = this.row_heights,
+            datarows = this.datarows,
+            self = this;
+
+        // filter bars to include only bars where the difference between low/high
+        // is greater than 0
+        let bar_half_height = 5,
+            bar_rows = datarows.filter((d)=>(d[bars.high_field_name]-d[bars.low_field_name]) > 0),
+            g_bars = this.vis.append('g');
+
+        g_bars.selectAll()
+                .data(bar_rows)
+            .enter().append('svg:line')
+                .attr('x1', function(d){return x(d[bars.low_field_name]);})
+                .attr('x2', function(d){return x(d[bars.high_field_name]);})
+                .attr('y1', function(d){return row_heights[d._dp_index].mid;})
+                .attr('y2', function(d){return row_heights[d._dp_index].mid;})
+                .each(this.apply_line_styles);
+
+        g_bars.selectAll()
+                .data(bar_rows)
+            .enter().append('svg:line')
+                .attr('x1', function(d){return x(d[bars.low_field_name]);})
+                .attr('x2', function(d){return x(d[bars.low_field_name]);})
+                .attr('y1', function(d){return row_heights[d._dp_index].mid + bar_half_height;})
+                .attr('y2', function(d){return row_heights[d._dp_index].mid - bar_half_height;})
+                .each(this.apply_line_styles);
+
+        g_bars.selectAll()
+            .data(bar_rows)
+            .enter().append('svg:line')
+                .attr('x1', function(d){return x(d[bars.high_field_name]);})
+                .attr('x2', function(d){return x(d[bars.high_field_name]);})
+                .attr('y1', function(d){return row_heights[d._dp_index].mid + bar_half_height;})
+                .attr('y2', function(d){return row_heights[d._dp_index].mid - bar_half_height;})
+                .each(this.apply_line_styles);
+
+        // add points
+        this.g_dose_points = this.vis.append('g');
+        datapoints.forEach((datum, i)=>{
+            let numeric = datarows.filter((d) => d[datum.field_name] !== '');
+
+            this.g_dose_points.selectAll()
+                  .data(numeric)
+              .enter().append('path')
+                  .attr('d', d3.svg.symbol()
+                      .size(function(d){return d._styles['points_' + i].size;})
+                      .type(function(d){return d._styles['points_' + i].type;}))
+                  .attr('transform', (d) => `translate(${x(d[datum.field_name])},${this.row_heights[d._dp_index].mid})`)
+                  .each(function(d){
+                      var obj = d3.select(this);
+                      for (var property in d._styles['points_' + i]) {
+                          obj.style(property, d._styles['points_' + i][property]);
+                      }
+                  })
+                  .style('cursor', (d) => (datum._dpe_key)? 'pointer': 'auto')
+                  .on('click', function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
+        });
+    }
+
+    renderTextLabels(){
+        let self = this,
+            apply_text_styles = this.apply_text_styles,
+            g_labels = this.vis.append('g'),
+            cursor = this.getCursorType(),
             label_drag = (!this.editable) ? function(){} :
               HAWCUtils.updateDragLocationXY(function(x, y){
                   var p = d3.select(this);
@@ -662,135 +986,12 @@ class DataPivotVisualization extends D3Plot {
                   self.dp_settings.plot_settings.xlabel_top = y;
               });
 
-
-        // construct inputs for background rectangles and y-gridlines
-        this.build_background_rectangles();
-
-        // add text background rectangles behind text
-        this.g_text_bg_rects = this.vis.append('g');
-        this.text_bg_rects = this.g_text_bg_rects.selectAll()
-            .data(this.bg_rectangles_data)
-            .enter().append('rect')
-                .attr('x', function(d){return d.x;})
-                .attr('height', function(d){return d.h;})
-                .attr('y', function(d){return d.y;})
-                .attr('width', function(d){return d.w;})
-                .style('fill', this.dp_settings.plot_settings.text_background_color);
-
-        // add y-gridlines
-        this.g_y_gridlines = this.vis.append('g')
-            .attr('class', 'primary_gridlines y_gridlines');
-
-        this.y_gridlines = this.g_y_gridlines.selectAll()
-            .data(this.y_gridlines_data)
-          .enter().append('svg:line')
-            .attr('x1', x.range()[0])
-            .attr('x2', x.range()[1])
-            .attr('y1', function(d){return d;})
-            .attr('y2', function(d){return d;})
-            .attr('class', 'primary_gridlines y_gridlines');
-
-        // add x-range rectangles for areas of interest
-        this.g_rects = this.vis.append('g');
-        this.rects_of_interest = this.vis.selectAll('rect.rects_of_interest')
-            .data(this.settings.reference_rectangles)
-            .enter().append('rect')
-                .attr('x', function(d){return x(d.x1);})
-                .attr('height', this.h)
-                .attr('y', 0).transition().duration(1000)
-                .attr('width', function(d){return (x(d.x2)-x(d.x1));})
-                .each(apply_styles);
-
-        // draw reference lines
-        this.g_reference_lines = this.vis.append('g');
-        this.line_reference_lines = self.g_reference_lines.selectAll('line')
-                .data(this.settings.reference_lines)
-            .enter().append('svg:line')
-                .attr('x1', function(v){return x(v.x1);})
-                .attr('x2', function(v){return x(v.x2);})
-                .attr('y1', 0).transition().duration(1000)
-                .attr('y2', this.h)
-                .each(apply_styles);
-
-        // draw horizontal-spacer lines
-        this.g_spacer_lines = this.vis.append('g');
-        this.spacer_lines = self.g_spacer_lines.selectAll('line')
-                .data(this.settings.spacer_lines)
-            .enter().append('svg:line')
-                .attr('x1', -this.text_width-this.padding.left)
-                .attr('x2', this.w)
-                .attr('y1', function(d){return self.row_heights[d.index].max;})
-                .attr('y2', function(d){return self.row_heights[d.index].max;})
-                .each(apply_line_styles);
-
-        // Add bars
-
-        // filter bars to include only bars where the difference between low/high
-        // is greater than 0
-        var bar_half_height = 5,
-            bar_rows = this.datarows.filter(function(d){
-                return ((d[self.settings.bars.high_field_name]-
-                         d[self.settings.bars.low_field_name])>0);
-            });
-
-        this.g_bars = this.vis.append('g');
-        this.dose_range_horizontal = this.g_bars.selectAll()
-                .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[self.settings.bars.low_field_name]);})
-                .attr('x2', function(d){return x(d[self.settings.bars.high_field_name]);})
-                .attr('y1', function(d){return self.row_heights[d._dp_index].mid;})
-                .attr('y2', function(d){return self.row_heights[d._dp_index].mid;})
-                .each(apply_line_styles);
-
-        this.dose_range_lower_vertical = this.g_bars.selectAll()
-                .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[self.settings.bars.low_field_name]);})
-                .attr('x2', function(d){return x(d[self.settings.bars.low_field_name]);})
-                .attr('y1', function(d){return self.row_heights[d._dp_index].mid + bar_half_height;})
-                .attr('y2', function(d){return self.row_heights[d._dp_index].mid - bar_half_height;})
-                .each(apply_line_styles);
-
-        this.dose_range_upper_vertical = this.g_bars.selectAll()
-            .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[self.settings.bars.high_field_name]);})
-                .attr('x2', function(d){return x(d[self.settings.bars.high_field_name]);})
-                .attr('y1', function(d){return self.row_heights[d._dp_index].mid + bar_half_height;})
-                .attr('y2', function(d){return self.row_heights[d._dp_index].mid - bar_half_height;})
-                .each(apply_line_styles);
-
-        // add points
-        this.g_dose_points = this.vis.append('g');
-        this.settings.datapoints.forEach(function(datum, i){
-            var numeric = self.datarows.filter(
-                    function(d){return d[datum.field_name] !== '';});
-
-            self['points_' + i] = self.g_dose_points.selectAll()
-                  .data(numeric)
-              .enter().append('path')
-                  .attr('d', d3.svg.symbol()
-                      .size(function(d){return d._styles['points_' + i].size;})
-                      .type(function(d){return d._styles['points_' + i].type;}))
-                  .attr('transform', (d) => `translate(${x(d[datum.field_name])},${self.row_heights[d._dp_index].mid})`)
-                  .each(function(d){
-                      var obj = d3.select(this);
-                      for (var property in d._styles['points_' + i]) {
-                          obj.style(property, d._styles['points_' + i][property]);
-                      }
-                  })
-                  .style('cursor', function(d){return(datum._dpe_key)?'pointer':'auto';})
-                  .on('click', function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
-        });
-
-        this.g_labels = this.vis.append('g');
-        this.text_labels = this.g_labels.selectAll('text')
+        g_labels.selectAll('text')
               .data(this.settings.labels)
               .enter().append('text')
-              .attr('x', function(d){return d.x;})
-              .attr('y', function(d){return d.y;})
-              .text(function(d){return d.text;})
+              .attr('x', (d) => d.x)
+              .attr('y', (d) => d.y)
+              .text((d) => d.text)
               .attr('cursor', cursor)
               .attr('class', 'with_whitespace')
               .each(function(d){apply_text_styles(this, d._style);})
@@ -853,7 +1054,7 @@ class DataPivotVisualization extends D3Plot {
                     txt = txt.toLocaleString();
                 }
                 row.push({
-                    row: i+1,
+                    row: i + 1,
                     col: j,
                     text: txt,
                     style: v._styles['text_' + j],

@@ -13,9 +13,10 @@ import {
 
 class _DataPivot_settings_conditionalFormat {
 
-    constructor(parent, data){
+    constructor(parent, data, settings){
         this.parent = parent;
         this.data = data;
+        this.settings = settings;
         this.status = $('<div>');
 
         this._status_text = $('<span style="padding-right: 10px">')
@@ -38,7 +39,8 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     _show_modal(){
-        var header = $('<h4>').html(`Conditional formatting: <i>${this.parent.values.field_name}<i>`),
+        var fieldName = this.parent.content.field_name.val(),
+            header = $('<h4>').html(`Conditional formatting: <i>${fieldName}<i>`),
             footer = this._getFooter();
 
         this.setModalContent();
@@ -110,13 +112,27 @@ class _DataPivot_settings_conditionalFormat {
         this.conditionals.splice_object(conditional);
         this._set_empty_message();
     }
+
+    getConditionTypes(){
+        switch(this.settings.type){
+        case 'symbols':
+            return [
+                'point-size',
+                'point-color',
+                'discrete-style',
+            ];
+
+        case 'rectangles':
+            return [
+                'discrete-style',
+            ];
+
+        default:
+            return [];
+        }
+    }
 }
 _.extend(_DataPivot_settings_conditionalFormat, {
-    condition_types: [
-        'point-size',
-        'point-color',
-        'discrete-style',
-    ],
     defaults: {
         field_name: NULL_CASE,
         condition_type: 'point-size',
@@ -167,7 +183,7 @@ class _DataPivot_ColorGradientSVG {
 
 
 class _DataPivot_settings_conditional {
-    constructor(parent_div, parent, values){
+    constructor(el, parent, values){
         this.inputs = [];
 
         values = values || {};
@@ -177,9 +193,10 @@ class _DataPivot_settings_conditional {
 
         var self = this,
             dp = parent.parent.data_pivot,
+            formattingTypes = parent.getConditionTypes(),
             defaults = _DataPivot_settings_conditionalFormat.defaults,
             div = $('<div class="well">')
-                    .appendTo(parent_div),
+                    .appendTo(el),
             add_input_row = function(parent, desc_txt, inp){
                 var lbl = $('<label>').html(desc_txt);
                 parent.append(lbl, inp);
@@ -188,13 +205,13 @@ class _DataPivot_settings_conditional {
                 .html(dp._get_header_options(true))
                 .val(values.field_name || defaults.field_name),
             conditionType = $('<select name="condition_type">')
-                .html(_DataPivot_settings_conditionalFormat.condition_types.map(function(v){
-                    return '<option value="{0}">{0}</option>'.printf(v);
+                .html(formattingTypes.map(function(v){
+                    return `<option value="${v}">${v}</option>`;
                 }))
                 .val(values.condition_type || defaults.condition_type),
             changeConditionType = function(){
                 div.find('.conditionalDivs').hide();
-                div.find('.' + conditionType.val()).fadeIn();
+                div.find(`.${conditionType.val()}`).fadeIn();
             };
 
         // add delete button
@@ -204,14 +221,14 @@ class _DataPivot_settings_conditional {
               div.remove();
               parent.delete_condition(self);
           })
-          .prependTo(div); // todo pop from parent
+          .prependTo(div);
 
         // add master conditional inputs and divs for changing fields
         add_input_row(div, 'Condition field', fieldName);
         add_input_row(div, 'Condition type', conditionType);
         div.append('<hr>');
-        _DataPivot_settings_conditionalFormat.condition_types.forEach(function(v){
-            $('<div class="conditionalDivs row-fluid {0}">'.printf(v)).appendTo(div).hide();
+        formattingTypes.forEach(function(v){
+            $(`<div class="conditionalDivs row-fluid ${v}">`).appendTo(div).hide();
         });
 
         // build min/max for size and color
@@ -268,15 +285,15 @@ class _DataPivot_settings_conditional {
 
                 vals.unique.forEach(function(v){
                     var style = dp.style_manager
-                                  .add_select('symbols', hash.get(v), true)
+                                  .add_select(parent.settings.type, hash.get(v), true)
                                   .data('key', v);
                     self.discrete_styles.push(style);
-                    add_input_row(discrete, 'Style for <i>{0}</i>:'.printf(v), style);
+                    add_input_row(discrete, `Style for <i>${v}</i>:`, style);
                 });
             } else {
-                var txt = 'Selected items in <i>{0}</i> '.printf(fieldName.val());
+                var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if(vals.range){
-                    txt += 'contain values ranging from {0} to {1}.'.printf(vals.range[0], vals.range[1]);
+                    txt += `contain values ranging from ${vals.range[0]} to ${vals.range[1]}.`;
                 } else {
                     txt += 'have no range of values, please select another column.';
                 }

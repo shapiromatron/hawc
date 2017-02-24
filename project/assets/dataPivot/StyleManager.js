@@ -37,13 +37,12 @@ class StyleManager {
     }
 
     add_select(style_type, selected_style, include_null){
-
-        var select = $('<select class="span12"></select>').html(this._build_options(style_type));
+        var select = $('<select class="span12">').html(this._build_options(style_type));
         if(include_null){
-            select.prepend('<option value="{0}">{0}</option>'.printf(NULL_CASE));
+            select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
         if(selected_style){
-            select.find('option[value="{0}"]'.printf(selected_style)).prop('selected', true);
+            select.find(`option[value="${selected_style}"]`).prop('selected', true);
         }
         this.selects[style_type].push(select);
         return select;
@@ -69,12 +68,17 @@ class StyleManager {
     build_styles_crud(style_type){
         // components
         var self = this,
-            container = $('<div class="row-fluid"></div>'),
-            title = $('<h3>{0}</h3>'.printf(style_type)),
-            style_div = $('<div class="row-fluid"></div>'),
-            form_div = $('<div class="span6"></div>'),
-            vis_div = $('<div class="span6"></div>'),
-            d3_div = $('<div></div>'),
+            toTitleCase = function(str){
+                return str.replace(/\w\S*/g, function(word){
+                    return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+                });
+            },
+            container = $('<div class="row-fluid">'),
+            title = $(`<h3>${toTitleCase(style_type)}</h3>`),
+            style_div = $('<div class="row-fluid">'),
+            form_div = $('<div class="span6">'),
+            vis_div = $('<div class="span6">'),
+            d3_div = $('<div>'),
             modal = $('<div class="modal hide fade">' +
                         '<div class="modal-header">' +
                             '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
@@ -87,7 +91,7 @@ class StyleManager {
                             '<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>' +
                         '</div>' +
                       '</div>'),
-            button_well = $('<div class="well"></div>');
+            button_well = $('<div class="well">');
 
         // functionality
         var get_style = function(){
@@ -163,9 +167,9 @@ class StyleManager {
 
           // create buttons and event-bindings
         var style_selector = this.add_select(style_type).on('change', load_style),
-            button_new_style = $('<button style="margin-right:5px" class="btn btn-primary">New style</button>').click(new_style),
-            button_edit_style = $('<button style="margin-right:5px" class="btn btn-info">Edit selected style</button>').click(edit_style),
-            button_delete_style = $('<button style="margin-right:5<p></p>px" class="btn btn-danger">Delete selected style</button>').click(delete_style);
+            button_new_style = $('<button style="margin-right:5px" class="btn btn-primary"><i class="fa fa-plus"></i> New</button>').click(new_style),
+            button_edit_style = $('<button style="margin-right:5px" class="btn btn-info"><i class="fa fa-pencil-square-o"></i> Update</button>').click(edit_style),
+            button_delete_style = $('<button style="margin-right:5<p></p>px" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>').click(delete_style);
 
         modal.find('.modal-footer')
              .prepend($('<a href="#" class="btn btn-primary">Save and close</a>')
@@ -173,13 +177,13 @@ class StyleManager {
         modal.on('hidden', load_style);
 
         // put all the pieces together
-        form_div.html(['<h4>Select styles</h4>', style_selector]);
+        form_div.append(style_selector, button_well);
         button_well.append(
             button_new_style,
             button_edit_style,
             button_delete_style);
-        style_div.append(form_div, vis_div.append('<h4>Style visualization</h4>', d3_div));
-        container.html([title, style_div, modal, button_well]);
+        style_div.append(form_div, vis_div.append(d3_div));
+        container.append(title, style_div, modal);
 
         load_style(); // load with initial style
 

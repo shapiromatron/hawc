@@ -6,6 +6,7 @@ import HAWCUtils from 'utils/HAWCUtils';
 import {
     StyleSymbol,
     StyleLine,
+    StyleRectangle,
 } from './Styles';
 import {
    NULL_CASE,
@@ -51,7 +52,7 @@ class DataPivotLegend {
 
     _build_options(){
         return this.settings.fields.map(function(v){
-            return $('<option value="{0}">{0}</option>'.printf(v.label)).data('d', v);
+            return $(`<option value="${v.label}">${v.label}</option>`).data('d', v);
         });
     }
 
@@ -109,9 +110,31 @@ class DataPivotLegend {
                 row_index = 0;
             }
 
+            // add rectangle
+            if(datum.rect_style !== NULL_CASE){
+                text_x_offset = 15;
+                style = self._get_rect_style(datum);
+                colg.selectAll()
+                    .data([
+                        {
+                            x: buffer*0.5,
+                            y: ((row_index+0.25)*vertical_spacing),
+                            width: text_x_offset+buffer,
+                            height: vertical_spacing*0.5,
+                            style,
+                        },
+                    ])
+                    .enter().append('svg:rect')
+                        .attr('x', (d) => d.x)
+                        .attr('y', (d) => d.y)
+                        .attr('width', (d) => d.width)
+                        .attr('height', (d) => d.height)
+                        .each(apply_styles);
+            }
+
             // add line
             if(datum.line_style !== NULL_CASE){
-                text_x_offset = 25;
+                text_x_offset = 15;
                 style = self._get_line_style(datum);
                 colg.selectAll()
                     .data([
@@ -142,12 +165,11 @@ class DataPivotLegend {
                         .attr('y1', function(v){return v.y1;})
                         .attr('y2', function(v){return v.y2;})
                         .each(apply_styles);
-            } else {
-                text_x_offset = 15;
             }
 
             // add symbol
             if(datum.symbol_style !== NULL_CASE){
+                text_x_offset = 15;
                 style = self._get_symbol_style(datum);
                 colg.selectAll()
                     .data([
@@ -166,6 +188,7 @@ class DataPivotLegend {
             }
 
             // add text
+            text_x_offset = 15;
             colg.selectAll()
                 .data([self.settings.fields[i]])
                 .enter()
@@ -197,11 +220,18 @@ class DataPivotLegend {
 
     add_or_update_field(obj, legend_item){
         if(isFinite(obj.symbol_index)){
-            legend_item=this.settings.fields.filter(function(v){return v.symbol_index === obj.symbol_index;})[0];
+            legend_item=this.settings.fields.filter(
+                function(v){return v.symbol_index === obj.symbol_index;})[0];
         }
 
         if(isFinite(obj.line_index)){
-            legend_item=this.settings.fields.filter(function(v){return v.line_index === obj.line_index;})[0];
+            legend_item=this.settings.fields.filter(
+                function(v){return v.line_index === obj.line_index;})[0];
+        }
+
+        if(obj.keyField !== undefined){
+            legend_item=this.settings.fields.filter(
+                function(v){return v.keyField === obj.keyField;})[0];
         }
 
         if(legend_item){
@@ -209,6 +239,7 @@ class DataPivotLegend {
         } else {
             if(!obj.line_style) obj.line_style = NULL_CASE;
             if(!obj.symbol_style) obj.symbol_style = NULL_CASE;
+            if(!obj.rect_style) obj.rect_style = NULL_CASE;
             this.settings.fields.push(obj);
         }
         this._update_selects();
@@ -225,6 +256,13 @@ class DataPivotLegend {
             function(v){return v.name === field.line_style;})[0] ||
                 StyleLine.default_settings();
     }
+
+    _get_rect_style(field){
+        return this.dp_settings.styles.rectangles.filter(
+            function(v){return v.name === field.rect_style;})[0] ||
+                StyleRectangle.default_settings();
+    }
+
 
     move_field(obj, offset){
         var fields = this.settings.fields;
