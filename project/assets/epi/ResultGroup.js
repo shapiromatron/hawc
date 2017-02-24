@@ -68,6 +68,11 @@ class ResultGroup {
                         '{0} - {1}'.printf(d.lower_ci, d.upper_ci) :
                         '-';
                 },
+                range(){
+                    return (_.isNumber(d.lower_range) && _.isNumber(d.upper_range)) ?
+                        '{0} - {1}'.printf(d.lower_range, d.upper_range) :
+                        '-';
+                },
                 pvalue(){
                     return (_.isNumber(d.p_value)) ?
                         '{0} {1}'.printf(d.p_value_qualifier, d.p_value) :

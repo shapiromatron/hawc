@@ -27,6 +27,8 @@ class ResultGroupTable {
             variance:  hasData(this.res.resultGroups, 'variance'),
             ci: (hasData(this.res.resultGroups, 'lower_ci') &&
                  hasData(this.res.resultGroups, 'upper_ci')),
+            range: (hasData(this.res.resultGroups, 'lower_range') &&
+                    hasData(this.res.resultGroups, 'upper_range')),
             pvalue: true,
         };
     }
@@ -47,6 +49,7 @@ class ResultGroupTable {
                 estimate: 15,
                 variance:  15,
                 ci: 25,
+                range: 15,
                 pvalue: 15,
             },
             cols = _.chain(this.visibleCol)
@@ -90,6 +93,9 @@ class ResultGroupTable {
                     return (_.isNumber(d.ci_units))?
                         `${d.ci_units*100}% confidence intervals${letter}`:
                         `Confidence intervals${letter}`;
+                },
+                range(){
+                    return 'Range';
                 },
                 pvalue(){
                     return '<i>p</i>-value';

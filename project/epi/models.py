@@ -1323,6 +1323,14 @@ class GroupResult(models.Model):
         null=True,
         verbose_name='Upper CI',
         help_text="Numerical value for upper-confidence interval")
+    lower_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower Range')
+    upper_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper Range')
     p_value_qualifier = models.CharField(
         max_length=1,
         choices=P_VALUE_QUALIFIER_CHOICES,
@@ -1371,6 +1379,8 @@ class GroupResult(models.Model):
             "result_group-variance",
             "result_group-lower_ci",
             "result_group-upper_ci",
+            "result_group-lower_range",
+            "result_group-upper_range",
             "result_group-p_value_qualifier",
             "result_group-p_value",
             "result_group-is_main_finding",
@@ -1425,6 +1435,8 @@ class GroupResult(models.Model):
             ser["variance"],
             ser["lower_ci"],
             ser["upper_ci"],
+            ser["lower_range"],
+            ser["upper_range"],
             ser["p_value_qualifier"],
             ser["p_value"],
             ser["is_main_finding"],
