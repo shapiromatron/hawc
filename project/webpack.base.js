@@ -22,12 +22,11 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'dist'),
         filename: '[name].[hash].js',
-        chunkFilename: '[name].js',
+        chunkFilename: '[name].[hash].js',
     },
 
     externals: {
         $: '$',
-        Outcome: 'Outcome',
     },
 
     plugins: [
@@ -40,8 +39,13 @@ module.exports = {
                 return userRequest && userRequest.indexOf('node_modules') >= 0;
             },
         }),
-        new webpack.optimize.CommonsChunkPlugin({name: 'manifest', filename: 'manifest.[hash].js'}),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'manifest',
+            filename: 'manifest.[hash].js',
+        }),
         new webpack.NoErrorsPlugin(),
-        new BundleTracker({filename: './webpack-stats.json'}),
+        new BundleTracker({
+            filename: './webpack-stats.json',
+        }),
     ],
 };
