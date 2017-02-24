@@ -53,10 +53,11 @@ class ResultForestPlot extends D3Plot {
             names = _.pluck(estimates, 'name'),
             vals = _.chain(estimates)
                     .map(function(d){
+                        let { upper_ci, lower_ci } = d.group.getCI();
                         return [
                             d.group.data.estimate,
-                            d.group.data.lower_ci,
-                            d.group.data.upper_ci,
+                            lower_ci,
+                            upper_ci,
                         ];
                     })
                     .flatten()

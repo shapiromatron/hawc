@@ -29,9 +29,12 @@ class ResultGroup {
         if ((this.data.lower_ci !== null) && (this.data.upper_ci !== null)){
             ci.lower_ci = this.data.lower_ci;
             ci.upper_ci = this.data.upper_ci;
-        } else if ((this.data.estimate !== null) && (this.data.se !== null) && (this.data.n !== null)){
+        } else if ((this.data.estimate !== null) && (this.data.se != null) && (this.data.n !== null)){
             ci.lower_ci = this.data.estimate - 1.96 * this.data.se * Math.sqrt(this.data.n);
             ci.upper_ci = this.data.estimate + 1.96 * this.data.se * Math.sqrt(this.data.n);
+        } else if ((this.data.lower_range !== null) && (this.data.upper_range !== null)){
+            ci.lower_ci = this.data.lower_range;
+            ci.upper_ci = this.data.upper_range;
         }
         return ci;
     }
