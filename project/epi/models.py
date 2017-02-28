@@ -1370,6 +1370,18 @@ class GroupResult(models.Model):
 
         return txt
 
+    @property
+    def lower_bound_interval(self):
+        if self.lower_ci is None:
+            return self.lower_range
+        return self.lower_ci
+
+    @property
+    def upper_bound_interval(self):
+        if self.upper_ci is None:
+            return self.upper_range
+        return self.upper_ci
+
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -1381,6 +1393,8 @@ class GroupResult(models.Model):
             "result_group-upper_ci",
             "result_group-lower_range",
             "result_group-upper_range",
+            "result_group-lower_bound_interval",
+            "result_group-upper_bound_interval",
             "result_group-p_value_qualifier",
             "result_group-p_value",
             "result_group-is_main_finding",
@@ -1437,6 +1451,8 @@ class GroupResult(models.Model):
             ser["upper_ci"],
             ser["lower_range"],
             ser["upper_range"],
+            ser["lower_bound_interval"],
+            ser["upper_bound_interval"],
             ser["p_value_qualifier"],
             ser["p_value"],
             ser["is_main_finding"],
