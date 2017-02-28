@@ -1421,6 +1421,8 @@ class GroupResult(models.Model):
                     lower_ci is None and
                     upper_ci is None and
                     n is not None and
+                    grp['lower_range'] is None and
+                    grp['upper_range'] is None and
                     grp['estimate'] is not None and
                     grp['variance'] is not None
                ):
