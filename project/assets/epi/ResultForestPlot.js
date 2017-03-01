@@ -47,17 +47,17 @@ class ResultForestPlot extends D3Plot {
                             };
                         }).value(),
             lines = _.chain(estimates)
-                    .map(function(d){return d.group.getCI();})
-                    .filter(function(d){return _.isNumber(d.lower_ci) && _.isNumber(d.upper_ci);})
+                    .map(function(d){return d.group.getIntervals();})
+                    .filter(function(d){return _.isNumber(d.lower_bound_interval) && _.isNumber(d.upper_bound_interval);})
                     .value(),
             names = _.pluck(estimates, 'name'),
             vals = _.chain(estimates)
                     .map(function(d){
-                        let { upper_ci, lower_ci } = d.group.getCI();
+                        let { upper_bound_interval, lower_bound_interval } = d.group.getIntervals();
                         return [
                             d.group.data.estimate,
-                            lower_ci,
-                            upper_ci,
+                            lower_bound_interval,
+                            upper_bound_interval,
                         ];
                     })
                     .flatten()
@@ -190,27 +190,27 @@ class ResultForestPlot extends D3Plot {
         this.estimate_range.selectAll('line.temp')
           .data(this.lines)
         .enter().append('line')
-          .attr('x1', function(d) { return x(d.lower_ci); })
+          .attr('x1', function(d) { return x(d.lower_bound_interval); })
           .attr('y1', function(d) {return  y(d.name) + mid;})
-          .attr('x2', function(d) { return x(d.upper_ci); })
+          .attr('x2', function(d) { return x(d.upper_bound_interval); })
           .attr('y2', function(d) {return  y(d.name) + mid;})
           .attr('class','dr_err_bars');
 
         this.estimate_range.selectAll('line.temp')
           .data(this.lines)
         .enter().append('line')
-          .attr('x1', function(d) { return x(d.lower_ci); })
+          .attr('x1', function(d) { return x(d.lower_bound_interval); })
           .attr('y1', function(d) {return  y(d.name) + mid*1.5;})
-          .attr('x2', function(d) { return x(d.lower_ci); })
+          .attr('x2', function(d) { return x(d.lower_bound_interval); })
           .attr('y2', function(d) {return  y(d.name) + mid*0.5;})
           .attr('class','dr_err_bars');
 
         this.estimate_range.selectAll('line.temp')
           .data(this.lines)
         .enter().append('line')
-          .attr('x1', function(d) { return x(d.upper_ci); })
+          .attr('x1', function(d) { return x(d.upper_bound_interval); })
           .attr('y1', function(d) {return  y(d.name) + mid*1.5;})
-          .attr('x2', function(d) { return x(d.upper_ci); })
+          .attr('x2', function(d) { return x(d.upper_bound_interval); })
           .attr('y2', function(d) {return  y(d.name) + mid*0.5;})
           .attr('class','dr_err_bars');
 
