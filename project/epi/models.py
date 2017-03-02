@@ -825,6 +825,18 @@ class Exposure(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def lower_bound_interval(self):
+        if self.lower_ci is None:
+            return self.lower_range
+        return self.lower_ci
+
+    @property
+    def upper_bound_interval(self):
+        if self.upper_ci is None:
+            return self.upper_range
+        return self.upper_ci
+
     def get_assessment(self):
         return self.study_population.get_assessment()
 
@@ -863,6 +875,8 @@ class Exposure(models.Model):
             "exposure-upper_ci",
             "exposure-lower_range",
             "exposure-upper_range",
+            "exposure-lower_bound_interval",
+            "exposure-upper_bound_interval",
             "exposure-estimate_type",
             "exposure-variance_type",
             "exposure-description",
@@ -901,6 +915,8 @@ class Exposure(models.Model):
             ser.get("upper_ci"),
             ser.get("lower_range"),
             ser.get("upper_range"),
+            ser.get("lower_bound_interval"),
+            ser.get("upper_bound_interval"),
             ser.get("estimate_type"),
             ser.get("variance_type"),
             ser.get("exposure_distribution"),
