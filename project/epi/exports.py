@@ -84,6 +84,7 @@ class OutcomeDataPivot(FlatFileExporter):
             'result summary',
             'dose response',
             'statistical power',
+            'statistical test results',
             'CI units',
 
             'exposure group order',
@@ -168,6 +169,7 @@ class OutcomeDataPivot(FlatFileExporter):
                     res['comments'],
                     res['dose_response'],
                     res['statistical_power'],
+                    res['statistical_test_results'],
                     res['ci_units'],
                 ])
 

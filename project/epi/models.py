@@ -1144,6 +1144,8 @@ class Result(models.Model):
         choices=STATISTICAL_POWER_CHOICES)
     statistical_power_details = models.TextField(
         blank=True)
+    statistical_test_results = models.TextField(
+        blank=True)
     trend_test = models.CharField(
         verbose_name="Trend test result",
         max_length=128,
