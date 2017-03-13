@@ -81,6 +81,8 @@ class ResultMetricSerializer(serializers.ModelSerializer):
 class SimpleExposureSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     metric_units = DoseUnitsSerializer()
+    variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
+    estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
 
