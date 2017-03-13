@@ -1323,6 +1323,16 @@ class GroupResult(models.Model):
         null=True,
         verbose_name='Upper CI',
         help_text="Numerical value for upper-confidence interval")
+    lower_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower range',
+        help_text='Numerical value for lower range')
+    upper_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper range',
+        help_text='Numerical value for upper range')
     p_value_qualifier = models.CharField(
         max_length=1,
         choices=P_VALUE_QUALIFIER_CHOICES,
@@ -1362,6 +1372,18 @@ class GroupResult(models.Model):
 
         return txt
 
+    @property
+    def lower_bound_interval(self):
+        return self.lower_range \
+            if self.lower_ci is None \
+            else self.lower_ci
+
+    @property
+    def upper_bound_interval(self):
+        return self.upper_range \
+            if self.upper_ci is None \
+            else self.upper_ci
+
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -1371,6 +1393,10 @@ class GroupResult(models.Model):
             "result_group-variance",
             "result_group-lower_ci",
             "result_group-upper_ci",
+            "result_group-lower_range",
+            "result_group-upper_range",
+            "result_group-lower_bound_interval",
+            "result_group-upper_bound_interval",
             "result_group-p_value_qualifier",
             "result_group-p_value",
             "result_group-is_main_finding",
@@ -1397,6 +1423,8 @@ class GroupResult(models.Model):
                     lower_ci is None and
                     upper_ci is None and
                     n is not None and
+                    grp['lower_range'] is None and
+                    grp['upper_range'] is None and
                     grp['estimate'] is not None and
                     grp['variance'] is not None
                ):
@@ -1425,6 +1453,10 @@ class GroupResult(models.Model):
             ser["variance"],
             ser["lower_ci"],
             ser["upper_ci"],
+            ser["lower_range"],
+            ser["upper_range"],
+            ser["lower_bound_interval"],
+            ser["upper_bound_interval"],
             ser["p_value_qualifier"],
             ser["p_value"],
             ser["is_main_finding"],

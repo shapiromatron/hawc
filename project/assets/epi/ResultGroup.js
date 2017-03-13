@@ -19,19 +19,19 @@ class ResultGroup {
         return _.isNumber(this.data.estimate);
     }
 
-    getCI(){
+    getIntervals(){
         var ci = {
             'name': this.data.group.name,
-            'lower_ci': null,
-            'upper_ci': null,
+            'lower_bound_interval': null,
+            'upper_bound_interval': null,
         };
 
-        if ((this.data.lower_ci !== null) && (this.data.upper_ci !== null)){
-            ci.lower_ci = this.data.lower_ci;
-            ci.upper_ci = this.data.upper_ci;
-        } else if ((this.data.estimate !== null) && (this.data.se !== null) && (this.data.n !== null)){
-            ci.lower_ci = this.data.estimate - 1.96 * this.data.se * Math.sqrt(this.data.n);
-            ci.upper_ci = this.data.estimate + 1.96 * this.data.se * Math.sqrt(this.data.n);
+        if ((this.data.lower_bound_interval !== null) && (this.data.upper_bound_interval !== null)){
+            ci.lower_bound_interval = this.data.lower_bound_interval;
+            ci.upper_bound_interval = this.data.upper_bound_interval;
+        } else if ((this.data.estimate !== null) && (this.data.se != null) && (this.data.n !== null)){
+            ci.lower_bound_interval = this.data.estimate - 1.96 * this.data.se * Math.sqrt(this.data.n);
+            ci.upper_bound_interval = this.data.estimate + 1.96 * this.data.se * Math.sqrt(this.data.n);
         }
         return ci;
     }
@@ -66,6 +66,11 @@ class ResultGroup {
                 ci(){
                     return (_.isNumber(d.lower_ci) && _.isNumber(d.upper_ci)) ?
                         '{0} - {1}'.printf(d.lower_ci, d.upper_ci) :
+                        '-';
+                },
+                range(){
+                    return (_.isNumber(d.lower_range) && _.isNumber(d.upper_range)) ?
+                        '{0} - {1}'.printf(d.lower_range, d.upper_range) :
                         '-';
                 },
                 pvalue(){
