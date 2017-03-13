@@ -1485,21 +1485,22 @@ class GroupResult(models.Model):
                     grp.update(lower_ci=lower_ci, upper_ci=upper_ci, ci_calc=True)
 
     @staticmethod
-
     def percentControl(estimate_type, variance_type, rgs):
         """
-        Expects a dictionary of result groups, the result estimate_type, and result variance_type.
-        Appends results to the dictionary for each result-group.
+        Expects a dictionary of result groups, the result estimate_type, and
+        result variance_type. Appends results to the dictionary for each result-group.
 
         Calculates a 95% confidence interval for the percent-difference from
         control, taking into account variance from both groups using a
         Fisher Information Matrix, assuming independent normal distributions.
 
-        Only calculates if estimate_type is 'mean' and variance_type is 'SD', 'SE', or 'SEM'.
+        Only calculates if estimate_type is 'median' or 'mean' and variance_type
+        is 'SD', 'SE', or 'SEM', all cases are true with a normal distribution.
         """
         for i, rg in enumerate(rgs):
             mean = low = high = None
-            if estimate_type == "mean" and variance_type in ['SD', 'SE', 'SEM']:
+            if estimate_type in ['median', 'mean'] and \
+               variance_type in ['SD', 'SE', 'SEM']:
 
                 if i == 0:
                     n_1 = rg['n']
@@ -1509,6 +1510,7 @@ class GroupResult(models.Model):
                 n_2 = rg['n']
                 mu_2 = rg['estimate']
                 sd_2 = rg.get('stdev')
+
                 if mu_1 and mu_2 and mu_1 != 0:
                     mean = (mu_2-mu_1) / mu_1 * 100.
                     if sd_1 and sd_2 and n_1 and n_2:
