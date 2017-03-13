@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0008_auto_20170221_1416'),
+        ('epi', '0008_exposure_numerical_fields'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='groupresult',
             name='lower_range',
-            field=models.FloatField(blank=True, null=True, verbose_name=b'Lower Range'),
+            field=models.FloatField(blank=True, null=True, verbose_name=b'Lower range', help_text='Numerical value for lower range'),
         ),
         migrations.AddField(
             model_name='groupresult',
             name='upper_range',
-            field=models.FloatField(blank=True, null=True, verbose_name=b'Upper Range'),
+            field=models.FloatField(blank=True, null=True, verbose_name=b'Upper range', help_text='Numerical value for upper range'),
         ),
     ]

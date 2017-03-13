@@ -1326,11 +1326,13 @@ class GroupResult(models.Model):
     lower_range = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Lower Range')
+        verbose_name='Lower range',
+        help_text='Numerical value for lower range')
     upper_range = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Upper Range')
+        verbose_name='Upper range',
+        help_text='Numerical value for upper range')
     p_value_qualifier = models.CharField(
         max_length=1,
         choices=P_VALUE_QUALIFIER_CHOICES,
@@ -1372,15 +1374,15 @@ class GroupResult(models.Model):
 
     @property
     def lower_bound_interval(self):
-        if self.lower_ci is None:
-            return self.lower_range
-        return self.lower_ci
+        return self.lower_range \
+            if self.lower_ci is None \
+            else self.lower_ci
 
     @property
     def upper_bound_interval(self):
-        if self.upper_ci is None:
-            return self.upper_range
-        return self.upper_ci
+        return self.upper_range \
+            if self.upper_ci is None \
+            else self.upper_ci
 
     @staticmethod
     def flat_complete_header_row():
