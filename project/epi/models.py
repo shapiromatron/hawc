@@ -1144,6 +1144,8 @@ class Result(models.Model):
         choices=STATISTICAL_POWER_CHOICES)
     statistical_power_details = models.TextField(
         blank=True)
+    statistical_test_results = models.TextField(
+        blank=True)
     trend_test = models.CharField(
         verbose_name="Trend test result",
         max_length=128,
@@ -1217,6 +1219,7 @@ class Result(models.Model):
             "result-prevalence_incidence",
             "result-statistical_power",
             "result-statistical_power_details",
+            "result-statistical_test_results",
             "result-trend_test",
             "result-adjustment_factors",
             "result-adjustment_factors_considered",
@@ -1251,6 +1254,7 @@ class Result(models.Model):
             ser['prevalence_incidence'],
             ser['statistical_power'],
             ser['statistical_power_details'],
+            ser['statistical_test_results'],
             ser['trend_test'],
             getFactorList(ser['factors'], True),
             getFactorList(ser['factors'], False),
