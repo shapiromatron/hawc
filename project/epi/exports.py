@@ -69,6 +69,9 @@ class OutcomeDataPivot(FlatFileExporter):
             'exposure name',
             'exposure metric',
             'exposure measured',
+            'exposure estimate',
+            'exposure lower bound interval',
+            'exposure upper bound interval',
             'dose units',
             'age of exposure',
 
@@ -141,6 +144,9 @@ class OutcomeDataPivot(FlatFileExporter):
                         res["comparison_set"]["exposure"]["name"],
                         res["comparison_set"]["exposure"]["metric"],
                         res["comparison_set"]["exposure"]["measured"],
+                        res["comparison_set"]["exposure"]["estimate"],
+                        res["comparison_set"]["exposure"]["lower_bound_interval"],
+                        res["comparison_set"]["exposure"]["upper_bound_interval"],
                         res["comparison_set"]["exposure"]["metric_units"]["name"],
                         res["comparison_set"]["exposure"]["age_of_exposure"],
                     ])

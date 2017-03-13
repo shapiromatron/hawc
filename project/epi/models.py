@@ -690,6 +690,23 @@ class Group(models.Model):
 class Exposure(models.Model):
     objects = managers.ExposureManager()
 
+    ESTIMATE_TYPE_CHOICES = (
+        (0, None),
+        (1, "mean"),
+        (2, "geometric mean"),
+        (3, "median"),
+        (5, "point"),
+        (4, "other"),
+    )
+
+    VARIANCE_TYPE_CHOICES = (
+        (0, None),
+        (1, "SD"),
+        (2, "SE"),
+        (3, "SEM"),
+        (4, "GSD"),
+        (5, "other"))
+
     study_population = models.ForeignKey(
         StudyPopulation,
         related_name='exposures')
@@ -751,6 +768,46 @@ class Exposure(models.Model):
         help_text='May be used to describe the exposure distribution, for '
                   'example, "2.05 µg/g creatinine (urine), geometric mean; '
                   '25th percentile = 1.18, 75th percentile = 3.33"')
+    n = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text="Individuals where outcome was measured")
+    estimate = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Central tendency estimate")
+    estimate_type = models.PositiveSmallIntegerField(
+        choices=ESTIMATE_TYPE_CHOICES,
+        verbose_name="Central estimate type",
+        default=0)
+    variance = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Variance',
+        help_text="Variance estimate")
+    variance_type = models.PositiveSmallIntegerField(
+        choices=VARIANCE_TYPE_CHOICES,
+        default=0)
+    lower_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower CI',
+        help_text="Numerical value for lower-confidence interval")
+    upper_ci = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper CI',
+        help_text="Numerical value for upper-confidence interval")
+    lower_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Lower range',
+        help_text='Numerical value for lower range')
+    upper_range = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name='Upper range',
+        help_text='Numerical value for upper range')
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
@@ -767,6 +824,18 @@ class Exposure(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def lower_bound_interval(self):
+        return self.lower_range \
+            if self.lower_ci is None \
+            else self.lower_ci
+
+    @property
+    def upper_bound_interval(self):
+        return self.upper_range \
+            if self.upper_ci is None \
+            else self.upper_ci
 
     def get_assessment(self):
         return self.study_population.get_assessment()
@@ -798,6 +867,17 @@ class Exposure(models.Model):
             "exposure-sampling_period",
             "exposure-age_of_exposure",
             "exposure-duration",
+            "exposure-n",
+            "exposure-estimate",
+            "exposure-estimate_type",
+            "exposure-variance",
+            "exposure-variance_type",
+            "exposure-lower_ci",
+            "exposure-upper_ci",
+            "exposure-lower_range",
+            "exposure-upper_range",
+            "exposure-lower_bound_interval",
+            "exposure-upper_bound_interval",
             "exposure-exposure_distribution",
             "exposure-description",
             "exposure-created",
@@ -828,6 +908,17 @@ class Exposure(models.Model):
             ser.get("sampling_period"),
             ser.get("age_of_exposure"),
             ser.get("duration"),
+            ser.get("n"),
+            ser.get("estimate"),
+            ser.get("estimate_type"),
+            ser.get("variance"),
+            ser.get("variance_type"),
+            ser.get("lower_ci"),
+            ser.get("upper_ci"),
+            ser.get("lower_range"),
+            ser.get("upper_range"),
+            ser.get("lower_bound_interval"),
+            ser.get("upper_bound_interval"),
             ser.get("exposure_distribution"),
             ser.get("description"),
             ser.get("created"),
