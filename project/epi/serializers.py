@@ -163,6 +163,9 @@ class ResultSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(ResultSerializer, self).to_representation(instance)
+        models.GroupResult.getStdevs(ret['variance_type'], ret['results'])
+        models.GroupResult.percentControl(
+            ret['estimate_type'], ret['variance_type'], ret['results'])
         models.GroupResult.getConfidenceIntervals(
             ret['variance_type'], ret['results'])
         return ret

@@ -1289,6 +1289,38 @@ class GroupResult(models.Model):
         )
 
     @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["id"],
+            ser["n"],
+            ser["estimate"],
+            ser["variance"],
+            ser["lower_ci"],
+            ser["upper_ci"],
+            ser["p_value_qualifier"],
+            ser["p_value"],
+            ser["is_main_finding"],
+            ser["main_finding_support"],
+            ser["created"],
+            ser["last_updated"],
+        )
+
+    @staticmethod
+    def stdev(variance_type, variance, n):
+        # calculate stdev given re
+        if variance_type == 'SD':
+            return variance
+        elif variance_type in ['SE', 'SEM'] and variance is not None and n is not None:
+            return variance * math.sqrt(n)
+        else:
+            return None
+
+    @classmethod
+    def getStdevs(cls, variance_type, rgs):
+        for rg in rgs:
+            rg['stdev'] = cls.stdev(variance_type, rg['variance'], rg['n'])
+
+    @staticmethod
     def getConfidenceIntervals(variance_type, groups):
         """
         Expects a dictionary of endpoint groups and the endpoint variance-type.
@@ -1326,21 +1358,43 @@ class GroupResult(models.Model):
                     grp.update(lower_ci=lower_ci, upper_ci=upper_ci, ci_calc=True)
 
     @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["n"],
-            ser["estimate"],
-            ser["variance"],
-            ser["lower_ci"],
-            ser["upper_ci"],
-            ser["p_value_qualifier"],
-            ser["p_value"],
-            ser["is_main_finding"],
-            ser["main_finding_support"],
-            ser["created"],
-            ser["last_updated"],
-        )
+    def percentControl(estimate_type, variance_type, rgs):
+        """
+        Expects a dictionary of result groups, the result estimate_type, and result variance_type.
+        Appends results to the dictionary for each result-group.
+
+        Calculates a 95% confidence interval for the percent-difference from
+        control, taking into account variance from both groups using a
+        Fisher Information Matrix, assuming independent normal distributions.
+
+        Only calculates if estimate_type is 'mean' and variance_type is 'SD', 'SE', or 'SEM'.
+        """
+        for i, rg in enumerate(rgs):
+            mean = low = high = None
+            if estimate_type == "mean" and variance_type in ['SD', 'SE', 'SEM']:
+
+                if i == 0:
+                    n_1 = rg['n']
+                    mu_1 = rg['estimate']
+                    sd_1 = rg.get('stdev')
+
+                n_2 = rg['n']
+                mu_2 = rg['estimate']
+                sd_2 = rg.get('stdev')
+                if mu_1 and mu_2 and mu_1 != 0:
+                    mean = (mu_2-mu_1) / mu_1 * 100.
+                    if sd_1 and sd_2 and n_1 and n_2:
+                        sd = math.sqrt(
+                            pow(mu_1, -2) * (
+                                (pow(sd_2, 2)/n_2) +
+                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
+                            )
+                        )
+                        ci = (1.96 * sd) * 100
+                        rng = sorted([mean - ci, mean + ci])
+                        low = rng[0]
+                        high = rng[1]
+            rg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     def copy_across_assessments(self, cw):
         old_id = self.id

@@ -99,6 +99,9 @@ class OutcomeDataPivot(FlatFileExporter):
             'statistical significance (numeric)',
             'main finding',
             'main finding support',
+            'percent control mean',
+            'percent control low',
+            'percent control high',
         ]
 
     def _get_data_rows(self):
@@ -180,6 +183,9 @@ class OutcomeDataPivot(FlatFileExporter):
                         rg['p_value'],
                         rg['is_main_finding'],
                         rg['main_finding_support'],
+                        rg['percentControlMean'],
+                        rg['percentControlLow'],
+                        rg['percentControlHigh'],
                     ])
                     rows.append(row_copy2)
         return rows
