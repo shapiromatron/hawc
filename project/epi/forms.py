@@ -326,6 +326,9 @@ class ExposureForm(forms.ModelForm):
         helper.add_fluid_row('measured', 3, "span4")
         helper.add_fluid_row('metric_description', 3, "span4")
         helper.add_fluid_row('age_of_exposure', 3, "span6")
+        helper.add_fluid_row('n', 3, "span4")
+        helper.add_fluid_row('variance', 2, "span6")
+        helper.add_fluid_row('lower_ci', 4, "span3")
 
         url = reverse(
             'assessment:dose_units_create',
@@ -874,7 +877,7 @@ class ResultForm(forms.ModelForm):
         helper.add_fluid_row('metric', 2, "span6")
         helper.add_fluid_row('data_location', 2, "span6")
         helper.add_fluid_row('dose_response', 3, "span4")
-        helper.add_fluid_row('statistical_power', 3, "span4")
+        helper.add_fluid_row('statistical_power', 4, "span3")
         helper.add_fluid_row('factors_applied', 2, "span6")
         helper.add_fluid_row('estimate_type', 3, "span4")
 

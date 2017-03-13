@@ -81,6 +81,10 @@ class ResultMetricSerializer(serializers.ModelSerializer):
 class SimpleExposureSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     metric_units = DoseUnitsSerializer()
+    variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
+    estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
+    lower_bound_interval = serializers.FloatField(read_only=True)
+    upper_bound_interval = serializers.FloatField(read_only=True)
 
     class Meta:
         model = models.Exposure
@@ -115,6 +119,10 @@ class ExposureSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     metric_units = DoseUnitsSerializer()
+    variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
+    estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
+    lower_bound_interval = serializers.FloatField(read_only=True)
+    upper_bound_interval = serializers.FloatField(read_only=True)
 
     class Meta:
         model = models.Exposure
@@ -125,6 +133,8 @@ class GroupResultSerializer(serializers.ModelSerializer):
     main_finding_support = serializers.CharField(source='get_main_finding_support_display', read_only=True)
     p_value_qualifier = serializers.CharField(source='get_p_value_qualifier_display', read_only=True)
     p_value_text = serializers.CharField(read_only=True)
+    lower_bound_interval = serializers.FloatField(read_only=True)
+    upper_bound_interval = serializers.FloatField(read_only=True)
     group = GroupSerializer()
 
     class Meta:

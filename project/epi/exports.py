@@ -69,6 +69,9 @@ class OutcomeDataPivot(FlatFileExporter):
             'exposure name',
             'exposure metric',
             'exposure measured',
+            'exposure estimate',
+            'exposure lower bound interval',
+            'exposure upper bound interval',
             'dose units',
             'age of exposure',
 
@@ -81,6 +84,7 @@ class OutcomeDataPivot(FlatFileExporter):
             'result summary',
             'dose response',
             'statistical power',
+            'statistical test results',
             'CI units',
 
             'exposure group order',
@@ -94,6 +98,10 @@ class OutcomeDataPivot(FlatFileExporter):
             'estimate',
             'lower CI',
             'upper CI',
+            'lower range',
+            'upper range',
+            'lower bound interval',
+            'upper bound interval',
             'variance',
             'statistical significance',
             'statistical significance (numeric)',
@@ -144,6 +152,9 @@ class OutcomeDataPivot(FlatFileExporter):
                         res["comparison_set"]["exposure"]["name"],
                         res["comparison_set"]["exposure"]["metric"],
                         res["comparison_set"]["exposure"]["measured"],
+                        res["comparison_set"]["exposure"]["estimate"],
+                        res["comparison_set"]["exposure"]["lower_bound_interval"],
+                        res["comparison_set"]["exposure"]["upper_bound_interval"],
                         res["comparison_set"]["exposure"]["metric_units"]["name"],
                         res["comparison_set"]["exposure"]["age_of_exposure"],
                     ])
@@ -161,6 +172,7 @@ class OutcomeDataPivot(FlatFileExporter):
                     res['comments'],
                     res['dose_response'],
                     res['statistical_power'],
+                    res['statistical_test_results'],
                     res['ci_units'],
                 ])
 
@@ -178,6 +190,10 @@ class OutcomeDataPivot(FlatFileExporter):
                         rg['estimate'],
                         rg['lower_ci'],
                         rg['upper_ci'],
+                        rg['lower_range'],
+                        rg['upper_range'],
+                        rg['lower_bound_interval'],
+                        rg['upper_bound_interval'],
                         rg['variance'],
                         rg['p_value_text'],
                         rg['p_value'],

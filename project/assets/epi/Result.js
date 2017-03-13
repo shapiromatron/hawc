@@ -134,6 +134,7 @@ class Result {
             .add_tbody_tr('Dose response details', this.data.dose_response_details)
             .add_tbody_tr('Statistical power', this.data.statistical_power)
             .add_tbody_tr('Statistical power details', this.data.statistical_power_details)
+            .add_tbody_tr('Statistical test results', this.data.statistical_test_results)
             .add_tbody_tr('Prevalence incidence', this.data.prevalence_incidence)
             .add_tbody_tr('Comments', this.data.comments)
             .get_tbl();
