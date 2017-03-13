@@ -801,13 +801,13 @@ class Exposure(models.Model):
     lower_range = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Lower Range',
-    )
+        verbose_name='Lower range',
+        help_text='Numerical value for lower range')
     upper_range = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Upper Range',
-    )
+        verbose_name='Upper range',
+        help_text='Numerical value for upper range')
     description = models.TextField(
         blank=True)
     created = models.DateTimeField(
@@ -827,15 +827,15 @@ class Exposure(models.Model):
 
     @property
     def lower_bound_interval(self):
-        if self.lower_ci is None:
-            return self.lower_range
-        return self.lower_ci
+        return self.lower_range \
+            if self.lower_ci is None \
+            else self.lower_ci
 
     @property
     def upper_bound_interval(self):
-        if self.upper_ci is None:
-            return self.upper_range
-        return self.upper_ci
+        return self.upper_range \
+            if self.upper_ci is None \
+            else self.upper_ci
 
     def get_assessment(self):
         return self.study_population.get_assessment()
