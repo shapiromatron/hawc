@@ -113,7 +113,11 @@ class NumberOfReviewersForm(forms.ModelForm):
         super(NumberOfReviewersForm, self).__init__(*args, **kwargs)
         self.fields['number_of_reviewers'].initial = \
             self.instance.rob_settings.number_of_reviewers
-        self.fields['number_of_reviewers'].help_text='For more than 1 reviewer, the form will have N reviewers + Final Reviewer'
+        self.fields['number_of_reviewers'].help_text = \
+            'The number of independent reviewers required for each study. If '\
+            'there is more than 1 reviewer, an additional final reviewer will '\
+            'resolve any conflicts and make a final determination, so there '\
+            'will be a total of N+1 reviews.'
         self.helper = self.setHelper()
 
     def setHelper(self):
