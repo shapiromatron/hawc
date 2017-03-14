@@ -40,11 +40,23 @@ class AggregateGraph extends Component {
         if (!itemsLoaded) return <Loading />;
         let domains = this.formatRiskofbiasForDisplay();
         return (
+            _.isEmpty(domains) ?
+            <NoFinalReviewWarning /> :
             <DisplayComponent domains={domains}
                               handleClick={this.selectActiveWithName}/>
         );
     }
 }
+
+const NoFinalReviewWarning = () => {
+    return (
+        <div className="container">
+            <span className="alert alert-warning span12">
+                Final Reviewer assignment required for risk of bias aggregation graph.
+            </span>
+        </div>
+    );
+};
 
 function mapStateToProps(state){
     return {
