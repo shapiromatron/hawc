@@ -66,27 +66,27 @@ function formatOutgoingRiskOfBias(state, riskofbias){
 }
 
 function formatIncomingStudy(study){
-    let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;});
-    let domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
-        return _.map(riskofbias.scores, (score) => {
-            return Object.assign({}, score, {
-                riskofbias_id: riskofbias.id,
-                author: riskofbias.author,
-                final: riskofbias.final,
-                domain_name: score.metric.domain.name,
-                domain_id: score.metric.domain.id,
+    let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;}),
+        domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
+            return _.map(riskofbias.scores, (score) => {
+                return Object.assign({}, score, {
+                    riskofbias_id: riskofbias.id,
+                    author: riskofbias.author,
+                    final: riskofbias.final,
+                    domain_name: score.metric.domain.name,
+                    domain_id: score.metric.domain.id,
+                });
             });
-        });
-    }));
-
-    let riskofbiases = d3.nest()
-        .key((d) => { return d.metric.domain.name;})
-        .key((d) => {return d.metric.metric;})
-        .entries(domains);
+        })),
+        riskofbiases = d3.nest()
+            .key((d) => { return d.metric.domain.name;})
+            .key((d) => {return d.metric.metric;})
+            .entries(domains),
+        finalRoB = _.findWhere(dirtyRoBs, { final: true });
 
     return Object.assign({}, study, {
         riskofbiases,
-        final: _.findWhere(dirtyRoBs, {final: true}).scores,
+        final: _.has(finalRoB, 'scores') ? finalRoB.scores : [],
     });
 }
 
