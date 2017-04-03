@@ -244,6 +244,7 @@ def get_git_commit():
     cmd = "git log -1 --format=%H"
     return subprocess.check_output(cmd.split(), cwd=path).strip()
 
+
 GIT_COMMIT = get_git_commit()
 COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMMIT)
 
@@ -258,6 +259,8 @@ BMD_HOST = os.getenv('BMDS_HOST', 'http://example.com')
 BMDS_USERNAME = os.getenv('BMDS_USERNAME', 'username')
 BMDS_PASSWORD = os.getenv('BMDS_PASSWORD', 'password')
 
+# increase allowable fields in POST for updating reviewers
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # Chemspider token details
 CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN', '')
