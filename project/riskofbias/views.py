@@ -120,8 +120,8 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
 
     def pre_validate(self, form, formset):
         # if number_of_reviewers changes, change required on fields
-        if 'number_of_reviewers' in form.changed_data:
-            n = int(form.data['number_of_reviewers'])
+        if form.is_valid() and 'number_of_reviewers' in form.changed_data:
+            n = form.cleaned_data['number_of_reviewers']
             required_fields = ['reference_ptr', 'final_author']
             if n == 1:
                 n = 0
