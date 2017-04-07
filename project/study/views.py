@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.apps import apps
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import FormView
 
@@ -49,6 +49,13 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     model = models.Study
     form_class = forms.NewStudyFromReferenceForm
     success_message = 'Study created.'
+
+    def dispatch(self, *args, **kwargs):
+        # ensure if study already exists you can't create another
+        study = self.model.objects.filter(pk=kwargs['pk']).first()
+        if study:
+            return HttpResponseRedirect(study.get_update_url())
+        return super(StudyCreateFromReference, self).dispatch(*args, **kwargs)
 
     def get_initial(self):
         self.initial = dict(

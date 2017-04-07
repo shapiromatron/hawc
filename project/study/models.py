@@ -184,6 +184,9 @@ class Study(Reference):
     def get_absolute_url(self):
         return reverse('study:detail', args=[str(self.pk)])
 
+    def get_update_url(self):
+        return reverse('study:update', args=[str(self.pk)])
+
     def get_final_rob_url(self):
         final = self.get_final_rob()
         try:
