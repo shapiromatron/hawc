@@ -1,13 +1,16 @@
 import json
+import logging
 
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Count
 from django.apps import apps
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
+from django.http import HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, ListView, DetailView, TemplateView, FormView
 from django.views.generic.edit import CreateView
@@ -17,9 +20,8 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseList, TeamMemberOrHigherMixin,
                          ProjectManagerOrHigherMixin)
-from utils.helper import tryParseInt
 
-from . import forms, models, tasks, serializers
+from . import forms, models, tasks
 
 
 # General views
@@ -35,11 +37,115 @@ class Home(TemplateView):
 class About(TemplateView):
     template_name = 'hawc/about.html'
 
+    def get_object_counts(self):
+        key = 'about-counts'
+        counts = cache.get(key)
+        if counts is None:
+
+            updated = timezone.now()
+
+            users = apps.get_model('myuser', 'HAWCUser')\
+                .objects.count()
+
+            assessments = models.Assessment\
+                .objects.count()
+
+            references = apps.get_model('lit', 'Reference')\
+                .objects.count()
+
+            tags = apps.get_model('lit', 'ReferenceTags')\
+                .objects.count()
+
+            references_tagged = apps.get_model('lit', 'ReferenceTags')\
+                .objects.distinct('content_object_id').count()
+
+            assessments_with_studies = apps.get_model('study', 'Study')\
+                .objects.values_list('assessment_id', flat=True)\
+                .distinct().count()
+
+            studies = apps.get_model('study', 'Study')\
+                .objects.count()
+
+            rob_scores = apps.get_model('riskofbias', 'RiskOfBiasScore')\
+                .objects.count()
+
+            studies_with_rob = apps.get_model('study', 'Study')\
+                .objects.annotate(robc=Count('riskofbiases'))\
+                .filter(robc__gt=0).count()
+
+            endpoints = apps.get_model('animal', 'Endpoint')\
+                .objects.count()
+
+            endpoints_with_data = apps.get_model('animal', 'EndpointGroup')\
+                .objects.distinct('endpoint_id').count()
+
+            outcomes = apps.get_model('epi', 'Outcome')\
+                .objects.count()
+
+            results = apps.get_model('epi', 'Result')\
+                .objects.count()
+
+            results_with_data = apps.get_model('epi', 'GroupResult')\
+                .objects.distinct('result_id').count()
+
+            iv_endpoints = apps.get_model('invitro', 'IVEndpoint')\
+                .objects.count()
+
+            iv_endpoints_with_data = apps.get_model('invitro', 'IVEndpointGroup')\
+                .objects.distinct('endpoint_id').count()
+
+            visuals = apps.get_model('summary', 'Visual').objects.count() + \
+                apps.get_model('summary', 'DataPivot').objects.count()
+
+            assessments_with_visuals = len(set(
+                models.Assessment.objects\
+                .annotate(vc=Count('visuals'))
+                .filter(vc__gt=0)
+                .values_list('id', flat=True))
+                .union(set(models.Assessment.objects
+                       .annotate(dp=Count('datapivot'))
+                       .filter(dp__gt=0)
+                       .values_list('id', flat=True))))
+
+            counts = dict(
+                updated=updated,
+                users=users,
+                assessments=assessments,
+                references=references,
+                tags=tags,
+                references_tagged=references_tagged,
+                references_tagged_percent=references_tagged / float(references),
+                studies=studies,
+                assessments_with_studies=assessments_with_studies,
+                assessments_with_studies_percent=assessments_with_studies / float(assessments),
+                rob_scores=rob_scores,
+                studies_with_rob=studies_with_rob,
+                studies_with_rob_percent=studies_with_rob / float(studies),
+                endpoints=endpoints,
+                endpoints_with_data=endpoints_with_data,
+                endpoints_with_data_percent=endpoints_with_data / float(endpoints),
+                outcomes=outcomes,
+                results=results,
+                results_with_data=results_with_data,
+                results_with_data_percent=results_with_data / float(results),
+                iv_endpoints=iv_endpoints,
+                iv_endpoints_with_data=iv_endpoints_with_data,
+                iv_endpoints_with_data_percent=iv_endpoints_with_data / float(iv_endpoints),
+                visuals=visuals,
+                assessments_with_visuals=assessments_with_visuals,
+                assessments_with_visuals_percent=assessments_with_visuals / float(assessments),
+            )
+            cache_duration = 60 * 60 * 24  # one day
+            cache.set(key, counts, cache_duration)  # cache for one day
+            logging.info('Setting about-page cache')
+        return counts
+
     def get_context_data(self, **kwargs):
         context = super(About, self).get_context_data(**kwargs)
         context['object_list'] = models.ChangeLog.objects.all()[:5]
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
+        context['counts'] = self.get_object_counts()
         return context
 
 

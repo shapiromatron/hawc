@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load percentage %}
+{% load humanize %}
 
 {% block main_content %}
   <div class="row">
@@ -22,6 +23,39 @@
       </p>
     </div>
   </div>
+
+  <div class="row">
+    <div class="span12">
+      <h2>Data in HAWC</h2>
+      <p>
+        The HAWC database is changing daily as users add more data to assessments.
+        Below is a list of the current counts for different types of data captured
+        in the database. Note that in most cases, these data are available in
+        assessments which may not be publicly accessible (yet):
+      </p>
+      <ul>
+        <li>Registered HAWC users: {{counts.users|intcomma}}</li>
+        <li>Assessments (public and private): {{counts.assessments|intcomma}}</li>
+        <li>References imported or found from searches: {{counts.references|intcomma}}</li>
+        <li>Number of tags applied to references: {{counts.tags|intcomma}}</li>
+        <li>Tagged references: {{counts.references_tagged|intcomma}} ({{counts.references_tagged_percent|percentage}})</li>
+        <li>Studies with data extracted: {{counts.studies|intcomma}}</li>
+        <li>Assessments with studies: {{counts.assessments_with_studies|intcomma}} ({{counts.assessments_with_studies_percent|percentage}})</li>
+        <li>Risk of bias scores: {{counts.rob_scores|intcomma}}</li>
+        <li>Studies with risk of bias: {{counts.studies_with_rob|intcomma}} ({{counts.studies_with_rob_percent|percentage}})</li>
+        <li>Animal bioassay endpoints: {{counts.endpoints|intcomma}}</li>
+        <li>Animal bioassay endpoints with data extracted: {{counts.endpoints_with_data|intcomma}} ({{counts.endpoints_with_data_percent|percentage}})</li>
+        <li>Epidemiology outcomes: {{counts.outcomes|intcomma}}</li>
+        <li>Epidemiology results with data: {{counts.results_with_data|intcomma}} ({{counts.results_with_data_percent|percentage}})</li>
+        <li>In vitro endpoints: {{counts.iv_endpoints|intcomma}}</li>
+        <li>In vitro endpoints with data: {{counts.iv_endpoints_with_data|intcomma}} ({{counts.iv_endpoints_with_data_percent|percentage}})</li>
+        <li>Visualizations: {{counts.visuals|intcomma}}</li>
+        <li>Assessments with visuals: {{counts.assessments_with_visuals|intcomma}} ({{counts.assessments_with_visuals_percent|percentage}})</li>
+      </ul>
+      <p><i>Last updated: </i>{{counts.updated}}</p>
+    </div>
+  </div>
+
   <div class="row">
     <div class="span12">
       <h2>Posters and presentations</h2>
