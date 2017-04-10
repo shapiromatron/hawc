@@ -142,7 +142,7 @@ class RISForm(SearchForm):
         if self.instance.id is None:
             self.fields['import_file'].required = True
             self.fields['import_file'].help_text = """Unicode RIS export file
-                ({0} for EndNote library preparation)""".format(
+                ({0} for EndNote RIS library preparation)""".format(
                 addPopupLink(reverse_lazy('lit:ris_export_instructions'), "view instructions"))
         else:
             self.fields.pop('import_file')
@@ -178,16 +178,26 @@ class RISForm(SearchForm):
     def clean_import_file(self):
         fileObj = self.cleaned_data['import_file']
         if fileObj.size > 1024 * 1024 * 10:
-            raise forms.ValidationError(
-                'Input file must be <10 MB')
-        if fileObj.name[-4:] not in (".txt", ".ris", ):
+            raise forms.ValidationError('Input file must be <10 MB')
+
+        if fileObj.name[-4:] not in ('.txt', '.ris', ):
             raise forms.ValidationError(
                 'File must have an ".ris" or ".txt" file-extension')
-        if not ris.RisImporter.file_readable(fileObj):
-            raise forms.ValidationError(
-                'File cannot be successfully loaded. Are you sure this is a '
-                'valid RIS file? If you are, please contact us and we will '
-                'attempt to fix our import to ensure it works as expected.')
+
+        try:
+            readable = ris.RisImporter.file_readable(fileObj)
+        except KeyError as err:
+            raise forms.ValidationError('''
+                Invalid key found: {}. Have you followed the instructions below
+                for RIS file preparation in Endnote? If you have, please contact
+                us and we'll try to fix the issue.'''.format(err.message))
+
+        if not readable:
+            raise forms.ValidationError('''
+                File cannot be successfully loaded. Are you sure this is a
+                valid RIS file?  If you are, please contact us and we'll try to
+                fix the issue.''')
+
         return fileObj
 
     def clean(self):
