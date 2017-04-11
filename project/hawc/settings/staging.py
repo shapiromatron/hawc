@@ -1,8 +1,8 @@
 from .base import *  # noqa
 
-SERVER_ROLE = "staging"
+SERVER_ROLE = 'staging'
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split('|')
 
 SESSION_COOKIE_SECURE = True
 

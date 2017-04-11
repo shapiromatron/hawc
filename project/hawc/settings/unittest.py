@@ -33,7 +33,7 @@ class DisableMigrations(object):
         return True
 
     def __getitem__(self, item):
-        return "notmigrations"
+        return 'notmigrations'
 
 
 MIGRATION_MODULES = DisableMigrations()

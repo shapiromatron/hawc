@@ -3,7 +3,7 @@ from .base import *  # noqa
 
 DEBUG = True
 
-SERVER_ROLE = "dev"
+SERVER_ROLE = 'dev'
 
 INSTALLED_APPS += (
     'debug_toolbar',
