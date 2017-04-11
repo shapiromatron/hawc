@@ -782,7 +782,8 @@ class DataPivotVisualization extends D3Plot {
                     obj.style(property, d._styles[type][property]);
                 }
             },
-            self = this;
+            barHeight = d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
+            lineMidpoint = barHeight * 0.5 + barPadding;
 
         bars_g.selectAll()
                 .data(datarows)
@@ -790,10 +791,9 @@ class DataPivotVisualization extends D3Plot {
                 .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
                 .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
                 .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
-                .attr('height', (d) => this.row_heights[d._dp_index].max -
-                      this.row_heights[d._dp_index].min - barPadding * 2)
+                .attr('height', barHeight)
                 .style('cursor', (d) => (barchart._dpe_key)? 'pointer': 'auto')
-                .on('click', (d) => {if(barchart._dpe_key){self.dpe.render_plottip(barchart, d);}})
+                .on('click', (d) => {if(barchart._dpe_key){this.dpe.render_plottip(barchart, d);}})
                 .each(_.partial(applyStyles, _, 'barchartBar'));
 
         // show error bars or exit early
@@ -806,8 +806,8 @@ class DataPivotVisualization extends D3Plot {
             .enter().append('svg:line')
                 .attr('x1', (d) => x(d[barchart.error_low_field_name]))
                 .attr('x2', (d) => x(d[barchart.error_high_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].mid)
-                .attr('y2', (d) => this.row_heights[d._dp_index].mid)
+                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
+                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
                 .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         // show error-bar tails or exit early
@@ -819,8 +819,8 @@ class DataPivotVisualization extends D3Plot {
             .enter().append('svg:line')
                 .attr('x1', (d) => x(d[barchart.error_low_field_name]))
                 .attr('x2', (d) => x(d[barchart.error_low_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
-                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
                 .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         errorbars_g.selectAll()
@@ -828,8 +828,8 @@ class DataPivotVisualization extends D3Plot {
             .enter().append('svg:line')
                 .attr('x1', (d) => x(d[barchart.error_high_field_name]))
                 .attr('x2', (d) => x(d[barchart.error_high_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].mid - barPadding)
-                .attr('y2', (d) => this.row_heights[d._dp_index].mid + barPadding)
+                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
+                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
                 .each(_.partial(applyStyles, _, 'barchartErrorBar'));
     }
 

@@ -11,7 +11,7 @@ DEBUG = False
 
 # Basic setup
 WSGI_APPLICATION = 'hawc.wsgi.application'
-SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
+SECRET_KEY = 'io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t'
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 TIME_ZONE = 'America/Chicago'
@@ -20,10 +20,10 @@ USE_L10N = True
 USE_TZ = True
 
 ADMINS = []
-_admin_names = os.getenv('DJANGO_ADMIN_NAMES', "")
-_admin_emails = os.getenv('DJANGO_ADMIN_EMAILS', "")
+_admin_names = os.getenv('DJANGO_ADMIN_NAMES', '')
+_admin_emails = os.getenv('DJANGO_ADMIN_EMAILS', '')
 if (len(_admin_names) > 0 and len(_admin_emails) > 0):
-    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
+    ADMINS = list(zip(_admin_names.split('|'), _admin_emails.split('|')))
 MANAGERS = ADMINS
 
 
@@ -37,14 +37,14 @@ TEMPLATES = [
         ],
         'OPTIONS': {
             'context_processors': (
-                "django.contrib.auth.context_processors.auth",
-                "django.template.context_processors.debug",
-                "django.template.context_processors.i18n",
-                "django.template.context_processors.media",
-                "django.template.context_processors.static",
-                "django.template.context_processors.tz",
-                "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.request"
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ),
         }
     },
@@ -164,7 +164,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('portal')
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT')
-STATICFILES_DIRS = os.getenv("DJANGO_STATIC_DIRS", "").split("|")
+STATICFILES_DIRS = os.getenv('DJANGO_STATIC_DIRS', '').split('|')
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -242,12 +242,12 @@ LOGGING = {
 # commit information
 def get_git_commit():
     path = PROJECT_ROOT
-    cmd = "git log -1 --format=%H"
+    cmd = 'git log -1 --format=%H'
     return subprocess.check_output(cmd.split(), cwd=path).strip()
 
 
 GIT_COMMIT = get_git_commit()
-COMMIT_URL = "https://github.com/shapiromatron/hawc/commit/{0}/".format(GIT_COMMIT)
+COMMIT_URL = 'https://github.com/shapiromatron/hawc/commit/{0}/'.format(GIT_COMMIT)
 
 
 # PubMed settings
@@ -266,7 +266,6 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 # Chemspider token details
 CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN', '')
 
-
 # Django rest framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
@@ -274,18 +273,14 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False
 }
 
-
 # Django pagedown settings
-PAGEDOWN_WIDGET_CSS = ('pagedown/demo/browser/demo.css', "css/pagedown.css",)
-
+PAGEDOWN_WIDGET_CSS = ('pagedown/demo/browser/demo.css', 'css/pagedown.css',)
 
 # Django selectable settings
 SELECTABLE_MAX_LIMIT = 10
 
-
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap'
-
 
 # DRF-Extensions header requirement
 REST_FRAMEWORK_EXTENSIONS = {

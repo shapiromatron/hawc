@@ -1,3 +1,3 @@
 from .staging import *  # noqa
 
-SERVER_ROLE = "production"
+SERVER_ROLE = 'production'

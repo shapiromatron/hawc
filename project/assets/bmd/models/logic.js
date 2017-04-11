@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import d3 from 'd3';
 import { deepCopy, toHawcString } from 'shared/utils';
 
 import * as types from 'bmd/constants';
@@ -106,7 +107,9 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
         },
         'GGOF'(logic, model, groups){
             let val = model.output.p_value4;
-
+            if(val === '<0.0001'){
+                val = 0.0001;
+            }
             if (validNumeric(val)){
                 return assertGreaterThan(
                     val,
@@ -117,7 +120,9 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
         },
         'GGOF (Cancer)'(logic, model, groups){
             let val = model.output.p_value4;
-
+            if(val === '<0.0001'){
+                val = 0.0001;
+            }
             if (validNumeric(val)){
                 return assertGreaterThan(
                     val,
