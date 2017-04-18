@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import collections
+import itertools
 import json
 import math
 
@@ -12,9 +13,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from reversion import revisions as reversion
 from scipy import stats
 
-from assessment.models import BaseEndpoint, get_cas_url
+from assessment.models import Assessment, BaseEndpoint, get_cas_url
 from assessment.serializers import AssessmentSerializer
-
+from study.models import Study
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, \
     cleanHTML, tryParseInt
 from utils.models import get_crumbs
@@ -132,6 +133,8 @@ class Experiment(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    COPY_NAME = 'experiments'
+
     def __unicode__(self):
         return self.name
 
@@ -200,6 +203,19 @@ class Experiment(models.Model):
                 .filter(animal_group__experiment__in=ids)
                 .values_list('id', flat=True)
         )
+
+    def copy_across_assessments(self, cw):
+        children = list(self.animal_groups.all())
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        cw[AnimalGroup.COPY_NAME]['parents'] = collections.defaultdict(list)
+        for child in children:
+            child.copy_across_assessments(cw)
+        for child in self.animal_groups.all():
+            child.complete_copy(cw)
 
 
 class AnimalGroup(models.Model):
@@ -297,6 +313,8 @@ class AnimalGroup(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    COPY_NAME = 'animal_groups'
+
     def __unicode__(self):
         return self.name
 
@@ -379,6 +397,32 @@ class AnimalGroup(models.Model):
                 .values_list('id', flat=True)
         )
 
+    def copy_across_assessments(self, cw):
+        children = list(itertools.chain(
+                self.endpoints.all(),
+        ))
+        old_id = self.id
+        parent_ids = [p.id for p in self.parents.all()]
+        self.id = None
+        self.experiment_id = cw[Experiment.COPY_NAME][self.experiment_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        cw[self.COPY_NAME]['parents'][self.id] = parent_ids
+        for child in children:
+            child.copy_across_assessments(cw)
+
+    def complete_copy(self, cw):
+        # copy parent animal group over
+        for old_parent_id in cw[self.COPY_NAME]['parents'][self.id]:
+            parent_id = cw[AnimalGroup.COPY_NAME][old_parent_id]
+            self.parents.add(AnimalGroup.objects.get(pk=parent_id))
+        # only create dosing_regime if it doesn't exist
+        dosing_regime_created = DosingRegime.objects.filter(pk=cw[DosingRegime.COPY_NAME].get(self.dosing_regime_id, None)).exists()
+        if not dosing_regime_created:
+            self.dosing_regime.copy_across_assessments(cw)
+        self.dosing_regime_id = cw[DosingRegime.COPY_NAME][self.dosing_regime_id]
+        self.save()
+
 
 class DosingRegime(models.Model):
 
@@ -459,6 +503,8 @@ class DosingRegime(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    COPY_NAME = 'dose_regime'
+
     def __unicode__(self):
         return u'{0} {1}'.format(self.dosed_animals,
                                  self.get_route_of_exposure_display())
@@ -526,6 +572,16 @@ class DosingRegime(models.Model):
         else:
             return doses
 
+    def copy_across_assessments(self, cw):
+        children = list(self.dose_groups)
+        old_id = self.id
+        self.id = None
+        self.dosed_animals_id = cw[AnimalGroup.COPY_NAME].get(self.dosed_animals_id, None)
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        for child in children:
+            child.copy_across_assessments(cw)
+
 
 class DoseGroup(models.Model):
     objects = managers.DoseGroupManager()
@@ -542,6 +598,8 @@ class DoseGroup(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+
+    COPY_NAME = 'doses'
 
     class Meta:
         ordering = ('dose_units', 'dose_group_id')
@@ -564,6 +622,12 @@ class DoseGroup(models.Model):
 
         return cols
 
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.dose_regime_id = cw[DosingRegime.COPY_NAME][self.dose_regime_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 class Endpoint(BaseEndpoint):
     objects = managers.EndpointManager()
@@ -745,6 +809,8 @@ class Endpoint(BaseEndpoint):
         help_text="Any additional notes related to this endpoint/methodology, not including results")
     additional_fields = models.TextField(
         default="{}")
+
+    COPY_NAME = 'endpoints'
 
     def get_update_url(self):
         return reverse('animal:endpoint_update', args=[self.pk])
@@ -983,6 +1049,35 @@ class Endpoint(BaseEndpoint):
         except ObjectDoesNotExist:
             return None
 
+    def copy_across_assessments(self, cw):
+        children = list(self.groups.all())
+
+        old_id = self.id
+        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+
+        # copy base endpoint
+        base = self.baseendpoint_ptr
+        base.id = None
+        base.assessment_id = new_assessment_id
+        base.save()
+
+        # copy endpoint
+        self.id = None
+        self.baseendpoint_ptr = base
+        self.assessment_id = new_assessment_id
+        self.animal_group_id = cw[AnimalGroup.COPY_NAME][self.animal_group_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+
+        # copy tags
+        for tag in self.effects.through.objects.filter(baseendpoint_id=old_id):
+            tag.id = None
+            tag.baseendpoint_id = self.id
+            tag.save()
+
+        # copy other children
+        for child in children:
+            child.copy_across_assessments(cw)
 
 class ConfidenceIntervalsMixin(object):
     """
@@ -1165,6 +1260,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Statistical significance level")
 
+    COPY_NAME = 'groups'
+
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
 
@@ -1229,6 +1326,12 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser['dose_group_id'] == endpoint['FEL'],
         )
 
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.endpoint_id = cw[Endpoint.COPY_NAME][self.endpoint_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 reversion.register(Experiment)
 reversion.register(AnimalGroup)
