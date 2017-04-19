@@ -135,7 +135,7 @@ class StudiesCopy(forms.Form):
         self.fields['assessment'].queryset = self.fields['assessment']\
             .queryset.model.objects.get_editable_assessments(user, assessment.id)
         self.fields['studies'].queryset = self.fields['studies']\
-            .queryset.filter(assessment_id=assessment.id, epi=True)
+            .queryset.filter(assessment_id=assessment.id, epi_meta=False)
         self.helper = self.setHelper(assessment)
 
     def setHelper(self, assessment):

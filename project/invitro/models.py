@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import itertools
 import json
 
 from django.core.validators import MinValueValidator
@@ -10,6 +11,7 @@ from reversion import revisions as reversion
 
 from assessment.models import BaseEndpoint
 from animal.models import ConfidenceIntervalsMixin
+from study.models import Study
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs, AssessmentRootedTagTree
 
@@ -56,6 +58,8 @@ class IVChemical(models.Model):
         "purity",
     )
 
+    COPY_NAME = 'ivchemicals'
+
     def __unicode__(self):
         return self.name
 
@@ -81,6 +85,13 @@ class IVChemical(models.Model):
             .filter(chemical__in=ids)
             .values_list('id', flat=True)
         )
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 class IVCellType(models.Model):
@@ -132,6 +143,8 @@ class IVCellType(models.Model):
         max_length=128,
         verbose_name="Source of cell cultures")
 
+    COPY_NAME = 'ivcelltypes'
+
     def __unicode__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
@@ -152,6 +165,13 @@ class IVCellType(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 class IVExperiment(models.Model):
@@ -219,6 +239,8 @@ class IVExperiment(models.Model):
         'assessment.DoseUnits',
         related_name='ivexperiments')
 
+    COPY_NAME = 'ivexperiments'
+
     def __unicode__(self):
         return self.name
 
@@ -239,6 +261,17 @@ class IVExperiment(models.Model):
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)
+
+    def copy_across_assessments(self, cw):
+        children = list(self.endpoints.all())
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.cell_type_id = cw[IVCellType.COPY_NAME][self.cell_type_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        for child in children:
+            child.copy_across_assessments(cw)
 
 
 class IVEndpointCategory(AssessmentRootedTagTree):
@@ -267,6 +300,15 @@ class IVEndpointCategory(AssessmentRootedTagTree):
             cat.get_choice_representation()
             for cat in cls.get_assessment_qs(assessment_id)
         ]
+
+    COPY_NAME = 'ivendpoint_category'
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.endpoint_id = cw[IVEndpoint.COPY_NAME][self.endpoint_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 class IVEndpoint(BaseEndpoint):
@@ -407,6 +449,8 @@ class IVEndpoint(BaseEndpoint):
     additional_fields = models.TextField(
         default="{}")
 
+    COPY_NAME = 'ivendpoints'
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -461,6 +505,41 @@ class IVEndpoint(BaseEndpoint):
             "field2": "b",
             "field3": "c",
         }
+
+    def copy_across_assessments(self, cw):
+        children = list(itertools.chain(
+                self.groups.all(),
+                self.benchmarks.all(),
+        ))
+        old_id = self.id
+        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+
+        # copy base endpoint
+        base = self.baseendpoint_ptr
+        base.id = None
+        base.assessment_id = new_assessment_id
+        base.save()
+
+        # copy endpoint
+        self.id = None
+        self.baseendpoint_ptr = base
+        self.assessment_id = new_assessment_id
+
+        self.experiment_id = cw[IVExperiment.COPY_NAME][self.experiment_id]
+        self.chemical_id = cw[IVChemical.COPY_NAME][self.chemical_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+
+        # copy tags
+        for tag in self.effects.through.objects.filter(baseendpoint_id=old_id):
+            tag.id = None
+            tag.baseendpoint_id = self.id
+            tag.save()
+
+        if self.category:
+            self.category.copy_across_assessments(cw)
+        for child in children:
+            child.copy_across_assessments(cw)
 
 
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
@@ -525,12 +604,21 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         default=None,
         choices=OBSERVATION_CHOICES)
 
+    COPY_NAME = 'ivendpoint_groups'
+
     @property
     def difference_control_symbol(self):
         return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
 
     class Meta:
         ordering = ('endpoint', 'dose_group_id')
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.endpoint_id = cw[IVEndpoint.COPY_NAME][self.endpoint_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 class IVBenchmark(models.Model):
@@ -542,6 +630,15 @@ class IVBenchmark(models.Model):
     benchmark = models.CharField(
         max_length=32)
     value = models.FloatField()
+
+    COPY_NAME = 'benchmarks'
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.endpoint_id = cw[IVEndpoint.COPY_NAME][self.endpoint_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 reversion.register(IVChemical)
