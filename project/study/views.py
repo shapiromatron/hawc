@@ -20,6 +20,9 @@ class StudyList(BaseList):
     model = models.Study
 
     def get_queryset(self):
+        perms = self.get_obj_perms()
+        if not perms['edit']:
+            return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment.id)
 
 
