@@ -167,6 +167,7 @@ class Study(Reference):
 
             for child in children:
                 child.copy_across_assessments(cw)
+        return cw
 
     def clean(self):
         pk_exclusion = {}
