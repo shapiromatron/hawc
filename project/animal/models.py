@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import collections
-import itertools
 import json
 import math
 
@@ -398,9 +397,7 @@ class AnimalGroup(models.Model):
         )
 
     def copy_across_assessments(self, cw):
-        children = list(itertools.chain(
-                self.endpoints.all(),
-        ))
+        children = list(self.endpoints.all())
         old_id = self.id
         parent_ids = [p.id for p in self.parents.all()]
         self.id = None
@@ -417,7 +414,9 @@ class AnimalGroup(models.Model):
             parent_id = cw[AnimalGroup.COPY_NAME][old_parent_id]
             self.parents.add(AnimalGroup.objects.get(pk=parent_id))
         # only create dosing_regime if it doesn't exist
-        dosing_regime_created = DosingRegime.objects.filter(pk=cw[DosingRegime.COPY_NAME].get(self.dosing_regime_id, None)).exists()
+        dosing_regime_created = DosingRegime.objects\
+            .filter(pk=cw[DosingRegime.COPY_NAME].get(self.dosing_regime_id, None))\
+            .exists()
         if not dosing_regime_created:
             self.dosing_regime.copy_across_assessments(cw)
         self.dosing_regime_id = cw[DosingRegime.COPY_NAME][self.dosing_regime_id]
