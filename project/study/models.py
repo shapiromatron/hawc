@@ -129,6 +129,8 @@ class Study(Reference):
             cw[Assessment.COPY_NAME][study.assessment_id] = assessment.id
             logging.info("Copying {} to  {}".format(study, assessment))
 
+            study._copy_across_assessment(cw)
+
             # get child-types before changing
             children = []
 
@@ -147,27 +149,31 @@ class Study(Reference):
             if study.epi_meta:
                 children.extend(list(study.meta_protocols.all()))
 
-            # copy reference and identifiers
-            # (except RIS which is assessment-specific)
-            ref = study.reference_ptr
-            idents = ref.identifiers.filter(database__in=[0, 1, 2])\
-                        .values_list('id', flat=True)
-            ref.id = None
-            ref.assessment = assessment
-            ref.save()
-            ref.identifiers.add(*idents)
-
-            # copy study
-            old_id = study.id
-            study.id = None
-            study.reference_ptr = ref
-            study.assessment = assessment
-            study.save()
-            cw[cls.COPY_NAME][old_id] = study.id
-
             for child in children:
                 child.copy_across_assessments(cw)
+
         return cw
+
+    def _copy_across_assessment(self, cw):
+        # copy reference and identifiers
+        # (except RIS which is assessment-specific)
+        ref = self.reference_ptr
+        idents = ref.identifiers.filter(database__in=[0, 1, 2])\
+                    .values_list('id', flat=True)
+        ref.id = None
+        ref.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        ref.save()
+        ref.identifiers.add(*idents)
+
+        # copy study
+        old_id = self.id
+        self.id = None
+        self.reference_ptr = ref
+        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        self.save()
+
+        # save self to crosswalk
+        cw[self.COPY_NAME][old_id] = self.id
 
     def clean(self):
         pk_exclusion = {}
