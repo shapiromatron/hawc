@@ -121,25 +121,28 @@ class Study(Reference):
 
     @classmethod
     @transaction.atomic
-    def copy_across_assessments(cls, studies, assessment):
+    def copy_across_assessment(cls, studies, assessment):
         # copy selected studies from one assessment to another.
         cw = collections.defaultdict(dict)
 
-        # set old assessment to new assessment crosswalk
-        old_assesment_ids = studies.order_by('assessment_id')\
-            .distinct('assessment_id')\
-            .values_list('assessment_id', flat=True)
-        if len(old_assesment_ids) != 1:
-            raise('Studies must come from the same assessment')
-        cw[Assessment.COPY_NAME][old_assesment_ids[0]] = assessment.id
+        # assert all studies come from a single assessment
+        source_assessment = Assessment.objects\
+            .filter(references__in=studies)\
+            .distinct()\
+            .values_list('id', flat=True)
+        if len(source_assessment) != 1:
+            raise ValueError('Studies must come from the same assessment')
+        source_assessment = source_assessment[0]
+        cw[Assessment.COPY_NAME][source_assessment] = assessment.id
 
-        # loop through studies and copy each
         for study in studies:
-            logging.info("Copying {} to  {}".format(study, assessment))
+            logging.info('Copying study {} to assessment {}'
+                         .format(study.id, assessment.id))
 
+            # copy study and references
             study._copy_across_assessment(cw)
 
-            # get child-types before changing
+            # get child-types and copy
             children = []
 
             if study.bioassay:

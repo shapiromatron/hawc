@@ -1,54 +1,39 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
+from django.core.management.base import BaseCommand
 
 from assessment.models import Assessment
-from riskofbias.models import RiskOfBias
+from riskofbias.models import RiskOfBiasDomain, RiskOfBias
 from study.models import Study
 
 
-HELP_TEXT = """Copy animal studies and risk of bias data from assessment 126 to assessment 405. """
+HELP_TEXT = """Clone studies in assessment from source to target."""
 
 
 class Command(BaseCommand):
     help = HELP_TEXT
 
-    def handle(self, *args, **options):
-        # copy animal studies to assessment 405
-        source_assessment = Assessment.objects.get(pk=126)
+    def add_arguments(self, parser):
+        parser.add_argument('source_assessment_id', type=int)
+        parser.add_argument('destination_assessment_id', type=int)
+        parser.add_argument('--copyRoB',
+                            action='store_true',
+                            dest='copyRoB',
+                            default=False,
+                            help='Copy risk of bias as well (default: False)')
+
+    @transaction.atomic
+    def handle(self, source_assessment_id, destination_assessment_id,
+               *args, **options):
+        source_assessment = Assessment.objects.get(pk=source_assessment_id)
+        target_assessment = Assessment.objects.get(pk=destination_assessment_id)
         source_studies = Study.objects.filter(assessment=source_assessment)
-        source_robs = RiskOfBias.objects.filter(study__in=source_studies)
-        target_assessment = Assessment.objects.get(pk=405)
-        crosswalk = Study.copy_across_assessments(source_studies, target_assessment)
 
+        cw = Study.copy_across_assessment(source_studies, target_assessment)
 
-        # copy risk of bias data
-        # copy domains and metrics to assessment
-        first_PM = target_assessment.project_manager.first()
-        for domain in source_assessment.rob_domains.all():
-            metrics = list(domain.metrics.all())  # force evaluation
-            old_domain_id = domain.id
-            domain.id = None
-            domain.name = "{} (copied from {})".format(domain.name, source_assessment)
-            domain.assessment = target_assessment
-            domain.save()
-            crosswalk['domain'][old_domain_id] = domain.id
-            for metric in metrics:
-                old_metric_id = metric.id
-                metric.id = None
-                metric.domain = domain
-                metric.save()
-                crosswalk['metric'][old_metric_id] = metric.id
+        if options['copyRoB']:
 
-        # copy reviews and scores
-        for rob in source_robs:
-            scores = list(rob.scores.all())
-            rob.id = None
-            rob.study_id = crosswalk[Study.COPY_NAME][rob.study_id]
-            # assign author to a project manager if the author isn't a team member of the assessment.
-            if not target_assessment.user_can_edit_object(rob.author):
-                rob.author = first_PM
-            rob.save()
-            for score in scores:
-                score.id = None
-                score.riskofbias_id = rob.id
-                score.metric_id = crosswalk['metric'][score.metric_id]
-                score.save()
+            cw = RiskOfBiasDomain.copy_across_assessment(
+                cw, source_studies, target_assessment)
+
+            cw = RiskOfBias.copy_across_assessment(
+                cw, source_studies, target_assessment)
