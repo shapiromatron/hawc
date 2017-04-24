@@ -9,13 +9,14 @@ from django.core.urlresolvers import reverse
 
 from reversion import revisions as reversion
 
-from assessment.models import BaseEndpoint
+from assessment.models import BaseEndpoint, Assessment
 from animal.models import ConfidenceIntervalsMixin
 from study.models import Study
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs, AssessmentRootedTagTree
 
 from . import managers
+
 
 class IVChemical(models.Model):
     objects = managers.IVChemicalManager()
@@ -508,8 +509,8 @@ class IVEndpoint(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         children = list(itertools.chain(
-                self.groups.all(),
-                self.benchmarks.all(),
+            self.groups.all(),
+            self.benchmarks.all(),
         ))
         old_id = self.id
         new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
