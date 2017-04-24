@@ -125,8 +125,16 @@ class Study(Reference):
         # copy selected studies from one assessment to another.
         cw = collections.defaultdict(dict)
 
+        # set old assessment to new assessment crosswalk
+        old_assesment_ids = studies.order_by('assessment_id')\
+            .distinct('assessment_id')\
+            .values_list('assessment_id', flat=True)
+        if len(old_assesment_ids) != 1:
+            raise('Studies must come from the same assessment')
+        cw[Assessment.COPY_NAME][old_assesment_ids[0]] = assessment.id
+
+        # loop through studies and copy each
         for study in studies:
-            cw[Assessment.COPY_NAME][study.assessment_id] = assessment.id
             logging.info("Copying {} to  {}".format(study, assessment))
 
             study._copy_across_assessment(cw)
