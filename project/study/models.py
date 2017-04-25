@@ -139,9 +139,6 @@ class Study(Reference):
             logging.info('Copying study {} to assessment {}'
                          .format(study.id, assessment.id))
 
-            # copy study and references
-            study._copy_across_assessment(cw)
-
             # get child-types and copy
             children = []
 
@@ -159,6 +156,9 @@ class Study(Reference):
 
             if study.epi_meta:
                 children.extend(list(study.meta_protocols.all()))
+
+            # copy study and references
+            study._copy_across_assessment(cw)
 
             for child in children:
                 child.copy_across_assessments(cw)

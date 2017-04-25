@@ -141,7 +141,7 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        models.Study.copy_across_assessments(
+        models.Study.copy_across_assessment(
             form.cleaned_data['studies'],
             form.cleaned_data['assessment'])
         msg = "Studies copied!"
