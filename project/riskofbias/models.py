@@ -70,8 +70,8 @@ class RiskOfBiasDomain(models.Model):
     @classmethod
     def copy_across_assessment(cls, cw, studies, assessment):
         # Copy domain and metrics across studies as well. If a domain and
-        # metric have identical text in the new assessment as the old,
-        # then don't create new metrics and domains. If the text are not
+        # metric have identical names in the new assessment as the old,
+        # then don't create new metrics and domains. If the names are not
         # identical, then create a new one. Save metric old:new IDs in a
         # crosswalk which is returned.
 
