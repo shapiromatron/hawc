@@ -12,6 +12,7 @@ import {
     StyleLine,
     StyleSymbol,
     StyleText,
+    StyleRectangle,
 } from './Styles';
 import {
    NULL_CASE,
@@ -246,6 +247,7 @@ class DataPivotVisualization extends D3Plot {
                     symbols: StyleSymbol.default_settings,
                     lines: StyleLine.default_settings,
                     texts: StyleText.default_settings,
+                    rectangles: StyleRectangle.default_settings,
                 };
 
                 return self.dp_settings.styles[style_type].filter(
