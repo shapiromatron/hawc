@@ -49,9 +49,12 @@ class TagTreeViz extends D3Plot {
     }
 
     check_svg_fit(value){
-        // it's more than likely that more than 1 node to node path will call this
-        // function at a time, so we check for how many path_lengths, rounded up, the graph extends
-        // past the svg viewBox and set the viewBox.width to the graph width + that amount of path_lengths.
+        // Ensure that the viewBox encapsulates the entire displayed chart.
+        // It's possible multiple nodes may call this function at the same time,
+        // so we check for how many path_lengths, rounded up, the graph extends
+        // past the viewBox and set the viewBox.width to the graph width +
+        // additional path_lengths.
+
         let { x, y, width, height } = this.svg.viewBox.baseVal,
             increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
         width = this.w + this.padding.left + this.padding.right + (this.path_length * increment);
