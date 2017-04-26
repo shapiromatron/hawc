@@ -89,6 +89,9 @@ class MetaProtocol(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
+    def copy_across_assessments(self, cw):
+        raise NotImplementedError()
+
     @staticmethod
     def flat_complete_header_row():
         return (

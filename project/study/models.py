@@ -121,15 +121,25 @@ class Study(Reference):
 
     @classmethod
     @transaction.atomic
-    def copy_across_assessments(cls, studies, assessment):
+    def copy_across_assessment(cls, studies, assessment):
         # copy selected studies from one assessment to another.
         cw = collections.defaultdict(dict)
 
-        for study in studies:
-            cw[Assessment.COPY_NAME][study.assessment_id] = assessment.id
-            logging.info("Copying {} to  {}".format(study, assessment))
+        # assert all studies come from a single assessment
+        source_assessment = Assessment.objects\
+            .filter(references__in=studies)\
+            .distinct()\
+            .values_list('id', flat=True)
+        if len(source_assessment) != 1:
+            raise ValueError('Studies must come from the same assessment')
+        source_assessment = source_assessment[0]
+        cw[Assessment.COPY_NAME][source_assessment] = assessment.id
 
-            # get child-types before changing
+        for study in studies:
+            logging.info('Copying study {} to assessment {}'
+                         .format(study.id, assessment.id))
+
+            # get child-types and copy
             children = []
 
             if study.bioassay:
@@ -147,26 +157,34 @@ class Study(Reference):
             if study.epi_meta:
                 children.extend(list(study.meta_protocols.all()))
 
-            # copy reference and identifiers
-            # (except RIS which is assessment-specific)
-            ref = study.reference_ptr
-            idents = ref.identifiers.filter(database__in=[0, 1, 2])\
-                        .values_list('id', flat=True)
-            ref.id = None
-            ref.assessment = assessment
-            ref.save()
-            ref.identifiers.add(*idents)
-
-            # copy study
-            old_id = study.id
-            study.id = None
-            study.reference_ptr = ref
-            study.assessment = assessment
-            study.save()
-            cw[cls.COPY_NAME][old_id] = study.id
+            # copy study and references
+            study._copy_across_assessment(cw)
 
             for child in children:
                 child.copy_across_assessments(cw)
+
+        return cw
+
+    def _copy_across_assessment(self, cw):
+        # copy reference and identifiers
+        # (except RIS which is assessment-specific)
+        ref = self.reference_ptr
+        idents = ref.identifiers.filter(database__in=[0, 1, 2])\
+                    .values_list('id', flat=True)
+        ref.id = None
+        ref.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        ref.save()
+        ref.identifiers.add(*idents)
+
+        # copy study
+        old_id = self.id
+        self.id = None
+        self.reference_ptr = ref
+        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        self.save()
+
+        # save self to crosswalk
+        cw[self.COPY_NAME][old_id] = self.id
 
     def clean(self):
         pk_exclusion = {}
