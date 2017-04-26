@@ -42,9 +42,20 @@ class TagTreeViz extends D3Plot {
         this.padding = {top:40, right:5, bottom:5, left:100};
         this.w = 1280 - this.padding.left - this.padding.right;
         this.h = 800 - this.padding.top - this.padding.bottom;
+        this.path_length = 180;
         this.minimum_radius = 8;
         this.maximum_radius = 30;
         if(!this.options.build_plot_startup){this.options.build_plot_startup=true;}
+    }
+
+    check_svg_fit(value){
+        // it's more than likely that more than 1 node to node path will call this
+        // function at a time, so we check for how many path_lengths, rounded up, the graph extends
+        // past the svg viewBox and set the viewBox.width to the graph width + that amount of path_lengths.
+        let { x, y, width, height } = this.svg.viewBox.baseVal,
+            increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
+        width = this.w + this.padding.left + this.padding.right + (this.path_length * increment);
+        this.svg.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
     }
 
     draw_visualization(){
@@ -107,7 +118,7 @@ class TagTreeViz extends D3Plot {
             var nodes = tree.nodes(root).reverse();
 
             // Normalize for fixed-depth.
-            nodes.forEach(function(d) { d.y = d.depth * 180; });
+            nodes.forEach(function(d) { d.y = d.depth * self.path_length; });
 
             // Update the nodes…
             var node = vis.selectAll('g.tagnode')
@@ -182,6 +193,7 @@ class TagTreeViz extends D3Plot {
             link.enter().insert('svg:path', 'g')
                 .attr('class', 'tagslink')
                 .attr('d', function(d) {
+                    self.check_svg_fit(source.y0);
                     var o = {x: source.x0, y: source.y0};
                     return diagonal({source: o, target: o});
                 })
@@ -198,6 +210,7 @@ class TagTreeViz extends D3Plot {
             link.exit().transition()
                 .duration(duration)
                 .attr('d', function(d) {
+                    self.check_svg_fit(source.y);
                     var o = {x: source.x, y: source.y};
                     return diagonal({source: o, target: o});
                 })
