@@ -11,6 +11,11 @@ Statistical methods used
 
 3. For calculating percent control relative to the control response (in data-pivot):
     - 95% confidence intervals are calculated using a Fisher Information Matrix, assuming independent normal distributions
+    - This statistic assumes that first dose-group is control, and all other dose-groups are compared to control
+    - Calculation of confidence intervals requires the following:
+        - The endpoint dataset must provide variance measures (i.e. standard deviation or standard error)
+        - The control mean value must not be equal to zero (cannot divide by zero)
+        - The n for each dose-group must be provided, including control
 
 Project management settings
 ===========================

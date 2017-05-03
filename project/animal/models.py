@@ -628,6 +628,7 @@ class DoseGroup(models.Model):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
+
 class Endpoint(BaseEndpoint):
     objects = managers.EndpointManager()
 
@@ -1078,6 +1079,7 @@ class Endpoint(BaseEndpoint):
         for child in children:
             child.copy_across_assessments(cw)
 
+
 class ConfidenceIntervalsMixin(object):
     """
     Mixin class which calculates standard deviation and confidence intervals
@@ -1139,12 +1141,12 @@ class ConfidenceIntervalsMixin(object):
                 sd_2 = eg.get('stdev')
 
                 if mu_1 and mu_2 and mu_1 != 0:
-                    mean = (mu_2-mu_1) / mu_1 * 100.
+                    mean = (mu_2 - mu_1) / mu_1 * 100.
                     if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
                             pow(mu_1, -2) * (
-                                (pow(sd_2, 2)/n_2) +
-                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
+                                (pow(sd_2, 2) / n_2) +
+                                (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1,  2))
                             )
                         )
                         ci = (1.96 * sd) * 100
@@ -1331,6 +1333,7 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         self.endpoint_id = cw[Endpoint.COPY_NAME][self.endpoint_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
 
 reversion.register(Experiment)
 reversion.register(AnimalGroup)
