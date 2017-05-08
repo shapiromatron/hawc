@@ -10,6 +10,7 @@ from reversion import revisions as reversion
 
 from assessment.serializers import AssessmentSerializer
 from epi.models import Criteria, ResultMetric, AdjustmentFactor
+from study.models import Study
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import get_crumbs
 
@@ -71,6 +72,8 @@ class MetaProtocol(models.Model):
                   "of literature review and screening criteria")
     notes = models.TextField(blank=True)
 
+    COPY_NAME = 'meta_protocol'
+
     class Meta:
         ordering = ('name', )
 
@@ -90,7 +93,15 @@ class MetaProtocol(models.Model):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     def copy_across_assessments(self, cw):
-        raise NotImplementedError()
+        children = list(self.results.all())
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        for child in children:
+            child.copy_across_assessments(cw)
+
 
     @staticmethod
     def flat_complete_header_row():
@@ -180,6 +191,8 @@ class MetaResult(models.Model):
         blank=True)
     notes = models.TextField(
         blank=True)
+
+    COPY_NAME = 'meta_result'
 
     class Meta:
         ordering = ('label', )
@@ -349,6 +362,13 @@ class MetaResult(models.Model):
             "studies": studies
         }
 
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.protocol_id = cw[MetaProtocol.COPY_NAME][self.protocol_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+
 
 class SingleResult(models.Model):
     objects = managers.SingleResultManager()
@@ -397,6 +417,8 @@ class SingleResult(models.Model):
         help_text='A 95% CI is written as 0.95.')
     notes = models.TextField(
         blank=True)
+
+    COPY_NAME = 'meta_single_result'
 
     class Meta:
         ordering = ('exposure_name', )
@@ -449,6 +471,22 @@ class SingleResult(models.Model):
             ser['ci_units'],
             ser['notes'],
         )
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        # meta_result might not be in the study getting copied
+        try:
+            self.meta_result_id = cw[MetaResult.COPY_NAME][self.meta_result_id]
+        except KeyError:
+            pass
+        # instance might not be in study being copied.
+        try:
+            self.study_id = cw[Study.COPY_NAME][self.study_id]
+        except KeyError:
+            pass
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 reversion.register(
