@@ -476,11 +476,7 @@ class SingleResult(models.Model):
         old_id = self.id
         self.id = None
         self.meta_result_id = cw[MetaResult.COPY_NAME][self.meta_result_id]
-        # instance.study might not be in studies being copied.
-        try:
-            self.study_id = cw[Study.COPY_NAME][self.study_id]
-        except KeyError:
-            pass
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
