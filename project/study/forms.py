@@ -113,8 +113,6 @@ class AttachmentForm(forms.ModelForm):
 
 
 class StudiesCopy(forms.Form):
-    # TODO: remove study-type restriction
-
     HELP_TEXT = """
     Clone multiple studies and move from one assessment to  another assessment.
     Clones are complete and include most nested data.  Cloned studies do not
