@@ -15,11 +15,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('source_assessment_id', type=int)
         parser.add_argument('destination_assessment_id', type=int)
-        parser.add_argument('--copyRoB',
+        parser.add_argument('--noRiskOfBias',
                             action='store_true',
-                            dest='copyRoB',
+                            dest='noRiskOfBias',
                             default=False,
-                            help='Copy risk of bias as well (default: False)')
+                            help='If flag is added, RoB is not copied')
 
     @transaction.atomic
     def handle(self, source_assessment_id, destination_assessment_id,
@@ -30,7 +30,8 @@ class Command(BaseCommand):
 
         cw = Study.copy_across_assessment(source_studies, target_assessment)
 
-        if options['copyRoB']:
+        copyRoB = not options['noRiskOfBias']
+        if copyRoB:
 
             cw = RiskOfBiasDomain.copy_across_assessment(
                 cw, source_studies, target_assessment)
