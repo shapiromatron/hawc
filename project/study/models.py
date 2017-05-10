@@ -135,6 +135,8 @@ class Study(Reference):
         source_assessment = source_assessment[0]
         cw[Assessment.COPY_NAME][source_assessment] = assessment.id
 
+        # copy studies; flag if any epi-meta studies exist
+        any_epi_meta = False
         for study in studies:
             logging.info('Copying study {} to assessment {}'
                          .format(study.id, assessment.id))
@@ -155,6 +157,7 @@ class Study(Reference):
                     study.ivexperiments.all()))
 
             if study.epi_meta:
+                any_epi_meta = True
                 children.extend(list(study.meta_protocols.all()))
 
             # copy study and references
@@ -162,6 +165,16 @@ class Study(Reference):
 
             for child in children:
                 child.copy_across_assessments(cw)
+
+        # Copy epimeta.SingleResult after copying studies because to ensure
+        # Study clones have already been created.
+        if any_epi_meta:
+            logging.info('Copying epi results')
+            SingleResult = apps.get_model('epimeta', 'SingleResult')
+            results = SingleResult.objects\
+                .filter(meta_result__protocol__study__in=studies)
+            for result in results:
+                result.copy_across_assessments(cw)
 
         return cw
 
