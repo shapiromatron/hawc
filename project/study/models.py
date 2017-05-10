@@ -166,18 +166,12 @@ class Study(Reference):
 
         # epi-meta single_results contain cross-study data, so we need to finish
         # copying studies before copying single results.
-
-        # Not all meta_result.single_results belong to the same study as meta_results,
-        # so single_results belonging to both the study and the study's meta_results
-        # need to be copied
         if studies[0].epi_meta:
             logging.info('Copying epi results')
             SingleResult = apps.get_model('epimeta', 'SingleResult')
-            results = SingleResult.objects.filter(Q(study__assessment=source_assessment) | Q(meta_result__protocol__study__assessment=source_assessment))
-            print(len(results))
+            results = SingleResult.objects.filter(meta_result__protocol__study__in=studies)
             for result in results:
                 result.copy_across_assessments(cw)
-
         return cw
 
     def _copy_across_assessment(self, cw):

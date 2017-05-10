@@ -475,12 +475,8 @@ class SingleResult(models.Model):
     def copy_across_assessments(self, cw):
         old_id = self.id
         self.id = None
-        # meta_result might not be in the study getting copied
-        try:
-            self.meta_result_id = cw[MetaResult.COPY_NAME][self.meta_result_id]
-        except KeyError:
-            pass
-        # instance might not be in study being copied.
+        self.meta_result_id = cw[MetaResult.COPY_NAME][self.meta_result_id]
+        # instance.study might not be in studies being copied.
         try:
             self.study_id = cw[Study.COPY_NAME][self.study_id]
         except KeyError:
