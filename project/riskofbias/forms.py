@@ -42,6 +42,13 @@ class RoBDomainForm(forms.ModelForm):
         helper['description'].wrap(cfl.Field, css_class='html5text span12')
         return helper
 
+    def clean(self):
+        cleaned_data = super(RoBDomainForm, self).clean()
+        if 'name' in self.changed_data and self._meta.model.objects\
+                .filter(assessment=self.instance.assessment,
+                        name=cleaned_data['name']).count() > 0:
+            raise forms.ValidationError('Domain already exists for assessment.')
+
 
 class RoBMetricForm(forms.ModelForm):
     class Meta:

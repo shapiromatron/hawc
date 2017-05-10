@@ -1,7 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Prefetch
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
