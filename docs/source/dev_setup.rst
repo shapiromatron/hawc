@@ -47,18 +47,6 @@ Create a local settings file and update the necessary fields within the settings
 
     cp ./project/hawc/settings/local.example.py ./project/hawc/settings/local.py
 
-Next, update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivate``::
-
-    #!/bin/sh
-    # This hook is sourced after this virtualenv is activated.
-
-    # django environment-variable settings
-    export "DJANGO_SETTINGS_MODULE=hawc.settings.local"
-    export "DJANGO_STATIC_ROOT=$HOME/dev/temp/hawc/static"
-    export "DJANGO_MEDIA_ROOT=$HOME/dev/temp/hawc/media"
-
-    # move to root HAWC path (wherever that is one your computer)
-    cd $HOME/dev/hawc
 
 Windows
 ~~~~~~~~~
@@ -88,16 +76,6 @@ Create a local settings file and update the necessary fields within the settings
 
     copy project\hawc\settings\local.example.py project\hawc\settings\local.py
 
-Next, add these values to the bottom of the ``activate.bat`` file, which should be
-located in ``%VIRTUAL_ENV%\Scripts\activate.bat``::
-
-    :: django environment-variable settings
-    set "DJANGO_SETTINGS_MODULE=hawc.settings.local"
-    set "DJANGO_STATIC_ROOT=%USERPROFILE%\dev\temp\hawc\static"
-    set "DJANGO_MEDIA_ROOT=$HOME\dev\temp\hawc\media"
-
-    :: move to project path (change to correct path)
-    cd %USERPROFILE%\dev\hawc\project"
 
 HAWC setup: Part II
 -------------------
