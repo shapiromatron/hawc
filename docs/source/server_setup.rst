@@ -33,10 +33,9 @@ Required environment variables
 ------------------------------
 
 The following environment variables will need to be set when running HAWC in
-production;
-For linux, you can update your virtual-environment settings in ``$VIRTUAL_ENV/bin/postactivate``::
-For Windows, you can update these values in ``activate.bat`` file, which should be
-located in ``%VIRTUAL_ENV%\Scripts\activate.bat``::
+production.
+ - For linux, you can set these values in ``$VIRTUAL_ENV/bin/postactivate``.
+ - For Windows, you can set these values in ``activate.bat``, which should be located at ``%VIRTUAL_ENV%\Scripts\activate.bat``.
 
 
 Example values are shown for each:
