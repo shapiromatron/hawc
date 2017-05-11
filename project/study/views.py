@@ -10,7 +10,7 @@ from lit.models import Reference
 from mgmt.views import EnsurePreparationStartedMixin
 from utils.views import (MessageMixin, BaseDetail, BaseDelete,
                          BaseUpdate, BaseCreate, BaseList,
-                         GenerateReport, TeamMemberOrHigherMixin)
+                         TeamMemberOrHigherMixin)
 
 from . import models, forms
 
@@ -24,24 +24,6 @@ class StudyList(BaseList):
         if not perms['edit']:
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment.id)
-
-
-class StudyReport(GenerateReport):
-    parent_model = Assessment
-    model = models.Study
-    report_type = 1
-
-    def get_queryset(self):
-        perms = super(StudyReport, self).get_obj_perms()
-        if not perms['edit'] or self.onlyPublished:
-            return self.model.objects.published(self.assessment.id)
-        return self.model.objects.get_qs(self.assessment.id)
-
-    def get_filename(self):
-        return "study.docx"
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):

@@ -31,9 +31,7 @@
 
     <li class="nav-header">Downloads</li>
     <li><a href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a></li>
-    {% if debug %}
-        <li><a href="{% url 'assessment:reports' assessment.pk %}">Download reports</a></li>
-    {% endif %}
+
   {% else %}
     <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an assessment</a>{% endblock %}</li>
   {% endif %}

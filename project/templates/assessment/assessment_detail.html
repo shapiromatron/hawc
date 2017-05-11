@@ -48,10 +48,6 @@
           <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a></li>
           {% endif%}
 
-          {% if debug %}
-          <li><a href="{% url 'assessment:template_list' object.pk %}">Word report templates</a></li>
-          {% endif %}
-
           <!-- data cleanup -->
           {% if assessment.enable_data_extraction or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
           <li class="divider"></li>

@@ -96,9 +96,6 @@ urlpatterns = [
         views.EndpointFullExport.as_view(),
         name='endpoints_export'),
 
-    url(r'^assessment/(?P<pk>\d+)/report/$',
-        views.EndpointReport.as_view(),
-        name='endpoints_report'),
 
     url(r'^api/', include(router.urls, namespace='api')),
 ]

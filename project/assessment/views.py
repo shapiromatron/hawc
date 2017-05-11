@@ -235,25 +235,6 @@ class AssessmentDelete(BaseDelete):
     success_message = 'Assessment deleted.'
 
 
-class AssessmentReports(BaseList):
-    """
-    Download assessment-level Microsoft Word reports.
-    """
-    parent_model = models.Assessment
-    model = models.ReportTemplate
-    template_name = "assessment/assessment_reports.html"
-
-    def get_queryset(self):
-        # Get report-templates associated with no assessment (global) and
-        # those associated with selected assessment
-        return self.model.objects.with_global(self.assessment)
-
-    def get_context_data(self, **kwargs):
-        context = super(AssessmentReports, self).get_context_data(**kwargs)
-        context['report_types'] = self.model.get_by_report_type(self.object_list)
-        return context
-
-
 class AssessmentDownloads(BaseDetail):
     """
     Download assessment-level Microsoft Excel reports
@@ -325,40 +306,6 @@ class AttachmentDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-
-
-# Word Templates
-class ReportTemplateCreate(BaseCreate):
-    success_message = 'Report template created.'
-    parent_model = models.Assessment
-    model = models.ReportTemplate
-    form_class = forms.ReportTemplateForm
-
-
-class ReportTemplateList(BaseList):
-    parent_model = models.Assessment
-    model = models.ReportTemplate
-
-    def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
-
-
-class ReportTemplateDetail(BaseDetail):
-    model = models.ReportTemplate
-
-
-class ReportTemplateUpdate(BaseUpdate):
-    success_message = "Report template updated."
-    model = models.ReportTemplate
-    form_class = forms.ReportTemplateForm
-
-
-class ReportTemplateDelete(BaseDelete):
-    success_message = "Report template deleted."
-    model = models.ReportTemplate
-
-    def get_success_url(self):
-        return reverse_lazy("assessment:template_list", kwargs={"pk": self.assessment.pk})
 
 
 # Endpoint objects

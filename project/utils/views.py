@@ -574,35 +574,6 @@ class BaseEndpointFilterList(BaseList):
         return context
 
 
-class GenerateReport(BaseList):
-    """
-    Generate a docx report given an assessment, data-type, and template.
-    """
-    report_type = None  # required; refer to assessment.ReportTemplate report-type choices
-
-    def get_filename(self):
-        raise NotImplementedError("Requires String return for docx filename")
-
-    def get_context(self, queryset):
-        raise NotImplementedError("Requires dictionary return for mail-merge")
-
-    def get_template(self, request):
-        ReportTemplate = apps.get_model("assessment", "ReportTemplate")
-        try:
-            template_id = tryParseInt(self.request.GET.get('template_id'), -1)
-            return ReportTemplate.objects.get_template(template_id, self.assessment.id, self.report_type)
-        except ObjectDoesNotExist:
-            raise Http404
-
-    def get(self, request, *args, **kwargs):
-        self.onlyPublished = bool(self.request.GET.get('onlyPublished', False))
-        self.object_list = self.get_queryset()
-        template = self.get_template(request)
-        context = self.get_context(self.object_list)
-        filename = self.get_filename()
-        return template.apply_mailmerge(context, filename)
-
-
 class GenerateFixedReport(BaseList):
     """
     Generate a docx report given an assessment, data-type, using method as template.
