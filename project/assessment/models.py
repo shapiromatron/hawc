@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import json
 import os
-from StringIO import StringIO
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -11,7 +10,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
-from mailmerge import MailMerge
 from reversion import revisions as reversion
 
 from utils.models import get_crumbs
