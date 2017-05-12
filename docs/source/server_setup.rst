@@ -65,7 +65,6 @@ Example values are shown for each:
     export "DJANGO_CACHE_SOCK=127.0.0.1:6379:1"
 
     # filesystem settings
-    export "DJANGO_STATIC_DIRS=/path/to/hawc/project/static|/path/to/venv/lib/python2.7/site-packages/django/contrib/admin/static"
     export "LOGS_PATH=/path/to/logs/hawc"
     export "PHANTOMJS_PATH=/path/to/phantomjs"
 

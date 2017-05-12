@@ -39,12 +39,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/endpoint-export/$',
         views.EndpointExport.as_view(),
         name='endpoint_export'),
-    url(r'^assessment/(?P<pk>\d+)/report/$',
-        views.EndpointsReport.as_view(),
-        name='endpoints_report'),
-    url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
-        views.EndpointsFixedReport.as_view(),
-        name='endpoints_fixedreport'),
 
     # Experiment
     url(r'^study/(?P<pk>\d+)/experiment/new/$',

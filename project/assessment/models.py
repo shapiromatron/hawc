@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import json
 import os
-from StringIO import StringIO
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -11,7 +10,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
-from mailmerge import MailMerge
 from reversion import revisions as reversion
 
 from utils.models import get_crumbs
@@ -407,81 +405,9 @@ class ChangeLog(models.Model):
         return reverse('change_log_detail', kwargs={'slug': self.slug})
 
 
-class ReportTemplate(models.Model):
-    objects = managers.ReportTemplateManager()
-
-    REPORT_TYPE_CHOICES = (
-        (0, 'Literature search'),
-        (1, 'Studies and study-quality'),
-        (2, 'Animal bioassay'),
-        (3, 'Epidemiology'),
-        (4, 'Epidemiology meta-analysis/pooled analysis'),
-        (5, 'In vitro'))
-
-    assessment = models.ForeignKey(
-        'assessment.assessment',
-        related_name="templates",
-        blank=True,
-        null=True)
-    description = models.CharField(
-        max_length=256)
-    report_type = models.PositiveSmallIntegerField(
-        choices=REPORT_TYPE_CHOICES)
-    template = models.FileField(
-        upload_to="templates")
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
-
-    def __unicode__(self):
-        return self.description
-
-    def get_absolute_url(self):
-        # show list view; no detail-view
-        return reverse("assessment:template_detail", kwargs={"pk": self.pk})
-
-    def get_assessment(self):
-        return self.assessment
-
-    def get_full_path(self):
-        return os.path.join(settings.MEDIA_ROOT, self.template.name)
-
-    def get_filename(self):
-        return os.path.basename(self.template.name)
-
-    def apply_mailmerge(self, context, filename="example.docx"):
-        # Return a django request response with a docx download.
-        docx = StringIO()
-
-        mailmerge = MailMerge(self.get_full_path())
-        mailmerge.merge(context)
-        mailmerge.write(docx)
-        mailmerge.close()
-
-        # return response
-        docx.seek(0)
-        response = HttpResponse(docx)
-        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return response
-
-    @classmethod
-    def get_by_report_type(cls, queryset):
-        templates = OrderedDict()
-        for typ in cls.REPORT_TYPE_CHOICES:
-            templates[typ[0]] = []
-
-        for obj in queryset:
-            templates[obj.report_type].append(obj)
-
-        return templates
-
-
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(ChangeLog)
-reversion.register(ReportTemplate)

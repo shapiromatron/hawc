@@ -1,9 +1,5 @@
+# web application
 Django==1.10.7
-amqp==1.4.9
-anyjson==0.3.3
-celery==3.1.25
-  billiard==3.3.0.23
-  kombu==3.0.37
 django-crispy-forms==1.6.0
 django-filter==1.0.1
 django-redis==4.3.0
@@ -15,42 +11,40 @@ django-taggit==0.18.0
 django-treebeard==4.1.0
 django-webpack-loader==0.4.1
 djangorestframework==3.5.3
-docutils==0.12
 drf-extensions==0.3.1
+
+# tasks
+celery==3.1.25
+
+# utilities
 jsonschema==2.5.1
 lxml==3.4.4
-pillow==3.1.1
 psycopg2==2.6.1
-pandas==0.19.2
-numexpr==2.6.1
-python-docx==0.8.5
-python-pptx==0.5.7
-pytz==2015.4
 redis==2.10.3
 requests==2.13.0
-RISparser==0.4.1
-six==1.10.0
-scipy==0.19.0
-sqlparse==0.2.2
-unicodecsv==0.13.0
-XlsxWriter==0.7.3
-xlrd==0.9.3
-xlwt==1.0.0
 
-# docx helper-tools
-git+git://github.com/shapiromatron/docx-mailmerge.git@287a0f195cca3da1daf2247d0ad4cda38e281435
-git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
+# computational
+numpy==1.12.1
+pandas==0.19.2
+scipy==0.19.0
+matplotlib==1.4.3  # pin this version due to framework warning
+
+# exports
+XlsxWriter==0.7.3
+python-docx==0.8.5
+python-pptx==0.5.7
+unicodecsv==0.13.0
 
 # bmds
 bmds==0.7.0
 
-# literature tools
+# literature
+RISparser==0.4.1
 litter-getter==0.1.2
 
-# for import scripts
+# notebooks/import scripts
 jupyter==1.0.0
 ipython==4.1.1
 runipy==0.1.5
-numpy==1.12.1
 python-dateutil==2.4.2
 fuzzywuzzy==0.7.0

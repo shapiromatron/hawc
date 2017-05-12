@@ -8,7 +8,6 @@ SERVER_ROLE = 'dev'
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
-    'django_coverage',
 )
 
 MIDDLEWARE_CLASSES += (
@@ -18,10 +17,6 @@ MIDDLEWARE_CLASSES += (
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
-STATICFILES_DIRS += (
-    os.path.join(PROJECT_ROOT, 'project', 'static'),
-)
 
 # use console for email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

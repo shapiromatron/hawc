@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView
 
 from utils.views import (AssessmentPermissionsMixin, MessageMixin, BaseList,
                          BaseCreate, BaseDetail, BaseUpdate, BaseDelete,
-                         GenerateReport, ProjectManagerOrHigherMixin,
+                         ProjectManagerOrHigherMixin,
                          TeamMemberOrHigherMixin)
 from utils.helper import listToUl, tryParseInt
 from assessment.models import Assessment
@@ -474,21 +474,6 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
 
     def get_success_url(self):
         return reverse_lazy('lit:overview', args=[self.assessment.pk])
-
-
-class RefReport(GenerateReport):
-    parent_model = Assessment
-    model = models.Reference
-    report_type = 0
-
-    def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
-
-    def get_filename(self):
-        return "literature.docx"
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)
 
 
 class RefListExtract(BaseList):

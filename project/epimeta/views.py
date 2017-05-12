@@ -5,7 +5,7 @@ from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseList,
                          BaseDelete, BaseDetail, BaseEndpointFilterList,
-                         BaseUpdate, BaseUpdateWithFormset, GenerateReport)
+                         BaseUpdate, BaseUpdateWithFormset)
 
 from . import forms, models, exports
 
@@ -109,24 +109,6 @@ class MetaResultDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.protocol.get_absolute_url()
-
-
-class MetaResultReport(GenerateReport):
-    parent_model = Assessment
-    model = models.MetaResult
-    report_type = 4
-
-    def get_queryset(self):
-        perms = super(MetaResultReport, self).get_obj_perms()
-        if not perms['edit'] or self.onlyPublished:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get_filename(self):
-        return "meta-results.docx"
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(self.assessment, queryset)
 
 
 class MetaResultList(BaseEndpointFilterList):

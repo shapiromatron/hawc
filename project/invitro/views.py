@@ -5,7 +5,7 @@ from assessment.models import Assessment
 from study.models import Study
 from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
                          BaseDetail, BaseList, BaseEndpointFilterList,
-                         BaseUpdate, BaseUpdateWithFormset, GenerateReport,
+                         BaseUpdate, BaseUpdateWithFormset,
                          ProjectManagerOrHigherMixin)
 from mgmt.views import EnsureExtractionStartedMixin
 
@@ -217,21 +217,3 @@ class EndpointFullExport(BaseList):
             export_format=export_format,
             filename='{}-invitro'.format(self.assessment))
         return exporter.build_response()
-
-
-class EndpointReport(GenerateReport):
-    parent_model = Assessment
-    model = models.IVEndpoint
-    report_type = 5
-
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms['edit'] or self.onlyPublished:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get_filename(self):
-        return "in-vitro.docx"
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(queryset)

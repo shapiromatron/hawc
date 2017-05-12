@@ -202,23 +202,6 @@ class EffectTagForm(forms.ModelForm):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
 
-class ReportTemplateForm(forms.ModelForm):
-
-    class Meta:
-        model = models.ReportTemplate
-        exclude = ('assessment', )
-
-    def __init__(self, *args, **kwargs):
-        parent = kwargs.pop('parent', None)
-        super(ReportTemplateForm, self).__init__(*args, **kwargs)
-
-        for fld in ('description', 'report_type'):
-            self.fields[fld].widget.attrs['class'] = 'span12'
-
-        if parent:
-            self.instance.assessment = parent
-
-
 class AssessmentEmailManagersForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=PagedownWidget())

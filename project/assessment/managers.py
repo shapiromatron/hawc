@@ -112,21 +112,3 @@ class EffectTagManager(BaseManager):
 
 class BaseEndpointManager(BaseManager):
     assessment_relation = 'assessment'
-
-
-class ReportTemplateManager(BaseManager):
-    assessment_relation = 'assessment'
-
-    def with_global(self, assessment_id):
-        return self.filter(Q(assessment=None) | Q(assessment=assessment_id))
-
-    def get_template(self, template_id, assessment_id, report_type):
-        # Return a template object if one exists which matches the specified
-        # criteria, else throw an ObjectDoesNotExist error
-        qs = self.filter(id=template_id, report_type=report_type)\
-                .filter(Q(assessment=assessment_id) | Q(assessment=None))
-
-        if qs.count() == 1:
-            return qs[0]
-        else:
-            raise models.ObjectDoesNotExist()

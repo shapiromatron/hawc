@@ -32,9 +32,6 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/delete/$',
         views.AssessmentDelete.as_view(),
         name='delete'),
-    url(r'^(?P<pk>\d+)/reports/$',
-        views.AssessmentReports.as_view(),
-        name='reports'),
     url(r'^(?P<pk>\d+)/downloads/$',
         views.AssessmentDownloads.as_view(),
         name='downloads'),
@@ -55,23 +52,6 @@ urlpatterns = [
     url(r'^attachment/(?P<pk>\d+)/delete/$',
         views.AttachmentDelete.as_view(),
         name='attachment_delete'),
-
-    # report-template objects
-    url(r'^(?P<pk>\d+)/templates/$',
-        views.ReportTemplateList.as_view(),
-        name='template_list'),
-    url(r'^(?P<pk>\d+)/templates/create/$',
-        views.ReportTemplateCreate.as_view(),
-        name='template_create'),
-    url(r'^templates/(?P<pk>\d+)/$',
-        views.ReportTemplateDetail.as_view(),
-        name='template_detail'),
-    url(r'^templates/(?P<pk>\d+)/edit/$',
-        views.ReportTemplateUpdate.as_view(),
-        name='template_update'),
-    url(r'^templates/(?P<pk>\d+)/delete/$',
-        views.ReportTemplateDelete.as_view(),
-        name='template_delete'),
 
     # species
     url(r'^assessment/(?P<pk>\d+)/species/create/$',

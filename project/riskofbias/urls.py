@@ -32,9 +32,6 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/complete-export/$',
         views.StudyRoBCompleteExport.as_view(),
         name='complete_export'),
-    url(r'^assessment/(?P<pk>\d+)/fixed-report/$',
-        views.RoBFixedReport.as_view(),
-        name='rob_fixedreport'),
 
     # modify domains
     url(r'^assessment/(?P<pk>\d+)/domain/create/$',

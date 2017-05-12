@@ -16,8 +16,6 @@ from rest_framework.renderers import JSONRenderer
 import unicodecsv
 import xlsxwriter
 
-from docxUtils.reports import DOCXReport
-
 
 def HAWCtoDateString(datetime):
     """
@@ -301,9 +299,3 @@ class TSVFileBuilder(FlatFile):
         response = HttpResponse(self.output, content_type='text/tab-separated-values')
         response['Content-Disposition'] = 'attachment; filename="{}.tsv"'.format(self.filename)
         return response
-
-
-class HAWCDOCXReport(DOCXReport):
-
-    def get_template_fn(self):
-        return "base.docx"
