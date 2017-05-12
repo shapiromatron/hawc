@@ -1,18 +1,15 @@
 -r base.txt
-selenium==2.46.0
-coverage==3.7.1
+
+# django development
 django-debug-toolbar==1.6
 django-extensions==1.7.5
 
-# for better-shell (optional; doesn't work on windows)
-bpython==0.16
+# tests
+selenium==2.46.0
 
-# for docs
+# docs
 watchdog==0.8.3
 Sphinx==1.4.6
 
-# for django_extensions.graph_models
-pyparsing==2.0.3
+# django_extensions.graph_models
 pydot==1.0.2
-curtsies==0.2.6
-greenlet==0.4.9
