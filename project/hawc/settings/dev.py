@@ -19,10 +19,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-STATICFILES_DIRS += (
-    os.path.join(PROJECT_ROOT, 'project', 'static'),
-)
-
 # use console for email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
