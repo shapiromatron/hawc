@@ -5,15 +5,18 @@ Below you will find basic setup and deployment instructions for the Health
 Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
-- Python 2.7
-- `Node.js >= 4.0 <https://nodejs.org/>`_
-- `Npm.js >= 3.0 <https://npmjs.org/>`_
-- `pip >= 8.1 <http://www.pip-installer.org/>`_
-- `virtualenv >= 1.9 <http://www.virtualenv.org/>`_
-- `virtualenvwrapper >= 3.5 <http://pypi.python.org/pypi/virtualenvwrapper>`_ (mac/linux)
-- `virtualenvwrapper-win >= 1.2.1 <https://pypi.python.org/pypi/virtualenvwrapper-win>`_. (windows)
-- Postgres >= 9.3
-- git >= 1.7
+- `Git`_
+- `Node.js`_
+- `Yarn`_
+- `PostgreSQL`_ ≥ 9.4 (uses `JSONB`_)
+- `Python`_ 2.7 (not Python 3... yet)
+
+.. _`Git`: https://git-scm.com/
+.. _`Python`: https://www.python.org/
+.. _`Node.js`: https://nodejs.org
+.. _`Yarn`: https://yarnpkg.com/
+.. _`PostgreSQL`: https://www.postgresql.org/
+.. _`JSONB`: https://www.postgresql.org/docs/current/static/datatype-json.html
 
 
 .. warning::
@@ -35,81 +38,98 @@ own adventure below.
 Mac/Linux
 ~~~~~~~~~
 
-To setup your local environment you should create a virtualenv and install the
-necessary requirements::
+.. code-block:: bash
 
-    mkvirtualenv hawc
+    # clone repository; we'll put in ~/dev but you can put anywhere
+    mkdir -p ~/dev
+    cd ~/dev
     git clone https://github.com/shapiromatron/hawc.git
-    cd hawc
+
+    # create virtual environment and install requirements
+    cd ~/dev/hawc
+    python -m venv venv
+    source ./venv/bin/activate
     $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
 
-Create a local settings file and update the necessary fields within the settings::
-
+    # create a local settings file
     cp ./project/hawc/settings/local.example.py ./project/hawc/settings/local.py
 
+Update the settings file with any changes you'd like to make for your local
+development environment.
 
 Windows
-~~~~~~~~~
+~~~~~~~
 
 To setup your local environment you should create a virtualenv and install the
-necessary requirements::
+necessary requirements:
 
-    mkvirtualenv hawc
+.. code-block:: batch
+
+    :: clone repository; we'll put in ~/dev but you can put anywhere
+    mkdir ~/dev
+    cd ~/dev
     git clone https://github.com/shapiromatron/hawc.git
 
-To install python packages, ensure you have the Python C++ compiler, available
-from `Microsoft <https://www.microsoft.com/en-us/download/details.aspx?id=44266>`_. Also
-ensure that your version of pip allows for installation of wheels (v8 or higher).
-Install numpy and scipy using precompiled binaries, available for download from
-`Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ (they're difficult to build on Windows),
-by using these commands (adapted to the filename/location on your computer)::
+    :: create virtual environment and install requirements
+    cd ~/dev/hawc
+    python -m venv venv
+    call ./venv/bin/activate.bat
+    $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
+
+    :: create a local settings file
+    copy ./project/hawc/settings/local.example.py ./project/hawc/settings/local.py
+
+The ``pip install`` call may fail with some packages on Windows if you don't have
+the `Python Microsoft C++ compiler`_ available. You can use prepackaged
+binaries available from `Christoph Gohlke`_ using these commands after
+downloading the wheels from the website:
+
+.. _`Python Microsoft C++ compiler`: https://www.microsoft.com/en-us/download/details.aspx?id=44266
+.. _`Christoph Gohlke`: http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+.. code-block:: batch
 
     pip install "C:\Users\username\Desktop\numpy-version.whl"
     pip install "C:\Users\username\Desktop\scipy-version.whl"
 
-Then, you should be able to install remaining packages via pip::
-
-    cd hawc
-    pip install -r requirements/windows/dev.txt
-
-Create a local settings file and update the necessary fields within the settings::
-
-    copy project\hawc\settings\local.example.py project\hawc\settings\local.py
-
+Update the settings file with any changes you'd like to make for your local
+development environment.
 
 HAWC setup: Part II
 -------------------
 
-start the virtual environment::
+You'll need to run both the python webserver and the node webserver to develop
+HAWC; here are instructions how how to do both.
 
-    deactivate
-    workon hawc
+To run the python webserver:
 
-Create a PostgreSQL database and run the initial syncdb/migrate::
+.. code-block:: bash
 
+    # create a PostgreSQL database
     createdb -E UTF-8 hawc
 
-Next, we'll run a few management command and apply migrations::
-
-    cd project
+    # active python virtual environment and sync database schema with code
+    cd ~/dev/hawc/project
+    source ../venv/bin/activate
     python manage.py build_d3_styles
     python manage.py migrate
     python manage.py createcachetable
 
-You should now be able to run the python backend development server::
+    # run development webserver
+    python manage.py runserver
 
-    cd ./project && python manage.py runserver
+In a new terminal, run the node development webserver for javascript:
 
-Next, you'll need to setup the front-end web bundler. Make sure the ``npm``
-command is accessible from your virtual environment. In the ``/project`` path,
-run the following command, which will install all javascript packages for our
-development environment::
+.. code-block:: bash
 
-    cd ./project && npm install --save-dev
+    # navigate to project folder
+    cd ~/dev/hawc/project
 
-After installing dependencies, run the javascript bundler in a second terminal::
+    # install javascript dependencies
+    yarn install
 
-    cd ./project && npm start
+    # start node hot-reloading server
+    npm start
 
 If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
@@ -128,11 +148,12 @@ You can modify the tmux environment by creating a local copy::
 
     cp bin/dev.sh bin/dev.local.sh
 
+.. _`tmux`: https://tmux.github.io/
 
 Importing a database export:
 ----------------------------
 
-To load a database export from the `assessment_db_dump` management command,
+To load a database export from the ``assessment_db_dump`` management command,
 use the following arguments, if Postgres is available from the command-line::
 
     dropdb hawc         # if database already exists
