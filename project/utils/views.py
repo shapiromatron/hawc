@@ -572,36 +572,3 @@ class BaseEndpointFilterList(BaseList):
         context['list_json'] = self.model.get_qs_json(
             context['object_list'], json_encode=True)
         return context
-
-
-class GenerateFixedReport(BaseList):
-    """
-    Generate a docx report given an assessment, data-type, using method as template.
-    """
-    ReportClass = None  # required; class used to generate report
-
-    def get_context(self, queryset):
-        raise NotImplementedError("Requires report-context object")
-
-    def get_filename(self):
-        raise NotImplementedError("Requires dictionary return for mail-merge")
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        context = self.get_context(self.object_list)
-        filename = self.get_filename()
-        root_path = os.path.join(settings.PROJECT_PATH, 'templates', 'hawc')
-        report = self.ReportClass(root_path, context)
-        try:
-            task = self.getResponse.delay(self, report, filename)
-            response = task.get(timeout=120)
-        except celery.exceptions.TimeoutError:
-            response = HttpResponseServerError("<p>An error in processing occurred - report not generated.</p>")
-        return response
-
-    @celery.shared_task
-    def getResponse(self, report, filename):
-        response = HttpResponse(report.build_report())
-        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return response

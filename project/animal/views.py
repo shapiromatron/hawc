@@ -14,10 +14,10 @@ from mgmt.views import EnsureExtractionStartedMixin
 from utils.views import (AssessmentPermissionsMixin, BaseCreate,
                          BaseCreateWithFormset, BaseDelete, BaseDetail,
                          BaseEndpointFilterList, BaseList, BaseUpdate,
-                         BaseUpdateWithFormset, GenerateFixedReport,
-                         MessageMixin, CopyAsNewSelectorMixin)
+                         BaseUpdateWithFormset, MessageMixin,
+                         CopyAsNewSelectorMixin)
 
-from . import forms, models, exports, reports
+from . import forms, models, exports
 
 
 # Experiment Views
@@ -374,24 +374,6 @@ class EndpointDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.animal_group.get_absolute_url()
-
-
-class EndpointsFixedReport(GenerateFixedReport):
-    parent_model = Assessment
-    model = models.Endpoint
-    ReportClass = reports.EndpointDOCXReport
-
-    def get_queryset(self):
-        perms = super(EndpointsFixedReport, self).get_obj_perms()
-        if not perms['edit']:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get_filename(self):
-        return "animal-bioassay.docx"
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(self.assessment, queryset)
 
 
 class FullExport(BaseList):

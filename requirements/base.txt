@@ -37,9 +37,6 @@ XlsxWriter==0.7.3
 xlrd==0.9.3
 xlwt==1.0.0
 
-# docx helper-tools
-git+git://github.com/shapiromatron/docxUtils@b3b68a27d95e28d9f0214d86f4f1b88ccdc5bad8
-
 # bmds
 bmds==0.7.0
 

@@ -5,13 +5,13 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
 from assessment.models import Assessment
-from riskofbias import exports, reports
+from riskofbias import exports
 from study.models import Study
 from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
-                         GenerateFixedReport, MessageMixin,
-                         TeamMemberOrHigherMixin, ProjectManagerOrHigherMixin)
+                         MessageMixin, TeamMemberOrHigherMixin,
+                         ProjectManagerOrHigherMixin)
 
 from . import models, forms
 
@@ -223,24 +223,6 @@ class RoBMetricDelete(BaseDelete):
 
 
 # Risk of bias views for study
-class RoBFixedReport(GenerateFixedReport):
-    parent_model = Assessment
-    model = Study
-    ReportClass = reports.RoBDOCXReport
-
-    def get_queryset(self):
-        perms = super(RoBFixedReport, self).get_obj_perms()
-        if not perms['edit']:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get_filename(self):
-        return 'riskofbias.docx'
-
-    def get_context(self, queryset):
-        return self.model.get_docx_template_context(self.assessment, queryset)
-
-
 class StudyRoBExport(StudyList):
     """
     Full XLS data export for the risk of bias.
