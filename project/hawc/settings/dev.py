@@ -8,7 +8,6 @@ SERVER_ROLE = 'dev'
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
-    'django_coverage',
 )
 
 MIDDLEWARE_CLASSES += (
