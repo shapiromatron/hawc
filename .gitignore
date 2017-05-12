@@ -5,6 +5,7 @@ project/hawc/settings/local.py
 project/static/css/hawc_d3_aggregated.css
 docs/build/*
 project/celerybeat*
+venv/
 
 public/static/
 public/media/

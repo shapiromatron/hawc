@@ -33,14 +33,18 @@ Required environment variables
 ------------------------------
 
 The following environment variables will need to be set when running HAWC in
-production; example values are shown for each:
+production.
+ - For linux, you can set these values in ``$VIRTUAL_ENV/bin/activate``.
+ - For Windows, you can set these values in ``activate.bat``, which should be located at ``%VIRTUAL_ENV%\Scripts\activate.bat``.
+
+
+Example values are shown for each:
 
 .. code-block:: bash
 
     #!/bin/bash
 
     # hawc settings
-    export "DJANGO_SETTINGS_MODULE=hawc.settings.production"
     export "DJANGO_ADMIN_NAMES=Johnny Appleseed|Tommy Appleseed"
     export "DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com"
     export "DJANGO_ALLOWED_HOSTS=hawc.mydomain.org|hawc.mydomain.com"
@@ -61,8 +65,6 @@ production; example values are shown for each:
     export "DJANGO_CACHE_SOCK=127.0.0.1:6379:1"
 
     # filesystem settings
-    export "DJANGO_MEDIA_ROOT=/path/to/public/media"
-    export "DJANGO_STATIC_ROOT=/path/to/public/static"
     export "DJANGO_STATIC_DIRS=/path/to/hawc/project/static|/path/to/venv/lib/python2.7/site-packages/django/contrib/admin/static"
     export "LOGS_PATH=/path/to/logs/hawc"
     export "PHANTOMJS_PATH=/path/to/phantomjs"

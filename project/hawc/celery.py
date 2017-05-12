@@ -1,11 +1,13 @@
 from __future__ import absolute_import
 
+import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 
 from django.conf import settings
 
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hawc.settings.local')
 logger = get_task_logger(__name__)
 app = Celery('hawc')
 
