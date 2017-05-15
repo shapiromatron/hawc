@@ -27,7 +27,6 @@ requests==2.13.0
 numpy==1.12.1
 pandas==0.19.2
 scipy==0.19.0
-matplotlib==1.4.3  # pin this version due to framework warning
 
 # exports
 XlsxWriter==0.7.3
@@ -36,10 +35,10 @@ python-pptx==0.5.7
 unicodecsv==0.13.0
 
 # bmds
-bmds==0.7.0
+bmds==0.8.0
 
 # literature
-RISparser==0.4.1
+git+https://github.com/JoshAddington/RISparser.git
 litter-getter==0.1.2
 
 # notebooks/import scripts

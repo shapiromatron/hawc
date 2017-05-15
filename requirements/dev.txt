@@ -12,4 +12,4 @@ watchdog==0.8.3
 Sphinx==1.4.6
 
 # django_extensions.graph_models
-pydot==1.0.2
+pydot==1.2.3
