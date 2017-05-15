@@ -31,11 +31,11 @@ class RoBDomainForm(forms.ModelForm):
                                   args=[self.instance.assessment.pk])
         }
         if self.instance.id:
-            inputs['legend_text'] = u'Update risk of bias domain'
-            inputs['help_text'] = u'Update an existing domain.'
+            inputs['legend_text'] = 'Update risk of bias domain'
+            inputs['help_text'] = 'Update an existing domain.'
         else:
-            inputs['legend_text'] = u'Create new risk of bias domain'
-            inputs['help_text'] = u'Create a new risk of bias domain.'
+            inputs['legend_text'] = 'Create new risk of bias domain'
+            inputs['help_text'] = 'Create a new risk of bias domain.'
 
         helper = BaseFormHelper(self, **inputs)
         helper['name'].wrap(cfl.Field, css_class='span6')
@@ -68,11 +68,11 @@ class RoBMetricForm(forms.ModelForm):
                                   args=[self.instance.domain.assessment.pk])
         }
         if self.instance.id:
-            inputs['legend_text'] = u'Update risk of bias metric'
-            inputs['help_text'] = u'Update an existing metric.'
+            inputs['legend_text'] = 'Update risk of bias metric'
+            inputs['help_text'] = 'Update an existing metric.'
         else:
-            inputs['legend_text'] = u'Create new risk of bias metric'
-            inputs['help_text'] = u'Create a new risk of bias metric.'
+            inputs['legend_text'] = 'Create new risk of bias metric'
+            inputs['help_text'] = 'Create a new risk of bias metric.'
 
         helper = BaseFormHelper(self, **inputs)
         helper['metric'].wrap(cfl.Field, css_class='span12')
@@ -245,8 +245,8 @@ class RiskOfBiasCopyForm(forms.Form):
 
     def setHelper(self):
         inputs = {
-            'legend_text': u'Copy risk of bias approach from existing assessments',  # noqa
-            'help_text': u'Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.',  # noqa
+            'legend_text': 'Copy risk of bias approach from existing assessments',  # noqa
+            'help_text': 'Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.',  # noqa
             'cancel_url': reverse(
                 'riskofbias:arob_detail', args=[self.assessment.id])
         }

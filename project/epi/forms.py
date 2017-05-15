@@ -19,9 +19,9 @@ from . import models, lookups
 
 class CriteriaForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new study criteria"
+    CREATE_LEGEND = "Create new study criteria"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a epidemiology study criteria. Study criteria can be applied to
         study populations as inclusion criteria, exclusion criteria, or
         confounding criteria. They are assessment-specific. Please take care
@@ -38,7 +38,7 @@ class CriteriaForm(forms.ModelForm):
             lookup_class=lookups.CriteriaLookup,
             allow_new=True)
         self.instance.assessment = assessment
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.update_query_parameters(
             {'related': self.instance.assessment.id})
@@ -60,7 +60,7 @@ class CriteriaForm(forms.ModelForm):
         return self.cleaned_data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -81,15 +81,15 @@ class CriteriaForm(forms.ModelForm):
 
 class StudyPopulationForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new study-population"
+    CREATE_LEGEND = "Create new study-population"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new study population. Each study-population is a
         associated with an epidemiology study. There may be
         multiple study populations with a single study,
         though this is typically unlikely."""
 
-    UPDATE_HELP_TEXT = u"Update an existing study-population."
+    UPDATE_HELP_TEXT = "Update an existing study-population."
 
     CRITERION_FIELDS = [
         "inclusion_criteria",
@@ -163,7 +163,7 @@ class StudyPopulationForm(forms.ModelForm):
         return instance
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.CRITERION_FIELDS:
@@ -175,7 +175,7 @@ class StudyPopulationForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text":   self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url()
             }
@@ -210,9 +210,9 @@ class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
 
 class AdjustmentFactorForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new adjustment factor"
+    CREATE_LEGEND = "Create new adjustment factor"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new adjustment factor. Adjustment factors can be applied to
         outcomes as applied or considered factors.
         They are assessment-specific.
@@ -229,7 +229,7 @@ class AdjustmentFactorForm(forms.ModelForm):
             lookup_class=lookups.AdjustmentFactorLookup,
             allow_new=True)
         self.instance.assessment = assessment
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.update_query_parameters(
             {'related': self.instance.assessment.id})
@@ -251,7 +251,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         return self.cleaned_data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -296,7 +296,7 @@ class ExposureForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["metric_units"]:
@@ -309,13 +309,13 @@ class ExposureForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new exposure",
+                "legend_text": "Create new exposure",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
@@ -388,7 +388,7 @@ class OutcomeForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
@@ -400,13 +400,13 @@ class OutcomeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new outcome",
+                "legend_text": "Create new outcome",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
@@ -535,7 +535,7 @@ class OutcomeFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'
@@ -643,7 +643,7 @@ class ComparisonSet(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -656,13 +656,13 @@ class ComparisonSet(forms.ModelForm):
             else:
                 url = self.instance.study_population.get_absolute_url()
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": url
             }
         else:
             inputs = {
-                "legend_text": u"Create new comparison set",
+                "legend_text": "Create new comparison set",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.parent.get_absolute_url()
             }
@@ -698,7 +698,7 @@ class SingleGroupForm(GroupForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -706,7 +706,7 @@ class SingleGroupForm(GroupForm):
                 widget.attrs['rows'] = 3
 
         inputs = {
-            "legend_text": u"Update {}".format(self.instance),
+            "legend_text": "Update {}".format(self.instance),
             "help_text": self.HELP_TEXT_UPDATE,
             "cancel_url": self.instance.get_absolute_url()
         }
@@ -725,7 +725,7 @@ class BaseGroupFormset(BaseModelFormSet):
         super(BaseGroupFormset, self).clean()
 
         # check that there is at least one exposure-group
-        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        count = len([f for f in self.forms if f.is_valid() and f.clean()])
         if count < 1:
             raise forms.ValidationError("At least one group is required.")
 
@@ -847,7 +847,7 @@ class ResultForm(forms.ModelForm):
         return instance
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.ADJUSTMENT_FIELDS:
@@ -859,13 +859,13 @@ class ResultForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new set of results",
+                "legend_text": "Create new set of results",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.outcome.get_absolute_url()
             }
@@ -922,7 +922,7 @@ class GroupResultForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld == "group":
                 widget.attrs['class'] = "groupField"
@@ -954,7 +954,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         super(BaseGroupResultFormset, self).clean()
 
         # check that there is at least one result-group
-        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        count = len([f for f in self.forms if f.is_valid() and f.clean()])
         if count < 1:
             raise forms.ValidationError("At least one group is required.")
 

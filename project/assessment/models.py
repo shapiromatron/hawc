@@ -21,7 +21,7 @@ from . import managers
 
 def get_cas_url(cas):
     if cas:
-        return u"{}?cas={}".format(reverse('assessment:cas_details'), urlquote(cas))
+        return "{}?cas={}".format(reverse('assessment:cas_details'), urlquote(cas))
     else:
         return None
 

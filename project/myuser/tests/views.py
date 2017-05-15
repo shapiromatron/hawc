@@ -20,13 +20,13 @@ class UserCreationTests(TestCase):
             'accept_license': ''
         })
         self.assertFormError(
-            response, 'form', 'email', u'Enter a valid email address.')
+            response, 'form', 'email', 'Enter a valid email address.')
         self.assertFormError(
             response, 'form', 'accept_license',
-            u'License must be accepted in order to create an account.')
+            'License must be accepted in order to create an account.')
         self.assertFormError(
             response, 'form', 'password1',
-            u'Password must be at least eight characters in length, at least one special character, and at least one digit.')
+            'Password must be at least eight characters in length, at least one special character, and at least one digit.')
 
     def test_password_match(self):
         # password-match check
@@ -42,7 +42,7 @@ class UserCreationTests(TestCase):
         })
         self.assertFormError(
             response, 'form', 'password2',
-            u"Passwords don't match")
+            "Passwords don't match")
 
     def test_duplicate_email(self):
         # confirm that you can't create two accounts with the same email
@@ -65,7 +65,7 @@ class UserCreationTests(TestCase):
         response = c2.post(reverse(view), form_dict)
         self.assertFormError(
             response, 'form', 'email',
-            u"HAWC user with this email already exists.")
+            "HAWC user with this email already exists.")
 
     def test_long_email_success(self):
         # confirm you can use a long email address, 200+characters

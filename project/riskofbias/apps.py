@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.apps import AppConfig
 
@@ -8,4 +8,4 @@ class RiskOfBiasConfig(AppConfig):
     verbose_name = 'Risk of Bias'
 
     def ready(self):
-        import signals  # noqa
+        from . import signals  # noqa

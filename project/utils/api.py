@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import list_route
@@ -23,7 +23,7 @@ class BulkIdFilter(InAssessmentFilter):
     def filter_queryset(self, request, queryset, view):
         queryset = super(BulkIdFilter, self).filter_queryset(request, queryset, view)
         ids = request.query_params.get('ids')\
-            if (request.query_params.get('ids') is not u'')\
+            if (request.query_params.get('ids') is not '')\
             else None
         try:
             ids = ids.split(',')

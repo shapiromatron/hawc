@@ -235,9 +235,9 @@ class StudyPopulation(models.Model):
     def flat_complete_data_row(ser):
 
         def getCriteriaList(lst, filt):
-            return u'|'.join([
+            return '|'.join([
                 d['description'] for d in
-                filter(lambda (d): d['criteria_type'] == filt, lst)
+                [d for d in lst if d['criteria_type'] == filt]
             ])
 
         return (
@@ -418,7 +418,7 @@ class Outcome(BaseEndpoint):
             ser['id'],
             ser['url'],
             ser['name'],
-            '|'.join([unicode(d['name']) for d in ser['effects']]),
+            '|'.join([str(d['name']) for d in ser['effects']]),
             ser['system'],
             ser['effect'],
             ser['effect_subtype'],
@@ -666,7 +666,7 @@ class Group(models.Model):
             ser['numeric'],
             ser['comparative_name'],
             ser['sex'],
-            u"|".join([d["name"] for d in ser['ethnicities']]),
+            "|".join([d["name"] for d in ser['ethnicities']]),
             ser['eligible_n'],
             ser['invited_n'],
             ser['participant_n'],
@@ -1150,7 +1150,7 @@ class Result(models.Model):
         verbose_name="Trend test result",
         max_length=128,
         blank=True,
-        help_text=u"Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
+        help_text="Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
     adjustment_factors = models.ManyToManyField(
         AdjustmentFactor,
         through=ResultAdjustmentFactor,
@@ -1235,9 +1235,9 @@ class Result(models.Model):
     def flat_complete_data_row(ser):
 
         def getFactorList(lst, isIncluded):
-            return u'|'.join([
+            return '|'.join([
                 d['description'] for d in
-                filter(lambda (d): d['included_in_final_model'] == isIncluded, lst)
+                [d for d in lst if d['included_in_final_model'] == isIncluded]
             ])
 
         return (
@@ -1370,9 +1370,9 @@ class GroupResult(models.Model):
         txt = self.get_p_value_qualifier_display()
         if self.p_value is not None:
             if txt in ["=", "-", "n.s."]:
-                txt = u"{0:g}".format(self.p_value)
+                txt = "{0:g}".format(self.p_value)
             else:
-                txt = u"{0}{1:g}".format(txt, self.p_value)
+                txt = "{0}{1:g}".format(txt, self.p_value)
 
         return txt
 

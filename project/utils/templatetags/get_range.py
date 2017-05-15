@@ -25,4 +25,4 @@ def get_range(value):
     Taken from:
     http://djangosnippets.org/snippets/1357/
     """
-    return range(value)
+    return list(range(value))

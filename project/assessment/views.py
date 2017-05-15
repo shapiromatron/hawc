@@ -440,7 +440,7 @@ class CloseWindow(TemplateView):
 
 class UpdateSession(View):
 
-    http_method_names = (u'post', )
+    http_method_names = ('post', )
 
     def isTruthy(self, request, field):
         return request.POST.get(field, "true") == "true"
@@ -457,7 +457,7 @@ class UpdateSession(View):
 
 class DownloadPlot(FormView):
 
-    http_method_names = [u'post', ]
+    http_method_names = ['post', ]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):

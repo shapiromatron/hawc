@@ -79,7 +79,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         """
         score_data = validated_data.pop('scores')
         for score, form_data in zip(instance.scores.all(), score_data):
-            for field, value in form_data.items():
+            for field, value in list(form_data.items()):
                 setattr(score, field, value)
             score.save()
         return super(RiskOfBiasSerializer, self).update(instance, validated_data)

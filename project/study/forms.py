@@ -32,7 +32,7 @@ class BaseStudyForm(forms.ModelForm):
     def setHelper(self, inputs={}):
         for fld in ('full_citation', 'coi_details', 'funding_source', 'ask_author'):
             self.fields[fld].widget.attrs['rows'] = 3
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -55,8 +55,8 @@ class StudyForm(BaseStudyForm):
 
     def setHelper(self):
         inputs = {
-            "legend_text": u"Update an existing study",
-            "help_text": u"",
+            "legend_text": "Update an existing study",
+            "help_text": "",
             "cancel_url": reverse('study:detail', args=[self.instance.id])
         }
         return super(StudyForm, self).setHelper(inputs)
@@ -67,8 +67,8 @@ class NewStudyFromReferenceForm(BaseStudyForm):
 
     def setHelper(self):
         inputs = {
-            "legend_text": u"Create a new study from an existing reference",
-            "help_text": u"",
+            "legend_text": "Create a new study from an existing reference",
+            "help_text": "",
             "cancel_url": reverse('lit:ref_list_extract', args=[self.instance.reference_ptr.assessment.id])
         }
         return super(NewStudyFromReferenceForm, self).setHelper(inputs)
@@ -93,8 +93,8 @@ class ReferenceStudyForm(BaseStudyForm):
         self.fields['journal'].widget = TextInput()
         self.fields['abstract'].widget.attrs['rows'] = 3
         inputs = {
-            "legend_text": u"Create a new study",
-            "help_text": u"",
+            "legend_text": "Create a new study",
+            "help_text": "",
             "cancel_url": reverse('study:list', args=[self.instance.assessment.id])
         }
         return super(ReferenceStudyForm, self).setHelper(inputs)
@@ -138,7 +138,7 @@ class StudiesCopy(forms.Form):
 
     def setHelper(self, assessment):
         self.fields['studies'].widget.attrs['size'] = 15
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         inputs = {

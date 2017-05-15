@@ -159,7 +159,7 @@ class PrefilterMixin(object):
                                  If no study is selected, no endpoints will be available.""")),
             ])
 
-        for k, v in fields.iteritems():
+        for k, v in fields.items():
             self.fields[k] = v
 
     def setInitialValues(self):
@@ -176,7 +176,7 @@ class PrefilterMixin(object):
             evidence_type = self.initial.get('evidence_type') or \
                 self.instance.evidence_type
 
-        for k, v in prefilters.iteritems():
+        for k, v in prefilters.items():
             if k == "system__in":
                 if evidence_type == models.BIOASSAY:
                     self.fields["prefilter_system"].initial = True
@@ -388,7 +388,7 @@ class SummaryTextForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -424,21 +424,21 @@ class VisualForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing visualization.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing visualization.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new visualization",
-                "help_text":   u"""
+                "legend_text": "Create new visualization",
+                "help_text":   """
                     Create a custom-visualization.
                     Generally, you will select a subset of available data on the
                     "Data" tab, then will customize the visualization using the
@@ -528,21 +528,21 @@ class DataPivotForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing data-pivot.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing data-pivot.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new data-pivot",
-                "help_text":   u"""
+                "legend_text": "Create new data-pivot",
+                "help_text":   """
                     Create a custom-visualization for this assessment.
                     Generally, you will select a subset of available data, then
                     customize the visualization the next-page.
@@ -634,7 +634,7 @@ class DataPivotSelectorForm(forms.Form):
         user = kwargs.pop('user')
         super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         self.fields['dp'].queryset = models.DataPivot.objects\
@@ -666,7 +666,7 @@ class SmartTagForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id', -1)
         super(SmartTagForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             widget.attrs['class'] = 'span12'
             if hasattr(widget, 'update_query_parameters'):

@@ -86,7 +86,7 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
         assessment = self.root.context['view'].assessment
         parent = self.get_parent(assessment.id, validated_data, canSelectRoot=True)
 
-        for attr, value in validated_data.items():
+        for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)
         instance.save()
 

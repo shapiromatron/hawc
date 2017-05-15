@@ -25,10 +25,10 @@ class AssessmentAdmin(admin.ModelAdmin):
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
         for user in mgr.all():
-            ul.append(u"<li>{} {}</li>".format(user.first_name, user.last_name))
+            ul.append("<li>{} {}</li>".format(user.first_name, user.last_name))
 
         ul.append("</ul>")
-        return u" ".join(ul)
+        return " ".join(ul)
 
     def get_managers(self, obj):
         return self.get_staff_ul(obj.project_manager)

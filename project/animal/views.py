@@ -112,7 +112,7 @@ class AnimalGroupCreate(BaseCreate):
                 # invalid formset; extract formset errors
                 lis = []
                 for f in fs.forms:
-                    if len(f.errors.keys()) > 0:
+                    if len(list(f.errors.keys())) > 0:
                         lis.extend(form_error_list_to_lis(f))
                 if len(fs._non_form_errors) > 0:
                     lis.extend(fs._non_form_errors)
@@ -229,7 +229,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             # invalid formset; extract formset errors
             lis = []
             for f in fs.forms:
-                if len(f.errors.keys()) > 0:
+                if len(list(f.errors.keys())) > 0:
                     lis.extend(form_error_list_to_lis(f))
             if len(fs._non_form_errors) > 0:
                 lis.extend(fs._non_form_errors)

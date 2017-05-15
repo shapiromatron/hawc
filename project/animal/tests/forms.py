@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from animal.forms import ExperimentForm
 from utils.tests import FormTester

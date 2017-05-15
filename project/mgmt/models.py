@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import logging
 
@@ -67,7 +67,7 @@ class Task(models.Model):
         ordering = ('study', 'type', )
 
     def __unicode__(self):
-        return u'{}: {}'.format(self.study, self.get_type_display())
+        return '{}: {}'.format(self.study, self.get_type_display())
 
     @classmethod
     def dashboard_metrics(cls, qs):

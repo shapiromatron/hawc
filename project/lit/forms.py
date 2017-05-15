@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import logging
 import numpy as np
 import pandas as pd
@@ -42,7 +42,7 @@ class SearchForm(forms.ModelForm):
             self.fields['search_string'].widget.attrs['rows'] = 5
             self.fields['search_string'].required = True
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -52,14 +52,14 @@ class SearchForm(forms.ModelForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature search",
-                "help_text": u"""
+                "legend_text": "Create new literature search",
+                "help_text": """
                     Create a new literature search. Note that upon creation,
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
@@ -89,14 +89,14 @@ class ImportForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature import",
-                "help_text": u"""
+                "legend_text": "Create new literature import",
+                "help_text": """
                     Import a list of literature from an external database by
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
@@ -152,14 +152,14 @@ class RISForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature import",
-                "help_text": u"""
+                "legend_text": "Create new literature import",
+                "help_text": """
                     Import a list of literature from an RIS export; this is a
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
@@ -229,7 +229,7 @@ class SearchSelectorForm(forms.Form):
 
         super(SearchSelectorForm, self).__init__(*args, **kwargs)
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span11'
 
         assessment_pks = Assessment.objects.get_viewable_assessments(user)\
@@ -253,7 +253,7 @@ class ReferenceForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ['title', 'authors', 'journal']:
                 widget.attrs['rows'] = 3

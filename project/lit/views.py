@@ -98,7 +98,7 @@ class RefDownloadExcel(BaseList):
         else:
             self.include_parent_tag = False
             self.fn = "{}-refs".format(self.assessment)
-            self.sheet_name = unicode(self.assessment)
+            self.sheet_name = str(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
                 self.assessment.id, json_encode=False)
 
@@ -253,7 +253,7 @@ class SearchDownloadExcel(BaseDetail):
 class SearchQuery(BaseUpdate):
     model = models.Search
     form_class = forms.SearchForm
-    http_method_names = (u'get', )  # don't allow POST
+    http_method_names = ('get', )  # don't allow POST
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(self.model,
@@ -464,7 +464,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
             self.assessment.id
         )
         if len(errors) > 0:
-            msg = u"""References updated, but some errors were found
+            msg = """References updated, but some errors were found
                 (references with errors were not updated): {0}"""\
                 .format(listToUl(errors))
         else:

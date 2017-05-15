@@ -78,14 +78,14 @@ class HAWCSetPasswordForm(SetPasswordForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Password reset",
-            "help_text": u"Enter a new password for your account."
+            "legend_text": "Password reset",
+            "help_text": "Enter a new password for your account."
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -116,14 +116,14 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Change your password",
-            "help_text": u"Enter a new password for your account.",
+            "legend_text": "Change your password",
+            "help_text": "Enter a new password for your account.",
             "cancel_url": reverse("user:settings")
 
         }
@@ -157,13 +157,13 @@ class RegisterForm(PasswordForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Create an account"
+            "legend_text": "Create an account"
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -209,14 +209,14 @@ class UserProfileForm(ModelForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Update your profile",
-            "help_text": u"Change settings associated with your account",
+            "legend_text": "Update your profile",
+            "help_text": "Change settings associated with your account",
             "cancel_url": reverse('user:settings')
         }
         helper = BaseFormHelper(self, **inputs)
@@ -264,13 +264,13 @@ class HAWCAuthenticationForm(AuthenticationForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"HAWC login"
+            "legend_text": "HAWC login"
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -315,14 +315,14 @@ class HAWCPasswordResetForm(PasswordResetForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Password reset",
-            "help_text": u"""
+            "legend_text": "Password reset",
+            "help_text": """
                 Enter your email address below, and we'll email instructions
                 for setting a new password.
             """

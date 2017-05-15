@@ -2,7 +2,7 @@ from datetime import datetime
 import decimal
 import logging
 from collections import OrderedDict
-from StringIO import StringIO
+from io import StringIO
 import re
 
 from django.core.cache import cache
@@ -54,8 +54,8 @@ def strip_tags(value):
 
 
 def listToUl(list_):
-    return u"<ul>{0}</ul>".format(
-        u"".join([u"<li>{0}</li>".format(d) for d in list_]))
+    return "<ul>{0}</ul>".format(
+        "".join(["<li>{0}</li>".format(d) for d in list_]))
 
 
 def tryParseInt(val, default=None):

@@ -323,7 +323,7 @@ class Study(Reference):
             return None
         except MultipleObjectsReturned:
             raise ValidationError(
-                u'Multiple active final risk of bias reviews for "{}", '
+                'Multiple active final risk of bias reviews for "{}", '
                 'there should only be one per study.'.format(self))
 
     def get_active_robs(self, with_final=True):

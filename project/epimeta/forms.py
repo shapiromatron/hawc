@@ -17,9 +17,9 @@ from . import models, lookups
 
 class MetaProtocolForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create a new meta-protocol"
+    CREATE_LEGEND = "Create a new meta-protocol"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new meta-protocol for an epidemiological
         assessment. A meta-protocol contains the methodology behind a
         meta-analysis or pooled analysis, which are frequently used
@@ -27,7 +27,7 @@ class MetaProtocolForm(forms.ModelForm):
         multiple studies or reference populations.
     """
 
-    UPDATE_HELP_TEXT = u"Update an existing meta-protocol"
+    UPDATE_HELP_TEXT = "Update an existing meta-protocol"
 
     inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
         lookup_class=CriteriaLookup,
@@ -58,7 +58,7 @@ class MetaProtocolForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.CRITERION_FIELDS:
@@ -70,7 +70,7 @@ class MetaProtocolForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text":   self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url()
             }
@@ -98,15 +98,15 @@ class MetaProtocolForm(forms.ModelForm):
 
 class MetaResultForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create a new meta-result"
+    CREATE_LEGEND = "Create a new meta-result"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new meta-result for an epidemiological assessment.
         A meta-result is the aggregate result from a meta-analysis or
         pooled analysis from multiple primary literature components.
     """
 
-    UPDATE_HELP_TEXT = u"Update an existing meta-result"
+    UPDATE_HELP_TEXT = "Update an existing meta-result"
 
     adjustment_factors = selectable.AutoCompleteSelectMultipleField(
         help_text="All factors which were included in final model",
@@ -142,7 +142,7 @@ class MetaResultForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld == "adjustment_factors":
@@ -154,7 +154,7 @@ class MetaResultForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text":   self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url()
             }
@@ -248,7 +248,7 @@ class MetaResultFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'
@@ -315,7 +315,7 @@ class SingleResultForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -356,7 +356,7 @@ class MetaResultSelectorForm(forms.Form):
     def __init__(self, *args, **kwargs):
         study_id = kwargs.pop("study_id")
         super(MetaResultSelectorForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span11'
         self.fields['selector'].widget.update_query_parameters(
             {'related': study_id})

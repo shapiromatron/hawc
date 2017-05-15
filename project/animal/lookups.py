@@ -108,7 +108,7 @@ class EndpointByStudyLookup(RelatedLookup):
     related_filter = 'animal_group__experiment__study'
 
     def get_item_label(self, obj):
-        return u"{} | {} | {}".format(
+        return "{} | {} | {}".format(
             obj.animal_group.experiment,
             obj.animal_group,
             obj
@@ -130,7 +130,7 @@ class EndpointByAssessmentLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
     def get_item_label(self, obj):
-        return u"{} | {} | {} | {}".format(
+        return "{} | {} | {} | {}".format(
             obj.animal_group.experiment.study,
             obj.animal_group.experiment,
             obj.animal_group,

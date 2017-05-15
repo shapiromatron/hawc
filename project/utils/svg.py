@@ -4,9 +4,9 @@ import logging
 import os
 import re
 import subprocess
-from StringIO import StringIO
+from io import StringIO
 import tempfile
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from django.conf import settings
 from django.http.request import HttpRequest
@@ -21,14 +21,14 @@ logger = logging.getLogger(__name__)
 
 
 def _get_css_styles():
-    txt = u''
+    txt = ''
 
     path = os.path.join(
         settings.PROJECT_PATH, r'static/css/hawc_d3_aggregated.css')
 
     if os.path.exists(path):
         with codecs.open(path, 'r', 'UTF-8') as f:
-            txt = unicode(f.read())
+            txt = str(f.read())
         txt = r'<defs style="hawc-styles"><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(txt)  # noqa
 
     return txt
@@ -49,7 +49,7 @@ class SVGConverter(object):
         svg = svg.decode('base64')\
             .replace('%u', '\\u')\
             .decode('unicode_escape')
-        self.svg = urllib2.unquote(svg)
+        self.svg = urllib.parse.unquote(svg)
 
     def to_svg(self):
         # add embedded styles

@@ -133,8 +133,8 @@ class MetaProtocol(models.Model):
             ser['lit_search_start_date'],
             ser['lit_search_end_date'],
             ser['total_references'],
-            u'|'.join(ser['inclusion_criteria']),
-            u'|'.join(ser['exclusion_criteria']),
+            '|'.join(ser['inclusion_criteria']),
+            '|'.join(ser['exclusion_criteria']),
             ser['total_studies_identified'],
             ser['notes']
         )
@@ -213,9 +213,9 @@ class MetaResult(models.Model):
     def estimate_formatted(self):
         txt = "-"
         if self.estimate:
-            txt = unicode(self.estimate)
+            txt = str(self.estimate)
         if (self.lower_ci and self.upper_ci):
-            txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
+            txt += ' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
     @classmethod
@@ -277,7 +277,7 @@ class MetaResult(models.Model):
             ser['upper_ci'],
             ser['ci_units'],
             ser['heterogeneity'],
-            u'|'.join(ser['adjustment_factors']),
+            '|'.join(ser['adjustment_factors']),
             ser['notes'],
         )
 
@@ -291,7 +291,7 @@ class MetaResult(models.Model):
         """
 
         def getStatMethods(mr):
-            key = u"{}|{}".format(
+            key = "{}|{}".format(
                 mr["adjustments_list"],
                 mr["statistical_notes"]
             )
@@ -317,8 +317,8 @@ class MetaResult(models.Model):
             pro = study["protocols"].get(thisPro["id"])
             if pro is None:
                 pro = thisPro
-                pro["inclusion_list"] = u', '.join(pro["inclusion_criteria"])
-                pro["exclusion_list"] = u', '.join(pro["exclusion_criteria"])
+                pro["inclusion_list"] = ', '.join(pro["inclusion_criteria"])
+                pro["exclusion_list"] = ', '.join(pro["exclusion_criteria"])
                 pro["results"] = {}
                 pro["statistical_methods"] = {}
                 study["protocols"][pro["id"]] = pro
@@ -327,7 +327,7 @@ class MetaResult(models.Model):
             if mr is None:
                 mr = thisMr
                 mr["ci_percent"] = int(mr["ci_units"] * 100.)
-                mr["adjustments_list"] = u', '.join(
+                mr["adjustments_list"] = ', '.join(
                     sorted(mr["adjustment_factors"]))
                 pro["results"][mr["id"]] = mr
 
@@ -341,19 +341,19 @@ class MetaResult(models.Model):
 
         # convert value dictionaries to lists
         studies = sorted(
-            studies.values(),
+            list(studies.values()),
             key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
             study["protocols"] = sorted(
-                study["protocols"].values(),
+                list(study["protocols"].values()),
                 key=lambda obj: (obj["name"].lower()))
             for pro in study["protocols"]:
                 pro["results"] = sorted(
-                    pro["results"].values(),
+                    list(pro["results"].values()),
                     key=lambda obj: (obj["label"].lower()))
-                pro["statistical_methods"] = pro["statistical_methods"].values()
+                pro["statistical_methods"] = list(pro["statistical_methods"].values())
                 for obj in pro["statistical_methods"]:
-                    obj["sm_endpoints"] = u"; ".join([
+                    obj["sm_endpoints"] = "; ".join([
                         d["label"] for d in obj["sm_endpoints"]
                     ])
 
@@ -430,9 +430,9 @@ class SingleResult(models.Model):
     def estimate_formatted(self):
         txt = "-"
         if self.estimate:
-            txt = unicode(self.estimate)
+            txt = str(self.estimate)
         if (self.lower_ci and self.upper_ci):
-            txt += u' ({}, {})'.format(self.lower_ci, self.upper_ci)
+            txt += ' ({}, {})'.format(self.lower_ci, self.upper_ci)
         return txt
 
     @staticmethod

@@ -5,4 +5,4 @@ class InvitroConfig(AppConfig):
     verbose_name = 'Invitro'
 
     def ready(self):
-        import signals
+        from . import signals

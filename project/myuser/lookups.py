@@ -5,6 +5,7 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 
 from . import models
+from functools import reduce
 
 
 class HAWCUserLookup(ModelLookup):

@@ -5,4 +5,4 @@ class EpimetaConfig(AppConfig):
     verbose_name = 'EpiMeta'
 
     def ready(self):
-        import signals
+        from . import signals

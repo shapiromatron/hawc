@@ -27,10 +27,10 @@ class BaseFormHelper(cf.FormHelper):
             self.layout = self.build_default_layout(form)
 
     def build_default_layout(self, form):
-        layout = cfl.Layout(*form.fields.keys())
+        layout = cfl.Layout(*list(form.fields.keys()))
 
         if self.kwargs.get('legend_text'):
-            layout.insert(0, cfl.HTML(u"<legend>{}</legend>".format(
+            layout.insert(0, cfl.HTML("<legend>{}</legend>".format(
                 self.kwargs.get('legend_text'))))
 
         if self.kwargs.get('help_text'):
@@ -67,7 +67,7 @@ class BaseFormHelper(cf.FormHelper):
 
     def add_fluid_row(self, firstField, numFields, wrapperClasses):
         first = self.layout.index(firstField)
-        if type(wrapperClasses) in [str, unicode]:
+        if type(wrapperClasses) in [str, str]:
             wrapperClasses = [wrapperClasses]*numFields
         for i, v in enumerate(wrapperClasses):
             self[first+i].wrap(cfl.Field, wrapper_class=v)
@@ -107,7 +107,7 @@ def form_error_list_to_lis(form):
     # Convert a list of errors from a form into a list of li,
     # used for endpoint group since everything is controlled by AJAX and JSON
     lis = []
-    for key, values in form.errors.iteritems():
+    for key, values in form.errors.items():
         for value in values:
             if key == '__all__':
                 lis.append("<li>" + value + "</li>")
@@ -117,7 +117,7 @@ def form_error_list_to_lis(form):
 
 
 def form_error_lis_to_ul(lis):
-    return u"<ul>{0}</ul>".format("".join(lis))
+    return "<ul>{0}</ul>".format("".join(lis))
 
 
 def anyNull(dict, fields):

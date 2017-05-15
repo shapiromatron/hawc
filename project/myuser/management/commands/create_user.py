@@ -45,13 +45,13 @@ class Command(BaseCommand):
         interactive = options.get('interactive')
         if interactive:
             try:
-                email = raw_input("Enter user email: ")
-                first_name = raw_input("Enter first name: ")
-                last_name = raw_input("Enter last name: ")
-                pms = raw_input("Enter assessment ids to assign as project manager (comma delimited, N if none): ")
-                tms = raw_input("Enter assessment ids to assign as team-member (comma delimited, N if none): ")
-                rvs = raw_input("Enter assessment ids to assign as reviewer (comma delimited, N if none): ")
-                send_welcome = raw_input("Send welcome email [Y or N] ? ")
+                email = input("Enter user email: ")
+                first_name = input("Enter first name: ")
+                last_name = input("Enter last name: ")
+                pms = input("Enter assessment ids to assign as project manager (comma delimited, N if none): ")
+                tms = input("Enter assessment ids to assign as team-member (comma delimited, N if none): ")
+                rvs = input("Enter assessment ids to assign as reviewer (comma delimited, N if none): ")
+                send_welcome = input("Send welcome email [Y or N] ? ")
             except KeyboardInterrupt:
                 self.stdout.write("\nUser creation aborted.\n")
                 return
@@ -63,7 +63,7 @@ class Command(BaseCommand):
             tms = options.get('tms')
             rvs = options.get('rvs')
             send_welcome = options.get('send_welcome')
-            print email, first_name, last_name, pms, tms, rvs, send_welcome
+            print(email, first_name, last_name, pms, tms, rvs, send_welcome)
             if not all((email, first_name, last_name, pms, tms, rvs, send_welcome)):
                 raise CommandError("Invalid number of input arguments")
 

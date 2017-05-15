@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 from utils.helper import SerializerHelper
 
-import models
+from . import models
 
 
 def clear_cache(Model, filters):

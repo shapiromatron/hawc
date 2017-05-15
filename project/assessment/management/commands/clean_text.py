@@ -57,7 +57,7 @@ class Command(BaseCommand):
                     mods += 1
                     self.stdout.write('Updated {} {}'.format(qs.model.__name__, obj.pk), self.style.HTTP_NOT_MODIFIED)
                 except Exception as e:
-                    print e, obj.id
+                    print(e, obj.id)
 
         self.stdout.write("{} objects were modified".format(mods), self.style.SQL_FIELD)
 
@@ -114,7 +114,7 @@ class Command(BaseCommand):
 
         # Remove control characters except line-break
         # http://www.utf8-chartable.de/unicode-utf8-table.pl
-        s = re.sub(ur"[\u0000-\u0009\u000b-\u001f\u007f-\u009f]", "", s)
+        s = re.sub(r"[\u0000-\u0009\u000b-\u001f\u007f-\u009f]", "", s)
 
         # Cleanup extra newlines-spacing
         # newstr = ""
@@ -145,7 +145,7 @@ class Command(BaseCommand):
         s = s.strip()
 
         # Fix quotes
-        s = s.replace(u"‘‘", u"“").replace(u"’’", u"”")
+        s = s.replace("‘‘", "“").replace("’’", "”")
 
         # Remove ALL control characters except our our new-lines above
-        return u"".join(ch for ch in s if ch=="\n" or unicodedata.category(ch)[0]!="C")
+        return "".join(ch for ch in s if ch=="\n" or unicodedata.category(ch)[0]!="C")

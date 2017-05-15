@@ -42,7 +42,7 @@ class IVChemicalForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -51,13 +51,13 @@ class IVChemicalForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new experimental chemical',
+                'legend_text': 'Create new experimental chemical',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -108,7 +108,7 @@ class IVCellTypeForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -117,13 +117,13 @@ class IVCellTypeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new cell type',
+                'legend_text': 'Create new cell type',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -171,7 +171,7 @@ class IVExperimentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -180,13 +180,13 @@ class IVExperimentForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new experiment',
+                'legend_text': 'Create new experiment',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -291,7 +291,7 @@ class IVEndpointForm(forms.ModelForm):
         return data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ['effects']:
@@ -304,13 +304,13 @@ class IVEndpointForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new endpoint',
+                'legend_text': 'Create new endpoint',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.experiment.get_absolute_url()
             }
@@ -425,7 +425,7 @@ class IVEndpointFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'

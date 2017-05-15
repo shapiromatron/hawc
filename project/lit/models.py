@@ -1,10 +1,10 @@
 from datetime import datetime
 from math import ceil
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 import logging
 import re
-import HTMLParser
+import html.parser
 
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
@@ -121,7 +121,7 @@ class Search(models.Model):
     @property
     def search_string_text(self):
         # strip all HTML tags from search-string text
-        html_parser = HTMLParser.HTMLParser()
+        html_parser = html.parser.HTMLParser()
         return html_parser.unescape(strip_tags(self.search_string))
 
     @transaction.atomic
@@ -379,7 +379,7 @@ class PubMedQuery(models.Model):
 
         block_size = 1000.
         logging.debug("{0} IDs to be added".format(ids_to_add_len))
-        for i in xrange(int(ceil(ids_to_add_len/block_size))):
+        for i in range(int(ceil(ids_to_add_len/block_size))):
             start_index = int(i*block_size)
             end_index = min(int(i*block_size+block_size), ids_to_add_len)
             logging.debug("Building from {0} to {1}".format(start_index, end_index))
@@ -431,18 +431,18 @@ class Identifiers(models.Model):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
     URL_TEMPLATES = {
-        constants.PUBMED: ur'https://www.ncbi.nlm.nih.gov/pubmed/{0}',
-        constants.HERO: ur'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
-        constants.DOI: ur'https://doi.org/{0}',
-        constants.WOS: ur'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
-        constants.SCOPUS: ur'http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist',
+        constants.PUBMED: r'https://www.ncbi.nlm.nih.gov/pubmed/{0}',
+        constants.HERO: r'http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}',
+        constants.DOI: r'https://doi.org/{0}',
+        constants.WOS: r'http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord',
+        constants.SCOPUS: r'http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist',
     }
 
     def get_url(self):
         url = self.url
         template = self.URL_TEMPLATES.get(self.database, None)
         if template:
-            url = template.format(urllib.quote(self.unique_id))
+            url = template.format(urllib.parse.quote(self.unique_id))
         return url
 
     def create_reference(self, assessment, block_id=None):
@@ -653,7 +653,7 @@ class Reference(models.Model):
 
     @property
     def reference_citation(self):
-        txt = u""
+        txt = ""
         for itm in [self.authors, self.title, self.journal]:
             txt += itm
             if ((len(itm) > 0) and (itm[-1] != ".")):
@@ -663,7 +663,7 @@ class Reference(models.Model):
         return txt
 
     def get_short_citation_estimate(self):
-        citation = u""
+        citation = ""
 
         # get authors guess
         if ((self.authors.find('and') > -1) or (self.authors.find('et al.') > -1)):
@@ -676,16 +676,16 @@ class Reference(models.Model):
                 citation = "[No authors listed]"
 
         # get year guess
-        year = u""
+        year = ""
         if self.year is not None:
-            year = unicode(self.year)
+            year = str(self.year)
         else:
             m = re.findall(r' (\d+);', self.journal)
             if len(m) > 0:
                 year = m[0]
 
         if len(year) > 0:
-            citation += u" " + year
+            citation += " " + year
 
         return citation
 
