@@ -12,6 +12,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cmd = 'git log -1 --format=%H'
-        commit = subprocess.check_output(cmd.split(), cwd=settings.PROJECT_ROOT).strip()
-        with open(os.path.join(settings.PROJECT_ROOT, '.gitcommit'), 'w') as f:
+        commit = subprocess.check_output(cmd.split(), cwd=settings.PROJECT_ROOT).decode().strip()
+        with open(os.path.join(settings.PROJECT_PATH, '.gitcommit'), 'w') as f:
             f.write(commit)

@@ -22,8 +22,8 @@ INTERNAL_IPS = [
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # execute celery-tasks locally instead of sending to queue
-CELERY_ALWAYS_EAGER = True
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
 
 DEBUG_TOOLBAR_CONFIG = dict(
     JQUERY_URL='/static/debug/jquery/1.9.1/jquery.js',

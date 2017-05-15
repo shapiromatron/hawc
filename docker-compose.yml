@@ -1,0 +1,45 @@
+version: '2'
+
+volumes:
+  postgres_data: {}
+  postgres_backup: {}
+
+services:
+
+  postgres:
+    build: ./compose/postgres
+    volumes:
+      - ./data:/app/data
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backup:/backups
+    env_file: .env
+
+  redis:
+    build: ./compose/redis
+
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    command: /usr/local/bin/supervisord -c /supervisord.conf --nodaemon
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./public:/app/public
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+      args:
+        - configuration_file
+    depends_on:
+      - django
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./public:/app/public

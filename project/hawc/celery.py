@@ -2,8 +2,6 @@ import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 
-from django.conf import settings
-
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hawc.settings.local')
 logger = get_task_logger(__name__)
@@ -11,8 +9,8 @@ app = Celery('hawc')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-app.config_from_object('django.conf:settings')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks()
 
 
 @app.task(bind=True)

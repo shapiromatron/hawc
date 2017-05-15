@@ -1,79 +1,28 @@
+
+# files
 *.db
 *~
-project/hawc/settings/local.py
-.idea/*
-project/static/css/hawc_d3_aggregated.css
-docs/build/*
-project/celerybeat*
-venv/
-env
-.env
-
-public/static/
-public/media/
-
-# https://github.com/github/gitignore/blob/master/Python.gitignore
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.cache
-nosetests.xml
-coverage.xml
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
 *.log
+*.py[cod]
+.env
+.gitcommit
+bin/*local.sh
+project/hawc/settings/local.py
+project/static/css/hawc_d3_aggregated.css
+project/celerybeat*
 
-# Sphinx documentation
-docs/_build/
+# folders
+__pycache__
+.idea/*
+data
+docs/_build
+env
+public/static
+public/media
+venv
 
-# PyBuilder
-target/
-
-# React/Webpack
+# javascript
 node_modules
 bundles/
 webpack-stats.json
 .happypack/
-
-bin/*local.sh
-
-.gitcommit

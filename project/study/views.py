@@ -175,4 +175,4 @@ class AttachmentRead(BaseDetail):
         if self.assessment.user_can_view_attachments(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
-            return PermissionDenied
+            raise PermissionDenied
