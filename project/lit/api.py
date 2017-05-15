@@ -1,5 +1,3 @@
-
-
 from assessment.api import AssessmentRootedTagTreeViewset
 
 from . import models, serializers

@@ -1,5 +1,3 @@
-
-
 from assessment.api import AssessmentViewset
 
 from . import models, serializers

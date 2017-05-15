@@ -1,5 +1,3 @@
-
-
 from animal.forms import ExperimentForm
 from utils.tests import FormTester
 

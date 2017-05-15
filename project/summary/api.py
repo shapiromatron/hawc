@@ -1,5 +1,3 @@
-
-
 from assessment.api import AssessmentViewset, DisabledPagination
 
 from . import models, serializers
