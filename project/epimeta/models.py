@@ -77,7 +77,7 @@ class MetaProtocol(models.Model):
     class Meta:
         ordering = ('name', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
@@ -197,7 +197,7 @@ class MetaResult(models.Model):
     class Meta:
         ordering = ('label', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
     def get_crumbs(self):
@@ -423,7 +423,7 @@ class SingleResult(models.Model):
     class Meta:
         ordering = ('exposure_name', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.exposure_name
 
     @property

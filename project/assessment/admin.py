@@ -8,7 +8,7 @@ from . import models
 
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
-        '__unicode__', 'get_managers', 'get_team_members', 'get_reviewers'
+        '__str__', 'get_managers', 'get_team_members', 'get_reviewers'
     )
     list_per_page = 10
     list_filter = ('editable', 'public', )
@@ -75,7 +75,7 @@ class EffectTagAdmin(admin.ModelAdmin):
 
 class ChangeLogAdmin(admin.ModelAdmin):
     # list options
-    list_display = ('__unicode__', 'header', 'view_on_site')
+    list_display = ('__str__', 'header', 'view_on_site')
 
     def view_on_site(self, obj):
         return '<a target="_blank" href="{0}">View</a>'.format(obj.get_absolute_url())

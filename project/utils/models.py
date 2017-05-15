@@ -45,7 +45,7 @@ def get_crumbs(obj, parent=None):
     else:
         crumbs = parent.get_crumbs()
     if obj.id is not None:
-        crumbs.append((obj.__unicode__(),  obj.get_absolute_url()))
+        crumbs.append((obj.__str__(),  obj.get_absolute_url()))
     else:
         crumbs.append((obj._meta.verbose_name.lower(), ))
     return crumbs
@@ -55,7 +55,7 @@ class NonUniqueTagBase(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=100)
     slug = models.SlugField(verbose_name=_('Slug'), max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

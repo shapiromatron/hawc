@@ -38,8 +38,8 @@ class AssessmentSettings(models.Model):
     class Meta:
         verbose_name_plural = "BMD assessment settings"
 
-    def __unicode__(self):
-        return self.assessment.__unicode__() + ' BMD settings'
+    def __str__(self):
+        return self.assessment.__str__() + ' BMD settings'
 
     def get_absolute_url(self):
         return reverse_lazy('bmd:assess_settings_detail',
@@ -97,7 +97,7 @@ class LogicField(models.Model):
     class Meta:
         ordering = ('id', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     def get_absolute_url(self):
@@ -151,7 +151,7 @@ class Session(models.Model):
         get_latest_by = "last_updated"
         ordering = ('-last_updated', )
 
-    def __unicode__(self):
+    def __str__(self):
         return 'BMD session'
 
     def get_assessment(self):

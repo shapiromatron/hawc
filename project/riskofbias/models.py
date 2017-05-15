@@ -38,7 +38,7 @@ class RiskOfBiasDomain(models.Model):
         unique_together = ('assessment', 'name')
         ordering = ('pk', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
@@ -165,7 +165,7 @@ class RiskOfBiasMetric(models.Model):
     class Meta:
         ordering = ('domain', 'id')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.metric
 
     def get_assessment(self):
@@ -210,7 +210,7 @@ class RiskOfBias(models.Model):
         verbose_name_plural = 'Risk of Biases'
         ordering = ('final',)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} (Risk of bias)'.format(self.study.short_citation)
 
     def get_assessment(self):
@@ -401,7 +401,7 @@ class RiskOfBiasScore(models.Model):
     class Meta:
         ordering = ('metric', 'id')
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {}'.format(self.riskofbias, self.metric)
 
     def get_assessment(self):

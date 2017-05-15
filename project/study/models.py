@@ -209,7 +209,7 @@ class Study(Reference):
             ).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- short-citation name must be unique for assessment.')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_citation
 
     def get_absolute_url(self):
@@ -352,7 +352,7 @@ class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")
     attachment = models.FileField(upload_to="study-attachment")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.filename
 
     def get_absolute_url(self):

@@ -6,7 +6,7 @@ from . import forms, models
 
 
 class HAWCUserAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__', 'email', 'is_active',
+    list_display = ('__str__', 'email', 'is_active',
                     'is_staff', 'date_joined')
     list_filter = ('date_joined', )
     search_fields = ('last_name', 'first_name', 'email')

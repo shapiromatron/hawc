@@ -61,7 +61,7 @@ class IVChemical(models.Model):
 
     COPY_NAME = 'ivchemicals'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_crumbs(self):
@@ -146,7 +146,7 @@ class IVCellType(models.Model):
 
     COPY_NAME = 'ivcelltypes'
 
-    def __unicode__(self):
+    def __str__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
     def get_crumbs(self):
@@ -242,7 +242,7 @@ class IVExperiment(models.Model):
 
     COPY_NAME = 'ivexperiments'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
@@ -279,7 +279,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     cache_template_taglist = 'invitro.ivendpointcategory.taglist.assessment-{0}'
     cache_template_tagtree = 'invitro.ivendpointcategory.tagtree.assessment-{0}'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_list_representation(self):

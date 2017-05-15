@@ -66,7 +66,7 @@ class Task(models.Model):
         unique_together = (('study', 'type'), )
         ordering = ('study', 'type', )
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}: {}'.format(self.study, self.get_type_display())
 
     @classmethod

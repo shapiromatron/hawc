@@ -134,7 +134,7 @@ class Experiment(models.Model):
 
     COPY_NAME = 'experiments'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -314,7 +314,7 @@ class AnimalGroup(models.Model):
 
     COPY_NAME = 'animal_groups'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -504,7 +504,7 @@ class DosingRegime(models.Model):
 
     COPY_NAME = 'dose_regime'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} {1}'.format(self.dosed_animals,
                                  self.get_route_of_exposure_display())
 
@@ -603,7 +603,7 @@ class DoseGroup(models.Model):
     class Meta:
         ordering = ('dose_units', 'dose_group_id')
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} {1}".format(self.dose, self.dose_units)
 
     @staticmethod
@@ -819,7 +819,7 @@ class Endpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):

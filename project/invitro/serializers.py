@@ -12,7 +12,7 @@ from . import models
 
 
 class IVCellTypeSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='__unicode__', read_only=True)
+    title = serializers.CharField(source='__str__', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     url_update = serializers.CharField(source='get_update_url', read_only=True)
     url_delete = serializers.CharField(source='get_delete_url', read_only=True)

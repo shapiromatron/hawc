@@ -80,7 +80,7 @@ class Search(models.Model):
         ordering = ['-last_updated']
         get_latest_by = 'last_updated'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @property
@@ -427,7 +427,7 @@ class Identifiers(models.Model):
         unique_together = (("database", "unique_id"),)
         index_together = (("database", "unique_id"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{db}: {id}'.format(db=self.database, id=self.unique_id)
 
     URL_TEMPLATES = {
@@ -624,7 +624,7 @@ class Reference(models.Model):
     def get_absolute_url(self):
         return reverse('lit:ref_detail', kwargs={'pk': self.pk})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_short_citation_estimate()
 
     def get_json(self, json_encode=True, searches=False):

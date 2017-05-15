@@ -132,7 +132,7 @@ class Assessment(models.Model):
     class Meta:
         ordering = ("-created", )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s)" % (self.name, self.year)
 
     def user_permissions(self, user):
@@ -216,7 +216,7 @@ class Attachment(models.Model):
     publicly_available = models.BooleanField(default=True)
     description = models.TextField(blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self):
@@ -256,7 +256,7 @@ class DoseUnits(models.Model):
         verbose_name_plural = "dose units"
         ordering = ("name", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -288,7 +288,7 @@ class Species(models.Model):
         verbose_name_plural = "species"
         ordering = ("name", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -308,7 +308,7 @@ class Strain(models.Model):
         unique_together = (("species", "name"),)
         ordering = ("species", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -322,7 +322,7 @@ class EffectTag(models.Model):
     class Meta:
         ordering = ("name", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_json(self, json_encode=False):
@@ -358,7 +358,7 @@ class BaseEndpoint(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
@@ -398,7 +398,7 @@ class ChangeLog(models.Model):
     class Meta:
         ordering = ("-date", )
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0}: {1}".format(self.date, self.name)
 
     def get_absolute_url(self):

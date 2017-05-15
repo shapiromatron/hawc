@@ -38,7 +38,7 @@ class Criteria(models.Model):
         unique_together = ('assessment', 'description')
         verbose_name_plural = "Criteria"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     def copy_across_assessments(self, cw):
@@ -62,7 +62,7 @@ class Country(models.Model):
         ordering = ('name', )
         verbose_name_plural = "Countries"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -81,7 +81,7 @@ class AdjustmentFactor(models.Model):
         unique_together = ('assessment', 'description')
         ordering = ('description', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     def copy_across_assessments(self, cw):
@@ -105,7 +105,7 @@ class Ethnicity(models.Model):
     class Meta:
         verbose_name_plural = "Ethnicities"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -282,7 +282,7 @@ class StudyPopulation(models.Model):
     def confounding_criteria(self):
         return self.criteria.filter(spcriteria__criteria_type="C")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_crumbs(self):
@@ -509,7 +509,7 @@ class ComparisonSet(models.Model):
         else:
             return self.study_population.get_assessment()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_crumbs(self):
@@ -632,7 +632,7 @@ class Group(models.Model):
     def get_assessment(self):
         return self.comparison_set.get_assessment()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_crumbs(self):
@@ -822,7 +822,7 @@ class Exposure(models.Model):
         verbose_name = "Exposure"
         verbose_name_plural = "Exposures"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -1001,7 +1001,7 @@ class GroupNumericalDescriptions(models.Model):
 
     COPY_NAME = "group_descriptions"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     def copy_across_assessments(self, cw):
@@ -1042,7 +1042,7 @@ class ResultMetric(models.Model):
     class Meta:
         ordering = ('order', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.metric
 
 
@@ -1191,7 +1191,7 @@ class Result(models.Model):
         return self.adjustment_factors\
             .filter(resfactors__included_in_final_model=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
