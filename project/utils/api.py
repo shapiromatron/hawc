@@ -19,7 +19,7 @@ class BulkIdFilter(InAssessmentFilter):
     Catches AttributeError when `ids` is not supplied.
     """
     def filter_queryset(self, request, queryset, view):
-        queryset = super(BulkIdFilter, self).filter_queryset(request, queryset, view)
+        queryset = super().filter_queryset(request, queryset, view)
         ids = request.query_params.get('ids')\
             if (request.query_params.get('ids') is not '')\
             else None
@@ -78,7 +78,7 @@ class DynamicFieldsMixin(object):
                 model = MyModel
     """
     def __init__(self, *args, **kwargs):
-        super(DynamicFieldsMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.context.get('request'):
             fields = self.context.get('request').query_params.get('fields')
             if fields:

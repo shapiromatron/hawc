@@ -16,7 +16,7 @@ class EnsurePreparationStartedMixin(object):
             self.object,
             self.request.user
         )
-        return super(EnsurePreparationStartedMixin, self).get_success_url()
+        return super().get_success_url()
 
 
 class EnsureExtractionStartedMixin(object):
@@ -27,7 +27,7 @@ class EnsureExtractionStartedMixin(object):
         user = self.request.user
         models.Task.objects.ensure_preparation_stopped(study)
         models.Task.objects.ensure_extraction_started(study, user)
-        return super(EnsureExtractionStartedMixin, self).get_success_url()
+        return super().get_success_url()
 
 
 # User-level task views

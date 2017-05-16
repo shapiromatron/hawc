@@ -44,7 +44,7 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     """
 
     def _get_header_row(self):
-        header = super(RiskOfBiasCompleteFlat, self)._get_header_row()
+        header = super()._get_header_row()
         header.extend(models.RiskOfBias.flat_complete_header_row())
         return header
 

@@ -31,7 +31,7 @@ class SearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(SearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.instance.search_type = 's'
         if assessment:
             self.instance.assessment = assessment
@@ -75,7 +75,7 @@ class SearchForm(forms.ModelForm):
 class ImportForm(SearchForm):
 
     def __init__(self, *args, **kwargs):
-        super(ImportForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
         self.instance.search_type = 'i'
         if self.instance.id is None:
@@ -136,7 +136,7 @@ class ImportForm(SearchForm):
 class RISForm(SearchForm):
 
     def __init__(self, *args, **kwargs):
-        super(RISForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['source'].choices = [(3, 'RIS (EndNote/Reference Manager)')]
         self.instance.search_type = 'i'
         if self.instance.id is None:
@@ -206,7 +206,7 @@ class RISForm(SearchForm):
         exported from file before save method. Cache the references on the
         instance method, so that upon import we don't need to re-read file.
         """
-        cleaned_data = super(RISForm, self).clean()
+        cleaned_data = super().clean()
         if 'import_file' in cleaned_data and not self._errors:
             # create a copy for RisImporter to open/close
             f = StringIO(cleaned_data['import_file'].read())
@@ -227,7 +227,7 @@ class SearchSelectorForm(forms.Form):
         user = kwargs.pop('user', None)
         kwargs.pop('assessment', None)
 
-        super(SearchSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span11'
@@ -249,7 +249,7 @@ class ReferenceForm(forms.ModelForm):
                   'journal', 'abstract', 'full_text_url', )
 
     def __init__(self, *args, **kwargs):
-        super(ReferenceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -302,7 +302,7 @@ class ReferenceSearchForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_pk = kwargs.pop('assessment_pk', None)
-        super(ReferenceSearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment_pk:
             self.assessment = Assessment.objects.get(pk=assessment_pk)
         self.helper = self.setHelper()
@@ -356,7 +356,7 @@ class TagsCopyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         self.assessment = kwargs.pop('assessment', None)
-        super(TagsCopyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
         self.fields['assessment'].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id)
@@ -376,7 +376,7 @@ class ReferenceExcelUploadForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop('assessment')
-        super(ReferenceExcelUploadForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):

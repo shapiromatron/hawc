@@ -32,7 +32,7 @@ class IVChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVChemicalForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
 
@@ -97,7 +97,7 @@ class IVCellTypeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVCellTypeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
 
@@ -157,7 +157,7 @@ class IVExperimentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVExperimentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
         self.fields['cell_type'].queryset = \
@@ -252,7 +252,7 @@ class IVEndpointForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop('parent', None)
         assessment = kwargs.pop('assessment', None)
-        super(IVEndpointForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if experiment:
             self.instance.experiment = experiment
         if assessment:
@@ -414,7 +414,7 @@ class IVEndpointFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(IVEndpointFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('dose_units', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -495,7 +495,7 @@ class IVEndpointGroupForm(forms.ModelForm):
         exclude = ('endpoint', 'dose_group_id')
 
     def __init__(self, *args, **kwargs):
-        super(IVEndpointGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['dose'].widget.attrs['class'] = 'doses'
 
 

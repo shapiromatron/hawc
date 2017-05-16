@@ -126,8 +126,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
         self.check_editing_permission(request)
 
-        return super(AssessmentRootedTagTreeViewset, self)\
-            .create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     @decorators.detail_route(methods=('patch',))
     def move(self, request, *args, **kwargs):

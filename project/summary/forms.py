@@ -317,12 +317,12 @@ class PrefilterMixin(object):
         return json.dumps(prefilters)
 
     def clean(self):
-        cleaned_data = super(PrefilterMixin, self).clean()
+        cleaned_data = super().clean()
         cleaned_data["prefilters"] = self.setPrefilters(cleaned_data)
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
-        super(PrefilterMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.createFields()
         self.setInitialValues()
         self.setFieldStyles()
@@ -344,7 +344,7 @@ class SummaryTextForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(SummaryTextForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
         qs = models.SummaryText.get_assessment_qs(self.instance.assessment.id)
@@ -415,7 +415,7 @@ class VisualForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
         visual_type = kwargs.pop('visual_type', None)
-        super(VisualForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['settings'].widget.attrs['rows'] = 2
         if assessment:
             self.instance.assessment = assessment
@@ -460,7 +460,7 @@ class VisualForm(forms.ModelForm):
 class EndpointAggregationForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
-        super(EndpointAggregationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
             lookup_class=EndpointByAssessmentLookupHtml,
             label='Endpoints',
@@ -479,7 +479,7 @@ class CrossviewForm(PrefilterMixin, VisualForm):
     prefilter_include = ('study', 'bioassay', 'effect_tags')
 
     def __init__(self, *args, **kwargs):
-        super(CrossviewForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     class Meta:
@@ -492,7 +492,7 @@ class RoBForm(PrefilterMixin, VisualForm):
     prefilter_include = ('bioassay', )
 
     def __init__(self, *args, **kwargs):
-        super(RoBForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["studies"].queryset = \
             self.fields["studies"]\
                 .queryset\
@@ -520,7 +520,7 @@ class DataPivotForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(DataPivotForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
         self.helper = self.setHelper()
@@ -566,7 +566,7 @@ class DataPivotUploadForm(DataPivotForm):
         exclude = ('assessment', )
 
     def __init__(self, *args, **kwargs):
-        super(DataPivotUploadForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['file'].help_text += """<br>
             For more details on saving in this format from Excel,
             <a href="{0}" target="_blank">click here</a>.
@@ -584,7 +584,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
                   'published_only', 'prefilters')
 
     def __init__(self, *args, **kwargs):
-        super(DataPivotQueryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["evidence_type"].choices = (
             (models.BIOASSAY, 'Animal Bioassay'),
             (models.EPI, 'Epidemiology'),
@@ -595,7 +595,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
     def save(self, commit=True):
         self.instance.preferred_units = self.cleaned_data.get('preferred_units', [])
-        return super(DataPivotQueryForm, self).save(commit=commit)
+        return super().save(commit=commit)
 
     def clean_export_style(self):
         evidence_type = self.cleaned_data['evidence_type']
@@ -632,7 +632,7 @@ class DataPivotSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
@@ -665,7 +665,7 @@ class SmartTagForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id', -1)
-        super(SmartTagForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             widget.attrs['class'] = 'span12'

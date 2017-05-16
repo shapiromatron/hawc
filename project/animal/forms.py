@@ -26,7 +26,7 @@ class ExperimentForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
-        super(ExperimentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
 
@@ -97,7 +97,7 @@ class ExperimentForm(ModelForm):
     LIT_EFF_NOTES_NOT_REQ = "Litter effect notes should be blank if effects are not-applicable"
 
     def clean(self):
-        cleaned_data = super(ExperimentForm, self).clean()
+        cleaned_data = super().clean()
 
         purity_available = cleaned_data.get("purity_available")
         purity_qualifier = cleaned_data.get("purity_qualifier")
@@ -150,7 +150,7 @@ class AnimalGroupForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
-        super(AnimalGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if parent:
             self.instance.experiment = parent
@@ -218,7 +218,7 @@ class AnimalGroupForm(ModelForm):
         return helper
 
     def clean(self):
-        cleaned_data = super(AnimalGroupForm, self).clean()
+        cleaned_data = super().clean()
 
         species = cleaned_data.get("species")
         strain = cleaned_data.get("strain")
@@ -241,7 +241,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
         exclude = ('experiment', )
 
     def __init__(self, *args, **kwargs):
-        super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['generation'].choices = self.fields['generation'].choices[1:]
         self.fields['parents'].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment)
@@ -256,7 +256,7 @@ class DosingRegimeForm(ModelForm):
         exclude = ('dosed_animals',)
 
     def __init__(self, *args, **kwargs):
-        super(DosingRegimeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -301,7 +301,7 @@ class DoseGroupForm(ModelForm):
 class BaseDoseGroupFormSet(BaseModelFormSet):
 
     def __init__(self, *args, **kwargs):
-        super(BaseDoseGroupFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.queryset = models.DoseGroup.objects.none()
 
     def clean(self, **kwargs):
@@ -380,7 +380,7 @@ class EndpointForm(ModelForm):
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
         assessment = kwargs.pop('assessment', None)
-        super(EndpointForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['NOEL'].widget = forms.Select()
         self.fields['LOEL'].widget = forms.Select()
@@ -466,7 +466,7 @@ class EndpointForm(ModelForm):
         return helper
 
     def clean(self):
-        cleaned_data = super(EndpointForm, self).clean()
+        cleaned_data = super().clean()
         obs_time = cleaned_data.get("observation_time")
         observation_time_units = cleaned_data.get("observation_time_units")
 
@@ -511,14 +511,14 @@ class EndpointGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         endpoint = kwargs.pop('endpoint', None)
-        super(EndpointGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if endpoint:
             self.instance.endpoint = endpoint
         for fld in self.fields:
             self.fields[fld].widget.attrs['class'] = 'span12'
 
     def clean(self):
-        super(EndpointGroupForm, self).clean()
+        super().clean()
         data = self.cleaned_data
         data_type = self.endpoint_form.cleaned_data['data_type']
         var_type = self.endpoint_form.cleaned_data.get('variance_type', 0)
@@ -552,7 +552,7 @@ class EndpointGroupForm(forms.ModelForm):
 class BaseEndpointGroupFormSet(BaseModelFormSet):
 
     def __init__(self, **defaults):
-        super(BaseEndpointGroupFormSet, self).__init__(**defaults)
+        super().__init__(**defaults)
         if len(self.forms) > 0:
             self.forms[0].fields['significance_level'].widget.attrs['class'] += " hidden"
 
@@ -680,7 +680,7 @@ class EndpointFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(EndpointFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('sex', 'data_extracted', 'dose_units', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(

@@ -19,7 +19,7 @@ class AssessmentAdmin(admin.ModelAdmin):
     )
 
     def queryset(self, request):
-        qs = super(AssessmentAdmin, self).queryset(request)
+        qs = super().queryset(request)
         return qs.prefetch_related('project_manager', 'team_members', 'reviewers')
 
     def get_staff_ul(self, mgr):

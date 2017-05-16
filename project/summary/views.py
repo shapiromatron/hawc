@@ -20,7 +20,7 @@ class SummaryTextJSON(BaseDetail):
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get('pk'))
         self.permission_check_user_can_view()
-        return super(SummaryTextJSON, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         content = self.model.get_assessment_descendants(self.assessment.id, json_encode=True)
@@ -57,7 +57,7 @@ class SummaryTextCreate(BaseCreate):
     def post(self, request, *args, **kwargs):
         if not request.is_ajax() or not request.user.is_authenticated():
             raise HttpResponseNotAllowed()
-        return super(SummaryTextCreate, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_invalid(self, form):
         return HttpResponse(json.dumps(form.errors))
@@ -67,7 +67,7 @@ class SummaryTextCreate(BaseCreate):
         return validSummaryTextChange(self.assessment.id)
 
     def get_context_data(self, **kwargs):
-        context = super(SummaryTextCreate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
@@ -82,7 +82,7 @@ class SummaryTextUpdate(BaseUpdate):
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
             raise HttpResponseNotAllowed()
-        return super(SummaryTextUpdate, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_invalid(self, form):
         return HttpResponse(json.dumps(form.errors))
@@ -101,7 +101,7 @@ class SummaryTextDelete(BaseDelete):
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
             raise HttpResponseNotAllowed()
-        return super(SummaryTextDelete, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -141,12 +141,12 @@ class VisualizationCreate(BaseCreate):
             raise Http404
 
     def get_form_kwargs(self):
-        kwargs = super(VisualizationCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['visual_type'] = int(self.kwargs.get('visual_type'))
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(VisualizationCreate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['visual_type'] = int(self.kwargs.get('visual_type'))
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
@@ -177,7 +177,7 @@ class VisualizationUpdate(BaseUpdate):
             raise Http404
 
     def get_context_data(self, **kwargs):
-        context = super(VisualizationUpdate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['visual_type'] = self.object.visual_type
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
@@ -213,10 +213,10 @@ class DataPivotNewPrompt(TemplateView):
 
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        return super(DataPivotNewPrompt, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(TemplateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
 
@@ -235,7 +235,7 @@ class DataPivotNew(BaseCreate):
         )
 
     def get_form_kwargs(self):
-        kwargs = super(DataPivotNew, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         if self.request.GET.get('reset_row_overrides'):
             kwargs['initial']['settings'] = \
                 models.DataPivot.reset_row_overrides(kwargs['initial']['settings'])
@@ -247,7 +247,7 @@ class DataPivotQueryNew(DataPivotNew):
     form_class = forms.DataPivotQueryForm
 
     def get_context_data(self, **kwargs):
-        context = super(DataPivotQueryNew, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['file_loader'] = False
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
@@ -258,7 +258,7 @@ class DataPivotFileNew(DataPivotNew):
     form_class = forms.DataPivotUploadForm
 
     def get_context_data(self, **kwargs):
-        context = super(DataPivotFileNew, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['file_loader'] = True
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
@@ -274,7 +274,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         return get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
 
     def get_form_kwargs(self):
-        kwargs = super(DataPivotCopyAsNewSelector, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
@@ -304,7 +304,7 @@ class GetDataPivotObjectMixin(object):
             obj = obj.datapivotquery
         else:
             obj = obj.datapivotupload
-        return super(GetDataPivotObjectMixin, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
 
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
@@ -341,7 +341,7 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
     template_name = 'summary/datapivot_form.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DataPivotUpdateQuery, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['file_loader'] = False
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
@@ -354,7 +354,7 @@ class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
     template_name = 'summary/datapivot_form.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DataPivotUpdateFile, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['file_loader'] = True
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context

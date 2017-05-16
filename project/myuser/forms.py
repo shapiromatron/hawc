@@ -60,7 +60,7 @@ class PasswordForm(forms.ModelForm):
 
     def save(self, commit=True):
         # Save the provided password in hashed format
-        user = super(PasswordForm, self).save(commit=False)
+        user = super().save(commit=False)
         if self.cleaned_data["password1"] != "":
             user.set_password(self.cleaned_data["password1"])
         if commit:
@@ -71,7 +71,7 @@ class PasswordForm(forms.ModelForm):
 class HAWCSetPasswordForm(SetPasswordForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCSetPasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['new_password1'].help_text = _PASSWORD_HELP
         self.helper = self.setHelper()
 
@@ -109,7 +109,7 @@ class HAWCSetPasswordForm(SetPasswordForm):
 class HAWCPasswordChangeForm(PasswordChangeForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCPasswordChangeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['new_password1'].help_text = _PASSWORD_HELP
         self.helper = self.setHelper()
 
@@ -151,7 +151,7 @@ class RegisterForm(PasswordForm):
                   "password1", "password2")
 
     def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -201,7 +201,7 @@ class UserProfileForm(ModelForm):
         fields = ("first_name", "last_name", "HERO_access")
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
         self.helper = self.setHelper()
@@ -224,7 +224,7 @@ class UserProfileForm(ModelForm):
 
     def save(self, commit=True):
         # save content to both UserProfile and User
-        up = super(UserProfileForm, self).save(commit=False)
+        up = super().save(commit=False)
         up.user.first_name = self.cleaned_data["first_name"]
         up.user.last_name = self.cleaned_data['last_name']
         if commit:
@@ -258,7 +258,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(HAWCAuthenticationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -308,7 +308,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 class HAWCPasswordResetForm(PasswordResetForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCPasswordResetForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['email'].help_text = "Email-addresses are case-sensitive."
         self.helper = self.setHelper()
 
@@ -371,7 +371,7 @@ class AdminUserForm(PasswordForm):
                   "password1", "password2")
 
     def __init__(self, *args, **kwargs):
-        super(AdminUserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance.id:
 
             self.fields['password1'].required = False
@@ -388,7 +388,7 @@ class AdminUserForm(PasswordForm):
                 .values_list('id', flat=True)
 
     def save(self, commit=True):
-        user = super(AdminUserForm, self).save(commit=commit)
+        user = super().save(commit=commit)
         if user.id:
             user.assessment_pms.set(self.cleaned_data['project_manager'])
             user.assessment_teams.set(self.cleaned_data['team_member'])

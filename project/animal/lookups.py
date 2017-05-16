@@ -147,8 +147,7 @@ class EndpointByAssessmentTextLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
     def get_query(self, request, term):
-        return super(EndpointByAssessmentTextLookup, self)\
-            .get_query(request, term)\
+        return super().get_query(request, term)\
             .distinct('name')
 
 

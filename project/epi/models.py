@@ -498,7 +498,7 @@ class ComparisonSet(models.Model):
     def save(self, *args, **kwargs):
         if not xor(self.outcome is None, self.study_population is None):
             raise ValueError("An outcome or study-population is required.")
-        super(ComparisonSet, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('epi:cs_detail', kwargs={'pk': self.pk})

@@ -12,7 +12,7 @@ from . import models
 class StudySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        ret = super(StudySerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['coi_reported'] = instance.get_coi_reported_display()
         ret['url'] = instance.get_absolute_url()
         return ret
@@ -60,7 +60,7 @@ class FinalRobStudySerializer(StudySerializer):
 
     def to_representation(self, instance):
         instance.riskofbiases = instance.riskofbiases.filter(final=True)
-        ret = super(FinalRobStudySerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         return ret
 
 

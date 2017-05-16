@@ -33,11 +33,11 @@ class MessageMixin(object):
 
     def delete(self, request, *args, **kwargs):
         self.send_message()
-        return super(MessageMixin, self).delete(request, *args, **kwargs)
+        return super().delete(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.send_message()
-        return super(MessageMixin, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class CloseIfSuccessMixin(object):
@@ -54,7 +54,7 @@ class LoginRequiredMixin(object):
     """
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class AssessmentPermissionsMixin(object):
@@ -86,7 +86,7 @@ class AssessmentPermissionsMixin(object):
         """
         obj = kwargs.get('object')
         if not obj:
-            obj = super(AssessmentPermissionsMixin, self).get_object(**kwargs)
+            obj = super().get_object(**kwargs)
 
         if not hasattr(self, 'assessment'):
             self.assessment = obj.get_assessment()
@@ -111,7 +111,7 @@ class AssessmentPermissionsMixin(object):
         self.assessment parameter in class with the assessment to check
         permissions for.
         """
-        queryset = super(AssessmentPermissionsMixin, self).get_queryset()
+        queryset = super().get_queryset()
         if not hasattr(self, 'assessment'):
             # get_object calls get_queryset; thus we must be careful to check
             # the correct object
@@ -161,11 +161,11 @@ class ProjectManagerOrHigherMixin(object):
         logging.debug("Permissions checked")
         if not self.assessment.user_can_edit_assessment(request.user):
             raise PermissionDenied
-        return super(ProjectManagerOrHigherMixin, self)\
+        return super()\
             .dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectManagerOrHigherMixin, self)\
+        context = super()\
             .get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
@@ -186,11 +186,11 @@ class TeamMemberOrHigherMixin(object):
         logging.debug("Permissions checked")
         if not self.assessment.user_can_edit_object(request.user):
             raise PermissionDenied
-        return super(TeamMemberOrHigherMixin, self)\
+        return super()\
             .dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(TeamMemberOrHigherMixin, self)\
+        context = super()\
             .get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
@@ -202,7 +202,7 @@ class IsAuthorMixin(object):
     owner_field = 'author'
 
     def get_object(self):
-        obj = super(IsAuthorMixin, self).get_object()
+        obj = super().get_object()
         if getattr(obj, self.owner_field) != self.request.user:
             raise PermissionDenied
         return obj
@@ -232,13 +232,13 @@ class CanCreateMixin(object):
 
     def get(self, request, *args, **kwargs):
         if self.user_can_create_object(self.assessment):
-            return super(CanCreateMixin, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
         else:
             raise PermissionDenied
 
     def post(self, request, *args, **kwargs):
         if self.user_can_create_object(self.assessment):
-            return super(CanCreateMixin, self).post(request, *args, **kwargs)
+            return super().post(request, *args, **kwargs)
         else:
             raise PermissionDenied
 
@@ -252,7 +252,7 @@ class CopyAsNewSelectorMixin(object):
         return self.object.id
 
     def get_context_data(self, **kwargs):
-        context = super(CopyAsNewSelectorMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         related_id = self.get_related_id()
         context['form'] = self.form_class(parent_id=related_id)
         return context
@@ -274,10 +274,10 @@ class BaseDetail(AssessmentPermissionsMixin, DetailView):
     crud = 'Read'
 
     def get_context_data(self, **kwargs):
-        context = super(DetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['crud'] = self.crud
-        context['obj_perms'] = super(BaseDetail, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         return context
 
 
@@ -293,10 +293,10 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return HttpResponseRedirect(success_url)
 
     def get_context_data(self, **kwargs):
-        context = super(DeleteView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['crud'] = self.crud
-        context['obj_perms'] = super(BaseDelete, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         return context
 
 
@@ -313,10 +313,10 @@ class BaseUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         pass
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         context['crud'] = self.crud
-        context['obj_perms'] = super(BaseUpdate, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         return context
 
 
@@ -329,10 +329,10 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_edit()
-        return super(BaseCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(BaseCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         # all inputs require a parent field
         kwargs['parent'] = self.parent
@@ -349,10 +349,10 @@ class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(BaseCreate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['crud'] = self.crud
         context['assessment'] = self.assessment
-        context['obj_perms'] = super(BaseCreate, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         context[self.parent_template_name] = self.parent
         return context
 
@@ -378,12 +378,12 @@ class BaseList(AssessmentPermissionsMixin, ListView):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_view()
-        return super(BaseList, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(BaseList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
-        context['obj_perms'] = super(BaseList, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         context['crud'] = self.crud
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
@@ -426,7 +426,7 @@ class BaseCreateWithFormset(BaseCreate):
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def get_context_data(self, **kwargs):
-        context = super(BaseCreateWithFormset, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.request.method == 'GET':
             context['formset'] = self.build_initial_formset_factory()
         else:
@@ -500,7 +500,7 @@ class BaseUpdateWithFormset(BaseUpdate):
         raise NotImplementedError("Method should be overridden to return a formset factory")
 
     def get_context_data(self, **kwargs):
-        context = super(BaseUpdateWithFormset, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.request.method == 'GET':
             context['formset'] = self.build_initial_formset_factory()
         else:
@@ -533,7 +533,7 @@ class BaseEndpointFilterList(BaseList):
             self.form = self.form_class(
                 assessment_id=self.assessment.id
             )
-        return super(BaseEndpointFilterList, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_query(self, perms):
         """
@@ -545,7 +545,7 @@ class BaseEndpointFilterList(BaseList):
         pass
 
     def get_queryset(self):
-        perms = super(BaseEndpointFilterList, self).get_obj_perms()
+        perms = super().get_obj_perms()
         order_by = None
 
         query = self.get_query(perms)
@@ -567,7 +567,7 @@ class BaseEndpointFilterList(BaseList):
         return qs
 
     def get_context_data(self, **kwargs):
-        context = super(BaseEndpointFilterList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = self.form
         context['list_json'] = self.model.get_qs_json(
             context['object_list'], json_encode=True)

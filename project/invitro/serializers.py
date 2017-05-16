@@ -54,7 +54,7 @@ class IVChemicalSerializer(_IVChemicalSerializer):
 class IVEndpointGroupSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        ret = super(IVEndpointGroupSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['difference_control'] = instance.get_difference_control_display()
         ret['difference_control_symbol'] = instance.difference_control_symbol
         ret['significant_control'] = instance.get_significant_control_display()
@@ -105,7 +105,7 @@ class IVEndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
 
     def to_representation(self, instance):
-        ret = super(IVEndpointSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['data_type'] = instance.get_data_type_display()
         ret['variance_type'] = instance.get_variance_type_display()
         ret['observation_time_units'] = instance.get_observation_time_units_display()
@@ -130,7 +130,7 @@ class MiniIVEndpointSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def to_representation(self, instance):
-        ret = super(MiniIVEndpointSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         return ret
 

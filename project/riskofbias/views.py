@@ -46,14 +46,14 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
-        kwargs = super(ARoBCopy, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['assessment'] = self.assessment
         return kwargs
 
     def form_valid(self, form):
         form.copy_riskofbias()
-        return super(ARoBCopy, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_detail',
@@ -82,7 +82,7 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
                     to_attr='active_riskofbiases'))
 
     def get_context_data(self, **kwargs):
-        context = super(ARoBReviewersList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['rob_count'] = self.assessment.rob_settings.number_of_reviewers + 1
         return context
 
@@ -228,7 +228,7 @@ class StudyRoBExport(StudyList):
     Full XLS data export for the risk of bias.
     """
     def get(self, request, *args, **kwargs):
-        self.object_list = super(StudyRoBExport, self).get_queryset()
+        self.object_list = super().get_queryset()
         exporter = exports.RiskOfBiasFlat(
             self.object_list,
             export_format="excel",
@@ -247,7 +247,7 @@ class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
         return self.parent
 
     def get(self, request, *args, **kwargs):
-        self.object_list = super(StudyRoBCompleteExport, self).get_queryset()
+        self.object_list = super().get_queryset()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.object_list,
             export_format="excel",
@@ -287,14 +287,14 @@ class RoBEdit(BaseDetail):
 
     def get_object(self, **kwargs):
         # either project managers OR the author can edit/view.
-        obj = super(RoBEdit, self).get_object(**kwargs)
+        obj = super().get_object(**kwargs)
         if obj.author != self.request.user and \
             not self.assessment.user_can_edit_assessment(self.request.user):
             raise PermissionDenied
         return obj
 
     def get_context_data(self, **kwargs):
-        context = super(RoBEdit, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['back_url'] = self.request.META['HTTP_REFERER'] \
             if 'HTTP_REFERER' in self.request.META \
             else self.object.get_absolute_url()

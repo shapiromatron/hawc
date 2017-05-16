@@ -42,7 +42,7 @@ class RiskOfBias(viewsets.ModelViewSet):
             .prefetch_related('study', 'author', 'scores__metric__domain')
 
     def perform_update(self, serializer):
-        super(RiskOfBias, self).perform_update(serializer)
+        super().perform_update(serializer)
         study = serializer.instance.study
         user = self.request.user
         Task.objects.ensure_rob_started(study, user)

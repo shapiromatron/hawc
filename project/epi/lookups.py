@@ -12,8 +12,7 @@ class StudyPopulationByAssessmentLookup(RelatedLookup):
     related_filter = 'study__assessment_id'
 
     def get_query(self, request, term):
-        return super(StudyPopulationByAssessmentLookup, self)\
-            .get_query(request, term)\
+        return super().get_query(request, term)\
             .distinct('name')
 
 

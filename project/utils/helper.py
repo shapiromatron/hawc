@@ -73,7 +73,7 @@ class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
         if isinstance(o, decimal.Decimal):
             return float(o)
         else:
-            return super(HAWCDjangoJSONEncoder, self).default(o)
+            return super().default(o)
 
 
 class SerializerHelper(object):

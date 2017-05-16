@@ -33,7 +33,7 @@ class CriteriaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(CriteriaForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['description'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.CriteriaLookup,
             allow_new=True)
@@ -45,7 +45,7 @@ class CriteriaForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def clean(self):
-        super(CriteriaForm, self).clean()
+        super().clean()
         # assessment-description unique-together constraint check must be
         # added since assessment is not included on form
         pk = getattr(self.instance, 'pk', None)
@@ -121,7 +121,7 @@ class StudyPopulationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(StudyPopulationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comments'] = self.fields.pop('comments')  # move to end
         self.fields['region'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup,
@@ -157,7 +157,7 @@ class StudyPopulationForm(forms.ModelForm):
         models.StudyPopulationCriteria.objects.bulk_create(objs)
 
     def save(self, commit=True):
-        instance = super(StudyPopulationForm, self).save(commit)
+        instance = super().save(commit)
         if commit:
             self.save_criteria()
         return instance
@@ -224,7 +224,7 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(AdjustmentFactorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['description'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AdjustmentFactorLookup,
             allow_new=True)
@@ -236,7 +236,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def clean(self):
-        super(AdjustmentFactorForm, self).clean()
+        super().clean()
         # assessment-description unique-together constraint check must be
         # added since assessment is not included on form
         pk = getattr(self.instance, 'pk', None)
@@ -281,7 +281,7 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop('parent', None)
-        super(ExposureForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['measured'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExposureMeasuredLookup,
             allow_new=True)
@@ -361,7 +361,7 @@ class OutcomeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('assessment', None)
         study_population = kwargs.pop('parent', None)
-        super(OutcomeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
@@ -524,7 +524,7 @@ class OutcomeFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(OutcomeFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('design', 'diagnostic', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -626,7 +626,7 @@ class ComparisonSet(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.parent = kwargs.pop('parent', None)
-        super(ComparisonSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.parent:
             if type(self.parent) == models.StudyPopulation:
                 self.instance.study_population = self.parent
@@ -694,7 +694,7 @@ class SingleGroupForm(GroupForm):
     HELP_TEXT_UPDATE = """Update an existing group and group descriptions."""
 
     def __init__(self, *args, **kwargs):
-        super(SingleGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -722,7 +722,7 @@ class SingleGroupForm(GroupForm):
 class BaseGroupFormset(BaseModelFormSet):
 
     def clean(self):
-        super(BaseGroupFormset, self).clean()
+        super().clean()
 
         # check that there is at least one exposure-group
         count = len([f for f in self.forms if f.is_valid() and f.clean()])
@@ -788,7 +788,7 @@ class ResultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
-        super(ResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comments'] = self.fields.pop('comments')  # move to end
 
         if outcome:
@@ -841,7 +841,7 @@ class ResultForm(forms.ModelForm):
         models.ResultAdjustmentFactor.objects.bulk_create(objs)
 
     def save(self, commit=True):
-        instance = super(ResultForm, self).save(commit)
+        instance = super().save(commit)
         if commit:
             self.save_factors()
         return instance
@@ -897,7 +897,7 @@ class ResultSelectorForm(CopyAsNewSelectorForm):
 class ResultUpdateForm(ResultForm):
 
     def __init__(self, *args, **kwargs):
-        super(ResultUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comparison_set'].widget.attrs['disabled'] = True
 
 
@@ -911,7 +911,7 @@ class GroupResultForm(forms.ModelForm):
         study_population = kwargs.pop('study_population', None)
         outcome = kwargs.pop('outcome', None)
         result = kwargs.pop('result', None)
-        super(GroupResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["group"].queryset = models.Group.objects\
             .filter(
                 Q(comparison_set__study_population=study_population) |
@@ -942,7 +942,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         study_population = kwargs.pop('study_population', None)
         outcome = kwargs.pop('outcome', None)
         self.result = kwargs.pop('result', None)
-        super(BaseGroupResultFormset, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.form = curry(
             self.form,
             study_population=study_population,
@@ -951,7 +951,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         )
 
     def clean(self):
-        super(BaseGroupResultFormset, self).clean()
+        super().clean()
 
         # check that there is at least one result-group
         count = len([f for f in self.forms if f.is_valid() and f.clean()])

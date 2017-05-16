@@ -80,14 +80,14 @@ class NonUniqueTagBase(models.Model):
                 i += 1
                 try:
                     sid = transaction.savepoint(**trans_kwargs)
-                    res = super(NonUniqueTagBase, self).save(*args, **kwargs)
+                    res = super().save(*args, **kwargs)
                     transaction.savepoint_commit(sid, **trans_kwargs)
                     return res
                 except IntegrityError:
                     transaction.savepoint_rollback(sid, **trans_kwargs)
                     self.slug = self.slugify(self.name, i)
         else:
-            return super(NonUniqueTagBase, self).save(*args, **kwargs)
+            return super().save(*args, **kwargs)
 
     def slugify(self, tag, i=None):
         slug = default_slugify(tag)
@@ -285,7 +285,7 @@ class CustomURLField(URLField):
             'form_class': forms.CustomURLField,
         }
         defaults.update(kwargs)
-        return super(CustomURLField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
 
 def get_distinct_charfield(Cls, assessment_id, field):

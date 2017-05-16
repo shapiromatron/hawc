@@ -30,7 +30,7 @@ class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
     form_class = forms.StudyPopulationForm
 
     def get_form_kwargs(self):
-        kwargs = super(StudyPopulationCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         if 'id' in kwargs['initial']:
             # add additional M2M through relationships
@@ -150,7 +150,7 @@ class OutcomeCreate(BaseCreate):
     form_class = forms.OutcomeForm
 
     def get_form_kwargs(self):
-        kwargs = super(OutcomeCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
@@ -188,7 +188,7 @@ class ResultCreate(BaseCreateWithFormset):
     formset_factory = forms.GroupResultFormset
 
     def get_form_kwargs(self):
-        kwargs = super(ResultCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         if 'id' in kwargs['initial']:
             # add additional M2M through relationships

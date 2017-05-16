@@ -91,7 +91,7 @@ class Task(models.Model):
             self.completed = timezone.now()
             self.open = False
 
-        super(Task, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""

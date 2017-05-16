@@ -115,7 +115,7 @@ class Search(models.Model):
 
     def delete(self, **kwargs):
         assessment_pk = self.assessment.pk
-        super(Search, self).delete(**kwargs)
+        super().delete(**kwargs)
         Reference.objects.delete_orphans(assessment_pk)
 
     @property

@@ -48,7 +48,7 @@ class MetaProtocolForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
-        super(MetaProtocolForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
         self.fields['inclusion_criteria'].widget.update_query_parameters(
@@ -120,7 +120,7 @@ class MetaResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
         assessment = kwargs.pop('assessment', None)
-        super(MetaResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['health_outcome'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.MetaResultHealthOutcomeLookup,
@@ -237,7 +237,7 @@ class MetaResultFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(MetaResultFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -304,7 +304,7 @@ class SingleResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
         assessment = kwargs.pop("assessment", None)
-        super(SingleResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if parent:
             self.instance.meta_result = parent
@@ -334,7 +334,7 @@ class BaseSingleResultFormset(forms.BaseModelFormSet):
 
     def __init__(self, **kwargs):
         assessment = kwargs.pop('assessment')
-        super(BaseSingleResultFormset, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.form = curry(self.form, assessment=assessment)
 
 
@@ -355,7 +355,7 @@ class MetaResultSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         study_id = kwargs.pop("study_id")
-        super(MetaResultSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span11'
         self.fields['selector'].widget.update_query_parameters(

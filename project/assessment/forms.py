@@ -26,7 +26,7 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
-        super(AssessmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['project_manager'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
@@ -86,7 +86,7 @@ class AssessmentModulesForm(forms.ModelForm):
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
-        super(AssessmentModulesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -114,7 +114,7 @@ class AttachmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop('parent', None)
-        super(AttachmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if obj:
             self.instance.content_type = ContentType.objects.get_for_model(obj)
             self.instance.object_id = obj.id
@@ -150,7 +150,7 @@ class SpeciesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(SpeciesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_name(self):
         return self.cleaned_data['name'].title()
@@ -164,7 +164,7 @@ class StrainForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(StrainForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_name(self):
         return self.cleaned_data['name'].title()
@@ -178,7 +178,7 @@ class DoseUnitsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(DoseUnitsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup,
             allow_new=True)
@@ -194,7 +194,7 @@ class EffectTagForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent')
-        super(EffectTagForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = AutoCompleteWidget(
             lookup_class=lookups.EffectTagLookup,
             allow_new=True)
@@ -218,7 +218,7 @@ class AssessmentEmailManagersForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop('assessment', None)
-        super(AssessmentEmailManagersForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for key in list(self.fields.keys()):
             self.fields[key].widget.attrs['class'] = 'span12'
 
@@ -240,7 +240,7 @@ class ContactForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.back_href = kwargs.pop('back_href', None)
-        super(ContactForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):

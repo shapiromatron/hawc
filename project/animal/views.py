@@ -79,7 +79,7 @@ class AnimalGroupCreate(BaseCreate):
 
         # If a dosing-regime is already specified, save as normal
         if self.is_generational and self.object.dosing_regime:
-            return super(AnimalGroupCreate, self).form_valid(form)
+            return super().form_valid(form)
 
         # Otherwise we create a new dosing-regime, as well as the associated
         # dose-groups using a formset.
@@ -106,7 +106,7 @@ class AnimalGroupCreate(BaseCreate):
 
                 fs.save()
 
-                return super(AnimalGroupCreate, self).form_valid(form)
+                return super().form_valid(form)
 
             else:
                 # invalid formset; extract formset errors
@@ -123,7 +123,7 @@ class AnimalGroupCreate(BaseCreate):
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(AnimalGroupCreate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["dose_types"] = DoseUnits.objects.json_all()
         if hasattr(self, 'form_dosing_regime'):
             context['form_dosing_regime'] = self.form_dosing_regime
@@ -158,14 +158,14 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
 
     def get_object(self, queryset=None):
-        obj = super(AnimalGroupUpdate, self).get_object()
+        obj = super().get_object()
         self.dosing_regime = obj.dosing_regime
         if obj.is_generational:
             self.form_class = forms.GenerationalAnimalGroupForm
         return obj
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = DoseUnits.objects.json_all()
@@ -223,7 +223,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
             fs.save()
 
-            return super(DosingRegimeUpdate, self).form_valid(form)
+            return super().form_valid(form)
 
         else:
             # invalid formset; extract formset errors
@@ -237,7 +237,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["crud"] = self.crud
         context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = DoseUnits.objects.json_all()
@@ -266,7 +266,7 @@ class EndpointCreate(BaseCreateWithFormset):
     formset_factory = forms.EndpointGroupFormSet
 
     def get_form_kwargs(self):
-        kwargs = super(EndpointCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
@@ -325,7 +325,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
-        context = super(EndpointUpdate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['animal_group'] = self.object.animal_group
         return context
 
@@ -343,7 +343,7 @@ class EndpointList(BaseEndpointFilterList):
         return query
 
     def get_context_data(self, **kwargs):
-        context = super(EndpointList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['dose_units'] = self.form.get_dose_units_id()
         return context
 
@@ -363,7 +363,7 @@ class EndpointRead(BaseDetail):
                         'animal_group__experiment__study')
 
     def get_context_data(self, **kwargs):
-        context = super(EndpointRead, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['bmd_session'] = self.object.get_latest_bmd_session()
         return context
 
