@@ -120,13 +120,6 @@ def form_error_lis_to_ul(lis):
     return "<ul>{0}</ul>".format("".join(lis))
 
 
-def anyNull(dict, fields):
-    for field in fields:
-        if dict.get(field) is None:
-            return True
-    return False
-
-
 def addPopupLink(href, text):
     return """<a href="{0}"
                  onclick="return HAWCUtils.newWindowPopupLink(this);")>{1}</a>""".format(href, text)
@@ -172,20 +165,6 @@ class AdderLayout(cfl.Field):
         return super(AdderLayout, self).render(form, form_style, context,
                                                template_pack, extra_context,
                                                **kwargs)
-
-
-class FormsetWithIgnoredFields(forms.BaseModelFormSet):
-
-    ignored_fields = []   # list of field names to be ignored
-
-    def __init__(self, *args, **kwargs):
-        super(FormsetWithIgnoredFields, self).__init__(*args, **kwargs)
-
-        for i, form in enumerate(self.forms):
-            for field_name in self.ignored_fields:
-                value = self.data.get('form-{0}-{1}'.format(i, field_name))
-                if value:
-                    form.fields[field_name].initial = value
 
 
 class CustomURLField(forms.URLField):
