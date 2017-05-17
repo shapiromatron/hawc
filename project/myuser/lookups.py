@@ -34,5 +34,6 @@ class AssessmentTeamMemberOrHigherLookup(HAWCUserLookup):
             reduce(operator.or_, search_fields)
         ).distinct()
 
+
 registry.register(HAWCUserLookup)
 registry.register(AssessmentTeamMemberOrHigherLookup)

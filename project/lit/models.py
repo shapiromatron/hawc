@@ -1,10 +1,10 @@
 from datetime import datetime
+import html.parser
 from math import ceil
-import urllib.request, urllib.parse, urllib.error
 import json
 import logging
 import re
-import html.parser
+from urllib import parse
 
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
@@ -442,7 +442,7 @@ class Identifiers(models.Model):
         url = self.url
         template = self.URL_TEMPLATES.get(self.database, None)
         if template:
-            url = template.format(urllib.parse.quote(self.unique_id))
+            url = template.format(parse.quote(self.unique_id))
         return url
 
     def create_reference(self, assessment, block_id=None):

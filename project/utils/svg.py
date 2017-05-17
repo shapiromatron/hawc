@@ -6,7 +6,7 @@ import re
 import subprocess
 from io import StringIO
 import tempfile
-import urllib.request, urllib.error, urllib.parse
+from urllib import parse
 
 from django.conf import settings
 from django.http.request import HttpRequest
@@ -49,7 +49,7 @@ class SVGConverter(object):
         svg = svg.decode('base64')\
             .replace('%u', '\\u')\
             .decode('unicode_escape')
-        self.svg = urllib.parse.unquote(svg)
+        self.svg = parse.unquote(svg)
 
     def to_svg(self):
         # add embedded styles
@@ -122,15 +122,15 @@ class SVGConverter(object):
         max_width = 9.
         left = Inches(0.5)
         top = Inches(0.75)
-        width_to_height_ratio = float(self.width)/self.height
-        if width_to_height_ratio > (max_width/max_height):
+        width_to_height_ratio = float(self.width) / self.height
+        if width_to_height_ratio > (max_width / max_height):
             width = Inches(max_width)
-            height = width/width_to_height_ratio
-            top = top + int((Inches(max_height)-height)*0.5)
+            height = width / width_to_height_ratio
+            top = top + int((Inches(max_height) - height) * 0.5)
         else:
             height = Inches(max_height)
-            width = height*width_to_height_ratio
-            left = left + int((Inches(max_width)-width)*0.5)
+            width = height * width_to_height_ratio
+            left = left + int((Inches(max_width) - width) * 0.5)
 
         slide.shapes.add_picture(png_fn, left, top, width, height)
 
