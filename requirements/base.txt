@@ -38,7 +38,7 @@ unicodecsv==0.13.0
 bmds==0.8.0
 
 # literature
-git+https://github.com/JoshAddington/RISparser.git
+git+git://github.com/JoshAddington/RISparser@2a37fea7efe7e66fbbdb7ff115d3feb1a6b53465
 litter-getter==0.1.2
 
 # notebooks/import scripts
