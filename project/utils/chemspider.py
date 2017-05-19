@@ -20,8 +20,7 @@ def fetch_chemspider(cas_number):
             'token': settings.CHEMSPIDER_TOKEN,
         }
         r = requests.post(url, data=payload)
-
-        id_val = re.search(r'\<int\>(\d+)\</int\>', r.content).group(1)
+        id_val = re.search(r'\<int\>(\d+)\</int\>', r.text).group(1)
 
         # get details
         url = 'http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo'  # noqa
@@ -30,7 +29,7 @@ def fetch_chemspider(cas_number):
             'token': settings.CHEMSPIDER_TOKEN,
         }
         r = requests.post(url, data=payload)
-        xml = ET.fromstring(r.content)
+        xml = ET.fromstring(r.text)
         namespace = '{http://www.chemspider.com/}'
         d['CommonName'] = xml.find('{}CommonName'.format(namespace)).text
         d['SMILES'] = xml.find('{}SMILES'.format(namespace)).text
@@ -43,13 +42,16 @@ def fetch_chemspider(cas_number):
             'token': settings.CHEMSPIDER_TOKEN,
         }
         r = requests.post(url, data=payload)
-        xml = ET.fromstring(r.content)
+        xml = ET.fromstring(r.text)
         d['image'] = xml.text
 
         # call it a success if we made it here
         d['status'] = 'success'
 
+    except AttributeError as e:
+        logger.error(f"Request failed: {r.text}", exc_info=True)
+
     except Exception as e:
-        logger.error(e.message, exc_info=True)
+        logger.error(str(e), exc_info=True)
 
     return d
