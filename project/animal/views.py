@@ -88,7 +88,11 @@ class AnimalGroupCreate(BaseCreate):
             dosing_regime = self.form_dosing_regime.save(commit=False)
 
             # unpack dose-groups into formset and validate
-            fs_initial = json.loads(self.request.POST['dose_groups_json'])
+            # occasionally POST['dose_groups_json'] will be '', which json.loads
+            # will raise an error on. Replace with '{}' on those occasions.
+            dose_groups  = self.request.POST['dose_groups_json']
+            dose_groups_json = dose_groups if dose_groups != '' else '{}'
+            fs_initial = json.loads(dose_groups_json)
             fs = forms.dosegroup_formset_factory(fs_initial, dosing_regime.num_dose_groups)
 
             if fs.is_valid():
