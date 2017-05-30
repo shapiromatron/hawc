@@ -38,7 +38,7 @@ unicodecsv==0.13.0
 bmds==0.8.0
 
 # literature
-litter-getter==0.1.2
+litter-getter==0.2.0
 
 # notebooks/import scripts
 jupyter==1.0.0
