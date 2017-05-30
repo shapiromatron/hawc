@@ -1,5 +1,4 @@
 import os
-import subprocess
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -244,13 +243,17 @@ LOGGING = {
 
 # commit information
 def get_git_commit():
-    path = PROJECT_ROOT
-    cmd = 'git log -1 --format=%H'
-    return subprocess.check_output(cmd.split(), cwd=path).strip()
+    fn = os.path.join(PROJECT_ROOT, '.gitcommit')
+    if os.path.exists(fn):
+        with open(fn, 'r') as f:
+            return f.read()
+    return None
 
 
 GIT_COMMIT = get_git_commit()
-COMMIT_URL = 'https://github.com/shapiromatron/hawc/commit/{0}/'.format(GIT_COMMIT)
+COMMIT_URL = 'https://github.com/shapiromatron/hawc/'
+if GIT_COMMIT:
+    COMMIT_URL = COMMIT_URL + 'commit/{0}/'.format(GIT_COMMIT)
 
 
 # PubMed settings

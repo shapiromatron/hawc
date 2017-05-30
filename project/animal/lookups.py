@@ -154,7 +154,7 @@ class EndpointByAssessmentTextLookup(RelatedLookup):
 class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
 
     def get_item_value(self, obj):
-        return '<a href="{}" target="_blank">{}</a>'.format(
+        return u'<a href="{}" target="_blank">{}</a>'.format(
             obj.get_absolute_url(),
             self.get_item_label(obj)
         )

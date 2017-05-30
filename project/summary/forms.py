@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import json
 
+from django.db.models import QuerySet
 from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
@@ -457,6 +458,21 @@ class VisualForm(forms.ModelForm):
         return clean_slug(self)
 
 
+class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMultipleWidget):
+    """
+    Value in render is a queryset of type assessment.models.BaseEndpoint,
+    where the widget is expecting type animal.models.Endpoint. Therefore, the
+    value is written as a string instead of ID when using the standard widget.
+    We override to return the proper type for the queryset so the widget
+    properly returns IDs instead of strings.
+    """
+
+    def render(self, name, value, attrs=None):
+        if value and isinstance(value, QuerySet):
+            value = Endpoint.objects.filter(id__in=value.values_list('id', flat=True))
+        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(name, value, attrs)
+
+
 class EndpointAggregationForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
@@ -464,7 +480,7 @@ class EndpointAggregationForm(VisualForm):
         self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
             lookup_class=EndpointByAssessmentLookupHtml,
             label='Endpoints',
-            widget=selectable.AutoCompleteSelectMultipleWidget)
+            widget=EndpointAggregationSelectMultipleWidget)
         self.fields["endpoints"].widget.update_query_parameters(
             {'related': self.instance.assessment_id})
         self.helper = self.setHelper()
