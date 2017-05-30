@@ -1,3 +1,4 @@
+import base64
 import collections
 import json
 import os
@@ -331,7 +332,7 @@ class Model(models.Model):
         if hasattr(model, 'plot_base64'):
             fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + '.emf')
             with open(os.path.join(self.plot.storage.location, fn), 'wb') as f:
-                f.write(model.plot_base64.decode('base64'))
+                f.write(base64.b64decode(model.plot_base64))
             self.plot = fn
 
         self.save()

@@ -1,10 +1,11 @@
 import codecs
 from datetime import datetime
+import base64
 import logging
 import os
 import re
 import subprocess
-from io import StringIO
+from io import BytesIO
 import tempfile
 from urllib import parse
 
@@ -46,9 +47,7 @@ class SVGConverter(object):
         self.height = height
         self.tempfns = []
 
-        svg = svg.decode('base64')\
-            .replace('%u', '\\u')\
-            .decode('unicode_escape')
+        svg = base64.b64decode(svg).decode('utf8').replace('%u', '\\u').encode().decode('unicode-escape')
         self.svg = parse.unquote(svg)
 
     def to_svg(self):
@@ -100,15 +99,15 @@ class SVGConverter(object):
     def _pptx_add_title(self, slide):
         txBox = slide.shapes.add_textbox(
             Inches(0.5), Inches(0.25), Inches(9), Inches(0.5))
-        tf = txBox.textframe
+        tf = txBox.text_frame
         now = datetime.now().strftime("%B %d %Y, %I:%M %p")
-        tf.text = "HAWC visualization generated on {}".format(now)
+        tf.text = 'HAWC visualization generated on {}'.format(now)
         tf.paragraphs[0].alignment = 2
 
     def _pptx_add_url(self, slide):
         txBox = slide.shapes.add_textbox(
             Inches(0), Inches(7.0), Inches(10), Inches(0.5))
-        tf = txBox.textframe
+        tf = txBox.text_frame
         p = tf.paragraphs[0]
         run = p.add_run()
         run.text = self.url
@@ -160,12 +159,12 @@ class SVGConverter(object):
             self._pptx_add_hawc_logo(slide)
 
             # save as object
-            content = StringIO()
+            content = BytesIO()
             pres.save(content)
             content.seek(0)
 
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
 

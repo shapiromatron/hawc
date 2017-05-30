@@ -12,8 +12,7 @@ from django.utils import html
 
 from rest_framework.renderers import JSONRenderer
 
-
-import unicodecsv
+import csv
 import xlsxwriter
 
 
@@ -286,7 +285,7 @@ class TSVFileBuilder(FlatFile):
 
     def _setup(self):
         self.output = StringIO()
-        self.tsv = unicodecsv.writer(self.output, dialect='excel-tab', encoding='utf-8')
+        self.tsv = csv.writer(self.output, dialect='excel-tab')
 
     def _write_header_row(self, header_row):
         self.tsv.writerow(header_row)

@@ -485,14 +485,14 @@ class DownloadPlot(FormView):
     def post(self, request, *args, **kwargs):
 
         # default response
-        response = HttpResponse("<p>An error in processing occurred.</p>")
+        response = HttpResponse('<p>An error in processing occurred.</p>')
 
         # grab input values and create converter object
         extension = request.POST.get('output', None)
         svg = request.POST['svg']
         url = request.META['HTTP_REFERER']
-        width = int(float(request.POST['width'])*5)
-        height = int(float(request.POST['height'])*5)
+        width = int(float(request.POST['width']) * 5)
+        height = int(float(request.POST['height']) * 5)
 
         handler = self.EXPORT_CROSSWALK.get(extension, None)
         if handler:
