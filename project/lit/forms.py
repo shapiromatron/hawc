@@ -185,7 +185,13 @@ class RISForm(SearchForm):
                 'File must have an ".ris" or ".txt" file-extension')
 
         try:
-            readable = ris.RisImporter.file_readable(fileObj)
+            # convert BytesIO file to StringIO file
+            with StringIO() as f:
+                f.write(fileObj.read().decode('utf8'))
+                f.seek(0)
+                fileObj.seek(0)
+                readable = ris.RisImporter.file_readable(f)
+
         except KeyError as err:
             raise forms.ValidationError('''
                 Invalid key found: {}. Have you followed the instructions below
@@ -208,9 +214,14 @@ class RISForm(SearchForm):
         """
         cleaned_data = super().clean()
         if 'import_file' in cleaned_data and not self._errors:
-            # create a copy for RisImporter to open/close
-            f = StringIO(cleaned_data['import_file'].read())
-            importer = ris.RisImporter(f)
+
+            # convert BytesIO file to StringIO file
+            with StringIO() as f:
+                f.write(cleaned_data['import_file'].read().decode('utf8'))
+                f.seek(0)
+                cleaned_data['import_file'].seek(0)
+                importer = ris.RisImporter(f)
+
             self.instance._references = importer.references
 
 
