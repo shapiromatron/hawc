@@ -2,7 +2,7 @@ from datetime import datetime
 import decimal
 import logging
 from collections import OrderedDict
-from io import StringIO
+from io import BytesIO, StringIO
 import re
 
 from django.core.cache import cache
@@ -220,7 +220,7 @@ class ExcelFileBuilder(FlatFile):
     """
 
     def _setup(self):
-        self.output = StringIO()
+        self.output = BytesIO()
         self.wb = xlsxwriter.Workbook(self.output)
         self._add_worksheet(sheet_name=self.kwargs.get("sheet_name", "Sheet1"))
 
