@@ -46,11 +46,12 @@ class UserAssessmentAssignments(LoginRequiredMixin, BaseList):
 
 
 # Assessment-level task views
-class TaskDashboard(TeamMemberOrHigherMixin, ListView):
+class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
+    parent_model = Assessment
     model = models.Task
     template_name = 'mgmt/assessment_dashboard.html'
 
-    def get_assessment(self, request, *args, **kwargs):
+    def get_assessment(self, *args, **kwargs):
         return get_object_or_404(Assessment, pk=kwargs['pk'])
 
     def get_queryset(self):
