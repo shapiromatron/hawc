@@ -6,10 +6,11 @@ project/static/css/hawc_d3_aggregated.css
 docs/build/*
 project/celerybeat*
 venv/
+env
+.env
 
 public/static/
 public/media/
-env
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files
