@@ -120,7 +120,7 @@ class IVEndpointByAssessmentTextLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
     def get_query(self, request, term):
-        return super(IVEndpointByAssessmentTextLookup, self)\
+        return super()\
             .get_query(request, term)\
             .distinct('name')
 

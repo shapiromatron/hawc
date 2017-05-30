@@ -5,4 +5,4 @@ class EpiConfig(AppConfig):
     verbose_name = 'Epi'
 
     def ready(self):
-        import signals
+        from . import signals

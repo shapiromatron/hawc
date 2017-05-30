@@ -25,7 +25,7 @@ class AssessmentTests(TestCase):
         # test two assessments with duplicate information can be created.
         c = Client()
         self.assertTrue(c.login(email='sudo@sudo.com', password='pw'))
-        for i in xrange(2):
+        for i in range(2):
             response = c.post(reverse('assessment:new'), {
                 'name': 'testing',
                 'year': '2013',

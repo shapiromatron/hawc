@@ -19,9 +19,9 @@ from . import models, lookups
 
 class CriteriaForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new study criteria"
+    CREATE_LEGEND = "Create new study criteria"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a epidemiology study criteria. Study criteria can be applied to
         study populations as inclusion criteria, exclusion criteria, or
         confounding criteria. They are assessment-specific. Please take care
@@ -33,19 +33,19 @@ class CriteriaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(CriteriaForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['description'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.CriteriaLookup,
             allow_new=True)
         self.instance.assessment = assessment
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.update_query_parameters(
             {'related': self.instance.assessment.id})
         self.helper = self.setHelper()
 
     def clean(self):
-        super(CriteriaForm, self).clean()
+        super().clean()
         # assessment-description unique-together constraint check must be
         # added since assessment is not included on form
         pk = getattr(self.instance, 'pk', None)
@@ -60,7 +60,7 @@ class CriteriaForm(forms.ModelForm):
         return self.cleaned_data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -81,15 +81,15 @@ class CriteriaForm(forms.ModelForm):
 
 class StudyPopulationForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new study-population"
+    CREATE_LEGEND = "Create new study-population"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new study population. Each study-population is a
         associated with an epidemiology study. There may be
         multiple study populations with a single study,
         though this is typically unlikely."""
 
-    UPDATE_HELP_TEXT = u"Update an existing study-population."
+    UPDATE_HELP_TEXT = "Update an existing study-population."
 
     CRITERION_FIELDS = [
         "inclusion_criteria",
@@ -121,7 +121,7 @@ class StudyPopulationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(StudyPopulationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comments'] = self.fields.pop('comments')  # move to end
         self.fields['region'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup,
@@ -157,13 +157,13 @@ class StudyPopulationForm(forms.ModelForm):
         models.StudyPopulationCriteria.objects.bulk_create(objs)
 
     def save(self, commit=True):
-        instance = super(StudyPopulationForm, self).save(commit)
+        instance = super().save(commit)
         if commit:
             self.save_criteria()
         return instance
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.CRITERION_FIELDS:
@@ -175,7 +175,7 @@ class StudyPopulationForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text":   self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url()
             }
@@ -210,9 +210,9 @@ class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
 
 class AdjustmentFactorForm(forms.ModelForm):
 
-    CREATE_LEGEND = u"Create new adjustment factor"
+    CREATE_LEGEND = "Create new adjustment factor"
 
-    CREATE_HELP_TEXT = u"""
+    CREATE_HELP_TEXT = """
         Create a new adjustment factor. Adjustment factors can be applied to
         outcomes as applied or considered factors.
         They are assessment-specific.
@@ -224,19 +224,19 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(AdjustmentFactorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['description'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AdjustmentFactorLookup,
             allow_new=True)
         self.instance.assessment = assessment
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
         self.fields['description'].widget.update_query_parameters(
             {'related': self.instance.assessment.id})
         self.helper = self.setHelper()
 
     def clean(self):
-        super(AdjustmentFactorForm, self).clean()
+        super().clean()
         # assessment-description unique-together constraint check must be
         # added since assessment is not included on form
         pk = getattr(self.instance, 'pk', None)
@@ -251,7 +251,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         return self.cleaned_data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -281,7 +281,7 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop('parent', None)
-        super(ExposureForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['measured'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExposureMeasuredLookup,
             allow_new=True)
@@ -296,7 +296,7 @@ class ExposureForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["metric_units"]:
@@ -309,13 +309,13 @@ class ExposureForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new exposure",
+                "legend_text": "Create new exposure",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
@@ -361,7 +361,7 @@ class OutcomeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('assessment', None)
         study_population = kwargs.pop('parent', None)
-        super(OutcomeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
@@ -388,7 +388,7 @@ class OutcomeForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
@@ -400,13 +400,13 @@ class OutcomeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new outcome",
+                "legend_text": "Create new outcome",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
@@ -524,7 +524,7 @@ class OutcomeFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(OutcomeFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('design', 'diagnostic', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -535,7 +535,7 @@ class OutcomeFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'
@@ -626,7 +626,7 @@ class ComparisonSet(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.parent = kwargs.pop('parent', None)
-        super(ComparisonSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.parent:
             if type(self.parent) == models.StudyPopulation:
                 self.instance.study_population = self.parent
@@ -643,7 +643,7 @@ class ComparisonSet(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -656,13 +656,13 @@ class ComparisonSet(forms.ModelForm):
             else:
                 url = self.instance.study_population.get_absolute_url()
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": url
             }
         else:
             inputs = {
-                "legend_text": u"Create new comparison set",
+                "legend_text": "Create new comparison set",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.parent.get_absolute_url()
             }
@@ -694,11 +694,11 @@ class SingleGroupForm(GroupForm):
     HELP_TEXT_UPDATE = """Update an existing group and group descriptions."""
 
     def __init__(self, *args, **kwargs):
-        super(SingleGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -706,7 +706,7 @@ class SingleGroupForm(GroupForm):
                 widget.attrs['rows'] = 3
 
         inputs = {
-            "legend_text": u"Update {}".format(self.instance),
+            "legend_text": "Update {}".format(self.instance),
             "help_text": self.HELP_TEXT_UPDATE,
             "cancel_url": self.instance.get_absolute_url()
         }
@@ -722,10 +722,10 @@ class SingleGroupForm(GroupForm):
 class BaseGroupFormset(BaseModelFormSet):
 
     def clean(self):
-        super(BaseGroupFormset, self).clean()
+        super().clean()
 
         # check that there is at least one exposure-group
-        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        count = len([f for f in self.forms if f.is_valid() and f.clean()])
         if count < 1:
             raise forms.ValidationError("At least one group is required.")
 
@@ -788,7 +788,7 @@ class ResultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
-        super(ResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comments'] = self.fields.pop('comments')  # move to end
 
         if outcome:
@@ -841,13 +841,13 @@ class ResultForm(forms.ModelForm):
         models.ResultAdjustmentFactor.objects.bulk_create(objs)
 
     def save(self, commit=True):
-        instance = super(ResultForm, self).save(commit)
+        instance = super().save(commit)
         if commit:
             self.save_factors()
         return instance
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.ADJUSTMENT_FIELDS:
@@ -859,13 +859,13 @@ class ResultForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
+                "legend_text": "Update {}".format(self.instance),
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new set of results",
+                "legend_text": "Create new set of results",
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.instance.outcome.get_absolute_url()
             }
@@ -897,7 +897,7 @@ class ResultSelectorForm(CopyAsNewSelectorForm):
 class ResultUpdateForm(ResultForm):
 
     def __init__(self, *args, **kwargs):
-        super(ResultUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['comparison_set'].widget.attrs['disabled'] = True
 
 
@@ -911,7 +911,7 @@ class GroupResultForm(forms.ModelForm):
         study_population = kwargs.pop('study_population', None)
         outcome = kwargs.pop('outcome', None)
         result = kwargs.pop('result', None)
-        super(GroupResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["group"].queryset = models.Group.objects\
             .filter(
                 Q(comparison_set__study_population=study_population) |
@@ -922,7 +922,7 @@ class GroupResultForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld == "group":
                 widget.attrs['class'] = "groupField"
@@ -942,7 +942,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         study_population = kwargs.pop('study_population', None)
         outcome = kwargs.pop('outcome', None)
         self.result = kwargs.pop('result', None)
-        super(BaseGroupResultFormset, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.form = curry(
             self.form,
             study_population=study_population,
@@ -951,10 +951,10 @@ class BaseGroupResultFormset(BaseModelFormSet):
         )
 
     def clean(self):
-        super(BaseGroupResultFormset, self).clean()
+        super().clean()
 
         # check that there is at least one result-group
-        count = len(filter(lambda f: f.is_valid() and f.clean(), self.forms))
+        count = len([f for f in self.forms if f.is_valid() and f.clean()])
         if count < 1:
             raise forms.ValidationError("At least one group is required.")
 

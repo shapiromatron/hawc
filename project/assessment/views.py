@@ -31,7 +31,7 @@ class Home(TemplateView):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse_lazy('portal'))
-        return super(Home, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class About(TemplateView):
@@ -141,7 +141,7 @@ class About(TemplateView):
         return counts
 
     def get_context_data(self, **kwargs):
-        context = super(About, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object_list'] = models.ChangeLog.objects.all()[:5]
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
@@ -156,14 +156,14 @@ class Contact(MessageMixin, FormView):
     success_message = 'Your message has been sent!'
 
     def get_form_kwargs(self):
-        kwargs = super(Contact, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['back_href'] = self.request.META.get(
             'HTTP_REFERER', reverse('portal'))
         return kwargs
 
     def form_valid(self, form):
         form.send_email()
-        return super(Contact, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class Error403(TemplateView):
@@ -189,7 +189,7 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(AssessmentFullList, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class AssessmentPublicList(ListView):
@@ -209,7 +209,7 @@ class AssessmentRead(BaseDetail):
     model = models.Assessment
 
     def get_context_data(self, **kwargs):
-        context = super(AssessmentRead, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['attachments'] = models.Attachment.objects.get_attachments(
             self.object,
             not context['obj_perms']['edit']
@@ -251,15 +251,15 @@ class AssessmentEmailManagers(MessageMixin, FormView):
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         self.assessment = get_object_or_404(models.Assessment, pk=kwargs.get('pk'))
-        return super(AssessmentEmailManagers, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(AssessmentEmailManagers, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(AssessmentEmailManagers, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object'] = self.assessment
         return context
 
@@ -268,7 +268,7 @@ class AssessmentEmailManagers(MessageMixin, FormView):
 
     def form_valid(self, form):
         form.send_email()
-        return super(AssessmentEmailManagers, self).form_valid(form)
+        return super().form_valid(form)
 
 
 # Attachment views
@@ -359,7 +359,7 @@ class BaseEndpointList(BaseList):
     model = models.BaseEndpoint
 
     def get_context_data(self, **kwargs):
-        context = super(BaseEndpointList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         eps = self.model.endpoint\
             .related.related_model.objects\
@@ -440,7 +440,7 @@ class CloseWindow(TemplateView):
 
 class UpdateSession(View):
 
-    http_method_names = (u'post', )
+    http_method_names = ('post', )
 
     def isTruthy(self, request, field):
         return request.POST.get(field, "true") == "true"
@@ -457,11 +457,11 @@ class UpdateSession(View):
 
 class DownloadPlot(FormView):
 
-    http_method_names = [u'post', ]
+    http_method_names = ['post', ]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
-        return super(DownloadPlot, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     EXPORT_CROSSWALK = {
         'svg': {
@@ -485,14 +485,14 @@ class DownloadPlot(FormView):
     def post(self, request, *args, **kwargs):
 
         # default response
-        response = HttpResponse("<p>An error in processing occurred.</p>")
+        response = HttpResponse('<p>An error in processing occurred.</p>')
 
         # grab input values and create converter object
         extension = request.POST.get('output', None)
         svg = request.POST['svg']
         url = request.META['HTTP_REFERER']
-        width = int(float(request.POST['width'])*5)
-        height = int(float(request.POST['height'])*5)
+        width = int(float(request.POST['width']) * 5)
+        height = int(float(request.POST['height']) * 5)
 
         handler = self.EXPORT_CROSSWALK.get(extension, None)
         if handler:

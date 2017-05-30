@@ -2,7 +2,7 @@ import logging
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
-import models
+from . import models
 
 
 @receiver(post_save, sender=models.StudyPopulation)

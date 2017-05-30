@@ -26,7 +26,7 @@ class ExperimentForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
-        super(ExperimentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
 
@@ -51,7 +51,7 @@ class ExperimentForm(ModelForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -61,14 +61,14 @@ class ExperimentForm(ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing experiment.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing experiment.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new experiment",
-                "help_text":   u"""
+                "legend_text": "Create new experiment",
+                "help_text":   """
                     Create a new experiment. Each experiment is a associated with a
                     study, and may have one or more collections of animals. For
                     example, one experiment may be a 2-year cancer bioassay,
@@ -97,7 +97,7 @@ class ExperimentForm(ModelForm):
     LIT_EFF_NOTES_NOT_REQ = "Litter effect notes should be blank if effects are not-applicable"
 
     def clean(self):
-        cleaned_data = super(ExperimentForm, self).clean()
+        cleaned_data = super().clean()
 
         purity_available = cleaned_data.get("purity_available")
         purity_qualifier = cleaned_data.get("purity_qualifier")
@@ -106,13 +106,13 @@ class ExperimentForm(ModelForm):
         litter_effects = cleaned_data.get("litter_effects")
         litter_effect_notes = cleaned_data.get("litter_effect_notes")
 
-        if purity_available and purity_qualifier is u"":
+        if purity_available and purity_qualifier is "":
             self.add_error('purity_qualifier', self.PURITY_QUALIFIER_REQ)
 
         if purity_available and purity is None:
             self.add_error('purity', self.PURITY_REQ)
 
-        if not purity_available and purity_qualifier is not u"":
+        if not purity_available and purity_qualifier is not "":
             self.add_error('purity_qualifier', self.PURITY_QUALIFIER_NOT_REQ)
 
         if not purity_available and purity is not None:
@@ -150,7 +150,7 @@ class AnimalGroupForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop('parent', None)
-        super(AnimalGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if parent:
             self.instance.experiment = parent
@@ -174,7 +174,7 @@ class AnimalGroupForm(ModelForm):
         self.fields['comments'].widget.attrs['rows'] = 4
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ["species", "strain"]:
                 widget.attrs['class'] = 'span10'
@@ -183,14 +183,14 @@ class AnimalGroupForm(ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing animal-group.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing animal-group.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new animal-group",
-                "help_text":   u"""
+                "legend_text": "Create new animal-group",
+                "help_text":   """
                     Create a new animal-group. Each animal-group is a set of
                     animals which are comparable for a given experiment. For
                     example, they may be a group of F1 rats. Animal-groups may
@@ -218,7 +218,7 @@ class AnimalGroupForm(ModelForm):
         return helper
 
     def clean(self):
-        cleaned_data = super(AnimalGroupForm, self).clean()
+        cleaned_data = super().clean()
 
         species = cleaned_data.get("species")
         strain = cleaned_data.get("strain")
@@ -241,7 +241,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
         exclude = ('experiment', )
 
     def __init__(self, *args, **kwargs):
-        super(GenerationalAnimalGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['generation'].choices = self.fields['generation'].choices[1:]
         self.fields['parents'].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment)
@@ -256,25 +256,25 @@ class DosingRegimeForm(ModelForm):
         exclude = ('dosed_animals',)
 
     def __init__(self, *args, **kwargs):
-        super(DosingRegimeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         self.fields['description'].widget.attrs['rows'] = 4
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update dosing regime",
-                "help_text":   u"Update an existing dosing-regime.",
+                "legend_text": "Update dosing regime",
+                "help_text":   "Update an existing dosing-regime.",
                 "cancel_url": self.instance.dosed_animals.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new dosing-regime",
-                "help_text":   u"""
+                "legend_text": "Create new dosing-regime",
+                "help_text":   """
                     Create a new dosing-regime. Each dosing-regime is one
                     protocol for how animals were dosed. Multiple different
                     dose-metrics can be associated with one dosing regime. If
@@ -301,7 +301,7 @@ class DoseGroupForm(ModelForm):
 class BaseDoseGroupFormSet(BaseModelFormSet):
 
     def __init__(self, *args, **kwargs):
-        super(BaseDoseGroupFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.queryset = models.DoseGroup.objects.none()
 
     def clean(self, **kwargs):
@@ -325,26 +325,26 @@ class BaseDoseGroupFormSet(BaseModelFormSet):
             dose_units[dose['dose_units']] += 1
             dose_group[dose['dose_group_id']] += 1
 
-        for dose_unit in dose_units.itervalues():
+        for dose_unit in dose_units.values():
             if dose_unit != num_dose_groups:
                 raise forms.ValidationError('<ul><li>Each dose-type must have {} dose groups</li></ul>'.format(num_dose_groups))
 
-        if not all(dose_group.values()[0] == group for group in dose_group.values()):
+        if not all(list(dose_group.values())[0] == group for group in list(dose_group.values())):
             raise forms.ValidationError('<ul><li>All dose ids must be equal to the same number of values</li></ul>')
 
 
 def dosegroup_formset_factory(groups, num_dose_groups):
 
     data = {
-        u'form-TOTAL_FORMS': str(len(groups)),
-        u'form-INITIAL_FORMS': 0,
-        u'num_dose_groups': num_dose_groups
+        'form-TOTAL_FORMS': str(len(groups)),
+        'form-INITIAL_FORMS': 0,
+        'num_dose_groups': num_dose_groups
     }
 
     for i, v in enumerate(groups):
-        data[u"form-{}-dose_group_id".format(i)] = str(v.get('dose_group_id', ""))
-        data[u"form-{}-dose_units".format(i)] = str(v.get('dose_units', ""))
-        data[u"form-{}-dose".format(i)] = str(v.get('dose', ""))
+        data["form-{}-dose_group_id".format(i)] = str(v.get('dose_group_id', ""))
+        data["form-{}-dose_units".format(i)] = str(v.get('dose_units', ""))
+        data["form-{}-dose".format(i)] = str(v.get('dose', ""))
 
     FS = modelformset_factory(
             models.DoseGroup,
@@ -380,7 +380,7 @@ class EndpointForm(ModelForm):
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop('parent', None)
         assessment = kwargs.pop('assessment', None)
-        super(EndpointForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['NOEL'].widget = forms.Select()
         self.fields['LOEL'].widget = forms.Select()
@@ -420,14 +420,14 @@ class EndpointForm(ModelForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing endpoint.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing endpoint.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new endpoint",
-                "help_text":   u"""
+                "legend_text": "Create new endpoint",
+                "help_text":   """
                     Create a new endpoint. An endpoint may should describe one
                     measure-of-effect which was measured in the study. It may
                     or may not contain quantitative data.""",
@@ -443,7 +443,7 @@ class EndpointForm(ModelForm):
             self.fields[fld].widget.attrs['rows'] = 3
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
@@ -466,7 +466,7 @@ class EndpointForm(ModelForm):
         return helper
 
     def clean(self):
-        cleaned_data = super(EndpointForm, self).clean()
+        cleaned_data = super().clean()
         obs_time = cleaned_data.get("observation_time")
         observation_time_units = cleaned_data.get("observation_time_units")
 
@@ -511,14 +511,14 @@ class EndpointGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         endpoint = kwargs.pop('endpoint', None)
-        super(EndpointGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if endpoint:
             self.instance.endpoint = endpoint
         for fld in self.fields:
             self.fields[fld].widget.attrs['class'] = 'span12'
 
     def clean(self):
-        super(EndpointGroupForm, self).clean()
+        super().clean()
         data = self.cleaned_data
         data_type = self.endpoint_form.cleaned_data['data_type']
         var_type = self.endpoint_form.cleaned_data.get('variance_type', 0)
@@ -552,7 +552,7 @@ class EndpointGroupForm(forms.ModelForm):
 class BaseEndpointGroupFormSet(BaseModelFormSet):
 
     def __init__(self, **defaults):
-        super(BaseEndpointGroupFormSet, self).__init__(**defaults)
+        super().__init__(**defaults)
         if len(self.forms) > 0:
             self.forms[0].fields['significance_level'].widget.attrs['class'] += " hidden"
 
@@ -680,7 +680,7 @@ class EndpointFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(EndpointFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('sex', 'data_extracted', 'dose_units', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -691,7 +691,7 @@ class EndpointFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'

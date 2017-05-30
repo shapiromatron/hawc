@@ -2,7 +2,7 @@ from datetime import datetime
 import decimal
 import logging
 from collections import OrderedDict
-from StringIO import StringIO
+from io import BytesIO, StringIO
 import re
 
 from django.core.cache import cache
@@ -12,8 +12,7 @@ from django.utils import html
 
 from rest_framework.renderers import JSONRenderer
 
-
-import unicodecsv
+import csv
 import xlsxwriter
 
 
@@ -54,8 +53,8 @@ def strip_tags(value):
 
 
 def listToUl(list_):
-    return u"<ul>{0}</ul>".format(
-        u"".join([u"<li>{0}</li>".format(d) for d in list_]))
+    return "<ul>{0}</ul>".format(
+        "".join(["<li>{0}</li>".format(d) for d in list_]))
 
 
 def tryParseInt(val, default=None):
@@ -73,7 +72,7 @@ class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
         if isinstance(o, decimal.Decimal):
             return float(o)
         else:
-            return super(HAWCDjangoJSONEncoder, self).default(o)
+            return super().default(o)
 
 
 class SerializerHelper(object):
@@ -221,7 +220,7 @@ class ExcelFileBuilder(FlatFile):
     """
 
     def _setup(self):
-        self.output = StringIO()
+        self.output = BytesIO()
         self.wb = xlsxwriter.Workbook(self.output)
         self._add_worksheet(sheet_name=self.kwargs.get("sheet_name", "Sheet1"))
 
@@ -286,7 +285,7 @@ class TSVFileBuilder(FlatFile):
 
     def _setup(self):
         self.output = StringIO()
-        self.tsv = unicodecsv.writer(self.output, dialect='excel-tab', encoding='utf-8')
+        self.tsv = csv.writer(self.output, dialect='excel-tab')
 
     def _write_header_row(self, header_row):
         self.tsv.writerow(header_row)

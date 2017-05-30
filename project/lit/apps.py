@@ -7,6 +7,6 @@ class LitConfig(AppConfig):
     verbose_name = 'Literature'
 
     def ready(self):
-        import signals  # noqa
+        from . import signals  # noqa
         from litter_getter import pubmed
         pubmed.connect(settings.PUBMED_TOOL, settings.PUBMED_EMAIL)

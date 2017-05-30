@@ -5,6 +5,7 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 
 from . import models
+from functools import reduce
 
 
 class HAWCUserLookup(ModelLookup):
@@ -32,6 +33,7 @@ class AssessmentTeamMemberOrHigherLookup(HAWCUserLookup):
             (Q(assessment_pms__id=id_) | Q(assessment_teams__id=id_)) &
             reduce(operator.or_, search_fields)
         ).distinct()
+
 
 registry.register(HAWCUserLookup)
 registry.register(AssessmentTeamMemberOrHigherLookup)

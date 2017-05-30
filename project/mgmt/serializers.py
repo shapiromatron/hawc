@@ -29,7 +29,7 @@ class TaskSerializer(serializers.ModelSerializer):
             owner_id = self.initial_data['owner']['id']
             instance.owner = HAWCUser.objects.get(pk=owner_id)
             instance.save()
-        return super(TaskSerializer, self).update(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class TaskByAssessmentSerializer(TaskSerializer):

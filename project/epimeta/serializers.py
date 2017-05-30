@@ -12,7 +12,7 @@ class SingleResultSerializer(serializers.ModelSerializer):
     meta_result = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def to_representation(self, instance):
-        ret = super(SingleResultSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['estimateFormatted'] = instance.estimate_formatted
         return ret
 
@@ -51,7 +51,7 @@ class MetaResultSerializer(serializers.ModelSerializer):
     single_results = SingleResultSerializer(many=True)
 
     def to_representation(self, instance):
-        ret = super(MetaResultSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['estimateFormatted'] = instance.estimate_formatted
         return ret
 

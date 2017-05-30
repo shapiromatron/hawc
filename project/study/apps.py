@@ -5,4 +5,4 @@ class StudyConfig(AppConfig):
     verbose_name = 'Study'
 
     def ready(self):
-        import signals
+        from . import signals

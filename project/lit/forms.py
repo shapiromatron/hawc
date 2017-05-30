@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import logging
 import numpy as np
 import pandas as pd
@@ -31,7 +31,7 @@ class SearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(SearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.instance.search_type = 's'
         if assessment:
             self.instance.assessment = assessment
@@ -42,7 +42,7 @@ class SearchForm(forms.ModelForm):
             self.fields['search_string'].widget.attrs['rows'] = 5
             self.fields['search_string'].required = True
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -52,14 +52,14 @@ class SearchForm(forms.ModelForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature search",
-                "help_text": u"""
+                "legend_text": "Create new literature search",
+                "help_text": """
                     Create a new literature search. Note that upon creation,
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
@@ -75,7 +75,7 @@ class SearchForm(forms.ModelForm):
 class ImportForm(SearchForm):
 
     def __init__(self, *args, **kwargs):
-        super(ImportForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['source'].choices = [(1, 'PubMed'), (2, 'HERO')]
         self.instance.search_type = 'i'
         if self.instance.id is None:
@@ -89,14 +89,14 @@ class ImportForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature import",
-                "help_text": u"""
+                "legend_text": "Create new literature import",
+                "help_text": """
                     Import a list of literature from an external database by
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
@@ -136,7 +136,7 @@ class ImportForm(SearchForm):
 class RISForm(SearchForm):
 
     def __init__(self, *args, **kwargs):
-        super(RISForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['source'].choices = [(3, 'RIS (EndNote/Reference Manager)')]
         self.instance.search_type = 'i'
         if self.instance.id is None:
@@ -152,14 +152,14 @@ class RISForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text": u"Update an existing literature search",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new literature import",
-                "help_text": u"""
+                "legend_text": "Create new literature import",
+                "help_text": """
                     Import a list of literature from an RIS export; this is a
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
@@ -185,7 +185,13 @@ class RISForm(SearchForm):
                 'File must have an ".ris" or ".txt" file-extension')
 
         try:
-            readable = ris.RisImporter.file_readable(fileObj)
+            # convert BytesIO file to StringIO file
+            with StringIO() as f:
+                f.write(fileObj.read().decode('utf8'))
+                f.seek(0)
+                fileObj.seek(0)
+                readable = ris.RisImporter.file_readable(f)
+
         except KeyError as err:
             raise forms.ValidationError('''
                 Invalid key found: {}. Have you followed the instructions below
@@ -206,11 +212,16 @@ class RISForm(SearchForm):
         exported from file before save method. Cache the references on the
         instance method, so that upon import we don't need to re-read file.
         """
-        cleaned_data = super(RISForm, self).clean()
+        cleaned_data = super().clean()
         if 'import_file' in cleaned_data and not self._errors:
-            # create a copy for RisImporter to open/close
-            f = StringIO(cleaned_data['import_file'].read())
-            importer = ris.RisImporter(f)
+
+            # convert BytesIO file to StringIO file
+            with StringIO() as f:
+                f.write(cleaned_data['import_file'].read().decode('utf8'))
+                f.seek(0)
+                cleaned_data['import_file'].seek(0)
+                importer = ris.RisImporter(f)
+
             self.instance._references = importer.references
 
 
@@ -227,9 +238,9 @@ class SearchSelectorForm(forms.Form):
         user = kwargs.pop('user', None)
         kwargs.pop('assessment', None)
 
-        super(SearchSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span11'
 
         assessment_pks = Assessment.objects.get_viewable_assessments(user)\
@@ -249,11 +260,11 @@ class ReferenceForm(forms.ModelForm):
                   'journal', 'abstract', 'full_text_url', )
 
     def __init__(self, *args, **kwargs):
-        super(ReferenceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ['title', 'authors', 'journal']:
                 widget.attrs['rows'] = 3
@@ -302,7 +313,7 @@ class ReferenceSearchForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_pk = kwargs.pop('assessment_pk', None)
-        super(ReferenceSearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment_pk:
             self.assessment = Assessment.objects.get(pk=assessment_pk)
         self.helper = self.setHelper()
@@ -356,7 +367,7 @@ class TagsCopyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         self.assessment = kwargs.pop('assessment', None)
-        super(TagsCopyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
         self.fields['assessment'].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id)
@@ -376,7 +387,7 @@ class ReferenceExcelUploadForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop('assessment')
-        super(ReferenceExcelUploadForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):

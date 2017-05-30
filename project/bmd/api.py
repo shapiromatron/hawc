@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 

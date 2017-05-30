@@ -20,7 +20,7 @@ class RoBDomainForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(RoBDomainForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
         self.helper = self.setHelper()
@@ -31,11 +31,11 @@ class RoBDomainForm(forms.ModelForm):
                                   args=[self.instance.assessment.pk])
         }
         if self.instance.id:
-            inputs['legend_text'] = u'Update risk of bias domain'
-            inputs['help_text'] = u'Update an existing domain.'
+            inputs['legend_text'] = 'Update risk of bias domain'
+            inputs['help_text'] = 'Update an existing domain.'
         else:
-            inputs['legend_text'] = u'Create new risk of bias domain'
-            inputs['help_text'] = u'Create a new risk of bias domain.'
+            inputs['legend_text'] = 'Create new risk of bias domain'
+            inputs['help_text'] = 'Create a new risk of bias domain.'
 
         helper = BaseFormHelper(self, **inputs)
         helper['name'].wrap(cfl.Field, css_class='span6')
@@ -43,7 +43,7 @@ class RoBDomainForm(forms.ModelForm):
         return helper
 
     def clean(self):
-        cleaned_data = super(RoBDomainForm, self).clean()
+        cleaned_data = super().clean()
         if 'name' in self.changed_data and self._meta.model.objects\
                 .filter(assessment=self.instance.assessment,
                         name=cleaned_data['name']).count() > 0:
@@ -57,7 +57,7 @@ class RoBMetricForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop('parent', None)
-        super(RoBMetricForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if domain:
             self.instance.domain = domain
         self.helper = self.setHelper()
@@ -68,11 +68,11 @@ class RoBMetricForm(forms.ModelForm):
                                   args=[self.instance.domain.assessment.pk])
         }
         if self.instance.id:
-            inputs['legend_text'] = u'Update risk of bias metric'
-            inputs['help_text'] = u'Update an existing metric.'
+            inputs['legend_text'] = 'Update risk of bias metric'
+            inputs['help_text'] = 'Update an existing metric.'
         else:
-            inputs['legend_text'] = u'Create new risk of bias metric'
-            inputs['help_text'] = u'Create a new risk of bias metric.'
+            inputs['legend_text'] = 'Create new risk of bias metric'
+            inputs['help_text'] = 'Create a new risk of bias metric.'
 
         helper = BaseFormHelper(self, **inputs)
         helper['metric'].wrap(cfl.Field, css_class='span12')
@@ -87,7 +87,7 @@ class RoBScoreForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(RoBScoreForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['metric'].widget.attrs['class'] = 'metrics'
         self.fields['score'].widget.attrs['class'] = 'score'
         self.fields['notes'].widget.attrs['class'] = 'html5text'
@@ -117,7 +117,7 @@ class NumberOfReviewersForm(forms.ModelForm):
         fields = ('number_of_reviewers',)
 
     def __init__(self, *args, **kwargs):
-        super(NumberOfReviewersForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['number_of_reviewers'].initial = \
             self.instance.rob_settings.number_of_reviewers
         self.fields['number_of_reviewers'].help_text = \
@@ -137,7 +137,7 @@ class NumberOfReviewersForm(forms.ModelForm):
         return helper
 
     def save(self, commit=True):
-        instance = super(NumberOfReviewersForm, self).save(commit)
+        instance = super().save(commit)
         if type(instance) is Assessment:
             instance.rob_settings.number_of_reviewers = \
                 self.cleaned_data['number_of_reviewers']
@@ -160,7 +160,7 @@ class RoBReviewersForm(forms.ModelForm):
          - If the number_of_reviewers is 2 or more, then int(number_of_reviewers)
             author fields are generated in addition to the final_author field.
         """
-        super(RoBReviewersForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.instance_name = 'Study'
         assessment_id = self.instance.assessment_id
         if hasattr(self.instance_name, 'active_riskofbiases'):
@@ -213,7 +213,7 @@ class RoBReviewersForm(forms.ModelForm):
              RiskOfBiasScore instances for each RiskOfBiasMetric.
          - activate the selected review.
         """
-        study = super(RoBReviewersForm, self).save(commit)
+        study = super().save(commit)
         changed_reviewer_fields = (
             field
             for field in self.changed_data
@@ -245,8 +245,8 @@ class RiskOfBiasCopyForm(forms.Form):
 
     def setHelper(self):
         inputs = {
-            'legend_text': u'Copy risk of bias approach from existing assessments',  # noqa
-            'help_text': u'Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.',  # noqa
+            'legend_text': 'Copy risk of bias approach from existing assessments',  # noqa
+            'help_text': 'Copy risk of bias metrics and domains from an existing HAWC assessment which you have access to.',  # noqa
             'cancel_url': reverse(
                 'riskofbias:arob_detail', args=[self.assessment.id])
         }
@@ -258,7 +258,7 @@ class RiskOfBiasCopyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         self.assessment = kwargs.pop('assessment', None)
-        super(RiskOfBiasCopyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['assessment'].widget.attrs['class'] = 'span12'
         self.fields['assessment'].queryset = Assessment.objects\
             .get_viewable_assessments(user, exclusion_id=self.assessment.id)

@@ -16,7 +16,7 @@ class EnsurePreparationStartedMixin(object):
             self.object,
             self.request.user
         )
-        return super(EnsurePreparationStartedMixin, self).get_success_url()
+        return super().get_success_url()
 
 
 class EnsureExtractionStartedMixin(object):
@@ -27,7 +27,7 @@ class EnsureExtractionStartedMixin(object):
         user = self.request.user
         models.Task.objects.ensure_preparation_stopped(study)
         models.Task.objects.ensure_extraction_started(study, user)
-        return super(EnsureExtractionStartedMixin, self).get_success_url()
+        return super().get_success_url()
 
 
 # User-level task views
@@ -46,11 +46,12 @@ class UserAssessmentAssignments(LoginRequiredMixin, BaseList):
 
 
 # Assessment-level task views
-class TaskDashboard(TeamMemberOrHigherMixin, ListView):
+class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
+    parent_model = Assessment
     model = models.Task
     template_name = 'mgmt/assessment_dashboard.html'
 
-    def get_assessment(self, request, *args, **kwargs):
+    def get_assessment(self, *args, **kwargs):
         return get_object_or_404(Assessment, pk=kwargs['pk'])
 
     def get_queryset(self):

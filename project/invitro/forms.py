@@ -32,7 +32,7 @@ class IVChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVChemicalForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
 
@@ -42,7 +42,7 @@ class IVChemicalForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -51,13 +51,13 @@ class IVChemicalForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new experimental chemical',
+                'legend_text': 'Create new experimental chemical',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -97,7 +97,7 @@ class IVCellTypeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVCellTypeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
 
@@ -108,7 +108,7 @@ class IVCellTypeForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -117,13 +117,13 @@ class IVCellTypeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new cell type',
+                'legend_text': 'Create new cell type',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -157,7 +157,7 @@ class IVExperimentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop('parent', None)
-        super(IVExperimentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
         self.fields['cell_type'].queryset = \
@@ -171,7 +171,7 @@ class IVExperimentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -180,13 +180,13 @@ class IVExperimentForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new experiment',
+                'legend_text': 'Create new experiment',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.study.get_absolute_url()
             }
@@ -252,7 +252,7 @@ class IVEndpointForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop('parent', None)
         assessment = kwargs.pop('assessment', None)
-        super(IVEndpointForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if experiment:
             self.instance.experiment = experiment
         if assessment:
@@ -291,7 +291,7 @@ class IVEndpointForm(forms.ModelForm):
         return data
 
     def setHelper(self):
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ['effects']:
@@ -304,13 +304,13 @@ class IVEndpointForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                'legend_text': u'Update {}'.format(self.instance),
+                'legend_text': 'Update {}'.format(self.instance),
                 'help_text': self.HELP_TEXT_UPDATE,
                 'cancel_url': self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                'legend_text': u'Create new endpoint',
+                'legend_text': 'Create new endpoint',
                 'help_text': self.HELP_TEXT_CREATE,
                 'cancel_url': self.instance.experiment.get_absolute_url()
             }
@@ -414,7 +414,7 @@ class IVEndpointFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id')
-        super(IVEndpointFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('dose_units', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
@@ -425,7 +425,7 @@ class IVEndpointFilterForm(forms.Form):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs['class'] = 'span12'
@@ -495,7 +495,7 @@ class IVEndpointGroupForm(forms.ModelForm):
         exclude = ('endpoint', 'dose_group_id')
 
     def __init__(self, *args, **kwargs):
-        super(IVEndpointGroupForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['dose'].widget.attrs['class'] = 'doses'
 
 

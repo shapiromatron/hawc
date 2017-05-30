@@ -5,4 +5,4 @@ class AnimalConfig(AppConfig):
     verbose_name = 'Animal'
 
     def ready(self):
-        import signals
+        from . import signals

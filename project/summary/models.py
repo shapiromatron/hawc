@@ -56,7 +56,7 @@ class SummaryText(MP_Node):
         unique_together = (("assessment", "title"),
                            ("assessment", "slug"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @classmethod
@@ -219,7 +219,7 @@ class Visual(models.Model):
     class Meta:
         unique_together = (("assessment", "slug"), )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @staticmethod
@@ -364,7 +364,7 @@ class DataPivot(models.Model):
         unique_together = (("assessment", "slug"), )
         ordering = ('title', )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @staticmethod

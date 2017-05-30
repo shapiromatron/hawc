@@ -9,7 +9,7 @@ from . import models
 class IdentifiersSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        ret = super(IdentifiersSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['database'] = instance.get_database_display()
         ret['url'] = instance.get_url()
         return ret

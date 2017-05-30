@@ -5,6 +5,7 @@ from django.db.models import Q
 from selectable.base import ModelLookup
 
 from .helper import tryParseInt
+from functools import reduce
 
 
 class DistinctStringLookup(ModelLookup):
@@ -54,8 +55,7 @@ class RelatedDistinctStringLookup(DistinctStringLookup):
     related_filter = None
 
     def get_query(self, request, term):
-        qs = super(RelatedDistinctStringLookup, self)\
-                .get_query(request, term)
+        qs = super().get_query(request, term)
         id_ = tryParseInt(request.GET.get('related'), -1)
 
         return qs.filter(

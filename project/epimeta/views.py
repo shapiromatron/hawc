@@ -60,7 +60,7 @@ class MetaResultCreate(BaseCreateWithFormset):
             **self.get_formset_kwargs())
 
     def get_form_kwargs(self):
-        kwargs = super(MetaResultCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
@@ -69,7 +69,7 @@ class MetaResultCopyAsNew(MetaProtocolDetail):
     template_name = 'epimeta/metaresult_copy_selector.html'
 
     def get_context_data(self, **kwargs):
-        context = super(MetaResultCopyAsNew, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
         return context
 
@@ -93,7 +93,7 @@ class MetaResultUpdate(BaseUpdateWithFormset):
             **self.get_formset_kwargs())
 
     def get_form_kwargs(self):
-        kwargs = super(MetaResultUpdate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 

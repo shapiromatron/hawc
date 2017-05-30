@@ -5,4 +5,4 @@ class AssessmentConfig(AppConfig):
     verbose_name = 'Assessment'
 
     def ready(self):
-        import signals
+        from . import signals

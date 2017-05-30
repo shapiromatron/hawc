@@ -45,7 +45,7 @@ def get_crumbs(obj, parent=None):
     else:
         crumbs = parent.get_crumbs()
     if obj.id is not None:
-        crumbs.append((obj.__unicode__(),  obj.get_absolute_url()))
+        crumbs.append((obj.__str__(),  obj.get_absolute_url()))
     else:
         crumbs.append((obj._meta.verbose_name.lower(), ))
     return crumbs
@@ -55,7 +55,7 @@ class NonUniqueTagBase(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=100)
     slug = models.SlugField(verbose_name=_('Slug'), max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -80,14 +80,14 @@ class NonUniqueTagBase(models.Model):
                 i += 1
                 try:
                     sid = transaction.savepoint(**trans_kwargs)
-                    res = super(NonUniqueTagBase, self).save(*args, **kwargs)
+                    res = super().save(*args, **kwargs)
                     transaction.savepoint_commit(sid, **trans_kwargs)
                     return res
                 except IntegrityError:
                     transaction.savepoint_rollback(sid, **trans_kwargs)
                     self.slug = self.slugify(self.name, i)
         else:
-            return super(NonUniqueTagBase, self).save(*args, **kwargs)
+            return super().save(*args, **kwargs)
 
     def slugify(self, tag, i=None):
         slug = default_slugify(tag)
@@ -285,7 +285,7 @@ class CustomURLField(URLField):
             'form_class': forms.CustomURLField,
         }
         defaults.update(kwargs)
-        return super(CustomURLField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
 
 def get_distinct_charfield(Cls, assessment_id, field):

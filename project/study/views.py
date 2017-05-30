@@ -40,7 +40,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         study = self.model.objects.filter(pk=kwargs['pk']).first()
         if study:
             return HttpResponseRedirect(study.get_update_url())
-        return super(StudyCreateFromReference, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
         self.initial = dict(
@@ -52,7 +52,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         return self.initial
 
     def get_form(self, form_class=None):
-        form = super(StudyCreateFromReference, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.instance.assessment = self.assessment
         return form
 
@@ -77,14 +77,14 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
         self.object = form.save()
         search = apps.get_model('lit', 'Search').objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
-        return super(ReferenceStudyCreate, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class StudyRead(BaseDetail):
     model = models.Study
 
     def get_context_data(self, **kwargs):
-        context = super(StudyRead, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['attachments_viewable'] = self.assessment.user_can_view_attachments(self.request.user)
         return context
 
@@ -116,11 +116,11 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
         return get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
 
     def get_context_data(self, **kwargs):
-        context = super(StudiesCopy, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(StudiesCopy, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['assessment'] = self.assessment
         return kwargs
@@ -131,7 +131,7 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
             form.cleaned_data['assessment'])
         msg = "Studies copied!"
         self.success_message = msg
-        return super(StudiesCopy, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('study:list', kwargs={'pk': self.assessment.id})

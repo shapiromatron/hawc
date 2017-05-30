@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import logging
 
 from django.conf import settings
@@ -66,8 +64,8 @@ class Task(models.Model):
         unique_together = (('study', 'type'), )
         ordering = ('study', 'type', )
 
-    def __unicode__(self):
-        return u'{}: {}'.format(self.study, self.get_type_display())
+    def __str__(self):
+        return '{}: {}'.format(self.study, self.get_type_display())
 
     @classmethod
     def dashboard_metrics(cls, qs):
@@ -93,7 +91,7 @@ class Task(models.Model):
             self.completed = timezone.now()
             self.open = False
 
-        super(Task, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""

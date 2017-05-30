@@ -86,7 +86,7 @@ class IdentifiersManager(BaseManager):
             # Create Endnote identifier
             # create id based on search_id and id from RIS file.
             id_ = "s{}-id{}".format(search_id, ref['id'])
-            content = json.dumps(ref, encoding='utf8')
+            content = json.dumps(ref)
             ident = self.filter(database=constants.RIS, unique_id=id_).first()
             if ident:
                 ident.update(content=content)
@@ -153,7 +153,7 @@ class IdentifiersManager(BaseManager):
         for content in fetcher.content:
             ident = Identifiers(database=constants.HERO,
                                 unique_id=content["HEROID"],
-                                content=json.dumps(content, encoding='utf-8'))
+                                content=json.dumps(content))
             ident.save()
             idents.append(ident.unique_id)
 
@@ -179,7 +179,7 @@ class IdentifiersManager(BaseManager):
         for item in fetch.get_content():
             ident = Identifiers(unique_id=item['PMID'],
                                 database=constants.PUBMED,
-                                content=json.dumps(item, encoding='utf-8'))
+                                content=json.dumps(item))
             ident.save()
             idents.append(ident.unique_id)
 

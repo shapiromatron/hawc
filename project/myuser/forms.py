@@ -60,7 +60,7 @@ class PasswordForm(forms.ModelForm):
 
     def save(self, commit=True):
         # Save the provided password in hashed format
-        user = super(PasswordForm, self).save(commit=False)
+        user = super().save(commit=False)
         if self.cleaned_data["password1"] != "":
             user.set_password(self.cleaned_data["password1"])
         if commit:
@@ -71,21 +71,21 @@ class PasswordForm(forms.ModelForm):
 class HAWCSetPasswordForm(SetPasswordForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCSetPasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['new_password1'].help_text = _PASSWORD_HELP
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Password reset",
-            "help_text": u"Enter a new password for your account."
+            "legend_text": "Password reset",
+            "help_text": "Enter a new password for your account."
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -109,21 +109,21 @@ class HAWCSetPasswordForm(SetPasswordForm):
 class HAWCPasswordChangeForm(PasswordChangeForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCPasswordChangeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['new_password1'].help_text = _PASSWORD_HELP
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Change your password",
-            "help_text": u"Enter a new password for your account.",
+            "legend_text": "Change your password",
+            "help_text": "Enter a new password for your account.",
             "cancel_url": reverse("user:settings")
 
         }
@@ -151,19 +151,19 @@ class RegisterForm(PasswordForm):
                   "password1", "password2")
 
     def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Create an account"
+            "legend_text": "Create an account"
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -201,7 +201,7 @@ class UserProfileForm(ModelForm):
         fields = ("first_name", "last_name", "HERO_access")
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
         self.helper = self.setHelper()
@@ -209,14 +209,14 @@ class UserProfileForm(ModelForm):
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Update your profile",
-            "help_text": u"Change settings associated with your account",
+            "legend_text": "Update your profile",
+            "help_text": "Change settings associated with your account",
             "cancel_url": reverse('user:settings')
         }
         helper = BaseFormHelper(self, **inputs)
@@ -224,7 +224,7 @@ class UserProfileForm(ModelForm):
 
     def save(self, commit=True):
         # save content to both UserProfile and User
-        up = super(UserProfileForm, self).save(commit=False)
+        up = super().save(commit=False)
         up.user.first_name = self.cleaned_data["first_name"]
         up.user.last_name = self.cleaned_data['last_name']
         if commit:
@@ -258,19 +258,19 @@ class HAWCAuthenticationForm(AuthenticationForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(HAWCAuthenticationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"HAWC login"
+            "legend_text": "HAWC login"
         }
 
         helper = BaseFormHelper(self, **inputs)
@@ -308,21 +308,21 @@ class HAWCAuthenticationForm(AuthenticationForm):
 class HAWCPasswordResetForm(PasswordResetForm):
 
     def __init__(self, *args, **kwargs):
-        super(HAWCPasswordResetForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['email'].help_text = "Email-addresses are case-sensitive."
         self.helper = self.setHelper()
 
     def setHelper(self):
 
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Password reset",
-            "help_text": u"""
+            "legend_text": "Password reset",
+            "help_text": """
                 Enter your email address below, and we'll email instructions
                 for setting a new password.
             """
@@ -371,7 +371,7 @@ class AdminUserForm(PasswordForm):
                   "password1", "password2")
 
     def __init__(self, *args, **kwargs):
-        super(AdminUserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance.id:
 
             self.fields['password1'].required = False
@@ -388,7 +388,7 @@ class AdminUserForm(PasswordForm):
                 .values_list('id', flat=True)
 
     def save(self, commit=True):
-        user = super(AdminUserForm, self).save(commit=commit)
+        user = super().save(commit=commit)
         if user.id:
             user.assessment_pms.set(self.cleaned_data['project_manager'])
             user.assessment_teams.set(self.cleaned_data['team_member'])

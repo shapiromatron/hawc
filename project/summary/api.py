@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from assessment.api import AssessmentViewset, DisabledPagination
 
 from . import models, serializers

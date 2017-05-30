@@ -9,7 +9,7 @@ following applications installed on your local development system:
 - `Node.js`_
 - `Yarn`_
 - `PostgreSQL`_ ≥ 9.4 (uses `JSONB`_)
-- `Python`_ 2.7 (not Python 3... yet)
+- `Python`_ 3.6+
 
 .. _`Git`: https://git-scm.com/
 .. _`Python`: https://www.python.org/

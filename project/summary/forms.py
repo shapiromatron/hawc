@@ -160,7 +160,7 @@ class PrefilterMixin(object):
                                  If no study is selected, no endpoints will be available.""")),
             ])
 
-        for k, v in fields.iteritems():
+        for k, v in fields.items():
             self.fields[k] = v
 
     def setInitialValues(self):
@@ -177,7 +177,7 @@ class PrefilterMixin(object):
             evidence_type = self.initial.get('evidence_type') or \
                 self.instance.evidence_type
 
-        for k, v in prefilters.iteritems():
+        for k, v in prefilters.items():
             if k == "system__in":
                 if evidence_type == models.BIOASSAY:
                     self.fields["prefilter_system"].initial = True
@@ -318,12 +318,12 @@ class PrefilterMixin(object):
         return json.dumps(prefilters)
 
     def clean(self):
-        cleaned_data = super(PrefilterMixin, self).clean()
+        cleaned_data = super().clean()
         cleaned_data["prefilters"] = self.setPrefilters(cleaned_data)
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
-        super(PrefilterMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.createFields()
         self.setInitialValues()
         self.setFieldStyles()
@@ -345,7 +345,7 @@ class SummaryTextForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(SummaryTextForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
         qs = models.SummaryText.get_assessment_qs(self.instance.assessment.id)
@@ -389,7 +389,7 @@ class SummaryTextForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -416,7 +416,7 @@ class VisualForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
         visual_type = kwargs.pop('visual_type', None)
-        super(VisualForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['settings'].widget.attrs['rows'] = 2
         if assessment:
             self.instance.assessment = assessment
@@ -425,21 +425,21 @@ class VisualForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing visualization.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing visualization.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new visualization",
-                "help_text":   u"""
+                "legend_text": "Create new visualization",
+                "help_text":   """
                     Create a custom-visualization.
                     Generally, you will select a subset of available data on the
                     "Data" tab, then will customize the visualization using the
@@ -476,7 +476,7 @@ class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMulti
 class EndpointAggregationForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
-        super(EndpointAggregationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
             lookup_class=EndpointByAssessmentLookupHtml,
             label='Endpoints',
@@ -495,7 +495,7 @@ class CrossviewForm(PrefilterMixin, VisualForm):
     prefilter_include = ('study', 'bioassay', 'effect_tags')
 
     def __init__(self, *args, **kwargs):
-        super(CrossviewForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     class Meta:
@@ -508,7 +508,7 @@ class RoBForm(PrefilterMixin, VisualForm):
     prefilter_include = ('bioassay', )
 
     def __init__(self, *args, **kwargs):
-        super(RoBForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["studies"].queryset = \
             self.fields["studies"]\
                 .queryset\
@@ -536,7 +536,7 @@ class DataPivotForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop('parent', None)
-        super(DataPivotForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
         self.helper = self.setHelper()
@@ -544,21 +544,21 @@ class DataPivotForm(forms.ModelForm):
 
     def setHelper(self):
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing data-pivot.",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing data-pivot.",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new data-pivot",
-                "help_text":   u"""
+                "legend_text": "Create new data-pivot",
+                "help_text":   """
                     Create a custom-visualization for this assessment.
                     Generally, you will select a subset of available data, then
                     customize the visualization the next-page.
@@ -582,7 +582,7 @@ class DataPivotUploadForm(DataPivotForm):
         exclude = ('assessment', )
 
     def __init__(self, *args, **kwargs):
-        super(DataPivotUploadForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['file'].help_text += """<br>
             For more details on saving in this format from Excel,
             <a href="{0}" target="_blank">click here</a>.
@@ -600,7 +600,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
                   'published_only', 'prefilters')
 
     def __init__(self, *args, **kwargs):
-        super(DataPivotQueryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["evidence_type"].choices = (
             (models.BIOASSAY, 'Animal Bioassay'),
             (models.EPI, 'Epidemiology'),
@@ -611,7 +611,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 
     def save(self, commit=True):
         self.instance.preferred_units = self.cleaned_data.get('preferred_units', [])
-        return super(DataPivotQueryForm, self).save(commit=commit)
+        return super().save(commit=commit)
 
     def clean_export_style(self):
         evidence_type = self.cleaned_data['evidence_type']
@@ -648,9 +648,9 @@ class DataPivotSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        super(DataPivotSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         self.fields['dp'].queryset = models.DataPivot.objects\
@@ -681,8 +681,8 @@ class SmartTagForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop('assessment_id', -1)
-        super(SmartTagForm, self).__init__(*args, **kwargs)
-        for fld in self.fields.keys():
+        super().__init__(*args, **kwargs)
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             widget.attrs['class'] = 'span12'
             if hasattr(widget, 'update_query_parameters'):

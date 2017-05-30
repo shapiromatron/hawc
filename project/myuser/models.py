@@ -92,7 +92,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         ordering = ("last_name", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name()
 
     def get_absolute_url(self):
@@ -154,7 +154,7 @@ class UserProfile(models.Model):
         help_text='All HERO links will redirect to the login-only HERO access ' + \
                   'page, allowing for full article text.')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name() + ' Profile'
 
     def get_absolute_url(self):

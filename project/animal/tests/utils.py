@@ -84,7 +84,7 @@ def build_endpoints_for_permission_testing(obj):
     endpoints = [obj.endpoint_working, obj.endpoint_final]
     egs = []
     for endpoint in endpoints:
-        for i in xrange(4):
+        for i in range(4):
             egs.append(models.EndpointGroup(
                dose_group_id=i,
                n=20,
@@ -98,7 +98,7 @@ def build_endpoints_for_permission_testing(obj):
 def build_dosing_datasets_json(dose_units):
     # build a DoseGroup dataset with four dose groups
     dose_groups = []
-    for i in xrange(4):
+    for i in range(4):
         dose_groups.append({'dose_units': dose_units.pk,
                             'dose_group_id': i,
                             'dose': i*50})
@@ -110,7 +110,7 @@ def build_dose_groups(obj):
     regimes = [obj.dosing_regime_working, obj.dosing_regime_final]
     dgs = []
     for regime in regimes:
-        for i in xrange(4):
+        for i in range(4):
             dgs.append(models.DoseGroup(
                 dose_regime=regime,
                 dose_units=obj.dose_units,

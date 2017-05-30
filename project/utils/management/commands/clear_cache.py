@@ -10,4 +10,3 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cache.clear()
-        self.stdout.write('Cache cleared!')

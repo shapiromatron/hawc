@@ -112,7 +112,7 @@ class EndpointCreate(BaseCreateWithFormset):
     formset_factory = forms.IVEndpointGroupFormset
 
     def get_form_kwargs(self):
-        kwargs = super(EndpointCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
@@ -169,7 +169,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
             benchmark_formset.save()
 
     def get_context_data(self, **kwargs):
-        context = super(EndpointUpdate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['benchmark_formset'] = forms.IVBenchmarkFormset(instance=self.object)
         return context
 
@@ -194,7 +194,7 @@ class EndpointList(BaseEndpointFilterList):
         return query
 
     def get_context_data(self, **kwargs):
-        context = super(EndpointList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['dose_units'] = self.form.get_dose_units_id()
         return context
 

@@ -46,10 +46,10 @@ class Experiment(models.Model):
         ("O",  "Other"))
 
     PURITY_QUALIFIER_CHOICES = (
-        (u'>', u'>'),
-        (u'≥', u'≥'),
-        (u'=', u'='),
-        (u'',  u''))
+        ('>', '>'),
+        ('≥', '≥'),
+        ('=', '='),
+        ('',  ''))
 
     TEXT_CLEANUP_FIELDS = (
         'name',
@@ -90,7 +90,7 @@ class Experiment(models.Model):
         max_length=1,
         choices=PURITY_QUALIFIER_CHOICES,
         blank=True,
-        default=u'')
+        default='')
     purity = models.FloatField(
         blank=True,
         null=True,
@@ -134,7 +134,7 @@ class Experiment(models.Model):
 
     COPY_NAME = 'experiments'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -221,10 +221,10 @@ class AnimalGroup(models.Model):
     objects = managers.AnimalGroupManager()
 
     SEX_SYMBOLS = {
-        "M": u"♂",
-        "F": u"♀",
-        "C": u"♂♀",
-        "R": u"NR"
+        "M": "♂",
+        "F": "♀",
+        "C": "♂♀",
+        "R": "NR"
     }
 
     SEX_CHOICES = (
@@ -314,7 +314,7 @@ class AnimalGroup(models.Model):
 
     COPY_NAME = 'animal_groups'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -428,25 +428,25 @@ class DosingRegime(models.Model):
     objects = managers.DosingRegimeManager()
 
     ROUTE_EXPOSURE_CHOICES = (
-        ("OR", u"Oral"),
-        ("OC", u"Oral capsule"),
-        ("OD", u"Oral diet"),
-        ("OG", u"Oral gavage"),
-        ("OW", u"Oral drinking water"),
-        ("I",  u"Inhalation"),
-        ("IG", u"Inhalation - gas"),
-        ("IR", u"Inhalation - particle"),
-        ("IA", u"Inhalation - vapor"),
-        ("D",  u"Dermal"),
-        ("SI", u"Subcutaneous injection"),
-        ("IP", u"Intraperitoneal injection"),
-        ("IV", u"Intravenous injection"),
-        ("IO", u"in ovo"),
-        ("P",  u"Parental"),
-        ("W",  u"Whole body"),
-        ("M",  u"Multiple"),
-        ("U",  u"Unknown"),
-        ("O",  u"Other"))
+        ("OR", "Oral"),
+        ("OC", "Oral capsule"),
+        ("OD", "Oral diet"),
+        ("OG", "Oral gavage"),
+        ("OW", "Oral drinking water"),
+        ("I",  "Inhalation"),
+        ("IG", "Inhalation - gas"),
+        ("IR", "Inhalation - particle"),
+        ("IA", "Inhalation - vapor"),
+        ("D",  "Dermal"),
+        ("SI", "Subcutaneous injection"),
+        ("IP", "Intraperitoneal injection"),
+        ("IV", "Intravenous injection"),
+        ("IO", "in ovo"),
+        ("P",  "Parental"),
+        ("W",  "Whole body"),
+        ("M",  "Multiple"),
+        ("U",  "Unknown"),
+        ("O",  "Other"))
 
     POSITIVE_CONTROL_CHOICES = (
         (True, "Yes"),
@@ -504,8 +504,8 @@ class DosingRegime(models.Model):
 
     COPY_NAME = 'dose_regime'
 
-    def __unicode__(self):
-        return u'{0} {1}'.format(self.dosed_animals,
+    def __str__(self):
+        return '{0} {1}'.format(self.dosed_animals,
                                  self.get_route_of_exposure_display())
 
     def get_absolute_url(self):
@@ -603,8 +603,8 @@ class DoseGroup(models.Model):
     class Meta:
         ordering = ('dose_units', 'dose_group_id')
 
-    def __unicode__(self):
-        return u"{0} {1}".format(self.dose, self.dose_units)
+    def __str__(self):
+        return "{0} {1}".format(self.dose, self.dose_units)
 
     @staticmethod
     def flat_complete_data_row(ser_full, units, idx):
@@ -745,7 +745,7 @@ class Endpoint(BaseEndpoint):
         max_length=32,
         blank=True,
         verbose_name="Response units",
-        help_text=u"Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)")
+        help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)")
     data_type = models.CharField(
         max_length=2,
         choices=DATA_TYPE_CHOICES,
@@ -819,7 +819,7 @@ class Endpoint(BaseEndpoint):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -878,8 +878,8 @@ class Endpoint(BaseEndpoint):
             return True
         change = 0
         resps = self.groups.values_list('response', flat=True)
-        resps = filter(lambda (x): x is not None, resps)
-        for i in xrange(1, len(resps)):
+        resps = [x for x in resps if x is not None]
+        for i in range(1, len(resps)):
             change += resps[i] - resps[0]
         return change >= 0
 
@@ -997,19 +997,19 @@ class Endpoint(BaseEndpoint):
 
         # convert value dictionaries to lists
         studies = sorted(
-            studies.values(),
+            list(studies.values()),
             key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
             study["exps"] = sorted(
-                study["exps"].values(),
+                list(study["exps"].values()),
                 key=lambda obj: (obj["name"].lower()))
             for exp in study["exps"]:
                 exp["ags"] = sorted(
-                    exp["ags"].values(),
+                    list(exp["ags"].values()),
                     key=lambda obj: (obj["name"].lower()))
                 for ag in exp["ags"]:
                     ag["eps"] = sorted(
-                        ag["eps"].values(),
+                        list(ag["eps"].values()),
                         key=lambda obj: (obj["name"].lower()))
 
         return {
@@ -1280,16 +1280,16 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         For example, may return "10-12", "7", or "NR".
         """
         if len(ns) == 0:
-            return u"NR"
+            return "NR"
         nmin = min(ns)
         nmax = max(ns)
         if nmin == nmax:
             if nmin is None:
-                return u"NR"
+                return "NR"
             else:
-                return unicode(nmin)
+                return str(nmin)
         else:
-            return u"{}-{}".format(nmin, nmax)
+            return "{}-{}".format(nmin, nmax)
 
     @staticmethod
     def flat_complete_header_row():

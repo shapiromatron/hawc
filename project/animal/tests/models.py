@@ -51,7 +51,7 @@ class AnimalGroup(TestCase):
 
         self.assertItemsEqual(
             err.exception.messages,
-            [u'Error- selected strain is not of the selected species.'])
+            ['Error- selected strain is not of the selected species.'])
 
     def test_get_assessment(self):
         self.assertEqual(

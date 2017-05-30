@@ -79,13 +79,13 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
         return self.request.user
 
     def get_form_kwargs(self):
-        kwargs = super(PasswordChange, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = kwargs.pop('instance')
         return kwargs
 
     @method_decorator(sensitive_post_parameters())
     def dispatch(self, request, *args, **kwargs):
-        return super(PasswordChange, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PasswordResetSent(TemplateView):
@@ -105,7 +105,7 @@ class SetUserPassword(MessageMixin, UpdateView):
     @method_decorator(sensitive_post_parameters())
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(SetUserPassword, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PasswordChanged(MessageMixin, RedirectView):

@@ -47,7 +47,7 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
 
     def to_representation(self, instance):
-        ret = super(RiskOfBiasScoreSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['score_description'] = instance.get_score_display()
         ret['score_symbol'] = instance.score_symbol
         ret['score_shade'] = instance.score_shade
@@ -79,10 +79,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         """
         score_data = validated_data.pop('scores')
         for score, form_data in zip(instance.scores.all(), score_data):
-            for field, value in form_data.items():
+            for field, value in list(form_data.items()):
                 setattr(score, field, value)
             score.save()
-        return super(RiskOfBiasSerializer, self).update(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class AssessmentMetricScoreSerializer(serializers.ModelSerializer):

@@ -19,7 +19,7 @@ class Task(AssessmentEditViewset):
     list_actions = ['list', 'dashboard']
 
     def filter_queryset(self, queryset):
-        return super(Task, self)\
+        return super()\
             .filter_queryset(queryset)\
             .select_related('owner', 'study')
 

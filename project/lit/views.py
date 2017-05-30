@@ -29,7 +29,7 @@ class LitOverview(BaseList):
                                  .exclude(slug="manual-import")
 
     def get_context_data(self, **kwargs):
-        context = super(LitOverview, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['overview'] = models.Reference.objects.get_overview_details(self.assessment)
         context['manual_import'] = models.Search.objects.get_manually_added(self.assessment)
         if context['obj_perms']['edit']: # expensive, only calculate if needed
@@ -57,15 +57,15 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
         self.permission_check_user_can_view()
-        return super(SearchCopyAsNewSelector, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(SearchCopyAsNewSelector, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(SearchCopyAsNewSelector, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['assessment'] = self.assessment
         return kwargs
@@ -87,7 +87,7 @@ class RefDownloadExcel(BaseList):
                 self.assessment.id, tag_id)
         except:
             self.tag = None
-        return super(RefDownloadExcel, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         if self.tag:
@@ -98,7 +98,7 @@ class RefDownloadExcel(BaseList):
         else:
             self.include_parent_tag = False
             self.fn = "{}-refs".format(self.assessment)
-            self.sheet_name = unicode(self.assessment)
+            self.sheet_name = str(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
                 self.assessment.id, json_encode=False)
 
@@ -139,12 +139,12 @@ class SearchNew(BaseCreate):
     search_type = 'Search'
 
     def get_context_data(self, **kwargs):
-        context = super(SearchNew, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['type'] = self.search_type
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(SearchNew, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         # check if we have a template to use
         pk = tryParseInt(self.request.GET.get('initial'), -1)
@@ -183,7 +183,7 @@ class SearchDetail(BaseDetail):
         obj = get_object_or_404(models.Search,
                                 slug=self.kwargs.get(self.slug_url_kwarg),
                                 assessment=self.kwargs.get('pk'))
-        return super(SearchDetail, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
 
 class SearchUpdate(BaseUpdate):
@@ -205,10 +205,10 @@ class SearchUpdate(BaseUpdate):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         assessment = self.kwargs.get('pk', None)
         obj = get_object_or_404(models.Search, assessment=assessment, slug=slug)
-        return super(SearchUpdate, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get_context_data(self, **kwargs):
-        context = super(SearchUpdate, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['type'] = self.object.get_search_type_display()
         return context
 
@@ -221,7 +221,7 @@ class SearchDelete(BaseDelete):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         self.assessment = get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
         obj = get_object_or_404(models.Search, assessment=self.assessment, slug=slug)
-        return super(SearchDelete, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get_success_url(self):
         return reverse_lazy('lit:search_list', kwargs={'pk': self.assessment.pk})
@@ -234,7 +234,7 @@ class SearchDownloadExcel(BaseDetail):
         obj = get_object_or_404(models.Search,
                                 slug=self.kwargs.get(self.slug_url_kwarg),
                                 assessment=self.kwargs.get('pk'))
-        return super(SearchDownloadExcel, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -253,13 +253,13 @@ class SearchDownloadExcel(BaseDetail):
 class SearchQuery(BaseUpdate):
     model = models.Search
     form_class = forms.SearchForm
-    http_method_names = (u'get', )  # don't allow POST
+    http_method_names = ('get', )  # don't allow POST
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(self.model,
                                 slug=self.kwargs.get(self.slug_url_kwarg),
                                 assessment=self.kwargs.get('pk'))
-        return super(SearchQuery, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -303,7 +303,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         return response
 
     def get_context_data(self, **kwargs):
-        context = super(TagReferences, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object'] = self.object
         context['model'] = self.model.__name__
         return context
@@ -323,7 +323,7 @@ class TagBySearch(TagReferences):
         return self.object.get_assessment()
 
     def get_context_data(self, **kwargs):
-        context = super(TagBySearch, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['references'] = models.Reference.objects\
             .filter(searches=self.object)\
             .prefetch_related('identifiers')
@@ -344,7 +344,7 @@ class TagByReference(TagReferences):
         return self.object.get_assessment()
 
     def get_context_data(self, **kwargs):
-        context = super(TagByReference, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['references'] = self.model.objects\
             .filter(pk=self.object.pk)\
             .prefetch_related('identifiers')
@@ -365,7 +365,7 @@ class TagByTag(TagReferences):
         return self.object.get_assessment()
 
     def get_context_data(self, **kwargs):
-        context = super(TagByTag, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['references'] = models.Reference.objects\
             .filter(tags=self.object.pk)\
             .distinct()\
@@ -385,7 +385,7 @@ class TagByUntagged(TagReferences):
         return self.object
 
     def get_context_data(self, **kwargs):
-        context = super(TagByUntagged, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['references'] = models.Reference.objects.get_untagged_references(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
@@ -399,10 +399,10 @@ class SearchRefList(BaseDetail):
         obj = get_object_or_404(models.Search,
                                 slug=self.kwargs.get(self.slug_url_kwarg),
                                 assessment=self.kwargs.get('pk'))
-        return super(SearchRefList, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get_context_data(self, **kwargs):
-        context = super(SearchRefList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['object_type'] = 'search'
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
@@ -418,10 +418,10 @@ class SearchTagsVisualization(BaseDetail):
         obj = get_object_or_404(models.Search,
                                 slug=self.kwargs.get(self.slug_url_kwarg),
                                 assessment=self.kwargs.get('pk'))
-        return super(SearchTagsVisualization, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get_context_data(self, **kwargs):
-        context = super(SearchTagsVisualization, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object_type'] = 'search'
         context['ref_objs'] = self.object.get_all_reference_tags()
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
@@ -434,7 +434,7 @@ class RefList(BaseList):
     model = models.Reference
 
     def get_context_data(self, **kwargs):
-        context = super(RefList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
@@ -454,7 +454,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return get_object_or_404(self.model, pk=kwargs['pk'])
 
     def get_form_kwargs(self):
-        kwargs = super(RefUploadExcel, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment'] = self.assessment
         return kwargs
 
@@ -464,13 +464,13 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
             self.assessment.id
         )
         if len(errors) > 0:
-            msg = u"""References updated, but some errors were found
+            msg = """References updated, but some errors were found
                 (references with errors were not updated): {0}"""\
                 .format(listToUl(errors))
         else:
             msg = "References updated."
         self.success_message = msg
-        return super(RefUploadExcel, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('lit:overview', args=[self.assessment.pk])
@@ -490,7 +490,7 @@ class RefDetail(BaseDetail):
     model = models.Reference
 
     def get_context_data(self, **kwargs):
-        context = super(RefDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context['object_json'] = self.object.get_json()
         return context
@@ -508,10 +508,10 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
-        return super(RefSearch, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(FormView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['assessment_pk'] = self.assessment.pk
         return kwargs
 
@@ -522,9 +522,9 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
                             content_type="application/json")
 
     def get_context_data(self, **kwargs):
-        context = super(FormView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
-        context['obj_perms'] = super(RefSearch, self).get_obj_perms()
+        context['obj_perms'] = super().get_obj_perms()
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -573,7 +573,7 @@ class RefVisualization(BaseDetail):
     template_name = "lit/reference_visual.html"
 
     def get_context_data(self, **kwargs):
-        context = super(RefVisualization, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object_type'] = 'reference'
         context['ref_objs'] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context['tags'] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
@@ -587,7 +587,7 @@ class TagsJSON(BaseDetail):
     def get_object(self, **kwargs):
         pk = tryParseInt(self.request.GET.get('pk'), -1)
         obj = get_object_or_404(self.model, pk=pk)
-        return super(TagsJSON, self).get_object(object=obj)
+        return super().get_object(object=obj)
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -620,22 +620,22 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
         self.permission_check_user_can_edit()
-        return super(TagsCopy, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(TagsCopy, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['assessment'] = self.assessment
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(TagsCopy, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['assessment'] = self.assessment
         return kwargs
 
     def form_valid(self, form):
         form.copy_tags()
-        return super(TagsCopy, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('lit:tags_update', kwargs={'pk': self.assessment.pk})

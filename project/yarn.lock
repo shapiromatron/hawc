@@ -1336,10 +1336,6 @@ clone@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.2.tgz#260b7a99ebb1edfe247538175f783243cb19d149"
 
-clone@~2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/clone/-/clone-2.0.0.tgz#df65d3ca142e4a4a47db33da3468d088a16fc76e"
-
 clone@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.0.tgz#9c715bfbd39aa197c8ee0f8e65c3912ba34f8cd6"
@@ -2150,7 +2146,7 @@ event-emitter@~0.3.4:
     d "~0.1.1"
     es5-ext "~0.10.7"
 
-eventemitter3@~2.0.1, eventemitter3@~2.0.2:
+eventemitter3@~2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-2.0.2.tgz#20ce4891909ce9f35b088c94fab40e2c96f473ac"
 
@@ -3790,10 +3786,6 @@ pako@~0.2.0:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/pako/-/pako-0.2.9.tgz#f3f7522f4ef782348da8161bad9ecfd51bf83a75"
 
-parchment@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/parchment/-/parchment-1.0.2.tgz#df6aae2fce06dbc1bbc0b949ef82e55ebe0fae13"
-
 parchment@1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/parchment/-/parchment-1.0.8.tgz#13ec6becce6c167481f1772bd51a5906de75a038"
@@ -4264,14 +4256,6 @@ querystring@0.2.0, querystring@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
 
-quill-delta@3.4.2:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-3.4.2.tgz#177e11a6c88d2a04fa34cabb333f556278d96848"
-  dependencies:
-    deep-equal "^1.0.1"
-    extend "^3.0.0"
-    fast-diff "1.1.1"
-
 quill-delta@3.4.3:
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-3.4.3.tgz#2b8cc300f8c98d5b179ef3fd1ff4b522f857a1d3"
@@ -4280,18 +4264,7 @@ quill-delta@3.4.3:
     extend "^3.0.0"
     fast-diff "1.1.1"
 
-quill@^1.0.0-beta.11:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/quill/-/quill-1.1.5.tgz#605a4998723aa55ce1cada77e4f80b8243c7669a"
-  dependencies:
-    clone "~2.0.0"
-    deep-equal "~1.0.1"
-    eventemitter3 "~2.0.1"
-    extend "~3.0.0"
-    parchment "1.0.2"
-    quill-delta "3.4.2"
-
-quill@^1.1.9:
+quill@^1.0.0-beta.11, quill@^1.1.9:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/quill/-/quill-1.1.9.tgz#858f37397a39ce40733289965f8ce28430638b9a"
   dependencies:

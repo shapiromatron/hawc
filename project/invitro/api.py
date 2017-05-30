@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from . import models, serializers
 from assessment.api import AssessmentViewset, AssessmentRootedTagTreeViewset
 from utils.api import CleanupFieldsBaseViewSet

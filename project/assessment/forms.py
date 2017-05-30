@@ -26,7 +26,7 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
-        super(AssessmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['project_manager'].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup)
@@ -39,7 +39,7 @@ class AssessmentForm(forms.ModelForm):
 
     def setHelper(self):
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -49,14 +49,14 @@ class AssessmentForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": u"Update {}".format(self.instance),
-                "help_text":   u"Update an existing HAWC assessment.<br><br>* required fields",
+                "legend_text": "Update {}".format(self.instance),
+                "help_text":   "Update an existing HAWC assessment.<br><br>* required fields",
                 "cancel_url": self.instance.get_absolute_url()
             }
         else:
             inputs = {
-                "legend_text": u"Create new assessment",
-                "help_text":   u"""
+                "legend_text": "Create new assessment",
+                "help_text":   """
                     Assessments are the fundamental objects in HAWC; all data added to the
                     tool will be related to an assessment. The settings below are used to
                     describe the basic characteristics of the assessment, along with setting
@@ -86,13 +86,13 @@ class AssessmentModulesForm(forms.ModelForm):
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
-        super(AssessmentModulesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
         inputs = {
-            "legend_text": u"Update enabled modules",
-            "help_text":   u"""
+            "legend_text": "Update enabled modules",
+            "help_text":   """
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
                 health assessment. This screen allows a project-manager to change
@@ -114,7 +114,7 @@ class AttachmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop('parent', None)
-        super(AttachmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if obj:
             self.instance.content_type = ContentType.objects.get_for_model(obj)
             self.instance.object_id = obj.id
@@ -123,7 +123,7 @@ class AttachmentForm(forms.ModelForm):
 
     def setHelper(self):
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
@@ -132,9 +132,9 @@ class AttachmentForm(forms.ModelForm):
                 widget.attrs['class'] += " html5text"
 
         if self.instance.id:
-            inputs = {"legend_text": u"Update {}".format(self.instance)}
+            inputs = {"legend_text": "Update {}".format(self.instance)}
         else:
-            inputs = {"legend_text": u"Create new attachment"}
+            inputs = {"legend_text": "Create new attachment"}
         inputs["cancel_url"] = self.instance.get_absolute_url()
 
         helper = BaseFormHelper(self, **inputs)
@@ -150,7 +150,7 @@ class SpeciesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(SpeciesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_name(self):
         return self.cleaned_data['name'].title()
@@ -164,7 +164,7 @@ class StrainForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(StrainForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_name(self):
         return self.cleaned_data['name'].title()
@@ -178,11 +178,11 @@ class DoseUnitsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent', None)
-        super(DoseUnitsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup,
             allow_new=True)
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
 
@@ -194,11 +194,11 @@ class EffectTagForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('parent')
-        super(EffectTagForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = AutoCompleteWidget(
             lookup_class=lookups.EffectTagLookup,
             allow_new=True)
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
 
@@ -218,8 +218,8 @@ class AssessmentEmailManagersForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop('assessment', None)
-        super(AssessmentEmailManagersForm, self).__init__(*args, **kwargs)
-        for key in self.fields.keys():
+        super().__init__(*args, **kwargs)
+        for key in list(self.fields.keys()):
             self.fields[key].widget.attrs['class'] = 'span12'
 
 
@@ -230,8 +230,8 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
     def send_email(self):
-        subject = u'[HAWC contact us]: {}'.format(self.cleaned_data['subject'])
-        content = u'{0}\n\n{1}\n{2}'.format(
+        subject = '[HAWC contact us]: {}'.format(self.cleaned_data['subject'])
+        content = '{0}\n\n{1}\n{2}'.format(
             self.cleaned_data['message'],
             self.cleaned_data['name'],
             self.cleaned_data['email']
@@ -240,19 +240,19 @@ class ContactForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.back_href = kwargs.pop('back_href', None)
-        super(ContactForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
 
     def setHelper(self):
         # by default take-up the whole row-fluid
-        for fld in self.fields.keys():
+        for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": u"Contact HAWC developers",
-            "help_text": u"""
+            "legend_text": "Contact HAWC developers",
+            "help_text": """
                 Have a question, comment, or need some help?
                 Use this form to to let us know what's going on.
             """,

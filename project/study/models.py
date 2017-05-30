@@ -209,7 +209,7 @@ class Study(Reference):
             ).exclude(**pk_exclusion).count() > 0:
             raise ValidationError('Error- short-citation name must be unique for assessment.')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_citation
 
     def get_absolute_url(self):
@@ -323,7 +323,7 @@ class Study(Reference):
             return None
         except MultipleObjectsReturned:
             raise ValidationError(
-                u'Multiple active final risk of bias reviews for "{}", '
+                'Multiple active final risk of bias reviews for "{}", '
                 'there should only be one per study.'.format(self))
 
     def get_active_robs(self, with_final=True):
@@ -352,7 +352,7 @@ class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments")
     attachment = models.FileField(upload_to="study-attachment")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.filename
 
     def get_absolute_url(self):

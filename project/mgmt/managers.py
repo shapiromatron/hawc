@@ -26,7 +26,7 @@ class TaskManager(BaseManager):
         tasks = []
         for study in studies:
             tasks.extend(self._get_missing_tasks(study, assessment))
-        logging.info(u'Creating {} tasks for assessment {}.'.format(len(tasks), assessment.id))
+        logging.info('Creating {} tasks for assessment {}.'.format(len(tasks), assessment.id))
         self.bulk_create(tasks)
 
     def create_study_tasks(self, study):
@@ -39,7 +39,7 @@ class TaskManager(BaseManager):
         if not assessment.enable_project_management:
             return
         tasks = self._get_missing_tasks(study, assessment)
-        logging.info(u'Creating {} tasks for study {}.'.format(len(tasks), study.id))
+        logging.info('Creating {} tasks for study {}.'.format(len(tasks), study.id))
         self.bulk_create(tasks)
 
     def _get_missing_tasks(self, study, assessment):

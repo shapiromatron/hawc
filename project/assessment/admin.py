@@ -8,7 +8,7 @@ from . import models
 
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
-        '__unicode__', 'get_managers', 'get_team_members', 'get_reviewers'
+        '__str__', 'get_managers', 'get_team_members', 'get_reviewers'
     )
     list_per_page = 10
     list_filter = ('editable', 'public', )
@@ -19,16 +19,16 @@ class AssessmentAdmin(admin.ModelAdmin):
     )
 
     def queryset(self, request):
-        qs = super(AssessmentAdmin, self).queryset(request)
+        qs = super().queryset(request)
         return qs.prefetch_related('project_manager', 'team_members', 'reviewers')
 
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
         for user in mgr.all():
-            ul.append(u"<li>{} {}</li>".format(user.first_name, user.last_name))
+            ul.append("<li>{} {}</li>".format(user.first_name, user.last_name))
 
         ul.append("</ul>")
-        return u" ".join(ul)
+        return " ".join(ul)
 
     def get_managers(self, obj):
         return self.get_staff_ul(obj.project_manager)
@@ -75,7 +75,7 @@ class EffectTagAdmin(admin.ModelAdmin):
 
 class ChangeLogAdmin(admin.ModelAdmin):
     # list options
-    list_display = ('__unicode__', 'header', 'view_on_site')
+    list_display = ('__str__', 'header', 'view_on_site')
 
     def view_on_site(self, obj):
         return '<a target="_blank" href="{0}">View</a>'.format(obj.get_absolute_url())

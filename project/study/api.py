@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import list_route

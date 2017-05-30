@@ -1,12 +1,13 @@
 import codecs
 from datetime import datetime
+import base64
 import logging
 import os
 import re
 import subprocess
-from StringIO import StringIO
+from io import BytesIO
 import tempfile
-import urllib2
+from urllib import parse
 
 from django.conf import settings
 from django.http.request import HttpRequest
@@ -21,14 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 def _get_css_styles():
-    txt = u''
+    txt = ''
 
     path = os.path.join(
         settings.PROJECT_PATH, r'static/css/hawc_d3_aggregated.css')
 
     if os.path.exists(path):
         with codecs.open(path, 'r', 'UTF-8') as f:
-            txt = unicode(f.read())
+            txt = str(f.read())
         txt = r'<defs style="hawc-styles"><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(txt)  # noqa
 
     return txt
@@ -46,10 +47,8 @@ class SVGConverter(object):
         self.height = height
         self.tempfns = []
 
-        svg = svg.decode('base64')\
-            .replace('%u', '\\u')\
-            .decode('unicode_escape')
-        self.svg = urllib2.unquote(svg)
+        svg = base64.b64decode(svg).decode('utf8').replace('%u', '\\u').encode().decode('unicode-escape')
+        self.svg = parse.unquote(svg)
 
     def to_svg(self):
         # add embedded styles
@@ -100,15 +99,15 @@ class SVGConverter(object):
     def _pptx_add_title(self, slide):
         txBox = slide.shapes.add_textbox(
             Inches(0.5), Inches(0.25), Inches(9), Inches(0.5))
-        tf = txBox.textframe
+        tf = txBox.text_frame
         now = datetime.now().strftime("%B %d %Y, %I:%M %p")
-        tf.text = "HAWC visualization generated on {}".format(now)
+        tf.text = 'HAWC visualization generated on {}'.format(now)
         tf.paragraphs[0].alignment = 2
 
     def _pptx_add_url(self, slide):
         txBox = slide.shapes.add_textbox(
             Inches(0), Inches(7.0), Inches(10), Inches(0.5))
-        tf = txBox.textframe
+        tf = txBox.text_frame
         p = tf.paragraphs[0]
         run = p.add_run()
         run.text = self.url
@@ -122,15 +121,15 @@ class SVGConverter(object):
         max_width = 9.
         left = Inches(0.5)
         top = Inches(0.75)
-        width_to_height_ratio = float(self.width)/self.height
-        if width_to_height_ratio > (max_width/max_height):
+        width_to_height_ratio = float(self.width) / self.height
+        if width_to_height_ratio > (max_width / max_height):
             width = Inches(max_width)
-            height = width/width_to_height_ratio
-            top = top + int((Inches(max_height)-height)*0.5)
+            height = width / width_to_height_ratio
+            top = top + int((Inches(max_height) - height) * 0.5)
         else:
             height = Inches(max_height)
-            width = height*width_to_height_ratio
-            left = left + int((Inches(max_width)-width)*0.5)
+            width = height * width_to_height_ratio
+            left = left + int((Inches(max_width) - width) * 0.5)
 
         slide.shapes.add_picture(png_fn, left, top, width, height)
 
@@ -160,12 +159,12 @@ class SVGConverter(object):
             self._pptx_add_hawc_logo(slide)
 
             # save as object
-            content = StringIO()
+            content = BytesIO()
             pres.save(content)
             content.seek(0)
 
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
 

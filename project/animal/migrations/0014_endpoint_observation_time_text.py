@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -14,12 +14,12 @@ def setObservationTimeText(apps, schema_editor):
             txt = ep.get_observation_time_units_display()
 
         elif int(ep.observation_time) == float(ep.observation_time):
-            txt = u"{0} {1}".format(
+            txt = "{0} {1}".format(
                 int(ep.observation_time),
                 ep.get_observation_time_units_display())
 
         else:
-            txt = u"{0} {1}".format(
+            txt = "{0} {1}".format(
                 ep.observation_time,
                 ep.get_observation_time_units_display())
 

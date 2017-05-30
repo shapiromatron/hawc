@@ -20,4 +20,4 @@ class CustomURLValidator(URLValidator):
             if http.urlquote(http.urlunquote(abspath)) != abspath:
                 raise ValidationError(self.message, code=self.code)
         else:
-            super(CustomURLValidator, self).__call__(value)
+            super().__call__(value)

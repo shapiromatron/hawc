@@ -4,7 +4,7 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.apps import apps
 
-import models
+from . import models
 
 
 @receiver(post_save, sender=models.SelectedModel)

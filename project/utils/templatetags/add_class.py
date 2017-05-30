@@ -10,7 +10,7 @@ class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
 def add_class(value, css_class):
     """http://djangosnippets.org/snippets/2253/
     Example call: {{field.name|add_class:"span4"}} """
-    string = unicode(value)
+    string = str(value)
     match = class_re.search(string)
     if match:
         m = re.search(r'^%s$|^%s\s|\s%s\s|\s%s$' % (css_class, css_class,

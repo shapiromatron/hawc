@@ -27,7 +27,7 @@ class NaiveWrapper(OutputWrapper):
 class UnicodeCommand(BaseCommand):
 
     def __init__(self, **kwargs):
-        super(UnicodeCommand, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.stdout = NaiveWrapper(self.stdout._out)
         self.stderr = NaiveWrapper(self.stderr._out)
 

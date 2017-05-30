@@ -61,7 +61,7 @@ class IVChemical(models.Model):
 
     COPY_NAME = 'ivchemicals'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_crumbs(self):
@@ -106,11 +106,11 @@ class IVCellType(models.Model):
         ('nr', 'Not-reported'))
 
     SEX_SYMBOLS = {
-        'm':  u'♂',
-        'f':  u'♀',
-        'mf': u'♂♀',
-        'na': u'N/A',
-        'nr': u'not reported'}
+        'm':  '♂',
+        'f':  '♀',
+        'mf': '♂♀',
+        'na': 'N/A',
+        'nr': 'not reported'}
 
     CULTURE_TYPE_CHOICES = (
         ("nr", "not reported"),
@@ -146,7 +146,7 @@ class IVCellType(models.Model):
 
     COPY_NAME = 'ivcelltypes'
 
-    def __unicode__(self):
+    def __str__(self):
         return "{} {} {}".format(self.cell_type, self.species, self.tissue)
 
     def get_crumbs(self):
@@ -242,7 +242,7 @@ class IVExperiment(models.Model):
 
     COPY_NAME = 'ivexperiments'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_assessment(self):
@@ -279,7 +279,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     cache_template_taglist = 'invitro.ivendpointcategory.taglist.assessment-{0}'
     cache_template_tagtree = 'invitro.ivendpointcategory.tagtree.assessment-{0}'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_list_representation(self):
@@ -290,7 +290,7 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 
     @property
     def choice_label(self):
-        return u". "*(self.depth-2) + self.name
+        return ". "*(self.depth-2) + self.name
 
     def get_choice_representation(self):
         return (self.id, self.choice_label)
@@ -554,17 +554,17 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     )
 
     DIFFERENCE_CONTROL_SYMBOLS = {
-        'nc': u'↔',
-        '-':  u'↓',
-        '+':  u'↑',
-        'nt': u'NT',
+        'nc': '↔',
+        '-':  '↓',
+        '+':  '↑',
+        'nt': 'NT',
     }
 
     SIGNIFICANCE_CHOICES = (
-        ("nr", u"not reported"),
-        ("si", u"p ≤ 0.05"),
-        ("ns", u"not significant"),
-        ("na", u"not applicable"),
+        ("nr", "not reported"),
+        ("si", "p ≤ 0.05"),
+        ("ns", "not significant"),
+        ("na", "not applicable"),
     )
 
     OBSERVATION_CHOICES = (

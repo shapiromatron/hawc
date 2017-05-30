@@ -17,7 +17,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer()
 
     def to_representation(self, instance):
-        ret = super(ExperimentSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['type'] = instance.get_type_display()
         ret['litter_effects'] = instance.get_litter_effects_display()
@@ -42,7 +42,7 @@ class DosesSerializer(serializers.ModelSerializer):
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        ret = super(AnimalGroupRelationSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         return ret
 
@@ -56,7 +56,7 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
     dosed_animals = AnimalGroupRelationSerializer()
 
     def to_representation(self, instance):
-        ret = super(DosingRegimeSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['route_of_exposure'] = instance.get_route_of_exposure_display()
         ret['positive_control'] = instance.get_positive_control_display()
         ret['negative_control'] = instance.get_negative_control_display()
@@ -77,7 +77,7 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
     children = AnimalGroupRelationSerializer(many=True)
 
     def to_representation(self, instance):
-        ret = super(AnimalGroupSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['sex'] = instance.get_sex_display()
         ret['generation'] = instance.generation_short
@@ -93,7 +93,7 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
     endpoint = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def to_representation(self, instance):
-        ret = super(EndpointGroupSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['hasVariance'] = instance.hasVariance
         ret['isReported'] = instance.isReported
         return ret
@@ -110,7 +110,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     groups = EndpointGroupSerializer(many=True)
 
     def to_representation(self, instance):
-        ret = super(EndpointSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['dataset_increasing'] = instance.dataset_increasing
         ret['variance_name'] = instance.variance_name
