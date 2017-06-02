@@ -971,6 +971,10 @@ class BaseGroupResultFormset(BaseModelFormSet):
         else:
             comparison_set_id = tryParseInt(self.data['comparison_set'], -1)
 
+        # exit early if any individual form is invalid
+        if any([not form.is_valid() for form in self.forms]):
+            return
+
         # Ensure all groups in group collection are accounted for,
         # and no other groups exist
         group_ids = [form.cleaned_data['group'].id for form in self.forms]

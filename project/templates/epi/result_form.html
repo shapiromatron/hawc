@@ -113,6 +113,13 @@
       // pass group-id back to server
       $("form").submit(function(){
         $('#id_comparison_set').prop('disabled', false);
+        // Edge-case. Sometimes, an initial value is specified and then the
+        // total forms is set. However, with a creation, there may be more or
+        // less of the original form. Therefore, we set the total forms based
+        // on the number rows currently available.
+        if (isNew){
+          $('#id_form-TOTAL_FORMS').val($('#rFormset tbody tr').length);
+        }
         return true;
       });
 
