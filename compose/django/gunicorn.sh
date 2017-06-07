@@ -3,6 +3,7 @@
 # make migrations
 python manage.py migrate --noinput
 python manage.py clear_cache
+python manage.py build_d3_styles
 python manage.py collectstatic --noinput
 
 LOGFILE="$LOGS_PATH/gunicorn.log"

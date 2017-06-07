@@ -23,6 +23,8 @@ venv
 
 # javascript
 node_modules
-bundles/
 webpack-stats.json
 .happypack/
+
+project/static/bundles/*
+!project/static/bundles/.gitkeep
