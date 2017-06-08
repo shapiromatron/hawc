@@ -28,3 +28,9 @@ webpack-stats.json
 
 project/static/bundles/*
 !project/static/bundles/.gitkeep
+
+compose/nginx/ssl/*
+!compose/nginx/ssl/.gitkeep
+
+compose/django/fonts/*
+!compose/django/fonts/.gitkeep

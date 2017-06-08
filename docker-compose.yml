@@ -3,13 +3,13 @@ version: '2'
 volumes:
   postgres_data: {}
   postgres_backup: {}
+  public_data: {}
 
 services:
 
   postgres:
     build: ./compose/postgres
     volumes:
-      - ./data:/app/data
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
     env_file: .env
@@ -27,7 +27,6 @@ services:
       - redis
     env_file: .env
     volumes:
-      - ./data:/app/data
       - ./public:/app/public
 
   nginx:

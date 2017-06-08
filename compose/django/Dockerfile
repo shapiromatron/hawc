@@ -9,7 +9,7 @@ COPY ./compose/django/entrypoint.sh /entrypoint.sh
 COPY ./compose/django/gunicorn.sh /gunicorn.sh
 COPY ./compose/django/celery.sh /celery.sh
 COPY ./compose/django/supervisord.conf /supervisord.conf
-COPY ./data/fonts /usr/share/fonts/truetype/django
+COPY ./compose/django/fonts /usr/share/fonts/truetype/django
 
 # 1) install start-scripts
 # 2) install supervisord on python2 (using pip)

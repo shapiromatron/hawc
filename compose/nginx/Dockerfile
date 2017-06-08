@@ -7,5 +7,5 @@ FROM nginx:1.12.0-alpine
 
 ARG configuration_file
 
-ADD ./data/ssl /etc/nginx/ssl
+ADD ./compose/nginx/ssl /etc/nginx/ssl
 ADD $configuration_file /etc/nginx/nginx.conf
