@@ -29,7 +29,7 @@ BACKUPFILE=/app/data/backups/$1
 
 # check that the file exists
 if ! [ -f $BACKUPFILE ]; then
-    echo "backup file not found"
+    echo "backup file not found $BACKUPFILE"
     echo 'to get a list of available backups, run:'
     echo '    docker-compose run postgres list-backups'
     exit 1
