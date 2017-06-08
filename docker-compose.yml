@@ -27,7 +27,7 @@ services:
       - redis
     env_file: .env
     volumes:
-      - ./public:/app/public
+      - public_data:/app/public
 
   nginx:
     build:
@@ -41,4 +41,4 @@ services:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
     volumes:
-      - ./public:/app/public
+      - public_data:/app/public
