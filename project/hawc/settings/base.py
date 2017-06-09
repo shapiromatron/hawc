@@ -113,8 +113,7 @@ DATABASES = {
         'NAME': os.getenv('DJANGO_DB_NAME'),
         'USER': os.getenv('DJANGO_DB_USER'),
         'PASSWORD': os.getenv('DJANGO_DB_PW'),
-        'HOST': '',
-        'PORT': '',
+        'HOST': os.getenv('DJANGO_DB_HOST', ''),
         'CONN_MAX_AGE': 300,
     }
 }
@@ -122,16 +121,17 @@ DATABASES = {
 
 # Celery settings
 CELERY_RESULT_BACKEND = os.getenv('DJANGO_CELERY_RESULT_BACKEND')
-BROKER_URL = os.getenv('DJANGO_BROKER_URL')
-CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
-CELERYD_CONCURRENCY = 3
+CELERY_BROKER_URL = os.getenv('DJANGO_BROKER_URL')
+CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
+CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_ACCEPT_CONTENT = ('json', 'pickle', )
 
 
 # Cache settings
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('DJANGO_CACHE_SOCK'),
+        'LOCATION': os.getenv('DJANGO_CACHE_LOCATION'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient'
         },
@@ -243,7 +243,7 @@ LOGGING = {
 
 # commit information
 def get_git_commit():
-    fn = os.path.join(PROJECT_ROOT, '.gitcommit')
+    fn = os.path.join(PROJECT_PATH, '.gitcommit')
     if os.path.exists(fn):
         with open(fn, 'r') as f:
             return f.read()
@@ -270,7 +270,7 @@ BMDS_PASSWORD = os.getenv('BMDS_PASSWORD', 'password')
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # Chemspider token details
-CHEMSPIDER_TOKEN = os.getenv('DJANGO_CHEMSPIDER_TOKEN', '')
+CHEMSPIDER_TOKEN = os.getenv('CHEMSPIDER_TOKEN', '')
 
 # Django rest framework settings
 REST_FRAMEWORK = {
