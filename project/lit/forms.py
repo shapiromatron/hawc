@@ -187,7 +187,7 @@ class RISForm(SearchForm):
         try:
             # convert BytesIO file to StringIO file
             with StringIO() as f:
-                f.write(fileObj.read().decode('utf8'))
+                f.write(fileObj.read().decode('utf-8-sig'))
                 f.seek(0)
                 fileObj.seek(0)
                 readable = ris.RisImporter.file_readable(f)
@@ -217,7 +217,7 @@ class RISForm(SearchForm):
 
             # convert BytesIO file to StringIO file
             with StringIO() as f:
-                f.write(cleaned_data['import_file'].read().decode('utf8'))
+                f.write(cleaned_data['import_file'].read().decode('utf-8-sig'))
                 f.seek(0)
                 cleaned_data['import_file'].seek(0)
                 importer = ris.RisImporter(f)
