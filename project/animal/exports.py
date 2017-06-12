@@ -18,8 +18,9 @@ def get_gen_species_strain_sex(e, withN=False):
 
     ns_txt = ""
     if withN:
-        ns = [eg["n"] for eg in e["groups"]]
-        ns_txt = ", N=" + models.EndpointGroup.getNRangeText(ns)
+        ns = [eg["n"] for eg in e["groups"] if eg["n"] is not None]
+        if len(ns) > 0:
+            ns_txt = ", N=" + models.EndpointGroup.getNRangeText(ns)
 
     sex_symbol = e['animal_group']['sex_symbol']
     if sex_symbol == 'NR':

@@ -1267,7 +1267,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         ordering = ('endpoint', 'dose_group_id')
 
     def clean(self):
-        self.significant = (self.significance_level > 0)
+        self.significant = (self.significance_level is not None and
+                            self.significance_level > 0)
 
     @property
     def isReported(self):
