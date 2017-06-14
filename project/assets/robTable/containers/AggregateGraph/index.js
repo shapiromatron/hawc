@@ -31,7 +31,7 @@ class AggregateGraph extends Component {
 
         return d3.nest()
                  .key((d) => {return d.metric.domain.name;})
-                 .key((d) => {return d.metric.metric;})
+                 .key((d) => {return d.metric.name;})
                  .entries(domains);
     }
 

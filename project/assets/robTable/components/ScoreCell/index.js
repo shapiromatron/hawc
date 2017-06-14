@@ -11,19 +11,19 @@ class ScoreCell extends Component {
 
     handleClick(){
         let { score, handleClick } = this.props;
-        handleClick({domain: score.domain_name, metric: score.metric.metric});
+        handleClick({domain: score.domain_name, metric: score.metric.name});
     }
 
     render(){
         let { score } = this.props;
         return (
             <div className='score-cell'
-                 name={score.metric.metric}
+                 name={score.metric.name}
                  style={{backgroundColor: score.score_shade}}
                  onClick={this.handleClick}>
                 <span className='tooltips'
                       data-toggle='tooltip'
-                      title={score.metric.metric}>
+                      title={score.metric.name}>
                         {score.score_symbol}
                  </span>
             </div>
@@ -37,7 +37,7 @@ ScoreCell.propTypes = {
         score_shade: PropTypes.string.isRequired,
         domain_name: PropTypes.string.isRequired,
         metric: PropTypes.shape({
-            metric: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
     handleClick: PropTypes.func.isRequired,

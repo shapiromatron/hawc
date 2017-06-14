@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import _ from 'underscore';
 
 import { setError, resetError } from 'robScoreCleanup/actions/Errors';
 import * as types from 'robScoreCleanup/constants';
@@ -66,7 +67,7 @@ function patchItems(patch){
 function addItemToMetric(item, current){
     let valueUpdate = Object.assign({}, current, item);
     return {
-        key: item.metric.metric,
+        key: item.metric.name,
         values: [
             {
                 ...valueUpdate,
@@ -77,7 +78,7 @@ function addItemToMetric(item, current){
 
 function updateMetric(item, current){
     return {
-        key: item.metric,
+        key: item.name,
         values:[
             {
                 ...current,

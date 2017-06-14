@@ -98,7 +98,7 @@ class ResultForestPlot extends D3Plot {
             lines,
             names,
             'x_domain': getXDomain(this.scale_type, vals),
-            'x_label_text': data.metric.metric,
+            'x_label_text': data.metric.name,
         });
     }
 

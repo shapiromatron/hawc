@@ -85,7 +85,7 @@ class RiskOfBiasDomain(models.Model):
         cw[Assessment.COPY_NAME][source_assessment.id] = assessment.id
 
         def get_key(metric):
-            return '{}: {}'.format(metric.domain.name, metric.metric)
+            return '{}: {}'.format(metric.domain.name, metric.name)
 
         # create a map of domain + metric for new assessment
         metrics = RiskOfBiasMetric.objects\
@@ -142,7 +142,7 @@ class RiskOfBiasMetric(models.Model):
     domain = models.ForeignKey(
         RiskOfBiasDomain,
         related_name='metrics')
-    metric = models.CharField(
+    name = models.CharField(
         max_length=256)
     description = models.TextField(
         blank=True,
@@ -166,7 +166,7 @@ class RiskOfBiasMetric(models.Model):
         ordering = ('domain', 'id')
 
     def __str__(self):
-        return self.metric
+        return self.name
 
     def get_assessment(self):
         return self.domain.get_assessment()
@@ -414,7 +414,7 @@ class RiskOfBiasScore(models.Model):
             'rob-domain_name',
             'rob-domain_description',
             'rob-metric_id',
-            'rob-metric_metric',
+            'rob-metric_name',
             'rob-metric_description',
             'rob-score_id',
             'rob-score_score',
@@ -429,7 +429,7 @@ class RiskOfBiasScore(models.Model):
             ser['metric']['domain']['name'],
             ser['metric']['domain']['description'],
             ser['metric']['id'],
-            ser['metric']['metric'],
+            ser['metric']['name'],
             ser['metric']['description'],
             ser['id'],
             ser['score'],

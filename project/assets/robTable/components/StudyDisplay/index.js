@@ -61,7 +61,7 @@ StudyDisplay.propTypes = {
                         score_shade: PropTypes.string.isRequired,
                         domain_name: PropTypes.string.isRequired,
                         metric: PropTypes.shape({
-                            metric: PropTypes.string.isRequired,
+                            name: PropTypes.string.isRequired,
                             description: PropTypes.string.isRequired,
                         }).isRequired,
                         notes: PropTypes.string.isRequired,

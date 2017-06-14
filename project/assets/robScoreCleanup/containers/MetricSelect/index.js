@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'underscore';
 
 import { selectMetric } from 'robScoreCleanup/actions/Metrics';
 
@@ -20,7 +21,7 @@ export class MetricSelect extends Component {
 
     formatMetricChoices(){
         return _.map(this.props.choices, (choice) => {
-            return {id: choice.id, value: choice.metric};
+            return {id: choice.id, value: choice.name};
         });
     }
 

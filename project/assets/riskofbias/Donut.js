@@ -77,7 +77,7 @@ class Donut extends D3Plot {
                                     score_text: v2.data.score_text,
                                     score_color: v2.data.score_color,
                                     score_text_color: v2.data.score_text_color,
-                                    criterion: v2.data.metric.metric,
+                                    criterion: v2.data.metric.name,
                                     notes: v2.data.notes,
                                     parent: v1});
             });
