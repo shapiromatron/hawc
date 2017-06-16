@@ -6,18 +6,21 @@ import celery
 from django.conf import settings
 from django.shortcuts import HttpResponse
 from django.apps import apps
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404, Http404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
-from assessment.models import Assessment
+from assessment.models import Assessment, TimeSpentEditing
+from assessment.tasks import add_time_spent
 from .helper import tryParseInt
 
 
@@ -144,6 +147,25 @@ class AssessmentPermissionsMixin(object):
 
         logging.debug('Permissions added')
         return self.assessment.user_permissions(self.request.user)
+
+
+class TimeSpentOnPageMixin(object):
+
+    def _set_time_spent_cache(self, request):
+        cache_name = TimeSpentEditing.get_cache_name(request)
+        now = timezone.now()  # TODO: convert to float
+        cache.set(cache_name, now)
+
+    def get(self, request, *args, **kwargs):
+        self._set_time_spent_cache(request)
+        response = super().get(request, *args, **kwargs)
+        return response
+
+    def get_success_url(self):
+        response = super().get_success_url()
+        cache_name = TimeSpentEditing.get_cache_name(self.request)
+        add_time_spent.delay(cache_name)
+        return response
 
 
 class ProjectManagerOrHigherMixin(object):
@@ -300,7 +322,7 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return context
 
 
-class BaseUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = 'Update'
 
     def form_valid(self, form):
@@ -320,7 +342,7 @@ class BaseUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         return context
 
 
-class BaseCreate(AssessmentPermissionsMixin, MessageMixin, CreateView):
+class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
     parent_template_name = None  # required
     crud = 'Create'

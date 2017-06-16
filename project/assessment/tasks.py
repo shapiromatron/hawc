@@ -1,10 +1,13 @@
 from django.core.cache import cache
+from django.utils import timezone
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
 from utils.chemspider import fetch_chemspider
 from utils.svg import SVGConverter
+
+from .models import TimeSpentEditing
 
 
 logger = get_task_logger(__name__)
@@ -50,3 +53,10 @@ def get_chemspider_details(cas_number):
                 logger.info('setting cache: {}'.format(cache_name))
                 cache.set(cache_name, d)
     return d
+
+
+@shared_task
+def add_time_spent(cache_name):
+    now = timezone.now()
+    # TODO get timediff; get model object id somehow or pass
+    TimeSpentEditing.objects.create()
