@@ -164,7 +164,7 @@ class TimeSpentOnPageMixin(object):
     def get_success_url(self):
         response = super().get_success_url()
         cache_name = TimeSpentEditing.get_cache_name(self.request)
-        add_time_spent.delay(cache_name)
+        add_time_spent.delay(cache_name, self.object)
         return response
 
 

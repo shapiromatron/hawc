@@ -417,6 +417,10 @@ class TimeSpentEditing(models.Model):
         'content_type', 'object_id')
     created = models.DateTimeField(
         auto_now_add=True)
+    assessment = models.ForeignKey(Assessment)
+
+    def __str__(self):
+        return f'{self.content_type.model} {self.object_id}: {self.seconds}'
 
     @staticmethod
     def get_cache_name(request):
