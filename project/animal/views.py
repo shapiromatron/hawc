@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView
 
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
@@ -151,7 +150,7 @@ class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentRead):
     form_class = forms.AnimalGroupSelectorForm
 
 
-class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class AnimalGroupUpdate(BaseUpdate):
     """
     Update selected animal-group. Dosing regime cannot be edited.
     """
@@ -159,7 +158,6 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     template_name = "animal/animalgroup_form.html"
     form_class = forms.AnimalGroupForm
     success_message = "Animal Group updated."
-    crud = "Update"
 
     def get_object(self, queryset=None):
         obj = super().get_object()
@@ -170,8 +168,6 @@ class AnimalGroupUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["crud"] = self.crud
-        context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = DoseUnits.objects.json_all()
         return context
 
@@ -193,7 +189,7 @@ class EndpointCopyAsNewSelector(CopyAsNewSelectorMixin, AnimalGroupRead):
 
 
 # Dosing Regime Views
-class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class DosingRegimeUpdate(BaseUpdate):
     """
     Update selected dosing regime. Has custom logic to also add dose-groups with
     each creation of a dose-regime.
@@ -201,7 +197,6 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
     model = models.DosingRegime
     form_class = forms.DosingRegimeForm
     success_message = "Dosing regime updated."
-    crud = "Update"
 
     def form_valid(self, form):
         """
@@ -242,8 +237,6 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["crud"] = self.crud
-        context["assessment"] = context["object"].get_assessment()
         context["dose_types"] = DoseUnits.objects.json_all()
 
         if self.request.method == 'POST':  # send back dose-group errors
@@ -257,6 +250,7 @@ class DosingRegimeUpdate(AssessmentPermissionsMixin, MessageMixin, UpdateView):
         return context
 
     def get_success_url(self):
+        super().get_success_url()
         return self.object.dosed_animals.get_absolute_url()
 
 
