@@ -121,7 +121,7 @@ class Result {
     }
 
     build_details_table(withURL){
-        var txt = (withURL===true) ? this.build_link() : this.data.metric.metric;
+        var txt = (withURL===true) ? this.build_link() : this.data.metric.name;
         return new DescriptiveTable()
             .add_tbody_tr('Results', txt)
             .add_tbody_tr('Comparison set', this.comparison_set.build_link())

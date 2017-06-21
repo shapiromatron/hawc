@@ -80,7 +80,7 @@ function formatIncomingStudy(study){
         })),
         riskofbiases = d3.nest()
             .key((d) => { return d.metric.domain.name;})
-            .key((d) => {return d.metric.metric;})
+            .key((d) => {return d.metric.name;})
             .entries(domains),
         finalRoB = _.findWhere(dirtyRoBs, { final: true });
 

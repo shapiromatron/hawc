@@ -57,7 +57,7 @@ MetricForm.propTypes = {
             PropTypes.shape({
                 metric: PropTypes.shape({
                     description: PropTypes.string.isRequired,
-                    metric: PropTypes.string.isRequired,
+                    name: PropTypes.string.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
                 score_description: PropTypes.string,

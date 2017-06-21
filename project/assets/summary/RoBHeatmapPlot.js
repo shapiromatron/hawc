@@ -93,7 +93,7 @@ class RoBHeatmapPlot extends D3Visualization {
                      study:              rob.study,
                      study_label:        rob.study.data.short_citation,
                      metric:             rob.data.metric,
-                     metric_label:       rob.data.metric.metric,
+                     metric_label:       rob.data.metric.name,
                      score:              rob.data.score,
                      score_text:         rob.data.score_text,
                      score_color:        rob.data.score_color,

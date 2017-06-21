@@ -1,5 +1,6 @@
-import * as types from 'robScoreCleanup/constants';
+import _ from 'underscore';
 
+import * as types from 'robScoreCleanup/constants';
 import { deepCopy } from 'shared/utils';
 
 
@@ -22,7 +23,7 @@ const defaultState = {
                 notes: 'This will change to reflect the first selected metric.',
                 metric: {
                     id: 0,
-                    metric: '',
+                    name: '',
                     description: '',
                 },
                 author: {

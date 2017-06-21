@@ -32,7 +32,7 @@ class RiskOfBiasScore {
             metric: robs[0].data.metric,
             scores: d3.nest()
                       .key(function(d){return d.metric.domain.name;})
-                      .key(function(d){return d.metric.metric;})
+                      .key(function(d){return d.metric.name;})
                       .entries(scores),
             config,
         };

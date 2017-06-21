@@ -10,7 +10,7 @@ class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasMetric
-        fields = ('id', 'metric', 'description')
+        fields = ('id', 'name', 'description')
 
 
 class AssessmentMetricSerializer(serializers.ModelSerializer):
@@ -90,7 +90,7 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasMetric
-        fields = ('id', 'metric', 'description', 'scores')
+        fields = ('id', 'name', 'description', 'scores')
 
     def get_final_score(self, instance):
         scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)

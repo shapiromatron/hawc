@@ -52,7 +52,7 @@ DomainCell.propTypes = {
                 score_shade: PropTypes.string.isRequired,
                 domain_name: PropTypes.string.isRequired,
                 metric: PropTypes.shape({
-                    metric: PropTypes.string.isRequired,
+                    name: PropTypes.string.isRequired,
                 }).isRequired,
             })).isRequired,
         })).isRequired,
