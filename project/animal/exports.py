@@ -338,7 +338,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             'dose units',
             'response units',
             'expected adversity direction',
-            'maximum endpoint change',
 
             'low_dose',
             'NOEL',
@@ -408,7 +407,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 self._get_dose_units(doses),
                 ser['response_units'],
                 ser['expected_adversity_direction'],
-                ser['percentControlMaxChange'],
             ]
 
             # dose-group specific information
