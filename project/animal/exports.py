@@ -92,6 +92,60 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
     visualizations.
     """
 
+    @classmethod
+    def _get_doses_list(cls, ser, preferred_units):
+        # compact the dose-list to only one set of dose-units; using the
+        # preferred units if available, else randomly get first available
+        units_id = None
+
+        if preferred_units:
+            available_units = set([
+                d['dose_units']['id'] for
+                d in ser['animal_group']['dosing_regime']['doses']
+            ])
+            for units in preferred_units:
+                if units in available_units:
+                    units_id = units
+                    break
+
+        if units_id is None:
+            units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
+
+        return [
+            d for d in ser['animal_group']['dosing_regime']['doses']
+            if units_id == d['dose_units']['id']
+        ]
+
+    @classmethod
+    def _get_dose_units(cls, doses):
+        return doses[0]['dose_units']['name']
+
+    @classmethod
+    def _get_doses_str(cls, doses):
+        values = ', '.join([str(float(d['dose'])) for d in doses])
+        return '{0} {1}'.format(values, cls._get_dose_units(doses))
+
+    @classmethod
+    def _get_dose(cls, doses, idx):
+        for dose in doses:
+            if dose['dose_group_id'] == idx:
+                return float(dose['dose'])
+        return None
+
+    @classmethod
+    def _get_species_strain(cls, e):
+        return '{} {}'.format(
+            e['animal_group']['species'],
+            e['animal_group']['strain']
+        )
+
+    @classmethod
+    def _get_tags(cls, e):
+        effs = [tag['name'] for tag in e['effects']]
+        if len(effs) > 0:
+            return '|{0}|'.format('|'.join(effs))
+        return ''
+
     def _get_header_row(self):
         # move qs.distinct() call here so we can make qs annotations.
         self.queryset = self.queryset.distinct('pk')
@@ -160,58 +214,10 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         preferred_units = self.kwargs.get('preferred_units', None)
 
-        def get_doses_list(ser):
-            # compact the dose-list to only one set of dose-units; using the
-            # preferred units if available, else randomly get first available
-            units_id = None
-
-            if preferred_units:
-                available_units = set([
-                    d['dose_units']['id'] for
-                    d in ser['animal_group']['dosing_regime']['doses']
-                ])
-                for units in preferred_units:
-                    if units in available_units:
-                        units_id = units
-                        break
-
-            if units_id is None:
-                units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
-
-            return [
-                d for d in ser['animal_group']['dosing_regime']['doses']
-                if units_id == d['dose_units']['id']
-            ]
-
-        def get_dose_units(doses):
-            return doses[0]['dose_units']['name']
-
-        def get_doses_str(doses):
-            values = ', '.join([str(float(d['dose'])) for d in doses])
-            return '{0} {1}'.format(values, get_dose_units(doses))
-
-        def get_dose(doses, idx):
-            for dose in doses:
-                if dose['dose_group_id'] == idx:
-                    return float(dose['dose'])
-            return None
-
-        def get_species_strain(e):
-            return '{} {}'.format(
-                e['animal_group']['species'],
-                e['animal_group']['strain']
-            )
-
-        def get_tags(e):
-            effs = [tag['name'] for tag in e['effects']]
-            if len(effs) > 0:
-                return '|{0}|'.format('|'.join(effs))
-            return ''
-
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
-            doses = get_doses_list(ser)
+            doses = self._get_doses_list(ser, preferred_units)
 
             # build endpoint-group independent data
             row = [
@@ -229,7 +235,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['lifestage_exposed'],
                 ser['animal_group']['lifestage_assessed'],
                 ser['animal_group']['species'],
-                get_species_strain(ser),
+                self._get_species_strain(ser),
                 ser['animal_group']['generation'],
                 get_gen_species_strain_sex(ser, withN=False),
                 get_gen_species_strain_sex(ser, withN=True),
@@ -246,11 +252,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 ser['effect'],
                 ser['effect_subtype'],
                 ser['diagnostic'],
-                get_tags(ser),
+                self._get_tags(ser),
                 ser['observation_time_text'],
                 ser['data_type_label'],
-                get_doses_str(doses),
-                get_dose_units(doses),
+                self._get_doses_str(doses),
+                self._get_dose_units(doses),
                 ser['response_units'],
                 ser['expected_adversity_direction'],
                 ser['percentControlMaxChange'],
@@ -259,11 +265,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             # dose-group specific information
             if len(ser['groups']) > 1:
                 row.extend([
-                    get_dose(doses, 1),  # first non-zero dose
-                    get_dose(doses, ser['NOEL']),
-                    get_dose(doses, ser['LOEL']),
-                    get_dose(doses, ser['FEL']),
-                    get_dose(doses, len(ser['groups'])-1),
+                    self._get_dose(doses, 1),  # first non-zero dose
+                    self._get_dose(doses, ser['NOEL']),
+                    self._get_dose(doses, ser['LOEL']),
+                    self._get_dose(doses, ser['FEL']),
+                    self._get_dose(doses, len(ser['groups']) - 1),
                 ])
             else:
                 row.extend([None] * 5)
@@ -274,7 +280,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 row_copy.extend([
                     eg['id'],
                     eg['dose_group_id'],
-                    get_dose(doses, i),
+                    self._get_dose(doses, i),
                     eg['n'],
                     eg['incidence'],
                     eg['response'],
@@ -291,7 +297,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return rows
 
 
-class EndpointFlatDataPivot(FlatFileExporter):
+class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
     def _get_header_row(self):
         header = [
@@ -358,58 +364,10 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
         preferred_units = self.kwargs.get('preferred_units', None)
 
-        def get_doses_list(ser):
-            # compact the dose-list to only one set of dose-units; using the
-            # preferred units if available, else randomly get first available
-            units_id = None
-
-            if preferred_units:
-                available_units = set([
-                    d['dose_units']['id'] for
-                    d in ser['animal_group']['dosing_regime']['doses']
-                ])
-                for units in preferred_units:
-                    if units in available_units:
-                        units_id = units
-                        break
-
-            if units_id is None:
-                units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
-
-            return [
-                d for d in ser['animal_group']['dosing_regime']['doses']
-                if units_id == d['dose_units']['id']
-            ]
-
-        def get_dose_units(doses):
-            return doses[0]['dose_units']['name']
-
-        def get_doses_str(doses):
-            values = ', '.join([str(float(d['dose'])) for d in doses])
-            return '{0} {1}'.format(values, get_dose_units(doses))
-
-        def get_dose(doses, idx):
-            for dose in doses:
-                if dose['dose_group_id'] == idx:
-                    return float(dose['dose'])
-            return None
-
-        def get_species_strain(e):
-            return '{} {}'.format(
-                e['animal_group']['species'],
-                e['animal_group']['strain']
-            )
-
-        def get_tags(e):
-            effs = [tag['name'] for tag in e['effects']]
-            if len(effs) > 0:
-                return '|{0}|'.format('|'.join(effs))
-            return ''
-
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
-            doses = get_doses_list(ser)
+            doses = self._get_doses_list(ser, preferred_units)
 
             # build endpoint-group independent data
             row = [
@@ -427,7 +385,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['animal_group']['lifestage_exposed'],
                 ser['animal_group']['lifestage_assessed'],
                 ser['animal_group']['species'],
-                get_species_strain(ser),
+                self._get_species_strain(ser),
                 ser['animal_group']['generation'],
                 get_gen_species_strain_sex(ser, withN=False),
                 get_gen_species_strain_sex(ser, withN=True),
@@ -444,11 +402,11 @@ class EndpointFlatDataPivot(FlatFileExporter):
                 ser['effect'],
                 ser['effect_subtype'],
                 ser['diagnostic'],
-                get_tags(ser),
+                self._get_tags(ser),
                 ser['observation_time_text'],
                 ser['data_type_label'],
-                get_doses_str(doses),
-                get_dose_units(doses),
+                self._get_doses_str(doses),
+                self._get_dose_units(doses),
                 ser['response_units'],
                 ser['expected_adversity_direction'],
                 ser['percentControlMaxChange'],
@@ -457,17 +415,17 @@ class EndpointFlatDataPivot(FlatFileExporter):
             # dose-group specific information
             if len(ser['groups']) > 1:
                 row.extend([
-                    get_dose(doses, 1),  # first non-zero dose
-                    get_dose(doses, ser['NOEL']),
-                    get_dose(doses, ser['LOEL']),
-                    get_dose(doses, ser['FEL']),
-                    get_dose(doses, len(ser['groups']) - 1),
+                    self._get_dose(doses, 1),  # first non-zero dose
+                    self._get_dose(doses, ser['NOEL']),
+                    self._get_dose(doses, ser['LOEL']),
+                    self._get_dose(doses, ser['FEL']),
+                    self._get_dose(doses, len(ser['groups']) - 1),
                 ])
             else:
                 row.extend([None] * 5)
 
-            dose_list = [get_dose(doses, i) for i in range(len(doses))]
             resps = [eg['response'] for eg in ser['groups']]
+            dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
             sigs = [eg['significant'] for eg in ser['groups']]
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
@@ -479,6 +437,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
             row.extend(sigs)
 
             rows.append(row)
+
         return rows
 
 
