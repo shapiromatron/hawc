@@ -388,7 +388,7 @@ class FullExport(BaseList):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        exporter = exports.EndpointFlatComplete(
+        exporter = exports.EndpointGroupFlatComplete(
             self.object_list,
             export_format="excel",
             filename='{}-animal-bioassay'.format(self.assessment),

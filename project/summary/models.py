@@ -14,7 +14,7 @@ from epi.models import Outcome
 from epimeta.models import MetaResult
 from invitro.models import IVEndpoint
 
-from animal.exports import EndpointFlatDataPivot
+from animal.exports import EndpointGroupFlatDataPivot
 from epi.exports import OutcomeDataPivot
 from epimeta.exports import MetaResultFlatDataPivot
 import invitro.exports as ivexports
@@ -544,7 +544,7 @@ class DataPivotQuery(DataPivot):
 
     def _get_dataset_exporter(self, qs, format_):
         if self.evidence_type == BIOASSAY:
-            exporter = EndpointFlatDataPivot(
+            exporter = EndpointGroupFlatDataPivot(
                 qs,
                 export_format=format_,
                 filename='{}-animal-bioassay'.format(self.assessment),

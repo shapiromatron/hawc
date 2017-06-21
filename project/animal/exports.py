@@ -46,7 +46,7 @@ def get_treatment_period(exp, dr):
     return txt
 
 
-class EndpointFlatComplete(FlatFileExporter):
+class EndpointGroupFlatComplete(FlatFileExporter):
     """
     Returns a complete export of all data required to rebuild the the
     animal bioassay study type from scratch.
@@ -86,7 +86,7 @@ class EndpointFlatComplete(FlatFileExporter):
         return rows
 
 
-class EndpointFlatDataPivot(FlatFileExporter):
+class EndpointGroupFlatDataPivot(FlatFileExporter):
     """
     Return a subset of frequently-used data for generation of data-pivot
     visualizations.
