@@ -410,6 +410,8 @@ class ChangeLog(models.Model):
 class TimeSpentEditing(models.Model):
     seconds = models.FloatField(
         validators=(MinValueValidator, ))
+    assessment = models.ForeignKey(
+        Assessment, on_delete=models.CASCADE)
     content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -417,7 +419,9 @@ class TimeSpentEditing(models.Model):
         'content_type', 'object_id')
     created = models.DateTimeField(
         auto_now_add=True)
-    assessment = models.ForeignKey(Assessment)
+
+    class Meta:
+        verbose_name_plural = 'Time spent editing models'
 
     def __str__(self):
         return f'{self.content_type.model} {self.object_id}: {self.seconds}'

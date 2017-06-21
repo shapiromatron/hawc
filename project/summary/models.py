@@ -372,8 +372,14 @@ class DataPivot(models.Model):
         return reverse('summary:visualization_list', args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse('summary:dp_detail', kwargs={'pk': self.assessment_id,
-                                                    'slug': self.slug})
+        return reverse(
+            'summary:dp_detail',
+            kwargs={'pk': self.assessment_id, 'slug': self.slug})
+
+    def get_visualization_update_url(self):
+        return reverse(
+            'summary:dp_update',
+            kwargs={'pk': self.assessment_id, 'slug': self.slug})
 
     def get_assessment(self):
         return self.assessment
@@ -404,7 +410,6 @@ class DataPivot(models.Model):
             return json.loads(self.settings)
         except ValueError:
             return None
-
 
     @staticmethod
     def reset_row_overrides(settings):

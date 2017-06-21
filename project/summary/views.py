@@ -229,10 +229,8 @@ class DataPivotNew(BaseCreate):
     template_name = 'summary/datapivot_form.html'
 
     def get_success_url(self):
-        return reverse_lazy(
-            'summary:dp_update',
-            kwargs={'pk': self.assessment.pk, 'slug': self.object.slug}
-        )
+        super().get_success_url()
+        return self.object.get_visualization_update_url()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

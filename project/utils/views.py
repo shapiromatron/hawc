@@ -1,21 +1,18 @@
 import abc
-import os
 import logging
-import celery
 
-from django.conf import settings
-from django.shortcuts import HttpResponse
 from django.apps import apps
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import get_object_or_404, Http404
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
@@ -153,7 +150,7 @@ class TimeSpentOnPageMixin(object):
 
     def _set_time_spent_cache(self, request):
         cache_name = TimeSpentEditing.get_cache_name(request)
-        now = timezone.now()  # TODO: convert to float
+        now = timezone.now()
         cache.set(cache_name, now)
 
     def get(self, request, *args, **kwargs):
@@ -164,7 +161,9 @@ class TimeSpentOnPageMixin(object):
     def get_success_url(self):
         response = super().get_success_url()
         cache_name = TimeSpentEditing.get_cache_name(self.request)
-        add_time_spent.delay(cache_name, self.object)
+        content_type_id = ContentType.objects.get_for_model(self.object).id
+        add_time_spent.delay(cache_name, self.object.id,
+                             self.assessment.id, content_type_id)
         return response
 
 

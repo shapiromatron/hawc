@@ -3,15 +3,14 @@ import json
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 
 from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from study.views import StudyRead
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from mgmt.views import EnsureExtractionStartedMixin
-from utils.views import (AssessmentPermissionsMixin, BaseCreate,
-                         BaseCreateWithFormset, BaseDelete, BaseDetail,
+from utils.views import (BaseCreate, BaseCreateWithFormset,
+                         BaseDelete, BaseDetail,
                          BaseEndpointFilterList, BaseList, BaseUpdate,
                          BaseUpdateWithFormset, MessageMixin,
                          CopyAsNewSelectorMixin)
@@ -89,7 +88,7 @@ class AnimalGroupCreate(BaseCreate):
             # unpack dose-groups into formset and validate
             # occasionally POST['dose_groups_json'] will be '', which json.loads
             # will raise an error on. Replace with '{}' on those occasions.
-            dose_groups  = self.request.POST['dose_groups_json']
+            dose_groups = self.request.POST['dose_groups_json']
             dose_groups_json = dose_groups if dose_groups != '' else '{}'
             fs_initial = json.loads(dose_groups_json)
             fs = forms.dosegroup_formset_factory(fs_initial, dosing_regime.num_dose_groups)
