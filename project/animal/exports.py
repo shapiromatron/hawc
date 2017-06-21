@@ -93,6 +93,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
     """
 
     def _get_header_row(self):
+        # move qs.distinct() call here so we can make qs annotations.
+        self.queryset = self.queryset.distinct('pk')
         return [
             'study id',
             'study name',
@@ -344,6 +346,8 @@ class EndpointFlatDataPivot(FlatFileExporter):
         header.extend(["Dose {0}".format(i) for i in rng])
         header.extend(["Response {0}".format(i) for i in rng])
         header.extend(["Significant {0}".format(i) for i in rng])
+        # move qs.distinct() call here so we can make qs annotations.
+        self.queryset = self.queryset.distinct('pk')
         self.num_doses = num_doses
 
         return header

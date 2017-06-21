@@ -529,7 +529,7 @@ class DataPivotQuery(DataPivot):
 
     def _get_dataset_queryset(self, filters):
         if self.evidence_type == BIOASSAY:
-            qs = Endpoint.objects.filter(**filters).distinct('pk')
+            qs = Endpoint.objects.filter(**filters)
 
         elif self.evidence_type == EPI:
             qs = Outcome.objects.filter(**filters)
