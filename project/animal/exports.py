@@ -14,19 +14,19 @@ def get_gen_species_strain_sex(e, withN=False):
 
     gen = e['animal_group']['generation']
     if len(gen) > 0:
-        gen += " "
+        gen += ' '
 
-    ns_txt = ""
+    ns_txt = ''
     if withN:
-        ns = [eg["n"] for eg in e["groups"] if eg["n"] is not None]
+        ns = [eg['n'] for eg in e['groups'] if eg['n'] is not None]
         if len(ns) > 0:
-            ns_txt = ", N=" + models.EndpointGroup.getNRangeText(ns)
+            ns_txt = ', N=' + models.EndpointGroup.getNRangeText(ns)
 
     sex_symbol = e['animal_group']['sex_symbol']
     if sex_symbol == 'NR':
         sex_symbol = 'sex=NR'
 
-    return "{}{}, {} ({}{})".format(
+    return '{}{}, {} ({}{})'.format(
         gen,
         e['animal_group']['species'],
         e['animal_group']['strain'],
@@ -36,12 +36,12 @@ def get_gen_species_strain_sex(e, withN=False):
 
 
 def get_treatment_period(exp, dr):
-    txt = exp["type"].lower()
-    if txt.find("(") >= 0:
-        txt = txt[:txt.find("(")]
+    txt = exp['type'].lower()
+    if txt.find('(') >= 0:
+        txt = txt[:txt.find('(')]
 
-    if dr["duration_exposure_text"]:
-        txt = "{0} ({1})".format(txt, dr["duration_exposure_text"])
+    if dr['duration_exposure_text']:
+        txt = '{0} ({1})'.format(txt, dr['duration_exposure_text'])
 
     return txt
 
@@ -188,7 +188,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         def get_doses_str(doses):
             values = ', '.join([str(float(d['dose'])) for d in doses])
-            return "{0} {1}".format(values, get_dose_units(doses))
+            return '{0} {1}'.format(values, get_dose_units(doses))
 
         def get_dose(doses, idx):
             for dose in doses:
@@ -197,16 +197,16 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             return None
 
         def get_species_strain(e):
-            return "{} {}".format(
+            return '{} {}'.format(
                 e['animal_group']['species'],
                 e['animal_group']['strain']
             )
 
         def get_tags(e):
-            effs = [tag["name"] for tag in e["effects"]]
+            effs = [tag['name'] for tag in e['effects']]
             if len(effs) > 0:
-                return "|{0}|".format("|".join(effs))
-            return ""
+                return '|{0}|'.format('|'.join(effs))
+            return ''
 
         rows = []
         for obj in self.queryset:
@@ -266,7 +266,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                     get_dose(doses, len(ser['groups'])-1),
                 ])
             else:
-                row.extend([None]*5)
+                row.extend([None] * 5)
 
             # endpoint-group information
             for i, eg in enumerate(ser['groups']):
@@ -343,10 +343,12 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
         rng = range(1, num_doses + 1)
-        header.extend(["Dose {0}".format(i) for i in rng])
-        header.extend(["Response {0}".format(i) for i in rng])
-        header.extend(["Significant {0}".format(i) for i in rng])
-        # move qs.distinct() call here so we can make qs annotations.
+        header.extend(['Dose {0}'.format(i) for i in rng])
+        header.extend(['Response {0}'.format(i) for i in rng])
+        header.extend(['Significant {0}'.format(i) for i in rng])
+
+        # distinct applied last so that queryset can add annotations above
+        # in self.queryset.model.max_dose_count
         self.queryset = self.queryset.distinct('pk')
         self.num_doses = num_doses
 
@@ -384,7 +386,7 @@ class EndpointFlatDataPivot(FlatFileExporter):
 
         def get_doses_str(doses):
             values = ', '.join([str(float(d['dose'])) for d in doses])
-            return "{0} {1}".format(values, get_dose_units(doses))
+            return '{0} {1}'.format(values, get_dose_units(doses))
 
         def get_dose(doses, idx):
             for dose in doses:
@@ -393,16 +395,16 @@ class EndpointFlatDataPivot(FlatFileExporter):
             return None
 
         def get_species_strain(e):
-            return "{} {}".format(
+            return '{} {}'.format(
                 e['animal_group']['species'],
                 e['animal_group']['strain']
             )
 
         def get_tags(e):
-            effs = [tag["name"] for tag in e["effects"]]
+            effs = [tag['name'] for tag in e['effects']]
             if len(effs) > 0:
-                return "|{0}|".format("|".join(effs))
-            return ""
+                return '|{0}|'.format('|'.join(effs))
+            return ''
 
         rows = []
         for obj in self.queryset:
@@ -459,18 +461,18 @@ class EndpointFlatDataPivot(FlatFileExporter):
                     get_dose(doses, ser['NOEL']),
                     get_dose(doses, ser['LOEL']),
                     get_dose(doses, ser['FEL']),
-                    get_dose(doses, len(ser['groups'])-1),
+                    get_dose(doses, len(ser['groups']) - 1),
                 ])
             else:
-                row.extend([None]*5)
+                row.extend([None] * 5)
 
             dose_list = [get_dose(doses, i) for i in range(len(doses))]
             resps = [eg['response'] for eg in ser['groups']]
             sigs = [eg['significant'] for eg in ser['groups']]
 
-            dose_list.extend([None] * (self.num_doses-len(dose_list)))
-            resps.extend([None] * (self.num_doses-len(resps)))
-            sigs.extend([None] * (self.num_doses-len(sigs)))
+            dose_list.extend([None] * (self.num_doses - len(dose_list)))
+            resps.extend([None] * (self.num_doses - len(resps)))
+            sigs.extend([None] * (self.num_doses - len(sigs)))
 
             row.extend(dose_list)
             row.extend(resps)
@@ -483,29 +485,29 @@ class EndpointFlatDataPivot(FlatFileExporter):
 class EndpointSummary(FlatFileExporter):
     def _get_header_row(self):
         return [
-            "study-short_citation",
-            "study-study_identifier",
-            "experiment-chemical",
-            "animal_group-name",
-            "animal_group-sex",
-            "animal description (with n)",
-            "dosing_regime-route_of_exposure",
-            "dosing_regime-duration_exposure_text",
-            "species-name",
-            "strain-name",
-            "endpoint-id",
-            "endpoint-url",
-            "endpoint-system",
-            "endpoint-organ",
-            "endpoint-effect",
-            "endpoint-name",
-            "endpoint-observation_time",
-            "endpoint-response_units",
-            "Dose units",
-            "Doses",
-            "Responses",
-            "Doses and responses",
-            "Response direction",
+            'study-short_citation',
+            'study-study_identifier',
+            'experiment-chemical',
+            'animal_group-name',
+            'animal_group-sex',
+            'animal description (with n)',
+            'dosing_regime-route_of_exposure',
+            'dosing_regime-duration_exposure_text',
+            'species-name',
+            'strain-name',
+            'endpoint-id',
+            'endpoint-url',
+            'endpoint-system',
+            'endpoint-organ',
+            'endpoint-effect',
+            'endpoint-name',
+            'endpoint-observation_time',
+            'endpoint-response_units',
+            'Dose units',
+            'Doses',
+            'Responses',
+            'Doses and responses',
+            'Response direction',
         ]
 
     def _get_data_rows(self):
@@ -521,19 +523,19 @@ class EndpointSummary(FlatFileExporter):
                 d['dose'] for d in doses
                 if d['dose_units']['name'] == unit
             ]
-            return ["{0:g}".format(d) for d in doses]
+            return ['{0:g}'.format(d) for d in doses]
 
         def getResponses(groups):
             resps = []
             for grp in groups:
-                txt = ""
+                txt = ''
                 if grp['isReported']:
-                    if grp["response"] is not None:
-                        txt = "{0:g}".format(grp["response"])
+                    if grp['response'] is not None:
+                        txt = '{0:g}'.format(grp['response'])
                     else:
-                        txt = "{0:g}".format(grp["incidence"])
+                        txt = '{0:g}'.format(grp['incidence'])
                     if grp['variance'] is not None:
-                        txt = "{0} ± {1:g}".format(txt, grp['variance'])
+                        txt = '{0} ± {1:g}'.format(txt, grp['variance'])
                 resps.append(txt)
             return resps
 
@@ -541,21 +543,21 @@ class EndpointSummary(FlatFileExporter):
             txts = []
             for i in range(len(doses)):
                 if len(responses) > i and len(responses[i]) > 0:
-                    txt = "{} {}: {}".format(doses[i], units, responses[i])
+                    txt = '{} {}: {}'.format(doses[i], units, responses[i])
                     txts.append(txt)
-            return ", ".join(txts)
+            return ', '.join(txts)
 
         def getResponseDirection(responses, data_type):
-            txt = "↔"
+            txt = '↔'
             for resp in responses:
                 if resp['significant']:
-                    if data_type in ["C", "P"]:
-                        if resp["response"] > responses[0]["response"]:
-                            txt = "↑"
+                    if data_type in ['C', 'P']:
+                        if resp['response'] > responses[0]['response']:
+                            txt = '↑'
                         else:
-                            txt = "↓"
+                            txt = '↓'
                     else:
-                        txt = "↑"
+                        txt = '↑'
                     break
             return txt
 
@@ -595,9 +597,9 @@ class EndpointSummary(FlatFileExporter):
                 row_copy = copy(row)
                 dosesList = getDoses(doses, unit)
                 row_copy.extend([
-                    unit,                   # "units"
-                    ", ".join(dosesList),  # Doses
-                    ", ".join(responsesList),  # Responses w/ units
+                    unit,  # 'units'
+                    ', '.join(dosesList),  # Doses
+                    ', '.join(responsesList),  # Responses w/ units
                     getDR(dosesList, responsesList, unit),
                     responseDirection
                 ])
