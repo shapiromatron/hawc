@@ -19,7 +19,7 @@ class RiskOfBiasMetricManager(BaseManager):
         return self.get_qs(assessment).filter(requireds)
 
     def get_metrics_for_visuals(self, assessment_id):
-        return self.get_qs(assessment_id).values('id', 'metric')
+        return self.get_qs(assessment_id).values('id', 'name')
 
 
 class RiskOfBiasManager(BaseManager):

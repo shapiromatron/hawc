@@ -19,7 +19,7 @@ from django.shortcuts import HttpResponse, get_object_or_404
 from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          CloseIfSuccessMixin, BaseDetail, BaseUpdate,
                          BaseDelete, BaseList, TeamMemberOrHigherMixin,
-                         ProjectManagerOrHigherMixin)
+                         ProjectManagerOrHigherMixin, TimeSpentOnPageMixin)
 
 from . import forms, models, tasks
 
@@ -199,10 +199,16 @@ class AssessmentPublicList(ListView):
         return self.model.objects.get_public_assessments()
 
 
-class AssessmentCreate(LoginRequiredMixin, MessageMixin, CreateView):
+class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin,
+                       MessageMixin, CreateView):
     success_message = 'Assessment created.'
     model = models.Assessment
     form_class = forms.AssessmentForm
+
+    def get_success_url(self):
+        self.assessment = self.object
+        response = super().get_success_url()
+        return response
 
 
 class AssessmentRead(BaseDetail):
@@ -278,9 +284,6 @@ class AttachmentCreate(BaseCreate):
     parent_template_name = 'parent'
     model = models.Attachment
     form_class = forms.AttachmentForm
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
 
 
 class AttachmentRead(BaseDetail):

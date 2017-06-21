@@ -90,9 +90,27 @@ class ChangeLogAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("date", "name")}
 
 
+class TimeSpentEditingAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'seconds',
+        'assessment',
+        'content_type',
+        'object_id',
+        'content_object',
+        'created',
+    )
+    search_fields = ('assessment', 'content_type',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.list_display_links = []
+
+
 admin.site.register(models.Assessment, AssessmentAdmin)
 admin.site.register(models.DoseUnits, DoseUnitsAdmin)
 admin.site.register(models.Species, SpeciesAdmin)
 admin.site.register(models.Strain, StrainAdmin)
 admin.site.register(models.EffectTag, EffectTagAdmin)
 admin.site.register(models.ChangeLog, ChangeLogAdmin)
+admin.site.register(models.TimeSpentEditing, TimeSpentEditingAdmin)
