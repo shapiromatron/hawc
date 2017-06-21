@@ -852,6 +852,16 @@ class Endpoint(BaseEndpoint):
         return Endpoint.VARIANCE_NAME.get(self.variance_type, "N/A")
 
     @staticmethod
+    def max_dose_count(queryset):
+        max_val = 0
+        qs = queryset\
+            .annotate(max_egs=models.Count('groups', distinct=True))\
+            .values_list('max_egs', flat=True)
+        if len(qs) > 0:
+            max_val = max(qs)
+        return max_val
+
+    @staticmethod
     def get_qs_json(queryset, json_encode=True):
         endpoints = [e.get_json(json_encode=False) for e in queryset]
         if json_encode:

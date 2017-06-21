@@ -289,6 +289,193 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return rows
 
 
+class EndpointFlatDataPivot(FlatFileExporter):
+
+    def _get_header_row(self):
+        header = [
+            'study id',
+            'study name',
+            'study identifier',
+            'study published',
+
+            'experiment id',
+            'experiment name',
+            'chemical',
+
+            'animal group id',
+            'animal group name',
+            'lifestage exposed',
+            'lifestage assessed',
+            'species',
+            'species strain',
+            'generation',
+            'animal description',
+            'animal description (with N)',
+            'sex',
+            'route',
+            'treatment period',
+            'duration exposure',
+
+            'endpoint id',
+            'endpoint name',
+            'system',
+            'organ',
+            'effect',
+            'effect subtype',
+            'diagnostic',
+            'tags',
+            'observation time',
+            'data type',
+            'doses',
+            'dose units',
+            'response units',
+            'expected adversity direction',
+            'maximum endpoint change',
+
+            'low_dose',
+            'NOEL',
+            'LOEL',
+            'FEL',
+            'high_dose',
+        ]
+
+        num_doses = self.queryset.model.max_dose_count(self.queryset)
+        rng = range(1, num_doses + 1)
+        header.extend(["Dose {0}".format(i) for i in rng])
+        header.extend(["Response {0}".format(i) for i in rng])
+        header.extend(["Significant {0}".format(i) for i in rng])
+        self.num_doses = num_doses
+
+        return header
+
+    def _get_data_rows(self):
+
+        preferred_units = self.kwargs.get('preferred_units', None)
+
+        def get_doses_list(ser):
+            # compact the dose-list to only one set of dose-units; using the
+            # preferred units if available, else randomly get first available
+            units_id = None
+
+            if preferred_units:
+                available_units = set([
+                    d['dose_units']['id'] for
+                    d in ser['animal_group']['dosing_regime']['doses']
+                ])
+                for units in preferred_units:
+                    if units in available_units:
+                        units_id = units
+                        break
+
+            if units_id is None:
+                units_id = ser['animal_group']['dosing_regime']['doses'][0]['dose_units']['id']
+
+            return [
+                d for d in ser['animal_group']['dosing_regime']['doses']
+                if units_id == d['dose_units']['id']
+            ]
+
+        def get_dose_units(doses):
+            return doses[0]['dose_units']['name']
+
+        def get_doses_str(doses):
+            values = ', '.join([str(float(d['dose'])) for d in doses])
+            return "{0} {1}".format(values, get_dose_units(doses))
+
+        def get_dose(doses, idx):
+            for dose in doses:
+                if dose['dose_group_id'] == idx:
+                    return float(dose['dose'])
+            return None
+
+        def get_species_strain(e):
+            return "{} {}".format(
+                e['animal_group']['species'],
+                e['animal_group']['strain']
+            )
+
+        def get_tags(e):
+            effs = [tag["name"] for tag in e["effects"]]
+            if len(effs) > 0:
+                return "|{0}|".format("|".join(effs))
+            return ""
+
+        rows = []
+        for obj in self.queryset:
+            ser = obj.get_json(json_encode=False)
+            doses = get_doses_list(ser)
+
+            # build endpoint-group independent data
+            row = [
+                ser['animal_group']['experiment']['study']['id'],
+                ser['animal_group']['experiment']['study']['short_citation'],
+                ser['animal_group']['experiment']['study']['study_identifier'],
+                ser['animal_group']['experiment']['study']['published'],
+
+                ser['animal_group']['experiment']['id'],
+                ser['animal_group']['experiment']['name'],
+                ser['animal_group']['experiment']['chemical'],
+
+                ser['animal_group']['id'],
+                ser['animal_group']['name'],
+                ser['animal_group']['lifestage_exposed'],
+                ser['animal_group']['lifestage_assessed'],
+                ser['animal_group']['species'],
+                get_species_strain(ser),
+                ser['animal_group']['generation'],
+                get_gen_species_strain_sex(ser, withN=False),
+                get_gen_species_strain_sex(ser, withN=True),
+                ser['animal_group']['sex'],
+                ser['animal_group']['dosing_regime']['route_of_exposure'].lower(),
+                get_treatment_period(ser['animal_group']['experiment'],
+                                     ser['animal_group']['dosing_regime']),
+                ser['animal_group']['dosing_regime']['duration_exposure_text'],
+
+                ser['id'],
+                ser['name'],
+                ser['system'],
+                ser['organ'],
+                ser['effect'],
+                ser['effect_subtype'],
+                ser['diagnostic'],
+                get_tags(ser),
+                ser['observation_time_text'],
+                ser['data_type_label'],
+                get_doses_str(doses),
+                get_dose_units(doses),
+                ser['response_units'],
+                ser['expected_adversity_direction'],
+                ser['percentControlMaxChange'],
+            ]
+
+            # dose-group specific information
+            if len(ser['groups']) > 1:
+                row.extend([
+                    get_dose(doses, 1),  # first non-zero dose
+                    get_dose(doses, ser['NOEL']),
+                    get_dose(doses, ser['LOEL']),
+                    get_dose(doses, ser['FEL']),
+                    get_dose(doses, len(ser['groups'])-1),
+                ])
+            else:
+                row.extend([None]*5)
+
+            dose_list = [get_dose(doses, i) for i in range(len(doses))]
+            resps = [eg['response'] for eg in ser['groups']]
+            sigs = [eg['significant'] for eg in ser['groups']]
+
+            dose_list.extend([None] * (self.num_doses-len(dose_list)))
+            resps.extend([None] * (self.num_doses-len(resps)))
+            sigs.extend([None] * (self.num_doses-len(sigs)))
+
+            row.extend(dose_list)
+            row.extend(resps)
+            row.extend(sigs)
+
+            rows.append(row)
+        return rows
+
+
 class EndpointSummary(FlatFileExporter):
     def _get_header_row(self):
         return [
