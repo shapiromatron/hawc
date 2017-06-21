@@ -350,7 +350,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         num_doses = self.queryset.model.max_dose_count(self.queryset)
         rng = range(1, num_doses + 1)
         header.extend(['Dose {0}'.format(i) for i in rng])
-        header.extend(['Response {0}'.format(i) for i in rng])
         header.extend(['Significant {0}'.format(i) for i in rng])
 
         # distinct applied last so that queryset can add annotations above
@@ -424,16 +423,13 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             else:
                 row.extend([None] * 5)
 
-            resps = [eg['response'] for eg in ser['groups']]
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
             sigs = [eg['significant'] for eg in ser['groups']]
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
-            resps.extend([None] * (self.num_doses - len(resps)))
             sigs.extend([None] * (self.num_doses - len(sigs)))
 
             row.extend(dose_list)
-            row.extend(resps)
             row.extend(sigs)
 
             rows.append(row)
