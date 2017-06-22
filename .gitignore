@@ -21,6 +21,7 @@ env
 public/static
 public/media
 venv
+.vagrant
 
 # javascript
 node_modules
