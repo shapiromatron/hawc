@@ -4398,9 +4398,9 @@ react-pure-render@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-pure-render/-/react-pure-render-1.0.2.tgz#9d8a928c7f2c37513c2d064e57b3e3c356e9fabb"
 
-"react-quill@git://github.com/alexkrolick/react-quill.git#30adc25cf2c73fc6b2d0674e986de82c64f4afca":
+"react-quill@git+https://github.com/alexkrolick/react-quill.git#30adc25cf2c73fc6b2d0674e986de82c64f4afca":
   version "2.0.0-beta.2"
-  resolved "git://github.com/alexkrolick/react-quill.git#30adc25cf2c73fc6b2d0674e986de82c64f4afca"
+  resolved "git+https://github.com/alexkrolick/react-quill.git#30adc25cf2c73fc6b2d0674e986de82c64f4afca"
   dependencies:
     quill "^1.0.0-beta.11"
 
