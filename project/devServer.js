@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.listen(port, 'localhost', function(err) {
+app.listen(port, '0.0.0.0', function(err) {
     if (err) {
         console.log(err);
         return;
