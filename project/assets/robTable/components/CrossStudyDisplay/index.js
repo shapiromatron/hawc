@@ -9,7 +9,7 @@ const CrossStudyDisplay = (props) => {
     return (
         <div className='cross-study-display'>
             <h3>{domain}</h3>
-            <h4>{metric.metric}</h4>
+            <h4>{metric.name}</h4>
             <div className='help-block' dangerouslySetInnerHTML={{__html: metric.description}} />
             {_.map(scores, (rob, i) => {
                 return (
@@ -29,7 +29,7 @@ const CrossStudyDisplay = (props) => {
 CrossStudyDisplay.propTypes = {
     domain: PropTypes.string.isRequired,
     metric: PropTypes.shape({
-        metric: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
     }).isRequired,
     scores: PropTypes.arrayOf(PropTypes.shape({

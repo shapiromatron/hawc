@@ -116,7 +116,7 @@ class IdentifiersManager(BaseManager):
                     ids.append(ident)
 
             # create other accession identifiers
-            if db is not None and ref['accession_number'] is not None:
+            if db is not None and ref['accession_number'] is not None and ref['accession_number'] is not '':
                 db_id = None
                 if db == "wos":
                     db_id = constants.WOS
@@ -133,7 +133,6 @@ class IdentifiersManager(BaseManager):
             refs.append(ids)
 
         Identifiers.update_pubmed_content(pimdsFetch)
-
         return refs
 
     def get_hero_identifiers(self, hero_ids):

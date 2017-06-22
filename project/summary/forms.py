@@ -616,7 +616,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def clean_export_style(self):
         evidence_type = self.cleaned_data['evidence_type']
         export_style = self.cleaned_data['export_style']
-        if evidence_type != models.IN_VITRO and export_style != self.instance.EXPORT_GROUP:
+        if evidence_type not in (models.IN_VITRO, models.BIOASSAY) and export_style != self.instance.EXPORT_GROUP:
             raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
         return export_style
 

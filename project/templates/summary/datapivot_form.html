@@ -84,12 +84,14 @@
               "#div_id_iv_categories",
               "#div_id_prefilter_iv_chemical",
               "#div_id_iv_chemicals",
+          ].join(",")),
+          aniIvOnlyDivs = $([
               "#div_id_export_style",
           ].join(","));
-
         ($('#id_evidence_type').val() === "0") ? aniOnlyDivs.show() : aniOnlyDivs.hide();
         ($('#id_evidence_type').val() === "1") ? epiOnlyDivs.show() : epiOnlyDivs.hide();
         ($('#id_evidence_type').val() === "2") ? ivOnlyDivs.show() : ivOnlyDivs.hide();
+        ($('#id_evidence_type').val() === "0" || $('#id_evidence_type').val() === "2") ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
         togglePrefilterSelectorVisibility();
       }).trigger('change');
 

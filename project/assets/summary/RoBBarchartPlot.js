@@ -90,7 +90,7 @@ class RoBBarchartPlot extends D3Visualization {
                 return _.contains(included_metrics, metric_id);
             }).map(function(d){
                 var vals = {
-                        'label': d.rob_scores[0].data.metric.metric,
+                        'label': d.rob_scores[0].data.metric.name,
                         'N/A':0, '--':0, '-':0, '+':0, '++':0,
                     },
                     weight = 1/d.rob_scores.length;

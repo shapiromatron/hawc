@@ -4,8 +4,10 @@ import os
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.contrib.contenttypes import fields
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
@@ -403,6 +405,32 @@ class ChangeLog(models.Model):
 
     def get_absolute_url(self):
         return reverse('change_log_detail', kwargs={'slug': self.slug})
+
+
+class TimeSpentEditing(models.Model):
+    seconds = models.FloatField(
+        validators=(MinValueValidator, ))
+    assessment = models.ForeignKey(
+        Assessment, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey(
+        'content_type', 'object_id')
+    created = models.DateTimeField(
+        auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'Time spent editing models'
+
+    def __str__(self):
+        return f'{self.content_type.model} {self.object_id}: {self.seconds}'
+
+    @staticmethod
+    def get_cache_name(request):
+        url = request.path
+        key = request.session.session_key
+        return hash(f'{url}-{key}')
 
 
 reversion.register(Assessment)

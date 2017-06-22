@@ -75,7 +75,7 @@ class RoBMetricForm(forms.ModelForm):
             inputs['help_text'] = 'Create a new risk of bias metric.'
 
         helper = BaseFormHelper(self, **inputs)
-        helper['metric'].wrap(cfl.Field, css_class='span12')
+        helper['name'].wrap(cfl.Field, css_class='span12')
         helper['description'].wrap(cfl.Field, css_class='html5text span12')
         return helper
 

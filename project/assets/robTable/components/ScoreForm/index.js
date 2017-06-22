@@ -78,7 +78,7 @@ class ScoreForm extends Component {
             <div className='score-form'>
                 <div>
                     <Select choices={scoreChoices}
-                          id={metric}
+                          id={name}
                           value={score}
                           handleSelect={this.selectScore}/>
                     <br/><br/>
@@ -101,7 +101,7 @@ ScoreForm.propTypes = {
         score: PropTypes.number.isRequired,
         notes: PropTypes.string.isRequired,
         metric: PropTypes.shape({
-            metric: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
 };
