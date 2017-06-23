@@ -10,11 +10,12 @@ The included VagrantFile sets up a VM with the following features:
 * Ubuntu 16.04 (Xenial Xerus)
 * 2GB of RAM
 * Forwarded ports:
-** Port 3000 > 3000 (Node server for JavaScript)
-** Port 8000 > 8000 (Django server for Python)
-** Port 80 > 8081 (If you want to use Nginx)
-** Port 5432 > 5432 (PostgreSQL access)
-** If the port is already used on the host system, Vagrant will choose another.
+
+  * Port 3000 > 3000 (Node server for JavaScript)
+  * Port 8000 > 8000 (Django server for Python)
+  * Port 80 > 8081 (If you want to use Nginx)
+  * Port 5432 > 5432 (PostgreSQL access)
+  * If the port is already used on the host system, Vagrant will choose another.
 
 Project Setup
 ~~~~~~~~~~~~~
