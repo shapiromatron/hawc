@@ -277,7 +277,7 @@ class RiskOfBias(models.Model):
         is empty, so HTML needs to be stripped out.
         """
         return all([
-            len(strip_tags(score.notes)) > 0 for score in self.scores.all()
+            len(strip_tags(score.notes)) > 0 for score in self.scores.all() if score.score is not 0
         ])
 
     @property
