@@ -13,6 +13,7 @@ from assessment.api import AssessmentLevelPermissions, AssessmentEditViewset,\
 from utils.api import BulkIdFilter
 from utils.views import TeamMemberOrHigherMixin
 
+from assessment.models import TimeSpentEditing
 from mgmt.models import Task
 from . import models, serializers
 
@@ -48,6 +49,15 @@ class RiskOfBias(viewsets.ModelViewSet):
         Task.objects.ensure_rob_started(study, user)
         if serializer.instance.final and serializer.instance.is_complete:
             Task.objects.ensure_rob_stopped(study)
+
+        # send time complete task
+        if not serializer.errors:
+            TimeSpentEditing.add_time_spent_job(
+                self.request.session.session_key,
+                serializer.instance.get_edit_url(),
+                serializer.instance,
+                serializer.instance.get_assessment().id
+            )
 
 
 class AssessmentMetricViewset(AssessmentViewset):
