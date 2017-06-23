@@ -41,8 +41,8 @@ Redis
 PostgreSQL 9.6
 --------------
 
-#. sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ \`lsb_release -cs\`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-#. wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+#. sudo sh -c 'echo "deb \http://apt.postgresql.org/pub/repos/apt/ \`lsb_release -cs\`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+#. wget -q \https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
 #. sudo apt-get update && sudo apt-get -y install postgresql postgresql-contrib postgresql-server-dev-9.6
 #. sudo su - postgres
 #. createdb -E UTF-8 hawc
