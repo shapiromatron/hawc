@@ -65,10 +65,20 @@ class ScoreForm extends Component {
             selectedShade: this.state.scoreShades[score],
             selectedSymbol: this.state.scoreSymbols[score],
         });
+        this.validateInput(score, this.state.notes);
     }
 
     handleEditorInput(event){
         this.setState({notes: event});
+        this.validateInput(this.state.score, event);
+    }
+
+    validateInput(score, notes){
+        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' && score != 0) {
+            this.props.updateNotesLeft(this.props.score.id, 'add');
+        } else {
+            this.props.updateNotesLeft(this.props.score.id, 'clear');
+        }
     }
 
     render() {
@@ -104,6 +114,7 @@ ScoreForm.propTypes = {
             name: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
+    updateNotesLeft: PropTypes.func.isRequired,
 };
 
 export default ScoreForm;
