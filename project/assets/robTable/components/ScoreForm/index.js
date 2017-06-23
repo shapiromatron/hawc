@@ -72,7 +72,7 @@ class ScoreForm extends Component {
     }
 
     render() {
-        let { metric } = this.props.score.metric,
+        let { name } = this.props.score.metric,
             { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
         return (
             <div className='score-form'>
@@ -85,7 +85,7 @@ class ScoreForm extends Component {
                     <ScoreIcon shade={selectedShade}
                              symbol={selectedSymbol}/>
                 </div>
-                <ReactQuill id={metric}
+                <ReactQuill id={name}
                          value={notes}
                          onChange={this.handleEditorInput}
                          toolbar={false}
