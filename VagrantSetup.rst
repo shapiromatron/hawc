@@ -21,14 +21,14 @@ Project Setup
 ~~~~~~~~~~~~~
 
 #. Go to your projects folder
-#. :command:`git clone https://github.com/teamhero/hawc.git`
-#. :command:`cd hawc`
+#. git clone https://github.com/teamhero/hawc.git
+#. cd hawc
 
 Starting Vagrant
 ~~~~~~~~~~~~~~~~
 
-#. :command:`vagrant up`
-#. :command:`vagrant ssh`
+#. vagrant up
+#. vagrant ssh
 
 Server Setup
 ~~~~~~~~~~~~
@@ -36,24 +36,24 @@ Server Setup
 Redis
 -----
 
-#. :command:`sudo apt-get -y install redis-server`
+#. sudo apt-get -y install redis-server
 
 PostgreSQL 9.6
 --------------
 
-#. :command:`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ \`lsb_release -cs\`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'`
-#. :command:`wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -`
-#. :command:`sudo apt-get update && sudo apt-get -y install postgresql postgresql-contrib postgresql-server-dev-9.6`
-#. :command:`sudo su - postgres`
-#. :command:`createdb -E UTF-8 hawc`
-#. :command:`psql`
-#. :command:`alter user postgres with password 'password';`
-#. :command:`\\q`
-#. :command:`exit`
-#. :command:`sudo nano /etc/postgresql/9.6/main/pg_hba.conf`
+#. sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ \`lsb_release -cs\`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+#. wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+#. sudo apt-get update && sudo apt-get -y install postgresql postgresql-contrib postgresql-server-dev-9.6
+#. sudo su - postgres
+#. createdb -E UTF-8 hawc
+#. psql
+#. alter user postgres with password 'password';
+#. \\q
+#. exit
+#. sudo nano /etc/postgresql/9.6/main/pg_hba.conf
 #. Replace ``peer`` with ``md5`` on the two lines that start with ``local``
-#. :command:`Ctrl-X`, then :command:`Ctrl-Y`, then :command:`Enter`
-#. :command:`sudo nano /etc/postgresql/9.6/main/postgresql.conf`
+#. Ctrl-X, then Ctrl-Y, then Enter
+#. sudo nano /etc/postgresql/9.6/main/postgresql.conf
 #. Change ``#listen_addresses = 'localhost'`` to ``listen_addresses = '*'``
-#. :command:`Ctrl-X`, then :command:`Ctrl-Y`, then :command:`Enter`
-#. :command:`sudo service postgresql restart`
+#. Ctrl-X, then Ctrl-Y, then Enter
+#. sudo service postgresql restart
