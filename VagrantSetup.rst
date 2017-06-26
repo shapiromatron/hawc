@@ -55,6 +55,9 @@ PostgreSQL 9.6
 #. exit
 #. sudo nano /etc/postgresql/9.6/main/pg_hba.conf
 #. Replace ``peer`` with ``md5`` on the two lines that start with ``local``
+#. Add two lines:
+  * host    all             all              0.0.0.0/0                       md5
+	* host    all             all              ::/0                            md5
 #. Ctrl-X, then Ctrl-Y, then Enter
 #. sudo nano /etc/postgresql/9.6/main/postgresql.conf
 #. Change ``#listen_addresses = 'localhost'`` to ``listen_addresses = '*'``
