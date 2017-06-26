@@ -1,4 +1,3 @@
-import codecs
 from datetime import datetime
 import base64
 import logging
@@ -21,22 +20,63 @@ from pptx.util import Inches, Pt
 logger = logging.getLogger(__name__)
 
 
-def _get_css_styles():
-    txt = ''
+class HawcStyles:
 
-    path = os.path.join(
-        settings.PROJECT_PATH, r'static/css/hawc_d3_aggregated.css')
+    @property
+    def for_svg(self):
+        # lazy evaluation
+        style = getattr(self, '_for_svg', None)
+        if style is None:
+            style = '<defs><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(self._get_styles())  # noqa
+            setattr(self, '_for_svg', style)
+        return style
 
-    if os.path.exists(path):
-        with codecs.open(path, 'r', 'UTF-8') as f:
-            txt = str(f.read())
-        txt = r'<defs style="hawc-styles"><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(txt)  # noqa
+    @property
+    def for_html(self):
+        # lazy evaluation
+        style = getattr(self, '_for_html', None)
+        if style is None:
+            style = '<style type="text/css">{0}</style>'.format(self._get_styles())  # noqa
+            setattr(self, '_for_html', style)
+        return style
 
-    return txt
+    def _get_styles(self):
+
+        print("SLOW")
+
+        def remove_spacing(txt, character):
+            txt = re.sub(character + ' ', character, txt)
+            return re.sub(' ' + character, character, txt)
+
+        def get_styles(files):
+            # Only using D3.css as adding other style-sheets with non SVG
+            # styles can potentially break the SVG processor.
+            texts = []
+            for fn in files:
+                with open(fn, 'r') as f:
+                    texts.append(f.read())
+            return ' '.join(texts)
+
+        def compact(txt):
+            txt = re.sub(r'\/\*[^(\*\/)]+\*\/', ' ', txt)
+            txt = re.sub(r'\n', ' ', txt)
+            txt = re.sub(r' >', ' ', txt)  # can break illustrator
+            txt = re.sub(r'[ ]+', ' ', txt)
+            txt = remove_spacing(txt, ':')
+            txt = remove_spacing(txt, '{')
+            txt = remove_spacing(txt, '}')
+            txt = remove_spacing(txt, ';')
+            txt = re.sub(r'}', r'}\n', txt)
+            return txt
+
+        path = os.path.abspath(os.path.join(settings.PROJECT_PATH, 'static'))
+        files = (
+            os.path.join(path, 'css/d3.css'),
+        )
+        return compact(get_styles(files))
 
 
-# load CSS into memory upon runtime (only do it once)
-D3_CSS_STYLES = _get_css_styles()
+Styles = HawcStyles()
 
 
 class SVGConverter(object):
@@ -47,22 +87,27 @@ class SVGConverter(object):
         self.height = height
         self.tempfns = []
 
-        svg = base64.b64decode(svg).decode('utf8').replace('%u', '\\u').encode().decode('unicode-escape')
+        svg = base64.b64decode(svg)\
+            .decode('utf8')\
+            .replace('%u', '\\u')\
+            .encode()\
+            .decode('unicode-escape')
         self.svg = parse.unquote(svg)
 
     def to_svg(self):
-        # add embedded styles
         svg = self.svg
 
-        # add CSS styles
+        # add CSS style definitions
         match = re.search(r'<svg [^>]+>', svg)
         insertion_point = match.end()
 
         # Manually add our CSS styles from a file. Because there are problems
         # inserting CDATA using a python etree, we use a regex instead
-        svg = (svg[:insertion_point] + D3_CSS_STYLES + svg[insertion_point:])
-
-        return svg
+        return ''.join([
+            svg[:insertion_point],
+            Styles.for_svg,
+            svg[insertion_point:]
+        ])
 
     def _rasterize_png(self):
         # rasterize png and return filename
@@ -184,7 +229,7 @@ class SVGConverter(object):
         request = HttpRequest()
         context = RequestContext(request, dict(
             svg=self.svg,
-            css=D3_CSS_STYLES
+            css=Styles.for_html,
         ))
         html = render_to_string('rasterize.html', context).encode('UTF-8')
         fn = self.get_tempfile(suffix='.html')
