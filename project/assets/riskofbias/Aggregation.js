@@ -25,10 +25,10 @@ class Aggregation {
         var score_binning = function(d){
             var score_bins = {
                 '0': {rob_scores: [], score: 0, score_text: 'N/A', score_description: 'Not applicable'},
-                '1': {rob_scores: [], score: 1, score_text: '--', score_description: 'Definitely high risk of bias'},
-                '2': {rob_scores: [], score: 2, score_text: '-', score_description: 'Probably high risk of bias'},
-                '3': {rob_scores: [], score: 3, score_text: '+', score_description: 'Probably low risk of bias'},
-                '4': {rob_scores: [], score: 4, score_text: '++', score_description: 'Definitely low risk of bias'},
+                '1': {rob_scores: [], score: 1, score_text: '--', score_description: 'Critically deficient'},
+                '2': {rob_scores: [], score: 2, score_text: '-', score_description: 'Poor'},
+                '3': {rob_scores: [], score: 3, score_text: '+', score_description: 'Adequate'},
+                '4': {rob_scores: [], score: 4, score_text: '++', score_description: 'Good'},
                 '10': {rob_scores: [], score: 10, score_text: 'NR', score_description: 'Not reported'},
             };
             d.rob_scores.forEach(function(rob){

@@ -60,11 +60,11 @@ _.extend(RiskOfBiasScore, {
     },
     score_text_description: {
         0: 'Not applicable',
-        1: 'Definitely high risk of bias',
-        2: 'Probably high risk of bias',
+        1: 'Critically deficient',
+        2: 'Poor',
         10: 'Not reported',
-        3: 'Probably low risk of bias',
-        4: 'Definitely low risk of bias',
+        3: 'Adequate',
+        4: 'Good',
     },
     collapsedNR: 'Probably high risk of bias/not reported',
 });
