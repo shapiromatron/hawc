@@ -5,7 +5,7 @@ import _ from 'underscore';
 import AssessmentTasks from 'mgmt/TaskAssignments/components/AssessmentTasks';
 import FinishedTaskFilter from 'mgmt/TaskAssignments/components/FinishedTaskFilter';
 import Loading from 'shared/components/Loading';
-import { fetchTasks } from 'mgmt/TaskAssignments/actions';
+import { fetchTasks, hydrateTasks } from 'mgmt/TaskAssignments/actions';
 
 
 class Assignments extends Component {
@@ -20,6 +20,7 @@ class Assignments extends Component {
 
 
     componentWillMount() {
+        this.props.dispatch(hydrateTasks());
         this.props.dispatch(fetchTasks());
     }
 

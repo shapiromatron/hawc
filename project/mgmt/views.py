@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 
@@ -35,8 +36,20 @@ class UserAssignments(LoginRequiredMixin, ListView):
     model = models.Task
     template_name = 'mgmt/user_assignments.html'
 
+    def get_review_tasks(self):
+        RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
+        rob_tasks = RiskOfBias.objects.filter(author=self.request.user, active=True)
+        filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
+        return RiskOfBias.get_qs_json(filtered_tasks, json_encode=True)
+
     def get_queryset(self):
         return self.model.objects.owned_by(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['list_json'] = self.model.get_qs_json(context['object_list'], json_encode=True)
+        context['review_tasks'] = self.get_review_tasks()
+        return context
 
 
 class UserAssessmentAssignments(LoginRequiredMixin, BaseList):
