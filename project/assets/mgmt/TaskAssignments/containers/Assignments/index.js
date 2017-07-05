@@ -5,6 +5,7 @@ import _ from 'underscore';
 import AssessmentTasks from 'mgmt/TaskAssignments/components/AssessmentTasks';
 import FinishedTaskFilter from 'mgmt/TaskAssignments/components/FinishedTaskFilter';
 import Loading from 'shared/components/Loading';
+import RobTasks from 'mgmt/TaskAssignments/components/RobTasks';
 import { fetchTasks, hydrateTasks } from 'mgmt/TaskAssignments/actions';
 
 
@@ -52,7 +53,8 @@ class Assignments extends Component {
 
     render() {
         if (!this.props.tasks.isLoaded) return <Loading/>;
-        const groupedTasks = this.formatTasks();
+        const groupedTasks = this.formatTasks(),
+            renderTasks = _.keys(groupedTasks).length !== 0;
 
         // only show assessment header if assessment is unspecified
         let showAssessment = (this.props.config.assessment_id === undefined);
@@ -60,12 +62,13 @@ class Assignments extends Component {
         return (
             <div>
                 <FinishedTaskFilter checked={this.state.filterTasks} onChange={this.toggleFilter} />
-                {_.keys(groupedTasks).length === 0 ?
-                    this.renderNoTasks() :
-                    _.map(groupedTasks, (tasks, key) => {
-                        return <AssessmentTasks key={key} tasks={tasks} showAssessment={showAssessment} />;
-                    })
+                {renderTasks ?
+                    _.map(groupedTasks, (tasks, key) =>
+                        <AssessmentTasks key={key} tasks={tasks} showAssessment={showAssessment} />
+                    ) :
+                    this.renderNoTasks()
                 }
+                <RobTasks tasks={this.props.tasks.robTasks} />
             </div>
         );
     }
