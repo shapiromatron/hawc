@@ -53,19 +53,18 @@ class Assignments extends Component {
         if (!this.props.tasks.isLoaded) return <Loading/>;
         const groupedTasks = this.formatTasks();
 
-        if (_.keys(groupedTasks).length === 0 ){
-            return this.renderNoTasks();
-        }
-
         // only show assessment header if assessment is unspecified
         let showAssessment = (this.props.config.assessment_id === undefined);
 
         return (
             <div>
                 <FinishedTaskFilter checked={this.state.filterTasks} onChange={this.toggleFilter} />
-                {_.map(groupedTasks, (tasks, key) => {
-                    return <AssessmentTasks key={key} name={key} tasks={tasks} showAssessment={showAssessment} />;
-                })}
+                {_.keys(groupedTasks).length === 0 ?
+                    this.renderNoTasks() :
+                    _.map(groupedTasks, (tasks, key) => {
+                        return <AssessmentTasks key={key} tasks={tasks} showAssessment={showAssessment} />;
+                    })
+                }
             </div>
         );
     }
