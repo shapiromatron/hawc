@@ -5,6 +5,7 @@
 *.log
 *.py[cod]
 *.pid
+*.sh
 .env
 .gitcommit
 bin/*local.sh
