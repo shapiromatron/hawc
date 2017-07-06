@@ -501,6 +501,9 @@ class EndpointSummary(FlatFileExporter):
             return ', '.join(txts)
 
         def getResponseDirection(responses, data_type):
+            # return unknown if control response is null
+            if responses[0]['response'] is None:
+                return '?'
             txt = '↔'
             for resp in responses:
                 if resp['significant']:
