@@ -358,6 +358,23 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
         return header
 
+    @staticmethod
+    def _get_significance(groups):
+        if groups[0]['response'] is None:
+            return [g['significant'] for g in groups]
+
+        significance_list = []
+        for group in groups:
+            if group['significant']:
+                if group['response'] > groups[0]['response']:
+                    significance_list.append('True - up')
+                else:
+                    significance_list.append('True - down')
+            else:
+                significance_list.append(False)
+        return significance_list
+
+
     def _get_data_rows(self):
 
         preferred_units = self.kwargs.get('preferred_units', None)
@@ -422,7 +439,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 row.extend([None] * 5)
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
-            sigs = [eg['significant'] for eg in ser['groups']]
+            sigs = self._get_significance(ser['groups'])
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
             sigs.extend([None] * (self.num_doses - len(sigs)))
