@@ -363,8 +363,12 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         """
         Get significance and direction; return all possible values as strings.
         """
-        control_resp = groups[0]['response']
         significance_list = []
+
+        if len(groups) == 0:
+            return significance_list
+
+        control_resp = groups[0]['response']
         for group in groups:
             if group['significant']:
                 resp = group['response']
@@ -376,6 +380,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                     significance_list.append('Yes - ↓')
             else:
                 significance_list.append('No')
+
         return significance_list
 
     def _get_data_rows(self):
