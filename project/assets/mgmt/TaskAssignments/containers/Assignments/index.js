@@ -68,7 +68,7 @@ class Assignments extends Component {
                     ) :
                     this.renderNoTasks()
                 }
-                <RobTasks tasks={this.props.tasks.robTasks} />
+                <RobTasks tasks={this.props.tasks.robTasks} showAssessment={showAssessment} />
             </div>
         );
     }
