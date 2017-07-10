@@ -9,7 +9,7 @@ class RobTasks extends Component {
         return (
             showTasks ?
                 <div>
-                    <h5>Risk of Bias reviews to be completed</h5>
+                    <h5>Risk of bias reviews to be completed</h5>
                     <div className='flexRow-container'>
                         <span className='flex-1'><b>Assessment</b></span>
                         <span className='flex-1'><b>Study</b></span>

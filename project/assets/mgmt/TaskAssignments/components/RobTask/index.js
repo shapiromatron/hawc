@@ -15,7 +15,8 @@ class RobTask extends Component {
                 <div className='flexRow-container'>
                     <AssessmentLabel className='flex-1' assessment={assessment} />
                     <span className='flex-1'><a href={`/study/${study_id}/`}>{study_name}</a></span>
-                    <span className='flex-2'><a href={url_edit}>{robText}</a></span>
+                    <span className='flex-2'><a href={url_edit} title="Edit this review">
+                        <i className='fa fa-edit'></i>  {robText}</a></span>
                 </div>
             </div>
         );
