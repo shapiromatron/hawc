@@ -14,7 +14,7 @@ from reversion import revisions as reversion
 from assessment.models import Assessment
 from myuser.models import HAWCUser
 from study.models import Study
-from utils.helper import cleanHTML, SerializerHelper
+from utils.helper import cleanHTML, HAWCDjangoJSONEncoder, SerializerHelper
 from utils.models import get_crumbs
 
 from . import managers
@@ -231,6 +231,14 @@ class RiskOfBias(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        robs = [rob.get_json(json_encode=False) for rob in queryset]
+        if json_encode:
+            return json.dumps(robs, cls=HAWCDjangoJSONEncoder)
+        else:
+            return robs
 
     def update_scores(self, assessment):
         """Sync RiskOfBiasScore for this study based on assessment requirements.

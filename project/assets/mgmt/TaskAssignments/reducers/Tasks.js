@@ -6,6 +6,7 @@ const defaultState = {
     isFetching: false,
     isLoaded: false,
     list: [],
+    robTasks: [],
 };
 
 function tasks(state=defaultState, action) {
@@ -22,6 +23,12 @@ function tasks(state=defaultState, action) {
             isFetching: false,
             isLoaded: true,
             list: action.tasks,
+        });
+
+    case types.HYDRATE_TASKS:
+        return Object.assign({}, state, {
+            list: action.list || [],
+            robTasks: action.robTasks || [],
         });
 
     case types.PATCH_TASK:
