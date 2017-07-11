@@ -452,7 +452,7 @@ class Identifiers(models.Model):
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
-            raise AttributeError('Content invalid JSON: {}'.format(self.id))
+            raise AttributeError('Content invalid JSON: {}'.format(self.unique_id))
 
         if self.database == constants.PUBMED:
             ref = Reference(

@@ -46,7 +46,7 @@ class RoBMetricTable extends TableField{
 
     fromSerializedRow(d){
         var row = this.addRow();
-        row.find('.metric').text(d.metric);
+        row.find('.metric').text(d.name);
         row.find('input[name="included"]')
             .prop('checked', d.included)
             .data('id', d.id);

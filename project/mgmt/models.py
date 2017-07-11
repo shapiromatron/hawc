@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.conf import settings
@@ -5,6 +6,7 @@ from django.db import models
 from django.utils import timezone
 
 from study.models import Study
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 
 from . import managers
 
@@ -76,6 +78,18 @@ class Task(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
+    @staticmethod
+    def get_qs_json(queryset, json_encode=True):
+        tasks = [task.get_json(json_encode=False) for task in queryset]
+        if json_encode:
+            return json.dumps(tasks, cls=HAWCDjangoJSONEncoder)
+        else:
+            return outcomes
+
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""

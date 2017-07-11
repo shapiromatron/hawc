@@ -11,6 +11,7 @@ from study.views import StudyList
 from utils.views import (BaseCreate, BaseDetail, BaseDelete, BaseList,
                          BaseUpdate, BaseUpdateWithFormset,
                          MessageMixin, TeamMemberOrHigherMixin,
+                         TimeSpentOnPageMixin,
                          ProjectManagerOrHigherMixin)
 
 from . import models, forms
@@ -277,7 +278,7 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         return self.object.get_assessment()
 
 
-class RoBEdit(BaseDetail):
+class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
     """
     Displays a form for editing the risk of bias metrics for the final review.
     Also displays the metrics for the other active risk of bias reviews.
