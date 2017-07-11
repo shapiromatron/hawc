@@ -23,7 +23,7 @@ def update_pubmed_content(ids):
     fetcher = pubmed.PubMedFetch(ids)
     contents = fetcher.get_content()
     for d in contents:
-        content = json.dumps(d, encoding='utf-8')
+        content = json.dumps(d)
         Identifiers.objects\
             .filter(
                 unique_id=d['PMID'],

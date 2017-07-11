@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from assessment.serializers import AssessmentMiniSerializer
 from utils.helper import SerializerHelper
 
 from myuser.serializers import HAWCUserSerializer
@@ -29,6 +30,7 @@ class AssessmentDomainSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
+    assessment = AssessmentMiniSerializer(read_only=True)
 
     class Meta:
         model = models.RiskOfBiasDomain

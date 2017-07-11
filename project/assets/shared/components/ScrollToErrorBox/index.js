@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'underscore';
 
 class ScrollToErrorBox extends Component {
 
@@ -35,7 +36,10 @@ class ScrollToErrorBox extends Component {
 }
 
 ScrollToErrorBox.propTypes = {
-    error: PropTypes.object,
+    error: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+    ]),
 };
 
 export default ScrollToErrorBox;

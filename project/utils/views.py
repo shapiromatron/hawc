@@ -2,22 +2,18 @@ import abc
 import logging
 
 from django.apps import apps
-from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 from assessment.models import Assessment, TimeSpentEditing
-from assessment.tasks import add_time_spent
 from .helper import tryParseInt
 
 
@@ -148,22 +144,21 @@ class AssessmentPermissionsMixin(object):
 
 class TimeSpentOnPageMixin(object):
 
-    def _set_time_spent_cache(self, request):
-        cache_name = TimeSpentEditing.get_cache_name(request)
-        now = timezone.now()
-        cache.set(cache_name, now)
-
     def get(self, request, *args, **kwargs):
-        self._set_time_spent_cache(request)
-        response = super().get(request, *args, **kwargs)
-        return response
+        TimeSpentEditing.set_start_time(
+            self.request.session.session_key,
+            self.request.path,
+        )
+        return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         response = super().get_success_url()
-        cache_name = TimeSpentEditing.get_cache_name(self.request)
-        content_type_id = ContentType.objects.get_for_model(self.object).id
-        add_time_spent.delay(cache_name, self.object.id,
-                             self.assessment.id, content_type_id)
+        TimeSpentEditing.add_time_spent_job(
+            self.request.session.session_key,
+            self.request.path,
+            self.object,
+            self.assessment.id
+        )
         return response
 
 

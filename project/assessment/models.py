@@ -3,12 +3,14 @@ import json
 import os
 
 from django.db import models
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 from django.utils.http import urlquote
 from django.shortcuts import HttpResponse
 
@@ -19,6 +21,7 @@ from utils.helper import HAWCDjangoJSONEncoder
 from myuser.models import HAWCUser
 
 from . import managers
+from .tasks import add_time_spent
 
 
 def get_cas_url(cas):
@@ -426,11 +429,40 @@ class TimeSpentEditing(models.Model):
     def __str__(self):
         return f'{self.content_type.model} {self.object_id}: {self.seconds}'
 
-    @staticmethod
-    def get_cache_name(request):
-        url = request.path
-        key = request.session.session_key
-        return hash(f'{url}-{key}')
+    @classmethod
+    def get_cache_name(cls, url, session_key):
+        return hash(f'{url}-{session_key}')
+
+    @classmethod
+    def set_start_time(cls, url, session_key):
+        cache_name = cls.get_cache_name(url, session_key)
+        now = timezone.now()
+        # Set max time of one hour on a page; otherwise assume the page is
+        # open but user is doing other things.
+        cache.set(cache_name, now, 60 * 60 * 1)
+
+    @classmethod
+    def add_time_spent_job(cls, url, session_key, obj, assessment_id):
+        cache_name = cls.get_cache_name(url, session_key)
+        content_type_id = ContentType.objects.get_for_model(obj).id
+        add_time_spent.delay(cache_name, obj.id,
+                             assessment_id, content_type_id)
+
+    @classmethod
+    def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):
+        time_spent, created = cls.objects.get_or_create(
+            content_type_id=content_type_id,
+            object_id=object_id,
+            assessment_id=assessment_id,
+            defaults={'seconds': 0})
+
+        now = timezone.now()
+        start_time = cache.get(cache_name)
+        if start_time:
+            seconds_spent = now - start_time
+            time_spent.seconds += seconds_spent.total_seconds()
+            time_spent.save()
+            cache.delete(cache_name)
 
 
 reversion.register(Assessment)

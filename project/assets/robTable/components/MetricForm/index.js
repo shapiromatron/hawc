@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import _ from 'underscore';
 
 import ScoreDisplay from 'robTable/components/ScoreDisplay';
 import ScoreForm from 'robTable/components/ScoreForm';
@@ -34,7 +35,7 @@ class MetricForm extends Component {
     }
 
     render(){
-        let { metric, config } = this.props,
+        let { metric, config, updateNotesLeft } = this.props,
             formScore = _.findWhere(metric.values, {riskofbias_id: parseInt(config.riskofbias.id)});
 
         return (
@@ -44,7 +45,7 @@ class MetricForm extends Component {
                     __html: metric.values[0].metric.description,
                 }} />
                 {config.display ==='final' ? this.renderScoreRow() : null}
-                <ScoreForm ref='form' score={formScore} addText={this.state.addText}/>
+                <ScoreForm ref='form' score={formScore} addText={this.state.addText} updateNotesLeft={updateNotesLeft}/>
             </div>
         );
     }
@@ -67,6 +68,7 @@ MetricForm.propTypes = {
         ).isRequired,
     }).isRequired,
     config: PropTypes.object,
+    updateNotesLeft: PropTypes.func.isRequired,
 };
 
 export default MetricForm;

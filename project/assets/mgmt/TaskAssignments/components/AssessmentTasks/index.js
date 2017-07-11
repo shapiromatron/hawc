@@ -27,7 +27,6 @@ class AssessmentTasks extends Component {
 }
 
 AssessmentTasks.propTypes = {
-    name: PropTypes.string.isRequired,
     tasks: PropTypes.array.isRequired,
     showAssessment: PropTypes.bool.isRequired,
 };
