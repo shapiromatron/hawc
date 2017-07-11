@@ -7,7 +7,7 @@ import MetricForm from 'robTable/components/MetricForm';
 class DomainDisplay extends Component {
 
     render(){
-        let { domain, config } = this.props;
+        let { domain, config, updateNotesLeft } = this.props;
         return (
             <div>
                 <h3>{domain.key}</h3>
@@ -18,7 +18,7 @@ class DomainDisplay extends Component {
                         metric,
                         config};
                     return config.isForm ?
-                        <MetricForm {...props}/> :
+                        <MetricForm {...props} updateNotesLeft={updateNotesLeft} /> :
                         <MetricDisplay {...props} />;
                 })}
                 <hr/>
@@ -34,6 +34,7 @@ DomainDisplay.propTypes = {
         values: PropTypes.array.isRequired,
     }).isRequired,
     config: PropTypes.object,
+    updateNotesLeft: PropTypes.func,
 };
 
 export default DomainDisplay;

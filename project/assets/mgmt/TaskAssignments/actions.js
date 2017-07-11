@@ -9,6 +9,18 @@ function makeTaskRequest(){
     };
 }
 
+export function hydrateTasks(){
+    return (dispatch, getState) => {
+        let state = getState(),
+            { list, rob_tasks } = state.config.tasks;
+        dispatch({
+            type: types.HYDRATE_TASKS,
+            list,
+            robTasks: rob_tasks,
+        });
+    };
+}
+
 function receiveTasks(tasks){
     return {
         type: types.RECEIVE_TASKS,

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from myuser.models import HAWCUser
 from myuser.serializers import HAWCUserSerializer
 from study.serializers import StudyAssessmentSerializer, SimpleStudySerializer
+from utils.helper import SerializerHelper
 
 from . import models
 
@@ -37,3 +38,5 @@ class TaskByAssessmentSerializer(TaskSerializer):
 
     class Meta(TaskSerializer.Meta):
         depth = 2
+
+SerializerHelper.add_serializer(models.Task, TaskSerializer)

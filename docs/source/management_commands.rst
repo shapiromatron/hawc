@@ -41,12 +41,6 @@ Assessment module commands
 
         psql -d hawc -f /path/to/export.sql
 
-- ``build_d3_styles``: notes. Assemble all CSS styles used in d3 visualizations and create a new CSS file which can be inserted into static SVG files containing all the style information from external-style sheets. Used for statically generating svg visualizations with appropriate styles on server using Inkscape.
-
-    Example usage::
-
-        $ python manage.py build_d3_styles
-
 - ``clean_text``: notes. Clean field to remove control characters or other non-UTF-8 characters which can typically be added when users copy and paste from PDF documents.
 
     Example usage::

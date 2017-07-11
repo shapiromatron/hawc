@@ -65,14 +65,24 @@ class ScoreForm extends Component {
             selectedShade: this.state.scoreShades[score],
             selectedSymbol: this.state.scoreSymbols[score],
         });
+        this.validateInput(score, this.state.notes);
     }
 
     handleEditorInput(event){
         this.setState({notes: event});
+        this.validateInput(this.state.score, event);
+    }
+
+    validateInput(score, notes){
+        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' && score != 0) {
+            this.props.updateNotesLeft(this.props.score.id, 'add');
+        } else {
+            this.props.updateNotesLeft(this.props.score.id, 'clear');
+        }
     }
 
     render() {
-        let { metric } = this.props.score.metric,
+        let { name } = this.props.score.metric,
             { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
         return (
             <div className='score-form'>
@@ -85,7 +95,7 @@ class ScoreForm extends Component {
                     <ScoreIcon shade={selectedShade}
                              symbol={selectedSymbol}/>
                 </div>
-                <ReactQuill id={metric}
+                <ReactQuill id={name}
                          value={notes}
                          onChange={this.handleEditorInput}
                          toolbar={false}
@@ -104,6 +114,7 @@ ScoreForm.propTypes = {
             name: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
+    updateNotesLeft: PropTypes.func.isRequired,
 };
 
 export default ScoreForm;
