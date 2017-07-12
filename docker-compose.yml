@@ -7,6 +7,7 @@ volumes:
 services:
 
   postgres:
+    restart: always
     build: ./compose/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -14,9 +15,11 @@ services:
     env_file: .env
 
   redis:
+    restart: always
     build: ./compose/redis
 
   django:
+    restart: always
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
@@ -30,6 +33,7 @@ services:
       - ./data:/app/data
 
   nginx:
+    restart: always
     build:
       context: .
       dockerfile: ./compose/nginx/Dockerfile
