@@ -99,7 +99,7 @@ input[type=number] {
 .videoTab iframe{
     margin: 10px auto;
     display: block;
-    border: 2px steelblue solid;
+    border: 2px black solid;
 }
 ul.sponsors {
   list-style-type: none;
