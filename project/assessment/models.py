@@ -384,32 +384,6 @@ class BaseEndpoint(models.Model):
         return d
 
 
-class ChangeLog(models.Model):
-    date = models.DateField(
-        unique=True)
-    name = models.CharField(
-        unique=True,
-        verbose_name="Release name",
-        help_text="Adjective + noun combination",
-        max_length=128)
-    slug = models.SlugField(
-        verbose_name="URL slug",
-        max_length=128)
-    header = models.TextField(
-        help_text="One-paragraph description of major changes made")
-    detailed_list = models.TextField(
-        help_text="Detailed bulleted-list of individual item-changes")
-
-    class Meta:
-        ordering = ("-date", )
-
-    def __str__(self):
-        return "{0}: {1}".format(self.date, self.name)
-
-    def get_absolute_url(self):
-        return reverse('change_log_detail', kwargs={'slug': self.slug})
-
-
 class TimeSpentEditing(models.Model):
     seconds = models.FloatField(
         validators=(MinValueValidator, ))
@@ -470,4 +444,3 @@ reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
 reversion.register(BaseEndpoint)
-reversion.register(ChangeLog)
