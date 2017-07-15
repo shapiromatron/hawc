@@ -2,6 +2,7 @@ version: '2'
 
 volumes:
   postgres_data: {}
+  postgres_backup: {}
   public_data: {}
 
 services:
@@ -11,7 +12,7 @@ services:
     build: ./compose/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./data:/app/data
+      - postgres_backup:/app/data
     env_file: .env
 
   redis:
@@ -30,7 +31,7 @@ services:
     env_file: .env
     volumes:
       - public_data:/app/public
-      - ./data:/app/data
+      - postgres_backup:/data/backups
 
   nginx:
     restart: always

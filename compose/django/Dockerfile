@@ -46,6 +46,7 @@ RUN chmod +x /entrypoint.sh && \
     mkdir -p /app/public/media/bmds_plot
 
 COPY ./requirements /requirements
+COPY ./cull_backups.py /cull_backups.py
 RUN pip3 install -r /requirements/production.txt --no-cache-dir && \
     rm -rf /requirements
 
