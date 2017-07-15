@@ -8,4 +8,4 @@ FROM nginx:1.12.0-alpine
 ARG configuration_file
 
 ADD ./compose/nginx/ssl /etc/nginx/ssl
-ADD $configuration_file /etc/nginx/nginx.conf
+ADD ./compose/nginx/nginx.conf /etc/nginx/nginx.conf
