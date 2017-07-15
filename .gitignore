@@ -35,3 +35,7 @@ compose/nginx/ssl/*
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
+
+.ipynb_checkpoints
+notebooks/*.ipynb
+!notebooks/example.ipynb
