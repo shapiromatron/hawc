@@ -35,11 +35,7 @@ services:
 
   nginx:
     restart: always
-    build:
-      context: .
-      dockerfile: ./compose/nginx/Dockerfile
-      args:
-        - configuration_file
+    build: ./compose/nginx
     depends_on:
       - django
     ports:
