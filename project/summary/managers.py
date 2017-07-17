@@ -20,3 +20,11 @@ class DataPivotManager(BaseManager):
         return self.filter(assessment__in=assessment_ids)\
             .select_related('assessment')\
             .order_by('assessment__name', 'title')
+
+
+class DataPivotUploadManager(BaseManager):
+    assessment_relation = 'assessment'
+
+
+class DataPivotQueryManager(BaseManager):
+    assessment_relation = 'assessment'

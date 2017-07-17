@@ -419,6 +419,8 @@ class DataPivot(models.Model):
 
 
 class DataPivotUpload(DataPivot):
+    objects = managers.DataPivotUploadManager()
+
     file = models.FileField(
         upload_to='data_pivot',
         help_text="The data should be in unicode-text format, tab delimited "
@@ -436,6 +438,7 @@ class DataPivotUpload(DataPivot):
 
 
 class DataPivotQuery(DataPivot):
+    objects = managers.DataPivotQueryManager()
 
     MAXIMUM_QUERYSET_COUNT = 500
 

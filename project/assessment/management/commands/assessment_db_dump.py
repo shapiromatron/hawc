@@ -135,10 +135,12 @@ class Command(UnicodeCommand):
 
             self.stdout.write("\n--- TABLE {}\n".format(db_table))
             qs = None
-            if hasattr(model, 'assessment_qs'):
-                qs = model.assessment_qs(assessment_id)
+            if hasattr(model.objects, 'assessment_qs'):
+                qs = model.objects.assessment_qs(assessment_id)
             elif external_exports.lookup(db_table):
                 qs = external_exports.lookup(db_table)(model, assessment_id)
+            else:
+                print(f'--- {model} not exported\n')
 
             if qs is not None:
 

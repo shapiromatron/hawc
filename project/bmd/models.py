@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils.timezone import now
 
 from utils.models import get_crumbs
+from . import managers
 
 import bmds
 
@@ -24,6 +25,8 @@ BMDS_CHOICES = (
 
 
 class AssessmentSettings(models.Model):
+    objects = managers.AssessmentSettingsManager()
+
     assessment = models.OneToOneField(
         'assessment.Assessment',
         related_name='bmd_settings')
@@ -55,6 +58,7 @@ class AssessmentSettings(models.Model):
 
 
 class LogicField(models.Model):
+    objects = managers.LogicFieldManager()
 
     LOGIC_BIN_CHOICES = (
         (0, 'Warning (no change)'),
@@ -130,6 +134,8 @@ class LogicField(models.Model):
 
 
 class Session(models.Model):
+    objects = managers.SessionManager()
+
     endpoint = models.ForeignKey(
         'animal.Endpoint',
         related_name='bmd_sessions')
@@ -282,6 +288,7 @@ class Session(models.Model):
 
 
 class Model(models.Model):
+    objects = managers.ModelManager()
 
     IMAGE_UPLOAD_TO = 'bmds_plot'
 
@@ -339,6 +346,8 @@ class Model(models.Model):
 
 
 class SelectedModel(models.Model):
+    objects = managers.SelectedModelManager()
+
     endpoint = models.OneToOneField(
         'animal.Endpoint',
         related_name='bmd_model')
