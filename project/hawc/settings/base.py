@@ -142,8 +142,8 @@ CACHES = {
 
 # Email settings
 EMAIL_SUBJECT_PREFIX = '[HAWC] '
-DEFAULT_FROM_EMAIL = 'webmaster@hawcproject.org'
-SERVER_EMAIL = 'webmaster@hawcproject.org'
+DEFAULT_FROM_EMAIL = 'webmaster@example.com'
+SERVER_EMAIL = 'webmaster@example.com'
 
 
 # Session and authentication
