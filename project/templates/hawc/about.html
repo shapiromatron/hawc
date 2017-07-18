@@ -58,6 +58,60 @@
 
   <div class="row">
     <div class="span12">
+      <h2>How to use HAWC</h2>
+      <h3>Full length tutorial</h3>
+      <div class="videoTab">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/hhQh-mNTmqY" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <hr>
+      <h3>Individual component guides</h3>
+      <div>
+          <div class="row-fluid">
+              <ul class="nav nav-tabs" id="tabs">
+                  <li class='active'><a href="#started" data-toggle="tab">Getting Started</a></li>
+                  <li><a href="#importing" data-toggle="tab">Importing literature</a></li>
+                  <li><a href="#mgmt" data-toggle="tab">Management dashboard</a></li>
+                  <li><a href="#aniExtraction" data-toggle="tab">Animal bioassay data extraction</a></li>
+                  <li><a href="#rob" data-toggle="tab">Risk of bias assessment</a></li>
+                  <li><a href="#viz" data-toggle="tab">Creating visualizations</a></li>
+              </ul>
+          </div>
+
+          <div class="tab-content">
+              <div id="started" class="videoTab tab-pane active">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/DSXFTtylrQU" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/-XsmG38lvps" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div id="importing" class="videoTab tab-pane">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/VIgstH82cL0" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/8Nsz7SbFzKY" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/XaK4K_U6zHs" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/FRbzuP4ap3Y" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div id="mgmt" class="videoTab tab-pane">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/NUbO1Omk7lY" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div id="aniExtraction" class="videoTab tab-pane">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/-KGvknhYOF0" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/ghmJyW30t9g" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div id="rob" class="videoTab tab-pane">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/ER8kV_aBuHg" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/5zowthB0410" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/jf10UXmz9lA" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div id="viz" class="videoTab tab-pane">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/IgoR-V2OIUQ" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/ScYZ7uFX03Y" frameborder="0" allowfullscreen></iframe>
+              </div>
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
       <h2>Posters and presentations</h2>
       <table class="table table-compressed table-striped">
         <colgroup>
@@ -107,7 +161,7 @@
               <a href="{{STATIC_URL}}docs/posters/2014_HAWC_Webinar.pdf">Slides
                 <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
                    alt="PDF file-format"></a><br>
-              <a href="http://www.youtube.com/watch?v=taqB_DlWdq8"
+              <a href="https://www.youtube.com/watch?v=hhQh-mNTmqY"
                  title="YouTube hyperlink">Video
                 <img class="ff ytb" src="{{STATIC_URL}}/img/youtube_icon.png"
                  alt="YouTube hyperlink"></a>
@@ -145,15 +199,6 @@
       <p>
         <strong>Current version: </strong><a href="{{COMMIT_URL}}">{{GIT_COMMIT}}</a>
       </p>
-
-      <p>
-        The HAWC software is constantly being updated; a list of the latest changes
-        are shown below:
-      </p>
-
-      {% include "assessment/_changelog_tbl.html" %}
-
-      <a class='btn btn-link' href="{% url 'change_log' %}">View the complete change log.</a>
     </div>
     <div class="span12">
         <h2>License</h2>

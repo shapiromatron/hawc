@@ -2,21 +2,25 @@ version: '2'
 
 volumes:
   postgres_data: {}
+  postgres_backup: {}
   public_data: {}
 
 services:
 
   postgres:
+    restart: always
     build: ./compose/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./data:/app/data
+      - postgres_backup:/app/data
     env_file: .env
 
   redis:
+    restart: always
     build: ./compose/redis
 
   django:
+    restart: always
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
@@ -27,14 +31,11 @@ services:
     env_file: .env
     volumes:
       - public_data:/app/public
-      - ./data:/app/data
+      - postgres_backup:/data
 
   nginx:
-    build:
-      context: .
-      dockerfile: ./compose/nginx/Dockerfile
-      args:
-        - configuration_file
+    restart: always
+    build: ./compose/nginx
     depends_on:
       - django
     ports:
