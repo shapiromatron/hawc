@@ -8,19 +8,19 @@ var helpers = Object.assign({}, shared, {
         },
         1: {
             shade: '#CC3333',
-            text: 'Definitely high risk of bias',
+            text: 'Critically deficient',
         },
         2: {
             shade: '#FFCC00',
-            text: 'Probably high risk of bias',
+            text: 'Poor',
         },
         3: {
             shade: '#6FFF00',
-            text: 'Probably low risk of bias',
+            text: 'Adequate',
         },
         4: {
             shade: '#00CC00',
-            text: 'Definitely low risk of bias',
+            text: 'Good',
         },
         10: {
             shade: '#E8E8E8',
