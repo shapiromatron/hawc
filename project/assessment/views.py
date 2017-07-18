@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, ListView, DetailView, TemplateView, FormView
+from django.views.generic import View, ListView, TemplateView, FormView
 from django.views.generic.edit import CreateView
 from django.shortcuts import HttpResponse, get_object_or_404
 
@@ -142,7 +142,6 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = models.ChangeLog.objects.all()[:5]
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
         context['counts'] = self.get_object_counts()
@@ -413,16 +412,6 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs['pk'])
-
-
-# Changelog views
-class ChangeLogList(ListView):
-    model = models.ChangeLog
-    paginate_by = 30
-
-
-class ChangeLogDetail(DetailView):
-    model = models.ChangeLog
 
 
 # Assorted functionality

@@ -1,8 +1,6 @@
 from django.db.models import TextField
 from django.contrib import admin
 
-from pagedown.widgets import AdminPagedownWidget
-
 from . import models
 
 
@@ -73,23 +71,6 @@ class EffectTagAdmin(admin.ModelAdmin):
     search_fields = ('name', )
 
 
-class ChangeLogAdmin(admin.ModelAdmin):
-    # list options
-    list_display = ('__str__', 'header', 'view_on_site')
-
-    def view_on_site(self, obj):
-        return '<a target="_blank" href="{0}">View</a>'.format(obj.get_absolute_url())
-
-    view_on_site.allow_tags = True
-
-    # form options
-    formfield_overrides = {
-        TextField: {'widget': AdminPagedownWidget},
-    }
-
-    prepopulated_fields = {"slug": ("date", "name")}
-
-
 class TimeSpentEditingAdmin(admin.ModelAdmin):
     list_display = (
         'id',
@@ -112,5 +93,4 @@ admin.site.register(models.DoseUnits, DoseUnitsAdmin)
 admin.site.register(models.Species, SpeciesAdmin)
 admin.site.register(models.Strain, StrainAdmin)
 admin.site.register(models.EffectTag, EffectTagAdmin)
-admin.site.register(models.ChangeLog, ChangeLogAdmin)
 admin.site.register(models.TimeSpentEditing, TimeSpentEditingAdmin)

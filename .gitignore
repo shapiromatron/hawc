@@ -16,6 +16,7 @@ project/celerybeat*
 # folders
 __pycache__
 .idea/*
+.ipynb_checkpoints
 data
 docs/_build
 env
@@ -35,5 +36,11 @@ project/static/bundles/*
 compose/nginx/ssl/*
 !compose/nginx/ssl/.gitkeep
 
+compose/nginx/conf/*
+!compose/nginx/conf/.gitkeep
+
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
+
+notebooks/*.ipynb
+!notebooks/example.ipynb

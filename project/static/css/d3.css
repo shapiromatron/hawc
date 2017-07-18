@@ -5,16 +5,18 @@ unrecognized HTML expressions.
 */
 
 .d3 {
-  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
-  border: thin solid black;
   background-color: white;
+  border: thin solid black;
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .options_menu {
-  padding: 5px;
   background-color: #eee;
   border: thin solid black;
   height: 23px;
+  padding: 5px;
 }
 
 .dr_title {
@@ -32,9 +34,9 @@ unrecognized HTML expressions.
 }
 
 .legend_text{
-  font-size: 12px;
   fill: black;
-  stroke-width: 0px;
+  font-size: 12px;
+  stroke-width: 0;
   white-space: pre;
 }
 
@@ -48,19 +50,19 @@ unrecognized HTML expressions.
 }
 
 .dr_err_bars {
-  stroke-width:1.5;
   stroke: #2F516E;
+  stroke-width: 1.5px;
 }
 
 .reference_line {
-  stroke-width:2;
   stroke: black;
+  stroke-width: 2px;
 }
 
 /* dose-response data points */
 .dose_points {
   fill: #A8B2D3;
-  r: 8;
+  r: 8px;
   stroke: black;
   stroke-width: 1.5px;
 }
@@ -107,11 +109,11 @@ rect.selected_overlay{
 }
 
 .centeredLabel {
-  pointer-events: none;
-  text-anchor: middle;
-  stroke-width: 0px;
   font-size: 12px;
   font-weight: bold;
+  pointer-events: none;
+  stroke-width: 0;
+  text-anchor: middle;
 }
 
 
@@ -143,39 +145,39 @@ path.dr_line {
 }
 
 path.bmd_line{
-  stroke-width: 3px;
   fill: none;
+  stroke-width: 3px;
 }
 
 
 .d3modal {
   background-color: white;
-  padding:10px;
   border: 2px solid gray;
+  padding:10px;
 }
 
 .scorebox{
-  display: inline-block;
-  width: 30px;
   border: 1px solid gray;
   border-radius: 5px;
-  text-align: center;
   color: white;
+  display: inline-block;
   font-weight: bold;
-  margin-right: 5px;
   margin-bottom: 3px;
+  margin-right: 5px;
+  text-align: center;
+  width: 30px;
 }
 
 td.scorecell {
-  width: 50px;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
+  background-color: #ddd;
   border: 2px solid white;
   border-radius: 10px;
-  cursor: pointer;
-  background-color: #ddd;
   color: white;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  width: 50px;
 }
 
 td.domain_cell {
@@ -208,10 +210,10 @@ path.donuts.hovered {
 }
 
 text.arc_label {
-  pointer-events: none;
   fill: white;
   font-size: 12px;
   font-weight: bold;
+  pointer-events: none;
 }
 
 .heatmap_selectable{
@@ -244,9 +246,9 @@ rect.heatmap_hovered {
 }
 
 .crossview_paths {
+  cursor: pointer;
   fill: none;
   stroke-width: 3px;
-  cursor: pointer;
 }
 
 .crossview_fields{
@@ -276,8 +278,8 @@ rect.heatmap_hovered {
 
 .tagnode text {
   font-size: 11px;
-  pointer-events: none;
   font-weight: bold;
+  pointer-events: none;
 }
 
 path.tagslink {
