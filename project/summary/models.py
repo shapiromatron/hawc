@@ -42,6 +42,8 @@ STUDY_TYPE_CHOICES = (
 
 
 class SummaryText(MP_Node):
+    objects = managers.SummaryTextManager()
+
     assessment = models.ForeignKey(Assessment)
     title = models.CharField(max_length=128)
     slug = models.SlugField(verbose_name="URL Name",
