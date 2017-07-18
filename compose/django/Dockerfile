@@ -8,6 +8,7 @@ RUN groupadd -r django && \
 COPY ./compose/django/entrypoint.sh /entrypoint.sh
 COPY ./compose/django/gunicorn.sh /gunicorn.sh
 COPY ./compose/django/celery.sh /celery.sh
+COPY ./compose/django/cull_backups.py /cull_backups.py
 COPY ./compose/django/supervisord.conf /supervisord.conf
 COPY ./compose/django/fonts /usr/share/fonts/truetype/django
 
@@ -46,7 +47,9 @@ RUN chmod +x /entrypoint.sh && \
     mkdir -p /app/public/media/bmds_plot
 
 COPY ./requirements /requirements
-RUN pip3 install -r /requirements/production.txt --no-cache-dir && \
+RUN pip3 install \
+        -r /requirements/production.txt \
+        --no-cache-dir && \
     rm -rf /requirements
 
 COPY ./project /app/project
