@@ -51,7 +51,7 @@ export class MetricForm extends React.Component {
         if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
-                <DisplayComponent ref='metricForm' metric={items.editMetric} config={config}/>
+                <DisplayComponent ref='metricForm' metric={items.editMetric} config={config} updateNotesLeft={_.noop}/>
                 <button type='submit' className='btn btn-primary space'>Update {items.updateIds.length} responses</button>
                 <button type='button' className='btn btn-info space' onClick={this.handleSelectAll}>Select/unselect all</button>
                 <button type='button' className='btn' onClick={this.handleCancel}>Cancel</button>
