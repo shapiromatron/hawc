@@ -166,9 +166,9 @@ class Command(UnicodeCommand):
             self.write_m2m_data(m2m, qs)
 
     def write_base_data(self):
-        '''
-            Exports data that would be duplicated when exporting multiple assessments
-        '''
+        """
+        Exports data that would be duplicated when exporting multiple assessments
+        """
         models = apps.get_models()
         base_exports = BaseHawcDataExports()
         self.stdout.write('--- HAWC BASE DATA\n')
