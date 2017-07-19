@@ -113,13 +113,18 @@ class AssessmentRootMixin(object):
             return cls.create_root(assessment_id)
 
     @classmethod
-    def get_assessment_qs(cls, assessment_id):
-        # return queryset, excluding root
-        return cls.get_assessment_root(assessment_id).get_descendants()
+    def get_assessment_qs(cls, assessment_id, include_root=False):
+        root = cls.get_assessment_root(assessment_id)
+        if include_root:
+            return cls.get_tree(root)
+        return root.get_descendants()
 
     @classmethod
     def assessment_qs(cls, assessment_id):
-        ids = cls.get_assessment_qs(assessment_id).values_list('id', flat=True)
+        include_root = False
+        if issubclass(cls, AssessmentRootMixin):
+            include_root = True
+        ids = cls.get_assessment_qs(assessment_id, include_root).order_by('depth').values_list('id', flat=True)
         ids = list(ids)  # force evaluation
         return cls.objects.filter(id__in=ids)
 

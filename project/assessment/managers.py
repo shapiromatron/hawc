@@ -112,3 +112,7 @@ class EffectTagManager(BaseManager):
 
 class BaseEndpointManager(BaseManager):
     assessment_relation = 'assessment'
+
+
+class TimeSpentEditingManager(BaseManager):
+    assessment_relation = 'assessment'
