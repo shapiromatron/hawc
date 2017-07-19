@@ -385,6 +385,8 @@ class BaseEndpoint(models.Model):
 
 
 class TimeSpentEditing(models.Model):
+    objects = managers.TimeSpentEditingManager()
+    
     seconds = models.FloatField(
         validators=(MinValueValidator, ))
     assessment = models.ForeignKey(

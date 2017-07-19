@@ -462,7 +462,7 @@ class RiskOfBiasScore(models.Model):
 
 
 class RiskOfBiasAssessment(models.Model):
-    objects = managers.RiskOfBiasScoreManager()
+    objects = managers.RiskOfBiasAssessmentManager()
 
     assessment = models.OneToOneField(
         Assessment,

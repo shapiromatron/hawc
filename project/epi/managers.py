@@ -92,4 +92,4 @@ class ResultManager(BaseManager):
 
 
 class GroupResultManager(BaseManager):
-    assessment_relation = 'results__outcome__assessment'
+    assessment_relation = 'result__outcome__assessment'
