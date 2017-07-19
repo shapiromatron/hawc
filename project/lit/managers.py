@@ -421,3 +421,7 @@ class ReferenceManager(BaseManager):
             # add all identifiers and searches
             ref.identifiers.add(*idents)
             ref.searches.add(search)
+
+
+class ReferenceTagsManager(BaseManager):
+    assessment_relation = 'content_object__assessment'

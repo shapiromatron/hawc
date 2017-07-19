@@ -67,6 +67,8 @@ class Country(models.Model):
 
 
 class AdjustmentFactor(models.Model):
+    objects = managers.AdjustmentFactorManager()
+    
     assessment = models.ForeignKey(
         'assessment.Assessment')
     description = models.TextField()
