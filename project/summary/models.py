@@ -42,6 +42,8 @@ STUDY_TYPE_CHOICES = (
 
 
 class SummaryText(MP_Node):
+    objects = managers.SummaryTextManager()
+
     assessment = models.ForeignKey(Assessment)
     title = models.CharField(max_length=128)
     slug = models.SlugField(verbose_name="URL Name",
@@ -419,6 +421,8 @@ class DataPivot(models.Model):
 
 
 class DataPivotUpload(DataPivot):
+    objects = managers.DataPivotUploadManager()
+
     file = models.FileField(
         upload_to='data_pivot',
         help_text="The data should be in unicode-text format, tab delimited "
@@ -436,6 +440,7 @@ class DataPivotUpload(DataPivot):
 
 
 class DataPivotQuery(DataPivot):
+    objects = managers.DataPivotQueryManager()
 
     MAXIMUM_QUERYSET_COUNT = 500
 
