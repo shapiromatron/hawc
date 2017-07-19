@@ -106,6 +106,7 @@ class BaseHawcDataExports(ExternalLibraryExports):
     def myuser_userprofile(self, cls, ids):
         return self.join_querysets_distinct(cls, ids)
 
+
 class Command(UnicodeCommand):
     help = HELP_TEXT
 
@@ -205,6 +206,8 @@ class Command(UnicodeCommand):
             qs = None
             if hasattr(model.objects, 'assessment_qs'):
                 qs = model.objects.assessment_qs(assessment_id)
+            elif hasattr(model, 'assessment_qs'):
+                qs = model.assessment_qs(assessment_id)
             else:
                 print(f'--- {model} not exported\n')
 
