@@ -42,39 +42,69 @@ class ExternalLibraryExports(object):
         # return all rows in table
         return cls.objects.all()
 
-    def auth_permission(self, cls, assessment_id):
+    def auth_permission(self, cls, ids):
         return self.complete_qs(cls)
 
-    def auth_group(self, cls, assessment_id):
+    def auth_group(self, cls, ids):
         return self.complete_qs(cls)
 
-    def django_content_type(self, cls, assessment_id):
+    def django_content_type(self, cls, ids):
         return self.complete_qs(cls)
 
-    def django_session(self, cls, assessment_id):
+    def django_session(self, cls, ids):
         return cls.objects.filter(session_key='null')
 
-    def django_site(self, cls, assessment_id):
+    def django_site(self, cls, ids):
         return self.complete_qs(cls)
 
-    def django_admin_log(self, cls, assessment_id):
+    def django_migrations(self, cls, ids):
+        return self.complete_qs(cls)
+
+    def django_admin_log(self, cls, ids):
         return self.empty_qs(cls)
 
-    def reversion_revision(self, cls, assessment_id):
+    def reversion_revision(self, cls, ids):
         return self.empty_qs(cls)
 
-    def reversion_version(self, cls, assessment_id):
+    def reversion_version(self, cls, ids):
         return self.empty_qs(cls)
 
-    def taggit_tag(self, cls, assessment_id):
+    def taggit_tag(self, cls, ids):
         return self.empty_qs(cls)
 
-    def taggit_taggeditem(self, cls, assessment_id):
+    def taggit_taggeditem(self, cls, ids):
         return self.empty_qs(cls)
 
     def lookup(self, dbname):
         return getattr(self, dbname, None)
 
+
+class BaseHawcDataExports(ExternalLibraryExports):
+
+    def join_querysets_distinct(self, cls, ids):
+        querysets = [cls.objects.assessment_qs(_id) for _id in ids]
+        query = cls.objects.none()
+        for qs in querysets:
+            query = (query | qs)
+        return query
+
+    def assessment_doseunits(self, cls, ids):
+        return self.complete_qs(cls)
+
+    def assessment_species(self, cls, ids):
+        return self.complete_qs(cls)
+
+    def assessment_strain(self, cls, ids):
+        return self.complete_qs(cls)
+
+    def epi_ethnicity(self, cls, ids):
+        return self.complete_qs(cls)
+
+    def myuser_hawcuser(self, cls, ids):
+        return self.join_querysets_distinct(cls, ids)
+
+    def myuser_userprofile(self, cls, ids):
+        return self.join_querysets_distinct(cls, ids)
 
 class Command(UnicodeCommand):
     help = HELP_TEXT
@@ -90,9 +120,10 @@ class Command(UnicodeCommand):
     """
 
     table_handled = []
+    base_tables_handled = []
 
     def add_arguments(self, parser):
-        parser.add_argument('assessment_id', type=int)
+        parser.add_argument('id_list', type=int, nargs='+', help='IDs of the assessments to export, separated by spaces.')
 
     def write_header(self, assessment):
         header = self.header.format(
@@ -121,11 +152,48 @@ class Command(UnicodeCommand):
         (out, err) = proc.communicate()
         self.stdout.write(out)
 
-    def write_data(self, assessment_id):
-        external_exports = ExternalLibraryExports()
-        self.stdout.write('--- HAWC ASSESSMENT DATA\n')
+    def write_qs_data(self, qs, model, db_table):
+        qry = qs.query.__str__()
+        fields = self.get_select_fields(qs.model)
+        select_include = self.generate_select(fields, db_table)
+        qry_start = 'SELECT DISTINCT' if 'DISTINCT' in qry else 'SELECT'
+        qry = "{} {} {}".format(
+            qry_start, select_include, qry[qry.find(' FROM'):])
+        self.convert_copy(db_table, fields, qry)
+
+        for m2m in model._meta.many_to_many:
+            self.write_m2m_data(m2m, qs)
+
+    def write_base_data(self):
+        '''
+            Exports data that would be duplicated when exporting multiple assessments
+        '''
+        models = apps.get_models()
+        base_exports = BaseHawcDataExports()
+        self.stdout.write('--- HAWC BASE DATA\n')
         self.stdout.write('------------------------\n')
         self.cursor = connection.cursor()
+        for model in models:
+            db_table = model._meta.db_table
+            if db_table in self.base_tables_handled:
+                continue
+
+            if base_exports.lookup(db_table):
+                self.base_tables_handled.append(db_table)
+                self.stdout.write("\n--- TABLE {}\n".format(db_table))
+                qs = None
+
+                qs = base_exports.lookup(db_table)(model, self.id_list)
+
+                if qs is not None:
+                    self.write_qs_data(qs, model, db_table)
+                else:
+                    self.stdout.write('--- no content added\n')
+
+    def write_data(self, assessment_id):
+        self.table_handled = list(self.base_tables_handled)
+        self.stdout.write('--- HAWC ASSESSMENT DATA\n')
+        self.stdout.write('------------------------\n')
         models = apps.get_models()
         for model in models:
             db_table = model._meta.db_table
@@ -137,26 +205,13 @@ class Command(UnicodeCommand):
             qs = None
             if hasattr(model.objects, 'assessment_qs'):
                 qs = model.objects.assessment_qs(assessment_id)
-            elif external_exports.lookup(db_table):
-                qs = external_exports.lookup(db_table)(model, assessment_id)
             else:
                 print(f'--- {model} not exported\n')
 
             if qs is not None:
-
                 if qs.count() == 0:
                     continue
-
-                qry = qs.query.__str__()
-                fields = self.get_select_fields(qs.model)
-                select_include = self.generate_select(fields, db_table)
-                qry_start = 'SELECT DISTINCT' if 'DISTINCT' in qry else 'SELECT'
-                qry = "{} {} {}".format(
-                    qry_start, select_include, qry[qry.find(' FROM'):])
-                self.convert_copy(db_table, fields, qry)
-
-                for m2m in model._meta.many_to_many:
-                    self.write_m2m_data(m2m, qs)
+                self.write_qs_data(qs, model, db_table)
 
             else:
                 self.stdout.write('--- no content added\n')
@@ -210,12 +265,17 @@ class Command(UnicodeCommand):
         return ", ".join(select)
 
     def handle(self, *args, **options):
-        assessment_id = options.get('assessment_id', -1)
-        assessment = Assessment.objects.filter(id=assessment_id).first()
-        if not assessment:
-            raise CommandError('Assessment {} not found.'.format(assessment_id))
 
-        self.write_header(assessment)
+        self.id_list = options.get('id_list', -1)
+
         self.write_schema_pre_data()
-        self.write_data(assessment.id)
+        self.write_base_data()
+        for assessment_id in self.id_list:
+            assessment = Assessment.objects.filter(id=assessment_id).first()
+            if not assessment:
+                raise CommandError('Assessment {} not found.'.format(assessment_id))
+
+            self.write_header(assessment)
+            self.write_data(assessment.id)
+
         self.write_schema_post_data()
