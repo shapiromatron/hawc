@@ -1499,34 +1499,60 @@ class GroupResult(models.Model):
         Only calculates if estimate_type is 'median' or 'mean' and variance_type
         is 'SD', 'SE', or 'SEM', all cases are true with a normal distribution.
         """
+        def get_control_group(rgs):
+            """
+            - If 0 groups are control=true, the first group will be chosen as control
+            - If 1 group is control=true, it will be used as control
+            - If ≥2 groups is control=true, a random control group will be chosen as control
+            """
+            control = None
+
+            for i, rg in enumerate(rgs):
+                if rg['group']['isControl']:
+                    control = rg
+                    break
+
+            if control is None:
+                control = rgs[0]
+
+            return control['n'], control['estimate'], control.get('stdev')
+
+        if len(rgs) == 0:
+            return
+
+        n_1, mu_1, sd_1 = get_control_group(rgs)
+
         for i, rg in enumerate(rgs):
+
             mean = low = high = None
+
             if estimate_type in ['median', 'mean'] and \
                variance_type in ['SD', 'SE', 'SEM']:
-
-                if i == 0:
-                    n_1 = rg['n']
-                    mu_1 = rg['estimate']
-                    sd_1 = rg.get('stdev')
 
                 n_2 = rg['n']
                 mu_2 = rg['estimate']
                 sd_2 = rg.get('stdev')
 
                 if mu_1 and mu_2 and mu_1 != 0:
-                    mean = (mu_2-mu_1) / mu_1 * 100.
+                    mean = (mu_2 - mu_1) / mu_1 * 100.
                     if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
                             pow(mu_1, -2) * (
-                                (pow(sd_2, 2)/n_2) +
-                                (pow(mu_2, 2)*pow(sd_1, 2)) / (n_1*pow(mu_1, 2))
+                                (pow(sd_2, 2) / n_2) +
+                                (pow(mu_2, 2) * pow(sd_1, 2)) /
+                                (n_1 * pow(mu_1, 2))
                             )
                         )
                         ci = (1.96 * sd) * 100
                         rng = sorted([mean - ci, mean + ci])
                         low = rng[0]
                         high = rng[1]
-            rg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
+
+            rg.update(
+                percentControlMean=mean,
+                percentControlLow=low,
+                percentControlHigh=high
+            )
 
     def copy_across_assessments(self, cw):
         old_id = self.id

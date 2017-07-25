@@ -26,7 +26,10 @@ class ResultGroup {
             'upper_bound_interval': null,
         };
 
-        if ((this.data.lower_bound_interval !== null) && (this.data.upper_bound_interval !== null)){
+        if ((this.data.lower_ci && this.data.upper_ci)){
+            ci.lower_bound_interval = this.data.lower_ci;
+            ci.upper_bound_interval = this.data.upper_ci;
+        } else if ((this.data.lower_bound_interval !== null) && (this.data.upper_bound_interval !== null)){
             ci.lower_bound_interval = this.data.lower_bound_interval;
             ci.upper_bound_interval = this.data.upper_bound_interval;
         } else if ((this.data.estimate !== null) && (this.data.se != null) && (this.data.n !== null)){

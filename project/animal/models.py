@@ -1191,7 +1191,7 @@ class ConfidenceIntervalsMixin(object):
                 Two-tailed t-test, assuming 95% confidence interval.
                 """
                 se = eg['stdev'] / math.sqrt(n)
-                change = stats.t.ppf(0.975, max(n-1, 1)) * se
+                change = stats.t.ppf(0.975, max(n - 1, 1)) * se
                 lower_ci = round(eg['response'] - change, 2)
                 upper_ci = round(eg['response'] + change, 2)
                 update = True
@@ -1213,16 +1213,16 @@ class ConfidenceIntervalsMixin(object):
                 represent the 95% confidence intervals on the observed
                 proportions (independent of model).
                 """
-                p = eg['incidence']/float(n)
+                p = eg['incidence'] / float(n)
                 z = stats.norm.ppf(0.975)
                 q = 1. - p
 
-                lower_limit = round(
-                    ((2*n*p + 2*z - 1) - z * math.sqrt(
-                        2*z - (2+1/n) + 4*p*(n*q+1))) / (2*(n+2*z)), 2)
-                upper_limit = round(
-                    ((2*n*p + 2*z + 1) + z * math.sqrt(
-                        2*z + (2+1/n) + 4*p*(n*q-1))) / (2*(n+2*z)), 2)
+                lower_ci = round(
+                    ((2 * n * p + 2 * z - 1) - z * math.sqrt(
+                        2 * z - (2 + 1 / n) + 4 * p * (n * q + 1))) / (2 * (n + 2 * z)), 2)
+                upper_ci = round(
+                    ((2 * n * p + 2 * z + 1) + z * math.sqrt(
+                        2 * z + (2 + 1 / n) + 4 * p * (n * q - 1))) / (2 * (n + 2 * z)), 2)
                 update = True
 
             if update:

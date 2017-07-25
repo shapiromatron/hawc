@@ -1,21 +1,53 @@
 Statistical methods used
 ========================
 
-1. For confidence intervals on animal-bioassay datasets:
+Bioassay:
+---------
 
-   - For continuous data, 95% confidence intervals are calculated using a two-tailed t-test
-   - For dichotomous data, intervals are calculated using the inverse standard normal cumulative distribution function evaluated at :math:`1-\alpha/2`, using a two-sided 95% confidence interval.
+- For single dose-response confidence intervals displayed on the dose-response plot:
+   - For continuous data, 95% confidence intervals are calculated using a two-tailed t-test (`example <https://hawcproject.org/ani/endpoint/1/>`_)
+   - For dichotomous data, intervals are calculated using the inverse standard normal cumulative distribution function evaluated at :math:`1-\alpha/2`, using a two-sided 95% confidence interval (`example <https://hawcproject.org/ani/endpoint/30/>`_)
 
-2. For confidence intervals on epidemiology result-datasets where response is a normal distribution:
-    - 95% confidence intervals are calculated using a two-tailed t-test
-
-3. For calculating percent control relative to the control response (in data-pivot):
+- For calculating percent control relative to the control response (in data-pivot, `example <https://hawcproject.org/summary/data-pivot/assessment/1/feature-example-percent-difference/>`_):
     - 95% confidence intervals are calculated using a Fisher Information Matrix, assuming independent normal distributions
     - This statistic assumes that first dose-group is control, and all other dose-groups are compared to control
     - Calculation of confidence intervals requires the following:
         - The endpoint dataset must provide variance measures (i.e. standard deviation or standard error)
         - The control mean value must not be equal to zero (cannot divide by zero)
         - The n for each dose-group must be provided, including control
+
+In-vitro:
+---------
+
+- For single dose-response confidence intervals displayed on the dose-response plot:
+   - 95% confidence intervals are calculated using a two-tailed t-test
+
+- For calculating percent control relative to the control response (in data-pivot):
+    - 95% confidence intervals are calculated using a Fisher Information Matrix, assuming independent normal distributions
+    - This statistic assumes that first dose-group is control, and all other dose-groups are compared to control
+    - Calculation of confidence intervals requires the following:
+        - The endpoint dataset must provide variance measures (i.e. standard deviation or standard error)
+        - The control mean value must not be equal to zero (cannot divide by zero)
+        - The n for each dose-group must be provided, including control
+
+Epidemiology:
+-------------
+
+- For confidence intervals on epidemiology result-datasets
+    - If 95% confidence intervals are entered, they are presented (`example <https://hawcproject.org/epi/result/98/>`_)
+    - If 95% confidence intervals are not entered, and the response is a normal distribution with a SD or SE:
+        - 95% confidence intervals are calculated using a two-tailed t-test (`example <https://hawcproject.org/epi/result/1445/>`_)
+
+- For calculating percent control relative to the control response (in data-pivot):
+    - 95% confidence intervals are calculated using a Fisher Information Matrix, assuming independent normal distributions
+    - Calculation of confidence intervals requires the following:
+        - The endpoint dataset must provide variance measures (i.e. standard deviation or standard error)
+        - The control mean value must not be equal to zero (cannot divide by zero)
+        - The n for each dose-group must be provided, including control
+    - The control group is determined by the following rules:
+        - If 0 groups are marked control (using comparison-set groups), the first group will be chosen as control
+        - If 1 groups is marked control (using comparison-set groups), the first group will be chosen as control
+        - If ≥ 2 groups are marked control (using comparison-set groups), a random control group will be chosen for control for all calculations
 
 Project management settings
 ===========================
