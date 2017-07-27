@@ -542,7 +542,9 @@ class EndpointGroupForm(forms.ModelForm):
             if data.get("incidence") is not None and data.get("n") is None:
                 msg = 'An N must be provided if an Incidence is provided'
                 self.add_error('n', msg)
-            if data.get("n") < data.get("incidence"):
+            if data.get("incidence") is not None and \
+                    data.get("n") is not None and \
+                    data['incidence'] > data['n']:
                 msg = 'Incidence must be less-than or equal-to N'
                 self.add_error('incidence', msg)
 
