@@ -541,6 +541,7 @@ class DataPivotForm(forms.ModelForm):
             self.instance.assessment = assessment
         self.helper = self.setHelper()
         self.fields['settings'].widget.attrs['rows'] = 2
+        self.fields['caption'].required = False
 
     def setHelper(self):
 
