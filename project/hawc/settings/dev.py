@@ -4,6 +4,7 @@ from .base import *  # noqa
 DEBUG = True
 
 SERVER_ROLE = 'dev'
+SERVER_COLOR = '#2ab6ff'
 
 INSTALLED_APPS += (
     'debug_toolbar',

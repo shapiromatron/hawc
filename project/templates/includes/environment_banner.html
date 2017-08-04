@@ -1,0 +1,16 @@
+<style type="text/css">
+    body:before {
+        background-color: {{ SERVER_COLOR }};
+        color: white;
+        content: "{{ SERVER_ROLE }}";
+        display: block;
+        font-weight: bold;
+        line-height: 20px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .{{ SERVER_ROLE }} {
+        background-image: linear-gradient(to bottom, #ffffff, {{ SERVER_COLOR }});
+    }
+</style>

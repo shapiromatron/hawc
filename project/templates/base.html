@@ -1,4 +1,3 @@
-{% load server_role %}
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
@@ -29,6 +28,9 @@
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
     {% block extrastyle %}{% endblock %}
+    {% if SERVER_ROLE and SERVER_COLOR and SERVER_ROLE != 'production' %}
+        {% include 'includes/environment_banner.html' %}
+    {% endif %}
   </head>
 
 
@@ -37,13 +39,13 @@
     <!-- Navigation bar -->
     {% block navbar_outer %}
     <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner  {% server_role %}">
+      <div class="navbar-inner  {{ SERVER_ROLE }}">
         <div class="container-fluid">
 
           {% block branding %}
           <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
             <img class="pull-left" src="{{STATIC_URL}}img/HAWC-40.png">
-            <span class="brand">{% server_role_text %}</span>
+            <span class="brand">{{ SERVER_ROLE_TEXT }}</span>
           </a>
           {% endblock %}
 
