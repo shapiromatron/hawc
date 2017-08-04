@@ -139,7 +139,7 @@ Django Start
 NPM Start
 ---------
 
-#. Open a new console
+#. Open a new console (or use tmux)
 #. Go to the hawc directory
 #. vagrant ssh
 #. cd /vagrant/project
