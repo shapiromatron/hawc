@@ -132,7 +132,6 @@ Django Start
 ------------
 
 #. cd /vagrant/project
-#. python manage.py build_d3_styles
 #. python manage.py migrate
 #. python manage.py createcachetable
 #. python manage.py runserver 0.0.0.0:8000 (starts the Django development server)
