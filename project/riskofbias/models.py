@@ -53,7 +53,7 @@ class RiskOfBiasDomain(models.Model):
         """
         fn = os.path.join(
             settings.PROJECT_PATH,
-            'riskofbias/fixtures/ohat_study_quality_defaults.json'
+            'riskofbias/fixtures/iris_study_quality_defaults.json'
         )
         with open(fn, 'r') as f:
             objects = json.loads(
