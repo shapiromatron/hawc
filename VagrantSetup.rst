@@ -125,6 +125,13 @@ Adjust Django
 
 #. Add MEDIA_ROOT = 'media' to /vagrant/project/hawc/settings/local.py to point to the media folder
 
+Set up Database
+---------------
+
+#. cd /vagrant/project
+#. python manage.py migrate
+#. python manage.py createcachetable
+
 Running Dev HAWC
 ~~~~~~~~~~~~~~~~
 
@@ -132,8 +139,7 @@ Django Start
 ------------
 
 #. cd /vagrant/project
-#. python manage.py migrate
-#. python manage.py createcachetable
+#. source ../venv/bin/activate
 #. python manage.py runserver 0.0.0.0:8000 (starts the Django development server)
 
 NPM Start
