@@ -6,6 +6,7 @@
 *.py[cod]
 *.pid
 *.sh
+*.sql
 .env
 .gitcommit
 bin/*local.sh
