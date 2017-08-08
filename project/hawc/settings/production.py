@@ -1,4 +1,4 @@
 from .staging import *  # noqa
 
 SERVER_ROLE = 'production'
-SERVER_COLOR = '#A40000'
+SERVER_BANNER_COLOR = '#A40000'

@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
     {% block extrastyle %}{% endblock %}
-    {% if SERVER_ROLE and SERVER_COLOR and SERVER_ROLE != 'production' %}
+    {% if SERVER_ROLE != 'production' %}
         {% include 'includes/environment_banner.html' %}
     {% endif %}
   </head>
@@ -45,7 +45,6 @@
           {% block branding %}
           <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
             <img class="pull-left" src="{{STATIC_URL}}img/HAWC-40.png">
-            <span class="brand">{{ SERVER_ROLE_TEXT }}</span>
           </a>
           {% endblock %}
 

@@ -1,7 +1,7 @@
 from .base import *  # noqa
 
 SERVER_ROLE = 'staging'
-SERVER_COLOR = '#EE8416'
+SERVER_BANNER_COLOR = '#EE8416'
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
