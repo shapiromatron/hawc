@@ -42,15 +42,6 @@ code {
 }
 
 
-/* Server-environment visual-notification */
-.dev{
-  background-image: linear-gradient(to bottom, #ffffff, #C2EAFF);
-}
-.staging{
-  background-image: linear-gradient(to bottom, #ffffff, #FFCA87);
-}
-
-
 /* Disable html5 number spinners in Chrome */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
