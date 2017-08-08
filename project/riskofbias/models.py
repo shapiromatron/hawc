@@ -150,11 +150,11 @@ class RiskOfBiasMetric(models.Model):
     required_animal = models.BooleanField(
         default=True,
         verbose_name='Required for bioassay?',
-        help_text='Is this metric required for animal bioassay studies?')
+        help_text='Is this metric required for animal bioassay studies?<br/><b>CAUTION:</b> Removing requirement will destroy all bioassay responses previously entered for this metric.')
     required_epi = models.BooleanField(
         default=True,
         verbose_name='Required for epidemiology?',
-        help_text='Is this metric required for human epidemiological studies?')
+        help_text='Is this metric required for human epidemiological studies?<br/><b>CAUTION:</b> Removing requirement will destroy all epi responses previously entered for this metric.')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(

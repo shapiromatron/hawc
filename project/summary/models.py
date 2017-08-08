@@ -212,7 +212,8 @@ class Visual(models.Model):
         blank=True)
     settings = models.TextField(
         default="{}")
-    caption = models.TextField()
+    caption = models.TextField(
+        blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -356,6 +357,7 @@ class DataPivot(models.Model):
         help_text="Paste content from a settings file from a different "
                   "data-pivot, or keep set to \"undefined\".")
     caption = models.TextField(
+        blank=True,
         default="")
     created = models.DateTimeField(
         auto_now_add=True)
