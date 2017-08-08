@@ -28,6 +28,6 @@ for fn in os.listdir(root):
     if not keep:
         fn = os.path.join(root, fn)
         print('Removing %s' % fn)
-        os.system('sudo rm {}'.format(fn))
+        os.system('rm {}'.format(fn))
 
 print('db backup removal complete')
