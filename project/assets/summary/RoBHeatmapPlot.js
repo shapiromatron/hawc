@@ -88,12 +88,17 @@ class RoBHeatmapPlot extends D3Visualization {
              .filter(function(rob){
                  return _.contains(included_metrics, rob.data.metric.id);
              }).each(function(rob){
+                 // Check for short_name setting on the metric
+                 var metric_name = rob.data.metric.name;
+                 if (rob.data.metric.use_short_name === true && rob.data.metric.short_name !== '') {
+                    metric_name = rob.data.metric.short_name;
+                 }
                  dataset.push({
                      riskofbias:         rob,
                      study:              rob.study,
                      study_label:        rob.study.data.short_citation,
                      metric:             rob.data.metric,
-                     metric_label:       rob.data.metric.name,
+                     metric_label:       metric_name,
                      score:              rob.data.score,
                      score_text:         rob.data.score_text,
                      score_color:        rob.data.score_color,
