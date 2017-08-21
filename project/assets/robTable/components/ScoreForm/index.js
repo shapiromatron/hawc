@@ -98,8 +98,6 @@ class ScoreForm extends Component {
                 <ReactQuill id={name}
                          value={notes}
                          onChange={this.handleEditorInput}
-                         toolbar={false}
-                         theme='snow'
                          className='score-editor' />
             </div>
         );
