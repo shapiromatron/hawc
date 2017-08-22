@@ -2,14 +2,17 @@
 
 # django development
 django-debug-toolbar==1.8
-django-extensions==1.7.9
+django-extensions==1.9.0
 
 # tests
-selenium==3.4.2
+selenium==3.5.0
 
 # docs
 watchdog==0.8.3
-Sphinx==1.6.2
+Sphinx==1.6.3
 
 # django_extensions.graph_models
 pydot==1.2.3
+
+# notebooks
+jupyter==1.0.0

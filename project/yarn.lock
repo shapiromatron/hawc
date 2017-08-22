@@ -4443,7 +4443,7 @@ react-pure-render@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-pure-render/-/react-pure-render-1.0.2.tgz#9d8a928c7f2c37513c2d064e57b3e3c356e9fabb"
 
-react-quill@1.10:
+react-quill@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-quill/-/react-quill-1.1.0.tgz#348dbd36252607fd31cad140f1c95e969da18d53"
   dependencies:

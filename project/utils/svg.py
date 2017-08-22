@@ -9,8 +9,6 @@ import tempfile
 from urllib import parse
 
 from django.conf import settings
-from django.http.request import HttpRequest
-from django.template import RequestContext
 from django.template.loader import render_to_string
 
 from pptx import Presentation
@@ -41,8 +39,6 @@ class HawcStyles:
         return style
 
     def _get_styles(self):
-
-        print("SLOW")
 
         def remove_spacing(txt, character):
             txt = re.sub(character + ' ', character, txt)
@@ -226,11 +222,10 @@ class SVGConverter(object):
 
     def _to_html(self):
         # return rendered html absolute filepath
-        request = HttpRequest()
-        context = RequestContext(request, dict(
+        context = dict(
             svg=self.svg,
             css=Styles.for_html,
-        ))
+        )
         html = render_to_string('rasterize.html', context).encode('UTF-8')
         fn = self.get_tempfile(suffix='.html')
         with open(fn, 'wb') as f:
