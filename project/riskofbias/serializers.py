@@ -13,6 +13,7 @@ class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
         model = models.RiskOfBiasMetric
         fields = ('id', 'name', 'description')
 
+
 class AssessmentMetricSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -43,12 +44,6 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
         model = models.RiskOfBiasMetric
         fields = '__all__'
 
-class RiskOfBiasScoreChoiceSerializer(serializers.ModelSerializer):
-    metric = RiskOfBiasMetricSerializer(read_only=True)
-
-    class Meta:
-        model = models.RiskOfBiasScoreChoice
-        fields = '__all__'
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)

@@ -34,8 +34,6 @@ class RiskOfBiasManager(BaseManager):
     def final(self, assessment=None):
         return self.get_qs(assessment).filter(final=True)
 
-class RiskOfBiasScoreChoiceManager(BaseManager):
-    assessment_relation = 'metric__domain__assessment'
 
 class RiskOfBiasScoreManager(BaseManager):
     assessment_relation = 'riskofbias__study__assessment'

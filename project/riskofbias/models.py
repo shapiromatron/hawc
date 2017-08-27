@@ -135,6 +135,7 @@ class RiskOfBiasDomain(models.Model):
 
         return cw
 
+
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
@@ -374,26 +375,6 @@ class RiskOfBias(models.Model):
 
         return cw
 
-class RiskOfBiasScoreChoice(models.Model):
-    objects = managers.RiskOfBiasScoreChoiceManager()
-
-    RISK_OF_BIAS_SCORE_CHOICES = (
-        (10, 'Not reported'),
-        (1, 'Critically deficient'),
-        (2, 'Poor'),
-        (3, 'Adequate'),
-        (4, 'Good'),
-        (0, 'Not applicable'))
-
-    metric = models.ForeignKey(
-        RiskOfBiasMetric,
-        related_name='scorechoices')
-    score_number = models.PositiveSmallIntegerField(
-        choices=RISK_OF_BIAS_SCORE_CHOICES,
-        default=10)
-    score_name = models.CharField(
-        max_length=50,
-        blank=False)
 
 class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
@@ -512,4 +493,3 @@ reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
-reversion.register(RiskOfBiasScoreChoice)
