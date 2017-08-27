@@ -45,3 +45,5 @@ compose/django/fonts/*
 
 notebooks/*.ipynb
 !notebooks/example.ipynb
+
+.DS_Store
