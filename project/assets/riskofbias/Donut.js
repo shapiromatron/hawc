@@ -248,7 +248,7 @@ class Donut extends D3Plot {
                             .attr('class', 'scorebox')
                             .css('background', metric.score_color),
             metric_txt = $('<b>').text(metric.criterion),
-            notes_txt = $('<p>').html(metric.notes);
+            notes_txt = $('<p>').html(metric.notes).css({'height': 250, 'overflow': 'auto'});
         ol.append($('<li>').html([div, metric_txt, notes_txt]));
         this.subset_div.append(ol);
         this.subset_div.fadeIn('500');
