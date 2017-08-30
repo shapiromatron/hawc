@@ -26,6 +26,10 @@ class MetricDisplay extends Component {
     render(){
         let { metric } = this.props;
 
+        if (metric.values[0].metric.hide_description === true) {
+            metric.values[0].metric.description = ''; 
+        }
+
         return (
             <div className='metric-display'>
                 <h4>{metric.key}</h4>
