@@ -26,6 +26,7 @@ Contents:
    :maxdepth: 2
 
    dev_setup
+   database
    server_setup
    reference
    management_commands
