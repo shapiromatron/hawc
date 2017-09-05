@@ -1007,14 +1007,11 @@ class GroupNumericalDescriptions(models.Model):
         return self.description
 
     def copy_across_assessments(self, cw):
-        children = list(self.descriptions.all())
         old_id = self.id
         self.id = None
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[GroupNumericalDescriptions.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
 
 class ResultMetric(models.Model):
