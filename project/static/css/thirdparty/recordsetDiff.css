@@ -1,0 +1,102 @@
+.pointer{
+	cursor:pointer;
+}
+.recordset{
+	min-height:	200px;
+	border: 2px inset gray;
+	max-width: 35%;
+	min-width: 25%;
+	overflow-x: auto;
+	padding: 4px;
+	float: left;
+	margin: 5px;
+	max-height: 300px;
+}
+#midPane{
+	float:left;
+	padding:4px;
+}
+.rsHeader{
+	font-weight:bold;
+	font-size: 16px;
+	padding-bottom:5px;
+}
+.activeRSHeader{
+	background-color: #F7F7F7;
+}
+.rsRecord{
+	background-color:;
+}
+.activeRSRecord{
+	background-color: #ABD6FC;
+	
+}
+.rsRecord,.activeRSRecord,.rsHeader{
+	cursor: pointer;
+	min-height: 18px;
+	min-width: 100%;
+}
+#rscontainer{
+	width:100%;
+	clear:both;
+	min-height:200px;
+}
+.hidden{
+	display:none;
+}
+#diffCopyToRightIcon,#diffCopyToLeftIcon{
+	float:right;
+	margin-top:4px;
+}
+.undoIcon{
+	float:right;
+	margin-top:4px;
+}
+
+.topBar{
+	//margin: 5px;
+	height: 30px;
+	width: 100%;
+}
+
+.topBar:after {
+	clear: both;
+}
+
+#switchWithRecordB {
+	margin-left: 4px;
+}
+
+#keepThisRecordB{
+	margin-right: 16px;
+}
+
+/*
+.button{
+	font-size:11px;
+	margin-bottom:8px;
+}*/
+
+.results td
+{
+	font-size:11px;
+	text-align: left;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #d6e5eb;
+	padding: 2px;
+	max-width:190px;
+}
+.ui-button{ 
+    font-size: 100%;
+}
+input.ui-button {
+    padding: 0.2em 0.5em;
+    margin: 0.4em 0;
+}
+
+.topButtonDiv {
+	margin: 0;
+	padding: 0;
+	width: 33%;
+}

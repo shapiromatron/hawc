@@ -1,0 +1,255 @@
+		input.text { margin-bottom:12px; width:95%; padding: .4em; }
+		fieldset { padding:0; border:0; margin-top:25px; }
+		h1 { font-size: 1.2em; margin: .6em 0; }
+		div#users-contain { width: 350px; margin: 20px 0; }
+		div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+		.ui-dialog .ui-state-error { padding: .3em; }
+		.validateTips { border: 1px solid transparent; padding: 0.3em; }
+		
+		.ui-dialog { position: absolute; padding: .2em; width: 300px; overflow: hidden; background-color:white;border:1px solid black;}
+.ui-dialog .ui-dialog-titlebar { padding: .5em 1em .3em; position: relative;  }
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 16px .2em 0; } 
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
+.ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; position:relative; right:15px;}
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; }
+.ui-dialog .ui-dialog-content { border: 0; /*padding: .5em 1em;*/ background: none; overflow: auto; zoom: 1; }
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0; padding: .3em 1em .5em .4em; }
+.ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em; line-height: 1.4em; width:auto; overflow:visible; }
+.ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
+.ui-draggable .ui-dialog-titlebar { cursor: move; }
+  .requiredlabel{
+ 	color:red;
+	font-weight:bold;
+	font-style: italic; 
+	font-size:66%;
+	
+}
+  
+  /*  Special codes used in the ColdFusion portion of the website */
+
+
+.label{
+	text-align : left; 
+	position:relative;
+	padding-left : 1%;
+	padding-right : 1%;
+	float:left;
+	font-family: verdana, geneva, arial, helvetica, sans-serif;
+	font-weight: bold;
+	vertical-align:top;
+
+  }
+.editfield, .editFieldDiff {
+	text-align : left; 
+	padding-left : 1%;
+	padding-right : 1%;
+	position:relative;
+	font-family: verdana, geneva, arial, helvetica, sans-serif;
+	vertical-align:top;
+	clear: both;
+  }
+.editFieldDiff{
+	width:	auto;
+	float:	left;
+	margin: 0px;
+	margin-left: 20px;
+}
+
+.none {
+  }
+.displayfield {
+	text-align : left; 
+	position:relative;
+	float:left;
+	font-family: verdana, geneva, arial, helvetica, sans-serif;
+	font-weight: bold;
+	padding: 2px 1% 5px 1%;
+	vertical-align:top;
+}
+.field{
+	width:100%;
+	padding: 5px 5px 5px 5px;
+	background-color:#ffffff;
+	overflow: auto;
+}
+.shadedfield{
+	width:100%;
+	padding: 5px 5px 5px 5px;
+	background-color:#ffffff;
+	overflow: auto;
+}
+.readonly {
+	color:#FF0000;
+	}
+.boxout 
+	{
+		border: 1px solid #000000 ; 
+		background:#F0F0F0; 
+		padding:10px 20px 10px 20px; 
+		margin:10px 25px 10px 25px;
+		clear: both;
+	}
+
+.hiddendiv
+	{
+	display:none;
+	}
+.visiblediv
+	{
+	display:block;
+	}
+.outline
+	{
+		border: 1px solid #000000 ; 
+		padding:5px 5px 5px 5px; 
+		margin:5px 5px 5px 5px; 
+	}
+.lightshade
+	{
+		background:#CCCCCC; 
+	}
+.noshade
+	{
+		background:#FFFFFF
+	}
+.highlight
+	{
+		background:#b0c6ed;
+	}
+.blueshade
+	{
+		background:#b0c6ed;
+	}
+.legendinstructions
+	{
+		border: solid ; 
+		border-width: 1px 0px 1px 0px ; 
+		border-color: #000000 ; 
+		background:#F0F0F0; 
+		padding:10px 20px 10px 20px; 
+		width:88%;
+	}
+.medicationtable {
+	text-align : left; 
+	font-family: verdana, geneva, arial, helvetica, sans-serif;
+	vertical-align:top;
+}
+.assay {
+	text-align : left; 
+	font-family: verdana, geneva, arial, helvetica, sans-serif;
+	vertical-align:top;
+}
+	
+	.tablebanner
+	{	
+		background-color: #B3D0E6; 
+		font-family: verdana, geneva, arial, helvetica, sans-serif;
+		font-size: 90%;
+		font-weight: bold;
+		width:95%;
+		padding:5px 5px 5px 5px; 
+		margin: 15px 0 5px 0;
+	}
+
+/* meetings */
+div.imac-meetings{
+	padding: 5px 10px;
+}
+
+table.imacs-meeting-agenda{
+ 	border-collapse:collapse;
+ 	width: 95%;
+ 	margin: 15px 0;
+ }
+ 
+table.imacs-meeting-agenda caption{
+  	text-transform: uppercase;
+ 	font-weight: bold; 	
+ 	margin: 5px 0;
+ }	
+ 
+table.imacs-meeting-agenda th{
+	text-align: center;
+	font-weight: normal;
+	background-color: #b0c6ed;
+	
+}
+
+table.imacs-meeting-agenda th, table.imacs-meeting-agenda td{
+	padding: 5px 3px;
+	border: 1px solid #000;	
+}	
+
+ul.alpha li{
+	list-style: lower-alpha;
+	padding: 0;
+	margin: 0;
+}
+
+
+a.external {
+	background: url(/imacs/images/exit.gif) no-repeat right;
+	padding-right: 15px;
+}
+
+a.pdf {
+	background: url(/imacs/images/pdf.gif)  no-repeat right;
+	padding-right: 25px;
+} 
+.diffContent{
+	position:absolute;
+	left:600px;
+}
+.button{
+	margin-bottom:8px;	
+}
+
+#Tags {
+	height: 600px;
+	overflow: auto;
+	margin-top: 12px;
+}
+
+.tagtab {
+	margin-top: 12px;
+}
+
+.ui-icon-spacer {
+	background-position: -160px 0;
+}
+
+.bubbleInfo {
+	position: relative;
+}
+
+.popup {
+	position: absolute;
+	display: none;
+	z-index: 50;
+	opacity: 0;
+	background-color: #ffffff;
+	border: 1px solid #000000;
+	padding: 5px;
+	overflow: visible;
+	width: 30em;
+}
+
+.validateThisError {
+	color: #CC3333;
+	font-weight: bold;
+}
+
+.spinnerBGLeft {
+	background-image: url('../images/ajax-loader.gif');
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 24px;
+}
+
+.spinnerBGRight {
+	background-image: url('../images/ajax-loader.gif');
+	background-repeat: no-repeat;
+	background-position: top right;
+	padding-right: 24px;
+}

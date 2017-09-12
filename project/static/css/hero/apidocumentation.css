@@ -1,0 +1,37 @@
+#parameters {
+	width: 90%;
+	margin-bottom: 15px;
+}
+
+.parameterCell {
+	width: 40%;
+}
+
+.descriptionCell {
+	width: 60%;
+}
+
+div.urlDiv {
+	margin-left:20px;
+	font-weight:bold;
+}
+
+th, td {
+	padding: 5px 10px 5px 10px;
+		border-bottom: 1px solid #DDDDDD;
+}
+
+th {
+	font-weight: bold;
+}
+
+table.tagTree th {
+	border: 1px solid #000000;
+}
+
+table.tagTree td {
+	border-left: 1px solid #000000;
+	border-top: 0;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}

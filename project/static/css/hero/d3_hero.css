@@ -1,0 +1,25 @@
+div.verticalBar {
+	display: inline-block;
+	width: 5px;
+	height: 20px;
+	background-color: #336699;
+}
+
+.currentlyInGraph {
+	color: #00AA00;
+	font-weight: bold;
+}
+
+rect.verticalBar {
+	fill: rgba(51, 102, 153, 1);
+	pointer-events: all;
+}
+
+.axis path,.axis line {
+	fill: none;
+	stroke: #000000;
+}
+
+.axis text {
+	font-size: 0.8em;
+}
