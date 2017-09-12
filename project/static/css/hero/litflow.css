@@ -1,0 +1,58 @@
+/* Old styles needed for litflow (from epa) */
+.box h5 {
+	background-color: #ddd;
+	color: #151515;
+	text-align: left;
+}
+.boxmulti h5, .boxnat h5, .box h5 {
+	-moz-border-radius: 6px 6px 0 0;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+.boxmulti h5, .boxnat h5, .boxalert h5, .box h5 {
+	font-size: 1.0em;
+	text-align: center;
+	color: #fff;
+	padding: 4px;
+	margin: 0 0 .2em;
+}
+#content .box h5 a { color: #000; }
+#content a:visited { color: #4298aa; }
+#content a:visited { color: #4298aa; }
+#content a { color: #069; text-decoration: none; }
+#content a { color: #06c; text-decoration: none; }
+#content .boxmulti ul, #content .boxnat ul, #content .boxalert ul, #content .box ul {
+	margin: .5em 1em;
+}
+#content .boxmulti ul, #content .boxmulti ol, #content .boxnat ul, #content .boxnat ol, #content .boxalert ul, #content .boxalert ol, #content .box ul, #content .box ol {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+#content ul { list-style-type: disc; }
+#content ul, #content ol { margin: 0 2em 1.5em; }
+#content ul { list-style-type: disc; }
+#content ul, #content ol { 	margin: 0 2em 1.5em 2.5em; }
+ul { padding-left: 1.2em; }
+div.ui-widget-content { border: 0px; }
+/*end old styles*/
+
+#litFlowList { clear: both; }
+#litFlowList ul { margin-bottom: 0px; }
+#litflow .box { border-width: 2px; padding: 0; clear: both; margin-top: 10px; margin-bottom: 10px; }
+#litflow .box .ui-icon { display: block; margin: 1px; }
+#litflow .initial { width: 48%; float: left; clear: none; }
+#litflow .exclusion { float: right; width: 60%; clear: both; }
+#litflow .result { clear: both; width: 60%; }
+#litflow #litflowh { width: 98%; }
+.level2 > li > .tagDisplay { font-weight: bold; }
+#content pre.box { border-style: dashed; padding: 10px; background-color: #fafafa; margin: 0px 0px 20px 0px; }
+.arrow { width: 0; height: 0; border-style: solid; border-color: transparent; border-width: 10px; }
+.adown { border-top-color: #cccccc; clear: left; margin-left: 97px; margin-bottom: -10px; }
+.aright { border-left-color: #cccccc; float: right; position: relative; left: 20px; top: -10px; }
+.hline { height: 0px; width: 110px; border: 2px solid #cccccc; clear: left; }
+.vline { width: 0px; border: 2px solid #cccccc; float: left; clear: left; margin-left: 105px; overflow: visible !important; }
+.level { font-size: .8em; }
+.floater { clear: both; height: 50%; }
+.ui-litflow-title { float: left; margin: 0 16px 0 0; }
+.ui-litflow-titlebar-close { float: right; }
+.ui-widget-header {background: #0070b9 url(images/ui-bg_gloss-wave_35_dddddd_500x100.png)};

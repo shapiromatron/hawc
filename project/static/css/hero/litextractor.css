@@ -1,0 +1,125 @@
+/* token input overrides */
+#content ul.token-input-list-facebook { width: 96%; margin-left: 0px; }
+#content ul li.token-input-input-token-facebook{width:190px; overflow:hidden; height:26px; color: black; display: block;}
+#content ul li.token-input-token-facebook{white-space: normal;}
+#content ul li.token-input-input-token-facebook input{ width: 300px !important; height:22px;}
+#content ul.token-input-focused-facebook {border: 1px solid #8496ba; outline-offset: -2px;  outline: -webkit-focus-ring-color auto 5px;}
+
+/* column layout - auto width based on number of child elements*/
+div.flex-row{ clear:both; }
+div.flex-row div.segment { float:left; padding: 2px; text-align: left; width:50%; }
+/* one item */
+div.flex-row div.segment:nth-last-child(1) { width: 100%; }
+/* two items */
+div.flex-row div.segment:nth-last-child(2) { width: 30% }
+div.flex-row div.segment:nth-last-child(2) ~ div.segment{width:70%;}
+/* three items */
+div.flex-row div.segment:nth-last-child(3), div.flex-row div.segment:nth-last-child(3) ~ div.segment { width: 33%; }
+/* four items */
+div.flex-row div.segment:nth-last-child(4), div.flex-row div.segment:nth-last-child(4) ~ div.segment { width: 25%; }
+/* five items */
+div.flex-row div.segment:nth-last-child(5), div.flex-row div.segment:nth-last-child(5) ~ div.segment { width: 20%; }
+/* six items */
+div.flex-row div.segment:nth-last-child(6), div.flex-row div.segment:nth-last-child(6) ~ div.segment { width: 16%; }
+div.flex-row div.segment.titleWarning { background-color: #fffaf3; color: #573a08; box-shadow: 0 0 0 1px rgba(34,36,38,.22) inset,0 0 0 0 transparent; }
+div.flex-row div.segment.sectionHeader { font-weight: bold; border: 1px solid #999; background-color: #E0E0E0; border-radius: 0px !important; height: 32px; padding: 5px; margin-bottom: 10px; }
+div.flex-row div.segment.header { font-weight: bold; }
+
+#content div.segment > textarea{margin: 0px; width: 96%; height: 60px; border: 1px solid #8496ba;}
+#content div.segment > textarea.small{height: 25px; }
+#content div.segment > textarea.large{height: 95px;}
+
+
+.data-row { padding-bottom: 35px; border: 1px solid #AAA; padding-left: 5px; padding-top: 5px; border-radius: 0px; border-top: 0px; }
+.data-row:nth-of-type(even) { background-color: #DEECF2; }
+.data-row:nth-of-type(odd) { background-color: #F0F9F3; }
+.new-row { background-color: #FFFFd1 !important; }
+.newrow { margin-bottom: 10px; }
+.add-form { display: none; }
+div.flex-break { border: 2px solid #CCC; background-color: #CCC; border-radius: 2px; margin: 35px 8px 10px 0; }
+div.flex-space { margin: 70px 10px 0px 0px; }
+span.alignLeft {float: left;}
+span.alignRight {float: right;}
+
+.float-save { 
+	-webkit-border-radius: 8 !important; 
+	-moz-border-radius: 8 !important; 
+	border-radius: 8px !important; 
+	padding: 3px 5px 3px 5px !important; 
+	font-weight: bold; position:fixed; 
+	right:23px; 
+	top:165px;
+	width: 180px; 
+	border: 1px solid #AD4353; 
+	background-color: #EBCCD1; }
+	
+.s1 { padding-bottom: 50px; margin-bottom: -20px; border-radius: 10px	!important; }
+.s2,.s3,.st { margin: auto; width: 98%; }
+.s2:nth-of-type(even) { background-color: #CCE1EB;}
+.s2:nth-of-type(odd) { background-color: #DEF2E5; }
+.s3:nth-of-type(even) { background-color: #B9D6E4;}
+.s3:nth-of-type(odd) { background-color: #CCEBD7; }
+
+#content .hide, #content .remove { display: none; }
+#content .show { display: inherit; }
+
+/*fix for tokeninput*/
+#content ul, #content ol {
+	margin: 0;
+}
+ul.token-input-list { border: 1px #dddddd solid; width:414px;}
+.noData{color:#cccccc; font-style: italic;}
+.toggleCounter{color:#008800;}
+
+/* highlight admin fields */
+.admin-only {background-color: beige;height: 70px;}
+
+/*disabled form fields */
+ul.token-input-list-facebook.disabled,
+	ul.token-input-list-facebook.disabled input,
+	ul.token-input-list-facebook.disabled textarea {background: #EBEBE4;}
+	
+#content button.disabled {background: silver!important; border-color: #666 !important;}
+
+/* Range icon and link */
+#content .showRange, #content .showRange i {font-weight: normal;text-decoration: underline;cursor: pointer;}
+#content .showRange i {text-decoration: none;margin-right: 9px;}
+span.showRange:before { content: ""; display: block; }
+
+/* Tagged projects */
+#content ul.ul-taggedProjects ul {list-style-type: none;}
+#content ul.ul-taggedProjects {list-style-type: none;}
+#content ul.ul-taggedProjects {margin: 0;padding: 0 1.25em;}
+#content ul.ul-taggedProjects li span.taggedProjects {cursor:pointer;}
+
+/*generic range containers*/
+#content .rangeContainer {width: 99%; margin: 8px auto;height:160px;}
+#content .rangeStart {width: 50%; float: left;} 
+#content .rangeEnd {width: 50%; float: left; border-left: 1px solid grey;padding-left: 2px;}
+
+#content a.removeElement {color: maroon;}
+#content a.removeElement span.removeHighlight {font-weight:bold;}
+#content #generalData .data-row{padding-bottom:0px;background-color:initial;}
+
+/* general pointers */
+#content a.toggle:hover, #content a.toggleAll:hover, #content a.toggleWide:hover {
+	cursor: pointer !important;
+}
+ #content .removeElement {margin-right:10px;cursor: pointer !important;}
+
+/* epidemiology pointers */
+#content .pollutants, #content .studyEffects, #content .exposures
+, #content .exposureGroups, #content .exposureLevels, #content .confounders
+, #content .resultSummaries, #content .resultDetails {margin-right:25px;cursor: pointer !important;}
+
+/* animal pointers */
+#content .experiments, #content .animalGroups, #content .doses
+, #content .responses, #content .endpoints {margin-right:25px;cursor: pointer !important;}
+
+/* right side save panel */
+#content .formReset, #content .undo, #content .le_save, #content .le_saveFinish { width: 120px; }
+#content .savePanel { float:left; text-align: center; padding-bottom: 5px;}
+
+/* Form Override */
+label { display: inline; }
+input + label { margin-right: 10px; }

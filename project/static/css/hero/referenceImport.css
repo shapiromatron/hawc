@@ -1,0 +1,100 @@
+.twoColumnLeftCell { width: 55%; height: 100%; float: left; display: block; min-height: 700px; }
+.twoColumnRightCell { width: 43%; height: 100%; float: right; display: block; min-height: 700px; }
+.twoColumnLeftCellNarrow { width: 49%; height: 100%; float: left; display: block; min-height: 700px; }
+.twoColumnRightCellWide { width: 49%; height: 100%; float: right; display: block; min-height: 700px; }
+
+#tags ul, #tags ol { margin: 0 !important;	}
+.ui-tabs .ui-tabs-nav { padding: 0 !important; }
+.ui-tabs-nav li a{ padding:	.5em !important; }
+.ui-button-text{ font-size:	0.9167em; }
+.ui-icon-spacer { background-position: -160px 0; }
+#addReferenceContent { height:	100%; }
+.radioList,#addReferenceSource { min-height:	80px; border: 	0px dashed red; }
+#addReferenceSource { padding-top: 8px; height:	100%; }
+#addReferenceContent .header { font-size:		13px; font-weight:	bold; }
+
+.radio { margin-left:	10px; }
+.radioList input[type="radio"]{ margin-bottom:	10px; }
+.radioList input[type="checkbox"]{ margin:	0px 0px 10px 0px; }
+.radioList label{ margin: 		0 0 0 8px; font-weight:	bold; }
+.clear { clear: both; }
+
+#addReferenceSource .radio{ width:	30%; }
+#addReferenceSource .ui-buttonset{ margin-right:	2px; /*margin-top:		20px;*/ }
+#addReferenceContent textarea{ height: 125px; }
+#addReferenceSource textarea{ height:	275px; 	width: 290px; }
+#searchOptions textarea{ height: 75px; }
+#addReferenceContent textarea, #addReferenceContent .textbox, #addReferenceContent .textbox input{ 	width:	100%; }
+#addReferenceContent fieldset { padding-top: 0; padding-right: 6px; padding-bottom: 0; padding-left: 6px; }
+
+.contentContainer{ padding: 2px 1px; display: block; }
+.content{ padding-top:5px; }
+.editfield{ margin-left: 	10% !important;	width: 			100% !important; }
+
+.field{ padding: 0 !important; }
+.checkboxitem label{ margin-left:	4px; }
+
+.buttonPanel{ width:	93%; background: #ffffff; padding:5px; }
+.buttonPanel .button{ margin-left: 0 !important; float: right; }
+.submitButtonPanel{ margin-left: 5px ; }
+.submitButtonPanel .button{ margin-left: 0 !important; margin-top: 5px; }
+
+#batchReport { width: 100%; border: none; }
+#batchReportTop { width: 98.5%; border-top: none; border-right: none; border-bottom:none; border-left: none; padding-top: 0; padding-right: 6px; padding-bottom: 0;
+	padding-left: 6px; text-align: left; font-weight: bold; }
+#batchReportContent { width: 100%; display: inline-block; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; }
+#batchReportFull { width: 98.5%; height: 300px; overflow: auto; padding-top: 0; padding-right: 6px; padding-bottom: 0; padding-left: 0; border-top: none;
+	border-right: 1px solid #D9F0A0; border-bottom: none; border-left: none; text-align: left; vertical-align: top; float: left; }
+#floatleft{ float: left; display:block;	}
+#batchReportLeft { width: 50%; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-top: none; border-right: 1px solid #D9F0A0;
+	border-bottom: none; border-left: none; text-align: left; vertical-align: top; float: left; }
+#batchReportRight { width: 44%; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 6px; text-align: left; vertical-align: top; float: left; }
+
+fieldset.batchReportLeft { width: 46%; border: 1px solid #D9F0A0; padding-top: 0; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; margin-top: 0;
+	margin-right: 6px; margin-bottom: 0; margin-left: 0; text-align: left; float: left; }
+fieldset.batchReportRight { width: 46%; border: 1px solid #D9F0A0; padding-top: 0; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; margin-top: 0;
+	margin-right: 0; margin-bottom: 0; margin-left: 0px; text-align: left; white-space: nowrap; float: left; }
+fieldset.batchReportFull { width: 94%; border: 1px solid #D9F0A0; padding-top: 0; padding-right: 6px; padding-bottom: 0; padding-left: 6px; text-align: left; }
+
+div#summarybox { height: 300px; }
+div#tagsbox { height: 90px; }
+.scroll { overflow: auto; }
+#batchReportTable { width: 97%; }
+
+.batchReportTableColumn1 { width: 10%; }
+.batchReportTableColumn2 { width: 50%; }
+.batchReportTableColumn3 { width: 20%; }
+.batchReportTableColumn4 { width: 10%; }
+.batchReportTableColumn5 { width: 10%; }
+
+.batchListTableColumn1 { width: 12%; }
+.batchListTableColumn2 { width: 20%; }
+.batchListTableColumn3 { width: 10%; }
+.batchListTableColumn4 { width: 12%; }
+.batchListTableColumn5 { width: 30%; }
+.batchListTableColumn6 { width: 29%; }
+.batchListTableColumn7 { width: 35%; }
+.batchListTableColumn8 { width: 5%; }
+
+input.batchName,input.batchNameDetail{ width:65%; }
+input.batchNameDetail{ font-size: 10.5pt; }
+.noBG{ background:none; }
+.bottomPadding { padding-bottom: 12px; }
+#topBanner { width: 100%; text-align: left; }
+.rightButton{ margin-left: 0 !important; float: right; clear: right; }
+#helpButton{ margin-left: 0 !important; float: left; }
+#metadataFields { padding-bottom: 12px; }
+
+.pdfButton { width: 25px; float: left; clear: left; }
+.pdfButtonLabel { width: 90%; float: left; min-height: 25px; margin-top: -2px; }
+
+#batchName { width: 45%; }
+.tagtab { height: 600px; overflow: auto; }
+#ris { width: 80%; clear:left; }
+.projectList { clear: left; }
+.tagList { clear: left; margin-left: 10px; }
+.reference_citation_header:hover, #all_reference_citations:hover { cursor: pointer; }
+.reference_citation_data { display: none; }
+
+.show {display: block; }
+.hide {display: none; }
