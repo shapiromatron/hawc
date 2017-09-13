@@ -1,0 +1,190 @@
+div .pagination_menu {
+	width: 100%;
+	border-top: 1px solid #C9BCB3;
+	border-bottom: 1px solid #C9BCB3;
+	border-left: 0;
+	border-right: 0;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 5px;
+	padding-bottom: 2px;
+	padding-left: 0;
+	padding-right: 0;
+	vertical-align: top;
+}
+
+div .pagination_tab_one {
+	float: left;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 16px;
+	text-align: left;
+	vertical-align: top;
+}
+
+div .pagination_tab_two {
+	float: left;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 16px;
+	text-align: left;
+	vertical-align: top;
+}
+
+div .pagination_tab_three {
+	float: right;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 16px;
+	padding-right: 0;
+	text-align: left;
+	vertical-align: top;
+}
+
+.pagination_button_group {
+	border: 1px solid #000000;
+}
+
+.pagination_icon_orange {
+	width: 16px;
+	height: 16px;
+	background-image: url(images/icons_paginate_orange.png);
+	background-color: #FFFFFF;
+}
+
+.pagination_link {
+	height: 16px;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.go_button_orange {
+	width: 39px;
+	height: 23px;
+	background-image: url(images/icons_paginate_orange.png);
+}
+
+.divider_orange {
+	width: 5px;
+	height: 23px;
+	background-image: url(images/icons_paginate_orange.png);
+}
+
+.first_page_icon_inactive {
+	background-position: -48px 0;
+}
+
+.first_page_icon_inactive_short {
+	background-position: -48px -3px;
+}
+
+.first_page_icon_active {
+	background-position: -48px -24px;
+}
+
+.first_page_icon_active_short {
+	background-position: -48px -27px;
+}
+
+.previous_page_icon_inactive {
+	background-position: -64px 0;
+}
+
+.previous_page_icon_inactive_short {
+	background-position: -64px -3px;
+}
+
+.previous_page_icon_active {
+	background-position: -64px -24px;
+}
+
+.previous_page_icon_active_short {
+	background-position: -64px -27px;
+}
+
+.next_page_icon_inactive {
+	background-position: -80px 0;
+}
+
+.next_page_icon_inactive_short {
+	background-position: -80px -3px;
+}
+
+.next_page_icon_active {
+	background-position: -80px -24px;
+}
+
+.next_page_icon_active_short {
+	background-position: -80px -27px;
+}
+
+.last_page_icon_inactive {
+	background-position: -96px 0;
+}
+
+.last_page_icon_inactive_short {
+	background-position: -96px -3px;
+}
+
+.last_page_icon_active {
+	background-position: -96px -24px;
+}
+
+.last_page_icon_active_short {
+	background-position: -96px -27px;
+}
+
+.go_icon_inactive {
+	background-position: 0 0;
+}
+
+.go_icon_active {
+	background-position: 0 -24px;
+}
+
+.divider_orange_inactive {
+	background-position: -40px 0;
+}
+
+.divider_orange_active {
+	background-position: -40px -24px;
+}
+
+input.pagination_page {
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+	width: 26px;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 0;
+	padding-bottom: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	vertical-align: top;
+}
+
+#pagination_submit_button {
+	width: 39px;
+	height: 21px;
+	background-position: 0 -2px;
+	border: none;
+	vertical-align: top;
+}
+
+.scoot_down {
+	margin-top: 2px;
+	margin-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 0;
+}

@@ -1,0 +1,86 @@
+.box .pane-content ul li, .box .pane-content ol li {padding: 0.333333em 0;}
+hr {margin: 8.5px 0;}
+fieldset {padding: 2em 1em 1em 1em; }
+.fieldnote {font-size: 70%;padding-left: 1em;}
+##prSearch {padding-left: 1em;}
+
+.popup {
+	position: absolute;
+	display: none;
+	z-index: 50;
+	opacity: 0;
+	background-color: #ffffff;
+	border: 1px solid #000000;
+	padding: 5px;
+	overflow: visible;
+	width: 30em;
+}
+
+th {white-space: nowrap;}
+
+.ui-autocomplete {
+  border: 1px solid;
+  overflow: hidden;
+  position: absolute;
+  z-index: 100;
+}
+.ui-autocomplete ul {
+  list-style: none;
+  list-style-image: none;
+  margin: 0;
+  padding: 0;
+}
+.ui-autocomplete li {
+  background: #fff;
+  color: #000;
+  cursor: default;
+  white-space: pre;
+}
+.ui-autocomplete li.selected {
+  background: #07b;
+  color: #fff;
+}
+
+.ui-tabs-hide {display:none;}
+
+.inactive {
+    background-color: #FFC0CB !important;
+}
+
+.adminMenu {
+	list-style: none;
+}
+
+.shaded {
+  background-color: #f0f4f9;
+}
+
+.button:visited {color: #FFF;}
+
+.button:hover {color: #FFF;}
+
+label {font-weight:bold;}
+
+.boxout {
+	border: 1px solid #000000 ; 
+	background:#F0F0F0; 
+	padding:10px 20px 10px 20px; 
+	margin:10px 25px 10px 25px;
+	clear: both;
+}
+
+#toolPadButtons button {
+	margin: 0 0 0.5em;
+	padding: 0.5em 1em;
+}
+
+.toolpadButton .button, .landingButtons .button {
+	margin: 0 0 0.5em;
+	padding: 0.5em 1em;
+}
+
+#cboxLoadedContent{margin-bottom:5px;}
+
+#toggleAdvanced { cursor: pointer;}
+
+input + label {margin-top: 0.5em;}

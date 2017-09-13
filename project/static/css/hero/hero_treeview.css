@@ -1,0 +1,16 @@
+#ar_tabs .tab_content { background-color: #ffffff; padding: .5em; }
+#ar_tabs .tab_override { padding: 0em; }
+#ar_tabs ul, #ar_tabs ol { margin:	0 !important; }
+.formleft { display: block; float: left; width: 19em; }
+.formright { display: block; float: right; width: 43%; }
+#batchName { width: 100%; }
+.ris { width: 75%; }
+#topBanner span.header { font-size: 24px; font-weight: bold; margin-left: 5em; }
+#ar_tabs .tagtab { padding: .2em .2em;height: 39.2em;font-size: .8em; }
+#ar_tabs .twoColumnLeftCell { min-height: 0px; }
+#ar_tabs .twoColumnRightCell { min-height: 0px; }
+#ar_tabs .ui-widget-header { border: 0px; }
+#ar_tabs li.ui-state-active { border: 0px; background: none; }
+#ar_tabs ul.tabs-js li.ui-state-active a { background: #ffffff; border-bottom-color: #FFFFFF; text-decoration: none; }
+#ar_tabs li.ui-state-default { border: 0px; background: none; }
+#topBanner a.ui-state-hover { color: #231F20; }
