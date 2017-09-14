@@ -121,7 +121,7 @@ class StudiesCopy(forms.Form):
 
     studies = forms.ModelMultipleChoiceField(
         queryset=models.Study.objects.all(),
-        help_text="Select studies to copy (for now, epi-only).")
+        help_text="Select studies to copy.")
     assessment = forms.ModelChoiceField(
         queryset=Assessment.objects.all(),
         help_text="Select assessment you wish to copy these studies to.")
@@ -142,7 +142,7 @@ class StudiesCopy(forms.Form):
             self.fields[fld].widget.attrs['class'] = 'span12'
 
         inputs = {
-            "legend_text": "Copy epi studies across assessments",
+            "legend_text": "Copy studies across assessments",
             "help_text": self.HELP_TEXT,
             "cancel_url": reverse("study:list", args=[assessment.id]),
         }
