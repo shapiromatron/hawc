@@ -31,7 +31,13 @@
 {% endblock %}
 
 {% block extrajs %}
+
     <script type="text/javascript">
+        // disable submit button on form submit.
+        $('form').submit(function(){
+            $('#submit-id-save').prop('disabled', true);
+        });
+
         $(document).ready(function(){
 
             var addMetricRow = function(data, i){
