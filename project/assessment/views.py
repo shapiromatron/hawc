@@ -23,6 +23,14 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
 
 from . import forms, models, tasks
 
+# Checking for denominator counts that are zero when dividing.
+def check_value_zero(numerator, denominator):
+    if denominator == 0:
+        percentage = 0.0
+    else:
+        percentage = numerator / float(denominator)
+    return percentage
+
 
 # General views
 class Home(TemplateView):
@@ -114,26 +122,26 @@ class About(TemplateView):
                 references=references,
                 tags=tags,
                 references_tagged=references_tagged,
-                references_tagged_percent=references_tagged / float(references),
+                references_tagged_percent=check_value_zero(references_tagged, references),
                 studies=studies,
                 assessments_with_studies=assessments_with_studies,
-                assessments_with_studies_percent=assessments_with_studies / float(assessments),
+                assessments_with_studies_percent=check_value_zero(assessments_with_studies, assessments),
                 rob_scores=rob_scores,
                 studies_with_rob=studies_with_rob,
-                studies_with_rob_percent=studies_with_rob / float(studies),
+                studies_with_rob_percent=check_value_zero(studies_with_rob, studies),
                 endpoints=endpoints,
                 endpoints_with_data=endpoints_with_data,
-                endpoints_with_data_percent=endpoints_with_data / float(endpoints),
+                endpoints_with_data_percent=check_value_zero(endpoints_with_data, endpoints),
                 outcomes=outcomes,
                 results=results,
                 results_with_data=results_with_data,
-                results_with_data_percent=results_with_data / float(results),
+                results_with_data_percent=check_value_zero(results_with_data, results),
                 iv_endpoints=iv_endpoints,
                 iv_endpoints_with_data=iv_endpoints_with_data,
-                iv_endpoints_with_data_percent=iv_endpoints_with_data / float(iv_endpoints),
+                iv_endpoints_with_data_percent=check_value_zero(iv_endpoints_with_data, iv_endpoints),
                 visuals=visuals,
                 assessments_with_visuals=assessments_with_visuals,
-                assessments_with_visuals_percent=assessments_with_visuals / float(assessments),
+                assessments_with_visuals_percent=check_value_zero(assessments_with_visuals, assessments),
             )
             cache_duration = 60 * 60 * 24  # one day
             cache.set(key, counts, cache_duration)  # cache for one day
