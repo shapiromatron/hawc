@@ -66,12 +66,6 @@
       <script type="text/javascript" src="{{STATIC_URL}}javascript/jquery/jquery.validate.min.js"></script>
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/thirdparty/font-awesome.min.css" />
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hero/hero.css" />
-       <!--  /* If present, loop through layout.myStyles and add the individual CSS files to the collection */
-        if (IsDefined("prc.myStyles")) {
-          for (i=1; i<=ListLen(prc.myStyles); i++) {
-  <link rel="stylesheet" type="text/css" href="resources/css/thirdparty/" & ListGetAt(prc.myStyles, i), media:"screen,print");
-          }
-        } -->
 
       <!-- test HERO template -->
       <style type="text/css">
@@ -89,9 +83,15 @@
           .main-content .region-sidebar {display: none;}
           .main-column {float: none; width: 100%;}
         </cfif>*/
+        input[type='radio'] { left: 0px;}
       </style>
 
-    {% block extrastyle %}{% endblock %}
+    {% block extrastyle %}
+      <style type="text/css">
+        .main-content {max-width: auto; margin:0;}
+        input[type='radio'] { left: 0px;}
+      </style>
+    {% endblock %}
   </head>
 
 
@@ -99,9 +99,6 @@
 
 
 <header class="masthead clearfix" role="banner">
-    <!--  <cfif application.oConfig.getEnvironmentID() neq "production">
-          <span class="#iif(application.oConfig.getIsDev(),DE('devmode'),DE('red') )#"><strong>#uCase(application.oConfig.getEnvironmentID())#</strong>(#application.applicationname#)</span>
-    </cfif> -->
     <img class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png" alt="" />
     <hgroup class="site-name-and-slogan">
       <h1 class="site-name"><a href="https://www.epa.gov/" title="Go to the home page" rel="home"><span>US EPA</span></a></h1>
@@ -198,7 +195,7 @@
 
 
 <section id="main-content" class="main-content clearfix" role="main">
-    <h2 class="microsite-name">Health & Environmental Research Online (HERO)</h2>
+    <h2 class="microsite-name">Health Assessment Workspace Collaborative (HAWC)</h2>
     <div class="region-preface clearfix">
       <div id="block-pane-epa-web-area-connect" class="block block-pane  block-pane-epa-web-area-connect">
         <ul class="menu utility-menu">
@@ -212,24 +209,7 @@
         <div class="pane-content">
           <div class="node node-page clearfix view-mode-full">
               <!--- BREADCRUMBS --->
-            <div id="cs_control_1518" class="cs_control CS_Element_LinkBar">
-              <b>You are here:</b> <a href="https://www.epa.gov/">EPA Home</a>
-              &raquo;
-              <a href="https://www.epa.gov/research/">Research</a>
-              &raquo;
-              <a href="https://www.epa.gov/ncea/">NCEA</a>
-              &raquo;
-            <!-- <cfif event.isSES()> -->
-              <a href="../hero/index.cfm/content/home">HERO</a>
-            <!-- <cfelse> -->
-              &raquo;
-              <a href="../portal">HAWC</a>
-            <!-- </cfif>
-            <cfif prc.title neq "">
-              &raquo;
-              #displayTitle#
-            </cfif> -->
-            </div>
+              
               <!--- END BREADCRUMBS --->
             <br/>
 
@@ -239,15 +219,6 @@
       {% endblock messages_base %}
 
       {% block main_content %}
-
-    
-
-<!--           <cfif (StructKeyExists(prc, "messageBox")) and (prc.messageBox neq "")>
-            #prc.messageBox#
-          </cfif>
-            #renderView()#
-          
- -->        
       {% endblock %}
           </div>
         </div>
@@ -259,95 +230,26 @@
 <div class="region-sidebar-first region-sidebar">
   <div id="block-og-menu-og-single-menu-block" class="block block-og-menu  block-og-menu-og-single-menu-block">
     <!-- BEGIN AREA MAIN NAVIGATION -->
-      <h4 class="skip">HERO Navigation</h4>
+      <h4 class="skip">HAWC Navigation</h4>
       <ul class="menu">
-          <li class="menu-item">
-            <!-- <cfif application.oConfig.getIsHERONet()> -->
-              <a class="menu-node-unpublished menu-link" href="#event.buildLink('content.home')#">HERONet Home</a>
-            <!-- <cfelse>
-              <a class="menu-node-unpublished menu-link" href="#event.buildLink('content.home')#">HERO Home</a>
-            </cfif> -->
-          </li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink("search.main")#">Search HERO</a></li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.basic')#">Basic Information</a></li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.frequentquestions')#">Frequent Questions</a></li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.howto')#">How to Use HERO</a></li>
-          <!-- <cfif application.oConfig.getIsHERONet()> -->
-            <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.tips')#">HERO User Tips</a></li>
-          <!-- </cfif> -->
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.assessment')#">Risk Assessment Process</a></li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.transparency')#">Transparency &amp; Integrity</a></li>
-          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink('content.glossary')#">Glossary</a></li>
-          <!--- Wrap these links in permissions --->
-          <!-- <cfif application.objPermission.hasPermission(session, "hero")> -->
-            <hr />
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'portal' %}">HAWC Portal</a></li>
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'user:settings' %}">HAWC Profile</a></li>
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'mgmt:user_assignments' %}">My HAWC assigned tasks</a></li>
+        {% if user.is_staff %}
+          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{%url 'admin:index' %}">HAWC Admin</a></li>
+        {% endif %}
+        <li><a class="menu-node-unpublished menu-link" href="{% url 'user:login' %}">Login to HAWC</a></li>
+        <li><a class="menu-node-unpublished menu-link" href="{% url 'user:logout' %}">Logout of HAWC</a></li>
+        <hr />
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="https://hero.epa.gov/hero/">HERO Home</a></li>
+      </ul>
+    <!-- END AREA MAIN NAVIGATION -->
+  </div>
+</div>
 
-    <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'portal' %}">HAWC Portal</a></li>
-    <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'user:settings' %}">HAWC Profile</a></li>
-    <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'mgmt:user_assignments' %}">My HAWC assigned tasks</a></li>
-    {% if user.is_staff %}
-      <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{%url 'admin:index' %}">HAWC Admin</a></li>
-    {% endif %}
-    <li><a class="menu-node-unpublished menu-link" href="{% url 'user:logout' %}">Logout of HAWC</a></li>
-      <hr />
+</section>
 
-            <li class="menu-item"><a class="menu-node-unpublished menu-link" href="litbrowser">LitBrowser</a></li>
-      <!-- <cfif not application.objPermission.hasPermission(session, "ally")> -->
-        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="litsearch">Literature Request</a></li>
-      <!-- </cfif> -->
-
-      <li class="menu-item"><a class="menu-node-unpublished menu-link" href="litciter">LitCiter</a></li>
-
-    <!--- This LitExtractor link is commented out until the client is ready to use LitExtractor --->
-      <!--- <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink("litextractor.home")#">LitExtractor</a></li>--->
-
-          <!-- </cfif> -->
-
-            <!-- <cfif application.objPermission.hasPermission(session, "admin,specialist_2,specialist_1,manager")> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="reports">Reports</a></li>
-            <!-- </cfif>
-            <cfif application.objPermission.hasPermission(session, "hero,ally")> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink(linkTo="import.addReference")#">Ask To Add References</a></li>
-            <!-- </cfif>
-            <cfif application.objPermission.hasPermission(session, "hero")> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink(linkTo="project.requestassessment")#">Project Setup</a></li>
-            <!-- </cfif>
-            <cfif application.objPermission.hasPermission(session,"hero")> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink(linkTo="content.myrequests")#">My Requests</a></li>
-            <!-- </cfif>
-            <cfif application.objPermission.hasPermission(session,"admin,pi,pi_lead,specialist_1,specialist_2")> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="tools">Tools</a></li>
-            <!-- </cfif>
-
-          <cfif application.oConfig.getEnvironmentID() neq "production"> -->
-            <li class="menu-item">
-              <hr />
-              <span class="navigationElement">THESE LINKS ONLY VISIBLE ON DEV AND STAGING MODES</span>
-            </li>
-            <!-- <cfif application.oConfig.getMode() eq "development"> -->
-              <li class="menu-item"><a class="menu-node-unpublished menu-link" href="#event.buildLink(linkTo="developer.main")#">Developer Menu</a></li>
-            <!-- </cfif> -->
-            <li class="menu-item"><a class="menu-node-unpublished menu-link" href="https://ssostage.rtpnc.epa.gov/pls/orasso/orasso.wwsso_app_admin.ls_logout?p_done_url=https://cfpstage.rtpnc.epa.gov/hero/index.cfm">Log Out of Portal</a></li>
-            <!-- <li class="menu-item">
-              <cfparam name="session.full_name" default="">
-              <cfparam name="session.oidGroups" default="">
-              <cfparam name="session.isncea" default="">
-              <a class="menu-node-unpublished menu-link" href="#event.buildLink('developer.spoof')#">Spoof Login</a><br />
-              <a>Logged in as:<br />
-              <cfif session.full_name eq "">Anonymous<cfelse>#session.full_name# (#session.person_id#)</cfif><br /><br />
-              oidGroups:<br /> #replace(session.oidGroups,",",", ","ALL")#<br />
-              isncea = #session.isncea#</a>
-            </li>
-          </cfif> -->
-
-        </ul>
-        <!-- END AREA MAIN NAVIGATION -->
-      </div>
-      </div>
-
-  </section>
-
-      <div id="footer">{% block footer %}
+<div id="footer">{% block footer %}
 
 <footer class="main-footer clearfix" role="contentinfo">
     <div class="main-footer__inner">

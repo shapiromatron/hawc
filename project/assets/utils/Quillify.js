@@ -15,9 +15,6 @@ Quill.register(SmartInline, true);
 const toolbarOptions = {
         container: [
             [
-                {header: [false, 1, 2, 3, 4]},
-            ],
-            [
                 'bold',
                 'italic',
                 'underline',
@@ -26,10 +23,6 @@ const toolbarOptions = {
             [
                 {script: 'sub'},
                 {script: 'super'},
-            ],
-            [
-                {color: []},
-                {background:[]},
             ],
             [
                 'link',

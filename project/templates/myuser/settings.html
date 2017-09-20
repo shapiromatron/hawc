@@ -6,10 +6,12 @@
 
 {% block main_content %}
 
-  <div class="row-fluid">
+  <!-- <div class="row-fluid"> -->
+  <div id="cs_control_1518" class="cs_control CS_Element_LinkBar">
+  <b>You are here:</b>  
     <ul class="breadcrumb">
-      <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
-      <li class="active"><a href="{% url 'user:settings' %}">User Profile</a><span class="divider">/</span></li>
+      <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">&raquo;</span></li>
+      <li class="active"><a href="{% url 'user:settings' %}">User Profile</a><span class="divider">&raquo;</span></li>
       {% block breadcrumbs %}
       {% endblock %}
     </ul>
