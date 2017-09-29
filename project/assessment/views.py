@@ -290,7 +290,7 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_can_view_attachments(self.request.user):
+        if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             return PermissionDenied
