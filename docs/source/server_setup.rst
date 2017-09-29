@@ -3,80 +3,103 @@ Server setup
 
 Minimum hardware requirements:
 
-- Linux OS (ex: Ubuntu 14.04, 16.04, CentOS, or RHEL)
+- Linux OS (ex: Ubuntu 16.04, CentOS, or RHEL)
 - 2 GB RAM (4 GB recommended)
 - 2 processors (4-8 recommended)
 - 40 GB HD space (120 GB recommended)
 
 Software requirements:
 
-- Python 2.7
-- Redis ≥ 2.8
-- Git
-- Nginx
-- Node.js ≥ 4.5
-- phantomjs ≥ 2.1.1
-- PostgreSQL ≥ 9.4 (HAWC uses `jsonb`_)
+- `docker`_ & `docker-compose`_
+- `fabric`_ scripts are currently used for deployment (not in github repository)
 
-Processes which should be always-on (currently using `supervisord`_):
+For more details, see the `docker-compose.yml`_ file in the HAWC source code.
 
-- `Gunicorn`_ for running the django app
-- `Celery`_ workers for running tasks
-- Redis as a messaging and result broker for celery
-- PostgreSQL for data persistence
-- Nginx for web serving
-
-`Fabric`_ scripts are currently used for deployment.
+.. _`docker`: https://docs.docker.com/
+.. _`docker-compose`: https://docs.docker.com/compose/
+.. _`fabric`: http://www.fabfile.org/
+.. _`docker-compose.yml`: https://github.com/shapiromatron/hawc/blob/master/docker-compose.yml
 
 
 Required environment variables
 ------------------------------
 
-The following environment variables will need to be set when running HAWC in
-production.
- - For linux, you can set these values in ``$VIRTUAL_ENV/bin/activate``.
- - For Windows, you can set these values in ``activate.bat``, which should be located at ``%VIRTUAL_ENV%\Scripts\activate.bat``.
-
-
-Example values are shown for each:
+The following environment variables are required for running in production;
+please specify in the docker-compose `.env` file (example secrets below):
 
 .. code-block:: bash
 
-    #!/bin/bash
+    # postgres
+    POSTGRES_USER=myDbUser
+    POSTGRES_PASSWORD=myDbPassword
+    USE_DOCKER=yes
 
-    # hawc settings
-    export "DJANGO_ADMIN_NAMES=Johnny Appleseed|Tommy Appleseed"
-    export "DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com"
-    export "DJANGO_ALLOWED_HOSTS=hawc.mydomain.org|hawc.mydomain.com"
-    export "DJANGO_SECRET_KEY=my-secret-key"
+    # django; same as postgres
+    DJANGO_DB_USER=myDbUser
+    DJANGO_DB_NAME=hawc
+    DJANGO_DB_HOST=postgres
+    DJANGO_DB_PW=myDbPassword
 
-    # database settings
-    export "DJANGO_DB_NAME=hawc"
-    export "DJANGO_DB_USER=hawc"
-    export "DJANGO_DB_PW=my-password"
+    # django
+    LOGS_PATH=/app/logs
+    DJANGO_SETTINGS_MODULE=hawc.settings.production
+    DJANGO_ALLOWED_HOSTS=hawcproject.org
+    DJANGO_SECRET_KEY=myBigSecretKey
+    DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com
+    DJANGO_ADMIN_NAMES=Johnny Appleseed|Tommy Appleseed
+    DJANGO_CACHE_LOCATION=redis://redis:6379/0
+    DJANGO_BROKER_URL=redis://redis:6379/1
+    DJANGO_CELERY_RESULT_BACKEND=redis://redis:6379/2
+    MAILGUN_ACCESS_KEY=myMailgunAccessKey
+    MAILGUN_SERVER_NAME=myMailgunServerName
+    CHEMSPIDER_TOKEN=myChemspiderToken
+    PHANTOMJS_PATH=/usr/local/bin/phantomjs
+    PUBMED_EMAIL=myEmail@email.com
 
-    # email settings
-    export "MAILGUN_ACCESS_KEY=my-secret-key"
-    export "MAILGUN_SERVER_NAME=my.server.name"
+    # required if using BMDS
+    BMDS_HOST=http://bmdhost.com
+    BMDS_PASSWORD=myBmdsPassword
+    BMDS_USERNAME=username@email.com
 
-    # caching and celery
-    export "DJANGO_BROKER_URL=redis://localhost:6379/0"
-    export "DJANGO_CELERY_RESULT_BACKEND=redis://localhost:6379/0"
-    export "DJANGO_CACHE_SOCK=127.0.0.1:6379:1"
+    # ensure redis is running
+    REDIS_CONNECTION_STRING=redis://redis:6379/0
 
-    # filesystem settings
-    export "LOGS_PATH=/path/to/logs/hawc"
-    export "PHANTOMJS_PATH=/path/to/phantomjs"
+Other required files are:
 
-    # external systems which hawc uses
-    export "DJANGO_CHEMSPIDER_TOKEN=my-secret-key"
-    export "PUBMED_EMAIL=johnny@appleseed.com"
-    export "BMDS_HOST=http://bmds-server.mydomain.org"
-    export "BMDS_PASSWORD=my-password"
-    export "BMDS_USERNAME=my-username"
+- TTF fonts (place in ``compose/django/fonts``)
+    - Arial, HelveticaNeue, Times New Roman
+- nginx configuration (place in ``compose/nginx/conf/nginx.conf``)
+- nginx ssl certificates (place in ``compose/nginx/ssl``)
 
-.. _`jsonb`: https://www.postgresql.org/docs/9.5/static/datatype-json.html
-.. _`supervisord`: http://supervisord.org/
-.. _`Gunicorn`: http://gunicorn.org/
-.. _`Celery`: http://www.celeryproject.org/
-.. _`Fabric`: http://www.fabfile.org/
+Deploying:
+----------
+
+To deploy, build and run all docker containers. Currently a javascript
+bundle is built locally on the development server and then pushed to production.
+Here is an example `fabric`_ script for doing so:
+
+.. code-block:: python
+
+    from fabric.api import task, local, lcd, cd, run, put
+
+
+    @task
+    def update():
+
+        with lcd('/local/hawc/project'):
+            local('npm run build')
+            put(
+                os.path.join('/local/hawc/project/webpack-stats.json'),
+                '/apps/hawc/project',
+                mode=0o644
+            )
+            put(
+                os.path.join(/local/hawc/project/static/bundles/*'),
+                '/remote/hawc/project/static/bundles/',
+                mode=0o644
+            )
+
+        with cd('/remote/hawc'):
+            run('git log -1 --format=%H > /remote/hawc/project/.gitcommit')
+            run('docker-compose build django')
+            run('docker-compose up --no-deps -d django')
