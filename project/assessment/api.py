@@ -39,7 +39,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
     list_actions = ['list', ]
 
     def has_object_permission(self, request, view, obj):
-        view.assessment = obj.get_assessment()
+        if not hasattr(view, 'assessment'):
+            view.assessment = obj.get_assessment()
         if request.method in permissions.SAFE_METHODS:
             return view.assessment.user_can_view_object(request.user)
         elif obj == view.assessment:

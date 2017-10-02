@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.filters import BaseFilterBackend
 from assessment.api import AssessmentViewset, DisabledPagination, InAssessmentFilter
 
@@ -6,16 +7,16 @@ from . import models, serializers
 
 class UnpublishedFilter(BaseFilterBackend):
     """
-        Only show unpublished visuals to admin and assessment members.
+    Only show unpublished visuals to admin and assessment members.
     """
-    def get_unpublished_perms(self, user, view):
-        return ((user.is_superuser) or
-                (user in view.assessment.project_manager.all()) or
-                (user in view.assessment.team_members.all()) or
-                (user in view.assessment.reviewers.all()))
 
     def filter_queryset(self, request, queryset, view):
-        if not self.get_unpublished_perms(request.user, view):
+
+        if not hasattr(view, 'assessment'):
+            self.instance = get_object_or_404(queryset.model, **view.kwargs)
+            view.assessment = self.instance.get_assessment()
+
+        if not view.assessment.user_is_part_of_team(request.user):
             queryset = queryset.filter(published=True)
         return queryset
 
