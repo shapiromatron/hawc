@@ -85,7 +85,7 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['attachments_viewable'] = self.assessment.user_can_view_attachments(self.request.user)
+        context['attachments_viewable'] = self.assessment.user_is_part_of_team(self.request.user)
         return context
 
 
@@ -172,7 +172,7 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_can_view_attachments(self.request.user):
+        if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             raise PermissionDenied

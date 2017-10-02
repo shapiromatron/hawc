@@ -11,14 +11,18 @@ class BaseVisual {
         this.data.last_updated = new Date(this.data.last_updated);
     }
 
-    build_row(){
-        return [
+    build_row(opts){
+        let arr = [
             '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.title),
             this.data.visual_type,
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),
             this.data.last_updated.toString(),
         ];
+        if (opts.showPublished){
+            arr.splice(3, 0, HAWCUtils.booleanCheckbox(this.data.published));
+        }
+        return arr;
     }
 
     displayAsPage($el, options){

@@ -214,6 +214,10 @@ class Visual(models.Model):
         default="{}")
     caption = models.TextField(
         blank=True)
+    published = models.BooleanField(
+        default=False,
+        verbose_name='Publish visual for public viewing',
+        help_text='For assessments marked for public viewing, mark visual to be viewable by public')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -359,6 +363,10 @@ class DataPivot(models.Model):
     caption = models.TextField(
         blank=True,
         default="")
+    published = models.BooleanField(
+        default=False,
+        verbose_name='Publish visual for public viewing',
+        help_text='For assessments marked for public viewing, mark visual to be viewable by public')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(

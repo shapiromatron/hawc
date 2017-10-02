@@ -117,6 +117,11 @@ class VisualizationList(BaseList):
     def get_queryset(self):
         return self.model.objects.get_qs(self.assessment)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_published'] = self.assessment.user_is_part_of_team(self.request.user)
+        return context
+
 
 class VisualizationDetail(BaseDetail):
     model = models.Visual

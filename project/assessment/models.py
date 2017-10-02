@@ -192,10 +192,10 @@ class Assessment(models.Model):
         else:
             return (user in self.project_manager.all())
 
-    def user_can_view_attachments(self, user):
+    def user_is_part_of_team(self, user):
         """
         Used for permissions-checking if attachments for a study can be
-        viewed. Checks to ensure user is authenticated and >= team-member.
+        viewed. Checks to ensure user is part of the team.
         """
         if user.is_superuser:
             return True
@@ -386,7 +386,7 @@ class BaseEndpoint(models.Model):
 
 class TimeSpentEditing(models.Model):
     objects = managers.TimeSpentEditingManager()
-    
+
     seconds = models.FloatField(
         validators=(MinValueValidator, ))
     assessment = models.ForeignKey(
