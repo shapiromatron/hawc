@@ -25,6 +25,7 @@ public/static
 public/media
 venv
 .vagrant
+hawc-venv/*
 
 # javascript
 node_modules
@@ -47,3 +48,6 @@ notebooks/*.ipynb
 !notebooks/example.ipynb
 
 .DS_Store
+
+project/hawc/settings/base.py
+requirements/base.txt
