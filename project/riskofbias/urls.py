@@ -24,6 +24,9 @@ urlpatterns = [
     url(r'^assessment/(?P<pk>\d+)/edit/$',
         views.ARoBEdit.as_view(),
         name='arob_update'),
+    url(r'^assessment/(?P<pk>\d+)/text-edit/$',
+        views.ARoBTextEdit.as_view(),
+        name='arob_text_update'),
 
     # reporting
     url(r'^assessment/(?P<pk>\d+)/export/$',
