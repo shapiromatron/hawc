@@ -17,8 +17,8 @@
     {% if assessment.enable_data_extraction %}
         <li><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
 
-        {% if assessment.enable_risk_of_bias and obj_perms.edit %}
-            <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Risk of bias</a></li>
+        {% if assessment.enable_risk_of_bias %}
+            <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias</a></li>
         {% endif %}
 
         <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>
