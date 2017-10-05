@@ -88,7 +88,7 @@ class SVGConverter(object):
             .replace('%u', '\\u')\
             .encode()\
             .decode('unicode-escape')
-        self.svg = parse.unquote(svg)
+        self.svg = parse.unquote(svg, encoding='ISO-8859-1')
 
     def to_svg(self):
         svg = self.svg
