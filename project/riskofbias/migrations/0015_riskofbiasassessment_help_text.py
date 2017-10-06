@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='riskofbiasassessment',
             name='help_text',
-            field=models.TextField(default='<p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for this assessment</p>', help_text='Detailed instructions for completing risk of bias assessments.'),
+            field=models.TextField(default='<p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for this assessment.</p>', help_text='Detailed instructions for completing risk of bias assessments.'),
         ),
     ]

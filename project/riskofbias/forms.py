@@ -21,8 +21,6 @@ class RobTextForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['help_text'].widget.attrs['class'] = 'html5text'
-        self.fields['help_text'].widget.attrs['style'] = 'width: 100%;'
-        self.fields['help_text'].widget.attrs['rows'] = 4
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -33,6 +31,7 @@ class RobTextForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         return helper
+
 
 class RoBDomainForm(forms.ModelForm):
     class Meta:
