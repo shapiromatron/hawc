@@ -17,36 +17,41 @@
 {% block content %}
 
   <h1>Risk of bias requirements
-    {% if crud == "Read" and obj_perms.edit %}
+    {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          {% if obj_perms.edit_assessment %}
-          <li class="disabled"><a tabindex="-1" href="#">Requirement settings</a></li>
-          <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
-          <li><a href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a></li>
-          <li class="divider"></li>
+          {% if crud == "Read" %}
+            {% if obj_perms.edit_assessment %}
+            <li class="disabled"><a tabindex="-1" href="#">Requirement settings</a></li>
+            <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
+            <li><a href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a></li>
+            <li class="divider"></li>
+            {% endif %}
+
+            <li class="disabled"><a tabindex="-1" href="#">Study assignment</a></li>
+            <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
+
+            {% if obj_perms.edit_assessment %}
+            <li class="divider"></li>
+            <li class="disabled"><a tabindex="-1" href="#">Data cleanup</a></li>
+            <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean risk of bias responses</a></li>
+            {% endif %}
+          {% elif crud == "Update" %}
+            <li class="disabled"><a tabindex="-1" href="#">Risk of bias changes</a></li>
+            <li><a href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a></li>
+            <li class="divider"></li>
+            <li class="disabled"><a tabindex="-1" href="#">Domain changes</a></li>
+            <li><a href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a></li>
           {% endif %}
-
-          <li class="disabled"><a tabindex="-1" href="#">Study assignment</a></li>
-          <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
-
-          {% if obj_perms.edit_assessment %}
-          <li class="disabled"><a tabindex="-1" href="#">Data cleanup</a></li>
-          <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean risk of bias responses</a></li>
-          {% endif %}
-
         </ul>
     </div>
     {% endif %}
   </h1>
-  <p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
 
-  {% if crud == "Update" %}
-    <a class="btn btn-info" href="{% url 'riskofbias:robd_create' assessment.pk %}">Create a new domain</a>
-  {% endif %}
+  {{assessment.rob_settings.help_text|safe}}
 
   {% for object in object_list %}
     <h2>{{object}} Domain
@@ -56,11 +61,11 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Domain Changes</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">{{object}} domain changes</a></li>
             <li><a href="{% url 'riskofbias:robd_update' object.pk %}">Update domain</a></li>
             <li><a href="{% url 'riskofbias:robd_delete' object.pk %}">Delete domain</a></li>
             <li class="divider"></li>
-            <li class="disabled"><a tabindex="-1" href="#">Metric Changes</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">{{object}} metric changes</a></li>
             <li><a href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a></li>
           </ul>
         </div>

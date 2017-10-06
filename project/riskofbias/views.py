@@ -36,6 +36,24 @@ class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
         return get_object_or_404(self.parent_model, pk=kwargs['pk'])
 
 
+class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
+    parent_model = Assessment
+    model = models.RiskOfBiasAssessment
+    template_name = 'riskofbias/arob_text_form.html'
+    form_class = forms.RobTextForm
+    success_message = 'Risk of bias help text has been updated.'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, assessment_id=self.assessment.pk)
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_detail',
+                            kwargs={'pk': self.assessment.pk})
+
+
 class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     model = models.RiskOfBiasDomain
     parent_model = Assessment

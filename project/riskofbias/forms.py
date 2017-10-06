@@ -13,6 +13,26 @@ from utils.forms import BaseFormHelper
 from . import models
 
 
+class RobTextForm(forms.ModelForm):
+    class Meta:
+        model = models.RiskOfBiasAssessment
+        fields = ('help_text', )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['help_text'].widget.attrs['class'] = 'html5text'
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = {
+            'cancel_url': reverse('riskofbias:arob_update',
+                                  args=[self.instance.assessment.pk])
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+
 class RoBDomainForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasDomain
