@@ -10,13 +10,39 @@ module.exports = {
     resolve: {
         modules: [
             path.join(__dirname, 'assets'),
+            path.join(__dirname, 'animal', 'assets'),
+            path.join(__dirname, 'assessment', 'assets'),
+            path.join(__dirname, 'bmd', 'assets'),
+            path.join(__dirname, 'epi', 'assets'),
+            path.join(__dirname, 'epimeta', 'assets'),
+            path.join(__dirname, 'invitro', 'assets'),
+            path.join(__dirname, 'lit', 'assets'),
+            path.join(__dirname, 'mgmt', 'assets'),
+            path.join(__dirname, 'riskofbias', 'assets'),
+            path.join(__dirname, 'study', 'assets'),
+            path.join(__dirname, 'summary', 'assets'),
+            path.join(__dirname, 'utils', 'assets'),
             'node_modules',
         ],
         extensions: ['.js', '.css'],
     },
 
     entry: {
-        main: './assets/index',
+        main: [
+            './assets/index',
+            './animal/assets/index',
+            './assessment/assets/index',
+            './bmd/assets/index',
+            './epi/assets/index',
+            './epimeta/assets/index',
+            './invitro/assets/index',
+            './lit/assets/index',
+            './mgmt/assets/index',
+            './riskofbias/assets/index',
+            './study/assets/index',
+            './summary/assets/index',
+            './utils/assets/index',
+        ],
     },
 
     output: {
