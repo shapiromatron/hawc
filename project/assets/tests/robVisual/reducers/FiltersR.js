@@ -1,5 +1,5 @@
-import * as types from 'robVisual/constants/ActionTypes';
-import filterReducer from 'robVisual/reducers/Filter';
+import * as types from 'riskofbias/robVisual/constants/ActionTypes';
+import filterReducer from 'riskofbias/robVisual/reducers/Filter';
 
 
 describe('robVisual Filter reducer', () => {

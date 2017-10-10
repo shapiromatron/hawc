@@ -5,10 +5,9 @@ var config = require('./webpack.base.js'),
     HappyPack = require('happypack');
 
 config.devtool = 'cheap-module-eval-source-map';
-config.entry.main = [
-    'webpack-hot-middleware/client?path=http://localhost:' + port + '/__webpack_hmr',
-    './assets/index',
-];
+config.entry.main.concat(
+    'webpack-hot-middleware/client?path=http://localhost:' + port + '/__webpack_hmr'
+);
 config.output.publicPath = 'http://localhost:' + port + '/dist/';
 
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
@@ -44,7 +43,7 @@ config.module = {
     rules: [{
         test: /\.js$/,
         use: 'happypack/loader?id=js',
-        include: path.join(__dirname, 'assets'),
+        include: config.resolve.modules.slice(0, -1),
     }, {
         test: /\.css$/, loader: 'style-loader!css-loader',
     }],
