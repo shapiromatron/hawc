@@ -4,8 +4,8 @@ import nock from 'nock';
 
 import { HOST } from 'tests/constants';
 
-import * as filterActions from 'robVisual/actions/Filter';
-import * as types from 'robVisual/constants/ActionTypes';
+import * as filterActions from 'riskofbias/robVisual/actions/Filter';
+import * as types from 'riskofbias/robVisual/constants/ActionTypes';
 
 
 const middlewares = [thunk];

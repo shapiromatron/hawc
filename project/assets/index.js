@@ -18,7 +18,6 @@ import summaryStartup from 'summary/split';
 import summaryFormsStartup from 'summaryForms/split';
 
 // custom applications
-import bmdStartup from 'bmd';
 import robVisualStartup from 'robVisual';
 import robTableStartup from 'robTable';
 import robScoreCleanupStartup from 'robScoreCleanup';
@@ -41,7 +40,6 @@ window.app = {
     smartTagsStartup,
     summaryStartup,
     summaryFormsStartup,
-    bmdStartup,
     robVisualStartup,
     robTableStartup,
     robScoreCleanupStartup,

@@ -32,7 +32,9 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        window.app.robTableStartup(document.getElementById('robTable'));
+        window.app.riskofbiasStartup(function(riskofbias){
+            riskofbias.TableStartup(document.getElementById('robTable'));
+        })
     });
 </script>
 {% endblock extrajs %}

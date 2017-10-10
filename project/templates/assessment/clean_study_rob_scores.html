@@ -42,7 +42,9 @@
 </script>
 <script type="text/javascript">
 $(document).ready(function(){
-    window.app.robScoreCleanupStartup(document.getElementById('root'));
+    window.app.riskofbiasStartup(function(riskofbias){
+        riskofbias.ScoreCleanupStartup(document.getElementById('root'));
+    });
 });
 </script>
 {% endblock extrajs %}
