@@ -62,14 +62,15 @@ class Donut extends D3Plot {
 
         var domain_donut_data = [],
             question_donut_data = [];
-
-        this.study.riskofbias.forEach(function(v1){
+			
+        this.study.riskofbias.forEach(function(v1, idx){
             domain_donut_data.push({weight:10, // equally weighted
                                     score: v1.score,
                                     score_text: v1.score_text,
                                     score_color: v1.score_color,
                                     score_text_color: String.contrasting_color(v1.score_color),
                                     domain: v1.domain_text,
+									idxOrder:idx,
                                     self: v1});
             v1.criteria.forEach(function(v2){
                 question_donut_data.push({weight:10/v1.criteria.length,
@@ -225,7 +226,7 @@ class Donut extends D3Plot {
         this.domain_domain_labels
             .transition()
             .duration('500')
-            .attr('transform', (d) => `translate(${(domain_arc.centroid(d))})`);
+	.attr('transform', (d) => `translate(${(domain_arc.centroid(d))}) translate(0,${(d.data.idxOrder)>=(this.study.riskofbias.length)/2?10:-10})`);
 
         this.domain_score_labels
             .transition()
