@@ -69,7 +69,7 @@ module.exports = {
             name: 'manifest',
             filename: 'manifest.[hash].js',
         }),
-        new webpack.NoErrorsPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
         new BundleTracker({
             filename: './webpack-stats.json',
         }),

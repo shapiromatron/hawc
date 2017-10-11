@@ -26,10 +26,10 @@ config.plugins.unshift.apply(config.plugins, [
 ]);
 
 config.module = {
-    loaders: [{
+    rules: [{
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: path.join(__dirname, 'assets'),
+        use: 'babel-loader',
+        include: config.resolve.modules.slice(0, -1),
     }, {
         test: /\.css$/, loader: 'style-loader!css-loader',
     }],
