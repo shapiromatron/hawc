@@ -9,6 +9,8 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from model_utils import Choices
+
 from reversion import revisions as reversion
 
 from assessment.models import Assessment
@@ -374,6 +376,50 @@ class RiskOfBias(models.Model):
                 score.save()
 
         return cw
+
+
+class RiskOfBiasMetricAnswers(models.Model):
+    """Possible metric scores"""
+    NOT_REPORTED = 10
+    CRITICALLY_DEFICIENT = 1
+    POOR = 2
+    ADEQUATE = 3
+    GOOD = 4
+    NOT_APPLICABLE = 0
+
+    """Possible metric choices"""
+    NOT_REPORTED_STRING = 'Not reported'
+    CRITICALLY_DEFICIENT_STRING = 'Critically deficient'
+    POOR_STRING = 'Poor'
+    ADEQUATE_STRING = 'Adequate'
+    GOOD_STRING = 'Good'
+    NOT_APPLICABLE_STRING = 'Not applicable'
+
+    RISK_OF_BIAS_CHOICES = Choices(
+        NOT_REPORTED_STRING,
+        CRITICALLY_DEFICIENT_STRING,
+        POOR_STRING,
+        ADEQUATE_STRING,
+        GOOD_STRING,
+        NOT_APPLICABLE_STRING
+    )
+    RISK_OF_BIAS_SCORE = Choices(
+        NOT_REPORTED,
+        CRITICALLY_DEFICIENT,
+        POOR,
+        ADEQUATE,
+        GOOD,
+        NOT_APPLICABLE
+    )
+    risk_of_bias_choice = models.CharField(
+        max_length=50,
+        choices=RISK_OF_BIAS_CHOICES,
+        default=RISK_OF_BIAS_CHOICES.NOT_REPORTED_STRING
+    )
+    risk_of_bias_score = models.PositiveSmallIntegerField(
+        choices=RISK_OF_BIAS_SCORE,
+        default=RISK_OF_BIAS_SCORE.NOT_REPORTED
+    )
 
 
 class RiskOfBiasScore(models.Model):
