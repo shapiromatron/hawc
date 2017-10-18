@@ -388,37 +388,86 @@ class RiskOfBiasMetricAnswers(models.Model):
     NOT_APPLICABLE = 0
 
     """Possible metric choices"""
-    NOT_REPORTED_STRING = 'Not reported'
-    CRITICALLY_DEFICIENT_STRING = 'Critically deficient'
+    NOT_REPORTED_STRING = 'Not_reported'
+    CRITICALLY_DEFICIENT_STRING = 'Critically_deficient'
     POOR_STRING = 'Poor'
     ADEQUATE_STRING = 'Adequate'
     GOOD_STRING = 'Good'
-    NOT_APPLICABLE_STRING = 'Not applicable'
+    NOT_APPLICABLE_STRING = 'Not_applicable'
+
+    """Possible metric symbols"""
+    NOT_REPORTED_SYMBOL = 'NR'
+    CRITICALLY_DEFICIENT_SYMBOL = '--'
+    POOR_SYMBOL = '-'
+    ADEQUATE_SYMBOL = '+'
+    GOOD_SYMBOL = '++'
+    NOT_APPLICABLE_SYMBOL = '-'
+
+    """Possible metric shades"""
+    NOT_REPORTED_SHADE = 'FFCC00'
+    CRITICALLY_DEFICIENT_SHADE = 'CC3333'
+    POOR_SHADE = 'FFCC00'
+    ADEQUATE_SHADE = '6FFF00'
+    GOOD_SHADE = '00CC00'
+    NOT_APPLICABLE_SHADE = 'FFCC00'
 
     RISK_OF_BIAS_CHOICES = Choices(
-        NOT_REPORTED_STRING,
-        CRITICALLY_DEFICIENT_STRING,
-        POOR_STRING,
-        ADEQUATE_STRING,
-        GOOD_STRING,
-        NOT_APPLICABLE_STRING
+        'Not_reported',
+        'Critically_deficient',
+        'Poor',
+        'Adequate',
+        'Good',
+        'Not_applicable'
     )
+
     RISK_OF_BIAS_SCORE = Choices(
-        NOT_REPORTED,
-        CRITICALLY_DEFICIENT,
-        POOR,
-        ADEQUATE,
-        GOOD,
-        NOT_APPLICABLE
+        (NOT_REPORTED, 'Not_reported'),
+        (CRITICALLY_DEFICIENT, 'Critically_deficient'),
+        (POOR, 'Poor'),
+        (ADEQUATE, 'Adequate'),
+        (GOOD, 'Good'),
+        (NOT_APPLICABLE, 'Not_applicable')
     )
-    risk_of_bias_choice = models.CharField(
-        max_length=50,
+
+    SCORE_SYMBOLS = Choices(
+        'NR',
+        '--',
+        '-',
+        '+',
+        '++',
+        '-'
+    )
+
+    SCORE_SHADES = Choices(
+        (NOT_REPORTED_SHADE, 'Yellow'),
+        (CRITICALLY_DEFICIENT_SHADE, 'Red'),
+        (POOR_SHADE, 'Yellow'),
+        (ADEQUATE_SHADE, 'Lime'),
+        (GOOD_SHADE, 'Green'),
+        (NOT_APPLICABLE_SHADE, 'Yellow')
+    )
+
+    choice = models.CharField(
         choices=RISK_OF_BIAS_CHOICES,
-        default=RISK_OF_BIAS_CHOICES.NOT_REPORTED_STRING
+        default=RISK_OF_BIAS_CHOICES.Not_reported,
+        max_length=20
     )
-    risk_of_bias_score = models.PositiveSmallIntegerField(
+    score = models.IntegerField(
         choices=RISK_OF_BIAS_SCORE,
-        default=RISK_OF_BIAS_SCORE.NOT_REPORTED
+        default=NOT_REPORTED
+    )
+    choice_notes = models.TextField(
+        blank=True
+    )
+    symbol = models.CharField(
+        max_length=2,
+        choices=SCORE_SYMBOLS,
+        default=SCORE_SYMBOLS.NR
+    )
+    color_shade = models.CharField(
+        max_length=15,
+        choices=SCORE_SHADES,
+        default=NOT_REPORTED_SHADE
     )
 
 
