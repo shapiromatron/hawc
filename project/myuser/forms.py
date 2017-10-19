@@ -367,8 +367,11 @@ class AdminUserForm(PasswordForm):
 
     class Meta:
         model = models.HAWCUser
-        fields = ("email", "first_name", "last_name",
-                  "is_staff", "password1", "password2")
+        fields = (
+            "email", "first_name", "last_name",
+            "is_staff", "password1", "password2",
+            "groups",
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
