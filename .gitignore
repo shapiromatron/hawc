@@ -40,5 +40,5 @@ compose/nginx/conf/*
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
 
-notebooks/*.ipynb
+notebooks/*
 !notebooks/example.ipynb
