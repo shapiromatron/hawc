@@ -13,6 +13,31 @@
     <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128" />
     <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64" />
     <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32" />
+
+      <meta name="HandheldFriendly" content="true" />
+      <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
+      <meta name="MobileOptimized" content="width" />
+      <meta http-equiv="cleartype" content="on" />
+      <meta http-equiv="ImageToolbar" content="false" />
+      <meta name="version" content="20170905" />
+      <meta name="dc.description" content="" />
+      <meta name="keywords" content="" />
+      <meta name="DC.Subject" content="" />
+      <meta name="DC.Type" content="WEB SITE" />
+      <meta name="DC.Date.modified" content="2009-03-15" />
+      <meta name="DC.Date" content="2009-03-15" />
+      <meta name="DC.Language" content="en" />
+      <meta name="DC.Creator" content="US EPA National Center for Environmental Assessment" />
+      <meta http-equiv="Content-Style-Type" content="text/css" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="-1">
+
+      <!--[if lt IE 9]><link type="text/css" rel="stylesheet" href="https://www.epa.gov/sites/all/themes/epa/css/ie.css" media="all" /><![endif]-->
+      <link rel="alternate" type="application/atom+xml" title="EPA.gov All Press Releases" href="https://www.epa.gov/newsreleases/search/rss" />
+      <link rel="alternate" type="application/atom+xml" title="EPA.gov Headquarters Press Releases" href="/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters" />
+      <link rel="alternate" type="application/atom+xml" title="Greenversations, EPA's Blog" href="https://blog.epa.gov/blog/feed/" />
+
     {% block extrahead %}{% endblock %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/font-awesome/css/font-awesome.css" />
@@ -28,15 +53,84 @@
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
-    {% block extrastyle %}{% endblock %}
+
+      <!-- test HERO template -->
+    <link type="text/css" rel="stylesheet" href="https://www.epa.gov/sites/all/libraries/template2/s.css" media="all" />
+      <script type="text/javascript" src="https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js"></script>
+      <script type="text/javascript" src="https://www.epa.gov/sites/all/libraries/template2/jquery.js"></script>
+      <script type="text/javascript" src="https://www.epa.gov/sites/all/libraries/template2/js.js"></script>
+      <script type="text/javascript" src="https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}javascript/jquery/jquery-ui-1.8.min.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}javascript/jsfunctions.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}javascript/hero.compatibility.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}javascript/jquery/jquery.validate.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/thirdparty/font-awesome.min.css" />
+      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hero/hero.css" />
+
+      <!-- test HERO template -->
+      <style type="text/css">
+        /*<cfif structKeyExists(prc, 'layoutWidth') and isNumeric(prc.layoutWidth) and prc.layoutWidth gt 0>
+        #content {width: 800ppx;}
+        footer.main-footer { max-width: #prc.layoutWidth#px;}
+        header.masthead { max-width: #prc.layoutWidth#px;}
+        nav.nav { max-width: #prc.layoutWidth#px;}
+        </cfif>
+        <cfif structKeyExists(prc, 'wideLayout') and isNumeric(prc.wideLayout) and prc.wideLayout eq 1>*/
+          .main-content {max-width: auto; margin:0;}
+        /*</cfif>
+        <cfif structKeyExists(prc, 'hideMenu') and isNumeric(prc.hideMenu) and prc.hideMenu eq 1>
+          .one-sidebar .main-column {width: 100%;}
+          .main-content .region-sidebar {display: none;}
+          .main-column {float: none; width: 100%;}
+        </cfif>*/
+        input[type='radio'] { left: 0px;}
+      </style>
+
+    {% block extrastyle %}
+      <style type="text/css">
+        .main-content {max-width: auto; margin:0;}
+        input[type='radio'] { left: 0px;}
+      </style>
+    {% endblock %}
   </head>
 
 
-  <body {% block bodyattrs %}class="fill"{% endblock %}>
+  <body {% block bodyattrs %}class="fill html one-sidebar sidebar-first block-og-menu microsite" style="padding-top:0px"{% endblock %}>
 
+
+<header class="masthead clearfix" role="banner">
+    <img class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png" alt="" />
+    <hgroup class="site-name-and-slogan">
+      <h1 class="site-name"><a href="https://www.epa.gov/" title="Go to the home page" rel="home"><span>US EPA</span></a></h1>
+      <div class="site-slogan">United States Environmental Protection Agency</div>
+    </hgroup>
+    <form class="epa-search" method="get" action="https://search.epa.gov/epasearch/epasearch">
+      <label class="element-hidden" for="search-box">Search</label>
+      <input class="form-text" placeholder="Search EPA.gov" name="querytext" id="search-box" value="">
+      <button class="epa-search-button" id="search-button" type="submit" title="Search">Search</button>
+      <input type="hidden" name="fld" value="">
+      <input type="hidden" name="areaname" value="">
+      <input type="hidden" name="areacontacts" value="">
+      <input type="hidden" name="areasearchurl" value="">
+      <input type="hidden" name="typeofsearch" value="epa">
+      <input type="hidden" name="result_template" value="epafiles_default.xsl">
+      <input type="hidden" name="filter" value="sample4filt.hts">
+    </form>
+
+  </header>
+ <nav class="nav main-nav clearfix" role="navigation">
+    <div class="nav__inner">
+      <h2 class="element-invisible">Main menu</h2>
+      <ul class="menu" role="menu">
+        <li class="menu-item" id="menu-learn" role="presentation"><a href="https://www.epa.gov/environmental-topics" title="Learn about EPA's environmental topics to help protect the environment in your home, workplace, and community and EPA&##039;s research mission is to conduct leading-edge research and foster the sound use of science and technology." class="menu-link" role="menuitem">Environmental Topics</a></li>
+        <li class="menu-item" id="menu-lawsregs" role="presentation"><a href="https://www.epa.gov/laws-regulations" title="Laws written by Congress provide the authority for EPA to write regulations. Regulations explain the technical, operational, and legal details necessary to implement laws." class="menu-link" role="menuitem">Laws &amp; Regulations</a></li>
+        <li class="menu-item" id="menu-about" role="presentation"><a href="https://www.epa.gov/aboutepa" title="Learn more about: our mission and what we do, how we are organized, and our history." class="menu-link" role="menuitem">About EPA</a></li>
+      </ul>
+    </div>
+  </nav>   
     <!-- Navigation bar -->
     {% block navbar_outer %}
-    <div class="navbar navbar-fixed-top">
+     <!---<div class="navbar navbar-fixed-top">
       <div class="navbar-inner  {% server_role %}">
         <div class="container-fluid">
 
@@ -54,6 +148,7 @@
           </a>
 
           {% block topnavbar %}
+           
             <div class="nav-collapse collapse">
               <ul class="nav pull-right">
                 <li><a href="{% url 'contact' %}">Contact</a></li>
@@ -80,24 +175,138 @@
                 {% endif %}
               </ul>
             </div>
+
+
+ 
           {% endblock %}
 
         </div>
       </div>
-    </div>
+    </div>--->
+
+
+  <div class="skip-links"><a href="#main-content" class="skip-link element-invisible element-focusable">Jump to main content</a></div>
+  
     {% endblock navbar_outer %}
 
     <!-- Main Container -->
     {% block content_outer %}
     <div id="container" class="container-fluid ">
 
+
+<section id="main-content" class="main-content clearfix" role="main">
+    <h2 class="microsite-name">Health Assessment Workspace Collaborative (HAWC)</h2>
+    <div class="region-preface clearfix">
+      <div id="block-pane-epa-web-area-connect" class="block block-pane  block-pane-epa-web-area-connect">
+        <ul class="menu utility-menu">
+          <li class="menu-item"><a href="#event.buildLink('content.contactus')#" class="menu-link">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="main-column clearfix" id="content">
+        <!--googleon: all-->
+      <div class="panel-pane pane-node-content" >
+        <div class="pane-content">
+          <div class="node node-page clearfix view-mode-full">
+              <!--- BREADCRUMBS --->
+              
+              <!--- END BREADCRUMBS --->
+            <br/>
+
+
       {% block messages_base %}
         {% include "messages.html" %}
       {% endblock messages_base %}
 
-      {% block main_content %}{% endblock %}
+      {% block main_content %}
+      {% endblock %}
+          </div>
+        </div>
+      </div>
+        <!--googleoff: all-->
+    </div>
 
-      <div id="footer">{% block footer %}{% endblock %}</div>
+
+<div class="region-sidebar-first region-sidebar">
+  <div id="block-og-menu-og-single-menu-block" class="block block-og-menu  block-og-menu-og-single-menu-block">
+    <!-- BEGIN AREA MAIN NAVIGATION -->
+      <h4 class="skip">HAWC Navigation</h4>
+      <ul class="menu">
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'portal' %}">HAWC Portal</a></li>
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'user:settings' %}">HAWC Profile</a></li>
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{% url 'mgmt:user_assignments' %}">My HAWC assigned tasks</a></li>
+        {% if user.is_staff %}
+          <li class="menu-item"><a class="menu-node-unpublished menu-link" href="{%url 'admin:index' %}">HAWC Admin</a></li>
+        {% endif %}
+        <li><a class="menu-node-unpublished menu-link" href="{% url 'user:login' %}">Login to HAWC</a></li>
+        <li><a class="menu-node-unpublished menu-link" href="{% url 'user:logout' %}">Logout of HAWC</a></li>
+        <hr />
+        <li class="menu-item"><a class="menu-node-unpublished menu-link" href="https://hero.epa.gov/hero/">HERO Home</a></li>
+      </ul>
+    <!-- END AREA MAIN NAVIGATION -->
+  </div>
+</div>
+
+</section>
+
+<div id="footer">{% block footer %}
+
+<footer class="main-footer clearfix" role="contentinfo">
+    <div class="main-footer__inner">
+      <div class="region-footer">
+        <div class="block block-pane block-pane-epa-global-footer">
+          <div class="row cols-3">
+            <div class="col size-1of3">
+              <div class="col__title">Discover.</div>
+              <ul class="menu">
+                <li><a href="https://www.epa.gov/accessibility">Accessibility</a></li>
+                <li><a href="https://www.epa.gov/aboutepa/administrator-gina-mccarthy">EPA Administrator</a></li>
+                <li><a href="https://www.epa.gov/planandbudget">Budget &amp; Performance</a></li>
+                <li><a href="https://www.epa.gov/contracts">Contracting</a></li>
+                <li><a href="https://www.epa.gov/home/grants-and-other-funding-opportunities">Grants</a></li>
+                <li><a href="https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees">No FEAR Act Data</a></li>
+                <li><a href="https://www.epa.gov/home/privacy-and-security-notice">Privacy and Security</a></li>
+              </ul>
+            </div>
+            <div class="col size-1of3">
+              <div class="col__title">Connect.</div>
+              <ul class="menu">
+                <li><a href="https://www.data.gov/">Data.gov</a></li>
+                <li><a href="https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general">Inspector General</a></li>
+                <li><a href="https://www.epa.gov/careers">Jobs</a></li>
+                <li><a href="https://www.epa.gov/newsroom">Newsroom</a></li>
+                <li><a href="https://www.whitehouse.gov/open">Open Government</a></li>
+                <li><a href="http://www.regulations.gov/">Regulations.gov</a></li>
+                <li><a href="https://www.epa.gov/newsroom/email-subscriptions">Subscribe</a></li>
+                <li><a href="https://www.usa.gov/">USA.gov</a></li>
+                <li><a href="https://www.whitehouse.gov/">White House</a></li>
+              </ul>
+            </div>
+            <div class="col size-1of3">
+              <div class="col__title">Ask.</div>
+              <ul class="menu">
+                <li><a href="https://www.epa.gov/home/forms/contact-us">Contact Us</a></li>
+                <li><a href="https://www.epa.gov/home/epa-hotlines">Hotlines</a></li>
+                <li><a href="https://www.epa.gov/foia">FOIA Requests</a></li>
+                <li><a href="https://www.epa.gov/home/frequent-questions-specific-epa-programstopics">Frequent Questions</a></li>
+              </ul>
+              <div class="col__title">Follow.</div>
+              <ul class="social-menu">
+                <li><a class="menu-link social-facebook" href="https://www.facebook.com/EPA">Facebook</a></li>
+                <li><a class="menu-link social-twitter" href="https://twitter.com/epa">Twitter</a></li>
+                <li><a class="menu-link social-youtube" href="https://www.youtube.com/user/USEPAgov">YouTube</a></li>
+                <li><a class="menu-link social-flickr" href="https://www.flickr.com/photos/usepagov">Flickr</a></li>
+                <li><a class="menu-link social-instagram" href="https://instagram.com/epagov">Instagram</a></li>
+              </ul>
+              <p class="last-updated">Last Updated on #DateFormat(Now(),'MMMM DD, YYYY')#</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+      {% endblock %}</div>
       <div id='hidden' style="display:none">{% block hidden_content %}{% endblock %}</div>
     </div>
     {% endblock content_outer %}

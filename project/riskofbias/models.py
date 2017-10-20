@@ -9,6 +9,8 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
+from model_utils import Choices
+
 from reversion import revisions as reversion
 
 from assessment.models import Assessment
@@ -374,6 +376,99 @@ class RiskOfBias(models.Model):
                 score.save()
 
         return cw
+
+
+class RiskOfBiasMetricAnswers(models.Model):
+    """Possible metric scores"""
+    NOT_REPORTED = 10
+    CRITICALLY_DEFICIENT = 1
+    POOR = 2
+    ADEQUATE = 3
+    GOOD = 4
+    NOT_APPLICABLE = 0
+
+    """Possible metric choices"""
+    NOT_REPORTED_STRING = 'Not_reported'
+    CRITICALLY_DEFICIENT_STRING = 'Critically_deficient'
+    POOR_STRING = 'Poor'
+    ADEQUATE_STRING = 'Adequate'
+    GOOD_STRING = 'Good'
+    NOT_APPLICABLE_STRING = 'Not_applicable'
+
+    """Possible metric symbols"""
+    NOT_REPORTED_SYMBOL = 'NR'
+    CRITICALLY_DEFICIENT_SYMBOL = '--'
+    POOR_SYMBOL = '-'
+    ADEQUATE_SYMBOL = '+'
+    GOOD_SYMBOL = '++'
+    NOT_APPLICABLE_SYMBOL = '-'
+
+    """Possible metric shades"""
+    NOT_REPORTED_SHADE = 'FFCC00'
+    CRITICALLY_DEFICIENT_SHADE = 'CC3333'
+    POOR_SHADE = 'FFCC00'
+    ADEQUATE_SHADE = '6FFF00'
+    GOOD_SHADE = '00CC00'
+    NOT_APPLICABLE_SHADE = 'FFCC00'
+
+    RISK_OF_BIAS_CHOICES = Choices(
+        'Not_reported',
+        'Critically_deficient',
+        'Poor',
+        'Adequate',
+        'Good',
+        'Not_applicable'
+    )
+
+    RISK_OF_BIAS_SCORE = Choices(
+        (NOT_REPORTED, 'Not_reported'),
+        (CRITICALLY_DEFICIENT, 'Critically_deficient'),
+        (POOR, 'Poor'),
+        (ADEQUATE, 'Adequate'),
+        (GOOD, 'Good'),
+        (NOT_APPLICABLE, 'Not_applicable')
+    )
+
+    SCORE_SYMBOLS = Choices(
+        'NR',
+        '--',
+        '-',
+        '+',
+        '++',
+        '-'
+    )
+
+    SCORE_SHADES = Choices(
+        (NOT_REPORTED_SHADE, 'Yellow'),
+        (CRITICALLY_DEFICIENT_SHADE, 'Red'),
+        (POOR_SHADE, 'Yellow'),
+        (ADEQUATE_SHADE, 'Lime'),
+        (GOOD_SHADE, 'Green'),
+        (NOT_APPLICABLE_SHADE, 'Yellow')
+    )
+
+    choice = models.CharField(
+        choices=RISK_OF_BIAS_CHOICES,
+        default=RISK_OF_BIAS_CHOICES.Not_reported,
+        max_length=20
+    )
+    score = models.IntegerField(
+        choices=RISK_OF_BIAS_SCORE,
+        default=NOT_REPORTED
+    )
+    choice_notes = models.TextField(
+        blank=True
+    )
+    symbol = models.CharField(
+        max_length=2,
+        choices=SCORE_SYMBOLS,
+        default=SCORE_SYMBOLS.NR
+    )
+    color_shade = models.CharField(
+        max_length=15,
+        choices=SCORE_SHADES,
+        default=NOT_REPORTED_SHADE
+    )
 
 
 class RiskOfBiasScore(models.Model):

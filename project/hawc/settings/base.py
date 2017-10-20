@@ -174,7 +174,8 @@ STATICFILES_FINDERS = (
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'public', 'media')
+# MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'public', 'media')
+MEDIA_ROOT = 'project/hawc/settings/local.py'
 
 
 # Filesystem settings

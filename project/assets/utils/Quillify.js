@@ -25,10 +25,6 @@ const toolbarOptions = {
                 {script: 'super'},
             ],
             [
-                {color: []},
-                {background:[]},
-            ],
-            [
                 'link',
                 {list: 'ordered'},
                 {list: 'bullet' },
