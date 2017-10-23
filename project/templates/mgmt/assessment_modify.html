@@ -16,8 +16,30 @@
 {% block content %}
 
   <h2>Modify task assignments</h2>
-  <div id='taskTable'></div>
+  <h3 onclick="$('#taskTable').toggle();$('#tTOpen').toggle();$('#tTClose').toggle();">Study Assignments [<span id="tTOpen" style="display:none;">+</span><span id="tTClose">-</span>]</h3>
 
+  <div id='taskTable'></div>
+  
+  <h3 onclick="$('#EndpointTable').toggle();$('#eTOpen').toggle();$('#eTClose').toggle();">Endpoint Assignments [<span id="eTOpen" style="display:none;">+</span><span id="eTClose">-</span>]</h3>
+  <div id="EndpointTable">
+	<div class="flexRow-container">
+		<h5 class="flex-1">Study</h5>
+		<h5 class="flex-1">Experiment</h5>
+		<h5 class="flex-1">Animal group</h5>
+		<h5 class="flex-1">Endpoint</h5>
+		<h5 class="flex-1">Risk of bias completed</h5>
+	</div>
+	<div>
+		<div>
+			<div class="flexRow-container taskStudy">
+				<div class="study-label flex-1"><a href="/study/282165/" target="_blank">NTP 2008</a><br><b>Date created: </b><span>06/08/2017</span></div>
+				<div class="task-0 flex-1"><a href="/ani/experiment/1683/" target="_blank">2-year cancer bioassay in F344/N rats and B6C3F1 mice</a></div>
+				<div class="task-1 flex-1"><a href="/ani/animal-group/3056/" target="_blank">Female B6C3F1 mice</a></div>
+				<div class="task-2 flex-1"><a href="/ani/endpoint/27493/" target="_blank">Adenomas of the duodenum</a></div>
+				<div class="task-3 flex-1"><div><label class="control-label" for="4360-owner">Owner</label><div class="autocomplete__container"><input type="text" value="Alan Sasso" autocomplete="off" role="combobox" aria-autocomplete="list" aria-owns="react-autowhatever-4360-owner" aria-expanded="false" aria-haspopup="false" class="autocomplete__input"><div id="react-autowhatever-4360-owner" class="autocomplete__suggestions-container"></div></div></div><div><label class="control-label" for="4360-status_selection">Status</label><select id="4360-status_selection" name="status_selection" style="width: auto;"><option value="10">not started</option><option value="20">started</option><option value="30">completed</option><option value="40">abandoned</option></select><i class="fa fa-circle" style="padding: 5px; color: rgb(255, 204, 0); height: 25px; vertical-align: middle;"></i></div><div><label for="4360-due_date" class="control-label">Due date (optional)</label><div class="react-datepicker__input-container"><input type="text" id="4360-due_date" class="" value=""></div></div></div>
+			</div>
+		</div>
+    </div>
 {% endblock %}
 
 

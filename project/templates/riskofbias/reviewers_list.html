@@ -31,7 +31,9 @@
         <b>Independent reviews: </b>{{assessment.rob_settings.number_of_reviewers}}
     </p>
 
-    <table class="table table-condensed table-striped">
+  <h3 onclick="$('#RoBStudyList').toggle();$('#RSLOpen').toggle();$('#RSLClose').toggle();">Study Reviewers [<span id="RSLOpen" style="display:none;">+</span><span id="RSLClose">-</span>]</h3>
+	
+    <table class="table table-condensed table-striped" id="RoBStudyList">
         {% for study in object_list %}
         {% if forloop.first %}
         <thead>
@@ -89,4 +91,42 @@
         {% endfor %}
 
     </table>
+  
+  <h3 onclick="$('#RoBEndpointList').toggle();$('#RELOpen').toggle();$('#RELClose').toggle();">Endpoint Reviewers [<span id="RELOpen" style="display:none;">+</span><span id="RELClose">-</span>]</h3>
+	
+    <table class="table table-condensed table-striped" id="RoBEndpointList">
+		<thead>
+			<th>Study</th>
+			<th>Experiment</th>
+			<th>Animal group</th>
+			<th>Endpoint</th>
+            <th colspan="{{ rob_count }}">
+                Reviewers
+            </th>
+        </thead>
+		<tbody>
+			<tr>
+				<td><a href="/study/282165/" target="_blank">NTP 2008</a><br><b>Date created: </b><span>06/08/2017</span></td>
+				<td><a href="/ani/experiment/1683/" target="_blank">2-year cancer bioassay in F344/N rats and B6C3F1 mice</a></td>
+				<td><a href="/ani/animal-group/3056/" target="_blank">Female B6C3F1 mice</a></td>
+				<td><a href="/ani/endpoint/27493/" target="_blank">Adenomas of the duodenum</a></td>
+				<td>Alan Sasso <a href="#"><i title="Edit this task" class="fa fa-pencil-square-o edit-icon" aria-hidden="true" style="cursor: pointer;"></i></a></td>
+			</tr>
+		</div>
+    </div>
+
+		</tbody
+        <tfoot>
+            <tr>
+                <td colspan="{{rob_count|add:1}}">
+                    <p>
+                    <i class="fa fa-check"></i> = completed review (a score and descriptive text are filled for all metrics).
+                    <br>
+                    <i class="fa fa-star"></i> = final review (score and descriptive text associated with study).
+                    </p>
+                </td>
+            </tr>
+        </tfoot>
+	</table>
 {% endblock %}
+	
