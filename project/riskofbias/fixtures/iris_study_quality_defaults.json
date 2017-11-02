@@ -11,7 +11,51 @@
           "required_epi": false,
           "short_name": "Reporting",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -26,7 +70,51 @@
           "required_epi": true,
           "short_name": "Allocation",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Blinding of investigators, particularly during outcome assessment",
@@ -35,7 +123,51 @@
           "required_epi": false,
           "short_name": "Blinding",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Participant selection",
@@ -44,7 +176,51 @@
           "required_epi": true,
           "short_name": "Participant",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -59,7 +235,51 @@
           "required_epi": false,
           "short_name": "Control",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -74,7 +294,51 @@
           "required_epi": false,
           "short_name": "Lack of selective data",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -89,7 +353,51 @@
           "required_epi": false,
           "short_name": "Characterization",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Utility of the exposure design for the endpoint of interest",
@@ -98,7 +406,51 @@
           "required_epi": false,
           "short_name": "Utility",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Exposure measures",
@@ -107,7 +459,51 @@
           "required_epi": true,
           "short_name": "Measures",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -122,7 +518,51 @@
           "required_epi": false,
           "short_name": "Sensitivity",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Presentation of results",
@@ -131,7 +571,51 @@
           "required_epi": false,
           "short_name": "Presentation",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Outcome measures",
@@ -140,7 +624,51 @@
           "required_epi": true,
           "short_name": "Outcome",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -155,7 +683,51 @@
           "required_epi": true,
           "short_name": "Confounding",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -170,7 +742,51 @@
           "required_epi": true,
           "short_name": "Analysis",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -185,7 +801,51 @@
           "required_epi": true,
           "short_name": "Selective",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -200,7 +860,51 @@
           "required_epi": false,
           "short_name": "Internal validity",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -215,7 +919,51 @@
           "required_epi": true,
           "short_name": "Study sensitivity",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     },
@@ -230,7 +978,51 @@
           "required_epi": false,
           "short_name": "Overall confidence",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         },
         {
           "name": "Overall study confidence domain (epi)",
@@ -239,7 +1031,51 @@
           "required_epi": true,
           "short_name": "Overall confidence",
           "hide_description": false,
-          "use_short_name": false
+          "use_short_name": false,
+          "answers": [
+            {
+              "answer_choice": "Not reported",
+              "answer_symbol": "NR",
+              "answer_score": 10,
+              "answer_shade": "#FFCC00",
+              "answer_order": 1
+            },
+            {
+              "answer_choice": "Critically deficient",
+              "answer_symbol": "--",
+              "answer_score": 1,
+              "answer_shade": "#CC3333",
+              "answer_order": 2
+            },
+            {
+              "answer_choice": "Poor",
+              "answer_symbol": "-",
+              "answer_score": 2,
+              "answer_shade": "#FFCC00",
+              "answer_order": 3
+            },
+            {
+              "answer_choice": "Adequate",
+              "answer_symbol": "+",
+              "answer_score": 3,
+              "answer_shade": "#6FFF00",
+              "answer_order": 4
+            },
+            {
+              "answer_choice": "Good",
+              "answer_symbol": "++",
+              "answer_score": 4,
+              "answer_shade": "#00CC00",
+              "answer_order": 5
+            },
+            {
+              "answer_choice": "Not applicable",
+              "answer_symbol": "-",
+              "answer_score": 0,
+              "answer_shade": "#FFCC00",
+              "answer_order": 6
+            }
+          ]
         }
       ]
     }
