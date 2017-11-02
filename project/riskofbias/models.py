@@ -379,116 +379,51 @@ class RiskOfBias(models.Model):
 
 
 class RiskOfBiasMetricAnswers(models.Model):
-    """Possible metric scores"""
-    NOT_REPORTED = 10
-    CRITICALLY_DEFICIENT = 1
-    POOR = 2
-    ADEQUATE = 3
-    GOOD = 4
-    NOT_APPLICABLE = 0
+    metric = models.ForeignKey(
+        RiskOfBiasMetric,
+        related_name='answers')
+    answer_choice = models.TextField(
+        default = 'Not reported',
+        blank=False
+    )
+    answer_symbol = models.TextField(
+        default = 'NR',
+        blank=False
+    )
+    answer_score = models.PositiveSmallIntegerField(
+        default = 10
+    )
+    answer_shade = models.CharField(
+        max_length=7,
+        default = '#FFCC00'
+    )
+    answer_order = models.IntegerField(
+        default = 1
+    )
+    class Meta:
+        verbose_name_plural = "Risk of bias metric answers"
+        ordering = ('metric', 'answer_order')
 
-    """Possible metric choices"""
-    NOT_REPORTED_STRING = 'Not reported'
-    CRITICALLY_DEFICIENT_STRING = 'Critically deficient'
-    POOR_STRING = 'Poor'
-    ADEQUATE_STRING = 'Adequate'
-    GOOD_STRING = 'Good'
-    NOT_APPLICABLE_STRING = 'Not applicable'
+class RiskOfBiasAnswersRecorded(models.Model):
+    riskofbias = models.ForeignKey(
+        RiskOfBias,
+        related_name='answers_recorded'
+    )
+    answers = models.ForeignKey(
+        RiskOfBiasMetricAnswers,
+        related_name='answers_recorded'
+    )
+    recorded_score = models.PositiveSmallIntegerField(
+        default = 10
+    )
+    recorded_notes = models.TextField(
+        blank=True
+    )
+    created = models.DateTimeField(
+        auto_now_add=True)
+    last_updated = models.DateTimeField(
+        auto_now=True)
 
-    """Possible metric symbols"""
-    NOT_REPORTED_SYMBOL = 'NR'
-    CRITICALLY_DEFICIENT_SYMBOL = '--'
-    POOR_SYMBOL = '-'
-    ADEQUATE_SYMBOL = '+'
-    GOOD_SYMBOL = '++'
-    NOT_APPLICABLE_SYMBOL = '-'
-
-    """Possible metric shades"""
-    NOT_REPORTED_SHADE = '#FFCC00'
-    CRITICALLY_DEFICIENT_SHADE = '#CC3333'
-    POOR_SHADE = '#FFCC00'
-    ADEQUATE_SHADE = '#6FFF00'
-    GOOD_SHADE = '#00CC00'
-    NOT_APPLICABLE_SHADE = '#FFCC00'
-
-    choice_one = models.TextField(
-        default=NOT_REPORTED_STRING
-    )
-    choice_two = models.TextField(
-        default=CRITICALLY_DEFICIENT_STRING
-    )
-    choice_three = models.TextField(
-        default=POOR_STRING
-    )
-    choice_four = models.TextField(
-        default=ADEQUATE_STRING
-    )
-    choice_five = models.TextField(
-        default=GOOD_STRING
-    )
-    choice_six = models.TextField(
-        default=NOT_APPLICABLE_STRING
-    )
-    symbol_one = models.TextField(
-        default=NOT_REPORTED_SYMBOL
-    )
-    symbol_two = models.TextField(
-        default=CRITICALLY_DEFICIENT_SYMBOL
-    )
-    symbol_three = models.TextField(
-        default=POOR_SYMBOL
-    )
-    symbol_four = models.TextField(
-        default=ADEQUATE_SYMBOL
-    )
-    symbol_five = models.TextField(
-        default=GOOD_SYMBOL
-    )
-    symbol_six = models.TextField(
-        default=NOT_APPLICABLE_SYMBOL
-    )
-    score_one = models.PositiveSmallIntegerField(
-        default=NOT_REPORTED
-    )
-    score_two = models.PositiveSmallIntegerField(
-        default=CRITICALLY_DEFICIENT
-    )
-    score_three = models.PositiveSmallIntegerField(
-        default=POOR
-    )
-    score_four = models.PositiveSmallIntegerField(
-        default=ADEQUATE
-    )
-    score_five = models.PositiveSmallIntegerField(
-        default=GOOD
-    )
-    score_six = models.PositiveSmallIntegerField(
-        default=NOT_APPLICABLE
-    )
-    shade_one = models.CharField(
-        max_length=7,
-        default=NOT_REPORTED_SHADE
-    )
-    shade_two = models.CharField(
-        max_length=7,
-        default=CRITICALLY_DEFICIENT_SHADE
-    )
-    shade_three = models.CharField(
-        max_length=7,
-        default=POOR_SHADE
-    )
-    shade_four = models.CharField(
-        max_length=7,
-        default=ADEQUATE_SHADE
-    )
-    shade_five = models.CharField(
-        max_length=7,
-        default=GOOD_SHADE
-    )
-    shade_six = models.CharField(
-        max_length=7,
-        default=NOT_APPLICABLE_SHADE
-    )
 class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
