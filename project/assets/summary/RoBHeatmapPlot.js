@@ -117,6 +117,16 @@ class RoBHeatmapPlot extends D3Visualization {
                    .uniq()
                    .value();
 
+var temp = metrics + '';
+var str = temp.split(',');
+var arrayLength = str.length;
+
+for (var i = 0; i < arrayLength; i++) {
+    str[i] = str[i] + '/n';
+}
+var thisString = str.join();
+alert(thisString);
+
         if(this.firstPass){
             _.extend(this.padding, {
                 top:             this.data.settings.padding_top,

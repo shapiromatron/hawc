@@ -19,7 +19,6 @@ from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 
 from . import managers
 
-
 class Criteria(models.Model):
     objects = managers.CriteriaManager()
 

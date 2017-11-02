@@ -46,6 +46,8 @@ urlpatterns = [
         include('riskofbias.urls', namespace='riskofbias')),
     url(r'^mgmt/',
         include('mgmt.urls', namespace='mgmt')),
+    url(r'^extract/',
+        include('extract.urls', namespace='extract')),
 
     # Error-pages
     url(r'^403/$',

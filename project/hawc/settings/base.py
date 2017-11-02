@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'bmd',
     'summary',
     'mgmt',
+    'extract',
 )
 
 

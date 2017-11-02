@@ -254,3 +254,11 @@ class AssessmentEndpointList(AssessmentViewset):
             .annotate(outcome_count=Count('baseendpoint__outcome'))\
             .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
         return queryset
+
+class ExtractViewset(viewsets.ReadOnlyModelViewSet):
+    assessment_filter_args = ""
+    permission_classes = (AssessmentLevelPermissions, )
+    filter_backends = (InAssessmentFilter, )
+
+    def get_queryset(self):
+        return self.model.objects.all()
