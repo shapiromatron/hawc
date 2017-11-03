@@ -42,6 +42,8 @@
     </div>
     {% endif %}
   </h1>
+  <h3 onclick="$('#RoBStudies').toggle();$('#RoBSOpen').toggle();$('#RoBSClose').toggle();">Risk of Bias Domains for Studies [<span id="RoBSOpen" style="display:none;">+</span><span id="RoBSClose">-</span>]</h3>
+  <div id="RoBStudies">
   <p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
 
   {% if crud == "Update" %}
@@ -111,5 +113,14 @@
       {% endfor %}
     </table>
   {% endfor %}
+  </div>
+  <h3 onclick="$('#RoBEndpoints').toggle();$('#RoBEOpen').toggle();$('#RoBEClose').toggle();">Risk of Bias Domains for Endpoints [<span id="RoBEOpen" style="display:none;">+</span><span id="RoBEClose">-</span>]</h3>
+  <div id="RoBEndpoints">
+   <p>When an endpoint is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each endpoint.
+   Risk of Bias metrics are organized by domain. The following questions are required for evaluation for {{assessment}}.</p>
+   {% if crud == "Update" %}
+      <a class="btn btn-info" href="{% url 'riskofbias:robd_create' assessment.pk %}">Create a new domain</a>
+   {% endif %}
 
+  </div>
 {% endblock %}

@@ -23,9 +23,30 @@
         </ul>
     </div>
   </h2>
+  <h3 onclick="$('#taskTable').toggle();$('#tTOpen').toggle();$('#tTClose').toggle();">Study Assignments [<span id="tTOpen" style="display:none;">+</span><span id="tTClose">-</span>]</h3>
 
   <div id='taskTable'></div>
-
+  
+  <h3 onclick="$('#EndpointTable').toggle();$('#eTOpen').toggle();$('#eTClose').toggle();">Endpoint Assignments [<span id="eTOpen" style="display:none;">+</span><span id="eTClose">-</span>]</h3>
+  <div id="EndpointTable">
+	<div class="flexRow-container">
+		<h5 class="flex-1">Study</h5>
+		<h5 class="flex-1">Experiment</h5>
+		<h5 class="flex-1">Animal group</h5>
+		<h5 class="flex-1">Endpoint</h5>
+		<h5 class="flex-1">Risk of bias completed</h5>
+	</div>
+	<div>
+		<div>
+			<div class="flexRow-container taskStudy">
+				<div class="study-label flex-1"><a href="/study/282165/" target="_blank">NTP 2008</a><br><b>Date created: </b><span>06/08/2017</span></div>
+				<div class="task-0 flex-1 relative-parent"><a href="/ani/experiment/1683/" target="_blank">2-year cancer bioassay in F344/N rats and B6C3F1 mice</a></div>
+				<div class="task-1 flex-1 relative-parent"><a href="/ani/animal-group/3056/" target="_blank">Female B6C3F1 mice</a></div>
+				<div class="task-2 flex-1 relative-parent"><a href="/ani/endpoint/27493/" target="_blank">Adenomas of the duodenum</a></div>
+				<div class="task-3 flex-1 relative-parent"><i title="Edit this task" class="fa fa-pencil-square-o edit-icon" aria-hidden="true" style="cursor: pointer;"></i><div class="taskLabel"><div><b>Status: </b><i class="fa fa-circle" style="padding-left: 5px; padding-right: 5px; color: rgb(255, 204, 0);"></i><!-- react-text: 87 -->Started<!-- /react-text --></div><div><b>Owner: </b><!-- react-text: 90 -->Alan Sasso<!-- /react-text --></div><!-- react-empty: 91 --></div></div>
+			</div>
+		</div>
+    </div>
 {% endblock %}
 
 
