@@ -381,7 +381,9 @@ class RiskOfBias(models.Model):
 class RiskOfBiasMetricAnswers(models.Model):
     metric = models.ForeignKey(
         RiskOfBiasMetric,
-        related_name='answers')
+        related_name='answers',
+        null=True,
+        blank=True)
     answer_choice = models.TextField(
         default = 'Not reported',
         blank=False
