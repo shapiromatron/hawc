@@ -112,6 +112,7 @@
             </ul>
           </td>
         </tr>
+
         <tr>
           <th>Team member(s)</th>
           <td>
@@ -122,6 +123,7 @@
             </ul>
           </td>
         </tr>
+
         <tr>
           <th>Reviewer(s)</th>
           <td>
@@ -132,23 +134,24 @@
             </ul>
           </td>
         </tr>
-      {% endif %}
 
-      <tr>
-        <th>Editable</th>
-        <td>{{object.editable}}</td>
-      </tr>
+        <tr>
+          <th>Editable</th>
+          <td>{{object.editable}}</td>
+        </tr>
 
-      <tr>
-        <th>Public</th>
-        <td>{{object.public}}</td>
-      </tr>
+        <tr>
+          <th>Public</th>
+          <td>{{object.public}}</td>
+        </tr>
 
-      {% if object.public %}
-      <tr>
-        <th>Hidden on public page?</th>
-        <td>{{object.hide_from_public_page}}</td>
-      </tr>
+        {% if object.public %}
+          <tr>
+            <th>Hidden on public page?</th>
+            <td>{{object.hide_from_public_page}}</td>
+          </tr>
+        {% endif %}
+
       {% endif %}
 
       {% if object.conflicts_of_interest %}
