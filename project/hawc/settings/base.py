@@ -302,3 +302,9 @@ WEBPACK_LOADER = {
         'IGNORE': ['.+/.map']
     }
 }
+
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', None)
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_USER', None)
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_PASSWORD', None)
+EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
+EMAIL_USE_SSL = bool(os.environ.get('DJANGO_EMAIL_USE_SSL') == 'True')

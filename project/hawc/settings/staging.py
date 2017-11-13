@@ -8,9 +8,15 @@ CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split('|')
 
-EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = os.environ.get('MAILGUN_ACCESS_KEY')
-MAILGUN_SERVER_NAME = os.environ.get('MAILGUN_SERVER_NAME')
+if os.environ.get('DJANGO_EMAIL_BACKEND') == 'SMTP':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+elif os.environ.get('DJANGO_EMAIL_BACKEND') == 'MAILGUN':
+    INSTALLED_APPS += 'anymail'
+    EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+    ANYMAIL = {
+        'MAILGUN_API_KEY': os.environ.get('MAILGUN_ACCESS_KEY'),
+        'MAILGUN_SENDER_DOMAIN': os.environ.get('MAILGUN_SERVER_NAME'),
+    }
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
