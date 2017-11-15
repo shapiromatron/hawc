@@ -223,6 +223,38 @@ class RoBMetricDelete(BaseDelete):
                             kwargs={'pk': self.assessment.pk})
 
 
+# Risk of bias metric views for custom or default answers
+class RoBMetricAnswersCreate(BaseCreate):
+    parent_model = models.RiskOfBiasMetric
+    parent_template_name = 'metric'
+    model = models.RiskOfBiasMetricAnswers
+    #form_class = forms.RoBMetricForm
+    success_message  = 'Risk of bias metric answers creates.'
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
+
+
+class RoBMetricAnswersUpdate(BaseUpdate):
+    model = models.RiskOfBiasMetricAnswers
+    #form_class = forms.RoBMetricForm
+    success_message = 'Risk of bias metric answers updated.'
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
+
+
+class RoBMetricAnswersDelete(BaseDelete):
+    success_message = 'Risk of bias metric answers deleted.'
+    model = models.RiskOfBiasMetricAnswers
+
+    def get_success_url(self):
+        return reverse_lazy('riskofbias:arob_update',
+                            kwargs={'pk': self.assessment.pk})
+
+
 # Risk of bias views for study
 class StudyRoBExport(StudyList):
     """
