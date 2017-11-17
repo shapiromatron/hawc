@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register(r'domain', api.RiskOfBiasDomain, base_name='domain')
 router.register(r'review', api.RiskOfBias, base_name='review')
 router.register(r'metrics', api.AssessmentMetricViewset, base_name='metrics')
+router.register(r'answers', api.AssessmentMetricAnswersViewSet, base_name='answers')
 router.register(r'metrics/scores', api.AssessmentMetricScoreViewset, base_name='metric_scores')
 router.register(r'scores', api.AssessmentScoreViewset, base_name='scores')
 
@@ -54,6 +55,17 @@ urlpatterns = [
     url(r'^metric/(?P<pk>\d+)/delete/$',
         views.RoBMetricDelete.as_view(),
         name='robm_delete'),
+
+    # modify metric answers
+    url(r'^metric/(?P<pk>\d+)/answers/create/$',
+        views.RoBMetricAnswersCreate.as_view,
+        name='robm_answers_create'),
+    url(r'^answers/(?P<pk>\d+)/edit/$',
+        views.RoBMetricAnswersUpdate.as_view(),
+        name='robm_answers_update'),
+    url(r'answers/(?P<pk>\d+)/delete/$',
+        views.RoBMetricAnswersDelete.as_view(),
+        name='robm_answers_delete'),
 
     # risk of bias reviewers
     url(r'^assessment/(?P<pk>\d+)/study-assignments/$',
