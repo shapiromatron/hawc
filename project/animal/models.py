@@ -1183,7 +1183,7 @@ class ConfidenceIntervalsMixin(object):
             n = eg.get('n')
             update = False
 
-            if lower_ci is not None or upper_ci is not None or n is None:
+            if lower_ci is not None or upper_ci is not None or n is None or n <= 0:
                 continue
 
             if (data_type == "C" and eg['response'] is not None and eg['stdev'] is not None):
