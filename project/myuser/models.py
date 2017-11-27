@@ -38,6 +38,9 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return '{0} {1}'.format(self.first_name, self.last_name).strip()
 
+    def get_short_name(self):
+        return self.first_name
+
     def get_assessments(self):
         Assessment = apps.get_model('assessment', 'Assessment')
         return Assessment.objects.get_viewable_assessments(self)
