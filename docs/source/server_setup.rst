@@ -54,15 +54,15 @@ please specify in the docker-compose `.env` file (example secrets below):
     PHANTOMJS_PATH=/usr/local/bin/phantomjs
     PUBMED_EMAIL=myEmail@email.com
 
-    # email - to use SMTP
+    # email (use these settings if using SMTP)
     DJANGO_EMAIL_BACKEND=SMTP
-    EMAIL_HOST = smtpHost
-    EMAIL_HOST_USER = smtpHostUsername
-    EMAIL_HOST_PASSWORD = smtpHostPassword
-    EMAIL_PORT = smtpPortNumber
-    EMAIL_USE_SSL = [True or False]
+    EMAIL_HOST=smtpHost
+    EMAIL_HOST_USER=smtpHostUsername
+    EMAIL_HOST_PASSWORD=smtpHostPassword
+    EMAIL_PORT=smtpPortNumber
+    EMAIL_USE_SSL=[True or False]
 
-    # email - to use mailgun
+    # email (use these settings if using mailgun)
     DJANGO_EMAIL_BACKEND=MAILGUN
     MAILGUN_ACCESS_KEY=myMailgunAccessKey
     MAILGUN_SERVER_NAME=myMailgunServerName
