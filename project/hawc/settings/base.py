@@ -176,6 +176,7 @@ STATICFILES_FINDERS = (
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'public', 'media')
+FILE_UPLOAD_PERMISSIONS = 0o755
 
 
 # Filesystem settings

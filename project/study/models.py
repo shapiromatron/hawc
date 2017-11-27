@@ -350,7 +350,7 @@ class Study(Reference):
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
-    
+
     study = models.ForeignKey(Study, related_name="attachments")
     attachment = models.FileField(upload_to="study-attachment")
 
