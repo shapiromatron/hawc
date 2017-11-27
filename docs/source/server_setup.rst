@@ -50,17 +50,22 @@ please specify in the docker-compose `.env` file (example secrets below):
     DJANGO_CACHE_LOCATION=redis://redis:6379/0
     DJANGO_BROKER_URL=redis://redis:6379/1
     DJANGO_CELERY_RESULT_BACKEND=redis://redis:6379/2
-    DJANGO_EMAIL_BACKEND=[SMTP or MAILGUN]
+    CHEMSPIDER_TOKEN=myChemspiderToken
+    PHANTOMJS_PATH=/usr/local/bin/phantomjs
+    PUBMED_EMAIL=myEmail@email.com
+
+    # email - to use SMTP
+    DJANGO_EMAIL_BACKEND=SMTP
     EMAIL_HOST = smtpHost
     EMAIL_HOST_USER = smtpHostUsername
     EMAIL_HOST_PASSWORD = smtpHostPassword
     EMAIL_PORT = smtpPortNumber
     EMAIL_USE_SSL = [True or False]
+
+    # email - to use mailgun
+    DJANGO_EMAIL_BACKEND=MAILGUN
     MAILGUN_ACCESS_KEY=myMailgunAccessKey
     MAILGUN_SERVER_NAME=myMailgunServerName
-    CHEMSPIDER_TOKEN=myChemspiderToken
-    PHANTOMJS_PATH=/usr/local/bin/phantomjs
-    PUBMED_EMAIL=myEmail@email.com
 
     # required if using BMDS
     BMDS_HOST=http://bmdhost.com
