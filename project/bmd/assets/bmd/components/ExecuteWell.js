@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class ExecuteWell extends React.Component {
@@ -57,10 +58,10 @@ class ExecuteWell extends React.Component {
 }
 
 ExecuteWell.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    handleExecute: React.PropTypes.func.isRequired,
-    validationErrors: React.PropTypes.array.isRequired,
-    isExecuting: React.PropTypes.bool.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    handleExecute: PropTypes.func.isRequired,
+    validationErrors: PropTypes.array.isRequired,
+    isExecuting: PropTypes.bool.isRequired,
 };
 
 export default ExecuteWell;

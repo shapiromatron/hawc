@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class EditableModalFooter extends React.Component {
@@ -40,9 +41,9 @@ class EditableModalFooter extends React.Component {
 }
 
 EditableModalFooter.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    handleSave: React.PropTypes.func.isRequired,
-    handleDelete: React.PropTypes.func.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    handleSave: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
 };
 
 export default EditableModalFooter;

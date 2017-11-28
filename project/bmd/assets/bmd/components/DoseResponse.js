@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class DoseResponse extends React.Component {
@@ -34,7 +35,7 @@ class DoseResponse extends React.Component {
 }
 
 DoseResponse.propTypes = {
-    endpoint: React.PropTypes.object.isRequired,
+    endpoint: PropTypes.object.isRequired,
 };
 
 export default DoseResponse;

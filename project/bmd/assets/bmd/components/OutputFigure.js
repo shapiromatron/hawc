@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
     BMDLine,
@@ -67,9 +68,9 @@ class OutputFigure extends React.Component {
 }
 
 OutputFigure.propTypes = {
-    endpoint: React.PropTypes.object.isRequired,
-    hoverModel: React.PropTypes.object,
-    selectedModel: React.PropTypes.object,
+    endpoint: PropTypes.object.isRequired,
+    hoverModel: PropTypes.object,
+    selectedModel: PropTypes.object,
 };
 
 export default OutputFigure;

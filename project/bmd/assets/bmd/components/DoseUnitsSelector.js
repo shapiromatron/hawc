@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class DoseUnitsSelector extends React.Component {
@@ -49,11 +50,11 @@ class DoseUnitsSelector extends React.Component {
 }
 
 DoseUnitsSelector.propTypes = {
-    version: React.PropTypes.string.isRequired,
-    editMode: React.PropTypes.bool.isRequired,
-    endpoint: React.PropTypes.object.isRequired,
-    doseUnits: React.PropTypes.number.isRequired,
-    handleUnitsChange: React.PropTypes.func.isRequired,
+    version: PropTypes.string.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    endpoint: PropTypes.object.isRequired,
+    doseUnits: PropTypes.number.isRequired,
+    handleUnitsChange: PropTypes.func.isRequired,
 };
 
 export default DoseUnitsSelector;

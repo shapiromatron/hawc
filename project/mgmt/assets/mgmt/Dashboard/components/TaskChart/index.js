@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import _ from 'underscore';
 import React, { PureComponent, PropTypes } from 'react';
+=======
+import _ from 'lodash';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+>>>>>>> 9430911... rebase proptypes
 import d3 from 'd3';
 
 import BarChart from 'Graphing/BarChart';

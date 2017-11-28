@@ -1,7 +1,8 @@
 import _ from 'underscore';
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import {asLabel} from 'bmd/models/bmr';
+import { asLabel } from 'bmd/models/bmr';
 
 import RecommendationTable from './RecommendationTable';
 
@@ -146,12 +147,12 @@ class Recommendation extends React.Component {
 }
 
 Recommendation.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    selectedModelId: React.PropTypes.number,
-    selectedModelNotes: React.PropTypes.string.isRequired,
-    handleSaveSelected: React.PropTypes.func.isRequired,
-    models: React.PropTypes.array.isRequired,
-    bmrs: React.PropTypes.array.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    selectedModelId: PropTypes.number,
+    selectedModelNotes: PropTypes.string.isRequired,
+    handleSaveSelected: PropTypes.func.isRequired,
+    models: PropTypes.array.isRequired,
+    bmrs: PropTypes.array.isRequired,
 };
 
 export default Recommendation;

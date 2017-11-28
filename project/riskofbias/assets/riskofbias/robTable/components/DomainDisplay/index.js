@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import MetricDisplay from 'riskofbias/robTable/components/MetricDisplay';
 import MetricForm from 'riskofbias/robTable/components/MetricForm';

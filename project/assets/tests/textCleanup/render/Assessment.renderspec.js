@@ -1,5 +1,5 @@
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
 
@@ -32,7 +32,7 @@ describe('textCleanup Assessment component', () => {
             name: 'test assessment',
         };
 
-        renderer = TestUtils.createRenderer();
+        renderer = ReactTestUtils.createRenderer();
         renderer.render(<Assessment object={object} />);
         output = renderer.getRenderOutput();
     });

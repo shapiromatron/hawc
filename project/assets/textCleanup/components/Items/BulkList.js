@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import BulkForm from 'textCleanup/containers/Items/BulkForm';
 import h from 'textCleanup/utils/helpers';

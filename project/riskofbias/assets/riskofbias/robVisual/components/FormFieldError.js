@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 
 class FormFieldError extends Component {

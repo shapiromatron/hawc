@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import AssessmentLabel from 'mgmt/TaskAssignments/components/AssessmentLabel';
 import StudyLabel from 'mgmt/TaskAssignments/components/StudyLabel';

@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import * as types from 'bmd/constants';
 
@@ -205,10 +206,10 @@ class ModelOptionModal extends React.Component {
 }
 
 ModelOptionModal.propTypes = {
-    model: React.PropTypes.object,
-    editMode: React.PropTypes.bool.isRequired,
-    handleSave: React.PropTypes.func.isRequired,
-    handleDelete: React.PropTypes.func.isRequired,
+    model: PropTypes.object,
+    editMode: PropTypes.bool.isRequired,
+    handleSave: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
 };
 
 export default ModelOptionModal;

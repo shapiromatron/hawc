@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class EditNode extends React.Component {
 
@@ -95,13 +96,13 @@ class EditNode extends React.Component {
 }
 
 EditNode.propTypes = {
-    parent: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    parentOptions: React.PropTypes.array.isRequired,
-    handleCancel: React.PropTypes.func.isRequired,
-    handleCreate: React.PropTypes.func,
-    handleUpdate: React.PropTypes.func,
-    handleDelete: React.PropTypes.func,
+    parent: PropTypes.number.isRequired,
+    node: PropTypes.object.isRequired,
+    parentOptions: PropTypes.array.isRequired,
+    handleCancel: PropTypes.func.isRequired,
+    handleCreate: PropTypes.func,
+    handleUpdate: PropTypes.func,
+    handleDelete: PropTypes.func,
 };
 
 export default EditNode;

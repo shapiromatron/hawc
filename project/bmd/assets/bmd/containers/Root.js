@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 
 import { loadConfig } from 'shared/actions/Config';
@@ -27,7 +28,7 @@ class Root extends React.Component {
 }
 
 Root.propTypes = {
-    store: React.PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired,
 };
 
 export default Root;

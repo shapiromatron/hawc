@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class BMROptionTable extends React.Component {
@@ -76,10 +77,10 @@ class BMROptionTable extends React.Component {
 }
 
 BMROptionTable.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    handleCreateBmr: React.PropTypes.func.isRequired,
-    handleModalDisplay: React.PropTypes.func.isRequired,
-    bmrs: React.PropTypes.array.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    handleCreateBmr: PropTypes.func.isRequired,
+    handleModalDisplay: PropTypes.func.isRequired,
+    bmrs: PropTypes.array.isRequired,
 };
 
 export default BMROptionTable;

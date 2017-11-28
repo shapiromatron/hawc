@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import FormFieldError from 'textCleanup/components/FormFieldError';
 import h from 'textCleanup/utils/helpers';

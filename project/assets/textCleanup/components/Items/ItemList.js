@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import BulkList from './BulkList';
 import Header from './Header';
@@ -26,8 +27,8 @@ ItemList.propTypes = {
     ).isRequired,
     params: PropTypes.shape({
         field: PropTypes.string.isRequired,
-        id: React.PropTypes.string.isRequired,
-        type: React.PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
     }).isRequired,
 };
 
