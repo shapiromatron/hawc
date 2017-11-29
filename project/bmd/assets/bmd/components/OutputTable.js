@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -75,9 +75,9 @@ class OutputTable extends React.Component {
                                 onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMDL}</td>,
                         ];
                     })
-                    .flatten()
+                    .flattenDeep()
                     .value(),
-            id = _.contains(_.pluck(models, 'id'), this.props.selectedModelId)? 'bmd_selected_model': '';
+            id = _.includes(_.map(models, 'id'), this.props.selectedModelId)? 'bmd_selected_model': '';
 
         return (
             <tr key={first.id}
@@ -110,7 +110,7 @@ class OutputTable extends React.Component {
                         <th key={i+'bmdl'} style={{width: widths.nums}}>BMDL<br/><span>({lbl})</span></th>,
                     ];
                 })
-                .flatten()
+                .flattenDeep()
                 .value();
 
         return (

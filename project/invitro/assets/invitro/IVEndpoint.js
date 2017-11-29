@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
@@ -110,7 +110,7 @@ class IVEndpoint {
            .add_tbody_tr('Trend test notes', this.data.trend_test_notes)
            .add_tbody_tr('Endpoint notes', this.data.endpoint_notes)
            .add_tbody_tr('Result notes', this.data.result_notes)
-           .add_tbody_tr_list('Effects', _.pluck(this.data.effects, 'name'))
+           .add_tbody_tr_list('Effects', _.map(this.data.effects, 'name'))
            .add_tbody_tr_list('Benchmarks', this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
@@ -183,7 +183,7 @@ class IVEndpoint {
             `<a href=${this.chemical.data.url} target="_blank">${this.chemical.data.name}</a>`,
             endpoint,
             this.data.effect ? this.data.effect : '--',
-            this.data.effects.length > 0 ? _.pluck(this.data.effects, 'name').join(', ') : '--',
+            this.data.effects.length > 0 ? _.map(this.data.effects, 'name').join(', ') : '--',
             this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : '--',
             this.data.response_units ? this.data.response_units : '--',
         ];

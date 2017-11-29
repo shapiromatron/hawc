@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import Group from './Group';
 

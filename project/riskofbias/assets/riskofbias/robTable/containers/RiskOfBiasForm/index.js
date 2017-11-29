@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'riskofbias/robTable/actions';
 import Completeness from 'riskofbias/robTable/components/Completeness';
@@ -27,7 +27,7 @@ class RiskOfBiasForm extends Component {
 
     submitForm(e){
         e.preventDefault();
-        let scores = _.flatten(_.map(this.refs, (domain) => {
+        let scores = _.flattenDeep(_.map(this.refs, (domain) => {
             return _.map(domain.refs, (metric) => {
                 let { form } = metric.refs;
                 return {

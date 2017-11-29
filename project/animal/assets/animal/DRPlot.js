@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import D3Plot from 'utils/D3Plot';
@@ -152,10 +152,10 @@ class DRPlot extends D3Plot {
 
     _setPlottableDoseValues(){
         if (this.x_axis_settings.scale_type == 'linear'){
-            this.min_x = d3.min(_.pluck(this.values, 'x'));
+            this.min_x = d3.min(_.map(this.values, 'x'));
             this.x_axis_settings.domain = [this.min_x-this.max_x*this.buff, this.max_x*(1+this.buff)];
         } else {
-            this.min_x = d3.min(_.pluck(this.values, 'x_log'));
+            this.min_x = d3.min(_.map(this.values, 'x_log'));
             this.x_axis_settings.domain = [this.min_x/10, this.max_x*(1+this.buff)];
         }
     }
@@ -587,7 +587,7 @@ class DRPlot extends D3Plot {
                             },
                         ];
                     })
-                    .flatten()
+                    .flattenDeep()
                     .value();
 
         var bmdls = _.chain(lines)
@@ -612,7 +612,7 @@ class DRPlot extends D3Plot {
                             },
                         ];
                     })
-                    .flatten()
+                    .flattenDeep()
                     .value();
 
         var g = this.vis

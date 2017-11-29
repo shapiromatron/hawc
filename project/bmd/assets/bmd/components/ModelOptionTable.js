@@ -96,7 +96,7 @@ class ModelOptionTable extends React.Component {
         } else {
             return <ul>{
                 _.chain(d.overrides)
-                    .pairs()
+                    .toPairs()
                     .filter(function(d2){
                         return (d.defaults[d2[0]].n !== undefined);
                     })

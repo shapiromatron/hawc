@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';
 import h from 'textCleanup/utils/helpers';
@@ -192,7 +193,7 @@ export function initializeBulkEditForm(ids=[], field='system'){
         let state = getState(),
             thisField, object;
         if (ids){
-            thisField = _.findWhere(state.items.list, {id: ids[0]})[field];
+            thisField = _.find(state.items.list, {id: ids[0]})[field];
             object = {
                 ids,
                 [field]: thisField,

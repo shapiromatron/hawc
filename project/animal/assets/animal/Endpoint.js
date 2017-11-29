@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import DescriptiveTable from 'utils/DescriptiveTable';
@@ -76,7 +76,7 @@ class Endpoint extends Observee {
     }
 
     toggle_dose_units(){
-        var units = _.pluck(this.doses, 'key'),
+        var units = _.map(this.doses, 'key'),
             idx = units.indexOf(this.dose_units_id),
             new_idx = (idx < units.length-1) ? (idx+1) : 0;
         this._switch_dose(new_idx);
@@ -133,14 +133,14 @@ class Endpoint extends Observee {
     _get_doses_by_dose_id(id){
         return _.chain(this.data.animal_group.dosing_regime.doses)
                 .filter(function(d){ return d.dose_units.id === id;})
-                .pluck('dose')
+                .map('dose')
                 .value();
     }
 
     _get_doses_units(){
         return _.chain(this.data.animal_group.dosing_regime.doses)
                 .map(function(d){return d.dose_units;})
-                .indexBy('id')
+                .keyBy('id')
                 .values()
                 .value();
     }
@@ -494,13 +494,13 @@ class Endpoint extends Observee {
     hasEGdata(){
         return (
             this.data.groups.length > 0 &&
-            _.any(_.pluck(this.data.groups, 'isReported'))
+            _.some(_.map(this.data.groups, 'isReported'))
         );
     }
 
     defaultDoseAxis(){
         var doses = _.chain(this.data.groups)
-            .pluck('dose')
+            .map('dose')
             .filter(function(d){return d>0;})
             .value();
         doses = d3.extent(doses);

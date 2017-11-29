@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import {
     initializeBulkEditForm,
@@ -23,7 +24,7 @@ class BulkForm extends Component {
     }
 
     getIDs(props) {
-        return _.pluck(props.items, 'id');
+        return _.map(props.items, 'id');
     }
 
     handleBulkSubmit(obj) {

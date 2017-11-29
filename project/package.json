@@ -74,6 +74,7 @@
     "history": "^1.13.1",
     "isomorphic-fetch": "^2.2.1",
     "moment": "^2.11.1",
+    "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
     "quill": "^1.2.6",
     "react": "^15.2.1",
@@ -90,7 +91,6 @@
     "redux-thunk": "^2.1.0",
     "sortablejs": "^1.5.0-rc1",
     "tablesort": "^4.1.0",
-    "underscore": "^1.8.3",
     "velocity-react": "^1.1.5"
   }
 }

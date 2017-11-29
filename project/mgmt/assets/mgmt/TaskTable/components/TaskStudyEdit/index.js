@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
 import TaskForm from 'mgmt/TaskTable/components/TaskForm';

@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import * as types from 'riskofbias/robScoreCleanup/constants';
@@ -127,7 +127,7 @@ export function updateEditMetricIfNeeded() {
             }
         } else {
         // update metricForm to reflect the first selected item
-            let updateItem = _.findWhere(state.items.items, {id: state.items.updateIds[0]});
+            let updateItem = _.find(state.items.items, {id: state.items.updateIds[0]});
             update = addItemToMetric(updateItem, current.values[0]);
             dispatch(updateEditMetric(update));
         }

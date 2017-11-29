@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import CardHeader from './CardHeader';
 import DoseResponseChart from './Graph/DoseResponseChart';
@@ -41,10 +41,10 @@ class EndpointCard extends Component {
                     id: group.dose_group_id,
                 };
             }), (response) => { return response.response !== null; }),
-            ids = _.pluck(responses, 'id'),
+            ids = _.map(responses, 'id'),
             doses = _.map(this.groupByDoseUnit(), (doseGroup) => {
                 return _.filter(doseGroup, (dose) => {
-                    return _.contains(ids, dose.id);
+                    return _.includes(ids, dose.id);
                 });
             });
         return { doses, responses };

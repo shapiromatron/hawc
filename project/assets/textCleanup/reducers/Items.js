@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';
 
@@ -30,7 +30,7 @@ export default function (state=defaultState, action){
 
     case types.ITEM_RECEIVE_OBJECT:
         index = state.list.indexOf(
-            _.findWhere(state.list, {id: action.item.id})
+            _.find(state.list, {id: action.item.id})
         );
         if (index >= 0){
             list = [
@@ -58,7 +58,7 @@ export default function (state=defaultState, action){
 
     case types.ITEM_DELETE_OBJECT:
         index = state.list.indexOf(
-            _.findWhere(state.list, {id: action.id})
+            _.find(state.list, {id: action.id})
         );
         if (index >= 0){
             list = [
@@ -115,7 +115,7 @@ export default function (state=defaultState, action){
         list = state.list;
         ids.map((id) => {
             let index = state.list.indexOf(
-                _.findWhere(state.list, {id})
+                _.find(state.list, {id})
             );
             if (index >= 0){
                 list = [

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import FormFieldError from 'textCleanup/components/FormFieldError';
 import h from 'textCleanup/utils/helpers';

@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';

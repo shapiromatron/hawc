@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';
 import h from 'textCleanup/utils/helpers';
@@ -53,7 +53,7 @@ export function makeAssessmentActive(id){
     return (dispatch, getState) => {
         let state = getState();
         if (state.assessment.isFetching) return;
-        let item = _.findWhere(state.assessment.items, {id});
+        let item = _.find(state.assessment.items, {id});
         if (item){
             dispatch(selectObject(item));
         } else {

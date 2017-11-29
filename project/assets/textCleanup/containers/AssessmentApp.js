@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import { makeAssessmentActive } from 'textCleanup/actions/Assessment';
 import Assessment from 'textCleanup/components/Assessment';
@@ -10,7 +10,7 @@ import Loading from 'shared/components/Loading';
 class App extends Component{
 
     getObject(){
-        return _.findWhere(
+        return _.find(
             this.props.objects,
             {id: parseInt(this.props.params.id)}
         );

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import _ from 'underscore';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Selector from 'riskofbias/robVisual/components/EffectSelector';

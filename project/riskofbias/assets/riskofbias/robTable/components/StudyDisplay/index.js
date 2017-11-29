@@ -27,9 +27,9 @@ class StudyDisplay extends Component {
             let scores = (this.isAllShown())? []: this.props.riskofbias.scores;
             this.setState({scores});
         } else {
-            let domain = _.findWhere(this.props.riskofbias.scores, {key: selection.domain});
+            let domain = _.find(this.props.riskofbias.scores, {key: selection.domain});
             if(selection.metric){
-                let metric = _.findWhere(domain.values, {key: selection.metric});
+                let metric = _.find(domain.values, {key: selection.metric});
                 this.setState({ scores: [Object.assign({}, domain, {values: [metric]})]});
             } else {
                 this.setState({scores: [domain]});

@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import D3Plot from 'utils/D3Plot';
@@ -98,7 +98,7 @@ class Barplot extends D3Plot {
     dose_scale_change(){
         this.get_dataset_info();
         if (this.parent && this.parent.plot === this){
-            this.x_axis_settings.domain = _.pluck(this.values, 'dose');
+            this.x_axis_settings.domain = _.map(this.values, 'dose');
             this.x_scale = this._build_scale(this.x_axis_settings);
             this.x_axis_change_chart_update();
             this.build_x_label();
@@ -217,7 +217,7 @@ class Barplot extends D3Plot {
 
     add_axes() {
         $.extend(this.x_axis_settings, {
-            domain: _.pluck(this.values, 'dose'),
+            domain: _.map(this.values, 'dose'),
             number_ticks: this.values.length,
             rangeRound: [0, this.w],
             x_translate: 0,

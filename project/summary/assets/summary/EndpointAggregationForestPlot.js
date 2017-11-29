@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import D3Visualization from './D3Visualization';
@@ -56,9 +56,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
         _.chain(this.data.endpoints)
         .filter(function(e){return e.hasEGdata();})
         .each(function(e){
-
             egs = _.filter(e.data.groups, function(d){ return d.isReported; });
-
             endpoint_labels.push({
                 endpoint: e,
                 y: (y + (egs.length*0.5)),
@@ -113,7 +111,8 @@ class EndpointAggregationForestPlot extends D3Visualization {
             });
             y += 1;
             lines.push({y, 'endpoint': e.data.name});
-        });
+        })
+        .value();
 
         // remove final spacer-line
         lines.pop();

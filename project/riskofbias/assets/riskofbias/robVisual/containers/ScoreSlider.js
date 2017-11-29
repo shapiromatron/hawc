@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import _ from 'underscore';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Slider from 'riskofbias/robVisual/components/ScoreSlider';
@@ -26,7 +26,7 @@ class ScoreSlider extends Component {
 
     render(){
         let threshold = this.state.threshold,
-            max = _.max(this.props.scores, (item) => {
+            max = _.maxBy(this.props.scores, (item) => {
                 return item.final_score;
             }).final_score;
         return (

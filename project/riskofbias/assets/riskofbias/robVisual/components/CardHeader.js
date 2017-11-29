@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import './CardHeader.css';
 

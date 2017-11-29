@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { fetchModelIfNeeded } from 'textCleanup/actions/Items';
 import FieldList from 'textCleanup/components/FieldList';
@@ -17,7 +18,7 @@ class FieldSelection extends Component {
     render() {
         if(this.props.objects == undefined) return <Loading />;
         let { objects, location, types, params } = this.props,
-            type = _.findWhere(types, {type: params.type}),
+            type = _.find(types, {type: params.type}),
             title = h.caseToWords(type.title),
             url = type.url.substr(0, type.url.lastIndexOf(params.type));
         h.extendBreadcrumbs(url);

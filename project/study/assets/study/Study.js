@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import DescriptiveTable from 'utils/DescriptiveTable';
@@ -17,7 +17,7 @@ class Study{
     constructor(data){
         this.data = data;
         this.riskofbias = [];
-        this.final = _.findWhere(this.data.riskofbiases, {final: true, active: true});
+        this.final = _.find(this.data.riskofbiases, {final: true, active: true});
         if(this.final) this.unpack_riskofbias();
     }
 
@@ -212,7 +212,7 @@ class Study{
     }
 
     format_for_react(riskofbias){
-        let scores = _.flatten(_.map(riskofbias, function(rob){
+        let scores = _.flattenDeep(_.map(riskofbias, function(rob){
             return rob.values;
         }));
         return RiskOfBiasScore.format_for_react(scores);

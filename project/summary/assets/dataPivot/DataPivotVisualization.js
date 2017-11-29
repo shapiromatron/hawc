@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import D3Plot from 'utils/D3Plot';
@@ -98,7 +98,7 @@ class DataPivotVisualization extends D3Plot {
     static sort_with_overrides(arr, sorts, overrides){
         // Return the array of "rows" sorted using any sort fields, and
         // then with manual row-index overrides specified
-        let override_map = _.object(_.pluck(overrides, 'pk'), _.pluck(overrides, 'index')),
+        let override_map = _.zipObject(_.map(overrides, 'pk'), _.map(overrides, 'index')),
             sorted = DataPivotVisualization.sorter(arr, sorts);
         sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
         return sorted;
@@ -352,12 +352,14 @@ class DataPivotVisualization extends D3Plot {
                       .filter(function(d){return d.field_name !== NULL_CASE;})
                       .each(function(d, i){
                           styles['points_' + i] = get_associated_style('symbols', d.marker_style);
-                      });
+                      })
+                      .value();
 
                     _.chain(self.dp_settings.description_settings)
                       .each(function(d, i){
                           styles['text_' + i] = get_associated_style('texts', d.text_style);
-                      });
+                      })
+                      .value();
 
                     return _.extend(d, {'_styles': styles});
                 })
@@ -585,13 +587,13 @@ class DataPivotVisualization extends D3Plot {
 
         // use user-specified domain if valid
         domain = _.map(this.dp_settings.plot_settings.domain.split(','), parseFloat);
-        if ((domain.length === 2) && (_.all(domain, isFinite))){
+        if ((domain.length === 2) && (_.every(domain, isFinite))){
             return domain;
         }
 
         // otherwise calculate domain from data
         fields = _.chain(this.settings.datapoints)
-                    .pluck('field_name')
+                    .map('field_name')
                     .push(bars.low_field_name, bars.high_field_name,
                         barchart.field_name, barchart.error_low_field_name,
                         barchart.error_high_field_name)
@@ -601,7 +603,7 @@ class DataPivotVisualization extends D3Plot {
         return d3.extent(
             _.chain(this.datarows)
                 .map((d) => _.map(fields, (f) => d[f]))
-                .flatten()
+                .flattenDeep()
                 .map(parseFloat)
                 .value()
         );

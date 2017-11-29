@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import _ from 'underscore';
-import React, { PureComponent, PropTypes } from 'react';
-=======
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
->>>>>>> 9430911... rebase proptypes
 import d3 from 'd3';
 
 import BarChart from 'Graphing/BarChart';
@@ -13,7 +8,7 @@ import XAxis from 'Graphing/Axes/xAxis';
 import YAxis from 'Graphing/Axes/yAxisLabeled';
 import './TaskChart.css';
 
-import {STATUS} from 'mgmt/TaskTable/constants';
+import { STATUS } from 'mgmt/TaskTable/constants';
 
 
 class TaskChart extends PureComponent {

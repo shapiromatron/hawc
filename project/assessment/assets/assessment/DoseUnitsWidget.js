@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 
 class DoseUnitsWidget {
@@ -70,7 +70,7 @@ class DoseUnitsWidget {
         });
 
         //set selected
-        var objectsKeymap = _.indexBy(objects, 'id'),
+        var objectsKeymap = _.keyBy(objects, 'id'),
             ids = this.$input.val().split(',')
                 .filter(function(d){return d.length>0;})
                 .map(function(d){return parseInt(d);});

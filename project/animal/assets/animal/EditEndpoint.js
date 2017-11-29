@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import DRPlot from './DRPlot';
 import Endpoint from './Endpoint';
@@ -131,7 +131,8 @@ class EditEndpoint extends Endpoint {
                                  z * Math.sqrt(2*z - (2+1/v.n) + 4*p*(v.n*q+1))) / (2*(v.n+2*z)));
                 v.upper_ci = (((2*v.n*p + 2*z + 1) +
                                  z * Math.sqrt(2*z + (2+1/v.n) + 4*p*(v.n*q-1))) / (2*(v.n+2*z)));
-            });
+            })
+            .value();
     }
 
     _add_continuous_confidence_intervals(){
@@ -150,7 +151,8 @@ class EditEndpoint extends Endpoint {
 
                 v.lower_ci = v.response - se * z;
                 v.upper_ci = v.response + se * z;
-            });
+            })
+            .value();
     }
 }
 

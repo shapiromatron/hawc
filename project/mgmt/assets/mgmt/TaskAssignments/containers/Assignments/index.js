@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import AssessmentTasks from 'mgmt/TaskAssignments/components/AssessmentTasks';
 import FinishedTaskFilter from 'mgmt/TaskAssignments/components/FinishedTaskFilter';

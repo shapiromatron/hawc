@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import { fetchTasks, fetchStudies, filterAndSortStudies, submitTasks } from 'mgmt/TaskTable/actions';
 
@@ -60,7 +60,7 @@ class ListApp extends Component {
         const updatedData = _.chain(this.refs.list.refs)
                     .map((ref) => { return ref.getChangedData(); })
                     .filter((data) => { return !_.isEmpty(data); })
-                    .flatten()
+                    .flattenDeep()
                     .value();
         this.props.dispatch(submitTasks(updatedData));
     }

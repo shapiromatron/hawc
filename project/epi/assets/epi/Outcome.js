@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
@@ -37,7 +37,7 @@ class Outcome {
             .add_tbody_tr('System', this.data.system)
             .add_tbody_tr('Effect', this.data.effect)
             .add_tbody_tr('Effect subtype', this.data.effect_subtype)
-            .add_tbody_tr_list('Effect tags', _.pluck(this.data.effects, 'name'))
+            .add_tbody_tr_list('Effect tags', _.map(this.data.effects, 'name'))
             .add_tbody_tr('Diagnostic', this.data.diagnostic)
             .add_tbody_tr('Diagnostic description', this.data.diagnostic_description)
             .add_tbody_tr('Age of outcome measurement', this.data.age_of_measurement)
@@ -74,9 +74,9 @@ class Outcome {
 
     get_unused_comparison_sets(){
         // get comparison sets associated with no results
-        var usedSets = _.pluck(this.results, 'comparison_set');
+        var usedSets = _.map(this.results, 'comparison_set');
         return _.filter(this.comparison_sets, function(d2){
-            return (!_.any(_.map(usedSets, function(d1){ return d1.isEqual(d2);})));
+            return (!_.some(_.map(usedSets, function(d1){ return d1.isEqual(d2);})));
         });
     }
 

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import BaseTable from 'utils/BaseTable';
@@ -14,9 +14,9 @@ class ResultGroupTable {
     setVisibleCols(){
         let hasData = function(rgs, fld){
             return _.chain(_.map(rgs, 'data'))
-                     .pluck(fld)
+                     .map(fld)
                      .map(_.isNumber)
-                     .any()
+                     .some()
                      .value();
         };
 
@@ -76,17 +76,17 @@ class ResultGroupTable {
                     return 'N';
                 },
                 estimate(){
-                    return (!_.contains([null, 'other'], d.estimate_type))?
+                    return (!_.includes([null, 'other'], d.estimate_type))?
                         `Estimate (${d.estimate_type})`:
                         'Estimate';
                 },
                 variance(){
-                    return (!_.contains([null, 'other'], d.variance_type))?
+                    return (!_.includes([null, 'other'], d.variance_type))?
                         `Variance (${d.variance_type})`:
                         'Variance';
                 },
                 ci(){
-                    let letter = (_.chain(d.results).pluck('ci_calc').any().value())?
+                    let letter = (_.chain(d.results).map('ci_calc').some().value())?
                       fn.add_footnote(`Confidence intervals calculated in HAWC from distributions provided (<a href="${docUrlRoot}reference.html#statistical-methods-used">source</a>).`):
                       '';
 

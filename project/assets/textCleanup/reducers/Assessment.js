@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';
 
@@ -21,7 +21,7 @@ export default function (state=defaultState, action){
 
     case types.AS_RECEIVE_OBJECT:
         index = state.items.indexOf(
-            _.findWhere(state.items, {id: action.item.id})
+            _.find(state.items, {id: action.item.id})
         );
         if (index >= 0){
             items = [

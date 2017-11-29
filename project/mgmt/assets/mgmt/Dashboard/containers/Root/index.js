@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -36,7 +36,7 @@ class Root extends Component {
 
     renderTasksByType(chartData, list){
         let types = _.chain(list)
-            .pluck('type')
+            .map('type')
             .uniq()
             .value();
 

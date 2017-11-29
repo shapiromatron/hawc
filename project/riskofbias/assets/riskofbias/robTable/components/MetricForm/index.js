@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
 import ScoreForm from 'riskofbias/robTable/components/ScoreForm';
@@ -37,7 +37,7 @@ class MetricForm extends Component {
 
     render(){
         let { metric, config, updateNotesLeft } = this.props,
-            formScore = _.findWhere(metric.values, {riskofbias_id: parseInt(config.riskofbias.id)});
+            formScore = _.find(metric.values, {riskofbias_id: parseInt(config.riskofbias.id)});
 
         return (
             <div className='metric-display'>

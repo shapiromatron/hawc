@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import * as types from 'mgmt/TaskTable/constants';
 
 
@@ -27,7 +27,7 @@ function tasks(state=defaultState, action) {
 
     case types.PATCH_TASK:
         index = state.list.indexOf(
-            _.findWhere(state.list, {id: action.task.id})
+            _.find(state.list, {id: action.task.id})
         );
         if (index >= 0){
             list = [

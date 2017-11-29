@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import $ from '$';
 
 import HAWCUtils from 'utils/HAWCUtils';
@@ -33,7 +33,7 @@ class TableField extends InputField {
     toSerialized() {
         this.parent.settings[this.schema.name] =
             _.chain(this.$tbody.children())
-             .map(this.toSerializedRow, this)
+             .map(_.bind(this.toSerializedRow, this))
              .compact()
              .value();
     }
@@ -44,7 +44,7 @@ class TableField extends InputField {
         if (arr.length === 0 && this.schema.addBlankRowIfNone) {
             this.addRow();
         } else {
-            _.each(arr, this.fromSerializedRow, this);
+            _.each(arr, _.bind(this.fromSerializedRow, this));
         }
     }
 
@@ -172,7 +172,7 @@ class ReferenceLineField extends TableField {
             .append(
                 this.addTdFloat('value'),
                 this.addTdText('title'),
-                this.addTdSelect('style', _.pluck(D3Visualization.styles.lines, 'name')),
+                this.addTdSelect('style', _.map(D3Visualization.styles.lines, 'name')),
                 this.tdOrdering()
             ).appendTo(this.$tbody);
     }
@@ -213,7 +213,7 @@ class ReferenceRangeField extends TableField {
                 this.addTdFloat('lower'),
                 this.addTdFloat('upper'),
                 this.addTdText('title'),
-                this.addTdSelect('style', _.pluck(D3Visualization.styles.rectangles, 'name')),
+                this.addTdSelect('style', _.map(D3Visualization.styles.rectangles, 'name')),
                 this.tdOrdering()
             ).appendTo(this.$tbody);
     }
@@ -255,7 +255,7 @@ class ReferenceLabelField extends TableField {
         return $('<tr>')
             .append(
                 this.addTdText('caption'),
-                this.addTdSelect('style', _.pluck(D3Visualization.styles.texts, 'name')),
+                this.addTdSelect('style', _.map(D3Visualization.styles.texts, 'name')),
                 this.addTdInt('max_width', 0),
                 this.addTdInt('x', 0),
                 this.addTdInt('y', 0),

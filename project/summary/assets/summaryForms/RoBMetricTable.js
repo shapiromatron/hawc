@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import $ from '$';
 
 import {
@@ -37,11 +37,11 @@ class RoBMetricTable extends TableField{
         // by default select all metrics if none are selected
         func = (selected.length === 0)?
                 function(d){d.included = true;}:
-                function(d){d.included = _.contains(selected, d.id);};
+                function(d){d.included = _.includes(selected, d.id);};
 
         _.each(metrics, func);
         this.$tbody.empty();
-        _.each(metrics, this.fromSerializedRow, this);
+        _.each(metrics, _.bind(this.fromSerializedRow, this));
     }
 
     fromSerializedRow(d){
