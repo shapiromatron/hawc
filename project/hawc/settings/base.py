@@ -142,9 +142,9 @@ CACHES = {
 
 
 # Email settings
-EMAIL_SUBJECT_PREFIX = '[HAWC] '
-DEFAULT_FROM_EMAIL = 'webmaster@hawcproject.org'
-SERVER_EMAIL = 'webmaster@hawcproject.org'
+EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[HAWC] ')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@hawcproject.org')
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'webmaster@hawcproject.org')
 
 
 # Session and authentication
