@@ -8,7 +8,8 @@
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "build:dev": "webpack --config webpack.config.dev.js",
     "build": "npm run clean && npm run build:webpack",
-    "start": "webpack-dashboard -- node devServer.js",
+    "prettier-watch": "onchange '**/*.js' -- prettier --write {{changed}}",
+    "start": "webpack-dashboard -- node devServer.js && npm run prettier-watch",
     "test": "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint assets"
@@ -43,6 +44,8 @@
     "imports-loader": "^0.7.1",
     "mocha": "^4.0.1",
     "nock": "^9.1.3",
+    "onchange": "^3.2.1",
+    "prettier": "1.8.2",
     "redux-devtools": "^3.4.1",
     "redux-devtools-dock-monitor": "^1.1.2",
     "redux-devtools-log-monitor": "^1.4.0",
