@@ -11,7 +11,7 @@ config.output.publicPath = 'http://localhost:' + port + '/dist/';
 config.plugins.unshift(new HappyPack({
     id: 'js',
     loaders: [{
-        path: 'babel-loader',
+        loader: 'babel-loader',
         options: {
             plugins: [
                 ['transform-object-rest-spread'],
