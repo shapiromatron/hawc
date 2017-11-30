@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reduxReactRouter } from 'redux-router';
-import createHistory from 'history/lib/createBrowserHistory';
+import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
-import createLogger from 'redux-logger';
+import { createLogger } from 'redux-logger';
 
 import routes from 'textCleanup/routes';
 import rootReducer from 'textCleanup/reducers';
