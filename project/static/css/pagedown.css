@@ -1,17 +1,14 @@
-.wmd-panel
-{
-     margin-left: 0%;
-     margin-right: 0%;
-     width: 100%;
+.wmd-panel {
+    margin-left: 0%;
+    margin-right: 0%;
+    width: 100%;
 }
-.wmd-input
-{
+.wmd-input {
     background-color: white;
     border: 1px solid DarkGray;
 }
 
-.wmd-preview
-{
+.wmd-preview {
     margin-top: 10px;
     background-color: white;
 }

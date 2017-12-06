@@ -5,12 +5,12 @@
 .node {
     margin: 0 0 3px;
 }
-.node:hover{
+.node:hover {
     background-color: #efefef;
     cursor: pointer;
 }
 
-.editNodeForm{
+.editNodeForm {
     padding: 1em;
     border: 2px solid black;
     border-radius: 5px;
@@ -20,12 +20,12 @@
 .draggable {
     cursor: pointer;
 }
-.draggable-ghost{
-    opacity: 1.0 !important;
+.draggable-ghost {
+    opacity: 1 !important;
     border-top: 2px solid orange;
     border-bottom: 2px solid orange;
 }
-.draggable-chosen{
+.draggable-chosen {
     background-color: white;
     opacity: 0.3;
 }
