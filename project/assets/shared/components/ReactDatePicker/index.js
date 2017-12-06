@@ -6,13 +6,12 @@ import DatePicker from 'react-datepicker';
 import '../.../../../../../node_modules/react-datepicker/dist/react-datepicker.css';
 
 class ReactDatePicker extends Component {
-
     constructor(props) {
         super(props);
         this.getDatePickerProps = this.getDatePickerProps.bind(this);
         this.onChange = this.onChange.bind(this);
         this.state = {
-            date: props.date ? moment(props.date): null,
+            date: props.date ? moment(props.date) : null,
         };
     }
 
@@ -40,7 +39,12 @@ class ReactDatePicker extends Component {
         const compProps = this.getDatePickerProps();
         return (
             <div>
-                <label htmlFor={compProps.id} className={this.props.labelClassName || ''}>{this.props.label}</label>
+                <label
+                    htmlFor={compProps.id}
+                    className={this.props.labelClassName || ''}
+                >
+                    {this.props.label}
+                </label>
                 <DatePicker {...compProps} />
             </div>
         );

@@ -33,7 +33,7 @@ export const DICHOTOMOUS = 'D';
 export const DICHOTOMOUS_CANCER = 'DC';
 
 export const param_cw = {
-    'd': 'Default',
-    'i': 'Initialized',
-    's': 'Specified',
+    d: 'Default',
+    i: 'Initialized',
+    s: 'Specified',
 };

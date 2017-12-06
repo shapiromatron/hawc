@@ -5,14 +5,15 @@ import DueDateLabel from 'mgmt/TaskTable/components/DueDateLabel';
 import StatusLabel from 'mgmt/TaskTable/components/StatusLabel';
 import { TASK_TYPES } from 'mgmt/TaskTable/constants';
 
-
 class TaskLabel extends Component {
     render() {
         const { id, due_date, status, type } = this.props.task;
         return (
             <div>
                 <StatusLabel task={this.props.task} />
-                <b>Task:</b><span id={`type-${id}-task`}> {TASK_TYPES[type]}</span><br/>
+                <b>Task:</b>
+                <span id={`type-${id}-task`}> {TASK_TYPES[type]}</span>
+                <br />
                 <DueDateLabel status={status} due_date={due_date} />
             </div>
         );

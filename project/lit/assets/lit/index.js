@@ -5,7 +5,6 @@ import TagTree from './TagTree';
 import TagTreeViz from './TagTreeViz';
 import startupSearchReference from './startupSearchReference';
 
-
 export default {
     EditReferenceContainer,
     Reference,

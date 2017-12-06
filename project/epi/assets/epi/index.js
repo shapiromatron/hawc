@@ -6,7 +6,6 @@ import OutcomeListTable from './OutcomeListTable';
 import Result from './Result';
 import StudyPopulation from './StudyPopulation';
 
-
 export default {
     ComparisonSet,
     Exposure,

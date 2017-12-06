@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 import './Select.css';
 
-
 class Select extends Component {
     /**
      * The choices props should be an object, whose key value pairs are the ids
@@ -18,20 +17,26 @@ class Select extends Component {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    handleSelect(e){
+    handleSelect(e) {
         this.props.handleSelect(e.target.value);
     }
 
     render() {
         let { id, value, choices } = this.props;
         return (
-            <select className='react-select'
-                    id={id}
-                    ref='select'
-                    value={value}
-                    onChange={this.handleSelect}>
+            <select
+                className="react-select"
+                id={id}
+                ref="select"
+                value={value}
+                onChange={this.handleSelect}
+            >
                 {_.map(choices, (choice, key) => {
-                    return <option key={key} value={key}>{choice}</option>;
+                    return (
+                        <option key={key} value={key}>
+                            {choice}
+                        </option>
+                    );
                 })}
             </select>
         );

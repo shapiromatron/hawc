@@ -5,10 +5,8 @@ import Endpoint from 'animal/Endpoint';
 import Study from 'study/Study';
 import Visual from 'summary/Visual';
 
-
 class SmartTagModal {
-
-    constructor(span){
+    constructor(span) {
         this.$span = $(span);
         this.type = this.$span.data('type');
         this.pk = this.$span.data('pk');
@@ -16,27 +14,27 @@ class SmartTagModal {
         this.$span.data('_smartTag', this);
     }
 
-    enable(){
+    enable() {
         this.isActive = true;
         this.$span.addClass('active');
     }
 
-    disable(){
+    disable() {
         this.isActive = false;
         this.$span.removeClass('active');
     }
 
-    renderModal(e){
+    renderModal(e) {
         if (!this.isActive) {
             return;
         }
         let Cls = this.getModelClass(this.type);
-        if (Cls){
+        if (Cls) {
             Cls.displayAsModal(this.pk);
         }
     }
 
-    getModelClass(type){
+    getModelClass(type) {
         let map = {
             endpoint: Endpoint,
             study: Study,
@@ -46,6 +44,5 @@ class SmartTagModal {
         return map[this.type];
     }
 }
-
 
 export default SmartTagModal;

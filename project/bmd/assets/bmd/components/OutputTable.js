@@ -4,86 +4,94 @@ import PropTypes from 'prop-types';
 
 import { asLabel } from 'bmd/models/bmr';
 
-
-let getColWidths = function(numBmrs){
-        switch(numBmrs){
-        case 1:
-            return {
-                name: '20%',
-                nums: '14%',
-                view: '10%',
-            };
-        case 2:
-            return {
-                name: '16%',
-                nums: '11%',
-                view: '7%',
-            };
-        case 3:
-            return {
-                name: '12%',
-                nums: '9%',
-                view: '7%',
-            };
-        default:
-            return {
-                name: '1%',
-                nums: '1%',
-                view: '1%',
-            };
+let getColWidths = function(numBmrs) {
+        switch (numBmrs) {
+            case 1:
+                return {
+                    name: '20%',
+                    nums: '14%',
+                    view: '10%',
+                };
+            case 2:
+                return {
+                    name: '16%',
+                    nums: '11%',
+                    view: '7%',
+                };
+            case 3:
+                return {
+                    name: '12%',
+                    nums: '9%',
+                    view: '7%',
+                };
+            default:
+                return {
+                    name: '1%',
+                    nums: '1%',
+                    view: '1%',
+                };
         }
     },
-    binModels = function(models){
+    binModels = function(models) {
         return _.chain(models)
             .groupBy('model_id')
             .values()
             .value();
     };
 
-
-
 class OutputTable extends React.Component {
-
-    handleRowClick(models){
+    handleRowClick(models) {
         this.props.handleModal(models);
     }
 
-    handleMouseOver(model, evt){
+    handleMouseOver(model, evt) {
         if (!evt) return;
         evt.stopPropagation();
         evt.nativeEvent.stopImmediatePropagation();
         this.props.handleModelHover(model);
     }
 
-    handleMouseOut(evt){
+    handleMouseOut(evt) {
         if (!evt) return;
         evt.stopPropagation();
         evt.nativeEvent.stopImmediatePropagation();
         this.props.handleModelNoHover();
     }
 
-    renderRow(models){
+    renderRow(models) {
         let first = models[0],
             bmds = _.chain(models)
-                    .map((d, i)=>{
-                        return [
-                            <td key={i+'bmd'}
-                                onMouseOver={this.handleMouseOver.bind(this, d)}
-                                onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMD}</td>,
-                            <td key={i+'bmdl'}
-                                onMouseOver={this.handleMouseOver.bind(this)}
-                                onMouseOut={this.handleMouseOut.bind(this)}>{d.output.BMDL}</td>,
-                        ];
-                    })
-                    .flattenDeep()
-                    .value(),
-            id = _.includes(_.map(models, 'id'), this.props.selectedModelId)? 'bmd_selected_model': '';
+                .map((d, i) => {
+                    return [
+                        <td
+                            key={i + 'bmd'}
+                            onMouseOver={this.handleMouseOver.bind(this, d)}
+                            onMouseOut={this.handleMouseOut.bind(this)}
+                        >
+                            {d.output.BMD}
+                        </td>,
+                        <td
+                            key={i + 'bmdl'}
+                            onMouseOver={this.handleMouseOver.bind(this)}
+                            onMouseOut={this.handleMouseOut.bind(this)}
+                        >
+                            {d.output.BMDL}
+                        </td>,
+                    ];
+                })
+                .flattenDeep()
+                .value(),
+            id = _.includes(_.map(models, 'id'), this.props.selectedModelId)
+                ? 'bmd_selected_model'
+                : '';
 
         return (
-            <tr key={first.id}
+            <tr
+                key={first.id}
                 onMouseOver={this.handleMouseOver.bind(this, first)}
                 onMouseOut={this.handleMouseOut.bind(this)}
-                id={id}>
+                id={id}
+            >
                 <td>{first.name}</td>
                 <td>{first.output.p_value4}</td>
                 <td>{first.output.AIC}</td>
@@ -92,22 +100,30 @@ class OutputTable extends React.Component {
                 <td>
                     <button
                         type="button"
-                        className='btn btn-link'
-                        onClick={this.handleRowClick.bind(this, models)}>View</button>
+                        className="btn btn-link"
+                        onClick={this.handleRowClick.bind(this, models)}
+                    >
+                        View
+                    </button>
                 </td>
             </tr>
         );
     }
 
-    renderHeader(){
-
+    renderHeader() {
         let widths = getColWidths(this.props.bmrs.length),
             ths = _.chain(this.props.bmrs)
-                .map((d, i)=>{
+                .map((d, i) => {
                     let lbl = asLabel(d);
                     return [
-                        <th key={i+'bmd'} style={{width: widths.nums}}>BMD<br/><span>({lbl})</span></th>,
-                        <th key={i+'bmdl'} style={{width: widths.nums}}>BMDL<br/><span>({lbl})</span></th>,
+                        <th key={i + 'bmd'} style={{ width: widths.nums }}>
+                            BMD<br />
+                            <span>({lbl})</span>
+                        </th>,
+                        <th key={i + 'bmdl'} style={{ width: widths.nums }}>
+                            BMDL<br />
+                            <span>({lbl})</span>
+                        </th>,
                     ];
                 })
                 .flattenDeep()
@@ -115,29 +131,30 @@ class OutputTable extends React.Component {
 
         return (
             <tr>
-                <th style={{width: widths.name}}>Model</th>
-                <th style={{width: widths.nums}}>Global <br /><i>p</i>-value</th>
-                <th style={{width: widths.nums}}>AIC</th>
+                <th style={{ width: widths.name }}>Model</th>
+                <th style={{ width: widths.nums }}>
+                    Global <br />
+                    <i>p</i>-value
+                </th>
+                <th style={{ width: widths.nums }}>AIC</th>
                 {ths}
-                <th style={{width: widths.nums}}>Residual of interest</th>
-                <th style={{width: widths.view}}>Output</th>
+                <th style={{ width: widths.nums }}>Residual of interest</th>
+                <th style={{ width: widths.view }}>Output</th>
             </tr>
         );
     }
 
     render() {
-        if (this.props.models.length ===0){
+        if (this.props.models.length === 0) {
             return null;
         }
 
         let binnedModels = binModels(this.props.models);
 
         return (
-            <div className='span8'>
+            <div className="span8">
                 <table className="table table-condensed">
-                    <thead>
-                        {this.renderHeader.bind(this)()}
-                    </thead>
+                    <thead>{this.renderHeader.bind(this)()}</thead>
                     <tfoot>
                         <tr>
                             <td colSpan="100">
@@ -145,8 +162,8 @@ class OutputTable extends React.Component {
                             </td>
                         </tr>
                     </tfoot>
-                    <tbody style={{cursor: 'pointer'}}>
-                    {binnedModels.map(this.renderRow.bind(this))}
+                    <tbody style={{ cursor: 'pointer' }}>
+                        {binnedModels.map(this.renderRow.bind(this))}
                     </tbody>
                 </table>
             </div>

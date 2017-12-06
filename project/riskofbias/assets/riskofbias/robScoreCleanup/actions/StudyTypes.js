@@ -1,31 +1,33 @@
 import fetch from 'isomorphic-fetch';
 
-import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
+import {
+    setError,
+    resetError,
+} from 'riskofbias/robScoreCleanup/actions/Errors';
 import * as types from 'riskofbias/robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
 
-
-function makeStudyTypeOptionRequest(){
+function makeStudyTypeOptionRequest() {
     return {
         type: types.REQUEST_STUDY_TYPE_OPTIONS,
     };
 }
 
-function receiveStudyTypeOptions(items){
+function receiveStudyTypeOptions(items) {
     return {
         type: types.RECEIVE_STUDY_TYPE_OPTIONS,
         items,
     };
 }
 
-export function selectStudyType(studyTypes){
+export function selectStudyType(studyTypes) {
     return {
         type: types.SELECT_STUDY_TYPE,
         studyTypes,
     };
 }
 
-export function fetchStudyTypeOptions(){
+export function fetchStudyTypeOptions() {
     return (dispatch, getState) => {
         let state = getState();
         if (state.studyTypes.isFetching || state.studyTypes.isLoaded) return;
@@ -33,12 +35,12 @@ export function fetchStudyTypeOptions(){
         dispatch(resetError());
         let { host, studyTypes, assessment_id } = state.config;
         const url = h.getUrlWithAssessment(
-                        h.getListUrl(host, studyTypes.url),
-                        assessment_id);
+            h.getListUrl(host, studyTypes.url),
+            assessment_id
+        );
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveStudyTypeOptions(json)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveStudyTypeOptions(json)))
+            .catch(error => dispatch(setError(error)));
     };
 }
-

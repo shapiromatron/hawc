@@ -7,37 +7,42 @@ import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
-import {
-    renderStudyDisplay,
-} from 'riskofbias/robTable/components/StudyDisplay';
+import { renderStudyDisplay } from 'riskofbias/robTable/components/StudyDisplay';
 
-
-class Study{
-
-    constructor(data){
+class Study {
+    constructor(data) {
         this.data = data;
         this.riskofbias = [];
-        this.final = _.find(this.data.riskofbiases, {final: true, active: true});
-        if(this.final) this.unpack_riskofbias();
+        this.final = _.find(this.data.riskofbiases, {
+            final: true,
+            active: true,
+        });
+        if (this.final) this.unpack_riskofbias();
     }
 
-    static get_object(id, cb){
-        $.get('/study/api/study/{0}/'.printf(id), function(d){
+    static get_object(id, cb) {
+        $.get('/study/api/study/{0}/'.printf(id), function(d) {
             cb(new Study(d));
         });
     }
 
-    static displayAsModal(id){
-        Study.get_object(id, function(d){d.displayAsModal();});
+    static displayAsModal(id) {
+        Study.get_object(id, function(d) {
+            d.displayAsModal();
+        });
     }
 
-    static render(id, $div, $shower){
-        Study.get_object(id, function(d){d.render($div, $shower);});
+    static render(id, $div, $shower) {
+        Study.get_object(id, function(d) {
+            d.render($div, $shower);
+        });
     }
 
-    static displayInline(id, setTitle, setBody){
-        Study.get_object(id, (obj)=>{
-            var title  = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),
+    static displayInline(id, setTitle, setBody) {
+        Study.get_object(id, obj => {
+            var title = $(
+                    '<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())
+                ),
                 content = $('<div>');
 
             setTitle(title);
@@ -46,16 +51,16 @@ class Study{
         });
     }
 
-    has_riskofbias(){
-        return this.riskofbias.length>0;
+    has_riskofbias() {
+        return this.riskofbias.length > 0;
     }
 
-    unpack_riskofbias(){
+    unpack_riskofbias() {
         // unpack risk of bias information and nest by domain
         var self = this,
             riskofbias = [];
 
-        this.final.scores.forEach(function(v, i){
+        this.final.scores.forEach(function(v, i) {
             v.score_color = RiskOfBiasScore.score_shades[v.score];
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = RiskOfBiasScore.score_text[v.score];
@@ -63,144 +68,187 @@ class Study{
         });
 
         // group rob by domains
-        this.riskofbias = d3.nest()
-            .key(function(d){return d.data.metric.domain.name;})
+        this.riskofbias = d3
+            .nest()
+            .key(function(d) {
+                return d.data.metric.domain.name;
+            })
             .entries(riskofbias);
 
         // now generate a score for each
-        this.riskofbias.forEach(function(v, i){
+        this.riskofbias.forEach(function(v, i) {
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
             v.criteria = v.values;
-            v.score_text = (v.score>0) ? v.score : 'N/A';
+            v.score_text = v.score > 0 ? v.score : 'N/A';
             v.score_color = '#E8E8E8';
             v.score_text_color = String.contrasting_color(v.score_color);
         });
 
         // try to put the 'other' domain at the end
         var l = this.riskofbias.length;
-        for(var i=0; i<l; i++){
-            if (this.riskofbias[i].domain_text.toLowerCase() === 'other'){
+        for (var i = 0; i < l; i++) {
+            if (this.riskofbias[i].domain_text.toLowerCase() === 'other') {
                 this.riskofbias.push(this.riskofbias.splice(i, 1)[0]);
                 break;
             }
         }
     }
 
-    build_breadcrumbs(){
+    build_breadcrumbs() {
         var urls = [{ url: this.data.url, name: this.data.short_citation }];
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
-    get_name(){
+    get_name() {
         return this.data.short_citation;
     }
 
-    get_url(){
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
+    get_url() {
+        return '<a href="{0}">{1}</a>'.printf(
+            this.data.url,
+            this.data.short_citation
+        );
     }
 
-    _get_data_types(){
+    _get_data_types() {
         var data = this.data;
         return _.chain(Study.typeNames)
             .keys()
-            .filter(function(d){return data[d];})
-            .map(function(d){return Study.typeNames[d];})
+            .filter(function(d) {
+                return data[d];
+            })
+            .map(function(d) {
+                return Study.typeNames[d];
+            })
             .value()
             .join(', ');
     }
 
-    build_details_table(div){
+    build_details_table(div) {
         var tbl = new DescriptiveTable(),
             links = this._get_identifiers_hyperlinks_ul();
         tbl.add_tbody_tr('Data type(s)', this._get_data_types());
         tbl.add_tbody_tr('Full citation', this.data.full_citation);
         tbl.add_tbody_tr('Abstract', this.data.abstract);
-        if (links.children().length>0) tbl.add_tbody_tr('Reference hyperlink', links);
-        tbl.add_tbody_tr_list('Literature review tags', this.data.tags.map(function(d){return d.name;}));
-        if (this.data.full_text_url) tbl.add_tbody_tr('Full-text link', '<a href={0}>{0}</a>'.printf(this.data.full_text_url));
+        if (links.children().length > 0)
+            tbl.add_tbody_tr('Reference hyperlink', links);
+        tbl.add_tbody_tr_list(
+            'Literature review tags',
+            this.data.tags.map(function(d) {
+                return d.name;
+            })
+        );
+        if (this.data.full_text_url)
+            tbl.add_tbody_tr(
+                'Full-text link',
+                '<a href={0}>{0}</a>'.printf(this.data.full_text_url)
+            );
         tbl.add_tbody_tr('COI reported', this.data.coi_reported);
         tbl.add_tbody_tr('COI details', this.data.coi_details);
         tbl.add_tbody_tr('Funding source', this.data.funding_source);
         tbl.add_tbody_tr('Study identifier', this.data.study_identifier);
-        tbl.add_tbody_tr('Author contacted?', HAWCUtils.booleanCheckbox(this.data.contact_author));
+        tbl.add_tbody_tr(
+            'Author contacted?',
+            HAWCUtils.booleanCheckbox(this.data.contact_author)
+        );
         tbl.add_tbody_tr('Author contact details', this.data.ask_author);
-        tbl.add_tbody_tr('Summary and/or extraction comments', this.data.summary);
+        tbl.add_tbody_tr(
+            'Summary and/or extraction comments',
+            this.data.summary
+        );
         $(div).html(tbl.get_tbl());
     }
 
-    _get_identifiers_hyperlinks_ul(){
+    _get_identifiers_hyperlinks_ul() {
         var ul = $('<ul>');
 
-        this.data.identifiers.forEach(function(v){
-            if (v.url){
-                ul.append($('<li>').append(
-                    $('<a>').attr('href', v.url).attr('target', '_blank').text(v.database)));
+        this.data.identifiers.forEach(function(v) {
+            if (v.url) {
+                ul.append(
+                    $('<li>').append(
+                        $('<a>')
+                            .attr('href', v.url)
+                            .attr('target', '_blank')
+                            .text(v.database)
+                    )
+                );
             }
         });
 
         return ul;
     }
 
-    add_attachments_row(div, attachments){
-        if (attachments.length===0) return;
+    add_attachments_row(div, attachments) {
+        if (attachments.length === 0) return;
 
         var tbody = div.find('table tbody'),
             ul = $('<ul>'),
             tr = $('<tr>').append('<th>Attachments</th>'),
             td = $('<td>');
 
-        attachments.forEach(function(v){
-            ul.append('<li><a target="_blank" href="{0}">{1}</a> <a class="pull-right" title="Delete {1}" href="{2}"><i class="icon-trash"></i></a></li>'.printf(v.url, v.filename, v.url_delete));
+        attachments.forEach(function(v) {
+            ul.append(
+                '<li><a target="_blank" href="{0}">{1}</a> <a class="pull-right" title="Delete {1}" href="{2}"><i class="icon-trash"></i></a></li>'.printf(
+                    v.url,
+                    v.filename,
+                    v.url_delete
+                )
+            );
         });
         tbody.append(tr.append(td.append(ul)));
     }
 
-    displayAsModal(){
+    displayAsModal() {
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">');
 
         this.render($content, modal.getModal());
 
-        modal.addHeader(title)
+        modal
+            .addHeader(title)
             .addBody($content)
             .addFooter('')
-            .show({maxWidth: 1000});
+            .show({ maxWidth: 1000 });
     }
 
-    render($div, $shower){
+    render($div, $shower) {
         var self = this,
             $details = $('<div class="row-fluid">').appendTo($div),
             displayRoB = () => {
-                var render_obj = {riskofbias: self.riskofbias, display: 'final'};
+                var render_obj = {
+                    riskofbias: self.riskofbias,
+                    display: 'final',
+                };
                 render_obj = self.format_for_react(self.riskofbias);
                 renderStudyDisplay(render_obj, $rob[0]);
             };
         this.build_details_table($details);
-        if(this.has_riskofbias()){
+        if (this.has_riskofbias()) {
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
-            if($shower){
-                $shower.on('shown', function(){
+            if ($shower) {
+                $shower.on('shown', function() {
                     displayRoB();
                 });
             } else {
                 displayRoB();
             }
-
         }
     }
 
-    get_citation_row(){
+    get_citation_row() {
         var content = [this.get_url()];
-        if (!this.data.published){
-            content.push('<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>');
+        if (!this.data.published) {
+            content.push(
+                '<br/><i title="Unpublished (may not be visible to the public or in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>'
+            );
         }
         return content;
     }
 
-    build_row(){
+    build_row() {
         return [
             this.get_citation_row(),
             this.data.full_citation,
@@ -211,14 +259,15 @@ class Study{
         ];
     }
 
-    format_for_react(riskofbias){
-        let scores = _.flattenDeep(_.map(riskofbias, function(rob){
-            return rob.values;
-        }));
+    format_for_react(riskofbias) {
+        let scores = _.flattenDeep(
+            _.map(riskofbias, function(rob) {
+                return rob.values;
+            })
+        );
         return RiskOfBiasScore.format_for_react(scores);
     }
 }
-
 
 Study.typeNames = {
     bioassay: 'Animal bioassay',

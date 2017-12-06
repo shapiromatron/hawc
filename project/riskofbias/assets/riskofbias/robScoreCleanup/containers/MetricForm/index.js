@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 
 import { resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import { selectAll } from 'riskofbias/robScoreCleanup/actions/Items';
-import { updateEditMetricIfNeeded, submitItemEdits } from 'riskofbias/robScoreCleanup/actions/Items';
+import {
+    updateEditMetricIfNeeded,
+    submitItemEdits,
+} from 'riskofbias/robScoreCleanup/actions/Items';
 
 import DisplayComponent from 'riskofbias/robTable/components/MetricForm';
 
-
 export class MetricForm extends React.Component {
-
     constructor(props) {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
@@ -18,8 +19,10 @@ export class MetricForm extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (!_.isEqual(nextProps, this.props) ||
-            !_.isEqual(nextState, this.state)){
+        if (
+            !_.isEqual(nextProps, this.props) ||
+            !_.isEqual(nextState, this.state)
+        ) {
             return true;
         }
         return false;
@@ -34,12 +37,12 @@ export class MetricForm extends React.Component {
         this.props.dispatch(resetError());
     }
 
-    handleSelectAll(e){
+    handleSelectAll(e) {
         e.preventDefault();
         this.props.dispatch(selectAll());
     }
 
-    onSubmit(e){
+    onSubmit(e) {
         e.preventDefault();
         let { notes, score } = this.refs.metricForm.refs.form.state,
             metric = { notes, score: parseInt(score) };
@@ -51,13 +54,31 @@ export class MetricForm extends React.Component {
         if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
-                <DisplayComponent ref='metricForm' metric={items.editMetric} config={config} updateNotesLeft={_.noop}/>
-                <button type='submit' className='btn btn-primary space'>Update {items.updateIds.length} responses</button>
-                <button type='button' className='btn btn-info space' onClick={this.handleSelectAll}>Select/unselect all</button>
-                <button type='button' className='btn' onClick={this.handleCancel}>Cancel</button>
+                <DisplayComponent
+                    ref="metricForm"
+                    metric={items.editMetric}
+                    config={config}
+                    updateNotesLeft={_.noop}
+                />
+                <button type="submit" className="btn btn-primary space">
+                    Update {items.updateIds.length} responses
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-info space"
+                    onClick={this.handleSelectAll}
+                >
+                    Select/unselect all
+                </button>
+                <button
+                    type="button"
+                    className="btn"
+                    onClick={this.handleCancel}
+                >
+                    Cancel
+                </button>
                 <hr />
             </form>
-
         );
     }
 }

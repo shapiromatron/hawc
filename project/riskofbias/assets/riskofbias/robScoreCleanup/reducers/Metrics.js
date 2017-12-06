@@ -7,29 +7,27 @@ const defaultState = {
     items: [],
 };
 
-function metrics(state=defaultState, action) {
+function metrics(state = defaultState, action) {
+    switch (action.type) {
+        case types.REQUEST_METRIC_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: true,
+            });
 
-    switch(action.type){
+        case types.RECEIVE_METRIC_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLoaded: true,
+                items: action.metrics,
+            });
 
-    case types.REQUEST_METRIC_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: true,
-        });
+        case types.SELECT_METRIC:
+            return Object.assign({}, state, {
+                selected: action.metric,
+            });
 
-    case types.RECEIVE_METRIC_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: false,
-            isLoaded: true,
-            items: action.metrics,
-        });
-
-    case types.SELECT_METRIC:
-        return Object.assign({}, state, {
-            selected: action.metric,
-        });
-
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 

@@ -5,56 +5,50 @@ import ModelOptionModal from 'bmd/components/ModelOptionModal';
 import BMROptionModal from 'bmd/components/BMROptionModal';
 import OutputModal from 'bmd/components/OutputModal';
 
-import {
-    updateModel,
-    deleteModel,
-    updateBmr,
-    deleteBmr,
-} from 'bmd/actions';
-
+import { updateModel, deleteModel, updateBmr, deleteBmr } from 'bmd/actions';
 
 class Modals extends React.Component {
-
-    handleModelUpdate(values){
+    handleModelUpdate(values) {
         this.props.dispatch(updateModel(values));
     }
 
-    handleModelDelete(){
+    handleModelDelete() {
         this.props.dispatch(deleteModel());
     }
 
-    handleBmrUpdate(values){
+    handleBmrUpdate(values) {
         this.props.dispatch(updateBmr(values));
     }
 
-    handleBmrDelete(){
+    handleBmrDelete() {
         this.props.dispatch(deleteBmr());
     }
 
-    isReady(){
-        return (this.props.allBmrOptions !== null);
+    isReady() {
+        return this.props.allBmrOptions !== null;
     }
 
     render() {
-        if (!this.isReady()){
+        if (!this.isReady()) {
             return null;
         }
-        let {editMode} = this.props.config;
+        let { editMode } = this.props.config;
         return (
             <div>
                 <ModelOptionModal
                     model={this.props.selectedModelOption}
                     editMode={editMode}
                     handleSave={this.handleModelUpdate.bind(this)}
-                    handleDelete={this.handleModelDelete.bind(this)} />
+                    handleDelete={this.handleModelDelete.bind(this)}
+                />
                 <BMROptionModal
                     bmr={this.props.selectedBmr}
                     allOptions={this.props.allBmrOptions}
                     editMode={editMode}
                     handleSave={this.handleBmrUpdate.bind(this)}
-                    handleDelete={this.handleBmrDelete.bind(this)} />
-                <OutputModal
-                    models={this.props.selectedOutputs} />
+                    handleDelete={this.handleBmrDelete.bind(this)}
+                />
+                <OutputModal models={this.props.selectedOutputs} />
             </div>
         );
     }
@@ -71,4 +65,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Modals);
-

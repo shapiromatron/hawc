@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import StudyTypeSelector from 'mgmt/TaskTable/components/StudyTypeSelector';
 import StudySortSelector from 'mgmt/TaskTable/components/StudySortSelector';
 
-
 class StudyFilter extends Component {
-
     constructor(props) {
         super(props);
         let fieldOptions = ['short_citation', 'created'],
@@ -34,7 +32,7 @@ class StudyFilter extends Component {
                 order: this.state.orderOptions[0],
             },
         };
-        this.setState({...defaults});
+        this.setState({ ...defaults });
         this.props.selectFilter({
             filterOpts: defaults.studyTypes,
             sortOpts: defaults.studySorting,
@@ -62,21 +60,33 @@ class StudyFilter extends Component {
 
     render() {
         return (
-            <div className='container-fluid filterContainer'>
-                <div className='flexRow-container'>
+            <div className="container-fluid filterContainer">
+                <div className="flexRow-container">
                     <StudyTypeSelector
-                        className='flex-1'
-                        handleChange={this.selectStudyType}/>
+                        className="flex-1"
+                        handleChange={this.selectStudyType}
+                    />
                     <StudySortSelector
-                        className='flex-1'
+                        className="flex-1"
                         handleChange={this.selectSort}
                         fieldOptions={this.state.fieldOptions}
                         orderOptions={this.state.orderOptions}
-                        studySorting={this.state.studySorting}/>
+                        studySorting={this.state.studySorting}
+                    />
                 </div>
-                <button className='btn btn-primary' onClick={this.filterResults}>Filter & sort studies</button>
+                <button
+                    className="btn btn-primary"
+                    onClick={this.filterResults}
+                >
+                    Filter & sort studies
+                </button>
                 <span>&nbsp;</span>
-                <button className='btn btn-secondary' onClick={this.clearFilters}>Reset</button>
+                <button
+                    className="btn btn-secondary"
+                    onClick={this.clearFilters}
+                >
+                    Reset
+                </button>
             </div>
         );
     }

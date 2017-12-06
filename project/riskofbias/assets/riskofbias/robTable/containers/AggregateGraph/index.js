@@ -1,49 +1,61 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
+import {
+    fetchFullStudyIfNeeded,
+    selectActive,
+} from 'riskofbias/robTable/actions';
 import DisplayComponent from 'riskofbias/robTable/components/AggregateGraph';
 import Loading from 'shared/components/Loading';
 
-
 class AggregateGraph extends Component {
-
     constructor(props) {
         super(props);
         this.selectActiveWithName = this.selectActiveWithName.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
-    selectActiveWithName(domainName){
+    selectActiveWithName(domainName) {
         // domainName is either {domain: xxx} or {domain: xxx, metric: xxx}
-        this.props.dispatch(selectActive({...domainName}));
+        this.props.dispatch(selectActive({ ...domainName }));
     }
 
-    formatRiskofbiasForDisplay(){
-        let domains = _.flattenDeep(_.map(this.props.riskofbiases, (domain) => {
-            return _.map(domain.values, (metric) => {
-                return _.filter(metric.values, (score) => { return score.final; });
-            });
-        }));
+    formatRiskofbiasForDisplay() {
+        let domains = _.flattenDeep(
+            _.map(this.props.riskofbiases, domain => {
+                return _.map(domain.values, metric => {
+                    return _.filter(metric.values, score => {
+                        return score.final;
+                    });
+                });
+            })
+        );
 
-        return d3.nest()
-                 .key((d) => {return d.metric.domain.name;})
-                 .key((d) => {return d.metric.name;})
-                 .entries(domains);
+        return d3
+            .nest()
+            .key(d => {
+                return d.metric.domain.name;
+            })
+            .key(d => {
+                return d.metric.name;
+            })
+            .entries(domains);
     }
 
-    render(){
+    render() {
         let { itemsLoaded } = this.props;
         if (!itemsLoaded) return <Loading />;
         let domains = this.formatRiskofbiasForDisplay();
-        return (
-            _.isEmpty(domains) ?
-            <NoFinalReviewWarning /> :
-            <DisplayComponent domains={domains}
-                              handleClick={this.selectActiveWithName}/>
+        return _.isEmpty(domains) ? (
+            <NoFinalReviewWarning />
+        ) : (
+            <DisplayComponent
+                domains={domains}
+                handleClick={this.selectActiveWithName}
+            />
         );
     }
 }
@@ -52,13 +64,14 @@ const NoFinalReviewWarning = () => {
     return (
         <div className="container">
             <span className="alert alert-warning span12">
-                Final Reviewer assignment required for risk of bias aggregation graph.
+                Final Reviewer assignment required for risk of bias aggregation
+                graph.
             </span>
         </div>
     );
 };
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,

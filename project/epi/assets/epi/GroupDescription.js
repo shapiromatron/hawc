@@ -1,13 +1,11 @@
 import _ from 'lodash';
 
-
 class GroupDescription {
-
-    constructor(data){
+    constructor(data) {
         this.data = data;
     }
 
-    build_tr(footnotes){
+    build_tr(footnotes) {
         var d = this.data,
             mean = '-',
             variance = '-',
@@ -16,27 +14,27 @@ class GroupDescription {
 
         if (_.isNumber(d.mean))
             mean = '{0}<br><span class="help-inline">{1}</span>'.printf(
-                d.mean, d.mean_type);
+                d.mean,
+                d.mean_type
+            );
         if (_.isNumber(d.variance))
             variance = '{0}<br><span class="help-inline">{1}</span>'.printf(
-                d.variance, d.variance_type);
+                d.variance,
+                d.variance_type
+            );
         if (_.isNumber(d.upper))
             upper = '{0}<br><span class="help-inline">{1}</span>'.printf(
-                d.upper, d.upper_type);
+                d.upper,
+                d.upper_type
+            );
         if (_.isNumber(d.lower))
             lower = '{0}<br><span class="help-inline">{1}</span>'.printf(
-                d.lower, d.lower_type);
+                d.lower,
+                d.lower_type
+            );
 
-        return [
-            d.description,
-            mean,
-            variance,
-            lower,
-            upper,
-            d.is_calculated,
-        ];
+        return [d.description, mean, variance, lower, upper, d.is_calculated];
     }
-
 }
 
 export default GroupDescription;

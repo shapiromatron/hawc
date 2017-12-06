@@ -6,10 +6,8 @@ import { loadConfig } from 'shared/actions/Config';
 import Header from './Header';
 import RiskOfBias from './RiskOfBias';
 
-
 class Root extends Component {
-
-    componentWillMount(){
+    componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
 

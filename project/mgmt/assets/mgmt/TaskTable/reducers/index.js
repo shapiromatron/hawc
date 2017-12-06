@@ -5,7 +5,6 @@ import error from 'shared/reducers/Errors';
 import studies from 'mgmt/TaskTable/reducers/Studies';
 import tasks from 'mgmt/TaskTable/reducers/Tasks';
 
-
 const rootReducer = combineReducers({
     config,
     error,

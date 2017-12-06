@@ -9,19 +9,17 @@ import Aggregation from 'riskofbias/Aggregation';
 import RoBHeatmapPlot from './RoBHeatmapPlot';
 import BaseVisual from './BaseVisual';
 
-
 class RoBHeatmap extends BaseVisual {
-
-    constructor(data){
+    constructor(data) {
         super(data);
-        var studies = _.map(data.studies, function(d){
+        var studies = _.map(data.studies, function(d) {
             return new Study(d);
         });
         this.roba = new Aggregation(studies);
         delete this.data.studies;
     }
 
-    displayAsPage($el, options){
+    displayAsPage($el, options) {
         var title = $('<h1>').text(this.data.title),
             captionDiv = $('<div>').html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -40,7 +38,7 @@ class RoBHeatmap extends BaseVisual {
         return this;
     }
 
-    displayAsModal(options){
+    displayAsModal(options) {
         options = options || {};
 
         var self = this,
@@ -50,24 +48,24 @@ class RoBHeatmap extends BaseVisual {
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
-        modal.getModal().on('shown', function(){
+        modal.getModal().on('shown', function() {
             new RoBHeatmapPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });
 
-        modal.addHeader($('<h4>').text(this.data.title))
+        modal
+            .addHeader($('<h4>').text(this.data.title))
             .addBody([$plotDiv, captionDiv])
             .addFooter('')
-            .show({maxWidth: 1200});
+            .show({ maxWidth: 1200 });
     }
 
-    getPlotData(){
+    getPlotData() {
         return {
             aggregation: this.roba,
             settings: this.data.settings,
         };
     }
-
 }
 
 export default RoBHeatmap;

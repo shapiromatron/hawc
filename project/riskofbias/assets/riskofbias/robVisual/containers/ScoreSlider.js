@@ -3,43 +3,44 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Slider from 'riskofbias/robVisual/components/ScoreSlider';
-import { fetchRobScores, setScoreThreshold } from 'riskofbias/robVisual/actions/Filter';
-
+import {
+    fetchRobScores,
+    setScoreThreshold,
+} from 'riskofbias/robVisual/actions/Filter';
 
 class ScoreSlider extends Component {
-
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchRobScores());
-        this.setState({threshold: 0});
+        this.setState({ threshold: 0 });
     }
 
-    handleChange(e){
+    handleChange(e) {
         let threshold = parseInt(e.target.value);
-        this.setState({threshold});
+        this.setState({ threshold });
         this.props.dispatch(setScoreThreshold(threshold));
     }
 
-    render(){
+    render() {
         let threshold = this.state.threshold,
-            max = _.maxBy(this.props.scores, (item) => {
+            max = _.maxBy(this.props.scores, item => {
                 return item.final_score;
             }).final_score;
-        return (
-            _.isEmpty(this.props.effects) ?
-                null :
-                <Slider
-                    max={max} threshold={threshold}
-                    handleChange={this.handleChange}/>
+        return _.isEmpty(this.props.effects) ? null : (
+            <Slider
+                max={max}
+                threshold={threshold}
+                handleChange={this.handleChange}
+            />
         );
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         effects: state.filter.selectedEffects,
         scores: state.filter.robScores,

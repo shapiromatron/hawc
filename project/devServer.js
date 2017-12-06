@@ -5,13 +5,15 @@ var args = process.argv.slice(2),
     port = 3000,
     DashboardPlugin = require('webpack-dashboard/plugin');
 
-if (args.indexOf('--testProduction')>=0){
+if (args.indexOf('--testProduction') >= 0) {
     console.log('Using test production;');
-    config.plugins.unshift(new webpack.DefinePlugin({
-        'process.env': {
-            'NODE_ENV': JSON.stringify('production'),
-        },
-    }));
+    config.plugins.unshift(
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production'),
+            },
+        })
+    );
 }
 
 var app = express(),
@@ -19,14 +21,19 @@ var app = express(),
 
 compiler.apply(new DashboardPlugin());
 
-app.use(require('webpack-dev-middleware')(compiler, {
-    noInfo: true,
-    publicPath: config.output.publicPath,
-}));
+app.use(
+    require('webpack-dev-middleware')(compiler, {
+        noInfo: true,
+        publicPath: config.output.publicPath,
+    })
+);
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
     next();
 });
 

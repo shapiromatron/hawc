@@ -6,59 +6,58 @@ import HAWCModal from 'utils/HAWCModal';
 
 import DataPivot from './DataPivot';
 import DataPivotVisualization from './DataPivotVisualization';
-import {
-   NULL_CASE,
-} from './shared';
-
+import { NULL_CASE } from './shared';
 
 class _DataPivot_settings_conditionalFormat {
-
-    constructor(parent, data, settings){
+    constructor(parent, data, settings) {
         this.parent = parent;
         this.data = data;
         this.settings = settings;
         this.status = $('<div>');
 
-        this._status_text = $('<span style="padding-right: 10px">')
-          .appendTo(this.status);
+        this._status_text = $('<span style="padding-right: 10px">').appendTo(
+            this.status
+        );
 
         this.modal = new HAWCModal();
         this._showModal = $('<button class="btn btn-small" type="button">')
-          .on('click', this._show_modal.bind(this))
-          .appendTo(this.status);
+            .on('click', this._show_modal.bind(this))
+            .appendTo(this.status);
 
         this._update_status();
     }
 
-    _update_status(){
-        var status = (this.data.length>0) ? 'Enabled' : 'None',
-            modal =  (this.data.length>0) ? 'Edit' : 'Create';
+    _update_status() {
+        var status = this.data.length > 0 ? 'Enabled' : 'None',
+            modal = this.data.length > 0 ? 'Edit' : 'Create';
 
         this._status_text.text(status);
         this._showModal.text(modal);
     }
 
-    _show_modal(){
+    _show_modal() {
         var fieldName = this.parent.content.field_name.val(),
-            header = $('<h4>').html(`Conditional formatting: <i>${fieldName}<i>`),
+            header = $('<h4>').html(
+                `Conditional formatting: <i>${fieldName}<i>`
+            ),
             footer = this._getFooter();
 
         this.setModalContent();
         this.modal
             .addHeader(header)
-            .addFooter(footer, {noClose: true})
-            .show({maxWidth: 1200});
+            .addFooter(footer, { noClose: true })
+            .show({ maxWidth: 1200 });
     }
 
-    close_modal(save){
-        if(save){
+    close_modal(save) {
+        if (save) {
             this._save_conditions();
         }
         this._update_status();
         this.modal.hide();
     }
 
-    setModalContent(){
+    setModalContent() {
         var body = this.modal.getBody();
         body.empty();
 
@@ -68,67 +67,64 @@ class _DataPivot_settings_conditionalFormat {
 
         // draw conditions
         this.conditionals = [];
-        this.data.forEach((v)=>{
-            this.conditionals.push(new _DataPivot_settings_conditional(body, this, v));
+        this.data.forEach(v => {
+            this.conditionals.push(
+                new _DataPivot_settings_conditional(body, this, v)
+            );
         });
     }
 
-    _getFooter(){
+    _getFooter() {
         let add = $('<button type="button" class="btn btn-primary">')
-              .text('Add')
-              .on('click', this._add_condition.bind(this, null)),
+                .text('Add')
+                .on('click', this._add_condition.bind(this, null)),
             save = $('<button type="button" class="btn btn-success">')
-              .text('Save and close')
-              .on('click', this.close_modal.bind(this, true)),
+                .text('Save and close')
+                .on('click', this.close_modal.bind(this, true)),
             close = $('<button type="button" class="btn pull-right">')
-              .text('Close')
-              .on('click', this.close_modal.bind(this, false)),
-            footer = $('<div>')
-              .append(add, save, close);
+                .text('Close')
+                .on('click', this.close_modal.bind(this, false)),
+            footer = $('<div>').append(add, save, close);
 
         return footer;
     }
 
-    _save_conditions(){
-        this.data = this.conditionals.map((v)=>v.get_values());
+    _save_conditions() {
+        this.data = this.conditionals.map(v => v.get_values());
         this.parent.data_push();
     }
 
-    _set_empty_message(){
-        if(this.data.length === 0){
+    _set_empty_message() {
+        if (this.data.length === 0) {
             this.blank.text('No conditions have been set.');
         } else {
             this.blank.empty();
         }
     }
 
-    _add_condition(values){
+    _add_condition(values) {
         var body = this.modal.getBody();
         this._set_empty_message();
-        this.conditionals.push(new _DataPivot_settings_conditional(body, this, values));
+        this.conditionals.push(
+            new _DataPivot_settings_conditional(body, this, values)
+        );
     }
 
-    delete_condition(conditional){
+    delete_condition(conditional) {
         this.conditionals.splice_object(conditional);
         this._set_empty_message();
     }
 
-    getConditionTypes(){
-        switch(this.settings.type){
-        case 'symbols':
-            return [
-                'point-size',
-                'point-color',
-                'discrete-style',
-            ];
+    getConditionTypes() {
+        switch (this.settings.type) {
+            case 'symbols':
+                return ['point-size', 'point-color', 'discrete-style'];
 
-        case 'rectangles':
-            return [
-                'discrete-style',
-            ];
+            case 'rectangles':
+                return ['discrete-style'];
 
-        default:
-            return [];
+            default:
+                return [];
         }
     }
 }
@@ -145,10 +141,11 @@ _.extend(_DataPivot_settings_conditionalFormat, {
 });
 
 class _DataPivot_ColorGradientSVG {
-    constructor(svg, start_color, stop_color){
+    constructor(svg, start_color, stop_color) {
         svg = d3.select(svg);
-        var gradient = svg.append('svg:defs')
-          .append('svg:linearGradient')
+        var gradient = svg
+            .append('svg:defs')
+            .append('svg:linearGradient')
             .attr('id', 'gradient')
             .attr('x1', '0%')
             .attr('y1', '100%')
@@ -156,38 +153,40 @@ class _DataPivot_ColorGradientSVG {
             .attr('y2', '100%')
             .attr('spreadMethod', 'pad');
 
-        this.start = gradient.append('svg:stop')
+        this.start = gradient
+            .append('svg:stop')
             .attr('offset', '0%')
             .attr('stop-color', start_color)
             .attr('stop-opacity', 1);
 
-        this.stop = gradient.append('svg:stop')
+        this.stop = gradient
+            .append('svg:stop')
             .attr('offset', '100%')
             .attr('stop-color', stop_color)
             .attr('stop-opacity', 1);
 
-        svg.append('svg:rect')
+        svg
+            .append('svg:rect')
             .attr('width', '100%')
             .attr('height', '100%')
             .style('fill', 'url(#gradient)');
     }
 
-    update_start_color(color){
+    update_start_color(color) {
         this.start.attr('stop-color', color);
     }
 
-    update_stop_color(color){
+    update_stop_color(color) {
         this.stop.attr('stop-color', color);
     }
 }
 
-
 class _DataPivot_settings_conditional {
-    constructor(el, parent, values){
+    constructor(el, parent, values) {
         this.inputs = [];
 
         values = values || {};
-        if (values.discrete_styles === undefined){
+        if (values.discrete_styles === undefined) {
             values.discrete_styles = [];
         }
 
@@ -195,9 +194,8 @@ class _DataPivot_settings_conditional {
             dp = parent.parent.data_pivot,
             formattingTypes = parent.getConditionTypes(),
             defaults = _DataPivot_settings_conditionalFormat.defaults,
-            div = $('<div class="well">')
-                    .appendTo(el),
-            add_input_row = function(parent, desc_txt, inp){
+            div = $('<div class="well">').appendTo(el),
+            add_input_row = function(parent, desc_txt, inp) {
                 var lbl = $('<label>').html(desc_txt);
                 parent.append(lbl, inp);
             },
@@ -205,53 +203,79 @@ class _DataPivot_settings_conditional {
                 .html(dp._get_header_options(true))
                 .val(values.field_name || defaults.field_name),
             conditionType = $('<select name="condition_type">')
-                .html(formattingTypes.map(function(v){
-                    return `<option value="${v}">${v}</option>`;
-                }))
+                .html(
+                    formattingTypes.map(function(v) {
+                        return `<option value="${v}">${v}</option>`;
+                    })
+                )
                 .val(values.condition_type || defaults.condition_type),
-            changeConditionType = function(){
+            changeConditionType = function() {
                 div.find('.conditionalDivs').hide();
                 div.find(`.${conditionType.val()}`).fadeIn();
             };
 
         // add delete button
         $('<button type="button" class="close">')
-          .text('x')
-          .on('click', function(){
-              div.remove();
-              parent.delete_condition(self);
-          })
-          .prependTo(div);
+            .text('x')
+            .on('click', function() {
+                div.remove();
+                parent.delete_condition(self);
+            })
+            .prependTo(div);
 
         // add master conditional inputs and divs for changing fields
         add_input_row(div, 'Condition field', fieldName);
         add_input_row(div, 'Condition type', conditionType);
         div.append('<hr>');
-        formattingTypes.forEach(function(v){
-            $(`<div class="conditionalDivs row-fluid ${v}">`).appendTo(div).hide();
+        formattingTypes.forEach(function(v) {
+            $(`<div class="conditionalDivs row-fluid ${v}">`)
+                .appendTo(div)
+                .hide();
         });
 
         // build min/max for size and color
-        var min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">')
-            .val(values.min_size || defaults.min_size),
-            max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">')
-              .val(values.max_size || defaults.max_size),
-            min_color = $('<input name="min_color" type="color">')
-              .val(values.min_color || defaults.min_color),
-            max_color = $('<input name="max_color" type="color">')
-              .val(values.max_color || defaults.max_color),
-            svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
-            gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
+        var min_size = $(
+                '<input name="min_size" type="range" min="0" max="500" step="5">'
+            ).val(values.min_size || defaults.min_size),
+            max_size = $(
+                '<input name="max_size" type="range" min="0" max="500" step="5">'
+            ).val(values.max_size || defaults.max_size),
+            min_color = $('<input name="min_color" type="color">').val(
+                values.min_color || defaults.min_color
+            ),
+            max_color = $('<input name="max_color" type="color">').val(
+                values.max_color || defaults.max_color
+            ),
+            svg = $(
+                '<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+            ),
+            gradient = new _DataPivot_ColorGradientSVG(
+                svg[0],
+                min_color.val(),
+                max_color.val()
+            );
 
         // add event-handlers to change gradient color
-        min_color.change(function(v){gradient.update_start_color(min_color.val());});
-        max_color.change(function(v){gradient.update_stop_color(max_color.val());});
+        min_color.change(function(v) {
+            gradient.update_start_color(min_color.val());
+        });
+        max_color.change(function(v) {
+            gradient.update_stop_color(max_color.val());
+        });
 
         // add size values to size div
         var ps = div.find('.point-size'),
             min_max_ps = $('<p>').appendTo(ps);
-        add_input_row(ps, 'Minimum point-size', DataPivot.rangeInputDiv(min_size));
-        add_input_row(ps, 'Maximum point-size', DataPivot.rangeInputDiv(max_size));
+        add_input_row(
+            ps,
+            'Minimum point-size',
+            DataPivot.rangeInputDiv(min_size)
+        );
+        add_input_row(
+            ps,
+            'Maximum point-size',
+            DataPivot.rangeInputDiv(max_size)
+        );
 
         // add color values to color div
         var pc = div.find('.point-color'),
@@ -259,43 +283,59 @@ class _DataPivot_settings_conditional {
         add_input_row(pc, 'Minimum color', min_color);
         add_input_row(pc, 'Maximum color', max_color);
         pc.append('<br>', svg);
-        div.find('input[type="color"]').spectrum({'showInitial': true, 'showInput': true});
+        div
+            .find('input[type="color"]')
+            .spectrum({ showInitial: true, showInput: true });
 
-        this.inputs.push(fieldName, conditionType,
-                         min_size, max_size,
-                         min_color, max_color);
+        this.inputs.push(
+            fieldName,
+            conditionType,
+            min_size,
+            max_size,
+            min_color,
+            max_color
+        );
 
         // get unique values and set values
-        var buildStyleSelectors = function(){
+        var buildStyleSelectors = function() {
             // show appropriate div
             var discrete = div.find('.discrete-style');
             self.discrete_styles = [];
             discrete.empty();
 
-            var subset = DataPivotVisualization.filter(dp.data, dp.settings.filters, dp.settings.plot_settings.filter_logic),
-                arr = subset.map(function(v){return v[fieldName.val()]; }),
+            var subset = DataPivotVisualization.filter(
+                    dp.data,
+                    dp.settings.filters,
+                    dp.settings.plot_settings.filter_logic
+                ),
+                arr = subset.map(function(v) {
+                    return v[fieldName.val()];
+                }),
                 vals = DataPivot.getRowDetails(arr);
 
-            if (conditionType.val() === 'discrete-style'){
+            if (conditionType.val() === 'discrete-style') {
                 // make map of current values
                 var hash = d3.map();
-                values.discrete_styles.forEach(function(v){
+                values.discrete_styles.forEach(function(v) {
                     hash.set(v.key, v.style);
                 });
 
-                vals.unique.forEach(function(v){
+                vals.unique.forEach(function(v) {
                     var style = dp.style_manager
-                                  .add_select(parent.settings.type, hash.get(v), true)
-                                  .data('key', v);
+                        .add_select(parent.settings.type, hash.get(v), true)
+                        .data('key', v);
                     self.discrete_styles.push(style);
                     add_input_row(discrete, `Style for <i>${v}</i>:`, style);
                 });
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
-                if(vals.range){
-                    txt += `contain values ranging from ${vals.range[0]} to ${vals.range[1]}.`;
+                if (vals.range) {
+                    txt += `contain values ranging from ${vals.range[0]} to ${
+                        vals.range[1]
+                    }.`;
                 } else {
-                    txt += 'have no range of values, please select another column.';
+                    txt +=
+                        'have no range of values, please select another column.';
                 }
 
                 min_max_pc.html(txt);
@@ -305,7 +345,7 @@ class _DataPivot_settings_conditional {
 
         // add event-handlers and fire to initialize
         fieldName.on('change', buildStyleSelectors);
-        conditionType.on('change', function(){
+        conditionType.on('change', function() {
             buildStyleSelectors();
             changeConditionType();
         });
@@ -314,19 +354,18 @@ class _DataPivot_settings_conditional {
         buildStyleSelectors();
     }
 
-    get_values(){
-        var values = {'discrete_styles': []};
-        this.inputs.forEach(function(v){
+    get_values() {
+        var values = { discrete_styles: [] };
+        this.inputs.forEach(function(v) {
             values[v.attr('name')] = parseInt(v.val(), 10) || v.val();
         });
-        this.discrete_styles.forEach(function(v){
-            values.discrete_styles.push({ key: v.data('key'), style: v.val()});
+        this.discrete_styles.forEach(function(v) {
+            values.discrete_styles.push({ key: v.data('key'), style: v.val() });
         });
         return values;
     }
 }
 
-
-export {_DataPivot_settings_conditionalFormat};
-export {_DataPivot_ColorGradientSVG};
-export {_DataPivot_settings_conditional};
+export { _DataPivot_settings_conditionalFormat };
+export { _DataPivot_ColorGradientSVG };
+export { _DataPivot_settings_conditional };

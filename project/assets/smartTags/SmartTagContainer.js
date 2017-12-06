@@ -3,26 +3,24 @@ import $ from '$';
 import SmartTagModal from './SmartTagModal';
 import SmartTagInline from './SmartTagInline';
 
-
 class SmartTagContainer {
-
-    constructor($el, options){
+    constructor($el, options) {
         this.options = options || {};
         this.$el = $el;
-        if (this.options.showOnStartup){
+        if (this.options.showOnStartup) {
             this.renderAndEnable();
         }
     }
 
-    static toggleAllModals(el){
+    static toggleAllModals(el) {
         $(el)
             .find('span.smart-tag')
-            .each(function(){
+            .each(function() {
                 let st = $(this).data('_smartTag');
-                if(!st){
+                if (!st) {
                     st = new SmartTagModal(this);
                 }
-                if(st.isActive){
+                if (st.isActive) {
                     st.disable();
                 } else {
                     st.enable();
@@ -30,62 +28,54 @@ class SmartTagContainer {
             });
     }
 
-    renderAndEnable(){
+    renderAndEnable() {
         this.renderInlines();
         this.enableModals();
     }
 
-    unrenderAndDisable(){
+    unrenderAndDisable() {
         this.unrenderInlines();
         this.disableModals();
     }
 
-    renderInlines(){
-        this.$el
-            .find('div.smart-tag')
-            .each(function(){
-                let st = $(this).data('_smartTag');
-                if(!st){
-                    st = new SmartTagInline(this);
-                }
-                st.render();
-            });
+    renderInlines() {
+        this.$el.find('div.smart-tag').each(function() {
+            let st = $(this).data('_smartTag');
+            if (!st) {
+                st = new SmartTagInline(this);
+            }
+            st.render();
+        });
     }
 
-    unrenderInlines($el){
-        this.$el
-            .find('div.smart-tag')
-            .each(function(){
-                let st = $(this).data('_smartTag');
-                if(!st){
-                    st = new SmartTagInline(this);
-                }
-                st.unrender();
-            });
+    unrenderInlines($el) {
+        this.$el.find('div.smart-tag').each(function() {
+            let st = $(this).data('_smartTag');
+            if (!st) {
+                st = new SmartTagInline(this);
+            }
+            st.unrender();
+        });
     }
 
-    enableModals(){
-        this.$el
-            .find('span.smart-tag')
-            .each(function(){
-                let st = $(this).data('_smartTag');
-                if(!st){
-                    st = new SmartTagModal(this);
-                }
-                st.enable();
-            });
+    enableModals() {
+        this.$el.find('span.smart-tag').each(function() {
+            let st = $(this).data('_smartTag');
+            if (!st) {
+                st = new SmartTagModal(this);
+            }
+            st.enable();
+        });
     }
 
-    disableModals(){
-        this.$el
-            .find('span.smart-tag')
-            .each(function(){
-                let st = $(this).data('_smartTag');
-                if(!st){
-                    st = new SmartTagModal(this);
-                }
-                st.disable();
-            });
+    disableModals() {
+        this.$el.find('span.smart-tag').each(function() {
+            let st = $(this).data('_smartTag');
+            if (!st) {
+                st = new SmartTagModal(this);
+            }
+            st.disable();
+        });
     }
 }
 

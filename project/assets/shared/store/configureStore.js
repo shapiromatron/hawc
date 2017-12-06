@@ -4,17 +4,11 @@ import { createLogger } from 'redux-logger';
 
 import addPromiseSupportToDispatch from './promisedDispatch';
 
-
 let finalCreateStore;
 
 if (process.env.NODE_ENV === 'production') {
-
-    finalCreateStore = compose(
-      applyMiddleware(thunk)
-    )(createStore);
-
+    finalCreateStore = compose(applyMiddleware(thunk))(createStore);
 } else {
-
     // development
     const logger = createLogger({
         level: 'info',
@@ -24,10 +18,9 @@ if (process.env.NODE_ENV === 'production') {
     });
 
     finalCreateStore = compose(
-      applyMiddleware(thunk, logger),
-      window.devToolsExtension ? window.devToolsExtension() : (f) => f
+        applyMiddleware(thunk, logger),
+        window.devToolsExtension ? window.devToolsExtension() : f => f
     )(createStore);
-
 }
 
 export default function configureStore(reducer, initialState) {

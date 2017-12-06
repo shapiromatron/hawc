@@ -5,31 +5,39 @@ import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
-
 class StudyPopulation {
-
-    constructor(data){
+    constructor(data) {
         this.data = data;
-        this.inclusion_criteria = _.filter(this.data.criteria, {'criteria_type': 'Inclusion'});
-        this.exclusion_criteria = _.filter(this.data.criteria, {'criteria_type': 'Exclusion'});
-        this.confounding_criteria = _.filter(this.data.criteria, {'criteria_type': 'Confounding'});
+        this.inclusion_criteria = _.filter(this.data.criteria, {
+            criteria_type: 'Inclusion',
+        });
+        this.exclusion_criteria = _.filter(this.data.criteria, {
+            criteria_type: 'Exclusion',
+        });
+        this.confounding_criteria = _.filter(this.data.criteria, {
+            criteria_type: 'Confounding',
+        });
     }
 
-    static get_object(id, cb){
-        $.get('/epi/api/study-population/{0}/'.printf(id), function(d){
+    static get_object(id, cb) {
+        $.get('/epi/api/study-population/{0}/'.printf(id), function(d) {
             cb(new StudyPopulation(d));
         });
     }
 
-    static displayAsModal(id){
-        StudyPopulation.get_object(id, function(d){d.displayAsModal();});
+    static displayAsModal(id) {
+        StudyPopulation.get_object(id, function(d) {
+            d.displayAsModal();
+        });
     }
 
-    static displayFullPager($el, id){
-        StudyPopulation.get_object(id, function(d){d.displayFullPager($el);});
+    static displayFullPager($el, id) {
+        StudyPopulation.get_object(id, function(d) {
+            d.displayFullPager($el);
+        });
     }
 
-    build_breadcrumbs(){
+    build_breadcrumbs() {
         var urls = [
             { url: this.data.study.url, name: this.data.study.short_citation },
             { url: this.data.url, name: this.data.name },
@@ -37,7 +45,7 @@ class StudyPopulation {
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
-    build_details_table(){
+    build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr('Study design', this.data.design)
             .add_tbody_tr('Age profile', this.data.age_profile)
@@ -48,64 +56,86 @@ class StudyPopulation {
             .add_tbody_tr('Eligible N', this.data.eligible_n)
             .add_tbody_tr('Invited N', this.data.invited_n)
             .add_tbody_tr('Participant N', this.data.participant_n)
-            .add_tbody_tr_list('Inclusion criteria', _.map(this.inclusion_criteria, 'description'))
-            .add_tbody_tr_list('Exclusion criteria', _.map(this.exclusion_criteria, 'description'))
-            .add_tbody_tr_list('Confounding criteria', _.map(this.confounding_criteria, 'description'))
+            .add_tbody_tr_list(
+                'Inclusion criteria',
+                _.map(this.inclusion_criteria, 'description')
+            )
+            .add_tbody_tr_list(
+                'Exclusion criteria',
+                _.map(this.exclusion_criteria, 'description')
+            )
+            .add_tbody_tr_list(
+                'Confounding criteria',
+                _.map(this.confounding_criteria, 'description')
+            )
             .add_tbody_tr('Comments', this.data.comments)
             .get_tbl();
     }
 
-    build_links_div(){
+    build_links_div() {
         var $el = $('<div>'),
-            liFunc = function(d){
+            liFunc = function(d) {
                 return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.name);
             };
 
         $el.append('<h2>Outcomes</h2>');
-        if (this.data.outcomes.length>0){
+        if (this.data.outcomes.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.outcomes, liFunc));
         } else {
             $el.append('<p class="help-block">No outcomes are available.</p>');
         }
 
-        if (this.data.can_create_sets){
+        if (this.data.can_create_sets) {
             $el.append('<h2>Comparison sets</h2>');
-            if (this.data.comparison_sets.length>0){
-                $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
+            if (this.data.comparison_sets.length > 0) {
+                $el.append(
+                    HAWCUtils.buildUL(this.data.comparison_sets, liFunc)
+                );
             } else {
-                $el.append('<p class="help-block">No comparison sets are available.</p>');
+                $el.append(
+                    '<p class="help-block">No comparison sets are available.</p>'
+                );
             }
         }
 
         $el.append('<h2>Exposure measurements</h2>');
-        if (this.data.exposures.length>0){
+        if (this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
-            $el.append('<p class="help-block">No exposure measurements are available.</p>');
+            $el.append(
+                '<p class="help-block">No exposure measurements are available.</p>'
+            );
         }
         return $el;
     }
 
-    displayFullPager($el){
-        $el.hide()
-           .append(this.build_details_table())
-           .append(this.build_links_div())
-           .fadeIn();
+    displayFullPager($el) {
+        $el
+            .hide()
+            .append(this.build_details_table())
+            .append(this.build_links_div())
+            .fadeIn();
     }
 
-    displayAsModal(){
+    displayAsModal() {
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append(this.build_details_table()))
-                .append($('<div class="row-fluid">').append(this.build_links_div()));
+                .append(
+                    $('<div class="row-fluid">').append(
+                        this.build_details_table()
+                    )
+                )
+                .append(
+                    $('<div class="row-fluid">').append(this.build_links_div())
+                );
 
-        modal.addHeader(title)
+        modal
+            .addHeader(title)
             .addBody($content)
             .addFooter('')
-            .show({maxWidth: 1000});
+            .show({ maxWidth: 1000 });
     }
-
 }
 
 export default StudyPopulation;

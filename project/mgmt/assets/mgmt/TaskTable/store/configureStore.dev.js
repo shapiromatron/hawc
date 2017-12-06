@@ -4,7 +4,6 @@ import { createLogger } from 'redux-logger';
 
 import rootReducer from '../reducers';
 
-
 const logger = createLogger({
     level: 'info',
     collapsed: false,
@@ -14,7 +13,7 @@ const logger = createLogger({
 
 const finalCreateStore = compose(
     applyMiddleware(thunk, logger),
-    window.devToolsExtension ? window.devToolsExtension() : (f) => f
+    window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore);
 
 export default function configureStore(initialState) {

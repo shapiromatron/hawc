@@ -5,18 +5,21 @@ import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
 import TaskLabel from 'mgmt/TaskTable/components/TaskLabel';
 import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
 
-
 class TaskStudy extends Component {
-
     render() {
         const { tasks, study } = this.props.item;
         return (
             <div>
-                <hr className='hr-tight' />
-                <div className='flexRow-container taskStudy'>
+                <hr className="hr-tight" />
+                <div className="flexRow-container taskStudy">
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
-                        <TaskToggle TaskLabel={TaskLabel} key={task.id} task={task} className={`task-${index} flex-1`}/>
+                        <TaskToggle
+                            TaskLabel={TaskLabel}
+                            key={task.id}
+                            task={task}
+                            className={`task-${index} flex-1`}
+                        />
                     ))}
                 </div>
             </div>

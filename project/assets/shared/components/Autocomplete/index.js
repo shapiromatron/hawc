@@ -6,29 +6,31 @@ import AutoSuggest from 'react-autosuggest';
 import h from 'shared/utils/helpers';
 import './Autocomplete.css';
 
-
 class Autocomplete extends Component {
-
     constructor(props) {
         super(props);
         let { loaded } = props;
         this.defaultTheme = {
-            container:            'autocomplete__container',
-            containerOpen:        'autocomplete__container--open',
-            input:                'autocomplete__input',
+            container: 'autocomplete__container',
+            containerOpen: 'autocomplete__container--open',
+            input: 'autocomplete__input',
             suggestionsContainer: 'autocomplete__suggestions-container',
-            suggestionsList:      'autocomplete__suggestions-list',
-            suggestion:           'autocomplete__suggestion',
-            suggestionFocused:    'autocomplete__suggestion--focused',
-            sectionContainer:     'autocomplete__section-container',
-            sectionTitle:         'autocomplete__section-title',
+            suggestionsList: 'autocomplete__suggestions-list',
+            suggestion: 'autocomplete__suggestion',
+            suggestionFocused: 'autocomplete__suggestion--focused',
+            sectionContainer: 'autocomplete__section-container',
+            sectionTitle: 'autocomplete__section-title',
         };
         this.getSuggestionValue = this.getSuggestionValue.bind(this);
         this.getTheme = this.getTheme.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
-        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(
+            this
+        );
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(
+            this
+        );
         this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
         this.selectionIsInvalid = this.selectionIsInvalid.bind(this);
 
@@ -38,7 +40,6 @@ class Autocomplete extends Component {
             selected: loaded.id ? loaded.id : null,
             theme: { ...this.defaultTheme },
         };
-
     }
 
     getTheme(event) {
@@ -55,7 +56,7 @@ class Autocomplete extends Component {
 
     selectionIsInvalid(event) {
         const { selected } = this.state;
-        return (event.type === 'blur' && !selected);
+        return event.type === 'blur' && !selected;
     }
 
     getSuggestionValue(suggestion) {
@@ -78,8 +79,10 @@ class Autocomplete extends Component {
 
     onSuggestionsFetchRequested({ value }) {
         fetch(`${this.props.url}&term=${value}`, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => { this.setState({suggestions: json.data}); });
+            .then(response => response.json())
+            .then(json => {
+                this.setState({ suggestions: json.data });
+            });
     }
 
     onSuggestionsClearRequested() {
@@ -118,7 +121,8 @@ class Autocomplete extends Component {
                 getSuggestionValue={this.getSuggestionValue}
                 renderSuggestion={this.renderSuggestion}
                 inputProps={inputProps}
-                theme={theme}/>
+                theme={theme}
+            />
         );
     }
 }

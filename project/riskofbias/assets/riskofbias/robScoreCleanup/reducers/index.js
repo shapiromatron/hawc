@@ -11,24 +11,21 @@ const defaultState = {
     message: null,
 };
 
-function error(state=defaultState, action) {
+function error(state = defaultState, action) {
+    switch (action.type) {
+        case types.SET_ERROR:
+            return Object.assign({}, state, {
+                message: action.error,
+            });
 
-    switch(action.type){
+        case types.RESET_ERROR:
+            return Object.assign({}, state, {
+                message: null,
+            });
 
-    case types.SET_ERROR:
-        return Object.assign({}, state, {
-            message: action.error,
-        });
-
-    case types.RESET_ERROR:
-        return Object.assign({}, state, {
-            message: null,
-        });
-
-    default:
-        return state;
+        default:
+            return state;
     }
-
 }
 
 const rootReducer = combineReducers({

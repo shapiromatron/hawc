@@ -8,54 +8,31 @@ import SmartInline from 'smartTags/QuillSmartInline';
 import SmartTagModal from 'smartTags/QuillSmartTagModal';
 import SmartTagContainer from 'smartTags/SmartTagContainer';
 
-
 Quill.register(SmartTag, true);
 Quill.register(SmartInline, true);
 
 const toolbarOptions = {
         container: [
-            [
-                {header: [false, 1, 2, 3, 4]},
-            ],
-            [
-                'bold',
-                'italic',
-                'underline',
-                'strike',
-            ],
-            [
-                {script: 'sub'},
-                {script: 'super'},
-            ],
-            [
-                {color: []},
-                {background:[]},
-            ],
-            [
-                'link',
-                {list: 'ordered'},
-                {list: 'bullet' },
-                'blockquote',
-            ],
-            [
-                'smartTag', 'smartInline',
-            ],
-            [
-                'clean',
-            ],
+            [{ header: [false, 1, 2, 3, 4] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ script: 'sub' }, { script: 'super' }],
+            [{ color: [] }, { background: [] }],
+            ['link', { list: 'ordered' }, { list: 'bullet' }, 'blockquote'],
+            ['smartTag', 'smartInline'],
+            ['clean'],
         ],
         handlers: {
-            smartTag(value){
+            smartTag(value) {
                 let sel = this.quill.getSelection();
-                if (sel === null || sel.length === 0){
+                if (sel === null || sel.length === 0) {
                     window.alert('Select text to add a smart-tag.');
                     return;
                 }
                 this.quill.smartTagModal.showModal('smartTag', sel, value);
             },
-            smartInline(value){
+            smartInline(value) {
                 let sel = this.quill.getSelection();
-                if (sel === null || sel.length === 0){
+                if (sel === null || sel.length === 0) {
                     window.alert('Select text to add an inline smart-tag.');
                     return;
                 }
@@ -63,26 +40,31 @@ const toolbarOptions = {
             },
         },
     },
-    formatSmartTagButtons = function(q){
+    formatSmartTagButtons = function(q) {
         var tb = q.getModule('toolbar');
-        $(tb.container).find('.ql-smartTag')
+        $(tb.container)
+            .find('.ql-smartTag')
             .append('<i class="fa fa-tag">');
-        $(tb.container).find('.ql-smartInline')
+        $(tb.container)
+            .find('.ql-smartInline')
             .append('<i class="fa fa-sticky-note">');
         q.smartTagModal = new SmartTagModal(q, $('#smartTagModal'));
     },
-    hideSmartTagButtons = function(q){
+    hideSmartTagButtons = function(q) {
         var tb = q.getModule('toolbar');
-        $(tb.container).find('.ql-smartTag').hide();
-        $(tb.container).find('.ql-smartInline').hide();
+        $(tb.container)
+            .find('.ql-smartTag')
+            .hide();
+        $(tb.container)
+            .find('.ql-smartInline')
+            .hide();
     };
 
-export default function(){
-
+export default function() {
     let modal = $('#smartTagModal'),
-        showHawcTools = (modal.length === 1);
+        showHawcTools = modal.length === 1;
 
-    return this.each(function(){
+    return this.each(function() {
         let editor = document.createElement('div'),
             textarea = $(this),
             q;
@@ -96,7 +78,7 @@ export default function(){
             theme: 'snow',
         });
 
-        if (showHawcTools){
+        if (showHawcTools) {
             q.stc = new SmartTagContainer($(q.container).find('.ql-editor'));
             formatSmartTagButtons(q);
         } else {
@@ -104,13 +86,15 @@ export default function(){
         }
 
         q.pasteHTML(textarea.val());
-        q.on('text-change', function(delta, oldDelta, source){
-            let content = $(editor).find('.ql-editor').html();
+        q.on('text-change', function(delta, oldDelta, source) {
+            let content = $(editor)
+                .find('.ql-editor')
+                .html();
             textarea.val(content);
         });
         textarea.data('_quill', q);
 
-        if (q.stc){
+        if (q.stc) {
             q.stc.enableModals();
         }
     });

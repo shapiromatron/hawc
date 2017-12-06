@@ -4,25 +4,21 @@ import RoBBarchart from 'summary/RoBBarchart';
 
 import RoBHeatmapForm from './RoBHeatmapForm';
 import RoBMetricTable from './RoBMetricTable';
-import {
-    TextField,
-    IntegerField,
-    CheckboxField,
-} from './Fields';
-
+import { TextField, IntegerField, CheckboxField } from './Fields';
 
 class RoBBarchartForm extends RoBHeatmapForm {
-
-    buildPreview($parent, data){
-        this.preview = new RoBBarchart(data).displayAsPage( $parent.empty(), {'dev': true} );
+    buildPreview($parent, data) {
+        this.preview = new RoBBarchart(data).displayAsPage($parent.empty(), {
+            dev: true,
+        });
     }
 }
 
 _.extend(RoBBarchartForm, {
     tabs: [
-        {name: 'overall', label: 'General settings'},
-        {name: 'metrics', label: 'Included metrics'},
-        {name: 'legend',  label: 'Legend settings'},
+        { name: 'overall', label: 'General settings' },
+        { name: 'metrics', label: 'Included metrics' },
+        { name: 'legend', label: 'Legend settings' },
     ],
     schema: [
         {
@@ -124,7 +120,8 @@ _.extend(RoBBarchartForm, {
             name: 'legend_x',
             label: 'Legend x-location (px)',
             def: -1,
-            helpText: 'Set to -1 to be at the left, or 9999 to be at the right (or any value inbetween)',
+            helpText:
+                'Set to -1 to be at the left, or 9999 to be at the right (or any value inbetween)',
             tab: 'legend',
         },
         {
@@ -132,7 +129,8 @@ _.extend(RoBBarchartForm, {
             name: 'legend_y',
             label: 'Legend y-location (px)',
             def: 9999,
-            helpText: 'Set to -1 to be at the top, or 9999 to be at the bottom (or any value inbetween)',
+            helpText:
+                'Set to -1 to be at the top, or 9999 to be at the bottom (or any value inbetween)',
             tab: 'legend',
         },
     ],

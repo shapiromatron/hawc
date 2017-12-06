@@ -1,50 +1,51 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
+import {
+    fetchFullStudyIfNeeded,
+    selectActive,
+} from 'riskofbias/robTable/actions';
 import DisplayComponent from 'riskofbias/robTable/components/RiskOfBiasDisplay';
 import ShowAll from 'riskofbias/robTable/components/ShowAll';
 import Loading from 'shared/components/Loading';
 
-
 class RiskOfBiasDisplay extends Component {
-
     constructor(props) {
         super(props);
         this.handleShowAllClick = this.handleShowAllClick.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
-    isAllShown(){
-        return this.props.active.length ===  this.props.riskofbiases.length;
+    isAllShown() {
+        return this.props.active.length === this.props.riskofbiases.length;
     }
 
-    handleShowAllClick(){
+    handleShowAllClick() {
         let { dispatch } = this.props,
-            domains = (this.isAllShown()) ? 'none': 'all';
-        dispatch(selectActive({domain: domains}));
+            domains = this.isAllShown() ? 'none' : 'all';
+        dispatch(selectActive({ domain: domains }));
     }
 
-    render(){
-
+    render() {
         let { itemsLoaded, active, config } = this.props;
         if (!itemsLoaded) return <Loading />;
 
         return (
-            <div className='riskofbias-container'>
+            <div className="riskofbias-container">
                 <DisplayComponent active={active} config={config} />
                 <ShowAll
                     allShown={this.isAllShown()}
-                    handleClick={this.handleShowAllClick} />
+                    handleClick={this.handleShowAllClick}
+                />
             </div>
         );
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         itemsLoaded: state.study.itemsLoaded,
         active: state.study.active,

@@ -6,19 +6,14 @@ import './Root.css';
 
 import { loadConfig } from 'shared/actions/Config';
 
-import {
-    getTags,
-} from 'nestedTagEditor/actions';
+import { getTags } from 'nestedTagEditor/actions';
 
 import Tree from 'nestedTagEditor/containers/Tree';
 
-
 class Root extends React.Component {
-
-    componentWillMount(){
-        let {dispatch} = this.props.store;
-        Promise.all([dispatch(loadConfig())])
-            .then(() => dispatch(getTags()));
+    componentWillMount() {
+        let { dispatch } = this.props.store;
+        Promise.all([dispatch(loadConfig())]).then(() => dispatch(getTags()));
     }
 
     render() {

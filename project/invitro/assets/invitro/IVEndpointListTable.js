@@ -1,8 +1,6 @@
 import BaseTable from 'utils/BaseTable';
 
-
 class IVEndpointListTable {
-
     constructor(endpoints) {
         this.endpoints = endpoints;
         this.table = new BaseTable();
@@ -26,7 +24,7 @@ class IVEndpointListTable {
             ];
         table.setColGroup([10, 16, 12, 11, 16, 20, 7, 7]);
         table.addHeaderRow(headers);
-        this.endpoints.map((endpoint) => {
+        this.endpoints.map(endpoint => {
             table.addRow(endpoint.buildListRow());
         });
         return table.getTbl();

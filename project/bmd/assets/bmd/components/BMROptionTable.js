@@ -1,32 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 class BMROptionTable extends React.Component {
-
-    handleRowClick(bmrIndex){
+    handleRowClick(bmrIndex) {
         this.props.handleModalDisplay(bmrIndex);
     }
 
-    renderEditDiv(){
+    renderEditDiv() {
         if (!this.props.editMode) return;
 
         return (
-            <div className='row-fluid' >
+            <div className="row-fluid">
                 <div className="controls">
                     <button
                         onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-small pull-right">
-                            <i className="icon-plus"></i> Create new BMR</button>
+                        className="btn btn-small pull-right"
+                    >
+                        <i className="icon-plus" /> Create new BMR
+                    </button>
                 </div>
             </div>
         );
     }
 
-    renderRow(bmr, i){
-        let header = (this.props.editMode)?
-             'View/edit': 'View';
+    renderRow(bmr, i) {
+        let header = this.props.editMode ? 'View/edit' : 'View';
 
         return (
             <tr key={i}>
@@ -36,33 +35,35 @@ class BMROptionTable extends React.Component {
                 <td>
                     <button
                         type="button"
-                        className='btn btn-link'
-                        onClick={this.handleRowClick.bind(this, i)}>{header}</button>
+                        className="btn btn-link"
+                        onClick={this.handleRowClick.bind(this, i)}
+                    >
+                        {header}
+                    </button>
                 </td>
             </tr>
         );
     }
 
     render() {
-        let header = (this.props.editMode)?
-             'View/edit': 'View';
+        let header = this.props.editMode ? 'View/edit' : 'View';
         return (
             <div className="span6">
                 <h4>Benchmark modeling responses</h4>
                 <table className="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th style={{width:'30%'}}>Type</th>
-                            <th style={{width:'20%'}}>Value</th>
-                            <th style={{width:'25%'}}>Confidence level</th>
-                            <th style={{width:'25%'}}>{header}</th>
+                            <th style={{ width: '30%' }}>Type</th>
+                            <th style={{ width: '20%' }}>Value</th>
+                            <th style={{ width: '25%' }}>Confidence level</th>
+                            <th style={{ width: '25%' }}>{header}</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <td colSpan="4">
-                            All models will be run using the selected BMRs,
-                            if appropriate for that particular model type.
+                                All models will be run using the selected BMRs,
+                                if appropriate for that particular model type.
                             </td>
                         </tr>
                     </tfoot>

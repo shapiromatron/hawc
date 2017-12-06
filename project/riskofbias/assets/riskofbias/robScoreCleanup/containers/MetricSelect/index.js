@@ -7,7 +7,6 @@ import { selectMetric } from 'riskofbias/robScoreCleanup/actions/Metrics';
 import ArraySelect from 'shared/components/ArraySelect';
 
 export class MetricSelect extends Component {
-
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);
@@ -19,14 +18,14 @@ export class MetricSelect extends Component {
         this.handleSelect(this.defaultValue);
     }
 
-    formatMetricChoices(){
-        return _.map(this.props.choices, (choice) => {
-            return {id: choice.id, value: choice.name};
+    formatMetricChoices() {
+        return _.map(this.props.choices, choice => {
+            return { id: choice.id, value: choice.name };
         });
     }
 
-    handleSelect(option=null){
-        let choice = _.find(this.props.choices, {id: parseInt(option)});
+    handleSelect(option = null) {
+        let choice = _.find(this.props.choices, { id: parseInt(option) });
         this.props.dispatch(selectMetric(choice));
     }
 
@@ -35,12 +34,16 @@ export class MetricSelect extends Component {
         this.setDefaultValue();
         return (
             <div>
-                <label className='control-label'>Select the metric to edit:</label>
-                <ArraySelect id='metric-select'
-                    className='span12'
+                <label className="control-label">
+                    Select the metric to edit:
+                </label>
+                <ArraySelect
+                    id="metric-select"
+                    className="span12"
                     choices={this.choices}
                     handleSelect={this.handleSelect}
-                    defVal={this.defaultValue}/>
+                    defVal={this.defaultValue}
+                />
             </div>
         );
     }

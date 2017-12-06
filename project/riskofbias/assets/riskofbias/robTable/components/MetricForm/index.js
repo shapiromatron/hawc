@@ -6,47 +6,64 @@ import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
 import ScoreForm from 'riskofbias/robTable/components/ScoreForm';
 import './MetricForm.css';
 
-
 class MetricForm extends Component {
-
     constructor(props) {
         super(props);
-        this.state = {addText: ''};
+        this.state = { addText: '' };
         this.copyNotes = this.copyNotes.bind(this);
     }
 
-    copyNotes(text){
-        this.setState({addText: text});
+    copyNotes(text) {
+        this.setState({ addText: text });
     }
 
-    renderScoreRow(){
+    renderScoreRow() {
         let { metric, config } = this.props,
-            displayScores = _.filter(metric.values, (score) => {return !score.final;});
+            displayScores = _.filter(metric.values, score => {
+                return !score.final;
+            });
 
         return (
-            <div className='score-row'>
-            {_.map(displayScores, (score) => {
-                return <ScoreDisplay key={score.id}
+            <div className="score-row">
+                {_.map(displayScores, score => {
+                    return (
+                        <ScoreDisplay
+                            key={score.id}
                             score={score}
                             config={config}
-                            copyNotes={config.display ==='final' ? this.copyNotes : undefined} />;
-            })}
+                            copyNotes={
+                                config.display === 'final'
+                                    ? this.copyNotes
+                                    : undefined
+                            }
+                        />
+                    );
+                })}
             </div>
         );
     }
 
-    render(){
+    render() {
         let { metric, config, updateNotesLeft } = this.props,
-            formScore = _.find(metric.values, {riskofbias_id: parseInt(config.riskofbias.id)});
+            formScore = _.find(metric.values, {
+                riskofbias_id: parseInt(config.riskofbias.id),
+            });
 
         return (
-            <div className='metric-display'>
+            <div className="metric-display">
                 <h4>{metric.key}</h4>
-                <span dangerouslySetInnerHTML={{
-                    __html: metric.values[0].metric.description,
-                }} />
-                {config.display ==='final' ? this.renderScoreRow() : null}
-                <ScoreForm ref='form' score={formScore} addText={this.state.addText} updateNotesLeft={updateNotesLeft}/>
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: metric.values[0].metric.description,
+                    }}
+                />
+                {config.display === 'final' ? this.renderScoreRow() : null}
+                <ScoreForm
+                    ref="form"
+                    score={formScore}
+                    addText={this.state.addText}
+                    updateNotesLeft={updateNotesLeft}
+                />
             </div>
         );
     }

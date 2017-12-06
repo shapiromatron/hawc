@@ -3,12 +3,11 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const helpers = {
-    noop(){
-    },
+    noop() {},
     fetchGet: {
         credentials: 'same-origin',
     },
-    fetchPost(csrf, obj, verb='POST'){
+    fetchPost(csrf, obj, verb = 'POST') {
         obj['csrfmiddlewaretoken'] = csrf;
         return {
             credentials: 'same-origin',
@@ -20,7 +19,7 @@ const helpers = {
             body: JSON.stringify(obj),
         };
     },
-    fetchBulk(csrf, obj, verb='PATCH'){
+    fetchBulk(csrf, obj, verb = 'PATCH') {
         obj['csrfmiddlewaretoken'] = csrf;
         return {
             credentials: 'same-origin',
@@ -33,7 +32,7 @@ const helpers = {
             body: JSON.stringify(obj),
         };
     },
-    fetchDelete(csrf){
+    fetchDelete(csrf) {
         return {
             credentials: 'same-origin',
             method: 'DELETE',
@@ -41,70 +40,75 @@ const helpers = {
                 'X-CSRFToken': csrf,
                 'content-type': 'application/json',
             }),
-            body: JSON.stringify({csrfmiddlewaretoken:  csrf}),
+            body: JSON.stringify({ csrfmiddlewaretoken: csrf }),
         };
     },
-    goBack(e){
+    goBack(e) {
         if (e && e.preventDefault) e.preventDefault();
         window.history.back();
     },
-    getValue(target){
-        switch(target.type){
-        case 'checkbox':
-            return target.checked;
-        case 'number':
-            return parseFloat(target.value);
-        case 'select-one':  // use isFinite in-case value is 0
-            let val = parseInt(target.value);
-            return (_.isFinite(val)) ? val : target.value;
-        case 'text':
-        case 'textarea':
-        default:
-            return target.value;
+    getValue(target) {
+        switch (target.type) {
+            case 'checkbox':
+                return target.checked;
+            case 'number':
+                return parseFloat(target.value);
+            case 'select-one': // use isFinite in-case value is 0
+                let val = parseInt(target.value);
+                return _.isFinite(val) ? val : target.value;
+            case 'text':
+            case 'textarea':
+            default:
+                return target.value;
         }
     },
-    getObjectUrl(host, base, id){
+    getObjectUrl(host, base, id) {
         return `${host}${base}${id}/`;
     },
-    getListUrl(host, base){
+    getListUrl(host, base) {
         return `${host}${base}`;
     },
-    getUrlWithAssessment(url, assessment_id){
+    getUrlWithAssessment(url, assessment_id) {
         return `${url}?assessment_id=${assessment_id}`;
     },
-    getBulkUrl(host, base, ids=null){
+    getBulkUrl(host, base, ids = null) {
         return `${host}${base}&ids=${ids}`;
     },
-    datetimeFormat(dt){
+    datetimeFormat(dt) {
         return moment(dt).format('MMMM Do YYYY, h:mm:ss a');
     },
-    booleanCheckbox(val){
-        if (val){
-            return <i className='fa fa-check-square-o' title="checked"></i>;
+    booleanCheckbox(val) {
+        if (val) {
+            return <i className="fa fa-check-square-o" title="checked" />;
         } else {
-            return <i className='fa fa-square-o' title="un-checked"></i>;
+            return <i className="fa fa-square-o" title="un-checked" />;
         }
     },
-    getInputDivClass(name, errors, extra=[]){
+    getInputDivClass(name, errors, extra = []) {
         extra.push('form-group');
         if (errors && errors[name]) extra.push('has-error');
         return extra.join(' ');
     },
-    deepCopy(object){
+    deepCopy(object) {
         return JSON.parse(JSON.stringify(object));
     },
-    caseToWords(string){
-        return string
-            // replace underscores and dashes with spaces
-            .replace(/[_-]/g, ' ')
-            // insert a space between lower followed by upper
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            // insert a space between last upper in sequence followed by lower
-            .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-            // uppercase the first character of first word
-            .replace(/\w\S*/, function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            });
+    caseToWords(string) {
+        return (
+            string
+                // replace underscores and dashes with spaces
+                .replace(/[_-]/g, ' ')
+                // insert a space between lower followed by upper
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                // insert a space between last upper in sequence followed by lower
+                .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+                // uppercase the first character of first word
+                .replace(/\w\S*/, function(txt) {
+                    return (
+                        txt.charAt(0).toUpperCase() +
+                        txt.substr(1).toLowerCase()
+                    );
+                })
+        );
     },
 };
 

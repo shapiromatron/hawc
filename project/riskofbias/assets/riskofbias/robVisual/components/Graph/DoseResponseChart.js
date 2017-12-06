@@ -7,7 +7,6 @@ import DoseAxis from './xAxis';
 import ResponseAxis from './yAxis';
 import SplineChart from './SplineChart';
 
-
 class DoseResponseChart extends Component {
     componentWillMount() {
         let { doses, responses } = this.props,
@@ -24,22 +23,24 @@ class DoseResponseChart extends Component {
             yScale = this.makeYScale(responseData);
 
         this.setState({
-            doseData: { ...doseData, xScale},
-            responseData: { ...responseData, yScale},
-            chartData: {data: chartData, yScale, xScale},
+            doseData: { ...doseData, xScale },
+            responseData: { ...responseData, yScale },
+            chartData: { data: chartData, yScale, xScale },
         });
     }
 
-    makeXScale(data){
+    makeXScale(data) {
         let { min, max, width, padding } = data;
-        return d3.scale.linear()
+        return d3.scale
+            .linear()
             .domain([min, max])
             .range([padding[3], width - padding[1] - padding[3]]);
     }
 
-    makeYScale(data){
+    makeYScale(data) {
         let { min, max, height, padding } = data;
-        return d3.scale.linear()
+        return d3.scale
+            .linear()
             .domain([max, min])
             .range([padding[0], height - padding[2]]);
     }
@@ -55,7 +56,7 @@ class DoseResponseChart extends Component {
         };
     }
 
-    getResponseAxisData(){
+    getResponseAxisData() {
         let { chartData, responses } = this.props;
         return {
             ...chartData,
@@ -71,8 +72,11 @@ class DoseResponseChart extends Component {
         return (
             <svg width={width} height={height}>
                 <DoseAxis {...this.state.doseData} renderScale={false} />
-                <SplineChart { ...this.state.chartData} radius={radius} />
-                <ResponseAxis {...this.state.responseData} renderScale={false} />
+                <SplineChart {...this.state.chartData} radius={radius} />
+                <ResponseAxis
+                    {...this.state.responseData}
+                    renderScale={false}
+                />
             </svg>
         );
     }
@@ -83,15 +87,9 @@ DoseResponseChart.propTypes = {
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
         radius: PropTypes.number.isRequired,
-        padding: PropTypes.arrayOf(
-            PropTypes.number.isRequired
-        ).isRequired,
-        xTransform: PropTypes.arrayOf(
-            PropTypes.number.isRequired
-        ).isRequired,
-        yTransform: PropTypes.arrayOf(
-            PropTypes.number.isRequired
-        ).isRequired,
+        padding: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+        xTransform: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+        yTransform: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
     }),
 };
 

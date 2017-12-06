@@ -6,13 +6,18 @@ import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
 import Select from 'shared/components/Select';
 import './ScoreForm.css';
 
-
 class ScoreForm extends Component {
-
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            scoreSymbols: {0: 'N/A', 1: '--', 2: '-', 3: '+', 4: '++', 10: 'NR'},
+            scoreSymbols: {
+                0: 'N/A',
+                1: '--',
+                2: '-',
+                3: '+',
+                4: '++',
+                10: 'NR',
+            },
             scoreShades: {
                 0: '#E8E8E8',
                 1: '#CC3333',
@@ -36,20 +41,20 @@ class ScoreForm extends Component {
         this.selectScore = this.selectScore.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.selectScore(this.props.score.score);
     }
 
     componentWillUpdate(nextProps, nextState) {
         // update notes if addText is modified
         // (usually by copying notes over from another form)
-        if(nextProps.addText !== this.props.addText){
+        if (nextProps.addText !== this.props.addText) {
             this.setState({
                 notes: this.state.notes + nextProps.addText,
             });
         }
         // if score notes is changed, change notes to new notes
-        if(nextProps.score.notes !== this.props.score.notes){
+        if (nextProps.score.notes !== this.props.score.notes) {
             this.setState({
                 notes: nextProps.score.notes,
             });
@@ -60,7 +65,7 @@ class ScoreForm extends Component {
         }
     }
 
-    selectScore(score){
+    selectScore(score) {
         this.setState({
             score,
             selectedShade: this.state.scoreShades[score],
@@ -69,13 +74,16 @@ class ScoreForm extends Component {
         this.validateInput(score, this.state.notes);
     }
 
-    handleEditorInput(event){
-        this.setState({notes: event});
+    handleEditorInput(event) {
+        this.setState({ notes: event });
         this.validateInput(this.state.score, event);
     }
 
-    validateInput(score, notes){
-        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' && score != 0) {
+    validateInput(score, notes) {
+        if (
+            this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' &&
+            score != 0
+        ) {
             this.props.updateNotesLeft(this.props.score.id, 'add');
         } else {
             this.props.updateNotesLeft(this.props.score.id, 'clear');
@@ -84,22 +92,32 @@ class ScoreForm extends Component {
 
     render() {
         let { name } = this.props.score.metric,
-            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
+            {
+                scoreChoices,
+                score,
+                notes,
+                selectedSymbol,
+                selectedShade,
+            } = this.state;
         return (
-            <div className='score-form'>
+            <div className="score-form">
                 <div>
-                    <Select choices={scoreChoices}
-                          id={name}
-                          value={score}
-                          handleSelect={this.selectScore}/>
-                    <br/><br/>
-                    <ScoreIcon shade={selectedShade}
-                             symbol={selectedSymbol}/>
+                    <Select
+                        choices={scoreChoices}
+                        id={name}
+                        value={score}
+                        handleSelect={this.selectScore}
+                    />
+                    <br />
+                    <br />
+                    <ScoreIcon shade={selectedShade} symbol={selectedSymbol} />
                 </div>
-                <ReactQuill id={name}
-                         value={notes}
-                         onChange={this.handleEditorInput}
-                         className='score-editor' />
+                <ReactQuill
+                    id={name}
+                    value={notes}
+                    onChange={this.handleEditorInput}
+                    className="score-editor"
+                />
             </div>
         );
     }

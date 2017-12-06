@@ -4,41 +4,43 @@ import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
-
 class IVCellType {
-
-    constructor(data){
+    constructor(data) {
         this.data = data;
     }
 
-    static get_object(id, cb){
-        $.get('/in-vitro/api/celltype/{0}/'.printf(id), function(d){
+    static get_object(id, cb) {
+        $.get('/in-vitro/api/celltype/{0}/'.printf(id), function(d) {
             cb(new IVCellType(d));
         });
     }
 
-    static displayAsModal(id){
-        IVCellType.get_object(id, function(d){d.displayAsModal();});
+    static displayAsModal(id) {
+        IVCellType.get_object(id, function(d) {
+            d.displayAsModal();
+        });
     }
 
-    static displayAsPage(id, div){
-        IVCellType.get_object(id, function(d){d.displayAsPage(div);});
+    static displayAsPage(id, div) {
+        IVCellType.get_object(id, function(d) {
+            d.displayAsPage(div);
+        });
     }
 
-    build_title(){
+    build_title() {
         var el = $('<h1>').text(this.data.title);
-        if (window.canEdit){
+        if (window.canEdit) {
             var urls = [
                 'Cell type editing',
-                {url: this.data.url_update, text: 'Update'},
-                {url: this.data.url_delete, text: 'Delete'},
+                { url: this.data.url_update, text: 'Update' },
+                { url: this.data.url_delete, text: 'Delete' },
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;
     }
 
-    build_details_table(){
+    build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr('Cell type', this.data.cell_type)
             .add_tbody_tr('Tissue', this.data.tissue)
@@ -50,26 +52,24 @@ class IVCellType {
             .get_tbl();
     }
 
-    displayAsModal(){
+    displayAsModal() {
         var modal = new HAWCModal(),
             $details = $('<div class="span12">'),
-            $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
+            $content = $('<div class="container-fluid">').append(
+                $('<div class="row-fluid">').append($details)
+            );
 
         $details.append(this.build_details_table());
         modal
             .addTitleLinkHeader(this.data.title, this.data.url)
             .addBody($content)
             .addFooter('')
-            .show({maxWidth: 900});
+            .show({ maxWidth: 900 });
     }
 
-    displayAsPage($div){
-        $div
-            .append(this.build_title())
-            .append(this.build_details_table());
+    displayAsPage($div) {
+        $div.append(this.build_title()).append(this.build_details_table());
     }
-
 }
 
 export default IVCellType;

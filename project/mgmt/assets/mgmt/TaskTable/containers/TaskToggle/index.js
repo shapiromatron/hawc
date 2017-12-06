@@ -7,7 +7,6 @@ import TaskForm from 'mgmt/TaskTable/components/TaskForm';
 import './TaskToggle.css';
 
 class TaskToggle extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -40,13 +39,17 @@ class TaskToggle extends Component {
     renderTaskForm() {
         return (
             <div className={`${this.props.className} relative-parent`}>
-                <i onClick={this.handleLabelDisplay}
-                   style={{cursor: 'pointer'}}
-                   title="Cancel edits"
-                   className="fa fa-times edit-icon"
-                   aria-hidden="true"></i>
-                <TaskForm ref={(c) => this.form = c} {...this.props} />
-                <button className='btn btn-primary' onClick={this.handleSubmit}>Submit</button>
+                <i
+                    onClick={this.handleLabelDisplay}
+                    style={{ cursor: 'pointer' }}
+                    title="Cancel edits"
+                    className="fa fa-times edit-icon"
+                    aria-hidden="true"
+                />
+                <TaskForm ref={c => (this.form = c)} {...this.props} />
+                <button className="btn btn-primary" onClick={this.handleSubmit}>
+                    Submit
+                </button>
             </div>
         );
     }
@@ -54,23 +57,22 @@ class TaskToggle extends Component {
     renderTaskLabel() {
         return (
             <div className={`${this.props.className} relative-parent`}>
-                <i onClick={this.handleFormDisplay}
-                   style={{cursor: 'pointer'}}
-                   title="Edit this task"
-                   className="fa fa-pencil-square-o edit-icon"
-                   aria-hidden="true"></i>
-                <this.props.TaskLabel
-                    task={this.props.task} />
+                <i
+                    onClick={this.handleFormDisplay}
+                    style={{ cursor: 'pointer' }}
+                    title="Edit this task"
+                    className="fa fa-pencil-square-o edit-icon"
+                    aria-hidden="true"
+                />
+                <this.props.TaskLabel task={this.props.task} />
             </div>
         );
     }
 
     render() {
-        return (
-            this.state.showForm ?
-            this.renderTaskForm() :
-            this.renderTaskLabel()
-        );
+        return this.state.showForm
+            ? this.renderTaskForm()
+            : this.renderTaskLabel();
     }
 }
 
@@ -80,7 +82,7 @@ TaskToggle.propTypes = {
     TaskLabel: PropTypes.func.isRequired,
 };
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     const { autocomplete } = state.config;
     return {
         autocompleteUrl: autocomplete.url,

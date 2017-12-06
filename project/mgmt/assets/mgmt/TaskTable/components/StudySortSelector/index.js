@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 
 import h from 'mgmt/utils/helpers';
 
-
 class StudySortSelector extends Component {
-
     constructor(props) {
         super(props);
         this.onChange = this.onChange.bind(this);
@@ -28,34 +26,68 @@ class StudySortSelector extends Component {
     }
 
     render() {
-        const { className, fieldOptions, orderOptions, studySorting } = this.props;
+        const {
+            className,
+            fieldOptions,
+            orderOptions,
+            studySorting,
+        } = this.props;
         return (
             <div className={className}>
-                <div className='flexRow-container'>
-
-                    <div className='flex-1'>
-                        <label className='control-label' htmlFor='study_sorting-field'>Sort studies by:</label>
-                        <form id='study_sorting-field'>
-                        {fieldOptions.map((field) => {
-                            return (
-                                <label key={field} htmlFor={field}>
-                                    <input onChange={this.onChange} checked={studySorting.field == field} type='radio' id={field} name='field' style={{margin: '0 4px'}}/>
-                                    {h.caseToWords(field)}
-                                </label>);
-                        })}
+                <div className="flexRow-container">
+                    <div className="flex-1">
+                        <label
+                            className="control-label"
+                            htmlFor="study_sorting-field"
+                        >
+                            Sort studies by:
+                        </label>
+                        <form id="study_sorting-field">
+                            {fieldOptions.map(field => {
+                                return (
+                                    <label key={field} htmlFor={field}>
+                                        <input
+                                            onChange={this.onChange}
+                                            checked={
+                                                studySorting.field == field
+                                            }
+                                            type="radio"
+                                            id={field}
+                                            name="field"
+                                            style={{ margin: '0 4px' }}
+                                        />
+                                        {h.caseToWords(field)}
+                                    </label>
+                                );
+                            })}
                         </form>
                     </div>
 
-                    <div className='flex-1'>
-                        <label className='control-label' htmlFor="study_sorting-order">Order studies by:</label>
-                        <form id='study_sorting-order'>
-                        {orderOptions.map((order) => {
-                            return (
-                                <label key={order} htmlFor={order}>
-                                    <input onChange={this.onChange} checked={studySorting.order === order} type='radio' id={order} name='order' style={{margin: '0 4px'}}/>
-                                    {h.caseToWords(order)}
-                                </label>);
-                        })}
+                    <div className="flex-1">
+                        <label
+                            className="control-label"
+                            htmlFor="study_sorting-order"
+                        >
+                            Order studies by:
+                        </label>
+                        <form id="study_sorting-order">
+                            {orderOptions.map(order => {
+                                return (
+                                    <label key={order} htmlFor={order}>
+                                        <input
+                                            onChange={this.onChange}
+                                            checked={
+                                                studySorting.order === order
+                                            }
+                                            type="radio"
+                                            id={order}
+                                            name="order"
+                                            style={{ margin: '0 4px' }}
+                                        />
+                                        {h.caseToWords(order)}
+                                    </label>
+                                );
+                            })}
                         </form>
                     </div>
                 </div>

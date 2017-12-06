@@ -4,15 +4,14 @@ import EndpointAggregation from 'summary/EndpointAggregation';
 
 import BaseVisualForm from './BaseVisualForm';
 
-
 class EndpointAggregationForm extends BaseVisualForm {
-
-    buildPreview($parent, data){
-        this.preview = new EndpointAggregation(data).displayAsPage( $parent.empty() );
+    buildPreview($parent, data) {
+        this.preview = new EndpointAggregation(data).displayAsPage(
+            $parent.empty()
+        );
     }
 
-    updateSettingsFromPreview(){
-    }
+    updateSettingsFromPreview() {}
 }
 
 _.extend(EndpointAggregationForm, {
@@ -20,4 +19,3 @@ _.extend(EndpointAggregationForm, {
 });
 
 export default EndpointAggregationForm;
-
