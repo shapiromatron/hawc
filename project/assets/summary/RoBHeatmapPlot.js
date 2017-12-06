@@ -207,10 +207,26 @@ class RoBHeatmapPlot extends D3Visualization {
             .data(this.dataset)
           .enter().append('rect')
             .attr('x', function(d){return x(d[self.xField]);})
-            .attr('y', function(d){return y(d[self.yField]);})
+            .attr(
+                'y'
+                ,function(d) {
+                    return y(d[self.yField]);
+                }
+            )
             .attr('height', width)
             .attr('width', width)
-            .attr('class', 'heatmap_selectable')
+            .attr(
+                'class',
+                function(d) {
+                    var returnValue = "heatmap_selectable";
+
+                    if (d.metric.domain.is_overall_confidence) {
+                        returnValue = "heatmap_selectable_bold";
+                    }
+
+                    return returnValue;
+                }
+            )
             .style('fill', function(d){return d.score_color;})
         .on('mouseover', function(v,i){self.draw_hovers(v, {draw: true, type: 'cell'});})
         .on('mouseout', function(v,i){self.draw_hovers(v, {draw: false});})
@@ -221,6 +237,7 @@ class RoBHeatmapPlot extends D3Visualization {
                 .addFooter('')
                 .show({maxWidth: 900});
         });
+
         this.score = this.cells_group.selectAll('svg.text')
             .data(this.dataset)
             .enter().append('text')
@@ -228,7 +245,23 @@ class RoBHeatmapPlot extends D3Visualization {
                 .attr('y', function(d){return (y(d[self.yField]) + half_width);})
                 .attr('text-anchor', 'middle')
                 .attr('dy', '3.5px')
-                .attr('class', 'centeredLabel')
+                .attr(
+                    'class'
+                    ,function(d) {
+                        var returnValue = "centeredLabel";
+
+                        if (
+                            (typeof(d.metric) != "undefined")
+                            && (typeof(d.metric.domain) != "undefined")
+                            && (typeof(d.metric.domain.is_overall_confidence) === "boolean")
+                            && (d.metric.domain.is_overall_confidence)
+                        ) {
+                            returnValue = "centeredLabel_bold";
+                        }
+
+                        return returnValue;
+                    }
+                )
                 .style('fill',  function(d){return d.score_text_color;})
                 .text(function(d){return d.score_text;});
 
@@ -239,7 +272,25 @@ class RoBHeatmapPlot extends D3Visualization {
             .on('click', showSQs);
 
         $('.y_axis text').each( (!this.xIsStudy) ? getStudySQs : getMetricSQs )
-            .attr('class', 'heatmap_selectable')
+            .attr(
+                'class'
+                ,function(d) {
+                    var returnValue = "heatmap_selectable";
+
+                    if (
+                        (typeof(self.data) != "undefined")
+                        && (typeof(self.data.aggregation) != "undefined")
+                        && (typeof(self.data.aggregation.metrics_dataset) != "undefined")
+                        && (d < self.data.aggregation.metrics_dataset.length)
+                        && (typeof(self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence) == "boolean")
+                        && (self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence)
+                    ) {
+                        var returnValue = "heatmap_selectable_bold";
+                    }
+
+                    return returnValue;
+                }
+            )
             .on('mouseover', function(v){self.draw_hovers(this, {draw: true, type: 'row'});})
             .on('mouseout', hideHovers)
             .on('click', showSQs);

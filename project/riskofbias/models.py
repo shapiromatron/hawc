@@ -35,6 +35,11 @@ class RiskOfBiasDomain(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+    is_overall_confidence = models.BooleanField(
+        default = False
+        ,verbose_name = "Overall confidence?"
+        ,help_text = "Is this domain for overall confidence?"
+    )
 
     class Meta:
         unique_together = ('assessment', 'name')
