@@ -71,6 +71,7 @@ class Study{
         this.riskofbias.forEach(function(v, i){
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
+            v.domain_is_overall_confidence = (typeof(v.values[0].data.metric.domain.is_overall_confidence) === "boolean") ? v.values[0].data.metric.domain.is_overall_confidence : false;
             v.criteria = v.values;
             v.score_text = (v.score>0) ? v.score : 'N/A';
             v.score_color = '#E8E8E8';
