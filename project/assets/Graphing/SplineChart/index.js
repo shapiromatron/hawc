@@ -5,16 +5,22 @@ import _ from 'lodash';
 
 import './SplineChart.css';
 
-
 class SplineChart extends Component {
-
     componentWillMount() {
         let { xScale, yScale, radius } = this.props;
-        this.dot = d3.svg.symbol().type('circle').size(radius);
-        this.line = d3.svg.line()
+        this.dot = d3.svg
+            .symbol()
+            .type('circle')
+            .size(radius);
+        this.line = d3.svg
+            .line()
             .interpolate('cardinal')
-            .x((d) => { return xScale(d.x); })
-            .y((d) => { return yScale(d.y); });
+            .x((d) => {
+                return xScale(d.x);
+            })
+            .y((d) => {
+                return yScale(d.y);
+            });
     }
 
     render() {

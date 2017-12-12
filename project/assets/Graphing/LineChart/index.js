@@ -4,15 +4,18 @@ import d3 from 'd3';
 
 import './LineChart.css';
 
-
 class LineChart extends Component {
-
     componentWillMount() {
         let { xScale, yScale } = this.props;
-        this.line = d3.svg.line()
+        this.line = d3.svg
+            .line()
             .interpolate('cardinal')
-            .x((d) => { return xScale(d.x); })
-            .y((d) => { return yScale(d.y); });
+            .x((d) => {
+                return xScale(d.x);
+            })
+            .y((d) => {
+                return yScale(d.y);
+            });
     }
 
     render() {

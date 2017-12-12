@@ -8,20 +8,11 @@ import HAWCUtils from 'utils/HAWCUtils';
 import DataPivot from './DataPivot';
 import DataPivotExtension from './DataPivotExtension';
 import DataPivotLegend from './DataPivotLegend';
-import {
-    StyleLine,
-    StyleSymbol,
-    StyleText,
-    StyleRectangle,
-} from './Styles';
-import {
-   NULL_CASE,
-} from './shared';
-
+import { StyleLine, StyleSymbol, StyleText, StyleRectangle } from './Styles';
+import { NULL_CASE } from './shared';
 
 class DataPivotVisualization extends D3Plot {
-
-    constructor(dp_data, dp_settings, plot_div, editable){
+    constructor(dp_data, dp_settings, plot_div, editable) {
         // Metadata viewer visualization
         super();
         this.editable = editable || false;
@@ -34,11 +25,16 @@ class DataPivotVisualization extends D3Plot {
         return this;
     }
 
-    static sorter(arr, sorts){
-        var chunkify = function(t){
-                var tz = [], x = 0, y = -1, n = 0, i, j;
-                while(i = (j = t.charAt(x++)).charCodeAt(0)){
-                    var m = (i == 46 || i == 45 || (i >=48 && i <= 57));
+    static sorter(arr, sorts) {
+        var chunkify = function(t) {
+                var tz = [],
+                    x = 0,
+                    y = -1,
+                    n = 0,
+                    i,
+                    j;
+                while ((i = (j = t.charAt(x++)).charCodeAt(0))) {
+                    var m = i == 46 || i == 45 || (i >= 48 && i <= 57);
                     if (m !== n) {
                         tz[++y] = '';
                         n = m;
@@ -47,16 +43,14 @@ class DataPivotVisualization extends D3Plot {
                 }
                 return tz;
             },
-            alphanum = function(a, b){
-                var field_name,
-                    ascending;
+            alphanum = function(a, b) {
+                var field_name, ascending;
 
-                for(var i=0; i<sorts.length; i++){
-
+                for (var i = 0; i < sorts.length; i++) {
                     field_name = sorts[i].field_name;
                     ascending = sorts[i].ascending;
 
-                    if (a[field_name].toString() !== b[field_name].toString()){
+                    if (a[field_name].toString() !== b[field_name].toString()) {
                         break;
                     }
                 }
@@ -69,98 +63,141 @@ class DataPivotVisualization extends D3Plot {
                         var c = Number(aa[x]),
                             d = Number(bb[x]);
                         if (c == aa[x] && d == bb[x]) {
-                            if (ascending){
+                            if (ascending) {
                                 return c - d;
                             } else {
                                 return d - c;
                             }
                         } else {
-                            if (ascending){
-                                return (aa[x] > bb[x]) ? 1 : -1;
+                            if (ascending) {
+                                return aa[x] > bb[x] ? 1 : -1;
                             } else {
-                                return (aa[x] < bb[x]) ? 1 : -1;
+                                return aa[x] < bb[x] ? 1 : -1;
                             }
                         }
                     }
                 }
 
-                return (ascending)?
-                    aa.length - bb.length:
-                    bb.length - aa.length;
-
+                return ascending
+                    ? aa.length - bb.length
+                    : bb.length - aa.length;
             };
 
-        return (sorts.length>0)?
-            arr.sort(alphanum):
-            arr;
+        return sorts.length > 0 ? arr.sort(alphanum) : arr;
     }
 
-    static sort_with_overrides(arr, sorts, overrides){
+    static sort_with_overrides(arr, sorts, overrides) {
         // Return the array of "rows" sorted using any sort fields, and
         // then with manual row-index overrides specified
-        let override_map = _.zipObject(_.map(overrides, 'pk'), _.map(overrides, 'index')),
+        let override_map = _.zipObject(
+                _.map(overrides, 'pk'),
+                _.map(overrides, 'index')
+            ),
             sorted = DataPivotVisualization.sorter(arr, sorts);
         sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
         return sorted;
     }
 
-    static filter(arr, filters, filter_logic){
-        if(filters.length===0) return arr;
+    static filter(arr, filters, filter_logic) {
+        if (filters.length === 0) return arr;
 
-        var field_name, value, func,
+        var field_name,
+            value,
+            func,
             new_arr = [],
             included = d3.map(),
             filters_map = d3.map({
-                lt(v){return v[field_name]<value;},
-                lte(v){return v[field_name]<=value;},
-                gt(v){return v[field_name]>value;},
-                gte(v){return v[field_name]>=value;},
-                contains(v){return v[field_name].toString().toLowerCase().indexOf(value.toLowerCase())>=0;},
-                not_contains(v){return v[field_name].toString().toLowerCase().indexOf(value.toLowerCase())<0;},
-                exact(v){return v[field_name].toString().toLowerCase() === value.toLowerCase();},
+                lt(v) {
+                    return v[field_name] < value;
+                },
+                lte(v) {
+                    return v[field_name] <= value;
+                },
+                gt(v) {
+                    return v[field_name] > value;
+                },
+                gte(v) {
+                    return v[field_name] >= value;
+                },
+                contains(v) {
+                    return (
+                        v[field_name]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(value.toLowerCase()) >= 0
+                    );
+                },
+                not_contains(v) {
+                    return (
+                        v[field_name]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(value.toLowerCase()) < 0
+                    );
+                },
+                exact(v) {
+                    return (
+                        v[field_name].toString().toLowerCase() ===
+                        value.toLowerCase()
+                    );
+                },
             });
 
-        if(filter_logic === 'and') new_arr = arr;
+        if (filter_logic === 'and') new_arr = arr;
 
-        for(var i=0; i<filters.length; i++){
+        for (var i = 0; i < filters.length; i++) {
             func = filters_map.get(filters[i].quantifier);
             field_name = filters[i].field_name;
-            if(field_name === NULL_CASE) continue;
+            if (field_name === NULL_CASE) continue;
             value = filters[i].value;
-            if (func){
-                if(filter_logic === 'and'){
+            if (func) {
+                if (filter_logic === 'and') {
                     new_arr = new_arr.filter(func);
                 } else {
                     var vals = arr.filter(func);
-                    vals.forEach(function(v){ included.set(v._dp_pk, v); });
+                    vals.forEach(function(v) {
+                        included.set(v._dp_pk, v);
+                    });
                 }
             } else {
-                console.log('Unrecognized filter: {0}'.printf(filters[i].quantifier));
+                console.log(
+                    'Unrecognized filter: {0}'.printf(filters[i].quantifier)
+                );
             }
         }
 
-        if(filter_logic === 'or') new_arr = included.values();
+        if (filter_logic === 'or') new_arr = included.values();
 
         return new_arr;
     }
 
-    static getIncludibleRows(row, bar, points, barchart){
+    static getIncludibleRows(row, bar, points, barchart) {
         // Determine row inclusion. Rows can either be included by having any
         // single data-point field being numeric, OR, if both the low-range and
         // high-range fields are both true, OR by having a barchart field
         if ($.isNumeric(row[barchart.field_name])) return true;
-        if (_.some(points, function(d){ return $.isNumeric(row[d.field_name]); })) return true;
-        return (($.isNumeric(row[bar.low_field_name])) && ($.isNumeric(row[bar.high_field_name])));
+        if (
+            _.some(points, function(d) {
+                return $.isNumeric(row[d.field_name]);
+            })
+        )
+            return true;
+        return (
+            $.isNumeric(row[bar.low_field_name]) &&
+            $.isNumeric(row[bar.high_field_name])
+        );
     }
 
-    set_defaults(){
+    set_defaults() {
         this.padding = $.extend({}, this.dp_settings.plot_settings.padding); //copy object
         this.padding.left_original = this.padding.left;
         this.w = this.dp_settings.plot_settings.plot_width;
-        this.h = this.w;  // temporary; depends on rendered text-size
+        this.h = this.w; // temporary; depends on rendered text-size
         this.textPadding = 5; // text padding on all sides of text
 
-        var scale_type = (this.dp_settings.plot_settings.logscale) ? 'log' : 'linear',
+        var scale_type = this.dp_settings.plot_settings.logscale
+                ? 'log'
+                : 'linear',
             formatNumber = d3.format(',.f');
 
         this.text_spacing_offset = 10;
@@ -183,18 +220,24 @@ class DataPivotVisualization extends D3Plot {
             axis_labels: false,
             x_translate: 0,
             y_translate: 0,
-            label_format: undefined,  //default
+            label_format: undefined, //default
         };
     }
 
-    build_plot(){
+    build_plot() {
         this.plot_div.html('');
         this.get_dataset();
-        if (this.dp_data.length === 0 ){
-            return HAWCUtils.addAlert('<strong>Error: </strong>no data are available to be plotted', this.plot_div);
+        if (this.dp_data.length === 0) {
+            return HAWCUtils.addAlert(
+                '<strong>Error: </strong>no data are available to be plotted',
+                this.plot_div
+            );
         }
-        if (this.datarows.length === 0 ){
-            return HAWCUtils.addAlert('<strong>Error: </strong>data exists, but settings need to be modified (currently no rows are displayed).', this.plot_div);
+        if (this.datarows.length === 0) {
+            return HAWCUtils.addAlert(
+                '<strong>Error: </strong>data exists, but settings need to be modified (currently no rows are displayed).',
+                this.plot_div
+            );
         }
         this.build_plot_skeleton(true);
         this.set_font_style();
@@ -207,25 +250,26 @@ class DataPivotVisualization extends D3Plot {
             this.vis,
             this.dp_settings.legend,
             this.dp_settings,
-            {offset: true, editable: this.editable});
+            { offset: true, editable: this.editable }
+        );
         this.add_menu();
         this.trigger_resize();
     }
 
-    set_font_style(){
+    set_font_style() {
         var font;
-        switch (this.dp_settings.plot_settings.font_style){
-        case 'Times New Roman':
-            font = 'Times New Roman;';
-            break;
-        case 'Arial':
-        default:
-            font = 'Arial;';
+        switch (this.dp_settings.plot_settings.font_style) {
+            case 'Times New Roman':
+                font = 'Times New Roman;';
+                break;
+            case 'Arial':
+            default:
+                font = 'Arial;';
         }
         d3.select(this.svg).attr('style', 'font-family: {0}'.printf(font));
     }
 
-    get_dataset(){
+    get_dataset() {
         var self = this,
             settings = {
                 datapoints: [],
@@ -241,8 +285,7 @@ class DataPivotVisualization extends D3Plot {
                 spacer_lines: [],
             },
             rows,
-            get_associated_style = function(style_type, style_name){
-
+            get_associated_style = function(style_type, style_name) {
                 var defaults = {
                     symbols: StyleSymbol.default_settings,
                     lines: StyleLine.default_settings,
@@ -250,13 +293,15 @@ class DataPivotVisualization extends D3Plot {
                     rectangles: StyleRectangle.default_settings,
                 };
 
-                return self.dp_settings.styles[style_type].filter(
-                    function(v){return v.name === style_name;})[0] ||
-                        defaults[style_type]();
+                return (
+                    self.dp_settings.styles[style_type].filter(function(v) {
+                        return v.name === style_name;
+                    })[0] || defaults[style_type]()
+                );
             };
 
         // unpack data-bars (expects only one bar)
-        this.dp_settings.dataline_settings.forEach(function(datum){
+        this.dp_settings.dataline_settings.forEach(function(datum) {
             settings.bars.low_field_name = datum.low_field_name;
             settings.bars.high_field_name = datum.high_field_name;
             settings.bars.header_name = datum.header_name;
@@ -264,12 +309,12 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // unpack datapoints and data bar settings
-        this.dp_settings.datapoint_settings.forEach(function(datum){
-            if (datum.field_name !== NULL_CASE){
+        this.dp_settings.datapoint_settings.forEach(function(datum) {
+            if (datum.field_name !== NULL_CASE) {
                 var copy = {};
 
                 // get dpe settings (if any)
-                if(datum.dpe !== NULL_CASE){
+                if (datum.dpe !== NULL_CASE) {
                     DataPivotExtension.update_extensions(copy, datum.dpe);
                 }
 
@@ -280,18 +325,18 @@ class DataPivotVisualization extends D3Plot {
 
         // unpack barchart settings
         settings.barchart = this.dp_settings.barchart;
-        if (settings.barchart.dpe !== NULL_CASE){
+        if (settings.barchart.dpe !== NULL_CASE) {
             let dpe = {};
             DataPivotExtension.update_extensions(dpe, settings.barchart.dpe);
             _.extend(settings.barchart, dpe);
         }
 
         // unpack description settings
-        this.dp_settings.description_settings.forEach(function(datum){
-            if (datum.field_name !== NULL_CASE){
+        this.dp_settings.description_settings.forEach(function(datum) {
+            if (datum.field_name !== NULL_CASE) {
                 var copy = {};
                 // get dpe settings (if any)
-                if(datum.dpe !== NULL_CASE){
+                if (datum.dpe !== NULL_CASE) {
                     DataPivotExtension.update_extensions(copy, datum.dpe);
                 }
                 // now, push extended settings values
@@ -299,82 +344,114 @@ class DataPivotVisualization extends D3Plot {
             }
         });
 
-        var get_selected_fields = function(v){return v.field_name !== NULL_CASE;};
+        var get_selected_fields = function(v) {
+            return v.field_name !== NULL_CASE;
+        };
         settings.sorts = this.dp_settings.sorts.filter(get_selected_fields);
         settings.filters = this.dp_settings.filters.filter(get_selected_fields);
 
         // unpack reference lines
-        this.dp_settings.reference_lines.forEach(function(datum){
-            if($.isNumeric(datum.value)){
+        this.dp_settings.reference_lines.forEach(function(datum) {
+            if ($.isNumeric(datum.value)) {
                 settings.reference_lines.push({
                     style: get_associated_style('lines', datum.line_style),
                     x1: datum.value,
-                    x2: datum.value});
+                    x2: datum.value,
+                });
             }
         });
 
         // unpack reference rectangles
-        this.dp_settings.reference_rectangles.forEach(function(datum){
-            if($.isNumeric(datum.x1) && $.isNumeric(datum.x2)){
+        this.dp_settings.reference_rectangles.forEach(function(datum) {
+            if ($.isNumeric(datum.x1) && $.isNumeric(datum.x2)) {
                 settings.reference_rectangles.push({
-                    style: get_associated_style('rectangles', datum.rectangle_style),
+                    style: get_associated_style(
+                        'rectangles',
+                        datum.rectangle_style
+                    ),
                     x1: datum.x1,
-                    x2: datum.x2});
+                    x2: datum.x2,
+                });
             }
         });
 
         // unpack labels
-        this.dp_settings.labels.forEach(function(d){
+        this.dp_settings.labels.forEach(function(d) {
             d._style = get_associated_style('texts', d.style);
             settings.labels.push(d);
         });
 
         //build data-objects for visualization
         rows = _.chain(self.dp_data)
-                .filter(
-                  _.partial(
+            .filter(
+                _.partial(
                     DataPivotVisualization.getIncludibleRows,
                     _,
                     settings.bars,
                     self.dp_settings.datapoint_settings,
                     settings.barchart
-                  )
                 )
-                .map(function(d){
-                    // unpack any column-level styles
-                    let styles = {
-                        bars: get_associated_style('lines', settings.bars.marker_style),
-                        barchartBar: get_associated_style('rectangles', settings.barchart.bar_style),
-                        barchartErrorBar: get_associated_style('lines', settings.barchart.error_marker_style),
-                    };
+            )
+            .map(function(d) {
+                // unpack any column-level styles
+                let styles = {
+                    bars: get_associated_style(
+                        'lines',
+                        settings.bars.marker_style
+                    ),
+                    barchartBar: get_associated_style(
+                        'rectangles',
+                        settings.barchart.bar_style
+                    ),
+                    barchartErrorBar: get_associated_style(
+                        'lines',
+                        settings.barchart.error_marker_style
+                    ),
+                };
 
-                    _.chain(self.dp_settings.datapoint_settings)
-                      .filter(function(d){return d.field_name !== NULL_CASE;})
-                      .each(function(d, i){
-                          styles['points_' + i] = get_associated_style('symbols', d.marker_style);
-                      })
-                      .value();
+                _.chain(self.dp_settings.datapoint_settings)
+                    .filter(function(d) {
+                        return d.field_name !== NULL_CASE;
+                    })
+                    .each(function(d, i) {
+                        styles['points_' + i] = get_associated_style(
+                            'symbols',
+                            d.marker_style
+                        );
+                    })
+                    .value();
 
-                    _.chain(self.dp_settings.description_settings)
-                      .each(function(d, i){
-                          styles['text_' + i] = get_associated_style('texts', d.text_style);
-                      })
-                      .value();
+                _.chain(self.dp_settings.description_settings)
+                    .each(function(d, i) {
+                        styles['text_' + i] = get_associated_style(
+                            'texts',
+                            d.text_style
+                        );
+                    })
+                    .value();
 
-                    return _.extend(d, {'_styles': styles});
-                })
-                .value();
+                return _.extend(d, { _styles: styles });
+            })
+            .value();
 
-        rows = DataPivotVisualization.filter(rows, settings.filters, this.dp_settings.plot_settings.filter_logic);
+        rows = DataPivotVisualization.filter(
+            rows,
+            settings.filters,
+            this.dp_settings.plot_settings.filter_logic
+        );
 
-        rows = DataPivotVisualization.sort_with_overrides(rows, settings.sorts, this.dp_settings.row_overrides);
+        rows = DataPivotVisualization.sort_with_overrides(
+            rows,
+            settings.sorts,
+            this.dp_settings.row_overrides
+        );
 
         // row-overrides: remove (in separate loop, after offsets)
-        this.dp_settings.row_overrides.forEach(function(v){
-            if(v.include === false){
-                for(var i=0; i<rows.length; i++){
-                    if(rows[i]._dp_pk === v.pk){
-                        rows.splice(i,1);
+        this.dp_settings.row_overrides.forEach(function(v) {
+            if (v.include === false) {
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i]._dp_pk === v.pk) {
+                        rows.splice(i, 1);
                         break;
                     }
                 }
@@ -382,104 +459,148 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // condition-formatting overrides
-        if (this.dp_settings.plot_settings.as_barchart){
+        if (this.dp_settings.plot_settings.as_barchart) {
+            settings.barchart.conditional_formatting.forEach(function(cf) {
+                switch (cf.condition_type) {
+                    case 'discrete-style':
+                        var hash = d3.map();
+                        cf.discrete_styles.forEach(function(d) {
+                            hash.set(d.key, d.style);
+                        });
+                        rows.forEach(function(d) {
+                            if (hash.get(d[cf.field_name]) === NULL_CASE) {
+                                return;
+                            }
+                            d._styles.barchartBar = get_associated_style(
+                                'rectangles',
+                                hash.get(d[cf.field_name])
+                            );
+                        });
+                        break;
 
-            settings.barchart.conditional_formatting.forEach(function(cf){
-                switch(cf.condition_type){
-
-                case 'discrete-style':
-                    var hash = d3.map();
-                    cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
-                    rows.forEach(function(d){
-                        if(hash.get(d[cf.field_name]) === NULL_CASE){
-                            return;
-                        }
-                        d._styles.barchartBar = get_associated_style('rectangles', hash.get(d[cf.field_name]));
-                    });
-                    break;
-
-                default:
-                    console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
+                    default:
+                        console.log(
+                            'Unrecognized condition_type: {0}'.printf(
+                                cf.condition_type
+                            )
+                        );
                 }
             });
-
         } else {
-            this.dp_settings.datapoint_settings.forEach(function(datapoint, i){
-                datapoint.conditional_formatting.forEach(function(cf){
-                    var arr = rows.map(function(d){return d[cf.field_name]; }),
+            this.dp_settings.datapoint_settings.forEach(function(datapoint, i) {
+                datapoint.conditional_formatting.forEach(function(cf) {
+                    var arr = rows.map(function(d) {
+                            return d[cf.field_name];
+                        }),
                         vals = DataPivot.getRowDetails(arr),
                         styles = 'points_' + i;
 
-                    switch(cf.condition_type){
+                    switch (cf.condition_type) {
+                        case 'point-size':
+                            if (vals.range) {
+                                var pscale = d3.scale
+                                    .pow()
+                                    .exponent(0.5)
+                                    .domain(vals.range)
+                                    .range([cf.min_size, cf.max_size]);
 
-                    case 'point-size':
-                        if (vals.range){
-                            var pscale = d3.scale.pow().exponent(0.5)
-                                  .domain(vals.range)
-                                  .range([cf.min_size, cf.max_size]);
-
-                            rows.forEach(function(d){
-                                if ($.isNumeric(d[cf.field_name])){
-                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                    d._styles[styles].size = pscale( d[cf.field_name] );
-                                }
-                            });
-                        }
-                        break;
-
-                    case 'point-color':
-                        if (vals.range){
-                            var cscale = d3.scale.linear()
-                                  .domain(vals.range)
-                                  .interpolate(d3.interpolateRgb)
-                                  .range([cf.min_color, cf.max_color]);
-
-                            rows.forEach(function(d){
-                                if ($.isNumeric(d[cf.field_name])){
-                                    d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
-                                    d._styles[styles].fill = cscale( d[cf.field_name] );
-                                }
-                            });
-                        }
-                        break;
-
-                    case 'discrete-style':
-                        var hash = d3.map();
-                        cf.discrete_styles.forEach(function(d){ hash.set(d.key, d.style); });
-                        rows.forEach(function(d){
-                            if(hash.get(d[cf.field_name]) !== NULL_CASE){
-                                d._styles[styles] = get_associated_style('symbols', hash.get(d[cf.field_name]));
+                                rows.forEach(function(d) {
+                                    if ($.isNumeric(d[cf.field_name])) {
+                                        d._styles[styles] = $.extend(
+                                            {},
+                                            d._styles[styles]
+                                        ); //copy object
+                                        d._styles[styles].size = pscale(
+                                            d[cf.field_name]
+                                        );
+                                    }
+                                });
                             }
-                        });
+                            break;
 
-                        break;
-                    default:
-                        console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
+                        case 'point-color':
+                            if (vals.range) {
+                                var cscale = d3.scale
+                                    .linear()
+                                    .domain(vals.range)
+                                    .interpolate(d3.interpolateRgb)
+                                    .range([cf.min_color, cf.max_color]);
+
+                                rows.forEach(function(d) {
+                                    if ($.isNumeric(d[cf.field_name])) {
+                                        d._styles[styles] = $.extend(
+                                            {},
+                                            d._styles[styles]
+                                        ); //copy object
+                                        d._styles[styles].fill = cscale(
+                                            d[cf.field_name]
+                                        );
+                                    }
+                                });
+                            }
+                            break;
+
+                        case 'discrete-style':
+                            var hash = d3.map();
+                            cf.discrete_styles.forEach(function(d) {
+                                hash.set(d.key, d.style);
+                            });
+                            rows.forEach(function(d) {
+                                if (hash.get(d[cf.field_name]) !== NULL_CASE) {
+                                    d._styles[styles] = get_associated_style(
+                                        'symbols',
+                                        hash.get(d[cf.field_name])
+                                    );
+                                }
+                            });
+
+                            break;
+                        default:
+                            console.log(
+                                'Unrecognized condition_type: {0}'.printf(
+                                    cf.condition_type
+                                )
+                            );
                     }
-
                 });
             });
-
         }
 
         // row-overrides: apply styles
-        this.dp_settings.row_overrides.forEach(function(v){
-            if((v.text_style !== NULL_CASE) ||
-               (v.line_style !== NULL_CASE) ||
-               (v.symbol_style !== NULL_CASE)){
-                rows.forEach(function(v2){
-                    if(v2._dp_pk === v.pk){
-                        for(var key in v2._styles){
-                            if((v.text_style !== NULL_CASE) && (key.substr(0,4) === 'text')){
-                                v2._styles[key] = get_associated_style('texts', v.text_style);
+        this.dp_settings.row_overrides.forEach(function(v) {
+            if (
+                v.text_style !== NULL_CASE ||
+                v.line_style !== NULL_CASE ||
+                v.symbol_style !== NULL_CASE
+            ) {
+                rows.forEach(function(v2) {
+                    if (v2._dp_pk === v.pk) {
+                        for (var key in v2._styles) {
+                            if (
+                                v.text_style !== NULL_CASE &&
+                                key.substr(0, 4) === 'text'
+                            ) {
+                                v2._styles[key] = get_associated_style(
+                                    'texts',
+                                    v.text_style
+                                );
                             }
 
-                            if((v.line_style !== NULL_CASE) && (key === 'bars')){
-                                v2._styles[key] = get_associated_style('lines', v.line_style);
+                            if (v.line_style !== NULL_CASE && key === 'bars') {
+                                v2._styles[key] = get_associated_style(
+                                    'lines',
+                                    v.line_style
+                                );
                             }
 
-                            if((v.symbol_style !== NULL_CASE) && (key.substr(0,6) === 'points')){
-                                v2._styles[key] = get_associated_style('symbols', v.symbol_style);
+                            if (
+                                v.symbol_style !== NULL_CASE &&
+                                key.substr(0, 6) === 'points'
+                            ) {
+                                v2._styles[key] = get_associated_style(
+                                    'symbols',
+                                    v.symbol_style
+                                );
                             }
                         }
                     }
@@ -488,14 +609,16 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // with final datarows subset, add index for rendered order
-        rows.forEach(function(v, i){v._dp_index = i;});
+        rows.forEach(function(v, i) {
+            v._dp_index = i;
+        });
 
         // unpack extra spacers
-        this.dp_settings.spacers.forEach(function(v){
+        this.dp_settings.spacers.forEach(function(v) {
             settings.spacers['row_' + v.index] = v;
-            if(v.show_line && v.index>0 && v.index<=rows.length){
+            if (v.show_line && v.index > 0 && v.index <= rows.length) {
                 settings.spacer_lines.push({
-                    index: v.index-1,
+                    index: v.index - 1,
                     _styles: {
                         bars: get_associated_style('lines', v.line_style),
                     },
@@ -509,47 +632,54 @@ class DataPivotVisualization extends D3Plot {
         this.title_str = this.dp_settings.plot_settings.title || '';
         this.x_label_text = this.dp_settings.plot_settings.axis_label || '';
         this.settings = settings;
-        this.headers = this.settings.descriptions.map(function(v, i){
+        this.headers = this.settings.descriptions.map(function(v, i) {
             return {
                 row: 0,
                 col: i,
                 text: v.header_name,
                 style: get_associated_style('texts', v.header_style),
                 cursor: 'auto',
-                onclick(){},
+                onclick() {},
                 max_width: v.max_width,
             };
         });
     }
 
-    merge_descriptions(){
+    merge_descriptions() {
         // Merge identical columns
         var merge_aggressive = this.dp_settings.plot_settings.merge_aggressive,
-            merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length-1,
+            merge_until =
+                this.dp_settings.plot_settings.merge_until ||
+                this.datarows.length - 1,
             shouldMerge = this.dp_settings.plot_settings.merge_descriptions,
-            field_names = this.dp_settings.description_settings.map(function(v){return v.field_name;}),
-            i, j;
+            field_names = this.dp_settings.description_settings.map(function(
+                v
+            ) {
+                return v.field_name;
+            }),
+            i,
+            j;
 
-        if (!shouldMerge){
-            for(i=this.datarows.length-1; i>0; i--){
+        if (!shouldMerge) {
+            for (i = this.datarows.length - 1; i > 0; i--) {
                 this.datarows[i]._dp_isMerged = false;
             }
             return;
         }
 
-        if (merge_aggressive){
+        if (merge_aggressive) {
             // merge all identical columns (regardless of merge_until similarity)
-            for(i=this.datarows.length-1; i>0; i--){
+            for (i = this.datarows.length - 1; i > 0; i--) {
                 this.datarows[i]._dp_isMerged = false;
-                for(j=0; j<=merge_until; j++){
+                for (j = 0; j <= merge_until; j++) {
                     var v1 = this.datarows[i][field_names[j]],
-                        v2 = this.datarows[i-1][field_names[j]];
-                    if (v1 !== v2){
+                        v2 = this.datarows[i - 1][field_names[j]];
+                    if (v1 !== v2) {
                         break; // stop checks on columns to the right
                     } else {
                         this.datarows[i][field_names[j]] = '';
-                        if (j == merge_until){
-                          // background rectangle indicates rows are related
+                        if (j == merge_until) {
+                            // background rectangle indicates rows are related
                             this.datarows[i]._dp_isMerged = true;
                         }
                     }
@@ -557,19 +687,22 @@ class DataPivotVisualization extends D3Plot {
             }
         } else {
             // merge only columns which have the value in merge_until
-            for(i=this.datarows.length-1; i>0; i--){
+            for (i = this.datarows.length - 1; i > 0; i--) {
                 shouldMerge = true;
-                if(shouldMerge){
+                if (shouldMerge) {
                     // check if all columns are identical between this and the prior column
-                    for(j=0; j<=merge_until; j++){
-                        if (this.datarows[i][field_names[j]] !== this.datarows[i-1][field_names[j]]){
+                    for (j = 0; j <= merge_until; j++) {
+                        if (
+                            this.datarows[i][field_names[j]] !==
+                            this.datarows[i - 1][field_names[j]]
+                        ) {
                             shouldMerge = false;
                             break;
                         }
                     }
                     // Merge if passed check
-                    if (shouldMerge){
-                        for(j=0; j<=merge_until; j++){
+                    if (shouldMerge) {
+                        for (j = 0; j <= merge_until; j++) {
                             this.datarows[i][field_names[j]] = '';
                         }
                     }
@@ -579,26 +712,33 @@ class DataPivotVisualization extends D3Plot {
         }
     }
 
-    getDomain(){
+    getDomain() {
         let domain,
             fields,
             bars = this.settings.bars,
             barchart = this.settings.barchart;
 
         // use user-specified domain if valid
-        domain = _.map(this.dp_settings.plot_settings.domain.split(','), parseFloat);
-        if ((domain.length === 2) && (_.every(domain, isFinite))){
+        domain = _.map(
+            this.dp_settings.plot_settings.domain.split(','),
+            parseFloat
+        );
+        if (domain.length === 2 && _.every(domain, isFinite)) {
             return domain;
         }
 
         // otherwise calculate domain from data
         fields = _.chain(this.settings.datapoints)
-                    .map('field_name')
-                    .push(bars.low_field_name, bars.high_field_name,
-                        barchart.field_name, barchart.error_low_field_name,
-                        barchart.error_high_field_name)
-                    .compact()
-                    .value();
+            .map('field_name')
+            .push(
+                bars.low_field_name,
+                bars.high_field_name,
+                barchart.field_name,
+                barchart.error_low_field_name,
+                barchart.error_high_field_name
+            )
+            .compact()
+            .value();
 
         return d3.extent(
             _.chain(this.datarows)
@@ -609,7 +749,7 @@ class DataPivotVisualization extends D3Plot {
         );
     }
 
-    add_axes(){
+    add_axes() {
         $.extend(this.x_axis_settings, {
             gridlines: this.dp_settings.plot_settings.show_xticks,
             domain: this.getDomain(),
@@ -627,16 +767,16 @@ class DataPivotVisualization extends D3Plot {
         this.build_x_axis();
     }
 
-    getCursorType(){
-        return (this.editable) ? 'pointer': 'auto';
+    getCursorType() {
+        return this.editable ? 'pointer' : 'auto';
     }
 
-    draw_visualizations(){
+    draw_visualizations() {
         this.calcBackgroundRectanglesAndGridlines();
         this.renderTextBackgroundRectangles();
         this.renderYGridlines();
         this.renderReferenceObjects();
-        if (this.dp_settings.plot_settings.as_barchart){
+        if (this.dp_settings.plot_settings.as_barchart) {
             this.renderBarChart();
         } else {
             this.renderDataPoints();
@@ -644,36 +784,39 @@ class DataPivotVisualization extends D3Plot {
         this.renderTextLabels();
     }
 
-    apply_styles(d){
+    apply_styles(d) {
         var obj = d3.select(this);
         for (var property in d.style) {
             obj.style(property, d.style[property]);
         }
     }
 
-    apply_line_styles(d){
+    apply_line_styles(d) {
         var obj = d3.select(this);
         for (var property in d._styles.bars) {
             obj.style(property, d._styles.bars[property]);
         }
     }
 
-    apply_text_styles(el, styles){
+    apply_text_styles(el, styles) {
         el = d3.select(el);
         for (var property in styles) {
             el.style(property, styles[property]);
         }
-        if(styles.rotate>0){
-            el.attr('transform', `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`);
+        if (styles.rotate > 0) {
+            el.attr(
+                'transform',
+                `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`
+            );
         }
     }
 
-    calcBackgroundRectanglesAndGridlines(){
+    calcBackgroundRectanglesAndGridlines() {
         var bgs = [],
             gridlines = [],
             everyOther = true,
             datarows = this.datarows,
-            pushBG = (first, last)=>{
+            pushBG = (first, last) => {
                 bgs.push({
                     x: -this.text_width - this.padding.left,
                     y: this.row_heights[first].min,
@@ -682,50 +825,62 @@ class DataPivotVisualization extends D3Plot {
                 });
             };
 
-        if (datarows.length>0){
+        if (datarows.length > 0) {
             var first_index = 0;
             // starting with second-row, build rectangles
-            for(var i=1; i<datarows.length; i++){
-                if (!datarows[i]._dp_isMerged){
-                    if(everyOther){
-                        pushBG(first_index, i-1);
+            for (var i = 1; i < datarows.length; i++) {
+                if (!datarows[i]._dp_isMerged) {
+                    if (everyOther) {
+                        pushBG(first_index, i - 1);
                     }
                     everyOther = !everyOther;
                     first_index = i;
                     gridlines.push(this.row_heights[first_index].min);
                 }
                 // edge-case to push final-row if needed
-                if (i === datarows.length-1 && everyOther) pushBG(first_index, i);
+                if (i === datarows.length - 1 && everyOther)
+                    pushBG(first_index, i);
             }
-
         }
-        this.bg_rectangles_data = (this.dp_settings.plot_settings.text_background) ? bgs : [];
-        this.y_gridlines_data = (this.dp_settings.plot_settings.show_yticks) ? gridlines : [];
+        this.bg_rectangles_data = this.dp_settings.plot_settings.text_background
+            ? bgs
+            : [];
+        this.y_gridlines_data = this.dp_settings.plot_settings.show_yticks
+            ? gridlines
+            : [];
     }
 
-    renderTextBackgroundRectangles(){
+    renderTextBackgroundRectangles() {
         // add background rectangles behind text
         this.g_text_bg_rects = this.vis.append('g');
 
-        this.g_text_bg_rects.selectAll()
+        this.g_text_bg_rects
+            .selectAll()
             .data(this.bg_rectangles_data)
-            .enter().append('rect')
-                .attr('x', (d) => d.x)
-                .attr('y', (d) => d.y)
-                .attr('height', (d) => d.h)
-                .attr('width', (d) => d.w)
-                .style('fill', this.dp_settings.plot_settings.text_background_color);
+            .enter()
+            .append('rect')
+            .attr('x', (d) => d.x)
+            .attr('y', (d) => d.y)
+            .attr('height', (d) => d.h)
+            .attr('width', (d) => d.w)
+            .style(
+                'fill',
+                this.dp_settings.plot_settings.text_background_color
+            );
     }
 
-    renderYGridlines(){
+    renderYGridlines() {
         let x = this.x_scale;
 
-        this.g_y_gridlines = this.vis.append('g')
+        this.g_y_gridlines = this.vis
+            .append('g')
             .attr('class', 'primary_gridlines y_gridlines');
 
-        this.y_gridlines = this.g_y_gridlines.selectAll()
+        this.y_gridlines = this.g_y_gridlines
+            .selectAll()
             .data(this.y_gridlines_data)
-          .enter().append('svg:line')
+            .enter()
+            .append('svg:line')
             .attr('x1', x.range()[0])
             .attr('x2', x.range()[1])
             .attr('y1', (d) => d)
@@ -733,111 +888,157 @@ class DataPivotVisualization extends D3Plot {
             .attr('class', 'primary_gridlines y_gridlines');
     }
 
-    renderReferenceObjects(){
-
+    renderReferenceObjects() {
         let x = this.x_scale;
 
         // add x-range rectangles for areas of interest
         this.g_rects = this.vis.append('g');
-        this.rects_of_interest = this.vis.selectAll('rect.rects_of_interest')
+        this.rects_of_interest = this.vis
+            .selectAll('rect.rects_of_interest')
             .data(this.settings.reference_rectangles)
-            .enter().append('rect')
-                .attr('x', (d) => x(d.x1))
-                .attr('height', this.h)
-                .attr('y', 0)
-                .attr('width', (d) => (x(d.x2)-x(d.x1)))
-                .each(this.apply_styles);
+            .enter()
+            .append('rect')
+            .attr('x', (d) => x(d.x1))
+            .attr('height', this.h)
+            .attr('y', 0)
+            .attr('width', (d) => x(d.x2) - x(d.x1))
+            .each(this.apply_styles);
 
         // draw reference lines
         this.g_reference_lines = this.vis.append('g');
-        this.line_reference_lines = this.g_reference_lines.selectAll('line')
-                .data(this.settings.reference_lines)
-            .enter().append('svg:line')
-                .attr('x1', (v) => x(v.x1))
-                .attr('x2', (v) => x(v.x2))
-                .attr('y1', 0)
-                .attr('y2', this.h)
-                .each(this.apply_styles);
+        this.line_reference_lines = this.g_reference_lines
+            .selectAll('line')
+            .data(this.settings.reference_lines)
+            .enter()
+            .append('svg:line')
+            .attr('x1', (v) => x(v.x1))
+            .attr('x2', (v) => x(v.x2))
+            .attr('y1', 0)
+            .attr('y2', this.h)
+            .each(this.apply_styles);
 
         // draw horizontal-spacer lines
         this.g_spacer_lines = this.vis.append('g');
-        this.spacer_lines = this.g_spacer_lines.selectAll('line')
-                .data(this.settings.spacer_lines)
-            .enter().append('svg:line')
-                .attr('x1', -this.text_width-this.padding.left)
-                .attr('x2', this.w)
-                .attr('y1', (d) => this.row_heights[d.index].max)
-                .attr('y2', (d) => this.row_heights[d.index].max)
-                .each(this.apply_line_styles);
+        this.spacer_lines = this.g_spacer_lines
+            .selectAll('line')
+            .data(this.settings.spacer_lines)
+            .enter()
+            .append('svg:line')
+            .attr('x1', -this.text_width - this.padding.left)
+            .attr('x2', this.w)
+            .attr('y1', (d) => this.row_heights[d.index].max)
+            .attr('y2', (d) => this.row_heights[d.index].max)
+            .each(this.apply_line_styles);
     }
 
-    renderBarChart(){
+    renderBarChart() {
         let x = this.x_scale,
             barchart_g = this.vis.append('g'),
             bars_g = barchart_g.append('g'),
             errorbars_g = barchart_g.append('g'),
-            barXStart = (x.domain()[0]<=0)? 0: x.domain()[0],
+            barXStart = x.domain()[0] <= 0 ? 0 : x.domain()[0],
             barPadding = 5,
             datarows = this.datarows,
             barchart = this.settings.barchart,
-            applyStyles = function(d, type){
+            applyStyles = function(d, type) {
                 let obj = d3.select(this);
                 for (var property in d._styles[type]) {
                     obj.style(property, d._styles[type][property]);
                 }
             },
-            barHeight = d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
+            barHeight =
+                d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding;
 
-        bars_g.selectAll()
-                .data(datarows)
-            .enter().append('svg:rect')
-                .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
-                .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
-                .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
-                .attr('height', barHeight)
-                .style('cursor', (d) => (barchart._dpe_key)? 'pointer': 'auto')
-                .on('click', (d) => {if(barchart._dpe_key){this.dpe.render_plottip(barchart, d);}})
-                .each(_.partial(applyStyles, _, 'barchartBar'));
+        bars_g
+            .selectAll()
+            .data(datarows)
+            .enter()
+            .append('svg:rect')
+            .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
+            .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
+            .attr('width', (d) =>
+                Math.abs(x(barXStart) - x(d[barchart.field_name]))
+            )
+            .attr('height', barHeight)
+            .style('cursor', (d) => (barchart._dpe_key ? 'pointer' : 'auto'))
+            .on('click', (d) => {
+                if (barchart._dpe_key) {
+                    this.dpe.render_plottip(barchart, d);
+                }
+            })
+            .each(_.partial(applyStyles, _, 'barchartBar'));
 
         // show error bars or exit early
-        if (barchart.error_low_field_name === NULL_CASE ||
-            barchart.error_high_field_name === NULL_CASE){
+        if (
+            barchart.error_low_field_name === NULL_CASE ||
+            barchart.error_high_field_name === NULL_CASE
+        ) {
             return;
         }
-        errorbars_g.selectAll()
-                .data(datarows)
-            .enter().append('svg:line')
-                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
-                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
-                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
-                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+        errorbars_g
+            .selectAll()
+            .data(datarows)
+            .enter()
+            .append('svg:line')
+            .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_high_field_name]))
+            .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
+            .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
+            .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         // show error-bar tails or exit early
-        if (!barchart.error_show_tails){
+        if (!barchart.error_show_tails) {
             return;
         }
-        errorbars_g.selectAll()
-                .data(datarows)
-            .enter().append('svg:line')
-                .attr('x1', (d) => x(d[barchart.error_low_field_name]))
-                .attr('x2', (d) => x(d[barchart.error_low_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
-                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
-                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+        errorbars_g
+            .selectAll()
+            .data(datarows)
+            .enter()
+            .append('svg:line')
+            .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_low_field_name]))
+            .attr(
+                'y1',
+                (d) =>
+                    this.row_heights[d._dp_index].min +
+                    lineMidpoint -
+                    barPadding
+            )
+            .attr(
+                'y2',
+                (d) =>
+                    this.row_heights[d._dp_index].min +
+                    lineMidpoint +
+                    barPadding
+            )
+            .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
-        errorbars_g.selectAll()
-                .data(datarows)
-            .enter().append('svg:line')
-                .attr('x1', (d) => x(d[barchart.error_high_field_name]))
-                .attr('x2', (d) => x(d[barchart.error_high_field_name]))
-                .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
-                .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
-                .each(_.partial(applyStyles, _, 'barchartErrorBar'));
+        errorbars_g
+            .selectAll()
+            .data(datarows)
+            .enter()
+            .append('svg:line')
+            .attr('x1', (d) => x(d[barchart.error_high_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_high_field_name]))
+            .attr(
+                'y1',
+                (d) =>
+                    this.row_heights[d._dp_index].min +
+                    lineMidpoint -
+                    barPadding
+            )
+            .attr(
+                'y2',
+                (d) =>
+                    this.row_heights[d._dp_index].min +
+                    lineMidpoint +
+                    barPadding
+            )
+            .each(_.partial(applyStyles, _, 'barchartErrorBar'));
     }
 
-    renderDataPoints(){
+    renderDataPoints() {
         // Add error bars for points
         let x = this.x_scale,
             bars = this.settings.bars,
@@ -849,107 +1050,166 @@ class DataPivotVisualization extends D3Plot {
         // filter bars to include only bars where the difference between low/high
         // is greater than 0
         let bar_half_height = 5,
-            bar_rows = datarows.filter((d)=>(d[bars.high_field_name]-d[bars.low_field_name]) > 0),
+            bar_rows = datarows.filter(
+                (d) => d[bars.high_field_name] - d[bars.low_field_name] > 0
+            ),
             g_bars = this.vis.append('g');
 
-        g_bars.selectAll()
-                .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[bars.low_field_name]);})
-                .attr('x2', function(d){return x(d[bars.high_field_name]);})
-                .attr('y1', function(d){return row_heights[d._dp_index].mid;})
-                .attr('y2', function(d){return row_heights[d._dp_index].mid;})
-                .each(this.apply_line_styles);
-
-        g_bars.selectAll()
-                .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[bars.low_field_name]);})
-                .attr('x2', function(d){return x(d[bars.low_field_name]);})
-                .attr('y1', function(d){return row_heights[d._dp_index].mid + bar_half_height;})
-                .attr('y2', function(d){return row_heights[d._dp_index].mid - bar_half_height;})
-                .each(this.apply_line_styles);
-
-        g_bars.selectAll()
+        g_bars
+            .selectAll()
             .data(bar_rows)
-            .enter().append('svg:line')
-                .attr('x1', function(d){return x(d[bars.high_field_name]);})
-                .attr('x2', function(d){return x(d[bars.high_field_name]);})
-                .attr('y1', function(d){return row_heights[d._dp_index].mid + bar_half_height;})
-                .attr('y2', function(d){return row_heights[d._dp_index].mid - bar_half_height;})
-                .each(this.apply_line_styles);
+            .enter()
+            .append('svg:line')
+            .attr('x1', function(d) {
+                return x(d[bars.low_field_name]);
+            })
+            .attr('x2', function(d) {
+                return x(d[bars.high_field_name]);
+            })
+            .attr('y1', function(d) {
+                return row_heights[d._dp_index].mid;
+            })
+            .attr('y2', function(d) {
+                return row_heights[d._dp_index].mid;
+            })
+            .each(this.apply_line_styles);
+
+        g_bars
+            .selectAll()
+            .data(bar_rows)
+            .enter()
+            .append('svg:line')
+            .attr('x1', function(d) {
+                return x(d[bars.low_field_name]);
+            })
+            .attr('x2', function(d) {
+                return x(d[bars.low_field_name]);
+            })
+            .attr('y1', function(d) {
+                return row_heights[d._dp_index].mid + bar_half_height;
+            })
+            .attr('y2', function(d) {
+                return row_heights[d._dp_index].mid - bar_half_height;
+            })
+            .each(this.apply_line_styles);
+
+        g_bars
+            .selectAll()
+            .data(bar_rows)
+            .enter()
+            .append('svg:line')
+            .attr('x1', function(d) {
+                return x(d[bars.high_field_name]);
+            })
+            .attr('x2', function(d) {
+                return x(d[bars.high_field_name]);
+            })
+            .attr('y1', function(d) {
+                return row_heights[d._dp_index].mid + bar_half_height;
+            })
+            .attr('y2', function(d) {
+                return row_heights[d._dp_index].mid - bar_half_height;
+            })
+            .each(this.apply_line_styles);
 
         // add points
         this.g_dose_points = this.vis.append('g');
-        datapoints.forEach((datum, i)=>{
+        datapoints.forEach((datum, i) => {
             let numeric = datarows.filter((d) => d[datum.field_name] !== '');
 
-            this.g_dose_points.selectAll()
-                  .data(numeric)
-              .enter().append('path')
-                  .attr('d', d3.svg.symbol()
-                      .size(function(d){return d._styles['points_' + i].size;})
-                      .type(function(d){return d._styles['points_' + i].type;}))
-                  .attr('transform', (d) => `translate(${x(d[datum.field_name])},${this.row_heights[d._dp_index].mid})`)
-                  .each(function(d){
-                      var obj = d3.select(this);
-                      for (var property in d._styles['points_' + i]) {
-                          obj.style(property, d._styles['points_' + i][property]);
-                      }
-                  })
-                  .style('cursor', (d) => (datum._dpe_key)? 'pointer': 'auto')
-                  .on('click', function(d){if(datum._dpe_key){self.dpe.render_plottip(datum, d);}});
+            this.g_dose_points
+                .selectAll()
+                .data(numeric)
+                .enter()
+                .append('path')
+                .attr(
+                    'd',
+                    d3.svg
+                        .symbol()
+                        .size(function(d) {
+                            return d._styles['points_' + i].size;
+                        })
+                        .type(function(d) {
+                            return d._styles['points_' + i].type;
+                        })
+                )
+                .attr(
+                    'transform',
+                    (d) =>
+                        `translate(${x(d[datum.field_name])},${
+                            this.row_heights[d._dp_index].mid
+                        })`
+                )
+                .each(function(d) {
+                    var obj = d3.select(this);
+                    for (var property in d._styles['points_' + i]) {
+                        obj.style(property, d._styles['points_' + i][property]);
+                    }
+                })
+                .style('cursor', (d) => (datum._dpe_key ? 'pointer' : 'auto'))
+                .on('click', function(d) {
+                    if (datum._dpe_key) {
+                        self.dpe.render_plottip(datum, d);
+                    }
+                });
         });
     }
 
-    renderTextLabels(){
+    renderTextLabels() {
         let self = this,
             apply_text_styles = this.apply_text_styles,
             g_labels = this.vis.append('g'),
             cursor = this.getCursorType(),
-            label_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  var p = d3.select(this);
-                  p.data()[0].x = x;
-                  p.data()[0].y = y;
-              }),
-            title_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  self.dp_settings.plot_settings.title_left = x;
-                  self.dp_settings.plot_settings.title_top = y;
-              }),
-            xlabel_drag = (!this.editable) ? function(){} :
-              HAWCUtils.updateDragLocationXY(function(x, y){
-                  self.dp_settings.plot_settings.xlabel_left = x;
-                  self.dp_settings.plot_settings.xlabel_top = y;
-              });
+            label_drag = !this.editable
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      var p = d3.select(this);
+                      p.data()[0].x = x;
+                      p.data()[0].y = y;
+                  }),
+            title_drag = !this.editable
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      self.dp_settings.plot_settings.title_left = x;
+                      self.dp_settings.plot_settings.title_top = y;
+                  }),
+            xlabel_drag = !this.editable
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      self.dp_settings.plot_settings.xlabel_left = x;
+                      self.dp_settings.plot_settings.xlabel_top = y;
+                  });
 
-        g_labels.selectAll('text')
-              .data(this.settings.labels)
-              .enter().append('text')
-              .attr('x', (d) => d.x)
-              .attr('y', (d) => d.y)
-              .text((d) => d.text)
-              .attr('cursor', cursor)
-              .attr('class', 'with_whitespace')
-              .each(function(d){apply_text_styles(this, d._style);})
-              .call(label_drag);
-
-        this.add_title(this.dp_settings.plot_settings.title_left,
-                       this.dp_settings.plot_settings.title_top);
-        this.title
+        g_labels
+            .selectAll('text')
+            .data(this.settings.labels)
+            .enter()
+            .append('text')
+            .attr('x', (d) => d.x)
+            .attr('y', (d) => d.y)
+            .text((d) => d.text)
             .attr('cursor', cursor)
-            .call(title_drag);
+            .attr('class', 'with_whitespace')
+            .each(function(d) {
+                apply_text_styles(this, d._style);
+            })
+            .call(label_drag);
 
-        this.build_x_label(this.dp_settings.plot_settings.xlabel_left,
-                           this.dp_settings.plot_settings.xlabel_top);
+        this.add_title(
+            this.dp_settings.plot_settings.title_left,
+            this.dp_settings.plot_settings.title_top
+        );
+        this.title.attr('cursor', cursor).call(title_drag);
 
-        this.x_axis_label
-            .attr('cursor', cursor)
-            .call(xlabel_drag);
+        this.build_x_label(
+            this.dp_settings.plot_settings.xlabel_left,
+            this.dp_settings.plot_settings.xlabel_top
+        );
+
+        this.x_axis_label.attr('cursor', cursor).call(xlabel_drag);
     }
 
-    layout_text(){
+    layout_text() {
         /*
          * Methodology for laying out a matrix of text in an SVG which requires
          * word-wrap. The working method is as follows. First, layout all text in
@@ -960,17 +1220,23 @@ class DataPivotVisualization extends D3Plot {
          * for each cell by column.
          */
         var self = this,
-            apply_text_styles = function(obj, styles){
+            apply_text_styles = function(obj, styles) {
                 obj = d3.select(obj);
                 for (var property in styles) {
                     obj.style(property, styles[property]);
                 }
-                if(styles.rotate>0){
-                    obj.attr('transform', 'rotate({0} {1},{2})'.printf(
-                        styles.rotate, obj.attr('x'), obj.attr('y')));
+                if (styles.rotate > 0) {
+                    obj.attr(
+                        'transform',
+                        'rotate({0} {1},{2})'.printf(
+                            styles.rotate,
+                            obj.attr('x'),
+                            obj.attr('y')
+                        )
+                    );
                 }
             },
-            matrix =[],
+            matrix = [],
             row,
             textPadding = this.textPadding,
             left = this.padding.left,
@@ -981,11 +1247,11 @@ class DataPivotVisualization extends D3Plot {
         // build n x m array-matrix of text-component-data (including header, where):
         // n = number of rows, m = number of columns
         matrix = [this.headers];
-        this.datarows.forEach(function(v, i){
+        this.datarows.forEach(function(v, i) {
             row = [];
-            self.settings.descriptions.forEach(function(desc, j){
+            self.settings.descriptions.forEach(function(desc, j) {
                 var txt = v[desc.field_name];
-                if($.isNumeric(txt)){
+                if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
                     txt = txt.toHawcString();
                 } else {
@@ -996,9 +1262,9 @@ class DataPivotVisualization extends D3Plot {
                     col: j,
                     text: txt,
                     style: v._styles['text_' + j],
-                    cursor: (desc._dpe_key)?'pointer':'auto',
-                    onclick(){
-                        if(desc._dpe_key){
+                    cursor: desc._dpe_key ? 'pointer' : 'auto',
+                    onclick() {
+                        if (desc._dpe_key) {
                             self.dpe.render_plottip(desc, v);
                         }
                     },
@@ -1008,50 +1274,73 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // naively layout components
-        this.g_text_columns = d3.select(this.svg).append('g').attr('class', 'text_g');
+        this.g_text_columns = d3
+            .select(this.svg)
+            .append('g')
+            .attr('class', 'text_g');
 
-        this.text_rows = this.g_text_columns.selectAll('g')
+        this.text_rows = this.g_text_columns
+            .selectAll('g')
             .data(matrix)
-          .enter().append('g')
+            .enter()
+            .append('g')
             .attr('class', 'text_row');
 
-        this.text_rows.selectAll('text')
-              .data(function(d) { return d; })
-              .enter().append('text')
-              .attr('x', 0)
-              .attr('y', 0)
-              .attr('class', 'with_whitespace')
-              .text(function(d){return d.text;})
-              .style('cursor', function(d){return d.cursor;})
-              .on('click', function(d){return d.onclick();})
-              .each(function(d){apply_text_styles(this, d.style);});
+        this.text_rows
+            .selectAll('text')
+            .data(function(d) {
+                return d;
+            })
+            .enter()
+            .append('text')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('class', 'with_whitespace')
+            .text(function(d) {
+                return d.text;
+            })
+            .style('cursor', function(d) {
+                return d.cursor;
+            })
+            .on('click', function(d) {
+                return d.onclick();
+            })
+            .each(function(d) {
+                apply_text_styles(this, d.style);
+            });
 
         // apply wrap text method
-        this.headers.forEach(function(v,i){
-            var sel = self.g_text_columns
-                  .selectAll('text')
-                  .filter(function(v){return v.col===i;});
+        this.headers.forEach(function(v, i) {
+            var sel = self.g_text_columns.selectAll('text').filter(function(v) {
+                return v.col === i;
+            });
 
-            if (v.max_width) _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+            if (v.max_width)
+                _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
 
             // get maximum column dimension and layout columns
-            v.widths = d3.max(sel[0].map(function(v){return v.getBBox().width;}));
-            sel.each(function(){
+            v.widths = d3.max(
+                sel[0].map(function(v) {
+                    return v.getBBox().width;
+                })
+            );
+            sel.each(function() {
                 var val = d3.select(this),
                     anchor = val.style('text-anchor');
-                if(anchor === 'end'){
-                    val.attr('x', left+v.max_width);
-                    val.selectAll('tspan').attr('x', left+v.widths);
-                } else if (anchor==='middle'){
-                    var width = v.max_width || v.widths;  // use max_width in case of overflow
-                    val.attr('x', left+width/2);
-                    val.selectAll('tspan').attr('x', left+width/2);
-                } else { // default: left-aligned
+                if (anchor === 'end') {
+                    val.attr('x', left + v.max_width);
+                    val.selectAll('tspan').attr('x', left + v.widths);
+                } else if (anchor === 'middle') {
+                    var width = v.max_width || v.widths; // use max_width in case of overflow
+                    val.attr('x', left + width / 2);
+                    val.selectAll('tspan').attr('x', left + width / 2);
+                } else {
+                    // default: left-aligned
                     val.attr('x', left);
                     val.selectAll('tspan').attr('x', left);
                 }
             });
-            left += v.widths + 2*textPadding;
+            left += v.widths + 2 * textPadding;
         });
 
         // get maximum row dimension and layout rows
@@ -1061,66 +1350,79 @@ class DataPivotVisualization extends D3Plot {
             text_rows = this.text_rows.selectAll('text'),
             j;
 
-        text_rows.forEach(function(v, i){
-            for(j=0; j<v.length; j++){
+        text_rows.forEach(function(v, i) {
+            for (j = 0; j < v.length; j++) {
                 var val = d3.select(v[j]);
-                val.attr('y', textPadding+top);
-                val.selectAll('tspan').attr('y', textPadding+top);
+                val.attr('y', textPadding + top);
+                val.selectAll('tspan').attr('y', textPadding + top);
             }
 
             // get maximum-height of rendered text, and row-height
-            var cellHeights = v.map(function(v){return v.getBBox().height;}),
+            var cellHeights = v.map(function(v) {
+                    return v.getBBox().height;
+                }),
                 actual_height = d3.max(cellHeights),
                 row_height = d3.max([min_row_height, actual_height]);
 
             // Peek-ahead and see if other rows are merged with this row; if so we may
             // want to adjust the actual row-height to allow for even spacing.
             // Only check for data rows (not header rows)
-            if (i>0 && !self.datarows[i-1]._dp_isMerged){
-                var numRows = 1, min_height = 0;
-                for(j=i+1; j<self.datarows.length; j++){
-
+            if (i > 0 && !self.datarows[i - 1]._dp_isMerged) {
+                var numRows = 1,
+                    min_height = 0;
+                for (j = i + 1; j < self.datarows.length; j++) {
                     // the row height should be the maximum-height of a non-merged cell
-                    if(j===i+1){
+                    if (j === i + 1) {
                         text_rows[j]
-                            .map(function(v){ return v.getBBox().height; })
-                            .forEach(function(d,i){
-                                if (d>0) min_height = Math.max(min_height, cellHeights[i]);
+                            .map(function(v) {
+                                return v.getBBox().height;
+                            })
+                            .forEach(function(d, i) {
+                                if (d > 0)
+                                    min_height = Math.max(
+                                        min_height,
+                                        cellHeights[i]
+                                    );
                             });
                     }
 
-                    if(!self.datarows[j]._dp_isMerged) break;
-                    numRows +=1;
+                    if (!self.datarows[j]._dp_isMerged) break;
+                    numRows += 1;
                 }
-                var extra = (actual_height-min_row_height);
-                if (numRows === 1){
+                var extra = actual_height - min_row_height;
+                if (numRows === 1) {
                     merged_row_height = actual_height;
-                } else if ((extra/numRows)<min_row_height){
+                } else if (extra / numRows < min_row_height) {
                     merged_row_height = min_row_height;
                 } else {
-                    merged_row_height = min_row_height + extra/numRows;
+                    merged_row_height = min_row_height + extra / numRows;
                 }
                 row_height = Math.max(min_height, merged_row_height);
             }
 
             // add spacer if needed
             var spacer = self.settings.spacers['row_' + i];
-            extra_space = (spacer && spacer.extra_space) ? min_row_height/2 : 0;
+            extra_space = spacer && spacer.extra_space ? min_row_height / 2 : 0;
 
             // get the starting point for the top-row and offset all dimensions from this
-            if (i===1) height_offset = top;
+            if (i === 1) height_offset = top;
 
             // save object of relative heights of data rows, with-respect to first-data row
-            if (i>0){
+            if (i > 0) {
                 heights.push({
                     min: top - height_offset - prior_extra,
-                    mid: top - height_offset + textPadding + row_height/2,
-                    max: top - height_offset + row_height + 2*textPadding + extra_space,
+                    mid: top - height_offset + textPadding + row_height / 2,
+                    max:
+                        top -
+                        height_offset +
+                        row_height +
+                        2 * textPadding +
+                        extra_space,
                 });
             }
 
             //adjust height of next row
-            top += row_height + 2*textPadding + 2*extra_space;
+            top += row_height + 2 * textPadding + 2 * extra_space;
 
             // set for next row
             prior_extra = extra_space;
@@ -1128,24 +1430,23 @@ class DataPivotVisualization extends D3Plot {
 
         // remove blank text elements; can mess-up size calculations
         $(
-            _.filter(
-                this.g_text_columns.selectAll('text')[0],
-                    function(d){return d.textContent.length===0;}
-            )
+            _.filter(this.g_text_columns.selectAll('text')[0], function(d) {
+                return d.textContent.length === 0;
+            })
         ).remove();
 
         // calculate plot-height, text-width, and save heights array
         var textDim = this.g_text_columns.node().getBBox();
         this.text_width = textDim.width + textDim.x;
-        this.h = heights[heights.length-1].max;
+        this.h = heights[heights.length - 1].max;
         this.row_heights = heights;
     }
 
-    layout_plot(){
-      // Top-location to equal to the first-data row
-      // Left-location to equal size of text plus left-padding
+    layout_plot() {
+        // Top-location to equal to the first-data row
+        // Left-location to equal size of text plus left-padding
         var headerDims = this.g_text_columns.selectAll('g')[0][1].getBBox(),
-            top = headerDims.y-this.textPadding,
+            top = headerDims.y - this.textPadding,
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;
 
@@ -1154,13 +1455,14 @@ class DataPivotVisualization extends D3Plot {
 
         // resize SVG to account for new size
         var svgDims = this.svg.getBBox(),
-            w = svgDims.width  + svgDims.x + this.padding.right,
+            w = svgDims.width + svgDims.x + this.padding.right,
             h = svgDims.height + svgDims.y + this.padding.bottom;
 
-        d3.select(this.svg)
-          .attr('width', w)
-          .attr('height', h)
-          .attr('viewBox', '0 0 {0} {1}'.printf(w, h));
+        d3
+            .select(this.svg)
+            .attr('width', w)
+            .attr('height', h)
+            .attr('viewBox', '0 0 {0} {1}'.printf(w, h));
 
         this.full_width = w;
         this.full_height = h;

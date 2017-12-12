@@ -7,7 +7,6 @@ import EndpointListTable from './EndpointListTable';
 import Experiment from './Experiment';
 import SampleSizeWidget from './SampleSizeWidget';
 
-
 export default {
     AnimalGroup,
     AnimalGroupTable,

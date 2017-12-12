@@ -1,6 +1,5 @@
 import Quill from 'quill';
 
-
 let Inline = Quill.imports['blots/inline'];
 
 class SmartTag extends Inline {
@@ -14,7 +13,7 @@ class SmartTag extends Inline {
 
     static formats(domNode) {
         let cls = domNode.getAttribute('class') || '';
-        if (cls.indexOf('smart-tag')<0){
+        if (cls.indexOf('smart-tag') < 0) {
             return null;
         }
         return {

@@ -4,24 +4,24 @@ import _ from 'lodash';
 import h from 'shared/utils/helpers';
 import * as types from 'nestedTagEditor/constants';
 
-import {
-    NO_PARENT,
-} from 'nestedTagEditor/constants';
+import { NO_PARENT } from 'nestedTagEditor/constants';
 
-var addDepth = function(node, depth){
+var addDepth = function(node, depth) {
         // add depth to each node, and recursively to child nodes
         node.data.depth = depth;
 
-        if (node.children){
-            node.children.forEach((d) => addDepth(d, depth+1));
+        if (node.children) {
+            node.children.forEach((d) => addDepth(d, depth + 1));
         }
     },
-    getOptions = function(nodes){
+    getOptions = function(nodes) {
         let opts = [],
-            addOption = function(node){
-                let indentedName =  _.times(node.data.depth, (d) => ' _ ').join('') + node.data.name;
+            addOption = function(node) {
+                let indentedName =
+                    _.times(node.data.depth, (d) => ' _ ').join('') +
+                    node.data.name;
                 opts.push([node.id, indentedName]);
-                if (node.children){
+                if (node.children) {
                     node.children.forEach(addOption);
                 }
             };
@@ -30,7 +30,7 @@ var addDepth = function(node, depth){
         opts.unshift([NO_PARENT, '---']);
         return opts;
     },
-    receiveTags = function(allTags){
+    receiveTags = function(allTags) {
         let tags = allTags[0].children || [];
         tags.forEach((d) => addDepth(d, 0));
         return {
@@ -39,7 +39,7 @@ var addDepth = function(node, depth){
             parentOptions: getOptions(tags),
         };
     },
-    getTags = function(){
+    getTags = function() {
         return (dispatch, getState) => {
             const url = getState().config.list_url;
 
@@ -49,7 +49,7 @@ var addDepth = function(node, depth){
                 .catch((ex) => console.error('Tag parsing failed', ex));
         };
     },
-    createTag = function(newNode){
+    createTag = function(newNode) {
         return (dispatch, getState) => {
             let state = getState(),
                 url = `${state.config.base_url}`,
@@ -62,14 +62,14 @@ var addDepth = function(node, depth){
 
             return fetch(url, h.fetchPost(csrf, obj, 'POST'))
                 .then((response) => {
-                    if (response.ok){
+                    if (response.ok) {
                         return dispatch(getTags());
                     }
                 })
                 .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
-    updateTag = function(id, newNode){
+    updateTag = function(id, newNode) {
         return (dispatch, getState) => {
             let state = getState(),
                 url = `${state.config.base_url}${id}/`,
@@ -85,7 +85,7 @@ var addDepth = function(node, depth){
                 .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
-    deleteTag = function(id){
+    deleteTag = function(id) {
         return (dispatch, getState) => {
             let state = getState(),
                 url = `${state.config.base_url}${id}/`,
@@ -93,14 +93,14 @@ var addDepth = function(node, depth){
 
             return fetch(url, h.fetchDelete(csrf))
                 .then((response) => {
-                    if (response.ok){
+                    if (response.ok) {
                         return dispatch(getTags());
                     }
                 })
                 .catch((ex) => console.error('Tag delete failed', ex));
         };
     },
-    moveTag = function(nodeId, oldIndex, newIndex){
+    moveTag = function(nodeId, oldIndex, newIndex) {
         return (dispatch, getState) => {
             let state = getState(),
                 url = `${state.config.base_url}${nodeId}/move/`,

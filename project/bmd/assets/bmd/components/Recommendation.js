@@ -6,13 +6,11 @@ import { asLabel } from 'bmd/models/bmr';
 
 import RecommendationTable from './RecommendationTable';
 
-
 class Recommendation extends React.Component {
-
-    updateState(props){
-        let model = (props.selectedModelId) ?
-                _.find(props.models, {id: props.selectedModelId}):
-                props.models[0],
+    updateState(props) {
+        let model = props.selectedModelId
+                ? _.find(props.models, { id: props.selectedModelId })
+                : props.models[0],
             d = {
                 bmr: model.bmr_id,
                 model: model.id,
@@ -21,20 +19,20 @@ class Recommendation extends React.Component {
         this.setState(d);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.updateState(this.props);
     }
 
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps) {
         this.updateState(nextProps);
     }
 
-    handleFieldChange(e){
-        let d={},
+    handleFieldChange(e) {
+        let d = {},
             name = e.target.name,
             val = e.target.value;
 
-        if (_.includes(['bmr', 'model'], name)){
+        if (_.includes(['bmr', 'model'], name)) {
             val = parseInt(val);
         }
 
@@ -42,104 +40,116 @@ class Recommendation extends React.Component {
         this.setState(d);
     }
 
-    handleSaveSelected(){
+    handleSaveSelected() {
         this.props.handleSaveSelected(this.state.model, this.state.notes);
     }
 
-    renderForm(){
-        let models = _.filter(
-            this.props.models,
-            {bmr_id: this.state.bmr}
-        );
+    renderForm() {
+        let models = _.filter(this.props.models, { bmr_id: this.state.bmr });
 
         return (
-            <div className='row-fluid' key={0}>
-            <legend>Select BMD model</legend>
-            <form className="form">
-                <div className='span4'>
-                    <label htmlFor="bmr"
-                           className="control-label">Selected BMR</label>
-                    <div className="controls">
-                        <select
-                            className='span12'
-                            value={this.state.bmr}
-                            name='bmr'
-                            onChange={this.handleFieldChange.bind(this)}>
-                        {this.props.bmrs.map((d, i)=>{
-                            return <option key={i} value={i}>{asLabel(d)}</option>;
-                        })}
-                        </select>
-                    </div>
+            <div className="row-fluid" key={0}>
+                <legend>Select BMD model</legend>
+                <form className="form">
+                    <div className="span4">
+                        <label htmlFor="bmr" className="control-label">
+                            Selected BMR
+                        </label>
+                        <div className="controls">
+                            <select
+                                className="span12"
+                                value={this.state.bmr}
+                                name="bmr"
+                                onChange={this.handleFieldChange.bind(this)}
+                            >
+                                {this.props.bmrs.map((d, i) => {
+                                    return (
+                                        <option key={i} value={i}>
+                                            {asLabel(d)}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
 
-                    <label htmlFor="model"
-                           className="control-label">Selected model</label>
+                        <label htmlFor="model" className="control-label">
+                            Selected model
+                        </label>
 
-                    <div className="controls">
-                        <select
-                            className='span12'
-                            value={this.state.model}
-                            name='model'
-                            onChange={this.handleFieldChange.bind(this)}>
-                        {models.map((d)=>{
-                            return <option key={d.id} value={d.id}>{d.name}</option>;
-                        })}
-                        </select>
+                        <div className="controls">
+                            <select
+                                className="span12"
+                                value={this.state.model}
+                                name="model"
+                                onChange={this.handleFieldChange.bind(this)}
+                            >
+                                {models.map((d) => {
+                                    return (
+                                        <option key={d.id} value={d.id}>
+                                            {d.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div className='span8'>
-                    <label htmlFor="notes"
-                           className="control-label">Notes</label>
-                    <div className="controls">
-                        <textarea
-                            className='span12'
-                            value={this.state.notes}
-                            onChange={this.handleFieldChange.bind(this)}
-                            name='notes'
-                            rows="5"
-                            cols="40"></textarea>
+                    <div className="span8">
+                        <label htmlFor="notes" className="control-label">
+                            Notes
+                        </label>
+                        <div className="controls">
+                            <textarea
+                                className="span12"
+                                value={this.state.notes}
+                                onChange={this.handleFieldChange.bind(this)}
+                                name="notes"
+                                rows="5"
+                                cols="40"
+                            />
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
             </div>
         );
     }
 
-    renderWell(){
+    renderWell() {
         return (
-            <div className='well' key={1}>
-                <button type='button'
-                        className='btn btn-primary'
-                        onClick={this.handleSaveSelected.bind(this)}>Save selected model</button>
+            <div className="well" key={1}>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={this.handleSaveSelected.bind(this)}
+                >
+                    Save selected model
+                </button>
             </div>
         );
     }
 
-    renderEditMode(){
-        if (!this.props.editMode){
+    renderEditMode() {
+        if (!this.props.editMode) {
             return null;
         }
 
-        return [
-            this.renderForm(),
-            this.renderWell(),
-        ];
+        return [this.renderForm(), this.renderWell()];
     }
 
     render() {
-        if (this.props.models.length===0){
+        if (this.props.models.length === 0) {
             return null;
         }
 
-        let modelSubset = _.filter(
-            this.props.models,
-            {bmr_id: this.state.bmr}
-        );
+        let modelSubset = _.filter(this.props.models, {
+            bmr_id: this.state.bmr,
+        });
 
         return (
             <div>
                 <RecommendationTable
                     models={modelSubset}
-                    selectedModelId={this.props.selectedModelId} />
+                    selectedModelId={this.props.selectedModelId}
+                />
                 {this.renderEditMode()}
             </div>
         );

@@ -5,9 +5,7 @@ import _ from 'lodash';
 import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
 import TaskForm from 'mgmt/TaskTable/components/TaskForm';
 
-
 class TaskStudyEdit extends Component {
-
     constructor(props) {
         super(props);
         this.getChangedData = this.getChangedData.bind(this);
@@ -15,17 +13,21 @@ class TaskStudyEdit extends Component {
 
     getChangedData() {
         return _.chain(this.refs)
-                .filter((ref) => { return ref.formDidChange(); })
-                .map((ref) => { return ref.state; })
-                .value();
+            .filter((ref) => {
+                return ref.formDidChange();
+            })
+            .map((ref) => {
+                return ref.state;
+            })
+            .value();
     }
 
     render() {
         const { tasks, study } = this.props.item;
         return (
             <div>
-                <hr className='hr-tight' />
-                <div className='flexRow-container taskStudy'>
+                <hr className="hr-tight" />
+                <div className="flexRow-container taskStudy">
                     <StudyLabel study={study} />
                     {tasks.map((task, index) => (
                         <TaskForm
@@ -33,7 +35,8 @@ class TaskStudyEdit extends Component {
                             ref={`form-${index}`}
                             task={task}
                             className={`task-${index} flex-1`}
-                            autocompleteUrl={this.props.autocompleteUrl}/>
+                            autocompleteUrl={this.props.autocompleteUrl}
+                        />
                     ))}
                 </div>
             </div>

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-
 class SubmitButton extends Component {
     render() {
         return (
-            <button onClick={this.props.submitForm} className='btn btn-primary'>Submit changes</button>
+            <button onClick={this.props.submitForm} className="btn btn-primary">
+                Submit changes
+            </button>
         );
     }
 }

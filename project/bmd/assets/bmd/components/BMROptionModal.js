@@ -2,48 +2,45 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {deepCopy} from 'shared/utils';
+import { deepCopy } from 'shared/utils';
 
 import * as types from 'bmd/constants';
 
 import EditableModalFooter from 'bmd/components/EditableModalFooter';
 
-
 class BMROptionModal extends React.Component {
-
-    componentWillReceiveProps(nextProps){
-        if (nextProps.bmr){
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.bmr) {
             this.setState(deepCopy(nextProps.bmr));
         }
     }
 
-    handleSave(){
+    handleSave() {
         let bmr = this.state;
         bmr.value = parseFloat(bmr.value);
         bmr.confidence_level = parseFloat(bmr.confidence_level);
         this.props.handleSave(bmr);
     }
 
-
-    handleTypeChange(e){
+    handleTypeChange(e) {
         let d = deepCopy(this.props.allOptions[e.target.value]);
         this.setState(d);
     }
 
-    handleChange(e){
+    handleChange(e) {
         let d = {};
         d[e.target.name] = e.target.value;
         this.setState(d);
     }
 
-    renderReadOnlyTable(){
-        let {bmr} = this.props;
+    renderReadOnlyTable() {
+        let { bmr } = this.props;
         return (
             <table className="table table-condensed table-striped">
                 <tbody>
                     <tr>
-                        <th style={{width: '30%'}}>BMR type</th>
-                        <td style={{width: '70%'}}>{bmr.type}</td>
+                        <th style={{ width: '30%' }}>BMR type</th>
+                        <td style={{ width: '70%' }}>{bmr.type}</td>
                     </tr>
                     <tr>
                         <th>Value</th>
@@ -58,32 +55,39 @@ class BMROptionModal extends React.Component {
         );
     }
 
-    renderEditingForm(){
-        let {allOptions} = this.props,
+    renderEditingForm() {
+        let { allOptions } = this.props,
             state = this.state,
             opts = _.values(allOptions);
 
         return (
             <form className="form-horizontal">
                 <div className="control-group form-row">
-                    <label className="control-label"
-                           htmlFor="bmr_type">BMR type</label>
+                    <label className="control-label" htmlFor="bmr_type">
+                        BMR type
+                    </label>
                     <div className="controls">
                         <select
                             id="bmr_type"
                             name="type"
                             value={state.type}
-                            onChange={this.handleTypeChange.bind(this)}>
-                            {opts.map((d, i)=>{
-                                return <option key={i} value={d.type}>{d.type}</option>;
+                            onChange={this.handleTypeChange.bind(this)}
+                        >
+                            {opts.map((d, i) => {
+                                return (
+                                    <option key={i} value={d.type}>
+                                        {d.type}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
                 </div>
 
                 <div className="control-group form-row">
-                    <label className="control-label"
-                           htmlFor="bmr_value">BMR value</label>
+                    <label className="control-label" htmlFor="bmr_value">
+                        BMR value
+                    </label>
                     <div className="controls">
                         <input
                             id="bmr_value"
@@ -91,13 +95,18 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.value}
-                            onChange={this.handleChange.bind(this)}></input>
+                            onChange={this.handleChange.bind(this)}
+                        />
                     </div>
                 </div>
 
                 <div className="control-group form-row">
-                    <label className="control-label"
-                           htmlFor="bmr_confidence_level">BMR confidence level</label>
+                    <label
+                        className="control-label"
+                        htmlFor="bmr_confidence_level"
+                    >
+                        BMR confidence level
+                    </label>
                     <div className="controls">
                         <input
                             id="bmr_confidence_level"
@@ -105,7 +114,8 @@ class BMROptionModal extends React.Component {
                             type="number"
                             step="any"
                             value={state.confidence_level}
-                            onChange={this.handleChange.bind(this)}></input>
+                            onChange={this.handleChange.bind(this)}
+                        />
                     </div>
                 </div>
             </form>
@@ -113,33 +123,42 @@ class BMROptionModal extends React.Component {
     }
 
     render() {
-        if (!this.props.bmr){
+        if (!this.props.bmr) {
             return null;
         }
 
-        let {editMode, bmr} = this.props,
-            title = (this.props.editMode)?
-                `Edit benchmark response: ${bmr.type}`:
-                `Benchmark response: ${bmr.type}`,
-            tableFunc = (editMode)? this.renderEditingForm: this.renderReadOnlyTable;
+        let { editMode, bmr } = this.props,
+            title = this.props.editMode
+                ? `Edit benchmark response: ${bmr.type}`
+                : `Benchmark response: ${bmr.type}`,
+            tableFunc = editMode
+                ? this.renderEditingForm
+                : this.renderReadOnlyTable;
 
         return (
-            <div className="modal hide fade" role="dialog" id={types.BMR_MODAL_ID}>
-
+            <div
+                className="modal hide fade"
+                role="dialog"
+                id={types.BMR_MODAL_ID}
+            >
                 <div className="modal-header">
-                    <button className="close" type="button"
-                        data-dismiss="modal">×</button>
+                    <button
+                        className="close"
+                        type="button"
+                        data-dismiss="modal"
+                    >
+                        ×
+                    </button>
                     <h3>{title}</h3>
                 </div>
 
-                <div className="modal-body">
-                    {tableFunc.bind(this)()}
-                </div>
+                <div className="modal-body">{tableFunc.bind(this)()}</div>
 
                 <EditableModalFooter
                     editMode={editMode}
                     handleSave={this.handleSave.bind(this)}
-                    handleDelete={this.props.handleDelete} />
+                    handleDelete={this.props.handleDelete}
+                />
             </div>
         );
     }

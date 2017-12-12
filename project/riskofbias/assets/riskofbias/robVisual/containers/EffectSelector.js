@@ -3,32 +3,34 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Selector from 'riskofbias/robVisual/components/EffectSelector';
-import { fetchEffects, selectEffects } from 'riskofbias/robVisual/actions/Filter';
-
+import {
+    fetchEffects,
+    selectEffects,
+} from 'riskofbias/robVisual/actions/Filter';
 
 class EffectSelector extends Component {
-
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchEffects());
     }
 
-    handleChange(e){
+    handleChange(e) {
         let selectedOptions = _.map(e.target.selectedOptions, (option) => {
             return option.value;
         });
         this.props.dispatch(selectEffects(selectedOptions));
     }
 
-    render(){
+    render() {
         return (
             <Selector
                 effects={this.props.effects}
-                handleChange={this.handleChange}/>
+                handleChange={this.handleChange}
+            />
         );
     }
 }

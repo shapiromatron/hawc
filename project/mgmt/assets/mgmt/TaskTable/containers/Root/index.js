@@ -6,10 +6,7 @@ import { loadConfig } from 'shared/actions/Config';
 import List from 'mgmt/TaskTable/containers/List';
 import Loading from 'shared/components/Loading';
 
-
-
 class Root extends Component {
-
     componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
@@ -18,7 +15,7 @@ class Root extends Component {
         let store = this.props.store,
             state = store.getState(),
             App = Loading;
-        if (state.config){
+        if (state.config) {
             App = state.config.type ? List : Loading;
         }
         return (

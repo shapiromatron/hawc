@@ -8,7 +8,7 @@
 .splineChart .dot {
     fill: black;
     stroke: white;
-    stroke-width: 1.5px
+    stroke-width: 1.5px;
 }
 
 .splineChart .significant {

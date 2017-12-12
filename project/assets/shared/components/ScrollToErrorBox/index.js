@@ -4,15 +4,14 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 class ScrollToErrorBox extends Component {
-
-    componentDidMount(){
+    componentDidMount() {
         let node = ReactDOM.findDOMNode(this);
-        if (node){
+        if (node) {
             node.scrollIntoView(false);
         }
     }
 
-    render(){
+    render() {
         let { error } = this.props;
 
         if (_.isNull(error)) {
@@ -23,24 +22,16 @@ class ScrollToErrorBox extends Component {
             error = error.message;
         }
 
-        if (!error){
+        if (!error) {
             return null;
         }
 
-        return (
-            <div className='alert alert-danger'>
-                {error.toString()}
-            </div>
-        );
-
+        return <div className="alert alert-danger">{error.toString()}</div>;
     }
 }
 
 ScrollToErrorBox.propTypes = {
-    error: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.object,
-    ]),
+    error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 export default ScrollToErrorBox;

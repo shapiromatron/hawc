@@ -7,62 +7,73 @@ import HAWCUtils from 'utils/HAWCUtils';
 
 import IVEndpoint from './IVEndpoint';
 
-
 class IVExperiment {
-
-    constructor(data){
+    constructor(data) {
         this.data = data;
         this.initEndpoints();
     }
 
-    static get_object(id, cb){
-        $.get('/in-vitro/api/experiment/{0}/'.printf(id), function(d){
+    static get_object(id, cb) {
+        $.get('/in-vitro/api/experiment/{0}/'.printf(id), function(d) {
             cb(new IVExperiment(d));
         });
     }
 
-    static displayAsModal(id){
-        IVExperiment.get_object(id, function(d){d.displayAsModal();});
+    static displayAsModal(id) {
+        IVExperiment.get_object(id, function(d) {
+            d.displayAsModal();
+        });
     }
 
-    static displayAsPage(id, div){
-        IVExperiment.get_object(id, function(d){d.displayAsPage(div);});
+    static displayAsPage(id, div) {
+        IVExperiment.get_object(id, function(d) {
+            d.displayAsPage(div);
+        });
     }
 
-    initEndpoints(){
+    initEndpoints() {
         this.endpoints = [];
-        if(this.data.endpoints){
-            this.endpoints = _.map(
-               this.data.endpoints,
-               function(d){return new IVEndpoint(d);});
+        if (this.data.endpoints) {
+            this.endpoints = _.map(this.data.endpoints, function(d) {
+                return new IVEndpoint(d);
+            });
             delete this.data.endpoints;
         }
     }
 
-    build_title(){
+    build_title() {
         var el = $('<h1>').text(this.data.name);
-        if (window.canEdit){
+        if (window.canEdit) {
             var urls = [
                 'Experiment editing',
-                {url: this.data.url_update, text: 'Update'},
-                {url: this.data.url_delete, text: 'Delete'},
+                { url: this.data.url_update, text: 'Update' },
+                { url: this.data.url_delete, text: 'Delete' },
                 'Endpoint editing',
-                {url: this.data.url_create_endpoint, text: 'Create endpoint'},
+                { url: this.data.url_create_endpoint, text: 'Create endpoint' },
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
         return el;
     }
 
-    build_details_table(){
+    build_details_table() {
         var getControlText = function(bool, str) {
                 var txt = HAWCUtils.booleanCheckbox(bool);
                 if (bool && str) txt = str;
                 return txt;
             },
-            pos = getControlText(this.data.has_positive_control, this.data.positive_control),
-            neg = getControlText(this.data.has_negative_control, this.data.negative_control),
-            veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control),
+            pos = getControlText(
+                this.data.has_positive_control,
+                this.data.positive_control
+            ),
+            neg = getControlText(
+                this.data.has_negative_control,
+                this.data.negative_control
+            ),
+            veh = getControlText(
+                this.data.has_vehicle_control,
+                this.data.vehicle_control
+            ),
             naive = getControlText(this.data.has_naive_control, '');
 
         return new DescriptiveTable()
@@ -76,7 +87,10 @@ class IVExperiment {
             .add_tbody_tr('Transfection', this.data.transfection)
             .add_tbody_tr('Cell notes', this.data.cell_notes)
             .add_tbody_tr('Dosing notes', this.data.dosing_notes)
-            .add_tbody_tr('Metabolic activation', this.data.metabolic_activation)
+            .add_tbody_tr(
+                'Metabolic activation',
+                this.data.metabolic_activation
+            )
             .add_tbody_tr('Serum', this.data.serum)
             .add_tbody_tr('Naive control', naive)
             .add_tbody_tr('Positive control', pos)
@@ -87,41 +101,42 @@ class IVExperiment {
             .get_tbl();
     }
 
-    build_endpoint_list(){
+    build_endpoint_list() {
         var ul = $('<ul>');
 
-        if (this.endpoints.length===0){
+        if (this.endpoints.length === 0) {
             ul.append('<li><i>No endpoints available.</i></li>');
         }
 
-        this.endpoints.forEach(function(d){
+        this.endpoints.forEach(function(d) {
             ul.append($('<li>').html(d.build_hyperlink()));
         });
 
         return ul;
     }
 
-    displayAsModal(){
+    displayAsModal() {
         var modal = new HAWCModal(),
             $details = $('<div class="span12">'),
-            $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
+            $content = $('<div class="container-fluid">').append(
+                $('<div class="row-fluid">').append($details)
+            );
 
         $details.append(this.build_details_table());
-        modal.addTitleLinkHeader(this.data.name, this.data.url)
+        modal
+            .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
             .addFooter('')
-            .show({maxWidth: 900});
+            .show({ maxWidth: 900 });
     }
 
-    displayAsPage($div){
+    displayAsPage($div) {
         $div
             .append(this.build_title())
             .append(this.build_details_table())
             .append('<h2>Available endpoints</h2>')
             .append(this.build_endpoint_list());
     }
-
 }
 
 export default IVExperiment;

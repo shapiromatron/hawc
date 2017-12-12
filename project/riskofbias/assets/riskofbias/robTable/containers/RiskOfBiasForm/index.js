@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'riskofbias/robTable/actions';
+import {
+    fetchFullStudyIfNeeded,
+    submitRiskOfBiasScores,
+} from 'riskofbias/robTable/actions';
 import Completeness from 'riskofbias/robTable/components/Completeness';
 import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 
-
 class RiskOfBiasForm extends Component {
-
     constructor(props) {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
@@ -21,69 +22,75 @@ class RiskOfBiasForm extends Component {
         };
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
-    submitForm(e){
+    submitForm(e) {
         e.preventDefault();
-        let scores = _.flattenDeep(_.map(this.refs, (domain) => {
-            return _.map(domain.refs, (metric) => {
-                let { form } = metric.refs;
-                return {
-                    id: form.props.score.id,
-                    notes: form.state.notes,
-                    score: form.state.score };
-            });
-        }));
-        this.props.dispatch(submitRiskOfBiasScores({scores}));
+        let scores = _.flattenDeep(
+            _.map(this.refs, (domain) => {
+                return _.map(domain.refs, (metric) => {
+                    let { form } = metric.refs;
+                    return {
+                        id: form.props.score.id,
+                        notes: form.state.notes,
+                        score: form.state.score,
+                    };
+                });
+            })
+        );
+        this.props.dispatch(submitRiskOfBiasScores({ scores }));
     }
 
-    handleCancel(e){
+    handleCancel(e) {
         e.preventDefault();
         window.location.href = this.props.config.cancelUrl;
     }
 
-    updateNotesLeft(id, action){
+    updateNotesLeft(id, action) {
         let notes = this.state.notesLeft;
-        if (action === 'clear'){
+        if (action === 'clear') {
             notes.delete(id);
-            this.setState({notesLeft: notes});
+            this.setState({ notesLeft: notes });
         } else if (action === 'add') {
             notes.add(id);
-            this.setState({notesLeft: notes});
+            this.setState({ notesLeft: notes });
         }
     }
 
-    render(){
+    render() {
         let { itemsLoaded, riskofbiases, error, config } = this.props;
         if (!itemsLoaded) return <Loading />;
         return (
-            <div className='riskofbias-display'>
+            <div className="riskofbias-display">
                 <ScrollToErrorBox error={error} />
                 <form onSubmit={this.submitForm}>
-
                     {_.map(riskofbiases, (domain) => {
-                        return <DomainDisplay key={domain.key}
-                                           ref={domain.key}
-                                           domain={domain}
-                                           config={config}
-                                           updateNotesLeft={this.updateNotesLeft}/>;
+                        return (
+                            <DomainDisplay
+                                key={domain.key}
+                                ref={domain.key}
+                                domain={domain}
+                                config={config}
+                                updateNotesLeft={this.updateNotesLeft}
+                            />
+                        );
                     })}
                     <Completeness number={this.state.notesLeft} />
-                    <button className='btn btn-primary space'
-                            type='submit'>
+                    <button className="btn btn-primary space" type="submit">
                         Update risk of bias
                     </button>
-                    <button className='btn space'
-                            onClick={this.handleCancel}>Cancel</button>
+                    <button className="btn space" onClick={this.handleCancel}>
+                        Cancel
+                    </button>
                 </form>
             </div>
         );
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         config: state.config,
         itemsLoaded: state.study.itemsLoaded,
@@ -91,6 +98,5 @@ function mapStateToProps(state){
         error: state.study.error,
     };
 }
-
 
 export default connect(mapStateToProps)(RiskOfBiasForm);

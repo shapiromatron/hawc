@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { fetchTasks, fetchStudies, filterAndSortStudies, submitTasks } from 'mgmt/TaskTable/actions';
-
 import {
-    TASK_TYPES,
-    TASK_TYPE_DESCRIPTIONS,
-} from 'mgmt/TaskTable/constants';
+    fetchTasks,
+    fetchStudies,
+    filterAndSortStudies,
+    submitTasks,
+} from 'mgmt/TaskTable/actions';
+
+import { TASK_TYPES, TASK_TYPE_DESCRIPTIONS } from 'mgmt/TaskTable/constants';
 import CancelButton from 'mgmt/TaskTable/components/CancelButton';
 import EmptyListNotification from 'shared/components/EmptyListNotification';
 import Header from 'mgmt/TaskTable/components/Header';
@@ -20,9 +22,7 @@ import TaskStudy from 'mgmt/TaskTable/components/TaskStudy';
 import TaskStudyEdit from 'mgmt/TaskTable/components/TaskStudyEdit';
 import './List.css';
 
-
 class ListApp extends Component {
-
     constructor(props) {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
@@ -42,11 +42,13 @@ class ListApp extends Component {
     formatTasks() {
         const { tasks, studies } = this.props,
             taskList = studies.visibleList.map((study) => {
-                let formattedTasks = tasks.list.filter((task) => {
-                    return task.study.id === study.id;
-                }).sort((a, b) => (a.type - b.type));
+                let formattedTasks = tasks.list
+                    .filter((task) => {
+                        return task.study.id === study.id;
+                    })
+                    .sort((a, b) => a.type - b.type);
 
-                return {tasks: formattedTasks , study};
+                return { tasks: formattedTasks, study };
             });
         return taskList;
     }
@@ -58,10 +60,14 @@ class ListApp extends Component {
     updateForm(e) {
         e.preventDefault();
         const updatedData = _.chain(this.refs.list.refs)
-                    .map((ref) => { return ref.getChangedData(); })
-                    .filter((data) => { return !_.isEmpty(data); })
-                    .flattenDeep()
-                    .value();
+            .map((ref) => {
+                return ref.getChangedData();
+            })
+            .filter((data) => {
+                return !_.isEmpty(data);
+            })
+            .flattenDeep()
+            .value();
         this.props.dispatch(submitTasks(updatedData));
     }
 
@@ -69,27 +75,38 @@ class ListApp extends Component {
         if (!this.props.tasks.isLoaded) return <Loading />;
         const { error, config } = this.props,
             taskList = this.formatTasks(),
-            emptyTaskList = (taskList.length === 0),
+            emptyTaskList = taskList.length === 0,
             headings = _.values(TASK_TYPES),
             descriptions = _.values(TASK_TYPE_DESCRIPTIONS),
             displayForm = config.type === 'edit';
 
         return (
-                <div>
-                    <ScrollToErrorBox error={error} />
-                    <StudyFilter selectFilter={this.filterStudies}/>
-                    <Header headings={headings} descriptions={descriptions} />
-                    {emptyTaskList ?
-                        <EmptyListNotification listItem={'studies'} /> :
-                        <List component={displayForm ? TaskStudyEdit : TaskStudy} items={taskList} autocompleteUrl={this.props.config.autocomplete.url} ref='list' />}
-                    {displayForm ? <SubmitButton submitForm={this.updateForm} /> : null}
-                    {displayForm ? <CancelButton onCancel={this.handleCancel} /> : null}
-                </div>
+            <div>
+                <ScrollToErrorBox error={error} />
+                <StudyFilter selectFilter={this.filterStudies} />
+                <Header headings={headings} descriptions={descriptions} />
+                {emptyTaskList ? (
+                    <EmptyListNotification listItem={'studies'} />
+                ) : (
+                    <List
+                        component={displayForm ? TaskStudyEdit : TaskStudy}
+                        items={taskList}
+                        autocompleteUrl={this.props.config.autocomplete.url}
+                        ref="list"
+                    />
+                )}
+                {displayForm ? (
+                    <SubmitButton submitForm={this.updateForm} />
+                ) : null}
+                {displayForm ? (
+                    <CancelButton onCancel={this.handleCancel} />
+                ) : null}
+            </div>
         );
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     const { error, tasks, studies, config } = state;
     return {
         config,

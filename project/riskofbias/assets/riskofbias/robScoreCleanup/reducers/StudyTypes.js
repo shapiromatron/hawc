@@ -7,29 +7,27 @@ const defaultState = {
     items: [],
 };
 
-function studyTypes(state=defaultState, action) {
+function studyTypes(state = defaultState, action) {
+    switch (action.type) {
+        case types.REQUEST_STUDY_TYPE_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: true,
+            });
 
-    switch(action.type){
+        case types.RECEIVE_STUDY_TYPE_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLoaded: true,
+                items: action.items,
+            });
 
-    case types.REQUEST_STUDY_TYPE_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: true,
-        });
+        case types.SELECT_STUDY_TYPE:
+            return Object.assign({}, state, {
+                selected: action.studyTypes,
+            });
 
-    case types.RECEIVE_STUDY_TYPE_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: false,
-            isLoaded: true,
-            items: action.items,
-        });
-
-    case types.SELECT_STUDY_TYPE:
-        return Object.assign({}, state, {
-            selected: action.studyTypes,
-        });
-
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 

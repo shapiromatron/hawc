@@ -4,7 +4,6 @@ import IVEndpoint from './IVEndpoint';
 import IVEndpointListTable from './IVEndpointListTable';
 import IVExperiment from './IVExperiment';
 
-
 export default {
     IVCellType,
     IVChemical,

@@ -7,20 +7,31 @@ import Study from 'study/Study';
 import './CheckboxScoreDisplay.css';
 
 class CheckboxScoreDisplay extends Component {
-
     render() {
         let { checked, item, config, handleCheck } = this.props,
             scoreInfo = h.getScoreInfo(item.score);
-        item = {...item, score_shade: scoreInfo.shade, score_description: scoreInfo.text};
+        item = {
+            ...item,
+            score_shade: scoreInfo.shade,
+            score_description: scoreInfo.text,
+        };
         return (
-            <div className='flexRow-container'>
-                <div className='score-display-checkbox'>
-                    <p onClick={() => { Study.displayAsModal(item.study_id); }}><b>{item.study_name}</b></p>
-                    <input type="checkbox"
+            <div className="flexRow-container">
+                <div className="score-display-checkbox">
+                    <p
+                        onClick={() => {
+                            Study.displayAsModal(item.study_id);
+                        }}
+                    >
+                        <b>{item.study_name}</b>
+                    </p>
+                    <input
+                        type="checkbox"
                         title="Include/exclude selected item in change"
                         checked={checked}
                         id={item.id}
-                        onChange={handleCheck}/>
+                        onChange={handleCheck}
+                    />
                 </div>
                 <ScoreDisplay key={item.id} score={item} config={config} />
             </div>

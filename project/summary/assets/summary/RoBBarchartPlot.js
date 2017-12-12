@@ -6,21 +6,21 @@ import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 import D3Visualization from './D3Visualization';
 import RoBLegend from './RoBLegend';
 
-
 class RoBBarchartPlot extends D3Visualization {
-
-    constructor(parent, data, options){
+    constructor(parent, data, options) {
         // stacked-bars of risk of bias information. Criteria are on the y-axis,
         // and studies are on the x-axis
         super(...arguments);
         this.setDefaults();
     }
 
-    render($div){
+    render($div) {
         this.plot_div = $div.html('');
         this.processData();
-        if(this.dataset.length === 0){
-            return this.plot_div.html('<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>');
+        if (this.dataset.length === 0) {
+            return this.plot_div.html(
+                '<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>'
+            );
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
@@ -33,23 +33,32 @@ class RoBBarchartPlot extends D3Visualization {
         this.build_legend();
     }
 
-    resize_plot_dimensions(){
+    resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var xlabel_width = this.vis.select('.y_axis').node().getBoundingClientRect().width;
+        var xlabel_width = this.vis
+            .select('.y_axis')
+            .node()
+            .getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + xlabel_width) {
             this.padding.left = this.padding.left_original + xlabel_width;
             this.render(this.plot_div);
         }
     }
 
-    get_plot_sizes(){
+    get_plot_sizes() {
         this.h = this.row_height * this.metrics.length;
         var menu_spacing = 40;
-        this.plot_div.css({'height': (this.h + this.padding.top + this.padding.bottom +
-            menu_spacing) + 'px'});
+        this.plot_div.css({
+            height:
+                this.h +
+                this.padding.top +
+                this.padding.bottom +
+                menu_spacing +
+                'px',
+        });
     }
 
-    setDefaults(){
+    setDefaults() {
         _.extend(this, {
             firstPass: true,
             included_metrics: [],
@@ -73,30 +82,37 @@ class RoBBarchartPlot extends D3Visualization {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale.ordinal()
+            color_scale: d3.scale
+                .ordinal()
                 .range(_.values(RiskOfBiasScore.score_shades)),
         });
     }
 
-    processData(){
-
+    processData() {
         var included_metrics = this.data.settings.included_metrics,
             stack_order = ['N/A', '--', '-', '+', '++'],
-            metrics, stack, dataset;
+            metrics,
+            stack,
+            dataset;
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
-            .filter(function(d){
+            .filter(function(d) {
                 var metric_id = d.rob_scores[0].data.metric.id;
                 return _.includes(included_metrics, metric_id);
-            }).map(function(d){
+            })
+            .map(function(d) {
                 var vals = {
-                        'label': d.rob_scores[0].data.metric.name,
-                        'N/A':0, '--':0, '-':0, '+':0, '++':0,
+                        label: d.rob_scores[0].data.metric.name,
+                        'N/A': 0,
+                        '--': 0,
+                        '-': 0,
+                        '+': 0,
+                        '++': 0,
                     },
-                    weight = 1/d.rob_scores.length;
-                d.rob_scores.forEach(function(rob){
+                    weight = 1 / d.rob_scores.length;
+                d.rob_scores.forEach(function(rob) {
                     vals[rob.data.score_text] += weight;
-                    if(rob.data.score_text==='NR'){
+                    if (rob.data.score_text === 'NR') {
                         vals['-'] += weight;
                     }
                 });
@@ -105,43 +121,45 @@ class RoBBarchartPlot extends D3Visualization {
             .value();
 
         metrics = _.chain(dataset)
-                   .map(function(d){return d.label;})
-                   .uniq()
-                   .value();
+            .map(function(d) {
+                return d.label;
+            })
+            .uniq()
+            .value();
 
         stack = d3.layout.stack()(
-            _.map(stack_order, function(score){
-                return _.map(dataset, function(d){
-                    return {x: d.label, y: d[score]};
+            _.map(stack_order, function(score) {
+                return _.map(dataset, function(d) {
+                    return { x: d.label, y: d[score] };
                 });
             })
         );
 
-        if(this.firstPass){
+        if (this.firstPass) {
             _.extend(this.padding, {
-                top:             this.data.settings.padding_top,
-                right:           this.data.settings.padding_right,
-                bottom:          this.data.settings.padding_bottom,
-                left:            this.data.settings.padding_left,
-                left_original:   this.data.settings.padding_left,
+                top: this.data.settings.padding_top,
+                right: this.data.settings.padding_right,
+                bottom: this.data.settings.padding_bottom,
+                left: this.data.settings.padding_left,
+                left_original: this.data.settings.padding_left,
             });
             this.firstPass = false;
         }
 
-        _.extend(this,{
-            w:              this.data.settings.plot_width,
-            row_height:     this.data.settings.row_height,
+        _.extend(this, {
+            w: this.data.settings.plot_width,
+            row_height: this.data.settings.row_height,
             dataset,
             metrics,
             stack_order,
             stack,
-            title_str:      this.data.settings.title,
-            x_label_text:   this.data.settings.xAxisLabel,
-            y_label_text:   this.data.settings.yAxisLabel,
+            title_str: this.data.settings.title,
+            x_label_text: this.data.settings.xAxisLabel,
+            y_label_text: this.data.settings.yAxisLabel,
         });
     }
 
-    add_axes(){
+    add_axes() {
         _.extend(this.x_axis_settings, {
             rangeRound: [0, this.w],
             number_ticks: 5,
@@ -161,7 +179,7 @@ class RoBBarchartPlot extends D3Visualization {
         this.build_x_axis();
     }
 
-    draw_visualizations(){
+    draw_visualizations() {
         var x = this.x_scale,
             y = this.y_scale,
             colors = this.color_scale,
@@ -171,81 +189,101 @@ class RoBBarchartPlot extends D3Visualization {
         this.bar_group = this.vis.append('g');
 
         // Add a group for each score.
-        groups = this.vis.selectAll('g.score')
+        groups = this.vis
+            .selectAll('g.score')
             .data(this.stack)
-            .enter().append('svg:g')
+            .enter()
+            .append('svg:g')
             .attr('class', 'score')
-            .style('fill', function(d, i){return colors(i);})
-            .style('stroke', function(d, i){return d3.rgb(colors(i)).darker();});
+            .style('fill', function(d, i) {
+                return colors(i);
+            })
+            .style('stroke', function(d, i) {
+                return d3.rgb(colors(i)).darker();
+            });
 
         // Add a rect for each score.
-        groups.selectAll('rect')
+        groups
+            .selectAll('rect')
             .data(Object)
-            .enter().append('svg:rect')
-            .attr('x', function(d) { return x(d.y0); })
-            .attr('y', function(d) { return y(d.x)+5; })
-            .attr('width', function(d) { return x(d.y); })
+            .enter()
+            .append('svg:rect')
+            .attr('x', function(d) {
+                return x(d.y0);
+            })
+            .attr('y', function(d) {
+                return y(d.x) + 5;
+            })
+            .attr('width', function(d) {
+                return x(d.y);
+            })
             .attr('height', 20);
 
-        if(this.data.settings.show_values){
-            groups.selectAll('text')
+        if (this.data.settings.show_values) {
+            groups
+                .selectAll('text')
                 .data(Object)
-                .enter().append('text')
+                .enter()
+                .append('text')
                 .attr('class', 'centeredLabel')
                 .style('fill', '#555')
-                .attr('x', function(d){return (x(d.y0) + x(d.y)/2);})
-                .attr('y', function(d){return (y(d.x)+20);})
-                .text(function(d){return (d.y>0) ? fmt(d.y) : '';});
+                .attr('x', function(d) {
+                    return x(d.y0) + x(d.y) / 2;
+                })
+                .attr('y', function(d) {
+                    return y(d.x) + 20;
+                })
+                .text(function(d) {
+                    return d.y > 0 ? fmt(d.y) : '';
+                });
         }
     }
 
-    build_labels(){
-
+    build_labels() {
         var svg = d3.select(this.svg),
-            x, y;
+            x,
+            y;
 
         x = parseInt(this.svg.getBoundingClientRect().width / 2, 10);
         y = 25;
-        svg.append('svg:text')
+        svg
+            .append('svg:text')
             .attr('x', x)
             .attr('y', y)
             .text(this.title_str)
             .attr('text-anchor', 'middle')
-            .attr('class','dr_title');
+            .attr('class', 'dr_title');
 
         x = this.w / 2;
         y = this.h + 30;
-        this.vis.append('svg:text')
+        this.vis
+            .append('svg:text')
             .attr('x', x)
             .attr('y', y)
             .attr('text-anchor', 'middle')
-            .attr('class','dr_axis_labels x_axis_label')
+            .attr('class', 'dr_axis_labels x_axis_label')
             .text(this.x_label_text);
 
         x = -this.padding.left + 15;
         y = this.h / 2;
-        this.vis.append('svg:text')
+        this.vis
+            .append('svg:text')
             .attr('x', x)
             .attr('y', y)
             .attr('text-anchor', 'middle')
-            .attr('transform','rotate(270, {0}, {1})'.printf(x, y))
+            .attr('transform', 'rotate(270, {0}, {1})'.printf(x, y))
             .attr('class', 'dr_axis_labels x_axis_label')
             .text(this.y_label_text);
     }
 
-    build_legend(){
+    build_legend() {
         if (this.legend || !this.data.settings.show_legend) return;
         let options = {
             dev: this.options.dev || false,
             collapseNR: true,
         };
-        this.legend = new RoBLegend(
-            this.svg,
-            this.data.settings,
-            options
-        );
+        this.legend = new RoBLegend(this.svg, this.data.settings, options);
     }
-
 }
 
 export default RoBBarchartPlot;

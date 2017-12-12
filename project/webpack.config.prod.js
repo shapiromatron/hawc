@@ -2,7 +2,6 @@ var config = require('./webpack.base.js'),
     path = require('path'),
     webpack = require('webpack');
 
-
 config.devtool = 'source-map';
 
 config.output.path = path.resolve('./static/bundles');
@@ -11,7 +10,7 @@ config.output.publicPath = '/static/bundles/';
 config.plugins.unshift.apply(config.plugins, [
     new webpack.DefinePlugin({
         'process.env': {
-            'NODE_ENV': JSON.stringify('production'),
+            NODE_ENV: JSON.stringify('production'),
         },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -26,13 +25,17 @@ config.plugins.unshift.apply(config.plugins, [
 ]);
 
 config.module = {
-    rules: [{
-        test: /\.js$/,
-        use: 'babel-loader',
-        include: config.resolve.modules.slice(0, -1),
-    }, {
-        test: /\.css$/, loader: 'style-loader!css-loader',
-    }],
+    rules: [
+        {
+            test: /\.js$/,
+            use: 'babel-loader',
+            include: config.resolve.modules.slice(0, -1),
+        },
+        {
+            test: /\.css$/,
+            loader: 'style-loader!css-loader',
+        },
+    ],
 };
 
 module.exports = config;

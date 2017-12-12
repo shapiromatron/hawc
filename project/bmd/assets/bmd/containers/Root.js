@@ -7,10 +7,8 @@ import { loadConfig } from 'shared/actions/Config';
 import Tabs from 'bmd/containers/Tabs';
 import Modals from 'bmd/containers/Modals';
 
-
 class Root extends React.Component {
-
-    componentWillMount(){
+    componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
 

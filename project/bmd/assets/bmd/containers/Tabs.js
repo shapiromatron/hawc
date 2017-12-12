@@ -13,7 +13,6 @@ import Recommendation from 'bmd/components/Recommendation';
 import OutputTable from 'bmd/components/OutputTable';
 import OutputFigure from 'bmd/components/OutputFigure';
 
-
 import {
     fetchEndpoint,
     fetchSessionSettings,
@@ -32,134 +31,158 @@ import {
     applyLogic,
 } from 'bmd/actions';
 
-
 class Tabs extends React.Component {
-
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
-        this.props.dispatch(fetchSessionSettings(this.props.config.session_url));
+        this.props.dispatch(
+            fetchSessionSettings(this.props.config.session_url)
+        );
     }
 
-    componentDidUpdate(){
-        if ($('.tab-pane.active').length === 0){
+    componentDidUpdate() {
+        if ($('.tab-pane.active').length === 0) {
             $('#tabs a:first').tab('show');
         }
     }
 
-    componentWillReceiveProps(nextProps){
-        if (nextProps.logicApplied === false &&
-                nextProps.hasSession &&
-                nextProps.hasEndpoint){
-
+    componentWillReceiveProps(nextProps) {
+        if (
+            nextProps.logicApplied === false &&
+            nextProps.hasSession &&
+            nextProps.hasEndpoint
+        ) {
             this.props.dispatch(applyLogic());
         }
     }
 
-    handleTabClick(event){
-        let tabDisabled = $(event.currentTarget.parentElement).hasClass('disabled');
-        if (!tabDisabled){
+    handleTabClick(event) {
+        let tabDisabled = $(event.currentTarget.parentElement).hasClass(
+            'disabled'
+        );
+        if (!tabDisabled) {
             $(event.currentTarget).tab('show');
         }
     }
 
-    handleUnitsChange(doseUnits){
+    handleUnitsChange(doseUnits) {
         this.props.dispatch(changeUnits(doseUnits));
     }
 
-    handleExecute(){
+    handleExecute() {
         this.props.dispatch(tryExecute());
     }
 
-    handleVarianceToggle(evt){
+    handleVarianceToggle(evt) {
         evt.preventDefault();
         this.props.dispatch(toggleVariance());
     }
 
-    handleAddAll(evt){
+    handleAddAll(evt) {
         evt.preventDefault();
         this.props.dispatch(addAllModels());
     }
 
-    handleRemoveAll(evt){
+    handleRemoveAll(evt) {
         evt.preventDefault();
         this.props.dispatch(removeAllModels());
     }
 
-    handleCreateModel(modelName){
+    handleCreateModel(modelName) {
         this.props.dispatch(createModel(modelName));
     }
 
-    handleOptionModal(modelIndex){
+    handleOptionModal(modelIndex) {
         this.props.dispatch(showOptionModal(modelIndex));
     }
 
-    handleBmrModal(bmrIndex){
+    handleBmrModal(bmrIndex) {
         this.props.dispatch(showBmrModal(bmrIndex));
     }
 
-    handleCreateBmr(){
+    handleCreateBmr() {
         this.props.dispatch(createBmr());
     }
 
-    handleSaveSelected(model_id, notes){
+    handleSaveSelected(model_id, notes) {
         this.props.dispatch(saveSelectedModel(model_id, notes));
     }
 
-    handleOutputModal(models){
+    handleOutputModal(models) {
         this.props.dispatch(showOutputModal(models));
     }
 
-    handleModelHover(model){
+    handleModelHover(model) {
         this.props.dispatch(setHoverModel(model));
     }
 
-    handleModelNoHover(){
+    handleModelNoHover() {
         this.props.dispatch(setHoverModel(null));
     }
 
-    renderSetupTab(){
-        let {editMode, bmds_version} = this.props.config,
-            {endpoint, dataType, validationErrors, isExecuting, doseUnits} = this.props;
+    renderSetupTab() {
+        let { editMode, bmds_version } = this.props.config,
+            {
+                endpoint,
+                dataType,
+                validationErrors,
+                isExecuting,
+                doseUnits,
+            } = this.props;
 
-        return <div>
-            <DoseResponse endpoint={endpoint} />
-            <h3>Selected models and options</h3>
-            <DoseUnitsSelector
-                version={bmds_version}
-                editMode={editMode}
-                endpoint={endpoint}
-                doseUnits={doseUnits}
-                handleUnitsChange={this.handleUnitsChange.bind(this)}/>
-            <div className="row-fluid">
-                <ModelOptionTable
+        return (
+            <div>
+                <DoseResponse endpoint={endpoint} />
+                <h3>Selected models and options</h3>
+                <DoseUnitsSelector
+                    version={bmds_version}
                     editMode={editMode}
-                    dataType={dataType}
-                    handleVarianceToggle={this.handleVarianceToggle.bind(this)}
-                    handleAddAll={this.handleAddAll.bind(this)}
-                    handleRemoveAll={this.handleRemoveAll.bind(this)}
-                    handleCreateModel={this.handleCreateModel.bind(this)}
-                    handleModalDisplay={this.handleOptionModal.bind(this)}
-                    models={this.props.modelSettings}
-                    allOptions={this.props.allModelOptions}/>
-                <BMROptionTable
+                    endpoint={endpoint}
+                    doseUnits={doseUnits}
+                    handleUnitsChange={this.handleUnitsChange.bind(this)}
+                />
+                <div className="row-fluid">
+                    <ModelOptionTable
+                        editMode={editMode}
+                        dataType={dataType}
+                        handleVarianceToggle={this.handleVarianceToggle.bind(
+                            this
+                        )}
+                        handleAddAll={this.handleAddAll.bind(this)}
+                        handleRemoveAll={this.handleRemoveAll.bind(this)}
+                        handleCreateModel={this.handleCreateModel.bind(this)}
+                        handleModalDisplay={this.handleOptionModal.bind(this)}
+                        models={this.props.modelSettings}
+                        allOptions={this.props.allModelOptions}
+                    />
+                    <BMROptionTable
+                        editMode={editMode}
+                        handleCreateBmr={this.handleCreateBmr.bind(this)}
+                        handleModalDisplay={this.handleBmrModal.bind(this)}
+                        bmrs={this.props.bmrs}
+                    />
+                </div>
+                <ExecuteWell
                     editMode={editMode}
-                    handleCreateBmr={this.handleCreateBmr.bind(this)}
-                    handleModalDisplay={this.handleBmrModal.bind(this)}
-                    bmrs={this.props.bmrs}/>
+                    validationErrors={validationErrors}
+                    isExecuting={isExecuting}
+                    handleExecute={this.handleExecute.bind(this)}
+                />
             </div>
-            <ExecuteWell
-                editMode={editMode}
-                validationErrors={validationErrors}
-                isExecuting={isExecuting}
-                handleExecute={this.handleExecute.bind(this)} />
-        </div>;
+        );
     }
 
-    renderResultsTab(){
-        let {bmrs, endpoint, models, selectedModelId, hoverModel, hasExecuted} = this.props,
-            selectedModel = _.find(models, {id: selectedModelId}) || null;
+    renderResultsTab() {
+        let {
+                bmrs,
+                endpoint,
+                models,
+                selectedModelId,
+                hoverModel,
+                hasExecuted,
+            } = this.props,
+            selectedModel = _.find(models, { id: selectedModelId }) || null;
 
-        if(!hasExecuted){
+        if (!hasExecuted) {
             return null;
         }
 
@@ -172,37 +195,48 @@ class Tabs extends React.Component {
                     handleModal={this.handleOutputModal.bind(this)}
                     handleModelHover={this.handleModelHover.bind(this)}
                     handleModelNoHover={this.handleModelNoHover.bind(this)}
-                    selectedModelId={selectedModelId}/>
+                    selectedModelId={selectedModelId}
+                />
                 <OutputFigure
                     endpoint={endpoint}
                     hoverModel={hoverModel}
-                    selectedModel={selectedModel} />
+                    selectedModel={selectedModel}
+                />
             </div>,
         ];
     }
 
-    renderRecommendationTab(){
-        let {editMode} = this.props.config,
-            { bmrs, models, selectedModelId, selectedModelNotes, hasExecuted } = this.props;
+    renderRecommendationTab() {
+        let { editMode } = this.props.config,
+            {
+                bmrs,
+                models,
+                selectedModelId,
+                selectedModelNotes,
+                hasExecuted,
+            } = this.props;
 
-        if(!hasExecuted){
+        if (!hasExecuted) {
             return null;
         }
 
-        return <Recommendation
-            editMode={editMode}
-            models={models}
-            bmrs={bmrs}
-            selectedModelId={selectedModelId}
-            selectedModelNotes={selectedModelNotes}
-            handleSaveSelected={this.handleSaveSelected.bind(this)}/>;
+        return (
+            <Recommendation
+                editMode={editMode}
+                models={models}
+                bmrs={bmrs}
+                selectedModelId={selectedModelId}
+                selectedModelNotes={selectedModelNotes}
+                handleSaveSelected={this.handleSaveSelected.bind(this)}
+            />
+        );
     }
 
-    render(){
-        let {hasExecuted} = this.props,
-            showResultsTabs = (hasExecuted)?'':'disabled';
+    render() {
+        let { hasExecuted } = this.props,
+            showResultsTabs = hasExecuted ? '' : 'disabled';
 
-        if (this.props.logicApplied === false){
+        if (this.props.logicApplied === false) {
             return <Loading />;
         }
 
@@ -210,12 +244,24 @@ class Tabs extends React.Component {
             <div>
                 <div className="row-fluid">
                     <ul className="nav nav-tabs" id="tabs">
-                        <li><a href="#setup"
-                            onClick={this.handleTabClick}>BMD setup</a></li>
-                        <li className={showResultsTabs}><a href="#results"
-                            onClick={this.handleTabClick}>Results</a></li>
-                        <li className={showResultsTabs}><a href="#recommendations"
-                            onClick={this.handleTabClick}>Model recommendation and selection</a></li>
+                        <li>
+                            <a href="#setup" onClick={this.handleTabClick}>
+                                BMD setup
+                            </a>
+                        </li>
+                        <li className={showResultsTabs}>
+                            <a href="#results" onClick={this.handleTabClick}>
+                                Results
+                            </a>
+                        </li>
+                        <li className={showResultsTabs}>
+                            <a
+                                href="#recommendations"
+                                onClick={this.handleTabClick}
+                            >
+                                Model recommendation and selection
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -230,7 +276,6 @@ class Tabs extends React.Component {
                         {this.renderRecommendationTab()}
                     </div>
                 </div>
-
             </div>
         );
     }
@@ -260,4 +305,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Tabs);
-

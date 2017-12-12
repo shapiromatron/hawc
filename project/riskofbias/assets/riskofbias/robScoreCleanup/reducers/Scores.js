@@ -7,29 +7,27 @@ const defaultState = {
     items: [],
 };
 
-function scores(state=defaultState, action) {
+function scores(state = defaultState, action) {
+    switch (action.type) {
+        case types.REQUEST_SCORE_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: true,
+            });
 
-    switch(action.type){
+        case types.RECEIVE_SCORE_OPTIONS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLoaded: true,
+                items: action.items,
+            });
 
-    case types.REQUEST_SCORE_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: true,
-        });
+        case types.SELECT_SCORES:
+            return Object.assign({}, state, {
+                selected: action.scores,
+            });
 
-    case types.RECEIVE_SCORE_OPTIONS:
-        return Object.assign({}, state, {
-            isFetching: false,
-            isLoaded: true,
-            items: action.items,
-        });
-
-    case types.SELECT_SCORES:
-        return Object.assign({}, state, {
-            selected: action.scores,
-        });
-
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 

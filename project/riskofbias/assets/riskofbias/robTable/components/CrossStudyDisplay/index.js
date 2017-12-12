@@ -8,21 +8,25 @@ const CrossStudyDisplay = (props) => {
     let { domain, metric, scores, config } = props;
     scores = scores[0].values[0].values;
     return (
-        <div className='cross-study-display'>
+        <div className="cross-study-display">
             <h3>{domain}</h3>
             <h4>{metric.name}</h4>
-            <div className='help-block' dangerouslySetInnerHTML={{__html: metric.description}} />
+            <div
+                className="help-block"
+                dangerouslySetInnerHTML={{ __html: metric.description }}
+            />
             {_.map(scores, (rob, i) => {
                 return (
                     <div key={rob.id}>
-                        <h4><a target='_blank' href={rob.study.url}>
-                            {rob.study.name}
-                        </a></h4>
+                        <h4>
+                            <a target="_blank" href={rob.study.url}>
+                                {rob.study.name}
+                            </a>
+                        </h4>
                         <ScoreDisplay key={i} score={rob} config={config} />
                     </div>
                 );
             })}
-
         </div>
     );
 };
@@ -33,25 +37,31 @@ CrossStudyDisplay.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
     }).isRequired,
-    scores: PropTypes.arrayOf(PropTypes.shape({
-        values: PropTypes.arrayOf(PropTypes.shape({
-            values: PropTypes.arrayOf(PropTypes.shape({
-                id: PropTypes.number.isRequired,
-                study: PropTypes.shape({
-                    url: PropTypes.string.isRequired,
-                    name: PropTypes.string.isRequired,
-                }).isRequired,
-                author: PropTypes.object.isRequired,
-                notes: PropTypes.string,
-                score_description: PropTypes.string.isRequired,
-                score_symbol: PropTypes.string.isRequired,
-                score_shade: PropTypes.string.isRequired,
-            })).isRequired,
-        })).isRequired,
-    })).isRequired,
+    scores: PropTypes.arrayOf(
+        PropTypes.shape({
+            values: PropTypes.arrayOf(
+                PropTypes.shape({
+                    values: PropTypes.arrayOf(
+                        PropTypes.shape({
+                            id: PropTypes.number.isRequired,
+                            study: PropTypes.shape({
+                                url: PropTypes.string.isRequired,
+                                name: PropTypes.string.isRequired,
+                            }).isRequired,
+                            author: PropTypes.object.isRequired,
+                            notes: PropTypes.string,
+                            score_description: PropTypes.string.isRequired,
+                            score_symbol: PropTypes.string.isRequired,
+                            score_shade: PropTypes.string.isRequired,
+                        })
+                    ).isRequired,
+                })
+            ).isRequired,
+        })
+    ).isRequired,
 };
 
-export function renderCrossStudyDisplay(data, element){
+export function renderCrossStudyDisplay(data, element) {
     return ReactDOM.render(<CrossStudyDisplay {...data} />, element);
 }
 

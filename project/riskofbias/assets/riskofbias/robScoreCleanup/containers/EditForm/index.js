@@ -5,7 +5,11 @@ import { resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import { fetchMetricOptions } from 'riskofbias/robScoreCleanup/actions/Metrics';
 import { fetchScoreOptions } from 'riskofbias/robScoreCleanup/actions/Scores';
 import { fetchStudyTypeOptions } from 'riskofbias/robScoreCleanup/actions/StudyTypes';
-import { fetchItemScores, clearItemScores, updateEditMetricIfNeeded } from 'riskofbias/robScoreCleanup/actions/Items';
+import {
+    fetchItemScores,
+    clearItemScores,
+    updateEditMetricIfNeeded,
+} from 'riskofbias/robScoreCleanup/actions/Items';
 
 import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
 import MetricForm from 'riskofbias/robScoreCleanup/containers/MetricForm';
@@ -16,9 +20,7 @@ import StudyTypeSelect from 'riskofbias/robScoreCleanup/containers/StudyTypeSele
 
 import './EditForm.css';
 
-
 class EditForm extends Component {
-
     constructor(props) {
         super(props);
         this.loadMetrics = this.loadMetrics.bind(this);
@@ -61,37 +63,46 @@ class EditForm extends Component {
         let { error } = this.props,
             { config } = this.state;
         return (
-                <div>
-                    <ScrollToErrorBox error={error} />
-                    <div className='container-fluid cleanStudyMetricForm' >
-                        <div className='span6'>
-                            <MetricSelect />
-                            <div>
-                                <button className='btn btn-primary space' onClick={this.loadMetrics}>
-                                    Load responses
-                                </button>
-                                <button className='btn space' onClick={this.clearMetrics}>
-                                    Hide currently shown responses
-                                </button>
-                            </div>
-                        </div>
-                        <div className='span6 container-fluid'>
-                            <div className='span6'>
-                                <ScoreSelect />
-                            </div>
-                            <div className='span6'>
-                                <StudyTypeSelect />
-                            </div>
-                            <p className='help-block'>To de-select a filter, click on the filter while holding ⌘ on Mac or Control on Windows</p>
+            <div>
+                <ScrollToErrorBox error={error} />
+                <div className="container-fluid cleanStudyMetricForm">
+                    <div className="span6">
+                        <MetricSelect />
+                        <div>
+                            <button
+                                className="btn btn-primary space"
+                                onClick={this.loadMetrics}
+                            >
+                                Load responses
+                            </button>
+                            <button
+                                className="btn space"
+                                onClick={this.clearMetrics}
+                            >
+                                Hide currently shown responses
+                            </button>
                         </div>
                     </div>
-                    <MetricForm config={config} />
-                    <ScoreList config={config} />
+                    <div className="span6 container-fluid">
+                        <div className="span6">
+                            <ScoreSelect />
+                        </div>
+                        <div className="span6">
+                            <StudyTypeSelect />
+                        </div>
+                        <p className="help-block">
+                            To de-select a filter, click on the filter while
+                            holding ⌘ on Mac or Control on Windows
+                        </p>
+                    </div>
                 </div>
+                <MetricForm config={config} />
+                <ScoreList config={config} />
+            </div>
         );
     }
 }
-function mapStateToProps(state){
+function mapStateToProps(state) {
     const { error } = state;
     return {
         error,

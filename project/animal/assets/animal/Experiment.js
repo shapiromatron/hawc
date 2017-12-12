@@ -4,23 +4,24 @@ import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
 
-
 class Experiment {
-    constructor(data){
+    constructor(data) {
         this.data = data;
     }
 
-    static get_object(id, cb){
-        $.get('/ani/api/experiment/{0}/'.printf(id), function(d){
+    static get_object(id, cb) {
+        $.get('/ani/api/experiment/{0}/'.printf(id), function(d) {
             cb(new Experiment(d));
         });
     }
 
-    static displayAsModal(id){
-        Experiment.get_object(id, function(d){d.displayAsModal();});
+    static displayAsModal(id) {
+        Experiment.get_object(id, function(d) {
+            d.displayAsModal();
+        });
     }
 
-    build_breadcrumbs(){
+    build_breadcrumbs() {
         var urls = [
             {
                 url: this.data.study.url,
@@ -34,22 +35,30 @@ class Experiment {
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
-    build_details_table(){
+    build_details_table() {
         var self = this,
-            getGenerations = function(){
-                return (self.data.is_generational) ? 'Yes' : 'No';
+            getGenerations = function() {
+                return self.data.is_generational ? 'Yes' : 'No';
             },
-            getLitterEffects = function(){
-                if(self.data.is_generational) return self.data.litter_effects;
+            getLitterEffects = function() {
+                if (self.data.is_generational) return self.data.litter_effects;
             },
-            getPurityText = function(){
-                return (self.data.purity_available) ? 'Chemical purity' : 'Chemical purity available';
+            getPurityText = function() {
+                return self.data.purity_available
+                    ? 'Chemical purity'
+                    : 'Chemical purity available';
             },
-            getPurity = function(){
-                var qualifier = (self.data.purity_qualifier === '=') ? '' : self.data.purity_qualifier;
-                return (self.data.purity) ? '{0}{1}%'.printf(qualifier, self.data.purity) : 'No';
+            getPurity = function() {
+                var qualifier =
+                    self.data.purity_qualifier === '='
+                        ? ''
+                        : self.data.purity_qualifier;
+                return self.data.purity
+                    ? '{0}{1}%'.printf(qualifier, self.data.purity)
+                    : 'No';
             },
-            tbl, casTd;
+            tbl,
+            casTd;
 
         tbl = new DescriptiveTable()
             .add_tbody_tr('Name', this.data.name)
@@ -61,34 +70,47 @@ class Experiment {
             .add_tbody_tr(getPurityText(), getPurity())
             .add_tbody_tr('Vehicle', this.data.vehicle)
             .add_tbody_tr('Animal diet', this.data.diet)
-            .add_tbody_tr('Litter effects', getLitterEffects(), {annotate: this.data.litter_effect_notes})
-            .add_tbody_tr('Guideline compliance', this.data.guideline_compliance)
-            .add_tbody_tr('Description and animal husbandry', this.data.description);
+            .add_tbody_tr('Litter effects', getLitterEffects(), {
+                annotate: this.data.litter_effect_notes,
+            })
+            .add_tbody_tr(
+                'Guideline compliance',
+                this.data.guideline_compliance
+            )
+            .add_tbody_tr(
+                'Description and animal husbandry',
+                this.data.description
+            );
 
-        if (this.data.cas_url){
-            casTd = tbl.get_tbl().find('th:contains("CAS")').next();
+        if (this.data.cas_url) {
+            casTd = tbl
+                .get_tbl()
+                .find('th:contains("CAS")')
+                .next();
             HAWCUtils.renderChemicalProperties(this.data.cas_url, casTd, false);
         }
 
         return tbl.get_tbl();
     }
 
-    displayAsModal(){
+    displayAsModal() {
         var modal = new HAWCModal(),
             title = $('<h4>').html(this.build_breadcrumbs()),
             $details = $('<div class="span12">'),
-            $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details));
+            $content = $('<div class="container-fluid">').append(
+                $('<div class="row-fluid">').append($details)
+            );
 
         this.render($details);
 
-        modal.addHeader(title)
+        modal
+            .addHeader(title)
             .addBody($content)
             .addFooter('')
-            .show({maxWidth: 1000});
+            .show({ maxWidth: 1000 });
     }
 
-    render($div){
+    render($div) {
         $div.append(this.build_details_table());
     }
 }

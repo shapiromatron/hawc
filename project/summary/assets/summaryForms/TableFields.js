@@ -11,31 +11,28 @@ import {
     HelpTextNullField,
 } from './Fields';
 
-
 class TableField extends InputField {
-
-    renderHeader(){
+    renderHeader() {
         return HAWCUtils.abstractMethod();
     }
 
-    addRow(){
+    addRow() {
         return HAWCUtils.abstractMethod();
     }
 
-    fromSerializedRow(){
+    fromSerializedRow() {
         return HAWCUtils.abstractMethod();
     }
 
-    toSerializedRow(){
+    toSerializedRow() {
         return HAWCUtils.abstractMethod();
     }
 
     toSerialized() {
-        this.parent.settings[this.schema.name] =
-            _.chain(this.$tbody.children())
-             .map(_.bind(this.toSerializedRow, this))
-             .compact()
-             .value();
+        this.parent.settings[this.schema.name] = _.chain(this.$tbody.children())
+            .map(_.bind(this.toSerializedRow, this))
+            .compact()
+            .value();
     }
 
     fromSerialized() {
@@ -50,7 +47,9 @@ class TableField extends InputField {
 
     setColgroup() {
         var cw = this.schema.colWidths || [],
-            setCol = function(d){return '<col width="{0}%"'.printf(d);};
+            setCol = function(d) {
+                return '<col width="{0}%"'.printf(d);
+            };
         $('<colgroup>')
             .append(_.map(cw, setCol))
             .appendTo(this.table);
@@ -59,11 +58,16 @@ class TableField extends InputField {
     render() {
         var $div = $('<div class="control-group form-row">');
 
-        if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
-        if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
-        if (this.schema.helpText) new HelpTextNullField(this.schema, this.$parent).render();
+        if (this.schema.prependSpacer)
+            new SpacerNullField(this.schema, this.$parent).render();
+        if (this.schema.label)
+            new HeaderNullField(this.schema, this.$parent).render();
+        if (this.schema.helpText)
+            new HelpTextNullField(this.schema, this.$parent).render();
 
-        this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
+        this.table = $(
+            '<table class="table table-condensed table-bordered">'
+        ).appendTo($div);
         this.setColgroup();
         this.$thead = $('<thead>').appendTo(this.table);
         this.$tbody = $('<tbody>').appendTo(this.table);
@@ -73,98 +77,145 @@ class TableField extends InputField {
 
     thOrdering(options) {
         var th = $('<th>').html('Ordering&nbsp;'),
-            add = $('<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>')
-                    .on('click', this.addRow.bind(this));
+            add = $(
+                '<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>'
+            ).on('click', this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
         return th;
     }
 
     tdOrdering() {
-        var moveUp = function(){
+        var moveUp = function() {
                 var tr = $(this.parentNode.parentNode),
                     prev = tr.prev();
-                if (prev.length>0) tr.insertBefore(prev);
+                if (prev.length > 0) tr.insertBefore(prev);
             },
-            moveDown = function(){
+            moveDown = function() {
                 var tr = $(this.parentNode.parentNode),
                     next = tr.next();
-                if (next.length>0) tr.insertAfter(next);
+                if (next.length > 0) tr.insertAfter(next);
             },
-            del = function(){
+            del = function() {
                 $(this.parentNode.parentNode).remove();
             },
             td = $('<td>');
 
         td.append(
-            $('<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>').on('click', moveUp),
-            $('<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>').on('click', moveDown),
-            $('<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>').on('click', del)
+            $(
+                '<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>'
+            ).on('click', moveUp),
+            $(
+                '<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>'
+            ).on('click', moveDown),
+            $(
+                '<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>'
+            ).on('click', del)
         );
         return td;
     }
 
-    addTdP(cls, txt){
-        return $('<td>').append($('<p>').attr('class', cls).text(txt));
+    addTdP(cls, txt) {
+        return $('<td>').append(
+            $('<p>')
+                .attr('class', cls)
+                .text(txt)
+        );
     }
 
-    addTdText(name, val){
+    addTdText(name, val) {
         val = val || '';
-        return $('<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val));
+        return $(
+            '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(
+                name,
+                val
+            )
+        );
     }
 
-    addTdInt(name, val){
+    addTdInt(name, val) {
         val = val || '';
-        return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(name, val);
+        return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(
+            name,
+            val
+        );
     }
 
-    addTdFloat(name, val){
+    addTdFloat(name, val) {
         val = val || '';
-        return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(name, val);
+        return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(
+            name,
+            val
+        );
     }
 
-    addTdColor(name, val){
+    addTdColor(name, val) {
         val = val || '#000000';
-        return $('<td>')
-           .append($('<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(name, val)));
+        return $('<td>').append(
+            $(
+                '<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(
+                    name,
+                    val
+                )
+            )
+        );
     }
 
-    addTdCheckbox(name, checked){
-        let checkProp = (checked) ? 'checked': '';
-        return $('<td>')
-           .append($('<input type="checkbox" name="{0}" {1} required>'.printf(name, checkProp)));
+    addTdCheckbox(name, checked) {
+        let checkProp = checked ? 'checked' : '';
+        return $('<td>').append(
+            $(
+                '<input type="checkbox" name="{0}" {1} required>'.printf(
+                    name,
+                    checkProp
+                )
+            )
+        );
     }
 
-    addTdSelect(name, values){
-        var sel = $('<select name="{0}" class="span12">'.printf(name))
-                .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d);}));
+    addTdSelect(name, values) {
+        var sel = $('<select name="{0}" class="span12">'.printf(name)).append(
+            _.map(values, function(d) {
+                return '<option value="{0}">{0}</option>'.printf(d);
+            })
+        );
         return $('<td>').append(sel);
     }
 
-    addTdSelectLabels(name, options){
-        var sel = $('<select name="{0}" class="span12">'.printf(name))
-                .append(_.map(options, function(d){return '<option value="{0}">{1}</option>'.printf(
-                        d.value, d.label);}));
+    addTdSelectLabels(name, options) {
+        var sel = $('<select name="{0}" class="span12">'.printf(name)).append(
+            _.map(options, function(d) {
+                return '<option value="{0}">{1}</option>'.printf(
+                    d.value,
+                    d.label
+                );
+            })
+        );
         return $('<td>').append(sel);
     }
 
-    addTdSelectMultiple(name, values){
-        var sel = $('<select name="{0}" class="span12" multiple>'.printf(name))
-                .append(_.map(values, function(d){return '<option value="{0}">{0}</option>'.printf(d);}));
+    addTdSelectMultiple(name, values) {
+        var sel = $(
+            '<select name="{0}" class="span12" multiple>'.printf(name)
+        ).append(
+            _.map(values, function(d) {
+                return '<option value="{0}">{0}</option>'.printf(d);
+            })
+        );
         return $('<td>').append(sel);
     }
 }
 
 class ReferenceLineField extends TableField {
-
     renderHeader() {
         return $('<tr>')
             .append(
                 '<th>Line value</th>',
                 '<th>Caption</th>',
                 '<th>Style</th>',
-                this.thOrdering({showNew: true})
-            ).appendTo(this.$thead);
+                this.thOrdering({ showNew: true })
+            )
+            .appendTo(this.$thead);
     }
 
     addRow() {
@@ -172,12 +223,16 @@ class ReferenceLineField extends TableField {
             .append(
                 this.addTdFloat('value'),
                 this.addTdText('title'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.lines, 'name')),
+                this.addTdSelect(
+                    'style',
+                    _.map(D3Visualization.styles.lines, 'name')
+                ),
                 this.tdOrdering()
-            ).appendTo(this.$tbody);
+            )
+            .appendTo(this.$tbody);
     }
 
-    fromSerializedRow(d,i) {
+    fromSerializedRow(d, i) {
         var row = this.addRow();
         row.find('input[name="value"]').val(d.value);
         row.find('input[name="title"]').val(d.title);
@@ -187,38 +242,42 @@ class ReferenceLineField extends TableField {
     toSerializedRow(row) {
         row = $(row);
         return {
-            'value': parseFloat(row.find('input[name="value"]').val(), 10),
-            'title': row.find('input[name="title"]').val(),
-            'style': row.find('select[name="style"]').val(),
+            value: parseFloat(row.find('input[name="value"]').val(), 10),
+            title: row.find('input[name="title"]').val(),
+            style: row.find('select[name="style"]').val(),
         };
     }
 }
 
 class ReferenceRangeField extends TableField {
-
-    renderHeader(){
+    renderHeader() {
         return $('<tr>')
             .append(
                 '<th>Lower value</th>',
                 '<th>Upper value</th>',
                 '<th>Caption</th>',
                 '<th>Style</th>',
-                this.thOrdering({showNew: true})
-            ).appendTo(this.$thead);
+                this.thOrdering({ showNew: true })
+            )
+            .appendTo(this.$thead);
     }
 
-    addRow(){
+    addRow() {
         return $('<tr>')
             .append(
                 this.addTdFloat('lower'),
                 this.addTdFloat('upper'),
                 this.addTdText('title'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.rectangles, 'name')),
+                this.addTdSelect(
+                    'style',
+                    _.map(D3Visualization.styles.rectangles, 'name')
+                ),
                 this.tdOrdering()
-            ).appendTo(this.$tbody);
+            )
+            .appendTo(this.$tbody);
     }
 
-    fromSerializedRow(d,i){
+    fromSerializedRow(d, i) {
         var row = this.addRow();
         row.find('input[name="lower"]').val(d.lower);
         row.find('input[name="upper"]').val(d.upper);
@@ -226,7 +285,7 @@ class ReferenceRangeField extends TableField {
         row.find('select[name="style"]').val(d.style);
     }
 
-    toSerializedRow(row){
+    toSerializedRow(row) {
         row = $(row);
         return {
             lower: parseFloat(row.find('input[name="lower"]').val(), 10),
@@ -238,8 +297,7 @@ class ReferenceRangeField extends TableField {
 }
 
 class ReferenceLabelField extends TableField {
-
-    renderHeader(){
+    renderHeader() {
         return $('<tr>')
             .append(
                 '<th>Caption</th>',
@@ -247,23 +305,28 @@ class ReferenceLabelField extends TableField {
                 '<th>Max width (px)</th>',
                 '<th>X position</th>',
                 '<th>Y position</th>',
-                this.thOrdering({showNew: true})
-            ).appendTo(this.$thead);
+                this.thOrdering({ showNew: true })
+            )
+            .appendTo(this.$thead);
     }
 
-    addRow(){
+    addRow() {
         return $('<tr>')
             .append(
                 this.addTdText('caption'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.texts, 'name')),
+                this.addTdSelect(
+                    'style',
+                    _.map(D3Visualization.styles.texts, 'name')
+                ),
                 this.addTdInt('max_width', 0),
                 this.addTdInt('x', 0),
                 this.addTdInt('y', 0),
                 this.tdOrdering()
-            ).appendTo(this.$tbody);
+            )
+            .appendTo(this.$tbody);
     }
 
-    fromSerializedRow(d,i) {
+    fromSerializedRow(d, i) {
         var row = this.addRow();
         row.find('input[name="caption"]').val(d.caption);
         row.find('select[name="style"]').val(d.style);
@@ -275,7 +338,7 @@ class ReferenceLabelField extends TableField {
     toSerializedRow(row) {
         row = $(row);
         return {
-            caption:  row.find('input[name="caption"]').val(),
+            caption: row.find('input[name="caption"]').val(),
             style: row.find('select[name="style"]').val(),
             max_width: parseInt(row.find('input[name="max_width"]').val(), 10),
             x: parseInt(row.find('input[name="x"]').val(), 10),
@@ -284,7 +347,7 @@ class ReferenceLabelField extends TableField {
     }
 }
 
-export {TableField};
-export {ReferenceLineField};
-export {ReferenceRangeField};
-export {ReferenceLabelField};
+export { TableField };
+export { ReferenceLineField };
+export { ReferenceRangeField };
+export { ReferenceLabelField };

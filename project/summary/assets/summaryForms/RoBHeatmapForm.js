@@ -5,42 +5,38 @@ import RoBHeatmap from 'summary/RoBHeatmap';
 
 import BaseVisualForm from './BaseVisualForm';
 import RoBMetricTable from './RoBMetricTable';
-import {
-    TextField,
-    IntegerField,
-    CheckboxField,
-    SelectField,
-} from './Fields';
-
+import { TextField, IntegerField, CheckboxField, SelectField } from './Fields';
 
 class RoBHeatmapForm extends BaseVisualForm {
-
-    buildPreview($parent, data){
-        this.preview = new RoBHeatmap(data).displayAsPage( $parent.empty(), {'dev': true} );
-    }
-
-    initDataForm(){
-        _.each(['system', 'organ', 'effect'], function(d){
-            $('#id_prefilter_{0}'.printf(d)).on('change', function(){
-                var div = $('#div_id_{0}s'.printf(d));
-                ($(this).prop('checked')) ? div.show(1000) : div.hide(0);
-            }).trigger('change');
+    buildPreview($parent, data) {
+        this.preview = new RoBHeatmap(data).displayAsPage($parent.empty(), {
+            dev: true,
         });
     }
 
-    updateSettingsFromPreview(){
+    initDataForm() {
+        _.each(['system', 'organ', 'effect'], function(d) {
+            $('#id_prefilter_{0}'.printf(d))
+                .on('change', function() {
+                    var div = $('#div_id_{0}s'.printf(d));
+                    $(this).prop('checked') ? div.show(1000) : div.hide(0);
+                })
+                .trigger('change');
+        });
+    }
+
+    updateSettingsFromPreview() {
         var plotSettings = JSON.stringify(this.preview.data.settings);
         $('#id_settings').val(plotSettings);
         this.unpackSettings();
     }
-
 }
 
 _.extend(RoBHeatmapForm, {
     tabs: [
-        {name: 'overall', label: 'General settings'},
-        {name: 'metrics', label: 'Included metrics'},
-        {name: 'legend',  label: 'Legend settings'},
+        { name: 'overall', label: 'General settings' },
+        { name: 'metrics', label: 'Included metrics' },
+        { name: 'legend', label: 'Legend settings' },
     ],
     schema: [
         {
@@ -103,10 +99,7 @@ _.extend(RoBHeatmapForm, {
             type: SelectField,
             name: 'x_field',
             label: 'X-axis field',
-            opts: [
-                ['study', 'Study'],
-                ['metric', 'RoB metric'],
-            ],
+            opts: [['study', 'Study'], ['metric', 'RoB metric']],
             def: 'study',
             tab: 'overall',
         },

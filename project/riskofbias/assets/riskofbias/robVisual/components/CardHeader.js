@@ -3,14 +3,11 @@ import _ from 'lodash';
 
 import './CardHeader.css';
 
-
 class CardHeader extends Component {
-
     getScoreQuality(score) {
-        if (_.isNull(score))
-            return 'not-applicable';
+        if (_.isNull(score)) return 'not-applicable';
 
-        if (score >= 24){
+        if (score >= 24) {
             return 'high';
         } else if (score >= 18) {
             return 'medium';
@@ -19,29 +16,37 @@ class CardHeader extends Component {
         }
     }
     render() {
-        let { endpoint, showEndpointModal, showStudyModal, study, citation } = this.props,
+        let {
+                endpoint,
+                showEndpointModal,
+                showStudyModal,
+                study,
+                citation,
+            } = this.props,
             score = study.final_score,
             quality = this.getScoreQuality(score);
         return (
-            <div className='cardHeader'>
-                <h4 className='cardTitle'>
-                    <span className={`pull-right score ${quality}`}><b>
-                        {score || 'N/A'}
-                    </b></span>
+            <div className="cardHeader">
+                <h4 className="cardTitle">
+                    <span className={`pull-right score ${quality}`}>
+                        <b>{score || 'N/A'}</b>
+                    </span>
                     <span
-                        className='modalAnchor'
+                        className="modalAnchor"
                         id={endpoint.id}
-                        onClick={showEndpointModal}>
+                        onClick={showEndpointModal}
+                    >
                         {endpoint.name}
                     </span>
                     <br />
-                    <span id={endpoint.animal_group.experiment.study.id}
-                          onClick={showStudyModal}
-                          className='modalAnchor cardCitation'>
+                    <span
+                        id={endpoint.animal_group.experiment.study.id}
+                        onClick={showStudyModal}
+                        className="modalAnchor cardCitation"
+                    >
                         {`(${citation})`}
                     </span>
                 </h4>
-
             </div>
         );
     }

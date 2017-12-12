@@ -14,23 +14,23 @@ const rootReducer = combineReducers({
     tasks,
 });
 
-function tasks(state=defaultState, action) {
+function tasks(state = defaultState, action) {
     switch (action.type) {
-    case types.REQUEST_TASKS:
-        return Object.assign({}, state, {
-            isFetching: true,
-            isLoaded: false,
-        });
+        case types.REQUEST_TASKS:
+            return Object.assign({}, state, {
+                isFetching: true,
+                isLoaded: false,
+            });
 
-    case types.RECEIVE_TASKS:
-        return Object.assign({}, state, {
-            isFetching: false,
-            isLoaded: true,
-            list: action.tasks,
-        });
+        case types.RECEIVE_TASKS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLoaded: true,
+                list: action.tasks,
+            });
 
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 

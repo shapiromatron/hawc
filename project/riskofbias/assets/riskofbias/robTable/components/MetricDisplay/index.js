@@ -4,36 +4,44 @@ import PropTypes from 'prop-types';
 import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
 import './MetricDisplay.css';
 
-
 class MetricDisplay extends Component {
-
-    renderScoreRow(){
+    renderScoreRow() {
         let { metric, config } = this.props,
             displayScores = metric.values;
 
         if (config.display === 'final') {
-            displayScores = _.filter(metric.values, (score) => {return score.final;});
+            displayScores = _.filter(metric.values, (score) => {
+                return score.final;
+            });
         }
 
         return (
-            <div className='score-row'>
-            {_.map(displayScores, (score) => {
-                return <ScoreDisplay key={score.id} score={score} config={config} />;
-            })}
+            <div className="score-row">
+                {_.map(displayScores, (score) => {
+                    return (
+                        <ScoreDisplay
+                            key={score.id}
+                            score={score}
+                            config={config}
+                        />
+                    );
+                })}
             </div>
         );
     }
 
-    render(){
+    render() {
         let { metric } = this.props;
 
         return (
-            <div className='metric-display'>
+            <div className="metric-display">
                 <h4>{metric.key}</h4>
-                <span dangerouslySetInnerHTML={{
-                    __html: metric.values[0].metric.description,
-                }} />
-            {this.renderScoreRow()}
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: metric.values[0].metric.description,
+                    }}
+                />
+                {this.renderScoreRow()}
             </div>
         );
     }

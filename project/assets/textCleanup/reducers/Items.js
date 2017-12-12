@@ -60,7 +60,7 @@ export default function(state = defaultState, action) {
         case types.ITEM_REMOVE_EDIT_OBJECT_IDS:
             patch = state.editObject[action.field];
             ids = patch.ids;
-            action.ids.map(id => {
+            action.ids.map((id) => {
                 index = ids.indexOf(id);
                 if (index >= 0) {
                     ids = [...ids.slice(0, index), ...ids.slice(index + 1)];
@@ -96,7 +96,7 @@ export default function(state = defaultState, action) {
             ids = action.patch.ids;
             patch = _.omit(action.patch, 'ids');
             list = state.list;
-            ids.map(id => {
+            ids.map((id) => {
                 let index = state.list.indexOf(_.find(state.list, { id }));
                 if (index >= 0) {
                     list = [

@@ -4,13 +4,11 @@ import PropTypes from 'prop-types';
 import BulkList from './BulkList';
 import Header from './Header';
 
-
 class ItemList extends Component {
-
     render() {
         const { params } = this.props;
         return (
-            <div className='endpoint_list'>
+            <div className="endpoint_list">
                 <Header params={params} />
                 <BulkList {...this.props} />
             </div>

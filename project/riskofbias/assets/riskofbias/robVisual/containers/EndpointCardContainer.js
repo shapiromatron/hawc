@@ -6,31 +6,35 @@ import EndpointCard from 'riskofbias/robVisual/components/EndpointCard';
 import { formatError } from 'riskofbias/robVisual/actions/Filter';
 import './EndpointCardContainer.css';
 
-
 class EndpointCardContainer extends Component {
-
-    componentDidUpdate(){
+    componentDidUpdate() {
         let { endpointsLoaded, endpoints, dispatch } = this.props;
         if (endpointsLoaded && endpoints.length === 0) {
             dispatch(formatError('empty'));
         }
     }
 
-    render(){
+    render() {
         let { endpoints, studies } = this.props;
         return (
-            <div className='endpointCardContainer'>
+            <div className="endpointCardContainer">
                 {_.map(endpoints, (ep, i) => {
-                    return <EndpointCard key={i}
-                        study={_.find(studies, {id: ep.animal_group.experiment.study.id})}
-                        endpoint={ep}/>;
+                    return (
+                        <EndpointCard
+                            key={i}
+                            study={_.find(studies, {
+                                id: ep.animal_group.experiment.study.id,
+                            })}
+                            endpoint={ep}
+                        />
+                    );
                 })}
             </div>
         );
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         endpoints: state.filter.endpoints,
         endpointsLoaded: state.filter.endpointsLoaded,

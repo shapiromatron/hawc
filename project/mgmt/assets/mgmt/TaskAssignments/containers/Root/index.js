@@ -6,7 +6,6 @@ import { loadConfig } from 'shared/actions/Config';
 import Assignments from 'mgmt/TaskAssignments/containers/Assignments';
 
 class Root extends Component {
-
     componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
@@ -22,6 +21,6 @@ class Root extends Component {
 
 Root.propTypes = {
     store: PropTypes.object.isRequired,
-}
+};
 
 export default Root;

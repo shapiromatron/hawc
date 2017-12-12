@@ -1,8 +1,6 @@
 import BaseTable from 'utils/BaseTable';
 
-
 class IVEndpointListTable {
-
     constructor(endpoints) {
         this.endpoints = endpoints;
         this.table = new BaseTable();

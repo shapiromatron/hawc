@@ -11,12 +11,10 @@ import EndpointAggregationExposureResponsePlot from './EndpointAggregationExposu
 import EndpointAggregationForestPlot from './EndpointAggregationForestPlot';
 import BaseVisual from './BaseVisual';
 
-
 class EndpointAggregation extends BaseVisual {
-
-    constructor(data){
+    constructor(data) {
         super(data);
-        this.endpoints = data.endpoints.map(function(d){
+        this.endpoints = data.endpoints.map(function(d) {
             var e = new Endpoint(d);
             e.switch_dose_units(data.dose_units);
             return e;
@@ -24,7 +22,7 @@ class EndpointAggregation extends BaseVisual {
         delete this.data.endpoints;
     }
 
-    displayAsPage($el, options){
+    displayAsPage($el, options) {
         var title = $('<h1>').text(this.data.title),
             captionDiv = $('<div>').html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -37,16 +35,22 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
-        $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
+        $(
+            '<button type="button" class="btn btn-mini" title="Toggle table-view representation">'
+        )
             .append('<i class="icon-chevron-right"></i>')
-            .click(function(){self.buildTbl();});
+            .click(function() {
+                self.buildTbl();
+            });
 
-        $el.empty()
-           .append(this.$plotDiv)
-           .append(this.$tblDiv);
+        $el
+            .empty()
+            .append(this.$plotDiv)
+            .append(this.$tblDiv);
 
-        if (!options.visualOnly){
-            $el.prepend(title)
+        if (!options.visualOnly) {
+            $el
+                .prepend(title)
                 .append('<h2>Caption</h2>')
                 .append(captionDiv);
         }
@@ -58,7 +62,7 @@ class EndpointAggregation extends BaseVisual {
         return this;
     }
 
-    displayAsModal(options){
+    displayAsModal(options) {
         options = options || {};
 
         var self = this,
@@ -69,25 +73,22 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
-        modal.getModal().on('shown', function(){
+        modal.getModal().on('shown', function() {
             self.buildPlot();
             caption.renderAndEnable();
         });
 
         this.buildTbl();
         this.plotData = this.getPlotData();
-        modal.addHeader($('<h4>').text(this.data.title))
-            .addBody($('<div>').append(
-                this.$plotDiv,
-                this.$tblDiv,
-                captionDiv
-            ))
+        modal
+            .addHeader($('<h4>').text(this.data.title))
+            .addBody($('<div>').append(this.$plotDiv, this.$tblDiv, captionDiv))
             .addFooter('')
-            .show({maxWidth: 1200});
+            .show({ maxWidth: 1200 });
     }
 
-    buildTbl(){
-        if(this.table){
+    buildTbl() {
+        if (this.table) {
             this.table.unshift(this.table.pop());
         } else {
             // todo: get default from options, if one exists
@@ -96,70 +97,103 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv.html(this.table[0].apply(this, arguments));
     }
 
-    buildTblPOD(){
+    buildTblPOD() {
         var tbl = new BaseTable(),
-            showEndpointDetail = function(e){
+            showEndpointDetail = function(e) {
                 e.preventDefault();
-                var tr = $(this).parent().parent();
-                if (tr.data('detail_row')){
-                    tr.data('detail_row').toggle_view(!tr.data('detail_row').object_visible);
+                var tr = $(this)
+                    .parent()
+                    .parent();
+                if (tr.data('detail_row')) {
+                    tr
+                        .data('detail_row')
+                        .toggle_view(!tr.data('detail_row').object_visible);
                 } else {
                     var ep = tr.data('endpoint'),
                         div_id = String.random_string(),
                         colspan = tr.children().length;
 
-                    tr.after('<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(colspan, div_id))
-                      .data('detail_row', new EndpointDetailRow(ep, '#'+div_id, 1));
+                    tr
+                        .after(
+                            '<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(
+                                colspan,
+                                div_id
+                            )
+                        )
+                        .data(
+                            'detail_row',
+                            new EndpointDetailRow(ep, '#' + div_id, 1)
+                        );
                 }
             };
 
         tbl.addHeaderRow([
-            'Study', 'Experiment', 'Animal Group', 'Endpoint',
-            'NOEL', 'LOEL', 'BMD', 'BMDL']);
+            'Study',
+            'Experiment',
+            'Animal Group',
+            'Endpoint',
+            'NOEL',
+            'LOEL',
+            'BMD',
+            'BMDL',
+        ]);
 
-        this.endpoints.forEach(function(e){
-            tbl.addRow([
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.study.url,
-                    e.data.animal_group.experiment.study.short_citation),
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.url,
-                    e.data.animal_group.experiment.name),
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.url,
-                    e.data.animal_group.name),
-                e._endpoint_detail_td(),
-                e.get_special_dose_text('NOEL'),
-                e.get_special_dose_text('LOEL'),
-                e.get_bmd_special_values('BMD'),
-                e.get_bmd_special_values('BMDL'),
-            ]).data('endpoint', e);
+        this.endpoints.forEach(function(e) {
+            tbl
+                .addRow([
+                    '<a href="{0}">{1}</a>'.printf(
+                        e.data.animal_group.experiment.study.url,
+                        e.data.animal_group.experiment.study.short_citation
+                    ),
+                    '<a href="{0}">{1}</a>'.printf(
+                        e.data.animal_group.experiment.url,
+                        e.data.animal_group.experiment.name
+                    ),
+                    '<a href="{0}">{1}</a>'.printf(
+                        e.data.animal_group.url,
+                        e.data.animal_group.name
+                    ),
+                    e._endpoint_detail_td(),
+                    e.get_special_dose_text('NOEL'),
+                    e.get_special_dose_text('LOEL'),
+                    e.get_bmd_special_values('BMD'),
+                    e.get_bmd_special_values('BMDL'),
+                ])
+                .data('endpoint', e);
         });
 
-        return tbl.getTbl().on('click', '.endpoint-selector', showEndpointDetail);
+        return tbl
+            .getTbl()
+            .on('click', '.endpoint-selector', showEndpointDetail);
     }
 
-    buildTblEvidence(){
+    buildTblEvidence() {
         var tbl = new BaseTable();
 
         tbl.addHeaderRow(['Study', 'Experiment', 'Animal Group', 'Endpoint']);
 
-        this.endpoints.forEach(function(e){
-
+        this.endpoints.forEach(function(e) {
             var ep_tbl = $('<div>')
-                    .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
-                    .append(e.build_endpoint_table($('<table class="table table-condensed">')));
+                .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
+                .append(
+                    e.build_endpoint_table(
+                        $('<table class="table table-condensed">')
+                    )
+                );
 
             tbl.addRow([
                 '<a href="{0}">{1}</a>'.printf(
                     e.data.animal_group.experiment.study.url,
-                    e.data.animal_group.experiment.study.short_citation),
+                    e.data.animal_group.experiment.study.short_citation
+                ),
                 '<a href="{0}">{1}</a>'.printf(
                     e.data.animal_group.experiment.url,
-                    e.data.animal_group.experiment.name),
+                    e.data.animal_group.experiment.name
+                ),
                 '<a href="{0}">{1}</a>'.printf(
                     e.data.animal_group.url,
-                    e.data.animal_group.name),
+                    e.data.animal_group.name
+                ),
                 ep_tbl,
             ]);
         });
@@ -167,29 +201,32 @@ class EndpointAggregation extends BaseVisual {
         return tbl.getTbl();
     }
 
-    buildPlot(){
-        if(this.plot){
+    buildPlot() {
+        if (this.plot) {
             this.plot.unshift(this.plot.pop());
         } else {
             // todo: get default from options, if one exists
             this.plot = [
-                new EndpointAggregationExposureResponsePlot(this, this.plotData),
+                new EndpointAggregationExposureResponsePlot(
+                    this,
+                    this.plotData
+                ),
                 new EndpointAggregationForestPlot(this, this.plotData),
             ];
         }
         this.$tblDiv.html(this.plot[0].render(this.$plotDiv));
     }
 
-    getPlotData(){
+    getPlotData() {
         return {
             title: this.data.title,
             endpoints: this.endpoints,
         };
     }
 
-    addPlotToggleButton(){
+    addPlotToggleButton() {
         return {
-            id:'plot_toggle',
+            id: 'plot_toggle',
             cls: 'btn btn-mini',
             title: 'View alternate visualizations',
             text: '',

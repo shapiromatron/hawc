@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 import './ArraySelect.css';
 
-
 class ArraySelect extends Component {
     /**
      * The choices props should be an array of objects, with id and value properties
@@ -17,7 +16,7 @@ class ArraySelect extends Component {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    handleSelect(e){
+    handleSelect(e) {
         this.props.handleSelect(e.target.value);
     }
 
@@ -26,13 +25,19 @@ class ArraySelect extends Component {
             className = this.props.className || 'react-select',
             defVal = this.props.defVal || _.first(choices);
         return (
-            <select id={id}
-                    className={className}
-                    ref='select'
-                    defaultValue={defVal}
-                    onChange={this.handleSelect}>
+            <select
+                id={id}
+                className={className}
+                ref="select"
+                defaultValue={defVal}
+                onChange={this.handleSelect}
+            >
                 {_.map(choices, (choice) => {
-                    return <option key={choice.id} value={choice.id}>{choice.value}</option>;
+                    return (
+                        <option key={choice.id} value={choice.id}>
+                            {choice.value}
+                        </option>
+                    );
                 })}
             </select>
         );

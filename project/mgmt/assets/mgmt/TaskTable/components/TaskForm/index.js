@@ -6,9 +6,7 @@ import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
 import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';
 import ReactDatePicker from 'shared/components/ReactDatePicker';
 
-
 class TaskForm extends Component {
-
     constructor(props) {
         super(props);
         const { owner, status, due_date, id } = props.task;
@@ -27,10 +25,7 @@ class TaskForm extends Component {
 
     formDidChange() {
         const { owner, status, due_date, id } = this.props.task;
-        return !_.isEqual(
-            this.state,
-            { owner, status, due_date, id }
-        );
+        return !_.isEqual(this.state, { owner, status, due_date, id });
     }
 
     getOwnerUpdate(owner) {
@@ -58,9 +53,19 @@ class TaskForm extends Component {
         const { task, className, autocompleteUrl } = this.props;
         return (
             <div className={className}>
-                <UserAutocomplete onChange={this.getOwnerUpdate} task={task} url={autocompleteUrl} />
+                <UserAutocomplete
+                    onChange={this.getOwnerUpdate}
+                    task={task}
+                    url={autocompleteUrl}
+                />
                 <StatusSelection onChange={this.getStatusUpdate} task={task} />
-                <ReactDatePicker onChange={this.getDueDateUpdate} labelClassName="control-label" label='Due date (optional)' id={`${task.id}-due_date`} date={task.due_date} />
+                <ReactDatePicker
+                    onChange={this.getDueDateUpdate}
+                    labelClassName="control-label"
+                    label="Due date (optional)"
+                    id={`${task.id}-due_date`}
+                    date={task.due_date}
+                />
             </div>
         );
     }

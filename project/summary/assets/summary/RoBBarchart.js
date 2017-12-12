@@ -7,10 +7,8 @@ import SmartTagContainer from 'smartTags/SmartTagContainer';
 import RoBBarchartPlot from './RoBBarchartPlot';
 import RoBHeatmap from './RoBHeatmap';
 
-
 class RoBBarchart extends RoBHeatmap {
-
-    displayAsPage($el, options){
+    displayAsPage($el, options) {
         var title = $('<h1>').text(this.data.title),
             captionDiv = $('<div>').html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -29,7 +27,7 @@ class RoBBarchart extends RoBHeatmap {
         return this;
     }
 
-    displayAsModal(options){
+    displayAsModal(options) {
         options = options || {};
 
         var self = this,
@@ -39,18 +37,19 @@ class RoBBarchart extends RoBHeatmap {
             $plotDiv = $('<div>'),
             modal = new HAWCModal();
 
-        modal.getModal().on('shown', function(){
+        modal.getModal().on('shown', function() {
             new RoBBarchartPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });
 
-        modal.addHeader($('<h4>').text(this.data.title))
+        modal
+            .addHeader($('<h4>').text(this.data.title))
             .addBody([$plotDiv, captionDiv])
             .addFooter('')
-            .show({maxWidth: 1200});
+            .show({ maxWidth: 1200 });
     }
 
-    getPlotData(){
+    getPlotData() {
         return {
             aggregation: this.roba,
             settings: this.data.settings,

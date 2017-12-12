@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-const splitStartupRedux = function(element, Component, configureStore){
+const splitStartupRedux = function(element, Component, configureStore) {
     /*
         To use for code splitting:
 
@@ -18,10 +18,10 @@ const splitStartupRedux = function(element, Component, configureStore){
         export default startup;
     */
     const store = configureStore();
-    render(<Component store={store}/>, element);
+    render(<Component store={store} />, element);
 };
 
-const splitStartup = function(element, Component, data){
+const splitStartup = function(element, Component, data) {
     render(<Component data={data} />, element);
 };
 

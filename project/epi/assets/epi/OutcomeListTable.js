@@ -1,7 +1,6 @@
 import BaseTable from 'utils/BaseTable';
 
 class OutcomeListTable {
-
     constructor(outcomes) {
         this.outcomes = outcomes;
         this.table = new BaseTable();

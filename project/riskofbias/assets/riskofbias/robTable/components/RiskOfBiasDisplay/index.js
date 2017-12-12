@@ -4,15 +4,18 @@ import ReactDOM from 'react-dom';
 
 import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
 
-
 const RiskOfBiasDisplay = (props) => {
     return (
-        <div className='riskofbias-display'>
+        <div className="riskofbias-display">
             {props.config.show_study ? renderStudyHeader(props) : null}
             {_.map(props.active, (domain) => {
-                return <DomainDisplay key={domain.key}
-                                   domain={domain}
-                                   config={props.config} />;
+                return (
+                    <DomainDisplay
+                        key={domain.key}
+                        domain={domain}
+                        config={props.config}
+                    />
+                );
             })}
         </div>
     );
@@ -20,7 +23,9 @@ const RiskOfBiasDisplay = (props) => {
 
 const renderStudyHeader = (props) => {
     return (
-        <h3><a href={props.config.study.url}>{props.config.study.name}</a></h3>
+        <h3>
+            <a href={props.config.study.url}>{props.config.study.name}</a>
+        </h3>
     );
 };
 
@@ -29,8 +34,11 @@ RiskOfBiasDisplay.propTypes = {
     config: PropTypes.object,
 };
 
-export function renderRiskOfBiasDisplay(data, element){
-    ReactDOM.render(<RiskOfBiasDisplay active={data.scores} config={data.config} />, element);
+export function renderRiskOfBiasDisplay(data, element) {
+    ReactDOM.render(
+        <RiskOfBiasDisplay active={data.scores} config={data.config} />,
+        element
+    );
 }
 
 export default RiskOfBiasDisplay;

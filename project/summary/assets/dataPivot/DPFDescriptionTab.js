@@ -5,31 +5,40 @@ import {
     buildHeaderTr,
 } from './DataPivotUtilities';
 
-
-let buildDescriptionTable = function(tab, dp){
-        let thead = $('<thead>').html(buildHeaderTr([
-                'Column header', 'Display name', 'Header style',
-                'Text style', 'Maximum width (pixels)', 'On-click', 'Ordering',
-            ])),
+let buildDescriptionTable = function(tab, dp) {
+        let thead = $('<thead>').html(
+                buildHeaderTr([
+                    'Column header',
+                    'Display name',
+                    'Header style',
+                    'Text style',
+                    'Maximum width (pixels)',
+                    'On-click',
+                    'Ordering',
+                ])
+            ),
             tbody = $('<tbody>'),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $(
+                '<table class="table table-condensed table-bordered">'
+            ).html([thead, tbody]),
             settings = dp.settings.description_settings,
-            addDataRow = function(i){
+            addDataRow = function(i) {
                 let obj;
-                if(!settings[i]){
+                if (!settings[i]) {
                     settings.push(_DataPivot_settings_description.defaults());
                 }
                 obj = new _DataPivot_settings_description(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function(){
+            newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>')
-                .on('click', newDataRow),
-            numRows = (settings.length === 0)? 5: settings.length;
+            newRowBtn = $(
+                '<button class="btn btn-primary pull-right">New row</button>'
+            ).on('click', newDataRow),
+            numRows = settings.length === 0 ? 5 : settings.length;
 
-        for(var i = 0; i < numRows; i++){
+        for (var i = 0; i < numRows; i++) {
             addDataRow(i);
         }
 
@@ -38,8 +47,10 @@ let buildDescriptionTable = function(tab, dp){
             tbl
         );
     },
-    buildDescriptionTab = function(dp){
-        let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');
+    buildDescriptionTab = function(dp) {
+        let tab = $(
+            '<div class="tab-pane active" id="data_pivot_settings_description">'
+        );
         buildDescriptionTable(tab, dp);
         return tab;
     };

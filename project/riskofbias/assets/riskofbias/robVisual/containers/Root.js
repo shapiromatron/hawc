@@ -8,10 +8,8 @@ import ApplyFilters from './ApplyFilters';
 import EndpointCardContainer from './EndpointCardContainer';
 import { loadConfig } from 'shared/actions/Config';
 
-
 class Root extends Component {
-
-    componentWillMount(){
+    componentWillMount() {
         this.props.store.dispatch(loadConfig());
     }
 
@@ -21,7 +19,7 @@ class Root extends Component {
             <Provider store={store}>
                 <div>
                     <h1>Endpoints by study risk of bias score</h1>
-                    <p className='help-text'>
+                    <p className="help-text">
                         This <b>prototype</b> is an example of showing different
                         effects in the database filtered by risk of bias score.
                         A higher risk of bias score indicates a greater number

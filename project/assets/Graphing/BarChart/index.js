@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 
 import './BarChart.css';
 
-
 class BarChart extends Component {
-
     render() {
         const { xScale, yScale, chartData, data } = this.props;
         return (
@@ -15,26 +13,30 @@ class BarChart extends Component {
                         x = xScale(bar.values.count),
                         height = yScale.rangeBand(),
                         width = x - chartData.padding.left,
-                        labelText = (width > 25)? 'bar-chart-label-left': 'bar-chart-label-right',
-                        labelOffset = (width > 25)? -5: 2;
+                        labelText =
+                            width > 25
+                                ? 'bar-chart-label-left'
+                                : 'bar-chart-label-right',
+                        labelOffset = width > 25 ? -5 : 2;
 
                     return (
-                    <g key={i}>
-                        <rect
-                            className='bar'
-                            x={chartData.padding.left}
-                            y={y}
-                            width={width}
-                            height={height}
-                            fill={chartData.colors[bar.key]}
-                        />
-                        <text
-                            className={labelText}
-                            y={y + height/2}
-                            x={(chartData.padding.left + width + labelOffset)}>
-                            {bar.values.count}
-                        </text>
-                    </g>
+                        <g key={i}>
+                            <rect
+                                className="bar"
+                                x={chartData.padding.left}
+                                y={y}
+                                width={width}
+                                height={height}
+                                fill={chartData.colors[bar.key]}
+                            />
+                            <text
+                                className={labelText}
+                                y={y + height / 2}
+                                x={chartData.padding.left + width + labelOffset}
+                            >
+                                {bar.values.count}
+                            </text>
+                        </g>
                     );
                 })}
             </g>

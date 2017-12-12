@@ -3,13 +3,13 @@ import h from 'mgmt/utils/helpers';
 
 import * as types from './constants';
 
-function makeTaskRequest(){
+function makeTaskRequest() {
     return {
         type: types.REQUEST_TASKS,
     };
 }
 
-export function hydrateTasks(){
+export function hydrateTasks() {
     return (dispatch, getState) => {
         let state = getState(),
             { list, rob_tasks } = state.config.tasks;
@@ -21,14 +21,14 @@ export function hydrateTasks(){
     };
 }
 
-function receiveTasks(tasks){
+function receiveTasks(tasks) {
     return {
         type: types.RECEIVE_TASKS,
         tasks,
     };
 }
 
-export function fetchTasks(){
+export function fetchTasks() {
     return (dispatch, getState) => {
         let state = getState();
         if (state.tasks.isFetching) return;

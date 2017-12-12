@@ -27,11 +27,18 @@ var helpers = Object.assign({}, shared, {
             text: 'Not Reported',
         },
     },
-    getScoreInfo(score){
+    getScoreInfo(score) {
         return this.scores[score];
     },
     buildPatchUrl(config, ids) {
-        return shared.getBulkUrl(config.host, shared.getUrlWithAssessment(config.items.patchUrl, config.assessment_id), ids);
+        return shared.getBulkUrl(
+            config.host,
+            shared.getUrlWithAssessment(
+                config.items.patchUrl,
+                config.assessment_id
+            ),
+            ids
+        );
     },
 });
 

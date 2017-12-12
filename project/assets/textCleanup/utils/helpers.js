@@ -17,9 +17,9 @@ var helpers = Object.assign({}, shared, {
             { field, id, type } = routerParams,
             fields = filterFields && field ? `&fields=${field}` : '',
             idList = ids ? `&ids=${ids}` : '';
-        return `${state.config.host}${state.config[type].url}${
-            getFields
-        }?assessment_id=${id}${fields}${idList}`;
+        return `${state.config.host}${
+            state.config[type].url
+        }${getFields}?assessment_id=${id}${fields}${idList}`;
     },
     getObjectUrl(base, id) {
         return `${base}${id}/`;
