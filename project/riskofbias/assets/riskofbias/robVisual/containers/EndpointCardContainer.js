@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import _ from 'underscore';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import EndpointCard from 'riskofbias/robVisual/components/EndpointCard';
@@ -22,7 +22,7 @@ class EndpointCardContainer extends Component {
             <div className='endpointCardContainer'>
                 {_.map(endpoints, (ep, i) => {
                     return <EndpointCard key={i}
-                        study={_.findWhere(studies, {id: ep.animal_group.experiment.study.id})}
+                        study={_.find(studies, {id: ep.animal_group.experiment.study.id})}
                         endpoint={ep}/>;
                 })}
             </div>

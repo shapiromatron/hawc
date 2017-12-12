@@ -1,5 +1,6 @@
 import $ from '$';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import * as types from 'bmd/constants';
 
@@ -55,7 +56,7 @@ class OutputModal extends React.Component {
 }
 
 OutputModal.propTypes = {
-    models: React.PropTypes.arrayOf(React.PropTypes.object),
+    models: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default OutputModal;

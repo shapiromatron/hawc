@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import Study from 'study/Study';
@@ -29,7 +29,7 @@ import {
 class DataPivotExtension {
 
     static extByName(){
-        return _.indexBy(DataPivotExtension.values, '_dpe_name');
+        return _.keyBy(DataPivotExtension.values, '_dpe_name');
     }
 
     static extByColumnKey(){

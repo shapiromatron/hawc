@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import _ from 'lodash';
 
 import * as types from 'riskofbias/robTable/constants';
 import h from 'riskofbias/robTable/utils/helpers';
@@ -41,7 +42,7 @@ function formatOutgoingRiskOfBias(state, riskofbias){
     let riskofbias_id = state.config.riskofbias.id,
         author,
         final,
-        scores = _.flatten(_.map(state.study.riskofbiases, (domain) =>{
+        scores = _.flattenDeep(_.map(state.study.riskofbiases, (domain) =>{
             return _.map(domain.values, (metric) => {
                 return _.omit(
                     _.find(metric.values, (score) => {
@@ -67,7 +68,7 @@ function formatOutgoingRiskOfBias(state, riskofbias){
 
 function formatIncomingStudy(study){
     let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {return rob.active === true;}),
-        domains = _.flatten(_.map(dirtyRoBs, (riskofbias) => {
+        domains = _.flattenDeep(_.map(dirtyRoBs, (riskofbias) => {
             return _.map(riskofbias.scores, (score) => {
                 return Object.assign({}, score, {
                     riskofbias_id: riskofbias.id,
@@ -82,7 +83,7 @@ function formatIncomingStudy(study){
             .key((d) => { return d.metric.domain.name;})
             .key((d) => {return d.metric.name;})
             .entries(domains),
-        finalRoB = _.findWhere(dirtyRoBs, { final: true });
+        finalRoB = _.find(dirtyRoBs, { final: true });
 
     return Object.assign({}, study, {
         riskofbiases,

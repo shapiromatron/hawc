@@ -1,16 +1,19 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import FormFieldError from 'textCleanup/components/FormFieldError';
 import h from 'textCleanup/utils/helpers';
 
+import GetModalClass from 'shared/utils/GetModalClass';
 import DetailList from './DetailList';
 import './BulkForm.css';
 
-
 class BulkForm extends Component {
-
     constructor(props) {
         super(props);
+        const classAccessor = new GetModalClass();
+        this.modalClass = classAccessor.getClass(this.props.modalClass);
         this.state = props.object;
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckAll = this.handleCheckAll.bind(this);
@@ -30,18 +33,20 @@ class BulkForm extends Component {
         let stale = this.props.items[0][this.state.field],
             { ids, detailIDs, showDetails } = this.state;
         // if detail edit and all checkboxes are not checked
-        if (showDetails && detailIDs && detailIDs.length !== ids.length){
-            this.props.handleDetailSubmit(Object.assign(
-                {},
-                _.omit(this.state, ['detailIDs', 'showDetails']),
-                { ids: detailIDs, stale }));
+        if (showDetails && detailIDs && detailIDs.length !== ids.length) {
+            this.props.handleDetailSubmit(
+                Object.assign(
+                    {},
+                    _.omit(this.state, ['detailIDs', 'showDetails']),
+                    { ids: detailIDs, stale }
+                )
+            );
         } else {
-            this.props.handleBulkSubmit(Object.assign(
-                {},
-                _.omit(this.state, 'detailIDs'),
-                { stale }));
+            this.props.handleBulkSubmit(
+                Object.assign({}, _.omit(this.state, 'detailIDs'), { stale })
+            );
         }
-        this.setState({ detailIDs: []});
+        this.setState({ detailIDs: [] });
     }
 
     handleChange(e) {
@@ -52,67 +57,85 @@ class BulkForm extends Component {
 
     handleCheckAll(e) {
         if (e.target.checked) {
-            this.setState({ detailIDs: this.props.object.ids});
+            this.setState({ detailIDs: this.props.object.ids });
         } else {
-            this.setState({ detailIDs: []});
+            this.setState({ detailIDs: [] });
         }
     }
 
-    handleCheck(target){
+    handleCheck(target) {
         let detailIDs = this.state.detailIDs,
             id = parseInt(target.id);
-        if (target.checked){
-            this.setState({ detailIDs: detailIDs ? detailIDs.concat(id) : [id]});
+        if (target.checked) {
+            this.setState({
+                detailIDs: detailIDs ? detailIDs.concat(id) : [id],
+            });
         } else {
-            this.setState({ detailIDs: _.without(detailIDs, id)});
+            this.setState({ detailIDs: _.without(detailIDs, id) });
         }
     }
 
-    onDetailChange(e){
-        (e.target.id === 'all') ? this.handleCheckAll(e) : this.handleCheck(e.target);
+    onDetailChange(e) {
+        e.target.id === 'all'
+            ? this.handleCheckAll(e)
+            : this.handleCheck(e.target);
     }
 
-    // Uses eval() as the object supplying displayAsModal is dynamic.
-    showModal(e){
-        eval(this.props.modalClass + '.displayAsModal(e.target.id)');
+    showModal(e) {
+        this.modalClass.displayAsModal(e.target.id);
     }
 
     render() {
         let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails ?
-                'fa-minus-square' :
-                'fa-plus-square',
-            editButtonText = this.state.showDetails ?
-                'Submit selected items' :
-                'Submit bulk edit';
+            detailShow = this.state.showDetails
+                ? 'fa-minus-square'
+                : 'fa-plus-square',
+            editButtonText = this.state.showDetails
+                ? 'Submit selected items'
+                : 'Submit bulk edit';
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit}>
-                    <span className='bulk-element field span4'>
-                        <button type='button'
-                            title='Show/hide all items'
-                            className='btn btn-inverse btn-mini'
-                            onClick={this._toggleDetails}>
-                            <i className={`fa ${detailShow}`}></i>
+                    <span className="bulk-element field span4">
+                        <button
+                            type="button"
+                            title="Show/hide all items"
+                            className="btn btn-inverse btn-mini"
+                            onClick={this._toggleDetails}
+                        >
+                            <i className={`fa ${detailShow}`} />
                         </button>
                         &nbsp;{field || `N/A`} ({items.length})
                     </span>
-                    <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
-                        <input name={field} className='form-control' type="text"
+                    <span
+                        className={`${h.getInputDivClass(
+                            field,
+                            errors
+                        )} bulk-element span5`}
+                    >
+                        <input
+                            name={field}
+                            className="form-control"
+                            type="text"
                             defaultValue={object[params.field]}
-                            onChange={this.handleChange}/>
+                            onChange={this.handleChange}
+                        />
                         <FormFieldError errors={errors.name} />
                     </span>
-                    <span className='bulk-element button span'>
-                        <button type='submit' className='btn btn-primary'>{editButtonText}</button></span>
+                    <span className="bulk-element button span">
+                        <button type="submit" className="btn btn-primary">
+                            {editButtonText}
+                        </button>
+                    </span>
                 </form>
-                {this.state.showDetails ?
+                {this.state.showDetails ? (
                     <DetailList
                         checkedRows={this.state.detailIDs}
                         items={items}
                         onDetailChange={this.onDetailChange}
                         showModal={this.showModal}
-                    /> : null}
+                    />
+                ) : null}
             </div>
         );
     }

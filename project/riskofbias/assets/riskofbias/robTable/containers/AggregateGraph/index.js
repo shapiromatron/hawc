@@ -23,7 +23,7 @@ class AggregateGraph extends Component {
     }
 
     formatRiskofbiasForDisplay(){
-        let domains = _.flatten(_.map(this.props.riskofbiases, (domain) => {
+        let domains = _.flattenDeep(_.map(this.props.riskofbiases, (domain) => {
             return _.map(domain.values, (metric) => {
                 return _.filter(metric.values, (score) => { return score.final; });
             });

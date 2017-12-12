@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import HAWCModal from 'utils/HAWCModal';
@@ -86,7 +86,7 @@ class RoBHeatmapPlot extends D3Visualization {
         _.each(this.data.aggregation.metrics_dataset, function(metric){
             _.chain(metric.rob_scores)
              .filter(function(rob){
-                 return _.contains(included_metrics, rob.data.metric.id);
+                 return _.includes(included_metrics, rob.data.metric.id);
              }).each(function(rob){
                  dataset.push({
                      riskofbias:         rob,
@@ -99,7 +99,8 @@ class RoBHeatmapPlot extends D3Visualization {
                      score_color:        rob.data.score_color,
                      score_text_color:   rob.data.score_text_color,
                  });
-             });
+             })
+             .value();
         });
 
         studies = _.chain(dataset)

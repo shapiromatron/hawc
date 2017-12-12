@@ -1,6 +1,7 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import d3 from 'd3';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import DoseAxis from './xAxis';
 import ResponseAxis from './yAxis';
@@ -49,8 +50,8 @@ class DoseResponseChart extends Component {
             ...chartData,
             transform: chartData.xTransform,
             label: `Dose of ${doses[0].unit}`,
-            min: _.min(_.pluck(doses, 'dose')),
-            max: _.max(_.pluck(doses, 'dose')),
+            min: _.min(_.map(doses, 'dose')),
+            max: _.max(_.map(doses, 'dose')),
         };
     }
 
@@ -60,8 +61,8 @@ class DoseResponseChart extends Component {
             ...chartData,
             transform: chartData.yTransform,
             label: `Response ${responses[0].unit}`,
-            min: _.min(_.pluck(responses, 'response')),
-            max: _.max(_.pluck(responses, 'response')),
+            min: _.min(_.map(responses, 'response')),
+            max: _.max(_.map(responses, 'response')),
         };
     }
 

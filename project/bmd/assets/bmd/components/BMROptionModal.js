@@ -1,5 +1,6 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {deepCopy} from 'shared/utils';
 
@@ -145,11 +146,11 @@ class BMROptionModal extends React.Component {
 }
 
 BMROptionModal.propTypes = {
-    bmr: React.PropTypes.object,
-    allOptions: React.PropTypes.object.isRequired,
-    editMode: React.PropTypes.bool.isRequired,
-    handleSave: React.PropTypes.func.isRequired,
-    handleDelete: React.PropTypes.func.isRequired,
+    bmr: PropTypes.object,
+    allOptions: PropTypes.object.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    handleSave: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
 };
 
 export default BMROptionModal;

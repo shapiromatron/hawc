@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import CheckboxScoreDisplay from 'riskofbias/robScoreCleanup/components/CheckboxScoreDisplay';
 
@@ -16,7 +17,7 @@ class ScoreList extends Component {
              <h4>RoB responses which meet criteria specified above:</h4>
             {_.map(items, (item) => {
                 item = item.author ? item : Object.assign({}, item, {author: { full_name: ''}});
-                let checked = _.contains(idList, item.id);
+                let checked = _.includes(idList, item.id);
                 return (
                     <div key={item.id}>
                         <CheckboxScoreDisplay

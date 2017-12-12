@@ -1,8 +1,8 @@
 import 'babel-polyfill';
+import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';
 import h from 'textCleanup/utils/helpers';
-
 
 function requestContent() {
     return {
@@ -10,7 +10,7 @@ function requestContent() {
     };
 }
 
-function receiveModel(json){
+function receiveModel(json) {
     return {
         type: types.ITEM_RECEIVE_MODEL,
         model: json,
@@ -31,28 +31,21 @@ function receiveObject(json) {
     };
 }
 
-function removeObject(id){
-    return {
-        type: types.ITEM_DELETE_OBJECT,
-        id,
-    };
-}
-
-function setEdititableObject(object){
+function setEdititableObject(object) {
     return {
         type: types.ITEM_CREATE_EDIT_OBJECT,
         object,
     };
 }
 
-function resetEditObject(field){
+function resetEditObject(field) {
     return {
         type: types.ITEM_RESET_EDIT_OBJECT,
         field,
     };
 }
 
-function removeEditObjectIds(field, ids){
+function removeEditObjectIds(field, ids) {
     return {
         type: types.ITEM_REMOVE_EDIT_OBJECT_IDS,
         field,
@@ -60,139 +53,122 @@ function removeEditObjectIds(field, ids){
     };
 }
 
-function patchItems(patch){
+function patchItems(patch) {
     return {
         type: types.ITEM_PATCH_OBJECTS,
         patch,
     };
 }
 
-function receiveEditErrors(errors){
+function receiveEditErrors(errors) {
     return {
         type: types.ITEM_RECEIVE_EDIT_ERRORS,
         errors,
     };
 }
 
-function releaseContent(){
-    return {
-        type: types.ITEM_RELEASE,
-    };
-}
-
-export function fetchModelIfNeeded(){
+export function fetchModel(routerParams) {
     return (dispatch, getState) => {
         let state = getState();
         if (state.items.isFetching) return;
         dispatch(requestContent());
         return fetch(
-                h.getItemApiURL(state, false, true),
-                h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveModel(json)))
-            .catch((ex) => console.error('Item parsing failed', ex));
+            h.getItemApiURL({
+                state,
+                filterFields: false,
+                fetchModel: true,
+                routerParams,
+            }),
+            h.fetchGet
+        )
+            .then(response => response.json())
+            .then(json => dispatch(receiveModel(json)))
+            .catch(ex => console.error('Item parsing failed', ex));
     };
 }
 
-export function fetchObjectsIfNeeded(ids=null) {
+export function fetchObjects({ ids = null, routerParams = {} }) {
     return (dispatch, getState) => {
         let state = getState();
         if (state.items.isFetching) return;
         dispatch(requestContent());
-        return fetch(h.getItemApiURL(state, false, false, ids), h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => {
-                if (ids === null){
+        return fetch(
+            h.getItemApiURL({
+                state,
+                filterFields: false,
+                fetchModel: false,
+                ids,
+                routerParams,
+            }),
+            h.fetchGet
+        )
+            .then(response => response.json())
+            .then(json => {
+                if (ids === null) {
                     dispatch(receiveObjects(json));
                 } else {
-                    _.map(json, (item) => {
+                    _.map(json, item => {
                         dispatch(receiveObject(item));
                     });
                 }
             })
-            .catch((ex) => console.error('Item parsing failed', ex));
+            .catch(ex => console.error('Item parsing failed', ex));
     };
 }
 
-export function patchBulkList(patchObject){
+export function patchBulkList(patchObject, routerParams) {
     return (dispatch, getState) => {
         let state = getState(),
             { ids, field, stale } = patchObject,
-            patch = {[field]: patchObject[field]},
+            patch = { [field]: patchObject[field] },
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
-        return fetch(
-            `${h.getItemApiURL(state)}&ids=${ids}`,
-            opts)
-            .then((response) => {
+        return fetch(h.getItemApiURL({ state, routerParams, ids }), opts)
+            .then(response => {
                 patchObject = _.omit(patchObject, 'stale');
                 dispatch(resetEditObject(stale));
                 dispatch(setEdititableObject(patchObject));
-                if (response.ok){
+                if (response.ok) {
                     dispatch(patchItems(patchObject));
                 } else {
-                    response.json()
-                    .then((json) => dispatch(receiveEditErrors(json)));
+                    response
+                        .json()
+                        .then(json => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch((ex) => console.error('Item parsing failed', ex));
+            .catch(ex => console.error('Item parsing failed', ex));
     };
 }
 
-export function patchDetailList(patchObject){
+export function patchDetailList(patchObject, routerParams) {
     return (dispatch, getState) => {
         let state = getState(),
             { ids, field, stale } = patchObject,
-            patch = {[field]: patchObject[field]},
+            patch = { [field]: patchObject[field] },
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
-        return fetch(
-            `${h.getItemApiURL(state)}&ids=${ids}`,
-            opts)
-            .then((response) => {
+        return fetch(h.getItemApiURL({ state, routerParams, ids }), opts)
+            .then(response => {
                 patchObject = _.omit(patchObject, 'stale');
                 dispatch(removeEditObjectIds(stale, ids));
                 dispatch(setEdititableObject(patchObject));
-                if (response.ok){
-                    dispatch(fetchObjectsIfNeeded(ids));
+                if (response.ok) {
+                    dispatch(fetchObjects({ ids, routerParams }));
                 } else {
-                    response.json()
-                    .then((json) => dispatch(receiveEditErrors(json)));
+                    response
+                        .json()
+                        .then(json => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch((ex) => console.error('Item parsing failed', ex));
+            .catch(ex => console.error('Item parsing failed', ex));
     };
 }
 
-export function deleteObject(id){
+export function initializeBulkEditForm(ids = [], field = 'system') {
     return (dispatch, getState) => {
         let state = getState(),
-            opts = h.fetchDelete(state.config.csrf);
-        return fetch(
-                h.getItemApiURL(state),
-                opts)
-            .then(function(response){
-                if (response.status === 204){
-                    dispatch(removeObject(id));
-                } else {
-                    response.json()
-                        .then((json) => dispatch(receiveEditErrors(json)));
-                }
-            })
-            .catch((ex) => console.error('Item parsing failed', ex));
-    };
-}
-
-export function releaseItems(){
-    return (dispatch) => {
-        dispatch(releaseContent());
-    };
-}
-
-export function initializeBulkEditForm(ids=[], field='system'){
-    return (dispatch, getState) => {
-        let state = getState(),
-            thisField, object;
-        if (ids){
-            thisField = _.findWhere(state.items.list, {id: ids[0]})[field];
+            thisField,
+            object;
+        if (ids) {
+            thisField = _.find(state.items.list, { id: ids[0] })[field];
             object = {
                 ids,
                 [field]: thisField,

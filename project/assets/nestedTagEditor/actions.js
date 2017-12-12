@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import h from 'shared/utils/helpers';
 import * as types from 'nestedTagEditor/constants';

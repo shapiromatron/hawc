@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import DueDateLabel from 'mgmt/TaskTable/components/DueDateLabel';
 import StatusLabel from 'mgmt/TaskTable/components/StatusLabel';

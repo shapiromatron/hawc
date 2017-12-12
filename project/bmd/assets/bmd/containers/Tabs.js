@@ -157,7 +157,7 @@ class Tabs extends React.Component {
 
     renderResultsTab(){
         let {bmrs, endpoint, models, selectedModelId, hoverModel, hasExecuted} = this.props,
-            selectedModel = _.findWhere(models, {id: selectedModelId}) || null;
+            selectedModel = _.find(models, {id: selectedModelId}) || null;
 
         if(!hasExecuted){
             return null;

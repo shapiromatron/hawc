@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import D3Plot from 'utils/D3Plot';
@@ -50,7 +50,7 @@ class ResultForestPlot extends D3Plot {
                     .map(function(d){return d.group.getIntervals();})
                     .filter(function(d){return _.isNumber(d.lower_bound_interval) && _.isNumber(d.upper_bound_interval);})
                     .value(),
-            names = _.pluck(estimates, 'name'),
+            names = _.map(estimates, 'name'),
             vals = _.chain(estimates)
                     .map(function(d){
                         let { upper_bound_interval, lower_bound_interval } = d.group.getIntervals();
@@ -60,7 +60,7 @@ class ResultForestPlot extends D3Plot {
                             upper_bound_interval,
                         ];
                     })
-                    .flatten()
+                    .flattenDeep()
                     .filter(function(d){ return _.isNumber(d);})
                     .value(),
             getXDomain = function(scale_type, vals){

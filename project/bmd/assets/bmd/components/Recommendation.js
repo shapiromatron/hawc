@@ -1,7 +1,8 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import {asLabel} from 'bmd/models/bmr';
+import { asLabel } from 'bmd/models/bmr';
 
 import RecommendationTable from './RecommendationTable';
 
@@ -10,7 +11,7 @@ class Recommendation extends React.Component {
 
     updateState(props){
         let model = (props.selectedModelId) ?
-                _.findWhere(props.models, {id: props.selectedModelId}):
+                _.find(props.models, {id: props.selectedModelId}):
                 props.models[0],
             d = {
                 bmr: model.bmr_id,
@@ -33,7 +34,7 @@ class Recommendation extends React.Component {
             name = e.target.name,
             val = e.target.value;
 
-        if (_.contains(['bmr', 'model'], name)){
+        if (_.includes(['bmr', 'model'], name)){
             val = parseInt(val);
         }
 
@@ -46,7 +47,7 @@ class Recommendation extends React.Component {
     }
 
     renderForm(){
-        let models = _.where(
+        let models = _.filter(
             this.props.models,
             {bmr_id: this.state.bmr}
         );
@@ -129,7 +130,7 @@ class Recommendation extends React.Component {
             return null;
         }
 
-        let modelSubset = _.where(
+        let modelSubset = _.filter(
             this.props.models,
             {bmr_id: this.state.bmr}
         );
@@ -146,12 +147,12 @@ class Recommendation extends React.Component {
 }
 
 Recommendation.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    selectedModelId: React.PropTypes.number,
-    selectedModelNotes: React.PropTypes.string.isRequired,
-    handleSaveSelected: React.PropTypes.func.isRequired,
-    models: React.PropTypes.array.isRequired,
-    bmrs: React.PropTypes.array.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    selectedModelId: PropTypes.number,
+    selectedModelNotes: PropTypes.string.isRequired,
+    handleSaveSelected: PropTypes.func.isRequired,
+    models: PropTypes.array.isRequired,
+    bmrs: PropTypes.array.isRequired,
 };
 
 export default Recommendation;

@@ -1,43 +1,33 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
-import { makeAssessmentActive } from 'textCleanup/actions/Assessment';
+import { fetchAssessment } from 'textCleanup/actions/Assessment';
 import Assessment from 'textCleanup/components/Assessment';
 import Loading from 'shared/components/Loading';
 
-
-class App extends Component{
-
-    getObject(){
-        return _.findWhere(
-            this.props.objects,
-            {id: parseInt(this.props.params.id)}
-        );
-    }
-
+class App extends Component {
     componentWillMount() {
-        const { id, dispatch } = this.props;
-        dispatch(makeAssessmentActive(id));
+        this.props.dispatch(fetchAssessment());
     }
 
     render() {
-        let object = this.getObject(),
-            helpText = 'After data has been initially extracted, this module can be\
+        let { assessment } = this.props,
+            helpText =
+                'After data has been initially extracted, this module can be\
                         used to update and standardize text which was used during\
                         data extraction.';
-        if (_.isUndefined(object)) return <Loading />;
+        if (_.isEmpty(assessment)) return <Loading />;
         return (
-            <Assessment object={object} helpText={helpText}/>
+            <div>
+                <Assessment assessment={assessment} helpText={helpText} />
+            </div>
         );
     }
 }
-
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
-        id: state.config.assessment_id,
-        objects: state.assessment.items,
+        assessment: state.assessment.active,
     };
 }
-
 export default connect(mapStateToProps)(App);

@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
@@ -48,7 +48,7 @@ class Group {
         addTuple('Numerical value', d.numeric);
         addTuple('Comparative name', d.comparative_name);
         addTuple('Sex', d.sex);
-        addTuple('Ethnicities', _.pluck(d.ethnicities, 'name'));
+        addTuple('Ethnicities', _.map(d.ethnicities, 'name'));
         addTuple('Eligible N', d.eligible_n);
         addTuple('Invited N', d.invited_n);
         addTuple('Participant N', d.participant_n);

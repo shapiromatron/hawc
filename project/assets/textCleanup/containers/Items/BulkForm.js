@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import {
     initializeBulkEditForm,
@@ -9,9 +10,7 @@ import {
 import Loading from 'shared/components/Loading';
 import FormComponent from 'textCleanup/components/Items/BulkForm';
 
-
 class BulkForm extends Component {
-
     constructor(props) {
         super(props);
         this.handleBulkSubmit = this.handleBulkSubmit.bind(this);
@@ -19,38 +18,47 @@ class BulkForm extends Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(initializeBulkEditForm(this.getIDs(this.props), this.props.field));
+        this.props.dispatch(
+            initializeBulkEditForm(
+                this.getIDs(this.props),
+                this.props.params.field
+            )
+        );
     }
 
     getIDs(props) {
-        return _.pluck(props.items, 'id');
+        return _.map(props.items, 'id');
     }
 
     handleBulkSubmit(obj) {
-        this.props.dispatch(patchBulkList(obj));
+        this.props.dispatch(patchBulkList(obj, this.props.params));
     }
 
     handleDetailSubmit(obj) {
-        this.props.dispatch(patchDetailList(obj));
+        this.props.dispatch(patchDetailList(obj, this.props.params));
     }
 
-    isReadyToRender(thisField){
+    isReadyToRender(thisField) {
         let ids = this.getIDs(this.props),
-            { field, model } = this.props;
+            { params, model } = this.props;
 
-
-        if (ids && model.editObject == null ||
-            ids && model.editObject[thisField] == null ||
-            ids && model.editObject[thisField][field] == null){
+        if (
+            (ids && model.editObject == null) ||
+            (ids && model.editObject[thisField] == null) ||
+            (ids && model.editObject[thisField][params.field] == null)
+        ) {
             return false;
         }
-        return (model.itemsLoaded && model.editObject[thisField][field] !== null);
+        return (
+            model.itemsLoaded &&
+            model.editObject[thisField][params.field] !== null
+        );
     }
 
     render() {
-        let { items, model, field, params, config } = this.props,
+        let { items, model, params, config } = this.props,
             modalClass = config[params.type].title,
-            thisField = items[0][field];
+            thisField = items[0][params.field];
         if (!this.isReadyToRender(thisField)) return <Loading />;
         this.isRendered = true;
         return (
@@ -64,16 +72,13 @@ class BulkForm extends Component {
                 params={params}
                 modalClass={modalClass}
             />
-
         );
     }
-
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         config: state.config,
-        params: state.router.params,
         model: state.items,
     };
 }

@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import Tablesort from 'tablesort';
 
@@ -73,10 +73,10 @@ class VisualCollection {
 
     setTableFilter(){
         var types = _.chain(this.visuals)
-                .pluck('data')
-                .pluck('visual_type')
+                .map('data')
+                .map('visual_type')
                 .sort()
-                .uniq(true)
+                .uniq()
                 .unshift(NULL_FILTER)
                 .map((d) =>`<option value="${d}">${d}</option>`)
                 .value();

@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
@@ -10,9 +10,9 @@ class StudyPopulation {
 
     constructor(data){
         this.data = data;
-        this.inclusion_criteria = _.where(this.data.criteria, {'criteria_type': 'Inclusion'});
-        this.exclusion_criteria = _.where(this.data.criteria, {'criteria_type': 'Exclusion'});
-        this.confounding_criteria = _.where(this.data.criteria, {'criteria_type': 'Confounding'});
+        this.inclusion_criteria = _.filter(this.data.criteria, {'criteria_type': 'Inclusion'});
+        this.exclusion_criteria = _.filter(this.data.criteria, {'criteria_type': 'Exclusion'});
+        this.confounding_criteria = _.filter(this.data.criteria, {'criteria_type': 'Confounding'});
     }
 
     static get_object(id, cb){
@@ -48,9 +48,9 @@ class StudyPopulation {
             .add_tbody_tr('Eligible N', this.data.eligible_n)
             .add_tbody_tr('Invited N', this.data.invited_n)
             .add_tbody_tr('Participant N', this.data.participant_n)
-            .add_tbody_tr_list('Inclusion criteria', _.pluck(this.inclusion_criteria, 'description'))
-            .add_tbody_tr_list('Exclusion criteria', _.pluck(this.exclusion_criteria, 'description'))
-            .add_tbody_tr_list('Confounding criteria', _.pluck(this.confounding_criteria, 'description'))
+            .add_tbody_tr_list('Inclusion criteria', _.map(this.inclusion_criteria, 'description'))
+            .add_tbody_tr_list('Exclusion criteria', _.map(this.exclusion_criteria, 'description'))
+            .add_tbody_tr_list('Confounding criteria', _.map(this.confounding_criteria, 'description'))
             .add_tbody_tr('Comments', this.data.comments)
             .get_tbl();
     }

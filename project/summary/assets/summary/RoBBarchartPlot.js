@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
@@ -87,7 +87,7 @@ class RoBBarchartPlot extends D3Visualization {
         dataset = _.chain(this.data.aggregation.metrics_dataset)
             .filter(function(d){
                 var metric_id = d.rob_scores[0].data.metric.id;
-                return _.contains(included_metrics, metric_id);
+                return _.includes(included_metrics, metric_id);
             }).map(function(d){
                 var vals = {
                         'label': d.rob_scores[0].data.metric.name,

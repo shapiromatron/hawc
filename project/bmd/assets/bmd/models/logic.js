@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 import { deepCopy, toHawcString } from 'shared/utils';
 
@@ -177,7 +177,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
         },
         'BMD higher'(logic, model, groups){
-            let high_dose = d3.max(_.pluck(groups, 'dose')),
+            let high_dose = d3.max(_.map(groups, 'dose')),
                 bmd = model.output.BMD;
             if (validNumeric(bmd)){
                 return assertLessThan(
@@ -188,7 +188,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
         },
         'BMDL higher'(logic, model, groups){
-            let high_dose = d3.max(_.pluck(groups, 'dose')),
+            let high_dose = d3.max(_.map(groups, 'dose')),
                 bmdl = model.output.BMDL;
             if (validNumeric(bmdl)){
                 return assertLessThan(
@@ -333,10 +333,10 @@ let apply_logic = function(logics, models, endpoint, doseUnits){
     });
 
     // apply model recommendations, with each bmr being independent.
-    let bmr_ids = _.chain(models).pluck('bmr_id').uniq().value();
+    let bmr_ids = _.chain(models).map('bmr_id').uniq().value();
 
     bmr_ids.forEach((bmr_id)=>{
-        let subset = _.where(models, {bmr_id, logic_bin: 0}),
+        let subset = _.filter(models, {bmr_id, logic_bin: 0}),
             bmdls = _.chain(subset)
                 .map((d)=>d.output.BMDL)
                 .filter((d)=>_.isNumber(d) && d>0)

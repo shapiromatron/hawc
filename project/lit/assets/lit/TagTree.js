@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import Observee from 'utils/Observee';
@@ -81,17 +81,13 @@ class TagTree extends Observee {
                 nodeDict[ref.tag_id].references.push(ref.content_object_id);
             };
 
-        _.chain(nodeDict)
-            .values()
-            .each((d) => d.references=[]);
-
+        _.map(nodeDict, d => d.references = []);
         _.each(references, addRef);
-
 
         var getNestedChildren = function(tag){
 
             let refs = [].concat(tag.references),
-                nested = (tag.children)? _.flatten(tag.children.map(getNestedChildren)): [],
+                nested = (tag.children)? _.flattenDeep(tag.children.map(getNestedChildren)): [],
                 uniqs;
 
             refs.push.apply(refs, nested);

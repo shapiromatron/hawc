@@ -1,5 +1,6 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import EditNode from './EditNode';
 
@@ -121,12 +122,12 @@ class Node extends React.Component {
 }
 
 Node.propTypes = {
-    node: React.PropTypes.object.isRequired,
-    parent: React.PropTypes.number.isRequired,
-    parentOptions: React.PropTypes.array.isRequired,
-    handleUpdate: React.PropTypes.func.isRequired,
-    handleDelete: React.PropTypes.func.isRequired,
-    sortableGroupDecorator: React.PropTypes.func.isRequired,
+    node: PropTypes.object.isRequired,
+    parent: PropTypes.number.isRequired,
+    parentOptions: PropTypes.array.isRequired,
+    handleUpdate: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
+    sortableGroupDecorator: PropTypes.func.isRequired,
 };
 
 export default Node;

@@ -1,11 +1,13 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 
 class DetailItem extends Component {
 
     render(){
         let { fields, item} = this.props,
-            checked = _.contains(this.props.checkedRows, item.id);
+            checked = _.includes(this.props.checkedRows, item.id);
         return (
             <div className='detail-stripe'>
                 {_.map(fields, (field) => {

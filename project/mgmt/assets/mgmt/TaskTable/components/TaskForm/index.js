@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
-import _ from 'underscore';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
 import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';

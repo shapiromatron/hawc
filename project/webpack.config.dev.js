@@ -5,32 +5,19 @@ var config = require('./webpack.base.js'),
     HappyPack = require('happypack');
 
 config.devtool = 'cheap-module-eval-source-map';
-config.entry.main.concat(
-    'webpack-hot-middleware/client?path=http://localhost:' + port + '/__webpack_hmr'
-);
+
 config.output.publicPath = 'http://localhost:' + port + '/dist/';
 
-config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 config.plugins.unshift(new HappyPack({
     id: 'js',
     loaders: [{
-        path: 'babel-loader',
+        loader: 'babel-loader',
         options: {
             plugins: [
                 ['transform-object-rest-spread'],
                 ['syntax-object-rest-spread'],
                 ['syntax-dynamic-import'],
                 ['dynamic-import-webpack'],
-                ['react-transform', {
-                    transforms: [{
-                        transform: 'react-transform-hmr',
-                        imports: ['react'],
-                        locals: ['module'],
-                    }, {
-                        'transform': 'react-transform-catch-errors',
-                        'imports': ['react', 'redbox-react'],
-                    }],
-                }],
             ],
         },
     }],

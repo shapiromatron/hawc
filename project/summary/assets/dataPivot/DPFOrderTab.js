@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import {
     _DataPivot_settings_filters,
@@ -180,7 +180,7 @@ let buildFilterTable = function(tab, dp, handleTableChange){
         data = DataPivotVisualization.sort_with_overrides(data, sorts, overrides);
 
         // apply manual index offsets
-        let row_override_map = _.indexBy(overrides, 'pk'),
+        let row_override_map = _.keyBy(overrides, 'pk'),
             get_default = function(pk){
                 return {
                     pk,

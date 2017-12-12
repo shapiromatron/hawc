@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import * as types from 'mgmt/TaskTable/constants';
 import h from 'mgmt/utils/helpers';
 
@@ -40,7 +40,7 @@ function studies(state=defaultState, action) {
                 return study[type];
             });
         });
-        list = _.flatten(list);
+        list = _.flattenDeep(list);
         return Object.assign({}, state, {
             visibleList: list,
         });

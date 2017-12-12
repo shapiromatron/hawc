@@ -1,5 +1,6 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 class RecommendationTable extends React.Component {
 
@@ -140,8 +141,8 @@ class RecommendationTable extends React.Component {
 }
 
 RecommendationTable.propTypes = {
-    models: React.PropTypes.array.isRequired,
-    selectedModelId: React.PropTypes.number,
+    models: PropTypes.array.isRequired,
+    selectedModelId: PropTypes.number,
 };
 
 export default RecommendationTable;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class ParameterField extends React.Component {
@@ -39,10 +40,10 @@ class ParameterField extends React.Component {
 }
 
 ParameterField.propTypes = {
-    index: React.PropTypes.number.isRequired,
-    settings: React.PropTypes.object.isRequired,
-    handleChange: React.PropTypes.func.isRequired,
-    value: React.PropTypes.any.isRequired,
+    index: PropTypes.number.isRequired,
+    settings: PropTypes.object.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    value: PropTypes.any.isRequired,
 };
 
 export default ParameterField;

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import {deepCopy} from 'shared/utils';
 
 import { combineReducers } from 'redux';
@@ -62,7 +62,7 @@ function bmd(state=defaultState, action){
         // create model-settings
         // 1) only get the first bmr instance of the model
         // 2) add defaults based on the model name
-        tmp2 = _.indexBy(action.settings.allModelOptions, 'name');
+        tmp2 = _.keyBy(action.settings.allModelOptions, 'name');
 
         action.settings.models
             .forEach((d)=>d.defaults = tmp2[d.name].defaults);
@@ -80,7 +80,7 @@ function bmd(state=defaultState, action){
             bmrs: action.settings.bmrs,
             doseUnits: action.settings.dose_units,
             allModelOptions: action.settings.allModelOptions,
-            allBmrOptions: _.indexBy(action.settings.allBmrOptions, 'type'),
+            allBmrOptions: _.keyBy(action.settings.allBmrOptions, 'type'),
             selectedModelId: tmp3.model || null,
             selectedModelNotes: tmp3.notes || '',
             logic: action.settings.logic,

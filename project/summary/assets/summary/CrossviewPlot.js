@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import d3 from 'd3';
 
 import HAWCUtils from 'utils/HAWCUtils';
@@ -21,9 +21,9 @@ class CrossviewPlot extends D3Visualization {
         return _.chain(eps)
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
                 .map(CrossviewPlot._cw_filter_process[fld])
-                .flatten()
+                .flattenDeep()
                 .sortBy()
-                .uniq(true)
+                .uniq()
                 .value();
     }
 
@@ -33,7 +33,7 @@ class CrossviewPlot extends D3Visualization {
 
     static _filterEndpoint(e, numDG){
         // need at-least two non-zero dose-groups for visualization
-        return d3.sum(_.pluck(e.data.groups, 'isReported'))>=numDG;
+        return d3.sum(_.map(e.data.groups, 'isReported'))>=numDG;
     }
 
     setDefaults(){
@@ -183,7 +183,7 @@ class CrossviewPlot extends D3Visualization {
                 if (val instanceof Array){
                     return _.chain(val)
                             .map(function(itm){return itm.toString().toLowerCase() === tgt;})
-                            .any()
+                            .some()
                             .value();
                 } else {
                     return val.toString().toLowerCase() === tgt;
@@ -257,7 +257,7 @@ class CrossviewPlot extends D3Visualization {
                         val = CrossviewPlot._cw_filter_process[filter.field](this);
                         return filter.fn(val);
                     }, e);
-                return (settings.endpointFilterLogic === 'and') ? _.all(res) : _.any(res);
+                return (settings.endpointFilterLogic === 'and') ? _.every(res) : _.some(res);
             },
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
             dataset = _.chain(this.data.endpoints)
@@ -276,9 +276,9 @@ class CrossviewPlot extends D3Visualization {
                 if(f.allValues){
                     vals = _.chain(dataset)
                             .map(function(d){return d.filters[f.name];})
-                            .flatten()
+                            .flattenDeep()
                             .sort()
-                            .uniq(true)
+                            .uniq()
                             .filter(function(d){return d != '';});
                 }
                 return vals.map(function(d){
@@ -318,7 +318,7 @@ class CrossviewPlot extends D3Visualization {
                 var arr = txt.split(',');
                 if(arr.length !== 2) return false;
                 arr = _.map(arr, parseFloat);
-                return (_.all( _.map(arr, isFinite))) ? arr : false;
+                return (_.every( _.map(arr, isFinite))) ? arr : false;
             },
             dose_range = parseRange(this.data.settings.dose_range || ''),
             resp_range = parseRange(this.data.settings.response_range || '');
@@ -374,7 +374,7 @@ class CrossviewPlot extends D3Visualization {
                     x: x.range()[0], width:  Math.abs(x.range()[1] - x.range()[0]),
                     y: y(d.upper),   height: Math.abs(y(d.upper) - y(d.lower)),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style}),
+                    styles: _.find(D3Visualization.styles.rectangles, {name: d.style}),
                 };
             },
             make_vrng = function(d){
@@ -382,7 +382,7 @@ class CrossviewPlot extends D3Visualization {
                     x: x(d.lower),   width:  Math.abs(x(d.upper) - x(d.lower)),
                     y: y.range()[1], height: Math.abs(y.range()[1] - y.range()[0]),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.rectangles, {name: d.style}),
+                    styles: _.find(D3Visualization.styles.rectangles, {name: d.style}),
                 };
             };
 
@@ -423,7 +423,7 @@ class CrossviewPlot extends D3Visualization {
                     x1: x.range()[0], x2: x.range()[1],
                     y1: y(d.value),   y2: y(d.value),
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style}),
+                    styles: _.find(D3Visualization.styles.lines, {name: d.style}),
                 };
             },
             make_vref = function(d){
@@ -431,7 +431,7 @@ class CrossviewPlot extends D3Visualization {
                     x1: x(d.value),   x2: x(d.value),
                     y1: y.range()[0], y2: y.range()[1],
                     title: d.title,
-                    styles: _.findWhere(D3Visualization.styles.lines, {name: d.style}),
+                    styles: _.find(D3Visualization.styles.lines, {name: d.style}),
                 };
             };
 
@@ -468,7 +468,7 @@ class CrossviewPlot extends D3Visualization {
             drag, dlabels, labels;
 
         dlabels = _.map(this.plot_settings.labels, function(d){
-            d._style = _.findWhere(D3Visualization.styles.texts, {name: d.style});
+            d._style = _.find(D3Visualization.styles.texts, {name: d.style});
             return d;
         });
 

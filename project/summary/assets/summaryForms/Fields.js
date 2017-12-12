@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import $ from '$';
 
 import HAWCUtils from 'utils/HAWCUtils';
@@ -111,10 +111,10 @@ class RadioField extends TextField {
     }
 
     _setInput(){
-        var radios = _.map(this.schema.options, function(d){
+        var radios = _.map(this.schema.options, _.bind(function(d){
             return '<label class="radio inline">{0}<input name="{1}" type="radio" value="{2}"></label>'.printf(
                 d.label, this.schema.name, d.value);
-        }, this);
+        }, this));
         this.$inp = $('<div>').html(radios.join('\n'));
     }
 }

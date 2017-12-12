@@ -57,9 +57,9 @@ function study(state=defaultState, action){
                 active: state.riskofbiases,
             });
         }
-        let domains = _.findWhere(state.riskofbiases, {key: action.domain});
+        let domains = _.find(state.riskofbiases, {key: action.domain});
         if(action.metric){
-            let values = _.findWhere(domains.values, {key: action.metric});
+            let values = _.find(domains.values, {key: action.metric});
             return Object.assign(
                 {},
                 state,

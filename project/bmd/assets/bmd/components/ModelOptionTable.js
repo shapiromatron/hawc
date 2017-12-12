@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import {param_cw} from 'bmd/constants';
+import { param_cw } from 'bmd/constants';
 
 
 class ModelOptionTable extends React.Component {
@@ -95,7 +96,7 @@ class ModelOptionTable extends React.Component {
         } else {
             return <ul>{
                 _.chain(d.overrides)
-                    .pairs()
+                    .toPairs()
                     .filter(function(d2){
                         return (d.defaults[d2[0]].n !== undefined);
                     })
@@ -152,15 +153,15 @@ class ModelOptionTable extends React.Component {
 }
 
 ModelOptionTable.propTypes = {
-    editMode: React.PropTypes.bool.isRequired,
-    dataType: React.PropTypes.string.isRequired,
-    handleVarianceToggle: React.PropTypes.func.isRequired,
-    handleAddAll: React.PropTypes.func.isRequired,
-    handleRemoveAll: React.PropTypes.func.isRequired,
-    handleCreateModel: React.PropTypes.func.isRequired,
-    handleModalDisplay: React.PropTypes.func.isRequired,
-    models: React.PropTypes.array.isRequired,
-    allOptions: React.PropTypes.array.isRequired,
+    editMode: PropTypes.bool.isRequired,
+    dataType: PropTypes.string.isRequired,
+    handleVarianceToggle: PropTypes.func.isRequired,
+    handleAddAll: PropTypes.func.isRequired,
+    handleRemoveAll: PropTypes.func.isRequired,
+    handleCreateModel: PropTypes.func.isRequired,
+    handleModalDisplay: PropTypes.func.isRequired,
+    models: PropTypes.array.isRequired,
+    allOptions: PropTypes.array.isRequired,
 };
 
 export default ModelOptionTable;

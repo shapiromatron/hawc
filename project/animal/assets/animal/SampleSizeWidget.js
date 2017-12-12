@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 
 // Widget to calculate if sample size is appropriate for measured results
@@ -41,7 +41,7 @@ class SampleSizeWidget {
     }
 
     recalculate(){
-        var fields = _.object(_.map(this.form.serializeArray(), function(d){
+        var fields = _.zipObject(_.map(this.form.serializeArray(), function(d){
                 return [d.name, parseFloat(d.value, 10)]; })),
             txt = 'Error in input fields.',
             power, ratio;

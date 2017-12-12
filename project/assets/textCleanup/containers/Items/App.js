@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
-import { fetchObjectsIfNeeded } from 'textCleanup/actions/Items';
+import { fetchObjects } from 'textCleanup/actions/Items';
 import ItemList from 'textCleanup/components/Items/ItemList';
 import Loading from 'shared/components/Loading';
 
-
 class Items extends Component {
-
     componentWillMount() {
-        this.props.dispatch(fetchObjectsIfNeeded());
+        this.props.dispatch(
+            fetchObjects({ routerParams: this.props.match.params })
+        );
     }
 
     render() {
-        if (_.isEmpty(this.props.items)) return <Loading />;
-        return <ItemList {...this.props}/>;
+        const { items, match } = this.props;
+        if (_.isEmpty(items)) return <Loading />;
+        return <ItemList items={items} params={match.params} />;
     }
 }
 

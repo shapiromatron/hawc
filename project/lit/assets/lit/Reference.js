@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 import Clipboard from 'clipboard';
 
 import Observee from 'utils/Observee';
@@ -88,7 +88,8 @@ class Reference extends Observee {
 
                 links.append(grp.append(link, copyID));
                 links.append('<span>&nbsp;</span>');
-            });
+            })
+            .value();
 
         _.chain(this.data.identifiers)
             .reject(function(v){return v.url.length > 0 || v.database === 'External link';})
@@ -101,7 +102,8 @@ class Reference extends Observee {
 
                 links.append(copyID);
                 links.append('<span>&nbsp;</span>');
-            });
+            })
+            .value();
 
         return (links.children().length>0) ? links : null;
     }

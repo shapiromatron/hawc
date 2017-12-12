@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import { selectMetric } from 'riskofbias/robScoreCleanup/actions/Metrics';
 
@@ -26,7 +26,7 @@ export class MetricSelect extends Component {
     }
 
     handleSelect(option=null){
-        let choice = _.findWhere(this.props.choices, {id: parseInt(option)});
+        let choice = _.find(this.props.choices, {id: parseInt(option)});
         this.props.dispatch(selectMetric(choice));
     }
 

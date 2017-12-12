@@ -1,5 +1,5 @@
 import $ from '$';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import TableFootnotes from 'utils/TableFootnotes';
 
@@ -34,7 +34,7 @@ class EndpointTable {
     hasValues(val){
         return _.chain(this.endpoint.data.groups)
                 .map(function(d){return d[val];})
-                .any($.isNumeric)
+                .some($.isNumeric)
                 .value();
     }
 

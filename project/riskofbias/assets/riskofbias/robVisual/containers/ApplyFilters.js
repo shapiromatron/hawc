@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import _ from 'underscore';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Filtering from 'riskofbias/robVisual/components/Filtering';
@@ -30,7 +30,7 @@ class ApplyFilters extends Component {
         if (this.hasNoErrors()) {
             let studyIds = _.chain(studies)
                     .filter((study) => { return study.final_score >= threshold; })
-                    .pluck('id')
+                    .map('id')
                     .value();
             dispatch(fetchEndpoints(studyIds));
         }
