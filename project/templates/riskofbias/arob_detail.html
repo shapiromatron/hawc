@@ -64,6 +64,8 @@
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Metric Changes</a></li>
             <li><a href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a></li>
+            <li class="disable"><a tabindex="-1" href="#">Metric Answer Changes</a></li>
+            <li><a href="{% url 'riskofbias:robm_answers_create' object.pk %}">New metric answer</a></li>
           </ul>
         </div>
       {% endif %}

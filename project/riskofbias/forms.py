@@ -80,6 +80,37 @@ class RoBMetricForm(forms.ModelForm):
         return helper
 
 
+class RoBMetricAnswersForm(forms.ModelForm):
+    class Meta:
+        model = models.RiskOfBiasMetricAnswers
+        fields = ('answer_choice', 'answer_symbol', 'answer_score', 'answer_shade', 'answer_order')
+        exclude = ('metric', )
+
+    def __init__(self, *args, **kwargs):
+        metric = kwargs.pop('parent', None)
+        super().__init__(*args, **kwargs)
+        if metric:
+            self.instance.metric = metric
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        inputs = {
+            'cancel_url': reverse('riskofbias:arob_update',
+                                  args=[self.instance.metric.pk])
+        }
+        if self.instance.id:
+            inputs['legend_text'] = 'Update risk of bias metric answers'
+            inputs['help_text'] = 'Update an existing metric answer.'
+        else:
+            inputs['legend_text'] = 'Create new risk of bias metric per answers'
+            inputs['help_text'] = 'Create a new risk of bias metric answer.'
+
+        helper = BaseFormHelper(self, **inputs)
+        helper['name'].wrap(cfl.Field, css_class='span12')
+        helper['description'].wrap(cfl.Field, css_class='html5text span12')
+        return helper
+
+
 class RoBScoreForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasScore

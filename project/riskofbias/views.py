@@ -228,7 +228,7 @@ class RoBMetricAnswersCreate(BaseCreate):
     parent_model = models.RiskOfBiasMetric
     parent_template_name = 'metric'
     model = models.RiskOfBiasMetricAnswers
-    #form_class = forms.RoBMetricForm
+    form_class = forms.RoBMetricAnswersForm
     success_message  = 'Risk of bias metric answers creates.'
 
     def get_success_url(self):
@@ -238,7 +238,7 @@ class RoBMetricAnswersCreate(BaseCreate):
 
 class RoBMetricAnswersUpdate(BaseUpdate):
     model = models.RiskOfBiasMetricAnswers
-    #form_class = forms.RoBMetricForm
+    form_class = forms.RoBMetricAnswersForm
     success_message = 'Risk of bias metric answers updated.'
 
     def get_success_url(self):
