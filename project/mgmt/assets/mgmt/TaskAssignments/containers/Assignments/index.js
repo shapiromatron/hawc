@@ -14,7 +14,7 @@ class Assignments extends Component {
         this.toggleFilter = this.toggleFilter.bind(this);
         this.state = {
             filterTasks: true,
-            taskFilter: task => {
+            taskFilter: (task) => {
                 return task.status !== 30 && task.status !== 40;
             },
         };
@@ -28,8 +28,8 @@ class Assignments extends Component {
     formatTasks() {
         return _.chain(this.props.tasks.list)
             .filter(this.state.taskFilter)
-            .filter(task => task.owner.id == this.props.config.user)
-            .groupBy(task => {
+            .filter((task) => task.owner.id == this.props.config.user)
+            .groupBy((task) => {
                 return task.study.assessment.name;
             })
             .value();
@@ -44,7 +44,7 @@ class Assignments extends Component {
         } else {
             this.setState({
                 filterTasks: true,
-                taskFilter: task => {
+                taskFilter: (task) => {
                     return task.status !== 30 && task.status !== 40;
                 },
             });

@@ -105,10 +105,10 @@ class StyleViewer extends D3Plot {
                 ])
                 .enter()
                 .append('svg:line')
-                .attr('x1', v => x(v.x1))
-                .attr('x2', v => x(v.x2))
-                .attr('y1', v => y(v.y1))
-                .attr('y2', v => y(v.y2))
+                .attr('x1', (v) => x(v.x1))
+                .attr('x2', (v) => x(v.x2))
+                .attr('y1', (v) => y(v.y1))
+                .attr('y2', (v) => y(v.y2))
                 .on('click', function() {
                     self._update_styles(self.style.settings, true);
                 });
@@ -153,7 +153,7 @@ class StyleViewer extends D3Plot {
                 .enter()
                 .append('path')
                 .attr('d', d3.svg.symbol())
-                .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`)
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                 .on('click', function() {
                     self._update_styles(self.style.settings, true);
                 });
@@ -237,10 +237,10 @@ class StyleViewer extends D3Plot {
             .data([{ min: 0.1, max: 1.9 }])
             .enter()
             .append('svg:rect')
-            .attr('x', d => x(d.min))
-            .attr('y', d => y(d.min))
-            .attr('width', d => x(d.max) - x(d.min))
-            .attr('height', d => y(d.max) - y(d.min));
+            .attr('x', (d) => x(d.min))
+            .attr('y', (d) => y(d.min))
+            .attr('width', (d) => x(d.max) - x(d.min))
+            .attr('height', (d) => y(d.max) - y(d.min));
     }
 
     add_legend_symbols() {
@@ -253,7 +253,7 @@ class StyleViewer extends D3Plot {
             .enter()
             .append('path')
             .attr('d', d3.svg.symbol())
-            .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`);
+            .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
     }
 
     _update_styles(style_settings, randomize_position) {
@@ -283,7 +283,7 @@ class StyleViewer extends D3Plot {
                 .data(d)
                 .transition()
                 .duration(1000)
-                .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`)
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                 .attr(
                     'd',
                     d3.svg
@@ -349,7 +349,7 @@ class StyleViewer extends D3Plot {
                 this.symbol
                     .transition()
                     .duration(1000)
-                    .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`)
+                    .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
                     .attr(
                         'd',
                         d3.svg

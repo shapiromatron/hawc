@@ -1,5 +1,5 @@
 const startup = function(cb) {
-    import('./index.js').then(epi => {
+    import('./index.js').then((epi) => {
         cb(epi.default);
     });
 };

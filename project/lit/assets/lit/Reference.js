@@ -187,11 +187,9 @@ class Reference extends Observee {
             get_searches = function() {
                 if (data.searches) {
                     let links = data.searches
-                            .map(d => `<a href="${d.url}">${d.title}</a>`)
+                            .map((d) => `<a href="${d.url}">${d.title}</a>`)
                             .join('<span>,&nbsp;</span>'),
-                        text = `<p><strong>HAWC searches/imports:</strong> ${
-                            links
-                        }</p>`;
+                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
 
                     return $('<div>').append(text);
                 }

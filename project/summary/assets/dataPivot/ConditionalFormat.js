@@ -67,7 +67,7 @@ class _DataPivot_settings_conditionalFormat {
 
         // draw conditions
         this.conditionals = [];
-        this.data.forEach(v => {
+        this.data.forEach((v) => {
             this.conditionals.push(
                 new _DataPivot_settings_conditional(body, this, v)
             );
@@ -90,7 +90,7 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     _save_conditions() {
-        this.data = this.conditionals.map(v => v.get_values());
+        this.data = this.conditionals.map((v) => v.get_values());
         this.parent.data_push();
     }
 

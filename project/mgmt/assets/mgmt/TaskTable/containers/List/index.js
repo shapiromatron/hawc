@@ -41,9 +41,9 @@ class ListApp extends Component {
 
     formatTasks() {
         const { tasks, studies } = this.props,
-            taskList = studies.visibleList.map(study => {
+            taskList = studies.visibleList.map((study) => {
                 let formattedTasks = tasks.list
-                    .filter(task => {
+                    .filter((task) => {
                         return task.study.id === study.id;
                     })
                     .sort((a, b) => a.type - b.type);
@@ -60,10 +60,10 @@ class ListApp extends Component {
     updateForm(e) {
         e.preventDefault();
         const updatedData = _.chain(this.refs.list.refs)
-            .map(ref => {
+            .map((ref) => {
                 return ref.getChangedData();
             })
-            .filter(data => {
+            .filter((data) => {
                 return !_.isEmpty(data);
             })
             .flattenDeep()

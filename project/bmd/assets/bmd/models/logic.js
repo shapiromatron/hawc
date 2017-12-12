@@ -22,7 +22,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
         return val !== undefined && _.isNumber(val) && val !== -999;
     },
     minNonZeroDose = function(groups) {
-        return d3.min(groups.filter(d => d.dose > 0).map(d => d.dose));
+        return d3.min(groups.filter((d) => d.dose > 0).map((d) => d.dose));
     },
     assertFieldExists = function(value, failure_bin, failure_text) {
         if (!validNumeric(value)) {
@@ -101,9 +101,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             } else {
                 return returnFailure(
                     logic.failure_bin,
-                    `Correct variance model is undetermined (p-value 2 = ${
-                        p_value2
-                    })`
+                    `Correct variance model is undetermined (p-value 2 = ${p_value2})`
                 );
             }
         },
@@ -311,13 +309,13 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
 let apply_logic = function(logics, models, endpoint, doseUnits) {
     let doses = endpoint._get_doses_by_dose_id(doseUnits),
         groups = _.chain(endpoint.data.groups)
-            .map(d => deepCopy(d))
+            .map((d) => deepCopy(d))
             .each((d, i) => (d.dose = doses[i]))
             .value();
 
     // get function associated with each test
     logics = _.chain(logics)
-        .filter(d => {
+        .filter((d) => {
             // filter by data-type
             switch (endpoint.data.data_type) {
                 case types.CONTINUOUS:
@@ -330,13 +328,13 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
                     throw 'Unknown data type';
             }
         })
-        .each(d => {
+        .each((d) => {
             d.func = testCrosswalk[d.name];
         })
         .value();
 
     // apply unit-tests to each model
-    models.forEach(model => {
+    models.forEach((model) => {
         // set global recommendations
         model.recommended = false;
         model.recommended_variable = '';
@@ -350,7 +348,7 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
         };
 
         // apply tests for each model
-        logics.forEach(logic => {
+        logics.forEach((logic) => {
             let res = logic.func(logic, model, groups);
             if (res && res.bin) {
                 model.logic_bin = Math.max(res.bin, model.logic_bin);
@@ -367,23 +365,23 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
         .uniq()
         .value();
 
-    bmr_ids.forEach(bmr_id => {
+    bmr_ids.forEach((bmr_id) => {
         let subset = _.filter(models, { bmr_id, logic_bin: 0 }),
             bmdls = _.chain(subset)
-                .map(d => d.output.BMDL)
-                .filter(d => _.isNumber(d) && d > 0)
+                .map((d) => d.output.BMDL)
+                .filter((d) => _.isNumber(d) && d > 0)
                 .value(),
             aics = _.chain(subset)
-                .map(d => d.output.AIC)
-                .filter(d => _.isNumber(d) && d > 0)
+                .map((d) => d.output.AIC)
+                .filter((d) => _.isNumber(d) && d > 0)
                 .value(),
             ratio = d3.max(bmdls) / d3.min(bmdls);
 
         if (ratio <= SUFFICIENTLY_CLOSE_BMDL) {
             let targetValue = d3.min(aics);
             _.chain(subset)
-                .filter(d => d.output.AIC === targetValue)
-                .each(d => {
+                .filter((d) => d.output.AIC === targetValue)
+                .each((d) => {
                     d.recommended = true;
                     d.recommended_variable = 'AIC';
                 })
@@ -391,8 +389,8 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
         } else {
             let targetValue = d3.min(bmdls);
             _.chain(subset)
-                .filter(d => d.output.BMDL === targetValue)
-                .each(d => {
+                .filter((d) => d.output.BMDL === targetValue)
+                .each((d) => {
                     d.recommended = true;
                     d.recommended_variable = 'BMDL';
                 })

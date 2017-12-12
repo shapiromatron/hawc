@@ -51,7 +51,7 @@ class Endpoint extends Observee {
     }
 
     static displayInline(id, setTitle, setBody) {
-        Endpoint.get_object(id, obj => {
+        Endpoint.get_object(id, (obj) => {
             let title = $('<h4>').html(obj.build_breadcrumbs()),
                 plot_div = $('<div style="height:350px; width:350px">'),
                 tbl = obj.build_endpoint_table(
@@ -71,7 +71,7 @@ class Endpoint extends Observee {
         if (!this.data.animal_group) return; // added for edit_endpoint prototype extension
         this.doses = d3
             .nest()
-            .key(d => d.dose_units.id)
+            .key((d) => d.dose_units.id)
             .entries(this.data.animal_group.dosing_regime.doses);
 
         this.doses.forEach(function(v) {
@@ -245,9 +245,8 @@ class Endpoint extends Observee {
                 `<th style="width: ${percents}%" rowspan="2">Obs. time</th>`
             )
             .append(
-                `<th style="width: ${percents * nGroups}%" colspan="${
-                    nGroups
-                }">${txt}</th>`
+                `<th style="width: ${percents *
+                    nGroups}%" colspan="${nGroups}">${txt}</th>`
             );
 
         // now build header row showing available doses

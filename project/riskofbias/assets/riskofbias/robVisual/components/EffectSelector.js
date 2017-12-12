@@ -20,7 +20,7 @@ class EffectSelector extends Component {
             <div className="robEffectSelect">
                 <label className="control-label">Effects to include</label>
                 <select multiple="true" size="8" onChange={this.handleChange}>
-                    {_.map(effects, effect => {
+                    {_.map(effects, (effect) => {
                         return (
                             <option key={effect} value={effect}>
                                 {effect}

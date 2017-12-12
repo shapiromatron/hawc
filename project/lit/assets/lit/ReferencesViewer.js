@@ -95,7 +95,7 @@ class ReferencesViewer {
         let content =
             this.refs.length === 0
                 ? '<p>No references found.</p>'
-                : this.refs.map(d => d.print_div_row());
+                : this.refs.map((d) => d.print_div_row());
 
         this.$table_div.html(content);
     }

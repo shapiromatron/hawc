@@ -83,10 +83,10 @@ function items(state = defaultState, action) {
                 action.selectedScores.length === 0
                     ? _.map(state.items, 'id')
                     : state.items
-                          .filter(d =>
+                          .filter((d) =>
                               _.includes(action.selectedScores, d.score)
                           )
-                          .map(d => d.id);
+                          .map((d) => d.id);
 
             // visibleItems: selectedStudyTypes
             list2 =
@@ -95,18 +95,18 @@ function items(state = defaultState, action) {
                     ? _.map(state.items, 'id')
                     : state.items
                           .filter(
-                              d =>
+                              (d) =>
                                   _.intersection(
                                       action.selectedStudyTypes,
                                       d.study_types
                                   ).length !== 0
                           )
-                          .map(d => d.id);
+                          .map((d) => d.id);
 
             intersection = _.intersection(list, list2);
 
             // updateIds
-            list3 = state.updateIds.filter(d => _.includes(intersection, d));
+            list3 = state.updateIds.filter((d) => _.includes(intersection, d));
 
             return Object.assign({}, state, {
                 visibleItemIds: intersection,
@@ -133,7 +133,7 @@ function items(state = defaultState, action) {
                 patch = _.omit(action.patch, 'ids'),
                 items = state.items;
 
-            _.map(ids, id => {
+            _.map(ids, (id) => {
                 let index = state.items.indexOf(_.find(state.items, { id }));
                 if (index >= 0) {
                     items = [

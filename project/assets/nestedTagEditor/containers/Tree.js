@@ -91,7 +91,7 @@ class Tree extends React.Component {
         this.props.dispatch(moveTag(nodeId, oldIndex, newIndex));
     }
 
-    sortableGroupDecorator = componentBackingInstance => {
+    sortableGroupDecorator = (componentBackingInstance) => {
         // check if backing instance not null
         if (!componentBackingInstance) {
             return;
@@ -101,7 +101,7 @@ class Tree extends React.Component {
             ghostClass: 'draggable-ghost',
             chosenClass: 'draggable-chosen',
             animation: 200,
-            onUpdate: e => {
+            onUpdate: (e) => {
                 this.handleMoveNode(
                     parseInt(e.item.dataset.id),
                     e.oldIndex,

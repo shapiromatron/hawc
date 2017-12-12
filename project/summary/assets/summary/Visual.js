@@ -45,7 +45,7 @@ class Visual {
     }
 
     static displayInline(id, setTitle, setBody) {
-        Visual.get_object(id, obj => {
+        Visual.get_object(id, (obj) => {
             var title = $('<h4>').html(obj.object_hyperlink()),
                 content = $('<div>');
 

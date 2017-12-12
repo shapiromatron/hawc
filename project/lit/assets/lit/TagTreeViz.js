@@ -151,7 +151,10 @@ class TagTreeViz extends D3Plot {
                 .enter()
                 .append('svg:g')
                 .attr('class', 'tagnode')
-                .attr('transform', d => `translate(${source.y0},${source.x0})`)
+                .attr(
+                    'transform',
+                    (d) => `translate(${source.y0},${source.x0})`
+                )
                 .on('click', function(d) {
                     if (d3.event.ctrlKey || d3.event.metaKey) {
                         if (d.depth == 0) {
@@ -200,7 +203,7 @@ class TagTreeViz extends D3Plot {
             var nodeUpdate = node
                 .transition()
                 .duration(duration)
-                .attr('transform', d => `translate(${d.y},${d.x})`);
+                .attr('transform', (d) => `translate(${d.y},${d.x})`);
 
             nodeUpdate
                 .select('circle')
@@ -218,7 +221,7 @@ class TagTreeViz extends D3Plot {
                 .exit()
                 .transition()
                 .duration(duration)
-                .attr('transform', d => `translate(${source.y},${source.x})`)
+                .attr('transform', (d) => `translate(${source.y},${source.x})`)
                 .remove();
 
             nodeExit.select('circle').attr('r', 1e-6);

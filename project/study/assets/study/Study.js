@@ -39,7 +39,7 @@ class Study {
     }
 
     static displayInline(id, setTitle, setBody) {
-        Study.get_object(id, obj => {
+        Study.get_object(id, (obj) => {
             var title = $(
                     '<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())
                 ),

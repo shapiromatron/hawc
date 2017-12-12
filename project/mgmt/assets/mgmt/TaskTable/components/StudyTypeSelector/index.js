@@ -15,8 +15,8 @@ class StudyTypeSelector extends Component {
 
     handleChange({ target: { options } }) {
         let values = [...options]
-            .filter(option => option.selected)
-            .map(option => option.value);
+            .filter((option) => option.selected)
+            .map((option) => option.value);
         this.props.handleChange(values);
     }
 

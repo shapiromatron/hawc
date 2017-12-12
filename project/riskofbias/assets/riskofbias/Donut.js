@@ -148,7 +148,7 @@ class Donut extends D3Plot {
             .enter()
             .append('text')
             .attr('class', 'centeredLabel domain_arc')
-            .attr('transform', d => `translate(${domain_arc.centroid(d)})`)
+            .attr('transform', (d) => `translate(${domain_arc.centroid(d)})`)
             .attr('text-anchor', 'middle')
             .text(function(d) {
                 return d.data.domain;
@@ -179,7 +179,7 @@ class Donut extends D3Plot {
             .style('fill', function(d) {
                 return d.data.score_text_color;
             })
-            .attr('transform', d => `translate(${details_arc.centroid(d)})`)
+            .attr('transform', (d) => `translate(${details_arc.centroid(d)})`)
             .attr('text-anchor', 'middle')
             .text(function(d) {
                 return d.data.score_text;
@@ -276,7 +276,7 @@ class Donut extends D3Plot {
         this.domain_domain_labels
             .transition()
             .duration('500')
-            .attr('transform', d => `translate(${domain_arc.centroid(d)})`);
+            .attr('transform', (d) => `translate(${domain_arc.centroid(d)})`);
 
         this.domain_score_labels
             .transition()

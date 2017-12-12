@@ -81,9 +81,9 @@ export function fetchModel(routerParams) {
             }),
             h.fetchGet
         )
-            .then(response => response.json())
-            .then(json => dispatch(receiveModel(json)))
-            .catch(ex => console.error('Item parsing failed', ex));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveModel(json)))
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -102,17 +102,17 @@ export function fetchObjects({ ids = null, routerParams = {} }) {
             }),
             h.fetchGet
         )
-            .then(response => response.json())
-            .then(json => {
+            .then((response) => response.json())
+            .then((json) => {
                 if (ids === null) {
                     dispatch(receiveObjects(json));
                 } else {
-                    _.map(json, item => {
+                    _.map(json, (item) => {
                         dispatch(receiveObject(item));
                     });
                 }
             })
-            .catch(ex => console.error('Item parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -123,7 +123,7 @@ export function patchBulkList(patchObject, routerParams) {
             patch = { [field]: patchObject[field] },
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
         return fetch(h.getItemApiURL({ state, routerParams, ids }), opts)
-            .then(response => {
+            .then((response) => {
                 patchObject = _.omit(patchObject, 'stale');
                 dispatch(resetEditObject(stale));
                 dispatch(setEdititableObject(patchObject));
@@ -132,10 +132,10 @@ export function patchBulkList(patchObject, routerParams) {
                 } else {
                     response
                         .json()
-                        .then(json => dispatch(receiveEditErrors(json)));
+                        .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch(ex => console.error('Item parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 
@@ -146,7 +146,7 @@ export function patchDetailList(patchObject, routerParams) {
             patch = { [field]: patchObject[field] },
             opts = h.fetchBulk(state.config.csrf, patch, 'PATCH');
         return fetch(h.getItemApiURL({ state, routerParams, ids }), opts)
-            .then(response => {
+            .then((response) => {
                 patchObject = _.omit(patchObject, 'stale');
                 dispatch(removeEditObjectIds(stale, ids));
                 dispatch(setEdititableObject(patchObject));
@@ -155,10 +155,10 @@ export function patchDetailList(patchObject, routerParams) {
                 } else {
                     response
                         .json()
-                        .then(json => dispatch(receiveEditErrors(json)));
+                        .then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
-            .catch(ex => console.error('Item parsing failed', ex));
+            .catch((ex) => console.error('Item parsing failed', ex));
     };
 }
 

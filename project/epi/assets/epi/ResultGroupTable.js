@@ -63,7 +63,7 @@ class ResultGroupTable {
                 .value(),
             sum = d3.sum(cols);
 
-        return _.map(cols, d => Math.round(d / sum * 100));
+        return _.map(cols, (d) => Math.round(d / sum * 100));
     }
 
     getTblHeader() {
@@ -95,9 +95,7 @@ class ResultGroupTable {
                         .some()
                         .value()
                         ? fn.add_footnote(
-                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${
-                                  docUrlRoot
-                              }reference.html#statistical-methods-used">source</a>).`
+                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${docUrlRoot}reference.html#statistical-methods-used">source</a>).`
                           )
                         : '';
 

@@ -12,7 +12,7 @@ class StatusSelection extends Component {
     }
 
     getStatusChoices() {
-        return Object.keys(STATUS).map(status => {
+        return Object.keys(STATUS).map((status) => {
             return { value: status, display: STATUS[status].type };
         });
     }

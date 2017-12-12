@@ -22,7 +22,7 @@ class OutcomeListTable {
             ];
         table.setColGroup([12, 25, 16, 17, 10, 13]);
         table.addHeaderRow(headers);
-        this.outcomes.map(outcome => {
+        this.outcomes.map((outcome) => {
             table.addRow(outcome.buildListRow());
         });
         return table.getTbl();

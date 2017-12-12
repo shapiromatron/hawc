@@ -19,7 +19,7 @@ export class MetricSelect extends Component {
     }
 
     formatMetricChoices() {
-        return _.map(this.props.choices, choice => {
+        return _.map(this.props.choices, (choice) => {
             return { id: choice.id, value: choice.name };
         });
     }

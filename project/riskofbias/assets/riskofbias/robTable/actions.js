@@ -42,10 +42,10 @@ function formatOutgoingRiskOfBias(state, riskofbias) {
         author,
         final,
         scores = _.flattenDeep(
-            _.map(state.study.riskofbiases, domain => {
-                return _.map(domain.values, metric => {
+            _.map(state.study.riskofbiases, (domain) => {
+                return _.map(domain.values, (metric) => {
                     return _.omit(
-                        _.find(metric.values, score => {
+                        _.find(metric.values, (score) => {
                             if (score.riskofbias_id == riskofbias_id) {
                                 author = author || score.author;
                                 final = final || score.final;
@@ -78,12 +78,12 @@ function formatOutgoingRiskOfBias(state, riskofbias) {
 }
 
 function formatIncomingStudy(study) {
-    let dirtyRoBs = _.filter(study.riskofbiases, rob => {
+    let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {
             return rob.active === true;
         }),
         domains = _.flattenDeep(
-            _.map(dirtyRoBs, riskofbias => {
-                return _.map(riskofbias.scores, score => {
+            _.map(dirtyRoBs, (riskofbias) => {
+                return _.map(riskofbias.scores, (score) => {
                     return Object.assign({}, score, {
                         riskofbias_id: riskofbias.id,
                         author: riskofbias.author,
@@ -96,10 +96,10 @@ function formatIncomingStudy(study) {
         ),
         riskofbiases = d3
             .nest()
-            .key(d => {
+            .key((d) => {
                 return d.metric.domain.name;
             })
-            .key(d => {
+            .key((d) => {
                 return d.metric.name;
             })
             .entries(domains),
@@ -125,10 +125,10 @@ export function fetchFullStudyIfNeeded() {
             ),
             h.fetchGet
         )
-            .then(response => response.json())
-            .then(json => formatIncomingStudy(json))
-            .then(json => dispatch(receiveStudy(json)))
-            .catch(ex => dispatch(setError(ex)));
+            .then((response) => response.json())
+            .then((json) => formatIncomingStudy(json))
+            .then((json) => dispatch(receiveStudy(json)))
+            .catch((ex) => dispatch(setError(ex)));
     };
 }
 
@@ -147,10 +147,10 @@ export function submitRiskOfBiasScores(scores) {
             )}`,
             opts
         )
-            .then(response => response.json())
-            .then(json => dispatch(updateFinalScores(json.scores)))
+            .then((response) => response.json())
+            .then((json) => dispatch(updateFinalScores(json.scores)))
             .then(() => (window.location.href = state.config.cancelUrl))
-            .catch(ex => dispatch(setError(ex)));
+            .catch((ex) => dispatch(setError(ex)));
     };
 }
 export function selectActive({ domain, metric }) {

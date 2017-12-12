@@ -11,14 +11,14 @@ var addDepth = function(node, depth) {
         node.data.depth = depth;
 
         if (node.children) {
-            node.children.forEach(d => addDepth(d, depth + 1));
+            node.children.forEach((d) => addDepth(d, depth + 1));
         }
     },
     getOptions = function(nodes) {
         let opts = [],
             addOption = function(node) {
                 let indentedName =
-                    _.times(node.data.depth, d => ' _ ').join('') +
+                    _.times(node.data.depth, (d) => ' _ ').join('') +
                     node.data.name;
                 opts.push([node.id, indentedName]);
                 if (node.children) {
@@ -32,7 +32,7 @@ var addDepth = function(node, depth) {
     },
     receiveTags = function(allTags) {
         let tags = allTags[0].children || [];
-        tags.forEach(d => addDepth(d, 0));
+        tags.forEach((d) => addDepth(d, 0));
         return {
             type: types.RECEIVE_TAGLIST,
             tags,
@@ -44,9 +44,9 @@ var addDepth = function(node, depth) {
             const url = getState().config.list_url;
 
             return fetch(url, h.fetchGet)
-                .then(response => response.json())
-                .then(json => dispatch(receiveTags(json)))
-                .catch(ex => console.error('Tag parsing failed', ex));
+                .then((response) => response.json())
+                .then((json) => dispatch(receiveTags(json)))
+                .catch((ex) => console.error('Tag parsing failed', ex));
         };
     },
     createTag = function(newNode) {
@@ -61,12 +61,12 @@ var addDepth = function(node, depth) {
                 };
 
             return fetch(url, h.fetchPost(csrf, obj, 'POST'))
-                .then(response => {
+                .then((response) => {
                     if (response.ok) {
                         return dispatch(getTags());
                     }
                 })
-                .catch(ex => console.error('Tag patch failed', ex));
+                .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
     updateTag = function(id, newNode) {
@@ -80,9 +80,9 @@ var addDepth = function(node, depth) {
                 };
 
             return fetch(url, h.fetchPost(csrf, obj, 'PATCH'))
-                .then(response => response.json())
-                .then(json => dispatch(getTags()))
-                .catch(ex => console.error('Tag patch failed', ex));
+                .then((response) => response.json())
+                .then((json) => dispatch(getTags()))
+                .catch((ex) => console.error('Tag patch failed', ex));
         };
     },
     deleteTag = function(id) {
@@ -92,12 +92,12 @@ var addDepth = function(node, depth) {
                 csrf = state.config.csrf;
 
             return fetch(url, h.fetchDelete(csrf))
-                .then(response => {
+                .then((response) => {
                     if (response.ok) {
                         return dispatch(getTags());
                     }
                 })
-                .catch(ex => console.error('Tag delete failed', ex));
+                .catch((ex) => console.error('Tag delete failed', ex));
         };
     },
     moveTag = function(nodeId, oldIndex, newIndex) {
@@ -111,9 +111,9 @@ var addDepth = function(node, depth) {
                 };
 
             return fetch(url, h.fetchPost(csrf, obj, 'PATCH'))
-                .then(response => response.json())
-                .then(json => dispatch(getTags()))
-                .catch(ex => console.error('Tag patch failed', ex));
+                .then((response) => response.json())
+                .then((json) => dispatch(getTags()))
+                .catch((ex) => console.error('Tag patch failed', ex));
         };
     };
 

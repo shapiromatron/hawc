@@ -36,9 +36,9 @@ export function fetchTasks() {
             state.config.assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveTasks(json)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveTasks(json)))
+            .catch((error) => dispatch(setError(error)));
     };
 }
 
@@ -52,11 +52,11 @@ export function submitTaskEdit(task) {
                 task.id
             ),
             opts = h.fetchPost(csrf, task, 'PATCH');
-        return fetch(url, opts).then(response => {
+        return fetch(url, opts).then((response) => {
             if (response.ok) {
-                response.json().then(json => dispatch(patchTask(json)));
+                response.json().then((json) => dispatch(patchTask(json)));
             } else {
-                response.json().then(json => dispatch(setError(json)));
+                response.json().then((json) => dispatch(setError(json)));
             }
         });
     };
@@ -68,7 +68,7 @@ export function submitTasks(tasks) {
         let state = getState();
         if (state.tasks.isSubmitting) return;
         Promise.all(
-            tasks.map(task => {
+            tasks.map((task) => {
                 return dispatch(submitTaskEdit(task));
             })
         ).then(() => (window.location.href = state.config.cancelUrl));
@@ -117,8 +117,8 @@ export function fetchStudies() {
         let { host, studies } = state.config;
         const url = h.getListUrl(host, studies.url);
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveStudies(json)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveStudies(json)))
+            .catch((error) => dispatch(setError(error)));
     };
 }

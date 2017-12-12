@@ -13,7 +13,7 @@ class ScoreList extends Component {
         return (
             <div>
                 <h4>RoB responses which meet criteria specified above:</h4>
-                {_.map(items, item => {
+                {_.map(items, (item) => {
                     item = item.author
                         ? item
                         : Object.assign({}, item, {

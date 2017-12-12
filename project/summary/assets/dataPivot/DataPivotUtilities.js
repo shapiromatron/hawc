@@ -1091,7 +1091,7 @@ class _DataPivot_settings_barchart {
 }
 
 let buildHeaderTr = function(lst) {
-    return $('<tr>').html(lst.map(v => `<th>${v}</th>`).join());
+    return $('<tr>').html(lst.map((v) => `<th>${v}</th>`).join());
 };
 
 export { _DataPivot_settings_refline };

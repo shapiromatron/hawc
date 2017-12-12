@@ -16,7 +16,7 @@ describe('textCleanup Endpoint actions', () => {
             nock.cleanAll();
         });
 
-        it('should load the endpoint model', done => {
+        it('should load the endpoint model', (done) => {
             nock(HOST)
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
                 .reply(200, {
@@ -63,7 +63,7 @@ describe('textCleanup Endpoint actions', () => {
             store.dispatch(endpointActions.fetchModelIfNeeded());
         });
 
-        it('should load endpoint items', done => {
+        it('should load endpoint items', (done) => {
             nock(HOST)
                 .get('/ani/api/cleanup/?assessment_id=57')
                 .reply(200, [
@@ -120,7 +120,7 @@ describe('textCleanup Endpoint actions', () => {
             store.dispatch(endpointActions.fetchObjectsIfNeeded());
         });
 
-        it('should bulk patch multiple objects', done => {
+        it('should bulk patch multiple objects', (done) => {
             nock(HOST)
                 .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
                 .reply(200, {})
@@ -199,7 +199,7 @@ describe('textCleanup Endpoint actions', () => {
             store.dispatch(endpointActions.patchBulkList(patchList));
         });
 
-        it('should detail patch multiple objects', done => {
+        it('should detail patch multiple objects', (done) => {
             nock(HOST)
                 .patch('/ani/api/cleanup/?assessment_id=57&ids=10210,10212')
                 .reply(204, {})

@@ -130,10 +130,10 @@ class DataPivotLegend {
                     ])
                     .enter()
                     .append('svg:rect')
-                    .attr('x', d => d.x)
-                    .attr('y', d => d.y)
-                    .attr('width', d => d.width)
-                    .attr('height', d => d.height)
+                    .attr('x', (d) => d.x)
+                    .attr('y', (d) => d.y)
+                    .attr('width', (d) => d.width)
+                    .attr('height', (d) => d.height)
                     .each(apply_styles);
             }
 
@@ -205,7 +205,7 @@ class DataPivotLegend {
                             .size(style.size)
                             .type(style.type)
                     )
-                    .attr('transform', d => `translate(${d.x},${d.y})`)
+                    .attr('transform', (d) => `translate(${d.x},${d.y})`)
                     .each(apply_styles);
             }
 

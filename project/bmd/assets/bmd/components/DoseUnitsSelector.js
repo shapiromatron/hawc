@@ -32,7 +32,7 @@ class DoseUnitsSelector extends React.Component {
                         value={this.props.doseUnits}
                         onChange={this.handleUnitsChange.bind(this)}
                     >
-                        {units.map(d => {
+                        {units.map((d) => {
                             return (
                                 <option key={d.id} value={d.id}>
                                     {d.name}

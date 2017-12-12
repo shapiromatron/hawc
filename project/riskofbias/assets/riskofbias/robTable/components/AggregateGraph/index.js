@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 import DomainCell from 'riskofbias/robTable/components/DomainCell';
 import './AggregateGraph.css';
 
-const AggregateGraph = props => {
+const AggregateGraph = (props) => {
     return (
         <div className="aggregate-graph">
             <div className="aggregate-flex">
-                {_.map(props.domains, domain => {
+                {_.map(props.domains, (domain) => {
                     return (
                         <DomainCell
                             key={domain.key}

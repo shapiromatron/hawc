@@ -43,7 +43,7 @@ class StudySortSelector extends Component {
                             Sort studies by:
                         </label>
                         <form id="study_sorting-field">
-                            {fieldOptions.map(field => {
+                            {fieldOptions.map((field) => {
                                 return (
                                     <label key={field} htmlFor={field}>
                                         <input
@@ -71,7 +71,7 @@ class StudySortSelector extends Component {
                             Order studies by:
                         </label>
                         <form id="study_sorting-order">
-                            {orderOptions.map(order => {
+                            {orderOptions.map((order) => {
                                 return (
                                     <label key={order} htmlFor={order}>
                                         <input

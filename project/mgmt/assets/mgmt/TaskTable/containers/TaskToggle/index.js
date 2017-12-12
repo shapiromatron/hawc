@@ -46,7 +46,7 @@ class TaskToggle extends Component {
                     className="fa fa-times edit-icon"
                     aria-hidden="true"
                 />
-                <TaskForm ref={c => (this.form = c)} {...this.props} />
+                <TaskForm ref={(c) => (this.form = c)} {...this.props} />
                 <button className="btn btn-primary" onClick={this.handleSubmit}>
                     Submit
                 </button>

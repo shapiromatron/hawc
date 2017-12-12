@@ -241,7 +241,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         // build rows
         data.forEach(function(v) {
             let obj = get_matched_override_or_default(v._dp_pk),
-                descs = descriptions.map(v2 => v[v2.field_name]).join('<br>'),
+                descs = descriptions.map((v2) => v[v2.field_name]).join('<br>'),
                 include = $('<input name="ov_include" type="checkbox">').prop(
                     'checked',
                     obj.include

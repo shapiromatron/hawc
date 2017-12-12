@@ -13,10 +13,10 @@ class TaskStudyEdit extends Component {
 
     getChangedData() {
         return _.chain(this.refs)
-            .filter(ref => {
+            .filter((ref) => {
                 return ref.formDidChange();
             })
-            .map(ref => {
+            .map((ref) => {
                 return ref.state;
             })
             .value();

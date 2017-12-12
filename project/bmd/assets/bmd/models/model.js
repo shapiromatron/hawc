@@ -100,9 +100,9 @@ class BMDLine {
             stroke: this.color,
             getData(xs) {
                 return _.chain(xs)
-                    .filter(d => d >= 0)
-                    .map(d => (d === 0 ? 1e-8 : d))
-                    .map(x => {
+                    .filter((d) => d >= 0)
+                    .map((d) => (d === 0 ? 1e-8 : d))
+                    .map((x) => {
                         return {
                             x,
                             y: eval(model),

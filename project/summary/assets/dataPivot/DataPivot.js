@@ -62,7 +62,7 @@ class DataPivot {
     }
 
     static displayInline(id, setTitle, setBody) {
-        DataPivot.get_object(id, obj => {
+        DataPivot.get_object(id, (obj) => {
             var title = $('<h4>').html(obj.object_hyperlink()),
                 content = $('<div>');
 
@@ -262,7 +262,7 @@ class DataPivot {
     }
 
     triggerOnRenderedCallbacks() {
-        this.onRendered.forEach(cb => cb());
+        this.onRendered.forEach((cb) => cb());
     }
 
     build_settings() {

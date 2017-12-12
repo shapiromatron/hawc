@@ -94,7 +94,7 @@ class DataPivotVisualization extends D3Plot {
                 _.map(overrides, 'index')
             ),
             sorted = DataPivotVisualization.sorter(arr, sorts);
-        sorted = _.sortBy(sorted, d => override_map[d._dp_pk]);
+        sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
         return sorted;
     }
 
@@ -742,7 +742,7 @@ class DataPivotVisualization extends D3Plot {
 
         return d3.extent(
             _.chain(this.datarows)
-                .map(d => _.map(fields, f => d[f]))
+                .map((d) => _.map(fields, (f) => d[f]))
                 .flattenDeep()
                 .map(parseFloat)
                 .value()
@@ -859,10 +859,10 @@ class DataPivotVisualization extends D3Plot {
             .data(this.bg_rectangles_data)
             .enter()
             .append('rect')
-            .attr('x', d => d.x)
-            .attr('y', d => d.y)
-            .attr('height', d => d.h)
-            .attr('width', d => d.w)
+            .attr('x', (d) => d.x)
+            .attr('y', (d) => d.y)
+            .attr('height', (d) => d.h)
+            .attr('width', (d) => d.w)
             .style(
                 'fill',
                 this.dp_settings.plot_settings.text_background_color
@@ -883,8 +883,8 @@ class DataPivotVisualization extends D3Plot {
             .append('svg:line')
             .attr('x1', x.range()[0])
             .attr('x2', x.range()[1])
-            .attr('y1', d => d)
-            .attr('y2', d => d)
+            .attr('y1', (d) => d)
+            .attr('y2', (d) => d)
             .attr('class', 'primary_gridlines y_gridlines');
     }
 
@@ -898,10 +898,10 @@ class DataPivotVisualization extends D3Plot {
             .data(this.settings.reference_rectangles)
             .enter()
             .append('rect')
-            .attr('x', d => x(d.x1))
+            .attr('x', (d) => x(d.x1))
             .attr('height', this.h)
             .attr('y', 0)
-            .attr('width', d => x(d.x2) - x(d.x1))
+            .attr('width', (d) => x(d.x2) - x(d.x1))
             .each(this.apply_styles);
 
         // draw reference lines
@@ -911,8 +911,8 @@ class DataPivotVisualization extends D3Plot {
             .data(this.settings.reference_lines)
             .enter()
             .append('svg:line')
-            .attr('x1', v => x(v.x1))
-            .attr('x2', v => x(v.x2))
+            .attr('x1', (v) => x(v.x1))
+            .attr('x2', (v) => x(v.x2))
             .attr('y1', 0)
             .attr('y2', this.h)
             .each(this.apply_styles);
@@ -926,8 +926,8 @@ class DataPivotVisualization extends D3Plot {
             .append('svg:line')
             .attr('x1', -this.text_width - this.padding.left)
             .attr('x2', this.w)
-            .attr('y1', d => this.row_heights[d.index].max)
-            .attr('y2', d => this.row_heights[d.index].max)
+            .attr('y1', (d) => this.row_heights[d.index].max)
+            .attr('y2', (d) => this.row_heights[d.index].max)
             .each(this.apply_line_styles);
     }
 
@@ -947,7 +947,7 @@ class DataPivotVisualization extends D3Plot {
                 }
             },
             barHeight =
-                d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
+                d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding;
 
         bars_g
@@ -955,14 +955,14 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append('svg:rect')
-            .attr('x', d => x(Math.min(barXStart, d[barchart.field_name])))
-            .attr('y', d => this.row_heights[d._dp_index].min + barPadding)
-            .attr('width', d =>
+            .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
+            .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
+            .attr('width', (d) =>
                 Math.abs(x(barXStart) - x(d[barchart.field_name]))
             )
             .attr('height', barHeight)
-            .style('cursor', d => (barchart._dpe_key ? 'pointer' : 'auto'))
-            .on('click', d => {
+            .style('cursor', (d) => (barchart._dpe_key ? 'pointer' : 'auto'))
+            .on('click', (d) => {
                 if (barchart._dpe_key) {
                     this.dpe.render_plottip(barchart, d);
                 }
@@ -981,10 +981,10 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append('svg:line')
-            .attr('x1', d => x(d[barchart.error_low_field_name]))
-            .attr('x2', d => x(d[barchart.error_high_field_name]))
-            .attr('y1', d => this.row_heights[d._dp_index].min + lineMidpoint)
-            .attr('y2', d => this.row_heights[d._dp_index].min + lineMidpoint)
+            .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_high_field_name]))
+            .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
+            .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint)
             .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         // show error-bar tails or exit early
@@ -996,18 +996,18 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append('svg:line')
-            .attr('x1', d => x(d[barchart.error_low_field_name]))
-            .attr('x2', d => x(d[barchart.error_low_field_name]))
+            .attr('x1', (d) => x(d[barchart.error_low_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_low_field_name]))
             .attr(
                 'y1',
-                d =>
+                (d) =>
                     this.row_heights[d._dp_index].min +
                     lineMidpoint -
                     barPadding
             )
             .attr(
                 'y2',
-                d =>
+                (d) =>
                     this.row_heights[d._dp_index].min +
                     lineMidpoint +
                     barPadding
@@ -1019,18 +1019,18 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append('svg:line')
-            .attr('x1', d => x(d[barchart.error_high_field_name]))
-            .attr('x2', d => x(d[barchart.error_high_field_name]))
+            .attr('x1', (d) => x(d[barchart.error_high_field_name]))
+            .attr('x2', (d) => x(d[barchart.error_high_field_name]))
             .attr(
                 'y1',
-                d =>
+                (d) =>
                     this.row_heights[d._dp_index].min +
                     lineMidpoint -
                     barPadding
             )
             .attr(
                 'y2',
-                d =>
+                (d) =>
                     this.row_heights[d._dp_index].min +
                     lineMidpoint +
                     barPadding
@@ -1051,7 +1051,7 @@ class DataPivotVisualization extends D3Plot {
         // is greater than 0
         let bar_half_height = 5,
             bar_rows = datarows.filter(
-                d => d[bars.high_field_name] - d[bars.low_field_name] > 0
+                (d) => d[bars.high_field_name] - d[bars.low_field_name] > 0
             ),
             g_bars = this.vis.append('g');
 
@@ -1115,7 +1115,7 @@ class DataPivotVisualization extends D3Plot {
         // add points
         this.g_dose_points = this.vis.append('g');
         datapoints.forEach((datum, i) => {
-            let numeric = datarows.filter(d => d[datum.field_name] !== '');
+            let numeric = datarows.filter((d) => d[datum.field_name] !== '');
 
             this.g_dose_points
                 .selectAll()
@@ -1135,7 +1135,7 @@ class DataPivotVisualization extends D3Plot {
                 )
                 .attr(
                     'transform',
-                    d =>
+                    (d) =>
                         `translate(${x(d[datum.field_name])},${
                             this.row_heights[d._dp_index].mid
                         })`
@@ -1146,7 +1146,7 @@ class DataPivotVisualization extends D3Plot {
                         obj.style(property, d._styles['points_' + i][property]);
                     }
                 })
-                .style('cursor', d => (datum._dpe_key ? 'pointer' : 'auto'))
+                .style('cursor', (d) => (datum._dpe_key ? 'pointer' : 'auto'))
                 .on('click', function(d) {
                     if (datum._dpe_key) {
                         self.dpe.render_plottip(datum, d);
@@ -1185,9 +1185,9 @@ class DataPivotVisualization extends D3Plot {
             .data(this.settings.labels)
             .enter()
             .append('text')
-            .attr('x', d => d.x)
-            .attr('y', d => d.y)
-            .text(d => d.text)
+            .attr('x', (d) => d.x)
+            .attr('y', (d) => d.y)
+            .text((d) => d.text)
             .attr('cursor', cursor)
             .attr('class', 'with_whitespace')
             .each(function(d) {

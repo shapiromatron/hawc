@@ -34,7 +34,7 @@ class TaskChart extends PureComponent {
 
     getYAxisData(setData) {
         const { chartData } = this.props,
-            values = setData.map(d => d.key);
+            values = setData.map((d) => d.key);
         return {
             ...chartData,
             transform: chartData.yTransform,
@@ -45,7 +45,7 @@ class TaskChart extends PureComponent {
 
     getXAxisData(setData) {
         const { chartData } = this.props,
-            values = setData.map(d => d.values.count);
+            values = setData.map((d) => d.values.count);
         return {
             ...chartData,
             transform: chartData.xTransform,
@@ -79,7 +79,7 @@ class TaskChart extends PureComponent {
                 return {
                     key: key.toString(),
                     values: {
-                        count: tasks.filter(d => d.status === keyInt).length,
+                        count: tasks.filter((d) => d.status === keyInt).length,
                         label: val.type,
                     },
                 };
@@ -108,7 +108,7 @@ class TaskChart extends PureComponent {
     render() {
         const svg = d3.select('svg'),
             { xData, yData, setData } = this.state,
-            ticks = d => {
+            ticks = (d) => {
                 let mapper = {
                     '10': 'not started',
                     '20': 'started',

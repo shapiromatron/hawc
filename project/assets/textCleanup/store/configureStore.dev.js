@@ -13,7 +13,7 @@ const logger = createLogger({
 
 const finalCreateStore = compose(
     applyMiddleware(thunk, logger),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
+    window.devToolsExtension ? window.devToolsExtension() : (f) => f
 )(createStore);
 
 export default function configureStore(initialState) {

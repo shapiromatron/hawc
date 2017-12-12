@@ -86,7 +86,7 @@ class ModelOptionModal extends React.Component {
             getOpts = function(type) {
                 return _.chain(model.defaults)
                     .values()
-                    .filter(d => d.c === type && d.n !== undefined)
+                    .filter((d) => d.c === type && d.n !== undefined)
                     .value();
             },
             models = getOpts('ot'),

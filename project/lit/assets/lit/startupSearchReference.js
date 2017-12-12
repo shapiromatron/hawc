@@ -15,7 +15,7 @@ let startupSearchReference = function(assessment_id, tags, canEdit) {
         handleResults = function(results) {
             if (results.status === 'success') {
                 let refs = results.refs.map(
-                    d => new Reference(d, window.tagtree)
+                    (d) => new Reference(d, window.tagtree)
                 );
                 refviewer.set_references(refs);
             } else {

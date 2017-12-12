@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
     finalCreateStore = compose(
         applyMiddleware(thunk, logger),
-        window.devToolsExtension ? window.devToolsExtension() : f => f
+        window.devToolsExtension ? window.devToolsExtension() : (f) => f
     )(createStore);
 }
 

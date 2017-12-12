@@ -36,7 +36,7 @@ export function fetchTasks() {
         let { host, tasks } = state.config;
         const url = h.getListUrl(host, tasks.url);
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveTasks(json)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveTasks(json)));
     };
 }

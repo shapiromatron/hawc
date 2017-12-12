@@ -551,7 +551,7 @@ class DRPlot extends D3Plot {
                 .data(this.values)
                 .transition()
                 .duration(1000)
-                .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`);
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
 
             this.sigs
                 .data(this.sigs_data)
@@ -575,7 +575,7 @@ class DRPlot extends D3Plot {
                 .attr('class', function(d) {
                     return d.cls;
                 })
-                .attr('transform', d => `translate(${x(d.x)},${y(d.y)})`);
+                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
 
             this.dot_labels = this.dots.append('svg:title').text(function(d) {
                 return d.txt;

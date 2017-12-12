@@ -31,7 +31,7 @@ class ApplyFilters extends Component {
         dispatch(clearErrors());
         if (this.hasNoErrors()) {
             let studyIds = _.chain(studies)
-                .filter(study => {
+                .filter((study) => {
                     return study.final_score >= threshold;
                 })
                 .map('id')

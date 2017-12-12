@@ -16,7 +16,7 @@ describe('robVisual Filter actions', () => {
             nock.cleanAll();
         });
 
-        it('should load endpoint effects', done => {
+        it('should load endpoint effects', (done) => {
             nock(HOST)
                 .get('/ani/api/endpoint/effects/?assessment_id=126')
                 .reply(200, [
@@ -55,7 +55,7 @@ describe('robVisual Filter actions', () => {
             store.dispatch(filterActions.fetchEffects());
         });
 
-        it('should load RoB scores', done => {
+        it('should load RoB scores', (done) => {
             nock(HOST)
                 .get('/study/api/study/rob_scores/?assessment_id=126')
                 .reply(200, [
@@ -115,7 +115,7 @@ describe('robVisual Filter actions', () => {
             store.dispatch(filterActions.fetchRobScores());
         });
 
-        it('should load endpoints', done => {
+        it('should load endpoints', (done) => {
             nock(HOST)
                 .get(
                     '/ani/api/endpoint/rob_filter/?assessment_id=126&study_id[]=8199,8200&effect[]=general%20behavior'

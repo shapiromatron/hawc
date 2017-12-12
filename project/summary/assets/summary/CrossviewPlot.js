@@ -118,10 +118,8 @@ class CrossviewPlot extends D3Visualization {
                                   y = parseInt(m[2]) + parseInt(d3.event.dy);
                               p.attr(
                                   'transform',
-                                  `translate(${x},${
-                                      y
-                                  }) rotate(270,${yAxisXDefault + x},${midY +
-                                      y})`
+                                  `translate(${x},${y}) rotate(270,${yAxisXDefault +
+                                      x},${midY + y})`
                               );
                               settings.ylabel_x = x;
                               settings.ylabel_y = y;
@@ -157,10 +155,8 @@ class CrossviewPlot extends D3Visualization {
             .attr('y', midY)
             .attr(
                 'transform',
-                `translate(${yAxisOffsetX},${
-                    yAxisOffsetY
-                }) rotate(270,${yAxisXDefault + yAxisOffsetX},${midY +
-                    yAxisOffsetY})`
+                `translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270,${yAxisXDefault +
+                    yAxisOffsetX},${midY + yAxisOffsetY})`
             )
             .text(this.data.settings.yAxisLabel)
             .attr('text-anchor', 'middle')
@@ -630,7 +626,7 @@ class CrossviewPlot extends D3Visualization {
             .enter()
             .append('g')
             .attr('class', 'labels')
-            .attr('transform', d => `translate(${d.x || 0},${d.y || 0})`)
+            .attr('transform', (d) => `translate(${d.x || 0},${d.y || 0})`)
             .attr('cursor', this.options.dev ? 'pointer' : 'auto')
             .call(drag)
             .each(function(d) {

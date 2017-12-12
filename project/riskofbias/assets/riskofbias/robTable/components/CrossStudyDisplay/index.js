@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
 
-const CrossStudyDisplay = props => {
+const CrossStudyDisplay = (props) => {
     let { domain, metric, scores, config } = props;
     scores = scores[0].values[0].values;
     return (

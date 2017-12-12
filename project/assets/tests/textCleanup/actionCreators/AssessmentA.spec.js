@@ -16,7 +16,7 @@ describe('textCleanup Assessment actions', () => {
     });
 
     describe('async actions', () => {
-        it('should create an action to load an assessment', done => {
+        it('should create an action to load an assessment', (done) => {
             nock(HOST)
                 .get('/assessment/api/endpoints/?assessment_id=57')
                 .reply(200, {
@@ -59,7 +59,7 @@ describe('textCleanup Assessment actions', () => {
             store.dispatch(assessmentActions.fetchObjectIfNeeded(57));
         });
 
-        it('should be able to make an assessment active', done => {
+        it('should be able to make an assessment active', (done) => {
             nock(HOST)
                 .get('/assessment/api/endpoints/?assessment_id=57')
                 .reply(200, {

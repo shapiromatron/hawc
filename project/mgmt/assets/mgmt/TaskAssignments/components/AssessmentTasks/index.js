@@ -15,7 +15,7 @@ class AssessmentTasks extends Component {
         return (
             <div style={{ padding: '10px' }}>
                 <Header headings={headings} />
-                {this.props.tasks.map(task => {
+                {this.props.tasks.map((task) => {
                     return (
                         <Task
                             key={task.id}

@@ -39,8 +39,8 @@ export function fetchStudyTypeOptions() {
             assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveStudyTypeOptions(json)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveStudyTypeOptions(json)))
+            .catch((error) => dispatch(setError(error)));
     };
 }

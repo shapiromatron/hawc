@@ -1,5 +1,5 @@
 const startup = function(cb) {
-    import('./index.js').then(summaryForms => {
+    import('./index.js').then((summaryForms) => {
         cb(summaryForms.default);
     });
 };

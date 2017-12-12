@@ -27,7 +27,7 @@ class ScoreSlider extends Component {
 
     render() {
         let threshold = this.state.threshold,
-            max = _.maxBy(this.props.scores, item => {
+            max = _.maxBy(this.props.scores, (item) => {
                 return item.final_score;
             }).final_score;
         return _.isEmpty(this.props.effects) ? null : (

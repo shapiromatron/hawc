@@ -28,7 +28,7 @@ export function selectScores(scores) {
 }
 
 function formatScoreOptions(choices) {
-    return choices.map(choice => {
+    return choices.map((choice) => {
         return { id: choice[0], value: choice[1] };
     });
 }
@@ -45,9 +45,9 @@ export function fetchScoreOptions() {
             assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => formatScoreOptions(json))
-            .then(json => dispatch(receiveScoreOptions(json)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => formatScoreOptions(json))
+            .then((json) => dispatch(receiveScoreOptions(json)))
+            .catch((error) => dispatch(setError(error)));
     };
 }

@@ -47,9 +47,9 @@ export function fetchItemScores() {
             assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveScores(json.scores)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveScores(json.scores)))
+            .catch((error) => dispatch(setError(error)));
     };
 }
 
@@ -104,7 +104,7 @@ export function updateVisibleItems(
     selectedStudyTypes = null
 ) {
     if (selectedScores !== null) {
-        selectedScores = selectedScores.map(d => parseInt(d));
+        selectedScores = selectedScores.map((d) => parseInt(d));
     }
     return {
         type: types.UPDATE_VISIBLE_ITEMS,
@@ -155,12 +155,12 @@ export function submitItemEdits(metric) {
         }
 
         return fetch(h.buildPatchUrl(state.config, updateIds), opts).then(
-            response => {
+            (response) => {
                 if (response.ok) {
                     let patch = { ids: updateIds, ...metric };
                     dispatch(patchItems(patch));
                 } else {
-                    response.json().then(json => dispatch(setError(json)));
+                    response.json().then((json) => dispatch(setError(json)));
                 }
             }
         );

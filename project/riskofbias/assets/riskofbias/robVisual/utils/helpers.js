@@ -10,9 +10,9 @@ var helpers = Object.assign({}, shared, {
     getEndpointsUrl(config, study_id = [], effect = []) {
         let effects = effect.join(','),
             study_ids = study_id.join(',');
-        return `${config.host}${config.endpoint_filter_url}&study_id[]=${
-            study_ids
-        }&effect[]=${effects}`;
+        return `${config.host}${
+            config.endpoint_filter_url
+        }&study_id[]=${study_ids}&effect[]=${effects}`;
     },
     errorDict: {
         endpoints:

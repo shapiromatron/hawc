@@ -27,7 +27,7 @@ class DomainCell extends Component {
                     <span className="domain-header">{domain.key}</span>
                 </div>
                 <div className="score-row">
-                    {_.map(domain.values, score => {
+                    {_.map(domain.values, (score) => {
                         return (
                             <ScoreCell
                                 key={score.values[0].id}

@@ -32,7 +32,7 @@ class ArraySelect extends Component {
                 defaultValue={defVal}
                 onChange={this.handleSelect}
             >
-                {_.map(choices, choice => {
+                {_.map(choices, (choice) => {
                     return (
                         <option key={choice.id} value={choice.id}>
                             {choice.value}

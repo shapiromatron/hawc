@@ -11,7 +11,7 @@ class DomainDisplay extends Component {
         return (
             <div>
                 <h3>{domain.key}</h3>
-                {_.map(domain.values, metric => {
+                {_.map(domain.values, (metric) => {
                     let props = {
                         key: metric.key,
                         ref: _.last(metric.values).id,

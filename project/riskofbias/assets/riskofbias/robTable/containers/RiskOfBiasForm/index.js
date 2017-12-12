@@ -29,8 +29,8 @@ class RiskOfBiasForm extends Component {
     submitForm(e) {
         e.preventDefault();
         let scores = _.flattenDeep(
-            _.map(this.refs, domain => {
-                return _.map(domain.refs, metric => {
+            _.map(this.refs, (domain) => {
+                return _.map(domain.refs, (metric) => {
                     let { form } = metric.refs;
                     return {
                         id: form.props.score.id,
@@ -66,7 +66,7 @@ class RiskOfBiasForm extends Component {
             <div className="riskofbias-display">
                 <ScrollToErrorBox error={error} />
                 <form onSubmit={this.submitForm}>
-                    {_.map(riskofbiases, domain => {
+                    {_.map(riskofbiases, (domain) => {
                         return (
                             <DomainDisplay
                                 key={domain.key}

@@ -34,8 +34,8 @@ function studies(state = defaultState, action) {
                 });
             }
 
-            list = action.types.map(type => {
-                return state.list.filter(study => {
+            list = action.types.map((type) => {
+                return state.list.filter((study) => {
                     return study[type];
                 });
             });

@@ -53,7 +53,7 @@ function bmd(state = defaultState, action) {
 
         case types.RECEIVE_SESSION:
             // add key-prop to each values dict for parameter
-            _.each(action.settings.allModelOptions, d =>
+            _.each(action.settings.allModelOptions, (d) =>
                 _.each(d.defaults, (v, k) => (v.key = k))
             );
 
@@ -63,12 +63,12 @@ function bmd(state = defaultState, action) {
             tmp2 = _.keyBy(action.settings.allModelOptions, 'name');
 
             action.settings.models.forEach(
-                d => (d.defaults = tmp2[d.name].defaults)
+                (d) => (d.defaults = tmp2[d.name].defaults)
             );
 
             tmp = _.chain(action.settings.models)
-                .filter(d => d.bmr_id === 0)
-                .map(d => deepCopy(d))
+                .filter((d) => d.bmr_id === 0)
+                .map((d) => deepCopy(d))
                 .value();
 
             tmp3 = action.settings.selected_model || {};
@@ -143,7 +143,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.TOGGLE_VARIANCE:
-            tmp = _.map(state.modelSettings, d => {
+            tmp = _.map(state.modelSettings, (d) => {
                 tmp2 = deepCopy(d);
                 tmp2.overrides.constant_variance =
                     tmp2.overrides.constant_variance === 0 ? 1 : 0;
@@ -154,7 +154,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.ADD_ALL_MODELS:
-            tmp = _.map(state.allModelOptions, d =>
+            tmp = _.map(state.allModelOptions, (d) =>
                 Object.assign(deepCopy(d), { overrides: {} })
             );
             return Object.assign({}, state, {

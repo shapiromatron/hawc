@@ -89,7 +89,7 @@ class VisualCollection {
             .sort()
             .uniq()
             .unshift(NULL_FILTER)
-            .map(d => `<option value="${d}">${d}</option>`)
+            .map((d) => `<option value="${d}">${d}</option>`)
             .value();
 
         return $('<div>').append(

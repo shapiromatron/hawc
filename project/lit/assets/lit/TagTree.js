@@ -86,7 +86,7 @@ class TagTree extends Observee {
                 nodeDict[ref.tag_id].references.push(ref.content_object_id);
             };
 
-        _.map(nodeDict, d => (d.references = []));
+        _.map(nodeDict, (d) => (d.references = []));
         _.each(references, addRef);
 
         var getNestedChildren = function(tag) {
@@ -106,7 +106,7 @@ class TagTree extends Observee {
         this.tags.forEach(getNestedChildren);
         if (this.data) {
             this.data.reference_count = d3.sum(
-                _.map(this.tags, d => d.data.reference_count)
+                _.map(this.tags, (d) => d.data.reference_count)
             );
         }
     }

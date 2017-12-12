@@ -11,10 +11,10 @@ class BulkList extends Component {
     // Groups items by the field to be edited.
     groupItems(items, field) {
         return _.sortBy(
-            _.groupBy(items, item => {
+            _.groupBy(items, (item) => {
                 return item[field];
             }),
-            item => {
+            (item) => {
                 return item[0][field];
             }
         );
@@ -35,7 +35,7 @@ class BulkList extends Component {
                     <span className="bulk-header span2">Submit</span>
                 </div>
 
-                {_.map(groupedItems, items => {
+                {_.map(groupedItems, (items) => {
                     return (
                         <BulkForm
                             key={items[0][params.field] || 'Empty'}

@@ -10,10 +10,10 @@ class LineChart extends Component {
         this.line = d3.svg
             .line()
             .interpolate('cardinal')
-            .x(d => {
+            .x((d) => {
                 return xScale(d.x);
             })
-            .y(d => {
+            .y((d) => {
                 return yScale(d.y);
             });
     }

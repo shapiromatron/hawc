@@ -83,7 +83,7 @@ class Recommendation extends React.Component {
                                 name="model"
                                 onChange={this.handleFieldChange.bind(this)}
                             >
-                                {models.map(d => {
+                                {models.map((d) => {
                                     return (
                                         <option key={d.id} value={d.id}>
                                             {d.name}

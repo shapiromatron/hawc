@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 
 import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
 
-const RiskOfBiasDisplay = props => {
+const RiskOfBiasDisplay = (props) => {
     return (
         <div className="riskofbias-display">
             {props.config.show_study ? renderStudyHeader(props) : null}
-            {_.map(props.active, domain => {
+            {_.map(props.active, (domain) => {
                 return (
                     <DomainDisplay
                         key={domain.key}
@@ -21,7 +21,7 @@ const RiskOfBiasDisplay = props => {
     );
 };
 
-const renderStudyHeader = props => {
+const renderStudyHeader = (props) => {
     return (
         <h3>
             <a href={props.config.study.url}>{props.config.study.name}</a>

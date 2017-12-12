@@ -110,7 +110,7 @@ class Node extends React.Component {
                     ref={this.props.sortableGroupDecorator}
                     style={{ display: displayChildren }}
                 >
-                    {children.map(child => {
+                    {children.map((child) => {
                         return (
                             <Node
                                 key={child.id}

@@ -19,7 +19,7 @@ class EffectSelector extends Component {
     }
 
     handleChange(e) {
-        let selectedOptions = _.map(e.target.selectedOptions, option => {
+        let selectedOptions = _.map(e.target.selectedOptions, (option) => {
             return option.value;
         });
         this.props.dispatch(selectEffects(selectedOptions));

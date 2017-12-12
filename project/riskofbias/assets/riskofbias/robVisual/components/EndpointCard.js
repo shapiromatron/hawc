@@ -19,7 +19,7 @@ class EndpointCard extends Component {
     groupByDoseUnit() {
         let doses = this.props.endpoint.animal_group.dosing_regime.doses;
         return _.chain(doses)
-            .map(dose => {
+            .map((dose) => {
                 return {
                     unit: dose.dose_units.name,
                     dose: dose.dose,
@@ -34,7 +34,7 @@ class EndpointCard extends Component {
     filterNullData() {
         let { endpoint } = this.props,
             responses = _.filter(
-                _.map(endpoint.groups, group => {
+                _.map(endpoint.groups, (group) => {
                     return {
                         response: group.response,
                         significant: group.significant,
@@ -42,13 +42,13 @@ class EndpointCard extends Component {
                         id: group.dose_group_id,
                     };
                 }),
-                response => {
+                (response) => {
                     return response.response !== null;
                 }
             ),
             ids = _.map(responses, 'id'),
-            doses = _.map(this.groupByDoseUnit(), doseGroup => {
-                return _.filter(doseGroup, dose => {
+            doses = _.map(this.groupByDoseUnit(), (doseGroup) => {
+                return _.filter(doseGroup, (dose) => {
                     return _.includes(ids, dose.id);
                 });
             });

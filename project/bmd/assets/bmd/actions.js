@@ -26,17 +26,17 @@ var showModal = function(name) {
         return (dispatch, getState) => {
             const url = Endpoint.get_endpoint_url(id);
             return fetch(url, h.fetchGet)
-                .then(response => response.json())
-                .then(json => dispatch(receiveEndpoint(new Endpoint(json))))
-                .catch(ex => console.error('Endpoint parsing failed', ex));
+                .then((response) => response.json())
+                .then((json) => dispatch(receiveEndpoint(new Endpoint(json))))
+                .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
     fetchSessionSettings = function(session_url) {
         return (dispatch, getState) => {
             return fetch(session_url, h.fetchGet)
-                .then(response => response.json())
-                .then(json => dispatch(receiveSession(json)))
-                .catch(ex => console.error('Endpoint parsing failed', ex));
+                .then((response) => response.json())
+                .then((json) => dispatch(receiveSession(json)))
+                .catch((ex) => console.error('Endpoint parsing failed', ex));
         };
     },
     changeUnits = function(doseUnits) {
@@ -131,7 +131,7 @@ var showModal = function(name) {
                 .then(() => dispatch(execute_start()))
                 .then(() => {
                     fetch(url, h.fetchPost(state.config.csrf, data, 'POST'))
-                        .then(response => {
+                        .then((response) => {
                             if (!response.ok) {
                                 dispatch(setErrors(['An error occurred.']));
                             }
@@ -174,8 +174,8 @@ var showModal = function(name) {
         return (dispatch, getState) => {
             let url = getState().config.execute_status_url;
             fetch(url, h.fetchGet)
-                .then(res => res.json())
-                .then(res => {
+                .then((res) => res.json())
+                .then((res) => {
                     if (res.finished) {
                         dispatch(getExecutionResults());
                     } else {

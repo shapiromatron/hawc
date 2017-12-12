@@ -10,7 +10,7 @@ export class ScoreSelect extends Component {
     }
 
     handleChange({ target: { options } }) {
-        let values = [...options].filter(o => o.selected).map(o => o.value);
+        let values = [...options].filter((o) => o.selected).map((o) => o.value);
         this.props.dispatch(selectScores(values));
     }
 
@@ -28,7 +28,7 @@ export class ScoreSelect extends Component {
                     onChange={this.handleChange}
                     style={{ height: '120px' }}
                 >
-                    {_.map(this.props.choices, score => {
+                    {_.map(this.props.choices, (score) => {
                         return (
                             <option key={score.id} value={score.id}>
                                 {score.value}

@@ -25,9 +25,9 @@ class AggregateGraph extends Component {
 
     formatRiskofbiasForDisplay() {
         let domains = _.flattenDeep(
-            _.map(this.props.riskofbiases, domain => {
-                return _.map(domain.values, metric => {
-                    return _.filter(metric.values, score => {
+            _.map(this.props.riskofbiases, (domain) => {
+                return _.map(domain.values, (metric) => {
+                    return _.filter(metric.values, (score) => {
                         return score.final;
                     });
                 });
@@ -36,10 +36,10 @@ class AggregateGraph extends Component {
 
         return d3
             .nest()
-            .key(d => {
+            .key((d) => {
                 return d.metric.domain.name;
             })
-            .key(d => {
+            .key((d) => {
                 return d.metric.name;
             })
             .entries(domains);

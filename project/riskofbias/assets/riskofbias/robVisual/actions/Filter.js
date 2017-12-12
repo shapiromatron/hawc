@@ -10,7 +10,7 @@ function receiveError(error) {
 }
 
 export function formatError(error) {
-    return dispatch => {
+    return (dispatch) => {
         error = h.formatErrors(error);
         dispatch(receiveError(error));
     };
@@ -44,9 +44,9 @@ export function fetchEffects() {
             h.getTestUrl(state.config.host, state.config.endpoint_effect_url),
             h.fetchGet
         )
-            .then(response => response.json())
-            .then(json => dispatch(receiveEffects(json)))
-            .catch(ex => console.error('Effect parsing failed', ex));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveEffects(json)))
+            .catch((ex) => console.error('Effect parsing failed', ex));
     };
 }
 
@@ -79,9 +79,9 @@ export function fetchRobScores() {
             h.getTestUrl(state.config.host, state.config.study_score_url),
             h.fetchGet
         )
-            .then(response => response.json())
-            .then(json => dispatch(receiveRobScores(json)))
-            .catch(ex => console.error('Effect parsing failed', ex));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveRobScores(json)))
+            .catch((ex) => console.error('Effect parsing failed', ex));
     };
 }
 
@@ -112,20 +112,20 @@ export function fetchEndpoints(ids) {
         if (state.isFetchingEndpoints) return;
         dispatch(requestEndpoints());
         return fetch(h.getEndpointsUrl(state.config, ids, effects), h.fetchGet)
-            .then(response => {
+            .then((response) => {
                 if (response.ok) {
                     response
                         .json()
-                        .then(json => dispatch(receiveEndpoints(json)));
+                        .then((json) => dispatch(receiveEndpoints(json)));
                 } else {
                     response
                         .json()
-                        .then(json =>
+                        .then((json) =>
                             dispatch(receiveError(h.formatErrors(json.detail)))
                         );
                 }
             })
-            .catch(ex => {
+            .catch((ex) => {
                 console.error('Effect parsing failed', ex);
             });
     };

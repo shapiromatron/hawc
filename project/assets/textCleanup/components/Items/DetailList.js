@@ -17,7 +17,7 @@ class DetailList extends Component {
         return (
             <div className="detail-list">
                 <div className="detail-header">
-                    {_.map(fields, field => {
+                    {_.map(fields, (field) => {
                         return (
                             <h5 key={field} className="header-field">
                                 {h.caseToWords(field)}
@@ -35,7 +35,7 @@ class DetailList extends Component {
                         />
                     </h5>
                 </div>
-                {_.map(_.sortBy(items, 'name'), item => {
+                {_.map(_.sortBy(items, 'name'), (item) => {
                     return (
                         <DetailItem
                             key={item.id}

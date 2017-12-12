@@ -79,8 +79,8 @@ class Autocomplete extends Component {
 
     onSuggestionsFetchRequested({ value }) {
         fetch(`${this.props.url}&term=${value}`, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
+            .then((response) => response.json())
+            .then((json) => {
                 this.setState({ suggestions: json.data });
             });
     }

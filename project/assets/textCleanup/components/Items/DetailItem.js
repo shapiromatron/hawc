@@ -8,7 +8,7 @@ class DetailItem extends Component {
             checked = _.includes(this.props.checkedRows, item.id);
         return (
             <div className="detail-stripe">
-                {_.map(fields, field => {
+                {_.map(fields, (field) => {
                     return (
                         <span
                             key={field}

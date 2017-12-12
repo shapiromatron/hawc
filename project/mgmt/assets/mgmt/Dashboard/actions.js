@@ -27,8 +27,8 @@ export function fetchTasks() {
             assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveTasks(json)))
-            .catch(error => dispatch(setError(error)));
+            .then((response) => response.json())
+            .then((json) => dispatch(receiveTasks(json)))
+            .catch((error) => dispatch(setError(error)));
     };
 }

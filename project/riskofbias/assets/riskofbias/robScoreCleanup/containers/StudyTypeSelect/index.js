@@ -12,8 +12,8 @@ class StudyTypeSelect extends Component {
 
     handleChange({ target: { options } }) {
         let values = [...options]
-            .filter(option => option.selected)
-            .map(option => option.value);
+            .filter((option) => option.selected)
+            .map((option) => option.value);
         this.props.dispatch(selectStudyType(values));
     }
 

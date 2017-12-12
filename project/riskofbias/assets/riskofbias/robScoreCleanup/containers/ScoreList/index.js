@@ -40,7 +40,9 @@ export class ScoreList extends Component {
     render() {
         if (!this.props.isLoaded) return null;
         let { items, visibleItemIds, idList, config } = this.props,
-            filteredItems = items.filter(d => _.includes(visibleItemIds, d.id));
+            filteredItems = items.filter((d) =>
+                _.includes(visibleItemIds, d.id)
+            );
 
         if (filteredItems.length === 0) {
             return this.renderEmptyScoreList();

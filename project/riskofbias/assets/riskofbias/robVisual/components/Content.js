@@ -14,7 +14,7 @@ class Content extends Component {
 
     render() {
         let { data } = this.props,
-            content = _.map(this.state.content_types, type => {
+            content = _.map(this.state.content_types, (type) => {
                 return data[type] ? (
                     <p key={type}>
                         <b>
