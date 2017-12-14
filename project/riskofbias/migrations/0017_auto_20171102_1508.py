@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='riskofbiasmetricanswers',
-            options={'ordering': ('metric', 'answer_order'), 'verbose_name_plural': 'Risk of bias metric answers'},
+            options={'ordering': ('metric', 'answer_order'), 'verbose_name_plural': 'Study Evaluation metric answers'},
         ),
         migrations.RenameField(
             model_name='riskofbiasmetricanswers',

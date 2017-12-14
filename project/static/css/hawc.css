@@ -150,7 +150,7 @@ ul.sponsors {
 }
 
 
-/* Risk of Bias */
+/* Study Evaluation*/
 .rob_score{
   border-radius: 25px;
   height: 50px;
@@ -497,7 +497,7 @@ Print styling
 }
 
 /*
-Risk of Bias
+Study Evaluation
 */
 .rob_footer {
     border-top: none !important;

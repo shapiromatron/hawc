@@ -55,7 +55,7 @@ urlpatterns = [
         views.VisualizationDelete.as_view(),
         name='visualization_delete'),
 
-    # Endpoint cards by risk of bias score
+    # Endpoint cards by Study Evaluation score
     url(r'^rob-filter/assessment/(?P<pk>\d+)/$',
         views.RobFilter.as_view(),
         name='rob_endpoint_filter'),

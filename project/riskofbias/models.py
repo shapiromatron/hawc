@@ -54,9 +54,9 @@ class RiskOfBiasDomain(models.Model):
     @classmethod
     def build_default(cls, assessment):
         """
-        Construct default risk of bias domains/metrics for an assessment.
-        The risk of bias domains and metrics are those defined by NTP/OHAT
-        protocols for risk of bias
+        Construct default Study Evaluation domains/metrics for an assessment.
+        The Study Evaluation domains and metrics are those defined by NTP/OHAT
+        protocols for Study Evaluation
         """
         fn = os.path.join(
             settings.PROJECT_PATH,
@@ -192,7 +192,7 @@ class RiskOfBiasMetric(models.Model):
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
         """
-        Build multiple risk of bias metrics given a domain django object and a
+        Build multiple Study Evaluation metrics given a domain django object and a
         list of python dictionaries for each metric.
         """
         objs = []
@@ -229,7 +229,7 @@ class RiskOfBias(models.Model):
         ordering = ('final',)
 
     def __str__(self):
-        return '{} (Risk of bias)'.format(self.study.short_citation)
+        return '{} (Risk of Bias)'.format(self.study.short_citation)
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -357,7 +357,7 @@ class RiskOfBias(models.Model):
 
     @classmethod
     def copy_across_assessment(cls, cw, studies, assessment):
-        # Copy active, final, risk of bias assessments for each study, and
+        # Copy active, final, Study Evaluation assessments for each study, and
         # assign to project manager selected at random. Requires that for all
         # studies, a crosswalk exists which assigns a new RiskOfBiasMetric ID
         # from the old RiskOfBiasMetric ID.
@@ -408,7 +408,7 @@ class RiskOfBiasMetricAnswers(models.Model):
         default = 1
     )
     class Meta:
-        verbose_name_plural = "Risk of bias metric answers"
+        verbose_name_plural = "Study Evaluation metric answers"
         ordering = ('metric', 'answer_order')
 
 class RiskOfBiasAnswersRecorded(models.Model):

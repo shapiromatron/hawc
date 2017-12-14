@@ -19,11 +19,11 @@ class Root extends Component {
         return (
             <Provider store={store}>
                 <div>
-                    <h1>Endpoints by study risk of bias score</h1>
+                    <h1>Endpoints by study Study Evaluation score</h1>
                     <p className='help-text'>
                         This <b>prototype</b> is an example of showing different
-                        effects in the database filtered by risk of bias score.
-                        A higher risk of bias score indicates a greater number
+                        effects in the database filtered by Study Evaluation score.
+                        A higher Study Evaluation score indicates a greater number
                         of low risk-of bias responses.
                     </p>
                     <EffectSelector />

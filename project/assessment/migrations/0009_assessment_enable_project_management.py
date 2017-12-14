@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assessment',
             name='enable_project_management',
-            field=models.BooleanField(default=True, help_text=b'Enable project management module for data extraction and risk of bias. If enabled, each study will have multiple tasks which can be assigned and tracked for completion.'),
+            field=models.BooleanField(default=True, help_text=b'Enable project management module for data extraction and Study Evaluation. If enabled, each study will have multiple tasks which can be assigned and tracked for completion.'),
         ),
         migrations.RunPython(
             disable_mgmt,

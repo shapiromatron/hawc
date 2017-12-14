@@ -183,7 +183,7 @@ class RoBHeatmapPlot extends D3Visualization {
             showSQs = function(v){
                 self.print_details(self.modal.getBody(), $(this).data('robs'));
                 self.modal
-                    .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
+                    .addHeader('<h4>Study Evaluation details: {0}</h4>'.printf(this.textContent))
                     .addFooter('')
                     .show({maxWidth: 900});
             },
@@ -233,7 +233,7 @@ class RoBHeatmapPlot extends D3Visualization {
         .on('click', function(v){
             self.print_details(self.modal.getBody(), {type: 'cell', robs: [v]});
             self.modal
-                .addHeader('<h4>Risk of bias details</h4>')
+                .addHeader('<h4>Study Evaluation details</h4>')
                 .addFooter('')
                 .show({maxWidth: 900});
         });
