@@ -1,0 +1,35 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+
+{% block title %}
+  {{assessment}} | Risk of bias | Metric | Delete | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
+  <li class="active">Delete metric answer<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+  <h1>{{object}}</h1>
+  <p class='help-block'>{{object.description|safe}}</p>
+
+  {% if crud == "Delete" %}
+    <div class="alert alert-block">
+      <h4>Warning!</h4>
+      Are you sure you want to delete this risk of bias metric answer?
+    </div>
+    <form action="." method="post">
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ crud }} answer</button>
+        <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn">Cancel</a>
+      </div>
+      {% csrf_token %}
+      </fieldset>
+    </form>
+  {% endif %}
+
+{% endblock %}

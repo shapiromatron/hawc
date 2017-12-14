@@ -229,7 +229,7 @@ class RoBMetricAnswersCreate(BaseCreate):
     parent_template_name = 'metric'
     model = models.RiskOfBiasMetricAnswers
     form_class = forms.RoBMetricAnswersForm
-    success_message  = 'Risk of bias metric answers creates.'
+    success_message  = 'Risk of bias metric answer created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',

@@ -64,8 +64,12 @@
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Metric Changes</a></li>
             <li><a href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a></li>
-            <li class="disable"><a tabindex="-1" href="#">Metric Answer Changes</a></li>
-            <li><a href="{% url 'riskofbias:robm_answers_create' object.pk %}">New metric answer</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">Metric Answer Changes</a></li>
+            {% for metric in object.metrics.all %}
+              {% if metric %}
+                <li><a href="{% url 'riskofbias:robm_answers_create' metric.pk %}">New metric answer</a></li>
+              {% endif %}
+            {% endfor %}
           </ul>
         </div>
       {% endif %}
@@ -112,6 +116,51 @@
                 <a class="btn btn-danger" href="{% url 'riskofbias:robm_delete' metric.pk %}">Delete</a></td>
           {% endif %}
         </tr>
+      {% endfor %}
+    </table>
+    <table class="table table-compressed">
+      <colgroup>
+          <col width="5%"></col>
+          <col width="35%"></col>
+        {% if crud == "Read" %}
+          <col width="60%"></col>
+        {% else %}
+          <col width="40%"></col>
+          <col width="20%"></col>
+        {% endif %}
+      </colgroup>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Choice</th>
+          <th>Symbol</th>
+          <th>Score</th>
+          {% if crud == "Update" %}
+            <th>Modify</th>
+          {% endif %}
+        </tr>
+      </thead>
+
+      {% for metric in object.metrics.all %}
+        {% for answer in metric.answers.all %}
+          <tr>
+            <th>{{forloop.counter}}</th>
+            <td>
+              {{answer.answer_choice}}<br>
+            </td>
+            <td>
+              {{answer.answer_symbol}}<br>
+            </td>
+            <td>
+              {{answer.answer_score}}<br>
+            </td>
+            {% if crud == "Update" %}
+              <td><a class="btn btn-info" href="{% url 'riskofbias:robm_answers_update' answer.pk %}">Edit</a>
+                  <a class="btn btn-danger" href="{% url 'riskofbias:robm_answers_delete' answer.pk %}">Delete</a></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
       {% endfor %}
     </table>
   {% endfor %}
