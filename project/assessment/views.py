@@ -23,7 +23,7 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
 
 from . import forms, models, tasks
 
-# Checking for denominator counts that are zero when dividing.
+
 def percentage(numerator, denominator):
     # Checking for denominator counts that are zero when dividing
     try:
