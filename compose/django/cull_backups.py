@@ -15,8 +15,8 @@ for fn in os.listdir(root):
     d1 = datetime.strptime(fn, 'hawc-%Y-%m-%dT%H_%M.sql.gz').date()
     days = (today - d1).days
 
-    if days <= 14:
-        # keep all <= 14 days
+    if days <= 7:
+        # keep all <= 7 days
         keep = True
     elif days <= 90:
         # keep one weekly for 3 months (or first of month)
