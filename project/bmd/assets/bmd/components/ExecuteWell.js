@@ -23,11 +23,7 @@ class ExecuteWell extends React.Component {
             return null;
         }
         return (
-            <button
-                type="button"
-                className="btn btn-primary"
-                onClick={this.props.handleExecute}
-            >
+            <button type="button" className="btn btn-primary" onClick={this.props.handleExecute}>
                 Execute
             </button>
         );

@@ -15,9 +15,7 @@ class EndpointDetailRow {
         this.hide_level = hide_level || 0;
 
         this.div.empty();
-        this.div.append(
-            '<a class="close" href="#" style="z-index:right;">×</a>'
-        );
+        this.div.append('<a class="close" href="#" style="z-index:right;">×</a>');
         this.div.append('<h4>{0}</h4>'.printf(endpoint.build_breadcrumbs()));
         this.div.data('pk', endpoint.data.pk);
         this.div.append(
@@ -39,10 +37,7 @@ class EndpointDetailRow {
     }
 
     toggle_view(show) {
-        var obj =
-            this.hide_level === 0
-                ? $(this.div)
-                : this.div.parents().eq(this.hide_level);
+        var obj = this.hide_level === 0 ? $(this.div) : this.div.parents().eq(this.hide_level);
         this.object_visible = show;
         return show === true ? obj.fadeIn('fast') : obj.fadeOut('fast');
     }

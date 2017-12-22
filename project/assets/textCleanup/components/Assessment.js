@@ -19,9 +19,7 @@ class Assessment extends Component {
 
     render() {
         const { assessment, helpText } = this.props,
-            isEmpty =
-                assessment.items.reduce((prev, curr) => prev + curr.count) ===
-                0;
+            isEmpty = assessment.items.reduce((prev, curr) => prev + curr.count) === 0;
         if (isEmpty) {
             return (
                 <li>

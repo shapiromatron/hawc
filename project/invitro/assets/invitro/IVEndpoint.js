@@ -53,10 +53,7 @@ class IVEndpoint {
     }
 
     build_hyperlink() {
-        return '<a href="{0}">{1}</a>'.printf(
-            this.data.url,
-            this._title_text()
-        );
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this._title_text());
     }
 
     _title_text() {
@@ -117,28 +114,19 @@ class IVEndpoint {
             .add_tbody_tr('Data type', this.data.data_type)
             .add_tbody_tr('Variance type', this.data.variance_type)
             .add_tbody_tr('Response units', this.data.response_units)
-            .add_tbody_tr(
-                'Values estimated',
-                HAWCUtils.booleanCheckbox(this.data.values_estimated)
-            )
+            .add_tbody_tr('Values estimated', HAWCUtils.booleanCheckbox(this.data.values_estimated))
             .add_tbody_tr('Observation time', getObservationTime())
             .add_tbody_tr('NOEL', getCriticalValue(this.data.NOEL))
             .add_tbody_tr('LOEL', getCriticalValue(this.data.LOEL))
             .add_tbody_tr('Monotonicity', this.data.monotonicity)
             .add_tbody_tr('Overall pattern', this.data.overall_pattern)
-            .add_tbody_tr(
-                'Statistical test notes',
-                this.data.statistical_test_notes
-            )
+            .add_tbody_tr('Statistical test notes', this.data.statistical_test_notes)
             .add_tbody_tr('Trend test', this.data.trend_test)
             .add_tbody_tr('Trend test notes', this.data.trend_test_notes)
             .add_tbody_tr('Endpoint notes', this.data.endpoint_notes)
             .add_tbody_tr('Result notes', this.data.result_notes)
             .add_tbody_tr_list('Effects', _.map(this.data.effects, 'name'))
-            .add_tbody_tr_list(
-                'Benchmarks',
-                this.data.benchmarks.map(getBenchmarkText)
-            );
+            .add_tbody_tr_list('Benchmarks', this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
         _.each(this.data.additional_fields, function(val, key) {
@@ -166,14 +154,10 @@ class IVEndpoint {
                     if (v.data.n !== null) opts.hasN = true;
                     if (v.data.response !== null) opts.hasResponse = true;
                     if (v.data.variance !== null) opts.hasVariance = true;
-                    if (v.data.difference_control !== 'not-tested')
-                        opts.hasDiffControl = true;
-                    if (v.data.significant_control !== 'not reported')
-                        opts.hasSigControl = true;
-                    if (v.data.cytotoxicity_observed !== 'not reported')
-                        opts.hasCytotox = true;
-                    if (v.data.precipitation_observed !== 'not reported')
-                        opts.hasPrecip = true;
+                    if (v.data.difference_control !== 'not-tested') opts.hasDiffControl = true;
+                    if (v.data.significant_control !== 'not reported') opts.hasSigControl = true;
+                    if (v.data.cytotoxicity_observed !== 'not reported') opts.hasCytotox = true;
+                    if (v.data.precipitation_observed !== 'not reported') opts.hasPrecip = true;
                 });
                 return opts;
             },
@@ -200,9 +184,7 @@ class IVEndpoint {
     }
 
     buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${
-                this.data.name
-            }</a>`,
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(() => {
@@ -216,20 +198,12 @@ class IVEndpoint {
             `<a href=${this.data.experiment.study.url} target="_blank">${
                 this.data.experiment.study.short_citation
             }</a>`,
-            `<a href=${this.data.experiment.url} target="_blank">${
-                this.data.experiment.name
-            }</a>`,
-            `<a href=${this.chemical.data.url} target="_blank">${
-                this.chemical.data.name
-            }</a>`,
+            `<a href=${this.data.experiment.url} target="_blank">${this.data.experiment.name}</a>`,
+            `<a href=${this.chemical.data.url} target="_blank">${this.chemical.data.name}</a>`,
             endpoint,
             this.data.effect ? this.data.effect : '--',
-            this.data.effects.length > 0
-                ? _.map(this.data.effects, 'name').join(', ')
-                : '--',
-            this.data.experiment.dose_units.name
-                ? this.data.experiment.dose_units.name
-                : '--',
+            this.data.effects.length > 0 ? _.map(this.data.effects, 'name').join(', ') : '--',
+            this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : '--',
             this.data.response_units ? this.data.response_units : '--',
         ];
     }
@@ -263,9 +237,7 @@ class IVEndpoint {
             .append(this.chemical.build_details_table());
 
         if (this.has_egs()) {
-            $div
-                .append('<h2>Endpoint-group</h2>')
-                .append(this.build_eg_table());
+            $div.append('<h2>Endpoint-group</h2>').append(this.build_eg_table());
         }
     }
 }

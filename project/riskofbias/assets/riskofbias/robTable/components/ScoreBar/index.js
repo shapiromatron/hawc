@@ -8,10 +8,7 @@ class ScoreBar extends Component {
     render_score_bar() {
         let { shade, symbol } = this.props;
         return (
-            <div
-                className="rob_score_bar"
-                style={{ backgroundColor: shade, opacity: 0, width: 0 }}
-            >
+            <div className="rob_score_bar" style={{ backgroundColor: shade, opacity: 0, width: 0 }}>
                 <span className="score-symbol">{symbol}</span>
             </div>
         );
@@ -20,8 +17,7 @@ class ScoreBar extends Component {
     render() {
         let { description, score } = this.props,
             // Not Reported score is 10. If Not reported, set barWidth to 25 instead of 250.
-            barWidth =
-                score === 10 ? 25 : d3.max([d3.round(score / 4 * 100, 2), 25]);
+            barWidth = score === 10 ? 25 : d3.max([d3.round(score / 4 * 100, 2), 25]);
 
         return (
             <div className="score-bar">

@@ -25,12 +25,8 @@ class Autocomplete extends Component {
         this.getTheme = this.getTheme.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(
-            this
-        );
-        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(
-            this
-        );
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
         this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
         this.selectionIsInvalid = this.selectionIsInvalid.bind(this);
 

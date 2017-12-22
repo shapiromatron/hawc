@@ -7,13 +7,7 @@ import Crossview from 'summary/Crossview';
 
 import BaseVisualForm from './BaseVisualForm';
 
-import {
-    TextField,
-    IntegerField,
-    ColorField,
-    CheckboxField,
-    RadioField,
-} from './Fields';
+import { TextField, IntegerField, ColorField, CheckboxField, RadioField } from './Fields';
 
 import {
     TableField,
@@ -39,10 +33,10 @@ class CrossviewSelectorField extends TableField {
 
     addRow() {
         var self = this,
-            nameTd = this.addTdSelect(
-                'name',
-                _.keys(CrossviewPlot._filters)
-            ).attr('class', 'valuesSome'),
+            nameTd = this.addTdSelect('name', _.keys(CrossviewPlot._filters)).attr(
+                'class',
+                'valuesSome'
+            ),
             valuesTd = this.addTdSelectMultiple('values', []),
             values = valuesTd
                 .find('select')
@@ -51,17 +45,9 @@ class CrossviewSelectorField extends TableField {
             name = nameTd.find('select'),
             setValues = function(fld) {
                 var isLog = $('input[name="dose_isLog"]').prop('checked'),
-                    opts = _.chain(
-                        CrossviewPlot.get_options(
-                            self.parent.endpoints,
-                            fld,
-                            isLog
-                        )
-                    )
+                    opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld, isLog))
                         .map(function(d) {
-                            return '<option value="{0}" selected>{0}</option>'.printf(
-                                d
-                            );
+                            return '<option value="{0}" selected>{0}</option>'.printf(d);
                         })
                         .value();
                 values.html(opts);
@@ -152,10 +138,10 @@ class CrossviewColorFilterField extends TableField {
 
     addRow() {
         var self = this,
-            fieldTd = this.addTdSelect(
-                'field',
-                _.keys(CrossviewPlot._filters)
-            ).attr('class', 'valuesSome'),
+            fieldTd = this.addTdSelect('field', _.keys(CrossviewPlot._filters)).attr(
+                'class',
+                'valuesSome'
+            ),
             valueTd = this.addTdSelect('value', []),
             headerNameTd = this.addTdText('headerName'),
             headerName = headerNameTd.find('input'),
@@ -164,16 +150,10 @@ class CrossviewColorFilterField extends TableField {
             setValues = function() {
                 var isLog = $('input[name="dose_isLog"]').prop('checked'),
                     opts = _.chain(
-                        CrossviewPlot.get_options(
-                            self.parent.endpoints,
-                            field.val(),
-                            isLog
-                        )
+                        CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog)
                     )
                         .map(function(d) {
-                            return '<option value="{0}" selected>{0}</option>'.printf(
-                                d
-                            );
+                            return '<option value="{0}" selected>{0}</option>'.printf(d);
                         })
                         .value();
                 value.html(opts);
@@ -252,11 +232,7 @@ class CrossviewEndpointFilterField extends TableField {
             value = valueTd.find('input'),
             setAutocomplete = function() {
                 var isLog = $('input[name="dose_isLog"]').prop('checked'),
-                    opts = CrossviewPlot.get_options(
-                        self.parent.endpoints,
-                        field.val(),
-                        isLog
-                    );
+                    opts = CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog);
                 value.autocomplete({ source: opts });
             };
 
@@ -360,8 +336,7 @@ _.extend(CrossviewForm, {
             type: TextField,
             name: 'yAxisLabel',
             label: 'Y-axis label',
-            def:
-                '% change from control (continuous), % incidence (dichotomous)',
+            def: '% change from control (continuous), % incidence (dichotomous)',
             tab: 'overall',
         },
         {
@@ -420,16 +395,14 @@ _.extend(CrossviewForm, {
             name: 'dose_range',
             label: 'Dose-axis range',
             tab: 'overall',
-            helpText:
-                'If left blank, calculated automatically from data (ex: "1, 100").',
+            helpText: 'If left blank, calculated automatically from data (ex: "1, 100").',
         },
         {
             type: TextField,
             name: 'response_range',
             label: 'Response-axis range',
             tab: 'overall',
-            helpText:
-                'If left blank, calculated automatically from data (ex: "-0.5, 2.5").',
+            helpText: 'If left blank, calculated automatically from data (ex: "-0.5, 2.5").',
         },
         {
             type: IntegerField,
@@ -437,8 +410,7 @@ _.extend(CrossviewForm, {
             label: 'Title x-offset (px)',
             def: 0,
             tab: 'overall',
-            helpText:
-                'x-offset from default title location (centered at top of plot)',
+            helpText: 'x-offset from default title location (centered at top of plot)',
         },
         {
             type: IntegerField,
@@ -446,8 +418,7 @@ _.extend(CrossviewForm, {
             label: 'Title y-offset (px)',
             def: 0,
             tab: 'overall',
-            helpText:
-                'y-offset from default title location (centered at top of plot)',
+            helpText: 'y-offset from default title location (centered at top of plot)',
         },
         {
             type: IntegerField,
@@ -471,8 +442,7 @@ _.extend(CrossviewForm, {
             label: 'Y label x-offset (px)',
             def: 0,
             tab: 'overall',
-            helpText:
-                'x-offset from default location (centered left of y-axis)',
+            helpText: 'x-offset from default location (centered left of y-axis)',
         },
         {
             type: IntegerField,
@@ -480,8 +450,7 @@ _.extend(CrossviewForm, {
             label: 'Y label y-offset (px)',
             def: 0,
             tab: 'overall',
-            helpText:
-                'y-offset from default location (centered left of y-axis)',
+            helpText: 'y-offset from default location (centered left of y-axis)',
         },
         {
             type: CrossviewSelectorField,
@@ -618,10 +587,7 @@ _.extend(CrossviewForm, {
                 'Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?',
             name: 'endpointFilterLogic',
             def: 'and',
-            options: [
-                { label: 'AND', value: 'and' },
-                { label: 'OR', value: 'or' },
-            ],
+            options: [{ label: 'AND', value: 'and' }, { label: 'OR', value: 'or' }],
             tab: 'endpointFilters',
         },
     ],

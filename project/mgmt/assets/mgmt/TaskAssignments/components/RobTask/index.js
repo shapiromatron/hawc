@@ -7,9 +7,7 @@ class RobTask extends Component {
     render() {
         let { assessment } = this.props.task.scores[0].metric.domain,
             { study_name, study_id, url_edit } = this.props.task.scores[0],
-            robText = this.props.task.final
-                ? 'Edit final review'
-                : 'Edit review',
+            robText = this.props.task.final ? 'Edit final review' : 'Edit review',
             assessmentLbl = this.props.showAssessment ? (
                 <AssessmentLabel className="flex-1" assessment={assessment} />
             ) : null;

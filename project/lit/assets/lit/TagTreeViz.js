@@ -35,12 +35,7 @@ class TagTreeViz extends D3Plot {
     get_plot_sizes() {
         var menu_spacing = this.options.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height:
-                this.h +
-                this.padding.top +
-                this.padding.bottom +
-                menu_spacing +
-                'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
         });
     }
 
@@ -64,14 +59,8 @@ class TagTreeViz extends D3Plot {
         // additional path_lengths.
 
         let { x, y, width, height } = this.svg.viewBox.baseVal,
-            increment = Math.ceil(
-                -(this.w - value - this.path_length) / this.path_length
-            );
-        width =
-            this.w +
-            this.padding.left +
-            this.padding.right +
-            this.path_length * increment;
+            increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
+        width = this.w + this.padding.left + this.padding.right + this.path_length * increment;
         this.svg.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
     }
 
@@ -151,10 +140,7 @@ class TagTreeViz extends D3Plot {
                 .enter()
                 .append('svg:g')
                 .attr('class', 'tagnode')
-                .attr(
-                    'transform',
-                    (d) => `translate(${source.y0},${source.x0})`
-                )
+                .attr('transform', (d) => `translate(${source.y0},${source.x0})`)
                 .on('click', function(d) {
                     if (d3.event.ctrlKey || d3.event.metaKey) {
                         if (d.depth == 0) {
@@ -229,11 +215,9 @@ class TagTreeViz extends D3Plot {
             nodeExit.select('text').style('fill-opacity', 1e-6);
 
             // Update the links…
-            var link = vis
-                .selectAll('path.tagslink')
-                .data(tree.links(nodes), function(d) {
-                    return d.target.id;
-                });
+            var link = vis.selectAll('path.tagslink').data(tree.links(nodes), function(d) {
+                return d.target.id;
+            });
 
             // Enter any new links at the parent's previous position.
             link

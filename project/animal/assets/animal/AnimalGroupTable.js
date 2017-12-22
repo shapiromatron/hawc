@@ -23,9 +23,7 @@ class AnimalGroupTable {
         if (tbl.endpoints_no_dr.length > 0) {
             $div
                 .append('<h3>Additional endpoints</h3>')
-                .append(
-                    '<p>Endpoints which have no dose-response data extracted.</p>'
-                )
+                .append('<p>Endpoints which have no dose-response data extracted.</p>')
                 .append(tbl.build_no_dr_ul());
         }
     }

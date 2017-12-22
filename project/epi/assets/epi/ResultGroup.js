@@ -33,17 +33,11 @@ class ResultGroup {
         ) {
             ci.lower_bound_interval = this.data.lower_bound_interval;
             ci.upper_bound_interval = this.data.upper_bound_interval;
-        } else if (
-            this.data.estimate !== null &&
-            this.data.se != null &&
-            this.data.n !== null
-        ) {
+        } else if (this.data.estimate !== null && this.data.se != null && this.data.n !== null) {
             ci.lower_bound_interval =
-                this.data.estimate -
-                1.96 * this.data.se * Math.sqrt(this.data.n);
+                this.data.estimate - 1.96 * this.data.se * Math.sqrt(this.data.n);
             ci.upper_bound_interval =
-                this.data.estimate +
-                1.96 * this.data.se * Math.sqrt(this.data.n);
+                this.data.estimate + 1.96 * this.data.se * Math.sqrt(this.data.n);
         }
         return ci;
     }
@@ -82,8 +76,7 @@ class ResultGroup {
                         : '-';
                 },
                 range() {
-                    return _.isNumber(d.lower_range) &&
-                        _.isNumber(d.upper_range)
+                    return _.isNumber(d.lower_range) && _.isNumber(d.upper_range)
                         ? '{0} - {1}'.printf(d.lower_range, d.upper_range)
                         : '-';
                 },

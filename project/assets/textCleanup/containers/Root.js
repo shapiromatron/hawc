@@ -24,16 +24,12 @@ class Root extends Component {
                         <Route
                             exact
                             path={urls.assessment.url}
-                            render={(routerProps) => (
-                                <AssessmentApp {...routerProps} />
-                            )}
+                            render={(routerProps) => <AssessmentApp {...routerProps} />}
                         />
                         <Route
                             exact
                             path={urls.fields.url}
-                            render={(routerProps) => (
-                                <FieldSelection {...routerProps} />
-                            )}
+                            render={(routerProps) => <FieldSelection {...routerProps} />}
                         />
                         <Route
                             path={urls.endpoints.url}

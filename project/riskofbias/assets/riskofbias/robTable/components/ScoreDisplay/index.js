@@ -25,10 +25,7 @@ class ScoreDisplay extends Component {
 
     // sets state.flex based on the width of the component.
     checkFlex() {
-        if (
-            this.state.flex === 'flexRow' &&
-            this.refs.display.offsetWidth <= this.toggleWidth
-        ) {
+        if (this.state.flex === 'flexRow' && this.refs.display.offsetWidth <= this.toggleWidth) {
             this.setState({ flex: 'flexColumn' });
         } else if (
             this.state.flex === 'flexColumn' &&
@@ -46,18 +43,12 @@ class ScoreDisplay extends Component {
     render() {
         let { score, config } = this.props,
             copyTextButton = this.props.copyNotes ? (
-                <button
-                    className="btn btn-secondary copy-notes"
-                    onClick={this.copyNotes}
-                >
+                <button className="btn btn-secondary copy-notes" onClick={this.copyNotes}>
                     Copy Notes
                 </button>
             ) : null;
         return (
-            <div
-                className={`score-display ${this.state.flex}-container`}
-                ref="display"
-            >
+            <div className={`score-display ${this.state.flex}-container`} ref="display">
                 <div className="flex-1">
                     {config.display === 'final' && !config.isForm ? null : (
                         <p>

@@ -44,8 +44,7 @@ class SummaryTextTree {
         var contents = [],
             txt;
         if (this.root.children.length === 0) {
-            txt =
-                '<li><a href="#"><i>No summary-text is available.</i></a></li>';
+            txt = '<li><a href="#"><i>No summary-text is available.</i></a></li>';
             contents.push(txt);
         } else {
             _.each(this.root.children, function(d) {
@@ -73,25 +72,17 @@ class SummaryTextTree {
             isNew = obj === undefined,
             parent_options = function() {
                 var lst = [],
-                    select = self.options.update_textdiv.find(
-                        'select#id_parent'
-                    );
+                    select = self.options.update_textdiv.find('select#id_parent');
                 self.root.get_option_item(lst);
                 select.html(lst);
                 if (!isNew) {
-                    select
-                        .find('option[value="{0}"]'.printf(obj.parent.id))
-                        .prop('selected', true);
+                    select.find('option[value="{0}"]'.printf(obj.parent.id)).prop('selected', true);
                 }
             },
             sibling_options = function() {
-                var select = self.options.update_textdiv.find(
-                        'select#id_sibling'
-                    ),
+                var select = self.options.update_textdiv.find('select#id_sibling'),
                     text_node_id = parseInt(
-                        self.options.update_textdiv
-                            .find('select#id_parent option:selected')
-                            .val(),
+                        self.options.update_textdiv.find('select#id_parent option:selected').val(),
                         10
                     ),
                     lst = ['<option value="">(none)</option>'],
@@ -100,26 +91,16 @@ class SummaryTextTree {
                 select.html(lst);
                 if (!isNew) {
                     select
-                        .find(
-                            'option[value="{0}"]'.printf(
-                                obj.get_prior_sibling_id()
-                            )
-                        )
+                        .find('option[value="{0}"]'.printf(obj.get_prior_sibling_id()))
                         .prop('selected', true);
                 }
             },
             load_contents = function() {
                 if (obj) {
-                    self.options.update_textdiv
-                        .find('#id_title')
-                        .val(obj.data.title);
-                    self.options.update_textdiv
-                        .find('#id_slug')
-                        .val(obj.data.slug);
+                    self.options.update_textdiv.find('#id_title').val(obj.data.title);
+                    self.options.update_textdiv.find('#id_slug').val(obj.data.slug);
                     self.options.text_editor.setContent(obj.data.text);
-                    self.options.update_textdiv
-                        .find('#id_text')
-                        .val(obj.data.text);
+                    self.options.update_textdiv.find('#id_text').val(obj.data.text);
                 } else {
                     self.options.update_textdiv.find('#id_title').val('');
                     self.options.update_textdiv.find('#id_slug').val('');
@@ -136,11 +117,9 @@ class SummaryTextTree {
         parent_options();
         sibling_options();
         self.options.update_textdiv.fadeIn();
-        self.options.update_textdiv
-            .find('select#id_parent')
-            .on('change', function() {
-                sibling_options(obj, isNew);
-            });
+        self.options.update_textdiv.find('select#id_parent').on('change', function() {
+            sibling_options(obj, isNew);
+        });
     }
 
     set_modify_events() {
@@ -163,11 +142,9 @@ class SummaryTextTree {
             $.post(url, self._redraw.bind(self));
         });
 
-        this.options.update_doctree
-            .unbind()
-            .on('click', '.summary_toc', function() {
-                self.update_textdiv($(this).data('d'));
-            });
+        this.options.update_doctree.unbind().on('click', '.summary_toc', function() {
+            self.update_textdiv($(this).data('d'));
+        });
     }
 
     render_doctree() {

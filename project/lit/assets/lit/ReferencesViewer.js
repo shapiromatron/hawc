@@ -35,10 +35,7 @@ class ReferencesViewer {
             );
 
             actionLinks.push({
-                url: '{0}?tag_id={1}'.printf(
-                    this.options.download_url,
-                    this.options.tag.data.pk
-                ),
+                url: '{0}?tag_id={1}'.printf(this.options.download_url, this.options.tag.data.pk),
                 text: 'Download references',
             });
 
@@ -86,9 +83,7 @@ class ReferencesViewer {
     }
 
     _set_loading_view() {
-        this.$table_div.html(
-            '<p>Loading: <img src="/static/img/loading.gif"></p>'
-        );
+        this.$table_div.html('<p>Loading: <img src="/static/img/loading.gif"></p>');
     }
 
     _build_reference_table() {

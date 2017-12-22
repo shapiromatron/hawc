@@ -67,10 +67,7 @@ class DataPivotExtension {
     }
 
     render_plottip(settings, datarow) {
-        settings._dpe_cls.displayAsModal(
-            datarow[settings._dpe_key],
-            settings._dpe_options
-        );
+        settings._dpe_cls.displayAsModal(datarow[settings._dpe_key], settings._dpe_options);
     }
 }
 

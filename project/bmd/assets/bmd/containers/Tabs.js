@@ -34,9 +34,7 @@ import {
 class Tabs extends React.Component {
     componentWillMount() {
         this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
-        this.props.dispatch(
-            fetchSessionSettings(this.props.config.session_url)
-        );
+        this.props.dispatch(fetchSessionSettings(this.props.config.session_url));
     }
 
     componentDidUpdate() {
@@ -46,19 +44,13 @@ class Tabs extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (
-            nextProps.logicApplied === false &&
-            nextProps.hasSession &&
-            nextProps.hasEndpoint
-        ) {
+        if (nextProps.logicApplied === false && nextProps.hasSession && nextProps.hasEndpoint) {
             this.props.dispatch(applyLogic());
         }
     }
 
     handleTabClick(event) {
-        let tabDisabled = $(event.currentTarget.parentElement).hasClass(
-            'disabled'
-        );
+        let tabDisabled = $(event.currentTarget.parentElement).hasClass('disabled');
         if (!tabDisabled) {
             $(event.currentTarget).tab('show');
         }
@@ -121,13 +113,7 @@ class Tabs extends React.Component {
 
     renderSetupTab() {
         let { editMode, bmds_version } = this.props.config,
-            {
-                endpoint,
-                dataType,
-                validationErrors,
-                isExecuting,
-                doseUnits,
-            } = this.props;
+            { endpoint, dataType, validationErrors, isExecuting, doseUnits } = this.props;
 
         return (
             <div>
@@ -144,9 +130,7 @@ class Tabs extends React.Component {
                     <ModelOptionTable
                         editMode={editMode}
                         dataType={dataType}
-                        handleVarianceToggle={this.handleVarianceToggle.bind(
-                            this
-                        )}
+                        handleVarianceToggle={this.handleVarianceToggle.bind(this)}
                         handleAddAll={this.handleAddAll.bind(this)}
                         handleRemoveAll={this.handleRemoveAll.bind(this)}
                         handleCreateModel={this.handleCreateModel.bind(this)}
@@ -172,14 +156,7 @@ class Tabs extends React.Component {
     }
 
     renderResultsTab() {
-        let {
-                bmrs,
-                endpoint,
-                models,
-                selectedModelId,
-                hoverModel,
-                hasExecuted,
-            } = this.props,
+        let { bmrs, endpoint, models, selectedModelId, hoverModel, hasExecuted } = this.props,
             selectedModel = _.find(models, { id: selectedModelId }) || null;
 
         if (!hasExecuted) {
@@ -208,13 +185,7 @@ class Tabs extends React.Component {
 
     renderRecommendationTab() {
         let { editMode } = this.props.config,
-            {
-                bmrs,
-                models,
-                selectedModelId,
-                selectedModelNotes,
-                hasExecuted,
-            } = this.props;
+            { bmrs, models, selectedModelId, selectedModelNotes, hasExecuted } = this.props;
 
         if (!hasExecuted) {
             return null;
@@ -255,10 +226,7 @@ class Tabs extends React.Component {
                             </a>
                         </li>
                         <li className={showResultsTabs}>
-                            <a
-                                href="#recommendations"
-                                onClick={this.handleTabClick}
-                            >
+                            <a href="#recommendations" onClick={this.handleTabClick}>
                                 Model recommendation and selection
                             </a>
                         </li>

@@ -35,11 +35,10 @@ class BulkForm extends Component {
         // if detail edit and all checkboxes are not checked
         if (showDetails && detailIDs && detailIDs.length !== ids.length) {
             this.props.handleDetailSubmit(
-                Object.assign(
-                    {},
-                    _.omit(this.state, ['detailIDs', 'showDetails']),
-                    { ids: detailIDs, stale }
-                )
+                Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {
+                    ids: detailIDs,
+                    stale,
+                })
             );
         } else {
             this.props.handleBulkSubmit(
@@ -76,9 +75,7 @@ class BulkForm extends Component {
     }
 
     onDetailChange(e) {
-        e.target.id === 'all'
-            ? this.handleCheckAll(e)
-            : this.handleCheck(e.target);
+        e.target.id === 'all' ? this.handleCheckAll(e) : this.handleCheck(e.target);
     }
 
     showModal(e) {
@@ -87,12 +84,8 @@ class BulkForm extends Component {
 
     render() {
         let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails
-                ? 'fa-minus-square'
-                : 'fa-plus-square',
-            editButtonText = this.state.showDetails
-                ? 'Submit selected items'
-                : 'Submit bulk edit';
+            detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
+            editButtonText = this.state.showDetails ? 'Submit selected items' : 'Submit bulk edit';
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit}>
@@ -107,12 +100,7 @@ class BulkForm extends Component {
                         </button>
                         &nbsp;{field || `N/A`} ({items.length})
                     </span>
-                    <span
-                        className={`${h.getInputDivClass(
-                            field,
-                            errors
-                        )} bulk-element span5`}
-                    >
+                    <span className={`${h.getInputDivClass(field, errors)} bulk-element span5`}>
                         <input
                             name={field}
                             className="form-control"

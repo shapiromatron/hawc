@@ -44,12 +44,7 @@ class RoBHeatmapPlot extends D3Visualization {
         this.h = this.cell_size * this.yVals.length;
         var menu_spacing = 40;
         this.plot_div.css({
-            height:
-                this.h +
-                this.padding.top +
-                this.padding.bottom +
-                menu_spacing +
-                'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
         });
     }
 
@@ -189,11 +184,7 @@ class RoBHeatmapPlot extends D3Visualization {
             showSQs = function(v) {
                 self.print_details(self.modal.getBody(), $(this).data('robs'));
                 self.modal
-                    .addHeader(
-                        '<h4>Risk of bias details: {0}</h4>'.printf(
-                            this.textContent
-                        )
-                    )
+                    .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
                     .addFooter('')
                     .show({ maxWidth: 900 });
             },
@@ -314,13 +305,11 @@ class RoBHeatmapPlot extends D3Visualization {
         if (
             this.padding.top < this.padding.top_original + ylabel_height ||
             this.padding.left < this.padding.left_original + xlabel_width ||
-            this.padding.right <
-                ylabel_width - this.w + this.padding.right_original
+            this.padding.right < ylabel_width - this.w + this.padding.right_original
         ) {
             this.padding.top = this.padding.top_original + ylabel_height;
             this.padding.left = this.padding.left_original + xlabel_width;
-            this.padding.right =
-                ylabel_width - this.w + this.padding.right_original;
+            this.padding.right = ylabel_width - this.w + this.padding.right_original;
             this.render(this.plot_div);
         }
     }
@@ -443,10 +432,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         },
                     });
                     renderRiskOfBiasDisplay(
-                        RiskOfBiasScore.format_for_react(
-                            [d.robs[0].riskofbias],
-                            config
-                        ),
+                        RiskOfBiasScore.format_for_react([d.robs[0].riskofbias], config),
                         $div[0]
                     );
                     break;

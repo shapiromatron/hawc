@@ -62,10 +62,7 @@ class StudyFilter extends Component {
         return (
             <div className="container-fluid filterContainer">
                 <div className="flexRow-container">
-                    <StudyTypeSelector
-                        className="flex-1"
-                        handleChange={this.selectStudyType}
-                    />
+                    <StudyTypeSelector className="flex-1" handleChange={this.selectStudyType} />
                     <StudySortSelector
                         className="flex-1"
                         handleChange={this.selectSort}
@@ -74,17 +71,11 @@ class StudyFilter extends Component {
                         studySorting={this.state.studySorting}
                     />
                 </div>
-                <button
-                    className="btn btn-primary"
-                    onClick={this.filterResults}
-                >
+                <button className="btn btn-primary" onClick={this.filterResults}>
                     Filter & sort studies
                 </button>
                 <span>&nbsp;</span>
-                <button
-                    className="btn btn-secondary"
-                    onClick={this.clearFilters}
-                >
+                <button className="btn btn-secondary" onClick={this.clearFilters}>
                     Reset
                 </button>
             </div>

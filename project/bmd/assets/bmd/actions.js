@@ -137,9 +137,7 @@ var showModal = function(name) {
                             }
                             return response.json();
                         })
-                        .then(() =>
-                            setTimeout(() => dispatch(getExecuteStatus()), 3000)
-                        );
+                        .then(() => setTimeout(() => dispatch(getExecuteStatus()), 3000));
                 });
         };
     },
@@ -262,8 +260,8 @@ var showModal = function(name) {
             return new Promise((res, rej) => {
                 res();
             }).then(() => {
-                fetch(url, h.fetchPost(state.config.csrf, data, 'POST')).then(
-                    () => dispatch(setSelectedModel(model_id, notes))
+                fetch(url, h.fetchPost(state.config.csrf, data, 'POST')).then(() =>
+                    dispatch(setSelectedModel(model_id, notes))
                 );
             });
         };

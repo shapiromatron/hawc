@@ -56,14 +56,8 @@ class StudyPopulation {
             .add_tbody_tr('Eligible N', this.data.eligible_n)
             .add_tbody_tr('Invited N', this.data.invited_n)
             .add_tbody_tr('Participant N', this.data.participant_n)
-            .add_tbody_tr_list(
-                'Inclusion criteria',
-                _.map(this.inclusion_criteria, 'description')
-            )
-            .add_tbody_tr_list(
-                'Exclusion criteria',
-                _.map(this.exclusion_criteria, 'description')
-            )
+            .add_tbody_tr_list('Inclusion criteria', _.map(this.inclusion_criteria, 'description'))
+            .add_tbody_tr_list('Exclusion criteria', _.map(this.exclusion_criteria, 'description'))
             .add_tbody_tr_list(
                 'Confounding criteria',
                 _.map(this.confounding_criteria, 'description')
@@ -88,13 +82,9 @@ class StudyPopulation {
         if (this.data.can_create_sets) {
             $el.append('<h2>Comparison sets</h2>');
             if (this.data.comparison_sets.length > 0) {
-                $el.append(
-                    HAWCUtils.buildUL(this.data.comparison_sets, liFunc)
-                );
+                $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
             } else {
-                $el.append(
-                    '<p class="help-block">No comparison sets are available.</p>'
-                );
+                $el.append('<p class="help-block">No comparison sets are available.</p>');
             }
         }
 
@@ -102,9 +92,7 @@ class StudyPopulation {
         if (this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
-            $el.append(
-                '<p class="help-block">No exposure measurements are available.</p>'
-            );
+            $el.append('<p class="help-block">No exposure measurements are available.</p>');
         }
         return $el;
     }
@@ -121,14 +109,8 @@ class StudyPopulation {
         var modal = new HAWCModal(),
             title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">')
-                .append(
-                    $('<div class="row-fluid">').append(
-                        this.build_details_table()
-                    )
-                )
-                .append(
-                    $('<div class="row-fluid">').append(this.build_links_div())
-                );
+                .append($('<div class="row-fluid">').append(this.build_details_table()))
+                .append($('<div class="row-fluid">').append(this.build_links_div()));
 
         modal
             .addHeader(title)

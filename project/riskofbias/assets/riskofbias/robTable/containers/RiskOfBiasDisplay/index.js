@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    fetchFullStudyIfNeeded,
-    selectActive,
-} from 'riskofbias/robTable/actions';
+import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
 import DisplayComponent from 'riskofbias/robTable/components/RiskOfBiasDisplay';
 import ShowAll from 'riskofbias/robTable/components/ShowAll';
 import Loading from 'shared/components/Loading';
@@ -36,10 +33,7 @@ class RiskOfBiasDisplay extends Component {
         return (
             <div className="riskofbias-container">
                 <DisplayComponent active={active} config={config} />
-                <ShowAll
-                    allShown={this.isAllShown()}
-                    handleClick={this.handleShowAllClick}
-                />
+                <ShowAll allShown={this.isAllShown()} handleClick={this.handleShowAllClick} />
             </div>
         );
     }

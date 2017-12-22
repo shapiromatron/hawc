@@ -38,18 +38,13 @@ class DataPivotLegend {
             var select = this.selects[i],
                 sel = select.find('option:selected').val();
             select.html(this._build_options());
-            select
-                .find('option[value="{0}"]'.printf(sel))
-                .prop('selected', true);
+            select.find('option[value="{0}"]'.printf(sel)).prop('selected', true);
         }
     }
 
     _build_options() {
         return this.settings.fields.map(function(v) {
-            return $(`<option value="${v.label}">${v.label}</option>`).data(
-                'd',
-                v
-            );
+            return $(`<option value="${v.label}">${v.label}</option>`).data('d', v);
         });
     }
 
@@ -80,10 +75,7 @@ class DataPivotLegend {
         if (this.options.offset) {
             this.legend
                 .attr('cursor', cursor)
-                .attr(
-                    'transform',
-                    `translate(${self.settings.left},${self.settings.top})`
-                )
+                .attr('transform', `translate(${self.settings.left},${self.settings.top})`)
                 .call(drag);
         }
 
@@ -231,9 +223,7 @@ class DataPivotLegend {
 
         var offset = 0;
         for (var i = 1; i < this.legend_columns.length; i++) {
-            offset +=
-                this.legend_columns[i - 1].node().getBoundingClientRect()
-                    .width + buffer;
+            offset += this.legend_columns[i - 1].node().getBoundingClientRect().width + buffer;
             this.legend_columns[i].attr('transform', `translate(${offset},0)`);
         }
 

@@ -44,18 +44,12 @@ class Experiment {
                 if (self.data.is_generational) return self.data.litter_effects;
             },
             getPurityText = function() {
-                return self.data.purity_available
-                    ? 'Chemical purity'
-                    : 'Chemical purity available';
+                return self.data.purity_available ? 'Chemical purity' : 'Chemical purity available';
             },
             getPurity = function() {
                 var qualifier =
-                    self.data.purity_qualifier === '='
-                        ? ''
-                        : self.data.purity_qualifier;
-                return self.data.purity
-                    ? '{0}{1}%'.printf(qualifier, self.data.purity)
-                    : 'No';
+                    self.data.purity_qualifier === '=' ? '' : self.data.purity_qualifier;
+                return self.data.purity ? '{0}{1}%'.printf(qualifier, self.data.purity) : 'No';
             },
             tbl,
             casTd;
@@ -73,14 +67,8 @@ class Experiment {
             .add_tbody_tr('Litter effects', getLitterEffects(), {
                 annotate: this.data.litter_effect_notes,
             })
-            .add_tbody_tr(
-                'Guideline compliance',
-                this.data.guideline_compliance
-            )
-            .add_tbody_tr(
-                'Description and animal husbandry',
-                this.data.description
-            );
+            .add_tbody_tr('Guideline compliance', this.data.guideline_compliance)
+            .add_tbody_tr('Description and animal husbandry', this.data.description);
 
         if (this.data.cas_url) {
             casTd = tbl

@@ -45,14 +45,8 @@ class Outcome {
             .add_tbody_tr('Effect subtype', this.data.effect_subtype)
             .add_tbody_tr_list('Effect tags', _.map(this.data.effects, 'name'))
             .add_tbody_tr('Diagnostic', this.data.diagnostic)
-            .add_tbody_tr(
-                'Diagnostic description',
-                this.data.diagnostic_description
-            )
-            .add_tbody_tr(
-                'Age of outcome measurement',
-                this.data.age_of_measurement
-            )
+            .add_tbody_tr('Diagnostic description', this.data.diagnostic_description)
+            .add_tbody_tr('Age of outcome measurement', this.data.age_of_measurement)
             .add_tbody_tr('Outcome N', this.data.outcome_n)
             .add_tbody_tr('Summary', this.data.summary)
             .get_tbl();
@@ -64,9 +58,7 @@ class Outcome {
             content = $('<div class="tab-content">');
 
         if (this.results.length === 0) {
-            return container.append(
-                '<p class="help-block">No results are available.</p>'
-            );
+            return container.append('<p class="help-block">No results are available.</p>');
         }
 
         _.each(this.results, function(d, i) {
@@ -107,18 +99,14 @@ class Outcome {
                     })
                 );
             } else {
-                $el.append(
-                    '<p class="help-block">No comparison sets are available.</p>'
-                );
+                $el.append('<p class="help-block">No comparison sets are available.</p>');
             }
         }
         return $el;
     }
 
     buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${
-                this.data.name
-            }</a>`,
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(() => {

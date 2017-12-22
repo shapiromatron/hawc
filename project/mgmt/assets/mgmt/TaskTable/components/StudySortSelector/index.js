@@ -26,20 +26,12 @@ class StudySortSelector extends Component {
     }
 
     render() {
-        const {
-            className,
-            fieldOptions,
-            orderOptions,
-            studySorting,
-        } = this.props;
+        const { className, fieldOptions, orderOptions, studySorting } = this.props;
         return (
             <div className={className}>
                 <div className="flexRow-container">
                     <div className="flex-1">
-                        <label
-                            className="control-label"
-                            htmlFor="study_sorting-field"
-                        >
+                        <label className="control-label" htmlFor="study_sorting-field">
                             Sort studies by:
                         </label>
                         <form id="study_sorting-field">
@@ -48,9 +40,7 @@ class StudySortSelector extends Component {
                                     <label key={field} htmlFor={field}>
                                         <input
                                             onChange={this.onChange}
-                                            checked={
-                                                studySorting.field == field
-                                            }
+                                            checked={studySorting.field == field}
                                             type="radio"
                                             id={field}
                                             name="field"
@@ -64,10 +54,7 @@ class StudySortSelector extends Component {
                     </div>
 
                     <div className="flex-1">
-                        <label
-                            className="control-label"
-                            htmlFor="study_sorting-order"
-                        >
+                        <label className="control-label" htmlFor="study_sorting-order">
                             Order studies by:
                         </label>
                         <form id="study_sorting-order">
@@ -76,9 +63,7 @@ class StudySortSelector extends Component {
                                     <label key={order} htmlFor={order}>
                                         <input
                                             onChange={this.onChange}
-                                            checked={
-                                                studySorting.order === order
-                                            }
+                                            checked={studySorting.order === order}
                                             type="radio"
                                             id={order}
                                             name="order"

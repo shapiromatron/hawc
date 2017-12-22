@@ -95,12 +95,8 @@ class ListApp extends Component {
                         ref="list"
                     />
                 )}
-                {displayForm ? (
-                    <SubmitButton submitForm={this.updateForm} />
-                ) : null}
-                {displayForm ? (
-                    <CancelButton onCancel={this.handleCancel} />
-                ) : null}
+                {displayForm ? <SubmitButton submitForm={this.updateForm} /> : null}
+                {displayForm ? <CancelButton onCancel={this.handleCancel} /> : null}
             </div>
         );
     }

@@ -6,9 +6,7 @@ class StudyLabel extends Component {
     render() {
         return (
             <div className="study-label flex-1">
-                <a href={this.props.study.url}>
-                    {this.props.study.short_citation}
-                </a>
+                <a href={this.props.study.url}>{this.props.study.short_citation}</a>
                 <br />
                 <b>Date created: </b>
                 <span>{moment(this.props.study.created).format('L')}</span>

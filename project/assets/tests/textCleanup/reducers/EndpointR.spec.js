@@ -12,12 +12,7 @@ describe('textCleanup Endpoint reducer', () => {
                 {
                     type: types.EP_RECEIVE_MODEL,
                     model: {
-                        text_cleanup_fields: [
-                            'system',
-                            'organ',
-                            'effect',
-                            'effect_subtype',
-                        ],
+                        text_cleanup_fields: ['system', 'organ', 'effect', 'effect_subtype'],
                     },
                 }
             )
@@ -35,8 +30,7 @@ describe('textCleanup Endpoint reducer', () => {
                     items: [
                         {
                             id: 10210,
-                            name:
-                                'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                             system: 'digestive system',
                         },
                     ],
@@ -57,8 +51,7 @@ describe('textCleanup Endpoint reducer', () => {
             items: [
                 {
                     id: 10210,
-                    name:
-                        'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                    name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                     system: 'digestive system',
                 },
             ],
@@ -83,8 +76,7 @@ describe('textCleanup Endpoint reducer', () => {
                     items: [
                         {
                             id: 10210,
-                            name:
-                                'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                             system: 'digestive system',
                         },
                         {
@@ -108,8 +100,7 @@ describe('textCleanup Endpoint reducer', () => {
             items: [
                 {
                     id: 10210,
-                    name:
-                        'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                    name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                     system: 'Digestive Systems',
                 },
                 {
@@ -130,8 +121,7 @@ describe('textCleanup Endpoint reducer', () => {
                     items: [
                         {
                             id: 10210,
-                            name:
-                                'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                             system: 'digestive system',
                         },
                         {
@@ -172,8 +162,7 @@ describe('textCleanup Endpoint reducer', () => {
                     items: [
                         {
                             id: 10210,
-                            name:
-                                'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                             system: 'digestive system',
                         },
                         {

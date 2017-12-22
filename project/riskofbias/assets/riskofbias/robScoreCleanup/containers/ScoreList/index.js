@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    checkScoreForUpdate,
-    updateVisibleItems,
-} from 'riskofbias/robScoreCleanup/actions/Items';
+import { checkScoreForUpdate, updateVisibleItems } from 'riskofbias/robScoreCleanup/actions/Items';
 
 import DisplayComponent from 'riskofbias/robScoreCleanup/components/ScoreList';
 
@@ -21,10 +18,7 @@ export class ScoreList extends Component {
             nextProps.selectedStudies != this.props.selectedStudies
         ) {
             this.props.dispatch(
-                updateVisibleItems(
-                    nextProps.selectedScores,
-                    nextProps.selectedStudies
-                )
+                updateVisibleItems(nextProps.selectedScores, nextProps.selectedStudies)
             );
         }
     }
@@ -40,9 +34,7 @@ export class ScoreList extends Component {
     render() {
         if (!this.props.isLoaded) return null;
         let { items, visibleItemIds, idList, config } = this.props,
-            filteredItems = items.filter((d) =>
-                _.includes(visibleItemIds, d.id)
-            );
+            filteredItems = items.filter((d) => _.includes(visibleItemIds, d.id));
 
         if (filteredItems.length === 0) {
             return this.renderEmptyScoreList();

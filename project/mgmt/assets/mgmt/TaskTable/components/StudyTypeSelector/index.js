@@ -14,18 +14,14 @@ class StudyTypeSelector extends Component {
     }
 
     handleChange({ target: { options } }) {
-        let values = [...options]
-            .filter((option) => option.selected)
-            .map((option) => option.value);
+        let values = [...options].filter((option) => option.selected).map((option) => option.value);
         this.props.handleChange(values);
     }
 
     render() {
         return (
             <div className={this.props.className}>
-                <label className="control-label">
-                    Study type filter (optional):
-                </label>
+                <label className="control-label">Study type filter (optional):</label>
                 <select
                     multiple
                     name="studyType_filter"

@@ -35,12 +35,7 @@ _.extend(Date.prototype, {
 _.extend(String, {
     hex_to_rgb(hex) {
         // http://stackoverflow.com/questions/5623838/
-        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(
-            m,
-            r,
-            g,
-            b
-        ) {
+        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) {
             return r + r + g + g + b + b;
         });
 
@@ -135,10 +130,7 @@ _.extend(Math, {
                         1.231739516 / (Z + 3) +
                         0.00120858003 / (Z + 4) -
                         0.00000536382 / (Z + 5),
-                    LG =
-                        (Z - 0.5) * Math.log(Z + 4.5) -
-                        (Z + 4.5) +
-                        Math.log(S * 2.50662827465);
+                    LG = (Z - 0.5) * Math.log(Z + 4.5) - (Z + 4.5) + Math.log(S * 2.50662827465);
                 return LG;
             },
             GI;
@@ -152,8 +144,7 @@ _.extend(Math, {
             var phiz = 0.39894228 * Math.exp(-z * z / 2);
             var w = y - b1 * (z * z - 1) * phiz / 6; //Edgeworth1
             var b2 = 6 / a;
-            var u =
-                3 * b2 * (z * z - 3) + b1 * b1 * (z ^ (4 - 10 * z * z + 15));
+            var u = 3 * b2 * (z * z - 3) + b1 * b1 * (z ^ (4 - 10 * z * z + 15));
             GI = w - phiz * z * u / 72; //Edgeworth2
         } else if (x < a + 1) {
             GI = gser(x, a);
@@ -170,10 +161,7 @@ _.extend(Math, {
             p =
                 D *
                 T *
-                (0.3193815 +
-                    T *
-                        (-0.3565638 +
-                            T * (1.781478 + T * (-1.821256 + T * 1.330274))));
+                (0.3193815 + T * (-0.3565638 + T * (1.781478 + T * (-1.821256 + T * 1.330274))));
         return X > 0 ? 1 - p : p;
     },
     inv_tdist_05(df) {
@@ -279,9 +267,7 @@ var getCookie = function(name) {
                 var cookie = $.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) == name + '=') {
-                    cookieValue = decodeURIComponent(
-                        cookie.substring(name.length + 1)
-                    );
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
             }

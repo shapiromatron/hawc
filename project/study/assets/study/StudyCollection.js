@@ -72,10 +72,7 @@ class StudyCollection {
             $('<select class="span12" size="6" multiple>')
                 .append(
                     _.map(flds, function(d) {
-                        return '<option value="{0}">{1}</option>'.printf(
-                            d,
-                            Study.typeNames[d]
-                        );
+                        return '<option value="{0}">{1}</option>'.printf(d, Study.typeNames[d]);
                     })
                 )
                 .appendTo($el);

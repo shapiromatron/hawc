@@ -73,10 +73,7 @@ class AnimalGroup {
             .add_tbody_tr('Lifestage assessed', this.data.lifestage_assessed)
             .add_tbody_tr('Generation', this.data.generation)
             .add_tbody_tr_list('Parents', getRelations(this.data.parents))
-            .add_tbody_tr(
-                'Siblings',
-                this._getAniRelationLink(this.data.siblings)
-            )
+            .add_tbody_tr('Siblings', this._getAniRelationLink(this.data.siblings))
             .add_tbody_tr_list('Children', getRelations(this.data.children))
             .add_tbody_tr('Description', this.data.comments);
 
@@ -136,10 +133,7 @@ class AnimalGroup {
             };
 
         tbl = new DescriptiveTable()
-            .add_tbody_tr(
-                'Dosed animals',
-                getDosedAnimals(this.data.id, data.dosed_animals)
-            )
+            .add_tbody_tr('Dosed animals', getDosedAnimals(this.data.id, data.dosed_animals))
             .add_tbody_tr('Route of exposure', data.route_of_exposure)
             .add_tbody_tr('Exposure duration', getDurObs())
             .add_tbody_tr('Number of dose-groups', data.num_dose_groups)

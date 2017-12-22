@@ -60,9 +60,7 @@ class Root extends Component {
             .value();
 
         return users.map(function(user) {
-            let subset = list.filter(
-                    (d) => d.owner && d.owner.full_name === user
-                ),
+            let subset = list.filter((d) => d.owner && d.owner.full_name === user),
                 data = _.extend({}, chartData, {
                     label: subset[0].owner.full_name,
                 });

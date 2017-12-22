@@ -69,16 +69,10 @@ class EditForm extends Component {
                     <div className="span6">
                         <MetricSelect />
                         <div>
-                            <button
-                                className="btn btn-primary space"
-                                onClick={this.loadMetrics}
-                            >
+                            <button className="btn btn-primary space" onClick={this.loadMetrics}>
                                 Load responses
                             </button>
-                            <button
-                                className="btn space"
-                                onClick={this.clearMetrics}
-                            >
+                            <button className="btn space" onClick={this.clearMetrics}>
                                 Hide currently shown responses
                             </button>
                         </div>
@@ -91,8 +85,8 @@ class EditForm extends Component {
                             <StudyTypeSelect />
                         </div>
                         <p className="help-block">
-                            To de-select a filter, click on the filter while
-                            holding ⌘ on Mac or Control on Windows
+                            To de-select a filter, click on the filter while holding ⌘ on Mac or
+                            Control on Windows
                         </p>
                     </div>
                 </div>

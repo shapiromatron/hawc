@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import {
-    initializeBulkEditForm,
-    patchBulkList,
-    patchDetailList,
-} from 'textCleanup/actions/Items';
+import { initializeBulkEditForm, patchBulkList, patchDetailList } from 'textCleanup/actions/Items';
 import Loading from 'shared/components/Loading';
 import FormComponent from 'textCleanup/components/Items/BulkForm';
 
@@ -19,10 +15,7 @@ class BulkForm extends Component {
 
     componentWillMount() {
         this.props.dispatch(
-            initializeBulkEditForm(
-                this.getIDs(this.props),
-                this.props.params.field
-            )
+            initializeBulkEditForm(this.getIDs(this.props), this.props.params.field)
         );
     }
 
@@ -49,10 +42,7 @@ class BulkForm extends Component {
         ) {
             return false;
         }
-        return (
-            model.itemsLoaded &&
-            model.editObject[thisField][params.field] !== null
-        );
+        return model.itemsLoaded && model.editObject[thisField][params.field] !== null;
     }
 
     render() {

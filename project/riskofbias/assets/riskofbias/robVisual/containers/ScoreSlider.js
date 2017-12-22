@@ -3,10 +3,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Slider from 'riskofbias/robVisual/components/ScoreSlider';
-import {
-    fetchRobScores,
-    setScoreThreshold,
-} from 'riskofbias/robVisual/actions/Filter';
+import { fetchRobScores, setScoreThreshold } from 'riskofbias/robVisual/actions/Filter';
 
 class ScoreSlider extends Component {
     constructor(props) {
@@ -31,11 +28,7 @@ class ScoreSlider extends Component {
                 return item.final_score;
             }).final_score;
         return _.isEmpty(this.props.effects) ? null : (
-            <Slider
-                max={max}
-                threshold={threshold}
-                handleChange={this.handleChange}
-            />
+            <Slider max={max} threshold={threshold} handleChange={this.handleChange} />
         );
     }
 }

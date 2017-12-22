@@ -11,15 +11,11 @@ class HawcTooltip {
             close = $(
                 '<button type="button" title="click or press ESC to close" class="close">&times;</button>'
             ).click(this.hide.bind(this));
-            heading = $(
-                '<div class="popover-title" title="drag to reposition">'
-            )
+            heading = $('<div class="popover-title" title="drag to reposition">')
                 .append(close)
                 .append('<div class="hawcTooltipHeading">');
 
-            tooltip = $(
-                '<div class="hawcTooltip popover" style="display: none;">'
-            )
+            tooltip = $('<div class="hawcTooltip popover" style="display: none;">')
                 .append(heading)
                 .append('<div class="hawcTooltipContent popover-content">')
                 .draggable()
@@ -53,17 +49,11 @@ class HawcTooltip {
         if (x - width - padding > 0 || x + width + padding < ww) {
             // see if whole thing fits to left or right
             l = x + width + padding < ww ? x + padding : x - width - padding;
-            t =
-                y - half_height - top_padding > 0
-                    ? y - half_height
-                    : top_padding;
+            t = y - half_height - top_padding > 0 ? y - half_height : top_padding;
             t = t + height + padding > wh ? wh - height - padding : t;
         } else if (y - height - top_padding > 0 || y + height + padding < wh) {
             // see if whole thing will fit above or below
-            t =
-                y - height - top_padding > 0
-                    ? y - height - padding
-                    : y + padding;
+            t = y - height - top_padding > 0 ? y - height - padding : y + padding;
             l = x - half_width > 0 ? x - half_width : 0;
             l = l + width + padding > ww ? ww - width - padding : l;
         } else {

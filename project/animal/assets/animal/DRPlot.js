@@ -41,10 +41,7 @@ class DRPlot extends D3Plot {
                     this.max_x * (1 + this.buff),
                 ];
             } else {
-                this.x_axis_settings.domain = [
-                    this.min_x / 10,
-                    this.max_x * (1 + this.buff),
-                ];
+                this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
             }
             this.x_scale = this._build_scale(this.x_axis_settings);
 
@@ -133,8 +130,7 @@ class DRPlot extends D3Plot {
     }
 
     toggle_y_axis() {
-        if (window.event && window.event.stopPropagation)
-            event.stopPropagation();
+        if (window.event && window.event.stopPropagation) event.stopPropagation();
         if (this.endpoint.data.data_type == 'C') {
             if (this.y_axis_settings.scale_type == 'linear') {
                 this.y_axis_settings.scale_type = 'log';
@@ -161,8 +157,7 @@ class DRPlot extends D3Plot {
     toggle_x_axis() {
         // get minimum non-zero dose and then set all control doses
         // equal to ten-times lower than the lowest dose
-        if (window.event && window.event.stopPropagation)
-            event.stopPropagation();
+        if (window.event && window.event.stopPropagation) event.stopPropagation();
         if (this.x_axis_settings.scale_type == 'linear') {
             this.x_axis_settings.scale_type = 'log';
             this.x_axis_settings.number_ticks = 1;
@@ -186,22 +181,13 @@ class DRPlot extends D3Plot {
             ];
         } else {
             this.min_x = d3.min(_.map(this.values, 'x_log'));
-            this.x_axis_settings.domain = [
-                this.min_x / 10,
-                this.max_x * (1 + this.buff),
-            ];
+            this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
         }
     }
 
     set_defaults() {
         // Default settings for a DR plot instance
-        this.line_colors = [
-            '#BF3F34',
-            '#545FF2',
-            '#D9B343',
-            '#228C5E',
-            '#B27373',
-        ]; //bmd lines
+        this.line_colors = ['#BF3F34', '#545FF2', '#D9B343', '#228C5E', '#B27373']; //bmd lines
         this.padding = { top: 40, right: 20, bottom: 40, left: 60 };
         this.buff = 0.05; // addition numerical-spacing around dose/response units
         this.radius = 7;
@@ -244,10 +230,7 @@ class DRPlot extends D3Plot {
         //rebuild y-axis
         this.yAxis
             .scale(y)
-            .ticks(
-                this.y_axis_settings.number_ticks,
-                this.y_axis_settings.label_format
-            );
+            .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
             .selectAll('.y_axis')
@@ -272,10 +255,7 @@ class DRPlot extends D3Plot {
         //rebuild x-axis
         this.xAxis
             .scale(x)
-            .ticks(
-                this.x_axis_settings.number_ticks,
-                this.x_axis_settings.label_format
-            );
+            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
 
         this.vis
             .selectAll('.x_axis')
@@ -314,33 +294,20 @@ class DRPlot extends D3Plot {
             .map(function(v, i) {
                 var y,
                     cls = 'dose_points',
-                    txts = [
-                        'Dose = {0} {1}'.printf(v.dose, dose_units),
-                        'N = {0}'.printf(v.n),
-                    ];
+                    txts = ['Dose = {0} {1}'.printf(v.dose, dose_units), 'N = {0}'.printf(v.n)];
 
                 if (ep.data_type == 'C') {
                     y = v.response;
                     txts.push(
-                        'Response = {0} {1}'.printf(
-                            v.response,
-                            ep.response_units
-                        ),
+                        'Response = {0} {1}'.printf(v.response, ep.response_units),
                         '{0} = {1}'.printf(ep.variance_name, v.variance)
                     );
                 } else if (ep.data_type == 'P') {
                     y = v.response;
-                    txts.push(
-                        'Response = {0}'.printf(self.endpoint.get_pd_string(v))
-                    );
+                    txts.push('Response = {0}'.printf(self.endpoint.get_pd_string(v)));
                 } else {
                     y = v.incidence / v.n;
-                    txts.push(
-                        'Incidence = {0} {1}'.printf(
-                            v.incidence,
-                            ep.response_units
-                        )
-                    );
+                    txts.push('Incidence = {0} {1}'.printf(v.incidence, ep.response_units));
                 }
 
                 if (ep.LOEL == i) cls += ' LOEL';
@@ -381,9 +348,7 @@ class DRPlot extends D3Plot {
         _.extend(this, {
             title_str: this.endpoint.data.name,
             x_label_text: 'Dose ({0})'.printf(this.endpoint.dose_units),
-            y_label_text: 'Response ({0})'.printf(
-                this.endpoint.data.response_units
-            ),
+            y_label_text: 'Response ({0})'.printf(this.endpoint.data.response_units),
             values,
             sigs_data,
             max_x: d3.max(ep.groups, function(datum) {
@@ -417,10 +382,7 @@ class DRPlot extends D3Plot {
         });
 
         $.extend(this.y_axis_settings, {
-            domain: [
-                this.min_y - this.max_y * this.buff,
-                this.max_y * (1 + this.buff),
-            ],
+            domain: [this.min_y - this.max_y * this.buff, this.max_y * (1 + this.buff)],
             rangeRound: [this.h, 0],
             x_translate: 0,
             y_translate: 0,
@@ -465,9 +427,7 @@ class DRPlot extends D3Plot {
         } catch (err) {}
 
         if (!this.error_bar_group) {
-            this.error_bar_group = this.vis
-                .append('g')
-                .attr('class', 'error_bars');
+            this.error_bar_group = this.vis.append('g').attr('class', 'error_bars');
         }
 
         var bars = this.values.filter(function(v) {
@@ -492,10 +452,7 @@ class DRPlot extends D3Plot {
             };
 
         if (this.error_bars_vertical && update) {
-            this.error_bars_vertical = this.build_line(
-                bar_options,
-                this.error_bars_vertical
-            );
+            this.error_bars_vertical = this.build_line(bar_options, this.error_bars_vertical);
         } else {
             this.error_bars_vertical = this.build_line(bar_options);
         }
@@ -515,10 +472,7 @@ class DRPlot extends D3Plot {
             },
         });
         if (this.error_bars_lower && update) {
-            this.error_bars_lower = this.build_line(
-                bar_options,
-                this.error_bars_lower
-            );
+            this.error_bars_lower = this.build_line(bar_options, this.error_bars_lower);
         } else {
             this.error_bars_lower = this.build_line(bar_options);
         }
@@ -532,10 +486,7 @@ class DRPlot extends D3Plot {
             },
         });
         if (this.error_bars_upper && update) {
-            this.error_bars_upper = this.build_line(
-                bar_options,
-                this.error_bars_upper
-            );
+            this.error_bars_upper = this.build_line(bar_options, this.error_bars_upper);
         } else {
             this.error_bars_upper = this.build_line(bar_options);
         }
@@ -603,9 +554,7 @@ class DRPlot extends D3Plot {
                 .text('*');
 
             this.sigs_labels = this.sigs.append('svg:title').text(function(d) {
-                return 'Statistically significant at {0}'.printf(
-                    d.significance_level
-                );
+                return 'Statistically significant at {0}'.printf(d.significance_level);
             });
         }
     }
@@ -658,8 +607,7 @@ class DRPlot extends D3Plot {
 
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
-        legend_settings.box_h =
-            legend_settings.items.length * legend_settings.item_height;
+        legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
 
         legend_settings.box_padding = 5;
         legend_settings.dot_r = 5;

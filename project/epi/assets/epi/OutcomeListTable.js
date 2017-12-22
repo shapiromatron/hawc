@@ -12,14 +12,7 @@ class OutcomeListTable {
         }
 
         var table = this.table,
-            headers = [
-                'Study',
-                'Study population',
-                'Outcome',
-                'System',
-                'Effect',
-                'Diagnostic',
-            ];
+            headers = ['Study', 'Study population', 'Outcome', 'System', 'Effect', 'Diagnostic'];
         table.setColGroup([12, 25, 16, 17, 10, 13]);
         table.addHeaderRow(headers);
         this.outcomes.map((outcome) => {

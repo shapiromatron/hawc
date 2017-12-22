@@ -11,8 +11,7 @@ class Donut extends D3Plot {
         this.plot_div = $(plot_id);
         this.options = options;
         this.viewlock = false;
-        if (!this.study.riskofbias || this.study.riskofbias.length === 0)
-            return;
+        if (!this.study.riskofbias || this.study.riskofbias.length === 0) return;
         this.set_defaults(options);
         if (this.options && this.options.build_plot_startup) {
             this.build_plot();
@@ -125,21 +124,13 @@ class Donut extends D3Plot {
         this.domain_arc = domain_arc;
 
         // setup groups
-        this.detail_arc_group = this.vis
-            .append('g')
-            .attr('transform', donut_center);
+        this.detail_arc_group = this.vis.append('g').attr('transform', donut_center);
 
-        this.detail_label_group = this.vis
-            .append('g')
-            .attr('transform', donut_center);
+        this.detail_label_group = this.vis.append('g').attr('transform', donut_center);
 
-        this.domain_arc_group = this.vis
-            .append('g')
-            .attr('transform', donut_center);
+        this.domain_arc_group = this.vis.append('g').attr('transform', donut_center);
 
-        this.domain_label_group = this.vis
-            .append('g')
-            .attr('transform', donut_center);
+        this.domain_label_group = this.vis.append('g').attr('transform', donut_center);
 
         // add domain labels. Two sets because we want two rows of information
         this.domain_domain_labels = this.domain_label_group
@@ -245,11 +236,7 @@ class Donut extends D3Plot {
             .attr('y', this.h)
             .attr('text-anchor', 'end')
             .attr('class', 'dr_title')
-            .text(
-                '{0} risk of bias summary'.printf(
-                    this.study.data.short_citation
-                )
-            );
+            .text('{0} risk of bias summary'.printf(this.study.data.short_citation));
 
         setTimeout(function() {
             self.toggle_domain_width();
@@ -258,8 +245,7 @@ class Donut extends D3Plot {
 
     toggle_domain_width() {
         var new_radius = this.radius_middle;
-        if (this.domain_outer_radius === this.radius_middle)
-            new_radius = this.radius_outer;
+        if (this.domain_outer_radius === this.radius_middle) new_radius = this.radius_outer;
 
         this.domain_arc = d3.svg
             .arc()
@@ -293,9 +279,7 @@ class Donut extends D3Plot {
 
     show_subset(metric) {
         this.clear_subset();
-        this.subset_div.append(
-            '<h4>{0} domain</h4>'.printf(metric.parent.domain_text)
-        );
+        this.subset_div.append('<h4>{0} domain</h4>'.printf(metric.parent.domain_text));
         var ol = $('<ol class="score-details"></ol>'),
             div = $('<div>')
                 .text(metric.score_text)

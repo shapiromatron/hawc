@@ -6,9 +6,7 @@ import BaseVisualForm from './BaseVisualForm';
 
 class EndpointAggregationForm extends BaseVisualForm {
     buildPreview($parent, data) {
-        this.preview = new EndpointAggregation(data).displayAsPage(
-            $parent.empty()
-        );
+        this.preview = new EndpointAggregation(data).displayAsPage($parent.empty());
     }
 
     updateSettingsFromPreview() {}

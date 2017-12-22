@@ -74,9 +74,7 @@ class EndpointCard extends Component {
     }
 
     renderNullData() {
-        return (
-            <h4 className="nullNotification">Endpoint contains empty data.</h4>
-        );
+        return <h4 className="nullNotification">Endpoint contains empty data.</h4>;
     }
 
     renderChart(doses, responses) {
@@ -97,27 +95,17 @@ class EndpointCard extends Component {
         let { endpoint, study } = this.props,
             { doses, responses } = this.filterNullData(),
             dataNull = _.isEmpty(doses) || _.isEmpty(responses),
-            content_types = [
-                'results_notes',
-                'system',
-                'organ',
-                'effect',
-                'effect_subtype',
-            ];
+            content_types = ['results_notes', 'system', 'organ', 'effect', 'effect_subtype'];
         return (
             <div className="endpointCard">
                 <CardHeader
                     endpoint={endpoint}
                     study={study}
-                    citation={
-                        endpoint.animal_group.experiment.study.short_citation
-                    }
+                    citation={endpoint.animal_group.experiment.study.short_citation}
                     showEndpointModal={this.showEndpointModal}
                     showStudyModal={this.showStudyModal}
                 />
-                {dataNull
-                    ? this.renderNullData()
-                    : this.renderChart(doses, responses)}
+                {dataNull ? this.renderNullData() : this.renderChart(doses, responses)}
                 <Content data={endpoint} content_types={content_types} />
             </div>
         );

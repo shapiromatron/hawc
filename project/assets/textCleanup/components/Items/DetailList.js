@@ -8,12 +8,8 @@ import h from 'textCleanup/utils/helpers';
 class DetailList extends Component {
     render() {
         let { items, checkedRows, onDetailChange, showModal } = this.props,
-            fields = _.keys(
-                _.omit(items[0], ['id', 'ids', 'field', 'showDetails'])
-            ),
-            allChecked = checkedRows
-                ? checkedRows.length === items.length
-                : false;
+            fields = _.keys(_.omit(items[0], ['id', 'ids', 'field', 'showDetails'])),
+            allChecked = checkedRows ? checkedRows.length === items.length : false;
         return (
             <div className="detail-list">
                 <div className="detail-header">

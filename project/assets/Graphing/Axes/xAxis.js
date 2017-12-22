@@ -53,9 +53,7 @@ class xAxis extends Component {
 
     renderAxis() {
         this.props.xScale();
-        this.props.renderScale
-            ? d3.select(this.refs.xAxis).call(this.xAxis)
-            : null;
+        this.props.renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
     }
 }
 

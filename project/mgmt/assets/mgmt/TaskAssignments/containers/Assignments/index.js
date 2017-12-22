@@ -65,10 +65,7 @@ class Assignments extends Component {
 
         return (
             <div>
-                <FinishedTaskFilter
-                    checked={this.state.filterTasks}
-                    onChange={this.toggleFilter}
-                />
+                <FinishedTaskFilter checked={this.state.filterTasks} onChange={this.toggleFilter} />
                 {renderTasks
                     ? _.map(groupedTasks, (tasks, key) => (
                           <AssessmentTasks
@@ -78,10 +75,7 @@ class Assignments extends Component {
                           />
                       ))
                     : this.renderNoTasks()}
-                <RobTasks
-                    tasks={this.props.tasks.robTasks}
-                    showAssessment={showAssessment}
-                />
+                <RobTasks tasks={this.props.tasks.robTasks} showAssessment={showAssessment} />
             </div>
         );
     }

@@ -133,10 +133,7 @@ class D3Plot {
             .attr('viewBox', `0 0 ${w} ${h}`)
             .attr('preserveAspectRatio', 'xMinYMin')
             .append('g')
-            .attr(
-                'transform',
-                `translate(${this.padding.left},${this.padding.top})`
-            );
+            .attr('transform', `translate(${this.padding.left},${this.padding.top})`);
         this.svg = this.vis[0][0].parentNode;
 
         var chart = $(this.svg),
@@ -148,8 +145,7 @@ class D3Plot {
         this.trigger_resize = function(forceResize) {
             var targetWidth = Math.min(container.width(), self.full_width),
                 aspect = self.full_width / self.full_height;
-            if (forceResize === true && !self.isFullSize)
-                targetWidth = self.full_width;
+            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
 
             if (targetWidth !== self.full_width) {
                 // use custom smaller size
@@ -157,10 +153,7 @@ class D3Plot {
                 chart.attr('height', Math.round(targetWidth / aspect));
                 self.isFullSize = false;
                 if (self.resize_button) {
-                    self.resize_button.attr(
-                        'title',
-                        'zoom figure to full-size'
-                    );
+                    self.resize_button.attr('title', 'zoom figure to full-size');
                     self.resize_button.find('i').attr('class', 'icon-zoom-in');
                 }
             } else {
@@ -169,10 +162,7 @@ class D3Plot {
                 chart.attr('height', self.full_height);
                 self.isFullSize = true;
                 if (self.resize_button) {
-                    self.resize_button.attr(
-                        'title',
-                        'zoom figure to fit screen'
-                    );
+                    self.resize_button.attr('title', 'zoom figure to fit screen');
                     self.resize_button.find('i').attr('class', 'icon-zoom-out');
                 }
             }
@@ -250,10 +240,7 @@ class D3Plot {
                     .rangeRoundBands(settings.rangeRound);
                 break;
             default:
-                console.log(
-                    'Error- settings.scale_type is not defined: ' +
-                        settings.scale_type
-                );
+                console.log('Error- settings.scale_type is not defined: ' + settings.scale_type);
         }
         return scale;
     }
@@ -279,10 +266,7 @@ class D3Plot {
         if (settings.axis_labels) {
             this.vis
                 .append('g')
-                .attr(
-                    'transform',
-                    `translate(${settings.x_translate},${settings.y_translate})`
-                )
+                .attr('transform', `translate(${settings.x_translate},${settings.y_translate})`)
                 .attr('class', settings.axis_class)
                 .call(axis);
         }
@@ -305,9 +289,7 @@ class D3Plot {
                 break;
         }
 
-        var gridlines = this.vis
-            .append('g')
-            .attr('class', settings.gridline_class);
+        var gridlines = this.vis.append('g').attr('class', settings.gridline_class);
 
         gridlines
             .selectAll('gridlines')
@@ -327,10 +309,7 @@ class D3Plot {
         //rebuild y-axis
         this.yAxis
             .scale(this.y_scale)
-            .ticks(
-                this.y_axis_settings.number_ticks,
-                this.y_axis_settings.label_format
-            );
+            .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
             .selectAll('.y_axis')
@@ -381,10 +360,7 @@ class D3Plot {
         //rebuild x-axis
         this.xAxis
             .scale(this.x_scale)
-            .ticks(
-                this.x_axis_settings.number_ticks,
-                this.x_axis_settings.label_format
-            );
+            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
 
         this.vis
             .selectAll('.x_axis')
@@ -435,22 +411,24 @@ class D3Plot {
         // build y-axis based on plot-settings
         this.y_scale = this._build_scale(this.y_axis_settings);
         this.yAxis = this._print_axis(this.y_scale, this.y_axis_settings);
-        this.y_primary_gridlines = this._print_gridlines(
+        this.y_primary_gridlines = this._print_gridlines(this.y_scale, this.y_axis_settings, [
+            0,
+            this.w,
             this.y_scale,
-            this.y_axis_settings,
-            [0, this.w, this.y_scale, this.y_scale]
-        );
+            this.y_scale,
+        ]);
     }
 
     build_x_axis() {
         // build x-axis based on plot-settings
         this.x_scale = this._build_scale(this.x_axis_settings);
         this.xAxis = this._print_axis(this.x_scale, this.x_axis_settings);
-        this.x_primary_gridlines = this._print_gridlines(
+        this.x_primary_gridlines = this._print_gridlines(this.x_scale, this.x_axis_settings, [
             this.x_scale,
-            this.x_axis_settings,
-            [this.x_scale, this.x_scale, 0, this.h]
-        );
+            this.x_scale,
+            0,
+            this.h,
+        ]);
     }
 
     build_line(options, existing) {
@@ -629,9 +607,7 @@ class D3Plot {
             ).html([
                 '<input name="height" value="{0}">'.printf(svg_blob.height),
                 '<input name="width" value="{0}">'.printf(svg_blob.width),
-                '<input name="svg" value="{0}">'.printf(
-                    btoa(escape(svg_blob.source[0]))
-                ),
+                '<input name="svg" value="{0}">'.printf(btoa(escape(svg_blob.source[0]))),
                 '<input name="output" value="{0}">'.printf(options.format),
             ]);
         form.appendTo('body').submit();

@@ -1,10 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
-import {
-    setError,
-    resetError,
-} from 'riskofbias/robScoreCleanup/actions/Errors';
+import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import * as types from 'riskofbias/robScoreCleanup/constants';
 import h from 'riskofbias/robScoreCleanup/utils/helpers';
 
@@ -99,10 +96,7 @@ export function selectAll() {
     };
 }
 
-export function updateVisibleItems(
-    selectedScores = null,
-    selectedStudyTypes = null
-) {
+export function updateVisibleItems(selectedScores = null, selectedStudyTypes = null) {
     if (selectedScores !== null) {
         selectedScores = selectedScores.map((d) => parseInt(d));
     }
@@ -124,10 +118,7 @@ export function updateEditMetricIfNeeded() {
             dispatch(updateEditMetric(update));
         } else if (_.isEmpty(state.items.updateIds)) {
             // if the selected metric changed, update displayed metric and description
-            update = updateMetric(
-                state.items.items[0].metric,
-                current.values[0]
-            );
+            update = updateMetric(state.items.items[0].metric, current.values[0]);
             if (!_.isEqual(update, current)) {
                 dispatch(updateEditMetric(update));
             }
@@ -154,15 +145,13 @@ export function submitItemEdits(metric) {
             return;
         }
 
-        return fetch(h.buildPatchUrl(state.config, updateIds), opts).then(
-            (response) => {
-                if (response.ok) {
-                    let patch = { ids: updateIds, ...metric };
-                    dispatch(patchItems(patch));
-                } else {
-                    response.json().then((json) => dispatch(setError(json)));
-                }
+        return fetch(h.buildPatchUrl(state.config, updateIds), opts).then((response) => {
+            if (response.ok) {
+                let patch = { ids: updateIds, ...metric };
+                dispatch(patchItems(patch));
+            } else {
+                response.json().then((json) => dispatch(setError(json)));
             }
-        );
+        });
     };
 }

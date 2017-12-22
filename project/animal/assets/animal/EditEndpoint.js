@@ -50,8 +50,7 @@ class EditEndpoint extends Endpoint {
                     var name = d.name.split('-').pop();
                     row[name] = parseFloat(d.value, 10);
                 });
-            row['isReported'] =
-                $.isNumeric(row['response']) || $.isNumeric(row['incidence']);
+            row['isReported'] = $.isNumeric(row['response']) || $.isNumeric(row['incidence']);
             row['hasVariance'] = $.isNumeric(row['variance']);
             vals.groups.push(row);
         });
@@ -84,32 +83,17 @@ class EditEndpoint extends Endpoint {
         );
 
         $('.doses').each(function(i, v) {
-            fields.append(
-                '<option value="{0}">{1}</option>'.printf(i, v.textContent)
-            );
+            fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
         });
 
-        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop(
-            'selected',
-            true
-        );
-        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop(
-            'selected',
-            true
-        );
-        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop(
-            'selected',
-            true
-        );
+        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
+        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
+        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
     }
 
     calculate_confidence_intervals() {
         // Calculate 95% confidence intervals
-        if (
-            this.data !== undefined &&
-            this.data.data_type !== undefined &&
-            this.hasEGdata()
-        ) {
+        if (this.data !== undefined && this.data.data_type !== undefined && this.hasEGdata()) {
             if (this.data.data_type === 'C') {
                 this._add_continuous_confidence_intervals();
             } else if (this.data.data_type === 'P') {
@@ -150,19 +134,13 @@ class EditEndpoint extends Endpoint {
                     (2 * v.n * p +
                         2 * z -
                         1 -
-                        z *
-                            Math.sqrt(
-                                2 * z - (2 + 1 / v.n) + 4 * p * (v.n * q + 1)
-                            )) /
+                        z * Math.sqrt(2 * z - (2 + 1 / v.n) + 4 * p * (v.n * q + 1))) /
                     (2 * (v.n + 2 * z));
                 v.upper_ci =
                     (2 * v.n * p +
                         2 * z +
                         1 +
-                        z *
-                            Math.sqrt(
-                                2 * z + (2 + 1 / v.n) + 4 * p * (v.n * q - 1)
-                            )) /
+                        z * Math.sqrt(2 * z + (2 + 1 / v.n) + 4 * p * (v.n * q - 1))) /
                     (2 * (v.n + 2 * z));
             })
             .value();

@@ -52,16 +52,11 @@ class DynamicFormset {
     }
 
     _updateTotalFormsField() {
-        $('#id_{0}-TOTAL_FORMS'.printf(this.prefix)).val(
-            this._formsInFormset().length
-        );
+        $('#id_{0}-TOTAL_FORMS'.printf(this.prefix)).val(this._formsInFormset().length);
     }
 
     deleteForm(e) {
-        if (
-            this.options.oneFormRequired &&
-            this._formsInFormset().length <= 1
-        ) {
+        if (this.options.oneFormRequired && this._formsInFormset().length <= 1) {
             return alert('Cannot remove all forms.');
         }
 

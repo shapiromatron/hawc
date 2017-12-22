@@ -35,9 +35,7 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $('<div>');
         this.$plotDiv = $('<div>');
 
-        $(
-            '<button type="button" class="btn btn-mini" title="Toggle table-view representation">'
-        )
+        $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
             .append('<i class="icon-chevron-right"></i>')
             .click(function() {
                 self.buildTbl();
@@ -105,9 +103,7 @@ class EndpointAggregation extends BaseVisual {
                     .parent()
                     .parent();
                 if (tr.data('detail_row')) {
-                    tr
-                        .data('detail_row')
-                        .toggle_view(!tr.data('detail_row').object_visible);
+                    tr.data('detail_row').toggle_view(!tr.data('detail_row').object_visible);
                 } else {
                     var ep = tr.data('endpoint'),
                         div_id = String.random_string(),
@@ -120,10 +116,7 @@ class EndpointAggregation extends BaseVisual {
                                 div_id
                             )
                         )
-                        .data(
-                            'detail_row',
-                            new EndpointDetailRow(ep, '#' + div_id, 1)
-                        );
+                        .data('detail_row', new EndpointDetailRow(ep, '#' + div_id, 1));
                 }
             };
 
@@ -162,9 +155,7 @@ class EndpointAggregation extends BaseVisual {
                 .data('endpoint', e);
         });
 
-        return tbl
-            .getTbl()
-            .on('click', '.endpoint-selector', showEndpointDetail);
+        return tbl.getTbl().on('click', '.endpoint-selector', showEndpointDetail);
     }
 
     buildTblEvidence() {
@@ -175,11 +166,7 @@ class EndpointAggregation extends BaseVisual {
         this.endpoints.forEach(function(e) {
             var ep_tbl = $('<div>')
                 .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
-                .append(
-                    e.build_endpoint_table(
-                        $('<table class="table table-condensed">')
-                    )
-                );
+                .append(e.build_endpoint_table($('<table class="table table-condensed">')));
 
             tbl.addRow([
                 '<a href="{0}">{1}</a>'.printf(
@@ -190,10 +177,7 @@ class EndpointAggregation extends BaseVisual {
                     e.data.animal_group.experiment.url,
                     e.data.animal_group.experiment.name
                 ),
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.url,
-                    e.data.animal_group.name
-                ),
+                '<a href="{0}">{1}</a>'.printf(e.data.animal_group.url, e.data.animal_group.name),
                 ep_tbl,
             ]);
         });
@@ -207,10 +191,7 @@ class EndpointAggregation extends BaseVisual {
         } else {
             // todo: get default from options, if one exists
             this.plot = [
-                new EndpointAggregationExposureResponsePlot(
-                    this,
-                    this.plotData
-                ),
+                new EndpointAggregationExposureResponsePlot(this, this.plotData),
                 new EndpointAggregationForestPlot(this, this.plotData),
             ];
         }

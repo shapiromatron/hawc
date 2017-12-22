@@ -31,11 +31,7 @@ class MetricForm extends Component {
                             key={score.id}
                             score={score}
                             config={config}
-                            copyNotes={
-                                config.display === 'final'
-                                    ? this.copyNotes
-                                    : undefined
-                            }
+                            copyNotes={config.display === 'final' ? this.copyNotes : undefined}
                         />
                     );
                 })}

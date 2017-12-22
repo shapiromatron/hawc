@@ -69,9 +69,7 @@ class DoseUnitsWidget {
 
         // set available
         objects.forEach(function(d) {
-            self.$available.append(
-                '<option value="{0}">{1}</option>'.printf(d.id, d.name)
-            );
+            self.$available.append('<option value="{0}">{1}</option>'.printf(d.id, d.name));
         });
 
         //set selected
@@ -88,9 +86,7 @@ class DoseUnitsWidget {
 
         ids.forEach(function(d) {
             var dose = objectsKeymap[d];
-            self.$selected.append(
-                '<option value="{0}">{1}</option>'.printf(dose.id, dose.name)
-            );
+            self.$selected.append('<option value="{0}">{1}</option>'.printf(dose.id, dose.name));
         });
 
         //render on DOM

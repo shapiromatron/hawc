@@ -53,9 +53,7 @@ class xAxis extends Component {
 
     renderAxis() {
         let { min, max, width, padding, xScale, renderScale } = this.props;
-        xScale
-            .domain([min, max])
-            .range([padding[3], width - padding[1] - padding[3]]);
+        xScale.domain([min, max]).range([padding[3], width - padding[1] - padding[3]]);
 
         renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
     }

@@ -86,10 +86,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
 
             if (validNumeric(p_value2)) {
-                if (
-                    (cv === 1 && p_value2 >= 0.1) ||
-                    (cv === 0 && p_value2 <= 0.1)
-                ) {
+                if ((cv === 1 && p_value2 >= 0.1) || (cv === 0 && p_value2 <= 0.1)) {
                     // pass!
                     return null;
                 } else {
@@ -181,11 +178,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     'Residual of interest'
                 );
             } else {
-                return assertFieldExists(
-                    val,
-                    logic.failure_bin,
-                    'Residual of interest not found.'
-                );
+                return assertFieldExists(val, logic.failure_bin, 'Residual of interest not found.');
             }
         },
         Warnings(logic, model, groups) {
@@ -276,19 +269,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             }
             let val = Math.abs(model.output.fit_residuals[0]);
             if (validNumeric(val)) {
-                return assertLessThan(
-                    val,
-                    logic.threshold,
-                    logic.failure_bin,
-                    'Control residual'
-                );
+                return assertLessThan(val, logic.threshold, logic.failure_bin, 'Control residual');
             }
         },
         'Control stdev'(logic, model, groups) {
-            if (
-                model.output.fit_est_stdev === undefined ||
-                model.output.fit_stdev === undefined
-            ) {
+            if (model.output.fit_est_stdev === undefined || model.output.fit_stdev === undefined) {
                 return;
             }
 

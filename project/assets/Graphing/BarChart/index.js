@@ -13,10 +13,7 @@ class BarChart extends Component {
                         x = xScale(bar.values.count),
                         height = yScale.rangeBand(),
                         width = x - chartData.padding.left,
-                        labelText =
-                            width > 25
-                                ? 'bar-chart-label-left'
-                                : 'bar-chart-label-right',
+                        labelText = width > 25 ? 'bar-chart-label-left' : 'bar-chart-label-right',
                         labelOffset = width > 25 ? -5 : 2;
 
                     return (

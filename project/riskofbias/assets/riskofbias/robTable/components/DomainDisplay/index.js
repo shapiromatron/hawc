@@ -19,10 +19,7 @@ class DomainDisplay extends Component {
                         config,
                     };
                     return config.isForm ? (
-                        <MetricForm
-                            {...props}
-                            updateNotesLeft={updateNotesLeft}
-                        />
+                        <MetricForm {...props} updateNotesLeft={updateNotesLeft} />
                     ) : (
                         <MetricDisplay {...props} />
                     );

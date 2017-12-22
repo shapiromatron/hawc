@@ -34,9 +34,7 @@ export class MetricSelect extends Component {
         this.setDefaultValue();
         return (
             <div>
-                <label className="control-label">
-                    Select the metric to edit:
-                </label>
+                <label className="control-label">Select the metric to edit:</label>
                 <ArraySelect
                     id="metric-select"
                     className="span12"

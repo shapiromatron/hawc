@@ -12,11 +12,7 @@ class HAWCUtils {
     static newWindowPopupLink(triggeringLink) {
         // Force new window to be a popup window
         var href = triggeringLink.href + '?_popup=1';
-        var win = window.open(
-            href,
-            '_blank',
-            'height=500,width=980,resizable=yes,scrollbars=yes'
-        );
+        var win = window.open(href, '_blank', 'height=500,width=980,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
     }
@@ -25,9 +21,7 @@ class HAWCUtils {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
         arr.forEach(function(v) {
-            links.push(
-                '<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name)
-            );
+            links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
         });
         return links.join('<span> / </span>');
     }
@@ -39,10 +33,7 @@ class HAWCUtils {
         submitter.on('click', function() {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
-                submitter.attr(
-                    'href',
-                    '{0}?initial={1}'.printf(config.base_url, val)
-                );
+                submitter.attr('href', '{0}?initial={1}'.printf(config.base_url, val));
                 return true;
             }
             return false;
@@ -65,17 +56,11 @@ class HAWCUtils {
         items.forEach(function(d) {
             if (d instanceof Object) {
                 $menu.append(
-                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(
-                        d.url,
-                        d.cls || '',
-                        d.text
-                    )
+                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || '', d.text)
                 );
             } else if (typeof d === 'string') {
                 $menu.append(
-                    '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(
-                        d
-                    )
+                    '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d)
                 );
             } else {
                 console.error('unknown input type');
@@ -92,9 +77,7 @@ class HAWCUtils {
         $div = $div || $('#content');
         $div.prepend(
             $('<div class="alert">')
-                .append(
-                    '<button type="button" class="close" data-dismiss="alert">&times;</button>'
-                )
+                .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
                 .append(content)
         );
     }
@@ -110,23 +93,12 @@ class HAWCUtils {
                     ul = $('<ul>');
 
                 ul
-                    .append(
-                        '<li><b>Common name:</b> {0}</li>'.printf(
-                            data.CommonName
-                        )
-                    )
+                    .append('<li><b>Common name:</b> {0}</li>'.printf(data.CommonName))
                     .append('<li><b>SMILES:</b> {0}</li>'.printf(data.SMILES))
-                    .append(
-                        '<li><b>Molecular Weight:</b> {0}</li>'.printf(data.MW)
-                    )
-                    .append(
-                        '<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(
-                            data.image
-                        )
-                    );
+                    .append('<li><b>Molecular Weight:</b> {0}</li>'.printf(data.MW))
+                    .append('<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image));
 
-                if (show_header)
-                    content.push('<h3>Chemical Properties Information</h3>');
+                if (show_header) content.push('<h3>Chemical Properties Information</h3>');
 
                 content.push(
                     ul,
@@ -144,10 +116,7 @@ class HAWCUtils {
             // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
             if (_.isNull(txt) || txt.indexOf('translate') !== 0) return;
             var cmps = txt.split(',');
-            return [
-                parseFloat(cmps[0].split('(')[1], 10),
-                parseFloat(cmps[1].split(')')[0], 10),
-            ];
+            return [parseFloat(cmps[0].split('(')[1], 10), parseFloat(cmps[1].split(')')[0], 10)];
         };
 
         return d3.behavior
@@ -208,10 +177,7 @@ class HAWCUtils {
         while ((word = words.pop())) {
             line.push(word);
             tspan.text(line.join(' '));
-            if (
-                tspan.node().getComputedTextLength() > max_width &&
-                line.length > 1
-            ) {
+            if (tspan.node().getComputedTextLength() > max_width && line.length > 1) {
                 line.pop();
                 tspan.text(line.join(' '));
                 line = [word];

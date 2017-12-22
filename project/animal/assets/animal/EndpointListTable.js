@@ -13,19 +13,10 @@ class EndpointListTable {
     }
 
     build_table() {
-        if (this.endpoints.length === 0)
-            return '<p>No endpoints available.</p>';
+        if (this.endpoints.length === 0) return '<p>No endpoints available.</p>';
 
         var tbl = this.tbl,
-            headers = [
-                'Study',
-                'Experiment',
-                'Animal group',
-                'Endpoint',
-                'Units',
-                'NOEL',
-                'LOEL',
-            ];
+            headers = ['Study', 'Experiment', 'Animal group', 'Endpoint', 'Units', 'NOEL', 'LOEL'];
         tbl.setColGroup([12, 16, 17, 31, 10, 7, 7]);
         tbl.addHeaderRow(headers);
         this.endpoints.forEach(function(v) {

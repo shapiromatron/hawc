@@ -48,22 +48,15 @@ class SampleSizeWidget {
             txt = 'Error in input fields.',
             power,
             ratio;
-        if (
-            !isNaN(fields.mean) &&
-            !isNaN(fields.sd) &&
-            !isNaN(fields.percentToDetect)
-        ) {
-            power = Math.round(
-                this.getPower(fields.mean, fields.sd, fields.percentToDetect)
-            );
+        if (!isNaN(fields.mean) && !isNaN(fields.sd) && !isNaN(fields.percentToDetect)) {
+            power = Math.round(this.getPower(fields.mean, fields.sd, fields.percentToDetect));
 
             if (!isNaN(fields.n)) {
                 ratio = fields.n / power;
                 if (ratio <= 0.5) {
                     txt = 'underpowered (sample size is ≤50% required), ';
                 } else if (ratio < 1.0) {
-                    txt =
-                        'marginally underpowered (sample size is between 50-100% required), ';
+                    txt = 'marginally underpowered (sample size is between 50-100% required), ';
                 } else {
                     txt = 'sufficiently powered (sample size ≥100% required), ';
                 }

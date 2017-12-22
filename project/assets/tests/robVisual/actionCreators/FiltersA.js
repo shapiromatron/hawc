@@ -44,8 +44,7 @@ describe('robVisual Filter actions', () => {
                     config: {
                         host: HOST,
                         assessment_id: '126',
-                        endpoint_effect_url:
-                            'ani/api/endpoint/effects/?assessment_id=126',
+                        endpoint_effect_url: 'ani/api/endpoint/effects/?assessment_id=126',
                     },
                 },
                 expectedActions,
@@ -104,8 +103,7 @@ describe('robVisual Filter actions', () => {
                 {
                     config: {
                         host: HOST,
-                        study_score_url:
-                            'study/api/study/rob_scores/?assessment_id=126',
+                        study_score_url: 'study/api/study/rob_scores/?assessment_id=126',
                     },
                 },
                 expectedActions,
@@ -176,8 +174,7 @@ describe('robVisual Filter actions', () => {
                 {
                     config: {
                         host: HOST,
-                        endpoint_filter_url:
-                            'ani/api/endpoint/rob_filter/?assessment_id=126',
+                        endpoint_filter_url: 'ani/api/endpoint/rob_filter/?assessment_id=126',
                     },
                     filter: { selectedEffects: ['general behavior'] },
                 },

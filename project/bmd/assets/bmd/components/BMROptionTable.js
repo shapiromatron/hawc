@@ -62,14 +62,12 @@ class BMROptionTable extends React.Component {
                     <tfoot>
                         <tr>
                             <td colSpan="4">
-                                All models will be run using the selected BMRs,
-                                if appropriate for that particular model type.
+                                All models will be run using the selected BMRs, if appropriate for
+                                that particular model type.
                             </td>
                         </tr>
                     </tfoot>
-                    <tbody>
-                        {this.props.bmrs.map(this.renderRow.bind(this))}
-                    </tbody>
+                    <tbody>{this.props.bmrs.map(this.renderRow.bind(this))}</tbody>
                 </table>
                 {this.renderEditDiv()}
             </div>

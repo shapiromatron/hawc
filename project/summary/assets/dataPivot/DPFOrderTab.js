@@ -12,21 +12,10 @@ import DataPivotVisualization from './DataPivotVisualization';
 
 let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $('<thead>').html(
-                buildHeaderTr([
-                    'Field name',
-                    'Filter type',
-                    'Value',
-                    'Ordering',
-                ])
+                buildHeaderTr(['Field name', 'Filter type', 'Value', 'Ordering'])
             ),
-            tbody = $('<tbody>').on(
-                'change autocompletechange',
-                'input,select',
-                handleTableChange
-            ),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbody = $('<tbody>').on('change autocompletechange', 'input,select', handleTableChange),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.filters,
             addDataRow = function(i) {
                 let obj;
@@ -40,9 +29,10 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 addDataRow(settings.length);
                 handleTableChange();
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             num_rows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < num_rows; i++) {
@@ -74,9 +64,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         // set event binding to change settings
         div.on('change', 'input[name="filter_logic"]', function() {
-            dp.settings.plot_settings.filter_logic = $(
-                'input[name="filter_logic"]:checked'
-            ).val();
+            dp.settings.plot_settings.filter_logic = $('input[name="filter_logic"]:checked').val();
             handleTableChange();
         });
 
@@ -90,15 +78,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         tab.append(div, '<hr/>');
     },
     buildSortingTable = function(tab, dp, handleTableChange) {
-        let thead = $('<thead>').html(
-                buildHeaderTr(['Field name', 'Sort order', 'Ordering'])
-            ),
+        let thead = $('<thead>').html(buildHeaderTr(['Field name', 'Sort order', 'Ordering'])),
             tbody = $('<tbody>')
                 .on('change', 'input,select', handleTableChange)
                 .on('click', 'button', handleTableChange),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.sorts,
             addDataRow = function(i) {
                 let obj;
@@ -111,9 +95,10 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -130,17 +115,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
     buildSpacingTable = function(tab, dp) {
         let tbody = $('<tbody>'),
             thead = $('<thead>').html(
-                buildHeaderTr([
-                    'Row index',
-                    'Show line?',
-                    'Line style',
-                    'Extra space?',
-                    'Delete',
-                ])
+                buildHeaderTr(['Row index', 'Show line?', 'Line style', 'Extra space?', 'Delete'])
             ),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.spacers,
             addDataRow = function(i) {
                 let obj;
@@ -153,9 +130,10 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -174,9 +152,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             get_selected_fields = function(v) {
                 return v.field_name !== NULL_CASE;
             },
-            descriptions = dp.settings.description_settings.filter(
-                get_selected_fields
-            ),
+            descriptions = dp.settings.description_settings.filter(get_selected_fields),
             filters = dp.settings.filters.filter(get_selected_fields),
             sorts = dp.settings.sorts.filter(get_selected_fields),
             overrides = dp.settings.row_overrides,
@@ -198,28 +174,16 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         data = _.filter(
             data,
-            _.partial(
-                DataPivotVisualization.getIncludibleRows,
-                _,
-                dataline,
-                datapoints,
-                barchart
-            )
+            _.partial(DataPivotVisualization.getIncludibleRows, _, dataline, datapoints, barchart)
         );
 
         if (data.length === 0) {
-            rows.push(
-                '<tr><td colspan="6">No rows remaining after filtering criteria.</td></tr>'
-            );
+            rows.push('<tr><td colspan="6">No rows remaining after filtering criteria.</td></tr>');
             return tbody.html(rows);
         }
 
         // apply sorts
-        data = DataPivotVisualization.sort_with_overrides(
-            data,
-            sorts,
-            overrides
-        );
+        data = DataPivotVisualization.sort_with_overrides(data, sorts, overrides);
 
         // apply manual index offsets
         let row_override_map = _.keyBy(overrides, 'pk'),
@@ -246,24 +210,12 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     'checked',
                     obj.include
                 ),
-                index = $(
-                    '<input name="ov_index" class="span12" type="number" step="any">'
-                ).val(obj.index),
-                text_style = dp.style_manager.add_select(
-                    'texts',
-                    obj.text_style,
-                    true
+                index = $('<input name="ov_index" class="span12" type="number" step="any">').val(
+                    obj.index
                 ),
-                line_style = dp.style_manager.add_select(
-                    'lines',
-                    obj.line_style,
-                    true
-                ),
-                symbol_style = dp.style_manager.add_select(
-                    'symbols',
-                    obj.symbol_style,
-                    true
-                );
+                text_style = dp.style_manager.add_select('texts', obj.text_style, true),
+                line_style = dp.style_manager.add_select('lines', obj.line_style, true),
+                symbol_style = dp.style_manager.add_select('symbols', obj.symbol_style, true);
 
             let tr = $('<tr>')
                 .data({ pk: v._dp_pk, obj })
@@ -309,10 +261,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         buildManualOverrideRows(dp, tbody);
 
         tab.append(
-            $('<h3>Row-level customization</h3>').append(
-                refreshRowsBtn,
-                resetOverridesBtn
-            ),
+            $('<h3>Row-level customization</h3>').append(refreshRowsBtn, resetOverridesBtn),
             '<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
             tbl
         );
@@ -323,15 +272,13 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         });
     },
     showOverrideRebuildRequired = function(dp, tbody) {
-        let btn = $(
-                '<button class="btn btn-primary">Click to rebuild</button>'
-            ).on('click', function() {
-                buildManualOverrideRows(dp, tbody);
-            }),
-            td = $('<td colspan="6">').append(
-                '<p>Row-ordering has changed.</p>',
-                btn
-            );
+        let btn = $('<button class="btn btn-primary">Click to rebuild</button>').on(
+                'click',
+                function() {
+                    buildManualOverrideRows(dp, tbody);
+                }
+            ),
+            td = $('<td colspan="6">').append('<p>Row-ordering has changed.</p>', btn);
         tbody.html($('<tr>').append(td));
     },
     updateOverrideSettingState = function(dp, tbody) {
@@ -340,19 +287,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             let $v = $(v),
                 obj = {
                     pk: $v.data('pk'),
-                    include: $v
-                        .find('input[name="ov_include"]')
-                        .prop('checked'),
+                    include: $v.find('input[name="ov_include"]').prop('checked'),
                     index: parseFloat($v.find('input[name="ov_index"]').val()),
-                    text_style: $v
-                        .find('.ov_text select option:selected')
-                        .val(),
-                    line_style: $v
-                        .find('.ov_line select option:selected')
-                        .val(),
-                    symbol_style: $v
-                        .find('.ov_symbol select option:selected')
-                        .val(),
+                    text_style: $v.find('.ov_text select option:selected').val(),
+                    line_style: $v.find('.ov_line select option:selected').val(),
+                    symbol_style: $v.find('.ov_symbol select option:selected').val(),
                 };
 
             if (!_.isFinite(obj.index)) {

@@ -7,16 +7,12 @@ class UserAutocomplete extends Component {
     constructor(props) {
         super(props);
         this.getPopulatedOwner = this.getPopulatedOwner.bind(this);
-        this.url = `${this.props.url}?related=${
-            props.task.study.assessment.id
-        }`;
+        this.url = `${this.props.url}?related=${props.task.study.assessment.id}`;
     }
 
     getPopulatedOwner() {
         return {
-            display: this.props.task.owner
-                ? this.props.task.owner.full_name
-                : null,
+            display: this.props.task.owner ? this.props.task.owner.full_name : null,
             id: this.props.task.owner ? this.props.task.owner.id : null,
         };
     }

@@ -18,28 +18,19 @@ class EditReferenceContainer {
         this.$div_selected_tags = $('<div class="well well-small"></div>');
         this.$div_details = $('<div></div>');
         this.$div_error = $('<div></div>');
-        this.saved_icon = $(
-            '<span class="btn litSavedIcon" style="display: none;">Saved!</span>'
-        );
+        this.saved_icon = $('<span class="btn litSavedIcon" style="display: none;">Saved!</span>');
         this.$editRef = $(
             '<a class="btn pull-right" target="_blank" href="#" title="Cleanup imported reference details">Edit</a>'
         );
 
         var self = this,
-            save_txt =
-                this.refs.length > 1
-                    ? 'Save and go to next untagged'
-                    : 'Save tags',
-            button_save_and_next = $(
-                '<button class="btn btn-primary"></button>'
-            )
+            save_txt = this.refs.length > 1 ? 'Save and go to next untagged' : 'Save tags',
+            button_save_and_next = $('<button class="btn btn-primary"></button>')
                 .text(save_txt)
                 .click(function() {
                     self.save_and_next();
                 }),
-            button_reset_tags = $(
-                '<button class="btn">Remove all tags</button>'
-            ).click(function() {
+            button_reset_tags = $('<button class="btn">Remove all tags</button>').click(function() {
                 if (self.loaded_ref) self.loaded_ref.remove_tags();
             }),
             div_buttons = $('<div></div>').append([
@@ -60,9 +51,7 @@ class EditReferenceContainer {
             this.$div_details,
         ]);
 
-        this.$tags_content = this.load_tags().on('hawc-tagClicked', function(
-            e
-        ) {
+        this.$tags_content = this.load_tags().on('hawc-tagClicked', function(e) {
             var tag = $(e.target).data('d');
             self.loaded_ref.add_tag(tag);
         });
@@ -76,15 +65,8 @@ class EditReferenceContainer {
             );
         }
 
-        this.$div_tags = $('<div class="span3"></div>').html([
-            header,
-            this.$tags_content,
-        ]);
-        this.$div_content.html([
-            this.$div_reflist,
-            this.$div_ref,
-            this.$div_tags,
-        ]);
+        this.$div_tags = $('<div class="span3"></div>').html([header, this.$tags_content]);
+        this.$div_content.html([this.$div_reflist, this.$div_ref, this.$div_tags]);
 
         this.$div_selected_tags.on('click', '.refTag', function() {
             self.loaded_ref.remove_tag($(this).data('d'));
@@ -253,8 +235,7 @@ class EditReferenceContainer {
     }
 
     set_references_complete() {
-        var txt =
-                'All references have been successfully tagged. Congratulations!',
+        var txt = 'All references have been successfully tagged. Congratulations!',
             div = $('<div>')
                 .attr('class', 'alert alert-success')
                 .text(txt);

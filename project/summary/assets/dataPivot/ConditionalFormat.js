@@ -15,9 +15,7 @@ class _DataPivot_settings_conditionalFormat {
         this.settings = settings;
         this.status = $('<div>');
 
-        this._status_text = $('<span style="padding-right: 10px">').appendTo(
-            this.status
-        );
+        this._status_text = $('<span style="padding-right: 10px">').appendTo(this.status);
 
         this.modal = new HAWCModal();
         this._showModal = $('<button class="btn btn-small" type="button">')
@@ -37,9 +35,7 @@ class _DataPivot_settings_conditionalFormat {
 
     _show_modal() {
         var fieldName = this.parent.content.field_name.val(),
-            header = $('<h4>').html(
-                `Conditional formatting: <i>${fieldName}<i>`
-            ),
+            header = $('<h4>').html(`Conditional formatting: <i>${fieldName}<i>`),
             footer = this._getFooter();
 
         this.setModalContent();
@@ -68,9 +64,7 @@ class _DataPivot_settings_conditionalFormat {
         // draw conditions
         this.conditionals = [];
         this.data.forEach((v) => {
-            this.conditionals.push(
-                new _DataPivot_settings_conditional(body, this, v)
-            );
+            this.conditionals.push(new _DataPivot_settings_conditional(body, this, v));
         });
     }
 
@@ -105,9 +99,7 @@ class _DataPivot_settings_conditionalFormat {
     _add_condition(values) {
         var body = this.modal.getBody();
         this._set_empty_message();
-        this.conditionals.push(
-            new _DataPivot_settings_conditional(body, this, values)
-        );
+        this.conditionals.push(new _DataPivot_settings_conditional(body, this, values));
     }
 
     delete_condition(conditional) {
@@ -234,26 +226,20 @@ class _DataPivot_settings_conditional {
         });
 
         // build min/max for size and color
-        var min_size = $(
-                '<input name="min_size" type="range" min="0" max="500" step="5">'
-            ).val(values.min_size || defaults.min_size),
-            max_size = $(
-                '<input name="max_size" type="range" min="0" max="500" step="5">'
-            ).val(values.max_size || defaults.max_size),
+        var min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">').val(
+                values.min_size || defaults.min_size
+            ),
+            max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">').val(
+                values.max_size || defaults.max_size
+            ),
             min_color = $('<input name="min_color" type="color">').val(
                 values.min_color || defaults.min_color
             ),
             max_color = $('<input name="max_color" type="color">').val(
                 values.max_color || defaults.max_color
             ),
-            svg = $(
-                '<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
-            ),
-            gradient = new _DataPivot_ColorGradientSVG(
-                svg[0],
-                min_color.val(),
-                max_color.val()
-            );
+            svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
+            gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color
         min_color.change(function(v) {
@@ -266,16 +252,8 @@ class _DataPivot_settings_conditional {
         // add size values to size div
         var ps = div.find('.point-size'),
             min_max_ps = $('<p>').appendTo(ps);
-        add_input_row(
-            ps,
-            'Minimum point-size',
-            DataPivot.rangeInputDiv(min_size)
-        );
-        add_input_row(
-            ps,
-            'Maximum point-size',
-            DataPivot.rangeInputDiv(max_size)
-        );
+        add_input_row(ps, 'Minimum point-size', DataPivot.rangeInputDiv(min_size));
+        add_input_row(ps, 'Maximum point-size', DataPivot.rangeInputDiv(max_size));
 
         // add color values to color div
         var pc = div.find('.point-color'),
@@ -283,18 +261,9 @@ class _DataPivot_settings_conditional {
         add_input_row(pc, 'Minimum color', min_color);
         add_input_row(pc, 'Maximum color', max_color);
         pc.append('<br>', svg);
-        div
-            .find('input[type="color"]')
-            .spectrum({ showInitial: true, showInput: true });
+        div.find('input[type="color"]').spectrum({ showInitial: true, showInput: true });
 
-        this.inputs.push(
-            fieldName,
-            conditionType,
-            min_size,
-            max_size,
-            min_color,
-            max_color
-        );
+        this.inputs.push(fieldName, conditionType, min_size, max_size, min_color, max_color);
 
         // get unique values and set values
         var buildStyleSelectors = function() {
@@ -330,12 +299,9 @@ class _DataPivot_settings_conditional {
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if (vals.range) {
-                    txt += `contain values ranging from ${vals.range[0]} to ${
-                        vals.range[1]
-                    }.`;
+                    txt += `contain values ranging from ${vals.range[0]} to ${vals.range[1]}.`;
                 } else {
-                    txt +=
-                        'have no range of values, please select another column.';
+                    txt += 'have no range of values, please select another column.';
                 }
 
                 min_max_pc.html(txt);

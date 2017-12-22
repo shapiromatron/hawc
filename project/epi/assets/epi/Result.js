@@ -96,12 +96,7 @@ class Result {
 
     build_content_tab(isActive) {
         var cls = isActive === true ? 'active' : '',
-            div = $(
-                '<div class="tab-pane {0}" id="{1}">'.printf(
-                    cls,
-                    this.get_tab_id()
-                )
-            );
+            div = $('<div class="tab-pane {0}" id="{1}">'.printf(cls, this.get_tab_id()));
         this.build_content(div, { tabbed: true });
         return div;
     }
@@ -116,18 +111,13 @@ class Result {
         $el.append(this.build_details_table(opts.tabbed));
 
         if (this.hasResultGroups()) {
-            $el
-                .append('<h3>Results by group</h3>')
-                .append(this.build_result_group_table());
+            $el.append('<h3>Results by group</h3>').append(this.build_result_group_table());
 
             if (this.data.metric.showForestPlot === true) {
                 $el
                     .append('<h3>Forest plot</h3>')
                     .append($plotDiv)
-                    .on(
-                        'plotDivShown',
-                        this.build_forest_plot.bind(this, $plotDiv)
-                    );
+                    .on('plotDivShown', this.build_forest_plot.bind(this, $plotDiv));
             }
         }
 
@@ -140,37 +130,19 @@ class Result {
             .add_tbody_tr('Results', txt)
             .add_tbody_tr('Comparison set', this.comparison_set.build_link())
             .add_tbody_tr('Data location', this.data.data_location)
-            .add_tbody_tr(
-                'Population description',
-                this.data.population_description
-            )
+            .add_tbody_tr('Population description', this.data.population_description)
             .add_tbody_tr('Metric Description', this.data.metric_description)
-            .add_tbody_tr_list(
-                'Adjustment factors',
-                _.map(this.factors, 'description')
-            )
+            .add_tbody_tr_list('Adjustment factors', _.map(this.factors, 'description'))
             .add_tbody_tr_list(
                 'Additional factors considered',
                 _.map(this.factors_considered, 'description')
             )
             .add_tbody_tr('Dose response', this.data.dose_response)
-            .add_tbody_tr(
-                'Dose response details',
-                this.data.dose_response_details
-            )
+            .add_tbody_tr('Dose response details', this.data.dose_response_details)
             .add_tbody_tr('Statistical power', this.data.statistical_power)
-            .add_tbody_tr(
-                'Statistical power details',
-                this.data.statistical_power_details
-            )
-            .add_tbody_tr(
-                'Statistical test results',
-                this.data.statistical_test_results
-            )
-            .add_tbody_tr(
-                'Prevalence incidence',
-                this.data.prevalence_incidence
-            )
+            .add_tbody_tr('Statistical power details', this.data.statistical_power_details)
+            .add_tbody_tr('Statistical test results', this.data.statistical_test_results)
+            .add_tbody_tr('Prevalence incidence', this.data.prevalence_incidence)
             .add_tbody_tr('Comments', this.data.comments)
             .get_tbl();
     }

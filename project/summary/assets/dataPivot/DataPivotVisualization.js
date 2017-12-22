@@ -78,9 +78,7 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                return ascending
-                    ? aa.length - bb.length
-                    : bb.length - aa.length;
+                return ascending ? aa.length - bb.length : bb.length - aa.length;
             };
 
         return sorts.length > 0 ? arr.sort(alphanum) : arr;
@@ -89,10 +87,7 @@ class DataPivotVisualization extends D3Plot {
     static sort_with_overrides(arr, sorts, overrides) {
         // Return the array of "rows" sorted using any sort fields, and
         // then with manual row-index overrides specified
-        let override_map = _.zipObject(
-                _.map(overrides, 'pk'),
-                _.map(overrides, 'index')
-            ),
+        let override_map = _.zipObject(_.map(overrides, 'pk'), _.map(overrides, 'index')),
             sorted = DataPivotVisualization.sorter(arr, sorts);
         sorted = _.sortBy(sorted, (d) => override_map[d._dp_pk]);
         return sorted;
@@ -136,10 +131,7 @@ class DataPivotVisualization extends D3Plot {
                     );
                 },
                 exact(v) {
-                    return (
-                        v[field_name].toString().toLowerCase() ===
-                        value.toLowerCase()
-                    );
+                    return v[field_name].toString().toLowerCase() === value.toLowerCase();
                 },
             });
 
@@ -160,9 +152,7 @@ class DataPivotVisualization extends D3Plot {
                     });
                 }
             } else {
-                console.log(
-                    'Unrecognized filter: {0}'.printf(filters[i].quantifier)
-                );
+                console.log('Unrecognized filter: {0}'.printf(filters[i].quantifier));
             }
         }
 
@@ -182,10 +172,7 @@ class DataPivotVisualization extends D3Plot {
             })
         )
             return true;
-        return (
-            $.isNumeric(row[bar.low_field_name]) &&
-            $.isNumeric(row[bar.high_field_name])
-        );
+        return $.isNumeric(row[bar.low_field_name]) && $.isNumeric(row[bar.high_field_name]);
     }
 
     set_defaults() {
@@ -195,9 +182,7 @@ class DataPivotVisualization extends D3Plot {
         this.h = this.w; // temporary; depends on rendered text-size
         this.textPadding = 5; // text padding on all sides of text
 
-        var scale_type = this.dp_settings.plot_settings.logscale
-                ? 'log'
-                : 'linear',
+        var scale_type = this.dp_settings.plot_settings.logscale ? 'log' : 'linear',
             formatNumber = d3.format(',.f');
 
         this.text_spacing_offset = 10;
@@ -246,12 +231,10 @@ class DataPivotVisualization extends D3Plot {
         this.add_axes();
         this.draw_visualizations();
         this.add_final_rectangle();
-        this.legend = new DataPivotLegend(
-            this.vis,
-            this.dp_settings.legend,
-            this.dp_settings,
-            { offset: true, editable: this.editable }
-        );
+        this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend, this.dp_settings, {
+            offset: true,
+            editable: this.editable,
+        });
         this.add_menu();
         this.trigger_resize();
     }
@@ -365,10 +348,7 @@ class DataPivotVisualization extends D3Plot {
         this.dp_settings.reference_rectangles.forEach(function(datum) {
             if ($.isNumeric(datum.x1) && $.isNumeric(datum.x2)) {
                 settings.reference_rectangles.push({
-                    style: get_associated_style(
-                        'rectangles',
-                        datum.rectangle_style
-                    ),
+                    style: get_associated_style('rectangles', datum.rectangle_style),
                     x1: datum.x1,
                     x2: datum.x2,
                 });
@@ -395,14 +375,8 @@ class DataPivotVisualization extends D3Plot {
             .map(function(d) {
                 // unpack any column-level styles
                 let styles = {
-                    bars: get_associated_style(
-                        'lines',
-                        settings.bars.marker_style
-                    ),
-                    barchartBar: get_associated_style(
-                        'rectangles',
-                        settings.barchart.bar_style
-                    ),
+                    bars: get_associated_style('lines', settings.bars.marker_style),
+                    barchartBar: get_associated_style('rectangles', settings.barchart.bar_style),
                     barchartErrorBar: get_associated_style(
                         'lines',
                         settings.barchart.error_marker_style
@@ -414,19 +388,13 @@ class DataPivotVisualization extends D3Plot {
                         return d.field_name !== NULL_CASE;
                     })
                     .each(function(d, i) {
-                        styles['points_' + i] = get_associated_style(
-                            'symbols',
-                            d.marker_style
-                        );
+                        styles['points_' + i] = get_associated_style('symbols', d.marker_style);
                     })
                     .value();
 
                 _.chain(self.dp_settings.description_settings)
                     .each(function(d, i) {
-                        styles['text_' + i] = get_associated_style(
-                            'texts',
-                            d.text_style
-                        );
+                        styles['text_' + i] = get_associated_style('texts', d.text_style);
                     })
                     .value();
 
@@ -479,11 +447,7 @@ class DataPivotVisualization extends D3Plot {
                         break;
 
                     default:
-                        console.log(
-                            'Unrecognized condition_type: {0}'.printf(
-                                cf.condition_type
-                            )
-                        );
+                        console.log('Unrecognized condition_type: {0}'.printf(cf.condition_type));
                 }
             });
         } else {
@@ -506,13 +470,8 @@ class DataPivotVisualization extends D3Plot {
 
                                 rows.forEach(function(d) {
                                     if ($.isNumeric(d[cf.field_name])) {
-                                        d._styles[styles] = $.extend(
-                                            {},
-                                            d._styles[styles]
-                                        ); //copy object
-                                        d._styles[styles].size = pscale(
-                                            d[cf.field_name]
-                                        );
+                                        d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                        d._styles[styles].size = pscale(d[cf.field_name]);
                                     }
                                 });
                             }
@@ -528,13 +487,8 @@ class DataPivotVisualization extends D3Plot {
 
                                 rows.forEach(function(d) {
                                     if ($.isNumeric(d[cf.field_name])) {
-                                        d._styles[styles] = $.extend(
-                                            {},
-                                            d._styles[styles]
-                                        ); //copy object
-                                        d._styles[styles].fill = cscale(
-                                            d[cf.field_name]
-                                        );
+                                        d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
+                                        d._styles[styles].fill = cscale(d[cf.field_name]);
                                     }
                                 });
                             }
@@ -557,9 +511,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
                         default:
                             console.log(
-                                'Unrecognized condition_type: {0}'.printf(
-                                    cf.condition_type
-                                )
+                                'Unrecognized condition_type: {0}'.printf(cf.condition_type)
                             );
                     }
                 });
@@ -576,31 +528,16 @@ class DataPivotVisualization extends D3Plot {
                 rows.forEach(function(v2) {
                     if (v2._dp_pk === v.pk) {
                         for (var key in v2._styles) {
-                            if (
-                                v.text_style !== NULL_CASE &&
-                                key.substr(0, 4) === 'text'
-                            ) {
-                                v2._styles[key] = get_associated_style(
-                                    'texts',
-                                    v.text_style
-                                );
+                            if (v.text_style !== NULL_CASE && key.substr(0, 4) === 'text') {
+                                v2._styles[key] = get_associated_style('texts', v.text_style);
                             }
 
                             if (v.line_style !== NULL_CASE && key === 'bars') {
-                                v2._styles[key] = get_associated_style(
-                                    'lines',
-                                    v.line_style
-                                );
+                                v2._styles[key] = get_associated_style('lines', v.line_style);
                             }
 
-                            if (
-                                v.symbol_style !== NULL_CASE &&
-                                key.substr(0, 6) === 'points'
-                            ) {
-                                v2._styles[key] = get_associated_style(
-                                    'symbols',
-                                    v.symbol_style
-                                );
+                            if (v.symbol_style !== NULL_CASE && key.substr(0, 6) === 'points') {
+                                v2._styles[key] = get_associated_style('symbols', v.symbol_style);
                             }
                         }
                     }
@@ -648,13 +585,9 @@ class DataPivotVisualization extends D3Plot {
     merge_descriptions() {
         // Merge identical columns
         var merge_aggressive = this.dp_settings.plot_settings.merge_aggressive,
-            merge_until =
-                this.dp_settings.plot_settings.merge_until ||
-                this.datarows.length - 1,
+            merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length - 1,
             shouldMerge = this.dp_settings.plot_settings.merge_descriptions,
-            field_names = this.dp_settings.description_settings.map(function(
-                v
-            ) {
+            field_names = this.dp_settings.description_settings.map(function(v) {
                 return v.field_name;
             }),
             i,
@@ -719,10 +652,7 @@ class DataPivotVisualization extends D3Plot {
             barchart = this.settings.barchart;
 
         // use user-specified domain if valid
-        domain = _.map(
-            this.dp_settings.plot_settings.domain.split(','),
-            parseFloat
-        );
+        domain = _.map(this.dp_settings.plot_settings.domain.split(','), parseFloat);
         if (domain.length === 2 && _.every(domain, isFinite)) {
             return domain;
         }
@@ -804,10 +734,7 @@ class DataPivotVisualization extends D3Plot {
             el.style(property, styles[property]);
         }
         if (styles.rotate > 0) {
-            el.attr(
-                'transform',
-                `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`
-            );
+            el.attr('transform', `rotate(${styles.rotate} ${el.attr('x')},${el.attr('y')})`);
         }
     }
 
@@ -838,16 +765,11 @@ class DataPivotVisualization extends D3Plot {
                     gridlines.push(this.row_heights[first_index].min);
                 }
                 // edge-case to push final-row if needed
-                if (i === datarows.length - 1 && everyOther)
-                    pushBG(first_index, i);
+                if (i === datarows.length - 1 && everyOther) pushBG(first_index, i);
             }
         }
-        this.bg_rectangles_data = this.dp_settings.plot_settings.text_background
-            ? bgs
-            : [];
-        this.y_gridlines_data = this.dp_settings.plot_settings.show_yticks
-            ? gridlines
-            : [];
+        this.bg_rectangles_data = this.dp_settings.plot_settings.text_background ? bgs : [];
+        this.y_gridlines_data = this.dp_settings.plot_settings.show_yticks ? gridlines : [];
     }
 
     renderTextBackgroundRectangles() {
@@ -863,18 +785,13 @@ class DataPivotVisualization extends D3Plot {
             .attr('y', (d) => d.y)
             .attr('height', (d) => d.h)
             .attr('width', (d) => d.w)
-            .style(
-                'fill',
-                this.dp_settings.plot_settings.text_background_color
-            );
+            .style('fill', this.dp_settings.plot_settings.text_background_color);
     }
 
     renderYGridlines() {
         let x = this.x_scale;
 
-        this.g_y_gridlines = this.vis
-            .append('g')
-            .attr('class', 'primary_gridlines y_gridlines');
+        this.g_y_gridlines = this.vis.append('g').attr('class', 'primary_gridlines y_gridlines');
 
         this.y_gridlines = this.g_y_gridlines
             .selectAll()
@@ -946,8 +863,7 @@ class DataPivotVisualization extends D3Plot {
                     obj.style(property, d._styles[type][property]);
                 }
             },
-            barHeight =
-                d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
+            barHeight = d3.min(this.row_heights, (d) => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding;
 
         bars_g
@@ -957,9 +873,7 @@ class DataPivotVisualization extends D3Plot {
             .append('svg:rect')
             .attr('x', (d) => x(Math.min(barXStart, d[barchart.field_name])))
             .attr('y', (d) => this.row_heights[d._dp_index].min + barPadding)
-            .attr('width', (d) =>
-                Math.abs(x(barXStart) - x(d[barchart.field_name]))
-            )
+            .attr('width', (d) => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr('height', barHeight)
             .style('cursor', (d) => (barchart._dpe_key ? 'pointer' : 'auto'))
             .on('click', (d) => {
@@ -998,20 +912,8 @@ class DataPivotVisualization extends D3Plot {
             .append('svg:line')
             .attr('x1', (d) => x(d[barchart.error_low_field_name]))
             .attr('x2', (d) => x(d[barchart.error_low_field_name]))
-            .attr(
-                'y1',
-                (d) =>
-                    this.row_heights[d._dp_index].min +
-                    lineMidpoint -
-                    barPadding
-            )
-            .attr(
-                'y2',
-                (d) =>
-                    this.row_heights[d._dp_index].min +
-                    lineMidpoint +
-                    barPadding
-            )
+            .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
+            .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
             .each(_.partial(applyStyles, _, 'barchartErrorBar'));
 
         errorbars_g
@@ -1021,20 +923,8 @@ class DataPivotVisualization extends D3Plot {
             .append('svg:line')
             .attr('x1', (d) => x(d[barchart.error_high_field_name]))
             .attr('x2', (d) => x(d[barchart.error_high_field_name]))
-            .attr(
-                'y1',
-                (d) =>
-                    this.row_heights[d._dp_index].min +
-                    lineMidpoint -
-                    barPadding
-            )
-            .attr(
-                'y2',
-                (d) =>
-                    this.row_heights[d._dp_index].min +
-                    lineMidpoint +
-                    barPadding
-            )
+            .attr('y1', (d) => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
+            .attr('y2', (d) => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
             .each(_.partial(applyStyles, _, 'barchartErrorBar'));
     }
 
@@ -1050,9 +940,7 @@ class DataPivotVisualization extends D3Plot {
         // filter bars to include only bars where the difference between low/high
         // is greater than 0
         let bar_half_height = 5,
-            bar_rows = datarows.filter(
-                (d) => d[bars.high_field_name] - d[bars.low_field_name] > 0
-            ),
+            bar_rows = datarows.filter((d) => d[bars.high_field_name] - d[bars.low_field_name] > 0),
             g_bars = this.vis.append('g');
 
         g_bars
@@ -1136,9 +1024,7 @@ class DataPivotVisualization extends D3Plot {
                 .attr(
                     'transform',
                     (d) =>
-                        `translate(${x(d[datum.field_name])},${
-                            this.row_heights[d._dp_index].mid
-                        })`
+                        `translate(${x(d[datum.field_name])},${this.row_heights[d._dp_index].mid})`
                 )
                 .each(function(d) {
                     var obj = d3.select(this);
@@ -1228,11 +1114,7 @@ class DataPivotVisualization extends D3Plot {
                 if (styles.rotate > 0) {
                     obj.attr(
                         'transform',
-                        'rotate({0} {1},{2})'.printf(
-                            styles.rotate,
-                            obj.attr('x'),
-                            obj.attr('y')
-                        )
+                        'rotate({0} {1},{2})'.printf(styles.rotate, obj.attr('x'), obj.attr('y'))
                     );
                 }
             },
@@ -1315,8 +1197,7 @@ class DataPivotVisualization extends D3Plot {
                 return v.col === i;
             });
 
-            if (v.max_width)
-                _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+            if (v.max_width) _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
 
             // get maximum column dimension and layout columns
             v.widths = d3.max(
@@ -1378,11 +1259,7 @@ class DataPivotVisualization extends D3Plot {
                                 return v.getBBox().height;
                             })
                             .forEach(function(d, i) {
-                                if (d > 0)
-                                    min_height = Math.max(
-                                        min_height,
-                                        cellHeights[i]
-                                    );
+                                if (d > 0) min_height = Math.max(min_height, cellHeights[i]);
                             });
                     }
 
@@ -1412,12 +1289,7 @@ class DataPivotVisualization extends D3Plot {
                 heights.push({
                     min: top - height_offset - prior_extra,
                     mid: top - height_offset + textPadding + row_height / 2,
-                    max:
-                        top -
-                        height_offset +
-                        row_height +
-                        2 * textPadding +
-                        extra_space,
+                    max: top - height_offset + row_height + 2 * textPadding + extra_space,
                 });
             }
 

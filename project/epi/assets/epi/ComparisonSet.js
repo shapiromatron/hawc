@@ -14,8 +14,7 @@ class ComparisonSet {
         this.groups = _.map(this.data.groups, function(d) {
             return new Group(d);
         });
-        if (this.data.exposure)
-            this.exposure = new Exposure(this.data.exposure);
+        if (this.data.exposure) this.exposure = new Exposure(this.data.exposure);
     }
 
     static get_object(id, cb) {
@@ -67,8 +66,7 @@ class ComparisonSet {
             urls = [
                 {
                     url: this.data.outcome.study_population.study.url,
-                    name: this.data.outcome.study_population.study
-                        .short_citation,
+                    name: this.data.outcome.study_population.study.short_citation,
                 },
                 {
                     url: this.data.outcome.study_population.url,
@@ -99,9 +97,7 @@ class ComparisonSet {
     }
 
     build_details_div() {
-        return this.data.description
-            ? $('<div>').html(this.data.description)
-            : null;
+        return this.data.description ? $('<div>').html(this.data.description) : null;
     }
 
     build_exposure_table() {

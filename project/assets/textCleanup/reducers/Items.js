@@ -27,15 +27,9 @@ export default function(state = defaultState, action) {
             });
 
         case types.ITEM_RECEIVE_OBJECT:
-            index = state.list.indexOf(
-                _.find(state.list, { id: action.item.id })
-            );
+            index = state.list.indexOf(_.find(state.list, { id: action.item.id }));
             if (index >= 0) {
-                list = [
-                    ...state.list.slice(0, index),
-                    action.item,
-                    ...state.list.slice(index + 1),
-                ];
+                list = [...state.list.slice(0, index), action.item, ...state.list.slice(index + 1)];
             } else {
                 list = [...state.list, action.item];
             }
@@ -79,9 +73,7 @@ export default function(state = defaultState, action) {
                 patch = {
                     [field]: {
                         ...action.object,
-                        ids: state.editObject[field].ids.concat(
-                            action.object.ids
-                        ),
+                        ids: state.editObject[field].ids.concat(action.object.ids),
                     },
                 };
             } else {

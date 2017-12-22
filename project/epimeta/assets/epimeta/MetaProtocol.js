@@ -31,31 +31,13 @@ class MetaProtocol {
         return new DescriptiveTable()
             .add_tbody_tr('Description', this.data.name)
             .add_tbody_tr('Protocol type', this.data.protocol_type)
-            .add_tbody_tr(
-                'Literature search strategy',
-                this.data.lit_search_strategy
-            )
-            .add_tbody_tr(
-                'Literature search start-date',
-                this.data.lit_search_start_date
-            )
-            .add_tbody_tr(
-                'Literature search end-date',
-                this.data.lit_search_end_date
-            )
+            .add_tbody_tr('Literature search strategy', this.data.lit_search_strategy)
+            .add_tbody_tr('Literature search start-date', this.data.lit_search_start_date)
+            .add_tbody_tr('Literature search end-date', this.data.lit_search_end_date)
             .add_tbody_tr('Literature search notes', this.data.lit_search_notes)
-            .add_tbody_tr(
-                'Total references from search',
-                this.data.total_references
-            )
-            .add_tbody_tr_list(
-                'Inclusion criteria',
-                this.data.inclusion_criteria
-            )
-            .add_tbody_tr_list(
-                'Exclusion criteria',
-                this.data.exclusion_criteria
-            )
+            .add_tbody_tr('Total references from search', this.data.total_references)
+            .add_tbody_tr_list('Inclusion criteria', this.data.inclusion_criteria)
+            .add_tbody_tr_list('Exclusion criteria', this.data.exclusion_criteria)
             .add_tbody_tr(
                 'Total references after inclusion/exclusion',
                 this.data.total_studies_identified
@@ -104,9 +86,7 @@ class MetaProtocol {
         if (this.data.results.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.results, liFunc));
         } else {
-            $el.append(
-                '<p class="help-block">No results are available for this protocol.</p>'
-            );
+            $el.append('<p class="help-block">No results are available for this protocol.</p>');
         }
 
         return $el;

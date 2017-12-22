@@ -9,13 +9,7 @@ const RiskOfBiasDisplay = (props) => {
         <div className="riskofbias-display">
             {props.config.show_study ? renderStudyHeader(props) : null}
             {_.map(props.active, (domain) => {
-                return (
-                    <DomainDisplay
-                        key={domain.key}
-                        domain={domain}
-                        config={props.config}
-                    />
-                );
+                return <DomainDisplay key={domain.key} domain={domain} config={props.config} />;
             })}
         </div>
     );
@@ -35,10 +29,7 @@ RiskOfBiasDisplay.propTypes = {
 };
 
 export function renderRiskOfBiasDisplay(data, element) {
-    ReactDOM.render(
-        <RiskOfBiasDisplay active={data.scores} config={data.config} />,
-        element
-    );
+    ReactDOM.render(<RiskOfBiasDisplay active={data.scores} config={data.config} />, element);
 }
 
 export default RiskOfBiasDisplay;

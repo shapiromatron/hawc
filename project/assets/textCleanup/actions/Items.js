@@ -130,9 +130,7 @@ export function patchBulkList(patchObject, routerParams) {
                 if (response.ok) {
                     dispatch(patchItems(patchObject));
                 } else {
-                    response
-                        .json()
-                        .then((json) => dispatch(receiveEditErrors(json)));
+                    response.json().then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
             .catch((ex) => console.error('Item parsing failed', ex));
@@ -153,9 +151,7 @@ export function patchDetailList(patchObject, routerParams) {
                 if (response.ok) {
                     dispatch(fetchObjects({ ids, routerParams }));
                 } else {
-                    response
-                        .json()
-                        .then((json) => dispatch(receiveEditErrors(json)));
+                    response.json().then((json) => dispatch(receiveEditErrors(json)));
                 }
             })
             .catch((ex) => console.error('Item parsing failed', ex));

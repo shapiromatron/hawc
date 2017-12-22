@@ -101,10 +101,7 @@ class BMROptionModal extends React.Component {
                 </div>
 
                 <div className="control-group form-row">
-                    <label
-                        className="control-label"
-                        htmlFor="bmr_confidence_level"
-                    >
+                    <label className="control-label" htmlFor="bmr_confidence_level">
                         BMR confidence level
                     </label>
                     <div className="controls">
@@ -131,22 +128,12 @@ class BMROptionModal extends React.Component {
             title = this.props.editMode
                 ? `Edit benchmark response: ${bmr.type}`
                 : `Benchmark response: ${bmr.type}`,
-            tableFunc = editMode
-                ? this.renderEditingForm
-                : this.renderReadOnlyTable;
+            tableFunc = editMode ? this.renderEditingForm : this.renderReadOnlyTable;
 
         return (
-            <div
-                className="modal hide fade"
-                role="dialog"
-                id={types.BMR_MODAL_ID}
-            >
+            <div className="modal hide fade" role="dialog" id={types.BMR_MODAL_ID}>
                 <div className="modal-header">
-                    <button
-                        className="close"
-                        type="button"
-                        data-dismiss="modal"
-                    >
+                    <button className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{title}</h3>

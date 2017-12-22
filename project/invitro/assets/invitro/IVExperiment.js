@@ -62,18 +62,9 @@ class IVExperiment {
                 if (bool && str) txt = str;
                 return txt;
             },
-            pos = getControlText(
-                this.data.has_positive_control,
-                this.data.positive_control
-            ),
-            neg = getControlText(
-                this.data.has_negative_control,
-                this.data.negative_control
-            ),
-            veh = getControlText(
-                this.data.has_vehicle_control,
-                this.data.vehicle_control
-            ),
+            pos = getControlText(this.data.has_positive_control, this.data.positive_control),
+            neg = getControlText(this.data.has_negative_control, this.data.negative_control),
+            veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control),
             naive = getControlText(this.data.has_naive_control, '');
 
         return new DescriptiveTable()
@@ -87,10 +78,7 @@ class IVExperiment {
             .add_tbody_tr('Transfection', this.data.transfection)
             .add_tbody_tr('Cell notes', this.data.cell_notes)
             .add_tbody_tr('Dosing notes', this.data.dosing_notes)
-            .add_tbody_tr(
-                'Metabolic activation',
-                this.data.metabolic_activation
-            )
+            .add_tbody_tr('Metabolic activation', this.data.metabolic_activation)
             .add_tbody_tr('Serum', this.data.serum)
             .add_tbody_tr('Naive control', naive)
             .add_tbody_tr('Positive control', pos)

@@ -105,10 +105,7 @@ class ModelOptionModal extends React.Component {
                                         <ModelOptionField
                                             index={i}
                                             settings={d}
-                                            handleChange={this.handleInputChange.bind(
-                                                this,
-                                                d
-                                            )}
+                                            handleChange={this.handleInputChange.bind(this, d)}
                                             value={this.state[d.key]}
                                         />
                                     );
@@ -123,10 +120,7 @@ class ModelOptionModal extends React.Component {
                                         <ModelOptionField
                                             index={i}
                                             settings={d}
-                                            handleChange={this.handleInputChange.bind(
-                                                this,
-                                                d
-                                            )}
+                                            handleChange={this.handleInputChange.bind(this, d)}
                                             value={this.state[d.key]}
                                         />
                                     );
@@ -143,10 +137,7 @@ class ModelOptionModal extends React.Component {
                                         <ParameterField
                                             index={i}
                                             settings={d}
-                                            handleChange={this.handleParameterChange.bind(
-                                                this,
-                                                d
-                                            )}
+                                            handleChange={this.handleParameterChange.bind(this, d)}
                                             value={this.state[d.key]}
                                         />
                                     );
@@ -185,19 +176,13 @@ class ModelOptionModal extends React.Component {
         }
 
         let { editMode, model } = this.props,
-            title = editMode
-                ? `Edit ${model.name} options`
-                : `${model.name} options`,
+            title = editMode ? `Edit ${model.name} options` : `${model.name} options`,
             tableFunc = editMode ? this.renderEditMode : this.renderReadOnly;
 
         return (
             <div className="modal hide fade" id={types.OPTION_MODAL_ID}>
                 <div className="modal-header">
-                    <button
-                        className="close"
-                        type="button"
-                        data-dismiss="modal"
-                    >
+                    <button className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{title}</h3>
