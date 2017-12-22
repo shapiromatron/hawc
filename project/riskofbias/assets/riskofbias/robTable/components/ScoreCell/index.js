@@ -23,11 +23,7 @@ class ScoreCell extends Component {
                 style={{ backgroundColor: score.score_shade }}
                 onClick={this.handleClick}
             >
-                <span
-                    className="tooltips"
-                    data-toggle="tooltip"
-                    title={score.metric.name}
-                >
+                <span className="tooltips" data-toggle="tooltip" title={score.metric.name}>
                     {score.score_symbol}
                 </span>
             </div>

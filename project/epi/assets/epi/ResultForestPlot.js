@@ -54,24 +54,14 @@ class ResultForestPlot extends D3Plot {
                     return d.group.getIntervals();
                 })
                 .filter(function(d) {
-                    return (
-                        _.isNumber(d.lower_bound_interval) &&
-                        _.isNumber(d.upper_bound_interval)
-                    );
+                    return _.isNumber(d.lower_bound_interval) && _.isNumber(d.upper_bound_interval);
                 })
                 .value(),
             names = _.map(estimates, 'name'),
             vals = _.chain(estimates)
                 .map(function(d) {
-                    let {
-                        upper_bound_interval,
-                        lower_bound_interval,
-                    } = d.group.getIntervals();
-                    return [
-                        d.group.data.estimate,
-                        lower_bound_interval,
-                        upper_bound_interval,
-                    ];
+                    let { upper_bound_interval, lower_bound_interval } = d.group.getIntervals();
+                    return [d.group.data.estimate, lower_bound_interval, upper_bound_interval];
                 })
                 .flattenDeep()
                 .filter(function(d) {
@@ -160,12 +150,7 @@ class ResultForestPlot extends D3Plot {
         this.w = this.plot_div.width() - this.padding.right - this.padding.left; // extra for margins
         var menu_spacing = this.options.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height:
-                this.h +
-                this.padding.top +
-                this.padding.bottom +
-                menu_spacing +
-                'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
         });
     }
 
@@ -208,9 +193,7 @@ class ResultForestPlot extends D3Plot {
             .attr('class', 'reference_line');
 
         // estimate range
-        this.estimate_range = this.vis
-            .append('g')
-            .attr('class', 'estimates_range');
+        this.estimate_range = this.vis.append('g').attr('class', 'estimates_range');
         this.estimate_range
             .selectAll('line.temp')
             .data(this.lines)
@@ -289,17 +272,13 @@ class ResultForestPlot extends D3Plot {
             })
             .append('title')
             .text(function(d) {
-                return '{0}: click to view exposure-group details'.printf(
-                    d.estimate
-                );
+                return '{0}: click to view exposure-group details'.printf(d.estimate);
             });
     }
 
     resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var ylabel_width = this.plot_div
-            .find('.y_axis')[0]
-            .getBoundingClientRect().width;
+        var ylabel_width = this.plot_div.find('.y_axis')[0].getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + ylabel_width) {
             this.padding.left = this.padding.left_original + ylabel_width;
             this.build_plot();

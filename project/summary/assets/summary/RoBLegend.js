@@ -33,9 +33,7 @@ class RoBLegend {
             return {
                 value: v,
                 color: RiskOfBiasScore.score_shades[v],
-                text_color: String.contrasting_color(
-                    RiskOfBiasScore.score_shades[v]
-                ),
+                text_color: String.contrasting_color(RiskOfBiasScore.score_shades[v]),
                 text: RiskOfBiasScore.score_text[v],
                 description: desc,
             };

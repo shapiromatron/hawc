@@ -33,10 +33,7 @@ var helpers = Object.assign({}, shared, {
     buildPatchUrl(config, ids) {
         return shared.getBulkUrl(
             config.host,
-            shared.getUrlWithAssessment(
-                config.items.patchUrl,
-                config.assessment_id
-            ),
+            shared.getUrlWithAssessment(config.items.patchUrl, config.assessment_id),
             ids
         );
     },

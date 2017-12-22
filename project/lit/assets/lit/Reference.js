@@ -45,11 +45,7 @@ class Reference extends Observee {
             cls = window.isEdit ? 'refTag refTagEditing' : 'refTag';
         return _.map(this.data.tags, function(d) {
             return $(
-                '<span title="{0}" class="{1}">{2}</span>'.printf(
-                    title,
-                    cls,
-                    d.get_full_name()
-                )
+                '<span title="{0}" class="{1}">{2}</span>'.printf(title, cls, d.get_full_name())
             ).data('d', d);
         });
     }
@@ -122,9 +118,7 @@ class Reference extends Observee {
             })
             .each(function(v) {
                 let copyID = $(
-                    `<button class="btn btn-mini" title="Copy ID ${
-                        v.id
-                    } to clipboard">${
+                    `<button class="btn btn-mini" title="Copy ID ${v.id} to clipboard">${
                         v.database
                     } <i class="fa fa-clipboard"></i></button>`
                 );
@@ -147,8 +141,7 @@ class Reference extends Observee {
             abs_btn = this.get_abstract_button(div),
             edit_btn = this.get_edit_button(),
             get_title = function() {
-                if (data.title)
-                    return '<p class="ref_title">{0}</p>'.printf(data.title);
+                if (data.title) return '<p class="ref_title">{0}</p>'.printf(data.title);
             },
             get_journal = function() {
                 let journal = data.journal ? `${data.journal}<br/>` : '';
@@ -205,9 +198,7 @@ class Reference extends Observee {
                 ];
             };
 
-        return div
-            .html(populate_div().concat(this.print_taglist()))
-            .append(get_searches());
+        return div.html(populate_div().concat(this.print_taglist())).append(get_searches());
     }
 
     get_abstract_button(div) {

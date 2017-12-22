@@ -45,22 +45,13 @@ class MetaResult {
         return new DescriptiveTable()
             .add_tbody_tr('Health outcome', this.data.health_outcome)
             .add_tbody_tr('Data location', this.data.data_location)
-            .add_tbody_tr(
-                'Health outcome notes',
-                this.data.health_outcome_notes
-            )
+            .add_tbody_tr('Health outcome notes', this.data.health_outcome_notes)
             .add_tbody_tr('Exposure name', this.data.exposure_name)
             .add_tbody_tr('Exposure details', this.data.exposure_details)
             .add_tbody_tr('Number of studies', this.data.number_studies)
-            .add_tbody_tr_list(
-                'Adjustment factors',
-                this.data.adjustment_factors
-            )
+            .add_tbody_tr_list('Adjustment factors', this.data.adjustment_factors)
             .add_tbody_tr('N', this.data.n)
-            .add_tbody_tr(
-                this.get_statistical_metric_header(),
-                this.data.estimateFormatted
-            )
+            .add_tbody_tr(this.get_statistical_metric_header(), this.data.estimateFormatted)
             .add_tbody_tr('Statistical notes', this.data.statistical_notes)
             .add_tbody_tr('Hetereogeneity notes', this.data.heterogeneity)
             .add_tbody_tr('Notes', this.data.notes)
@@ -102,9 +93,7 @@ class MetaResult {
     }
 
     buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${
-                this.data.label
-            }</a>`,
+        let link = `<a href="${this.data.url}" target="_blank">${this.data.label}</a>`,
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(() => {
@@ -119,9 +108,7 @@ class MetaResult {
                 this.data.protocol.study.short_citation
             }</a>`,
             endpoint,
-            `<a href=${this.data.protocol.url} target="_blank">${
-                this.data.protocol.name
-            }</a>`,
+            `<a href=${this.data.protocol.url} target="_blank">${this.data.protocol.name}</a>`,
             this.data.health_outcome ? this.data.health_outcome : '--',
             this.data.exposure_name ? this.data.exposure_name : '--',
             this.data.ci_units ? `${this.data.ci_units * 100}%` : '--',

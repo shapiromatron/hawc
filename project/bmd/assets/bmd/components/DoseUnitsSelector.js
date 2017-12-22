@@ -23,9 +23,7 @@ class DoseUnitsSelector extends React.Component {
         }
         return (
             <div className="span3">
-                <label className="control-label">
-                    Dose units used in modeling:
-                </label>
+                <label className="control-label">Dose units used in modeling:</label>
                 <div className="controls">
                     <select
                         name="dose_units"

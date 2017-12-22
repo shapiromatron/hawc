@@ -78,9 +78,7 @@ class BaseTable {
         var txt = this.footnotes.html_list().join('<br>'),
             colspan = this.numCols();
         if (txt.length > 0)
-            this.tfoot.html(
-                '<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt)
-            );
+            this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
     }
 }
 

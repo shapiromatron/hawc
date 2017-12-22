@@ -46,10 +46,7 @@ class HAWCModal {
     }
 
     addTitleLinkHeader(name, url, options) {
-        var txt = '<h4><a href="{0}" target="_blank">{1}</a></h4>'.printf(
-            url,
-            name
-        );
+        var txt = '<h4><a href="{0}" target="_blank">{1}</a></h4>'.printf(url, name);
         return this.addHeader(txt, options);
     }
 
@@ -57,10 +54,7 @@ class HAWCModal {
         var noClose = (options && options.noClose) || false,
             $el = this.$modalDiv.find('.modal-footer');
         $el.html(html);
-        if (!noClose)
-            $el.append(
-                '<button class="btn" data-dismiss="modal">Close</button>'
-            );
+        if (!noClose) $el.append('<button class="btn" data-dismiss="modal">Close</button>');
         return this;
     }
 

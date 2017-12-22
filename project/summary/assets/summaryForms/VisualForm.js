@@ -20,9 +20,7 @@ class VisualForm {
                 Cls = RoBBarchartForm;
                 break;
             default:
-                throw 'Error - unknown visualization-type: {0}'.printf(
-                    visual_type
-                );
+                throw 'Error - unknown visualization-type: {0}'.printf(visual_type);
         }
         return new Cls($el);
     }

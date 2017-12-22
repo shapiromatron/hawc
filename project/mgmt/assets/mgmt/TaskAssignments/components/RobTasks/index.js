@@ -18,11 +18,7 @@ class RobTasks extends Component {
                 <h5>Risk of bias reviews to be completed</h5>
                 <Header headings={headings} />
                 {this.props.tasks.map((task) => (
-                    <RobTask
-                        key={task.id}
-                        task={task}
-                        showAssessment={this.props.showAssessment}
-                    />
+                    <RobTask key={task.id} task={task} showAssessment={this.props.showAssessment} />
                 ))}
             </div>
         ) : null;

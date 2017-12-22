@@ -121,10 +121,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                     ];
                     if (v2.dose > 0) {
                         if (e.data.data_type == 'C') {
-                            txt.push(
-                                'Mean: ' + v2.response,
-                                'Stdev: ' + v2.stdev
-                            );
+                            txt.push('Mean: ' + v2.response, 'Stdev: ' + v2.stdev);
                         } else {
                             txt.push('Incidence: ' + v2.incidence);
                         }
@@ -150,16 +147,8 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
                         'BMD Model: ' + e.data.BMD.outputs.model_name,
-                        'BMD: ' +
-                            e.data.BMD.outputs.BMD +
-                            ' (' +
-                            e.data.dose_units +
-                            ')',
-                        'BMDL: ' +
-                            e.data.BMD.outputs.BMDL +
-                            ' (' +
-                            e.data.dose_units +
-                            ')',
+                        'BMD: ' + e.data.BMD.outputs.BMD + ' (' + e.data.dose_units + ')',
+                        'BMDL: ' + e.data.BMD.outputs.BMDL + ' (' + e.data.dose_units + ')',
                     ];
 
                     points_data.push({
@@ -174,10 +163,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
         // calculate dimensions
         var plot_width = parseInt(
-                this.plot_div.width() -
-                    this.padding.right -
-                    this.padding.left -
-                    20,
+                this.plot_div.width() - this.padding.right - this.padding.left - 20,
                 10
             ),
             plot_height = parseInt(lines_data.length * 40, 10),
@@ -301,10 +287,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     update_x_domain() {
         var domain_value;
         if (this.x_axis_settings.scale_type === 'linear') {
-            domain_value = [
-                this.min_x - this.max_x * this.buff,
-                this.max_x * (1 + this.buff),
-            ];
+            domain_value = [this.min_x - this.max_x * this.buff, this.max_x * (1 + this.buff)];
         } else {
             domain_value = [this.min_x, this.max_x];
         }
@@ -409,12 +392,9 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             box_w = 110,
             items = [addItem('Doses in Study', 'dose_points')];
 
-        if (this.plot_div.find('.LOEL').length > 0)
-            items.push(addItem('LOEL', 'dose_points LOEL'));
-        if (this.plot_div.find('.NOEL').length > 0)
-            items.push(addItem('NOEL', 'dose_points NOEL'));
-        if (this.plot_div.find('.BMDL').length > 0)
-            items.push(addItem('BMDL', 'dose_points BMDL'));
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem('LOEL', 'dose_points LOEL'));
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem('NOEL', 'dose_points NOEL'));
+        if (this.plot_div.find('.BMDL').length > 0) items.push(addItem('BMDL', 'dose_points BMDL'));
 
         this.build_legend({
             items,

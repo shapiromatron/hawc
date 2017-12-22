@@ -49,12 +49,7 @@ class RoBBarchartPlot extends D3Visualization {
         this.h = this.row_height * this.metrics.length;
         var menu_spacing = 40;
         this.plot_div.css({
-            height:
-                this.h +
-                this.padding.top +
-                this.padding.bottom +
-                menu_spacing +
-                'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
         });
     }
 
@@ -82,9 +77,7 @@ class RoBBarchartPlot extends D3Visualization {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale
-                .ordinal()
-                .range(_.values(RiskOfBiasScore.score_shades)),
+            color_scale: d3.scale.ordinal().range(_.values(RiskOfBiasScore.score_shades)),
         });
     }
 

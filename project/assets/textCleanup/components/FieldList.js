@@ -8,9 +8,7 @@ class FieldList extends Component {
     renderField(field) {
         return (
             <li key={field}>
-                <Link to={`${location.pathname}${field}/`}>
-                    {h.caseToWords(field)}
-                </Link>
+                <Link to={`${location.pathname}${field}/`}>{h.caseToWords(field)}</Link>
             </li>
         );
     }

@@ -23,9 +23,7 @@ class Visual {
                     Cls = RoBBarchart;
                     break;
                 default:
-                    throw 'Error - unknown visualization-type: {0}'.printf(
-                        d.visual_type
-                    );
+                    throw 'Error - unknown visualization-type: {0}'.printf(d.visual_type);
             }
             cb(new Cls(d));
         });

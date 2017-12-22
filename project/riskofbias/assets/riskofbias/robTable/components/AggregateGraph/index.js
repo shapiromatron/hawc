@@ -18,19 +18,14 @@ const AggregateGraph = (props) => {
                     );
                 })}
             </div>
-            <div className="footer muted">
-                Click on any cell above to view details.
-            </div>
+            <div className="footer muted">Click on any cell above to view details.</div>
         </div>
     );
 };
 
 export function renderAggregateGraph(data, element) {
     ReactDOM.render(
-        <AggregateGraph
-            domains={data.domains}
-            handleClick={data.handleClick}
-        />,
+        <AggregateGraph domains={data.domains} handleClick={data.handleClick} />,
         element
     );
 }

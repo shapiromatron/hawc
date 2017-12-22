@@ -19,10 +19,7 @@ export class MetricForm extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (
-            !_.isEqual(nextProps, this.props) ||
-            !_.isEqual(nextState, this.state)
-        ) {
+        if (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)) {
             return true;
         }
         return false;
@@ -63,18 +60,10 @@ export class MetricForm extends React.Component {
                 <button type="submit" className="btn btn-primary space">
                     Update {items.updateIds.length} responses
                 </button>
-                <button
-                    type="button"
-                    className="btn btn-info space"
-                    onClick={this.handleSelectAll}
-                >
+                <button type="button" className="btn btn-info space" onClick={this.handleSelectAll}>
                     Select/unselect all
                 </button>
-                <button
-                    type="button"
-                    className="btn"
-                    onClick={this.handleCancel}
-                >
+                <button type="button" className="btn" onClick={this.handleCancel}>
                     Cancel
                 </button>
                 <hr />

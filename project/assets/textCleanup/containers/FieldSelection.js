@@ -21,8 +21,7 @@ class FieldSelection extends Component {
     }
 
     render() {
-        if (this.props.objects == undefined || this.props.types == undefined)
-            return <Loading />;
+        if (this.props.objects == undefined || this.props.types == undefined) return <Loading />;
         let { objects, location, types, match } = this.props,
             type = _.find(types, { type: match.params.type }),
             title = h.caseToWords(type.title),
@@ -31,9 +30,7 @@ class FieldSelection extends Component {
 
         return (
             <div>
-                <h2 className="field_list_title">
-                    {`${urls.fields.name} for ${title}`}
-                </h2>
+                <h2 className="field_list_title">{`${urls.fields.name} for ${title}`}</h2>
                 <FieldList fields={objects} location={location.pathname} />
             </div>
         );

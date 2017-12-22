@@ -43,18 +43,10 @@ class VisualCollection {
 
     build_table($el) {
         if (this.visuals.length === 0)
-            return $el.html(
-                '<p><i>No custom-visuals are available for this assessment.</i></p>'
-            );
+            return $el.html('<p><i>No custom-visuals are available for this assessment.</i></p>');
 
         let tbl = new BaseTable(),
-            headers = [
-                'Title',
-                'Visual type',
-                'Description',
-                'Created',
-                'Modified',
-            ],
+            headers = ['Title', 'Visual type', 'Description', 'Created', 'Modified'],
             headerWidths = [20, 20, 36, 12, 12];
 
         if (this.opts.showPublished) {
@@ -75,10 +67,7 @@ class VisualCollection {
 
     setTableSorting() {
         var name = this.$tbl.find('thead tr th')[0];
-        name.setAttribute(
-            'class',
-            (name.getAttribute('class') || '') + ' sort-default'
-        );
+        name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
         new Tablesort(this.$tbl[0]);
     }
 

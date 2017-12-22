@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    fetchFullStudyIfNeeded,
-    selectActive,
-} from 'riskofbias/robTable/actions';
+import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
 import DisplayComponent from 'riskofbias/robTable/components/AggregateGraph';
 import Loading from 'shared/components/Loading';
 
@@ -52,10 +49,7 @@ class AggregateGraph extends Component {
         return _.isEmpty(domains) ? (
             <NoFinalReviewWarning />
         ) : (
-            <DisplayComponent
-                domains={domains}
-                handleClick={this.selectActiveWithName}
-            />
+            <DisplayComponent domains={domains} handleClick={this.selectActiveWithName} />
         );
     }
 }
@@ -64,8 +58,7 @@ const NoFinalReviewWarning = () => {
     return (
         <div className="container">
             <span className="alert alert-warning span12">
-                Final Reviewer assignment required for risk of bias aggregation
-                graph.
+                Final Reviewer assignment required for risk of bias aggregation graph.
             </span>
         </div>
     );

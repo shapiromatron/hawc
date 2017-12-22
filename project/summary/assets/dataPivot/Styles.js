@@ -36,22 +36,11 @@ class StyleSymbol {
 
     get_modified_settings() {
         var settings = {},
-            fields = [
-                'name',
-                'size',
-                'fill',
-                'fill-opacity',
-                'stroke',
-                'stroke-width',
-            ];
+            fields = ['name', 'size', 'fill', 'fill-opacity', 'stroke', 'stroke-width'];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal
-                .find('input[name="{0}"]'.printf(fields[i]))
-                .val();
+            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
         }
-        settings.type = this.$modal
-            .find('select[name="type"] option:selected')
-            .val();
+        settings.type = this.$modal.find('select[name="type"] option:selected').val();
         return settings;
     }
 
@@ -60,11 +49,7 @@ class StyleSymbol {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append(
-                        '<label class="control-label">{0}</label>'.printf(
-                            label_text
-                        )
-                    )
+                    .append('<label class="control-label">{0}</label>'.printf(label_text))
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $('<div></div>'),
@@ -110,20 +95,14 @@ class StyleSymbol {
             '<option value="triangle-up">triangle-up</option>',
         ]);
 
-        type
-            .find('option[value="{0}"]'.printf(set.type))
-            .prop('selected', true);
+        type.find('option[value="{0}"]'.printf(set.type)).prop('selected', true);
         form.append(add_horizontal_field('Type', type));
 
         //fill
         form.append(
             add_horizontal_field(
                 'Fill',
-                $(
-                    '<input name="fill" type="color" value="{0}">'.printf(
-                        set.fill
-                    )
-                )
+                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
             )
         );
 
@@ -145,11 +124,7 @@ class StyleSymbol {
         form.append(
             add_horizontal_field(
                 'Stroke',
-                $(
-                    '<input name="stroke" type="color" value="{0}">'.printf(
-                        set.stroke
-                    )
-                )
+                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
             )
         );
 
@@ -230,9 +205,7 @@ class StyleText {
         var settings = {},
             fields = ['name', 'font-size', 'fill', 'fill-opacity', 'rotate'];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal
-                .find('input[name="{0}"]'.printf(fields[i]))
-                .val();
+            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
         }
         settings['font-size'] = settings['font-size'] + 'px';
         settings['text-anchor'] = this.$modal
@@ -249,11 +222,7 @@ class StyleText {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append(
-                        '<label class="control-label">{0}</label>'.printf(
-                            label_text
-                        )
-                    )
+                    .append('<label class="control-label">{0}</label>'.printf(label_text))
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $('<div></div>'),
@@ -293,11 +262,7 @@ class StyleText {
         form.append(
             add_horizontal_field(
                 'Fill',
-                $(
-                    '<input name="fill" type="color" value="{0}">'.printf(
-                        set.fill
-                    )
-                )
+                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
             )
         );
 
@@ -321,9 +286,7 @@ class StyleText {
             '<option value="middle">middle</option>',
             '<option value="end">end</option>',
         ]);
-        text_anchor
-            .find('option[value="{0}"]'.printf(set['text-anchor']))
-            .prop('selected', true);
+        text_anchor.find('option[value="{0}"]'.printf(set['text-anchor'])).prop('selected', true);
         form.append(add_horizontal_field('Type', text_anchor));
 
         //text-anchor
@@ -331,9 +294,7 @@ class StyleText {
             '<option value="normal">normal</option>',
             '<option value="bold">bold</option>',
         ]);
-        font_weight
-            .find('option[value="{0}"]'.printf(set['font-weight']))
-            .prop('selected', true);
+        font_weight.find('option[value="{0}"]'.printf(set['font-weight'])).prop('selected', true);
         form.append(add_horizontal_field('Type', font_weight));
 
         //rotate
@@ -397,9 +358,7 @@ class StyleLine {
         var settings = {},
             fields = ['name', 'stroke', 'stroke-width', 'stroke-opacity'];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal
-                .find('input[name="{0}"]'.printf(fields[i]))
-                .val();
+            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
         }
         settings['stroke-dasharray'] = this.$modal
             .find('select[name="stroke-dasharray"] option:selected')
@@ -412,11 +371,7 @@ class StyleLine {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append(
-                        '<label class="control-label">{0}</label>'.printf(
-                            label_text
-                        )
-                    )
+                    .append('<label class="control-label">{0}</label>'.printf(label_text))
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $('<div></div>'),
@@ -442,11 +397,7 @@ class StyleLine {
         form.append(
             add_horizontal_field(
                 'Stroke',
-                $(
-                    '<input name="stroke" type="color" value="{0}">'.printf(
-                        set.stroke
-                    )
-                )
+                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
             )
         );
 
@@ -527,9 +478,7 @@ class StyleRectangle {
         var settings = {},
             fields = ['name', 'fill', 'fill-opacity', 'stroke', 'stroke-width'];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal
-                .find('input[name="{0}"]'.printf(fields[i]))
-                .val();
+            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
         }
         return settings;
     }
@@ -539,11 +488,7 @@ class StyleRectangle {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append(
-                        '<label class="control-label">{0}</label>'.printf(
-                            label_text
-                        )
-                    )
+                    .append('<label class="control-label">{0}</label>'.printf(label_text))
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $('<div></div>'),
@@ -569,11 +514,7 @@ class StyleRectangle {
         form.append(
             add_horizontal_field(
                 'Fill',
-                $(
-                    '<input name="fill" type="color" value="{0}">'.printf(
-                        set.fill
-                    )
-                )
+                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
             )
         );
 
@@ -595,11 +536,7 @@ class StyleRectangle {
         form.append(
             add_horizontal_field(
                 'Stroke',
-                $(
-                    '<input name="stroke" type="color" value="{0}">'.printf(
-                        set.stroke
-                    )
-                )
+                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
             )
         );
 

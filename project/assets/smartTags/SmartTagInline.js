@@ -14,18 +14,18 @@ class InlineRendering {
     }
 
     render() {
-        this.renderParent = $(
-            '<div class="inlineSmartTagParent">'
-        ).insertBefore(this.$div);
+        this.renderParent = $('<div class="inlineSmartTagParent">').insertBefore(this.$div);
 
         let $title = $('<div class="row-fluid inlineSmartTagTitle">'),
             $body = $('<div class="row-fluid inlineSmartTagBody">'),
-            $caption = $(
-                '<div class="row-fluid inlineSmartTagCaption">'
-            ).append(this.$div.detach()),
-            $container = $(
-                '<div class="inlineSmartTagContainer container-fluid">'
-            ).append([$title, $body, $caption]);
+            $caption = $('<div class="row-fluid inlineSmartTagCaption">').append(
+                this.$div.detach()
+            ),
+            $container = $('<div class="inlineSmartTagContainer container-fluid">').append([
+                $title,
+                $body,
+                $caption,
+            ]);
 
         this.renderParent.append($container);
 
@@ -60,9 +60,7 @@ class InlineRendering {
                     $body.fadeIn('slow');
                 }
             },
-            toggleBtn = $(
-                '<a title="click to toggle visibility" class="btn btn-mini pull-right">'
-            )
+            toggleBtn = $('<a title="click to toggle visibility" class="btn btn-mini pull-right">')
                 .append('<i class="icon-minus"></i>')
                 .off('click')
                 .click(expandHideTogger.bind(this));
@@ -89,11 +87,7 @@ class InlineRendering {
     }
 
     display(Cls) {
-        Cls.displayInline(
-            this.pk,
-            this.setTitle.bind(this),
-            this.setBody.bind(this)
-        );
+        Cls.displayInline(this.pk, this.setTitle.bind(this), this.setBody.bind(this));
     }
 }
 

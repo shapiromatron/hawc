@@ -65,10 +65,7 @@ class BaseVisualForm {
                 case '#preview':
                     self.setPreviewLoading();
                     if (self.dataSynced) {
-                        $('a[data-toggle="tab"]').one(
-                            'shown',
-                            self.buildPreviewDiv.bind(self)
-                        );
+                        $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
                     } else {
                         self.getData();
                     }
@@ -112,8 +109,7 @@ class BaseVisualForm {
 
         // set defaults if needed
         this.constructor.schema.forEach(function(d) {
-            if (d.name && settings[d.name] === undefined)
-                settings[d.name] = d.def;
+            if (d.name && settings[d.name] === undefined) settings[d.name] = d.def;
         });
 
         $('#id_settings').val(JSON.stringify(settings));
@@ -174,19 +170,12 @@ class BaseVisualForm {
 
         $('<div class="form-actions">')
             .append(
-                $('<a class="btn btn-primary">Save</a>').on(
-                    'click',
-                    function() {
-                        if (beforeSubmit) beforeSubmit.call(self);
-                        submitter.trigger('click');
-                    }
-                )
+                $('<a class="btn btn-primary">Save</a>').on('click', function() {
+                    if (beforeSubmit) beforeSubmit.call(self);
+                    submitter.trigger('click');
+                })
             )
-            .append(
-                '<a class="btn btn-default" href="{0}">Cancel</a>'.printf(
-                    cancel_url
-                )
-            )
+            .append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
             .appendTo($parent);
     }
 
@@ -203,10 +192,7 @@ class BaseVisualForm {
         _.each(tabs, function(d, i) {
             isActive = i === 0 ? 'active' : '';
             self.settingsTabs[d.name] = $(
-                '<div id="settings_{0}" class="tab-pane {1}">'.printf(
-                    d.name,
-                    isActive
-                )
+                '<div id="settings_{0}" class="tab-pane {1}">'.printf(d.name, isActive)
             );
             tablinks.push(
                 '<li class="{0}"><a href="#settings_{1}" data-toggle="tab">{2}</a></li>'.printf(
@@ -228,9 +214,7 @@ class BaseVisualForm {
 
     setPreviewLoading() {
         var $preview = this.$el.find('#preview'),
-            loading = $(
-                '<p class="loader">Loading... <img src="/static/img/loading.gif"></p>'
-            );
+            loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         $preview.html(loading);
     }
 
@@ -238,9 +222,7 @@ class BaseVisualForm {
         var div = $('#settings'),
             loader = div.find('p.loader');
         if (loader.length === 0)
-            loader = $(
-                '<p class="loader">Loading... <img src="/static/img/loading.gif"></p>'
-            );
+            loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         div.children().hide(0, function() {
             div.append(loader).show();
         });

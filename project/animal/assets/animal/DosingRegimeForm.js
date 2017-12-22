@@ -37,9 +37,7 @@ class DosingRegimeForm {
             // fill-in array
             initial.forEach(function(v, i) {
                 if (isFinite(parseFloat(v.dose))) {
-                    array[v.dose_group_id].doses[
-                        doses_hash[v.dose_units]
-                    ] = parseFloat(v.dose);
+                    array[v.dose_group_id].doses[doses_hash[v.dose_units]] = parseFloat(v.dose);
                 }
             });
         } else {
@@ -116,11 +114,7 @@ class DosingRegimeForm {
     rebuildTable() {
         $('#dose_table')
             .html('')
-            .append(
-                this._build_colgroup(),
-                this._build_thead(),
-                this._build_tbody()
-            );
+            .append(this._build_colgroup(), this._build_thead(), this._build_tbody());
     }
 
     _syncFromForm() {
@@ -155,14 +149,10 @@ class DosingRegimeForm {
             var th = $('<th>');
             var select = $('<select class="input-medium dose_types"></select>');
             this.dose_types.forEach(function(v, i) {
-                select.append(
-                    '<option value="{0}">{1}</option>'.printf(v.id, v.name)
-                );
+                select.append('<option value="{0}">{1}</option>'.printf(v.id, v.name));
             });
             if (this.dose_units[j]) {
-                select
-                    .find('option[value={0}]'.printf(this.dose_units[j]))
-                    .prop('selected', true);
+                select.find('option[value={0}]'.printf(this.dose_units[j])).prop('selected', true);
             }
             th.append(select);
             if (j > 0) {
@@ -188,11 +178,7 @@ class DosingRegimeForm {
         var tbody = $('<tbody>');
         for (var i = 0; i < this.rows; i++) {
             var tr = $('<tr></tr>');
-            tr.append(
-                '<td><label class="control-label">Dose Group {0}</label></td>'.printf(
-                    i + 1
-                )
-            );
+            tr.append('<td><label class="control-label">Dose Group {0}</label></td>'.printf(i + 1));
             for (var j = 0; j < this.columns; j++) {
                 tr.append(
                     '<td><input type="number" step="any" tabindex="{0}" class="input-medium" id="dose_{1}" value="{2}"></td>'.printf(
@@ -208,10 +194,7 @@ class DosingRegimeForm {
     }
 
     _get_number_dose_groups() {
-        return Math.min(
-            parseInt(this.form.find('#id_num_dose_groups').val()),
-            20
-        );
+        return Math.min(parseInt(this.form.find('#id_num_dose_groups').val()), 20);
     }
 
     _setEventHandlers() {
@@ -236,9 +219,7 @@ class DosingRegimeForm {
         });
 
         this.form.submit(function() {
-            self.form
-                .find('#dose_groups_json')
-                .val(JSON.stringify(self.jsonify()));
+            self.form.find('#dose_groups_json').val(JSON.stringify(self.jsonify()));
             return true;
         });
     }

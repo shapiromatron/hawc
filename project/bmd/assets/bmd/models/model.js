@@ -7,11 +7,9 @@ let formulas = {
     'Exponential-M2': '{a} * Math.exp({isIncreasing}*{b}*x)',
     'Exponential-M3': '{a} * Math.exp({isIncreasing}*Math.pow({b}*x,{d}))',
     'Exponential-M4': '{a} * ({c}-({c}-1) * Math.exp(-1.*{b}*x))',
-    'Exponential-M5':
-        '{a} * ({c}-({c}-1) *  Math.exp(-1.*Math.pow({b}*x,{d})))',
+    'Exponential-M5': '{a} * ({c}-({c}-1) *  Math.exp(-1.*Math.pow({b}*x,{d})))',
     Power: '{control} + {slope} * Math.pow(x,{power})',
-    Hill:
-        '{intercept} + ({v}*Math.pow(x,{n})) / (Math.pow({k},{n}) + Math.pow(x,{n}))',
+    Hill: '{intercept} + ({v}*Math.pow(x,{n})) / (Math.pow({k},{n}) + Math.pow(x,{n}))',
     Multistage:
         '{Background} + (1. - {Background}) * (1. - Math.exp( -1. * {Beta(1)}*x - {Beta(2)}*Math.pow(x,2) - {Beta(3)}*Math.pow(x,3) - {Beta(4)}*Math.pow(x,4) - {Beta(5)}*Math.pow(x,5) - {Beta(6)}*Math.pow(x,6) - {Beta(7)}*Math.pow(x,7) - {Beta(8)}*Math.pow(x,8)))',
     'Multistage-Cancer':
@@ -21,8 +19,7 @@ let formulas = {
     LogProbit:
         '{background} + (1-{background}) * Math.normalcdf({intercept} + {slope}*Math.log(x))',
     Probit: 'Math.normalcdf({intercept} + {slope}*x)',
-    Gamma:
-        '{Background} + (1 - {Background}) * Math.GammaCDF(x*{Slope},{Power})',
+    Gamma: '{Background} + (1 - {Background}) * Math.GammaCDF(x*{Slope},{Power})',
     LogLogistic:
         '{background} + (1-{background})/( 1 + Math.exp(-1.*{intercept}-1.*{slope}*Math.log(x) ) )',
     Logistic: '1/( 1 + Math.exp(-1*{intercept}-{slope}*x ))',
@@ -55,8 +52,7 @@ class BMDLine {
         _.each(this.model.output.parameters, (v, k) => {
             params[k] = v.estimate;
         });
-        params['isIncreasing'] =
-            estimates[0] < estimates[estimates.length - 1] ? 1 : -1;
+        params['isIncreasing'] = estimates[0] < estimates[estimates.length - 1] ? 1 : -1;
 
         _.each(params_in_formula, function(param) {
             let unbracketed = param.slice(1, param.length - 1),

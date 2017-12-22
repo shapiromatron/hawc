@@ -3,10 +3,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Selector from 'riskofbias/robVisual/components/EffectSelector';
-import {
-    fetchEffects,
-    selectEffects,
-} from 'riskofbias/robVisual/actions/Filter';
+import { fetchEffects, selectEffects } from 'riskofbias/robVisual/actions/Filter';
 
 class EffectSelector extends Component {
     constructor(props) {
@@ -26,12 +23,7 @@ class EffectSelector extends Component {
     }
 
     render() {
-        return (
-            <Selector
-                effects={this.props.effects}
-                handleChange={this.handleChange}
-            />
-        );
+        return <Selector effects={this.props.effects} handleChange={this.handleChange} />;
     }
 }
 

@@ -70,9 +70,7 @@ class TaskToggle extends Component {
     }
 
     render() {
-        return this.state.showForm
-            ? this.renderTaskForm()
-            : this.renderTaskLabel();
+        return this.state.showForm ? this.renderTaskForm() : this.renderTaskLabel();
     }
 }
 

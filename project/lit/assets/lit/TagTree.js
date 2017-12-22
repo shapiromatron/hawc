@@ -91,9 +91,7 @@ class TagTree extends Observee {
 
         var getNestedChildren = function(tag) {
             let refs = [].concat(tag.references),
-                nested = tag.children
-                    ? _.flattenDeep(tag.children.map(getNestedChildren))
-                    : [],
+                nested = tag.children ? _.flattenDeep(tag.children.map(getNestedChildren)) : [],
                 uniqs;
 
             refs.push.apply(refs, nested);
@@ -105,9 +103,7 @@ class TagTree extends Observee {
         // set reference_count on each node.
         this.tags.forEach(getNestedChildren);
         if (this.data) {
-            this.data.reference_count = d3.sum(
-                _.map(this.tags, (d) => d.data.reference_count)
-            );
+            this.data.reference_count = d3.sum(_.map(this.tags, (d) => d.data.reference_count));
         }
     }
 
@@ -118,9 +114,7 @@ class TagTree extends Observee {
     }
 
     view_untagged_references(reference_viewer) {
-        var url = '/lit/assessment/{0}/references/untagged/json/'.printf(
-            window.assessment_pk
-        );
+        var url = '/lit/assessment/{0}/references/untagged/json/'.printf(window.assessment_pk);
         if (window.search_id) url += '?search_id={0}'.printf(window.search_id);
 
         $.get(url, function(results) {

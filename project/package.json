@@ -5,8 +5,7 @@
     "description": "HAWC frontend code",
     "scripts": {
         "clean": "rimraf ./static/bundles/* && rimraf ./webpack-stats.json",
-        "build:webpack":
-            "NODE_ENV=production webpack --config webpack.config.prod.js",
+        "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
         "build:dev": "webpack --config webpack.config.dev.js",
         "build": "npm run clean && npm run build:webpack",
         "prettier-watch": "onchange '**/*.js' -- prettier --write {{changed}}",
@@ -15,7 +14,8 @@
         "test":
             "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
         "test:watch": "npm run test -- --watch",
-        "lint": "eslint assets"
+        "lint": "eslint assets",
+        "prettify": "prettier --config=./.prettierrc --write \"**/*.{js,css}\""
     },
     "lint-staged": {
         "*.{js,json,css}": ["prettier --write", "git add"]

@@ -52,13 +52,7 @@ function formatOutgoingRiskOfBias(state, riskofbias) {
                             }
                             return score.riskofbias_id == riskofbias_id;
                         }),
-                        [
-                            'riskofbias_id',
-                            'author',
-                            'final',
-                            'domain_id',
-                            'domain_name',
-                        ]
+                        ['riskofbias_id', 'author', 'final', 'domain_id', 'domain_name']
                     );
                 });
             })
@@ -118,11 +112,7 @@ export function fetchFullStudyIfNeeded() {
         dispatch(requestStudy());
         dispatch(resetError());
         return fetch(
-            h.getObjectUrl(
-                state.config.host,
-                state.config.study.url,
-                state.config.study.id
-            ),
+            h.getObjectUrl(state.config.host, state.config.study.url, state.config.study.id),
             h.fetchGet
         )
             .then((response) => response.json())

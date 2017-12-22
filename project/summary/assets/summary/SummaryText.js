@@ -50,19 +50,14 @@ class SummaryText {
 
     get_children_option_items(lst) {
         this.children.forEach(function(v) {
-            lst.push(
-                '<option value="{0}">{1}</option>'.printf(v.id, v.data.title)
-            );
+            lst.push('<option value="{0}">{1}</option>'.printf(v.id, v.data.title));
         });
     }
 
     render_tree(lst) {
         lst.push(
             $(
-                '<p class="summary_toc">{0}{1}</p>'.printf(
-                    this.get_tab_depth(),
-                    this.data.title
-                )
+                '<p class="summary_toc">{0}{1}</p>'.printf(this.get_tab_depth(), this.data.title)
             ).data('d', this)
         );
         this.children.forEach(function(v) {

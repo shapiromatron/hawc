@@ -6,12 +6,7 @@ import Node from 'nestedTagEditor/components/Node';
 import EditNode from 'nestedTagEditor/components/EditNode';
 import Sortable from 'sortablejs';
 
-import {
-    createTag,
-    updateTag,
-    deleteTag,
-    moveTag,
-} from 'nestedTagEditor/actions';
+import { createTag, updateTag, deleteTag, moveTag } from 'nestedTagEditor/actions';
 import { NO_PARENT } from 'nestedTagEditor/constants';
 
 class Tree extends React.Component {
@@ -102,11 +97,7 @@ class Tree extends React.Component {
             chosenClass: 'draggable-chosen',
             animation: 200,
             onUpdate: (e) => {
-                this.handleMoveNode(
-                    parseInt(e.item.dataset.id),
-                    e.oldIndex,
-                    e.newIndex
-                );
+                this.handleMoveNode(parseInt(e.item.dataset.id), e.oldIndex, e.newIndex);
             },
         });
     };
@@ -134,10 +125,9 @@ class Tree extends React.Component {
                             __html: this.props.extraHelpHtml,
                         }}
                     />
-                    Click on any node to edit that node or move the node to a
-                    different parent. If you move a node, by default the node
-                    will be the last-child to that parent. You can also drag
-                    nodes to re-organize siblings.
+                    Click on any node to edit that node or move the node to a different parent. If
+                    you move a node, by default the node will be the last-child to that parent. You
+                    can also drag nodes to re-organize siblings.
                 </p>
                 <div>
                     {this.state.showCreate ? this.renderCreateNode() : null}

@@ -66,9 +66,7 @@ class Group {
                 .text(d.name),
             addLI = function(key, val) {
                 if (val) {
-                    ul.append(
-                        '<li><strong>{0}:</strong> {1}</li>'.printf(key, val)
-                    );
+                    ul.append('<li><strong>{0}:</strong> {1}</li>'.printf(key, val));
                 }
             },
             content = this.get_content();
@@ -98,14 +96,7 @@ class Group {
 
     build_group_descriptions_table() {
         var tbl = new BaseTable(),
-            headers = [
-                'Variable',
-                'Mean',
-                'Variance',
-                'Lower value',
-                'Upper value',
-                'Calculated',
-            ],
+            headers = ['Variable', 'Mean', 'Variance', 'Lower value', 'Upper value', 'Calculated'],
             colgroups = [25, 15, 15, 15, 15, 15]; // todo: number observations? - review data imports
 
         tbl.addHeaderRow(headers);

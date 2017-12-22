@@ -157,9 +157,7 @@ class OutputTable extends React.Component {
                     <thead>{this.renderHeader.bind(this)()}</thead>
                     <tfoot>
                         <tr>
-                            <td colSpan="100">
-                                Selected model (if any) highlighted in yellow
-                            </td>
+                            <td colSpan="100">Selected model (if any) highlighted in yellow</td>
                         </tr>
                     </tfoot>
                     <tbody style={{ cursor: 'pointer' }}>

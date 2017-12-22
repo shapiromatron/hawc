@@ -95,11 +95,7 @@ class TaskChart extends PureComponent {
         }
 
         return (
-            <text
-                className="task-chart-title"
-                x={chartData.width * 0.5}
-                y={chartData.padding.top}
-            >
+            <text className="task-chart-title" x={chartData.width * 0.5} y={chartData.padding.top}>
                 {chartData.label}
             </text>
         );
@@ -119,10 +115,7 @@ class TaskChart extends PureComponent {
             };
         return (
             <div>
-                <svg
-                    width={this.props.chartData.width}
-                    height={this.props.chartData.height}
-                >
+                <svg width={this.props.chartData.width} height={this.props.chartData.height}>
                     {this.renderTitle()}
                     <XAxis {...xData} ticks={5} renderScale />
                     <BarChart

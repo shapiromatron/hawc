@@ -16,13 +16,7 @@ class CardHeader extends Component {
         }
     }
     render() {
-        let {
-                endpoint,
-                showEndpointModal,
-                showStudyModal,
-                study,
-                citation,
-            } = this.props,
+        let { endpoint, showEndpointModal, showStudyModal, study, citation } = this.props,
             score = study.final_score,
             quality = this.getScoreQuality(score);
         return (
@@ -31,11 +25,7 @@ class CardHeader extends Component {
                     <span className={`pull-right score ${quality}`}>
                         <b>{score || 'N/A'}</b>
                     </span>
-                    <span
-                        className="modalAnchor"
-                        id={endpoint.id}
-                        onClick={showEndpointModal}
-                    >
+                    <span className="modalAnchor" id={endpoint.id} onClick={showEndpointModal}>
                         {endpoint.name}
                     </span>
                     <br />

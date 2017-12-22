@@ -54,9 +54,7 @@ class yAxisLabeled extends Component {
 
     renderAxis() {
         this.props.yScale();
-        this.props.renderScale
-            ? d3.select(this.refs.yAxis).call(this.yAxis)
-            : null;
+        this.props.renderScale ? d3.select(this.refs.yAxis).call(this.yAxis) : null;
     }
 }
 

@@ -80,10 +80,7 @@ class ScoreForm extends Component {
     }
 
     validateInput(score, notes) {
-        if (
-            this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' &&
-            score != 0
-        ) {
+        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' && score != 0) {
             this.props.updateNotesLeft(this.props.score.id, 'add');
         } else {
             this.props.updateNotesLeft(this.props.score.id, 'clear');
@@ -92,13 +89,7 @@ class ScoreForm extends Component {
 
     render() {
         let { name } = this.props.score.metric,
-            {
-                scoreChoices,
-                score,
-                notes,
-                selectedSymbol,
-                selectedShade,
-            } = this.state;
+            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
         return (
             <div className="score-form">
                 <div>

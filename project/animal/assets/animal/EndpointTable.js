@@ -47,9 +47,7 @@ class EndpointTable {
             txt;
 
         if (this.endpoint.doses.length > 1) {
-            $(
-                '<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>'
-            )
+            $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>')
                 .on('click', function(e) {
                     e.preventDefault();
                     self.endpoint.toggle_dose_units();
@@ -65,16 +63,10 @@ class EndpointTable {
         switch (d.data_type) {
             case 'D':
             case 'DC':
-                tr
-                    .append('<th>Incidence</th>')
-                    .append('<th>Percent Incidence</th>');
+                tr.append('<th>Incidence</th>').append('<th>Percent Incidence</th>');
                 break;
             case 'P':
-                tr.append(
-                    '<th>Response ({0}% CI)</th>'.printf(
-                        d.confidence_interval * 100
-                    )
-                );
+                tr.append('<th>Response ({0}% CI)</th>'.printf(d.confidence_interval * 100));
                 break;
             case 'C':
                 txt = 'Response';
@@ -83,8 +75,7 @@ class EndpointTable {
                 }
                 tr.append($('<th>').text(txt));
                 this.hasVariance = this.hasValues('variance');
-                if (this.hasVariance)
-                    tr.append('<th>{0}</th>'.printf(d.variance_name));
+                if (this.hasVariance) tr.append('<th>{0}</th>'.printf(d.variance_name));
                 break;
             default:
                 throw 'Unknown data type.';
@@ -103,9 +94,7 @@ class EndpointTable {
             var tr = $('<tr>'),
                 dose = v.dose.toHawcString();
 
-            dose =
-                dose +
-                self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
+            dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
             tr.append('<td>{0}</td>'.printf(dose));
 
@@ -113,20 +102,15 @@ class EndpointTable {
 
             if (self.endpoint.data.data_type == 'C') {
                 tr.append('<td>{0}</td>'.printf(v.response));
-                if (self.hasVariance)
-                    tr.append('<td>{0}</td>'.printf(v.variance || 'NR'));
+                if (self.hasVariance) tr.append('<td>{0}</td>'.printf(v.variance || 'NR'));
             } else if (self.endpoint.data.data_type == 'P') {
-                tr.append(
-                    '<td>{0}</td>'.printf(self.endpoint.get_pd_string(v))
-                );
+                tr.append('<td>{0}</td>'.printf(self.endpoint.get_pd_string(v)));
             } else {
                 tr
                     .append('<td>{0}</td>'.printf(v.incidence))
                     .append(
                         '<td>{0}%</td>'.printf(
-                            self.endpoint._dichotomous_percent_change_incidence(
-                                v
-                            )
+                            self.endpoint._dichotomous_percent_change_incidence(v)
                         )
                     );
             }
@@ -137,10 +121,7 @@ class EndpointTable {
     build_footer() {
         var txt = this.footnotes.html_list().join('<br>');
         this.tfoot = $(
-            '<tfoot><tr><td colspan="{0}">{1}</td></tr></tfoot>'.printf(
-                this.number_columns,
-                txt
-            )
+            '<tfoot><tr><td colspan="{0}">{1}</td></tr></tfoot>'.printf(this.number_columns, txt)
         );
     }
 
@@ -148,9 +129,7 @@ class EndpointTable {
         this.colgroup = $('<colgroup></colgroup>');
         var self = this;
         for (var i = 0; i < this.number_columns; i++) {
-            self.colgroup.append(
-                '<col style="width:{0}%;">'.printf(100 / self.number_columns)
-            );
+            self.colgroup.append('<col style="width:{0}%;">'.printf(100 / self.number_columns));
         }
     }
 }

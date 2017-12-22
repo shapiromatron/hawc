@@ -8,9 +8,7 @@ import Loading from 'shared/components/Loading';
 
 class Items extends Component {
     componentWillMount() {
-        this.props.dispatch(
-            fetchObjects({ routerParams: this.props.match.params })
-        );
+        this.props.dispatch(fetchObjects({ routerParams: this.props.match.params }));
     }
 
     render() {

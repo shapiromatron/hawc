@@ -2,9 +2,7 @@ import shared from 'shared/utils/helpers';
 
 var helpers = Object.assign({}, shared, {
     getAssessmentApiUrl(config) {
-        return `${config.host}${config.assessment}?assessment_id=${
-            config.assessment_id
-        }`;
+        return `${config.host}${config.assessment}?assessment_id=${config.assessment_id}`;
     },
     getItemApiURL({
         state,

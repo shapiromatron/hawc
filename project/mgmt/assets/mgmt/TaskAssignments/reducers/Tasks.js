@@ -31,9 +31,7 @@ function tasks(state = defaultState, action) {
             });
 
         case types.PATCH_TASK:
-            index = state.list.indexOf(
-                _.find(state.list, { id: action.task.id })
-            );
+            index = state.list.indexOf(_.find(state.list, { id: action.task.id }));
             if (index >= 0) {
                 list = [
                     ...state.list.slice(0, index),

@@ -11,9 +11,7 @@ let buildReferenceLines = function(tab, dp) {
                 buildHeaderTr(['Reference line value', 'Line style', 'Delete'])
             ),
             tbody = $('<tbody>'),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.reference_lines,
             addDataRow = function(i) {
                 let obj;
@@ -26,9 +24,10 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -38,20 +37,17 @@ let buildReferenceLines = function(tab, dp) {
     },
     buildReferenceRanges = function(tab, dp) {
         let thead = $('<thead>').html(
-                buildHeaderTr([
-                    'Lower value',
-                    'Upper value',
-                    'Range style',
-                    'Delete',
-                ])
+                buildHeaderTr(['Lower value', 'Upper value', 'Range style', 'Delete'])
             ),
             colgroup = $(
                 '<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'
             ),
             tbody = $('<tbody>'),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([colgroup, thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([
+                colgroup,
+                thead,
+                tbody,
+            ]),
             settings = dp.settings.reference_rectangles,
             addDataRow = function(i) {
                 let obj;
@@ -64,9 +60,10 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -76,13 +73,9 @@ let buildReferenceLines = function(tab, dp) {
         tab.append($('<h3>Reference ranges</h3>').append(newRowBtn), tbl);
     },
     buildReferenceLabels = function(tab, dp) {
-        var thead = $('<thead>').html(
-                buildHeaderTr(['Text', 'Style', 'Delete'])
-            ),
+        var thead = $('<thead>').html(buildHeaderTr(['Text', 'Style', 'Delete'])),
             tbody = $('<tbody>'),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.labels,
             addDataRow = function(i) {
                 let obj;
@@ -95,9 +88,10 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (let i = 0; i < numRows; i++) {

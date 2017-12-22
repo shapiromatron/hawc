@@ -4,12 +4,7 @@ import $ from '$';
 import HAWCUtils from 'utils/HAWCUtils';
 import D3Visualization from 'summary/D3Visualization';
 
-import {
-    InputField,
-    SpacerNullField,
-    HeaderNullField,
-    HelpTextNullField,
-} from './Fields';
+import { InputField, SpacerNullField, HeaderNullField, HelpTextNullField } from './Fields';
 
 class TableField extends InputField {
     renderHeader() {
@@ -58,16 +53,11 @@ class TableField extends InputField {
     render() {
         var $div = $('<div class="control-group form-row">');
 
-        if (this.schema.prependSpacer)
-            new SpacerNullField(this.schema, this.$parent).render();
-        if (this.schema.label)
-            new HeaderNullField(this.schema, this.$parent).render();
-        if (this.schema.helpText)
-            new HelpTextNullField(this.schema, this.$parent).render();
+        if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
+        if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
+        if (this.schema.helpText) new HelpTextNullField(this.schema, this.$parent).render();
 
-        this.table = $(
-            '<table class="table table-condensed table-bordered">'
-        ).appendTo($div);
+        this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
         this.setColgroup();
         this.$thead = $('<thead>').appendTo(this.table);
         this.$tbody = $('<tbody>').appendTo(this.table);
@@ -102,15 +92,17 @@ class TableField extends InputField {
             td = $('<td>');
 
         td.append(
-            $(
-                '<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>'
-            ).on('click', moveUp),
+            $('<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>').on(
+                'click',
+                moveUp
+            ),
             $(
                 '<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>'
             ).on('click', moveDown),
-            $(
-                '<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>'
-            ).on('click', del)
+            $('<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>').on(
+                'click',
+                del
+            )
         );
         return td;
     }
@@ -126,10 +118,7 @@ class TableField extends InputField {
     addTdText(name, val) {
         val = val || '';
         return $(
-            '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(
-                name,
-                val
-            )
+            '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val)
         );
     }
 
@@ -164,12 +153,7 @@ class TableField extends InputField {
     addTdCheckbox(name, checked) {
         let checkProp = checked ? 'checked' : '';
         return $('<td>').append(
-            $(
-                '<input type="checkbox" name="{0}" {1} required>'.printf(
-                    name,
-                    checkProp
-                )
-            )
+            $('<input type="checkbox" name="{0}" {1} required>'.printf(name, checkProp))
         );
     }
 
@@ -185,19 +169,14 @@ class TableField extends InputField {
     addTdSelectLabels(name, options) {
         var sel = $('<select name="{0}" class="span12">'.printf(name)).append(
             _.map(options, function(d) {
-                return '<option value="{0}">{1}</option>'.printf(
-                    d.value,
-                    d.label
-                );
+                return '<option value="{0}">{1}</option>'.printf(d.value, d.label);
             })
         );
         return $('<td>').append(sel);
     }
 
     addTdSelectMultiple(name, values) {
-        var sel = $(
-            '<select name="{0}" class="span12" multiple>'.printf(name)
-        ).append(
+        var sel = $('<select name="{0}" class="span12" multiple>'.printf(name)).append(
             _.map(values, function(d) {
                 return '<option value="{0}">{0}</option>'.printf(d);
             })
@@ -223,10 +202,7 @@ class ReferenceLineField extends TableField {
             .append(
                 this.addTdFloat('value'),
                 this.addTdText('title'),
-                this.addTdSelect(
-                    'style',
-                    _.map(D3Visualization.styles.lines, 'name')
-                ),
+                this.addTdSelect('style', _.map(D3Visualization.styles.lines, 'name')),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -268,10 +244,7 @@ class ReferenceRangeField extends TableField {
                 this.addTdFloat('lower'),
                 this.addTdFloat('upper'),
                 this.addTdText('title'),
-                this.addTdSelect(
-                    'style',
-                    _.map(D3Visualization.styles.rectangles, 'name')
-                ),
+                this.addTdSelect('style', _.map(D3Visualization.styles.rectangles, 'name')),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -314,10 +287,7 @@ class ReferenceLabelField extends TableField {
         return $('<tr>')
             .append(
                 this.addTdText('caption'),
-                this.addTdSelect(
-                    'style',
-                    _.map(D3Visualization.styles.texts, 'name')
-                ),
+                this.addTdSelect('style', _.map(D3Visualization.styles.texts, 'name')),
                 this.addTdInt('max_width', 0),
                 this.addTdInt('x', 0),
                 this.addTdInt('y', 0),

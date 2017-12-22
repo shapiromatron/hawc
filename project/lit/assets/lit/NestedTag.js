@@ -26,14 +26,11 @@ class NestedTag extends Observee {
 
     get_nested_list_item(parent, padding, options) {
         var div = $('<div data-id="{0}">'.printf(this.data.pk)),
-            collapse = $('<span class="nestedTagCollapser"></span>').appendTo(
-                div
-            ),
+            collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
             txtspan = $('<p class="nestedTag"></p>'),
             text = '{0}{1}'.printf(padding, this.data.name);
 
-        if (options && options.show_refs_count)
-            text += ' ({0})'.printf(this.data.reference_count);
+        if (options && options.show_refs_count) text += ' ({0})'.printf(this.data.reference_count);
         txtspan
             .text(text)
             .appendTo(div)
@@ -55,25 +52,17 @@ class NestedTag extends Observee {
                         self.data('expanded', !self.data('expanded'));
                         if (self.data('expanded')) {
                             span.attr('class', 'icon-minus');
-                            self.attr(
-                                'title',
-                                'Collapse tags: {0}'.printf(self.data('name'))
-                            );
+                            self.attr('title', 'Collapse tags: {0}'.printf(self.data('name')));
                         } else {
                             span.attr('class', 'icon-plus');
-                            self.attr(
-                                'title',
-                                'Expand tags: {0}'.printf(self.data('name'))
-                            );
+                            self.attr('title', 'Expand tags: {0}'.printf(self.data('name')));
                         }
                     }),
                 span = $('<span class="icon-minus"></span>').appendTo(toggle);
             toggle.appendTo(collapse);
 
             var nested = $(
-                '<div id="collapseTag{0}" class="in collapse"></div>'.printf(
-                    this.data.pk
-                )
+                '<div id="collapseTag{0}" class="in collapse"></div>'.printf(this.data.pk)
             ).appendTo(div);
             this.children.forEach(function(v) {
                 v.get_nested_list_item(nested, padding + '   ', options);
@@ -88,8 +77,7 @@ class NestedTag extends Observee {
                     stop(event, ui) {
                         var start_pos = ui.item.data('start_pos'),
                             offset = ui.item.index() - start_pos;
-                        if (offset !== 0)
-                            $(this).trigger('hawc-tagMoved', [ui.item, offset]);
+                        if (offset !== 0) $(this).trigger('hawc-tagMoved', [ui.item, offset]);
                     },
                 });
             }
@@ -159,9 +147,7 @@ class NestedTag extends Observee {
 
         $.post('.', data, function(v) {
             if (v.status === 'success') {
-                self.children.push(
-                    new NestedTag(v.node[0], self.level + 1, self.tree, self)
-                );
+                self.children.push(new NestedTag(v.node[0], self.level + 1, self.tree, self));
                 self.tree.tree_changed();
             }
         });

@@ -62,9 +62,7 @@ function bmd(state = defaultState, action) {
             // 2) add defaults based on the model name
             tmp2 = _.keyBy(action.settings.allModelOptions, 'name');
 
-            action.settings.models.forEach(
-                (d) => (d.defaults = tmp2[d.name].defaults)
-            );
+            action.settings.models.forEach((d) => (d.defaults = tmp2[d.name].defaults));
 
             tmp = _.chain(action.settings.models)
                 .filter((d) => d.bmr_id === 0)
@@ -89,12 +87,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.APPLY_LOGIC:
-            apply_logic(
-                state.logic,
-                state.models,
-                state.endpoint,
-                state.doseUnits
-            );
+            apply_logic(state.logic, state.models, state.endpoint, state.doseUnits);
             return Object.assign({}, state, {
                 logicApplied: true,
             });
@@ -105,10 +98,9 @@ function bmd(state = defaultState, action) {
             });
 
         case types.CREATE_MODEL:
-            tmp = Object.assign(
-                deepCopy(state.allModelOptions[action.modelIndex]),
-                { overrides: {} }
-            );
+            tmp = Object.assign(deepCopy(state.allModelOptions[action.modelIndex]), {
+                overrides: {},
+            });
             return Object.assign({}, state, {
                 modelSettings: [...state.modelSettings, tmp],
             });
@@ -131,11 +123,7 @@ function bmd(state = defaultState, action) {
         case types.DELETE_MODEL:
             tmp = state.modelSettings
                 .slice(0, state.selectedModelOptionIndex)
-                .concat(
-                    state.modelSettings.slice(
-                        state.selectedModelOptionIndex + 1
-                    )
-                );
+                .concat(state.modelSettings.slice(state.selectedModelOptionIndex + 1));
             return Object.assign({}, state, {
                 modelSettings: tmp,
                 selectedModelOptionIndex: null,
@@ -145,8 +133,7 @@ function bmd(state = defaultState, action) {
         case types.TOGGLE_VARIANCE:
             tmp = _.map(state.modelSettings, (d) => {
                 tmp2 = deepCopy(d);
-                tmp2.overrides.constant_variance =
-                    tmp2.overrides.constant_variance === 0 ? 1 : 0;
+                tmp2.overrides.constant_variance = tmp2.overrides.constant_variance === 0 ? 1 : 0;
                 return tmp2;
             });
             return Object.assign({}, state, {

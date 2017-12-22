@@ -155,8 +155,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text:
-                '% change from control (continuous), % incidence (dichotomous)',
+            x_label_text: '% change from control (continuous), % incidence (dichotomous)',
             y_label_text: 'Doses ({0})'.printf(dose_units),
         });
         this.plot_div.css({ height: '{0}px'.printf(container_height) });
@@ -166,10 +165,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
         // using plot-settings, customize axes
         this.x_axis_settings = {
             scale_type: 'linear',
-            domain: [
-                this.min_x - this.max_x * this.buff,
-                this.max_x * (1 + this.buff),
-            ],
+            domain: [this.min_x - this.max_x * this.buff, this.max_x * (1 + this.buff)],
             rangeRound: [0, this.w],
             text_orient: 'bottom',
             x_translate: 0,
@@ -367,12 +363,9 @@ class EndpointAggregationForestPlot extends D3Visualization {
             box_w = 110,
             items = [addItem('Doses in Study', 'dose_points')];
 
-        if (this.plot_div.find('.LOEL').length > 0)
-            items.push(addItem('LOEL', 'dose_points LOEL'));
-        if (this.plot_div.find('.NOEL').length > 0)
-            items.push(addItem('NOEL', 'dose_points NOEL'));
-        if (this.plot_div.find('.BMDL').length > 0)
-            items.push(addItem('BMDL', 'dose_points BMDL'));
+        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem('LOEL', 'dose_points LOEL'));
+        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem('NOEL', 'dose_points NOEL'));
+        if (this.plot_div.find('.BMDL').length > 0) items.push(addItem('BMDL', 'dose_points BMDL'));
 
         this.build_legend({
             items,

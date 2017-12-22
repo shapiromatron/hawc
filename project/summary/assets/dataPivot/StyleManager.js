@@ -28,18 +28,12 @@ class StyleManager {
     }
 
     add_select(style_type, selected_style, include_null) {
-        var select = $('<select class="span12">').html(
-            this._build_options(style_type)
-        );
+        var select = $('<select class="span12">').html(this._build_options(style_type));
         if (include_null) {
-            select.prepend(
-                `<option value="${NULL_CASE}">${NULL_CASE}</option>`
-            );
+            select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
         if (selected_style) {
-            select
-                .find(`option[value="${selected_style}"]`)
-                .prop('selected', true);
+            select.find(`option[value="${selected_style}"]`).prop('selected', true);
         }
         this.selects[style_type].push(select);
         return select;
@@ -50,9 +44,7 @@ class StyleManager {
             var select = this.selects[style_type][i],
                 sel = select.find('option:selected').val();
             select.html(this._build_options(style_type));
-            select
-                .find('option[value="{0}"]'.printf(sel))
-                .prop('selected', true);
+            select.find('option[value="{0}"]'.printf(sel)).prop('selected', true);
         }
     }
 
@@ -60,9 +52,7 @@ class StyleManager {
         var options = [];
         this.styles[style_type].forEach(function(v) {
             options.push(
-                $(
-                    '<option value="{0}">{0}</option>'.printf(v.settings.name)
-                ).data('d', v)
+                $('<option value="{0}">{0}</option>'.printf(v.settings.name)).data('d', v)
             );
         });
         return options;
@@ -73,10 +63,7 @@ class StyleManager {
         var self = this,
             toTitleCase = function(str) {
                 return str.replace(/\w\S*/g, function(word) {
-                    return (
-                        word.charAt(0).toUpperCase() +
-                        word.substr(1).toLowerCase()
-                    );
+                    return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
                 });
             },
             container = $('<div class="row-fluid">'),
@@ -144,15 +131,8 @@ class StyleManager {
                     i;
 
                 // remove from settings
-                for (
-                    i = 0;
-                    i < self.pivot.settings.styles[style_type].length;
-                    i++
-                ) {
-                    if (
-                        self.pivot.settings.styles[style_type][i] ===
-                        style.settings
-                    ) {
+                for (i = 0; i < self.pivot.settings.styles[style_type].length; i++) {
+                    if (self.pivot.settings.styles[style_type][i] === style.settings) {
                         self.pivot.settings.styles[style_type].splice(i, 1);
                         break;
                     }
@@ -182,10 +162,7 @@ class StyleManager {
             };
 
         // create buttons and event-bindings
-        var style_selector = this.add_select(style_type).on(
-                'change',
-                load_style
-            ),
+        var style_selector = this.add_select(style_type).on('change', load_style),
             button_new_style = $(
                 '<button style="margin-right:5px" class="btn btn-primary"><i class="fa fa-plus"></i> New</button>'
             ).click(new_style),
@@ -198,20 +175,12 @@ class StyleManager {
 
         modal
             .find('.modal-footer')
-            .prepend(
-                $(
-                    '<a href="#" class="btn btn-primary">Save and close</a>'
-                ).click(save_style)
-            );
+            .prepend($('<a href="#" class="btn btn-primary">Save and close</a>').click(save_style));
         modal.on('hidden', load_style);
 
         // put all the pieces together
         form_div.append(style_selector, button_well);
-        button_well.append(
-            button_new_style,
-            button_edit_style,
-            button_delete_style
-        );
+        button_well.append(button_new_style, button_edit_style, button_delete_style);
         style_div.append(form_div, vis_div.append(d3_div));
         container.append(title, style_div, modal);
 

@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import {
-    fetchFullStudyIfNeeded,
-    submitRiskOfBiasScores,
-} from 'riskofbias/robTable/actions';
+import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'riskofbias/robTable/actions';
 import Completeness from 'riskofbias/robTable/components/Completeness';
 import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
 import Loading from 'shared/components/Loading';

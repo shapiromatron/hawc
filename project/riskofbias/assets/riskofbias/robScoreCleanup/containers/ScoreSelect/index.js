@@ -18,9 +18,7 @@ export class ScoreSelect extends Component {
         if (!this.props.isLoaded) return null;
         return (
             <div>
-                <label className="control-label">
-                    Rating filter (optional):
-                </label>
+                <label className="control-label">Rating filter (optional):</label>
                 <select
                     multiple
                     name="score_filter"

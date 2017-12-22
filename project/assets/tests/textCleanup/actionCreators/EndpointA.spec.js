@@ -20,12 +20,7 @@ describe('textCleanup Endpoint actions', () => {
             nock(HOST)
                 .get('/ani/api/cleanup/fields/?assessment_id=57')
                 .reply(200, {
-                    text_cleanup_fields: [
-                        'system',
-                        'organ',
-                        'effect',
-                        'effect_subtype',
-                    ],
+                    text_cleanup_fields: ['system', 'organ', 'effect', 'effect_subtype'],
                 });
 
             const expectedActions = [
@@ -33,12 +28,7 @@ describe('textCleanup Endpoint actions', () => {
                 {
                     type: types.EP_RECEIVE_MODEL,
                     model: {
-                        text_cleanup_fields: [
-                            'system',
-                            'organ',
-                            'effect',
-                            'effect_subtype',
-                        ],
+                        text_cleanup_fields: ['system', 'organ', 'effect', 'effect_subtype'],
                     },
                 },
             ];
@@ -69,8 +59,7 @@ describe('textCleanup Endpoint actions', () => {
                 .reply(200, [
                     {
                         id: 10210,
-                        name:
-                            'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                         system: 'digestive system',
                     },
                     {
@@ -87,8 +76,7 @@ describe('textCleanup Endpoint actions', () => {
                     items: [
                         {
                             id: 10210,
-                            name:
-                                'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                             system: 'digestive system',
                         },
                         {
@@ -128,8 +116,7 @@ describe('textCleanup Endpoint actions', () => {
                 .reply(200, [
                     {
                         id: 10210,
-                        name:
-                            'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                         system: 'Digestive Systems',
                     },
                     {
@@ -179,8 +166,7 @@ describe('textCleanup Endpoint actions', () => {
                         items: [
                             {
                                 id: 10210,
-                                name:
-                                    'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                                name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                                 system: 'digestive system',
                             },
                             {
@@ -207,8 +193,7 @@ describe('textCleanup Endpoint actions', () => {
                 .reply(200, [
                     {
                         id: 10210,
-                        name:
-                            'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                         system: 'Digestive Systems',
                     },
                     {
@@ -243,8 +228,7 @@ describe('textCleanup Endpoint actions', () => {
                     type: types.EP_RECEIVE_OBJECT,
                     item: {
                         id: 10210,
-                        name:
-                            'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                        name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                         system: 'Digestive Systems',
                     },
                 },
@@ -271,8 +255,7 @@ describe('textCleanup Endpoint actions', () => {
                         items: [
                             {
                                 id: 10210,
-                                name:
-                                    'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
+                                name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
                                 system: 'digestive system',
                             },
                             {

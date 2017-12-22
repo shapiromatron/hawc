@@ -9,10 +9,7 @@ import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
 class Task extends Component {
     render() {
         let assessmentLbl = this.props.showAssessment ? (
-            <AssessmentLabel
-                className="flex-1"
-                assessment={this.props.task.study.assessment}
-            />
+            <AssessmentLabel className="flex-1" assessment={this.props.task.study.assessment} />
         ) : null;
 
         return (
@@ -20,15 +17,8 @@ class Task extends Component {
                 <hr className="hr-tight" />
                 <div className="flexRow-container">
                     {assessmentLbl}
-                    <StudyLabel
-                        className="flex-1"
-                        study={this.props.task.study}
-                    />
-                    <TaskToggle
-                        TaskLabel={TaskLabel}
-                        className="flex-2"
-                        task={this.props.task}
-                    />
+                    <StudyLabel className="flex-1" study={this.props.task.study} />
+                    <TaskToggle TaskLabel={TaskLabel} className="flex-2" task={this.props.task} />
                 </div>
             </div>
         );

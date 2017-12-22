@@ -31,11 +31,7 @@ class EditableModalFooter extends React.Component {
     renderReadOnly() {
         return (
             <div className="modal-footer">
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    data-dismiss="modal"
-                >
+                <button type="button" className="btn btn-primary" data-dismiss="modal">
                     Close
                 </button>
             </div>

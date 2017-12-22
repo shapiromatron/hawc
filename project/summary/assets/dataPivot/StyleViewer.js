@@ -44,12 +44,7 @@ class StyleViewer extends D3Plot {
         this.h = this.settings.plot_settings.height;
         var menu_spacing = this.settings.plot_settings.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height:
-                this.h +
-                this.padding.top +
-                this.padding.bottom +
-                menu_spacing +
-                'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
         });
     }
 
@@ -164,10 +159,7 @@ class StyleViewer extends D3Plot {
         if (this.style.type === 'text') {
             this.lines = this.vis
                 .selectAll()
-                .data([
-                    { x1: 1.25, x2: 0.75, y1: 1, y2: 1 },
-                    { x1: 1, x2: 1, y1: 1.25, y2: 0.75 },
-                ])
+                .data([{ x1: 1.25, x2: 0.75, y1: 1, y2: 1 }, { x1: 1, x2: 1, y1: 1.25, y2: 0.75 }])
                 .enter()
                 .append('svg:line')
                 .attr('x1', function(v) {
@@ -304,10 +296,7 @@ class StyleViewer extends D3Plot {
                 .attr('fill-opacity', style_settings['fill-opacity'])
                 .attr('text-anchor', style_settings['text-anchor'])
                 .attr('fill', style_settings.fill)
-                .attr(
-                    'transform',
-                    'rotate({0} 25,25)'.printf(style_settings.rotate)
-                );
+                .attr('transform', 'rotate({0} 25,25)'.printf(style_settings.rotate));
         }
 
         if (this.style.type === 'rectangle') {

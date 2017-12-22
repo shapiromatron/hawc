@@ -39,13 +39,7 @@ class DataPivot {
                     return DataPivot.massage_row(d, i);
                 })
                 .get(function(error, data) {
-                    var dp = new DataPivot(
-                        data,
-                        d.settings,
-                        {},
-                        d.title,
-                        d.url
-                    );
+                    var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
                     if (callback) {
                         callback(dp);
                     } else {
@@ -212,12 +206,7 @@ class DataPivot {
         delete this.plot;
         editable = editable || false;
         var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
-        this.plot = new DataPivotVisualization(
-            data,
-            this.settings,
-            div,
-            editable
-        );
+        this.plot = new DataPivotVisualization(data, this.settings, div, editable);
     }
 
     build_data_table() {
@@ -297,8 +286,7 @@ class DataPivot {
 
     _get_header_options(show_blank) {
         var opts = [];
-        if (show_blank)
-            opts.push('<option value="{0}">{0}</option>'.printf(NULL_CASE));
+        if (show_blank) opts.push('<option value="{0}">{0}</option>'.printf(NULL_CASE));
         return opts.concat(
             this.data_headers.map(function(v) {
                 return '<option value="{0}">{0}</option>'.printf(v);

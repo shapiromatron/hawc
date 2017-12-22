@@ -82,10 +82,7 @@ class Aggregation {
                         return v.data.score;
                     })
                 );
-            v.score =
-                possible_score > 0
-                    ? d3.round(score / possible_score * 100, 2)
-                    : 0;
+            v.score = possible_score > 0 ? d3.round(score / possible_score * 100, 2) : 0;
             v.score_bins = score_binning(v);
         });
         return ds;

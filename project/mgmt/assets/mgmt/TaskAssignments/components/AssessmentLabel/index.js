@@ -5,9 +5,7 @@ class AssessmentLabel extends Component {
     render() {
         return (
             <div className={this.props.className}>
-                <a href={this.props.assessment.url}>
-                    {this.props.assessment.name}
-                </a>
+                <a href={this.props.assessment.url}>{this.props.assessment.name}</a>
             </div>
         );
     }

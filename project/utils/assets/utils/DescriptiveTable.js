@@ -21,10 +21,7 @@ class DescriptiveTable {
             }
             var td = $('<td>').html(value);
             if (opts.annotate) {
-                td.append(
-                    '<br>',
-                    $('<span class="muted">').text(opts.annotate)
-                );
+                td.append('<br>', $('<span class="muted">').text(opts.annotate));
             }
             this._tbody.append(
                 $('<tr>')

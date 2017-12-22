@@ -6,10 +6,7 @@ const startup = function() {
         import('shared/store/configureStore').then((configureStore) => {
             import('nestedTagEditor/reducers').then((reducer) => {
                 const store = configureStore.default(reducer.default);
-                render(
-                    <Component.default store={store} />,
-                    document.getElementById('root')
-                );
+                render(<Component.default store={store} />, document.getElementById('root'));
             });
         });
     });

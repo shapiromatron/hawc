@@ -38,10 +38,7 @@ class Endpoint extends Observee {
     }
 
     static getTagURL(assessment, slug) {
-        return '/ani/assessment/{0}/endpoints/tags/{1}/'.printf(
-            assessment,
-            slug
-        );
+        return '/ani/assessment/{0}/endpoints/tags/{1}/'.printf(assessment, slug);
     }
 
     static displayAsModal(id, opts) {
@@ -201,16 +198,13 @@ class Endpoint extends Observee {
 
     get_pd_string(eg) {
         var txt = '{0}%'.printf(eg.response);
-        if (eg.lower_ci && eg.upper_ci)
-            txt += ' ({0}-{1})'.printf(eg.lower_ci, eg.upper_ci);
+        if (eg.lower_ci && eg.upper_ci) txt += ' ({0}-{1})'.printf(eg.lower_ci, eg.upper_ci);
         return txt;
     }
 
     _calculate_stdev(eg) {
         // stdev is required for plotting; calculate if SE is specified
-        var convert =
-            this.data.data_type === 'C' &&
-            parseInt(this.data.variance_type, 10) === 2;
+        var convert = this.data.data_type === 'C' && parseInt(this.data.variance_type, 10) === 2;
         if (convert) {
             if ($.isNumeric(eg.n)) {
                 eg.stdev = eg.variance * Math.sqrt(eg.n);
@@ -237,17 +231,10 @@ class Endpoint extends Observee {
         });
 
         tr1
-            .append(
-                `<th style="width: ${percents * 2}%" rowspan="2">Endpoint</th>`
-            )
+            .append(`<th style="width: ${percents * 2}%" rowspan="2">Endpoint</th>`)
             .append(`<th style="width: ${percents}%" rowspan="2">Organ</th>`)
-            .append(
-                `<th style="width: ${percents}%" rowspan="2">Obs. time</th>`
-            )
-            .append(
-                `<th style="width: ${percents *
-                    nGroups}%" colspan="${nGroups}">${txt}</th>`
-            );
+            .append(`<th style="width: ${percents}%" rowspan="2">Obs. time</th>`)
+            .append(`<th style="width: ${percents * nGroups}%" colspan="${nGroups}">${txt}</th>`);
 
         // now build header row showing available doses
         for (var i = 0; i < nGroups; i++) {
@@ -255,8 +242,7 @@ class Endpoint extends Observee {
                 return v.values[i].dose.toHawcString();
             });
             txt = doses[0];
-            if (doses.length > 1)
-                txt += ' ({0})'.printf(doses.slice(1, doses.length).join(', '));
+            if (doses.length > 1) txt += ' ({0})'.printf(doses.slice(1, doses.length).join(', '));
             tr2.append('<th>{0}</th>'.printf(txt));
         }
 
@@ -264,10 +250,7 @@ class Endpoint extends Observee {
     }
 
     build_ag_no_dr_li() {
-        return '<li><a href="{0}">{1}</a></li>'.printf(
-            this.data.url,
-            this.data.name
-        );
+        return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
     }
 
     build_ag_n_key() {
@@ -295,9 +278,7 @@ class Endpoint extends Observee {
             dr_control,
             data_type = this.data.data_type,
             tr = $('<tr>')
-                .append(
-                    `<td><a href="${this.data.url}">${this.data.name}</a></td>`
-                )
+                .append(`<td><a href="${this.data.url}">${this.data.name}</a></td>`)
                 .append(`<td>${this.data.organ || '-'}</td>`)
                 .append(`<td>${this.data.observation_time_text || '-'}</td>`);
 
@@ -309,20 +290,13 @@ class Endpoint extends Observee {
             if (!v.isReported) {
                 td.text('-');
             } else {
-                footnotes = self.add_endpoint_group_footnotes(
-                    footnote_object,
-                    i
-                );
+                footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if (data_type === 'C') {
                     response = v.response.toHawcString();
-                    if (v.stdev)
-                        response += ' ± {0}'.printf(v.stdev.toHawcString());
+                    if (v.stdev) response += ' ± {0}'.printf(v.stdev.toHawcString());
                     txt = '';
                     if (i > 0) {
-                        txt = self._continuous_percent_difference_from_control(
-                            v,
-                            dr_control
-                        );
+                        txt = self._continuous_percent_difference_from_control(v, dr_control);
                         txt = txt === 'NR' ? '' : ' ({0}%)'.printf(txt);
                     }
                     td.html('{0}{1}{2}'.printf(response, txt, footnotes));
@@ -334,10 +308,7 @@ class Endpoint extends Observee {
                             v.incidence,
                             v.n,
                             self._dichotomous_percent_change_incidence(v),
-                            self.add_endpoint_group_footnotes(
-                                footnote_object,
-                                i
-                            )
+                            self.add_endpoint_group_footnotes(footnote_object, i)
                         )
                     );
                 } else {
@@ -396,18 +367,9 @@ class Endpoint extends Observee {
             .add_tbody_tr('Effect subtype', this.data.effect_subtype)
             .add_tbody_tr('Diagnostic description', this.data.diagnostic)
             .add_tbody_tr('Observation time', this.data.observation_time_text)
-            .add_tbody_tr(
-                'Additional tags',
-                getTaglist(this.data.effects, this.data.assessment)
-            )
-            .add_tbody_tr(
-                'Data reported?',
-                HAWCUtils.booleanCheckbox(this.data.data_reported)
-            )
-            .add_tbody_tr(
-                'Data extracted?',
-                HAWCUtils.booleanCheckbox(this.data.data_extracted)
-            )
+            .add_tbody_tr('Additional tags', getTaglist(this.data.effects, this.data.assessment))
+            .add_tbody_tr('Data reported?', HAWCUtils.booleanCheckbox(this.data.data_reported))
+            .add_tbody_tr('Data extracted?', HAWCUtils.booleanCheckbox(this.data.data_extracted))
             .add_tbody_tr(
                 'Values estimated?',
                 HAWCUtils.booleanCheckbox(this.data.values_estimated)
@@ -428,18 +390,12 @@ class Endpoint extends Observee {
             .add_tbody_tr('BMD', bmd_response('BMD', true))
             .add_tbody_tr('BMDL', bmd_response('BMDL', false))
             .add_tbody_tr('Monotonicity', this.data.monotonicity)
-            .add_tbody_tr(
-                'Statistical test description',
-                this.data.statistical_test
-            )
+            .add_tbody_tr('Statistical test description', this.data.statistical_test)
             .add_tbody_tr('Trend result', this.data.trend_result)
             .add_tbody_tr('Trend <i>p</i>-value', this.data.trend_value)
             .add_tbody_tr('Power notes', this.data.power_notes)
             .add_tbody_tr('Results notes', this.data.results_notes)
-            .add_tbody_tr(
-                'General notes/methodology',
-                this.data.endpoint_notes
-            );
+            .add_tbody_tr('General notes/methodology', this.data.endpoint_notes);
 
         $(div).html(tbl.get_tbl());
     }
@@ -450,14 +406,9 @@ class Endpoint extends Observee {
 
     _continuous_percent_difference_from_control(eg, eg_control) {
         var txt = 'NR';
-        if (
-            eg_control.isReported &&
-            eg.isReported &&
-            eg_control.response !== 0
-        ) {
+        if (eg_control.isReported && eg.isReported && eg_control.response !== 0) {
             txt = Math.round(
-                100 *
-                    ((eg.response - eg_control.response) / eg_control.response),
+                100 * ((eg.response - eg_control.response) / eg_control.response),
                 3
             ).toString();
         }
@@ -492,10 +443,7 @@ class Endpoint extends Observee {
 
     build_endpoint_list_row() {
         var self = this,
-            link = '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.url,
-                this.data.name
-            ),
+            link = '<a href="{0}" target="_blank">{1}</a>'.printf(this.data.url, this.data.name),
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(function() {
@@ -533,13 +481,9 @@ class Endpoint extends Observee {
                     this.data.groups[0]
                 );
             } else if (this.data.data_type == 'P') {
-                return this._pd_percent_difference_from_control(
-                    this.data.groups[index]
-                );
+                return this._pd_percent_difference_from_control(this.data.groups[index]);
             } else {
-                return this._dichotomous_percent_change_incidence(
-                    this.data.groups[index]
-                );
+                return this._dichotomous_percent_change_incidence(this.data.groups[index]);
             }
         } catch (err) {
             return '-';
@@ -587,12 +531,7 @@ class Endpoint extends Observee {
             ag.render($ag);
 
             $end = $('<div class="tab-pane active" id="modalEnd">');
-            divs = $('<div class="tab-content">').append(
-                $study,
-                $exp,
-                $ag,
-                $end
-            );
+            divs = $('<div class="tab-content">').append($study, $exp, $ag, $end);
             $content.prepend(tabs, divs);
         } else {
             $end = $content;
@@ -618,10 +557,7 @@ class Endpoint extends Observee {
     }
 
     hasEGdata() {
-        return (
-            this.data.groups.length > 0 &&
-            _.some(_.map(this.data.groups, 'isReported'))
-        );
+        return this.data.groups.length > 0 && _.some(_.map(this.data.groups, 'isReported'));
     }
 
     defaultDoseAxis() {
@@ -633,9 +569,7 @@ class Endpoint extends Observee {
             .value();
         doses = d3.extent(doses);
         if (doses.length !== 2) return 'linear';
-        return Math.log10(doses[1]) - Math.log10(doses[0]) >= 3
-            ? 'log'
-            : 'linear';
+        return Math.log10(doses[1]) - Math.log10(doses[0]) >= 3 ? 'log' : 'linear';
     }
 
     renderPlot($div, withBMD) {

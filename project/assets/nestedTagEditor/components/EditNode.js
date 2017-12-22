@@ -28,22 +28,13 @@ class EditNode extends React.Component {
     renderUpdateWell() {
         return (
             <div className="well">
-                <button
-                    className="btn btn-primary"
-                    onClick={this.handleUpdate.bind(this)}
-                >
+                <button className="btn btn-primary" onClick={this.handleUpdate.bind(this)}>
                     Save
                 </button>
-                <button
-                    onClick={this.props.handleCancel}
-                    className="btn btn-default"
-                >
+                <button onClick={this.props.handleCancel} className="btn btn-default">
                     Cancel
                 </button>
-                <button
-                    className="btn btn-danger pull-right"
-                    onClick={this.props.handleDelete}
-                >
+                <button className="btn btn-danger pull-right" onClick={this.props.handleDelete}>
                     Delete
                 </button>
             </div>
@@ -53,16 +44,10 @@ class EditNode extends React.Component {
     renderCreateWell() {
         return (
             <div className="well">
-                <button
-                    className="btn btn-primary"
-                    onClick={this.handleCreate.bind(this)}
-                >
+                <button className="btn btn-primary" onClick={this.handleCreate.bind(this)}>
                     Create
                 </button>
-                <button
-                    onClick={this.props.handleCancel}
-                    className="btn btn-default"
-                >
+                <button onClick={this.props.handleCancel} className="btn btn-default">
                     Cancel
                 </button>
             </div>
@@ -70,10 +55,7 @@ class EditNode extends React.Component {
     }
 
     render() {
-        let well =
-            this.props.node.id === null
-                ? this.renderCreateWell
-                : this.renderUpdateWell;
+        let well = this.props.node.id === null ? this.renderCreateWell : this.renderUpdateWell;
 
         return (
             <div className="editNodeForm container-fluid">

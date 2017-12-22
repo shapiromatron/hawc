@@ -12,12 +12,8 @@ const visSelectorId = 'visType',
     bcDiv = 'bcDiv';
 
 let buildChartSelector = function(tab, dp) {
-        let asBarchart = dp.settings.plot_settings.as_barchart
-                ? 'selected'
-                : '',
-            asForPlot = !dp.settings.plot_settings.as_barchart
-                ? 'selected'
-                : '';
+        let asBarchart = dp.settings.plot_settings.as_barchart ? 'selected' : '',
+            asForPlot = !dp.settings.plot_settings.as_barchart ? 'selected' : '';
 
         tab.prepend(`
            <h3>Visualization type</h3>
@@ -56,9 +52,7 @@ let buildChartSelector = function(tab, dp) {
                 ])
             ),
             tbody = $('<tbody>'),
-            tbl = $(
-                '<table class="table table-condensed table-bordered">'
-            ).html([thead, tbody]),
+            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.datapoint_settings,
             addDataRow = function(i) {
                 let obj;
@@ -72,9 +66,10 @@ let buildChartSelector = function(tab, dp) {
                 let num_rows = settings.length;
                 addDataRow(num_rows);
             },
-            newRowBtn = $(
-                '<button class="btn btn-primary pull-right">New row</button>'
-            ).on('click', newDataRow),
+            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+                'click',
+                newDataRow
+            ),
             numRows = settings.length === 0 ? 3 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -91,9 +86,7 @@ let buildChartSelector = function(tab, dp) {
             obj,
             settings = dp.settings.dataline_settings;
 
-        thead = $('<thead>').html(
-            buildHeaderTr(['Column header', 'Legend name', 'Line style'])
-        );
+        thead = $('<thead>').html(buildHeaderTr(['Column header', 'Legend name', 'Line style']));
         tbody = $('<tbody>');
 
         if (settings.length === 0) {
@@ -101,10 +94,7 @@ let buildChartSelector = function(tab, dp) {
         }
 
         obj = new _DataPivot_settings_linedata(dp, 0);
-        tbl = $('<table class="table table-condensed table-bordered">').html([
-            thead,
-            tbody,
-        ]);
+        tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
         tbody.append(obj.tr);
 
         tab.append('<h3>Data point error-bar options</h3>', tbl);

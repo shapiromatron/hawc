@@ -30,10 +30,7 @@ class ModelOptionTable extends React.Component {
             <div className="row-fluid">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
-                    <select
-                        style={{ marginBottom: 0, marginRight: '1em' }}
-                        ref="modelName"
-                    >
+                    <select style={{ marginBottom: 0, marginRight: '1em' }} ref="modelName">
                         {allOptions.map(this.renderOption)}
                     </select>
                     <button
@@ -45,10 +42,7 @@ class ModelOptionTable extends React.Component {
                     </button>
 
                     <div className="btn-group pull-right">
-                        <a
-                            className="btn dropdown-toggle"
-                            data-toggle="dropdown"
-                        >
+                        <a className="btn dropdown-toggle" data-toggle="dropdown">
                             Actions &nbsp;<span className="caret" />
                         </a>
                         <ul className="dropdown-menu">
@@ -58,10 +52,7 @@ class ModelOptionTable extends React.Component {
                                 </a>
                             </li>
                             <li>
-                                <a
-                                    href="#"
-                                    onClick={this.props.handleRemoveAll}
-                                >
+                                <a href="#" onClick={this.props.handleRemoveAll}>
                                     Remove all models
                                 </a>
                             </li>
@@ -173,15 +164,11 @@ class ModelOptionTable extends React.Component {
                     <thead>
                         <tr>
                             <th style={{ width: '25%' }}>Model name</th>
-                            <th style={{ width: '60%' }}>
-                                Non-default settings
-                            </th>
+                            <th style={{ width: '60%' }}>Non-default settings</th>
                             <th style={{ width: '15%' }}>{header}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {this.props.models.map(this.renderRow.bind(this))}
-                    </tbody>
+                    <tbody>{this.props.models.map(this.renderRow.bind(this))}</tbody>
                 </table>
                 {this.renderOptionEdits()}
             </div>

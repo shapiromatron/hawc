@@ -1,5 +1,5 @@
 prettyPrint();
 
 $('.js-tooltip').tooltip({
-    delay: 1000
+    delay: 1000,
 });

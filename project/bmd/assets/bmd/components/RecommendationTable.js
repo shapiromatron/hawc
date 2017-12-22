@@ -26,9 +26,7 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={0}>
                     <b>Warnings</b>
-                    <ul>
-                        {d.logic_notes[0].map((d2, i) => <li key={i}>{d2}</li>)}
-                    </ul>
+                    <ul>{d.logic_notes[0].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
                 </div>
             );
         }
@@ -36,9 +34,7 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={1}>
                     <b>Questionable warnings</b>
-                    <ul>
-                        {d.logic_notes[1].map((d2, i) => <li key={i}>{d2}</li>)}
-                    </ul>
+                    <ul>{d.logic_notes[1].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
                 </div>
             );
         }
@@ -46,9 +42,7 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={2}>
                     <b>Serious warnings</b>
-                    <ul>
-                        {d.logic_notes[2].map((d2, i) => <li key={i}>{d2}</li>)}
-                    </ul>
+                    <ul>{d.logic_notes[2].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
                 </div>
             );
         }
@@ -136,9 +130,8 @@ class RecommendationTable extends React.Component {
                     <tr>
                         <td colSpan="3">
                             <p>
-                                The recommended model (if any) in shown in
-                                green. The user-selected best-fitting model (if
-                                any) in shown in yellow.
+                                The recommended model (if any) in shown in green. The user-selected
+                                best-fitting model (if any) in shown in yellow.
                             </p>
                         </td>
                     </tr>

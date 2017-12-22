@@ -228,9 +228,7 @@ class Barplot extends D3Plot {
         _.extend(this, {
             title_str: this.endpoint.data.name,
             x_label_text: 'Doses ({0})'.printf(this.endpoint.dose_units),
-            y_label_text: 'Response ({0})'.printf(
-                this.endpoint.data.response_units
-            ),
+            y_label_text: 'Response ({0})'.printf(this.endpoint.data.response_units),
             values,
             sigs_data,
             min_y: min,
@@ -309,9 +307,7 @@ class Barplot extends D3Plot {
             .text('*');
 
         this.sigs_labels = this.sigs.append('svg:title').text(function(d) {
-            return 'Statistically significant at {0}'.printf(
-                d.significance_level
-            );
+            return 'Statistically significant at {0}'.printf(d.significance_level);
         });
     }
 
@@ -333,10 +329,7 @@ class Barplot extends D3Plot {
         //rebuild y-axis
         this.yAxis
             .scale(y)
-            .ticks(
-                this.y_axis_settings.number_ticks,
-                this.y_axis_settings.label_format
-            );
+            .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
             .selectAll('.y_axis')
@@ -479,8 +472,7 @@ class Barplot extends D3Plot {
         }
         legend_settings.item_height = 20;
         legend_settings.box_w = 110;
-        legend_settings.box_h =
-            legend_settings.items.length * legend_settings.item_height;
+        legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
         legend_settings.box_padding = 5;
         legend_settings.dot_r = 5;
 

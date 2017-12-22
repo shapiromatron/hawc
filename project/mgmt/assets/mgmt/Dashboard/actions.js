@@ -22,10 +22,7 @@ export function fetchTasks() {
         let state = getState();
         if (state.tasks.isFetching) return;
         let { host, tasks, assessment_id } = state.config;
-        const url = h.getUrlWithAssessment(
-            h.getListUrl(host, tasks.url),
-            assessment_id
-        );
+        const url = h.getUrlWithAssessment(h.getListUrl(host, tasks.url), assessment_id);
         return fetch(url, h.fetchGet)
             .then((response) => response.json())
             .then((json) => dispatch(receiveTasks(json)))

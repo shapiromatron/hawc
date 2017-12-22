@@ -18,8 +18,7 @@ class EndpointCriticalDose {
             });
         try {
             txt = doses[0].values[this.critical_effect_idx].dose.toHawcString();
-            if (this.show_units)
-                txt = '{0} {1}'.printf(txt, this.endpoint.dose_units);
+            if (this.show_units) txt = '{0} {1}'.printf(txt, this.endpoint.dose_units);
         } catch (err) {
             console.log('dose units not found');
         }

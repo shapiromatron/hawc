@@ -1,9 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
-import {
-    setError,
-    resetError,
-} from 'riskofbias/robScoreCleanup/actions/Errors';
+import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import * as types from 'riskofbias/robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
 
@@ -40,10 +37,7 @@ export function fetchScoreOptions() {
         dispatch(makeScoreOptionRequest());
         dispatch(resetError());
         let { host, scores, assessment_id } = state.config;
-        const url = h.getUrlWithAssessment(
-            h.getListUrl(host, scores.url),
-            assessment_id
-        );
+        const url = h.getUrlWithAssessment(h.getListUrl(host, scores.url), assessment_id);
         return fetch(url, h.fetchGet)
             .then((response) => response.json())
             .then((json) => formatScoreOptions(json))

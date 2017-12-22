@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 var page = require('webpage').create(),
     system = require('system'),
     address = system.args[1],
     output = system.args[2],
     renderTimeout = 500,
-    pageEvalGetSvgSize = function(){
+    pageEvalGetSvgSize = function() {
         var d = document.querySelector('svg').getBoundingClientRect();
         return {
             top: d.top,
@@ -13,30 +13,30 @@ var page = require('webpage').create(),
             width: d.width,
         };
     },
-    renderAndExit = function(){
+    renderAndExit = function() {
         // Wait for animations, after viewport size change
-        window.setTimeout(function(){
+        window.setTimeout(function() {
             page.render(output);
             phantom.exit();
         }, renderTimeout);
     },
-    getPdf = function(){
+    getPdf = function() {
         var svg = page.evaluate(pageEvalGetSvgSize);
 
         page.viewportSize = {
-            height: (2 * svg.top + svg.height),
-            width: (2 * svg.left + svg.width),
+            height: 2 * svg.top + svg.height,
+            width: 2 * svg.left + svg.width,
         };
 
         page.paperSize = {
-            height: (20 + 2 * svg.top + svg.height) + 'px',
-            width: (10 + 2 * svg.left + svg.width) + 'px',
+            height: 20 + 2 * svg.top + svg.height + 'px',
+            width: 10 + 2 * svg.left + svg.width + 'px',
             margin: '5px',
         };
 
         renderAndExit();
-
-    }, getRasterization = function(){
+    },
+    getRasterization = function() {
         var svg = page.evaluate(pageEvalGetSvgSize),
             zoomFactor = 3;
 
@@ -57,14 +57,14 @@ var page = require('webpage').create(),
         renderAndExit();
     };
 
-var func = (output.substr(-4) === '.pdf') ? getPdf : getRasterization,
-    onPageReady = function(){
+var func = output.substr(-4) === '.pdf' ? getPdf : getRasterization,
+    onPageReady = function() {
         window.setTimeout(func, renderTimeout);
     },
     checkReadyState = function() {
         // continue to check until ready-state is complete
-        setTimeout(function () {
-            var readyState = page.evaluate(function () {
+        setTimeout(function() {
+            var readyState = page.evaluate(function() {
                 return document.readyState;
             });
             if (readyState === 'complete') {
@@ -74,7 +74,7 @@ var func = (output.substr(-4) === '.pdf') ? getPdf : getRasterization,
             }
         });
     },
-    onLoadFinished = function (status) {
+    onLoadFinished = function(status) {
         // page loaded but other resources may not be complete
         if (status === 'success') {
             checkReadyState();
@@ -89,6 +89,5 @@ page.viewportSize = {
     height: 1440,
     width: 2560,
 };
-
 
 page.open(address, onLoadFinished);

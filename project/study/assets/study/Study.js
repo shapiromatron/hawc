@@ -40,9 +40,7 @@ class Study {
 
     static displayInline(id, setTitle, setBody) {
         Study.get_object(id, (obj) => {
-            var title = $(
-                    '<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())
-                ),
+            var title = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),
                 content = $('<div>');
 
             setTitle(title);
@@ -105,10 +103,7 @@ class Study {
     }
 
     get_url() {
-        return '<a href="{0}">{1}</a>'.printf(
-            this.data.url,
-            this.data.short_citation
-        );
+        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
     }
 
     _get_data_types() {
@@ -131,8 +126,7 @@ class Study {
         tbl.add_tbody_tr('Data type(s)', this._get_data_types());
         tbl.add_tbody_tr('Full citation', this.data.full_citation);
         tbl.add_tbody_tr('Abstract', this.data.abstract);
-        if (links.children().length > 0)
-            tbl.add_tbody_tr('Reference hyperlink', links);
+        if (links.children().length > 0) tbl.add_tbody_tr('Reference hyperlink', links);
         tbl.add_tbody_tr_list(
             'Literature review tags',
             this.data.tags.map(function(d) {
@@ -148,15 +142,9 @@ class Study {
         tbl.add_tbody_tr('COI details', this.data.coi_details);
         tbl.add_tbody_tr('Funding source', this.data.funding_source);
         tbl.add_tbody_tr('Study identifier', this.data.study_identifier);
-        tbl.add_tbody_tr(
-            'Author contacted?',
-            HAWCUtils.booleanCheckbox(this.data.contact_author)
-        );
+        tbl.add_tbody_tr('Author contacted?', HAWCUtils.booleanCheckbox(this.data.contact_author));
         tbl.add_tbody_tr('Author contact details', this.data.ask_author);
-        tbl.add_tbody_tr(
-            'Summary and/or extraction comments',
-            this.data.summary
-        );
+        tbl.add_tbody_tr('Summary and/or extraction comments', this.data.summary);
         $(div).html(tbl.get_tbl());
     }
 

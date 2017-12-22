@@ -7,15 +7,7 @@ let build_styles_tab = function(self) {
         text_div = self.style_manager.build_styles_crud('texts'),
         rectangle_div = self.style_manager.build_styles_crud('rectangles');
 
-    return tab.html([
-        symbol_div,
-        '<hr>',
-        line_div,
-        '<hr>',
-        text_div,
-        '<hr>',
-        rectangle_div,
-    ]);
+    return tab.html([symbol_div, '<hr>', line_div, '<hr>', text_div, '<hr>', rectangle_div]);
 };
 
 export default build_styles_tab;

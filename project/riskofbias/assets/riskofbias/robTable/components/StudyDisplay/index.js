@@ -46,14 +46,8 @@ class StudyDisplay extends Component {
                     domains={this.props.riskofbias.scores}
                     handleClick={this.selectActive}
                 />
-                <RiskOfBiasDisplay
-                    active={this.state.scores}
-                    config={this.props.config}
-                />
-                <ShowAll
-                    allShown={this.isAllShown()}
-                    handleClick={this.selectAllActive}
-                />
+                <RiskOfBiasDisplay active={this.state.scores} config={this.props.config} />
+                <ShowAll allShown={this.isAllShown()} handleClick={this.selectAllActive} />
             </div>
         );
     }
@@ -92,9 +86,6 @@ StudyDisplay.propTypes = {
 };
 
 export function renderStudyDisplay(data, element) {
-    ReactDOM.render(
-        <StudyDisplay riskofbias={data} config={data.config} />,
-        element
-    );
+    ReactDOM.render(<StudyDisplay riskofbias={data} config={data.config} />, element);
 }
 export default StudyDisplay;

@@ -39,10 +39,7 @@ class ReactDatePicker extends Component {
         const compProps = this.getDatePickerProps();
         return (
             <div>
-                <label
-                    htmlFor={compProps.id}
-                    className={this.props.labelClassName || ''}
-                >
+                <label htmlFor={compProps.id} className={this.props.labelClassName || ''}>
                     {this.props.label}
                 </label>
                 <DatePicker {...compProps} />

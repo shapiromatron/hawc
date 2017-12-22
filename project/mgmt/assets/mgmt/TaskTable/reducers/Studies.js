@@ -62,8 +62,7 @@ function studies(state = defaultState, action) {
                 if (action.opts.order === 'descending') list = list.reverse();
             } else {
                 /* if sorting field didn't change, but sorting order did, reverse list */
-                if (action.opts.order !== state.sortOrder)
-                    list = list.reverse();
+                if (action.opts.order !== state.sortOrder) list = list.reverse();
             }
             return Object.assign({}, state, {
                 list,

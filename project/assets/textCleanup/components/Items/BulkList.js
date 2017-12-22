@@ -26,12 +26,8 @@ class BulkList extends Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <span className="bulk-header span4">
-                        {h.caseToWords(params.field)}
-                    </span>
-                    <span className="bulk-header span5">
-                        {h.caseToWords(params.field)} edit
-                    </span>
+                    <span className="bulk-header span4">{h.caseToWords(params.field)}</span>
+                    <span className="bulk-header span5">{h.caseToWords(params.field)} edit</span>
                     <span className="bulk-header span2">Submit</span>
                 </div>
 

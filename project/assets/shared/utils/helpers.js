@@ -103,10 +103,7 @@ const helpers = {
                 .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
                 // uppercase the first character of first word
                 .replace(/\w\S*/, function(txt) {
-                    return (
-                        txt.charAt(0).toUpperCase() +
-                        txt.substr(1).toLowerCase()
-                    );
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                 })
         );
     },

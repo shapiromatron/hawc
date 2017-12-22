@@ -60,10 +60,7 @@ function items(state = defaultState, action) {
         case types.CHECK_SCORE_FOR_UPDATE:
             index = state.updateIds.indexOf(action.id);
             if (index >= 0) {
-                list = [
-                    ...state.updateIds.slice(0, index),
-                    ...state.updateIds.slice(index + 1),
-                ];
+                list = [...state.updateIds.slice(0, index), ...state.updateIds.slice(index + 1)];
             } else {
                 list = [...state.updateIds, action.id];
             }
@@ -79,27 +76,21 @@ function items(state = defaultState, action) {
 
             // visibleItems: selectedScores
             list =
-                action.selectedScores === null ||
-                action.selectedScores.length === 0
+                action.selectedScores === null || action.selectedScores.length === 0
                     ? _.map(state.items, 'id')
                     : state.items
-                          .filter((d) =>
-                              _.includes(action.selectedScores, d.score)
-                          )
+                          .filter((d) => _.includes(action.selectedScores, d.score))
                           .map((d) => d.id);
 
             // visibleItems: selectedStudyTypes
             list2 =
-                action.selectedStudyTypes === null ||
-                action.selectedStudyTypes.length === 0
+                action.selectedStudyTypes === null || action.selectedStudyTypes.length === 0
                     ? _.map(state.items, 'id')
                     : state.items
                           .filter(
                               (d) =>
-                                  _.intersection(
-                                      action.selectedStudyTypes,
-                                      d.study_types
-                                  ).length !== 0
+                                  _.intersection(action.selectedStudyTypes, d.study_types)
+                                      .length !== 0
                           )
                           .map((d) => d.id);
 

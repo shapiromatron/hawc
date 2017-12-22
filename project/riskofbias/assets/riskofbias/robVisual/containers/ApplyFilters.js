@@ -4,11 +4,7 @@ import { connect } from 'react-redux';
 
 import Filtering from 'riskofbias/robVisual/components/Filtering';
 import FormFieldError from 'riskofbias/robVisual/components/FormFieldError';
-import {
-    fetchEndpoints,
-    formatError,
-    clearErrors,
-} from 'riskofbias/robVisual/actions/Filter';
+import { fetchEndpoints, formatError, clearErrors } from 'riskofbias/robVisual/actions/Filter';
 
 class ApplyFilters extends Component {
     constructor(props) {
@@ -44,11 +40,7 @@ class ApplyFilters extends Component {
         return (
             <div>
                 <FormFieldError errors={this.props.errors} />
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.handleSubmit}
-                >
+                <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>
                     Apply filters
                 </button>
                 {this.props.isFetching ? <Filtering /> : null}

@@ -50,8 +50,7 @@ class Node extends React.Component {
     }
 
     renderShowHide() {
-        let active =
-                this.props.node.children && this.props.node.children.length > 0,
+        let active = this.props.node.children && this.props.node.children.length > 0,
             classed = 'fa fa-fw',
             action = null;
 
@@ -100,16 +99,9 @@ class Node extends React.Component {
             displayChildren = this.state.showChildren ? 'inherit' : 'none';
 
         return (
-            <div
-                onClick={this.handleEditClick.bind(this)}
-                className="draggable"
-                data-id={node.id}
-            >
+            <div onClick={this.handleEditClick.bind(this)} className="draggable" data-id={node.id}>
                 {this.state.showForm ? this.renderForm() : this.renderDetail()}
-                <div
-                    ref={this.props.sortableGroupDecorator}
-                    style={{ display: displayChildren }}
-                >
+                <div ref={this.props.sortableGroupDecorator} style={{ display: displayChildren }}>
                     {children.map((child) => {
                         return (
                             <Node

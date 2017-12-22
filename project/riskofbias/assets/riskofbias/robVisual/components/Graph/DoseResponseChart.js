@@ -73,10 +73,7 @@ class DoseResponseChart extends Component {
             <svg width={width} height={height}>
                 <DoseAxis {...this.state.doseData} renderScale={false} />
                 <SplineChart {...this.state.chartData} radius={radius} />
-                <ResponseAxis
-                    {...this.state.responseData}
-                    renderScale={false}
-                />
+                <ResponseAxis {...this.state.responseData} renderScale={false} />
             </svg>
         );
     }

@@ -1,19 +1,19 @@
-
-.resource-description, .response-info {
+.resource-description,
+.response-info {
     margin-bottom: 2em;
 }
 .version:before {
-    content: "v";
+    content: 'v';
     opacity: 0.6;
     padding-right: 0.25em;
 }
 
 .version {
-  font-size: 70%;
+    font-size: 70%;
 }
 
 .format-option {
-    font-family: Menlo, Consolas, "Andale Mono", "Lucida Console", monospace;
+    font-family: Menlo, Consolas, 'Andale Mono', 'Lucida Console', monospace;
 }
 
 .button-form {
@@ -22,15 +22,17 @@
 }
 
 ul.breadcrumb {
-  margin: 58px 0 0 0;
+    margin: 58px 0 0 0;
 }
 
-form select, form input, form textarea {
-  width: 90%;
+form select,
+form input,
+form textarea {
+    width: 90%;
 }
 
 form select[multiple] {
-  height: 150px;
+    height: 150px;
 }
 /* To allow tooltips to work on disabled elements */
 .disabled-tooltip-shield {
@@ -46,10 +48,10 @@ form select[multiple] {
 }
 
 pre {
-  overflow: auto;
-  word-wrap: normal;
-  white-space: pre;
-  font-size: 12px;
+    overflow: auto;
+    word-wrap: normal;
+    white-space: pre;
+    font-size: 12px;
 }
 
 .page-header {
@@ -58,48 +60,49 @@ pre {
     margin-bottom: 20px;
 }
 
-body{
-  padding-top:0px;
+body {
+    padding-top: 0px;
 }
 
-#content a span{
+#content a span {
     text-decoration: underline;
- }
+}
 
 /* sticky footer and footer */
 
-html, body {
-  height: 100%;
+html,
+body {
+    height: 100%;
 }
 
 .wrapper {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin: 0 auto -60px;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -60px;
 }
 
-#footer, #push {
-  height: 60px; /* .push must be the same height as .footer */
+#footer,
+#push {
+    height: 60px; /* .push must be the same height as .footer */
 }
 
-#footer{
+#footer {
     text-align: right;
 }
 
 #footer p {
-  text-align: center;
-  color: gray;
-  border-top: 1px solid #DDD;
-  padding-top: 10px;
+    text-align: center;
+    color: gray;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
 }
 
 #footer a {
-  color: gray;
-  font-weight: bold;
+    color: gray;
+    font-weight: bold;
 }
 
 #footer a:hover {
-  color: gray;
+    color: gray;
 }
-
