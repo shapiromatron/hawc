@@ -5,6 +5,7 @@
         "linebreak-style": [2, "unix"],
         "semi": [2, "always"],
         "comma-dangle": [1, "always-multiline"],
+        "max-len": [2, 100, 4, {"ignoreUrls": true}],
         "no-console": 1,
         "no-unused-vars": [2, { "args": "none" }],
         "no-sparse-arrays": 2,
