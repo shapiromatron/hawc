@@ -64,10 +64,10 @@
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Metric Changes</a></li>
             <li><a href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a></li>
-            {% for metric in object.metrics.all|slice:":1" %}
+            {% for metric in object.metrics.all %}
               {% if metric %}
                 <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">Metric Answer Changes</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">{{metric}} Answer Changes</a></li>
                 <li><a href="{% url 'riskofbias:robm_answers_create' metric.pk %}">New metric answer</a></li>
               {% endif %}
             {% endfor %}
@@ -134,6 +134,7 @@
       <thead>
         <tr>
           <th>ID</th>
+          <th>Metric</th>
           <th>Choice</th>
           <th>Symbol</th>
           <th>Score</th>
@@ -147,6 +148,9 @@
         {% for answer in metric.answers.all %}
           <tr>
             <th>{{forloop.counter}}</th>
+            <td>
+              {{answer.metric}}<br>
+            </td>
             <td>
               {{answer.answer_choice}}<br>
             </td>
