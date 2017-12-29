@@ -52,7 +52,7 @@ const NoFinalReviewWarning = () => {
     return (
         <div className="container">
             <span className="alert alert-warning span12">
-                Final Reviewer assignment required for risk of bias aggregation graph.
+                Final Reviewer assignment required for Study Evaluation aggregation graph.
             </span>
         </div>
     );

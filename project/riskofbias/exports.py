@@ -5,7 +5,7 @@ from utils.helper import FlatFileExporter
 
 class RiskOfBiasFlat(FlatFileExporter):
     """
-    Returns a complete export of active Final Risk of Bias reviews, without
+    Returns a complete export of active Final Study Evaluation reviews, without
     reviewer information.
     """
 
@@ -39,7 +39,7 @@ class RiskOfBiasFlat(FlatFileExporter):
 
 class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     """
-    Returns a complete export of all Risk of Bias reviews including reviewer
+    Returns a complete export of all Study Evaluation reviews including reviewer
     information.
     """
 

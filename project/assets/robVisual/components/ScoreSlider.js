@@ -18,7 +18,7 @@ class ScoreSlider extends Component {
             <div>
             <form name='scoreSliderForm'>
                 <label className="control-label">
-                    Minimum risk of bias rating: <span>{threshold}</span>
+                    Minimum Study Evaluation rating: <span>{threshold}</span>
                 </label>
                 <input
                     type='range'

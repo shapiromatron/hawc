@@ -89,7 +89,7 @@ class Assessment(models.Model):
     enable_project_management = models.BooleanField(
         default=True,
         help_text="Enable project management module for data extraction and "
-                  "risk of bias. If enabled, each study will have multiple "
+                  "Study Evaluation. If enabled, each study will have multiple "
                   "tasks which can be assigned and tracked for completion.")
     enable_data_extraction = models.BooleanField(
         default=True,

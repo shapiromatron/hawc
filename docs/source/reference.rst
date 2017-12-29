@@ -25,7 +25,7 @@ The project-management module in is designed to allow users to track the progres
 1. **Study preparation**: content which should be extracted is clarified and saved to the ``Study`` instance
 2. **Data extraction**: data extracted from paper into HAWC. This can be animal bioassay, epidemiological, epidemiological meta-analyses, or in-vitro data.
 3. **QA/QC**: data extracted has been QA/QC.
-4. **Risk of Bias:** Risk of bias has been completed.
+4. **Study Evaluation:** Risk of bias has been completed.
 
 With each tasks, there are four possible statuses:
 
@@ -43,10 +43,10 @@ In addition, "signals" are automatically fired in order to help users keep track
 - When data is extracted into a ``Study`` (i.e. animal bioassy ``Experiment``, an epidemiology ``Study population``, and epidemiology meta-analysis ``Study Protocol``, or an *in vitro* ``Experiment``)...
     - If the study preparation task is currently "started", the task is marked "complete"
     - If the data extraction task is currently "not started", the task is assigned to the user who added the data, and it is marked "started".
-- When ``Risk of Bias`` is modified...
-    - If the risk of bias task is currently "not started", the task is assigned to the user who modified the Risk of Bias, and it is marked "started".
-- When a final ``Risk of Bias`` is completed (which may include conflict resolution)...
-    - If the risk of bias task is currently "started", the task is marked "complete"
+- When ``Study Evaluation`` is modified...
+    - If the Study Evaluation task is currently "not started", the task is assigned to the user who modified the Study Evaluation, and it is marked "started".
+- When a final ``Study Evaluation`` is completed (which may include conflict resolution)...
+    - If the Study Evaluation task is currently "started", the task is marked "complete"
 
 Unfortunately, we cannot track everything with the automated signals. Therefore, the following task-operations do not have any "signals" associated with them, and must always be manually performed by a user:
 

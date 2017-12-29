@@ -15,7 +15,7 @@ router.register(r'scores', api.AssessmentScoreViewset, base_name='scores')
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
 
-    # modify assessment risk of bias settings
+    # modify assessment Study Evaluation settings
     url(r'^assessment/(?P<pk>\d+)/$',
         views.ARoBDetail.as_view(),
         name='arob_detail'),
@@ -67,7 +67,7 @@ urlpatterns = [
         views.RoBMetricAnswersDelete.as_view(),
         name='robm_answers_delete'),
 
-    # risk of bias reviewers
+    # Study Evaluation reviewers
     url(r'^assessment/(?P<pk>\d+)/study-assignments/$',
         views.ARoBReviewersList.as_view(),
         name='arob_reviewers'),
@@ -75,7 +75,7 @@ urlpatterns = [
         views.ARoBReviewersUpdate.as_view(),
         name='arob_reviewers_update'),
 
-    # risk of bias at study-level
+    # Study Evaluation at study-level
     url(r'^study/(?P<pk>\d+)/$',
         views.RoBDetail.as_view(),
         name='rob_detail'),
@@ -83,7 +83,7 @@ urlpatterns = [
         views.RoBsDetailAll.as_view(),
         name='rob_detail_all'),
 
-    # risk of bias editing views
+    # Study Evaluation editing views
     url(r'^(?P<pk>\d+)/edit/$',
         views.RoBEdit.as_view(),
         name='rob_update'),

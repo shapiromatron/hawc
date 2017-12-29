@@ -116,7 +116,7 @@ class StudiesCopy(forms.Form):
     HELP_TEXT = """
     Clone multiple studies and move from one assessment to  another assessment.
     Clones are complete and include most nested data.  Cloned studies do not
-    include risk of bias information.
+    include Study Evaluation information.
     """
 
     studies = forms.ModelMultipleChoiceField(
