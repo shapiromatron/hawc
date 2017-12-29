@@ -228,8 +228,8 @@ class RoBMetricAnswersCreate(BaseCreate):
     parent_model = models.RiskOfBiasMetric
     parent_template_name = 'metric'
     model = models.RiskOfBiasMetricAnswers
-    #form_class = forms.RoBMetricForm
-    success_message  = 'Study Evaluation metric answers creates.'
+    form_class = forms.RoBMetricAnswersForm
+    success_message  = 'Study Evaluation metric answer created.'
 
     def get_success_url(self):
         return reverse_lazy('riskofbias:arob_update',
@@ -238,7 +238,7 @@ class RoBMetricAnswersCreate(BaseCreate):
 
 class RoBMetricAnswersUpdate(BaseUpdate):
     model = models.RiskOfBiasMetricAnswers
-    #form_class = forms.RoBMetricForm
+    form_class = forms.RoBMetricAnswersForm
     success_message = 'Study Evaluation metric answers updated.'
 
     def get_success_url(self):

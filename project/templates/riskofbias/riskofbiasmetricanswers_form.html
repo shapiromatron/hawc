@@ -1,0 +1,31 @@
+{% extends 'portal.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {{assessment}} | Risk of bias | Metric | Answers | Edit | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+<li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Risk of bias Metric Answers</a><span class="divider">/</span></li>
+{% if crud == "Update" %}
+  <li class="active"> Edit metric Answers<span class="divider">/</span></li>
+{% elif crud == "Create" %}
+  <li class="active"> Create metric Answers <span class="divider">/</span></li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+  {% crispy form %}
+
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.html5text').quillify();
+});
+</script>
+{% endblock extrajs %}

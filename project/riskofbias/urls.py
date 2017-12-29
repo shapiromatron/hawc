@@ -58,7 +58,7 @@ urlpatterns = [
 
     # modify metric answers
     url(r'^metric/(?P<pk>\d+)/answers/create/$',
-        views.RoBMetricAnswersCreate.as_view,
+        views.RoBMetricAnswersCreate.as_view(),
         name='robm_answers_create'),
     url(r'^answers/(?P<pk>\d+)/edit/$',
         views.RoBMetricAnswersUpdate.as_view(),
