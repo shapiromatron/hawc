@@ -7,12 +7,8 @@ class AnimalGroupTable {
     constructor(endpoints) {
         this.endpoints = endpoints;
         this.tbl = new BaseTable();
-        (this.endpoints_no_dr = this.endpoints.filter(function(v) {
-            return !v.hasEGdata();
-        })),
-            (this.endpoints_dr = this.endpoints.filter(function(v) {
-                return v.hasEGdata();
-            }));
+        (this.endpoints_no_dr = this.endpoints.filter((v) => !v.hasEGdata())),
+            (this.endpoints_dr = this.endpoints.filter((v) => v.hasEGdata()));
     }
 
     static render($div, endpoints) {
@@ -49,13 +45,12 @@ class AnimalGroupTable {
 
         ngroups.forEach(function(endpoints) {
             _.chain(endpoints)
-                .sortBy(function(d) {
-                    return d.data.name.toLowerCase();
-                })
+                .sortBy((d) => d.data.name.toLowerCase())
                 .each(function(v, i) {
                     if (i === 0) tbl.addRow(v._build_ag_n_row());
                     tbl.addRow(v._build_ag_response_row(tbl.footnotes));
-                });
+                })
+                .value();
         });
     }
 
