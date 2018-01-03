@@ -51,5 +51,3 @@ notebooks/*.ipynb
 
 project/hawc/settings/base.py
 requirements/base.txt
-project/mgmt/migrations/0002_endpointrobtask.py
-project/mgmt/migrations/0003_auto_20171213_1125.py
