@@ -581,6 +581,8 @@ class EndpointFilterForm(forms.Form):
         ('system', 'system'),
         ('organ', 'organ'),
         ('effect', 'effect'),
+        ('NOEL', 'NOEL'),
+        ('LOEL', 'LOEL'),
         ('effect_subtype', 'effect subtype'),
         ('animal_group__experiment__chemical', 'chemical'),
     )
@@ -728,6 +730,8 @@ class EndpointFilterForm(forms.Form):
         system = self.cleaned_data.get('system')
         organ = self.cleaned_data.get('organ')
         effect = self.cleaned_data.get('effect')
+        NOEL = self.cleaned_data.get('NOEL')
+        LOEL = self.cleaned_data.get('LOEL')
         tags = self.cleaned_data.get('tags')
         dose_units = self.cleaned_data.get('dose_units')
 
@@ -756,6 +760,10 @@ class EndpointFilterForm(forms.Form):
             query &= Q(organ__icontains=organ)
         if effect:
             query &= Q(effect__icontains=effect)
+        if NOEL:
+            query &= Q(NOEL_icontains=NOEL)
+        if LOEL:
+            query &= Q(LOEL_icontains=LOEL)
         if tags:
             query &= Q(effects__name__icontains=tags)
         if dose_units:
