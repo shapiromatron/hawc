@@ -67,6 +67,9 @@ class EndpointManager(BaseManager):
     def get_effect_choices(self, assessment_id):
         return get_distinct_charfield_opts(self, assessment_id, 'effect')
 
+    def get_effect_subtype_choices(self, assessment_id):
+        return get_distinct_charfield_opts(self, assessment_id, 'effect_subtype')
+
     def get_effects(self, assessment_id):
         return get_distinct_charfield(self, assessment_id, 'effect')
 

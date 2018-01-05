@@ -35,10 +35,10 @@ class PrefilterMixin(object):
 
     PREFILTER_COMBO_FIELDS = [
         'studies',
-        'systems', 'organs', 'effects',
+        'systems', 'organs', 'effects', 'effect_subtypes',
         'episystems', 'epieffects',
         'iv_categories', 'iv_chemicals',
-        'effect_tags',
+        'effect_tags'
     ]
 
     def createFields(self):
@@ -96,6 +96,16 @@ class PrefilterMixin(object):
                     label="Effects to include",
                     help_text="""Select one or more effects to include in the plot.
                                  If no effect is selected, no endpoints will be available.""")),
+                ("prefilter_effect_subtype", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by effect sub-type",
+                    help_text="Prefilter endpoints on plot to include selected effects.")),
+                ("effect_subtypes", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Effect Sub-Types to include",
+                    help_text="""Select one or more effect sub-types to include in the plot.
+                                 If no effect sub-type is selected, no endpoints will be available.""")),
             ])
 
         if "epi" in self.prefilter_include:
@@ -240,6 +250,8 @@ class PrefilterMixin(object):
             choices = Endpoint.objects.get_organ_choices(assessment_id)
         elif field_name == "effects":
             choices = Endpoint.objects.get_effect_choices(assessment_id)
+        elif field_name == "effect_subtypes":
+            choices = Endpoint.objects.get_effect_subtype_choices(assessment_id)
         elif field_name == "iv_categories":
             choices = IVEndpointCategory.get_choices(assessment_id)
         elif field_name == "iv_chemicals":
