@@ -40,9 +40,12 @@
           <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">Risk of bias settings</a></li>
           {% endif %}
 
+          {% comment %}
+          <!-- DISABLED UNTIL BMDS SERVER ONLINE (hopefully temporarily) -->
           {% if assessment.enable_bmd %}
           <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a></li>
           {% endif %}
+          {% endcomment %}
 
           {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
           <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a></li>

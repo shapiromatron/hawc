@@ -23,6 +23,8 @@
             <li class="divider"></li>
             {% endif %}
 
+            {% comment %}
+            <!-- DISABLED UNTIL BMDS SERVER ONLINE (hopefully temporarily) -->
             {% if assessment.enable_bmd and object.bmd_modeling_possible %}
               {% if bmd_session %}
                 <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
@@ -35,6 +37,7 @@
                 {% endif %}
               {% endif %}
             {% endif %}
+            {% endcomment %}
         </ul>
       </div>
     {% endif %}
