@@ -38,7 +38,7 @@ class PrefilterMixin(object):
         'systems', 'organs', 'effects', 'effect_subtypes',
         'episystems', 'epieffects',
         'iv_categories', 'iv_chemicals',
-        'effect_tags'
+        'effect_tags',
     ]
 
     def createFields(self):
@@ -208,6 +208,10 @@ class PrefilterMixin(object):
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
+            if k == "effect_subtype__in":
+                self.fields["prefilter_effect_subtype"].initial = True
+                self.fields["effect_subtypes"].initial = v
+
             if k == "effects__in":
                 self.fields["prefilter_effect_tag"].initial = True
                 self.fields["effect_tags"].initial = v
@@ -307,6 +311,9 @@ class PrefilterMixin(object):
 
         if data.get('prefilter_effect') is True:
             prefilters["effect__in"] = data.get("effects", [])
+
+        if data.get('prefilter_effect_subtype') is True:
+            prefilters["effect_subtype__in"] = data.get("effect_subtypes", [])
 
         if data.get('prefilter_episystem') is True:
             prefilters["system__in"] = data.get("episystems", [])
