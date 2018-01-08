@@ -83,13 +83,45 @@ class Donut extends D3Plot {
                                     parent: v1});
             });
         });
+		this.overall_domain_data = domain_donut_data.pop();
+		this.overall_question_data = question_donut_data.pop();
         this.domain_donut_data = domain_donut_data;
         this.question_donut_data = question_donut_data;
     }
 
     draw_visualizations(){
         var self = this,
-            donut_center = `translate(200,${(this.h / 2)})`;
+            donut_center = `translate(200,${(this.h / 2)})`,
+			overall_question_data = this.overall_question_data;
+			
+		this.ROBcenter = this.vis.append('circle')
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .attr("r", this.radius_inner)
+			.attr('fill', overall_question_data.score_color)
+            .attr('transform', donut_center)
+            .on('mouseover', function(){
+                if (self.viewlock) return;
+                d3.select(this).classed('hovered', true);
+                $(':animated').promise().done(function(){
+                    self.show_subset(overall_question_data);
+                });
+            })
+            .on('mouseout', function(v){
+                if (self.viewlock) return;
+                d3.select(this).classed('hovered', false);
+                detail_arcs.classed('hovered', false);
+                domain_arcs.classed('hovered', false);
+                self.subset_div.fadeOut('500', function(){self.clear_subset();});
+            });
+
+			this.ROBcentertext = this.vis.append('svg:text')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('text-anchor', 'end')
+            .attr('class','centeredLabel')
+            .attr('transform', donut_center)
+            .text(this.overall_question_data.score_text);
 
         // setup pie layout generator
         this.pie_layout = d3.layout.pie()
@@ -203,7 +235,7 @@ class Donut extends D3Plot {
             .attr('text-anchor', 'end')
             .attr('class','dr_title')
             .text('{0} risk of bias summary'.printf(this.study.data.short_citation));
-
+			
         setTimeout(function(){self.toggle_domain_width();}, 2.0);
     }
 
