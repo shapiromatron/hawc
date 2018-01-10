@@ -643,6 +643,9 @@ class Prefilter(object):
         if d.get('prefilter_effect'):
             filters["effect__in"] = d.getlist('effects')
 
+        if d.get('prefilter_effect_subtype'):
+            filters["effect_subtype__in"] = d.getlist('effect_subtypes')
+
         if d.get('prefilter_effect_tag'):
             filters["effects__in"] = d.getlist('effect_tags')
 
