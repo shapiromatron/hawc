@@ -139,13 +139,6 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             e['animal_group']['strain']
         )
 
-    @classmethod
-    def _get_tags(cls, e):
-        effs = [tag['name'] for tag in e['effects']]
-        if len(effs) > 0:
-            return '|{0}|'.format('|'.join(effs))
-        return ''
-
     def _get_header_row(self):
         # move qs.distinct() call here so we can make qs annotations.
         self.queryset = self.queryset.distinct('pk')

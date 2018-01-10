@@ -62,6 +62,8 @@ class OutcomeDataPivot(FlatFileExporter):
             'diagnostic',
             'age of outcome measurement',
 
+            'tags',
+
             'comparison set id',
             'comparison set name',
 
@@ -135,6 +137,8 @@ class OutcomeDataPivot(FlatFileExporter):
                 ser['effect_subtype'],
                 ser['diagnostic'],
                 ser['age_of_measurement'],
+
+                self._get_tags(ser),
             ]
             for res in ser['results']:
                 row_copy = list(row)
