@@ -85,6 +85,4 @@ label {font-weight:bold;}
 
 input + label {margin-top: 0.5em;}
 
-input[type='checkbox'], input[type='radio'] {
-	position: static;
 }

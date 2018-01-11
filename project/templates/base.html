@@ -338,7 +338,13 @@
     {% render_bundle 'manifest' %}
     {% render_bundle 'vendor' %}
     {% render_bundle 'main' %}
-    {% block extrajs %}{% endblock %}
+	  <script type="text/javascript">
+	  $(document).ready(function(){
+		$("label > :checkbox").each(function(){$(this).parent().parent().prepend($(this));});
+		$("label > :radio").each(function(){$(this).parent().parent().prepend($(this));}); 
+		} );
+	  </script>
+   {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}
   </body>
 </html>
