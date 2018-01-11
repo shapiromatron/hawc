@@ -1,6 +1,5 @@
 {% extends 'portal.html' %}
 
-
 {% block title %}
   {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
@@ -52,8 +51,9 @@
 
     <div id='dr-plot-container' class="span5">
       <h2>Plot</h2>
-      <div id='bmd_ds_plot' class="d3_container">
-      </div>
+      <div id='bmd_ds_plot' class="d3_container"></div>
+      <br/>
+      <div id="endpoint-general-notes"></div>
     </div>
   </div>
 
@@ -67,6 +67,7 @@
           endpoint.build_details_table($('#endpoint-details-table'));
           endpoint.build_endpoint_table($('#dr-tbl'));
           endpoint.renderPlot($('#bmd_ds_plot'));
+          endpoint.build_general_notes($('#endpoint-general-notes'));
       })
   </script>
 {% endblock %}
