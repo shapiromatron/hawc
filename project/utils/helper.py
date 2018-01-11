@@ -167,6 +167,18 @@ class FlatFileExporter(object):
     def _get_data_rows(self):
         raise NotImplementedError()
 
+    @classmethod
+    def _get_tags(cls, e):
+        returnValue = ""
+
+        if ("effects" in e):
+            effects = [tag["name"] for tag in e["effects"]]
+
+            if (len(effects) > 0):
+                returnValue = "|{0}|".format("|".join(effects))
+
+        return returnValue
+
     def build_response(self):
         header_row = self._get_header_row()
         data_rows = self._get_data_rows()
