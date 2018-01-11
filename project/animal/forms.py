@@ -574,15 +574,15 @@ class UploadFileForm(forms.Form):
 
 
 class EndpointFilterForm(forms.Form):
-
+    
     ORDER_BY_CHOICES = (
         ('animal_group__experiment__study__short_citation', 'study'),
         ('name', 'endpoint name'),
         ('system', 'system'),
         ('organ', 'organ'),
         ('effect', 'effect'),
-        ('NOEL', 'NOEL'),
-        ('LOEL', 'LOEL'),
+        ('-NOEL', 'NOEL'),
+        ('-LOEL', 'LOEL'),
         ('effect_subtype', 'effect subtype'),
         ('animal_group__experiment__chemical', 'chemical'),
     )
@@ -761,9 +761,9 @@ class EndpointFilterForm(forms.Form):
         if effect:
             query &= Q(effect__icontains=effect)
         if NOEL:
-            query &= Q(NOEL_icontains=NOEL)
+            query &= Q(NOEL__icontains=NOEL)
         if LOEL:
-            query &= Q(LOEL_icontains=LOEL)
+            query &= Q(LOEL__icontains=LOEL)
         if tags:
             query &= Q(effects__name__icontains=tags)
         if dose_units:
