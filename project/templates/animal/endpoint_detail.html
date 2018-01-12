@@ -44,9 +44,6 @@
     <div id="dr-details" class="span7">
       <h2>Endpoint Details</h2>
       <div id="endpoint-details-table"></div>
-
-      <h2>Dataset</h2>
-      <table id="dr-tbl" class="table table-condensed table-striped"></table>
     </div>
 
     <div id='dr-plot-container' class="span5">
@@ -54,6 +51,11 @@
       <div id='bmd_ds_plot' class="d3_container"></div>
       <br/>
       <div id="endpoint-general-notes"></div>
+    </div>
+
+    <div id="dr-dataset" class="span7">
+      <h2>Dataset</h2>
+      <table id="dr-tbl" class="table table-condensed table-striped"></table>
     </div>
   </div>
 
@@ -66,8 +68,8 @@
 
           endpoint.build_details_table($('#endpoint-details-table'));
           endpoint.build_endpoint_table($('#dr-tbl'));
-          endpoint.renderPlot($('#bmd_ds_plot'));
           endpoint.build_general_notes($('#endpoint-general-notes'));
+          endpoint.renderPlot($('#bmd_ds_plot'));
       })
   </script>
 {% endblock %}
