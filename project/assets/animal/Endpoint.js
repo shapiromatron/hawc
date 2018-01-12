@@ -2,6 +2,7 @@ import $ from '$';
 import _ from 'underscore';
 import d3 from 'd3';
 
+import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
@@ -349,9 +350,39 @@ class Endpoint extends Observee {
            .add_tbody_tr('Trend <i>p</i>-value', this.data.trend_value)
            .add_tbody_tr('Power notes', this.data.power_notes)
            .add_tbody_tr('Results notes', this.data.results_notes)
-           .add_tbody_tr('General notes/methodology', this.data.endpoint_notes);
 
         $(div).html(tbl.get_tbl());
+    }
+
+    build_general_notes(div){
+        var self = this,
+            tbl = new BaseTable(),
+            critical_dose = function(type){
+                if(self.data[type]<0) return;
+                var span = $('<span>');
+                new EndpointCriticalDose(self, span, type, true);
+                return span;
+            },
+            bmd_response = function(type, showURL){
+                if(self.data.bmd === null) return;
+                var span = $('<span>');
+                new BMDResult(self, span, type, true, showURL);
+                return span;
+            },
+            getTaglist = function(tags, assessment_id){
+                if(tags.length === 0) return false;
+                var ul = $('<ul class="nav nav-pills nav-stacked">');
+                tags.forEach(function(v){
+                    ul.append('<li><a href="{0}">{1}</a></li>'.printf(
+                      Endpoint.getTagURL(assessment_id, v.slug), v.name));
+                });
+                return ul;
+            };
+        tbl.addHeaderRow(['General Notes/Methodology']);
+        tbl.setColGroup([100]);
+        tbl.tbody.append(this.data.endpoint_notes);
+        $(div).html(tbl.getTbl());
+
     }
 
     _dichotomous_percent_change_incidence(eg){
