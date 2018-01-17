@@ -772,15 +772,17 @@ class ResultForm(forms.ModelForm):
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
 
     factors_applied = selectable.AutoCompleteSelectMultipleField(
-        help_text="All factors included in final model",
-        lookup_class=lookups.AdjustmentFactorLookup,
-        required=False)
+        help_text="All factors included in final model"
+        ,lookup_class=lookups.AdjustmentFactorLookup
+        ,required=False
+    )
 
     factors_considered = selectable.AutoCompleteSelectMultipleField(
-        label="Adjustment factors considered",
-        help_text="Factors considered, but not included in the final model",
-        lookup_class=lookups.AdjustmentFactorLookup,
-        required=False)
+        label="Adjustment factors considered"
+        ,help_text="Factors considered, but not included in the final model"
+        ,lookup_class=lookups.AdjustmentFactorLookup
+        ,required=False
+    )
 
     class Meta:
         model = models.Result
@@ -789,6 +791,7 @@ class ResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop('parent', None)
         super().__init__(*args, **kwargs)
+
         self.fields['comments'] = self.fields.pop('comments')  # move to end
 
         if outcome:
@@ -880,11 +883,14 @@ class ResultForm(forms.ModelForm):
         helper.add_fluid_row('statistical_power', 4, "span3")
         helper.add_fluid_row('factors_applied', 2, "span6")
         helper.add_fluid_row('estimate_type', 3, "span4")
+        helper.add_fluid_row("resulttags", 1, "span6")
 
-        url = reverse('epi:adjustmentfactor_create',
-                      kwargs={'pk': self.instance.outcome.assessment_id})
-        helper.addBtnLayout(helper.layout[8], 0, url, "Add new adjustment factor", "span6")
-        helper.addBtnLayout(helper.layout[8], 1, url, "Add new adjustment factor", "span6")
+        url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.outcome.assessment_id})
+        helper.addBtnLayout(helper.layout[8], 0, url, "Add new result tag", "span6")
+
+        url = reverse('epi:adjustmentfactor_create', kwargs={'pk': self.instance.outcome.assessment_id})
+        helper.addBtnLayout(helper.layout[9], 0, url, "Add new adjustment factor", "span6")
+        helper.addBtnLayout(helper.layout[9], 1, url, "Add new adjustment factor", "span6")
 
         return helper
 

@@ -12,7 +12,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from reversion import revisions as reversion
 from scipy.stats import t
 
-from assessment.models import Assessment, BaseEndpoint
+from assessment.models import Assessment, BaseEndpoint, EffectTag
 from study.models import Study
 from utils.models import get_crumbs, get_distinct_charfield_opts
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
@@ -1065,6 +1065,31 @@ class ResultAdjustmentFactor(models.Model):
         cw[self.COPY_NAME][old_id] = self.id
 
 
+"""
+class ResultTag(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    slug = models.SlugField(max_length=128, unique=True, help_text="The URL (web address) used to describe this object (no spaces or special-characters).")
+
+    class Meta:
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+    def get_json(self, json_encode=False):
+        d = {}
+
+        fields = ("pk", "name")
+        for field in fields:
+            d[field] = getattr(self, field)
+
+        if json_encode:
+            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
+        else:
+            return d
+"""
+
+
 class Result(models.Model):
     objects = managers.ResultManager()
 
@@ -1100,83 +1125,130 @@ class Result(models.Model):
         (5, "other"))
 
     name = models.CharField(
-        max_length=256)
+        max_length=256
+    )
+
     outcome = models.ForeignKey(
-        Outcome,
-        related_name="results")
+        Outcome
+        ,related_name="results"
+    )
+
     comparison_set = models.ForeignKey(
-        ComparisonSet,
-        related_name="results")
+        ComparisonSet
+        ,related_name="results"
+    )
+
     metric = models.ForeignKey(
-        ResultMetric,
-        related_name="results",
-        help_text="&nbsp;")
+        ResultMetric
+        ,related_name="results"
+        ,help_text="&nbsp;"
+    )
+
     metric_description = models.TextField(
-        blank=True,
-        help_text="Add additional text describing the metric used, if needed.")
+        blank=True
+        ,help_text="Add additional text describing the metric used, if needed."
+    )
+
     data_location = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="Details on where the data are found in the literature "
-                  "(ex: Figure 1, Table 2, etc.)")
+        max_length=128
+        ,blank=True
+        ,help_text="Details on where the data are found in the literature "
+                   "(ex: Figure 1, Table 2, etc.)"
+    )
+
     population_description = models.CharField(
-        max_length=128,
-        help_text='Detailed description of the population being studied for'
-                  'this outcome, which may be a subset of the entire'
-                  'study-population. For example, "US (national) NHANES'
-                  '2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
-        blank=True)
+        max_length=128
+        ,help_text='Detailed description of the population being studied for'
+                   'this outcome, which may be a subset of the entire'
+                   'study-population. For example, "US (national) NHANES'
+                   '2003-2008, Hispanic children 6-18 years, ♂♀ (n=797)"',
+        blank=True
+    )
+
     dose_response = models.PositiveSmallIntegerField(
-        verbose_name="Dose Response Trend",
-        help_text="Was a trend observed?",
-        default=0,
-        choices=DOSE_RESPONSE_CHOICES)
+        verbose_name="Dose Response Trend"
+        ,help_text="Was a trend observed?"
+        ,default=0
+        ,choices=DOSE_RESPONSE_CHOICES
+    )
+
     dose_response_details = models.TextField(
-        blank=True)
+        blank=True
+    )
+
     prevalence_incidence = models.CharField(
-        max_length=128,
-        verbose_name="Overall incidence prevalence",
-        blank=True)
+        max_length=128
+        ,verbose_name="Overall incidence prevalence"
+        ,blank=True
+    )
+
     statistical_power = models.PositiveSmallIntegerField(
-        help_text="Is the study sufficiently powered?",
-        default=0,
-        choices=STATISTICAL_POWER_CHOICES)
+        help_text="Is the study sufficiently powered?"
+        ,default=0
+        ,choices=STATISTICAL_POWER_CHOICES
+    )
+
     statistical_power_details = models.TextField(
-        blank=True)
+        blank=True
+    )
+
     statistical_test_results = models.TextField(
-        blank=True)
+        blank=True
+    )
+
     trend_test = models.CharField(
-        verbose_name="Trend test result",
-        max_length=128,
-        blank=True,
-        help_text="Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)")
+        verbose_name="Trend test result"
+        ,max_length=128
+        ,blank=True
+        ,help_text="Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)"
+    )
+
     adjustment_factors = models.ManyToManyField(
-        AdjustmentFactor,
-        through=ResultAdjustmentFactor,
-        related_name='outcomes',
-        blank=True)
+        AdjustmentFactor
+        ,through=ResultAdjustmentFactor
+        ,related_name='outcomes'
+        ,blank=True
+    )
+
     estimate_type = models.PositiveSmallIntegerField(
-        choices=ESTIMATE_TYPE_CHOICES,
-        verbose_name="Central estimate type",
-        default=0)
+        choices=ESTIMATE_TYPE_CHOICES
+        ,verbose_name="Central estimate type"
+        ,default=0
+    )
+
     variance_type = models.PositiveSmallIntegerField(
-        choices=VARIANCE_TYPE_CHOICES,
-        default=0)
+        choices=VARIANCE_TYPE_CHOICES
+        ,default=0
+    )
+
     ci_units = models.FloatField(
-        blank=True,
-        null=True,
-        default=0.95,
-        verbose_name='Confidence Interval (CI)',
-        help_text='A 95% CI is written as 0.95.')
+        blank=True
+        ,null=True
+        ,default=0.95
+        ,verbose_name="Confidence Interval (CI)"
+        ,help_text="A 95% CI is written as 0.95."
+    )
+
     comments = models.TextField(
-        blank=True,
-        help_text='Summarize main findings of outcome, or describe why no '
-                  'details are presented (for example, "no association '
-                  '(data not shown)")')
+        blank=True
+        ,help_text='Summarize main findings of outcome, or describe why no '
+                   'details are presented (for example, "no association '
+                   '(data not shown)")'
+    )
+
     created = models.DateTimeField(
-        auto_now_add=True)
+        auto_now_add=True
+    )
+
     last_updated = models.DateTimeField(
-        auto_now=True)
+        auto_now=True
+    )
+
+    resulttags = models.ManyToManyField(
+        EffectTag
+        ,blank=True
+        ,verbose_name="Tags"
+    )
 
     COPY_NAME = "results"
 
@@ -1546,4 +1618,5 @@ reversion.register(Exposure)
 reversion.register(Outcome, follow=('effects',))
 reversion.register(Group, follow=('ethnicities',))
 reversion.register(Result, follow=('adjustment_factors', 'resfactors', 'results'))
+#reversion.register(ResultTag)
 reversion.register(GroupResult)
