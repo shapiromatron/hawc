@@ -1244,21 +1244,11 @@ class Result(models.Model):
         auto_now=True
     )
 
-    """
     resulttags = models.ManyToManyField(
         EffectTag
         ,blank=True
         ,verbose_name="Tags"
     )
-    """
-
-    """
-    resulttags = models.ManyToManyField(
-        ResultTag
-        ,blank=True
-        ,verbose_name="Tags"
-    )
-    """
 
     COPY_NAME = "results"
 

@@ -167,6 +167,7 @@ class ResultSerializer(serializers.ModelSerializer):
     statistical_power = serializers.CharField(source='get_statistical_power_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = GroupResultSerializer(many=True)
+    resulttags = EffectTagsSerializer()
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     comparison_set = SimpleComparisonSetSerializer()

@@ -128,6 +128,7 @@ class Result {
             .add_tbody_tr('Data location', this.data.data_location)
             .add_tbody_tr('Population description', this.data.population_description)
             .add_tbody_tr('Metric Description', this.data.metric_description)
+            .add_tbody_tr_list('Result tags', _.pluck(this.data.resulttags, 'name'))
             .add_tbody_tr_list('Adjustment factors', _.pluck(this.factors, 'description'))
             .add_tbody_tr_list('Additional factors considered', _.pluck(this.factors_considered, 'description'))
             .add_tbody_tr('Dose response', this.data.dose_response)
