@@ -1,4 +1,4 @@
-FROM nginx:1.12.1-alpine
+FROM nginx:1.13.8-alpine
 
 ARG configuration_file
 
