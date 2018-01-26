@@ -172,10 +172,17 @@ class FlatFileExporter(object):
         returnValue = ""
 
         if ("effects" in e):
+            """ This element is an Outcome element with an "effects" field """
             effects = [tag["name"] for tag in e["effects"]]
 
             if (len(effects) > 0):
                 returnValue = "|{0}|".format("|".join(effects))
+        elif ("resulttags" in e):
+            """ This element is a Result element with a "resulttags" field """
+            resulttags = [tag["name"] for tag in e["resulttags"]]
+
+            if (len(resulttags) > 0):
+                returnValue = "|{0}|".format("|".join(resulttags))
 
         return returnValue
 
