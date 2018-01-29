@@ -1,3 +1,4 @@
+from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
@@ -80,3 +81,25 @@ class HAWCMgr(BaseUserManager):
                 models.Q(assessment_teams=assessment_id) |
                 models.Q(assessment_reviewers=assessment_id)
             ).distinct()
+
+    def lookup_by_epa_sso_uid(self, httpRequest):
+        """
+        Attempts to instantiate this HAWCUser object by using an incoming EPA single-sign-on User ID
+        This method does not return anything, but instead sets the incoming httpRequest object's user attribute to the user found
+        from the value found in the request's "UID" header field
+        """
+
+        if ((isinstance(httpRequest, WSGIRequest)) and (httpRequest.user.is_anonymous)):
+            # The incoming httpRequest argument is of the expected type, continue checking
+
+            # This is just for test/development purposes, it will be removed when no longer needed
+            if ("UID" not in httpRequest.META):
+                httpRequest.META["UID"] = "jay_buie"
+
+            if (("UID" in httpRequest.META) and (isinstance(httpRequest.META["UID"], str)) and (httpRequest.META["UID"] != "")):
+                # httpRequest has a non-empty "UID" request header, use it to look up the HAWCUser in the database
+
+                userSet = self.filter(models.Q(epa_sso_uid=httpRequest.META["UID"]))
+                if (len(userSet) >= 1):
+                    # At least one user was found with that EPA Single-Sign-On UserID, take the first one and use it as request.user
+                    httpRequest.user = userSet[0]

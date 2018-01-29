@@ -80,6 +80,10 @@ class AssessmentPermissionsMixin(object):
         """
         Check to make sure user can view object
         """
+        print(self.request.user)
+        apps.get_model("myuser", "HAWCUser").objects.lookup_by_epa_sso_uid(self.request)
+        print(self.request.user)
+
         obj = kwargs.get('object')
         if not obj:
             obj = super().get_object(**kwargs)
