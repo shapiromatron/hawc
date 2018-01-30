@@ -16,6 +16,7 @@ from django.views.generic.edit import DeleteView, UpdateView, CreateView
 from assessment.models import Assessment, TimeSpentEditing
 from .helper import tryParseInt
 
+from utils.decorators import epa_sso_authenticator
 
 class MessageMixin(object):
     """
@@ -48,10 +49,11 @@ class LoginRequiredMixin(object):
     """
     A mixin requiring a user to be logged in.
     """
+
+    @method_decorator(epa_sso_authenticator)
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-
 
 class AssessmentPermissionsMixin(object):
     """
@@ -63,11 +65,17 @@ class AssessmentPermissionsMixin(object):
     """
 
     def permission_check_user_can_view(self):
+        # Check to see if the user is being re-directed from the EPA's Single-Sign-On portal
+        apps.get_model("myuser", "HAWCUser").objects.lookup_by_epa_sso_uid(self.request)
+
         logging.debug('Permissions checked')
         if not self.assessment.user_can_view_object(self.request.user):
             raise PermissionDenied
 
     def permission_check_user_can_edit(self):
+        # Check to see if the user is being re-directed from the EPA's Single-Sign-On portal
+        apps.get_model("myuser", "HAWCUser").objects.lookup_by_epa_sso_uid(self.request)
+
         logging.debug('Permissions checked')
         if self.model == Assessment:
             canEdit = self.assessment.user_can_edit_assessment(self.request.user)
@@ -80,9 +88,9 @@ class AssessmentPermissionsMixin(object):
         """
         Check to make sure user can view object
         """
-        print(self.request.user)
+
+        # Check to see if the user is being re-directed from the EPA's Single-Sign-On portal
         apps.get_model("myuser", "HAWCUser").objects.lookup_by_epa_sso_uid(self.request)
-        print(self.request.user)
 
         obj = kwargs.get('object')
         if not obj:

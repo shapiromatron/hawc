@@ -1,4 +1,5 @@
 from django.core.handlers.wsgi import WSGIRequest
+from django.contrib.auth import login
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
@@ -92,9 +93,24 @@ class HAWCMgr(BaseUserManager):
         if ((isinstance(httpRequest, WSGIRequest)) and (httpRequest.user.is_anonymous)):
             # The incoming httpRequest argument is of the expected type, continue checking
 
-            # This is just for test/development purposes, it will be removed when no longer needed
+            # Look for a request header field named "UID" (checking for various capitalizations)
             if ("UID" not in httpRequest.META):
-                httpRequest.META["UID"] = "jay_buie"
+                # "UID" was not found, start looking for others
+                if ("uid" in httpRequest.META):
+                    # "uid" was foud, copy it to "UID"
+                    request.META["UID"] = httpRequest.META["uid"]
+                elif ("Uid" in httpRequest.META):
+                    # "Uid" was foud, copy it to "UID"
+                    request.META["UID"] = httpRequest.META["Uid"]
+                elif ("UId" in httpRequest.META):
+                    # "UId" was foud, copy it to "UID"
+                    request.META["UID"] = httpRequest.META["UId"]
+                elif ("uId" in httpRequest.META):
+                    # "uId" was foud, copy it to "UID"
+                    request.META["UID"] = httpRequest.META["uId"]
+                elif ("uID" in httpRequest.META):
+                    # "uID" was foud, copy it to "UID"
+                    request.META["UID"] = httpRequest.META["uID"]
 
             if (("UID" in httpRequest.META) and (isinstance(httpRequest.META["UID"], str)) and (httpRequest.META["UID"] != "")):
                 # httpRequest has a non-empty "UID" request header, use it to look up the HAWCUser in the database
@@ -102,4 +118,4 @@ class HAWCMgr(BaseUserManager):
                 userSet = self.filter(models.Q(epa_sso_uid=httpRequest.META["UID"]))
                 if (len(userSet) >= 1):
                     # At least one user was found with that EPA Single-Sign-On UserID, take the first one and use it as request.user
-                    httpRequest.user = userSet[0]
+                    login(httpRequest, userSet[0])

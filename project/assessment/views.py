@@ -21,6 +21,8 @@ from utils.views import (MessageMixin, LoginRequiredMixin, BaseCreate,
                          BaseDelete, BaseList, TeamMemberOrHigherMixin,
                          ProjectManagerOrHigherMixin, TimeSpentOnPageMixin)
 
+from utils.decorators import epa_sso_authenticator
+
 from . import forms, models, tasks
 
 # Checking for denominator counts that are zero when dividing.
@@ -40,7 +42,6 @@ class Home(TemplateView):
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse_lazy('portal'))
         return super().get(request, *args, **kwargs)
-
 
 class About(TemplateView):
     template_name = 'hawc/about.html'
@@ -194,6 +195,7 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(LoginRequiredMixin, ListView):
     model = models.Assessment
 
+    @method_decorator(epa_sso_authenticator)
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -261,6 +263,7 @@ class AssessmentEmailManagers(MessageMixin, FormView):
     form_class = forms.AssessmentEmailManagersForm
     success_message = 'Your message has been sent!'
 
+    @method_decorator(epa_sso_authenticator)
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         self.assessment = get_object_or_404(models.Assessment, pk=kwargs.get('pk'))
