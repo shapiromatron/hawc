@@ -92,30 +92,12 @@ class HAWCMgr(BaseUserManager):
 
         if ((isinstance(httpRequest, WSGIRequest)) and (httpRequest.user.is_anonymous)):
             # The incoming httpRequest argument is of the expected type, continue checking
+            keyName = "HTTP_UID"
 
-            # Look for a request header field named "UID" (checking for various capitalizations)
-            if ("UID" not in httpRequest.META):
-                # "UID" was not found, start looking for others
-                if ("uid" in httpRequest.META):
-                    # "uid" was foud, copy it to "UID"
-                    request.META["UID"] = httpRequest.META["uid"]
-                elif ("Uid" in httpRequest.META):
-                    # "Uid" was foud, copy it to "UID"
-                    request.META["UID"] = httpRequest.META["Uid"]
-                elif ("UId" in httpRequest.META):
-                    # "UId" was foud, copy it to "UID"
-                    request.META["UID"] = httpRequest.META["UId"]
-                elif ("uId" in httpRequest.META):
-                    # "uId" was foud, copy it to "UID"
-                    request.META["UID"] = httpRequest.META["uId"]
-                elif ("uID" in httpRequest.META):
-                    # "uID" was foud, copy it to "UID"
-                    request.META["UID"] = httpRequest.META["uID"]
+            if ((keyName in httpRequest.META) and (isinstance(httpRequest.META[keyName], str)) and (httpRequest.META[keyName] != "")):
+                # httpRequest has a non-empty "HTTP_UID" request header, use it to look up the HAWCUser in the database
 
-            if (("UID" in httpRequest.META) and (isinstance(httpRequest.META["UID"], str)) and (httpRequest.META["UID"] != "")):
-                # httpRequest has a non-empty "UID" request header, use it to look up the HAWCUser in the database
-
-                userSet = self.filter(models.Q(epa_sso_uid=httpRequest.META["UID"]))
+                userSet = self.filter(models.Q(epa_sso_uid=httpRequest.META[keyName]))
                 if (len(userSet) >= 1):
                     # At least one user was found with that EPA Single-Sign-On UserID, take the first one and use it as request.user
                     login(httpRequest, userSet[0])
