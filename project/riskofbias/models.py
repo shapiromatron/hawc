@@ -14,12 +14,12 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from myuser.models import HAWCUser
+from lit.models import Reference
 from study.models import Study
 from utils.helper import cleanHTML, HAWCDjangoJSONEncoder, SerializerHelper
 from utils.models import get_crumbs
 
 from . import managers
-
 
 class RiskOfBiasDomain(models.Model):
     objects = managers.RiskOfBiasDomainManager()
@@ -201,13 +201,17 @@ class RiskOfBiasMetric(models.Model):
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
 
-
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
     study = models.ForeignKey(
         'study.Study',
         related_name='riskofbiases',
+        null=True)
+
+    identifiers_id = models.ForeignKey(
+        Reference,
+        related_name='heroids',
         null=True)
     final = models.BooleanField(
         default=False,

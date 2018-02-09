@@ -3,7 +3,8 @@ import $ from '$';
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
-
+import Study from 'study/Study';
+import { fetchFullStudyIfNeeded } from 'robTable/actions';
 
 class Experiment {
     constructor(data){
@@ -32,6 +33,18 @@ class Experiment {
             },
         ];
         return HAWCUtils.build_breadcrumbs(urls);
+    }
+
+    build_pdf_link() {
+
+        this.props.dispatch(fetchFullStudyIfNeeded());
+        heroID = this.props.heroid
+
+        return (
+            <div>
+                <p><a className='btn btn-mini btn-primary' target='_blank' href={'https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/' + heroID}>Full text link <i className='fa fa-fw fa-file-pdf-o'></i></a><span>&nbsp;</span></p>
+            </div>
+        );
     }
 
     build_details_table(){

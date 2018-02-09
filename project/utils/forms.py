@@ -37,6 +37,12 @@ class BaseFormHelper(cf.FormHelper):
             layout.insert(1, cfl.HTML("""<p class="help-block">{}</p><br>""".format(
                 self.kwargs.get('help_text'))))
 
+        if self.kwargs.get('pdf_link'):
+            self.addCustomFormActions(layout, [
+                cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i className="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(
+                    self.kwargs.get('pdf_link')))
+            ])
+
         if self.kwargs.get('cancel_url'):
             self.addCustomFormActions(layout, [
                 cfl.Submit('save', 'Save'),

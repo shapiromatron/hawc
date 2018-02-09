@@ -331,4 +331,5 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context['back_url'] = self.request.META['HTTP_REFERER'] \
             if 'HTTP_REFERER' in self.request.META \
             else self.object.get_absolute_url()
+        context['hero_id'] = Study.objects.prefetch_related('identifiers').filter(identifiers__database=2).values_list('identifiers__unique_id', flat=True)
         return context

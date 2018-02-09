@@ -86,6 +86,7 @@ class StudyRead(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['attachments_viewable'] = self.assessment.user_can_view_attachments(self.request.user)
+        context['hero_id'] = Study.objects.prefetch_related('identifiers').filter(identifiers__database=2).values_list('identifiers__unique_id', flat=True)
         return context
 
 

@@ -11,6 +11,7 @@ const defaultState = {
     final: [],
     riskofbiases: [],
     active: [],
+    heroid: '',
 };
 
 function study(state=defaultState, action){
@@ -29,6 +30,7 @@ function study(state=defaultState, action){
             active: action.study.riskofbiases,
             isFetching: false,
             itemsLoaded: true,
+            heroid: action.study.heroid,
         });
 
     case types.SET_ERROR:

@@ -9,14 +9,11 @@ class Header extends Component {
     render() {
         let headerText, smallText, heroID,
             { isForm, display } = this.props.config;
-            console.log("hello");
-            console.log(this.props.config.study.id);
             this.props.dispatch(fetchFullStudyIfNeeded());
-            console.log(this.props.config.study);
         if(isForm){
             headerText = `${display == 'final' ? 'Final ' : ''}Review edit`;
             smallText = 'Justification for risk of bias assessment of selected study. Each row contains the selected domain, a description of the question to be answered, and an area for the user to detail the bias selection and notes for justification.';
-            heroID = 12345;
+            heroID = this.props.heroid
             
         } else if(display == 'all'){
             headerText = 'Show all active reviews';
@@ -36,6 +33,7 @@ class Header extends Component {
 function mapStateToProps(state){
     return {
         config: state.config,
+        heroid: state.study.heroid,
     };
 }
 

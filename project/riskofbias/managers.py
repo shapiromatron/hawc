@@ -6,7 +6,6 @@ from utils.models import BaseManager
 class RiskOfBiasDomainManager(BaseManager):
     assessment_relation = 'assessment'
 
-
 class RiskOfBiasMetricManager(BaseManager):
     assessment_relation = 'domain__assessment'
 

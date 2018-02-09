@@ -13,6 +13,7 @@ from selectable import forms as selectable
 from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
 from study.lookups import AnimalStudyLookup
+from study.models import Study
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 
 from . import models, lookups
@@ -58,6 +59,7 @@ class ExperimentForm(ModelForm):
 
         self.fields["diet"].widget.attrs['rows'] = 3
         self.fields["description"].widget.attrs['rows'] = 4
+        self.pdf_link = "54321"
 
         if self.instance.id:
             inputs = {
@@ -79,6 +81,7 @@ class ExperimentForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")

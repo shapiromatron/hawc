@@ -87,6 +87,7 @@ function formatIncomingStudy(study){
     return Object.assign({}, study, {
         riskofbiases,
         final: _.has(finalRoB, 'scores') ? finalRoB.scores : [],
+        heroid: study.identifiers[0].unique_id,
     });
 }
 

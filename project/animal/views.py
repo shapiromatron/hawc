@@ -5,6 +5,7 @@ from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 
 from assessment.models import Assessment, DoseUnits
+from lit.models import Reference
 from study.models import Study
 from study.views import StudyRead
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
@@ -41,6 +42,10 @@ class ExperimentUpdate(BaseUpdate):
     model = models.Experiment
     form_class = forms.ExperimentForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['hero_id'] = Study.objects.prefetch_related('identifiers').filter(identifiers__database=2).values_list('identifiers__unique_id', flat=True)
+        return context
 
 class ExperimentDelete(BaseDelete):
     success_message = "Experiment deleted."
