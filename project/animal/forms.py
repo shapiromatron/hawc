@@ -17,7 +17,10 @@ from study.models import Study
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 
 from . import models, lookups
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class ExperimentForm(ModelForm):
 
@@ -59,7 +62,7 @@ class ExperimentForm(ModelForm):
 
         self.fields["diet"].widget.attrs['rows'] = 3
         self.fields["description"].widget.attrs['rows'] = 4
-        self.pdf_link = "54321"
+        self.pdf_link = int('0' + self.instance.study.get_hero_id())
 
         if self.instance.id:
             inputs = {
@@ -81,7 +84,8 @@ class ExperimentForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('chemical', 3, "span4")
@@ -184,6 +188,8 @@ class AnimalGroupForm(ModelForm):
             else:
                 widget.attrs['class'] = 'span12'
 
+        self.pdf_link = int('0' + self.instance.experiment.study.get_hero_id())
+
         if self.instance.id:
             inputs = {
                 "legend_text": "Update {}".format(self.instance),
@@ -218,6 +224,8 @@ class AnimalGroupForm(ModelForm):
 
         if "generation" in self.fields:
             helper.add_fluid_row('siblings', 3, "span4")
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         return helper
 
     def clean(self):
@@ -250,7 +258,6 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
             experiment=self.instance.experiment)
         self.fields['dosing_regime'].queryset = models.DosingRegime.objects.filter(
                 dosed_animals__in=self.fields['parents'].queryset)
-
 
 class DosingRegimeForm(ModelForm):
 
@@ -437,6 +444,8 @@ class EndpointForm(ModelForm):
                 "cancel_url": self.instance.animal_group.get_absolute_url()
             }
 
+        self.pdf_link = int('0' + self.instance.animal_group.experiment.study.get_hero_id())
+
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.form_id = "endpoint"
@@ -465,6 +474,8 @@ class EndpointForm(ModelForm):
 
         url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.assessment.pk})
         helper.addBtnLayout(helper.layout[4], 0, url, "Add new effect tag", "span6")
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
 
         return helper
 

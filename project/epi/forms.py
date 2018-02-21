@@ -11,6 +11,7 @@ from selectable import forms as selectable
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
 from assessment.models import DoseUnits
 from study.lookups import EpiStudyLookup
+from study.models import Study
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 from utils.helper import tryParseInt
 
@@ -185,6 +186,7 @@ class StudyPopulationForm(forms.ModelForm):
                 "help_text":   self.CREATE_HELP_TEXT,
                 "cancel_url": self.instance.study.get_absolute_url()
             }
+        self.pdf_link = int('0' + self.instance.study.get_hero_id())
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
@@ -199,7 +201,8 @@ class StudyPopulationForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[6], 0, url, "Create criteria", "span4")
         helper.addBtnLayout(helper.layout[6], 1, url, "Create criteria", "span4")
         helper.addBtnLayout(helper.layout[6], 2, url, "Create criteria", "span4")
-
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         return helper
 
 
@@ -320,6 +323,8 @@ class ExposureForm(forms.ModelForm):
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
 
+        self.pdf_link = int('0' + self.instance.study_population.study.get_hero_id())
+
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.add_fluid_row('inhalation', 6, "span2")
@@ -335,7 +340,8 @@ class ExposureForm(forms.ModelForm):
             kwargs={'pk': self.instance.study_population.study.assessment_id}
         )
         helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "span4")
-
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         return helper
 
 
@@ -411,6 +417,8 @@ class OutcomeForm(forms.ModelForm):
                 "cancel_url": self.instance.study_population.get_absolute_url()
             }
 
+        self.pdf_link = int('0' + self.instance.study_population.study.get_hero_id())
+
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
@@ -423,7 +431,8 @@ class OutcomeForm(forms.ModelForm):
             kwargs={'pk': self.instance.assessment.pk}
         )
         helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
-
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         return helper
 
 
@@ -666,9 +675,13 @@ class ComparisonSet(forms.ModelForm):
                 "help_text": self.HELP_TEXT_CREATE,
                 "cancel_url": self.parent.get_absolute_url()
             }
+        
+        self.pdf_link = int('0' + self.instance.outcome.study_population.study.get_hero_id())
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
+        if self.pdf_link > 0:
+            helper.layout.insert(2, cfl.HTML("""<p><a class="btn btn-mini btn-primary" target="_blank" href="https://hero.epa.gov/hero/index.cfm/reference/downloads/reference_id/{}">Full text link <i class="fa fa-fw fa-file-pdf-o"></i></a><span>&nbsp;</span></p>""".format(self.pdf_link)))
         return helper
 
 

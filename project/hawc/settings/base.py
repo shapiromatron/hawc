@@ -184,7 +184,7 @@ PHANTOMJS_PATH = os.getenv('PHANTOMJS_PATH')
 # Logging configuration
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'

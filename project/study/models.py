@@ -347,6 +347,16 @@ class Study(Reference):
                 'riskofbiases__scores__metric__domain',
             ).first()
 
+    def get_hero_id(self):
+        try:
+            return self.__class__.objects\
+                .filter(id=self.id)\
+                .prefetch_related('identifiers').filter(identifiers__database=2).values_list('identifiers__unique_id', flat=True)[0]
+        except IndexError:
+            noheroid = '0'
+            return noheroid
+        except ObjectDoesNotExist:
+            return None
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
