@@ -39,7 +39,8 @@
         "execute_status_url": "{{ object.get_execute_status_url }}",
         "selected_model_url": "{{ object.get_selected_model_url }}",
         "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}"
+        "host": "//{{request.get_host}}",
+        "bmds_token": "{{object.get_api_token}}"
     }
 </script>
 <script type="text/javascript">

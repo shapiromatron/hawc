@@ -167,6 +167,9 @@ class Session(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.endpoint)
 
+    def get_api_token(self):
+        return settings.BMDS_TOKEN
+
     def get_absolute_url(self):
         return reverse_lazy('bmd:session_detail', args=[self.id])
 

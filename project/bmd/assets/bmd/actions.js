@@ -115,6 +115,16 @@ var showModal = function(name) {
             type: types.EXECUTE_STOP,
         };
     },
+    fetchPost = function(state, obj, verb = 'POST') {
+        return {
+            method: verb,
+            headers: new Headers({
+                'content-type': 'application/json',
+                'Authorization': `Token ${state.config.bmds_token}`,
+            }),
+            body: JSON.stringify(obj),
+        };
+    },
     execute = function() {
         return (dispatch, getState) => {
             let state = getState(),
@@ -130,7 +140,7 @@ var showModal = function(name) {
             })
                 .then(() => dispatch(execute_start()))
                 .then(() => {
-                    fetch(url, h.fetchPost(state.config.csrf, data, 'POST'))
+                    fetch(url, fetchPost(state, data))
                         .then((response) => {
                             if (!response.ok) {
                                 dispatch(setErrors(['An error occurred.']));
