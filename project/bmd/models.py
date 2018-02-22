@@ -183,7 +183,7 @@ class Session(models.Model):
         return reverse_lazy('bmd:api:session-detail', args=[self.id])
 
     def get_execute_url(self):
-        return reverse_lazy('bmd:api:session-execute', args=[self.id])
+        return 'https://sandbox.ntp.niehs.nih.gov/job-runner/api/v1/bmds-dose-response/'
 
     def get_execute_status_url(self):
         return reverse_lazy('bmd:api:session-execute-status', args=[self.id])
