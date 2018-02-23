@@ -35,7 +35,7 @@ python-docx==0.8.6
 python-pptx==0.6.6
 
 # bmds
-bmds==0.8.0
+bmds==0.9.1
 
 # literature
 litter-getter==0.2.1
