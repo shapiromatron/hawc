@@ -16,11 +16,11 @@ import bmds
 
 
 BMDS_CHOICES = (
-    ('BMDS230', 'BMDS v2.3.0'),
     ('BMDS231', 'BMDS v2.3.1'),
     ('BMDS240', 'BMDS v2.4.0'),
     ('BMDS260', 'BMDS v2.6.0'),
     ('BMDS2601', 'BMDS v2.6.0.1'),
+    ('BMDS270', 'BMDS v2.7.0'),
 )
 
 
