@@ -10,7 +10,7 @@ class BMDConfig(AppConfig):
 
     def ready(self):
         # load signals
-        from . import models, signals
+        from . import bmds_monkeypatch, models, signals  # noqa
 
         # ensure media upload path exists
         path = os.path.abspath(
