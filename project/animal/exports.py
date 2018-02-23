@@ -344,6 +344,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             'LOEL',
             'FEL',
             'high_dose',
+            'BMD',
+            'BMDL',
         ]
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
@@ -382,6 +384,16 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 significance_list.append('No')
 
         return significance_list
+
+    @staticmethod
+    def _get_bmd_values(bmd, preferred_units):
+        # only return BMD values if they're in the preferred units
+        if bmd and bmd['dose_units'] in preferred_units:
+            return [
+                bmd['output']['BMD'],
+                bmd['output']['BMDL']
+            ]
+        return [None, None]
 
     def _get_data_rows(self):
 
@@ -445,6 +457,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ])
             else:
                 row.extend([None] * 5)
+
+            # bmd/bmdl information
+            row.extend(self._get_bmd_values(ser['bmd'], preferred_units))
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
             sigs = self._get_significance_and_direction(ser['groups'])

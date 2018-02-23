@@ -68,9 +68,8 @@ please specify in the docker-compose `.env` file (example secrets below):
     MAILGUN_SERVER_NAME=myMailgunServerName
 
     # required if using BMDS
-    BMDS_HOST=http://bmdhost.com
-    BMDS_PASSWORD=myBmdsPassword
-    BMDS_USERNAME=username@email.com
+    BMDS_SUBMISSION_URL = 'https://bmds-server/api/dfile/'
+    BMDS_TOKEN = 'mysecrettoken'
 
     # ensure redis is running
     REDIS_CONNECTION_STRING=redis://redis:6379/0

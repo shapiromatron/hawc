@@ -262,11 +262,9 @@ if GIT_COMMIT:
 PUBMED_TOOL = os.getenv('PUBMED_TOOL', 'hawc')
 PUBMED_EMAIL = os.getenv('PUBMED_EMAIL', DEFAULT_FROM_EMAIL)
 
-
 # BMD modeling settings
-BMD_HOST = os.getenv('BMDS_HOST', 'http://example.com')
-BMDS_USERNAME = os.getenv('BMDS_USERNAME', 'username')
-BMDS_PASSWORD = os.getenv('BMDS_PASSWORD', 'password')
+BMDS_SUBMISSION_URL = os.getenv('BMDS_SUBMISSION_URL', 'http://example.com/api/dfile/')
+BMDS_TOKEN = os.getenv('BMDS_TOKEN', 'token')
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000

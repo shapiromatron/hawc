@@ -81,7 +81,7 @@ class AssessmentModulesForm(forms.ModelForm):
                   'enable_data_extraction',
                   'enable_project_management',
                   'enable_risk_of_bias',
-                  # 'enable_bmd',  # DISABLED UNTIL BMDS SERVER ONLINE (hopefully temporarily)
+                  'enable_bmd',
                   'enable_summary_text')
         model = models.Assessment
 
