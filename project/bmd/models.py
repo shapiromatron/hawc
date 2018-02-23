@@ -167,9 +167,6 @@ class Session(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.endpoint)
 
-    def get_api_token(self):
-        return settings.BMDS_TOKEN
-
     def get_absolute_url(self):
         return reverse_lazy('bmd:session_detail', args=[self.id])
 
@@ -183,7 +180,7 @@ class Session(models.Model):
         return reverse_lazy('bmd:api:session-detail', args=[self.id])
 
     def get_execute_url(self):
-        return 'https://sandbox.ntp.niehs.nih.gov/job-runner/api/v1/bmds-dose-response/'
+        return reverse_lazy('bmd:api:session-execute', args=[self.id])
 
     def get_execute_status_url(self):
         return reverse_lazy('bmd:api:session-execute-status', args=[self.id])
