@@ -77,7 +77,7 @@
                   </ul>
                 </li>
                 {% else %}
-                  <li><a href="{% url 'portal' %}">Login</a></li>
+                  <li><a href="{% url 'user:login' %}?next={{request.path}}">Login</a></li>
                 {% endif %}
               </ul>
             </div>
