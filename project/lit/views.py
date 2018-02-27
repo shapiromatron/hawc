@@ -508,6 +508,7 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
