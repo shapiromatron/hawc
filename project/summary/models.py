@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
-from assessment.models import Assessment, DoseUnits, BaseEndpoint
+from assessment.models import Assessment, DoseUnits
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import Outcome
@@ -201,7 +201,7 @@ class Visual(models.Model):
     prefilters = models.TextField(
         default="{}")
     endpoints = models.ManyToManyField(
-        BaseEndpoint,
+        Endpoint,
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
         blank=True)
