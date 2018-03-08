@@ -13,6 +13,7 @@ from utils.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
 
 
+@sensitive_post_parameters('password1', 'password2')
 def create_account(request):
     """
     Create a new user request. Modified from default such that the username is
@@ -24,21 +25,21 @@ def create_account(request):
         form = forms.RegisterForm(post)
 
         if form.is_valid():
+            # use case normalized email
+            email = models.HAWCUser.objects.normalize_email(post['email'])
+            pw = post['password1']
+
             # create a new user
-            user = models.HAWCUser.objects.create_user(post['email'],
-                                                       post['password1'])
+            user = models.HAWCUser.objects.create_user(email, pw)
             user.first_name = post['first_name']
             user.last_name = post['last_name']
-            user.full_clean()
             user.save()
 
             # create a new user profile
-            profile = models.UserProfile(user=user)
-            profile.save()
+            models.UserProfile.objects.create(user=user)
 
             # after save, log user in
-            user = authenticate(username=post['email'],
-                                password=post['password1'])
+            user = authenticate(request, email=post['email'], password=pw)
             login(request, user)
             return redirect('portal')
     else:
