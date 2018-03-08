@@ -245,6 +245,13 @@ class Visual(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    @staticmethod
+    def get_dose_units():
+        return DoseUnits.objects.json_all()
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     def get_endpoints(self, request=None):
         qs = Endpoint.objects.none()
         filters = {"assessment_id": self.assessment_id}

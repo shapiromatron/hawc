@@ -63,3 +63,6 @@ class VisualSerializer(CollectionVisualSerializer):
         ]
 
         return ret
+
+
+SerializerHelper.add_serializer(models.Visual, VisualSerializer)
