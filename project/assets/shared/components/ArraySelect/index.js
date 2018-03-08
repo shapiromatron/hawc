@@ -21,7 +21,7 @@ class ArraySelect extends Component {
     }
 
     render() {
-        let { id, choices } = this.props,
+        let { id, choices, name } = this.props,
             className = this.props.className || 'react-select',
             defVal = this.props.defVal || _.first(choices);
         return (
@@ -31,6 +31,7 @@ class ArraySelect extends Component {
                 ref="select"
                 defaultValue={defVal}
                 onChange={this.handleSelect}
+                name={name}
             >
                 {_.map(choices, (choice) => {
                     return (
@@ -55,6 +56,7 @@ ArraySelect.propTypes = {
     ).isRequired,
     id: PropTypes.string.isRequired,
     defVal: PropTypes.any,
+    name: PropTypes.string,
 };
 
 export default ArraySelect;
