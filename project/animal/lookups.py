@@ -151,13 +151,10 @@ class EndpointByAssessmentTextLookup(RelatedLookup):
             .distinct('name')
 
 
-class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
+class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
 
     def get_item_value(self, obj):
-        return u'<a href="{}" target="_blank">{}</a>'.format(
-            obj.get_absolute_url(),
-            self.get_item_label(obj)
-        )
+        return obj.id
 
 
 registry.register(ExperimentByStudyLookup)
@@ -182,4 +179,4 @@ registry.register(EndpointStatisticalTestLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)
-registry.register(EndpointByAssessmentLookupHtml)
+registry.register(EndpointIdByAssessmentLookup)

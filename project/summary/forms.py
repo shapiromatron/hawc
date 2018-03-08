@@ -14,7 +14,7 @@ from epi.models import Outcome
 from invitro.models import IVEndpointCategory, IVChemical
 
 from study.lookups import StudyLookup
-from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
+from animal.lookups import EndpointByAssessmentLookup, EndpointIdByAssessmentLookup
 from utils.forms import BaseFormHelper
 
 from . import models, lookups
@@ -478,7 +478,7 @@ class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
-            lookup_class=EndpointByAssessmentLookupHtml,
+            lookup_class=EndpointIdByAssessmentLookup,
             label='Endpoints',
             widget=EndpointAggregationSelectMultipleWidget)
         self.fields["endpoints"].widget.update_query_parameters(
