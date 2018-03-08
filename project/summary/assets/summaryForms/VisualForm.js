@@ -1,3 +1,4 @@
+import { formRender } from './BaseVisualFormReact';
 import EndpointAggregationForm from './EndpointAggregationForm';
 import CrossviewForm from './CrossviewForm';
 import RoBHeatmapForm from './RoBHeatmapForm';
@@ -5,10 +6,10 @@ import RoBBarchartForm from './RoBBarchartForm';
 
 class VisualForm {
     static create(visual_type, $el) {
-        var Cls;
+        var func;
         switch (visual_type) {
             case 0:
-                Cls = EndpointAggregationForm;
+                func = formRender;
                 break;
             case 1:
                 Cls = CrossviewForm;
@@ -22,7 +23,7 @@ class VisualForm {
             default:
                 throw 'Error - unknown visualization-type: {0}'.printf(visual_type);
         }
-        return new Cls($el);
+        return func($el);
     }
 }
 

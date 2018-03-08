@@ -1,6 +1,5 @@
 {% extends 'portal.html' %}
 
-{% load crispy_forms_tags %}
 {% load selectable_tags %}
 
 {% block extrastyle %}
@@ -23,29 +22,7 @@
 
 {% block content %}
 
-<div class="tabbable">
-
-  <ul class="nav nav-tabs">
-    <li class="active">
-      <a href="#data" data-toggle="tab">Visualization settings</a></li>
-    <li>
-      <a href="#settings" data-toggle="tab">Figure customization</a></li>
-    <li>
-      <a href="#preview" data-toggle="tab">Preview</a></li>
-  </ul>
-
-  <div class="tab-content">
-
-    <div id="data"     class="tab-pane active">
-      {% crispy form %}
-    </div>
-    <div id="settings" class="tab-pane form-horizontal"></div>
-    <div id="preview"  class="tab-pane"></div>
-
-  </div>
-
-</div>
-
+    <div id="formMount"></div>
 {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
 
 {% endblock %}
@@ -53,7 +30,15 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script type="text/javascript">
+  <script id="config" type="text/json" charset="utf-8">
+      {
+          "csrf": "{{csrf_token}}",
+          "url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
+          "instance": {{object.get_json|safe}},
+          "dose_units": {{object.get_dose_units|safe}},
+          "endpointUrl": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}"
+      }
+  </script>  <script type="text/javascript">
     window.app.summaryFormsStartup(function(summaryForms){
 
       {% if crud == "Create" %}
@@ -63,8 +48,7 @@
       {% endif %}
 
       window.rob_metrics = {{rob_metrics|safe}};
-      window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
-      new summaryForms.VisualForm.create({{visual_type}}, $('.tabbable'));
+      summaryForms.VisualForm.create({{visual_type}}, document.getElementById('formMount'));
 
       window.app.smartTagsStartup(function(smartTags){
           new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
