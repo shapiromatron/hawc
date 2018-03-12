@@ -1,0 +1,1 @@
+import BaseVisualFormReact from 'BaseVisualFormReact';

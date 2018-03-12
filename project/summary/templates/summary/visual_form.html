@@ -33,12 +33,15 @@
   <script id="config" type="text/json" charset="utf-8">
       {
           "csrf": "{{csrf_token}}",
+          "visual_type": "{{visual_type}}",
           "url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
           "instance": {{object.get_json|safe}},
           "dose_units": {{object.get_dose_units|safe}},
-          "endpointUrl": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}"
+          "endpoint_url": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}",
+          "api_url": "{% url 'summary:api:visual-detail' pk=object.id %}"
       }
-  </script>  <script type="text/javascript">
+  </script>
+  <script type="text/javascript">
     window.app.summaryFormsStartup(function(summaryForms){
 
       {% if crud == "Create" %}

@@ -258,7 +258,7 @@ class Visual(models.Model):
 
         if self.visual_type == self.BIOASSAY_AGGREGATION:
             if request:
-                ids = request.POST.getlist('endpoints_1')
+                ids = request.POST.getlist('endpoints')
             else:
                 ids = self.endpoints.values_list('id', flat=True)
 
