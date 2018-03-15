@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Async, Option } from 'react-select';
+import { Async } from 'react-select';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
@@ -8,12 +8,8 @@ import _ from 'lodash';
 import 'react-tabs/style/react-tabs.css';
 import 'react-select/dist/react-select.css';
 
-import EndpointAggregation from 'summary/EndpointAggregation';
 import h from 'shared/utils/helpers';
 import { splitStartup } from 'utils/WebpackSplit';
-import ArraySelect from 'shared/components/ArraySelect';
-import TextInput from 'shared/components/TextInput';
-import TextAreaInput from 'shared/components/TextAreaInput';
 import HAWCUtils from 'utils/HAWCUtils';
 
 class BaseVisualForm extends Component {
@@ -30,6 +26,7 @@ class BaseVisualForm extends Component {
             visual_type: this.config.visual_type,
             settings: '',
             endpoints: [],
+            syncData: true,
         };
     }
 
@@ -38,29 +35,32 @@ class BaseVisualForm extends Component {
     }
 
     handleInputChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({ [e.target.name]: e.target.value, syncData: true });
     };
 
     handleCheckboxChange = (e) => {
-        this.setState({ [e.target.name]: e.target.checked });
+        this.setState({ [e.target.name]: e.target.checked, syncData: true });
     };
 
     handleDoseUnitSelect = (value) => {
-        this.setState({ dose_units: parseInt(value) });
+        this.setState({ dose_units: parseInt(value), syncData: true });
     };
 
     handleEndpointSelect = (value) => {
-        this.setState({ endpoints: value });
+        this.setState({ endpoints: value, syncData: true });
     };
 
     handleTabSelection = (tabIndex) => {
-        if (tabIndex === 2) {
-            fetch(this.config.url, h.fetchForm(this.config.csrf, $(this.form).serialize()))
+        if (tabIndex === 2 && this.state.syncData) {
+            fetch(this.config.preview_url, h.fetchForm(this.config.csrf, $(this.form).serialize()))
                 .then((response) => response.json())
-                .then((json) => {
-                    new EndpointAggregation(json).displayAsPage($('#preview').empty());
-                });
+                .then((json) => this.updatePreviewGraph(json))
+                .then(() => this.setState({ syncData: false }));
         }
+    };
+
+    getEndpointChoices = (endpoint) => {
+        return [];
     };
 
     fetchFormData = () => {
@@ -86,15 +86,7 @@ class BaseVisualForm extends Component {
                     published,
                     visual_type: this.config.visual_type,
                     settings: JSON.stringify(settings),
-                    endpoints: endpoints.map((e) => {
-                        let s = e.animal_group.experiment.study.short_citation,
-                            x = e.animal_group.experiment.name,
-                            g = e.animal_group.name;
-                        return {
-                            value: e.id,
-                            label: `${s} | ${x} | ${g} | ${e.name}`,
-                        };
-                    }),
+                    endpoints: this.getEndpointChoices(endpoints),
                 });
             });
     };
@@ -110,10 +102,19 @@ class BaseVisualForm extends Component {
             });
     };
 
+    renderForm = () => {
+        return HAWCUtils.abstractMethod();
+    };
+
+    renderSettingsForm = () => {
+        return HAWCUtils.abstractMethod();
+    };
+
+    updatePreviewGraph = (json) => {
+        return HAWCUtils.abstractMethod();
+    };
+
     render() {
-        let doseUnitChoices = this.config.dose_units.map((u) => {
-            return { id: u.id, value: u.name };
-        });
         return (
             <Tabs onSelect={this.handleTabSelection}>
                 <TabList>
@@ -133,88 +134,10 @@ class BaseVisualForm extends Component {
                         <legend>Update {this.state.title}</legend>
                         <p>Update an existing visualization</p>
                         <br />
-                        <TextInput
-                            name="title"
-                            label="Title"
-                            value={this.state.title}
-                            onChange={this.handleInputChange}
-                            required
-                        />
-                        <TextInput
-                            name="slug"
-                            label="URL Name"
-                            value={this.state.slug}
-                            onChange={this.handleInputChange}
-                            helpText="The URL (web address) used to describe this object (no spaces or special-characters)."
-                            required
-                        />
-                        <div className="control-group">
-                            <label className="control-label">Dose Units</label>
-                            <div className="controls">
-                                <ArraySelect
-                                    name="dose_units"
-                                    className="span12 select"
-                                    choices={doseUnitChoices}
-                                    id="id_dose_units"
-                                    value={this.state.dose_units}
-                                    handleSelect={this.handleDoseUnitSelect}
-                                />
-                            </div>
-                        </div>
-                        <div className="control-group">
-                            <label className="control-label">
-                                Endpoints
-                                <span className="asteriskField">*</span>
-                            </label>
-                            <Async
-                                multi
-                                name="endpoints"
-                                value={this.state.endpoints}
-                                onChange={this.handleEndpointSelect}
-                                autoload={false}
-                                loadOptions={this.fetchEndpoints}
-                                backspaceRemoves={false}
-                                deleteRemoves={false}
-                                clearable={false}
-                            />
-                        </div>
-                        <TextAreaInput
-                            name="settings"
-                            label="Settings"
-                            value={this.state.settings}
-                            onChange={this.handleInputChange}
-                            required
-                        />
-                        <TextAreaInput
-                            name="caption"
-                            label="Caption"
-                            value={this.state.caption}
-                            onChange={this.handleInputChange}
-                        />
-                        <div id="div_id_published" className="control-group">
-                            <div className="controls">
-                                <label className="checkbox">
-                                    <input
-                                        onChange={this.handleCheckboxChange}
-                                        type="checkbox"
-                                        name="published"
-                                        className="checkboxinput"
-                                        id="id_published"
-                                        checked={this.state.published}
-                                    />
-                                    Publish visual for public viewing
-                                </label>
-                                <p id="hint_id_published" className="help-block">
-                                    For assessments marked for public viewing, mark visual to be
-                                    viewable by public
-                                </p>
-                            </div>
-                        </div>
+                        {this.renderForm()}
                     </TabPanel>
-                    <TabPanel>
-                        <h2>Any content 2</h2>
-                    </TabPanel>
-                    <TabPanel>
+                    <TabPanel>{this.renderSettingsForm()}</TabPanel>
+                    <TabPanel forceRender>
                         <h2>Preview</h2>
                         <div id="preview" />
                     </TabPanel>
@@ -225,9 +148,8 @@ class BaseVisualForm extends Component {
                             value="Save"
                             className="btn btn-primary"
                             id="submit-id-save"
-                            onClick={this.onSubmit}
                         />
-                        <a role="button" className="btn btn-default" href="/summary/visual/1/">
+                        <a role="button" className="btn btn-default" href={this.config.cancel_url}>
                             Cancel
                         </a>
                     </div>
