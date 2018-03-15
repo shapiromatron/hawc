@@ -19,9 +19,7 @@ const helpers = {
             body: JSON.stringify(obj),
         };
     },
-    fetchForm(csrf, obj, verb = 'POST') {
-        obj['csrfmiddlewaretoken'] = csrf;
-        console.log('obj', obj);
+    fetchForm(csrf, form, verb = 'POST') {
         return {
             credentials: 'same-origin',
             method: verb,
@@ -29,7 +27,7 @@ const helpers = {
                 'X-CSRFToken': csrf,
                 'content-type': 'application/x-www-form-urlencoded',
             }),
-            body: JSON.stringify(obj),
+            body: form,
         };
     },
 

@@ -8,6 +8,7 @@ import _ from 'lodash';
 import 'react-tabs/style/react-tabs.css';
 import 'react-select/dist/react-select.css';
 
+import EndpointAggregation from 'summary/EndpointAggregation';
 import h from 'shared/utils/helpers';
 import { splitStartup } from 'utils/WebpackSplit';
 import ArraySelect from 'shared/components/ArraySelect';
@@ -33,7 +34,7 @@ class BaseVisualForm extends Component {
     }
 
     componentDidMount() {
-        this.fetchVisualData();
+        this.fetchFormData();
     }
 
     handleInputChange = (e) => {
@@ -52,8 +53,18 @@ class BaseVisualForm extends Component {
         this.setState({ endpoints: value });
     };
 
-    fetchVisualData = () => {
-        fetch(this.config.api_url, h.fetchGet)
+    handleTabSelection = (tabIndex) => {
+        if (tabIndex === 2) {
+            fetch(this.config.url, h.fetchForm(this.config.csrf, $(this.form).serialize()))
+                .then((response) => response.json())
+                .then((json) => {
+                    new EndpointAggregation(json).displayAsPage($('#preview').empty());
+                });
+        }
+    };
+
+    fetchFormData = () => {
+        fetch(this.config.data_url, h.fetchGet)
             .then((response) => response.json())
             .then((json) => {
                 let {
@@ -90,7 +101,7 @@ class BaseVisualForm extends Component {
 
     fetchEndpoints = (input, callback) => {
         fetch(
-            `${this.config.endpoint_url}?related=${this.config.instance.assessment}&therm=${input}`,
+            `${this.config.endpoint_url}?related=${this.config.instance.assessment}&term=${input}`,
             h.fetchGet
         )
             .then((response) => response.json())
@@ -99,108 +110,114 @@ class BaseVisualForm extends Component {
             });
     };
 
-    onSubmit = (e) => {
-        e.preventDefault();
-        let data = this.state;
-        data.endpoints = data.endpoints.map((e) => e.value);
-        fetch(this.config.api_url, h.fetchPost(this.config.csrf, data, 'PUT'))
-            .then((response) => response.json())
-            .then((json) => console.log('json', json));
-    };
-
     render() {
         let doseUnitChoices = this.config.dose_units.map((u) => {
             return { id: u.id, value: u.name };
         });
         return (
-            <Tabs>
+            <Tabs onSelect={this.handleTabSelection}>
                 <TabList>
                     <Tab>Visualization settings</Tab>
                     <Tab>Figure customization</Tab>
                     <Tab>Preview</Tab>
                 </TabList>
 
-                <TabPanel>
-                    <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />
-                    <legend>Update {this.state.title}</legend>
-                    <p>Update an existing visualization</p>
-                    <br />
-                    <TextInput
-                        name="title"
-                        label="Title"
-                        value={this.state.title}
-                        onChange={this.handleInputChange}
-                        required
-                    />
-                    <TextInput
-                        name="slug"
-                        label="URL Name"
-                        value={this.state.slug}
-                        onChange={this.handleInputChange}
-                        helpText="The URL (web address) used to describe this object (no spaces or special-characters)."
-                        required
-                    />
-                    <div className="control-group">
-                        <label className="control-label">Dose Units</label>
-                        <div className="controls">
-                            <ArraySelect
-                                name="dose_units"
-                                className="span12 select"
-                                choices={doseUnitChoices}
-                                id="id_dose_units"
-                                value={this.state.dose_units}
-                                handleSelect={this.handleDoseUnitSelect}
+                <form
+                    ref={(form) => {
+                        this.form = form;
+                    }}
+                    method="POST"
+                >
+                    <TabPanel>
+                        <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />
+                        <legend>Update {this.state.title}</legend>
+                        <p>Update an existing visualization</p>
+                        <br />
+                        <TextInput
+                            name="title"
+                            label="Title"
+                            value={this.state.title}
+                            onChange={this.handleInputChange}
+                            required
+                        />
+                        <TextInput
+                            name="slug"
+                            label="URL Name"
+                            value={this.state.slug}
+                            onChange={this.handleInputChange}
+                            helpText="The URL (web address) used to describe this object (no spaces or special-characters)."
+                            required
+                        />
+                        <div className="control-group">
+                            <label className="control-label">Dose Units</label>
+                            <div className="controls">
+                                <ArraySelect
+                                    name="dose_units"
+                                    className="span12 select"
+                                    choices={doseUnitChoices}
+                                    id="id_dose_units"
+                                    value={this.state.dose_units}
+                                    handleSelect={this.handleDoseUnitSelect}
+                                />
+                            </div>
+                        </div>
+                        <div className="control-group">
+                            <label className="control-label">
+                                Endpoints
+                                <span className="asteriskField">*</span>
+                            </label>
+                            <Async
+                                multi
+                                name="endpoints"
+                                value={this.state.endpoints}
+                                onChange={this.handleEndpointSelect}
+                                autoload={false}
+                                loadOptions={this.fetchEndpoints}
+                                backspaceRemoves={false}
+                                deleteRemoves={false}
+                                clearable={false}
                             />
                         </div>
-                    </div>
-                    <div className="control-group">
-                        <label className="control-label">
-                            Endpoints
-                            <span className="asteriskField">*</span>
-                        </label>
-                        <Async
-                            multi
-                            name="endpoints"
-                            value={this.state.endpoints}
-                            onChange={this.handleEndpointSelect}
-                            loadOptions={this.fetchEndpoints}
-                            backspaceRemoves={false}
-                            deleteRemoves={false}
-                            clearable={false}
+                        <TextAreaInput
+                            name="settings"
+                            label="Settings"
+                            value={this.state.settings}
+                            onChange={this.handleInputChange}
+                            required
                         />
-                    </div>
-                    <TextAreaInput
-                        name="settings"
-                        label="Settings"
-                        value={this.state.settings}
-                        onChange={this.handleInputChange}
-                        required
-                    />
-                    <TextAreaInput
-                        name="caption"
-                        label="Caption"
-                        value={this.state.caption}
-                        onChange={this.handleInputChange}
-                    />
-                    <div id="div_id_published" className="control-group">
-                        <div className="controls">
-                            <label className="checkbox">
-                                <input
-                                    onChange={this.handleCheckboxChange}
-                                    type="checkbox"
-                                    name="published"
-                                    className="checkboxinput"
-                                    id="id_published"
-                                    checked={this.state.published}
-                                />
-                                Publish visual for public viewing
-                            </label>
-                            <p id="hint_id_published" className="help-block">
-                                For assessments marked for public viewing, mark visual to be
-                                viewable by public
-                            </p>
+                        <TextAreaInput
+                            name="caption"
+                            label="Caption"
+                            value={this.state.caption}
+                            onChange={this.handleInputChange}
+                        />
+                        <div id="div_id_published" className="control-group">
+                            <div className="controls">
+                                <label className="checkbox">
+                                    <input
+                                        onChange={this.handleCheckboxChange}
+                                        type="checkbox"
+                                        name="published"
+                                        className="checkboxinput"
+                                        id="id_published"
+                                        checked={this.state.published}
+                                    />
+                                    Publish visual for public viewing
+                                </label>
+                                <p id="hint_id_published" className="help-block">
+                                    For assessments marked for public viewing, mark visual to be
+                                    viewable by public
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <h2>Any content 2</h2>
+                    </TabPanel>
+                    <TabPanel>
+                        <h2>Preview</h2>
+                        <div id="preview" />
+                    </TabPanel>
                     <div className="form-actions">
                         <input
                             type="submit"
@@ -214,13 +231,7 @@ class BaseVisualForm extends Component {
                             Cancel
                         </a>
                     </div>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Any content 2</h2>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Any content 3</h2>
-                </TabPanel>
+                </form>
             </Tabs>
         );
     }

@@ -68,7 +68,7 @@ class Visual(AssessmentEditViewset):
             instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             instance.visual_type = visual_type
-        instance.endpoint_set
+
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)

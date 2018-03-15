@@ -38,7 +38,9 @@
           "instance": {{object.get_json|safe}},
           "dose_units": {{object.get_dose_units|safe}},
           "endpoint_url": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}",
-          "api_url": "{% url 'summary:api:visual-detail' pk=object.id %}"
+          "data_url": "{% url 'summary:api:visual-detail' pk=object.id %}",
+          "submit_url": "{% url 'summary:visualization_update' pk=object.id %}"
+
       }
   </script>
   <script type="text/javascript">
@@ -52,10 +54,6 @@
 
       window.rob_metrics = {{rob_metrics|safe}};
       summaryForms.VisualForm.create({{visual_type}}, document.getElementById('formMount'));
-
-      window.app.smartTagsStartup(function(smartTags){
-          new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
-      })
     });
   </script>
 {% endblock %}
