@@ -138,7 +138,6 @@ class BaseVisualForm extends Component {
                     </TabPanel>
                     <TabPanel>{this.renderSettingsForm()}</TabPanel>
                     <TabPanel forceRender>
-                        <h2>Preview</h2>
                         <div id="preview" />
                     </TabPanel>
                     <div className="form-actions">
