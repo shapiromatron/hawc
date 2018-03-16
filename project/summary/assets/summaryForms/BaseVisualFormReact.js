@@ -17,7 +17,6 @@ class BaseVisualForm extends Component {
         super(props);
         this.config = JSON.parse(document.getElementById('config').textContent);
         this.state = {
-            assessment: null,
             title: '',
             slug: '',
             dose_units: null,
@@ -64,36 +63,28 @@ class BaseVisualForm extends Component {
     };
 
     fetchFormData = () => {
-        fetch(this.config.data_url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => {
-                let {
-                    title,
-                    slug,
-                    dose_units,
-                    endpoints,
-                    settings,
-                    caption,
-                    published,
-                    assessment,
-                } = json;
-                this.setState({
-                    assessment,
-                    title,
-                    slug,
-                    dose_units,
-                    caption,
-                    published,
-                    visual_type: this.config.visual_type,
-                    settings: JSON.stringify(settings),
-                    endpoints: this.getEndpointChoices(endpoints),
+        if (this.config.crud == 'Update') {
+            fetch(`${this.config.data_url}${this.config.instance.id}`, h.fetchGet)
+                .then((response) => response.json())
+                .then((json) => {
+                    let { title, slug, dose_units, endpoints, settings, caption, published } = json;
+                    this.setState({
+                        title,
+                        slug,
+                        dose_units,
+                        caption,
+                        published,
+                        visual_type: this.config.visual_type,
+                        settings: JSON.stringify(settings),
+                        endpoints: this.getEndpointChoices(endpoints),
+                    });
                 });
-            });
+        }
     };
 
     fetchEndpoints = (input, callback) => {
         fetch(
-            `${this.config.endpoint_url}?related=${this.config.instance.assessment}&term=${input}`,
+            `${this.config.endpoint_url}?related=${this.config.assessment}&term=${input}`,
             h.fetchGet
         )
             .then((response) => response.json())
@@ -131,8 +122,10 @@ class BaseVisualForm extends Component {
                 >
                     <TabPanel>
                         <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />
-                        <legend>Update {this.state.title}</legend>
-                        <p>Update an existing visualization</p>
+                        <legend>
+                            {this.config.crud} {this.state.title}
+                        </legend>
+                        <p>{this.config.crud} a visualization</p>
                         <br />
                         {this.renderForm()}
                     </TabPanel>

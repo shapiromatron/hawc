@@ -130,6 +130,8 @@ const formRender = (element) => {
     splitStartup(element, EndpointAggregationForm);
 };
 
+// Shim class is for rendering using current VisualForm.create().
+// Once all visual forms are refactored, the shim can be removed and formRender used.
 class EndpointAggregationShim {
     constructor(element) {
         formRender(element);

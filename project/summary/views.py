@@ -152,6 +152,8 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['dose_units'] = models.Visual.get_dose_units()
+        context['instance'] = {}
         context['visual_type'] = int(self.kwargs.get('visual_type'))
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
@@ -183,6 +185,8 @@ class VisualizationUpdate(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['dose_units'] = models.Visual.get_dose_units()
+        context['instance'] = self.object.get_json()
         context['visual_type'] = self.object.visual_type
         context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context['rob_metrics'] = json.dumps(list(
