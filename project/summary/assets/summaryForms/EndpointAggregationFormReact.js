@@ -79,6 +79,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                         backspaceRemoves={false}
                         deleteRemoves={false}
                         clearable={false}
+                        onValueClick={(ep) => window.open(`/ani/endpoint/${ep.value}`, '_blank')}
                     />
                 </div>
                 <TextAreaInput
