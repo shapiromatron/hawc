@@ -26,6 +26,10 @@ class EndpointAggregationForm extends BaseVisualForm {
         });
     };
 
+    componentDidUpdate() {
+        $('[name=caption]').quillify();
+    }
+
     updatePreviewGraph = (json) => {
         new EndpointAggregation(json).displayAsPage($('#preview').empty());
     };
