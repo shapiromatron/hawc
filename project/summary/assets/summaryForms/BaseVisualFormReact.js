@@ -26,6 +26,7 @@ class BaseVisualForm extends Component {
             settings: '',
             endpoints: [],
             syncData: true,
+            quillInputs: ['[name=caption]'],
         };
     }
 
@@ -78,6 +79,9 @@ class BaseVisualForm extends Component {
                         settings: JSON.stringify(settings),
                         endpoints: this.getEndpointChoices(endpoints),
                     });
+                })
+                .then(() => {
+                    this.state.quillInputs.map((i) => $(i).quillify());
                 });
         }
     };
@@ -119,6 +123,7 @@ class BaseVisualForm extends Component {
                         this.form = form;
                     }}
                     method="POST"
+                    id="visualForm"
                 >
                     <TabPanel>
                         <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />

@@ -26,9 +26,14 @@ class EndpointAggregationForm extends BaseVisualForm {
         });
     };
 
-    componentDidUpdate() {
-        $('[name=caption]').quillify();
-    }
+    slugifyTitleChange = (e) => {
+        let title = e.target.value;
+        this.setState({
+            title: title,
+            slug: URLify(title),
+            syncData: true,
+        });
+    };
 
     updatePreviewGraph = (json) => {
         new EndpointAggregation(json).displayAsPage($('#preview').empty());
@@ -36,15 +41,18 @@ class EndpointAggregationForm extends BaseVisualForm {
 
     renderForm = () => {
         let doseUnitChoices = this.config.dose_units.map((u) => {
-            return { id: u.id, value: u.name };
-        });
+                return { id: u.id, value: u.name };
+            }),
+            handleTitleChange =
+                this.config.crud == 'Create' ? this.slugifyTitleChange : this.handleInputChange;
+
         return (
             <div>
                 <TextInput
                     name="title"
                     label="Title"
                     value={this.state.title}
-                    onChange={this.handleInputChange}
+                    onChange={handleTitleChange}
                     required
                 />
                 <TextInput
@@ -139,7 +147,7 @@ const formRender = (element) => {
 // Once all visual forms are refactored, the shim can be removed and formRender used.
 class EndpointAggregationShim {
     constructor(element) {
-        formRender(element);
+        formRender(element[0]);
     }
 }
 export { formRender, EndpointAggregationShim };
