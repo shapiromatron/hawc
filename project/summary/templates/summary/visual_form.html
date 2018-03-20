@@ -1,5 +1,6 @@
 {% extends 'portal.html' %}
 
+{% load crispy_forms_tags %}
 {% load selectable_tags %}
 
 {% block extrastyle %}
@@ -22,7 +23,29 @@
 
 {% block content %}
 
-    <div id="formMount"></div>
+<div class="tabbable" style="display:none;">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#data" data-toggle="tab">Visualization settings</a></li>
+        <li>
+            <a href="#settings" data-toggle="tab">Figure customization</a></li>
+        <li>
+            <a href="#preview" data-toggle="tab">Preview</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+    <div id="data"     class="tab-pane active">
+        {% crispy form %}
+    </div>
+    <div id="settings" class="tab-pane form-horizontal"></div>
+    <div id="preview"  class="tab-pane"></div>
+
+    </div>
+
+</div>
+
+<div id="formMount" style="display:none;"></div>
 {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
 
 {% endblock %}
@@ -53,8 +76,16 @@
         });
       {% endif %}
 
+      var mountElement = {{visual_type}} == 0 ? $('#formMount') : $('.tabbable')
+      mountElement.show()
+
       window.rob_metrics = {{rob_metrics|safe}};
-      summaryForms.VisualForm.create({{visual_type}}, document.getElementById('formMount'));
+      window.test_url = "{% url 'summary:visualization_create_tester' assessment.id visual_type %}";
+      summaryForms.VisualForm.create({{visual_type}}, mountElement);
+
+      window.app.smartTagsStartup(function(smartTags){
+          new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
+      })
     });
   </script>
 {% endblock %}
