@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ReactQuill from 'react-quill';
 
 import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
-import ArraySelect from 'shared/components/ArraySelect';
+import SelectInput from 'shared/components/SelectInput';
 import './ScoreForm.css';
 
 class ScoreForm extends Component {
@@ -98,7 +98,7 @@ class ScoreForm extends Component {
         return (
             <div className="score-form">
                 <div>
-                    <ArraySelect
+                    <SelectInput
                         choices={choices}
                         id={name}
                         value={score}

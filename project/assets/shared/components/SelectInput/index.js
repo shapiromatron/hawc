@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import './ArraySelect.css';
+import './SelectInput.css';
 
-class ArraySelect extends Component {
+class SelectInput extends Component {
     /**
-     * The choices props should be an array of objects, with id and value properties
+     * Builds a single <select> input.
      *
-     * choices = [{id: 0, value: 'Option 1'}, {id:1, value: 'Option 1'}];
+     * `Choices` should be an array of objects,
+     * with id:int and value:str properties, eg:
+     *  [{id: 0, value: 'Option 1'}, {id:1, value: 'Option 1'}];
      */
 
     constructor(props) {
@@ -23,14 +25,12 @@ class ArraySelect extends Component {
     render() {
         let { id, choices, name } = this.props,
             className = this.props.className || 'react-select',
-            value = this.props.defVal || this.props.value || _.first(choices);
+            value = this.props.value || this.props.defVal || _.first(choices);
         return (
             <select
                 id={id}
                 className={className}
-                ref="select"
-                defaultValue={this.props.defVal ? value : undefined}
-                value={this.props.value ? value : undefined}
+                value={value}
                 onChange={this.handleSelect}
                 name={name}
             >
@@ -46,7 +46,7 @@ class ArraySelect extends Component {
     }
 }
 
-ArraySelect.propTypes = {
+SelectInput.propTypes = {
     handleSelect: PropTypes.func.isRequired,
     className: PropTypes.string,
     choices: PropTypes.arrayOf(
@@ -61,4 +61,4 @@ ArraySelect.propTypes = {
     name: PropTypes.string,
 };
 
-export default ArraySelect;
+export default SelectInput;

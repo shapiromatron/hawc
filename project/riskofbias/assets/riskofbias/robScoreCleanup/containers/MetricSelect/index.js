@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { selectMetric } from 'riskofbias/robScoreCleanup/actions/Metrics';
 
-import ArraySelect from 'shared/components/ArraySelect';
+import SelectInput from 'shared/components/SelectInput';
 
 export class MetricSelect extends Component {
     constructor(props) {
@@ -35,7 +35,7 @@ export class MetricSelect extends Component {
         return (
             <div>
                 <label className="control-label">Select the metric to edit:</label>
-                <ArraySelect
+                <SelectInput
                     id="metric-select"
                     className="span12"
                     choices={this.choices}

@@ -9,7 +9,7 @@ import BaseVisualForm from './BaseVisualFormReact';
 import EndpointAggregation from 'summary/EndpointAggregation';
 
 import { splitStartup } from 'utils/WebpackSplit';
-import ArraySelect from 'shared/components/ArraySelect';
+import SelectInput from 'shared/components/SelectInput';
 import TextInput from 'shared/components/TextInput';
 import TextAreaInput from 'shared/components/TextAreaInput';
 
@@ -55,7 +55,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                 <div className="control-group">
                     <label className="control-label">Dose Units</label>
                     <div className="controls">
-                        <ArraySelect
+                        <SelectInput
                             name="dose_units"
                             className="span12 select"
                             choices={doseUnitChoices}
