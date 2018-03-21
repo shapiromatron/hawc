@@ -131,12 +131,12 @@ class EndpointByAssessmentLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
     def get_item_label(self, obj):
-        return "{} | {} | {} | {}".format(
+        return mark_safe("{} | {} | {} | {}".format(
             obj.animal_group.experiment.study,
             obj.animal_group.experiment,
             obj.animal_group,
             obj
-        )
+        ))
 
     def get_item_value(self, obj):
         return self.get_item_label(obj)
@@ -153,9 +153,6 @@ class EndpointByAssessmentTextLookup(RelatedLookup):
 
 
 class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
-
-    def get_item_label(self, obj):
-        return mark_safe(super().get_item_label(obj))
 
     def get_item_value(self, obj):
         return obj.id
