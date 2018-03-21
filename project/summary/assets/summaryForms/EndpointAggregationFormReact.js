@@ -1,6 +1,7 @@
+import $ from '$';
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Async } from 'react-select';
+import slugify from 'slugify';
 
 import 'react-tabs/style/react-tabs.css';
 import 'react-select/dist/react-select.css';
@@ -30,7 +31,7 @@ class EndpointAggregationForm extends BaseVisualForm {
         let title = e.target.value;
         this.setState({
             title: title,
-            slug: URLify(title),
+            slug: slugify(title),
             syncData: true,
         });
     };
