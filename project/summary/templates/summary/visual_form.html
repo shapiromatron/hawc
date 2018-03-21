@@ -24,25 +24,25 @@
 {% block content %}
 
 <div class="tabbable" style="display:none;">
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#data" data-toggle="tab">Visualization settings</a></li>
-        <li>
-            <a href="#settings" data-toggle="tab">Figure customization</a></li>
-        <li>
-            <a href="#preview" data-toggle="tab">Preview</a></li>
-    </ul>
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#data" data-toggle="tab">Visualization settings</a>
+    </li>
+    <li>
+      <a href="#settings" data-toggle="tab">Figure customization</a>
+    </li>
+    <li>
+      <a href="#preview" data-toggle="tab">Preview</a>
+    </li>
+  </ul>
 
-    <div class="tab-content">
-
+  <div class="tab-content">
     <div id="data"     class="tab-pane active">
-        {% crispy form %}
+      {% crispy form %}
     </div>
     <div id="settings" class="tab-pane form-horizontal"></div>
     <div id="preview"  class="tab-pane"></div>
-
-    </div>
-
+  </div>
 </div>
 
 <div id="formMount" style="display:none;"></div>
@@ -76,6 +76,7 @@
         });
       {% endif %}
 
+      // todo: remove when we've ported all visuals to React
       var mountElement = {{visual_type}} == 0 ? $('#formMount') : $('.tabbable')
       mountElement.show()
 

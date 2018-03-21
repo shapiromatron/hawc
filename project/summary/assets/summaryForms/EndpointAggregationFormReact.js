@@ -1,7 +1,6 @@
 import $ from '$';
 import React from 'react';
 import { Async } from 'react-select';
-import slugify from 'slugify';
 
 import 'react-tabs/style/react-tabs.css';
 import 'react-select/dist/react-select.css';
@@ -27,25 +26,14 @@ class EndpointAggregationForm extends BaseVisualForm {
         });
     };
 
-    slugifyTitleChange = (e) => {
-        let title = e.target.value;
-        this.setState({
-            title: title,
-            slug: slugify(title),
-            syncData: true,
-        });
-    };
-
     updatePreviewGraph = (json) => {
         new EndpointAggregation(json).displayAsPage($('#preview').empty());
     };
 
     renderForm = () => {
         let doseUnitChoices = this.config.dose_units.map((u) => {
-                return { id: u.id, value: u.name };
-            }),
-            handleTitleChange =
-                this.config.crud == 'Create' ? this.slugifyTitleChange : this.handleInputChange;
+            return { id: u.id, value: u.name };
+        });
 
         return (
             <div>
@@ -53,7 +41,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     name="title"
                     label="Title"
                     value={this.state.title}
-                    onChange={handleTitleChange}
+                    onChange={this.handleTitleChange}
                     required
                 />
                 <TextInput
@@ -132,7 +120,11 @@ class EndpointAggregationForm extends BaseVisualForm {
     };
 
     renderSettingsForm = () => {
-        return null;
+        return (
+            <div>
+                <p className="help-block">No figure customization settings are available.</p>
+            </div>
+        );
     };
 }
 

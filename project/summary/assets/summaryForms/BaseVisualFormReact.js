@@ -1,9 +1,7 @@
+import $ from '$';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Async } from 'react-select';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import fetch from 'isomorphic-fetch';
-import _ from 'lodash';
 
 import 'react-tabs/style/react-tabs.css';
 import 'react-select/dist/react-select.css';
@@ -23,68 +21,87 @@ class BaseVisualForm extends Component {
             caption: '',
             published: '',
             visual_type: this.config.visual_type,
-            settings: '',
+            settings: 'undefined',
             endpoints: [],
-            syncData: true,
+            dataRefreshRequired: true,
             quillInputs: ['[name=caption]'],
         };
     }
 
     componentDidMount() {
-        this.fetchFormData();
-    }
+        let quillify = () => {
+            this.state.quillInputs.map((i) => $(i).quillify());
+        };
 
-    handleInputChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, syncData: true });
-    };
-
-    handleCheckboxChange = (e) => {
-        this.setState({ [e.target.name]: e.target.checked, syncData: true });
-    };
-
-    handleDoseUnitSelect = (value) => {
-        this.setState({ dose_units: parseInt(value), syncData: true });
-    };
-
-    handleEndpointSelect = (value) => {
-        this.setState({ endpoints: value, syncData: true });
-    };
-
-    handleTabSelection = (tabIndex) => {
-        if (tabIndex === 2 && this.state.syncData) {
-            fetch(this.config.preview_url, h.fetchForm(this.config.csrf, $(this.form).serialize()))
-                .then((response) => response.json())
-                .then((json) => this.updatePreviewGraph(json))
-                .then(() => this.setState({ syncData: false }));
-        }
-    };
-
-    getEndpointChoices = (endpoint) => {
-        return [];
-    };
-
-    fetchFormData = () => {
         if (this.config.crud == 'Update') {
             fetch(`${this.config.data_url}${this.config.instance.id}`, h.fetchGet)
                 .then((response) => response.json())
                 .then((json) => {
                     let { title, slug, dose_units, endpoints, settings, caption, published } = json;
-                    this.setState({
-                        title,
-                        slug,
-                        dose_units,
-                        caption,
-                        published,
-                        visual_type: this.config.visual_type,
-                        settings: JSON.stringify(settings),
-                        endpoints: this.getEndpointChoices(endpoints),
-                    });
-                })
-                .then(() => {
-                    this.state.quillInputs.map((i) => $(i).quillify());
+                    this.setState(
+                        {
+                            title,
+                            slug,
+                            dose_units,
+                            caption,
+                            published,
+                            visual_type: this.config.visual_type,
+                            settings: JSON.stringify(settings),
+                            endpoints: this.getEndpointChoices(endpoints),
+                        },
+                        quillify
+                    );
                 });
+        } else {
+            quillify();
+        }
+    }
+
+    handleInputChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value, dataRefreshRequired: true });
+    };
+
+    handleCheckboxChange = (e) => {
+        this.setState({ [e.target.name]: e.target.checked, dataRefreshRequired: true });
+    };
+
+    handleDoseUnitSelect = (value) => {
+        this.setState({ dose_units: parseInt(value), dataRefreshRequired: true });
+    };
+
+    handleTitleChange = (e) => {
+        // When creating a new visual, the slug automatically changes w/ the
+        // title. However, if updating, the slug does not change automatically.
+        let title = e.target.value,
+            newState = {
+                title,
+                dataRefreshRequired: true,
+            };
+
+        if (this.config.crud === 'Create') {
+            newState.slug = HAWCUtils.urlify(title);
+        }
+        this.setState(newState);
+    };
+
+    handleEndpointSelect = (value) => {
+        this.setState({ endpoints: value, dataRefreshRequired: true });
+    };
+
+    handleTabSelection = (tabIndex) => {
+        // Get new data for chart if a user clicks the preview tab and
+        // the data has changed.
+        if (tabIndex === 2 && this.state.dataRefreshRequired) {
+            fetch(this.config.preview_url, h.fetchForm(this.config.csrf, this.form))
+                .then((response) => response.json())
+                .then((json) => this.updatePreviewGraph(json))
+                .then(() => this.setState({ dataRefreshRequired: false }));
         }
     };
+
+    getEndpointChoices(endpoint) {
+        return [];
+    }
 
     fetchEndpoints = (input, callback) => {
         fetch(
@@ -97,17 +114,17 @@ class BaseVisualForm extends Component {
             });
     };
 
-    renderForm = () => {
+    renderForm() {
         return HAWCUtils.abstractMethod();
-    };
+    }
 
-    renderSettingsForm = () => {
+    renderSettingsForm() {
         return HAWCUtils.abstractMethod();
-    };
+    }
 
-    updatePreviewGraph = (json) => {
+    updatePreviewGraph(json) {
         return HAWCUtils.abstractMethod();
-    };
+    }
 
     render() {
         return (

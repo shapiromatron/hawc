@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import json
 
-from django.db.models import QuerySet
 from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
@@ -14,7 +13,7 @@ from epi.models import Outcome
 from invitro.models import IVEndpointCategory, IVChemical
 
 from study.lookups import StudyLookup
-from animal.lookups import EndpointByAssessmentLookup, EndpointIdByAssessmentLookup
+from animal.lookups import EndpointByAssessmentLookup
 from utils.forms import BaseFormHelper
 
 from . import models, lookups

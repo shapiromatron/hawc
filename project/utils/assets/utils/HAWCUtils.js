@@ -1,6 +1,7 @@
 import $ from '$';
 import _ from 'lodash';
 import d3 from 'd3';
+import slugify from 'slugify';
 
 class HAWCUtils {
     static booleanCheckbox(value) {
@@ -226,6 +227,10 @@ class HAWCUtils {
             if (c[i].nodeType == 1) return true;
         }
         return false;
+    }
+
+    static urlify(str) {
+        return slugify(str);
     }
 }
 

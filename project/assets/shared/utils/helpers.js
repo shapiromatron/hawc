@@ -1,3 +1,4 @@
+import $ from '$';
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -20,6 +21,7 @@ const helpers = {
         };
     },
     fetchForm(csrf, form, verb = 'POST') {
+        // form should be a <form> html element
         return {
             credentials: 'same-origin',
             method: verb,
@@ -27,7 +29,7 @@ const helpers = {
                 'X-CSRFToken': csrf,
                 'content-type': 'application/x-www-form-urlencoded',
             }),
-            body: form,
+            body: $(form).serialize(),
         };
     },
 
