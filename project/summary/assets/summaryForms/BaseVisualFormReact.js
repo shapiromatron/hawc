@@ -29,10 +29,6 @@ class BaseVisualForm extends Component {
     }
 
     componentDidMount() {
-        let quillify = () => {
-            this.state.quillInputs.map((i) => $(i).quillify());
-        };
-
         if (this.config.crud == 'Update') {
             fetch(`${this.config.data_url}${this.config.instance.id}`, h.fetchGet)
                 .then((response) => response.json())
@@ -49,13 +45,17 @@ class BaseVisualForm extends Component {
                             settings: JSON.stringify(settings),
                             endpoints: this.getEndpointChoices(endpoints),
                         },
-                        quillify
+                        this.quillify
                     );
                 });
         } else {
-            quillify();
+            this.quillify();
         }
     }
+
+    quillify = () => {
+        this.state.quillInputs.map((i) => $(i).quillify());
+    };
 
     handleInputChange = (e) => {
         this.setState({ [e.target.name]: e.target.value, dataRefreshRequired: true });
@@ -96,6 +96,11 @@ class BaseVisualForm extends Component {
                 .then((response) => response.json())
                 .then((json) => this.updatePreviewGraph(json))
                 .then(() => this.setState({ dataRefreshRequired: false }));
+        }
+
+        // quillify whenever form is selected
+        if (tabIndex == 0) {
+            setTimeout(this.quillify, 250);
         }
     };
 
