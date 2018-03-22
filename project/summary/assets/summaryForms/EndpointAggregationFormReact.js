@@ -27,7 +27,7 @@ class EndpointAggregationForm extends BaseVisualForm {
     };
 
     updatePreviewGraph = (json) => {
-        new EndpointAggregation(json).displayAsPage($('#preview').empty());
+        new EndpointAggregation(json).displayAsPage($(this.preview).empty());
     };
 
     renderForm = () => {

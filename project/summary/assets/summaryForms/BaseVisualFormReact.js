@@ -135,13 +135,7 @@ class BaseVisualForm extends Component {
                     <Tab>Preview</Tab>
                 </TabList>
 
-                <form
-                    ref={(form) => {
-                        this.form = form;
-                    }}
-                    method="POST"
-                    id="visualForm"
-                >
+                <form ref={(form) => (this.form = form)} method="POST" id="visualForm">
                     <TabPanel>
                         <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />
                         <legend>
@@ -153,7 +147,7 @@ class BaseVisualForm extends Component {
                     </TabPanel>
                     <TabPanel>{this.renderSettingsForm()}</TabPanel>
                     <TabPanel forceRender>
-                        <div id="preview" />
+                        <div ref={(preview) => (this.preview = preview)} />
                     </TabPanel>
                     <div className="form-actions">
                         <input
