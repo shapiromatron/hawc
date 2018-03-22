@@ -22,26 +22,44 @@ class SelectInput extends Component {
         this.props.handleSelect(e.target.value);
     }
 
+    renderLabel() {
+        if (!this.props.label) {
+            return null;
+        }
+        return (
+            <label htmlFor={`id_${this.props.name}`} className="control-label">
+                {this.props.label}
+                {this.props.required ? <span className="asteriskField">*</span> : null}
+            </label>
+        );
+    }
+
     render() {
-        let { id, choices, name } = this.props,
+        let { id, choices, helpText, name } = this.props,
             className = this.props.className || 'react-select',
             value = this.props.value || this.props.defVal || _.first(choices);
         return (
-            <select
-                id={id}
-                className={className}
-                value={value}
-                onChange={this.handleSelect}
-                name={name}
-            >
-                {_.map(choices, (choice) => {
-                    return (
-                        <option key={choice.id} value={choice.id}>
-                            {choice.value}
-                        </option>
-                    );
-                })}
-            </select>
+            <div className="control-group">
+                {this.renderLabel()}
+                <div className="controls">
+                    <select
+                        id={id}
+                        className={className}
+                        value={value}
+                        onChange={this.handleSelect}
+                        name={name}
+                    >
+                        {_.map(choices, (choice) => {
+                            return (
+                                <option key={choice.id} value={choice.id}>
+                                    {choice.value}
+                                </option>
+                            );
+                        })}
+                    </select>
+                    {helpText ? <p className="help-block">{this.props.helpText}</p> : null}
+                </div>
+            </div>
         );
     }
 }
@@ -59,6 +77,9 @@ SelectInput.propTypes = {
     defVal: PropTypes.any,
     value: PropTypes.any,
     name: PropTypes.string,
+    helpText: PropTypes.string,
+    label: PropTypes.string,
+    required: PropTypes.bool,
 };
 
 export default SelectInput;

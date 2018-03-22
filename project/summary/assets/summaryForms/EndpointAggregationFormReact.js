@@ -62,6 +62,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                             id="id_dose_units"
                             value={this.state.dose_units}
                             handleSelect={this.handleDoseUnitSelect}
+                            helpText="Paste from another visualization to copy settings, or set to &quot;undefined&quot;."
                         />
                     </div>
                 </div>

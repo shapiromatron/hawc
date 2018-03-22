@@ -104,8 +104,6 @@ class ScoreForm extends Component {
                         value={score}
                         handleSelect={this.selectScore}
                     />
-                    <br />
-                    <br />
                     <ScoreIcon shade={selectedShade} symbol={selectedSymbol} />
                 </div>
                 <ReactQuill

@@ -34,13 +34,14 @@ export class MetricSelect extends Component {
         this.setDefaultValue();
         return (
             <div>
-                <label className="control-label">Select the metric to edit:</label>
                 <SelectInput
                     id="metric-select"
+                    name="metric-select"
                     className="span12"
                     choices={this.choices}
                     handleSelect={this.handleSelect}
                     defVal={this.defaultValue}
+                    label="Select the metric to edit"
                 />
             </div>
         );
