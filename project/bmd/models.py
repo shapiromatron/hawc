@@ -335,11 +335,13 @@ class Model(models.Model):
         return self.session.get_assessment()
 
     def save_model(self, model):
-        self.execution_error = (model.outfile == '')
         self.dfile = model.as_dfile()
-        self.outfile = model.outfile
-        self.output = model.output
-        self.date_executed = now()
+        self.execution_error = not model.has_successfully_executed
+
+        if model.has_successfully_executed:
+            self.outfile = model.outfile
+            self.output = model.output
+            self.date_executed = now()
 
         if hasattr(model, 'plot_base64'):
             fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + '.emf')
