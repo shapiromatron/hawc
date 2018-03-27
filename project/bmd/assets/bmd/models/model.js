@@ -65,10 +65,10 @@ class BMDLine {
     }
 
     _getPlotData() {
+        // x must be defined since we're calling "eval" in the javascript models
         let model = this._getModel(),
             bmd = this.model.output.BMD,
             bmdl = this.model.output.BMDL,
-            data,
             bmd_line,
             bmdl_line,
             x;
