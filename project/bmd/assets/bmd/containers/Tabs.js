@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import $ from '$';
 
 import Loading from 'shared/components/Loading';
@@ -10,6 +11,7 @@ import ModelOptionTable from 'bmd/components/ModelOptionTable';
 import BMROptionTable from 'bmd/components/BMROptionTable';
 import ExecuteWell from 'bmd/components/ExecuteWell';
 import Recommendation from 'bmd/components/Recommendation';
+import RecommendationNotes from 'bmd/components/RecommendationNotes';
 import OutputTable from 'bmd/components/OutputTable';
 import OutputFigure from 'bmd/components/OutputFigure';
 
@@ -165,7 +167,7 @@ class Tabs extends React.Component {
 
         return [
             <h3 key={0}>BMDS output summary</h3>,
-            <div className="row-fluid" key={1}>
+            <div key={1} className="row-fluid">
                 <OutputTable
                     models={models}
                     bmrs={bmrs}
@@ -180,6 +182,7 @@ class Tabs extends React.Component {
                     selectedModel={selectedModel}
                 />
             </div>,
+            <RecommendationNotes key={2} notes={this.props.selectedModelNotes} />,
         ];
     }
 

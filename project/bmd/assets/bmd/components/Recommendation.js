@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { asLabel } from 'bmd/models/bmr';
 
+import RecommendationNotes from './RecommendationNotes';
 import RecommendationTable from './RecommendationTable';
 
 class Recommendation extends React.Component {
@@ -148,6 +149,13 @@ class Recommendation extends React.Component {
         );
     }
 
+    renderUserNotes() {
+        if (this.props.editMode) {
+            return null;
+        }
+        return <RecommendationNotes notes={this.props.selectedModelNotes} />;
+    }
+
     renderEditMode() {
         if (!this.props.editMode) {
             return null;
@@ -172,6 +180,7 @@ class Recommendation extends React.Component {
                     selectedModelId={this.props.selectedModelId}
                 />
                 {this.renderEditMode()}
+                {this.renderUserNotes()}
             </div>
         );
     }
