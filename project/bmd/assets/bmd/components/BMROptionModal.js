@@ -6,9 +6,10 @@ import { deepCopy } from 'shared/utils';
 
 import * as types from 'bmd/constants';
 
+import BaseModal from './BaseModal';
 import EditableModalFooter from 'bmd/components/EditableModalFooter';
 
-class BMROptionModal extends React.Component {
+class BMROptionModal extends BaseModal {
     componentWillReceiveProps(nextProps) {
         if (nextProps.bmr) {
             this.setState(deepCopy(nextProps.bmr));
@@ -133,7 +134,7 @@ class BMROptionModal extends React.Component {
         return (
             <div className="modal hide fade" role="dialog" id={types.BMR_MODAL_ID}>
                 <div className="modal-header">
-                    <button className="close" type="button" data-dismiss="modal">
+                    <button ref="closer" className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{title}</h3>
