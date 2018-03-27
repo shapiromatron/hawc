@@ -71,13 +71,15 @@ class BMDLine {
             bmdl = this.model.output.BMDL,
             bmd_line,
             bmdl_line,
+            bmd_y,
             x;
 
         if (bmd && bmd > 0) {
             x = bmd;
+            bmd_y = eval(model);
             bmd_line = {
                 x: bmd,
-                y: eval(model),
+                y: bmd_y,
             };
         }
 
@@ -85,7 +87,7 @@ class BMDLine {
             x = bmdl;
             bmdl_line = {
                 x: bmdl,
-                y: eval(model),
+                y: bmd_y,
             };
         }
 
