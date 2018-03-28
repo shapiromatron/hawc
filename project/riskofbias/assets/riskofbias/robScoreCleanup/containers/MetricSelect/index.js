@@ -12,12 +12,6 @@ export class MetricSelect extends Component {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    setDefaultValue() {
-        this.choices = this.formatMetricChoices();
-        this.defaultValue = _.first(this.choices).id;
-        this.handleSelect(this.defaultValue);
-    }
-
     formatMetricChoices() {
         return _.map(this.props.choices, (choice) => {
             return { id: choice.id, value: choice.name };
@@ -31,16 +25,16 @@ export class MetricSelect extends Component {
 
     render() {
         if (!this.props.isLoaded) return null;
-        this.setDefaultValue();
+        let choices = this.formatMetricChoices();
         return (
             <div>
                 <SelectInput
                     id="metric-select"
                     name="metric-select"
                     className="span12"
-                    choices={this.choices}
+                    choices={choices}
                     handleSelect={this.handleSelect}
-                    defVal={this.defaultValue}
+                    value={this.props.selected.id}
                     label="Select the metric to edit"
                 />
             </div>
@@ -50,6 +44,7 @@ export class MetricSelect extends Component {
 
 function mapStateToProps(state) {
     return {
+        selected: state.metrics.selected,
         isLoaded: state.metrics.isLoaded,
         choices: state.metrics.items,
     };

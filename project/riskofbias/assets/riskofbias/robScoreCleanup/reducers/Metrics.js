@@ -19,6 +19,7 @@ function metrics(state = defaultState, action) {
                 isFetching: false,
                 isLoaded: true,
                 items: action.metrics,
+                selected: action.metrics[0],
             });
 
         case types.SELECT_METRIC:

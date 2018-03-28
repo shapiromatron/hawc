@@ -52,20 +52,15 @@ class EndpointAggregationForm extends BaseVisualForm {
                     helpText="The URL (web address) used to describe this object (no spaces or special-characters)."
                     required
                 />
-                <div className="control-group">
-                    <label className="control-label">Dose Units</label>
-                    <div className="controls">
-                        <SelectInput
-                            name="dose_units"
-                            className="span12 select"
-                            choices={doseUnitChoices}
-                            id="id_dose_units"
-                            value={this.state.dose_units}
-                            handleSelect={this.handleDoseUnitSelect}
-                            helpText="Paste from another visualization to copy settings, or set to &quot;undefined&quot;."
-                        />
-                    </div>
-                </div>
+                <SelectInput
+                    name="dose_units"
+                    label="Dose Units"
+                    className="span12 select"
+                    choices={doseUnitChoices}
+                    id="id_dose_units"
+                    value={this.state.dose_units}
+                    handleSelect={this.handleDoseUnitSelect}
+                />
                 <div className="control-group">
                     <label className="control-label">
                         Endpoints
@@ -89,6 +84,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     label="Settings"
                     value={this.state.settings}
                     onChange={this.handleInputChange}
+                    helpText="Paste from another visualization to copy settings, or set to &quot;undefined&quot;."
                     required
                 />
                 <TextAreaInput

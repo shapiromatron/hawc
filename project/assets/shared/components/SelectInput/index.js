@@ -37,7 +37,7 @@ class SelectInput extends Component {
     render() {
         let { id, choices, helpText, name } = this.props,
             className = this.props.className || 'react-select',
-            value = this.props.value || this.props.defVal || _.first(choices);
+            value = this.props.value || _.first(choices).id;
         return (
             <div className="control-group">
                 {this.renderLabel()}
@@ -74,8 +74,7 @@ SelectInput.propTypes = {
         })
     ).isRequired,
     id: PropTypes.string.isRequired,
-    defVal: PropTypes.any,
-    value: PropTypes.any,
+    value: PropTypes.number,
     name: PropTypes.string,
     helpText: PropTypes.string,
     label: PropTypes.string,
