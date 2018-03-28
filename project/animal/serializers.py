@@ -123,6 +123,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.getStdevs(ret['variance_type'], ret['groups'])
         models.EndpointGroup.percentControl(ret['data_type'], ret['groups'])
         models.EndpointGroup.getConfidenceIntervals(ret['data_type'], ret['groups'])
+        models.EndpointGroup.get_incidence_summary(ret['data_type'], ret['groups'])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
         ret['bmd'] = None
@@ -159,5 +160,6 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
         model = models.Endpoint
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
+
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

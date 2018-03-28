@@ -1219,14 +1219,43 @@ class ConfidenceIntervalsMixin(object):
 
                 lower_ci = round(
                     ((2 * n * p + 2 * z - 1) - z * math.sqrt(
-                        2 * z - (2 + 1 / n) + 4 * p * (n * q + 1))) / (2 * (n + 2 * z)), 2)
+                        2 * z - (2 + 1 / n) + 4 * p * (n * q + 1))) / (2 * (n + 2 * z)), 3)
                 upper_ci = round(
                     ((2 * n * p + 2 * z + 1) + z * math.sqrt(
-                        2 * z + (2 + 1 / n) + 4 * p * (n * q - 1))) / (2 * (n + 2 * z)), 2)
+                        2 * z + (2 + 1 / n) + 4 * p * (n * q - 1))) / (2 * (n + 2 * z)), 3)
+
                 update = True
 
             if update:
                 eg.update(lower_ci=lower_ci, upper_ci=upper_ci)
+
+    @staticmethod
+    def get_incidence_summary(data_type, egs):
+        # For plotting purposes, present incidence numbers as percentage and
+        # generate a pretty-printing format for dichotomous data
+        for eg in egs:
+            additions = dict(
+                dichotomous_summary='-',
+                percent_affected=None,
+                percent_lower_ci=None,
+                percent_upper_ci=None,
+            )
+            n = eg['n']
+            inc = eg['incidence']
+            if (
+                data_type in ["D", "DC"] and
+                n is not None and
+                n > 0 and
+                inc is not None
+            ):
+                additions.update(
+                    dichotomous_summary=f'{inc}/{n} ({inc / n * 100:.1f}%)',
+                    percent_affected=inc / n * 100,
+                    percent_lower_ci=eg['lower_ci'] * 100,
+                    percent_upper_ci=eg['upper_ci'] * 100,
+                )
+
+            eg.update(**additions)
 
 
 class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
