@@ -36,7 +36,11 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
         ret['visual_type'] = instance.get_visual_type_display()
-        ret["settings"] = json.loads(instance.settings)
+        try:
+            settings = json.loads(instance.settings)
+        except json.JSONDecodeError:
+            settings = {}
+        ret["settings"] = settings
         return ret
 
     class Meta:
@@ -63,3 +67,6 @@ class VisualSerializer(CollectionVisualSerializer):
         ]
 
         return ret
+
+
+SerializerHelper.add_serializer(models.Visual, VisualSerializer)

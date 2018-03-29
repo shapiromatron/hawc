@@ -86,8 +86,11 @@
         "react-redux": "^5.0.6",
         "react-router": "^4.2.0",
         "react-router-dom": "^4.2.2",
+        "react-select": "^1.2.1",
+        "react-tabs": "^2.2.1",
         "redux": "^3.7.2",
         "redux-thunk": "^2.2.0",
+        "slugify": "^1.2.9",
         "sortablejs": "^1.5.0-rc1",
         "tablesort": "^4.1.0",
         "velocity-react": "^1.3.3"

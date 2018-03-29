@@ -1,4 +1,4 @@
-import EndpointAggregationForm from './EndpointAggregationForm';
+import { EndpointAggregationShim } from './EndpointAggregationFormReact';
 import CrossviewForm from './CrossviewForm';
 import RoBHeatmapForm from './RoBHeatmapForm';
 import RoBBarchartForm from './RoBBarchartForm';
@@ -8,7 +8,7 @@ class VisualForm {
         var Cls;
         switch (visual_type) {
             case 0:
-                Cls = EndpointAggregationForm;
+                Cls = EndpointAggregationShim;
                 break;
             case 1:
                 Cls = CrossviewForm;

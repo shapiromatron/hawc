@@ -1,3 +1,4 @@
+import $ from '$';
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -19,6 +20,19 @@ const helpers = {
             body: JSON.stringify(obj),
         };
     },
+    fetchForm(csrf, form, verb = 'POST') {
+        // form should be a <form> html element
+        return {
+            credentials: 'same-origin',
+            method: verb,
+            headers: new Headers({
+                'X-CSRFToken': csrf,
+                'content-type': 'application/x-www-form-urlencoded',
+            }),
+            body: $(form).serialize(),
+        };
+    },
+
     fetchBulk(csrf, obj, verb = 'PATCH') {
         obj['csrfmiddlewaretoken'] = csrf;
         return {

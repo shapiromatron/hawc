@@ -4,18 +4,12 @@ import _ from 'lodash';
 
 import { selectMetric } from 'riskofbias/robScoreCleanup/actions/Metrics';
 
-import ArraySelect from 'shared/components/ArraySelect';
+import SelectInput from 'shared/components/SelectInput';
 
 export class MetricSelect extends Component {
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    setDefaultValue() {
-        this.choices = this.formatMetricChoices();
-        this.defaultValue = _.first(this.choices).id;
-        this.handleSelect(this.defaultValue);
     }
 
     formatMetricChoices() {
@@ -31,16 +25,17 @@ export class MetricSelect extends Component {
 
     render() {
         if (!this.props.isLoaded) return null;
-        this.setDefaultValue();
+        let choices = this.formatMetricChoices();
         return (
             <div>
-                <label className="control-label">Select the metric to edit:</label>
-                <ArraySelect
+                <SelectInput
                     id="metric-select"
+                    name="metric-select"
                     className="span12"
-                    choices={this.choices}
+                    choices={choices}
                     handleSelect={this.handleSelect}
-                    defVal={this.defaultValue}
+                    value={this.props.selected.id}
+                    label="Select the metric to edit"
                 />
             </div>
         );
@@ -49,6 +44,7 @@ export class MetricSelect extends Component {
 
 function mapStateToProps(state) {
     return {
+        selected: state.metrics.selected,
         isLoaded: state.metrics.isLoaded,
         choices: state.metrics.items,
     };

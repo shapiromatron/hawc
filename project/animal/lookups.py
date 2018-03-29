@@ -1,3 +1,4 @@
+from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
 from . import models
@@ -130,12 +131,12 @@ class EndpointByAssessmentLookup(RelatedLookup):
     related_filter = 'assessment_id'
 
     def get_item_label(self, obj):
-        return "{} | {} | {} | {}".format(
+        return mark_safe("{} | {} | {} | {}".format(
             obj.animal_group.experiment.study,
             obj.animal_group.experiment,
             obj.animal_group,
             obj
-        )
+        ))
 
     def get_item_value(self, obj):
         return self.get_item_label(obj)
@@ -151,13 +152,10 @@ class EndpointByAssessmentTextLookup(RelatedLookup):
             .distinct('name')
 
 
-class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
+class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
 
     def get_item_value(self, obj):
-        return u'<a href="{}" target="_blank">{}</a>'.format(
-            obj.get_absolute_url(),
-            self.get_item_label(obj)
-        )
+        return obj.id
 
 
 registry.register(ExperimentByStudyLookup)
@@ -182,4 +180,4 @@ registry.register(EndpointStatisticalTestLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)
-registry.register(EndpointByAssessmentLookupHtml)
+registry.register(EndpointIdByAssessmentLookup)

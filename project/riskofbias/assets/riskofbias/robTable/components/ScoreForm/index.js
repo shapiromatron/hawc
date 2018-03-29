@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactQuill from 'react-quill';
 
 import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
-import Select from 'shared/components/Select';
+import SelectInput from 'shared/components/SelectInput';
 import './ScoreForm.css';
 
 class ScoreForm extends Component {
@@ -89,18 +90,20 @@ class ScoreForm extends Component {
 
     render() {
         let { name } = this.props.score.metric,
-            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state;
+            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state,
+            choices = _.map(scoreChoices, (v, k) => {
+                return { id: parseInt(k), value: v };
+            });
+
         return (
             <div className="score-form">
                 <div>
-                    <Select
-                        choices={scoreChoices}
+                    <SelectInput
+                        choices={choices}
                         id={name}
                         value={score}
                         handleSelect={this.selectScore}
                     />
-                    <br />
-                    <br />
                     <ScoreIcon shade={selectedShade} symbol={selectedSymbol} />
                 </div>
                 <ReactQuill
