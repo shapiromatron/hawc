@@ -9,6 +9,7 @@ import BaseVisualForm from './BaseVisualFormReact';
 import EndpointAggregation from 'summary/EndpointAggregation';
 
 import { splitStartup } from 'utils/WebpackSplit';
+import QuillTextInput from 'shared/components/QuillTextInput';
 import SelectInput from 'shared/components/SelectInput';
 import TextInput from 'shared/components/TextInput';
 import TextAreaInput from 'shared/components/TextAreaInput';
@@ -87,7 +88,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     helpText="Paste from another visualization to copy settings, or set to &quot;undefined&quot;."
                     required
                 />
-                <TextAreaInput
+                <QuillTextInput
                     name="caption"
                     label="Caption"
                     value={this.state.caption}
@@ -95,7 +96,8 @@ class EndpointAggregationForm extends BaseVisualForm {
                 />
                 <div id="div_id_published" className="control-group">
                     <div className="controls">
-                        <label className="checkbox">
+                        <label htmlFor="id_published" className="checkbox">
+                            Publish visual for public viewing
                             <input
                                 onChange={this.handleCheckboxChange}
                                 type="checkbox"
@@ -104,7 +106,6 @@ class EndpointAggregationForm extends BaseVisualForm {
                                 id="id_published"
                                 checked={this.state.published}
                             />
-                            Publish visual for public viewing
                         </label>
                         <p id="hint_id_published" className="help-block">
                             For assessments marked for public viewing, mark visual to be viewable by

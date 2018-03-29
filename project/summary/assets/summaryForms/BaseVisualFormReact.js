@@ -24,7 +24,6 @@ class BaseVisualForm extends Component {
             settings: 'undefined',
             endpoints: [],
             dataRefreshRequired: true,
-            quillInputs: ['[name=caption]'],
         };
     }
 
@@ -34,28 +33,19 @@ class BaseVisualForm extends Component {
                 .then((response) => response.json())
                 .then((json) => {
                     let { title, slug, dose_units, endpoints, settings, caption, published } = json;
-                    this.setState(
-                        {
-                            title,
-                            slug,
-                            dose_units,
-                            caption,
-                            published,
-                            visual_type: this.config.visual_type,
-                            settings: JSON.stringify(settings),
-                            endpoints: this.getEndpointChoices(endpoints),
-                        },
-                        this.quillify
-                    );
+                    this.setState({
+                        title,
+                        slug,
+                        dose_units,
+                        caption,
+                        published,
+                        visual_type: this.config.visual_type,
+                        settings: JSON.stringify(settings),
+                        endpoints: this.getEndpointChoices(endpoints),
+                    });
                 });
-        } else {
-            this.quillify();
         }
     }
-
-    quillify = () => {
-        this.state.quillInputs.map((i) => $(i).quillify());
-    };
 
     handleInputChange = (e) => {
         this.setState({ [e.target.name]: e.target.value, dataRefreshRequired: true });
@@ -96,11 +86,6 @@ class BaseVisualForm extends Component {
                 .then((response) => response.json())
                 .then((json) => this.updatePreviewGraph(json))
                 .then(() => this.setState({ dataRefreshRequired: false }));
-        }
-
-        // quillify whenever form is selected
-        if (tabIndex == 0) {
-            setTimeout(this.quillify, 250);
         }
     };
 
