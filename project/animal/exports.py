@@ -146,6 +146,16 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             return '|{0}|'.format('|'.join(effs))
         return ''
 
+    @staticmethod
+    def _get_bmd_values(bmd, preferred_units):
+        # only return BMD values if they're in the preferred units
+        if bmd and bmd['dose_units'] in preferred_units:
+            return [
+                bmd['output']['BMD'],
+                bmd['output']['BMDL']
+            ]
+        return [None, None]
+
     def _get_header_row(self):
         # move qs.distinct() call here so we can make qs annotations.
         self.queryset = self.queryset.distinct('pk')
@@ -194,6 +204,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             'LOEL',
             'FEL',
             'high_dose',
+            'BMD',
+            'BMDL',
 
             'key',
             'dose index',
@@ -207,7 +219,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             'pairwise significant',
             'percent control mean',
             'percent control low',
-            'percent control high'
+            'percent control high',
         ]
 
     def _get_data_rows(self):
@@ -273,6 +285,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 ])
             else:
                 row.extend([None] * 5)
+            
+            # bmd/bmdl information
+            row.extend(self._get_bmd_values(ser['bmd'], preferred_units))
 
             # endpoint-group information
             for i, eg in enumerate(ser['groups']):
