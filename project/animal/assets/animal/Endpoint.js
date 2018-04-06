@@ -392,14 +392,14 @@ class Endpoint extends Observee {
 
         let tmp = this.data.monotonicity;
         if (tmp && tmp != 'unclear') {
-            tbl.add_tbody_tr('Monotonicity', this.data.monotonicity);
+            tbl.add_tbody_tr('Monotonicity', tmp);
         }
 
         tbl.add_tbody_tr('Statistical test description', this.data.statistical_test);
 
         tmp = this.data.trend_result;
         if (tmp && tmp != 'not applicable') {
-            tbl.add_tbody_tr('Trend result', this.data.monotonicity);
+            tbl.add_tbody_tr('Trend result', tmp);
         }
 
         tbl
