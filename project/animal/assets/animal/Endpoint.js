@@ -388,10 +388,21 @@ class Endpoint extends Observee {
             .add_tbody_tr('LOEL', critical_dose('LOEL'))
             .add_tbody_tr('FEL', critical_dose('FEL'))
             .add_tbody_tr('BMD', bmd_response('BMD', true))
-            .add_tbody_tr('BMDL', bmd_response('BMDL', false))
-            .add_tbody_tr('Monotonicity', this.data.monotonicity)
-            .add_tbody_tr('Statistical test description', this.data.statistical_test)
-            .add_tbody_tr('Trend result', this.data.trend_result)
+            .add_tbody_tr('BMDL', bmd_response('BMDL', false));
+
+        let tmp = this.data.monotonicity;
+        if (tmp && tmp != 'unclear') {
+            tbl.add_tbody_tr('Monotonicity', this.data.monotonicity);
+        }
+
+        tbl.add_tbody_tr('Statistical test description', this.data.statistical_test);
+
+        tmp = this.data.trend_result;
+        if (tmp && tmp != 'not applicable') {
+            tbl.add_tbody_tr('Trend result', this.data.monotonicity);
+        }
+
+        tbl
             .add_tbody_tr('Trend <i>p</i>-value', this.data.trend_value)
             .add_tbody_tr('Power notes', this.data.power_notes)
             .add_tbody_tr('Results notes', this.data.results_notes)
