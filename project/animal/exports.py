@@ -205,9 +205,15 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             'lower_ci',
             'upper_ci',
             'pairwise significant',
+            'pairwise significant value',
             'percent control mean',
             'percent control low',
-            'percent control high'
+            'percent control high',
+
+            'dichotomous summary',
+            'percent affected',
+            'percent lower ci',
+            'percent upper ci',
         ]
 
     def _get_data_rows(self):
@@ -288,9 +294,14 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                     eg['lower_ci'],
                     eg['upper_ci'],
                     eg['significant'],
+                    eg['significance_level'],
                     eg['percentControlMean'],
                     eg['percentControlLow'],
-                    eg['percentControlHigh']
+                    eg['percentControlHigh'],
+                    eg['dichotomous_summary'],
+                    eg['percent_affected'],
+                    eg['percent_lower_ci'],
+                    eg['percent_upper_ci'],
                 ])
                 rows.append(row_copy)
 

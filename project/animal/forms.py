@@ -373,8 +373,8 @@ class EndpointForm(ModelForm):
                   'data_reported', 'data_extracted', 'values_estimated',
                   'data_type', 'variance_type', 'confidence_interval',
                   'response_units', 'data_location', 'expected_adversity_direction',
-                  'NOEL', 'LOEL', 'FEL',
-                  'monotonicity', 'statistical_test', 'trend_value',
+                  'NOEL', 'LOEL', 'FEL', 'monotonicity',
+                  'statistical_test', 'trend_result', 'trend_value',
                   'power_notes', 'results_notes', 'endpoint_notes')
 
     def __init__(self, *args, **kwargs):
@@ -457,8 +457,8 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row('data_reported', 3, "span4")
         helper.add_fluid_row('data_type', 3, "span4")
         helper.add_fluid_row('response_units', 3, "span4")
-        helper.add_fluid_row('NOEL', 3, "span4")
-        helper.add_fluid_row('monotonicity', 3, ["span2", "span5", "span5"])
+        helper.add_fluid_row('NOEL', 4, "span3")
+        helper.add_fluid_row('statistical_test', 3, ["span6", "span3", "span3"])
 
         url = reverse('assessment:effect_tag_create', kwargs={'pk': self.instance.assessment.pk})
         helper.addBtnLayout(helper.layout[4], 0, url, "Add new effect tag", "span6")
