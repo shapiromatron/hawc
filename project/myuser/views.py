@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
 
 from django.views.generic.base import RedirectView
@@ -26,20 +26,21 @@ def create_account(request):
 
         if form.is_valid():
             # use case normalized email
-            email = models.HAWCUser.objects.normalize_email(post['email'])
-            pw = post['password1']
+            email = models.HAWCUser.objects.normalize_email(form.cleaned_data['email'])
+            pw = form.cleaned_data['password1']
 
             # create a new user
             user = models.HAWCUser.objects.create_user(email, pw)
-            user.first_name = post['first_name']
-            user.last_name = post['last_name']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.license_v2_accepted = form.cleaned_data['license_v2_accepted']
             user.save()
 
             # create a new user profile
             models.UserProfile.objects.create(user=user)
 
             # after save, log user in
-            user = authenticate(request, email=post['email'], password=pw)
+            user = authenticate(request, email=form.cleaned_data['email'], password=pw)
             login(request, user)
             return redirect('portal')
     else:
@@ -64,6 +65,25 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
     def get_object(self, **kwargs):
         obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
+
+
+class AcceptNewLicense(MessageMixin, FormView):
+    model = models.HAWCUser
+    form_class = forms.AcceptNewLicenseForm
+    success_message = 'License acceptance updated.'
+    success_url = reverse_lazy('portal')
+
+    def get(self, request, *args, **kwargs):
+        return redirect('portal')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):

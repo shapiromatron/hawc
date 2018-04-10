@@ -190,6 +190,11 @@ class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
     template_name = "assessment/assessment_home.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_v2_license'] = not self.request.user.license_v2_accepted
+        return context
+
 
 class AssessmentFullList(LoginRequiredMixin, ListView):
     model = models.Assessment

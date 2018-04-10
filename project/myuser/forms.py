@@ -140,18 +140,15 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 class RegisterForm(PasswordForm):
     _accept_license_help_text = "License must be accepted in order to create an account."
 
-    accept_license = forms.BooleanField(
-        label="Accept License",
-        required=False,
-        help_text=_accept_license_help_text)
-
     class Meta:
         model = models.HAWCUser
         fields = ("email", "first_name", "last_name",
-                  "password1", "password2")
+                  "password1", "password2", "license_v2_accepted")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['license_v2_accepted'].label = 'Accept license'
+        self.fields['license_v2_accepted'].help_text = self._accept_license_help_text
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -169,17 +166,18 @@ class RegisterForm(PasswordForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = "loginForm"
 
-        helper.layout.append(
+        helper.layout.extend([
+            cfl.HTML('''<a class="btn btn-small" href="#license_modal" data-toggle="modal">View License</a>'''),
             cfb.FormActions(
                 cfl.Submit('login', 'Create account'),
                 cfl.HTML("""<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(reverse('user:login'))),
             )
-        )
+        ])
 
         return helper
 
-    def clean_accept_license(self):
-        license = self.cleaned_data.get('accept_license')
+    def clean_license_v2_accepted(self):
+        license = self.cleaned_data.get('license_v2_accepted')
         if not license:
             raise forms.ValidationError(self._accept_license_help_text)
         return license
@@ -231,6 +229,12 @@ class UserProfileForm(ModelForm):
             up.save()
             up.user.save()
         return up
+
+
+class AcceptNewLicenseForm(ModelForm):
+    class Meta:
+        model = models.HAWCUser
+        fields = ('license_v2_accepted', )
 
 
 def hawc_authenticate(email=None, password=None):

@@ -29,6 +29,9 @@ urlpatterns = [
     url(r'^profile/update/$',
         views.ProfileUpdate.as_view(),
         name='profile_update'),
+    url(r'^accept-new-license/$',
+        views.AcceptNewLicense.as_view(),
+        name='accept-new-license'),
 
     url(r'^password-change/$',
         views.PasswordChange.as_view(),
