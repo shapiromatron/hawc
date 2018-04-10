@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
 
 from django.views.generic.base import RedirectView
@@ -65,6 +65,25 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
     def get_object(self, **kwargs):
         obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
+
+
+class AcceptNewLicense(MessageMixin, FormView):
+    model = models.HAWCUser
+    form_class = forms.AcceptNewLicenseForm
+    success_message = 'License acceptance updated.'
+    success_url = reverse_lazy('portal')
+
+    def get(self, request, *args, **kwargs):
+        return redirect('portal')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):

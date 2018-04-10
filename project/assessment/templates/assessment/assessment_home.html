@@ -21,6 +21,26 @@
       </div>
   </h1>
 
+  {% if show_v2_license %}
+    <div class="alert">
+      <b>HAWC license</b>
+      <p>The HAWC license has changed. Please <a href="#license_modal" data-toggle="modal">review the license</a> and accept:</p>
+      <form action="{% url 'user:accept-new-license' %}" method="post">
+        {% csrf_token %}
+        <div class="controls">
+          <label for="license_v2_accepted" class="checkbox">
+            <input type="checkbox" name="license_v2_accepted" class="checkboxinput"
+                id="license_v2_accepted">I accept this license
+          </label>
+        </div>
+        <div class="controls">
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+    {% include "hawc_license.html" %}
+  {% endif %}
+
   <p>
     Welcome to the HAWC portal. Here you're able to create new assessments,
     or work on existing assessments. Each assessment is a single human-health

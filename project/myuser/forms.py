@@ -231,6 +231,12 @@ class UserProfileForm(ModelForm):
         return up
 
 
+class AcceptNewLicenseForm(ModelForm):
+    class Meta:
+        model = models.HAWCUser
+        fields = ('license_v2_accepted', )
+
+
 def hawc_authenticate(email=None, password=None):
     """
     If the given credentials are valid, return a User object.
