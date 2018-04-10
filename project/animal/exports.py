@@ -195,6 +195,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             'FEL',
             'high_dose',
 
+            'trend test value',
+            'trend test result',
+
             'key',
             'dose index',
             'dose',
@@ -280,6 +283,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             else:
                 row.extend([None] * 5)
 
+            row.extend([
+                ser['trend_value'],
+                ser['trend_result'],
+            ])
+
             # endpoint-group information
             for i, eg in enumerate(ser['groups']):
                 row_copy = copy(row)
@@ -357,6 +365,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             'high_dose',
             'BMD',
             'BMDL',
+            'trend test value',
+            'trend test result',
         ]
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
@@ -469,8 +479,12 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             else:
                 row.extend([None] * 5)
 
-            # bmd/bmdl information
             row.extend(self._get_bmd_values(ser['bmd'], preferred_units))
+
+            row.extend([
+                ser['trend_value'],
+                ser['trend_result'],
+            ])
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
             sigs = self._get_significance_and_direction(ser['groups'])
