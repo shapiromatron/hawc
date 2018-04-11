@@ -23,6 +23,8 @@ let formulas = {
     LogLogistic:
         '{background} + (1-{background})/( 1 + Math.exp(-1.*{intercept}-1.*{slope}*Math.log(x) ) )',
     Logistic: '1/( 1 + Math.exp(-1*{intercept}-{slope}*x ))',
+    'Dichotomous-Hill':
+        '{v} * {g} + ({v} - {v} * {g}) / (1 + Math.exp(-1 * {intercept} - {slope} * Math.log(x)))',
 };
 
 class BMDLine {
