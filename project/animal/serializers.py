@@ -127,9 +127,15 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.Endpoint.setMaximumPercentControlChange(ret)
 
         ret['bmd'] = None
-        bmd = instance.get_selected_bmd_model()
-        if bmd:
-            ret['bmd'] = ModelSerializer().to_representation(bmd)
+        ret['bmd_notes'] = ''
+        ret['bmd_url'] = ''
+        selected_model = instance.get_selected_bmd_model()
+        if selected_model:
+            ret['bmd_notes'] = selected_model.notes
+            if selected_model.model_id is not None:
+                ret['bmd'] = ModelSerializer().to_representation(selected_model.model)
+            else:
+                ret['bmd_url'] = instance.bmd_sessions.latest().get_absolute_url()
 
         return ret
 

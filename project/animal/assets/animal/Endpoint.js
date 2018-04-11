@@ -340,10 +340,12 @@ class Endpoint extends Observee {
                 return span;
             },
             bmd_response = function(type, showURL) {
-                if (self.data.bmd === null) return;
-                var span = $('<span>');
-                new BMDResult(self, span, type, true, showURL);
-                return span;
+                if (self.data.bmd === null && !self.data.bmd_url) {
+                    return;
+                }
+                var el = $('<div>');
+                new BMDResult(self, el, type, true, showURL);
+                return el;
             },
             getTaglist = function(tags, assessment_id) {
                 if (tags.length === 0) return false;
@@ -387,8 +389,7 @@ class Endpoint extends Observee {
             .add_tbody_tr('NOEL', critical_dose('NOEL'))
             .add_tbody_tr('LOEL', critical_dose('LOEL'))
             .add_tbody_tr('FEL', critical_dose('FEL'))
-            .add_tbody_tr('BMD', bmd_response('BMD', true))
-            .add_tbody_tr('BMDL', bmd_response('BMDL', false));
+            .add_tbody_tr('Benchmark dose modeling', bmd_response(null, true));
 
         let tmp = this.data.monotonicity;
         if (tmp && tmp != 'unclear') {

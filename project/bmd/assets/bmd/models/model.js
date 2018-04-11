@@ -23,6 +23,8 @@ let formulas = {
     LogLogistic:
         '{background} + (1-{background})/( 1 + Math.exp(-1.*{intercept}-1.*{slope}*Math.log(x) ) )',
     Logistic: '1/( 1 + Math.exp(-1*{intercept}-{slope}*x ))',
+    'Dichotomous-Hill':
+        '{v} * {g} + ({v} - {v} * {g}) / (1 + Math.exp(-1 * {intercept} - {slope} * Math.log(x)))',
 };
 
 class BMDLine {
@@ -65,19 +67,21 @@ class BMDLine {
     }
 
     _getPlotData() {
+        // x must be defined since we're calling "eval" in the javascript models
         let model = this._getModel(),
             bmd = this.model.output.BMD,
             bmdl = this.model.output.BMDL,
-            data,
             bmd_line,
             bmdl_line,
+            bmd_y,
             x;
 
         if (bmd && bmd > 0) {
             x = bmd;
+            bmd_y = eval(model);
             bmd_line = {
                 x: bmd,
-                y: eval(model),
+                y: bmd_y,
             };
         }
 
@@ -85,7 +89,7 @@ class BMDLine {
             x = bmdl;
             bmdl_line = {
                 x: bmdl,
-                y: eval(model),
+                y: bmd_y,
             };
         }
 

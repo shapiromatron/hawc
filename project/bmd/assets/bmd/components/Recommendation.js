@@ -4,18 +4,26 @@ import PropTypes from 'prop-types';
 
 import { asLabel } from 'bmd/models/bmr';
 
+import RecommendationNotes from './RecommendationNotes';
 import RecommendationTable from './RecommendationTable';
 
 class Recommendation extends React.Component {
     updateState(props) {
-        let model = props.selectedModelId
-                ? _.find(props.models, { id: props.selectedModelId })
-                : props.models[0],
+        let d;
+        if (props.selectedModelId === null) {
+            d = {
+                bmr: props.models[0].bmr_id,
+                model: null,
+                notes: props.selectedModelNotes,
+            };
+        } else {
+            let model = _.find(props.models, { id: props.selectedModelId });
             d = {
                 bmr: model.bmr_id,
                 model: model.id,
                 notes: props.selectedModelNotes,
             };
+        }
         this.setState(d);
     }
 
@@ -36,6 +44,10 @@ class Recommendation extends React.Component {
             val = parseInt(val);
         }
 
+        if (val === -1) {
+            val = null;
+        }
+
         d[name] = val;
         this.setState(d);
     }
@@ -45,7 +57,13 @@ class Recommendation extends React.Component {
     }
 
     renderForm() {
-        let models = _.filter(this.props.models, { bmr_id: this.state.bmr });
+        let models = _.filter(this.props.models, { bmr_id: this.state.bmr }),
+            selectedModel = this.state.model !== null ? this.state.model : -1;
+
+        models.unshift({
+            id: -1,
+            name: '<no model selected>',
+        });
 
         return (
             <div className="row-fluid" key={0}>
@@ -79,7 +97,7 @@ class Recommendation extends React.Component {
                         <div className="controls">
                             <select
                                 className="span12"
-                                value={this.state.model}
+                                value={selectedModel}
                                 name="model"
                                 onChange={this.handleFieldChange.bind(this)}
                             >
@@ -106,6 +124,10 @@ class Recommendation extends React.Component {
                                 rows="5"
                                 cols="40"
                             />
+                            <p className="help-block">
+                                Enter notes on why a model was selected as best fitting; if no model
+                                is selected, add notes on why no model was selected.
+                            </p>
                         </div>
                     </div>
                 </form>
@@ -125,6 +147,13 @@ class Recommendation extends React.Component {
                 </button>
             </div>
         );
+    }
+
+    renderUserNotes() {
+        if (this.props.editMode) {
+            return null;
+        }
+        return <RecommendationNotes notes={this.props.selectedModelNotes} />;
     }
 
     renderEditMode() {
@@ -151,6 +180,7 @@ class Recommendation extends React.Component {
                     selectedModelId={this.props.selectedModelId}
                 />
                 {this.renderEditMode()}
+                {this.renderUserNotes()}
             </div>
         );
     }

@@ -223,18 +223,23 @@ class Session(models.Model):
             if dose['dose_units']['id'] == self.dose_units_id
         ]
         grps = ds['groups']
+        # only get doses where data are reported
+        doses = [
+            d for d, grp in zip(doses, grps)
+            if grp['isReported']
+        ]
         if self.endpoint.data_type == 'C':
             return bmds.ContinuousDataset(
                 doses=doses,
-                ns=[d['n'] for d in grps],
-                means=[d['response'] for d in grps],
-                stdevs=[d['stdev'] for d in grps],
+                ns=[d['n'] for d in grps if d['isReported']],
+                means=[d['response'] for d in grps if d['isReported']],
+                stdevs=[d['stdev'] for d in grps if d['isReported']],
             )
         else:
             return bmds.DichotomousDataset(
                 doses=doses,
-                ns=[d['n'] for d in grps],
-                incidences=[d['incidence'] for d in grps],
+                ns=[d['n'] for d in grps if d['isReported']],
+                incidences=[d['incidence'] for d in grps if d['isReported']],
             )
 
     def get_bmr_overrides(self, session, index):
@@ -330,11 +335,13 @@ class Model(models.Model):
         return self.session.get_assessment()
 
     def save_model(self, model):
-        self.execution_error = (model.outfile == '')
         self.dfile = model.as_dfile()
-        self.outfile = model.outfile
-        self.output = model.output
-        self.date_executed = now()
+        self.execution_error = not model.has_successfully_executed
+
+        if model.has_successfully_executed:
+            self.outfile = model.outfile
+            self.output = model.output
+            self.date_executed = now()
 
         if hasattr(model, 'plot_base64'):
             fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + '.emf')

@@ -1,29 +1,75 @@
 import EndpointCriticalDose from './EndpointCriticalDose';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const WrongUnitsRender = function(props) {
+        return (
+            <p>
+                N/A
+                <br />
+                <span className="help-block">(BMD conducted using different units)</span>
+            </p>
+        );
+    },
+    ModelDetails = function(props) {
+        return [
+            <p key={0}>
+                <b>Selected model:</b> {props.bmd.output.model_name}
+                &nbsp;(<a href={props.bmd.url}>View details</a>)
+            </p>,
+            <ul key={1}>
+                <li>
+                    <b>BMDL:</b> {props.bmd.output.BMDL.toHawcString()} {props.units}
+                </li>
+                <li>
+                    <b>BMD:</b> {props.bmd.output.BMD.toHawcString()} {props.units}
+                </li>
+                <li>
+                    <b>BMDU:</b> {props.bmd.output.BMDU.toHawcString()} {props.units}
+                </li>
+            </ul>,
+        ];
+    },
+    Renderer = function(props) {
+        return (
+            <div>
+                {ModelDetails(props)}
+                <p>{props.bmd_notes}</p>
+            </div>
+        );
+    },
+    NoneSelected = function(props) {
+        return (
+            <div>
+                <p>
+                    <i>BMD modeling conducted; no model selected.</i>
+                    (<a href={props.url}>View details</a>)
+                </p>
+                <p>{props.bmd_notes}</p>
+            </div>
+        );
+    };
 
 class BMDResult extends EndpointCriticalDose {
-    constructor(endpoint, span, type, show_units, show_url) {
-        super(...arguments);
-        this.show_url = show_url;
-    }
+    update() {
+        let bmd = this.endpoint.data.bmd,
+            bmd_notes = this.endpoint.data.bmd_notes,
+            url = this.endpoint.data.bmd_url;
 
-    display() {
-        var txt,
-            bmd = this.endpoint.data.bmd,
-            currentUnits = this.endpoint.dose_units_id,
-            bmdUnits = this.endpoint.data.bmd.dose_units;
-
-        if (currentUnits == bmdUnits) {
-            txt = bmd.output[this.type].toHawcString();
-            if (this.show_units) {
-                txt = txt + ' {0}'.printf(this.endpoint.dose_units);
-            }
-            if (this.show_url) {
-                txt = txt + ' <a href="{0}">(view details)</a>'.printf(bmd.url);
-            }
-        } else {
-            txt = '-';
+        if (bmd === null) {
+            return ReactDOM.render(<NoneSelected bmd_notes={bmd_notes} url={url} />, this.span[0]);
         }
-        return this.span.html(txt);
+
+        let currentUnits = this.endpoint.dose_units_id,
+            bmdUnits = this.endpoint.data.bmd.dose_units,
+            units_string = this.endpoint.dose_units;
+
+        let RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
+
+        ReactDOM.render(
+            <RenderComponent bmd={bmd} bmd_notes={bmd_notes} units={units_string} />,
+            this.span[0]
+        );
     }
 }
 
