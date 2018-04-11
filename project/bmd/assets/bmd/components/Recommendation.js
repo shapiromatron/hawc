@@ -13,7 +13,7 @@ class Recommendation extends React.Component {
         if (props.selectedModelId === null) {
             d = {
                 bmr: props.models[0].bmr_id,
-                model: -1,
+                model: null,
                 notes: props.selectedModelNotes,
             };
         } else {

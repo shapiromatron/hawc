@@ -340,7 +340,9 @@ class Endpoint extends Observee {
                 return span;
             },
             bmd_response = function(type, showURL) {
-                if (self.data.bmd === null) return;
+                if (self.data.bmd === null && !self.data.bmd_url) {
+                    return;
+                }
                 var el = $('<div>');
                 new BMDResult(self, el, type, true, showURL);
                 return el;

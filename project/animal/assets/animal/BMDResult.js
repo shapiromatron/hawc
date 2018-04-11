@@ -12,15 +12,6 @@ const WrongUnitsRender = function(props) {
         );
     },
     ModelDetails = function(props) {
-        if (!props.bmd) {
-            return (
-                <p>
-                    <b>BMD modeling conducted; no model selected.</b> (<a href={props.bmd.url}>
-                        View details
-                    </a>)
-                </p>
-            );
-        }
         return [
             <p key={0}>
                 <b>Selected model:</b> {props.bmd.output.model_name}
@@ -46,13 +37,30 @@ const WrongUnitsRender = function(props) {
                 <p>{props.bmd_notes}</p>
             </div>
         );
+    },
+    NoneSelected = function(props) {
+        return (
+            <div>
+                <p>
+                    <i>BMD modeling conducted; no model selected.</i>
+                    (<a href={props.url}>View details</a>)
+                </p>
+                <p>{props.bmd_notes}</p>
+            </div>
+        );
     };
 
 class BMDResult extends EndpointCriticalDose {
     update() {
         let bmd = this.endpoint.data.bmd,
             bmd_notes = this.endpoint.data.bmd_notes,
-            currentUnits = this.endpoint.dose_units_id,
+            url = this.endpoint.data.bmd_url;
+
+        if (bmd === null) {
+            return ReactDOM.render(<NoneSelected bmd_notes={bmd_notes} url={url} />, this.span[0]);
+        }
+
+        let currentUnits = this.endpoint.dose_units_id,
             bmdUnits = this.endpoint.data.bmd.dose_units,
             units_string = this.endpoint.dose_units;
 
