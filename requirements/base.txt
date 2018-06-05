@@ -38,4 +38,4 @@ python-pptx==0.6.6
 bmds==0.10.0
 
 # literature
-litter-getter==0.2.3
+litter-getter==0.2.4
