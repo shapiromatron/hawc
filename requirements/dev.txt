@@ -6,6 +6,8 @@ django-extensions==1.9.0
 
 # tests
 selenium==3.5.0
+pytest==3.6.1
+pytest-django==3.2.1
 
 # docs
 watchdog==0.8.3
