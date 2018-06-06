@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block main_content %}
   <div class="row">
     <div class="offset2 span8">
-      <img style="max-height:300px" src="{{STATIC_URL}}img/HAWC-400.png">
+      <img style="max-height:300px" src="{% static 'img/HAWC-400.png' %}">
       <p class="lead">A content management system for human health assessments.</p>
     </div>
   </div>

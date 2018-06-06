@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% load rest_framework %}
 
@@ -7,9 +8,9 @@
 {% endblock %}
 
 {% block extrastyle %}
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}rest_framework/css/bootstrap-tweaks.css"/>
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}rest_framework/css/prettify.css"/>
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}rest_framework/css/default.css"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/bootstrap-tweaks.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/prettify.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/default.css' %}"/>
 {% endblock %}
 
 {% block main_content %}
@@ -140,6 +141,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script src="{{STATIC_URL}}rest_framework/js/prettify-min.js"></script>
-  <script src="{{STATIC_URL}}rest_framework/js/default.js"></script>
+  <script src="{% static 'rest_framework/js/prettify-min.js' %}"></script>
+  <script src="{% static 'rest_framework/js/default.js' %}"></script>
 {% endblock %}

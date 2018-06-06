@@ -1,3 +1,4 @@
+{% load static %}
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
@@ -8,25 +9,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-256.png" rel="shortcut icon" sizes="256x256" />
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-128.png" rel="shortcut icon" sizes="128x128" />
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-64.png" rel="shortcut icon" sizes="64x64" />
-    <link id="favicon" href="{{STATIC_URL}}img/favicon-32.png" rel="shortcut icon" sizes="32x32" />
+    <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
+    <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
+    <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
+    <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
     {% if debug %}
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/font-awesome/css/font-awesome.css" />
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/twitter-bootstrap/2.2.2/css/bootstrap.css" />
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css" />
-      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}debug/jqueryui/1.10.3/css/jquery-ui.css">
+      <link rel="stylesheet" type="text/css" href="{% static 'debug/font-awesome/css/font-awesome.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/2.2.2/css/bootstrap.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'debug/jqueryui/1.10.3/css/jquery-ui.css' %}">
     {% else %}
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/hawc.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/d3.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/flex.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
     {% block extrastyle %}{% endblock %}
     {% if SERVER_ROLE != 'production' %}
         {% include 'includes/environment_banner.html' %}
@@ -44,7 +45,7 @@
 
           {% block branding %}
           <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
-            <img class="pull-left" src="{{STATIC_URL}}img/HAWC-40.png">
+            <img class="pull-left" src="{% static 'img/HAWC-40.png' %}">
           </a>
           {% endblock %}
 
@@ -105,11 +106,11 @@
     <!-- END Container -->
 
     <!-- JS at bottom for quicker pageloads -->
-    <script type="text/javascript" src="{{STATIC_URL}}admin/js/urlify.js" ></script>
+    <script type="text/javascript" src="{% static 'admin/js/urlify.js' %}" ></script>
     {% if debug %}
-      <script type="text/javascript" src="{{STATIC_URL}}debug/jquery/1.9.1/jquery.js" ></script>
-      <script type="text/javascript" src="{{STATIC_URL}}debug/twitter-bootstrap/2.2.2/bootstrap.js" ></script>
-      <script type="text/javascript" src="{{STATIC_URL}}debug/jqueryui/1.10.3/jquery-ui.js"></script>
+      <script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}" ></script>
+      <script type="text/javascript" src="{% static 'debug/twitter-bootstrap/2.2.2/bootstrap.js' %}" ></script>
+      <script type="text/javascript" src="{% static 'debug/jqueryui/1.10.3/jquery-ui.js' %}"></script>
     {% else %}
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js" ></script>

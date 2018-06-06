@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load percentage %}
 {% load humanize %}
 
@@ -181,8 +182,8 @@
             Toxicology Program (NIH/NIEHS/NTP)
             </td>
             <td>2015 National Toxicology Program (NTP) Board of Scientific Counselors</td>
-            <td><a href="{{STATIC_URL}}docs/posters/2015_HAWC_BSC.pdf">Slides
-              <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
+            <td><a href="{% static 'docs/posters/2015_HAWC_BSC.pdf' %}">Slides
+              <img class="ff" src="{% static '/img/pdf_icon.png' %}"
                  alt="PDF file-format"></a></td>
           </tr>
 
@@ -192,8 +193,8 @@
             Human Health Assessments of Chemicals
             </td>
             <td>2014 Society of Toxicology (SOT)</td>
-            <td><a href="{{STATIC_URL}}docs/posters/2014_HAWC_SOT_final.pdf">Poster
-              <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
+            <td><a href="{% static 'docs/posters/2014_HAWC_SOT_final.pdf' %}">Poster
+              <img class="ff" src="{% static '/img/pdf_icon.png' %}"
                  alt="PDF file-format"></a></td>
           </tr>
 
@@ -205,12 +206,12 @@
             </td>
             <td>2014 Webinar</td>
             <td>
-              <a href="{{STATIC_URL}}docs/posters/2014_HAWC_Webinar.pdf">Slides
-                <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
+              <a href="{% static 'docs/posters/2014_HAWC_Webinar.pdf' %}">Slides
+                <img class="ff" src="{% static '/img/pdf_icon.png' %}"
                    alt="PDF file-format"></a><br>
               <a href="https://www.youtube.com/watch?v=hhQh-mNTmqY"
                  title="YouTube hyperlink">Video
-                <img class="ff ytb" src="{{STATIC_URL}}/img/youtube_icon.png"
+                <img class="ff ytb" src="{% static '/img/youtube_icon.png' %}"
                  alt="YouTube hyperlink"></a>
             </td>
           </tr>
@@ -221,8 +222,8 @@
             Human Health Assessments of Chemicals
             </td>
             <td>2013 OpenTox USA</td>
-            <td><a href="{{STATIC_URL}}docs/posters/2013_HAWC_OpenTox_final.pdf">Poster
-              <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
+            <td><a href="{% static 'docs/posters/2013_HAWC_OpenTox_final.pdf' %}">Poster
+              <img class="ff" src="{% static '/img/pdf_icon.png' %}"
                    alt="PDF file-format"></a></td>
           </tr>
 
@@ -233,8 +234,8 @@
             Assessments of Chemicals
             </td>
             <td>2013 Society of Toxicology (SOT)</td>
-            <td><a href="{{STATIC_URL}}docs/posters/2013_HAWC_SOT_final.pdf">Poster
-              <img class="ff" src="{{STATIC_URL}}/img/pdf_icon.png"
+            <td><a href="{% static 'docs/posters/2013_HAWC_SOT_final.pdf' %}">Poster
+              <img class="ff" src="{% static '/img/pdf_icon.png' %}"
                    alt="PDF file-format"></a></td>
           </tr>
         </tbody>
@@ -285,17 +286,17 @@
     <div class="span12">
       <ul class="sponsors">
         <li><a href="http://ntp.niehs.nih.gov">
-          <img src="{{STATIC_URL}}img/ntplogo.jpg"></a></li>
+          <img src="{% static 'img/ntplogo.jpg' %}"></a></li>
 
         <li><a href="http://vetmed.tamu.edu">
-            <img src="{{STATIC_URL}}img/am-150.png"
+            <img src="{% static 'img/am-150.png' %}"
                  style="margin-top: 15px; max-width: 240px;"></a></li>
 
         <li><a href="http://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/recipients.welcome/displayOption/grants">
-          <img src="{{STATIC_URL}}img/epa-star-75.png"></a></li>
+          <img src="{% static 'img/epa-star-75.png' %}"></a></li>
 
         <li><a href="http://monographs.iarc.fr/">
-          <img src="{{STATIC_URL}}img/logoiarc.gif"
+          <img src="{% static 'img/logoiarc.gif' %}"
                style="margin-top: 5px; max-width: 250px;"></a></li>
       </ul>
     </div>

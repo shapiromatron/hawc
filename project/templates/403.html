@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     403 | {{block.super}}
@@ -10,7 +11,7 @@
         {% if user.is_authenticated %}
             <img
                 class='pull-right'
-                src="{{STATIC_URL}}/img/hal.png"
+                src="{% static '/img/hal.png' %}"
                 style="max-height:250px; margin-left: 20px;">
             <h1>403. Forbidden.</h1>
             <p>I'm sorry Dave, I'm afraid I can't do that. </p>

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %} EndNote RIS instructions {% endblock title %}
 
@@ -8,7 +9,7 @@
 
 <h1 id="preparing-endnote-exports-for-upload">Preparing EndNote exports for upload</h1>
 
-<p>Download these <a href="{{STATIC_URL}}docs/ris/Endnote_to_HAWC_11-25-15.pdf">instructions (pdf).</a></p>
+<p>Download these <a href="{% static 'docs/ris/Endnote_to_HAWC_11-25-15.pdf' %}">instructions (pdf).</a></p>
 
 <p>While HAWC can import any RIS export, additional information can be added into HAWC by structuring the RIS export in a custom format. It is recommended to do so; this will allow for hyperlinks in HAWC to be added to reference databases for access to the original reference, or the database it was found from. </p>
 
@@ -37,17 +38,17 @@
 <p><strong>EndNote filters:</strong></p>
 
 <ul>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_EndNote_Import.enf">EndNote</a></li>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_PubMed.enf">PubMed</a></li>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_Embase_TEXT.enf">Embase (text)</a></li>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_Scopus_RIS.enf">Scopus (RIS)</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_EndNote_Import.enf' %}">EndNote</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_PubMed.enf' %}">PubMed</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_Embase_TEXT.enf' %}">Embase (text)</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_Scopus_RIS.enf' %}">Scopus (RIS)</a></li>
 </ul>
 
 <p><strong>EndNote styles</strong>: </p>
 
 <ul>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_EndNote Export.ens">Export (EndNote)</a></li>
-    <li><a href="{{STATIC_URL}}docs/ris/HAWC_Export RIS.ens">Export (RIS)</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_EndNote Export.ens' %}">Export (EndNote)</a></li>
+    <li><a href="{% static 'docs/ris/HAWC_Export RIS.ens' %}">Export (RIS)</a></li>
 </ul>
 
 <p>Instructions on adding filters and styles to your EndNote library are described <a href="#endnote-tutorial-adding-filters-and-styles">below</a>.</p>

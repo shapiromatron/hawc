@@ -1,5 +1,5 @@
 {% extends 'portal.html' %}
-
+{% load static %}
 
 {% block title %}
   {{assessment}} | Visualizations  | {{object}} | HAWC
@@ -44,7 +44,7 @@
     <div id="dp_display"></div>
 
     <div id="loading_div">
-      <p>Fetching the latest data from {{assessment}}... <img src="{{STATIC_URL}}img/loading.gif"></p>
+      <p>Fetching the latest data from {{assessment}}... <img src="{% static 'img/loading.gif' %}"></p>
     </div>
 
     <div id="caption">{{object.caption|safe}}</div>
