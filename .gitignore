@@ -5,6 +5,7 @@
 *.log
 *.py[cod]
 *.pid
+.pytest_cache
 .env
 .gitcommit
 bin/*local.sh
