@@ -215,7 +215,7 @@ class Session(models.Model):
             model.save_model(resp)
         self.save()
 
-    def get_endpoint_dataset(self):
+    def get_endpoint_dataset(self, doses_to_drop: int=0):
         ds = self.endpoint.get_json(json_encode=False)
         doses = [
             dose['dose']
@@ -223,24 +223,31 @@ class Session(models.Model):
             if dose['dose_units']['id'] == self.dose_units_id
         ]
         grps = ds['groups']
+
         # only get doses where data are reported
-        doses = [
-            d for d, grp in zip(doses, grps)
-            if grp['isReported']
-        ]
+        doses = [d for d, grp in zip(doses, grps) if grp['isReported']]
+
         if self.endpoint.data_type == 'C':
-            return bmds.ContinuousDataset(
+            Cls = bmds.ContinuousDataset
+            kwargs = dict(
                 doses=doses,
                 ns=[d['n'] for d in grps if d['isReported']],
                 means=[d['response'] for d in grps if d['isReported']],
                 stdevs=[d['stdev'] for d in grps if d['isReported']],
             )
         else:
-            return bmds.DichotomousDataset(
+            Cls = bmds.DichotomousDataset
+            kwargs = dict(
                 doses=doses,
                 ns=[d['n'] for d in grps if d['isReported']],
                 incidences=[d['incidence'] for d in grps if d['isReported']],
             )
+
+        # drop doses from the top
+        for i in range(doses_to_drop):
+            [lst.pop() for lst in kwargs.values()]
+
+        return Cls(**kwargs)
 
     def get_bmr_overrides(self, session, index):
         # convert bmr overrides from GUI to modeling version
@@ -257,9 +264,22 @@ class Session(models.Model):
         session = getattr(self, '_session', None)
 
         if session is None:
+
+            # drop doses is complicated. In the UI, doses are dropped at the
+            # model level, but in the bmds library, they're dropped at the
+            # session level. Therefore, we drop doses only if ALL models have
+            # the same drop_dose value, by default zero doses are dropped.
+            doses_to_drop = {
+                model.overrides.get('dose_drop', 0) for model in
+                self.models.all()
+            }
+            doses_to_drop = doses_to_drop.pop() \
+                if len(doses_to_drop) == 1 \
+                else 0
+
             version = self.endpoint.assessment.bmd_settings.version
             Session = bmds.BMDS.versions[version]
-            dataset = self.get_endpoint_dataset()
+            dataset = self.get_endpoint_dataset(doses_to_drop=doses_to_drop)
             session = Session(
                 self.endpoint.data_type,
                 dataset=dataset
