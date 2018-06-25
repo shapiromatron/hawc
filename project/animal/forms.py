@@ -658,6 +658,12 @@ class EndpointFilterForm(forms.Form):
         help_text="ex: alanine aminotransferase (ALT)",
         required=False)
 
+    effect_subtype = forms.CharField(
+        label='Effect Subtype',
+        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointEffectSubtypeLookup),
+        help_text="ex: ",
+        required=False)
+
     tags = forms.CharField(
         label='Tags',
         widget=selectable.AutoCompleteWidget(EffectTagLookup),
@@ -730,6 +736,7 @@ class EndpointFilterForm(forms.Form):
         system = self.cleaned_data.get('system')
         organ = self.cleaned_data.get('organ')
         effect = self.cleaned_data.get('effect')
+        effect_subtype = self.cleaned_data.get('effect_subtype')
         tags = self.cleaned_data.get('tags')
         dose_units = self.cleaned_data.get('dose_units')
 
