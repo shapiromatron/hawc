@@ -765,6 +765,8 @@ class EndpointFilterForm(forms.Form):
             query &= Q(organ__icontains=organ)
         if effect:
             query &= Q(effect__icontains=effect)
+        if effect_subtype:
+            query &= Q(effect_subtype__icontains=effect_subtype)
         if tags:
             query &= Q(effects__name__icontains=tags)
         if dose_units:
