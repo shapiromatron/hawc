@@ -289,7 +289,7 @@ class CrossviewPlot extends D3Visualization {
                     res = _.map(
                         settings.endpointFilters,
                         function(filter) {
-                            val = CrossviewPlot._cw_filter_process[filter.field](this);
+                            val = CrossviewPlot._cw_filter_process[filter.field](e);
                             return filter.fn(val);
                         },
                         e
