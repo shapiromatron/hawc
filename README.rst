@@ -1,7 +1,8 @@
 Health Assessment Workspace Collaborative
 =========================================
 
-[![DOI](https://zenodo.org/badge/25273569.svg)](https://zenodo.org/badge/latestdoi/25273569)
+.. image:: https://zenodo.org/badge/25273569.svg
+   :target: https://zenodo.org/badge/latestdoi/25273569
 
 The Health Assessment Workspace Collaborative (HAWC) is a website designed to
 capture key data and analyses performed in conducting human-health assessment
