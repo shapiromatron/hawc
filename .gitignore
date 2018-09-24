@@ -43,3 +43,6 @@ compose/django/fonts/*
 
 notebooks/*
 !notebooks/example.ipynb
+
+# editor settings
+.vscode/
