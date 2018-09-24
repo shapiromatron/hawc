@@ -145,27 +145,36 @@ class EndpointSerializer(serializers.ModelSerializer):
 
 
 class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Experiment
-        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        cleanup_fields = ('study_short_citation',) + model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
+    def get_study_short_citation(self, obj):
+        return obj.study.short_citation
 
 class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
 
     class Meta:
         model = models.AnimalGroup
-        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        cleanup_fields = ('study_short_citation',) + model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
+    def get_study_short_citation(self, obj):
+        return obj.experiment.study.short_citation
 
 class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-
+    study_short_citation = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Endpoint
-        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        cleanup_fields = ('study_short_citation',) + model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ('id', )
 
+    def get_study_short_citation(self, obj):
+        return obj.animal_group.experiment.study.short_citation
 
 SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
