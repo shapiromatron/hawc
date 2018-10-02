@@ -25,6 +25,7 @@ if (len(_admin_names) > 0 and len(_admin_emails) > 0):
     ADMINS = list(zip(_admin_names.split('|'), _admin_emails.split('|')))
 MANAGERS = ADMINS
 
+HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
 
 # Template processors
 TEMPLATES = [
