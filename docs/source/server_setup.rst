@@ -54,6 +54,9 @@ please specify in the docker-compose `.env` file (example secrets below):
     PHANTOMJS_PATH=/usr/local/bin/phantomjs
     PUBMED_EMAIL=myEmail@email.com
 
+    # Enum; one of {"PRIME", "EPA"}
+    HAWC_FLAVOR=PRIME
+
     # email (use these settings if using SMTP)
     DJANGO_EMAIL_BACKEND=SMTP
     EMAIL_HOST=smtpHost

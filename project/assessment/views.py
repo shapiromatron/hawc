@@ -152,6 +152,7 @@ class About(TemplateView):
         context = super().get_context_data(**kwargs)
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
+        context['HAWC_FLAVOR'] = settings.HAWC_FLAVOR
         context['counts'] = self.get_object_counts()
         return context
 

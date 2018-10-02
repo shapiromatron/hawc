@@ -21,3 +21,6 @@ PHANTOMJS_PATH = r'/path/to/phantomjs'
 
 # API keys
 CHEMSPIDER_TOKEN = r'get-chemspider-token-online'
+
+# SET HAWC FLAVOR (see docs)
+HAWC_FLAVOR = "PRIME"
