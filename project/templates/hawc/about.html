@@ -84,8 +84,12 @@
 
           <div class="tab-content">
               <div id="started" class="videoTab tab-pane active">
+                {% if HAWC_FLAVOR == "EPA" %}
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/LWtZWttBhkA" frameborder="0" allowfullscreen></iframe>
+                {% else %}
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/DSXFTtylrQU" frameborder="0" allowfullscreen></iframe>
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/-XsmG38lvps" frameborder="0" allowfullscreen></iframe>
+                {% endif %}
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/-XsmG38lvps" frameborder="0" allowfullscreen></iframe>
               </div>
               <div id="importing" class="videoTab tab-pane">
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/VIgstH82cL0" frameborder="0" allowfullscreen></iframe>
