@@ -373,7 +373,7 @@ class AdminUserForm(PasswordForm):
         model = models.HAWCUser
         fields = (
             "email", "first_name", "last_name",
-            "is_staff", "password1", "password2",
+            "is_active", "is_staff", "password1", "password2",
             "groups",
         )
 
