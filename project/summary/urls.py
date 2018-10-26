@@ -61,10 +61,6 @@ urlpatterns = [
         name='rob_endpoint_filter'),
 
     # DATA-PIVOT
-    url(r'^data-pivot/excel-unicode-saving/$',
-        views.ExcelUnicode.as_view(),
-        name="dp_excel-unicode"),
-
     url(r'^data-pivot/assessment/(?P<pk>\d+)/new/$',
         views.DataPivotNewPrompt.as_view(),
         name='dp_new-prompt'),

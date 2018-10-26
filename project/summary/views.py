@@ -208,10 +208,6 @@ class RobFilter(BaseDetail):
 
 
 # DATA-PIVOT
-class ExcelUnicode(TemplateView):
-    template_name = "summary/datapivot_save_as_unicode_modal.html"
-
-
 class DataPivotNewPrompt(TemplateView):
     """
     Select if you wish to upload a file or use a query.

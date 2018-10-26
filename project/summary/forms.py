@@ -554,13 +554,6 @@ class DataPivotUploadForm(DataPivotForm):
         model = models.DataPivotUpload
         exclude = ('assessment', )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['file'].help_text += """<br>
-            For more details on saving in this format from Excel,
-            <a href="{0}" target="_blank">click here</a>.
-            """.format(reverse('summary:dp_excel-unicode'))
-
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
 

@@ -27,6 +27,7 @@ venv
 # javascript
 node_modules
 webpack-stats.json
+package-lock.json
 .happypack/
 
 project/static/bundles/*
