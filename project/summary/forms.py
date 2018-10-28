@@ -4,7 +4,9 @@ import json
 from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
+import pandas as pd
 from selectable import forms as selectable
+from xlrd import XLRDError
 
 from assessment.models import EffectTag
 from study.models import Study
@@ -553,6 +555,18 @@ class DataPivotUploadForm(DataPivotForm):
     class Meta:
         model = models.DataPivotUpload
         exclude = ('assessment', )
+
+    def clean_excel_file(self):
+        file_ = self.cleaned_data['excel_file']
+        try:
+            df = pd.read_excel(file_)
+        except XLRDError:
+            raise forms.ValidationError("Unable to read Excel file. Please upload an Excel file in XLSX format.")
+        if df.shape[0] < 2:
+            raise forms.ValidationError("Must contain at least 2 rows of data.")
+        if df.shape[1] < 2:
+            raise forms.ValidationError("Must contain at least 2 columns.")
+        return file_
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
