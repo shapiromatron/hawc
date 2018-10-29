@@ -6,7 +6,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 import pandas as pd
 from selectable import forms as selectable
-from xlrd import XLRDError
+from xlrd import XLRDError, open_workbook
 
 from assessment.models import EffectTag
 from study.models import Study
@@ -556,17 +556,35 @@ class DataPivotUploadForm(DataPivotForm):
         model = models.DataPivotUpload
         exclude = ('assessment', )
 
-    def clean_excel_file(self):
-        file_ = self.cleaned_data['excel_file']
-        try:
-            df = pd.read_excel(file_)
-        except XLRDError:
-            raise forms.ValidationError("Unable to read Excel file. Please upload an Excel file in XLSX format.")
-        if df.shape[0] < 2:
-            raise forms.ValidationError("Must contain at least 2 rows of data.")
-        if df.shape[1] < 2:
-            raise forms.ValidationError("Must contain at least 2 columns.")
-        return file_
+    def clean(self):
+        cleaned_data = super().clean()
+        excel_file = cleaned_data.get('excel_file')
+        worksheet_name = cleaned_data.get('worksheet_name', '')
+        if worksheet_name == '':
+            worksheet_name = 0
+
+        if excel_file:
+            # see if it loads
+            try:
+                worksheet_names = open_workbook(file_contents=excel_file.read()).sheet_names()
+            except XLRDError:
+                self.add_error("excel_file", "Unable to read Excel file. Please upload an Excel file in XLSX format.")
+                return
+
+            # check worksheet name
+            if worksheet_name:
+                if worksheet_name not in worksheet_names:
+                    self.add_error('worksheet_name', f"Worksheet name {worksheet_name} not found.")
+                    return
+
+            df = pd.read_excel(excel_file, sheet_name=worksheet_name)
+
+            # check data
+            if df.shape[0] < 2:
+                self.add_error("excel_file", "Must contain at least 2 rows of data.")
+
+            if df.shape[1] < 2:
+                self.add_error("excel_file", "Must contain at least 2 columns.")
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):

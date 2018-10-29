@@ -337,8 +337,11 @@ class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
                 )
                 fn = os.path.basename(self.object.excel_file.name)
             else:
+                worksheet_name = self.object.worksheet_name
+                if worksheet_name == '':
+                    worksheet_name = 0
                 response = HttpResponse(
-                    pd.read_excel(self.object.excel_file.file).to_csv(index=False, sep='\t'),
+                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(index=False, sep='\t'),
                     content_type='text/tab-separated-values'
                 )
                 fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + '.tsv'

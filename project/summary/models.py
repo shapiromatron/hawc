@@ -435,8 +435,12 @@ class DataPivotUpload(DataPivot):
     excel_file = models.FileField(
         verbose_name="Excel file",
         upload_to="data_pivot_excel",
-        help_text="Upload an Excel file (XLSX). If the file contains multiple worksheets (tabs), "
-                  "the data from the first worksheet will be used.",
+        help_text="Upload an Excel file in XLSX format.",
+    )
+    worksheet_name = models.CharField(
+        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
+        max_length=64,
+        blank=True
     )
 
     @property
