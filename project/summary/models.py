@@ -404,18 +404,10 @@ class DataPivot(models.Model):
         return self.assessment
 
     def get_download_url(self):
-        # get download url for Excel file (default download-type)
-        if hasattr(self, 'datapivotupload'):
-            return self.datapivotupload.get_download_url()
-        else:
-            return self.datapivotquery.get_download_url()
+        return reverse('summary:dp_data', kwargs={'pk': self.assessment_id, 'slug': self.slug})
 
     def get_data_url(self):
-        # get download url for tab-separated values, used in data_pivot.js
-        if hasattr(self, 'datapivotupload'):
-            return self.datapivotupload.get_data_url()
-        else:
-            return self.datapivotquery.get_data_url()
+        return self.get_download_url() + "?format=tsv"
 
     @property
     def visual_type(self):
@@ -440,16 +432,16 @@ class DataPivot(models.Model):
 class DataPivotUpload(DataPivot):
     objects = managers.DataPivotUploadManager()
 
-    file = models.FileField(
-        upload_to='data_pivot',
-        help_text="The data should be in unicode-text format, tab delimited "
-                  "(this is a standard output type in Microsoft Excel).")
-
-    def get_data_url(self):
-        return self.file.url
-
-    def get_download_url(self):
-        return self.file.url
+    excel_file = models.FileField(
+        verbose_name="Excel file",
+        upload_to="data_pivot_excel",
+        help_text="Upload an Excel file in XLSX format.",
+    )
+    worksheet_name = models.CharField(
+        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
+        max_length=64,
+        blank=True
+    )
 
     @property
     def visual_type(self):
@@ -619,12 +611,6 @@ class DataPivotQuery(DataPivot):
         qs = self.get_queryset()
         exporter = self._get_dataset_exporter(qs, format_)
         return exporter.build_response()
-
-    def get_download_url(self):
-        return reverse('summary:dp_data', kwargs={'pk': self.assessment_id, 'slug': self.slug})
-
-    def get_data_url(self):
-        return self.get_download_url() + "?format=tsv"
 
     @property
     def visual_type(self):

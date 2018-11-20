@@ -1,9 +1,11 @@
 import json
+import os
 
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, FormView
+import pandas as pd
 
 from assessment.models import Assessment
 from riskofbias.models import RiskOfBiasMetric
@@ -208,10 +210,6 @@ class RobFilter(BaseDetail):
 
 
 # DATA-PIVOT
-class ExcelUnicode(TemplateView):
-    template_name = "summary/datapivot_save_as_unicode_modal.html"
-
-
 class DataPivotNewPrompt(TemplateView):
     """
     Select if you wish to upload a file or use a query.
@@ -331,7 +329,28 @@ class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         format_ = self.get_export_format()
-        return self.object.get_dataset(format_)
+        if hasattr(self.object, 'datapivotupload'):
+            if format_ == 'excel':
+                response = HttpResponse(
+                    self.object.excel_file.file.read(),
+                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
+                fn = os.path.basename(self.object.excel_file.name)
+            else:
+                worksheet_name = self.object.worksheet_name
+                if worksheet_name == '':
+                    worksheet_name = 0
+                response = HttpResponse(
+                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(index=False, sep='\t'),
+                    content_type='text/tab-separated-values'
+                )
+                fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + '.tsv'
+            response['Content-Disposition'] = f'attachment; filename="{fn}"'
+            return response
+        elif hasattr(self.object, 'datapivotquery'):
+            return self.object.get_dataset(format_)
+        else:
+            raise Http404()
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
