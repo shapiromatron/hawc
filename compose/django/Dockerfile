@@ -50,9 +50,8 @@ RUN chmod +x /entrypoint.sh && \
     mkdir -p /app/public/media/bmds_plot
 
 COPY ./requirements /requirements
-RUN pip3 install \
-        -r /requirements/production.txt \
-        --no-cache-dir && \
+RUN pip3 install -U pip && \
+    pip3 install -r /requirements/production.txt --no-cache-dir && \
     rm -rf /requirements
 
 COPY ./project /app/project
