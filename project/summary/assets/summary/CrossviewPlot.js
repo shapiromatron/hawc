@@ -737,7 +737,8 @@ class CrossviewPlot extends D3Visualization {
     draw_visualization() {
         var x = this.x_scale,
             y = this.y_scale,
-            self = this;
+            self = this,
+            paths;
 
         this._draw_ref_ranges();
         this._draw_ref_lines();
@@ -747,32 +748,45 @@ class CrossviewPlot extends D3Visualization {
             line = d3.svg
                 .line()
                 .interpolate('basis')
-                .x(function(d) {
-                    return x(d.dose);
-                })
-                .y(function(d) {
-                    return y(d.resp);
-                }),
-            plotData = this.dataset.map(function(d) {
-                return d.plotting;
-            });
+                .x((d) => x(d.dose))
+                .y((d) => y(d.resp)),
+            plotData = this.dataset.map((d) => d.plotting);
 
-        response_centerlines
+        paths = response_centerlines
             .selectAll('.crossview_paths')
             .data(plotData)
             .enter()
-            .append('path')
-            .attr('class', function(d) {
-                return 'crossview_paths ' + d[0].classes.join(' ');
-            })
+            .append('g')
+            .attr('class', 'crossview_path_group');
+
+        paths
+            .each(function (d) {
+                let g = d3.select(this);
+                d.forEach((point) => {
+                    g.append('circle')
+                        .attr('class', 'crossview_points')
+                        .attr('cx', x(point.dose))
+                        .attr('cy', y(point.resp))
+                        .attr('r', '6px')
+                        .attr('opacity', 0)
+                        .attr('fill', self.plot_settings.colorHover);
+                });
+                g.on('mouseover', function () {
+                    let that = d3.select(this);
+                    that.moveToFront();
+                    that.selectAll('circle').style('opacity', 1);
+                }).on('mouseout', function(){
+                    d3.select(this).selectAll('circle').style('opacity', 0);
+                });
+            });
+
+
+        paths.append('path')
+            .attr('class', (d) => `crossview_paths ${d[0].classes.join(' ')}`)
             .attr('d', line)
-            .style('stroke', function(d) {
-                return d[0].currentStroke;
-            })
-            .on('click', function(d) {
-                d[0].endpoint.displayAsModal();
-            })
-            .on('mouseover', function(d) {
+            .style('stroke', (d) => d[0].currentStroke)
+            .on('click', (d) => d[0].endpoint.displayAsModal())
+            .on('mouseover', function (d) {
                 if (
                     self.active_filters.length === 0 ||
                     d[0].currentStroke === self.plot_settings.colorSelected
@@ -781,14 +795,12 @@ class CrossviewPlot extends D3Visualization {
                 }
                 self.change_show_selected_fields(this, d, true);
             })
-            .on('mouseout', function(d) {
+            .on('mouseout', function (d) {
                 d3.select(this).style('stroke', d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
             .append('svg:title')
-            .text(function(d) {
-                return d[0].title;
-            });
+            .text((d) => d[0].title);
 
         this._draw_labels();
         this._draw_colorFilterLabels();
