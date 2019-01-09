@@ -6,7 +6,15 @@
 {% block main_content %}
   <div class="row">
     <div class="span12">
-      <h1>About us</h1>
+      <h1>About HAWC</h1>
+      <p>
+        HAWC is a modular, content management system designed to store, display, and synthesize
+        multiple data sources for the purpose of producing human health assessments of chemicals.
+        This online application documents the overall workflow of developing an assessment, from
+        literature search and systematic review, to data extraction (human epidemiology, animal
+        bioassay, and in vitro assay), dose-response analysis, and finally evidence synthesis and
+        visualization.
+      </p>
       <p>
       HAWC is a collaboration of several individuals and organizations who
       create, maintain, and enhance the functionalities of this tool. The lead
@@ -14,13 +22,33 @@
       partial fulfillment of the requirements for the degree of Masters of
       Science in Public Health in the Department of Environmental Sciences and
       Engineering at the University of North Carolina at Chapel Hill under
-      direction of Dr. Ivan Rusyn.
-
-      Overall guidance on HAWC development is provided by a
+      direction of Dr. Ivan Rusyn. Overall guidance on HAWC development is provided by a
       steering committee with representation from the National Toxicology
       Program at the National Institute of Environmental Health Sciences
       (NIEHS/NTP), Texas A&amp;M University, and the National Center for
       Computational Toxicology of the Environmental Protection Agency (EPA/NCCT).
+      </p>
+      <p>
+        HAWC is <a href="https://github.com/shapiromatron/hawc">open-source</a> software under
+        the permissive MIT license. It is free to create an account to use the software.
+        It is also free to download, edit, and modify the source code. For more details, view the
+        <a href="#license_modal" data-toggle="modal">full license</a>.
+        Current version: <a href="{{COMMIT_URL}}">{{GIT_COMMIT|truncatechars:12}}</a>
+        {% include "hawc_license.html" %}
+      </p>
+      <p>
+        <b>Want more details? Read our paper:</b>
+      </p>
+      <p style="padding-left: 5em">
+        Shapiro AJ, Antoni S, Guyton KZ, Lunn RM, Loomis D, Rusyn I, Jahnke GD,
+        Schwingl PJ, Mehta SS, Addington J, Guha N. Software Tools to Facilitate
+        Systematic Review Used for Cancer Hazard Identification. Environ Health
+        Perspect. 2018 Oct;126(10):104501. DOI:
+        <a href="https://doi.org/10.1289/EHP4224">10.1289/EHP4224</a>
+      </p>
+      <p>
+        If you find HAWC useful in your work, a citation is always appreciated. To cite, either use the paper above, or the recommended citation below:
+        <pre><i>HAWC: Health Assessment Workplace Collaborative</i> [Computer software]. (2013).<br>URL: https://hawcproject.org. [Month, year of date use].</pre>
       </p>
     </div>
   </div>
@@ -167,8 +195,8 @@
       <h2>Posters and presentations</h2>
       <table class="table table-compressed table-striped">
         <colgroup>
-          <col style="width:50%">
-          <col style="width:25%">
+          <col style="width:40%">
+          <col style="width:35%">
           <col style="width:25%">
         </colgroup>
         <thead>
@@ -179,6 +207,18 @@
           </tr>
         </thead>
         <tbody>
+
+          <tr>
+            <td>
+              HAWCPROJECT.ORG: A content management system for human health assessments
+            </td>
+            <td>
+              2018 National Academy of Sciences: Strategies and Tools for Conducting Systematic
+              Reviews of Mechanistic Data to Support Chemical Assessments
+            </td>
+            <td><a href="{% static 'docs/posters/2018_NAS_HAWC.pdf' %}">Poster
+                <img class="ff" src="{% static '/img/pdf_icon.png' %}" alt="PDF file-format"></a></td>
+          </tr>
 
           <tr>
             <td>
@@ -244,32 +284,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="span12">
-      <h2>Latest updates</h2>
-
-      <p>
-        <strong>Current version: </strong><a href="{{COMMIT_URL}}">{{GIT_COMMIT}}</a>
-      </p>
-    </div>
-    <div class="span12">
-        <h2>License</h2>
-        <ul>
-          <li>HAWC is <a href="https://github.com/shapiromatron/hawc">open-source</a> software.</li>
-          <li>It is free to create an account to use the software.</li>
-          <li>It is free to download, edit, and modify the source code, so long
-              as the resulting project is not sold for profit.</li>
-          <li>The <a href="#license_modal" data-toggle="modal">full license</a>
-              is available.</li>
-        </ul>
-        {% include "hawc_license.html" %}
-    </div>
-    <div class="span12">
-      <h2>Citation</h2>
-
-      If you find HAWC useful in your work, a citation is always appreciated. To cite HAWC in publications, use:
-
-      <pre><i>HAWC: Health Assessment Workplace Collaborative</i> [Computer software]. (2013).<br>URL: https://hawcproject.org. [Month, year of date use].</pre>
     </div>
     <div class="span12">
         <h2>Acknowledgments</h2>
