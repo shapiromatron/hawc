@@ -1,27 +1,12 @@
-.. Health Assessment Workspace Collaborative documentation master file, created by
-   sphinx-quickstart on Mon Sep 15 10:09:22 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Health Assessment Workspace Collaborative's documentation!
 =====================================================================
 
 .. image:: https://zenodo.org/badge/25273569.svg
    :target: https://zenodo.org/badge/latestdoi/25273569
 
-The Health Assessment Workspace Collaborative (HAWC) is a website designed to
-capture key data and analyses performed in conducting human-health assessment
-of chemicals and other environmental exposures in-order to establish hazard
-identification and potentially derive quantitative levels of concern.
+The Health Assessment Workspace Collaborative (HAWC) is a website designed to capture key data and analyses performed in conducting human-health assessment of chemicals and other environmental exposures in-order to establish hazard identification and potentially derive quantitative levels of concern.
 
-The development team consists of:
-
-* Andy Shapiro
-* Josh Addington
-
-The Principal Investigator (PI) is:
-
-* Ivan Rusyn
+The public website is currently available on `<hawcproject.org>`_, though there are additional versions available.
 
 Contents:
 
@@ -32,6 +17,7 @@ Contents:
    database
    server_setup
    reference
+   ci_description
    management_commands
    contributing
 
