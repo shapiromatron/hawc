@@ -1,6 +1,9 @@
 A method for estimating the variance of a ratio of means
 --------------------------------------------------------
 
+Or, a Normal-Theory Derivation of an Estimator of the Sampling Variance for a Ratio of Means.
+
+
 Introduction
 ============
 
@@ -8,7 +11,7 @@ A maximum likelihood method is used to find a formula for the variance of the ra
 
 The method is not used very much, because in general the algebra is prohibitive. For this reason also, it is hard to find a single reference that contains the work below. The method works in this case, because the starting point is two independent normally distributed samples, and the ratio transformation is pretty simple. Transformations of maximum likelihood estimators (MLEs) (in this case, the mean and variance estimators for normal distributions) are again maximum likelihood estimators [eg, Cox and Hinkley, p. 287]. Thus, the variance estimate for the ratio of means this method produces is a maximum likelihood estimator if the MLEs for the normal means and variances are used. Note the MLEs for normal mean and variance for a sample :math:`\{x_1, x_2, ..., x_n\}` are :math:`\hat{\mu} = \bar{x}` and :math:`\hat{\sigma^2} = \frac{1}{n}\sum_i(x_i - \bar{x})^2`.
 
-Maximum likelihood estimators have nice asymptotic properties. For example, the asymptotic distribution is normal around the true value of the parameter (here the ratio) with confidence intervals constructed using the variance estimate with Gaussian critical values.
+One may note that the 2nd formula above is not the usual textbook estimator of variance.  The latter is usually denoted :math:`s^2` and has an :math:`n – 1` in the denominator where the formula above has :math:`n`, i.e., uses the "degrees of freedom." The two estimators will converge with a modest amount of data. We will revisit this distinction below. Maximum likelihood estimators have nice asymptotic properties. For example, the asymptotic distribution is normal around the true value of the parameter (here the ratio) with confidence intervals constructed using the variance estimate with Gaussian critical values. For example, the 95% confidence interval can be computed by subtracting from the observed ratio of means (for lower bound) and adding (for upper bound), the quantity :math:`Z_{0.975} * SE`, where :math:`SE` is the standard error (as derived here) and :math:`Z_{0.975}` is the 97.5th percentile of the standard normal distribution, around 1.96.
 
 Method
 ======
@@ -62,6 +65,10 @@ Therefore the estimate of variance of the variance of :math:`\theta_3` is given 
 .. math::
 
     \frac { 1 } { \theta _ { 1 } ^ { 2 } } \left( \frac { \theta _ { 4 } } { n _ { 2 } } + \frac { \theta _ { 3 } ^ { 2 } \theta _ { 2 } } { n _ { 1 } } \right) = \frac { 1 } { \mu _ { 1 } ^ { 2 } } \left( \frac { \sigma _ { 2 } ^ { 2 } } { n _ { 2 } } + \frac { \mu _ { 2 } ^ { 2 } \sigma _ { 1 } ^ { 2 } } { n _ { 1 } \mu _ { 1 } ^ { 2 } } \right)
+
+To make use of this expression, four parameters (means and variances of normal distributions, for two treatment groups) have to be substituted with estimators. The use of maximum likelihood estimators (expressions given above) is appropriate. The approach is also expected to work if the variances are substituted with the "textbook" estimate mentioned above (the square of standard deviation as normally computed), which is an unbiased estimator regardless of normality. The current version of HAWC uses :math:`s^2`, not the variance MLE.
+
+This describes a standard error for a ratio of normal means (e.g., the treated group mean over the control mean). Biologists will frequently report the difference in means, as percentage of controls (a relative difference). The standard error for that will be the standard error just described (for a ratio of means), times 100 (accounting for conversion of the ratio to a percentage).
 
 The formula is generally used with positive measurements. For example, inspection of the formula shows that the mean of the first sample cannot be "close" to zero. But "close" would be defined in terms of the corresponding standard deviation :math:`\sigma_1`. If the standard deviation was large enough that the chance of negative values was appreciable given a normal distribution, probably the assumption of normality would be suspect, and a different approach should be used.
 
