@@ -104,6 +104,15 @@ _.extend(RoBHeatmapForm, {
             tab: 'overall',
         },
         {
+            type: SelectField,
+            name: 'study_label_field',
+            label: 'Study label',
+            opts: [['short_citation', 'Short citation'], ['study_identifier', 'Study identifier']],
+            def: 'short_citation',
+            tab: 'overall',
+            helpText: 'Label to show on the axis to describe each study.',
+        },
+        {
             type: RoBMetricTable,
             prependSpacer: false,
             label: 'Included metrics',
