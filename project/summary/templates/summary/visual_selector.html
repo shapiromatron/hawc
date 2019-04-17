@@ -36,11 +36,11 @@
           <option
             data-showcase="#visual2"
             value="{% url 'summary:visualization_create' assessment.id 2 %}">
-            Risk of bias heatmap</option>
+            {{assessment.get_rob_name_display}} heatmap</option>
           <option
             data-showcase="#visual3"
             value="{% url 'summary:visualization_create' assessment.id 3 %}">
-            Risk of bias barchart</option>
+            {{assessment.get_rob_name_display}} barchart</option>
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -101,7 +101,7 @@
     </div>
 
     <div id="visual2">
-      <h2>Risk of bias heatmap</h2>
+      <h2>{{assessment.get_rob_name_display}} heatmap</h2>
       <div class="row">
         <img
           class="span10 offset1"
@@ -109,15 +109,15 @@
           src="{% static '/img/summary/rob-heatmap.svg' %}">
       </div>
       <p class="help-block">
-        A risk of bias heatmap, showing a subset of selected studies and
-        risk of bias findings for each metric. This plot is interactive; a user
+        A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
+        {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
         can select and row, column, or cell, to view all details associated
         with these cells.
       </p>
     </div>
 
     <div id="visual3">
-      <h2>Risk of bias barchart</h2>
+      <h2>{{assessment.get_rob_name_display}} barchart</h2>
       <div class="row">
         <img
           class="span10 offset1"
@@ -125,7 +125,7 @@
           src="{% static '/img/summary/rob-barchart.svg' %}">
       </div>
       <p class="help-block">
-        A risk of bias stacked barchart, showing the percent of studies with
+        A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
         each score, for each metric, in a selectable subset of studies.
       </p>
     </div>

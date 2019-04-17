@@ -1,35 +1,35 @@
+# file extensions
+*.db
+*.log
+*.pid
+*.py[cod]
+*~
 
 # files
-*.db
-*~
-*.log
-*.py[cod]
-*.pid
-.pytest_cache
 .env
 .gitcommit
+.pytest_cache
 bin/*local.sh
+package-lock.json
+project/celerybeat*
 project/hawc/settings/local.py
 project/static/css/hawc_d3_aggregated.css
-project/celerybeat*
+webpack-stats.json
 
 # folders
-__pycache__
-.idea/*
-.ipynb_checkpoints
-data
-docs/_build
-env
-public/static
-public/media
-venv
-
-# javascript
-node_modules
-webpack-stats.json
-package-lock.json
 .happypack/
+.idea/
+.ipynb_checkpoints/
+.vscode/
+__pycache__/
+data/
+docs/_build/
+node_modules/
+public/media/
+public/static/
+venv/
 
+# keep folders; not contents
 project/static/bundles/*
 !project/static/bundles/.gitkeep
 
@@ -44,6 +44,3 @@ compose/django/fonts/*
 
 notebooks/*
 !notebooks/example.ipynb
-
-# editor settings
-.vscode/

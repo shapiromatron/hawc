@@ -78,5 +78,11 @@ class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Endpoint
 
 
+class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DosingRegimeCleanupFieldsSerializer
+    model = models.DosingRegime
+    assessment_filter_args = "dosed_animals__experiment__study__assessment"
+
+
 class DoseUnits(DoseUnitsViewset):
     pass

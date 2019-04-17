@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Q
+from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 
@@ -338,6 +339,37 @@ class EndpointList(BaseEndpointFilterList):
         if not perms['edit']:
             query &= Q(animal_group__experiment__study__published=True)
         return query
+
+    def get_queryset(self):
+        # TODO - revisit after upgrading to 2.1 to see if this can be handled outside of
+        # RawSQL query
+        perms = super().get_obj_perms()
+        order_by = None
+
+        query = self.get_query(perms)
+
+        if self.form.is_valid():
+            query &= self.form.get_query()
+            order_by = self.form.get_order_by()
+
+        ids = self.model.objects.filter(query)\
+            .order_by('id')\
+            .distinct('id')\
+            .values_list('id', flat=True)
+
+        qs = self.model.objects.filter(id__in=ids)
+
+        if order_by:
+            if order_by == "customBMD":
+                # the second "order_by" is basically here to force the ORM to
+                # properly add the bmd_model table to the constructed query.
+                qs = qs.order_by(RawSQL("bmd_model.output->>'BMD'", ()), "bmd_model__model")
+            elif order_by == "customBMDLS":
+                qs = qs.order_by(RawSQL("bmd_model.output->>'BMDL'", ()), "bmd_model__model")
+            else:
+                qs = qs.order_by(order_by)
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

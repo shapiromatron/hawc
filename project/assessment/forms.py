@@ -87,6 +87,7 @@ class AssessmentModulesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['enable_risk_of_bias'].label = f"Enable {self.instance.get_rob_name_display().lower()}"
         self.helper = self.setHelper()
 
     def setHelper(self):

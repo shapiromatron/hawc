@@ -28,15 +28,10 @@ following applications installed on your local development system:
     There's nothing we can do to fix this that we're aware of.
 
 
-HAWC setup: Part I (OS-specific)
---------------------------------
+HAWC setup
+----------
 
-The initial HAWC setup is operating-system specific, due to limitations in
-the ease of installing scientific python software on Windows. Choose your
-own adventure below.
-
-Mac/Linux
-~~~~~~~~~
+Clone the repository and install all requirements into a virtual environment:
 
 .. code-block:: bash
 
@@ -59,51 +54,10 @@ development environment.
 
 Current HAWC as two possible application "flavors", where the application is slightly
 different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-environment variable in the local settings. Possible values include:
+variable in settings. Possible values include:
 
 - PRIME (default application)
 - EPA (EPA application)
-
-Windows
-~~~~~~~
-
-To setup your local environment you should create a virtualenv and install the
-necessary requirements:
-
-.. code-block:: batch
-
-    :: clone repository; we'll put in ~/dev but you can put anywhere
-    mkdir ~/dev
-    cd ~/dev
-    git clone https://github.com/shapiromatron/hawc.git
-
-    :: create virtual environment and install requirements
-    cd ~/dev/hawc
-    python -m venv venv
-    call ./venv/bin/activate.bat
-    $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
-
-    :: create a local settings file
-    copy ./project/hawc/settings/local.example.py ./project/hawc/settings/local.py
-
-The ``pip install`` call may fail with some packages on Windows if you don't have
-the `Python Microsoft C++ compiler`_ available. You can use prepackaged
-binaries available from `Christoph Gohlke`_ using these commands after
-downloading the wheels from the website:
-
-.. _`Python Microsoft C++ compiler`: https://www.microsoft.com/en-us/download/details.aspx?id=44266
-.. _`Christoph Gohlke`: http://www.lfd.uci.edu/~gohlke/pythonlibs/
-
-.. code-block:: batch
-
-    pip install "C:\Users\username\Desktop\numpy-version.whl"
-    pip install "C:\Users\username\Desktop\scipy-version.whl"
-
-Update the settings file with any changes you'd like to make for your local
-development environment.
-
-HAWC setup: Part II
--------------------
 
 You'll need to run both the python webserver and the node webserver to develop
 HAWC; here are instructions how how to do both.
@@ -116,9 +70,8 @@ To run the python webserver:
     createdb -E UTF-8 hawc
 
     # active python virtual environment and sync database schema with code
-    cd ~/dev/hawc/project
+    cd ./project
     source ../venv/bin/activate
-    python manage.py build_d3_styles
     python manage.py migrate
     python manage.py createcachetable
 
@@ -130,7 +83,7 @@ In a new terminal, run the node development webserver for javascript:
 .. code-block:: bash
 
     # navigate to project folder
-    cd ~/dev/hawc/project
+    cd ./project
 
     # install javascript dependencies
     yarn install

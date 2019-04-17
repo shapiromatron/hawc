@@ -19,7 +19,7 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model('lit', 'ReferenceFilterTag').build_default(instance)
         apps.get_model('lit', 'Search').build_default(instance)
 
-        logging.info("Creating default settings for risk of bias criteria")
+        logging.info(f"Creating default settings for {instance.get_rob_name_display().lower()} criteria")
         apps.get_model('riskofbias', 'RiskOfBiasDomain').build_default(instance)
         apps.get_model('riskofbias', 'RiskOfBiasAssessment').build_default(instance)
 

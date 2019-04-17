@@ -15,7 +15,7 @@ from assessment.models import Assessment
 from myuser.models import HAWCUser
 from study.models import Study
 from utils.helper import cleanHTML, HAWCDjangoJSONEncoder, SerializerHelper
-from utils.models import get_crumbs
+from utils.models import get_crumbs, get_flavored_text
 
 from . import managers
 
@@ -28,7 +28,13 @@ class RiskOfBiasDomain(models.Model):
         related_name='rob_domains')
     name = models.CharField(
         max_length=128)
-    description = models.TextField()
+    description = models.TextField(
+        blank=True)
+    is_overall_confidence = models.BooleanField(
+        default = False,
+        verbose_name = "Overall confidence?",
+        help_text = "Is this domain for overall confidence?"
+    )
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -51,14 +57,16 @@ class RiskOfBiasDomain(models.Model):
         The risk of bias domains and metrics are those defined by NTP/OHAT
         protocols for risk of bias
         """
-        fn = os.path.join(
-            settings.PROJECT_PATH,
-            'riskofbias/fixtures/ohat_study_quality_defaults.json'
-        )
+        if settings.HAWC_FLAVOR == "PRIME":
+            fixture = "ohat_study_quality_defaults.json"
+        elif settings.HAWC_FLAVOR == "EPA":
+            fixture = "iris_study_quality_defaults.json"
+        else:
+            raise ValueError("Unknown HAWC flavor")
+
+        fn = os.path.join(settings.PROJECT_PATH, f'riskofbias/fixtures/{fixture}')
         with open(fn, 'r') as f:
-            objects = json.loads(
-                f.read(),
-                object_pairs_hook=collections.OrderedDict)
+            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
         for domain in objects['domains']:
             d = RiskOfBiasDomain.objects.create(
@@ -144,6 +152,9 @@ class RiskOfBiasMetric(models.Model):
         related_name='metrics')
     name = models.CharField(
         max_length=256)
+    short_name = models.CharField(
+        max_length=50,
+        blank=True)
     description = models.TextField(
         blank=True,
         help_text='HTML text describing scoring of this field.')
@@ -155,6 +166,18 @@ class RiskOfBiasMetric(models.Model):
         default=True,
         verbose_name='Required for epidemiology?',
         help_text='Is this metric required for human epidemiological studies?<br/><b>CAUTION:</b> Removing requirement will destroy all epi responses previously entered for this metric.')
+    required_invitro = models.BooleanField(
+        default=True,
+        verbose_name='Required for in-vitro?',
+        help_text='Is this metric required for in-vitro studies?<br/><b>CAUTION:</b> Removing requirement will destroy all in-vitro responses previously entered for this metric.')
+    hide_description = models.BooleanField(
+        default=False,
+        verbose_name='Hide description?',
+        help_text='Hide the description on reports?')
+    use_short_name = models.BooleanField(
+        default=False,
+        verbose_name='Use the short name?',
+        help_text='Use the short name in visualizations?')
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -369,29 +392,50 @@ class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
     RISK_OF_BIAS_SCORE_CHOICES = (
-        (10, 'Not reported'),
-        (1, 'Definitely high risk of bias'),
-        (2, 'Probably high risk of bias'),
-        (3, 'Probably low risk of bias'),
-        (4, 'Definitely low risk of bias'),
-        (0, 'Not applicable'))
+        (1, 'Not applicable'),
+        (2, 'Not reported'),
+
+        (14, 'Definitely high risk of bias'),
+        (15, 'Probably high risk of bias'),
+        (16, 'Probably low risk of bias'),
+        (17, 'Definitely low risk of bias'),
+
+        (24, 'Critically deficient'),
+        (25, 'Deficient'),
+        (26, 'Adequate'),
+        (27, 'Good'),
+    )
+
+    RISK_OF_BIAS_SCORE_CHOICES_MAP = {k: v for k, v in RISK_OF_BIAS_SCORE_CHOICES}
 
     SCORE_SYMBOLS = {
-        1: '--',
-        2: '-',
-        3: '+',
-        4: '++',
-        0: '-',
-        10: 'NR',
+        1: 'N/A',
+        2: 'NR',
+
+        14: '--',
+        15: '-',
+        16: '+',
+        17: '++',
+
+        24: '--',
+        25: '-',
+        26: '+',
+        27: '++',
     }
 
     SCORE_SHADES = {
-        1: '#CC3333',
+        1: '#FFCC00',
         2: '#FFCC00',
-        3: '#6FFF00',
-        4: '#00CC00',
-        0: '#FFCC00',
-        10: '#FFCC00',
+
+        14: '#CC3333',
+        15: '#FFCC00',
+        16: '#6FFF00',
+        17: '#00CC00',
+
+        24: '#CC3333',
+        25: '#FFCC00',
+        26: '#6FFF00',
+        27: '#00CC00',
     }
 
     riskofbias = models.ForeignKey(
@@ -461,8 +505,41 @@ class RiskOfBiasScore(models.Model):
         Study.delete_caches(study_ids)
 
 
+DEFAULT_QUESTIONS_OHAT = 1
+DEFAULT_QUESTIONS_EPA = 2
+
+RESPONSES_OHAT = 0
+RESPONSES_EPA = 1
+
+
 class RiskOfBiasAssessment(models.Model):
     objects = managers.RiskOfBiasAssessmentManager()
+
+    DEFAULT_QUESTIONS_CHOICES = (
+        (DEFAULT_QUESTIONS_OHAT, "OHAT"),
+        (DEFAULT_QUESTIONS_EPA, "EPA"),
+    )
+
+    def get_default_default_questions():
+        if settings.HAWC_FLAVOR == "PRIME":
+            return DEFAULT_QUESTIONS_OHAT
+        elif settings.HAWC_FLAVOR == "EPA":
+            return DEFAULT_QUESTIONS_EPA
+        else:
+            raise ValueError("Unknown HAWC flavor")
+
+    RESPONSES_CHOICES = (
+        (RESPONSES_OHAT, "OHAT"),
+        (RESPONSES_EPA, "EPA"),
+    )
+
+    def get_default_responses():
+        if settings.HAWC_FLAVOR == "PRIME":
+            return RESPONSES_OHAT
+        elif settings.HAWC_FLAVOR == "EPA":
+            return RESPONSES_EPA
+        else:
+            raise ValueError("Unknown HAWC flavor")
 
     assessment = models.OneToOneField(
         Assessment,
@@ -470,11 +547,20 @@ class RiskOfBiasAssessment(models.Model):
     number_of_reviewers = models.PositiveSmallIntegerField(
         default=1)
     help_text = models.TextField(
-        default="<p>When a study is entered into the HAWC database for use in an assessment, "
-            "risk of bias metrics can be entered for a metric of bias for each study. "
-            "Risk of Bias metrics are organized by domain. The following questions are "
-            "required for evaluation for this assessment.</p>",
+        default="Instructions for reviewers completing assessments",
         help_text="Detailed instructions for completing risk of bias assessments."
+    )
+    default_questions = models.PositiveSmallIntegerField(
+        choices=DEFAULT_QUESTIONS_CHOICES,
+        default=get_default_default_questions,
+        verbose_name="Default questions",
+        help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact."
+    )
+    responses = models.PositiveSmallIntegerField(
+        choices=RESPONSES_CHOICES,
+        default=get_default_responses,
+        verbose_name="Question responses",
+        help_text="Why responses should be used to answering questions:"
     )
 
     def get_absolute_url(self):
@@ -482,7 +568,19 @@ class RiskOfBiasAssessment(models.Model):
 
     @classmethod
     def build_default(cls, assessment):
-        RiskOfBiasAssessment.objects.create(assessment=assessment)
+        RiskOfBiasAssessment.objects.create(
+            assessment=assessment,
+            help_text=get_flavored_text("riskofbias__riskofbiasassessment_help_text_default")
+        )
+
+    def get_rob_response_values(self):
+        # get valid RiskOfBiasScore response options given responses selection
+        if self.responses == RESPONSES_OHAT:
+            return [1, 14, 15, 16, 17, 2]
+        elif self.responses == RESPONSES_EPA:
+            return [1, 24, 25, 26, 27, 2]
+        else:
+            raise ValueError(f"Unknown responses: {self.responses}")
 
 
 reversion.register(RiskOfBiasDomain)

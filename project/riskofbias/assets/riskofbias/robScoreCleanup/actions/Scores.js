@@ -3,6 +3,7 @@ import fetch from 'isomorphic-fetch';
 import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
 import * as types from 'riskofbias/robScoreCleanup/constants';
 import h from 'shared/utils/helpers';
+import { SCORE_TEXT_DESCRIPTION } from '../../constants';
 
 function makeScoreOptionRequest() {
     return {
@@ -26,7 +27,7 @@ export function selectScores(scores) {
 
 function formatScoreOptions(choices) {
     return choices.map((choice) => {
-        return { id: choice[0], value: choice[1] };
+        return { id: choice, value: SCORE_TEXT_DESCRIPTION[choice] };
     });
 }
 

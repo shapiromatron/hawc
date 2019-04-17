@@ -48,10 +48,6 @@ class AnimalGroup {
 
     build_details_table() {
         var self = this,
-            getDurObs = function() {
-                var d = self.data.duration_observation;
-                return d ? '{0} days'.printf(d) : undefined;
-            },
             getRelations = function(lst) {
                 return _.chain(lst)
                     .map(self._getAniRelationLink)
@@ -67,7 +63,6 @@ class AnimalGroup {
             .add_tbody_tr('Species', this.data.species)
             .add_tbody_tr('Strain', this.data.strain)
             .add_tbody_tr('Sex', this.data.sex)
-            .add_tbody_tr('Duration of observation', getDurObs())
             .add_tbody_tr('Source', this.data.animal_source)
             .add_tbody_tr('Lifestage exposed', this.data.lifestage_exposed)
             .add_tbody_tr('Lifestage assessed', this.data.lifestage_assessed)
@@ -75,7 +70,8 @@ class AnimalGroup {
             .add_tbody_tr_list('Parents', getRelations(this.data.parents))
             .add_tbody_tr('Siblings', this._getAniRelationLink(this.data.siblings))
             .add_tbody_tr_list('Children', getRelations(this.data.children))
-            .add_tbody_tr('Description', this.data.comments);
+            .add_tbody_tr('Animal Husbandry', this.data.comments)
+            .add_tbody_tr('Diet', this.data.diet);
 
         return tbl.get_tbl();
     }
@@ -84,7 +80,7 @@ class AnimalGroup {
         var self = this,
             data = this.data.dosing_regime,
             tbl,
-            getDurObs = function(d) {
+            getExposureDuration = function(d) {
                 var txt = data.duration_exposure_text,
                     num = data.duration_exposure;
 
@@ -95,6 +91,10 @@ class AnimalGroup {
                 } else {
                     return undefined;
                 }
+            },
+            getDurationObservation = function(d) {
+                var d = data.duration_observation;
+                return d ? '{0} days'.printf(d) : undefined;
             },
             getDoses = function(doses) {
                 if (doses.length === 0) return undefined;
@@ -135,7 +135,8 @@ class AnimalGroup {
         tbl = new DescriptiveTable()
             .add_tbody_tr('Dosed animals', getDosedAnimals(this.data.id, data.dosed_animals))
             .add_tbody_tr('Route of exposure', data.route_of_exposure)
-            .add_tbody_tr('Exposure duration', getDurObs())
+            .add_tbody_tr('Exposure duration', getExposureDuration())
+            .add_tbody_tr('Duration observation', getDurationObservation())
             .add_tbody_tr('Number of dose-groups', data.num_dose_groups)
             .add_tbody_tr('Positive control', data.positive_control)
             .add_tbody_tr('Negative control', data.negative_control)

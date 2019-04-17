@@ -2,17 +2,17 @@
 
 
 {% block title %}
-  {{assessment}} | {{object.study}} | All risk of bias reviews | HAWC
+  {{assessment}} | {{object.study}} | All {{assessment.get_rob_name_display|lower}} reviews | HAWC
 {% endblock %}
 
 {% block breadcrumbs_self %}
-  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">Risk of bias</a><span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
   <li class="active"> All reviews <span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
 
-  <h2>{{object}}: Risk of bias (all reviews)</h2>
+  <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
   <div id="robTable"></div>
 
 {% endblock %}

@@ -35,7 +35,7 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret['url'] = instance.get_absolute_url()
-        ret['visual_type'] = instance.get_visual_type_display()
+        ret['visual_type'] = instance.get_rob_visual_type_display(instance.get_visual_type_display())
         try:
             settings = json.loads(instance.settings)
         except json.JSONDecodeError:
@@ -45,7 +45,7 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = ('endpoints', )
+        exclude = ('endpoints', 'studies', )
 
 
 class VisualSerializer(CollectionVisualSerializer):
@@ -65,6 +65,8 @@ class VisualSerializer(CollectionVisualSerializer):
             SerializerHelper.get_serialized(d, json=False)
             for d in instance.get_studies()
         ]
+
+        ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
 
         return ret
 

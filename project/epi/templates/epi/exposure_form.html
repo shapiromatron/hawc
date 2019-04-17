@@ -16,10 +16,33 @@
 {% endblock %}
 
 {% block content %}
-  {% crispy form %}
+    <div id="exposureForm">
+      {% crispy form %}
+    </div>
+
+    <div id="ctFormset">
+      <legend>Central Tendencies
+        <button class="pull-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
+      </legend>
+      {% if crud == "Create" %}
+      <p class="help-block">
+        help text placeholer
+        <span class='help-text-notes'>notes placeholder</span>
+        <span class='important-note'>important note placeholder</span>
+      </p>
+      {% endif %}
+      {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+    </div>
 {% endblock %}
 
 {% block extrajs %}
   {{ form.media }}
+
+  <script type="text/javascript">
+    $(document).on('ready', function () {
+      new window.app.utils.DynamicFormset($('#ctFormset'), 'form', { oneFormRequired: true });
+      $('#ctFormset').insertBefore($('#exposureForm .form-actions'));
+    });
+  </script>
 {% endblock extrajs %}
 

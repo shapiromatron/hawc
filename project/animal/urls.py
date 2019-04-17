@@ -24,6 +24,9 @@ router.register(r'animal_group-cleanup',
 router.register(r'endpoint-cleanup',
                 api.EndpointCleanupFieldsView,
                 base_name="endpoint-cleanup")
+router.register(r'dosingregime-cleanup',
+                api.DosingRegimeCleanupFieldsView,
+                base_name="dosingregime-cleanup")
 router.register(r'dose-units',
                 api.DoseUnits,
                 base_name="dose_units")

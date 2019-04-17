@@ -16,6 +16,8 @@ class RiskOfBiasMetricManager(BaseManager):
             requireds |= models.Q(required_animal=True)
         if study.epi or study.epi_meta:
             requireds |= models.Q(required_epi=True)
+        if study.in_vitro:
+            requireds |= models.Q(required_invitro=True)
         return self.get_qs(assessment).filter(requireds)
 
     def get_metrics_for_visuals(self, assessment_id):

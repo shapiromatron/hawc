@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -47,7 +48,7 @@ export class MetricForm extends React.Component {
     }
 
     render() {
-        let { items, config } = this.props;
+        let { items, config, robResponseValues } = this.props;
         if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
@@ -56,6 +57,7 @@ export class MetricForm extends React.Component {
                     metric={items.editMetric}
                     config={config}
                     updateNotesLeft={_.noop}
+                    robResponseValues={robResponseValues}
                 />
                 <button type="submit" className="btn btn-primary space">
                     Update {items.updateIds.length} responses
@@ -76,6 +78,7 @@ function mapStateToProps(state) {
     const { items } = state;
     return {
         items,
+        robResponseValues: _.map(state.scores.items, 'id'),
     };
 }
 

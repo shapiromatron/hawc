@@ -471,6 +471,21 @@ table th.sort-up:after {
     border-width: 4px 4px 0;
 }
 
+/* server-side order_by functionality for endpoint listings */
+table th.sort-header.active-sort {
+    cursor: default;
+}
+
+table th.sort-header.potential-sort-down:after {
+    border-bottom: none;
+    border-width: 4px 4px 0;
+}
+
+table th.sort-header a {
+    color: black;
+    text-decoration: none;
+}
+
 /*
 Print styling
 */
@@ -499,4 +514,24 @@ Risk of Bias
 .is-complete {
     font-weight: bold;
     color: darkgreen;
+}
+
+.help-block .help-text-notes {
+    display: block;
+    font-style: italic;
+}
+
+.help-block .important-note {
+    display: block;
+    font-style: italic;
+    color: red;
+}
+
+.help-block .optional {
+    color: #999999;
+}
+
+table.bordered th,
+table.bordered td {
+    border: 1px solid #dddddd;
 }

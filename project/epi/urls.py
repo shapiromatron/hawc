@@ -13,6 +13,8 @@ router.register(r'result', api.Result, base_name="result")
 router.register(r'comparison-set', api.ComparisonSet, base_name="set")
 router.register(r'group', api.Group, base_name="group")
 router.register(r'outcome-cleanup', api.OutcomeCleanup, base_name="outcome-cleanup")
+router.register(r'studypopulation-cleanup', api.StudyPopulationCleanup, base_name="studypopulation-cleanup")
+router.register(r'exposure-cleanup', api.ExposureCleanup, base_name="exposure-cleanup")
 
 
 urlpatterns = [

@@ -1,4 +1,6 @@
 import os
+import sys
+
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -25,6 +27,7 @@ if (len(_admin_names) > 0 and len(_admin_emails) > 0):
     ADMINS = list(zip(_admin_names.split('|'), _admin_emails.split('|')))
 MANAGERS = ADMINS
 
+# {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
 
 # Template processors
@@ -302,3 +305,5 @@ WEBPACK_LOADER = {
         'IGNORE': ['.+/.map']
     }
 }
+
+MODIFY_HELP_TEXT = 'makemigrations' not in sys.argv

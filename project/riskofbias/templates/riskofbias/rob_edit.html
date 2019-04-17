@@ -15,7 +15,7 @@
 {% block content %}
     <h2>{{object}}</h2>
     {% if object.final and not object.study_reviews_complete %}
-        <h4 class="alert alert-danger">All other risk of bias reviews for
+        <h4 class="alert alert-danger">All other {{assessment.get_rob_name_display|lower}} reviews for
             {{object.study}} must be complete in order to complete the final review.
         </h4>
     {% else %}

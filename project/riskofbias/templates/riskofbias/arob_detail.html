@@ -1,22 +1,22 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Risk of bias requirements | HAWC
+  {{assessment}} | {{assessment.get_rob_name_display}} requirements | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
   {% if crud == "Read" %}
-    <li class="active">Risk of bias requirements<span class="divider">/</span></li>
+    <li class="active">{{assessment.get_rob_name_display}} requirements<span class="divider">/</span></li>
   {% else %}
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a><span class="divider">/</span></li>
     <li class="active">Edit<span class="divider">/</span></li>
   {% endif %}
 {% endblock breadcrumbs %}
 
 {% block content %}
 
-  <h1>Risk of bias requirements
+  <h1>{{assessment.get_rob_name_display}} requirements
     {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
@@ -25,7 +25,7 @@
         <ul class="dropdown-menu">
           {% if crud == "Read" %}
             {% if obj_perms.edit_assessment %}
-            <li class="disabled"><a tabindex="-1" href="#">Requirement settings</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}} settings</a></li>
             <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a></li>
             <li><a href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a></li>
             <li class="divider"></li>
@@ -37,10 +37,10 @@
             {% if obj_perms.edit_assessment %}
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Data cleanup</a></li>
-            <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean risk of bias responses</a></li>
+            <li><a href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a></li>
             {% endif %}
           {% elif crud == "Update" %}
-            <li class="disabled"><a tabindex="-1" href="#">Risk of bias changes</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}} changes</a></li>
             <li><a href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a></li>
             <li class="divider"></li>
             <li class="disabled"><a tabindex="-1" href="#">Domain changes</a></li>
@@ -103,7 +103,9 @@
             <strong>Required for animal bioassay: </strong>
               {%if metric.required_animal %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}<br>
             <strong>Required for epidemiological: </strong>
-              {%if metric.required_epi %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}
+              {%if metric.required_epi %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}<br>
+            <strong>Required for in-vitro: </strong>
+              {%if metric.required_invitro %}<i class='fa fa-check'></i>{% else %}<i class='fa fa-minus'></i>{% endif %}
           </td>
           <td>
             {{metric.description|safe}}<br>

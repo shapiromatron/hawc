@@ -40,9 +40,6 @@ class Experiment {
             getGenerations = function() {
                 return self.data.is_generational ? 'Yes' : 'No';
             },
-            getLitterEffects = function() {
-                if (self.data.is_generational) return self.data.litter_effects;
-            },
             getPurityText = function() {
                 return self.data.purity_available ? 'Chemical purity' : 'Chemical purity available';
             },
@@ -64,9 +61,6 @@ class Experiment {
             .add_tbody_tr(getPurityText(), getPurity())
             .add_tbody_tr('Vehicle', this.data.vehicle)
             .add_tbody_tr('Animal diet', this.data.diet)
-            .add_tbody_tr('Litter effects', getLitterEffects(), {
-                annotate: this.data.litter_effect_notes,
-            })
             .add_tbody_tr('Guideline compliance', this.data.guideline_compliance)
             .add_tbody_tr('Description and animal husbandry', this.data.description);
 

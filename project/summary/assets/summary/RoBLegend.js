@@ -3,38 +3,46 @@ import d3 from 'd3';
 
 import HAWCUtils from 'utils/HAWCUtils';
 
-import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
+import {
+    NA_KEY,
+    NR_KEY,
+    SCORE_SHADES,
+    SCORE_TEXT,
+    SCORE_TEXT_DESCRIPTION,
+    COLLAPSED_NR_FIELDS_DESCRIPTION,
+} from 'riskofbias/constants';
 
 class RoBLegend {
-    constructor(svg, settings, options) {
+    constructor(svg, settings, rob_response_values, options) {
         this.svg = svg;
         this.settings = settings;
+        this.rob_response_values = rob_response_values;
         this.options = options;
         this.render();
     }
 
     get_data() {
-        let scores = RiskOfBiasScore.score_values.slice(), // shallow copy
+        let scores = this.rob_response_values.slice(), // shallow copy
             fields,
             collapseNR = this.options.collapseNR;
 
         // determine which scores to present in legend
         if (!this.settings.show_na_legend) {
-            scores.splice(scores.indexOf(0), 1);
+            scores.splice(scores.indexOf(NA_KEY), 1);
         }
         if (!this.settings.show_nr_legend || collapseNR) {
-            scores.splice(scores.indexOf(10), 1);
+            scores.splice(scores.indexOf(NR_KEY), 1);
         }
         fields = _.map(scores, function(v) {
-            let desc = RiskOfBiasScore.score_text_description[v];
-            if (v === 2 && collapseNR) {
-                desc = RiskOfBiasScore.collapsedNR;
+            let desc = SCORE_TEXT_DESCRIPTION[v];
+            if (collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[v]) {
+                desc = COLLAPSED_NR_FIELDS_DESCRIPTION[v];
             }
             return {
                 value: v,
-                color: RiskOfBiasScore.score_shades[v],
-                text_color: String.contrasting_color(RiskOfBiasScore.score_shades[v]),
-                text: RiskOfBiasScore.score_text[v],
+                color: SCORE_SHADES[v],
+                text_color: String.contrasting_color(SCORE_SHADES[v]),
+                text: SCORE_TEXT[v],
                 description: desc,
             };
         });

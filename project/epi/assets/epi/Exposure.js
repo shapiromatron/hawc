@@ -56,8 +56,48 @@ class Exposure {
         return lis;
     }
 
+    build_central_tendencies_table() {
+        var ctTable = $('<table/>').addClass('bordered');
+        var ctHeaders = [
+            'Estimate',
+            'Estimate type',
+            'Variance',
+            'Variance type',
+            'Lower Bound Interval',
+            'Upper Bound Interval',
+            'Lower CI',
+            'Upper CI',
+            'Lower Range',
+            'Upper Range',
+        ];
+
+        var headerRow = $('<tr/>').appendTo(ctTable);
+        for (var i = 0; i < ctHeaders.length; i++) {
+            $('<th/>')
+                .html(ctHeaders[i].replace(/ /g, '&nbsp'))
+                .appendTo(headerRow);
+        }
+
+        this.data.central_tendencies.forEach(function(el, idx) {
+            var row = $('<tr/>').appendTo(ctTable);
+            for (var i = 0; i < ctHeaders.length; i++) {
+                var val = el[ctHeaders[i].replace(/ /g, '_').toLowerCase()];
+                if (val != null && typeof val == 'string') {
+                    val = val.replace(/ /g, '&nbsp;');
+                }
+                $('<td/>')
+                    .html(val)
+                    .appendTo(row);
+            }
+        });
+        return ctTable;
+    }
+
     build_details_table(showLink) {
         var link = showLink === true ? this.build_link() : undefined;
+
+        var ctTable = this.build_central_tendencies_table();
+
         return new DescriptiveTable()
             .add_tbody_tr('Name', link)
             .add_tbody_tr('What was measured', this.data.measured)
@@ -71,18 +111,7 @@ class Exposure {
             .add_tbody_tr('Duration', this.data.duration)
             .add_tbody_tr('Sampling period', this.data.sampling_period)
             .add_tbody_tr('Exposure distribution', this.data.exposure_distribution)
-            .add_tbody_tr(
-                this.data.estimate_type ? `Estimate (${this.data.estimate_type})` : 'Estimate',
-                this.data.estimate
-            )
-            .add_tbody_tr(
-                this.data.variance_type ? `Variance (${this.data.variance_type})` : 'Variance',
-                this.data.variance
-            )
-            .add_tbody_tr('Lower CI', this.data.lower_ci)
-            .add_tbody_tr('Upper CI', this.data.upper_ci)
-            .add_tbody_tr('Lower Range', this.data.lower_range)
-            .add_tbody_tr('Upper Range', this.data.upper_range)
+            .add_tbody_tr('Central tendencies', ctTable)
             .add_tbody_tr('Description', this.data.description)
             .get_tbl();
     }

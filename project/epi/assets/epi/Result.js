@@ -132,6 +132,8 @@ class Result {
             .add_tbody_tr('Data location', this.data.data_location)
             .add_tbody_tr('Population description', this.data.population_description)
             .add_tbody_tr('Metric Description', this.data.metric_description)
+            .add_tbody_tr('Metric Units', this.data.metric_units)
+            .add_tbody_tr_list('Result tags', _.map(this.data.resulttags, 'name'))
             .add_tbody_tr_list('Adjustment factors', _.map(this.factors, 'description'))
             .add_tbody_tr_list(
                 'Additional factors considered',

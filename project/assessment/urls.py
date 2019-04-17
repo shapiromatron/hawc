@@ -6,6 +6,7 @@ from rest_framework.routers import DefaultRouter
 from . import views, api
 
 router = DefaultRouter()
+router.register(r'assessment', api.Assessment, base_name='assessment')
 router.register(r'endpoints', api.AssessmentEndpointList, base_name='endpoint_type')
 
 urlpatterns = [

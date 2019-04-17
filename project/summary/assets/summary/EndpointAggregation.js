@@ -125,8 +125,8 @@ class EndpointAggregation extends BaseVisual {
             'Experiment',
             'Animal Group',
             'Endpoint',
-            'NOEL',
-            'LOEL',
+            this.endpoints[0].data.noel_names.noel,
+            this.endpoints[0].data.noel_names.loel,
             'BMD',
             'BMDL',
         ]);

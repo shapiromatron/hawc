@@ -13,7 +13,7 @@
 {% block content %}
 
     <h3>Included references in literature search/import</h3>
-    <p>The following references were selected for inclusion and are therefore ready for risk of bias and/or data-extraction. To create a study, which can be used in HAWC to extract data or add risk of bias, from a literature reference which was marked for inclusion in the HAWC,  select one from the list below:</p>
+    <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
     {% if object_list.count > 0 %}
         <table class="table table-compressed">
             <colgroup>

@@ -115,6 +115,14 @@ rect.selected_overlay {
     text-anchor: middle;
 }
 
+.centeredLabel_bold {
+    font-size: 18px;
+    font-weight: bold;
+    pointer-events: none;
+    stroke-width: 0;
+    text-anchor: middle;
+}
+
 /* LEGEND */
 rect.legend {
     fill: white;
@@ -232,6 +240,23 @@ rect.heatmap_hovered {
     fill: white;
     fill-opacity: 0.5;
     pointer-events: none;
+}
+
+.heatmap_selectable_bold {
+    cursor: pointer;
+}
+
+rect.heatmap_selectable_bold {
+    stroke: black;
+    stroke-width: 4px;
+}
+
+text.heatmap_selectable_bold {
+    font-weight: bold;
+}
+
+text.heatmap_selectable_bold:hover {
+    font-weight: bold;
 }
 
 /*

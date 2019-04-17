@@ -24,6 +24,20 @@ class IVEndpointListTable {
             ];
         table.setColGroup([10, 16, 12, 11, 16, 20, 7, 7]);
         table.addHeaderRow(headers);
+
+        var headersToSortKeys = table.makeHeaderToSortKeyMapFromOrderByDropdown(
+            'select#id_order_by',
+            {
+                'experiment name': 'experiment',
+                'endpoint name': 'endpoint',
+                effect: 'effect category',
+            }
+        );
+
+        table.enableSortableHeaderLinks($('#initial_order_by').val(), headersToSortKeys, {
+            unsortableColumns: ['effects'],
+        });
+
         this.endpoints.map((endpoint) => {
             table.addRow(endpoint.buildListRow());
         });

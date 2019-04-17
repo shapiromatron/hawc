@@ -2,6 +2,7 @@ import $ from '$';
 import _ from 'lodash';
 import d3 from 'd3';
 
+import BaseTable from 'utils/BaseTable';
 import DescriptiveTable from 'utils/DescriptiveTable';
 import HAWCModal from 'utils/HAWCModal';
 import HAWCUtils from 'utils/HAWCUtils';
@@ -158,6 +159,14 @@ class Endpoint extends Observee {
         // return the appropriate dose of interest
         try {
             return this.data.groups[this.data[name]].dose.toHawcString();
+        } catch (err) {
+            return '-';
+        }
+    }
+
+    get_bmd_data(name) {
+        try {
+            return this.data.bmd.output[name];
         } catch (err) {
             return '-';
         }
@@ -386,8 +395,8 @@ class Endpoint extends Observee {
         }
 
         tbl
-            .add_tbody_tr('NOEL', critical_dose('NOEL'))
-            .add_tbody_tr('LOEL', critical_dose('LOEL'))
+            .add_tbody_tr(this.data.noel_names.noel, critical_dose('NOEL'))
+            .add_tbody_tr(this.data.noel_names.loel, critical_dose('LOEL'))
             .add_tbody_tr('FEL', critical_dose('FEL'))
             .add_tbody_tr('Benchmark dose modeling', bmd_response(null, true));
 
@@ -406,10 +415,49 @@ class Endpoint extends Observee {
         tbl
             .add_tbody_tr('Trend <i>p</i>-value', this.data.trend_value)
             .add_tbody_tr('Power notes', this.data.power_notes)
-            .add_tbody_tr('Results notes', this.data.results_notes)
-            .add_tbody_tr('General notes/methodology', this.data.endpoint_notes);
+            .add_tbody_tr('Results notes', this.data.results_notes);
+
+        if (['Rp', 'Dv', 'Ot'].indexOf(this.data.experiment_type) >= 0) {
+            tbl.add_tbody_tr('Litter Effects', this.data.litter_effects_display, {
+                annotate: this.data.litter_effect_notes,
+            });
+        } // else - don't display litter effects at all if not Rp/Dv/Ot in the underlying experiment type
 
         $(div).html(tbl.get_tbl());
+    }
+
+    build_general_notes(div) {
+        var self = this,
+            tbl = new BaseTable(),
+            critical_dose = function(type) {
+                if (self.data[type] < 0) return;
+                var span = $('<span>');
+                new EndpointCriticalDose(self, span, type, true);
+                return span;
+            },
+            bmd_response = function(type, showURL) {
+                if (self.data.bmd === null) return;
+                var span = $('<span>');
+                new BMDResult(self, span, type, true, showURL);
+                return span;
+            },
+            getTaglist = function(tags, assessment_id) {
+                if (tags.length === 0) return false;
+                var ul = $('<ul class="nav nav-pills nav-stacked">');
+                tags.forEach(function(v) {
+                    ul.append(
+                        '<li><a href="{0}">{1}</a></li>'.printf(
+                            Endpoint.getTagURL(assessment_id, v.slug),
+                            v.name
+                        )
+                    );
+                });
+                return ul;
+            };
+        tbl.addHeaderRow(['Methodology']);
+        tbl.setColGroup([100]);
+        tbl.tbody.append(this.data.endpoint_notes);
+        $(div).html(tbl.getTbl());
     }
 
     _dichotomous_percent_change_incidence(eg) {
@@ -441,11 +489,11 @@ class Endpoint extends Observee {
                 )
             );
         }
-        if (self.data.LOEL == endpoint_group_index) {
-            footnotes.push('LOEL (Lowest Observed Effect Level)');
-        }
         if (self.data.NOEL == endpoint_group_index) {
-            footnotes.push('NOEL (No Observed Effect Level)');
+            footnotes.push(`${this.data.noel_names.noel} (${this.data.noel_names.noel_help_text})`);
+        }
+        if (self.data.LOEL == endpoint_group_index) {
+            footnotes.push(`${this.data.noel_names.loel} (${this.data.noel_names.loel_help_text})`);
         }
         if (self.data.FEL == endpoint_group_index) {
             footnotes.push('FEL (Frank Effect Level)');
@@ -482,6 +530,8 @@ class Endpoint extends Observee {
             this.dose_units,
             this.get_special_dose_text('NOEL'),
             this.get_special_dose_text('LOEL'),
+            this.get_bmd_data('BMD'),
+            this.get_bmd_data('BMDL'),
         ];
     }
 
@@ -511,6 +561,7 @@ class Endpoint extends Observee {
             $plot = $('<div style="height:300px; width:300px">'),
             $tbl = $('<table class="table table-condensed table-striped">'),
             $content = $('<div class="container-fluid">'),
+            $notes = $('<div class="span12">'),
             $study,
             $exp,
             $ag,
@@ -549,14 +600,18 @@ class Endpoint extends Observee {
             $end = $content;
         }
 
-        $end.append($('<div class="row-fluid">').append($details)).append(
-            $('<div class="row-fluid">')
-                .append($('<div class="span7">').append($tbl))
-                .append($('<div class="span5">').append($plot))
-        );
+        $end
+            .append($('<div class="row-fluid">').append($details))
+            .append(
+                $('<div class="row-fluid">')
+                    .append($('<div class="span7">').append($tbl))
+                    .append($('<div class="span5">').append($plot))
+            )
+            .append($('<div class="row-fluid">').append($notes));
 
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
+        this.build_general_notes($notes);
         modal.getModal().on('shown', function() {
             self.renderPlot($plot, true);
         });

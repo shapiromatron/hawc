@@ -22,7 +22,7 @@
             <li><a href="{% url 'study:new_ref' assessment.pk %}">Create new</a></li>
             <li><a href="{% url 'study:studies_copy' assessment.pk %}">Copy studies</a></li>
             {% if assessment.enable_risk_of_bias %}
-            <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
+            <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}}</a></li>
             <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a></li>
             <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a></li>
             {% endif %}

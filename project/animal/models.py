@@ -33,17 +33,11 @@ class Experiment(models.Model):
         ("Ca", "Cancer"),
         ("Me", "Mechanistic"),
         ("Rp", "Reproductive"),
+        ("1r", "1-generation reproductive"),
+        ("2r", "2-generation reproductive"),
         ("Dv", "Developmental"),
         ("Ot", "Other"),
         ("NR", "Not-reported"))
-
-    LITTER_EFFECT_CHOICES = (
-        ("NA", "Not-applicable"),
-        ("NR", "Not-reported"),
-        ("YS", "Yes, statistical controls"),
-        ("YD", "Yes, study-design"),
-        ("N",  "No"),
-        ("O",  "Other"))
 
     PURITY_QUALIFIER_CHOICES = (
         ('>', '>'),
@@ -57,6 +51,8 @@ class Experiment(models.Model):
         'cas',
         'chemical_source',
         'vehicle',
+        'description',
+        'guideline_compliance',
     )
 
     study = models.ForeignKey(
@@ -64,21 +60,29 @@ class Experiment(models.Model):
         related_name='experiments')
     name = models.CharField(
         max_length=80,
-        help_text="Short-text used to describe the experiment "
-                  "(i.e. 2-year cancer bioassay, 28-day inhalation, etc.).")
+        help_text = "Short-text used to describe the experiment "
+                    "(i.e. 2-Year Cancer Bioassay, 10-Day Oral, 28-Day Inhalation, etc.) "
+                    "using title style (all words capitalized). If study contains more "
+                    "than one chemical, then also include the chemical name (e.g. 28-Day Oral PFBS).")
     type = models.CharField(
         max_length=2,
         choices=EXPERIMENT_TYPE_CHOICES,
-        help_text="Type of study being performed; be as specific as-possible")
+        help_text="Type of study being performed; be as specific as possible")
     chemical = models.CharField(
         max_length=128,
         verbose_name="Chemical name",
-        blank=True)
+        blank=True,
+        help_text="This field may get displayed in visualizations, "
+                    "so consider using a common acronym, e.g., BPA instead of Bisphenol A")
     cas = models.CharField(
         max_length=40,
         blank=True,
         verbose_name="Chemical identifier (CAS)",
-        help_text="CAS number for chemical-tested, if available.")
+        help_text="""
+                CAS number for chemical-tested. Use N/A if not applicable. If more than one
+                CAS number is applicable, then use a common one here and indicate others
+                in the comment field below.
+                """)
     chemical_source = models.CharField(
         max_length=128,
         verbose_name="Source of chemical",
@@ -100,33 +104,28 @@ class Experiment(models.Model):
     vehicle = models.CharField(
         max_length=64,
         verbose_name="Chemical vehicle",
-        help_text="If a vehicle was used, vehicle common-name",
-        blank=True)
-    diet = models.TextField(
-        help_text="Description of animal-feed, if relevant",
+        help_text="Describe vehicle (use name as described in methods but also add the " +
+                    "common name if the vehicle was described in a non-standard way). " +
+                    "Enter \"not reported\" if the vehicle is not described. For inhalation " +
+                    "studies, air can be inferred if not explicitly reported. " +
+                    "Examples: \"corn oil,\" \"filtered air,\" \"not reported, but assumed clean air.\"",
         blank=True)
     guideline_compliance = models.CharField(
         max_length=128,
         blank=True,
-        help_text="""Description of any compliance methods used (i.e. use of EPA
-            OECD, NTP, or other guidelines; conducted under GLP guideline
-            conditions, non-GLP but consistent with guideline study, etc.)""")
-    litter_effects = models.CharField(
-        max_length=2,
-        choices=LITTER_EFFECT_CHOICES,
-        default="NA",
-        help_text="Type of controls used for litter-effects")
-    litter_effect_notes = models.CharField(
-        max_length=128,
-        help_text="Any additional notes describing how litter effects were controlled",
-        blank=True)
+        help_text="""
+            Description of any compliance methods used (i.e. use of EPA OECD, NTP,
+            or other guidelines; conducted under GLP guideline conditions, non-GLP but consistent
+            with guideline study, etc.). This field response should match any description used
+            in study evaluation in the reporting quality domain, e.g., GLP study (OECD guidelines
+            414 and 412, 1981 versions). If not reported, then use state "not reported."
+            """)
     description = models.TextField(
         blank=True,
-        verbose_name="Description and animal husbandry",
-        help_text="Text-description of the experimental protocol used. "
-                  "May also include information such as animal husbandry. "
-                  "Note that dosing-regime information and animal details are "
-                  "captured in other fields.")
+        verbose_name="Comments",
+        help_text="Add additional comments. In most cases, this field will "
+                  "be blank. Note that dosing-regime information and animal "
+                  "details are captured in the Animal Group extraction module.")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -167,9 +166,6 @@ class Experiment(models.Model):
             'experiment-purity_qualifier',
             'experiment-purity',
             'experiment-vehicle',
-            'experiment-diet',
-            'experiment-litter_effects',
-            'experiment-litter_effect_notes',
             'experiment-guideline_compliance',
             'experiment-description'
         )
@@ -188,9 +184,6 @@ class Experiment(models.Model):
             ser['purity_qualifier'],
             ser['purity'],
             ser['vehicle'],
-            ser['diet'],
-            ser['litter_effects'],
-            ser['litter_effect_notes'],
             ser['guideline_compliance'],
             cleanHTML(ser['description'])
         )
@@ -215,6 +208,9 @@ class Experiment(models.Model):
             child.copy_across_assessments(cw)
         for child in self.animal_groups.all():
             child.complete_copy(cw)
+
+    def get_study(self):
+        return self.study
 
 
 class AnimalGroup(models.Model):
@@ -242,11 +238,26 @@ class AnimalGroup(models.Model):
         ("F4", "Fourth-generation (F4)"),
         ("Ot", "Other"))
 
+    # these choices for lifesage expose/assessed were added ~Sept 2018. B/c there
+    # are existing values in the database, we are not going to enforce these choices on
+    # the model as we do for say sex/SEX_CHOICES. Instead we'll leave the model as is,
+    # and start using this to drive a Select widget on the form. For old/existing data,
+    # we'll add the previously saved value to the dropdown at runtime so we don't lose data.
+    LIFESTAGE_CHOICES = (
+        ("Developmental", "Developmental"),
+        ("Adult", "Adult"),
+        ("Adult (gestation)", "Adult (gestation)"),
+        ("Multi-lifestage", "Multi-lifestage")
+    )
+
+
     TEXT_CLEANUP_FIELDS = (
         'name',
         'animal_source',
         'lifestage_exposed',
         'lifestage_assessed',
+        'comments',
+        'diet',
     )
 
     experiment = models.ForeignKey(
@@ -254,35 +265,48 @@ class AnimalGroup(models.Model):
         related_name="animal_groups")
     name = models.CharField(
         max_length=80,
-        help_text="Short description of the animals (i.e. Male Fischer F344 rats, Female C57BL/6 mice)"
-        )
+        help_text="""
+            Name should be: sex, common strain name, species (plural) and use Title Style
+            (e.g. Male Sprague Dawley Rat, Female C57BL/6 Mice, Male and Female
+            C57BL/6 Mice). For developmental studies, include the generation before
+            sex in title (e.g., F1 Male Sprague Dawley Rat or P0 Female C57 Mice)
+            """)
     species = models.ForeignKey(
         'assessment.Species')
     strain = models.ForeignKey(
-        'assessment.Strain')
+        'assessment.Strain',
+        help_text='When adding a new strain, put the stock in parenthesis, e.g., ' +
+                    '\"Sprague-Dawley (Harlan).\"')
     sex = models.CharField(
         max_length=1,
         choices=SEX_CHOICES)
     animal_source = models.CharField(
         max_length=128,
-        help_text="Laboratory and/or breeding details where animals were acquired",
+        help_text="Source from where animals were acquired",
         blank=True)
     lifestage_exposed = models.CharField(
         max_length=32,
         blank=True,
-        help_text='Textual life-stage description when exposure occurred '
-                  '(examples include: "parental, PND18, juvenile, adult, '
-                  'continuous, multiple")')
+        verbose_name="Exposure lifestage",
+        help_text='Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams '
+                    'or postnatal exposure in offspring until sexual maturity (~6 weeks '
+                    'in rats and mice). Include studies with pre-mating exposure <em>if the '
+                    'endpoint focus is developmental</em>. <strong>Adult</strong>: Exposure in sexually '
+                    'mature males or females. <strong>Adult (gestation)</strong>: Exposure in dams during'
+                    'pregnancy. <strong>Multi-lifestage</strong>: includes both developmental and adult '
+                    '(i.e., multi-generational studies, exposure that start before sexual '
+                    'maturity and continue to adulthood)'
+        )
     lifestage_assessed = models.CharField(
         max_length=32,
         blank=True,
-        help_text='Textual life-stage description when endpoints were measured '
-                  '(examples include: "parental, PND18, juvenile, adult, multiple")')
-    duration_observation = models.FloatField(
-        verbose_name="Observation duration (days)",
-        help_text="Numeric length of observation period, in days (fractions allowed)",
-        blank=True,
-        null=True)
+        help_text='Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or ' +
+                    'postnatal exposure in offspring until sexual maturity (~6 weeks in rats and ' +
+                    'mice). Include studies with pre-mating exposure if the endpoint focus is ' +
+                    'developmental. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult ' +
+                    '(gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both ' +
+                    'developmental and adult (i.e., multi-generational studies, exposure that start ' +
+                    'before sexual maturity and continue to adulthood)')
     siblings = models.ForeignKey(
         "self",
         blank=True,
@@ -305,8 +329,13 @@ class AnimalGroup(models.Model):
         null=True)  # not enforced in db, but enforced in views
     comments = models.TextField(
         blank=True,
-        verbose_name="Description",
-        help_text="Any addition notes for this animal-group.")
+        verbose_name="Animal Source and Husbandry",
+        help_text="Copy paste animal husbandry information from materials and methods, "
+                    "use quotation marks around all text directly copy/pasted from paper.")
+    diet = models.TextField(
+        help_text="Describe diet as presented in the paper (e.g., \"soy-protein free " +
+                    "2020X Teklad,\" \"Atromin 1310\", \"standard rodent chow\").",
+        blank=True)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -356,11 +385,11 @@ class AnimalGroup(models.Model):
             "animal_group-animal_source",
             "animal_group-lifestage_exposed",
             "animal_group-lifestage_assessed",
-            "animal_group-duration_observation",
             "animal_group-siblings",
             "animal_group-parents",
             "animal_group-generation",
             "animal_group-comments",
+            "animal_group-diet",
             "species-name",
             "strain-name",
         )
@@ -379,11 +408,11 @@ class AnimalGroup(models.Model):
             ser['animal_source'],
             ser['lifestage_exposed'],
             ser['lifestage_assessed'],
-            ser['duration_observation'],
             cls.get_relation_id(ser['siblings']),
             '|'.join([cls.get_relation_id(p) for p in ser['parents']]),
             ser['generation'],
             cleanHTML(ser['comments']),
+            ser["diet"],
             ser['species'],
             ser['strain']
         )
@@ -422,6 +451,9 @@ class AnimalGroup(models.Model):
         self.dosing_regime_id = cw[DosingRegime.COPY_NAME][self.dosing_regime_id]
         self.save()
 
+    def get_study(self):
+        if self.experiment is not None:
+            return self.experiment.get_study()
 
 class DosingRegime(models.Model):
 
@@ -458,8 +490,12 @@ class DosingRegime(models.Model):
         ("UN", "Untreated"),
         ("VT", "Vehicle-treated"),
         ("B" , "Untreated + Vehicle-treated"),
-        ("Y" , "Yes (untreated and/or vehicle)"),
         ("N" , "No"))
+
+    TEXT_CLEANUP_FIELDS = (
+        'description',
+        'duration_exposure_text',
+    )
 
     dosed_animals = models.OneToOneField(
         AnimalGroup,
@@ -472,14 +508,30 @@ class DosingRegime(models.Model):
         help_text="Primary route of exposure. If multiple primary-exposures, describe in notes-field below")
     duration_exposure = models.FloatField(
         verbose_name="Exposure duration (days)",
-        help_text="Length of exposure period (fractions allowed), used for sorting in visualizations",
+        help_text="Length of exposure period (fractions allowed), used for sorting in visualizations. For single-dose or multiple-dose/same day gavage studies, 1.",
         blank=True,
         null=True)
     duration_exposure_text = models.CharField(
         verbose_name="Exposure duration (text)",
         max_length=128,
         blank=True,
-        help_text="Text-description of the exposure duration (ex: 21 days, 104 wks, GD0 to PND9, GD0 to weaning)")
+        help_text="Length of time between start of exposure and outcome assessment, "
+                    "in days when &lt;7 (e.g., 5d), weeks when &ge;7 days to 12 weeks (e.g., "
+                    "1wk, 12wk), or months when &gt;12 weeks (e.g., 15mon). For repeated "
+                    "measures use descriptions such as \"1, 2 and 3 wk\".  For inhalations "
+                    "studies, also include hours per day and days per week, e.g., \"13wk "
+                    "(6h/d, 7d/wk).\" This field is commonly used in visualizations, so "
+                    "use abbreviations (h, d, wk, mon, y) and no spaces between numbers "
+                    "to save space. For reproductive and developmental studies, where "
+                    "possible instead include abbreviated age descriptions such as \"GD1-10\" "
+                    "or \"GD2-PND10\". For gavage studies, include the number of doses, e.g. "
+                    "\"1wk (1dose/d, 5d/wk)\" or \"2doses\" for a single-day experiment.")
+    duration_observation = models.FloatField(
+        verbose_name="Exposure-outcome duration",
+        help_text='Optional: Numeric length of time between start of exposure and outcome assessment in days. ' +
+                    'This field may be used to sort studies which is why days are used as a common metric.',
+        blank=True,
+        null=True)
     num_dose_groups = models.PositiveSmallIntegerField(
         default=4,
         validators=[MinValueValidator(1)],
@@ -487,16 +539,22 @@ class DosingRegime(models.Model):
         help_text="Number of dose groups, plus control")
     positive_control = models.NullBooleanField(
         choices=POSITIVE_CONTROL_CHOICES,
-        default=None,
+        default=False,
         help_text="Was a positive control used?")
     negative_control = models.CharField(
         max_length=2,
-        default="NR",
+        default="VT",
         choices=NEGATIVE_CONTROL_CHOICES,
         help_text="Description of negative-controls used")
     description = models.TextField(
         blank=True,
-        help_text="Detailed description of dosing methodology (i.e. exposed via inhalation 5 days/week for 6 hours)")
+        help_text="Cut and paste from methods, use quotation marks around all "
+                    "text directly copy/pasted from paper. Also summarize results "
+                    "of any analytical work done to confirm dose, stability, etc. "
+                    "This can be a narrative summary of tabular information, "
+                    "e.g., \"Author's present data on the target and actual concentration "
+                    "(Table 1; means &plusmn; SD for entire 13-week period) and the values are "
+                    "very close.\" ")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -517,6 +575,10 @@ class DosingRegime(models.Model):
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
 
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
+
     @property
     def dose_groups(self):
         if not hasattr(self, '_dose_groups'):
@@ -535,6 +597,7 @@ class DosingRegime(models.Model):
             "dosing_regime-route_of_exposure",
             "dosing_regime-duration_exposure",
             "dosing_regime-duration_exposure_text",
+            "dosing_regime-duration_observation",
             "dosing_regime-num_dose_groups",
             "dosing_regime-positive_control",
             "dosing_regime-negative_control",
@@ -549,6 +612,7 @@ class DosingRegime(models.Model):
             ser['route_of_exposure'],
             ser['duration_exposure'],
             ser['duration_exposure_text'],
+            ser['duration_observation'],
             ser['num_dose_groups'],
             ser['positive_control'],
             ser['negative_control'],
@@ -581,6 +645,9 @@ class DosingRegime(models.Model):
         for child in children:
             child.copy_across_assessments(cw)
 
+    def get_study(self):
+        if self.dosed_animals is not None:
+            return self.dosed_animals.get_study()
 
 class DoseGroup(models.Model):
     objects = managers.DoseGroupManager()
@@ -642,6 +709,12 @@ class Endpoint(BaseEndpoint):
         'data_location',
         'response_units',
         'statistical_test',
+        'diagnostic',
+        'data_location',
+        'trend_value',
+        'results_notes',
+        'endpoint_notes',
+        'litter_effect_notes',
     )
 
     DATA_TYPE_CHOICES = (
@@ -652,15 +725,14 @@ class Endpoint(BaseEndpoint):
         ('NR', 'Not reported'))
 
     MONOTONICITY_CHOICES = (
+        (8, "--"),
         (0, "N/A, single dose level study"),
         (1, "N/A, no effects detected"),
-        (2, "yes, visual appearance of monotonicity but no trend"),
-        (3, "yes, monotonic and significant trend"),
-        (4, "yes, visual appearance of non-monotonic but no trend"),
-        (5, "yes, non-monotonic and significant trend"),
-        (6, "no pattern"),
-        (7, "unclear"),
-        (8, "not-reported"))
+        (2, "visual appearance of monotonicity"),
+        (3, "monotonic and significant trend"),
+        (4, "visual appearance of non-monotonicity"),
+        (6, "no pattern/unclear"),
+    )
 
     VARIANCE_TYPE_CHOICES = (
         (0, "NA"),
@@ -675,7 +747,7 @@ class Endpoint(BaseEndpoint):
         3: "Not Reported"}
 
     OBSERVATION_TIME_UNITS = (
-        (0, "not-reported"),
+        (0, "not reported"),
         (1, "seconds"),
         (2, "minutes"),
         (3, "hours"),
@@ -683,8 +755,8 @@ class Endpoint(BaseEndpoint):
         (5, "weeks"),
         (6, "months"),
         (9, "years"),
-        (7, "PND"),
-        (8, "GD"))
+        (7, "post-natal day (PND)"),
+        (8, "gestational day (GD)"))
 
     TREND_RESULT_CHOICES = (
         (0, "not applicable"),
@@ -696,8 +768,17 @@ class Endpoint(BaseEndpoint):
         (3, 'increase from reference/control group'),
         (2, 'decrease from reference/control group'),
         (1, 'any change from reference/control group'),
-        (0, 'not reported'),
+        (0, 'unclear'),
+        (4, '---')
     )
+
+    LITTER_EFFECT_CHOICES = (
+        ("NA", "Not applicable"),
+        ("NR", "Not reported"),
+        ("YS", "Yes, statistical control"),
+        ("YD", "Yes, study-design"),
+        ("N",  "No"),
+        ("O",  "Other"))
 
     animal_group = models.ForeignKey(
         AnimalGroup,
@@ -710,7 +791,7 @@ class Endpoint(BaseEndpoint):
         max_length=128,
         blank=True,
         verbose_name="Organ (and tissue)",
-        help_text="Relevant organ; also include tissue if relevant")
+        help_text="Relevant organ or tissue")
     effect = models.CharField(
         max_length=128,
         blank=True,
@@ -719,6 +800,18 @@ class Endpoint(BaseEndpoint):
         max_length=128,
         blank=True,
         help_text="Effect subtype, using common-vocabulary")
+    litter_effects = models.CharField(
+        max_length=2,
+        choices=LITTER_EFFECT_CHOICES,
+        default="NA",
+        help_text="Type of controls used for litter-effects. The \"No\" response " +
+                "will be infrequently used. More typically the information will be " +
+                "\"Not reported\" and assumed not considered. Only use \"No\" if it " +
+                "is explicitly mentioned in the study that litter was not controlled for.")
+    litter_effect_notes = models.CharField(
+        max_length=128,
+        help_text="Any additional notes describing how litter effects were controlled",
+        blank=True)
     observation_time = models.FloatField(
         blank=True,
         null=True,
@@ -735,10 +828,11 @@ class Endpoint(BaseEndpoint):
         max_length=128,
         blank=True,
         help_text="Details on where the data are found in the literature "
-                  "(ex: Figure 1, Table 2, etc.)")
+                    "(ex: \"Figure 1\", \"Table 2\", \"Text, p. 24\", \"Figure "
+                    "1 and Text, p.24\")")
     expected_adversity_direction = models.PositiveSmallIntegerField(
         choices=ADVERSE_DIRECTION_CHOICES,
-        default=0,
+        default=4,
         verbose_name='Expected response adversity direction',
         help_text='Response direction which would be considered adverse')
     response_units = models.CharField(
@@ -786,7 +880,8 @@ class Endpoint(BaseEndpoint):
     statistical_test = models.CharField(
         max_length=256,
         blank=True,
-        help_text="Description of statistical analysis techniques used")
+        help_text="Short description of statistical analysis techniques used, e.g., "
+                    "Fisher Exact Test, ANOVA, Chi Square, Peto's test, none conducted")
     trend_value = models.FloatField(
         null=True,
         blank=True,
@@ -795,18 +890,40 @@ class Endpoint(BaseEndpoint):
         default=3,
         choices=TREND_RESULT_CHOICES)
     diagnostic = models.TextField(
+        verbose_name="Endpoint Name in Study",
         blank=True,
-        help_text="Diagnostic or method used to measure endpoint (if relevant)")
+        help_text="List the endpoint/adverse outcome name as used in the study. "
+                    "This will help during QA/QC of the extraction to the original "
+                    "study in cases where the endpoint/adverse outcome name is "
+                    "adjusted for consistency across studies or assessments.")
     power_notes = models.TextField(
         blank=True,
         help_text="Power of study-design to detect change from control")
     results_notes = models.TextField(
         blank=True,
-        help_text="Qualitative description of the results")
+        help_text= """
+            Qualitative description of the results. This field can be
+            left blank if there is no need to further describe numerically
+            extracted findings, e.g., organ or body weights. Use this
+            field to describe findings such as the type and severity
+            of histopathology or malformations not otherwise captured
+            in the numerical data extraction. Also use this field to cut
+            and paste findings described only in text in the study. If
+            coding is used to create exposure-response arrays, then add
+            this comment in bold font at the start of the text box entry
+            <strong>"For exposure-response array data display purposes, the following
+            results were coded (control and no effect findings were coded as
+            "0", treatment-related increases were coded as "1", and
+            treatment-related decreases were coded as "-1"."</strong>
+            """)
     endpoint_notes = models.TextField(
         blank=True,
-        verbose_name="General notes/methodology",
-        help_text="Any additional notes related to this endpoint/methodology, not including results")
+        verbose_name="Methods",
+        help_text="Cut and paste from methods, use quotation marks around all "
+                    "text directly copy/pasted from paper. Include all methods "
+                    "pertinent to measuring ALL outcomes, including statistical "
+                    "methods. This will make it easier to copy from existing HAWC "
+                    "endpoints to create new endpoints for a study.")
     additional_fields = models.TextField(
         default="{}")
 
@@ -904,6 +1021,8 @@ class Endpoint(BaseEndpoint):
             "endpoint-organ",
             "endpoint-effect",
             "endpoint-effect_subtype",
+            'endpoint-litter_effects',
+            'endpoint-litter_effect_notes',
             "endpoint-observation_time",
             "endpoint-observation_time_units",
             "endpoint-observation_time_text",
@@ -938,6 +1057,8 @@ class Endpoint(BaseEndpoint):
             ser['organ'],
             ser['effect'],
             ser['effect_subtype'],
+            ser['litter_effects'],
+            ser['litter_effect_notes'],
             ser['observation_time'],
             ser['observation_time_units'],
             ser['observation_time_text'],
@@ -1088,6 +1209,13 @@ class Endpoint(BaseEndpoint):
         # copy other children
         for child in children:
             child.copy_across_assessments(cw)
+
+    def get_study(self):
+        if self.animal_group is not None:
+            return self.animal_group.get_study()
+
+    def get_noel_names(self):
+        return self.assessment.get_noel_names()
 
 
 class ConfidenceIntervalsMixin(object):
