@@ -1,3 +1,5 @@
+from textwrap import dedent
+
 from django.core.mail import send_mail, mail_admins
 from django import forms
 from django.conf import settings
@@ -224,24 +226,33 @@ class AssessmentEmailManagersForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    name = forms.CharField(max_length=100)
-    email = forms.EmailField()
+    name = forms.CharField(max_length=100, disabled=True)
+    email = forms.EmailField(disabled=True)
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
-
-    def send_email(self):
-        subject = '[HAWC contact us]: {}'.format(self.cleaned_data['subject'])
-        content = '{0}\n\n{1}\n{2}'.format(
-            self.cleaned_data['message'],
-            self.cleaned_data['name'],
-            self.cleaned_data['email']
-        )
-        mail_admins(subject, content, fail_silently=False)
+    previous_page = forms.CharField(widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
-        self.back_href = kwargs.pop('back_href', None)
+        self.back_href = kwargs.pop("back_href")
+        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
+        self.fields["name"].initial = self.user.get_full_name()
+        self.fields["email"].initial = self.user.email
+        self.fields["previous_page"].initial = self.back_href
         self.helper = self.setHelper()
+
+    def send_email(self):
+        subject = f"[HAWC contact us]: {self.cleaned_data['subject']}"
+        body = dedent(
+            f"""\
+        {self.cleaned_data["message"]}
+        ---
+        Full name: {self.cleaned_data["name"]}
+        Email: {self.cleaned_data["email"]}
+        Previous page: {self.cleaned_data["previous_page"]}
+        """
+        )
+        mail_admins(subject, body, fail_silently=False)
 
     def setHelper(self):
         # by default take-up the whole row-fluid

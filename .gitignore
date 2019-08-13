@@ -17,6 +17,7 @@ project/celerybeat*
 __pycache__
 .idea/*
 .ipynb_checkpoints
+.mypy_cache/
 data
 docs/_build
 env
