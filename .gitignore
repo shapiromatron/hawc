@@ -17,17 +17,23 @@ project/static/css/hawc_d3_aggregated.css
 webpack-stats.json
 
 # folders
-.happypack/
-.idea/
-.ipynb_checkpoints/
+__pycache__
+.idea/*
+.ipynb_checkpoints
+.mypy_cache/
+data
+docs/_build
+env
+public/static
+public/media
+venv
 .vscode/
-__pycache__/
-data/
-docs/_build/
-node_modules/
-public/media/
-public/static/
-venv/
+
+# javascript
+node_modules
+webpack-stats.json
+package-lock.json
+.happypack/
 
 # keep folders; not contents
 project/static/bundles/*

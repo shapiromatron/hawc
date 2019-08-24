@@ -166,7 +166,7 @@ class About(TemplateView):
         return context
 
 
-class Contact(MessageMixin, FormView):
+class Contact(LoginRequiredMixin, MessageMixin, FormView):
     template_name = 'hawc/contact.html'
     form_class = forms.ContactForm
     success_url = reverse_lazy('home')
@@ -174,8 +174,10 @@ class Contact(MessageMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['back_href'] = self.request.META.get(
-            'HTTP_REFERER', reverse('portal'))
+        kwargs.update(
+            back_href=self.request.META.get('HTTP_REFERER', reverse('portal')),
+            user=self.request.user,
+        )
         return kwargs
 
     def form_valid(self, form):
