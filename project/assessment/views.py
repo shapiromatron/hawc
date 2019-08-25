@@ -148,11 +148,20 @@ class About(TemplateView):
             logging.info('Setting about-page cache')
         return counts
 
+    def get_rob_name(self):
+        if settings.HAWC_FLAVOR == "PRIME":
+            return models.ROB_NAME_CHOICES_ROB_TEXT
+        elif settings.HAWC_FLAVOR == "EPA":
+            return models.ROB_NAME_CHOICES_SE_TEXT
+        else:
+            raise ValueError("Unknown HAWC flavor")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['GIT_COMMIT'] = settings.GIT_COMMIT
         context['COMMIT_URL'] = settings.COMMIT_URL
         context['HAWC_FLAVOR'] = settings.HAWC_FLAVOR
+        context['rob_name'] = self.get_rob_name()
         context['counts'] = self.get_object_counts()
         return context
 

@@ -8,6 +8,7 @@ import HAWCUtils from 'utils/HAWCUtils';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 import { renderStudyDisplay } from 'riskofbias/robTable/components/StudyDisplay';
+import { SCORE_SHADES, SCORE_TEXT } from 'riskofbias/constants';
 
 class Study {
     constructor(data) {
@@ -54,15 +55,16 @@ class Study {
     }
 
     unpack_riskofbias() {
-        // unpack risk of bias information and nest by domain
+        // unpack rob information and nest by domain
         var self = this,
-            riskofbias = [];
+            riskofbias = [],
+            rob_response_values = this.data.rob_response_values;
 
         this.final.scores.forEach(function(v, i) {
-            v.score_color = RiskOfBiasScore.score_shades[v.score];
+            v.score_color = SCORE_SHADES[v.score];
             v.score_text_color = String.contrasting_color(v.score_color);
-            v.score_text = RiskOfBiasScore.score_text[v.score];
-            riskofbias.push(new RiskOfBiasScore(self, v));
+            v.score_text = SCORE_TEXT[v.score];
+            riskofbias.push(new RiskOfBiasScore(self, v, rob_response_values));
         });
 
         // group rob by domains
@@ -77,6 +79,10 @@ class Study {
         this.riskofbias.forEach(function(v, i) {
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
+            v.domain_is_overall_confidence =
+                typeof v.values[0].data.metric.domain.is_overall_confidence === 'boolean'
+                    ? v.values[0].data.metric.domain.is_overall_confidence
+                    : false;
             v.criteria = v.values;
             v.score_text = v.score > 0 ? v.score : 'N/A';
             v.score_color = '#E8E8E8';
@@ -123,6 +129,7 @@ class Study {
     build_details_table(div) {
         var tbl = new DescriptiveTable(),
             links = this._get_identifiers_hyperlinks_ul();
+        tbl.add_tbody_tr('Locked?', this.data.editable ? 'no' : 'yes');
         tbl.add_tbody_tr('Data type(s)', this._get_data_types());
         tbl.add_tbody_tr('Full citation', this.data.full_citation);
         tbl.add_tbody_tr('Abstract', this.data.abstract);
@@ -144,7 +151,7 @@ class Study {
         tbl.add_tbody_tr('Study identifier', this.data.study_identifier);
         tbl.add_tbody_tr('Author contacted?', HAWCUtils.booleanCheckbox(this.data.contact_author));
         tbl.add_tbody_tr('Author contact details', this.data.ask_author);
-        tbl.add_tbody_tr('Summary and/or extraction comments', this.data.summary);
+        tbl.add_tbody_tr('Summary/extraction comments', this.data.summary);
         $(div).html(tbl.get_tbl());
     }
 

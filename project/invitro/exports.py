@@ -1,6 +1,7 @@
 from copy import copy
 from django.apps import apps
 
+from animal.exports import get_final_rob_text
 from utils.helper import FlatFileExporter
 
 
@@ -65,6 +66,7 @@ class DataPivotEndpoint(FlatFileExporter):
             'minimum dose',
             'maximum dose',
             'number of doses',
+            'Overall study confidence'
         ]
 
         num_cats = 0
@@ -100,6 +102,8 @@ class DataPivotEndpoint(FlatFileExporter):
 
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
+            study_id = ser['experiment']['study']['id']
+            finalROB = get_final_rob_text(study_id)
 
             doseRange = getDoseRange(ser)
 
@@ -159,7 +163,8 @@ class DataPivotEndpoint(FlatFileExporter):
                 ser['trend_test'],
                 doseRange[0],
                 doseRange[1],
-                number_doses
+                number_doses,
+                finalROB
             ]
 
             # extend rows to include blank placeholders, and apply

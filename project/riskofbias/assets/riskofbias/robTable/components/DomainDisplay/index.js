@@ -7,7 +7,7 @@ import MetricForm from 'riskofbias/robTable/components/MetricForm';
 
 class DomainDisplay extends Component {
     render() {
-        let { domain, config, updateNotesLeft } = this.props;
+        let { domain, config, updateNotesLeft, robResponseValues } = this.props;
         return (
             <div>
                 <h3>{domain.key}</h3>
@@ -17,6 +17,7 @@ class DomainDisplay extends Component {
                         ref: _.last(metric.values).id,
                         metric,
                         config,
+                        robResponseValues,
                     };
                     return config.isForm ? (
                         <MetricForm {...props} updateNotesLeft={updateNotesLeft} />
@@ -36,6 +37,7 @@ DomainDisplay.propTypes = {
         values: PropTypes.array.isRequired,
     }).isRequired,
     config: PropTypes.object,
+    robResponseValues: PropTypes.array.isRequired,
     updateNotesLeft: PropTypes.func,
 };
 

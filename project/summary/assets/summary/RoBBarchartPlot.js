@@ -1,14 +1,13 @@
 import _ from 'lodash';
 import d3 from 'd3';
 
-import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
-
 import D3Visualization from './D3Visualization';
 import RoBLegend from './RoBLegend';
+import { SCORE_SHADES } from 'riskofbias/constants';
 
 class RoBBarchartPlot extends D3Visualization {
     constructor(parent, data, options) {
-        // stacked-bars of risk of bias information. Criteria are on the y-axis,
+        // stacked-bars of rob information. Criteria are on the y-axis,
         // and studies are on the x-axis
         super(...arguments);
         this.setDefaults();
@@ -18,8 +17,9 @@ class RoBBarchartPlot extends D3Visualization {
         this.plot_div = $div.html('');
         this.processData();
         if (this.dataset.length === 0) {
+            let robName = this.data.assessment_rob_name.toLowerCase();
             return this.plot_div.html(
-                '<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>'
+                `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
             );
         }
         this.get_plot_sizes();
@@ -77,7 +77,7 @@ class RoBBarchartPlot extends D3Visualization {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale.ordinal().range(_.values(RiskOfBiasScore.score_shades)),
+            color_scale: d3.scale.ordinal().range(_.values(SCORE_SHADES)),
         });
     }
 
@@ -271,11 +271,12 @@ class RoBBarchartPlot extends D3Visualization {
 
     build_legend() {
         if (this.legend || !this.data.settings.show_legend) return;
-        let options = {
-            dev: this.options.dev || false,
-            collapseNR: true,
-        };
-        this.legend = new RoBLegend(this.svg, this.data.settings, options);
+        let rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
+            options = {
+                dev: this.options.dev || false,
+                collapseNR: true,
+            };
+        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, options);
     }
 }
 

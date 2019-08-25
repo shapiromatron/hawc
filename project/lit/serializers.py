@@ -3,6 +3,8 @@ from rest_framework.exceptions import ParseError
 
 from assessment.serializers import AssessmentRootedSerializer
 
+from utils.api import DynamicFieldsMixin
+
 from . import models
 
 
@@ -35,3 +37,11 @@ class ReferenceFilterTagSerializer(AssessmentRootedSerializer):
     class Meta:
         model = models.ReferenceFilterTag
         fields = ('id', 'name', 'parent')
+
+
+class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Reference
+        cleanup_fields = model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )

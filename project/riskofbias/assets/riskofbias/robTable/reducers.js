@@ -9,6 +9,7 @@ const defaultState = {
     error: null,
     name: '',
     final: [],
+    rob_response_values: [],
     riskofbiases: [],
     active: [],
 };
@@ -24,6 +25,7 @@ function study(state = defaultState, action) {
             return Object.assign({}, state, {
                 name: action.study.short_citation,
                 final: action.study.final,
+                rob_response_values: action.study.rob_response_values,
                 riskofbiases: action.study.riskofbiases,
                 active: action.study.riskofbiases,
                 isFetching: false,

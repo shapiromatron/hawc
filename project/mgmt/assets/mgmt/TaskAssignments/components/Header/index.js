@@ -7,9 +7,9 @@ class Header extends Component {
             <div className="flexRow-container">
                 {this.props.headings.map((heading, i) => {
                     return (
-                        <h5 key={`heading-${i}`} className={`flex-${heading.flex}`}>
+                        <h4 key={`heading-${i}`} className={`flex-${heading.flex}`}>
                             {heading.name}
-                        </h5>
+                        </h4>
                     );
                 })}
             </div>

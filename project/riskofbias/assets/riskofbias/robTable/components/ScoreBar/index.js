@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { VelocityComponent } from 'velocity-react';
 
+import { SCORE_BAR_WIDTH_PERCENTAGE } from 'riskofbias/constants';
+
 import './ScoreBar.css';
 
 class ScoreBar extends Component {
@@ -16,8 +18,7 @@ class ScoreBar extends Component {
 
     render() {
         let { description, score } = this.props,
-            // Not Reported score is 10. If Not reported, set barWidth to 25 instead of 250.
-            barWidth = score === 10 ? 25 : d3.max([d3.round(score / 4 * 100, 2), 25]);
+            barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score];
 
         return (
             <div className="score-bar">

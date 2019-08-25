@@ -21,6 +21,9 @@
         <ul class="dropdown-menu">
 
             <li class="disabled"><a tabindex="-1" href="#">Study editing</a></li>
+            {% if obj_perms.edit_assessment %}
+            <li><a href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a></li>
+            {% endif %}
             <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
             <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
             <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
@@ -64,7 +67,7 @@
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <div class="row-fluid">
-          <h3>Risk of bias visualization
+          <h3>{{assessment.get_rob_name_display}} visualization
             <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
           </h3>
           <div class="span12">

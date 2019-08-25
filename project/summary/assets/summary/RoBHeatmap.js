@@ -64,6 +64,7 @@ class RoBHeatmap extends BaseVisual {
         return {
             aggregation: this.roba,
             settings: this.data.settings,
+            assessment_rob_name: this.data.assessment_rob_name,
         };
     }
 }

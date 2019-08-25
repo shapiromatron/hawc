@@ -43,33 +43,4 @@ class RiskOfBiasScore {
     }
 }
 
-_.extend(RiskOfBiasScore, {
-    score_values: [0, 1, 2, 10, 3, 4],
-    score_text: {
-        0: 'N/A',
-        1: '--',
-        2: '-',
-        10: 'NR',
-        3: '+',
-        4: '++',
-    },
-    score_shades: {
-        0: '#E8E8E8',
-        1: '#CC3333',
-        2: '#FFCC00',
-        10: '#FFCC00',
-        3: '#6FFF00',
-        4: '#00CC00',
-    },
-    score_text_description: {
-        0: 'Not applicable',
-        1: 'Definitely high risk of bias',
-        2: 'Probably high risk of bias',
-        10: 'Not reported',
-        3: 'Probably low risk of bias',
-        4: 'Definitely low risk of bias',
-    },
-    collapsedNR: 'Probably high risk of bias/not reported',
-});
-
 export default RiskOfBiasScore;

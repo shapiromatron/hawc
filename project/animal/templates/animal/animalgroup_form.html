@@ -53,7 +53,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var animalGroupSetup = function(){
-            var onSpeciesChange = function(){
+            var onSpeciesChange = function(e, onStrainUpdateComplete){
                 // only show proper strains for a given species
                 var selected = $('#id_strain option:selected').val(),
                     update_strain_opts = function(d){
@@ -64,6 +64,10 @@ $(document).ready(function() {
                         $('#id_strain').html(opts);
                         $('#id_strain option[value="{0}"]'.printf(selected))
                             .prop('selected', true);
+
+                        if (onStrainUpdateComplete !== undefined) {
+                            onStrainUpdateComplete();
+                        }
                     }
                 $.get(
                     '{% url "assessment:get_strains" %}',
@@ -77,6 +81,29 @@ $(document).ready(function() {
             $('#id_species')
                 .change(onSpeciesChange)
                 .trigger('change');
+
+            // refresh species after "Add new strain" popup closes. Wait half a second
+            // to give the addition, if any, time to register.
+            $("a[title='Add new strain']").on(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
+                setTimeout(function() {
+                    var numStrainsBefore = $("#id_strain option").length;
+
+                    // reload the species
+                    onSpeciesChange(null, function() {
+                        var strains = $("#id_strain option");
+
+                        if (strains.length > numStrainsBefore) {
+                            // a new one was added; let's select it.
+                            var highestId = -1;
+                            strains.each(function() {
+                                highestId = Math.max(Number($(this).val()), highestId);
+                            });
+
+                            $("#id_strain").val(highestId);
+                        }
+                    });
+                }, 500);
+            });
         },
         dosingRegimeSetup = function(){
             var drc = $('#dosingRegimeContainer'),
@@ -120,7 +147,7 @@ $(document).ready(function() {
             drInput
                 .change(onDosingRegimeChange)
                 .trigger('change');
-                
+
             window.app.animalStartup(function(animal){
                 new animal.DosingRegimeForm(
                     $("#animal_group"), dose_types, dose_values);

@@ -46,7 +46,7 @@ class ExperimentPermissions(TestCase):
         # check to ensure that sudo, pm and team can view the edit list,
         # create a new experiment, edit it, and delete it
         clients = ['sudo@sudo.com', 'pm@pm.com', 'team@team.com']
-        exp_post = {'name': 'experiment name', 'type': 'Ac', 'description': 'No description.', 'litter_effects': 'NA'}
+        exp_post = {'name': 'experiment name', 'type': 'Ac', 'description': 'No description.' }
         for client in clients:
             c = Client()
             if client:

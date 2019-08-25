@@ -14,7 +14,7 @@ from django.utils.html import strip_tags
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCDjangoJSONEncoder
+from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 from utils.models import NonUniqueTagBase, get_crumbs, CustomURLField, AssessmentRootMixin
 
 from litter_getter import ris, pubmed
@@ -577,6 +577,10 @@ class ReferenceTags(ItemBase):
 
 
 class Reference(models.Model):
+    TEXT_CLEANUP_FIELDS = (
+        'full_text_url',
+    )
+
     objects = managers.ReferenceManager()
 
     assessment = models.ForeignKey(
@@ -606,8 +610,8 @@ class Reference(models.Model):
         blank=True)
     full_text_url = CustomURLField(
         blank=True,
-        help_text="Link to full-text publication (may require increased "
-                  "access privileges, only reviewers and team-members)")
+        help_text="Link to full-text URL from journal site (may require increased "
+                  "access privileges to view)")
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -647,6 +651,10 @@ class Reference(models.Model):
 
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
+
+    @classmethod
+    def delete_caches(cls, ids):
+        SerializerHelper.delete_caches(cls, ids)
 
     @property
     def reference_citation(self):

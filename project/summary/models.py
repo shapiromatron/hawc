@@ -1,3 +1,4 @@
+from operator import methodcaller
 from datetime import datetime
 import json
 
@@ -7,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
-from assessment.models import Assessment, DoseUnits
+from assessment.models import Assessment, BaseEndpoint, DoseUnits
 from study.models import Study
 from animal.models import Endpoint
 from epi.models import Outcome
@@ -183,6 +184,8 @@ class Visual(models.Model):
         (ROB_HEATMAP, "risk of bias heatmap"),
         (ROB_BARCHART, "risk of bias barchart"), )
 
+    SORT_ORDER_CHOICES = (("short_citation","Short Citation"),("overall_confidence","Final Study Confidence"),)
+
     title = models.CharField(
         max_length=128)
     slug = models.SlugField(
@@ -201,7 +204,7 @@ class Visual(models.Model):
     prefilters = models.TextField(
         default="{}")
     endpoints = models.ManyToManyField(
-        Endpoint,
+        BaseEndpoint,
         related_name='visuals',
         help_text="Endpoints to be included in visualization",
         blank=True)
@@ -218,6 +221,7 @@ class Visual(models.Model):
         default=False,
         verbose_name='Publish visual for public viewing',
         help_text='For assessments marked for public viewing, mark visual to be viewable by public')
+    sort_order = models.CharField(max_length=40,choices=SORT_ORDER_CHOICES, default="short_citation",)
     created = models.DateTimeField(
         auto_now_add=True)
     last_updated = models.DateTimeField(
@@ -315,6 +319,12 @@ class Visual(models.Model):
                 else:
                     qs = self.studies.all()
 
+        if self.sort_order:
+            if self.sort_order == "overall_confidence":
+                qs = sorted(qs, key=methodcaller('get_overall_confidence'), reverse=True)
+            else:
+                qs = qs.order_by(self.sort_order)
+
         return qs
 
     def get_editing_dataset(self, request):
@@ -349,6 +359,10 @@ class Visual(models.Model):
         ]
 
         return json.dumps(data)
+
+    def get_rob_visual_type_display(self, value):
+        rob_name = self.assessment.get_rob_name_display().lower()
+        return value.replace('risk of bias', rob_name)
 
 
 class DataPivot(models.Model):
@@ -435,6 +449,7 @@ class DataPivotUpload(DataPivot):
     excel_file = models.FileField(
         verbose_name="Excel file",
         upload_to="data_pivot_excel",
+        max_length=250,
         help_text="Upload an Excel file in XLSX format.",
     )
     worksheet_name = models.CharField(
@@ -451,7 +466,7 @@ class DataPivotUpload(DataPivot):
 class DataPivotQuery(DataPivot):
     objects = managers.DataPivotQueryManager()
 
-    MAXIMUM_QUERYSET_COUNT = 500
+    MAXIMUM_QUERYSET_COUNT = 1000
 
     EXPORT_GROUP = 0
     EXPORT_ENDPOINT = 1
@@ -567,6 +582,7 @@ class DataPivotQuery(DataPivot):
 
             exporter = Exporter(
                 qs,
+                assessment=self.assessment,
                 export_format=format_,
                 filename='{}-animal-bioassay'.format(self.assessment),
                 preferred_units=self.preferred_units
@@ -575,6 +591,7 @@ class DataPivotQuery(DataPivot):
         elif self.evidence_type == EPI:
             exporter = OutcomeDataPivot(
                 qs,
+                assessment=self.assessment,
                 export_format=format_,
                 filename='{}-epi'.format(self.assessment)
             )
@@ -582,6 +599,7 @@ class DataPivotQuery(DataPivot):
         elif self.evidence_type == EPI_META:
             exporter = MetaResultFlatDataPivot(
                 qs,
+                assessment=self.assessment,
                 export_format=format_,
                 filename='{}-epi-meta-analysis'.format(self.assessment)
             )
@@ -597,6 +615,7 @@ class DataPivotQuery(DataPivot):
             # generate export
             exporter = Exporter(
                 qs,
+                assessment=self.assessment,
                 export_format=format_,
                 filename='{}-invitro'.format(self.assessment)
             )
@@ -645,6 +664,9 @@ class Prefilter(object):
 
         if d.get('prefilter_effect'):
             filters["effect__in"] = d.getlist('effects')
+
+        if d.get('prefilter_effect_subtype'):
+            filters["effect_subtype__in"] = d.getlist('effect_subtypes')
 
         if d.get('prefilter_effect_tag'):
             filters["effects__in"] = d.getlist('effect_tags')

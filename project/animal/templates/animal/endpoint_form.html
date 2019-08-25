@@ -26,13 +26,18 @@
       <legend>Dose-response data</legend>
       <p class="help-text">
         <span class="d_only">
-          For dichotomous data, all fields are required.
+          For dichotomous data, all fields are required. For p-values,
+          0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
+          should be coded as 0.01; 0.001 or &lt;0.001 should be coded
+          as 0.001.
         </span>
         <span class="c_only">
           For continuous data, if variance is not-reported, ensure the
           "variance type" input-field above is "NR", and then variance can be
           left blank; otherwise it is required. If any data are not reported,
-          leave those fields blank.
+          leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
+          as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
+          should be coded as 0.001.
         </span>
         <span class="p_only">
           For percent-difference data, lower CI (%) and upper CI (%) are optional.
@@ -232,6 +237,19 @@
           new animal.SampleSizeWidget();
 
       })
+
+      // show/hide the litter_effects fields depending on the underlying experiment type
+      var litEff = $('#id_litter_effects'),
+        litEffNotes = $('#id_litter_effect_notes'),
+        litterDiv = litEff.parent().parent().parent();
+      if (["Rp", "Dv", "Ot"].indexOf("{{animal_group.experiment.type}}")>=0){
+        litterDiv.show();
+      } else {
+        litterDiv.hide();
+        litEff.val("NA");
+        litEffNotes.val("");
+      }
+
 
     });
   </script>

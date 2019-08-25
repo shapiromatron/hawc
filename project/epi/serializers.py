@@ -78,13 +78,21 @@ class ResultMetricSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SimpleExposureSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    metric_units = DoseUnitsSerializer()
+class CentralTendencySerializer(serializers.ModelSerializer):
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = models.CentralTendency
+        fields = '__all__'
+
+
+class SimpleExposureSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    metric_units = DoseUnitsSerializer()
+    central_tendencies = CentralTendencySerializer(many=True)
 
     class Meta:
         model = models.Exposure
@@ -119,10 +127,7 @@ class ExposureSerializer(serializers.ModelSerializer):
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     metric_units = DoseUnitsSerializer()
-    variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
-    estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
-    lower_bound_interval = serializers.FloatField(read_only=True)
-    upper_bound_interval = serializers.FloatField(read_only=True)
+    central_tendencies = CentralTendencySerializer(many=True)
 
     class Meta:
         model = models.Exposure
@@ -167,6 +172,7 @@ class ResultSerializer(serializers.ModelSerializer):
     statistical_power = serializers.CharField(source='get_statistical_power_display', read_only=True)
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     results = GroupResultSerializer(many=True)
+    resulttags = EffectTagsSerializer()
     variance_type = serializers.CharField(source='get_variance_type_display', read_only=True)
     estimate_type = serializers.CharField(source='get_estimate_type_display', read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
@@ -221,4 +227,28 @@ class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerial
 
     def get_study_short_citation(self, obj):
         return obj.study_population.study.short_citation
+
+class StudyPopulationCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.StudyPopulation
+        cleanup_fields = ('study_short_citation',) + model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+    def get_study_short_citation(self, obj):
+        return obj.study.short_citation
+
+
+class ExposureCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Exposure
+        cleanup_fields = ('study_short_citation',) + model.TEXT_CLEANUP_FIELDS
+        fields = cleanup_fields + ('id', )
+
+    def get_study_short_citation(self, obj):
+        return obj.study_population.study.short_citation
+
 SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)

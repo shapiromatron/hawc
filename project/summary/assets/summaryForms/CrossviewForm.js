@@ -294,6 +294,7 @@ class CrossviewForm extends BaseVisualForm {
             ['system', 'systems'],
             ['organ', 'organs'],
             ['effect', 'effects'],
+            ['effect_subtype', 'effect_subtypes'],
             ['study', 'studies'],
             ['effect_tag', 'effect_tags'],
         ];

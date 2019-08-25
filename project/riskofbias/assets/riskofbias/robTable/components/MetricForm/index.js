@@ -40,7 +40,7 @@ class MetricForm extends Component {
     }
 
     render() {
-        let { metric, config, updateNotesLeft } = this.props,
+        let { metric, config, updateNotesLeft, robResponseValues } = this.props,
             formScore = _.find(metric.values, {
                 riskofbias_id: parseInt(config.riskofbias.id),
             });
@@ -59,6 +59,7 @@ class MetricForm extends Component {
                     score={formScore}
                     addText={this.state.addText}
                     updateNotesLeft={updateNotesLeft}
+                    robResponseValues={robResponseValues}
                 />
             </div>
         );
@@ -75,13 +76,11 @@ MetricForm.propTypes = {
                     name: PropTypes.string.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
-                score_description: PropTypes.string,
-                score_symbol: PropTypes.string.isRequired,
-                score_shade: PropTypes.string.isRequired,
             }).isRequired
         ).isRequired,
     }).isRequired,
     config: PropTypes.object,
+    robResponseValues: PropTypes.array.isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
 };
 

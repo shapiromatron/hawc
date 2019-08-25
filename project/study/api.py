@@ -34,7 +34,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
             return self.model.objects.prefetch_related(
                 'identifiers',
                 'riskofbiases__scores__metric__domain',
-            )
+            ).select_related('assessment__rob_settings', 'assessment')
 
     @list_route()
     def rob_scores(self, request):

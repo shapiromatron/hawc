@@ -1,7 +1,7 @@
 var config = require('./webpack.base.js'),
     path = require('path'),
     webpack = require('webpack'),
-    port = 3000,
+    port = 3001,
     HappyPack = require('happypack');
 
 config.devtool = 'cheap-module-eval-source-map';

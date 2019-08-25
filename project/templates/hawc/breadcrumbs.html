@@ -1,12 +1,17 @@
 {% for crumb in crumbs %}
     {% if forloop.last %}
         {% if crud == "Read" %}
-            <li class="active">{{crumb.0}}<span class="divider">/</span></li>
+            <li class="active">{{crumb.0}}
+                {{ crumb.2|default_if_none:""|safe}}
+                <span class="divider">/</span></li>
         {% elif crud == "Create" %}
-            <li class="active">{{crud}} {{crumb.0}}<span class="divider">/</span></li>
+            <li class="active">{{crud}} {{crumb.0}}
+                {{ crumb.2|default_if_none:""|safe}}
+                <span class="divider">/</span></li>
         {% else %}
             <li>
                 <a href="{{crumb.1}}">{{crumb.0}}</a>
+                {{ crumb.2|default_if_none:""|safe}}
                 <span class="divider">/</span>
             </li>
             <li class="active">{{crud}}<span class="divider">/</span></li>
@@ -15,6 +20,7 @@
     {% else %}
         <li>
             <a href="{{crumb.1}}">{{crumb.0}}</a>
+            {{ crumb.2|default_if_none:""|safe}}
             <span class="divider">/</span>
         </li>
     {% endif %}

@@ -1,12 +1,12 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  {{assessment}} | Risk of bias reviewers | HAWC
+  {{assessment}} | {{assessment.get_rob_name_display}} reviewers | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
     <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias</a><span class="divider">/</span></li>
+    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
     <li class="active">Reviewer assignments<span class="divider">/</span></li>
 {% endblock breadcrumbs %}
 
@@ -24,7 +24,7 @@
     {% endif %}
 
     <h2>
-        Risk of bias reviewer settings and assignment
+        {{assessment.get_rob_name_display}} reviewer settings and assignment
     </h2>
 
     <p>
@@ -82,7 +82,7 @@
                 {% endfor %}
             {% else %}
             <td>
-                No risk of bias assigned.
+                No {{assessment.get_rob_name_display|lower}} assigned.
             </td>
             {% endif %}
         </tr>

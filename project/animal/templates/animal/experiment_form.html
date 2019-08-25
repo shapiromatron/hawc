@@ -48,21 +48,6 @@
           };
       pa.on('change', showPurity).trigger('change');
 
-      var type = $('#id_type'),
-          litEff = $('#id_litter_effects'),
-          litEffNotes = $('#id_litter_effect_notes'),
-          litterDiv = litEff.parent().parent().parent(),
-          showLitterEffects = function(){
-            if (["Rp", "Dv", "Ot"].indexOf(type.val())>=0){
-              litterDiv.show();
-            } else {
-              litterDiv.hide();
-              litEff.val("NA");
-              litEffNotes.val("");
-            }
-          };
-      type.on('change', showLitterEffects).trigger('change');
-
     });
   </script>
 {% endblock extrajs %}

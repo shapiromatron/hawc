@@ -340,12 +340,15 @@ class IVEndpointFilterForm(forms.Form):
 
     ORDER_BY_CHOICES = (
         ('experiment__study__short_citation', 'study'),
+        ('experiment__name', 'experiment name'),
         ('name', 'endpoint name'),
         ('assay_type', 'assay type'),
         ('effect', 'effect'),
         ('chemical__name', 'chemical'),
         ('category__name', 'category'),
         ('observation_time', 'observation time'),
+        ('experiment__dose_units_id', 'dose units'),
+        ('response_units', 'response units'),
     )
 
     studies = selectable.AutoCompleteSelectMultipleField(
@@ -413,12 +416,12 @@ class IVEndpointFilterForm(forms.Form):
         required=False)
 
     def __init__(self, *args, **kwargs):
-        assessment_id = kwargs.pop('assessment_id')
+        assessment = kwargs.pop('assessment')
         super().__init__(*args, **kwargs)
         for field in self.fields:
             if field not in ('dose_units', 'order_by', 'paginate_by'):
                 self.fields[field].widget.update_query_parameters(
-                    {'related': assessment_id})
+                    {'related': assessment.id})
 
         self.helper = self.setHelper()
 

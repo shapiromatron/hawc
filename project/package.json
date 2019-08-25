@@ -10,7 +10,7 @@
         "build": "npm run clean && npm run build:webpack",
         "prettier-watch": "onchange '**/*.js' -- prettier --write {{changed}}",
         "precommit": "lint-staged",
-        "start": "webpack-dashboard -- node devServer.js",
+        "start": "node devServer.js",
         "test":
             "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
         "test:watch": "npm run test -- --watch",
@@ -65,7 +65,6 @@
         "unexpected-react": "^5.0.1",
         "webpack": "^3.8.1",
         "webpack-bundle-tracker": "^0.2.0",
-        "webpack-dashboard": "^1.0.2",
         "webpack-dev-middleware": "^1.12.2"
     },
     "dependencies": {
