@@ -22,6 +22,7 @@ __pycache__
 .ipynb_checkpoints
 .mypy_cache/
 data
+dist
 docs/_build
 env
 public/static
