@@ -10,6 +10,7 @@ from . import models
 
 
 class StudySerializer(serializers.ModelSerializer):
+    assessment = AssessmentMiniSerializer(read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

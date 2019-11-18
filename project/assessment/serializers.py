@@ -21,7 +21,7 @@ class AssessmentMiniSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Assessment
-        fields = ('id', 'url', 'name')
+        fields = ('id', 'url', "enable_risk_of_bias", 'name')
 
 
 class EffectTagsSerializer(serializers.ModelSerializer):
