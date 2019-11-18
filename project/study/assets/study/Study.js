@@ -17,7 +17,9 @@ class Study {
             final: true,
             active: true,
         });
-        if (this.final) this.unpack_riskofbias();
+        if (this.data.assessment.enable_risk_of_bias && this.final) {
+            this.unpack_riskofbias();
+        }
     }
 
     static get_object(id, cb) {
