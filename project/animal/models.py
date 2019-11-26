@@ -68,6 +68,8 @@ class Experiment(models.Model):
         max_length=2,
         choices=EXPERIMENT_TYPE_CHOICES,
         help_text="Type of study being performed; be as specific as possible")
+    has_multiple_generations = models.BooleanField(
+        default=False)
     chemical = models.CharField(
         max_length=128,
         verbose_name="Chemical name",
@@ -140,7 +142,7 @@ class Experiment(models.Model):
         return reverse('animal:experiment_detail', args=[str(self.pk)])
 
     def is_generational(self):
-        return self.type in ["Rp", "Dv"]
+        return self.has_multiple_generations
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -159,6 +161,7 @@ class Experiment(models.Model):
             'experiment-url',
             'experiment-name',
             'experiment-type',
+            'experiment-has_multiple_generations',
             'experiment-chemical',
             'experiment-cas',
             'experiment-chemical_source',
@@ -177,6 +180,7 @@ class Experiment(models.Model):
             ser['url'],
             ser['name'],
             ser['type'],
+            ser['has_multiple_generations'],
             ser['chemical'],
             ser['cas'],
             ser['chemical_source'],

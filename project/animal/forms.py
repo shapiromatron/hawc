@@ -48,6 +48,10 @@ class ExperimentForm(ModelForm):
             lookup_class=lookups.ExpGlpLookup,
             allow_new=True)
 
+        # change checkbox to select box
+        self.fields['has_multiple_generations'].widget = forms.Select(
+            choices=((True, 'Yes'), (False, 'No')))
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -81,7 +85,7 @@ class ExperimentForm(ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row('name', 2, "span6")
+        helper.add_fluid_row('name', 3, "span4")
         helper.add_fluid_row('chemical', 3, "span4")
         helper.add_fluid_row('purity_available', 4, ["span2", "span2", "span2", "span6"])
         return helper

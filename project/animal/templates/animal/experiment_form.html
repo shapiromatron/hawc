@@ -48,6 +48,12 @@
           };
       pa.on('change', showPurity).trigger('change');
 
+      // by default, reproductive/developmental experiments are multi-generational; other types are not.
+      $('#id_type').change(function () {
+        var updatedType = $(this).val();
+        $("#id_has_multiple_generations").val((updatedType == "Rp" || updatedType == "Dv") ? "True" : "False");
+      });
+
     });
   </script>
 {% endblock extrajs %}
