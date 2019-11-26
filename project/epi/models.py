@@ -213,8 +213,9 @@ class StudyPopulation(models.Model):
         max_length=128,
         blank=True,
         help_text="Population source (General population, Occupational cohort, Superfund site, etc.). Ex. General population")
-    country = models.ForeignKey(
-        Country)
+    countries = models.ManyToManyField(
+        Country,
+        blank=True)
     region = models.CharField(
         max_length=128,
         blank=True,
@@ -270,7 +271,7 @@ class StudyPopulation(models.Model):
             "sp-design",
             "sp-age_profile",
             "sp-source",
-            "sp-country",
+            "sp-countries",
             "sp-region",
             "sp-state",
             "sp-eligible_n",
@@ -300,7 +301,7 @@ class StudyPopulation(models.Model):
             ser["design"],
             ser["age_profile"],
             ser["source"],
-            ser["country"],
+            '|'.join([ c['name'] for c in ser["countries"] ]),
             ser["region"],
             ser["state"],
             ser["eligible_n"],
@@ -1782,7 +1783,7 @@ reversion.register(Ethnicity)
 reversion.register(StudyPopulationCriteria)
 reversion.register(AdjustmentFactor)
 reversion.register(ResultAdjustmentFactor)
-reversion.register(StudyPopulation, follow=('country', 'spcriteria'))
+reversion.register(StudyPopulation, follow=('countries', 'spcriteria'))
 reversion.register(ComparisonSet)
 reversion.register(Exposure)
 reversion.register(Outcome, follow=('effects',))

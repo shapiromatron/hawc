@@ -192,7 +192,7 @@ class StudyPopulationForm(forms.ModelForm):
         helper.form_class = None
         helper.add_fluid_row('name', 2, "span6")
         helper.add_fluid_row('age_profile', 2, "span6")
-        helper.add_fluid_row('country', 3, "span4")
+        helper.add_fluid_row('countries', 3, "span4")
         helper.add_fluid_row('eligible_n', 3, "span4")
         helper.add_fluid_row('inclusion_criteria', 3, "span4")
 
@@ -205,6 +205,13 @@ class StudyPopulationForm(forms.ModelForm):
         helper.addBtnLayout(helper.layout[btn_target_idx], 2, url, "Create criteria", "span4")
 
         return helper
+
+    def clean(self):
+        cleaned_data = super().clean()
+        countries = cleaned_data.get("countries")
+        if not countries:
+            self.add_error('countries', "At least one country must be selected")
+        return cleaned_data
 
 
 class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
