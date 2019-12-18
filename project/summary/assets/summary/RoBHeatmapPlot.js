@@ -83,7 +83,7 @@ class RoBHeatmapPlot extends D3Visualization {
             xIsStudy,
             study_label_field = this.data.settings.study_label_field
                 ? this.data.settings.study_label_field
-                : 'short_citation';
+                : 'short_citation'; // use `short_citation` for backwards compatible default
 
         _.each(this.data.aggregation.metrics_dataset, function(metric) {
             _.chain(metric.rob_scores)
@@ -98,7 +98,6 @@ class RoBHeatmapPlot extends D3Visualization {
                     dataset.push({
                         riskofbias: rob,
                         study: rob.study,
-                        study_id: rob.study.id,
                         study_label: rob.study.data[study_label_field],
                         metric: rob.data.metric,
                         metric_label: metric_name,
