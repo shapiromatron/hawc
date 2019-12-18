@@ -107,6 +107,11 @@ class EndpointStatisticalTestLookup(DistinctStringLookup):
 class EndpointByStudyLookup(RelatedLookup):
     # Return names of endpoints available for a particular study
     model = models.Endpoint
+    user_specified_search_fields = [
+        "animal_group__experiment__name",
+        "animal_group__name",
+        "name"
+    ]
     search_fields = (
         'name__icontains',
         'animal_group__name__icontains',
@@ -115,14 +120,30 @@ class EndpointByStudyLookup(RelatedLookup):
     related_filter = 'animal_group__experiment__study'
 
     def get_item_label(self, obj):
-        return "{} | {} | {}".format(
-            obj.animal_group.experiment,
-            obj.animal_group,
-            obj
-        )
+        return " | ".join([
+            str(self.get_underscore_field_val(obj, f))
+            for f in self.user_specified_search_fields
+        ])
 
     def get_item_value(self, obj):
         return self.get_item_label(obj)
+
+    def get_query(self, request, term):
+        order_by = request.GET['order_by']
+        search_fields = request.GET.get('search_fields')
+
+        # TODO - investigate if this alters class-state; may have side effects across requests
+        # preserve this so we can return a dynamic representation of the Endpoint...
+        self.user_specified_search_fields = search_fields.split(",")
+
+        # TODO - investigate if this alters class-state; may have side effects across requests
+        # update the search_fields tuple to match the fields we're going to show...
+        self.search_fields = [f"{field}__icontains" for field in self.user_specified_search_fields]
+
+        if len(self.search_fields) > 0:
+            return super().get_query(request, term).distinct().order_by(order_by)
+        else:
+            return None
 
 
 class EndpointByAssessmentLookup(RelatedLookup):
