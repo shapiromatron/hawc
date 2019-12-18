@@ -2,7 +2,7 @@ var args = process.argv.slice(2),
     express = require('express'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev'),
-    port = 3001;
+    port = 3100;
 
 if (args.indexOf('--testProduction') >= 0) {
     console.log('Using test production;');
