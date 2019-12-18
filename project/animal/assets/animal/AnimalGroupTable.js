@@ -45,7 +45,6 @@ class AnimalGroupTable {
 
         ngroups.forEach(function(endpoints) {
             _.chain(endpoints)
-                .sortBy((d) => d.data.name.toLowerCase())
                 .each(function(v, i) {
                     if (i === 0) tbl.addRow(v._build_ag_n_row());
                     tbl.addRow(v._build_ag_response_row(tbl.footnotes));

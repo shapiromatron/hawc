@@ -240,9 +240,16 @@ class Endpoint extends Observee {
         });
 
         tr1
-            .append(`<th style="width: ${percents * 2}%" rowspan="2">Endpoint</th>`)
-            .append(`<th style="width: ${percents}%" rowspan="2">Organ</th>`)
-            .append(`<th style="width: ${percents}%" rowspan="2">Obs. time</th>`)
+            .append(
+                `<th class="sortable" data-sortable-field="name" style="width: ${percents *
+                    2}%" rowspan="2">Endpoint</th>`
+            )
+            .append(
+                `<th class="sortable" data-sortable-field="organ" style="width: ${percents}%" rowspan="2">Organ</th>`
+            )
+            .append(
+                `<th class="sortable" data-sortable-field="obs-time" style="width: ${percents}%" rowspan="2">Obs. time</th>`
+            )
             .append(`<th style="width: ${percents * nGroups}%" colspan="${nGroups}">${txt}</th>`);
 
         // now build header row showing available doses
